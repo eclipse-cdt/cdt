@@ -64,7 +64,6 @@ import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.cdtvariables.CoreVariableSubstitutor;
 import org.eclipse.cdt.internal.core.cdtvariables.DefaultVariableContextInfo;
 import org.eclipse.cdt.internal.core.cdtvariables.ICoreVariableContextInfo;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsLogger;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.model.APathEntry;
 import org.eclipse.cdt.internal.core.model.CModelStatus;
@@ -2017,9 +2016,6 @@ public class PathEntryTranslator {
 			public boolean visit(PathSettingsContainer container) {
 				CResourceData rcData = (CResourceData)container.getValue();
 				if (rcData != null) {
-					// AG FIXME - temporary log to remove before CDT Juno release
-					temporaryLog(cfgDescription, kinds, rcData);
-
 					PathEntryCollector child = collector.createChild(container.getPath());
 					for (int kind : kinds) {
 						List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
@@ -2031,24 +2027,6 @@ public class PathEntryTranslator {
 				}
 				return true;
 			}
-
-			// AG FIXME - temporary log to remove before CDT Juno release
-			@Deprecated
-			private void temporaryLog(final ICConfigurationDescription cfgDescription, final int[] kinds, CResourceData rcData) {
-				String kindsStr="";
-				for (int kind : kinds) {
-					String kstr = LanguageSettingEntriesSerializer.kindToString(kind);
-					if (kindsStr.length()==0) {
-						kindsStr = kstr;
-					} else {
-						kindsStr += "|" + kstr;
-					}
-				}
-				final IProject prj = cfgDescription.getProjectDescription().getProject();
-				String log_msg = "path="+prj+"/"+rcData.getPath()+", kind=["+kindsStr+"]"+" (PathEntryTranslator.collectEntries())";
-				LanguageSettingsLogger.logInfo(log_msg);
-			}
-
 		});
 		return collector;
 	}

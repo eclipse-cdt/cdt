@@ -232,8 +232,6 @@ public class ScannerDiscoveryLegacySupport {
 			legacyProfiles = new HashMap<String, String>();
 
 			// InputTypes
-			// TODO -doublecheck
-			//			legacyProfiles.put(inputTypeId, scannerConfigDiscoveryProfileId);
 			legacyProfiles.put("cdt.managedbuild.tool.gnu.c.compiler.input", "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile");
 			legacyProfiles.put("cdt.managedbuild.tool.gnu.cpp.compiler.input", "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile");
 			legacyProfiles.put("cdt.managedbuild.tool.gnu.c.compiler.input.cygwin", "org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC");
@@ -243,8 +241,6 @@ public class ScannerDiscoveryLegacySupport {
 			legacyProfiles.put("cdt.managedbuild.tool.xlc.cpp.compiler.input", "org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP");
 
 			// Toolchains
-			// TODO -doublecheck
-			//			legacyProfiles.put(toolchainId, scannerConfigDiscoveryProfileId);
 		}
 
 		return legacyProfiles.get(id);

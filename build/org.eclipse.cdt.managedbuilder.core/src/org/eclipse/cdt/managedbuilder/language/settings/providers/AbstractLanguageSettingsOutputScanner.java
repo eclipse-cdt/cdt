@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.XmlUtil;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsLogger;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.filesystem.EFS;
@@ -563,22 +562,6 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		return buildDirURI;
 	}
 
-	// AG FIXME - temporary, remove me
-	/**
-	 * @since 8.2
-	 */
-	@Deprecated
-	protected String getPrefixForLog() {
-		String str;
-		if (currentCfgDescription!= null) {
-			IProject ownerProject = currentCfgDescription.getProjectDescription().getProject();
-			str = ownerProject + ":" + currentCfgDescription.getName();
-		} else {
-			str = "[global]";
-		}
-		return str + ": ";
-	}
-
 	/**
 	 * Sets language settings entries for current configuration description, current resource
 	 * and current language ID.
@@ -587,10 +570,6 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 */
 	protected void setSettingEntries(List<ICLanguageSettingEntry> entries) {
 		setSettingEntries(currentCfgDescription, currentResource, currentLanguageId, entries);
-
-		// AG FIXME - temporary log to remove before CDT Juno release
-		LanguageSettingsLogger.logInfo(getPrefixForLog()
-				+ getClass().getSimpleName() + " collected " + (entries!=null ? ("" + entries.size()) : "null") + " entries for " + currentResource);
 	}
 
 	/**

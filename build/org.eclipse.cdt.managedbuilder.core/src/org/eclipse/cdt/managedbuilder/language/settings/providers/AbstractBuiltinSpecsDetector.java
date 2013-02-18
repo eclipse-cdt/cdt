@@ -43,7 +43,6 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.BuildRunnerHelper;
 import org.eclipse.cdt.internal.core.XmlUtil;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsLogger;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.utils.CommandLineUtil;
@@ -335,17 +334,12 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 	@Override
 	public void registerListener(ICConfigurationDescription cfgDescription) {
-		// AG FIXME - temporary log to remove before CDT Juno release
-		LanguageSettingsLogger.logInfo(getPrefixForLog() + "registerListener [" + System.identityHashCode(this) + "] " + this);
-
 		currentCfgDescription = cfgDescription;
 		execute();
 	}
 
 	@Override
 	public void unregisterListener() {
-		// AG FIXME - temporary log to remove before CDT Juno release
-		LanguageSettingsLogger.logInfo(getPrefixForLog() + "unregisterListener [" + System.identityHashCode(this) + "] " + this);
 	}
 
 	@Override
@@ -370,8 +364,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 */
 	protected void execute() {
 		if (isExecuted) {
-			// AG FIXME - temporary log to remove before CDT Juno release
-//			LanguageSettingsLogger.logInfo(getPrefixForLog() + "Already executed [" + System.identityHashCode(this) + "] " + this);
 			return;
 		}
 
@@ -410,9 +402,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		}
 		job.setRule(rule);
 		job.schedule();
-
-		// AG FIXME - temporary log to remove before CDT Juno release
-		LanguageSettingsLogger.logInfo(getPrefixForLog() + "Execution scheduled [" + System.identityHashCode(this) + "] " + this);
 	}
 
 	/**
@@ -509,11 +498,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	protected void shutdownForLanguage() {
 		if (detectedSettingEntries != null && detectedSettingEntries.size() > 0) {
 			collected = detectedSettingEntries.size();
-
-			// AG FIXME - temporary log to remove before CDT Juno release
-			LanguageSettingsLogger.logInfo(getPrefixForLog()
-					+ getClass().getSimpleName() + " collected " + detectedSettingEntries.size() + " entries" + " for language " + currentLanguageId);
-
 			setSettingEntries(currentCfgDescription, currentResource, currentLanguageId, detectedSettingEntries);
 		}
 		detectedSettingEntries = null;

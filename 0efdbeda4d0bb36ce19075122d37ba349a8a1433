@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//+Zg\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-19T22:34:06Z",
+      "side": 1,
+      "message": "Hm. That seems like something that ought to be fixed in Mylyn, then.",
+      "parentUuid": "AABOPX//+fc\u003d",
+      "revId": "0efdbeda4d0bb36ce19075122d37ba349a8a1433",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//+9I\u003d",
         "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/internal/ui/Messages.properties",
         "patchSetId": 1

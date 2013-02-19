@@ -7314,7 +7314,7 @@ public class AST2Tests extends AST2TestBase {
 		parseAndCheckBindings(code, C, true);
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
 		ITypedef td= bh.assertNonProblem("ptrdiff_t", 0);
-		assertEquals("int", ASTTypeUtil.getType(td.getType()));
+		assertEquals("long int", ASTTypeUtil.getType(td.getType()));
 		td= bh.assertNonProblem("size_t", 0);
 		assertEquals("unsigned long int", ASTTypeUtil.getType(td.getType()));
 
@@ -7322,7 +7322,7 @@ public class AST2Tests extends AST2TestBase {
 		parseAndCheckBindings(code, CPP, true);
 		bh= new BindingAssertionHelper(code, true);
 		td= bh.assertNonProblem("ptrdiff_t", 0);
-		assertEquals("int", ASTTypeUtil.getType(td.getType()));
+		assertEquals("long int", ASTTypeUtil.getType(td.getType()));
 		td= bh.assertNonProblem("size_t", 0);
 		assertEquals("unsigned long int", ASTTypeUtil.getType(td.getType()));
 	}

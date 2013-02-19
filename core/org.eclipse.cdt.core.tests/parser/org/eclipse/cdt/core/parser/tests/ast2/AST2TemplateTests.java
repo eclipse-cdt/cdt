@@ -7271,4 +7271,26 @@ public class AST2TemplateTests extends AST2TestBase {
     public void testRegression_399829() throws Exception {
     	parseAndCheckBindings();
     }
+
+	//	template <typename>
+	//	struct Bind {};
+	//	template <typename Func, typename ... BoundArgs>
+	//	struct Bind_helper {
+	//	    typedef Bind<Func(BoundArgs...)> type;
+	//	};
+	//	template <typename Func, typename ... BoundArgs>
+	//	typename Bind_helper<Func, BoundArgs...>::type
+	//	bind(Func, BoundArgs...);
+	//	struct S {
+	//	    template <typename T, typename U>
+	//	    void operator()(T, U);
+	//	};
+	//	int main() {
+	//	    S s;
+	//	    bind(s, 0, foo);
+	//	}
+	public void testNPE_401140() throws Exception {
+		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
+		helper.assertProblem("bind(s, 0, foo)", "bind");
+	}
 }

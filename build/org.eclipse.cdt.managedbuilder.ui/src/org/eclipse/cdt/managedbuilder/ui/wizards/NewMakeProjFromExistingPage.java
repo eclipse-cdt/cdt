@@ -155,10 +155,13 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 			else {
 				final File file= new File(loc);
 				if (file.isDirectory()) {
+					// Ensure we can create files in the directory.
+					if (!file.canWrite())
+						msg = Messages.NewMakeProjFromExistingPage_DirReadOnlyError;
 					// Set the project name to the directory name but not if the user has supplied a name
 					// (bugzilla 368987). Use a job to ensure proper sequence of activity, as setting the Text
 					// will invoke the listener, which will invoke this method.
-					if (!projectNameSetByUser && !name.equals(file.getName())) {
+					else if (!projectNameSetByUser && !name.equals(file.getName())) {
 						WorkbenchJob wjob = new WorkbenchJob("update project name") { //$NON-NLS-1$
 							@Override
 							public IStatus runInUIThread(IProgressMonitor monitor) {

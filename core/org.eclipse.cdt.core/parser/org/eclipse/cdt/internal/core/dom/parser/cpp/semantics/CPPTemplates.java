@@ -1102,6 +1102,7 @@ public class CPPTemplates {
 			ICPPTemplateArgument origArg = args[i];
 			ICPPTemplateArgument newArg;
 			if (origArg.isPackExpansion()) {
+				ICPPTemplateArgument unexpanded= origArg;
 				origArg= origArg.getExpansionPattern();
 				int packSize= determinePackSize(origArg, tpMap);
 				if (packSize == PACK_SIZE_FAIL || packSize == PACK_SIZE_NOT_FOUND) {
@@ -1117,6 +1118,7 @@ public class CPPTemplates {
 						if (!isValidArgument(newArg)) {
 							if (strict)
 								return null;
+							result[i + resultShift] = unexpanded;
 							newResult = result;
 							shift = 0;
 							break;

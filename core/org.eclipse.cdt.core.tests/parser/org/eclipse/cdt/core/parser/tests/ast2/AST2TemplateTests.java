@@ -7271,4 +7271,23 @@ public class AST2TemplateTests extends AST2TestBase {
     public void testRegression_399829() throws Exception {
     	parseAndCheckBindings();
     }
+
+	//	template <bool... Args>
+	//	struct ice_or;
+	//	template <bool First>
+	//	struct ice_or<First> {
+	//	    static const bool value = First;
+	//	};
+	//	template <bool>
+	//	struct S {};
+	//	template <>
+	//	struct S<false> {
+	//	    typedef int type;
+	//	};
+	//	int main() {
+	//	    S<ice_or<false>::value>::type t;
+	//	}
+	public void testVariadicNonTypeTemplateParameter_401142() throws Exception {
+		parseAndCheckBindings();
+	}
 }

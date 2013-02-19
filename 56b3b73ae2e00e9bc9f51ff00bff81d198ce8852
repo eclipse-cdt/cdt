@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//+Zc\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/internal/ui/Messages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-19T22:33:43Z",
+      "side": 1,
+      "message": "Er, you forgot to change this to NewMakeProjFromExistingPage_DirReadOnlyError",
+      "revId": "56b3b73ae2e00e9bc9f51ff00bff81d198ce8852",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//+ZU\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/newui/Messages.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-19T22:33:43Z",
+      "side": 1,
+      "message": "And this, also, would benefit from a descriptive name.",
+      "revId": "56b3b73ae2e00e9bc9f51ff00bff81d198ce8852",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//+ZQ\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/newui/Messages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-19T22:33:43Z",
+      "side": 1,
+      "message": "Don\u0027t forget to change it here.",
+      "revId": "56b3b73ae2e00e9bc9f51ff00bff81d198ce8852",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//+ZM\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/CDTMainWizardPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-19T22:33:43Z",
+      "side": 1,
+      "message": "And here.",
+      "revId": "56b3b73ae2e00e9bc9f51ff00bff81d198ce8852",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

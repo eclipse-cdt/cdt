@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//+fc\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-02-19T22:27:07Z",
+      "side": 1,
+      "message": "This is done by Eclipse mylyn, not manually by me.  I can remove it.",
+      "parentUuid": "AABOPX//+9E\u003d",
+      "revId": "0efdbeda4d0bb36ce19075122d37ba349a8a1433",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//+9I\u003d",
         "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/internal/ui/Messages.properties",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2013-02-16T02:32:40Z",
       "side": 1,
       "message": "Even though the existing code uses unclear, numerical names for messages, it\u0027s not necessary to continue this practice. It would be better to use a descriptive name like: \"NewMakeProjFromExistingPage_read_only_dir\".",
+      "revId": "0efdbeda4d0bb36ce19075122d37ba349a8a1433",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//+fY\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/internal/ui/Messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-02-19T22:27:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//+9I\u003d",
       "revId": "0efdbeda4d0bb36ce19075122d37ba349a8a1433",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -186,6 +186,7 @@ public class Messages extends NLS {
 	public static String NewMakeProjFromExistingPage_7;
 	public static String NewMakeProjFromExistingPage_8;
 	public static String NewMakeProjFromExistingPage_9;
+	public static String NewMakeProjFromExistingPage_DirReadOnlyError;
 	public static String NewVarDialog_0;
 	public static String NewVarDialog_1;
 	public static String PreferredToolchainsTab_0;

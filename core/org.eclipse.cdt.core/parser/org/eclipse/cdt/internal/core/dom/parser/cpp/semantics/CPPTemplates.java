@@ -2460,6 +2460,8 @@ public class CPPTemplates {
 			} else {
 				if (arg.isTypeValue())
 					return false;
+				if (par.isParameterPack() != arg.isPackExpansion())
+					return false;
 				int parpos= Value.isTemplateParameter(arg.getNonTypeValue());
 				if (parpos != par.getParameterID())
 					return false;

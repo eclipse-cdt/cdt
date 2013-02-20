@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: CDT Qt Support Core
 Bundle-SymbolicName: org.eclipse.cdt.qt.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.cdt.qt.core.Activator
+Bundle-Activator: org.eclipse.cdt.qt.core.QtPlugin
 Bundle-Vendor: Eclipse CDT
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,

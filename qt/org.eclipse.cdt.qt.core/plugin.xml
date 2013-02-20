@@ -50,4 +50,20 @@
          </run>
       </runtime>
    </extension>
+    <extension
+        point="org.eclipse.cdt.core.tagger"
+        id="qt.signalslots"
+        name="Qt Signal/Slot Tagger">
+        <bindingTagger
+            local-id="signalslot.tagger"
+            class="org.eclipse.cdt.qt.internal.core.QtSignalSlotTagger">
+            <enablement>
+                <with variable="projectNatures">
+                    <iterate operator="or">
+                        <equals value="org.eclipse.cdt.qt.core.qtNature"/>
+                    </iterate>
+                </with>
+            </enablement>
+        </bindingTagger>            
+    </extension>
 </plugin>

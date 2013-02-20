@@ -17,4 +17,10 @@ public class QtKeywords
     public static final String Q_SLOTS = "Q_SLOTS";
     public static final String SIGNALS = "signals";
     public static final String SLOTS = "slots";
+
+    public static final String SIGNAL = "SIGNAL";
+    public static final String SLOT = "SLOT";
+
+    public static final String QOBJECT = "QObject";
+    public static final String CONNECT = "connect";
 }

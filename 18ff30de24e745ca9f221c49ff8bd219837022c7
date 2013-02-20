@@ -1,0 +1,9 @@
+Code-Review+2: Jeff Johnston <jjohnstn@redhat.com>
+IP-Clean+1: Jeff Johnston <jjohnstn@redhat.com>
+Verified+1: Jeff Johnston <jjohnstn@redhat.com>
+Code-Review+1: Jesse Weinstein <Jesse.Weinstein@clinicomp.com>
+Submitted-by: Jeff Johnston <jjohnstn@redhat.com>
+Submitted-at: Wed, 20 Feb 2013 16:16:50 -0500
+Reviewed-on: https://git.eclipse.org/r/10404
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

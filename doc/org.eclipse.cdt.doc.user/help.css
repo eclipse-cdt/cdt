@@ -13,7 +13,7 @@ pre				{ font-size: 12pt}
 /* end font size declarations */
 
 body	     { background: #FFFFFF}
-h1           { font-size: 18pt; margin-top: 5; margin-bottom: 1 }	
+h1           { font-size: 18pt; margin-top: 5; margin-bottom: 1 }
 h2           { font-size: 14pt; margin-top: 25; margin-bottom: 3 }
 h3           { font-size: 11pt; margin-top: 20; margin-bottom: 3 }
 h4           { font-size: 10pt; margin-top: 20; margin-bottom: 3; font-style: italic }
@@ -26,8 +26,8 @@ a:visited { color: #996699 }
 a:hover  { color: #006699 }
 
 ul	     { margin-top: 0; margin-bottom: 10 }
-li	     { margin-top: 0; margin-bottom: 0 } 
-li p	     { margin-top: 0; margin-bottom: 0 } 
+li	     { margin-top: 0; margin-bottom: 0 }
+li p	     { margin-top: 0; margin-bottom: 0 }
 ol	     { margin-top: 0; margin-bottom: 10 }
 dl	     { margin-top: 0; margin-bottom: 10 }
 dt	     { margin-top: 0; margin-bottom: 0; font-weight: bold }
@@ -35,16 +35,18 @@ dd	     { margin-top: 0; margin-bottom: 0 }
 strong	     { font-weight: bold}
 em	     { font-style: italic}
 var	     { font-style: italic}
-div.revision { border-left-style: solid; border-left-width: thin; 
+div.revision { border-left-style: solid; border-left-width: thin;
 				   border-left-color: #7B68EE; padding-left:5 }
 th	     { font-weight: bold }
 .hidden {
 	display: none;
 }
+td { text-align:left; vertical-align: top; }
+td.menu_name {font-weight: bold;}
 
 /* Mike Behm's addition to the style sheet */
 .userinput { font-family: monospace; }
-.guitab, .important, .guibutton, .selectblue, .guimenu, .guilabel, 
+.guitab, .important, .guibutton, .selectblue, .guimenu, .guilabel,
 .notetitle  {
      color: #000000;
      font-family: helvetica, arial, sans-serif;

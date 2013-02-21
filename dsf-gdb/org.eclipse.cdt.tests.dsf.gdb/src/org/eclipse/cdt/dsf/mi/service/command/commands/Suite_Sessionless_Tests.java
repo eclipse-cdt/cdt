@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson			  - Initial Implementation
+ *     Marc Dumais (Ericsson) - Initial API and implementation (Bug 396268)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
@@ -14,6 +15,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIStringHandlerTests;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadTests;
 import org.eclipse.cdt.tests.dsf.gdb.framework.OnceOnlySuite;
 import org.eclipse.cdt.tests.dsf.gdb.tests.LaunchUtilsTest;
+import org.eclipse.cdt.tests.dsf.gdb.tests.ProcStatParserTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -29,7 +31,8 @@ import org.junit.runners.Suite;
         TestMICommandConstructCommand.class,
         MIThreadTests.class,
         LaunchUtilsTest.class,
-        MIStringHandlerTests.class
+        MIStringHandlerTests.class,
+        ProcStatParserTest.class
         /* Add your test class here */
         })
 public class Suite_Sessionless_Tests {

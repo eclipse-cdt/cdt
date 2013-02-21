@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//9vE\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 7332,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-21T18:59:18Z",
+      "side": 1,
+      "message": "To keep a consistent style move the opening brace to the previous line.",
+      "revId": "885d140319b130d65713861d7a0d8f11b3498ed5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//9vI\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPTemplateParameterMap.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-21T18:59:18Z",
+      "side": 1,
+      "message": "@since tag is missing. Do you have a baseline for API tooling set up?",
+      "revId": "885d140319b130d65713861d7a0d8f11b3498ed5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

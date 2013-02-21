@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [334969] Fix multi-command SGR sequence
  * Kris De Volder (VMWare) - [392107] Switched interpretation for ESC[0K and ESC[1K sequences
  * Martin Oberhuber (Wind River) - [401386] Regression: No header on top due to incorrect ESC[K interpretation
+ * Martin Oberhuber (Wind River) - [401480] Handle ESC[39;49m and ESC[G
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -607,12 +608,7 @@ public class VT100Emulator implements ControlListener {
 	 * specified by the ANSI parameter (default is column 1).
 	 */
 	private void processAnsiCommand_G() {
-		int targetColumn = 1;
-
-		if (ansiParameters[0].length() > 0)
-			targetColumn = getAnsiParameter(0) - 1;
-
-		moveCursor(relativeCursorLine(), targetColumn);
+		moveCursor(relativeCursorLine(), getAnsiParameter(0) - 1);
 	}
 
 	/**
@@ -801,6 +797,10 @@ public class VT100Emulator implements ControlListener {
 				style = style.setForground("WHITE_FOREGROUND"); //$NON-NLS-1$
 				break;
 
+			case 39: //Foreground: Default
+				style = style.setForground(text.getDefaultStyle().getForground());
+				break;
+
 			case 40:
 				style = style.setBackground("BLACK"); //$NON-NLS-1$
 				break;
@@ -831,6 +831,10 @@ public class VT100Emulator implements ControlListener {
 
 			case 47:
 				style = style.setBackground("WHITE"); //$NON-NLS-1$
+				break;
+
+			case 49: //Background: Default
+				style = style.setBackground(text.getDefaultStyle().getBackground());
 				break;
 
 			default:

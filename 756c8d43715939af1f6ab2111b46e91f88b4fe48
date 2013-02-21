@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//9/g\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-21T01:34:30Z",
+      "side": 1,
+      "message": "The customary way to link back to bugzilla entries is by prefixing the commit message with Bug XXXX: where XXXX is the bug number.",
+      "revId": "756c8d43715939af1f6ab2111b46e91f88b4fe48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

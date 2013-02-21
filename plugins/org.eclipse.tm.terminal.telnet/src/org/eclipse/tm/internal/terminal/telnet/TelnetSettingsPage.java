@@ -14,6 +14,7 @@
  * Michael Scharf (Wind River) - extracted from TerminalSettingsDlg
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [206917] Add validation for Terminal Settings
+ * Martin Oberhuber (Wind River) - [401476] Strip whitespace around Telnet Port
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.telnet;
 
@@ -86,7 +87,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 		}
 	}
 	private String getNetworkPort() {
-		String portText = fNetworkPortCombo.getText();
+		String portText = fNetworkPortCombo.getText().trim();
 		String mappedPort = getNetworkPortMap().findPort(portText);
 		return mappedPort!=null ? mappedPort : portText;
 	}
@@ -111,7 +112,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 		}
 
 		try {
-			int p = Integer.parseInt(getNetworkPort().trim());
+			int p = Integer.parseInt(getNetworkPort());
 			if (p <= 0 || p > 65535) {
 				String m = "Invalid network port. Must be between 0 and 65535."; //$NON-NLS-1$
 				int mt = IMessageProvider.ERROR;

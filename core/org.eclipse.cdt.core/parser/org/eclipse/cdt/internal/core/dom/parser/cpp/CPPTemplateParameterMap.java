@@ -114,6 +114,7 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 		return null;
 	}
 
+	@Override
 	public ICPPTemplateArgument getArgument(ICPPTemplateParameter tpar, int packOffset) {
 		return getArgument(tpar.getParameterID(), packOffset);
 	}

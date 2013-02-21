@@ -7312,4 +7312,26 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testVariadicNonTypeTemplateParameter_401142() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <bool... Args>
+	//	struct ice_or;
+	//	template <>
+	//	struct ice_or<> {
+	//	    static const bool value = false;
+	//	};
+	//	template <bool First, bool... Rest>
+	//	struct ice_or<First, Rest...> {
+	//	    static const bool value = ice_or<Rest...>::value;
+	//	};
+	//	template <bool> struct S {};
+	//	template <>
+	//	struct S<false> {
+	//	    typedef int type;
+	//	};
+	//	int main() {
+	//	    S<ice_or<false, false>::value>::type t;
+	//	}
+	public void testVariadicNonTypeTemplateParameter_401400() throws Exception {
+		parseAndCheckBindings();
+	}
 }

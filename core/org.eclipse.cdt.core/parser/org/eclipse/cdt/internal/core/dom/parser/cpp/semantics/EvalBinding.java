@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -246,6 +247,12 @@ public class EvalBinding extends CPPDependentEvaluation {
 		}
 		if (binding instanceof ICPPTemplateNonTypeParameter) {
 			IType type= ((ICPPTemplateNonTypeParameter) binding).getType();
+			// If the binding is a non-type parameter pack, it must have been 
+			// referenced from inside the expansion pattern of a pack expansion. 
+			// In such a context, the type of the binding is the type of each 
+			// parameter in the parameter pack, not the type of the pack itself.
+			if (type instanceof ICPPParameterPackType)
+				type = ((ICPPParameterPackType) type).getType();
 			return prvalueType(type);
 		}
 		if (binding instanceof IVariable) {
@@ -329,7 +336,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
 		IBinding origBinding = getBinding();
 		if (origBinding instanceof ICPPTemplateNonTypeParameter) {
-			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) origBinding);
+			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) origBinding, packOffset);
 			if (argument != null && argument.isNonTypeValue()) {
 				return argument.getNonTypeEvaluation();
 			}

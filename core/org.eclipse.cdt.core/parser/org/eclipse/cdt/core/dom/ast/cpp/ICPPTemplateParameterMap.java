@@ -45,6 +45,15 @@ public interface ICPPTemplateParameterMap {
 	public ICPPTemplateArgument[] getPackExpansion(ICPPTemplateParameter param);
 
 	/**
+	 * If 'param' is not a parameter pack, returns the value for 'param' in the map.
+	 * If 'param' is a parmameter pack, returns the value at position 'packOffset'
+	 * in the pack of values for 'param' in the map.
+	 * Returns <code>null</code> is 'param' is not mapped.
+	 * @since 5.5
+	 */
+	public ICPPTemplateArgument getArgument(ICPPTemplateParameter param, int packOffset);
+	
+	/**
 	 * Returns the array of template parameter positions, for which a mapping exists.
 	 */
 	Integer[] getAllParameterPositions();

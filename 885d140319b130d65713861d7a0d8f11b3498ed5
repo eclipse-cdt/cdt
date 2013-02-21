@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//9tc\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 7332,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-21T21:24:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9vE\u003d",
+      "revId": "885d140319b130d65713861d7a0d8f11b3498ed5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//9vI\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPTemplateParameterMap.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2013-02-21T18:59:18Z",
       "side": 1,
       "message": "@since tag is missing. Do you have a baseline for API tooling set up?",
+      "revId": "885d140319b130d65713861d7a0d8f11b3498ed5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//9tg\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPTemplateParameterMap.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-21T21:24:36Z",
+      "side": 1,
+      "message": "I had API tooling set up, but wasn\u0027t seeing any errors. I repeated the setup with a fresh CDT installation as baseline and the errors showed up. Fixed now.",
+      "parentUuid": "AABOPX//9vI\u003d",
       "revId": "885d140319b130d65713861d7a0d8f11b3498ed5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

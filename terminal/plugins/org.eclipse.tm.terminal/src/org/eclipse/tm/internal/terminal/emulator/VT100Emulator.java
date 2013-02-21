@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  * Michael Scharf (Wind River) - [262996] get rid of TerminalState.OPENED
  * Martin Oberhuber (Wind River) - [334969] Fix multi-command SGR sequence
  * Kris De Volder (VMWare) - [392107] Switched interpretation for ESC[0K and ESC[1K sequences
+ * Martin Oberhuber (Wind River) - [401386] Regression: No header on top due to incorrect ESC[K interpretation
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -661,7 +662,10 @@ public class VT100Emulator implements ControlListener {
 	 * moving the cursor.
 	 */
 	private void processAnsiCommand_K() {
-		int ansiParameter = getAnsiParameter(0);
+		//Bug 401386: missing parameter must be interpreted as 0, and not 1 like most other defaults.
+		int ansiParameter = 0;
+		if (ansiParameters[0].length() > 0)
+			ansiParameter = getAnsiParameter(0);
 
 		switch (ansiParameter) {
 		case 0:

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//9+M\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/help.css",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-21T05:00:01Z",
+      "side": 1,
+      "message": "Please don\u0027t mix whitespace changes with semantically important ones.",
+      "revId": "23a5df712ffd100e6db34e557aa66600dd5f763d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//9+Q\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/help.css",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-21T05:00:01Z",
+      "side": 1,
+      "message": "This change affects all help pages. Please justify.",
+      "revId": "23a5df712ffd100e6db34e557aa66600dd5f763d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

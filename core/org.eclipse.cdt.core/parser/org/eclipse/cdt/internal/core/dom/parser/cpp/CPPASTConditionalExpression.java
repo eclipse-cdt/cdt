@@ -170,7 +170,7 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 				final ICPPEvaluation condEval = fCondition.getEvaluation();
 				final ICPPEvaluation posEval = fPositive == null ? null : fPositive.getEvaluation();
 				fEval= new EvalConditional(condEval, posEval, fNegative.getEvaluation(),
-						isThrowExpression(fPositive), isThrowExpression(fNegative));
+						isThrowExpression(fPositive), isThrowExpression(fNegative), this);
 			}
 		}
 		return fEval;

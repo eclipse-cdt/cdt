@@ -216,8 +216,9 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
  * Collection of methods to extract information from a C++ translation unit.
  */
 public class CPPVisitor extends ASTQueries {
-	private static final CPPBasicType UNSIGNED_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
 	private static final CPPBasicType INT_TYPE = new CPPBasicType(Kind.eInt, 0);
+	private static final CPPBasicType LONG_TYPE = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG);
+	private static final CPPBasicType UNSIGNED_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
 
 	public static final String BEGIN_STR = "begin"; //$NON-NLS-1$
 	public static final char[] BEGIN = BEGIN_STR.toCharArray();
@@ -225,7 +226,7 @@ public class CPPVisitor extends ASTQueries {
 	static final String STD = "std"; //$NON-NLS-1$
 	private static final char[] SIZE_T = "size_t".toCharArray(); //$NON-NLS-1$
 	private static final char[] PTRDIFF_T = "ptrdiff_t".toCharArray(); //$NON-NLS-1$
-	private static final char[] TYPE_INFO= "type_info".toCharArray(); //$NON-NLS-1$
+	private static final char[] TYPE_INFO = "type_info".toCharArray(); //$NON-NLS-1$
 	private static final char[] INITIALIZER_LIST = "initializer_list".toCharArray(); //$NON-NLS-1$
 	private static final char[][] EMPTY_CHAR_ARRAY_ARRAY = {};
 	public static final IASTInitializerClause[] NO_ARGS = {};
@@ -339,10 +340,10 @@ public class CPPVisitor extends ASTQueries {
 				return false;
 			}
 		}
-		
+
 		if (inScope == null)
 			return false;
-		
+
 		IBinding pb= names[names.length-2].resolvePreBinding();
 		if (pb instanceof IProblemBinding)
 			return false;
@@ -356,7 +357,7 @@ public class CPPVisitor extends ASTQueries {
 		} else if (pb instanceof ICPPNamespace) {
 			scope= ((ICPPNamespace)pb).getNamespaceScope();
 		}
-		
+
 		return scope == inScope;
 	}
 
@@ -2276,7 +2277,7 @@ public class CPPVisitor extends ASTQueries {
 
 	public static IType getPointerDiffType(final IASTNode point) {
 		IType t= getStdType(point, PTRDIFF_T);
-		return t != null ? t : INT_TYPE;
+		return t != null ? t : LONG_TYPE;
 	}
 
 	private static IType getStdType(final IASTNode node, char[] name) {

@@ -489,20 +489,24 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 
 		inputValue.setEnabled(isMacroSelected);
 
-		int indexPathKind = comboPathCategory.getSelectionIndex();
-		boolean isProjectSelected = (indexPathKind == COMBO_PATH_INDEX_PROJECT);
-		boolean isWorkspaceSelected = (indexPathKind == COMBO_PATH_INDEX_WORKSPACE);
-		boolean isFilesystemSelected = (indexPathKind == COMBO_PATH_INDEX_FILESYSTEM);
-
-		String path = inputName.getText().trim();
-		if (path.isEmpty()) {
-			buttonOk.setEnabled(false);
+		if (isMacroSelected) {
+			buttonOk.setEnabled(!inputName.getText().trim().isEmpty());
 		} else {
-			buttonOk.setEnabled((isProjectSelected && !path.startsWith(SLASH)) ||
-					(isWorkspaceSelected && path.startsWith(SLASH)) || isFilesystemSelected);
+			int indexPathKind = comboPathCategory.getSelectionIndex();
+			boolean isProjectSelected = (indexPathKind == COMBO_PATH_INDEX_PROJECT);
+			boolean isWorkspaceSelected = (indexPathKind == COMBO_PATH_INDEX_WORKSPACE);
+			boolean isFilesystemSelected = (indexPathKind == COMBO_PATH_INDEX_FILESYSTEM);
+	
+			String path = inputName.getText().trim();
+			if (path.isEmpty()) {
+				buttonOk.setEnabled(false);
+			} else {
+				buttonOk.setEnabled((isProjectSelected && !path.startsWith(SLASH)) ||
+						(isWorkspaceSelected && path.startsWith(SLASH)) || isFilesystemSelected);
+			}
+	
+			buttonVars.setEnabled(isFilesystemSelected);
 		}
-
-		buttonVars.setEnabled(isFilesystemSelected);
 
 		compositeArea.layout(true);
 	}

@@ -38,11 +38,15 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Performs evaluation of an expression.
  */
-public class EvalFunctionSet extends CPPEvaluation {
+public class EvalFunctionSet extends CPPDependentEvaluation {
 	private final CPPFunctionSet fFunctionSet;
 	private final boolean fAddressOf;
 
-	public EvalFunctionSet(CPPFunctionSet set, boolean addressOf) {
+	public EvalFunctionSet(CPPFunctionSet set, boolean addressOf, IASTNode pointOfDefinition) {
+		this(set, addressOf, findEnclosingTemplate(pointOfDefinition));
+	}
+	public EvalFunctionSet(CPPFunctionSet set, boolean addressOf, IBinding templateDefinition) {
+		super(templateDefinition);
 		fFunctionSet= set;
 		fAddressOf= addressOf;
 	}
@@ -122,6 +126,7 @@ public class EvalFunctionSet extends CPPEvaluation {
 				buffer.marshalTemplateArgument(arg);
 			}
 		}
+		marshalTemplateDefinition(buffer);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
@@ -139,7 +144,8 @@ public class EvalFunctionSet extends CPPEvaluation {
 				args[i]= buffer.unmarshalTemplateArgument();
 			}
 		}
-		return new EvalFunctionSet(new CPPFunctionSet(bindings, args, null), addressOf);
+		IBinding templateDefinition= buffer.unmarshalBinding();
+		return new EvalFunctionSet(new CPPFunctionSet(bindings, args, null), addressOf, templateDefinition);
 	}
 
 	@Override
@@ -173,7 +179,7 @@ public class EvalFunctionSet extends CPPEvaluation {
 		}
 		if (Arrays.equals(arguments, originalArguments) && functions == originalFunctions)
 			return this;
-		return new EvalFunctionSet(new CPPFunctionSet(functions, arguments, null), fAddressOf);
+		return new EvalFunctionSet(new CPPFunctionSet(functions, arguments, null), fAddressOf, getTemplateDefinition());
 	}
 
 	@Override
@@ -198,7 +204,7 @@ public class EvalFunctionSet extends CPPEvaluation {
 		try {
 			IBinding binding = CPPSemantics.resolveFunction(data, functions, true);
 			if (binding instanceof ICPPFunction && !(binding instanceof ICPPUnknownBinding))
-				return new EvalBinding(binding, null);
+				return new EvalBinding(binding, null, getTemplateDefinition());
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
 		}

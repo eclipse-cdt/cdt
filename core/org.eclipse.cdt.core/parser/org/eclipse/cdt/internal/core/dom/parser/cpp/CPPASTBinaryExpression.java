@@ -38,7 +38,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 	private int op;
     private ICPPASTExpression operand1;
     private ICPPASTInitializerClause operand2;
-    
+
     private ICPPEvaluation evaluation;
     private IASTImplicitName[] implicitNames = null;
 
@@ -55,7 +55,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 	public CPPASTBinaryExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTBinaryExpression copy(CopyStyle style) {
 		CPPASTBinaryExpression copy = new CPPASTBinaryExpression();
@@ -99,7 +99,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         if (expression != null) {
         	if (!(expression instanceof ICPPASTExpression))
         		throw new IllegalArgumentException(expression.getClass().getName());
-        	
+
 			expression.setParent(this);
 			expression.setPropertyInParent(OPERAND_ONE);
 		}
@@ -148,7 +148,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     	if (operand1 instanceof IASTBinaryExpression || operand2 instanceof IASTBinaryExpression) {
     		return acceptWithoutRecursion(this, action);
     	}
-    	
+
 		if (action.shouldVisitExpressions) {
 			switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -230,13 +230,13 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 				if (op2 != null && !op2.accept(action))
 					return false;
 			}
-			
+
 			if (action.shouldVisitExpressions && action.leave(expr) == ASTVisitor.PROCESS_ABORT)
 				return false;
-		
+
 			stack= stack.fNext;
 		}
-		
+
 		return true;
 	}
 
@@ -262,22 +262,22 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 			return ((EvalBinary) eval).getOverload(this);
 		return null;
     }
-    
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
-		if (evaluation == null) 
+		if (evaluation == null)
 			evaluation= computeEvaluation();
-		
+
 		return evaluation;
 	}
-	
+
 	private ICPPEvaluation computeEvaluation() {
 		if (operand1 == null || operand2 == null)
 			return EvalFixed.INCOMPLETE;
 		
-		return new EvalBinary(op, operand1.getEvaluation(), operand2.getEvaluation());
+		return new EvalBinary(op, operand1.getEvaluation(), operand2.getEvaluation(), this);
 	}
-    
+
     @Override
 	public IType getExpressionType() {
     	return getEvaluation().getTypeOrFunctionSet(this);

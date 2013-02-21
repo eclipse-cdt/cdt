@@ -103,7 +103,7 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 			if (type == null || type instanceof IProblemType) {
 				fEvaluation= EvalFixed.INCOMPLETE;
 			} else {
-				fEvaluation= new EvalUnaryTypeID(op, type);
+				fEvaluation= new EvalUnaryTypeID(op, type, this);
 			}
 		}
 		return fEvaluation;

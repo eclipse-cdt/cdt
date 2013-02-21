@@ -204,7 +204,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 					return EvalFixed.INCOMPLETE;
 			}
 		}
-    	return new EvalUnary(fOperator, nestedEval, addressOfQualifiedNameBinding);
+    	return new EvalUnary(fOperator, nestedEval, addressOfQualifiedNameBinding, this);
 	}
     
     @Override

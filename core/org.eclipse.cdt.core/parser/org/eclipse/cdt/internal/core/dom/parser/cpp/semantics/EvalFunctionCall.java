@@ -43,12 +43,16 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.CoreException;
 
-public class EvalFunctionCall extends CPPEvaluation {
+public class EvalFunctionCall extends CPPDependentEvaluation {
 	private final ICPPEvaluation[] fArguments;
 	private ICPPFunction fOverload= CPPFunction.UNINITIALIZED_FUNCTION;
 	private IType fType;
 
-	public EvalFunctionCall(ICPPEvaluation[] args) {
+	public EvalFunctionCall(ICPPEvaluation[] args, IASTNode pointOfDefinition) {
+		this(args, findEnclosingTemplate(pointOfDefinition));
+	}
+	public EvalFunctionCall(ICPPEvaluation[] args, IBinding templateDefinition) {
+		super(templateDefinition);
 		fArguments= args;
 	}
 
@@ -101,7 +105,8 @@ public class EvalFunctionCall extends CPPEvaluation {
 
 		IType t= SemanticUtil.getNestedType(fArguments[0].getTypeOrFunctionSet(point), TDEF | REF | CVTYPE);
 		if (t instanceof ICPPClassType) {
-	    	return CPPSemantics.findOverloadedOperator(point, fArguments, t, OverloadableOperator.PAREN, LookupMode.NO_GLOBALS);
+	    	return CPPSemantics.findOverloadedOperator(point, getTemplateDefinitionScope(), fArguments, t, 
+	    			OverloadableOperator.PAREN, LookupMode.NO_GLOBALS);
 		}
 		return null;
     }
@@ -174,6 +179,7 @@ public class EvalFunctionCall extends CPPEvaluation {
 		for (ICPPEvaluation arg : fArguments) {
 			buffer.marshalEvaluation(arg, includeValue);
 		}
+		marshalTemplateDefinition(buffer);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
@@ -182,7 +188,8 @@ public class EvalFunctionCall extends CPPEvaluation {
 		for (int i = 0; i < args.length; i++) {
 			args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		}
-		return new EvalFunctionCall(args);
+		IBinding templateDefinition = buffer.unmarshalBinding();
+		return new EvalFunctionCall(args, templateDefinition);
 	}
 
 	@Override
@@ -206,7 +213,7 @@ public class EvalFunctionCall extends CPPEvaluation {
 			// Resolve the function using the parameters of the function call.
 			args[0] = ((EvalFunctionSet) args[0]).resolveFunction(Arrays.copyOfRange(args, 1, args.length), point);
 		}
-		return new EvalFunctionCall(args);
+		return new EvalFunctionCall(args, getTemplateDefinition());
 	}
 
 	@Override
@@ -228,7 +235,7 @@ public class EvalFunctionCall extends CPPEvaluation {
 		}
 		EvalFunctionCall eval = this;
 		if (args != fArguments)
-			eval = new EvalFunctionCall(args);
+			eval = new EvalFunctionCall(args, getTemplateDefinition());
 		return eval.computeForFunctionCall(maxdepth - 1, point);
 	}
 

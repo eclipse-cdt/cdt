@@ -155,7 +155,7 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 		if (type == null || type instanceof IProblemType)
 			return EvalFixed.INCOMPLETE;
 		
-		return new EvalTypeId(type, operand.getEvaluation());
+		return new EvalTypeId(type, this, operand.getEvaluation());
 	}
 
     @Override

@@ -649,7 +649,7 @@ public class CVisitor extends ASTQueries {
 			}
 		}
 
-		return new CBasicType(Kind.eInt, 0, expr);
+		return new CBasicType(Kind.eInt, IBasicType.IS_LONG, expr);
 	}
 
 	static IType get_SIZE_T(IASTExpression expr) {

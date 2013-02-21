@@ -4509,25 +4509,25 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings(code);
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, CPP);
 		ICPPFunctionTemplate f= bh.assertNonProblem("f1", 2);
-		assertEquals("void (int (*)(#0 ...))", ASTTypeUtil.getType(f.getType(), true));
+		assertEquals("void (int (*)(#0(...) ...))", ASTTypeUtil.getType(f.getType(), true));
 		assertFalse(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f2", 2);
-		assertEquals("void (int (* ...)(#0, int))", ASTTypeUtil.getType(f.getType(), true));
+		assertEquals("void (int (* ...)(#0(...), int))", ASTTypeUtil.getType(f.getType(), true));
 		assertTrue(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f3", 2);
-		assertEquals("void (#0 (* ...)())", ASTTypeUtil.getType(f.getType(), true));
+		assertEquals("void (#0(...) (* ...)())", ASTTypeUtil.getType(f.getType(), true));
 		assertTrue(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f4", 2);
 		assertEquals("void (int (& ...)[3 *0 0])", ASTTypeUtil.getType(f.getType(), true));
 		assertTrue(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f5", 2);
-		assertEquals("void (#0 ...)", ASTTypeUtil.getType(f.getType(), true));
+		assertEquals("void (#0(...) ...)", ASTTypeUtil.getType(f.getType(), true));
 		assertTrue(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f6", 2);
 		assertEquals("void (#0, ...)", ASTTypeUtil.getType(f.getType(), true));
 		assertFalse(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f7", 2);
-		assertEquals("#0 ...", ASTTypeUtil.getType(f.getExceptionSpecification()[0], true));
+		assertEquals("#0(...) ...", ASTTypeUtil.getType(f.getExceptionSpecification()[0], true));
 	}
 
 	//	template<typename... Pack> class C1 {};
@@ -7163,6 +7163,153 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	    W<A<char>::value>::type w;
 	//	}
 	public void testDependentExpressionInvolvingFieldInNestedClass_399362() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//    template <typename _Tp>
+	//    struct remove_reference {
+	//        typedef _Tp type;
+	//    };
+	//    template <typename>
+	//    struct A {};
+	//    template <typename From, typename To>
+	//    struct waldo {
+	//        typedef typename remove_reference<From>::type src_t;
+	//        typedef A<src_t> type;
+	//    };
+	//    template <bool First>
+	//    struct ice_or {
+	//        static const bool value = First;
+	//    };
+	//    template <typename T>
+	//    struct is_waldo {
+	//        static const bool value = false;
+	//    };
+	//    template <typename... Args>
+	//    struct contains_waldo {
+	//        static const bool value = ice_or<is_waldo<typename remove_reference<Args>::type>::value...>::value;
+	//    };
+	//    template <bool>
+	//    struct S {};
+	//    struct Cat {
+	//        void meow();
+	//    };
+	//    template <>
+	//    struct S<false> {
+	//        typedef Cat type;
+	//    };
+	//    int main() {
+	//        S<contains_waldo<int>::value>::type t;
+	//    }
+    public void testVariadicTemplates_401024() throws Exception {
+        parseAndCheckBindings();
+    }
+
+	// struct S {
+	//     void kind();
+	// };
+	// struct T {};
+	// namespace N {
+	//     S operator++(T);
+	//     template <class T>
+	//     struct impl {
+	//         static T x;
+	//         typedef decltype(++x) type;
+	//     };
+	// }
+	// void test() {
+	//     N::impl<T>::type operand;
+	//     operand.kind();  // ERROR HERE: Method 'kind' could not be resolved
+	// }
+    public void testNameLookupInDependentExpression_399829a() throws Exception {
+        parseAndCheckBindings();
+    }
+
+	// struct S {
+	//     void kind();
+	// };
+	// namespace N {
+	//   struct tag {};
+	//   struct any { template <class T> any(T); };
+	//   tag operator++(any);
+	//   tag operator,(tag,int);
+	//   S check(tag);
+	//   int check(int);
+	//   template <class T>
+	//   struct impl {
+	//       static T& x;
+	//       typedef decltype(N::check((++x,0))) type;
+	//   };
+	// }
+	// void test() {
+	//     N::impl<S>::type operand;
+	//     operand.kind();  // ERROR HERE: Method 'kind' could not be resolved
+	// }
+    public void testNameLookupInDependentExpression_399829b() throws Exception {
+        parseAndCheckBindings();
+    }
+    
+	//    template <bool> int assertion_failed(void*);
+	//    struct assert_ {};
+	//    assert_ arg;
+	//    char operator==(assert_, assert_);
+	//    template <unsigned> struct assert_relation {};
+	//    template<class>
+	//    struct concept {
+	//        typedef decltype(assertion_failed<true>((assert_relation<sizeof(arg == arg) >*)0)) type;
+	//    };
+	//    template <bool> struct S {};
+	//    template <typename>
+	//    struct is_int
+	//    {
+	//        static const bool value = false;
+	//    };
+	//    template<typename T>
+	//    S<true> operator==(T, T*);
+	//    template<typename T>
+	//    S<(is_int<T>::value)> operator==(T, T);
+    public void testRegression_399829() throws Exception {
+    	parseAndCheckBindings();
+    }
+
+	//	template <typename>
+	//	struct Bind {};
+	//	template <typename Func, typename ... BoundArgs>
+	//	struct Bind_helper {
+	//	    typedef Bind<Func(BoundArgs...)> type;
+	//	};
+	//	template <typename Func, typename ... BoundArgs>
+	//	typename Bind_helper<Func, BoundArgs...>::type
+	//	bind(Func, BoundArgs...);
+	//	struct S {
+	//	    template <typename T, typename U>
+	//	    void operator()(T, U);
+	//	};
+	//	int main() {
+	//	    S s;
+	//	    bind(s, 0, foo);
+	//	}
+	public void testNPE_401140() throws Exception {
+		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
+		helper.assertProblem("bind(s, 0, foo)", "bind");
+    }
+
+	//	template <bool... Args>
+	//	struct ice_or;
+	//	template <bool First>
+	//	struct ice_or<First> {
+	//	    static const bool value = First;
+	//	};
+	//	template <bool>
+	//	struct S {};
+	//	template <>
+	//	struct S<false> {
+	//	    typedef int type;
+	//	};
+	//	int main() {
+	//	    S<ice_or<false>::value>::type t;
+	//	}
+	public void testVariadicNonTypeTemplateParameter_401142() throws Exception {
 		parseAndCheckBindings();
 	}
 }

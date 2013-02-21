@@ -105,6 +105,7 @@ public class Messages extends NLS {
 	public static String CMainWizardPage_5;
 	public static String CMainWizardPage_6;
 	public static String CMainWizardPage_7;
+	public static String CMainWizardPage_DirReadOnlyError;
 	public static String ConfigDescriptionTab_0;
 	public static String ConfigDescriptionTab_1;
 	public static String ConfigDescriptionTab_2;

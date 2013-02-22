@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//9XA\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_edit.htm",
+        "patchSetId": 4
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-22T22:15:14Z",
+      "side": 0,
+      "message": "Here\u0027s an example of text-align:left in the file -- I don\u0027t know why Dave Williams added it (and only to some entries) when he originally created the file 9 years ago, but it\u0027s been there ever since.",
+      "revId": "18ff30de24e745ca9f221c49ff8bd219837022c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -16,6 +16,24 @@
       "revId": "8d197d339c75a52d916d123747c60e3365d350c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//9XQ\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/help.css",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-22T22:15:14Z",
+      "side": 1,
+      "message": "I added the left align because it was present in the file (see other note). It doesn\u0027t look like it is actually necessary. However, the top align does make a difference -- vertical-align: center is the default, so aligning it to top changes things.",
+      "parentUuid": "AABOPX//9XY\u003d",
+      "revId": "8d197d339c75a52d916d123747c60e3365d350c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

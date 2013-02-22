@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//9YY\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/help.css",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-22T21:30:19Z",
+      "side": 1,
+      "message": "Sorry -- I assumed removing end-of-line whitespace was trivial enough to toss in. But it does confuse the diff, I suppose.",
+      "parentUuid": "AABOPX//9+M\u003d",
+      "revId": "23a5df712ffd100e6db34e557aa66600dd5f763d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//9+Q\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/help.css",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2013-02-21T05:00:01Z",
       "side": 1,
       "message": "This change affects all help pages. Please justify.",
+      "revId": "23a5df712ffd100e6db34e557aa66600dd5f763d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//9YQ\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/help.css",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-22T21:30:19Z",
+      "side": 1,
+      "message": "I noticed it was inconsistent between entries in the menu pages (some had it defined, some didn\u0027t, pretty much randomly), so I though this was a good place to standardize it.\n\nI can make it specific to just the menu tables by adding a class, like so:\n\n.menu td { ... }\n\nI\u0027ll be glad to do that if it would help.",
+      "parentUuid": "AABOPX//9+Q\u003d",
       "revId": "23a5df712ffd100e6db34e557aa66600dd5f763d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

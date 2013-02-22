@@ -173,20 +173,20 @@ public class CBasicType implements ICBasicType, ISerializableType {
 		final int shiftedKind=  kind * ITypeMarshalBuffer.FLAG1;
 		final int modifiers= getModifiers();
 		if (shiftedKind < ITypeMarshalBuffer.FLAG4 && modifiers == 0) {
-			buffer.putByte((byte) (ITypeMarshalBuffer.BASIC_TYPE | shiftedKind));
+			buffer.putShort((short) (ITypeMarshalBuffer.BASIC_TYPE | shiftedKind));
 		} else {
-			buffer.putByte((byte) (ITypeMarshalBuffer.BASIC_TYPE | ITypeMarshalBuffer.FLAG4));
+			buffer.putShort((short) (ITypeMarshalBuffer.BASIC_TYPE | ITypeMarshalBuffer.FLAG4));
 			buffer.putByte((byte) kind);
 			buffer.putByte((byte) modifiers);
 		} 
 	}
 	
-	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		final boolean dense= (firstByte & ITypeMarshalBuffer.FLAG4) == 0;
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		final boolean dense= (firstBytes & ITypeMarshalBuffer.FLAG4) == 0;
 		int modifiers= 0;
 		int kind;
 		if (dense) {
-			kind= (firstByte & (ITypeMarshalBuffer.FLAG4-1))/ITypeMarshalBuffer.FLAG1;
+			kind= (firstBytes & (ITypeMarshalBuffer.FLAG4-1))/ITypeMarshalBuffer.FLAG1;
 		} else {
 			kind= buffer.getByte();
 			modifiers= buffer.getByte();

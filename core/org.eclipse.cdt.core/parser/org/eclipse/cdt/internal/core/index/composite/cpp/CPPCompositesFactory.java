@@ -85,6 +85,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalID;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalInitList;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalMemberAccess;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalParameterPack;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnaryTypeID;
@@ -373,6 +374,14 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			IBinding b2= getCompositeBinding((IIndexFragmentBinding) b);
 			if (a != a2 || b != b2 || templateDefinition != templateDefinition2)
 				e= new EvalMemberAccess(a2, e.getOwnerValueCategory(), b2, e.isPointerDeref(), templateDefinition2);
+			return e;
+		}
+		if (eval instanceof EvalParameterPack) {
+			EvalParameterPack e = (EvalParameterPack) eval;
+			ICPPEvaluation a = e.getExpansionPattern();
+			ICPPEvaluation a2 = getCompositeEvaluation(a);
+			if (a != a2 || templateDefinition != templateDefinition2)
+				e = new EvalParameterPack(a2, templateDefinition2);
 			return e;
 		}
 		if (eval instanceof EvalTypeId) {

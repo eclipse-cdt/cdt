@@ -160,7 +160,7 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.ARRAY_TYPE;
+		short firstBytes = ITypeMarshalBuffer.ARRAY_TYPE;
 		int flags= 0;
 		long nval= -1;
 		IValue val= null;
@@ -171,21 +171,21 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 		if (isStatic()) flags |= 0x08;
 		if (isVariableLength()) flags |= 0x10;
 		if (flags != 0) {
-			firstByte |= ITypeMarshalBuffer.FLAG1;
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
 		}
 
 		val= getSize();
 		if (val != null) {
-			firstByte |= ITypeMarshalBuffer.FLAG2;
+			firstBytes |= ITypeMarshalBuffer.FLAG2;
 			Long num= val.numericalValue();
 			if (num != null) {
 				nval= num;
 				if (nval >= 0) {
-					firstByte |= ITypeMarshalBuffer.FLAG3;
+					firstBytes |= ITypeMarshalBuffer.FLAG3;
 				} 
 			}
 		}
-		buffer.putByte((byte) firstByte);
+		buffer.putShort(firstBytes);
 		if (flags != 0) {
 			buffer.putByte((byte) flags);
 		}
@@ -197,15 +197,15 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 		buffer.marshalType(getType());
 	}
 
-	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int flags= 0;
 		IValue value= null;
-		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0) {
+		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0) {
 			flags= buffer.getByte();
 		}
-		if ((firstByte & ITypeMarshalBuffer.FLAG3) != 0) {
+		if ((firstBytes & ITypeMarshalBuffer.FLAG3) != 0) {
 			value = Value.create(buffer.getLong());
-		} else if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0) {
+		} else if ((firstBytes & ITypeMarshalBuffer.FLAG2) != 0) {
 			value = buffer.unmarshalValue();
 		}
 		IType nested= buffer.unmarshalType();		

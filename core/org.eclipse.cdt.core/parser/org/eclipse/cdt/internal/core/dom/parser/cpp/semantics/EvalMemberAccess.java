@@ -295,27 +295,27 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		int firstByte = ITypeMarshalBuffer.EVAL_MEMBER_ACCESS;
+		short firstBytes = ITypeMarshalBuffer.EVAL_MEMBER_ACCESS;
 		if (fIsPointerDeref)
-			firstByte |= ITypeMarshalBuffer.FLAG1;
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
 		if (fOwnerValueCategory == LVALUE) {
-			firstByte |= ITypeMarshalBuffer.FLAG2;
+			firstBytes |= ITypeMarshalBuffer.FLAG2;
 		} else if (fOwnerValueCategory == XVALUE) {
-			firstByte |= ITypeMarshalBuffer.FLAG3;
+			firstBytes |= ITypeMarshalBuffer.FLAG3;
 		}
 
-		buffer.putByte((byte) firstByte);
+		buffer.putShort(firstBytes);
 		buffer.marshalType(fOwnerType);
 		buffer.marshalBinding(fMember);
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		boolean isDeref= (firstByte & ITypeMarshalBuffer.FLAG1) != 0;
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		boolean isDeref= (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
 		ValueCategory ownerValueCat;
-		if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0) {
+		if ((firstBytes & ITypeMarshalBuffer.FLAG2) != 0) {
 			ownerValueCat= LVALUE;
-		} else if ((firstByte & ITypeMarshalBuffer.FLAG3) != 0) {
+		} else if ((firstBytes & ITypeMarshalBuffer.FLAG3) != 0) {
 			ownerValueCat= XVALUE;
 		} else {
 			ownerValueCat= PRVALUE;

@@ -175,13 +175,13 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		buffer.putByte(ITypeMarshalBuffer.EVAL_UNARY_TYPE_ID);
+		buffer.putShort(ITypeMarshalBuffer.EVAL_UNARY_TYPE_ID);
 		buffer.putByte((byte) fOperator);
 		buffer.marshalType(fOrigType);
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int op= buffer.getByte();
 		IType arg= buffer.unmarshalType();
 		IBinding templateDefinition= buffer.unmarshalBinding();

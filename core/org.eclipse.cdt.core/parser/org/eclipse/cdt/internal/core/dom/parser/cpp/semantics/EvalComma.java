@@ -159,7 +159,7 @@ public class EvalComma extends CPPDependentEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		buffer.putByte(ITypeMarshalBuffer.EVAL_COMMA);
+		buffer.putShort(ITypeMarshalBuffer.EVAL_COMMA);
 		buffer.putInt(fArguments.length);
 		for (ICPPEvaluation arg : fArguments) {
 			buffer.marshalEvaluation(arg, includeValue);
@@ -167,7 +167,7 @@ public class EvalComma extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int len= buffer.getInt();
 		ICPPEvaluation[] args = new ICPPEvaluation[len];
 		for (int i = 0; i < args.length; i++) {

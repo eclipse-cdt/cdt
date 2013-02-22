@@ -136,12 +136,12 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.FUNCTION_TYPE;
-		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
-		if (isVolatile()) firstByte |= ITypeMarshalBuffer.FLAG2;
-		if (takesVarArgs()) firstByte |= ITypeMarshalBuffer.FLAG3;
+		short firstBytes= ITypeMarshalBuffer.FUNCTION_TYPE;
+		if (isConst()) firstBytes |= ITypeMarshalBuffer.FLAG1;
+		if (isVolatile()) firstBytes |= ITypeMarshalBuffer.FLAG2;
+		if (takesVarArgs()) firstBytes |= ITypeMarshalBuffer.FLAG3;
 		
-		buffer.putByte((byte) firstByte);
+		buffer.putShort(firstBytes);
 		buffer.putInt(parameters.length);
 		
 		buffer.marshalType(returnType);
@@ -150,14 +150,14 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 		}
 	}
 	
-	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int len= buffer.getInt();
 		IType rt= buffer.unmarshalType();
 		IType[] pars= new IType[len];
 		for (int i = 0; i < pars.length; i++) {
 			pars[i]= buffer.unmarshalType();
 		}
-		return new CPPFunctionType(rt, pars, (firstByte & ITypeMarshalBuffer.FLAG1) != 0,
-				(firstByte & ITypeMarshalBuffer.FLAG2) != 0, (firstByte & ITypeMarshalBuffer.FLAG3) != 0);
+		return new CPPFunctionType(rt, pars, (firstBytes & ITypeMarshalBuffer.FLAG1) != 0,
+				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0, (firstBytes & ITypeMarshalBuffer.FLAG3) != 0);
 	}
 }

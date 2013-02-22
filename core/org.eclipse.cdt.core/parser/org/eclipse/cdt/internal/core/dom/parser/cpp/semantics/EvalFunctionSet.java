@@ -109,13 +109,13 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
 		final ICPPFunction[] bindings = fFunctionSet.getBindings();
 		final ICPPTemplateArgument[] args = fFunctionSet.getTemplateArguments();
-		int firstByte = ITypeMarshalBuffer.EVAL_FUNCTION_SET;
+		short firstBytes = ITypeMarshalBuffer.EVAL_FUNCTION_SET;
 		if (fAddressOf)
-			firstByte |= ITypeMarshalBuffer.FLAG1;
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
 		if (args != null)
-			firstByte |= ITypeMarshalBuffer.FLAG2;
+			firstBytes |= ITypeMarshalBuffer.FLAG2;
 
-		buffer.putByte((byte) firstByte);
+		buffer.putShort(firstBytes);
 		buffer.putInt(bindings.length);
 		for (ICPPFunction binding : bindings) {
 			buffer.marshalBinding(binding);
@@ -129,15 +129,15 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		final boolean addressOf= (firstByte & ITypeMarshalBuffer.FLAG1) != 0;
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		final boolean addressOf= (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
 		int bindingCount= buffer.getInt();
 		ICPPFunction[] bindings= new ICPPFunction[bindingCount];
 		for (int i = 0; i < bindings.length; i++) {
 			bindings[i]= (ICPPFunction) buffer.unmarshalBinding();
 		}
 		ICPPTemplateArgument[] args= null;
-		if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0) {
+		if ((firstBytes & ITypeMarshalBuffer.FLAG2) != 0) {
 			int len= buffer.getInt();
 			args = new ICPPTemplateArgument[len];
 			for (int i = 0; i < args.length; i++) {

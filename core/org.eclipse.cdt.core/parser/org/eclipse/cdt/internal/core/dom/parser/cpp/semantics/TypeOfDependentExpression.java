@@ -63,11 +63,11 @@ public class TypeOfDependentExpression implements ICPPUnknownType, ISerializable
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		buffer.putByte(ITypeMarshalBuffer.DEPENDENT_EXPRESSION_TYPE);
+		buffer.putShort(ITypeMarshalBuffer.DEPENDENT_EXPRESSION_TYPE);
 		buffer.marshalEvaluation(fEvaluation, false);
 	}
 	
-	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		ISerializableEvaluation eval= buffer.unmarshalEvaluation();
 		if (eval instanceof ICPPEvaluation)
 			return new TypeOfDependentExpression((ICPPEvaluation) eval);

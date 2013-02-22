@@ -160,35 +160,28 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.ARRAY_TYPE;
-		int flags= 0;
+		short firstBytes = ITypeMarshalBuffer.ARRAY_TYPE;
 		long nval= -1;
 		IValue val= null;
 
-		if (isConst()) flags |= 0x01;
-		if (isVolatile()) flags |= 0x02;
-		if (isRestrict()) flags |= 0x04;
-		if (isStatic()) flags |= 0x08;
-		if (isVariableLength()) flags |= 0x10;
-		if (flags != 0) {
-			firstByte |= ITypeMarshalBuffer.FLAG1;
-		}
+		if (isConst()) firstBytes |= ITypeMarshalBuffer.FLAG1;
+		if (isVolatile()) firstBytes |= ITypeMarshalBuffer.FLAG2;
+		if (isRestrict()) firstBytes |= ITypeMarshalBuffer.FLAG3;
+		if (isStatic()) firstBytes |= ITypeMarshalBuffer.FLAG4;
+		if (isVariableLength()) firstBytes |= ITypeMarshalBuffer.FLAG5;
 
 		val= getSize();
 		if (val != null) {
-			firstByte |= ITypeMarshalBuffer.FLAG2;
+			firstBytes |= ITypeMarshalBuffer.FLAG6;
 			Long num= val.numericalValue();
 			if (num != null) {
 				nval= num;
 				if (nval >= 0) {
-					firstByte |= ITypeMarshalBuffer.FLAG3;
+					firstBytes |= ITypeMarshalBuffer.FLAG7;
 				} 
 			}
 		}
-		buffer.putByte((byte) firstByte);
-		if (flags != 0) {
-			buffer.putByte((byte) flags);
-		}
+		buffer.putShort(firstBytes);
 		if (nval >= 0) {
 			buffer.putLong(nval);
 		} else if (val != null) {
@@ -197,21 +190,20 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 		buffer.marshalType(getType());
 	}
 
-	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		int flags= 0;
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IValue value= null;
-		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0) {
-			flags= buffer.getByte();
-		}
-		if ((firstByte & ITypeMarshalBuffer.FLAG3) != 0) {
+		if ((firstBytes & ITypeMarshalBuffer.FLAG7) != 0) {
 			value = Value.create(buffer.getLong());
-		} else if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0) {
+		} else if ((firstBytes & ITypeMarshalBuffer.FLAG6) != 0) {
 			value = buffer.unmarshalValue();
 		}
 		IType nested= buffer.unmarshalType();		
-		CArrayType result= new CArrayType(nested, (flags & 0x01) != 0, (flags & 0x02) != 0, (flags & 0x04) != 0, value);
-		result.setIsStatic((flags & 0x08) != 0);
-		result.setIsVariableLength((flags & 0x10) != 0);
+		CArrayType result= new CArrayType(nested, 
+				(firstBytes & ITypeMarshalBuffer.FLAG1) != 0, 
+				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0, 
+				(firstBytes & ITypeMarshalBuffer.FLAG3) != 0, value);
+		result.setIsStatic((firstBytes & ITypeMarshalBuffer.FLAG4) != 0);
+		result.setIsVariableLength((firstBytes & ITypeMarshalBuffer.FLAG5) != 0);
 		return result;
 	}
 	

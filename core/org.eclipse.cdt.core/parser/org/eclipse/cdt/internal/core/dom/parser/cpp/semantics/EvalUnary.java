@@ -300,14 +300,14 @@ public class EvalUnary extends CPPDependentEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		buffer.putByte(ITypeMarshalBuffer.EVAL_UNARY);
+		buffer.putShort(ITypeMarshalBuffer.EVAL_UNARY);
 		buffer.putByte((byte) fOperator);
 		buffer.marshalEvaluation(fArgument, includeValue);
 		buffer.marshalBinding(fAddressOfQualifiedNameBinding);
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int op= buffer.getByte();
 		ICPPEvaluation arg= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		IBinding binding= buffer.unmarshalBinding();

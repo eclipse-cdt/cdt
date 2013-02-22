@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Markus Schorn - initial API and implementation
  *     Thomas Corbat
  *     Sergey Prigogin (Google)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -22,45 +23,56 @@ import org.eclipse.core.runtime.CoreException;
  * Buffer for marshalling and unmarshalling types.
  */
 public interface ITypeMarshalBuffer {
-	final static byte BASIC_TYPE=     				  1;
-	final static byte POINTER_TYPE=        			  2;
-	final static byte ARRAY_TYPE=            		  3;
-	final static byte CVQUALIFIER_TYPE=      		  4;
-	final static byte FUNCTION_TYPE=    			  5;
-	final static byte REFERENCE_TYPE=        		  6;
-	final static byte POINTER_TO_MEMBER_TYPE=   	  7;
-	final static byte PACK_EXPANSION_TYPE= 			  8;
-	final static byte PROBLEM_TYPE= 				  9;
-	final static byte VALUE= 				   	     10;
-	final static byte DEPENDENT_EXPRESSION_TYPE=     11;
-	final static byte UNKNOWN_MEMBER=			     12;
-	final static byte UNKNOWN_MEMBER_CLASS_INSTANCE= 13;
-	final static byte DEFERRED_CLASS_INSTANCE=     	 14;
-	final static byte ALIAS_TEMPLATE =				 15;
+	final static byte BASIC_TYPE                    = 0x01;
+	final static byte POINTER_TYPE                  = 0x02;
+	final static byte ARRAY_TYPE                    = 0x03;
+	final static byte CVQUALIFIER_TYPE              = 0x04;
+	final static byte FUNCTION_TYPE                 = 0x05;
+	final static byte REFERENCE_TYPE                = 0x06;
+	final static byte POINTER_TO_MEMBER_TYPE        = 0x07;
+	final static byte PACK_EXPANSION_TYPE           = 0x08;
+	final static byte PROBLEM_TYPE                  = 0x09;
+	final static byte VALUE                         = 0x0A;
+	final static byte DEPENDENT_EXPRESSION_TYPE     = 0x0B;
+	final static byte UNKNOWN_MEMBER                = 0x0C;
+	final static byte UNKNOWN_MEMBER_CLASS_INSTANCE = 0x0D;
+	final static byte DEFERRED_CLASS_INSTANCE       = 0x0E;
+	final static byte ALIAS_TEMPLATE                = 0x0F;
+	// Can add more types up to 0x1C, after that it will collide with TypeMarshalBuffer.UNSTORABLE_TYPE. 
 
 	final static byte
-		EVAL_BINARY= 1,
-		EVAL_BINARY_TYPE_ID = 2,
-		EVAL_BINDING = 3,
-		EVAL_COMMA = 4,
-		EVAL_COMPOUND = 5,
-		EVAL_CONDITIONAL = 6,
-		EVAL_FIXED= 7,
-		EVAL_FUNCTION_CALL= 8,
-		EVAL_FUNCTION_SET= 9,
-		EVAL_ID= 10,
-		EVAL_INIT_LIST= 11,
-		EVAL_MEMBER_ACCESS= 12,
-		EVAL_TYPE_ID= 13,
-		EVAL_UNARY= 14,
-		EVAL_UNARY_TYPE_ID = 15;
+		EVAL_BINARY         = 0x01,
+		EVAL_BINARY_TYPE_ID = 0x02,
+		EVAL_BINDING        = 0x03,
+		EVAL_COMMA          = 0x04,
+		EVAL_COMPOUND       = 0x05,
+		EVAL_CONDITIONAL    = 0x06,
+		EVAL_FIXED          = 0x07,
+		EVAL_FUNCTION_CALL  = 0x08,
+		EVAL_FUNCTION_SET   = 0x09,
+		EVAL_ID             = 0x0A,
+		EVAL_INIT_LIST      = 0x0B,
+		EVAL_MEMBER_ACCESS  = 0x0C,
+		EVAL_PARAMETER_PACK = 0x0D,
+		EVAL_TYPE_ID        = 0x0E,
+		EVAL_UNARY          = 0x0F,
+		EVAL_UNARY_TYPE_ID  = 0x10;
+	// Can add more evaluations up to 0x1C, after that it will collide with TypeMarshalBuffer.UNSTORABLE_TYPE.
 
-	static final byte KIND_MASK= 				   15;
+	static final short KIND_MASK = 0x001F;
 
-	final static int FLAG1	= 0x10;
-	final static int FLAG2	= 0x20;
-	final static int FLAG3	= 0x40;
-	final static int FLAG4	= 0x80;
+	final static short FIRST_FLAG = 0x0020;
+	
+	final static short FLAG1	  = 0x0020;
+	final static short FLAG2	  = 0x0040;
+	final static short FLAG3	  = 0x0080;
+	final static short FLAG4	  = 0x0100;
+	final static short FLAG5	  = 0x0200;
+	final static short FLAG6	  = 0x0400;
+	final static short FLAG7	  = 0x0800;
+	// Can add more flags up to LAST_FLAG.
+	
+	final static short LAST_FLAG  = 0x2000;
 
 	CoreException unmarshallingError();
 
@@ -72,6 +84,11 @@ public interface ITypeMarshalBuffer {
 	int getByte() throws CoreException;
 	int getFixedInt() throws CoreException;
 
+	/**
+	 * Reads a 16-bit integer stored in the variable length base-128 encoding. 
+	 */
+	public short getShort() throws CoreException;
+	
 	/**
 	 * Reads a 32-bit integer stored in the variable length base-128 encoding.
 	 */
@@ -92,6 +109,12 @@ public interface ITypeMarshalBuffer {
 	void putByte(byte data);
 	void putFixedInt(int data);
 
+	/**
+	 * Writes a 16-bit integer in the variable length base-128 encoding.
+	 * @param value the value to write
+	 */
+	public void putShort(short value);
+	
 	/**
 	 * Writes a 32-bit integer in the variable length base-128 encoding. Each byte, except the last
 	 * byte, has the most significant bit set – this indicates that there are further bytes to come.

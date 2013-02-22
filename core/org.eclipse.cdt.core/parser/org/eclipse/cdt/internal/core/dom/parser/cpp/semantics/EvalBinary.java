@@ -331,14 +331,14 @@ public class EvalBinary extends CPPDependentEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		buffer.putByte(ITypeMarshalBuffer.EVAL_BINARY);
+		buffer.putShort(ITypeMarshalBuffer.EVAL_BINARY);
 		buffer.putByte((byte) fOperator);
 		buffer.marshalEvaluation(fArg1, includeValue);
 		buffer.marshalEvaluation(fArg2, includeValue);
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int op= buffer.getByte();
 		ICPPEvaluation arg1= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		ICPPEvaluation arg2= (ICPPEvaluation) buffer.unmarshalEvaluation();

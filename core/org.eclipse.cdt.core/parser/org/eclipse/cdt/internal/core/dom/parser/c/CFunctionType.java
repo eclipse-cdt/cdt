@@ -78,16 +78,16 @@ public class CFunctionType implements IFunctionType, ISerializableType {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.FUNCTION_TYPE;
+		short firstBytes = ITypeMarshalBuffer.FUNCTION_TYPE;
 
 		int len= parameters.length & 0xffff;
-		int codedLen= len * ITypeMarshalBuffer.FLAG1;
-		if (codedLen < ITypeMarshalBuffer.FLAG4) {
-			firstByte |= codedLen;
-			buffer.putByte((byte) firstByte);
+		int codedLen= len * ITypeMarshalBuffer.FIRST_FLAG;
+		if (codedLen < ITypeMarshalBuffer.LAST_FLAG) {
+			firstBytes |= codedLen;
+			buffer.putShort(firstBytes);
 		} else {
-			firstByte |= ITypeMarshalBuffer.FLAG4;
-			buffer.putByte((byte) firstByte);
+			firstBytes |= ITypeMarshalBuffer.LAST_FLAG;
+			buffer.putShort(firstBytes);
 			buffer.putInt(len);
 		}
 		
@@ -97,12 +97,12 @@ public class CFunctionType implements IFunctionType, ISerializableType {
 		}
 	}
 	
-	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int len;
-		if (((firstByte & ITypeMarshalBuffer.FLAG4) != 0)) {
+		if (((firstBytes & ITypeMarshalBuffer.LAST_FLAG) != 0)) {
 			len= buffer.getInt();
 		} else {
-			len= (firstByte & (ITypeMarshalBuffer.FLAG4-1))/ITypeMarshalBuffer.FLAG1;
+			len= (firstBytes & (ITypeMarshalBuffer.LAST_FLAG-1))/ITypeMarshalBuffer.FIRST_FLAG;
 		}
 		IType rt= buffer.unmarshalType();
 		IType[] pars= new IType[len];

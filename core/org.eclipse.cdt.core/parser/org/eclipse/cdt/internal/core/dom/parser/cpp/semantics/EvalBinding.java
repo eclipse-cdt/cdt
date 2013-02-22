@@ -305,24 +305,24 @@ public class EvalBinding extends CPPDependentEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		byte firstByte = ITypeMarshalBuffer.EVAL_BINDING;
+		short firstBytes = ITypeMarshalBuffer.EVAL_BINDING;
 		ICPPFunction parameterOwner = getParameterOwner();
 		if (parameterOwner != null) {
 			// A function parameter cannot be marshalled directly. We are storing the owning
 			// function and the parameter position instead.
-			buffer.putByte((byte) (ITypeMarshalBuffer.EVAL_BINDING | ITypeMarshalBuffer.FLAG1));
+			buffer.putShort((short) (ITypeMarshalBuffer.EVAL_BINDING | ITypeMarshalBuffer.FLAG1));
 			buffer.marshalBinding(parameterOwner);
 			buffer.putInt(getFunctionParameterPosition());
 		} else {
-			buffer.putByte(firstByte);
+			buffer.putShort(firstBytes);
 			buffer.marshalBinding(fBinding);
 		}
 		buffer.marshalType(fFixedType ? fType : null);
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0) {
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0) {
 			ICPPFunction parameterOwner= (ICPPFunction) buffer.unmarshalBinding();
 			int parameterPosition= buffer.getInt();
 			IType type= buffer.unmarshalType();
@@ -347,10 +347,12 @@ public class EvalBinding extends CPPDependentEvaluation {
 					return argument.getNonTypeEvaluation();
 				}
 			}
-			// TODO(sprigogin): Do we need something similar for pack expansion?
 		} else if (origBinding instanceof ICPPParameter) {
 			ICPPParameter parameter = (ICPPParameter) origBinding;
 			IType origType = parameter.getType();
+			if (origType instanceof ICPPParameterPackType && packOffset != -1) {
+				origType = ((ICPPParameterPackType) origType).getType();
+			}
 			IType instantiatedType = CPPTemplates.instantiateType(origType, tpMap, packOffset, within, point);
 			if (origType != instantiatedType) {
 				return new EvalFixed(instantiatedType, ValueCategory.LVALUE, Value.create(this));
@@ -386,6 +388,10 @@ public class EvalBinding extends CPPDependentEvaluation {
 		}
 		if (binding instanceof ICPPUnknownBinding) {
 			return CPPTemplates.determinePackSize((ICPPUnknownBinding) binding, tpMap);
+		}
+		if (binding instanceof ICPPParameter && ((ICPPParameter) binding).isParameterPack()) {
+			ICPPParameterPackType type = (ICPPParameterPackType) ((ICPPParameter) binding).getType();
+			return CPPTemplates.determinePackSize(type.getType(), tpMap);
 		}
 		
 		if (binding instanceof ICPPSpecialization) {

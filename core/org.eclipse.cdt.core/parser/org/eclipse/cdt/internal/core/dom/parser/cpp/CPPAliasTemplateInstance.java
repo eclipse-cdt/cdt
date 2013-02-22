@@ -111,14 +111,14 @@ public class CPPAliasTemplateInstance extends PlatformObject
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte = ITypeMarshalBuffer.ALIAS_TEMPLATE;
-		buffer.putByte((byte) firstByte);
+		short firstBytes = ITypeMarshalBuffer.ALIAS_TEMPLATE;
+		buffer.putShort(firstBytes);
 		buffer.putCharArray(name);
 		buffer.marshalType(aliasedType);
 		buffer.marshalBinding(aliasTemplate);
 	}
 
-	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		char[] name = buffer.getCharArray();
 		IType unmarshalledAliasedTypeInstance = buffer.unmarshalType();
 		ICPPAliasTemplate unmarshalledAlias = (ICPPAliasTemplate)buffer.unmarshalBinding();

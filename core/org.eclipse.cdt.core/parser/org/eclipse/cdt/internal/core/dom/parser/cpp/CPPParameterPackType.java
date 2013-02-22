@@ -72,12 +72,12 @@ public class CPPParameterPackType implements ICPPParameterPackType, ITypeContain
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.PACK_EXPANSION_TYPE;
-		buffer.putByte((byte) firstByte);
+		short firstBytes= ITypeMarshalBuffer.PACK_EXPANSION_TYPE;
+		buffer.putShort(firstBytes);
 		buffer.marshalType(getType());
 	}
 	
-	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType nested= buffer.unmarshalType();
 		if (nested == null)
 			return new ProblemBinding(null, IProblemBinding.SEMANTIC_INVALID_TYPE);

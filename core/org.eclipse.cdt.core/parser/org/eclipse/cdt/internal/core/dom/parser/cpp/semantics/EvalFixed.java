@@ -116,37 +116,37 @@ public class EvalFixed extends CPPEvaluation {
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
 		includeValue= includeValue && fValue != Value.UNKNOWN;
-		int firstByte = ITypeMarshalBuffer.EVAL_FIXED;
+		short firstBytes = ITypeMarshalBuffer.EVAL_FIXED;
 		if (includeValue)
-			firstByte |= ITypeMarshalBuffer.FLAG1;
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
 		switch (fValueCategory) {
-		case LVALUE:
-			firstByte |= ITypeMarshalBuffer.FLAG2;
-			break;
 		case PRVALUE:
-			firstByte |= ITypeMarshalBuffer.FLAG3;
+			firstBytes |= ITypeMarshalBuffer.FLAG2;
+			break;
+		case LVALUE:
+			firstBytes |= ITypeMarshalBuffer.FLAG3;
 			break;
 		default:
 			break;
 		}
 
-		buffer.putByte((byte) firstByte);
+		buffer.putShort(firstBytes);
 		buffer.marshalType(fType);
 		if (includeValue) {
 			buffer.marshalValue(fValue);
 		}
 	}
 
-	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		final boolean readValue= (firstByte & ITypeMarshalBuffer.FLAG1) != 0;
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		final boolean readValue= (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
 		IValue value;
 		ValueCategory cat;
-		switch (firstByte & (ITypeMarshalBuffer.FLAG2 | ITypeMarshalBuffer.FLAG3)) {
+		switch (firstBytes & (ITypeMarshalBuffer.FLAG2 | ITypeMarshalBuffer.FLAG3)) {
 		case ITypeMarshalBuffer.FLAG2:
-			cat= LVALUE;
+			cat= PRVALUE;
 			break;
 		case ITypeMarshalBuffer.FLAG3:
-			cat= PRVALUE;
+			cat= LVALUE;
 			break;
 		default:
 			cat= XVALUE;

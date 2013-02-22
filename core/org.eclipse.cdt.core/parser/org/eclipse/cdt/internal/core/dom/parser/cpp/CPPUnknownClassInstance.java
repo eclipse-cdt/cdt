@@ -82,8 +82,8 @@ public class CPPUnknownClassInstance extends CPPUnknownMemberClass implements IC
 	
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.UNKNOWN_MEMBER_CLASS_INSTANCE;
-		buffer.putByte((byte) firstByte);
+		short firstBytes= ITypeMarshalBuffer.UNKNOWN_MEMBER_CLASS_INSTANCE;
+		buffer.putShort(firstBytes);
 		buffer.marshalType(getOwnerType());
 		buffer.putCharArray(getNameCharArray());
 		buffer.putInt(arguments.length);
@@ -92,7 +92,7 @@ public class CPPUnknownClassInstance extends CPPUnknownMemberClass implements IC
 		}
 	}
 	
-	public static ICPPUnknownMemberClassInstance unmarshal(IIndexFragment fragment, int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ICPPUnknownMemberClassInstance unmarshal(IIndexFragment fragment, short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType owner= buffer.unmarshalType();
 		char[] name = buffer.getCharArray();
 		int argcount= buffer.getInt();

@@ -144,17 +144,17 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.CVQUALIFIER_TYPE;
-		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
-		if (isVolatile()) firstByte |= ITypeMarshalBuffer.FLAG2;
-		if (isRestrict()) firstByte |= ITypeMarshalBuffer.FLAG3;
-		buffer.putByte((byte) firstByte);
+		short firstBytes= ITypeMarshalBuffer.CVQUALIFIER_TYPE;
+		if (isConst()) firstBytes |= ITypeMarshalBuffer.FLAG1;
+		if (isVolatile()) firstBytes |= ITypeMarshalBuffer.FLAG2;
+		if (isRestrict()) firstBytes |= ITypeMarshalBuffer.FLAG3;
+		buffer.putShort(firstBytes);
 		buffer.marshalType(getType());
 	}
 	
-	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType nested= buffer.unmarshalType();
-		return new CQualifierType(nested, (firstByte & ITypeMarshalBuffer.FLAG1) != 0,
-				(firstByte & ITypeMarshalBuffer.FLAG2) != 0, (firstByte & ITypeMarshalBuffer.FLAG3) != 0);
+		return new CQualifierType(nested, (firstBytes & ITypeMarshalBuffer.FLAG1) != 0,
+				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0, (firstBytes & ITypeMarshalBuffer.FLAG3) != 0);
 	}
 }

@@ -91,7 +91,7 @@ public class EvalInitList extends CPPDependentEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		buffer.putByte(ITypeMarshalBuffer.EVAL_INIT_LIST);
+		buffer.putShort(ITypeMarshalBuffer.EVAL_INIT_LIST);
 		buffer.putInt(fClauses.length);
 		for (ICPPEvaluation arg : fClauses) {
 			buffer.marshalEvaluation(arg, includeValue);
@@ -99,7 +99,7 @@ public class EvalInitList extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int len= buffer.getInt();
 		ICPPEvaluation[] args = new ICPPEvaluation[len];
 		for (int i = 0; i < args.length; i++) {
@@ -112,17 +112,8 @@ public class EvalInitList extends CPPDependentEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		ICPPEvaluation[] clauses = fClauses;
-		for (int i = 0; i < fClauses.length; i++) {
-			ICPPEvaluation clause = fClauses[i].instantiate(tpMap, packOffset, within, maxdepth, point);
-			if (clause != fClauses[i]) {
-				if (clauses == fClauses) {
-					clauses = new ICPPEvaluation[fClauses.length];
-					System.arraycopy(fClauses, 0, clauses, 0, fClauses.length);
-				}
-				clauses[i] = clause;
-			}
-		}
+		ICPPEvaluation[] clauses = instantiateCommaSeparatedSubexpressions(fClauses, tpMap, 
+				packOffset, within, maxdepth, point);
 		if (clauses == fClauses)
 			return this;
 		return new EvalInitList(clauses, getTemplateDefinition());

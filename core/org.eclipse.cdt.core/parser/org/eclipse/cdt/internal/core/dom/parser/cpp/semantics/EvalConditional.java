@@ -309,22 +309,22 @@ public class EvalConditional extends CPPDependentEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		int firstByte = ITypeMarshalBuffer.EVAL_CONDITIONAL;
+		short firstBytes = ITypeMarshalBuffer.EVAL_CONDITIONAL;
 		if (fPositiveThrows)
-			firstByte |= ITypeMarshalBuffer.FLAG1;
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
 		if (fNegativeThrows)
-			firstByte |= ITypeMarshalBuffer.FLAG2;
+			firstBytes |= ITypeMarshalBuffer.FLAG2;
 
-		buffer.putByte((byte) firstByte);
+		buffer.putShort(firstBytes);
 		buffer.marshalEvaluation(fCondition, includeValue);
 		buffer.marshalEvaluation(fPositive, includeValue);
 		buffer.marshalEvaluation(fNegative, includeValue);
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		boolean pth= (firstByte & ITypeMarshalBuffer.FLAG1) != 0;
-		boolean nth= (firstByte & ITypeMarshalBuffer.FLAG2) != 0;
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		boolean pth= (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
+		boolean nth= (firstBytes & ITypeMarshalBuffer.FLAG2) != 0;
 		ICPPEvaluation cond= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		ICPPEvaluation pos= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		ICPPEvaluation neg= (ICPPEvaluation) buffer.unmarshalEvaluation();

@@ -121,11 +121,11 @@ public class EvalTypeId extends CPPDependentEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		int firstByte = ITypeMarshalBuffer.EVAL_TYPE_ID;
+		short firstBytes = ITypeMarshalBuffer.EVAL_TYPE_ID;
 		if (includeValue)
-			firstByte |= ITypeMarshalBuffer.FLAG1;
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
 
-		buffer.putByte((byte) firstByte);
+		buffer.putShort(firstBytes);
 		buffer.marshalType(fInputType);
 		if (includeValue) {
 			buffer.putInt(fArguments.length);
@@ -136,10 +136,10 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType type= buffer.unmarshalType();
 		ICPPEvaluation[] args= null;
-		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0) {
+		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0) {
 			int len= buffer.getInt();
 			args = new ICPPEvaluation[len];
 			for (int i = 0; i < args.length; i++) {
@@ -153,19 +153,9 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		ICPPEvaluation[] args = fArguments;
-		if (fArguments != null) {
-			for (int i = 0; i < fArguments.length; i++) {
-				ICPPEvaluation arg = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, point);
-				if (arg != fArguments[i]) {
-					if (args == fArguments) {
-						args = new ICPPEvaluation[fArguments.length];
-						System.arraycopy(fArguments, 0, args, 0, fArguments.length);
-					}
-					args[i] = arg;
-				}
-			}
-		}
+		ICPPEvaluation[] args = null;
+		if (fArguments != null)
+			args = instantiateCommaSeparatedSubexpressions(fArguments, tpMap, packOffset, within, maxdepth, point);
 		IType type = CPPTemplates.instantiateType(fInputType, tpMap, packOffset, within, point);
 		if (args == fArguments && type == fInputType)
 			return this;

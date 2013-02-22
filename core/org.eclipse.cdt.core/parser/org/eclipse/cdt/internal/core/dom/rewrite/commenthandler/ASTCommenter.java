@@ -65,7 +65,7 @@ public class ASTCommenter {
 		}
 
 		private int checkOffsets(IASTNode node) {
-			int offset = ((ASTNode)node).getOffset();
+			int offset = ((ASTNode) node).getOffset();
 			int status = PROCESS_CONTINUE;
 			
 			if (isCommentOnSameLine(node) 
@@ -169,33 +169,29 @@ public class ASTCommenter {
 	}
 
 	/**
-	 * Creates a NodeCommentMap for the given TranslationUnit. This is the only way
-	 * to get a NodeCommentMap which contains all the comments mapped against nodes.
+	 * Creates a NodeCommentMap for the given AST. This is the only way to get a NodeCommentMap
+	 * which contains all the comments mapped against nodes.
 	 * 
-	 * @param tu TranslationUnit
+	 * @param ast the AST
 	 * @return NodeCommentMap
 	 */
-	public static NodeCommentMap getCommentedNodeMap(IASTTranslationUnit tu){
+	public static NodeCommentMap getCommentedNodeMap(IASTTranslationUnit ast) {
 		NodeCommentMap commentMap = new NodeCommentMap();
-		if (tu == null) {
+		if (ast == null) {
 			return commentMap;
 		}
-		IASTComment[] commentsArray = tu.getComments();
-		if (commentsArray == null) {
-			return commentMap;
-		}
-		List<IASTComment> comments = filterNonTuComments(commentsArray);
-		return addCommentsToCommentMap(tu, comments);
-	}
-
-	private static List<IASTComment> filterNonTuComments(IASTComment[] comments) {
-		List<IASTComment> filtered = new ArrayList<IASTComment>(comments.length);
-		for (IASTComment comment : comments) {
+		IASTComment[] commentsArray = ast.getComments();
+		List<IASTComment> comments = new ArrayList<IASTComment>(commentsArray.length);
+		for (IASTComment comment : commentsArray) {
 			if (comment.isPartOfTranslationUnitFile()) {
-				filtered.add(comment);
+				comments.add(comment);
 			}
 		}
-		return filtered;
+		assignPreprocessorComments(commentMap, comments, ast);
+		CommentHandler commentHandler = new CommentHandler(comments);
+		ASTCommenterVisitor commenter = new ASTCommenterVisitor(commentHandler, commentMap);
+		ast.accept(commenter);
+		return commentMap;
 	}
 
 	private static boolean isCommentDirectlyBeforePreprocessorStatement(IASTComment comment,
@@ -204,11 +200,11 @@ public class ASTCommenter {
 			return true;
 		}
 		IASTFileLocation commentLocation = comment.getFileLocation();
-		int preprcessorOffset = statement.getFileLocation().getNodeOffset();
-		if (preprcessorOffset > commentLocation.getNodeOffset()) {
-			PreprocessorRangeChecker vister = new PreprocessorRangeChecker(preprcessorOffset, commentLocation);
-			tu.accept(vister);
-			return vister.isPreStatementComment;
+		int preprocessorOffset = statement.getFileLocation().getNodeOffset();
+		if (preprocessorOffset > commentLocation.getNodeOffset()) {
+			PreprocessorRangeChecker visitor = new PreprocessorRangeChecker(preprocessorOffset, commentLocation);
+			tu.accept(visitor);
+			return visitor.isPreStatementComment;
 		}
 		return false;
 	}
@@ -218,22 +214,7 @@ public class ASTCommenter {
 	}
 	
 	/**
-	 * Puts leading and training comments to the returned map and removes them from
-	 * the {@code comments} list. 
-	 */
-	private static NodeCommentMap addCommentsToCommentMap(IASTTranslationUnit tu,
-			List<IASTComment> comments) {
-		NodeCommentMap commentMap = new NodeCommentMap();
-		CommentHandler commHandler = new CommentHandler(comments);
-
-		assignPreprocessorComments(commentMap, comments, tu);
-		ASTCommenterVisitor commenter = new ASTCommenterVisitor(commHandler, commentMap);
-		tu.accept(commenter);
-		return commentMap;
-	}
-
-	/**
-	 * Puts leading and training comments to {@code commentMap} and removes them from
+	 * Puts leading and trailing comments to {@code commentMap} and removes them from
 	 * the {@code comments} list. 
 	 */
 	private static void assignPreprocessorComments(NodeCommentMap commentMap,

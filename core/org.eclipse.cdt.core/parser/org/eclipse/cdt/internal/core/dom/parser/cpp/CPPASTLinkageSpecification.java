@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -22,13 +22,12 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * Extern "C" construct.
  */
-public class CPPASTLinkageSpecification extends ASTNode implements
-        ICPPASTLinkageSpecification, IASTAmbiguityParent {
-
+public class CPPASTLinkageSpecification extends ASTNode
+		implements ICPPASTLinkageSpecification, IASTAmbiguityParent {
     private String fLiteral;
 	private IASTDeclaration[] fAllDeclarations;
 	private IASTDeclaration[] fActiveDeclarations;
-    private int fLastDeclaration=-1;
+    private int fLastDeclaration = -1;
     
     public CPPASTLinkageSpecification() {
 	}
@@ -45,13 +44,10 @@ public class CPPASTLinkageSpecification extends ASTNode implements
 	@Override
 	public CPPASTLinkageSpecification copy(CopyStyle style) {
 		CPPASTLinkageSpecification copy = new CPPASTLinkageSpecification(fLiteral);
-		for (IASTDeclaration declaration : getDeclarations())
+		for (IASTDeclaration declaration : getDeclarations()) {
 			copy.addDeclaration(declaration == null ? null : declaration.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
 		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -70,7 +66,7 @@ public class CPPASTLinkageSpecification extends ASTNode implements
 		if (decl != null) {
 			decl.setParent(this);
 			decl.setPropertyInParent(OWNED_DECLARATION);
-			fAllDeclarations = ArrayUtil.appendAt( IASTDeclaration.class, fAllDeclarations, ++fLastDeclaration, decl);
+			fAllDeclarations = ArrayUtil.appendAt(IASTDeclaration.class, fAllDeclarations, ++fLastDeclaration, decl);
 			fActiveDeclarations= null;
 		}
 	}
@@ -99,9 +95,9 @@ public class CPPASTLinkageSpecification extends ASTNode implements
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDeclarations) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         

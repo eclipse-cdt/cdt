@@ -29,14 +29,14 @@ public class CommentTests extends AST2TestBase {
 		return suite(CommentTests.class);
 	}
 
-	public void testCountCommentsInHeaderFile() throws ParserException{
+	public void testCountCommentsInHeaderFile() throws ParserException {
 		IASTTranslationUnit tu = parse(getHSource(), ParserLanguage.CPP, false, true);
 		IASTComment[] comments = tu.getComments();
 
 		assertEquals(9, comments.length);
 	}
 	
-	public void testCommentsInHeaderFile() throws ParserException{
+	public void testCommentsInHeaderFile() throws ParserException {
 		IASTTranslationUnit tu = parse(getHSource(), ParserLanguage.CPP, false, true);
 		IASTComment[] comments = tu.getComments();
 
@@ -51,14 +51,14 @@ public class CommentTests extends AST2TestBase {
 		assertEquals("//Endcomment h", new String(comments[8].getComment()));
 	}
 	
-	public void testCountCommentsInCPPFile() throws ParserException{
+	public void testCountCommentsInCPPFile() throws ParserException {
 		IASTTranslationUnit tu = parse(getCppSource(), ParserLanguage.CPP, false, true);
 		IASTComment[] comments = tu.getComments();
 		
 		assertEquals(10, comments.length);
 	}
 
-	public void testCommentsInCPPFile() throws ParserException{
+	public void testCommentsInCPPFile() throws ParserException {
 		IASTTranslationUnit tu = parse(getCppSource(), ParserLanguage.CPP, false, true);
 		IASTComment[] comments = tu.getComments();
 		
@@ -74,14 +74,14 @@ public class CommentTests extends AST2TestBase {
 		assertEquals("//An integer", new String(comments[9].getComment()));
 	}
 	
-	public void testCountCommentsInCFile() throws ParserException{
+	public void testCountCommentsInCFile() throws ParserException {
 		IASTTranslationUnit tu = parse(getCSource(), ParserLanguage.C, false, true);
 		IASTComment[] comments = tu.getComments();
 		
 		assertEquals(4, comments.length);
 	}
 	
-	public void testCommentsInCFile() throws ParserException{
+	public void testCommentsInCFile() throws ParserException {
 		IASTTranslationUnit tu = parse(getCSource(), ParserLanguage.C, false, true);
 		IASTComment[] comments = tu.getComments();
 		
@@ -211,7 +211,7 @@ public class CommentTests extends AST2TestBase {
 	}
 	
 	// //comment
-	public void testCommentLocation_bug186337() throws Exception{
+	public void testCommentLocation_bug186337() throws Exception {
 		CharSequence code= getContents(1)[0];
 		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, true);
 		IASTComment[] comments = tu.getComments();
@@ -234,7 +234,6 @@ public class CommentTests extends AST2TestBase {
 	// #ifdef WHATEVA // TODO: ignored
 	// #endif // TODO: ignored
 	// // TODO: shows up in task list
-
 	public void testCommentInDirectives_bug192546() throws Exception {
 		CharSequence code= getContents(1)[0];
 		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, false);

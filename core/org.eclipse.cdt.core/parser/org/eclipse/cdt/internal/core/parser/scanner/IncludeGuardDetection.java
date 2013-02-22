@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import static org.eclipse.cdt.core.parser.OffsetLimitReachedException.ORIGIN_PREPROCESSOR_DIRECTIVE;
@@ -39,7 +38,7 @@ public class IncludeGuardDetection {
 				Token t = l.nextToken();
 				if (t.getType() == IToken.tIDENTIFIER) {
 					char[] guard= null;
-					switch(ppKeywords.get(t.getCharImage())) {
+					switch (ppKeywords.get(t.getCharImage())) {
 					case IPreprocessorDirective.ppIfndef:
 						// #ifndef GUARD
 						t= l.nextToken();
@@ -98,7 +97,7 @@ public class IncludeGuardDetection {
 				Token t= l.nextDirective();
 				if (t.getType() == IToken.tEND_OF_INPUT)
 					return true;
-				switch(ppKeywords.get(l.nextToken().getCharImage())) {
+				switch (ppKeywords.get(l.nextToken().getCharImage())) {
 				case IPreprocessorDirective.ppIf:
 				case IPreprocessorDirective.ppIfdef:
 				case IPreprocessorDirective.ppIfndef:
@@ -124,7 +123,6 @@ public class IncludeGuardDetection {
 		return t;
 	}
 
-	
 	public static boolean detectIncludeEndif(Lexer l) {
 		l.saveState();
 		try {

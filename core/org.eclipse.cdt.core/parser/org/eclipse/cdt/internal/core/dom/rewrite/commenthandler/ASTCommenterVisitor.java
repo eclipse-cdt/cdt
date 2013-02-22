@@ -39,7 +39,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier
  * @author Guido Zgraggen IFS 
  */
 public class ASTCommenterVisitor extends ASTVisitor {
-	protected CommentHandler commHandler;
+	protected CommentHandler commentHandler;
 	protected NodeCommentMap commentMap;
 		
 	private NodeCommenter nodeCommenter;
@@ -61,14 +61,14 @@ public class ASTCommenterVisitor extends ASTVisitor {
 		shouldVisitTranslationUnit = true;
 	}
 	
-	public ASTCommenterVisitor(CommentHandler commHandler, NodeCommentMap commentMap) {
-		this.commHandler = commHandler;
+	public ASTCommenterVisitor(CommentHandler commentHandler, NodeCommentMap commentMap) {
+		this.commentHandler = commentHandler;
 		this.commentMap = commentMap;
 		init();
 	}
 
 	private void init() {
-		nodeCommenter = new NodeCommenter(this, commHandler, commentMap);
+		nodeCommenter = new NodeCommenter(this, commentHandler, commentMap);
 	}
 	
 	@Override

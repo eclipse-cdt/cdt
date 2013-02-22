@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//9XY\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/help.css",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-22T22:02:10Z",
+      "side": 1,
+      "message": "This is something that confuses me. Isn\u0027t left-top alignment of text the default? If so, what changes it so that we have to restore it again?",
+      "revId": "8d197d339c75a52d916d123747c60e3365d350c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

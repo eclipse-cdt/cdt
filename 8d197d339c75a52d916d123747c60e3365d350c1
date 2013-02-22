@@ -52,6 +52,24 @@
       "revId": "8d197d339c75a52d916d123747c60e3365d350c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//9WU\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/help.css",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-22T22:41:11Z",
+      "side": 1,
+      "message": "Do you want me to limit the scope of the vertical-align to the menu class (and add that class to all the cdt_u_m_*.htm files), or leave it to apply to all td elements?",
+      "parentUuid": "AABOPX//9Ww\u003d",
+      "revId": "8d197d339c75a52d916d123747c60e3365d350c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

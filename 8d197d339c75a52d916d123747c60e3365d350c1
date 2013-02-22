@@ -70,6 +70,24 @@
       "revId": "8d197d339c75a52d916d123747c60e3365d350c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//9V4\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/help.css",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-22T22:50:36Z",
+      "side": 1,
+      "message": "Yes, it should be limited to the menu class only.",
+      "parentUuid": "AABOPX//9WU\u003d",
+      "revId": "8d197d339c75a52d916d123747c60e3365d350c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

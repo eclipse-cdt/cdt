@@ -7205,6 +7205,23 @@ public class AST2TemplateTests extends AST2TestBase {
         parseAndCheckBindings();
     }
 
+	//    int fn(int);
+	//    struct S {
+	//        template <typename... Args>
+	//        auto operator()(Args... args) -> decltype(fn(args...));
+	//    };
+	//    template <typename F>
+	//    int foo(F);
+	//    template <typename T>
+	//    void bar(T);
+	//    int main() {
+	//        S s;
+	//        bar(foo(s(0)));
+	//    }
+    public void testVariadicTemplatesAndFunctionObjects_401479() throws Exception {
+    	parseAndCheckBindings();
+    }
+
 	// struct S {
 	//     void kind();
 	// };

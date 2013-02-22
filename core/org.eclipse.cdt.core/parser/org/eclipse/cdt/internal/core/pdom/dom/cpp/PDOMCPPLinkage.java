@@ -111,6 +111,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalID;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalInitList;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalMemberAccess;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalParameterPack;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnaryTypeID;
@@ -122,6 +123,7 @@ import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
+import org.eclipse.cdt.internal.core.pdom.db.TypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -1105,94 +1107,98 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	@Override
 	public IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= buffer.getByte();
-		switch ((firstByte & ITypeMarshalBuffer.KIND_MASK)) {
+		short firstBytes= buffer.getShort();
+		switch ((firstBytes & ITypeMarshalBuffer.KIND_MASK)) {
 		case ITypeMarshalBuffer.ARRAY_TYPE:
-			return CPPArrayType.unmarshal(firstByte, buffer);
+			return CPPArrayType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.BASIC_TYPE:
-			return CPPBasicType.unmarshal(firstByte, buffer);
+			return CPPBasicType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.CVQUALIFIER_TYPE:
-			return CPPQualifierType.unmarshal(firstByte, buffer);
+			return CPPQualifierType.unmarshal(firstBytes, buffer);			
 		case ITypeMarshalBuffer.FUNCTION_TYPE:
-			return CPPFunctionType.unmarshal(firstByte, buffer);
+			return CPPFunctionType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.POINTER_TYPE:
-			return CPPPointerType.unmarshal(firstByte, buffer);
+			return CPPPointerType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.PROBLEM_TYPE:
-			return ProblemType.unmarshal(firstByte, buffer);
+			return ProblemType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.REFERENCE_TYPE:
-			return CPPReferenceType.unmarshal(firstByte, buffer);
+			return CPPReferenceType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.PACK_EXPANSION_TYPE:
-			return CPPParameterPackType.unmarshal(firstByte, buffer);
+			return CPPParameterPackType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.POINTER_TO_MEMBER_TYPE:
-			return CPPPointerToMemberType.unmarshal(firstByte, buffer);
+			return CPPPointerToMemberType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.DEPENDENT_EXPRESSION_TYPE:
-			return TypeOfDependentExpression.unmarshal(firstByte, buffer);
+			return TypeOfDependentExpression.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.UNKNOWN_MEMBER:
-			IBinding binding= CPPUnknownMember.unmarshal(getPDOM(), firstByte, buffer);
+			IBinding binding= CPPUnknownMember.unmarshal(getPDOM(), firstBytes, buffer);
 			if (binding instanceof IType)
 				return (IType) binding;
 			break;
 		case ITypeMarshalBuffer.UNKNOWN_MEMBER_CLASS_INSTANCE:
-			return CPPUnknownClassInstance.unmarshal(getPDOM(), firstByte, buffer);
+			return CPPUnknownClassInstance.unmarshal(getPDOM(), firstBytes, buffer);
 		case ITypeMarshalBuffer.DEFERRED_CLASS_INSTANCE:
-			return CPPDeferredClassInstance.unmarshal(getPDOM(), firstByte, buffer);
+			return CPPDeferredClassInstance.unmarshal(getPDOM(), firstBytes, buffer);
 		case ITypeMarshalBuffer.ALIAS_TEMPLATE:
-			return CPPAliasTemplateInstance.unmarshal(firstByte, buffer);
+			return CPPAliasTemplateInstance.unmarshal(firstBytes, buffer);
 		}
 
-		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first byte=" + firstByte)); //$NON-NLS-1$
+		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first bytes=" + firstBytes)); //$NON-NLS-1$
 	}
 
 	@Override
 	public IBinding unmarshalBinding(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= buffer.getByte();
-		switch ((firstByte & ITypeMarshalBuffer.KIND_MASK)) {
+		short firstBytes= buffer.getShort();
+		switch ((firstBytes & ITypeMarshalBuffer.KIND_MASK)) {
 		case ITypeMarshalBuffer.UNKNOWN_MEMBER:
-			return CPPUnknownMember.unmarshal(getPDOM(), firstByte, buffer);
+			return CPPUnknownMember.unmarshal(getPDOM(), firstBytes, buffer);
 		case ITypeMarshalBuffer.UNKNOWN_MEMBER_CLASS_INSTANCE:
-			return CPPUnknownClassInstance.unmarshal(getPDOM(), firstByte, buffer);
+			return CPPUnknownClassInstance.unmarshal(getPDOM(), firstBytes, buffer);
 		case ITypeMarshalBuffer.DEFERRED_CLASS_INSTANCE:
-			return CPPDeferredClassInstance.unmarshal(getPDOM(), firstByte, buffer);
+			return CPPDeferredClassInstance.unmarshal(getPDOM(), firstBytes, buffer);
 		}
 
-		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first byte=" + firstByte)); //$NON-NLS-1$
+		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first bytes=" + firstBytes)); //$NON-NLS-1$
 	}
 
 	@Override
 	public ISerializableEvaluation unmarshalEvaluation(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= buffer.getByte();
-		switch ((firstByte & ITypeMarshalBuffer.KIND_MASK)) {
+		short firstBytes= buffer.getShort();
+		if (firstBytes == TypeMarshalBuffer.NULL_TYPE)
+			return null;
+		switch ((firstBytes & ITypeMarshalBuffer.KIND_MASK)) {
 		case ITypeMarshalBuffer.EVAL_BINARY:
-			return EvalBinary.unmarshal(firstByte, buffer);
+			return EvalBinary.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_BINARY_TYPE_ID:
-			return EvalBinaryTypeId.unmarshal(firstByte, buffer);
+			return EvalBinaryTypeId.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_BINDING:
-			return EvalBinding.unmarshal(firstByte, buffer);
+			return EvalBinding.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_COMMA:
-			return EvalComma.unmarshal(firstByte, buffer);
+			return EvalComma.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_COMPOUND:
-			return EvalCompound.unmarshal(firstByte, buffer);
+			return EvalCompound.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_CONDITIONAL:
-			return EvalConditional.unmarshal(firstByte, buffer);
+			return EvalConditional.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_FIXED:
-			return EvalFixed.unmarshal(firstByte, buffer);
+			return EvalFixed.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_FUNCTION_CALL:
-			return EvalFunctionCall.unmarshal(firstByte, buffer);
+			return EvalFunctionCall.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_FUNCTION_SET:
-			return EvalFunctionSet.unmarshal(firstByte, buffer);
+			return EvalFunctionSet.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_ID:
-			return EvalID.unmarshal(firstByte, buffer);
+			return EvalID.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_INIT_LIST:
-			return EvalInitList.unmarshal(firstByte, buffer);
+			return EvalInitList.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_MEMBER_ACCESS:
-			return EvalMemberAccess.unmarshal(firstByte, buffer);
+			return EvalMemberAccess.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EVAL_PARAMETER_PACK:
+			return EvalParameterPack.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_TYPE_ID:
-			return EvalTypeId.unmarshal(firstByte, buffer);
+			return EvalTypeId.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_UNARY:
-			return EvalUnary.unmarshal(firstByte, buffer);
+			return EvalUnary.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_UNARY_TYPE_ID:
-			return EvalUnaryTypeID.unmarshal(firstByte, buffer);
+			return EvalUnaryTypeID.unmarshal(firstBytes, buffer);
 		}
-		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal an evaluation, first byte=" + firstByte)); //$NON-NLS-1$
+		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal an evaluation, first bytes=" + firstBytes)); //$NON-NLS-1$
 	}
 }

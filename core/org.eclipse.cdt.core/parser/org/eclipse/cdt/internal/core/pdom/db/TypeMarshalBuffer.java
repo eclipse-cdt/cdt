@@ -35,10 +35,10 @@ import org.eclipse.core.runtime.CoreException;
  */
 public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	public static final byte[] EMPTY= { 0, 0, 0, 0, 0, 0 };
-	public static final byte NULL_TYPE= 0;
-	public static final byte INDIRECT_TYPE= (byte) -1;
-	public static final byte BINDING_TYPE= (byte) -2;
-	public static final byte UNSTORABLE_TYPE= (byte) -3;
+	public static final byte NULL_TYPE       = 0x00;
+	public static final byte INDIRECT_TYPE   = 0x1F;
+	public static final byte BINDING_TYPE    = 0x1E;
+	public static final byte UNSTORABLE_TYPE = 0x1D;
 
 	public static final IType UNSTORABLE_TYPE_PROBLEM = new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
 
@@ -83,13 +83,13 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		if (binding instanceof ISerializableType) {
 			((ISerializableType) binding).marshal(this);
 		} else if (binding == null) {
-			putByte(NULL_TYPE);
+			putShort(NULL_TYPE);
 		} else {
 			PDOMNode pb= fLinkage.addTypeBinding(binding);
 			if (pb == null) {
-				putByte(UNSTORABLE_TYPE);
+				putShort(UNSTORABLE_TYPE);
 			} else {
-				putByte(BINDING_TYPE);
+				putShort(BINDING_TYPE);
 				putByte((byte) 0);
 				putRecordPointer(pb.getRecord());
 			}
@@ -98,19 +98,17 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 
 	@Override
 	public IBinding unmarshalBinding() throws CoreException {
-		if (fPos >= fBuffer.length)
-			throw unmarshallingError();
-
-		byte firstByte= fBuffer[fPos];
-		if (firstByte == BINDING_TYPE) {
-			fPos += 2;
+		int oldPos = fPos;
+		short firstBytes = getShort();
+		if (firstBytes == BINDING_TYPE) {
+			fPos += 1;
 			long rec= getRecordPointer();
 			return (IBinding) fLinkage.getNode(rec);
-		} else if (firstByte == NULL_TYPE || firstByte == UNSTORABLE_TYPE) {
-			fPos++;
+		} else if (firstBytes == NULL_TYPE || firstBytes == UNSTORABLE_TYPE) {
 			return null;
 		}
 
+		fPos = oldPos;  // fLinkage.unmarshalBinding() will read firstBytes again
 		return fLinkage.unmarshalBinding(this);
 	}
 
@@ -119,40 +117,37 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		if (type instanceof ISerializableType) {
 			((ISerializableType) type).marshal(this);
 		} else if (type == null) {
-			putByte(NULL_TYPE);
+			putShort(NULL_TYPE);
 		} else if (type instanceof IBinding) {
 			marshalBinding((IBinding) type);
 		} else {
 			assert false : "Cannot serialize " + ASTTypeUtil.getType(type) + " (" + type.getClass().getName() + ")";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			putByte(UNSTORABLE_TYPE);
+			putShort(UNSTORABLE_TYPE);
 		}
 	}
 
 	@Override
 	public IType unmarshalType() throws CoreException {
-		if (fPos >= fBuffer.length)
-			throw unmarshallingError();
-
-		byte firstByte= fBuffer[fPos];
-		if (firstByte == BINDING_TYPE) {
-			fPos += 2;
+		int oldPos = fPos;
+		short firstBytes = getShort();
+		if (firstBytes == BINDING_TYPE) {
+			fPos += 1;
 			long rec= getRecordPointer();
 			return (IType) fLinkage.getNode(rec);
-		} else if (firstByte == NULL_TYPE) {
-			fPos++;
+		} else if (firstBytes == NULL_TYPE) {
 			return null;
-		} else if (firstByte == UNSTORABLE_TYPE) {
-			fPos++;
+		} else if (firstBytes == UNSTORABLE_TYPE) {
 			return UNSTORABLE_TYPE_PROBLEM;
 		}
 
+		fPos = oldPos;  // fLinkage.unmarshalType() will read firstBytes again
 		return fLinkage.unmarshalType(this);
 	}
 
 	@Override
 	public void marshalEvaluation(ISerializableEvaluation eval, boolean includeValues) throws CoreException {
 		if (eval == null) {
-			putByte(NULL_TYPE);
+			putShort(NULL_TYPE);
 		} else {
 			eval.marshal(this, includeValues);
 		}
@@ -160,23 +155,15 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 
 	@Override
 	public ISerializableEvaluation unmarshalEvaluation() throws CoreException {
-		if (fPos >= fBuffer.length)
-			throw unmarshallingError();
-
-		byte firstByte= fBuffer[fPos];
-		if (firstByte == NULL_TYPE) {
-			fPos++;
-			return null;
-		}
 		return fLinkage.unmarshalEvaluation(this);
 	}
 
 	@Override
 	public void marshalValue(IValue value) throws CoreException {
 		if (value instanceof Value) {
-			((Value) value).marshall(this);
+			((Value) value).marshal(this);
 		} else {
-			putByte(NULL_TYPE);
+			putShort(NULL_TYPE);
 		}
 	}
 
@@ -191,7 +178,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	@Override
 	public void marshalTemplateArgument(ICPPTemplateArgument arg) throws CoreException {
 		if (arg.isNonTypeValue()) {
-			putByte(VALUE);
+			putShort(VALUE);
 			arg.getNonTypeEvaluation().marshal(this, true);
 		} else {
 			final IType typeValue = arg.getTypeValue();
@@ -207,11 +194,12 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 
 	@Override
 	public ICPPTemplateArgument unmarshalTemplateArgument() throws CoreException {
-		int firstByte= getByte();
-		if (firstByte == VALUE) {
+		int oldPos = fPos;
+		short firstBytes = getShort();
+		if (firstBytes == VALUE) {
 			return new CPPTemplateNonTypeArgument((ICPPEvaluation) unmarshalEvaluation(), null);
 		} else {
-			fPos--;
+			fPos = oldPos;
 			IType type = unmarshalType();
 			IType originalType = unmarshalType();
 			if (originalType == null || originalType == UNSTORABLE_TYPE_PROBLEM)
@@ -285,6 +273,11 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	}
 
 	@Override
+	public void putShort(short value) {
+		putInt(value);
+	}
+	
+	@Override
 	public void putInt(int value) {
 		do {
 			int b = value & 0x7F;
@@ -306,6 +299,14 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		} while (value != 0);
 	}
 
+	@Override
+	public short getShort() throws CoreException {
+		int result = getInt();
+		if (result > Short.MAX_VALUE)
+			unmarshallingError();
+		return (short) result;
+	}
+	
 	@Override
 	public int getInt() throws CoreException {
 		int b = getByte();

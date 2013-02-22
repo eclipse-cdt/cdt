@@ -56,13 +56,13 @@ public class ProblemType implements IProblemType, ISerializableType {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		buffer.putByte(ITypeMarshalBuffer.PROBLEM_TYPE);
+		buffer.putShort(ITypeMarshalBuffer.PROBLEM_TYPE);
 		buffer.putInt(getID());
 	}
 	
-	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0)
-			return ProblemFunctionType.unmarshal(firstByte, buffer);
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0)
+			return ProblemFunctionType.unmarshal(firstBytes, buffer);
 		
 		return new ProblemType(buffer.getInt());
 	}

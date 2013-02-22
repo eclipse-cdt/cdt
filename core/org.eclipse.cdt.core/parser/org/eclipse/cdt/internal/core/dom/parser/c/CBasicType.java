@@ -60,6 +60,7 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	}
 	
 	private static Kind getKind(ICASTSimpleDeclSpecifier sds) {
+		// Note: when adding a new kind, marshal() and unnmarshal() may need to be revised.
 		switch (sds.getType()) {
 		case IASTSimpleDeclSpecifier.t_bool:
 			return Kind.eBoolean;
@@ -170,23 +171,23 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		final int kind= getKind().ordinal();
-		final int shiftedKind=  kind * ITypeMarshalBuffer.FLAG1;
+		final int shiftedKind=  kind * ITypeMarshalBuffer.FIRST_FLAG;
 		final int modifiers= getModifiers();
-		if (shiftedKind < ITypeMarshalBuffer.FLAG4 && modifiers == 0) {
-			buffer.putByte((byte) (ITypeMarshalBuffer.BASIC_TYPE | shiftedKind));
+		if (modifiers == 0) {
+			buffer.putShort((short) (ITypeMarshalBuffer.BASIC_TYPE | shiftedKind));
 		} else {
-			buffer.putByte((byte) (ITypeMarshalBuffer.BASIC_TYPE | ITypeMarshalBuffer.FLAG4));
+			buffer.putShort((short) (ITypeMarshalBuffer.BASIC_TYPE | ITypeMarshalBuffer.LAST_FLAG));
 			buffer.putByte((byte) kind);
 			buffer.putByte((byte) modifiers);
 		} 
 	}
 	
-	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		final boolean dense= (firstByte & ITypeMarshalBuffer.FLAG4) == 0;
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		final boolean dense= (firstBytes & ITypeMarshalBuffer.LAST_FLAG) == 0;
 		int modifiers= 0;
 		int kind;
 		if (dense) {
-			kind= (firstByte & (ITypeMarshalBuffer.FLAG4-1))/ITypeMarshalBuffer.FLAG1;
+			kind= (firstBytes & (ITypeMarshalBuffer.LAST_FLAG-1))/ITypeMarshalBuffer.FIRST_FLAG;
 		} else {
 			kind= buffer.getByte();
 			modifiers= buffer.getByte();

@@ -64,7 +64,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -518,7 +517,7 @@ public class LookupData extends ScopeLookupData {
 		int count= 0;
 		if (functionArgs != null) {
 			for (ICPPEvaluation arg : functionArgs) {
-				if (arg instanceof EvalFixed && arg.getTypeOrFunctionSet(null) instanceof ICPPParameterPackType)
+				if (arg instanceof EvalParameterPack)
 					count++;
 			}
 		}

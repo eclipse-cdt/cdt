@@ -109,14 +109,14 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		buffer.putByte(ITypeMarshalBuffer.EVAL_BINARY_TYPE_ID);
+		buffer.putShort(ITypeMarshalBuffer.EVAL_BINARY_TYPE_ID);
 		buffer.putByte((byte) fOperator.ordinal());
 		buffer.marshalType(fType1);
 		buffer.marshalType(fType2);
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int op= buffer.getByte();
 		IType arg1= buffer.unmarshalType();
 		IType arg2= buffer.unmarshalType();

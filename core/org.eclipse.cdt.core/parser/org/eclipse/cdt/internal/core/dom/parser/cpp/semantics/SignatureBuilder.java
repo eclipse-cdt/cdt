@@ -25,8 +25,8 @@ import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.core.runtime.CoreException;
 
 class SignatureBuilder implements ITypeMarshalBuffer {
-	private static final byte NULL_TYPE= 0;
-	private static final byte UNSTORABLE_TYPE= (byte) -1;
+	private static final short NULL_TYPE       = 0x0000;
+	private static final short UNSTORABLE_TYPE = 0x001D;
 
 	private final StringBuilder fBuffer;
 
@@ -51,7 +51,7 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 		if (binding instanceof ISerializableType) {
 			((ISerializableType) binding).marshal(this);
 		} else if (binding == null) {
-			putByte(NULL_TYPE);
+			putShort(NULL_TYPE);
 		} else {
 			appendSeparator();
 			if (binding instanceof ICPPBinding) {
@@ -73,19 +73,19 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 		if (type instanceof ISerializableType) {
 			((ISerializableType) type).marshal(this);
 		} else if (type == null) {
-			putByte(NULL_TYPE);
+			putShort(NULL_TYPE);
 		} else if (type instanceof IBinding) {
 			marshalBinding((IBinding) type);
 		} else {
 			assert false : "Cannot serialize " + ASTTypeUtil.getType(type) + " (" + type.getClass().getName() + ")"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			putByte(UNSTORABLE_TYPE);
+			putShort(UNSTORABLE_TYPE);
 		}
 	}
 
 	@Override
 	public void marshalEvaluation(ISerializableEvaluation eval, boolean includeValues) throws CoreException {
 		if (eval == null) {
-			putByte(NULL_TYPE);
+			putShort(NULL_TYPE);
 		} else {
 			eval.marshal(this, includeValues);
 		}
@@ -94,16 +94,16 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 	@Override
 	public void marshalValue(IValue value) throws CoreException {
 		if (value instanceof Value) {
-			((Value) value).marshall(this);
+			((Value) value).marshal(this);
 		} else {
-			putByte(NULL_TYPE);
+			putShort(NULL_TYPE);
 		}
 	}
 
 	@Override
 	public void marshalTemplateArgument(ICPPTemplateArgument arg) throws CoreException {
 		if (arg.isNonTypeValue()) {
-			putByte(VALUE);
+			putShort(VALUE);
 			arg.getNonTypeEvaluation().marshal(this, true);
 		} else {
 			marshalType(arg.getTypeValue());
@@ -122,6 +122,12 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 		fBuffer.append(value);
 	}
 
+	@Override
+	public void putShort(short value) {
+		appendSeparator();
+		fBuffer.append(value);
+	}
+	
 	@Override
 	public void putInt(int value) {
 		appendSeparator();
@@ -187,6 +193,11 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public short getShort() throws CoreException {
+		throw new UnsupportedOperationException();
+	}
+	
 	@Override
 	public int getInt() throws CoreException {
 		throw new UnsupportedOperationException();

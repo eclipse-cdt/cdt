@@ -145,15 +145,15 @@ public class EvalID extends CPPDependentEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		int firstByte = ITypeMarshalBuffer.EVAL_ID;
+		short firstBytes = ITypeMarshalBuffer.EVAL_ID;
 		if (fAddressOf)
-			firstByte |= ITypeMarshalBuffer.FLAG1;
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
 		if (fQualified)
-			firstByte |= ITypeMarshalBuffer.FLAG2;
+			firstBytes |= ITypeMarshalBuffer.FLAG2;
 		if (fTemplateArgs != null)
-			firstByte |= ITypeMarshalBuffer.FLAG3;
+			firstBytes |= ITypeMarshalBuffer.FLAG3;
 
-		buffer.putByte((byte) firstByte);
+		buffer.putShort(firstBytes);
 		buffer.marshalEvaluation(fFieldOwner, false);
 		buffer.putCharArray(fName);
 		buffer.marshalBinding(fNameOwner);
@@ -166,14 +166,14 @@ public class EvalID extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		final boolean addressOf= (firstByte & ITypeMarshalBuffer.FLAG1) != 0;
-		final boolean qualified= (firstByte & ITypeMarshalBuffer.FLAG2) != 0;
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		final boolean addressOf= (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
+		final boolean qualified= (firstBytes & ITypeMarshalBuffer.FLAG2) != 0;
 		ICPPEvaluation fieldOwner= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		char[] name= buffer.getCharArray();
 		IBinding nameOwner= buffer.unmarshalBinding();
 		ICPPTemplateArgument[] args= null;
-		if ((firstByte & ITypeMarshalBuffer.FLAG3) != 0) {
+		if ((firstBytes & ITypeMarshalBuffer.FLAG3) != 0) {
 			int len= buffer.getInt();
 			args = new ICPPTemplateArgument[len];
 			for (int i = 0; i < args.length; i++) {

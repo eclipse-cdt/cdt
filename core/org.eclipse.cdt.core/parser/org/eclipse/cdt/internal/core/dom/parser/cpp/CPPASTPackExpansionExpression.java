@@ -11,8 +11,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -21,9 +19,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalParameterPack;
 
 /**
  * Implementation of pack expansion expression.
@@ -70,13 +66,7 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
-			IType type = fPattern.getExpressionType();
-			if (type == null) {
-				type= ProblemType.UNKNOWN_FOR_EXPRESSION;
-			} else {
-				type= new CPPParameterPackType(type);
-			}
-			fEvaluation= new EvalFixed(type, PRVALUE, Value.create(((ICPPASTExpression) fPattern).getEvaluation()));
+			fEvaluation = new EvalParameterPack(((ICPPASTExpression) fPattern).getEvaluation(), this);
 		}
 		return fEvaluation;
 	}

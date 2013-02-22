@@ -340,10 +340,12 @@ public class EvalBinding extends CPPDependentEvaluation {
 			if (argument != null && argument.isNonTypeValue()) {
 				return argument.getNonTypeEvaluation();
 			}
-			// TODO(sprigogin): Do we need something similar for pack expansion?
 		} else if (origBinding instanceof ICPPParameter) {
 			ICPPParameter parameter = (ICPPParameter) origBinding;
 			IType origType = parameter.getType();
+			if (origType instanceof ICPPParameterPackType && packOffset != -1) {
+				origType = ((ICPPParameterPackType) origType).getType();
+			}
 			IType instantiatedType = CPPTemplates.instantiateType(origType, tpMap, packOffset, within, point);
 			if (origType != instantiatedType) {
 				return new EvalFixed(instantiatedType, ValueCategory.LVALUE, Value.create(this));
@@ -379,6 +381,10 @@ public class EvalBinding extends CPPDependentEvaluation {
 		}
 		if (binding instanceof ICPPUnknownBinding) {
 			return CPPTemplates.determinePackSize((ICPPUnknownBinding) binding, tpMap);
+		}
+		if (binding instanceof ICPPParameter && ((ICPPParameter) binding).isParameterPack()) {
+			ICPPParameterPackType type = (ICPPParameterPackType) ((ICPPParameter) binding).getType();
+			return CPPTemplates.determinePackSize(type.getType(), tpMap);
 		}
 		
 		if (binding instanceof ICPPSpecialization) {

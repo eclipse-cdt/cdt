@@ -17,8 +17,12 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -92,6 +96,68 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 		// may end up needing the signature).
 		if (!(buffer instanceof SignatureBuilder))
 			buffer.marshalBinding(getTemplateDefinition());
+	}
+	
+	/**
+	 * Instantiate evaluations that represent subexpressions separated by commas.
+	 * If a subexpression is a pack expansion expression, and the template parameter map
+	 * contains a mapping for the parameter pack(s) that occur in its expansion pattern,
+	 * the expansion pattern is instantiated once for each mapped template argument,
+	 * and the resulting evaluations are returned in place of the pack expansion.  
+	 * 
+	 * This code is similar to CPPTemplates.instantiateArguments(), but applies to evaluations
+	 * rather than template arguments. 
+	 */
+	protected static ICPPEvaluation[] instantiateCommaSeparatedSubexpressions(
+			ICPPEvaluation[] subexpressions, ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point)
+	{
+		ICPPEvaluation[] result = subexpressions;
+		int resultShift = 0;
+		for (int i = 0; i < subexpressions.length; i++) {
+			ICPPEvaluation origEval = subexpressions[i];
+			ICPPEvaluation newEval;
+			// TODO(nathanridge): 
+			//   Currently, evaluations for pack expansion expressions are represented as an 
+			//   EvalFixed with CPPParameterPackType as the type and the expansion pattern 
+			//   as the evaluation (see CPPASTPackExpansionExpression.getEvaluation()). 
+			//   Perhaps we should introduce an EvalParameterPack for this purpose instead?
+			if (origEval instanceof EvalFixed &&
+					((EvalFixed) origEval).getTypeOrFunctionSet(point) instanceof ICPPParameterPackType) {
+				origEval = ((EvalFixed) origEval).getValue().getEvaluation();
+				int packSize = origEval.determinePackSize(tpMap);
+				if (packSize == CPPTemplates.PACK_SIZE_FAIL || packSize == CPPTemplates.PACK_SIZE_NOT_FOUND) {
+					// TODO(nathanridge): 
+					//   Can we handle this error better, e.g. turn it into a ProblemBinding somehow?
+					newEval = origEval;
+				} else if (packSize == CPPTemplates.PACK_SIZE_DEFER) {
+					newEval = origEval;
+				} else {
+					int shift = packSize - 1;
+					ICPPEvaluation[] newResult = new ICPPEvaluation[subexpressions.length + resultShift + shift];
+					System.arraycopy(result, 0, newResult, 0, i + resultShift);
+					for (int j = 0; j < packSize; ++j) {
+						newEval = origEval.instantiate(tpMap, j, within, maxdepth, point);
+						newResult[i + resultShift + j] = newEval;
+					}
+					result = newResult;
+					resultShift += shift;
+					continue;
+				}
+			} else {
+				newEval = origEval.instantiate(tpMap, packOffset, within, maxdepth, point);
+			}
+			
+			if (result != subexpressions)
+				result[i + resultShift] = newEval;
+			else if (newEval != origEval) {
+				assert resultShift == 0;
+				result = new ICPPEvaluation[subexpressions.length];
+				System.arraycopy(subexpressions, 0, result, 0, i);
+				result[i] = newEval;
+			}
+		}
+		return result;
 	}
 	
 	/**

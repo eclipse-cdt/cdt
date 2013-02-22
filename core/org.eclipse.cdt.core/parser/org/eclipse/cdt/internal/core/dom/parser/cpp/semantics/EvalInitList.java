@@ -112,17 +112,8 @@ public class EvalInitList extends CPPDependentEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		ICPPEvaluation[] clauses = fClauses;
-		for (int i = 0; i < fClauses.length; i++) {
-			ICPPEvaluation clause = fClauses[i].instantiate(tpMap, packOffset, within, maxdepth, point);
-			if (clause != fClauses[i]) {
-				if (clauses == fClauses) {
-					clauses = new ICPPEvaluation[fClauses.length];
-					System.arraycopy(fClauses, 0, clauses, 0, fClauses.length);
-				}
-				clauses[i] = clause;
-			}
-		}
+		ICPPEvaluation[] clauses = instantiateCommaSeparatedSubexpressions(fClauses, tpMap, 
+				packOffset, within, maxdepth, point);
 		if (clauses == fClauses)
 			return this;
 		return new EvalInitList(clauses, getTemplateDefinition());

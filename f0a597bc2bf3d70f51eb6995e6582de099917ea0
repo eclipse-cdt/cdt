@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//9qw\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinding.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-22T01:51:16Z",
+      "side": 0,
+      "message": "Note: I actually meant to remove this line with the fix for bug 401400, which added forwarding the packOffset to tpMap.getArgument() above. I believe that change handled this TODO.",
+      "revId": "f0a597bc2bf3d70f51eb6995e6582de099917ea0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

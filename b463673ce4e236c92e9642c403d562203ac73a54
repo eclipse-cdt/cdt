@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//9Zg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-22T21:08:10Z",
+      "side": 1,
+      "message": "Can\u0027t we do this once at the start, since we always enable(true)?",
+      "revId": "b463673ce4e236c92e9642c403d562203ac73a54",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//9Zc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-22T21:08:10Z",
+      "side": 1,
+      "message": "Can\u0027t we do this loop once at the start, since we always enable(true)?",
+      "revId": "b463673ce4e236c92e9642c403d562203ac73a54",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

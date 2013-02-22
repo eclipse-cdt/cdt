@@ -49,24 +49,24 @@ public class CPPUnknownMember extends CPPUnknownBinding	implements ICPPUnknownMe
 	
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.UNKNOWN_MEMBER;
+		short firstBytes= ITypeMarshalBuffer.UNKNOWN_MEMBER;
 		if (this instanceof ICPPField) {
-			firstByte |= ITypeMarshalBuffer.FLAG1;
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
 		} else if (this instanceof ICPPMethod) {
-			firstByte |= ITypeMarshalBuffer.FLAG2;
+			firstBytes |= ITypeMarshalBuffer.FLAG2;
 		}
 		
-		buffer.putByte((byte) firstByte);
+		buffer.putShort(firstBytes);
 		buffer.marshalType(getOwnerType());
 		buffer.putCharArray(getNameCharArray());
 	}
 
-	public static IBinding unmarshal(IIndexFragment fragment, int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static IBinding unmarshal(IIndexFragment fragment, short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType owner= buffer.unmarshalType();
 		char[] name = buffer.getCharArray();
-		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0) {
+		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0) {
 			return new PDOMCPPUnknownField(fragment, owner, name);
-		} else if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0) {
+		} else if ((firstBytes & ITypeMarshalBuffer.FLAG2) != 0) {
 			return new PDOMCPPUnknownMethod(fragment, owner, name);
 		}
 		return new PDOMCPPUnknownMemberClass(fragment, owner, name);

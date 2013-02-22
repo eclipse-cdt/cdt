@@ -448,7 +448,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			if (len <= maxInlineSize) {
 				db.putBytes(offset, buf.getBuffer(), len);
 			} else {
-				db.putByte(offset, TypeMarshalBuffer.INDIRECT_TYPE);
+				db.putByte(offset, (byte) TypeMarshalBuffer.INDIRECT_TYPE);
 				long chainOffset = offset + 1;
 				buf.putInt(len);
 				int lenSize = buf.getPosition() - len;

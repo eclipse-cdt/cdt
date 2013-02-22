@@ -109,16 +109,16 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISer
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.REFERENCE_TYPE;
+		short firstBytes= ITypeMarshalBuffer.REFERENCE_TYPE;
 		if (isRValueReference()) {
-			firstByte |= ITypeMarshalBuffer.FLAG1;
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
 		}
-		buffer.putByte((byte) firstByte);
+		buffer.putShort(firstBytes);
 		buffer.marshalType(getType());
 	}
 	
-	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType nested= buffer.unmarshalType();
-		return new CPPReferenceType(nested, (firstByte & ITypeMarshalBuffer.FLAG1) != 0);
+		return new CPPReferenceType(nested, (firstBytes & ITypeMarshalBuffer.FLAG1) != 0);
 	}
 }

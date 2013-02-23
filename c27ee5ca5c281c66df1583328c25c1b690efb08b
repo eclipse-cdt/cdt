@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//9SA\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPDependentEvaluation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-23T09:43:39Z",
+      "side": 1,
+      "message": "I see that for serialization of evaluations, the lower-order 4 bits of the \u0027firstByte\u0027 are allocated for storing the evaluation kind, and the higher-order 4 bits are for flags. We already have 15 evaluation kinds (using the constants 1-15; I assume there is a good reason for not using 0), so there is no room to add EvalParameterPack under the current scheme.\n\nShould I change it so that a full byte is used for storing the evaluation kind, and another byte for the flags?",
+      "parentUuid": "AABOPX//9qk\u003d",
+      "revId": "c27ee5ca5c281c66df1583328c25c1b690efb08b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//9qg\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPDependentEvaluation.java",
         "patchSetId": 1

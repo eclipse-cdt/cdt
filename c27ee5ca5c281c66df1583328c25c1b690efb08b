@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//9Pc\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPDependentEvaluation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-24T09:54:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9qo\u003d",
+      "revId": "c27ee5ca5c281c66df1583328c25c1b690efb08b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//9qk\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPDependentEvaluation.java",
         "patchSetId": 1
@@ -72,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//9PU\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPDependentEvaluation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-24T09:54:52Z",
+      "side": 1,
+      "message": "Done. Hope I didn\u0027t miss anything (IndexTests pass). IP stuff is on bugzilla.",
+      "parentUuid": "AABOPX//9Po\u003d",
+      "revId": "c27ee5ca5c281c66df1583328c25c1b690efb08b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//9qg\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPDependentEvaluation.java",
         "patchSetId": 1
@@ -83,6 +119,24 @@
       "writtenOn": "2013-02-22T03:42:13Z",
       "side": 1,
       "message": "We can probably use EvalFixed.INCOMPLETE or something similar.",
+      "revId": "c27ee5ca5c281c66df1583328c25c1b690efb08b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//9PY\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPDependentEvaluation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-24T09:54:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9qg\u003d",
       "revId": "c27ee5ca5c281c66df1583328c25c1b690efb08b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

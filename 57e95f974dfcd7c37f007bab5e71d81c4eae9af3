@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//8/k\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/IOption.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 419,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-25T19:58:14Z",
+      "side": 1,
+      "message": "You\u0027ve got some end-of-line whitespace it would be nice to clean up.",
+      "revId": "57e95f974dfcd7c37f007bab5e71d81c4eae9af3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8/g\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1465,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-25T19:58:14Z",
+      "side": 1,
+      "message": "More end-of-line whitespace.",
+      "revId": "57e95f974dfcd7c37f007bab5e71d81c4eae9af3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8/c\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1476,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-25T19:58:14Z",
+      "side": 1,
+      "message": "Since the two if-clauses are shared between getId and hasId, it would be better to factor them out into a private method, avoiding the duplication.",
+      "revId": "57e95f974dfcd7c37f007bab5e71d81c4eae9af3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

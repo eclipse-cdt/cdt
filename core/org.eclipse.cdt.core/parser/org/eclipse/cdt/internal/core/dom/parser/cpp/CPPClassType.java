@@ -117,10 +117,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	private ICPPClassType typeInIndex;
 
 	public CPPClassType(IASTName name, IBinding indexBinding) {
-		if (name instanceof ICPPASTQualifiedName) {
-			IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-			name = ns[ns.length - 1];
-		}
+		name = stripQualifier(name);
 		IASTNode parent = name.getParent();
 		while (parent instanceof IASTName)
 			parent = parent.getParent();
@@ -195,7 +192,8 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	@Override
 	public IScope getScope() {
 		IASTName name = definition != null ? definition : declarations[0];
-
+		name = stripQualifier(name);
+		
 		IScope scope = CPPVisitor.getContainingScope(name);
 		if (definition == null && name.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME) {
 			IASTNode node = declarations[0].getParent().getParent();
@@ -405,5 +403,13 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 			return typeSpecifier.isFinal();
 		}
 		return false;
+	}
+
+	private IASTName stripQualifier(IASTName name) {
+		if (name instanceof ICPPASTQualifiedName) {
+	        IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
+	        name = ns[ ns.length - 1 ];
+	    }
+		return name;
 	}
 }

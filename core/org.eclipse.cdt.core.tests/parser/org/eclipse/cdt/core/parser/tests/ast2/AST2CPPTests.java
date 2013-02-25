@@ -10195,4 +10195,70 @@ public class AST2CPPTests extends AST2TestBase {
 		long BSize = SizeofCalculator.getSizeAndAlignment(B, nameB).size;
 		assertEquals(pointerSize, BSize);
 	}
+
+	//  namespace NS {
+	//  class Enclosing {
+	//    class Inner {};
+	//  };
+	//  }
+	public void testNestedClassScopeInlineDefinition_401661() throws Exception {
+		String code = getAboveComment();
+		parseAndCheckBindings(code);
+
+		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+
+		ICPPClassType Enclosing = bh.assertNonProblem("Enclosing", 9);
+		ICPPClassType Inner = bh.assertNonProblem("Inner", 5);
+
+		assertEquals(Enclosing.getCompositeScope(), Inner.getScope());
+	}
+
+	//  namespace NS {
+	//  class Enclosing {
+	//    class Inner;
+	//  };
+	//  }
+	//  class NS::Enclosing::Inner{};
+	public void testNestedClassScopeSeparateDefinition_401661() throws Exception {
+		String code = getAboveComment();
+		parseAndCheckBindings(code);
+
+		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+
+		ICPPClassType Enclosing = bh.assertNonProblem("Enclosing", 9);
+		ICPPClassType Inner = bh.assertNonProblem("Inner;", 5);
+
+		assertEquals(Enclosing.getCompositeScope(), Inner.getScope());
+	}
+
+	//  namespace NS {
+	//  class Inner {};
+	//  }
+	public void testClassScopeInlineDefinition_401661() throws Exception {
+		String code = getAboveComment();
+		parseAndCheckBindings(code);
+
+		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+
+		ICPPNamespace NamespaceNS = bh.assertNonProblem("NS {", 2);
+		ICPPClassType Inner = bh.assertNonProblem("Inner", 5);
+
+		assertEquals(NamespaceNS.getNamespaceScope(), Inner.getScope());
+	}
+
+	//  namespace NS {
+	//  class Inner;
+	//  }
+	//  class NS::Inner{};
+	public void testClassScopeSeparateDefinition_401661() throws Exception {
+		String code = getAboveComment();
+		parseAndCheckBindings(code);
+
+		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+
+		ICPPNamespace NamespaceNS = bh.assertNonProblem("NS {", 2);
+		ICPPClassType Inner = bh.assertNonProblem("Inner;", 5);
+
+		assertEquals(NamespaceNS.getNamespaceScope(), Inner.getScope());
+	}
 }

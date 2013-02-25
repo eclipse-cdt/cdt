@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//8+I\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ITypeMarshalBuffer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T21:34:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9Co\u003d",
+      "revId": "e56d87208a0a7a7ce277330de72260b0c4138f56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//9Ck\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/CBasicType.java",
         "patchSetId": 4
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//8+E\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/CBasicType.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T21:34:59Z",
+      "side": 1,
+      "message": "Yes we can. I missed that.",
+      "parentUuid": "AABOPX//9Ck\u003d",
+      "revId": "e56d87208a0a7a7ce277330de72260b0c4138f56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//9Cg\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPBasicType.java",
         "patchSetId": 4
@@ -47,6 +83,24 @@
       "writtenOn": "2013-02-25T18:25:55Z",
       "side": 1,
       "message": "Can\u0027t we use ITypeMarshalBuffer.BASIC_TYPE | shiftedKind | ITypeMarshalBuffer.LAST_FLAG and not write kind separately?",
+      "revId": "e56d87208a0a7a7ce277330de72260b0c4138f56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8+A\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPBasicType.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T21:34:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9Cg\u003d",
       "revId": "e56d87208a0a7a7ce277330de72260b0c4138f56",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

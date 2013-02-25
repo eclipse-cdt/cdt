@@ -279,6 +279,11 @@ public class EvalBinding extends CPPDependentEvaluation {
 			value= ((IVariable) fBinding).getInitialValue();
 		} else if (fBinding instanceof IEnumerator) {
 			value= ((IEnumerator) fBinding).getValue();
+		} else if (fBinding instanceof IFunction) {
+			// If a function passed as a non-type template parameter is constexpr,
+			// it can be used inside the template as a constexpr function, so it's
+			// important to preserve the binding in the value.
+			value = Value.create(this);
 		}
 		if (value == null)
 			value = Value.UNKNOWN;
@@ -336,9 +341,11 @@ public class EvalBinding extends CPPDependentEvaluation {
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
 		IBinding origBinding = getBinding();
 		if (origBinding instanceof ICPPTemplateNonTypeParameter) {
-			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) origBinding, packOffset);
-			if (argument != null && argument.isNonTypeValue()) {
-				return argument.getNonTypeEvaluation();
+			if (tpMap != null) {
+				ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) origBinding, packOffset);
+				if (argument != null && argument.isNonTypeValue()) {
+					return argument.getNonTypeEvaluation();
+				}
 			}
 			// TODO(sprigogin): Do we need something similar for pack expansion?
 		} else if (origBinding instanceof ICPPParameter) {

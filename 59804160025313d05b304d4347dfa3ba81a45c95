@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//9MY\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ITypeMarshalBuffer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T07:54:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9NY\u003d",
+      "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//9NQ\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ITypeMarshalBuffer.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2013-02-25T05:05:24Z",
       "side": 1,
       "message": "Please capitalize the first character of the comment (can -\u003e Can).",
+      "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//9MU\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ITypeMarshalBuffer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T07:54:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9NQ\u003d",
       "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//9MM\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ITypeMarshalBuffer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T07:54:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9NU\u003d",
+      "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//9NM\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ITypeMarshalBuffer.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2013-02-25T05:05:24Z",
       "side": 1,
       "message": "Please capitalize the first character of the comment (can -\u003e Can).",
+      "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//9MQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ITypeMarshalBuffer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T07:54:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9NM\u003d",
       "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//9LY\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/CArrayType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T07:54:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9NA\u003d",
+      "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//9Mw\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/CBasicType.java",
         "patchSetId": 3
@@ -98,6 +188,24 @@
       "writtenOn": "2013-02-25T05:05:24Z",
       "side": 1,
       "message": "The check for shiftedKind \u003c ITypeMarshalBuffer.FLAG4 is not needed anymore since shiftedKind can be safely combined with ITypeMarshalBuffer.BASIC_TYPE into a short int.",
+      "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//9Lw\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/CBasicType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T07:54:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9Mw\u003d",
       "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//9L0\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/CFunctionType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T07:54:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9Ms\u003d",
+      "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//9M8\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPBasicType.java",
         "patchSetId": 3
@@ -132,6 +258,24 @@
       "writtenOn": "2013-02-25T05:05:24Z",
       "side": 1,
       "message": "The check for shiftedKind \u003c ITypeMarshalBuffer.FLAG4 is not needed anymore since shiftedKind can be safely combined with ITypeMarshalBuffer.BASIC_TYPE into a short int.",
+      "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//9Lk\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPBasicType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T07:54:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9M8\u003d",
       "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//9L4\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunctionType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T07:54:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9M4\u003d",
+      "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//9M0\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFixed.java",
         "patchSetId": 3
@@ -166,6 +328,24 @@
       "writtenOn": "2013-02-25T05:05:24Z",
       "side": 1,
       "message": "Makes sense to swap FLAG2 and FLAG3 since LVALUE is less common than PRVALUE.",
+      "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//9L8\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFixed.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T07:54:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9M0\u003d",
       "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//9MI\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/TypeMarshalBuffer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T07:54:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9Ng\u003d",
+      "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//9Nk\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/TypeMarshalBuffer.java",
         "patchSetId": 3
@@ -206,6 +404,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//9MA\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/TypeMarshalBuffer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T07:54:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9Nk\u003d",
+      "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//9Nc\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/PDOMLinkage.java",
         "patchSetId": 3
@@ -217,6 +433,24 @@
       "writtenOn": "2013-02-25T05:05:24Z",
       "side": 1,
       "message": "The case would not be necessary if INDIRECT_TYPE were defined as byte.",
+      "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//9ME\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/PDOMLinkage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 451,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-02-25T07:54:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//9Nc\u003d",
       "revId": "59804160025313d05b304d4347dfa3ba81a45c95",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -280,6 +280,8 @@ public class Value implements IValue {
 	}
 
 	public static IValue incrementedValue(IValue value, int increment) {
+		if (value == UNKNOWN)
+			return UNKNOWN;
 		Long val = value.numericalValue();
 		if (val != null) {
 			return create(val.longValue() + increment);

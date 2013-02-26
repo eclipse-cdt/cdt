@@ -535,6 +535,10 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 						return new CompositeCPPTypedefSpecialization(this, (ICPPBinding) binding);
 					} else if (binding instanceof ICPPUsingDeclaration) {
 						return new CompositeCPPUsingDeclarationSpecialization(this, (ICPPUsingDeclaration) binding);
+					} else if (binding instanceof ICPPEnumeration) {
+						return new CompositeCPPEnumerationSpecialization(this, (ICPPEnumeration) binding);
+					} else if (binding instanceof IEnumerator) {
+						return new CompositeCPPEnumeratorSpecialization(this, (IEnumerator) binding);
 					} else {
 						throw new CompositingNotImplementedError("Composite binding unavailable for " + binding + " " + binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 					}

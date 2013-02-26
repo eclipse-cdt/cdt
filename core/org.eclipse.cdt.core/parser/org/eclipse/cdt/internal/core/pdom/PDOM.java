@@ -89,6 +89,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacroReferenceName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.tag.PDOMTagIndex;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -231,10 +232,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  139.0 - More efficient and robust storage of types and template arguments, bug 395243.
 	 *  140.0 - Enumerators with dependent values, bug 389009.
 	 *  141.0 - Storing enclosing template bindings for evaluations, bug 399829
+	 *  141.1 - Mechanism for tagging nodes with extended data, bug TODO
 	 */
 	private static final int MIN_SUPPORTED_VERSION= version(141, 0);
 	private static final int MAX_SUPPORTED_VERSION= version(141, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(141, 0);
+	private static final int DEFAULT_VERSION = version(141, 1);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;
@@ -270,7 +272,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public static final int INDEX_OF_DEFECTIVE_FILES = Database.DATA_AREA + 8;
 	public static final int INDEX_OF_FILES_WITH_UNRESOLVED_INCLUDES = Database.DATA_AREA + 12;
 	public static final int PROPERTIES = Database.DATA_AREA + 16;
-	public static final int END= Database.DATA_AREA + 20;
+	public static final int TAG_INDEX = Database.DATA_AREA + 20;
+	public static final int END= Database.DATA_AREA + 24;
 	static {
 		assert END <= Database.CHUNK_SIZE;
 	}
@@ -332,6 +335,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	// Local caches
 	protected Database db;
 	private BTree fileIndex;
+	private PDOMTagIndex tagIndex;
 	private BTree indexOfDefectiveFiles;
 	private BTree indexOfFiledWithUnresolvedIncludes;
 	private final Map<Integer, PDOMLinkage> fLinkageIDCache = new HashMap<Integer, PDOMLinkage>();
@@ -458,6 +462,15 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (fileIndex == null)
 			fileIndex = new BTree(getDB(), FILE_INDEX, new PDOMFile.Comparator(getDB()));
 		return fileIndex;
+	}
+
+	public PDOMTagIndex getTagIndex() throws CoreException {
+		if (tagIndex == null)
+		{
+			// tag index can only be stored in database versions 141.1 or greater
+			tagIndex = new PDOMTagIndex( db.getVersion() >= version( 141, 1 ) ? db : null, TAG_INDEX );
+		}
+		return tagIndex;
 	}
 
 	/**
@@ -1358,6 +1371,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	private void clearCaches() {
 		fileIndex= null;
+		tagIndex = null;
 		indexOfDefectiveFiles= null;
 		indexOfFiledWithUnresolvedIncludes= null;
 		fLinkageIDCache.clear();

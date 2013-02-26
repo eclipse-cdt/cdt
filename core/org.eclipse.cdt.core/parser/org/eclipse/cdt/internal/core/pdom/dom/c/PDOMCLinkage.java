@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.internal.core.dom.ast.tag.TagManager;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -97,6 +98,11 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 				if (pdomBinding != null) {
 					getPDOM().putCachedResult(inputBinding, pdomBinding);
 				}
+
+				// Synchronize the tags associated with the persistent binding to match the set that is
+				// associated with the input binding.
+				TagManager.getInstance().syncTags( pdomBinding, inputBinding );
+
 				return pdomBinding;
 			}
 
@@ -104,7 +110,13 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		}
 		
 		if (shouldUpdate(pdomBinding, fromName)) {
-			pdomBinding.update(this, fromName.getBinding());
+			IBinding fromBinding = fromName.getBinding();
+
+			pdomBinding.update(this, fromBinding);
+
+			// Update the tags based on the tags from the new binding.  This was in PDOMBinding.update, but
+			// I found that not all subclasses (e.g., PDOMCPPFunction) call the parent implementation.
+			TagManager.getInstance().syncTags( pdomBinding, fromBinding );
 		}
 		return pdomBinding;
 	}

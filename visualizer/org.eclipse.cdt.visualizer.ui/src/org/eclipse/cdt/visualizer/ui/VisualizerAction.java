@@ -38,6 +38,11 @@ public class VisualizerAction extends Action
 	}
 	
 	/** Constructor. */
+	public VisualizerAction(String text, int style) {
+		super(text, style);
+	}
+
+	/** Constructor. */
 	public VisualizerAction(String text, String description) {
 		super(text);
 		setDescription(description);

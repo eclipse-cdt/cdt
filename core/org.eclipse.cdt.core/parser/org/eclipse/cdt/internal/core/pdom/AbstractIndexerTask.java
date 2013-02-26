@@ -41,7 +41,6 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -49,7 +48,6 @@ import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
-import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.index.FileContentKey;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
@@ -1006,9 +1004,6 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			IASTTranslationUnit ast= createAST(lang, codeReader, scanInfo, isSource, fASTOptions, ctx, pm);
 			fStatistics.fParsingTime += System.currentTimeMillis() - start;
 			if (ast != null) {
-				// Give the new AST-TU a chance to recognize its translation unit before it is written
-				// to the index.
-				( (ASTTranslationUnit)ast ).setOriginatingTranslationUnit( (ITranslationUnit)tu );
 				writeToIndex(lang.getLinkageID(), ast, codeReader, ctx, pm);
 			}
 		} catch (CoreException e) {

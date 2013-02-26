@@ -26,7 +26,6 @@ import java.util.ResourceBundle;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.cdtvariables.IUserVarSupplier;
 import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.dom.ast.tag.ITagService;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
@@ -51,7 +50,6 @@ import org.eclipse.cdt.internal.core.ICConsole;
 import org.eclipse.cdt.internal.core.PositionTrackerManager;
 import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
 import org.eclipse.cdt.internal.core.cdtvariables.UserVarSupplier;
-import org.eclipse.cdt.internal.core.dom.ast.tag.TagService;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsScannerInfoProvider;
 import org.eclipse.cdt.internal.core.model.CModelManager;
@@ -215,8 +213,6 @@ public class CCorePlugin extends Plugin {
 	private CoreModel fCoreModel;
 
 	private PDOMManager pdomManager;
-
-	private ITagService tagService = new TagService();
 
 	private CdtVarPathEntryVariableManager fPathEntryVariableManager;
 
@@ -715,13 +711,6 @@ public class CCorePlugin extends Plugin {
 
 	public static IIndexManager getIndexManager() {
 		return getDefault().pdomManager;
-	}
-
-	/**
-	 * @since 5.5
-	 */
-	public static ITagService getTagService() {
-		return getDefault().tagService;
 	}
 
 	public IPathEntryVariableManager getPathEntryVariableManager() {

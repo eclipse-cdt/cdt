@@ -38,9 +38,7 @@ public class PDOMTests extends TestSuite {
 		suite.addTest(OverloadsWithinSingleTUTests.suite());
 		suite.addTest(OverloadsWithinCommonHeaderTests.suite());
 		suite.addTest(BTreeTests.suite());
-		suite.addTest(PDOMStringSetTests.suite());
-		suite.addTest(PDOMTagIndexTests.suite());
-		suite.addTest(FilesOnReindexTests.suite());
+		suite.addTest(FilesOnReindexTests.suite());		
 		suite.addTest(GeneratePDOMApplicationTest.suite());
 
 		suite.addTest(CPPFieldTests.suite());

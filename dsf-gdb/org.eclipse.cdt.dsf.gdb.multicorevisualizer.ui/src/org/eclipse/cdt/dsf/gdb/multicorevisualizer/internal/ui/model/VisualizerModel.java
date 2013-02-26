@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Initial API and implementation (Bug 396268)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
@@ -43,6 +44,8 @@ public class VisualizerModel
 	// and a way to for the user to clean up old threads,
 	// or maybe a timeout to remove them.
 	private boolean m_keepExitedThreads = false;
+	
+	protected boolean m_loadMetersEnabled = false;
 	
 	// --- constructors/destructors ---
 	
@@ -84,6 +87,14 @@ public class VisualizerModel
 	/** Gets completion state tracker. */
 	public Todo getTodo() {
 		return m_todo;
+	}
+	
+	public void setLoadMetersEnabled (boolean enable) {
+		m_loadMetersEnabled = enable;
+	}
+	
+	public boolean getLoadMetersEnabled () {
+		return m_loadMetersEnabled;
 	}
 	
 	// --- methods ---

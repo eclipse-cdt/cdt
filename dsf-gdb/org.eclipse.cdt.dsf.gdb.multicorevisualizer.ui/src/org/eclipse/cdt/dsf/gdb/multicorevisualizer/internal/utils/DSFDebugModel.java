@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils;
@@ -14,9 +15,11 @@ package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateCountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
@@ -34,8 +37,12 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICPUDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICoreDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.IHardwareTargetDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.ILoadInfo;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
+import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.visualizer.ui.util.Timer;
 
 
 /** Debugger state information accessors.
@@ -79,6 +86,33 @@ public class DSFDebugModel {
 				}
 			}
 		);
+	}
+	
+	/** Request load information for a single CPU or core
+	 * @since 1.1*/
+	@ConfinedToDsfExecutor("getSession().getExecutor()")
+	public static void getLoad(DSFSessionState sessionState,
+			final IDMContext context,
+			final DSFDebugModelListener listener,
+			final Object arg,
+			final RequestMonitor rm)
+	{
+		IGDBHardwareAndOS2 hwService = sessionState.getService(IGDBHardwareAndOS2.class);
+		if (hwService == null) {
+			listener.getLoadDone(context, null, arg);
+			rm.done();
+			return;
+		}
+		
+		hwService.getLoadInfo(context,
+				new ImmediateDataRequestMonitor<ILoadInfo>(rm) {
+					@Override
+					protected void handleCompleted() {
+						listener.getLoadDone(context, getData(), arg);
+						rm.done();
+					}
+				}
+			);
 	}
 	
 	/** Requests list of Cores.
@@ -336,5 +370,37 @@ public class DSFDebugModel {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Creates and returns a timer that refreshes the load meters
+	 * @since 1.1
+	 */
+	public static Timer getLoadTimer(final DSFSessionState sessionState,
+									 final int timeout,
+									 final DSFDebugModelListener listener) 
+	{
+		
+		Timer t = new Timer(timeout) {
+			@Override
+			public void run() {
+				if (sessionState != null) {
+					DsfSession session = DsfSession.getSession(sessionState.getSessionID());
+					if (session != null) {
+						DsfExecutor executor = session.getExecutor();
+						if (executor != null) {
+							executor.execute(new Runnable() {
+								@Override
+								public void run() {
+									listener.updateLoads();
+								}
+							});
+						}
+					}
+				}
+			}
+		};
+		
+		return t;
 	}
 }

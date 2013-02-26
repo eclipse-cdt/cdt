@@ -1,0 +1,531 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//8wA\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMStringSetTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Please follow the standard Eclipse style:\n1. Opening braces on the same line\n2. No spaces after opening and before closing parentheses.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8vs\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMTagIndexTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "A space is required after ) in casts.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8vw\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMTagIndexTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Space required between \u0027while\u0027 and the opening parenthesis. There should be no space after !. Use {} instead of ; to make boundaries of the loop easier to spot.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8vk\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMTagIndexTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "A space if required between \u0027for\u0027 and (",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8vY\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/tag/IBindingTagger.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Method Javadocs must use a descriptive form of verb (Examine -\u003e Examines, Return -\u003e Returns)",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8vU\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/tag/ITag.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Constants have to be in ALL CAPITAL case.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8vQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/tag/ITag.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Why not an exception on failure?",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8vE\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/tag/ITagReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Add a list of contributors. This applies to all new files.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8vM\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/tag/ITagReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Unnecessary blank line. This applies to all similarly formatted files.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8vA\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/tag/ITagReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Excessive blank lines.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8uU\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/ast/tag/TagManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Make sure that this method returns immediately if taggers map is empty.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8uQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/ast/tag/TaggerDescriptor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Constants should be in ALL UPPER case.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8wk\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "A bug number, please.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8u4\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "This change is not compatible and requires increment of the major PDOM version.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8uk\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Why not simply increment the major PDOM version. This will happen pretty soon anyway.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8ug\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMStringSet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Why not serialize the whole set and store it as a single entity? This would be more efficient for small sets.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8uc\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMStringSet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Explain what is being mapped to what.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8uY\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/PDOMBinding.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Use isAssignableFrom",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8uM\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/tag/BTreeIterable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Normalize formatting. Same for other try-catch statements.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8tw\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/tag/PDOMTag.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Add javadoc. If this class represents a database record, follow the standard pattern for such classes.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8t0\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/tag/PDOMTag.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Is \u0027new String()\u0027 needed, or \"\" would do?",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8uI\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/tag/PDOMTag.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "\u0027catch\u0027 should be on the same line with }. There should be a space between \u0027catch\u0027 and (.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8uE\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/tag/PDOMTag.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Space is required between \u0027if\u0027 and (",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8ts\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/tag/PDOMTagIndex.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Continuation lines have to be indented by 8.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8tk\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/tag/PDOMTagIndex.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Curly braces are required if the condition is on multiple lines. Same in other places.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8tg\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/tag/PDOMTagIndex.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "L is an overkill/",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8tc\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/tag/PDOMTagIndex.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Why Long and not long?",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8tY\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/tag/PDOMTagSynchronizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Add Javadoc.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8tU\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/tag/PDOMTagSynchronizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Curly braces are required if \u0027else\u0027 clause is present.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8tQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/tag/PDOMTagSynchronizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "\u0027else\u0027 has to be on the same line with }",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8tM\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/tag/PDOMTaggable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-26T18:06:29Z",
+      "side": 1,
+      "message": "Add javadoc.",
+      "revId": "ad8f2a6b99cb221d0320e67126b98805cb547719",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -89,6 +89,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacroReferenceName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.tag.PDOMTagIndex;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -208,7 +209,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  113.0 - Changed marshaling of values, bug 327878
 	 *  #114.0# - Partial specializations for class template specializations, bug 332884.
 	 *          - Corrected signatures for function templates, bug 335062.  <<CDT 8.0>>
-	 *  
+	 *
 	 *  CDT 8.1 development (versions not supported on the 8.0.x branch)
 	 *  120.0 - Enumerators in global index, bug 356235
 	 *  120.1 - Specializations of using declarations, bug 357293.
@@ -217,7 +218,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  123.0 - Combined file size and encoding hash code.
 	 *  124.0 - GCC attributes and NO_RETURN flag for functions.
 	 *  #125.0# - Indexes for unresolved includes and files indexed with I/O errors. <<CDT 8.1>>
-	 *  
+	 *
 	 *  CDT 8.2 development (versions not supported on the 8.1.x branch)
 	 *  130.0 - Dependent expressions, bug 299911.
 	 *  131.0 - Dependent expressions part 2, bug 299911.
@@ -230,6 +231,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  138.0 - Constexpr functions, bug 395238.
 	 *  139.0 - More efficient and robust storage of types and template arguments, bug 395243.
 	 *  140.0 - Enumerators with dependent values, bug 389009.
+	 *  140.1 - Mechanism for tagging nodes with extended data, bug 400020
 	 *  141.0 - Storing enclosing template bindings for evaluations, bug 399829
 	 */
 	private static final int MIN_SUPPORTED_VERSION= version(141, 0);
@@ -270,7 +272,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public static final int INDEX_OF_DEFECTIVE_FILES = Database.DATA_AREA + 8;
 	public static final int INDEX_OF_FILES_WITH_UNRESOLVED_INCLUDES = Database.DATA_AREA + 12;
 	public static final int PROPERTIES = Database.DATA_AREA + 16;
-	public static final int END= Database.DATA_AREA + 20;
+	public static final int TAG_INDEX = Database.DATA_AREA + 20;
+	public static final int END= Database.DATA_AREA + 24;
 	static {
 		assert END <= Database.CHUNK_SIZE;
 	}
@@ -332,6 +335,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	// Local caches
 	protected Database db;
 	private BTree fileIndex;
+	private PDOMTagIndex tagIndex;
 	private BTree indexOfDefectiveFiles;
 	private BTree indexOfFiledWithUnresolvedIncludes;
 	private final Map<Integer, PDOMLinkage> fLinkageIDCache = new HashMap<Integer, PDOMLinkage>();
@@ -460,6 +464,15 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return fileIndex;
 	}
 
+	public PDOMTagIndex getTagIndex() throws CoreException {
+		if (tagIndex == null)
+		{
+			// tag index can only be stored in database versions 139.1 or greater
+			tagIndex = new PDOMTagIndex( db.getVersion() >= version( 139, 1 ) ? db : null, TAG_INDEX );
+		}
+		return tagIndex;
+	}
+
 	/**
 	 * Returns the index of files that were read with I/O errors.
 	 */
@@ -549,7 +562,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		});
 		return files.toArray(new IIndexFragmentFile[files.size()]);
 	}
-		
+
 	protected IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location,
 			ISignificantMacros sigMacros) throws CoreException {
 		PDOMLinkage linkage= createLinkage(linkageID);
@@ -1358,6 +1371,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	private void clearCaches() {
 		fileIndex= null;
+		tagIndex = null;
 		indexOfDefectiveFiles= null;
 		indexOfFiledWithUnresolvedIncludes= null;
 		fLinkageIDCache.clear();

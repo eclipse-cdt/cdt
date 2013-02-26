@@ -156,7 +156,7 @@ public class QtCompletionProposalComputer extends ParsingBasedProposalComputer
                         return false;
 
                     int result = tag.getByte( 0 );
-                    return result != ITag.Fail
+                    return result != ITag.FAIL
                         && ( ( result & QtPlugin.SignalSlot_Mask_signal ) == QtPlugin.SignalSlot_Mask_signal );
                 }
             };
@@ -175,7 +175,7 @@ public class QtCompletionProposalComputer extends ParsingBasedProposalComputer
                         return false;
 
                     int result = tag.getByte( 0 );
-                    return result != ITag.Fail
+                    return result != ITag.FAIL
                         && ( ( result & QtPlugin.SignalSlot_Mask_slot ) == QtPlugin.SignalSlot_Mask_slot );
                 }
             };

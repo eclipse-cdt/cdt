@@ -44,6 +44,8 @@ public class VisualizerModel
 	// or maybe a timeout to remove them.
 	private boolean m_keepExitedThreads = false;
 	
+	protected boolean m_loadMetersEnabled = false;
+	
 	// --- constructors/destructors ---
 	
 	/** Constructor */
@@ -84,6 +86,14 @@ public class VisualizerModel
 	/** Gets completion state tracker. */
 	public Todo getTodo() {
 		return m_todo;
+	}
+	
+	public void setLoadMetersEnabled (boolean enable) {
+		m_loadMetersEnabled = enable;
+	}
+	
+	public boolean getLoadMetersEnabled () {
+		return m_loadMetersEnabled;
 	}
 	
 	// --- methods ---

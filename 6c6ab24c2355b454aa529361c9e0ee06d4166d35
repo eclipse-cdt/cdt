@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//8kg\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/AbstractIndexerTask.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1011,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-27T02:28:18Z",
+      "side": 1,
+      "message": "Invalid formatting.",
+      "revId": "6c6ab24c2355b454aa529361c9e0ee06d4166d35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8kU\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 469,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-27T02:28:18Z",
+      "side": 1,
+      "message": "Opening brace in a wrong place.",
+      "revId": "6c6ab24c2355b454aa529361c9e0ee06d4166d35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8kY\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-27T02:28:18Z",
+      "side": 1,
+      "message": "Invalid version number. Extra spaces.",
+      "revId": "6c6ab24c2355b454aa529361c9e0ee06d4166d35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//8kc\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPLinkage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-27T02:28:18Z",
+      "side": 1,
+      "message": "Remove spaces after ( and before ).",
+      "revId": "6c6ab24c2355b454aa529361c9e0ee06d4166d35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

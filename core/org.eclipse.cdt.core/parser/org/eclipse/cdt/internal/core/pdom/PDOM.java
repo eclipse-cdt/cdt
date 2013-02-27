@@ -467,8 +467,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	public PDOMTagIndex getTagIndex() throws CoreException {
 		if (tagIndex == null) {
-			// tag index can only be stored in database versions 140.1 or greater
-			tagIndex = new PDOMTagIndex(db.getVersion() >= version(140, 1) ? db : null, TAG_INDEX);
+			tagIndex = new PDOMTagIndex(db, TAG_INDEX);
 		}
 		return tagIndex;
 	}
@@ -483,7 +482,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	/**
-	 * Returns the index of files containg unresolved includes.
+	 * Returns the index of files containing unresolved includes.
 	 */
 	public BTree getIndexOfFilesWithUnresolvedIncludes() throws CoreException {
 		if (indexOfFiledWithUnresolvedIncludes == null) {

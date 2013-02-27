@@ -99,9 +99,9 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 					getPDOM().putCachedResult(inputBinding, pdomBinding);
 				}
 
-				// Synchronize the tags associated with the persistent binding to match the set that is
-				// associated with the input binding.
-				TagManager.getInstance().syncTags( pdomBinding, inputBinding );
+				// Synchronize the tags associated with the persistent binding to match the set that
+				// is associated with the input binding.
+				TagManager.getInstance().syncTags(pdomBinding, inputBinding);
 
 				return pdomBinding;
 			}
@@ -114,9 +114,10 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 
 			pdomBinding.update(this, fromBinding);
 
-			// Update the tags based on the tags from the new binding.  This was in PDOMBinding.update, but
-			// I found that not all subclasses (e.g., PDOMCPPFunction) call the parent implementation.
-			TagManager.getInstance().syncTags( pdomBinding, fromBinding );
+			// Update the tags based on the tags from the new binding.  This cannot be done in
+			// PDOMBinding.update, because not all subclasses (e.g., PDOMCPPFunction) call
+			// the superclass implementation.
+			TagManager.getInstance().syncTags(pdomBinding, fromBinding);
 		}
 		return pdomBinding;
 	}

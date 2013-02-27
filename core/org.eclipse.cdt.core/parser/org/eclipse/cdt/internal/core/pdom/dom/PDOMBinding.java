@@ -69,13 +69,14 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		if (adapter.isAssignableFrom(PDOMBinding.class))
 			return this;
 
-		// Any PDOMBinding can have a persistent tag.  These tags should be deleted when the PDOMBinding
-		// is deleted.  However, PDOMBinding's don't get deleted, so there is no way to trigger deleting
-		// of the tags.  If the implementation is changed so that PDOMBindings do get deleted, then call:
-		//		PDOMTagIndex.setTags( getPDOM(), pdomBinding.record, Collections.<ITag>emptyList() );
+		// Any PDOMBinding can have a persistent tag.  These tags should be deleted when
+		// the PDOMBinding is deleted.  However, PDOMBinding's don't get deleted, so there is no way
+		// to trigger deleting of the tags.  If the implementation is changed so that PDOMBindings
+		// do get deleted, then it should call:
+		// PDOMTagIndex.setTags(getPDOM(), pdomBinding.record, Collections.<ITag>emptyList());
 		// to clear out all tags for the binding.
 		if (adapter.isAssignableFrom(ITagReader.class))
-			return new PDOMTaggable( getPDOM(), getRecord() );
+			return new PDOMTaggable(getPDOM(), getRecord());
 
 		return null;
 	}

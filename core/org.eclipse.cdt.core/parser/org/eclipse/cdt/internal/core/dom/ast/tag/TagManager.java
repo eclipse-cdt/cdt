@@ -8,7 +8,6 @@
  * Contributors:
  *     Andrew Eidsness - Initial implementation
  */
-
 package org.eclipse.cdt.internal.core.dom.ast.tag;
 
 import java.util.HashMap;
@@ -29,6 +28,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
 public class TagManager {
+	private static final String EXTENSION_POINT = "tagger"; //$NON-NLS-1$
 	private static TagManager INSTANCE;
 
 	private Map<String, TaggerDescriptor> taggers;
@@ -43,14 +43,12 @@ public class TagManager {
 		taggers = loadExtensions();
 	}
 
-	private static final String ExtensionPoint = "tagger"; //$NON-NLS-1$
-
 	private static Map<String, TaggerDescriptor> loadExtensions() {
 		Map<String, TaggerDescriptor> taggers = new HashMap<String, TaggerDescriptor>();
 
-		// load the extensions
+		// Load the extensions
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(CCorePlugin.PLUGIN_ID, ExtensionPoint);
+				.getConfigurationElementsFor(CCorePlugin.PLUGIN_ID, EXTENSION_POINT);
 		for (IConfigurationElement element : elements) {
 			TaggerDescriptor desc = new TaggerDescriptor(element);
 			taggers.put(desc.getId(), desc);
@@ -60,8 +58,8 @@ public class TagManager {
 	}
 
 	/**
-	 * Provide an opportunity for the specified tagger to process the given values. The tagger will only run
-	 * if its enablement expression returns true for the arguments.
+	 * Provides an opportunity for the specified tagger to process the given values. The tagger will
+	 * only run if its enablement expression returns true for the arguments.
 	 */
 	public ITag process(String taggerId, ITagWriter tagWriter, IBinding binding, IASTName ast) {
 		TaggerDescriptor desc = taggers.get(taggerId);
@@ -72,7 +70,7 @@ public class TagManager {
 		return tagger == null ? null : tagger.process(tagWriter, binding, ast);
 	}
 
-	/** Provide an opportunity for all enabled taggers to process the given values. */
+	/** Provides an opportunity for all enabled taggers to process the given values. */
 	public Iterable<ITag> process(ITagWriter tagWriter, IBinding binding, IASTName ast) {
 		List<ITag> tags = new LinkedList<ITag>();
 		for (TaggerDescriptor desc : taggers.values()) {
@@ -87,7 +85,7 @@ public class TagManager {
 		return tags;
 	}
 
-	/** Add or remove tags from the destination to ensure that it has the same tag information as the source. */
+	/** Adds or removes tags from the destination to ensure that it has the same tag information as the source. */
 	public void syncTags(IPDOMBinding dst, IBinding src) {
 		// don't try to copy any tags when there are no contributors to this extension point
 		if (dst == null || taggers.isEmpty())

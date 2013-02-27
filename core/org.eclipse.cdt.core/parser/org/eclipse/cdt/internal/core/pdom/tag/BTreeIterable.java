@@ -8,7 +8,6 @@
  * Contributors:
  *     Andrew Eidsness - Initial implementation
  */
-
 package org.eclipse.cdt.internal.core.pdom.tag;
 
 import java.util.Collections;

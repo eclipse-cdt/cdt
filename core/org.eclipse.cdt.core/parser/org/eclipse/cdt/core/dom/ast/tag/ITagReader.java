@@ -8,7 +8,6 @@
  * Contributors:
  *     Andrew Eidsness - Initial implementation
  */
-
 package org.eclipse.cdt.core.dom.ast.tag;
 
 /**
@@ -20,16 +19,17 @@ package org.eclipse.cdt.core.dom.ast.tag;
  */
 public interface ITagReader {
 	/**
-	 * Look for a tag for the receiver, returns null if there is no such tag.
+	 * Looks for a tag for the receiver, returns null if there is no such tag.
 	 *
 	 * @param id
-	 *            A string that uniquely identifies the tag to be returned. This value was provided by the
-	 *            contributor when the tag was created (see {@link ITagWriter#createTag(String, int)}).
+	 *            A string that uniquely identifies the tag to be returned. This value was provided
+	 *            by the contributor when the tag was created
+	 *            (see {@link ITagWriter#createTag(String, int)}).
 	 */
 	public ITag getTag(String id);
 
 	/**
-	 * Return all tags known to the receiver. Does not return null.
+	 * Returns all tags known to the receiver. Does not return null.
 	 */
 	public Iterable<ITag> getTags();
 }

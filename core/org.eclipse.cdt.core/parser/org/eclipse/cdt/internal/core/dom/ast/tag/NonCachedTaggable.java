@@ -8,7 +8,6 @@
  * Contributors:
  *     Andrew Eidsness - Initial implementation
  */
-
 package org.eclipse.cdt.internal.core.dom.ast.tag;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -47,7 +46,7 @@ public class NonCachedTaggable implements ITagReader, ITagWriter {
 
 	@Override
 	public boolean setTags(Iterable<ITag> tags) {
-		// this non-caching implementation has nothing to set, the tags will be regenerated
+		// This non-caching implementation has nothing to set, the tags will be regenerated
 		// when they are queried
 		return true;
 	}

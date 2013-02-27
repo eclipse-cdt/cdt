@@ -8,7 +8,6 @@
  * Contributors:
  *     Andrew Eidsness - Initial implementation
  */
-
 package org.eclipse.cdt.internal.core.dom.ast.tag;
 
 import org.eclipse.cdt.core.dom.ast.tag.ITag;

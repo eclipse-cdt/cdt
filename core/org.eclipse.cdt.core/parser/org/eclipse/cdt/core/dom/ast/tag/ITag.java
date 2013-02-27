@@ -8,13 +8,13 @@
  * Contributors:
  *     Andrew Eidsness - Initial implementation
  */
-
 package org.eclipse.cdt.core.dom.ast.tag;
 
 /**
- * Tags are used to annotate {@link ITagReader}'s with extra information. They are created by implementations
- * of {@link IBindingTagger} which are contributed using the org.eclipse.cdt.core.tagger extension point. The
- * base tag interface is read-only, it is extended by the writable {@link IWritableTag}.
+ * Tags are used to annotate {@link ITagReader}'s with extra information. They are created by
+ * implementations of {@link IBindingTagger} which are contributed using
+ * the org.eclipse.cdt.core.tagger extension point. The base tag interface is read-only, it is
+ * extended by the writable {@link IWritableTag}.
  *
  * @see IBindingTagger
  * @see ITagReader
@@ -25,20 +25,21 @@ public interface ITag {
 	/** A constant that is returned to indicate a read failure. */
 	public static final int FAIL = -1;
 
-	/** Return the number of bytes in the tag's data payload. */
+	/** Returns the number of bytes in the tag's data payload. */
 	public int getDataLen();
 
-	/** Return the globally unique id of the tagger that created the receiver. */
+	/** Returns the globally unique id of the tagger that created the receiver. */
 	public String getTaggerId();
 
-	/** Return the byte from the specified offset or {@link #FAIL} on failure. */
+	/** Returns the byte from the specified offset or {@link #FAIL} on failure. */
 	public int getByte(int offset);
 
 	/**
-	 * Return the specified number of bytes from the specified offset. Specify len of -1 to read all bytes
-	 * from the specified offset to the end of the payload. Return null if the given range is not valid. This
-	 * would be expected if the version of the contributor has changed in a way that changes the structure of
-	 * the data that it stores. Contributors must be able to deal with that case.
+	 * Returns the specified number of bytes from the specified offset. Specify {@code len} of -1
+	 * to read all bytes from the specified offset to the end of the payload. Returns null if
+	 * the given range is not valid. This would be expected if the version of the contributor has
+	 * changed in a way that changes the structure of the data that it stores. Contributors must be
+	 * able to deal with that case.
 	 */
 	public byte[] getBytes(int offset, int len);
 }

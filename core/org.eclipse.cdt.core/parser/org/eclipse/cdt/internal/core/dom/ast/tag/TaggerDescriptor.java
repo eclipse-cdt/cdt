@@ -8,7 +8,6 @@
  * Contributors:
  *     Andrew Eidsness - Initial implementation
  */
-
 package org.eclipse.cdt.internal.core.dom.ast.tag;
 
 import java.util.Arrays;
@@ -33,9 +32,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
- * Internal container for extensions of org.eclipse.cdt.core.tagger. The implementation of the tagger is
- * instantiated only after checking the enablement expression (if present) for the specified binding. This
- * avoids activating the contributing plugin until it is actually needed.
+ * Internal container for extensions of org.eclipse.cdt.core.tagger. The implementation of
+ * the tagger is instantiated only after checking the enablement expression (if present) for
+ * the specified binding. This avoids activating the contributing plugin until it is actually
+ * needed.
  */
 public class TaggerDescriptor {
 	private static final String Attr_LocalId = "local-id"; //$NON-NLS-1$
@@ -52,10 +52,10 @@ public class TaggerDescriptor {
 	private static final String VAR_LANGUAGEID = "languageId"; //$NON-NLS-1$
 
 	/**
-	 * An empty implementation of the tagger used as a placeholder in descriptors that are unable to load the
-	 * contributed class.
+	 * An empty implementation of the tagger used as a placeholder in descriptors that are unable
+	 * to load the contributed class.
 	 */
-	private static final IBindingTagger NullTagger = new IBindingTagger() {
+	private static final IBindingTagger NULL_TAGGER = new IBindingTagger() {
 		@Override
 		public ITag process(ITagWriter tagWriter, IBinding binding, IASTName ast) {
 			return null;
@@ -97,8 +97,8 @@ public class TaggerDescriptor {
 		// there must be a valid local id
 		if (localId == null) {
 			String extId = element.getDeclaringExtension().getSimpleIdentifier();
-			CCorePlugin
-					.log("Invalid extension " + globalId + '.' + extId + " must provide tagger's local-id"); //$NON-NLS-1$ //$NON-NLS-2$
+			CCorePlugin.log("Invalid extension " + globalId + '.' + extId //$NON-NLS-1$
+					+ " must provide tagger's local-id"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -109,8 +109,8 @@ public class TaggerDescriptor {
 		// make sure the local id has real content
 		if (localId.isEmpty()) {
 			String extId = element.getDeclaringExtension().getSimpleIdentifier();
-			CCorePlugin
-					.log("Invalid extension " + globalId + '.' + extId + " must provide value for tagger's local-id"); //$NON-NLS-1$ //$NON-NLS-2$
+			CCorePlugin.log("Invalid extension " + globalId + '.' + extId //$NON-NLS-1$
+					+ " must provide value for tagger's local-id"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -121,12 +121,12 @@ public class TaggerDescriptor {
 	}
 
 	private boolean matches(ITranslationUnit tu) {
-		// if the enablement expression is missing or structurally invalid, then return immediately
+		// If the enablement expression is missing or structurally invalid, then return immediately
 		if (fStatus != null)
 			return fStatus.booleanValue();
 
-		// if there is no tu, then the enablement expression cannot be evaluated, assume that all taggers
-		// are needed
+		// If there is no tu, then the enablement expression cannot be evaluated, assume that all
+		// taggers are needed
 		if (tu == null)
 			return true;
 
@@ -171,7 +171,7 @@ public class TaggerDescriptor {
 						CCorePlugin.log("Error in class attribute of " + id, e); //$NON-NLS-1$
 
 						// mark the tagger with an empty implementation to prevent future load attempts
-						tagger = NullTagger;
+						tagger = NULL_TAGGER;
 					}
 				}
 			}

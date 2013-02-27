@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@
  * Noriaki Takatsu  (IBM) - [283656] [dstore][multithread] Serviceability issue
  * Noriaki Takatsu  (IBM) - [289234][multithread][api] Reset and Restart KeepAliveRequestThread
  * David McKnight   (IBM) - [385793] [dstore] DataStore spirit mechanism and other memory improvements needed
+ * David McKnight   (IBM) - [400749] [dstore] Remove the use of Standard.out from ServerReceiver#handleError
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -130,16 +131,16 @@ public class ServerReceiver extends Receiver
 		if (_dataStore.getClient() != null) {
 			_dataStore.getClient().getLogger().logError(this.getClass().toString(), e.toString(), e);
 		}
-		System.out.println("RECEIVER ERROR"); //$NON-NLS-1$
-		e.printStackTrace();
-		System.out.println(e);
+		
+		_dataStore.trace("Server Receiver Error"); //$NON-NLS-1$
+		_dataStore.trace(e);
+
 		_connection.finished(this);
 		try
 	    {
 	    	socket().close();
 	    }
 	    catch (IOException IOe){
-	    	System.out.println(IOe);
 	    }
 	}
 }

@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.parser.tests.rewrite.TestSourceFile;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 
 /**
  * This test tests the behavior of the class ASTCommenter. It checks if the ASTCommenter assigns
@@ -158,15 +159,17 @@ public class CommentHandlingTest extends RewriteBaseTest {
 		return output.toString().trim();
 	}
 
-	private String getSignature(IASTNode actNode) {
-		if (actNode instanceof IASTCompositeTypeSpecifier) {
-			IASTCompositeTypeSpecifier comp = (IASTCompositeTypeSpecifier) actNode;
+	private String getSignature(IASTNode node) {
+		if (node instanceof IASTCompositeTypeSpecifier) {
+			IASTCompositeTypeSpecifier comp = (IASTCompositeTypeSpecifier) node;
 			return comp.getName().toString();
-		} else if (actNode instanceof IASTEnumerationSpecifier) {
-			IASTEnumerationSpecifier comp = (IASTEnumerationSpecifier) actNode;
+		} else if (node instanceof IASTEnumerationSpecifier) {
+			IASTEnumerationSpecifier comp = (IASTEnumerationSpecifier) node;
 			return comp.getName().toString();
+		} else if (node instanceof IASTTranslationUnit) {
+			return Path.fromOSString(node.getFileLocation().getFileName()).lastSegment();
 		}
-		return actNode.getRawSignature();
+		return node.getRawSignature();
 	}
 
 	private static String getSeparatingRegexp() {

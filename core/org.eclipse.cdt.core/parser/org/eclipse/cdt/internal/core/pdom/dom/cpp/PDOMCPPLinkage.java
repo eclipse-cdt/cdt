@@ -378,7 +378,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 			// Update the tags based on the tags from the new binding.  This was in PDOMBinding.update, but
 			// I found that not all subclasses (e.g., PDOMCPPFunction) call the parent implementation.
-			TagManager.getInstance().syncTags( pdomBinding, fromBinding );
+			TagManager.getInstance().syncTags(pdomBinding, fromBinding);
 		}
 
 		return pdomBinding;

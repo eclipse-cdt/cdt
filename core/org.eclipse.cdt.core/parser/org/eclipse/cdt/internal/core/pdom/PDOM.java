@@ -465,10 +465,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public PDOMTagIndex getTagIndex() throws CoreException {
-		if (tagIndex == null)
-		{
-			// tag index can only be stored in database versions 139.1 or greater
-			tagIndex = new PDOMTagIndex( db.getVersion() >= version( 139, 1 ) ? db : null, TAG_INDEX );
+		if (tagIndex == null) {
+			// tag index can only be stored in database versions 140.1 or greater
+			tagIndex = new PDOMTagIndex(db.getVersion() >= version(140, 1) ? db : null, TAG_INDEX);
 		}
 		return tagIndex;
 	}

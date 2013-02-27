@@ -1008,7 +1008,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			if (ast != null) {
 				// Give the new AST-TU a chance to recognize its translation unit before it is written
 				// to the index.
-				( (ASTTranslationUnit)ast ).setOriginatingTranslationUnit( (ITranslationUnit)tu );
+				((ASTTranslationUnit)ast).setOriginatingTranslationUnit((ITranslationUnit)tu);
 				writeToIndex(lang.getLinkageID(), ast, codeReader, ctx, pm);
 			}
 		} catch (CoreException e) {

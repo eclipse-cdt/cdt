@@ -402,18 +402,6 @@ public class Value implements IValue {
 	public static boolean isDependentValue(IValue nonTypeValue) {
 		if (nonTypeValue == null)
 			return false;
-		// Unknown values may or may not be dependent. In the case of a template with
-		// a non-type template argument, whether or not the argument's value is dependent
-		// determines whether or not the template gets instantiated. In light of this, 
-		// it's safer to assume that an unknown value is dependent because:
-		//  1. Instantiating a template with a non-type template argument whose value is
-		//     unknown is useless.
-		//  2. Instantiating such a template can lead to an infinite recursion of
-		//     instantiations (e.g. consider a template A<N> that delegates to A<N - 1>,
-		//     with A<0> being specialized to end the recursion - if N is unknown,
-		//     N - 1 will be unknown as well, and we get an infinite recursion). 
-		if (nonTypeValue == UNKNOWN)
-			return true;
 		ICPPEvaluation eval = nonTypeValue.getEvaluation();
 		return eval != null && eval.isValueDependent();
 	}

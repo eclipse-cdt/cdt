@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//8DU\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1060,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-28T18:48:39Z",
+      "side": 0,
+      "message": "Note the additional copy of the appliciableValuesList check here -- it\u0027d require more creativity to reuse this one (i.e. making another private method) but it might be worth doing...",
+      "revId": "52c0edd492391f725d3cf5f6da113dd7924688fe",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

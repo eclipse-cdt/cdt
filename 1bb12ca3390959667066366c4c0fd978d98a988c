@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//8FM\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1349,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-28T18:48:39Z",
+      "side": 1,
+      "message": "Sorry to keep bugging you about this, but I was thinking you would include this check in the shared function, as it is repeated (except for the call to the superClass function) among them.\n\nIt\u0027s trickier, but you could do something like this:\n\n\tprivate enum SuperEnum { SUCCESS, FAIL, LOOK_IN_SUPER }\n\t\n\tprivate SuperEnum checkEnumOrTree(String v) throws BuildException {\n\t\t// Sanity\n\t\tif (id \u003d\u003d null) return SuperEnum.FAIL;\n\n\t\t// Does this option instance have the list of values?\n\t\tif (applicableValuesList \u003d\u003d null) {\n\t\t\tif (superClass !\u003d null) {\n\t\t\t\treturn SuperEnum.LOOK_IN_SUPER;\n\t\t\t} else {\n\t\t\t\treturn SuperEnum.FAIL;\n\t\t\t}\n\t\t}\n\t\tif (getValueType() !\u003d ENUMERATED \u0026\u0026 getValueType() !\u003d  TREE) {\n\t\t\tthrow new BuildException(ManagedMakeMessages.getResourceString\n\t\t\t\t\t(\"Option.error.bad_value_type\")); //$NON-NLS-1$\n\t\t}\n\n\t\treturn SuperEnum.SUCCESS;\n\t}\n\nand in each of the three actual methods:\n\n\t\tswitch (checkEnumOrTree(id)) {\n\t\tcase LOOK_IN_SUPER:\n\t\t\treturn superClass.getCommand(id);\n\t\tcase FAIL:\n\t\t\treturn EMPTY_STRING;\n\t\tcase SUCCESS:\n\t\t}\n\nchanging the return values appropriately.",
+      "revId": "1bb12ca3390959667066366c4c0fd978d98a988c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

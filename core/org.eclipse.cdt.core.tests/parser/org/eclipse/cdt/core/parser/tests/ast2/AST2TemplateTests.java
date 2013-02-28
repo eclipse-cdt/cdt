@@ -7351,4 +7351,17 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testVariadicNonTypeTemplateParameter_401400() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename... Args>
+	//	struct foo {
+	//		static constexpr int i = sizeof...(Args);
+	//	};
+	//	constexpr int bar = foo<int, double>::i;
+	public void testSizeofParameterPackOnTypeid_401973() throws Exception {
+		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
+		ICPPVariable bar = helper.assertNonProblem("bar", ICPPVariable.class);
+		Long barValue = bar.getInitialValue().numericalValue();
+		assertNotNull(barValue);
+		assertEquals(2,  barValue.longValue());
+	}
 }

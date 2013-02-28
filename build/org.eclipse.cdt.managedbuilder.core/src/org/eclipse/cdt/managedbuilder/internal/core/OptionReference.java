@@ -470,6 +470,14 @@ public class OptionReference implements IOption {
 	}
 
 	/* (non-Javadoc)
+	 * @see IOption#hasId(String)
+	 */
+	@Override
+	public boolean hasId(String id) throws BuildException {
+		return option.hasId(id);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getBaseId()
 	 */
 	@Override

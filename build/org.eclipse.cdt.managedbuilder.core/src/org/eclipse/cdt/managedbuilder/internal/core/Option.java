@@ -1347,9 +1347,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				return EMPTY_STRING;
 			}
 		}
-		if (getValueType() != ENUMERATED && getValueType() !=  TREE) {
-			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
-		}
+		checkEnumOrTree();
 
 		// First check for the command in ID->command map
 		String cmd = getCommandMap().get(id);
@@ -1445,9 +1443,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				return EMPTY_STRING;
 			}
 		}
-		if (getValueType() != ENUMERATED && getValueType() != TREE) {
-			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
-		}
+		checkEnumOrTree();
 
 		Set<String> idSet = getNameMap().keySet();
 		for (String id : idSet) {
@@ -1457,6 +1453,29 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public boolean hasId(String id) throws BuildException {
+		if (id == null) return false;
+
+		if (applicableValuesList == null) {
+			if (superClass != null) {
+				return superClass.hasId(id);
+			} else {
+				return false;
+			}
+		}
+
+		checkEnumOrTree();
+
+		return applicableValuesList.contains(id);
+	}
+
+	private void checkEnumOrTree() throws BuildException {
+		if (getValueType() != ENUMERATED && getValueType() != TREE) {
+			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
 	}
 
 	/* (non-Javadoc)

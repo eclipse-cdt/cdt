@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//778\u003d",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/qt/core/QtKeywords.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-28T22:40:16Z",
+      "side": 1,
+      "message": "Why did you add the Q_ prefix on these entries?",
+      "revId": "8bf5a5053509f630e7c420091c83b556a13d5924",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

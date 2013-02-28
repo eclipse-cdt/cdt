@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
+ *     Marc Dumais (Ericsson) - Initial API and implementation (Bug 396268)
  *******************************************************************************/
 
 package org.eclipse.cdt.visualizer.ui;
@@ -37,6 +38,11 @@ public class VisualizerAction extends Action
 		// programmatically.
 	}
 	
+	/** Constructor. */
+	public VisualizerAction(String text, int style) {
+		super(text, style);
+	}
+
 	/** Constructor. */
 	public VisualizerAction(String text, String description) {
 		super(text);

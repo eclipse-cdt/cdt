@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -14,7 +15,6 @@ package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.visualizer.ui.util.Colors;
 import org.eclipse.cdt.visualizer.ui.util.GUIUtils;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
@@ -32,6 +32,22 @@ public class MulticoreVisualizerCPU extends MulticoreVisualizerGraphicObject
 	/** Child cores. */
 	protected ArrayList<MulticoreVisualizerCore> m_cores;
 	
+	/**
+	 * Load meter associated to this CPU
+	 * @since 1.1
+	 */
+	protected MulticoreVisualizerLoadMeter m_loadMeter;
+	
+	/**
+	 * @since 1.1
+	 */
+	protected static final Color BG_COLOR = IMulticoreVisualizerConstants.COLOR_CPU_BG;
+	
+	/**
+	 * @since 1.1
+	 */
+	protected static final Color FG_COLOR = IMulticoreVisualizerConstants.COLOR_CPU_FG;
+	
 
 	// --- constructors/destructors ---
 	
@@ -40,12 +56,18 @@ public class MulticoreVisualizerCPU extends MulticoreVisualizerGraphicObject
 	{
 		m_id = id;
 		m_cores = new ArrayList<MulticoreVisualizerCore>();
+		
+		// default load meter
+		m_loadMeter = new MulticoreVisualizerLoadMeter(null, null);
 	}
 	
 	/** Dispose method */
 	@Override
 	public void dispose() {
 		super.dispose();
+		if (m_loadMeter != null) {
+			m_loadMeter.dispose();
+		}
 	}
 	
 	
@@ -77,17 +99,30 @@ public class MulticoreVisualizerCPU extends MulticoreVisualizerGraphicObject
 		return m_cores;
 	}
 
+	/**
+	 * @since 1.1
+	 */
+	public void setLoadMeter (MulticoreVisualizerLoadMeter meter) {
+		m_loadMeter = meter;
+	}
+	
+	/**
+	 * @since 1.1
+	 */
+	public MulticoreVisualizerLoadMeter getLoadMeter() {
+		return m_loadMeter;
+	}
 	
 	// --- paint methods ---
 	
 	/** Invoked to allow element to paint itself on the viewer canvas */
 	@Override
 	public void paintContent(GC gc) {
-		Color fg, bg;
-		fg = Colors.getColor(0,255,0);
-		bg = Colors.getColor(0,64,0);
-		gc.setForeground(fg);
-		gc.setBackground(bg);
+		gc.setForeground(FG_COLOR);
+		gc.setBackground(BG_COLOR);
+		
+		// We want the load meter to share the same BG color
+		m_loadMeter.setParentBgColor(BG_COLOR);
 		
 		gc.fillRectangle(m_bounds);
 		gc.drawRectangle(m_bounds);
@@ -103,15 +138,13 @@ public class MulticoreVisualizerCPU extends MulticoreVisualizerGraphicObject
 	@Override
 	public void paintDecorations(GC gc) {
 		if (m_bounds.height > 20) {
-			Color fg, bg;
-			fg = Colors.getColor(0,255,0);
-			bg = Colors.getColor(0,64,0);
-			gc.setForeground(fg);
-			gc.setBackground(bg);
+			gc.setForeground(IMulticoreVisualizerConstants.COLOR_CPU_FG);
+			gc.setBackground(IMulticoreVisualizerConstants.COLOR_CPU_BG);
 			
-			int text_indent = 6;
-			int tx = m_bounds.x + m_bounds.width  - text_indent;
-			int ty = m_bounds.y + m_bounds.height - text_indent;
+			int text_indent_x = 6;
+			int text_indent_y = 2;
+			int tx = m_bounds.x + m_bounds.width  - text_indent_x;
+			int ty = m_bounds.y + m_bounds.height - text_indent_y;
 			GUIUtils.drawTextAligned(gc, Integer.toString(m_id), tx, ty, false, false);
 		}
 	}

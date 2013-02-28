@@ -2467,6 +2467,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTTypeIdExpression node) {
+		if (enclosedInMacroExpansion(node)) {
+			return PROCESS_SKIP;
+		}
 		scribe.printNextToken(peekNextToken());
 		scribe.printNextToken(Token.tLPAREN);
 		node.getTypeId().accept(this);
@@ -2598,6 +2601,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTUnaryExpression node) {
+		if (enclosedInMacroExpansion(node)) {
+			return PROCESS_SKIP;
+		}
 		final IASTExpression operand= node.getOperand();
 		final int operator= node.getOperator();
 		switch (operator) {

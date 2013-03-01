@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Andrew Gvozdev and others.
+ * Copyright (c) 2010, 2013 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,11 +155,15 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		public String getText(Object element) {
 			if (element instanceof ICLanguageSettingEntry) {
 				ICLanguageSettingEntry entry = (ICLanguageSettingEntry) element;
-				String s = entry.getName();
-				if ((entry.getKind() == ICSettingEntry.MACRO) && (entry.getFlags()&ICSettingEntry.UNDEFINED) == 0) {
-					s = s + '=' + entry.getValue();
+				String text = entry.getName();
+				if (entry.getKind() == ICSettingEntry.MACRO) {
+					if ((entry.getFlags() & ICSettingEntry.UNDEFINED) == 0) {
+						text = text + '=' + entry.getValue();
+					}
+				} else if (LanguageSettingsImages.isProjectRelative(entry)) {
+					text = LanguageSettingsImages.toProjectRelative(text);
 				}
-				return s;
+				return text;
 			}
 
 			return super.getText(element);

@@ -46,11 +46,11 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 	private static final String SLASH = "/"; //$NON-NLS-1$
 
-	private ICConfigurationDescription cfgDescription;
-	private IProject project;
-	private ICLanguageSettingEntry entry;
-	private boolean clearValue;
-	private int kind;
+	private final ICConfigurationDescription cfgDescription;
+	private final IProject project;
+	private final ICLanguageSettingEntry initialEntry;
+	private final int initialKind;
+	private final boolean clearValue;
 
 	private Composite compositeArea;
 	private Label iconComboKind;
@@ -115,9 +115,9 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 		super(parent, ""); //$NON-NLS-1$
 		this.cfgDescription = cfgDescription;
 		this.project = cfgDescription.getProjectDescription().getProject();
-		this.entry = null;
+		this.initialEntry = null;
+		this.initialKind = kind;
 		this.clearValue = true;
-		this.kind = kind;
 	}
 
 	/**
@@ -128,8 +128,8 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 		super(parent, ""); //$NON-NLS-1$
 		this.cfgDescription = cfgDescription;
 		this.project = cfgDescription.getProjectDescription().getProject();
-		this.entry = entry;
-		this.kind = entry != null ? entry.getKind() : ICSettingEntry.INCLUDE_PATH;
+		this.initialEntry = entry;
+		this.initialKind = entry != null ? entry.getKind() : ICSettingEntry.INCLUDE_PATH;
 		this.clearValue = clearValue;
 	}
 
@@ -210,7 +210,7 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 		gd.horizontalAlignment = SWT.RIGHT;
 		iconComboKind.setLayoutData(gd);
 		iconComboKind.setText(Messages.LanguageSettingEntryDialog_SelectKind);
-		int kindToComboIndex = kindToComboIndex(kind);
+		int kindToComboIndex = kindToComboIndex(initialKind);
 		iconComboKind.setImage(comboKindImages[kindToComboIndex]);
 
 		// Combo for the setting entry kind
@@ -247,14 +247,14 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 			comboPathCategory.add(pathCategories[i], pathCategoryImages[i]);
 		}
 		int pcindex = COMBO_PATH_INDEX_PROJECT;
-		if (entry != null) {
-			if ((entry.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) == 0) {
+		if (initialEntry != null) {
+			if ((initialEntry.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) == 0) {
 				pcindex = COMBO_PATH_INDEX_FILESYSTEM;
 			} else {
-				if (entry.getName().startsWith(SLASH)) {
-					pcindex = COMBO_PATH_INDEX_WORKSPACE;
-				} else {
+				if (LanguageSettingsImages.isProjectRelative(initialEntry)) {
 					pcindex = COMBO_PATH_INDEX_PROJECT;
+				} else {
+					pcindex = COMBO_PATH_INDEX_WORKSPACE;
 				}
 			}
 		}
@@ -285,8 +285,12 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 
 		// Dir/File/Name input
 		inputName = new Text(compositeArea, SWT.SINGLE | SWT.BORDER);
-		if (entry!=null && !clearValue) {
-			inputName.setText(entry.getName());
+		if (initialEntry != null && !clearValue) {
+			String name = initialEntry.getName();
+			if (pcindex == COMBO_PATH_INDEX_PROJECT && LanguageSettingsImages.isProjectRelative(initialEntry)) {
+				name = LanguageSettingsImages.toProjectRelative(name);
+			}
+			inputName.setText(name);
 		}
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -333,14 +337,14 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 		// Value input. Located after the other controls to get sufficient width
 		int comboPathWidth = comboPathCategory.computeSize(SWT.DEFAULT, SWT.NONE).x;
 		inputValue = new Text(compositeArea, SWT.SINGLE | SWT.BORDER);
-		if (entry != null && !clearValue) {
-			inputValue.setText(entry.getValue());
+		if (initialEntry != null && !clearValue) {
+			inputValue.setText(initialEntry.getValue());
 		}
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		gd.widthHint = comboPathWidth;
 		inputValue.setLayoutData(gd);
 
-		if (entry != null && kind == ICSettingEntry.MACRO && !clearValue) {
+		if (initialEntry != null && initialKind == ICSettingEntry.MACRO && !clearValue) {
 			inputValue.setFocus();
 			inputValue.setSelection(0, inputValue.getText().length());
 		}
@@ -356,7 +360,7 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 		// Checkbox "Built-In"
 		checkBoxBuiltIn = new Button(compCheckboxes, SWT.CHECK);
 		checkBoxBuiltIn.setText(Messages.LanguageSettingEntryDialog_BuiltInFlag);
-		checkBoxBuiltIn.setSelection(entry != null && (entry.getFlags() & ICSettingEntry.BUILTIN) != 0);
+		checkBoxBuiltIn.setSelection(initialEntry != null && (initialEntry.getFlags() & ICSettingEntry.BUILTIN) != 0);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		checkBoxBuiltIn.setLayoutData(gd);
 		checkBoxBuiltIn.addSelectionListener(new SelectionListener() {
@@ -374,7 +378,7 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 		// Checkbox "Contains system includes"
 		checkBoxSystem = new Button(compCheckboxes, SWT.CHECK);
 		checkBoxSystem.setText(Messages.LanguageSettingEntryDialog_ContainsSystemHeaders);
-		checkBoxSystem.setSelection(entry != null && (entry.getFlags() & ICSettingEntry.LOCAL) == 0);
+		checkBoxSystem.setSelection(initialEntry != null && (initialEntry.getFlags() & ICSettingEntry.LOCAL) == 0);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		checkBoxSystem.setLayoutData(gd);
 		checkBoxSystem.addSelectionListener(new SelectionListener() {
@@ -392,7 +396,7 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 		// Checkbox "Framework folder"
 		checkBoxFramework = new Button(compCheckboxes, SWT.CHECK);
 		checkBoxFramework.setText(Messages.LanguageSettingEntryDialog_FrameworkFolder);
-		checkBoxFramework.setSelection(entry != null && (entry.getFlags() & ICSettingEntry.FRAMEWORKS_MAC) != 0);
+		checkBoxFramework.setSelection(initialEntry != null && (initialEntry.getFlags() & ICSettingEntry.FRAMEWORKS_MAC) != 0);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		checkBoxFramework.setLayoutData(gd);
 		checkBoxFramework.addSelectionListener(new SelectionListener() {
@@ -495,7 +499,7 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 			boolean isProjectSelected = (indexPathKind == COMBO_PATH_INDEX_PROJECT);
 			boolean isWorkspaceSelected = (indexPathKind == COMBO_PATH_INDEX_WORKSPACE);
 			boolean isFilesystemSelected = (indexPathKind == COMBO_PATH_INDEX_FILESYSTEM);
-	
+
 			String path = inputName.getText().trim();
 			if (path.isEmpty()) {
 				buttonOk.setEnabled(false);
@@ -503,7 +507,7 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 				buttonOk.setEnabled((isProjectSelected && !path.startsWith(SLASH)) ||
 						(isWorkspaceSelected && path.startsWith(SLASH)) || isFilesystemSelected);
 			}
-	
+
 			buttonVars.setEnabled(isFilesystemSelected);
 		}
 
@@ -514,28 +518,38 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 	public void buttonPressed(SelectionEvent e) {
 		String str = null;
 		if (e.widget.equals(buttonOk)) {
-			String name = inputName.getText().trim();
-			text1 = name;
-			String value = inputValue.getText().trim();
+			text1 = inputName.getText().trim();
 			result = true;
 
+			String name = text1;
 			int flagBuiltIn = checkBoxBuiltIn.isVisible() && checkBoxBuiltIn.getSelection() ? ICSettingEntry.BUILTIN : 0;
-			int flagSystem = checkBoxSystem.isVisible() && checkBoxSystem.getSelection() ? 0 : ICSettingEntry.LOCAL;
-			int flagFramework = checkBoxFramework.isVisible() && checkBoxFramework.getSelection() ? ICSettingEntry.FRAMEWORKS_MAC : 0;
-			int indexPathKind = comboPathCategory.getSelectionIndex();
+			int flags = flagBuiltIn;
+
 			int kind = comboKind.getSelectionIndex();
-			boolean isProjectPath = indexPathKind == COMBO_PATH_INDEX_PROJECT;
-			boolean isWorkspacePath = (kind != COMBO_INDEX_MACRO) && (isProjectPath || indexPathKind == COMBO_PATH_INDEX_WORKSPACE);
-			int flagWorkspace = isWorkspacePath ? ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED : 0;
-			int flags = flagBuiltIn | flagWorkspace | flagSystem | flagFramework;
+			if (kind != COMBO_INDEX_MACRO) {
+				int flagSystem = checkBoxSystem.isVisible() && checkBoxSystem.getSelection() ? 0 : ICSettingEntry.LOCAL;
+				int flagFramework = checkBoxFramework.isVisible() && checkBoxFramework.getSelection() ? ICSettingEntry.FRAMEWORKS_MAC : 0;
+
+				int indexPathKind = comboPathCategory.getSelectionIndex();
+				boolean isProjectPath = indexPathKind == COMBO_PATH_INDEX_PROJECT;
+				boolean isWorkspacePath = indexPathKind == COMBO_PATH_INDEX_WORKSPACE;
+				int flagWorkspace = (isWorkspacePath || isProjectPath) ? ICSettingEntry.VALUE_WORKSPACE_PATH : 0;
+				int flagResolved = isWorkspacePath && !name.contains("$") ? ICSettingEntry.RESOLVED : 0; //$NON-NLS-1$
+				flags = flagBuiltIn | flagWorkspace | flagResolved | flagSystem | flagFramework;
+
+				if (isProjectPath) {
+					name = LanguageSettingsImages.fromProjectRelative(name);
+				}
+			}
 
 			ICLanguageSettingEntry entry = null;
-			switch (kind) {
+			switch (comboKind.getSelectionIndex()) {
 			case COMBO_INDEX_INCLUDE_DIR:
 				entry = CDataUtil.createCIncludePathEntry(name, flags);
 				break;
 			case COMBO_INDEX_MACRO:
 				// Note that value=null is not supported by CMacroEntry
+				String value = inputValue.getText().trim();
 				entry = CDataUtil.createCMacroEntry(name, value, flags);
 				break;
 			case COMBO_INDEX_INCLUDE_FILE:

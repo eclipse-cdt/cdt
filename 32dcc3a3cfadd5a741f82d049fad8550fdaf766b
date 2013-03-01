@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//74I\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T00:47:24Z",
+      "side": 1,
+      "message": "I\u0027m delighted that there\u0027s a standard, but *where* is it written down (so I can see what other useful guidelines are included).\n\nI will have to go back through the other menus and fix this, so expect a flurry of patches to that effect.",
+      "parentUuid": "AABOPX//74k\u003d",
+      "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//74Q\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2013-03-01T00:40:14Z",
       "side": 1,
       "message": "I don\u0027t think we should get into so great details here. We can just say that the a submenu allowing user to select a workspace will be shown.",
+      "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//74E\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T00:47:24Z",
+      "side": 1,
+      "message": "I went into the detail in order to explain the (rather subtle) difference between \"Switch workspace\" and \"Restart\". AFAICS, the difference is as follows: \n\n1) If you unconditionally want to bring up the Workspace selection dialog, use Switch workspace -\u003e Other. \n\n2) If you uncondtionally want to switch to a particular workspace (that happens to be listed in the submenu), use Switch workspace -\u003e that workspace.\n\n3) If you want to restart, but don\u0027t particularly care which workspace you end up in, use Restart.\n\nIf you can think of a clearer way to bring out this distinction in fewer words, I\u0027d love to use it!",
+      "parentUuid": "AABOPX//74Q\u003d",
       "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//74A\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T00:47:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//74c\u003d",
+      "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//74g\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2013-03-01T00:40:14Z",
       "side": 1,
       "message": "of -\u003e for",
+      "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//738\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T00:47:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//74g\u003d",
       "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

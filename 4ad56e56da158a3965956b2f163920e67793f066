@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//7qo\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T22:15:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//7rU\u003d",
+      "revId": "4ad56e56da158a3965956b2f163920e67793f066",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//7rM\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2013-03-01T21:59:01Z",
       "side": 1,
       "message": "object -\u003e type",
+      "revId": "4ad56e56da158a3965956b2f163920e67793f066",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//7qk\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T22:15:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//7rM\u003d",
       "revId": "4ad56e56da158a3965956b2f163920e67793f066",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//7qg\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T22:15:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//7rQ\u003d",
+      "revId": "4ad56e56da158a3965956b2f163920e67793f066",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//7rE\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2013-03-01T21:59:01Z",
       "side": 1,
       "message": "Should there be some description?",
+      "revId": "4ad56e56da158a3965956b2f163920e67793f066",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//7qc\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T22:15:43Z",
+      "side": 1,
+      "message": "Apparently it\u0027s a JDT-specific command to open a file (and line) from a stacktrace... I don\u0027t know why it shows up in CDT...",
+      "parentUuid": "AABOPX//7rE\u003d",
       "revId": "4ad56e56da158a3965956b2f163920e67793f066",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//7qY\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T22:15:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//7q8\u003d",
+      "revId": "4ad56e56da158a3965956b2f163920e67793f066",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//7rA\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
         "patchSetId": 1
@@ -98,6 +188,24 @@
       "writtenOn": "2013-03-01T21:59:01Z",
       "side": 1,
       "message": "active -\u003e the active",
+      "revId": "4ad56e56da158a3965956b2f163920e67793f066",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//7qU\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T22:15:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//7rA\u003d",
       "revId": "4ad56e56da158a3965956b2f163920e67793f066",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//7qQ\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T22:15:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//7q4\u003d",
+      "revId": "4ad56e56da158a3965956b2f163920e67793f066",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//7qw\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
         "patchSetId": 1
@@ -138,6 +264,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//7qM\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T22:15:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//7qw\u003d",
+      "revId": "4ad56e56da158a3965956b2f163920e67793f066",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//7q0\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
         "patchSetId": 1
@@ -149,6 +293,24 @@
       "writtenOn": "2013-03-01T21:59:01Z",
       "side": 1,
       "message": "editor windows -\u003e editors",
+      "revId": "4ad56e56da158a3965956b2f163920e67793f066",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//7qI\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T22:15:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//7q0\u003d",
       "revId": "4ad56e56da158a3965956b2f163920e67793f066",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

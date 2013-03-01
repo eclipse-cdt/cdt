@@ -36,6 +36,7 @@ import org.eclipse.cdt.make.internal.core.makefile.EmptyLine;
 import org.eclipse.cdt.make.internal.core.makefile.IgnoreRule;
 import org.eclipse.cdt.make.internal.core.makefile.InferenceRule;
 import org.eclipse.cdt.make.internal.core.makefile.MakeFileConstants;
+import org.eclipse.cdt.make.internal.core.makefile.MakefileMessages;
 import org.eclipse.cdt.make.internal.core.makefile.MakefileReader;
 import org.eclipse.cdt.make.internal.core.makefile.PosixRule;
 import org.eclipse.cdt.make.internal.core.makefile.PreciousRule;
@@ -76,7 +77,14 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 	public static String FILE_SEPARATOR = System.getProperty("file.separator", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	String[] includeDirectories = new String[0];
-	IDirective[] builtins = new IDirective[0];
+	IDirective[] builtins = new IDirective[]{
+		new AutomaticVariable(null, "<", MakefileMessages.getString("GNUMakefile.automatic.lt")),//$NON-NLS-1$//$NON-NLS-2$
+		new AutomaticVariable(null, "*", MakefileMessages.getString("GNUMakefile.automatic.star")),//$NON-NLS-1$//$NON-NLS-2$
+		new AutomaticVariable(null, "@", MakefileMessages.getString("GNUMakefile.automatic.at")),//$NON-NLS-1$//$NON-NLS-2$
+		new AutomaticVariable(null, "?", MakefileMessages.getString("GNUMakefile.automatic.qm")),//$NON-NLS-1$//$NON-NLS-2$
+		new AutomaticVariable(null, "%", MakefileMessages.getString("GNUMakefile.automatic.percent")),//$NON-NLS-1$//$NON-NLS-2$
+		new AutomaticVariable(null, "^", MakefileMessages.getString("GNUMakefile.automatic.up")),//$NON-NLS-1$//$NON-NLS-2$
+	};
 	private IMakefileReaderProvider makefileReaderProvider;
 
 	public GNUMakefile() {

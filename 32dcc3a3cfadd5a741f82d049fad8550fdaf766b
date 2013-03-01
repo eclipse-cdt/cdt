@@ -91,6 +91,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//720\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-01T01:54:36Z",
+      "side": 1,
+      "message": "Great!",
+      "parentUuid": "AABOPX//73A\u003d",
+      "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//74Q\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
         "patchSetId": 1
@@ -156,6 +174,24 @@
       "side": 1,
       "message": "But switching workspaces *also* restarts eclipse, and restarting eclipse *also* enables you to switch workspaces (maybe, depending on a setting). I\u0027m somewhat confused by the presence of both menu items...",
       "parentUuid": "AABOPX//73Q\u003d",
+      "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//72w\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-01T01:54:36Z",
+      "side": 1,
+      "message": "Yes, but it should not be emphasized in the description to reduce user confusion. The fact that Eclipse cannot switch workspaces without restarting could be considered a bug.",
+      "parentUuid": "AABOPX//728\u003d",
       "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

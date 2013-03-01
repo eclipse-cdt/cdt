@@ -208,7 +208,7 @@ public class CCorePlugin extends Plugin {
 	/**
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	public CDTLogWriter cdtLog = null;
+	public CDTLogWriter cdtLog;
 
 	private volatile CProjectDescriptionManager fNewCProjectDescriptionManager;
 

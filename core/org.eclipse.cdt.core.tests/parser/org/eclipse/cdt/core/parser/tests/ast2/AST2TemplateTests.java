@@ -7205,6 +7205,23 @@ public class AST2TemplateTests extends AST2TestBase {
         parseAndCheckBindings();
     }
 
+	//    int fn(int);
+	//    struct S {
+	//        template <typename... Args>
+	//        auto operator()(Args... args) -> decltype(fn(args...));
+	//    };
+	//    template <typename F>
+	//    int foo(F);
+	//    template <typename T>
+	//    void bar(T);
+	//    int main() {
+	//        S s;
+	//        bar(foo(s(0)));
+	//    }
+    public void testVariadicTemplatesAndFunctionObjects_401479() throws Exception {
+    	parseAndCheckBindings();
+    }
+
 	// struct S {
 	//     void kind();
 	// };
@@ -7310,6 +7327,28 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	    S<ice_or<false>::value>::type t;
 	//	}
 	public void testVariadicNonTypeTemplateParameter_401142() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <bool... Args>
+	//	struct ice_or;
+	//	template <>
+	//	struct ice_or<> {
+	//	    static const bool value = false;
+	//	};
+	//	template <bool First, bool... Rest>
+	//	struct ice_or<First, Rest...> {
+	//	    static const bool value = ice_or<Rest...>::value;
+	//	};
+	//	template <bool> struct S {};
+	//	template <>
+	//	struct S<false> {
+	//	    typedef int type;
+	//	};
+	//	int main() {
+	//	    S<ice_or<false, false>::value>::type t;
+	//	}
+	public void testVariadicNonTypeTemplateParameter_401400() throws Exception {
 		parseAndCheckBindings();
 	}
 }

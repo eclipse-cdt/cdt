@@ -593,6 +593,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		}
 		vars = null;
 		super.performOK();
+		updateData();
 	}
 
 	@Override

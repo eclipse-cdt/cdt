@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Initial API and implementation (Bug 396268)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
@@ -38,11 +39,16 @@ public class VisualizerModel
 	/** Completion state tracker. */
 	protected Todo m_todo;
 	
+	/** Completion state tracker for load meters. */
+	protected Todo m_loadTodo;
+	
 	// Setting to remove exited threads, or keep them shown.
 	// If we are to support this, we should have a preference
 	// and a way to for the user to clean up old threads,
 	// or maybe a timeout to remove them.
 	private boolean m_keepExitedThreads = false;
+	
+	protected boolean m_loadMetersEnabled = false;
 	
 	// --- constructors/destructors ---
 	
@@ -52,6 +58,7 @@ public class VisualizerModel
 		m_cpuMap = new Hashtable<Integer, VisualizerCPU>();
 		m_threads = new ArrayList<VisualizerThread>();
 		m_todo = new Todo();
+		m_loadTodo = new Todo();
 	}
 	
 	/** Dispose method */
@@ -76,6 +83,10 @@ public class VisualizerModel
 			m_todo.dispose();
 			m_todo = null;
 		}
+		if (m_loadTodo != null) {
+			m_loadTodo.dispose();
+			m_loadTodo = null;
+		}
 	}
 	
 	
@@ -84,6 +95,19 @@ public class VisualizerModel
 	/** Gets completion state tracker. */
 	public Todo getTodo() {
 		return m_todo;
+	}
+	
+	/** Gets completion state tracker. */
+	public Todo getLoadTodo() {
+		return m_loadTodo;
+	}
+	
+	public void setLoadMetersEnabled (boolean enable) {
+		m_loadMetersEnabled = enable;
+	}
+	
+	public boolean getLoadMetersEnabled () {
+		return m_loadMetersEnabled;
 	}
 	
 	// --- methods ---

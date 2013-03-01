@@ -85,6 +85,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalID;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalInitList;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalMemberAccess;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalParameterPack;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnaryTypeID;
@@ -375,6 +376,14 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				e= new EvalMemberAccess(a2, e.getOwnerValueCategory(), b2, e.isPointerDeref(), templateDefinition2);
 			return e;
 		}
+		if (eval instanceof EvalParameterPack) {
+			EvalParameterPack e = (EvalParameterPack) eval;
+			ICPPEvaluation a = e.getExpansionPattern();
+			ICPPEvaluation a2 = getCompositeEvaluation(a);
+			if (a != a2 || templateDefinition != templateDefinition2)
+				e = new EvalParameterPack(a2, templateDefinition2);
+			return e;
+		}
 		if (eval instanceof EvalTypeId) {
 			EvalTypeId e= (EvalTypeId) eval;
 			IType a = e.getInputType();
@@ -535,6 +544,10 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 						return new CompositeCPPTypedefSpecialization(this, (ICPPBinding) binding);
 					} else if (binding instanceof ICPPUsingDeclaration) {
 						return new CompositeCPPUsingDeclarationSpecialization(this, (ICPPUsingDeclaration) binding);
+					} else if (binding instanceof ICPPEnumeration) {
+						return new CompositeCPPEnumerationSpecialization(this, (ICPPEnumeration) binding);
+					} else if (binding instanceof IEnumerator) {
+						return new CompositeCPPEnumeratorSpecialization(this, (IEnumerator) binding);
 					} else {
 						throw new CompositingNotImplementedError("Composite binding unavailable for " + binding + " " + binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 					}

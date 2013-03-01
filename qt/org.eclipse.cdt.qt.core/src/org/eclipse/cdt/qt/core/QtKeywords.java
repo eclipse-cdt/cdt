@@ -11,16 +11,13 @@ package org.eclipse.cdt.qt.core;
 /**
  * Declares constants related to tokens that are special in Qt applications.
  */
-public class QtKeywords
-{
-    public static final String Q_SIGNALS = "Q_SIGNALS";
-    public static final String Q_SLOTS = "Q_SLOTS";
-    public static final String SIGNALS = "signals";
-    public static final String SLOTS = "slots";
-
-    public static final String SIGNAL = "SIGNAL";
-    public static final String SLOT = "SLOT";
-
-    public static final String QOBJECT = "QObject";
-    public static final String CONNECT = "connect";
+public class QtKeywords {
+	public static final String CONNECT = "connect";
+	public static final String Q_SIGNAL = "Q_SIGNAL";
+	public static final String Q_SIGNALS = "Q_SIGNALS";
+	public static final String Q_SLOT = "Q_SLOT";
+	public static final String Q_SLOTS = "Q_SLOTS";
+	public static final String QOBJECT = "QObject";
+	public static final String SIGNALS = "signals";
+	public static final String SLOTS = "slots";
 }

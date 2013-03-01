@@ -46,347 +46,345 @@ import org.eclipse.cdt.qt.core.QtKeywords;
 import org.eclipse.cdt.qt.core.QtNature;
 import org.eclipse.cdt.qt.core.QtPlugin;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.contentassist.ICEditorContentAssistInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
-@SuppressWarnings( "restriction" )
-public class QtCompletionProposalComputer extends ParsingBasedProposalComputer
-{
-    private boolean isApplicable( CContentAssistInvocationContext context )
-    {
-        ITranslationUnit tu = context.getTranslationUnit();
-        if( tu == null )
-            return false;
+@SuppressWarnings("restriction")
+public class QtCompletionProposalComputer extends ParsingBasedProposalComputer {
+	private boolean isApplicable(ICEditorContentAssistInvocationContext context) {
+		ITranslationUnit tu = context.getTranslationUnit();
+		if (tu == null)
+			return false;
 
-        ICProject cProject = tu.getCProject();
-        if( cProject == null )
-            return false;
+		ICProject cProject = tu.getCProject();
+		if (cProject == null)
+			return false;
 
-        IProject project = cProject.getProject();
-        if( project == null )
-            return false;
+		IProject project = cProject.getProject();
+		if (project == null)
+			return false;
 
-        try
-        {
-            return project.hasNature( QtNature.ID );
-        }
-        catch( CoreException e )
-        {
-            CUIPlugin.log( e );
-            return false;
-        }
-    }
+		try {
+			return project.hasNature(QtNature.ID);
+		} catch (CoreException e) {
+			CUIPlugin.log(e);
+			return false;
+		}
+	}
 
-    private static boolean is_QObject_connect( CContentAssistInvocationContext context, IASTCompletionContext astContext, IASTName name )
-    {
-        IASTName connectName = name.getLastName();
-        if( ! QtKeywords.CONNECT.equals( new String( connectName.getSimpleID() ) ) )
-            return false;
+	private static boolean is_QObject_connect(
+			ICEditorContentAssistInvocationContext context,
+			IASTCompletionContext astContext, IASTName name) {
+		IASTName connectName = name.getLastName();
+		if (!QtKeywords.CONNECT.equals(new String(connectName.getSimpleID())))
+			return false;
 
-        IBinding[] funcBindings = astContext.findBindings( connectName, ! context.isContextInformationStyle() );
-        for( IBinding funcBinding : funcBindings )
-            if( funcBinding instanceof ICPPFunction )
-            {
-                IBinding ownerBinding = ( (ICPPFunction)funcBinding ).getOwner();
-                if( ownerBinding != null && QtKeywords.QOBJECT.equals( ownerBinding.getName() ) )
-                    return true;
-            }
+		IBinding[] funcBindings = astContext.findBindings(connectName,
+				!context.isContextInformationStyle());
+		for (IBinding funcBinding : funcBindings)
+			if (funcBinding instanceof ICPPFunction) {
+				IBinding ownerBinding = ((ICPPFunction) funcBinding).getOwner();
+				if (ownerBinding != null
+						&& QtKeywords.QOBJECT.equals(ownerBinding.getName()))
+					return true;
+			}
 
-        return false;
-    }
+		return false;
+	}
 
-    private static class Completion
-    {
-        private final String replacement;
-        private final String display;
-        private final int cursorOffset;
+	private static class Completion {
+		private final String replacement;
+		private final String display;
+		private final int cursorOffset;
 
-        public static final Completion SIGNAL = new Completion( "SIGNAL()", "SIGNAL(a)", -1 );
-        public static final Completion SLOT = new Completion( "SLOT()", "SLOT(a)", -1 );
+		public static final Completion SIGNAL = new Completion("SIGNAL()",
+				"SIGNAL(a)", -1);
+		public static final Completion SLOT = new Completion("SLOT()",
+				"SLOT(a)", -1);
 
-        public Completion( String replacement )
-        {
-            this( replacement, replacement, 0 );
-        }
+		public Completion(String replacement) {
+			this(replacement, replacement, 0);
+		}
 
-        public Completion( String replacement, String display, int cursorOffset )
-        {
-            this.replacement = replacement;
-            this.display = display;
-            this.cursorOffset = cursorOffset;
-        }
+		public Completion(String replacement, String display, int cursorOffset) {
+			this.replacement = replacement;
+			this.display = display;
+			this.cursorOffset = cursorOffset;
+		}
 
-        public ICompletionProposal createProposal( CContentAssistInvocationContext context )
-        {
-            int repLength = replacement.length();
-            int repOffset = context.getInvocationOffset();
-            CCompletionProposal p = new CCompletionProposal( replacement, repOffset, repLength, null, display, RelevanceConstants.DEFAULT_TYPE_RELEVANCE, context.getViewer() );
-            p.setCursorPosition( repLength + cursorOffset );
-            return p;
-        }
+		public ICompletionProposal createProposal(
+				ICEditorContentAssistInvocationContext context) {
+			int repLength = replacement.length();
+			int repOffset = context.getInvocationOffset();
+			CCompletionProposal p = new CCompletionProposal(replacement,
+					repOffset, repLength, null, display,
+					RelevanceConstants.DEFAULT_TYPE_RELEVANCE,
+					context.getViewer());
+			p.setCursorPosition(repLength + cursorOffset);
+			return p;
+		}
 
-        @Override
-        public String toString()
-        {
-            if( replacement == null )
-                return super.toString();
-            return replacement + '@' + cursorOffset;
-        }
-    }
+		@Override
+		public String toString() {
+			if (replacement == null)
+				return super.toString();
+			return replacement + '@' + cursorOffset;
+		}
+	}
 
-    private static interface MethodFilter
-    {
-        public boolean keep( ICPPMethod method );
+	private static interface MethodFilter {
+		public boolean keep(ICPPMethod method);
 
-        public static class Qt
-        {
-            public static final MethodFilter Signal = new MethodFilter()
-            {
-                @Override
-                public boolean keep( ICPPMethod method )
-                {
-                    ITagReader tagReader = CCorePlugin.getTagService().findTagReader( method );
-                    if( tagReader == null )
-                        return false;
+		public static class Qt {
+			public static final MethodFilter Signal = new MethodFilter() {
+				@Override
+				public boolean keep(ICPPMethod method) {
+					ITagReader tagReader = CCorePlugin.getTagService()
+							.findTagReader(method);
+					if (tagReader == null)
+						return false;
 
-                    ITag tag = tagReader.getTag( QtPlugin.SIGNAL_SLOT_TAGGER_ID );
-                    if( tag == null )
-                        return false;
+					ITag tag = tagReader.getTag(QtPlugin.SIGNAL_SLOT_TAGGER_ID);
+					if (tag == null)
+						return false;
 
-                    int result = tag.getByte( 0 );
-                    return result != ITag.Fail
-                        && ( ( result & QtPlugin.SignalSlot_Mask_signal ) == QtPlugin.SignalSlot_Mask_signal );
-                }
-            };
+					int result = tag.getByte(0);
+					return result != ITag.FAIL
+							&& ((result & QtPlugin.SignalSlot_Mask_signal) == QtPlugin.SignalSlot_Mask_signal);
+				}
+			};
 
-            public static final MethodFilter Slot = new MethodFilter()
-            {
-                @Override
-                public boolean keep( ICPPMethod method )
-                {
-                    ITagReader tagReader = CCorePlugin.getTagService().findTagReader( method );
-                    if( tagReader == null )
-                        return false;
+			public static final MethodFilter Slot = new MethodFilter() {
+				@Override
+				public boolean keep(ICPPMethod method) {
+					ITagReader tagReader = CCorePlugin.getTagService()
+							.findTagReader(method);
+					if (tagReader == null)
+						return false;
 
-                    ITag tag = tagReader.getTag( QtPlugin.SIGNAL_SLOT_TAGGER_ID );
-                    if( tag == null )
-                        return false;
+					ITag tag = tagReader.getTag(QtPlugin.SIGNAL_SLOT_TAGGER_ID);
+					if (tag == null)
+						return false;
 
-                    int result = tag.getByte( 0 );
-                    return result != ITag.Fail
-                        && ( ( result & QtPlugin.SignalSlot_Mask_slot ) == QtPlugin.SignalSlot_Mask_slot );
-                }
-            };
-        }
-    }
+					int result = tag.getByte(0);
+					return result != ITag.FAIL
+							&& ((result & QtPlugin.SignalSlot_Mask_slot) == QtPlugin.SignalSlot_Mask_slot);
+				}
+			};
+		}
+	}
 
-    private static Iterable<ICPPMethod> filterMethods( final ICPPClassType cls, final MethodFilter filter )
-    {
-        return new Iterable<ICPPMethod>()
-        {
-            @Override
-            public Iterator<ICPPMethod> iterator()
-            {
-                return new Iterator<ICPPMethod>()
-                {
-                    private int index = 0;
-                    private final ICPPMethod[] methods = cls.getMethods();
+	private static Iterable<ICPPMethod> filterMethods(final ICPPClassType cls,
+			final MethodFilter filter) {
+		return new Iterable<ICPPMethod>() {
+			@Override
+			public Iterator<ICPPMethod> iterator() {
+				return new Iterator<ICPPMethod>() {
+					private int index = 0;
+					private final ICPPMethod[] methods = cls.getMethods();
 
-                    @Override
-                    public boolean hasNext()
-                    {
-                        for( ; index < methods.length; ++index )
-                            if( filter.keep( methods[index] ) )
-                                return true;
-                        return false;
-                    }
+					@Override
+					public boolean hasNext() {
+						for (; index < methods.length; ++index)
+							if (filter.keep(methods[index]))
+								return true;
+						return false;
+					}
 
-                    @Override public ICPPMethod next() { return methods[index++]; }
-                    @Override public void remove() { }
-                };
-            }
-        };
-    }
+					@Override
+					public ICPPMethod next() {
+						return methods[index++];
+					}
 
-    private static String getSignature( ICPPMethod method )
-    {
-        StringBuilder signature = new StringBuilder();
+					@Override
+					public void remove() {
+					}
+				};
+			}
+		};
+	}
 
-        signature.append( method.getName() );
-        signature.append( '(' );
-        boolean first = true;
-        for( ICPPParameter param : method.getParameters() )
-        {
-            if( first )
-                first = false;
-            else
-                signature.append( ", " );
-            signature.append( ASTTypeUtil.getType( param.getType() ) );
-        }
+	private static String getSignature(ICPPMethod method) {
+		StringBuilder signature = new StringBuilder();
 
-        signature.append( ')' );
-        return signature.toString();
-    }
+		signature.append(method.getName());
+		signature.append('(');
+		boolean first = true;
+		for (ICPPParameter param : method.getParameters()) {
+			if (first)
+				first = false;
+			else
+				signature.append(", ");
+			signature.append(ASTTypeUtil.getType(param.getType()));
+		}
 
-    private static void addCompletionsFor( Collection<Completion> completions, IASTInitializerClause init, MethodFilter filter )
-    {
-        if( !( init instanceof ICPPASTInitializerClause ) )
-            return;
+		signature.append(')');
+		return signature.toString();
+	}
 
-        ICPPEvaluation eval = ( (ICPPASTInitializerClause)init ).getEvaluation();
-        if( eval == null )
-            return;
+	private static void addCompletionsFor(Collection<Completion> completions,
+			IASTInitializerClause init, MethodFilter filter) {
+		if (!(init instanceof ICPPASTInitializerClause))
+			return;
 
-        IType type = eval.getTypeOrFunctionSet( init );
-        while( type instanceof IPointerType )
-            type = ( (IPointerType)type ).getType();
+		ICPPEvaluation eval = ((ICPPASTInitializerClause) init).getEvaluation();
+		if (eval == null)
+			return;
 
-        if( type instanceof ICPPClassType )
-            for( ICPPMethod signal : filterMethods( (ICPPClassType)type, filter ) )
-                completions.add( new Completion( getSignature( signal ) ) );
-    }
+		IType type = eval.getTypeOrFunctionSet(init);
+		while (type instanceof IPointerType)
+			type = ((IPointerType) type).getType();
 
-    // Copied from org.eclipse.cdt.internal.ui.text.CParameterListValidator
-    private static int indexOfClosingPeer(String code, char left, char right, int pos) {
-        int level= 0;
-        final int length= code.length();
-        while (pos < length) {
-            char ch= code.charAt(pos);
-            if (ch == left) {
-                ++level;
-            } else if (ch == right) {
-                if (--level == 0) {
-                    return pos;
-                }
-            }
-            ++pos;
-        }
-        return -1;
-    }
+		if (type instanceof ICPPClassType)
+			for (ICPPMethod signal : filterMethods((ICPPClassType) type, filter))
+				completions.add(new Completion(getSignature(signal)));
+	}
 
-    // Copied from org.eclipse.cdt.internal.ui.text.CParameterListValidator
-    private static int[] computeCommaPositions(String code) {
-        final int length= code.length();
-        int pos= 0;
-        List<Integer> positions= new ArrayList<Integer>();
-        positions.add(new Integer(-1));
-        while (pos < length && pos != -1) {
-            char ch= code.charAt(pos);
-            switch (ch) {
-                case ',':
-                    positions.add(new Integer(pos));
-                    break;
-                case '(':
-                    pos= indexOfClosingPeer(code, '(', ')', pos);
-                    break;
-                case '<':
-                    pos= indexOfClosingPeer(code, '<', '>', pos);
-                    break;
-                case '[':
-                    pos= indexOfClosingPeer(code, '[', ']', pos);
-                    break;
-                default:
-                    break;
-            }
-            if (pos != -1)
-                pos++;
-        }
-        positions.add(new Integer(length));
+	// Copied from org.eclipse.cdt.internal.ui.text.CParameterListValidator
+	private static int indexOfClosingPeer(String code, char left, char right,
+			int pos) {
+		int level = 0;
+		final int length = code.length();
+		while (pos < length) {
+			char ch = code.charAt(pos);
+			if (ch == left) {
+				++level;
+			} else if (ch == right) {
+				if (--level == 0) {
+					return pos;
+				}
+			}
+			++pos;
+		}
+		return -1;
+	}
 
-        int[] fields= new int[positions.size()];
-        for (int i= 0; i < fields.length; i++)
-            fields[i]= positions.get(i).intValue();
-        return fields;
-    }
+	// Copied from org.eclipse.cdt.internal.ui.text.CParameterListValidator
+	private static int[] computeCommaPositions(String code) {
+		final int length = code.length();
+		int pos = 0;
+		List<Integer> positions = new ArrayList<Integer>();
+		positions.add(new Integer(-1));
+		while (pos < length && pos != -1) {
+			char ch = code.charAt(pos);
+			switch (ch) {
+			case ',':
+				positions.add(new Integer(pos));
+				break;
+			case '(':
+				pos = indexOfClosingPeer(code, '(', ')', pos);
+				break;
+			case '<':
+				pos = indexOfClosingPeer(code, '<', '>', pos);
+				break;
+			case '[':
+				pos = indexOfClosingPeer(code, '[', ']', pos);
+				break;
+			default:
+				break;
+			}
+			if (pos != -1)
+				pos++;
+		}
+		positions.add(new Integer(length));
 
+		int[] fields = new int[positions.size()];
+		for (int i = 0; i < fields.length; i++)
+			fields[i] = positions.get(i).intValue();
+		return fields;
+	}
 
-    private void addConnectParameterCompletions( List<ICompletionProposal> proposals, CContentAssistInvocationContext context, IASTCompletionNode completionNode, String prefix )
-    {
-        IASTName[] names = completionNode.getNames();
-        List<Completion> completions = new LinkedList<Completion>();
+	private void addConnectParameterCompletions(
+			List<ICompletionProposal> proposals,
+			ICEditorContentAssistInvocationContext context,
+			IASTCompletionNode completionNode, String prefix) {
+		IASTName[] names = completionNode.getNames();
+		List<Completion> completions = new LinkedList<Completion>();
 
-        for( IASTName name : names )
-        {
-            // The node isn't properly hooked up, must have backtracked out of this node
-            if( name.getTranslationUnit() == null )
-                continue;
+		for (IASTName name : names) {
+			// The node isn't properly hooked up, must have backtracked out of
+			// this node
+			if (name.getTranslationUnit() == null)
+				continue;
 
-            IASTCompletionContext astContext = name.getCompletionContext();
-            if( astContext == null || ! ( astContext instanceof IASTNode ) )
-                continue;
-            IASTNode astNode = (IASTNode)astContext;
+			IASTCompletionContext astContext = name.getCompletionContext();
+			if (astContext == null || !(astContext instanceof IASTNode))
+				continue;
+			IASTNode astNode = (IASTNode) astContext;
 
-            if( is_QObject_connect( context, astContext, name ) )
-            {
-                int parseOffset = context.getParseOffset();
-                int invocationOffset = context.getInvocationOffset();
+			if (is_QObject_connect(context, astContext, name)) {
+				int parseOffset = context.getParseOffset();
+				int invocationOffset = context.getInvocationOffset();
 
-                String unparsed = "";
-                try { unparsed = context.getDocument().get( parseOffset, invocationOffset - parseOffset ); }
-                catch( BadLocationException e ) { CCorePlugin.log( e ); }
+				String unparsed = "";
+				try {
+					unparsed = context.getDocument().get(parseOffset,
+							invocationOffset - parseOffset);
+				} catch (BadLocationException e) {
+					CCorePlugin.log(e);
+				}
 
-                if( unparsed.length() > 0 && unparsed.charAt( 0 ) == '(' )
-                    unparsed = unparsed.substring( 1 );
+				if (unparsed.length() > 0 && unparsed.charAt(0) == '(')
+					unparsed = unparsed.substring(1);
 
-                int[] commas = computeCommaPositions( unparsed );
-                switch( commas.length )
-                {
-                case 3:
-                    completions.add( Completion.SIGNAL );
-                    break;
-                case 5:
-                    completions.add( Completion.SLOT );
-                    break;
-                }
-            }
-            else if( astNode.getPropertyInParent() == IASTFunctionCallExpression.ARGUMENT )
-            {
-                IASTNode parent = astNode.getParent();
-                if( ! ( parent instanceof IASTFunctionCallExpression ) )
-                    continue;
-                IASTFunctionCallExpression call = (IASTFunctionCallExpression)parent;
-                IASTExpression nameExpr = call.getFunctionNameExpression();
-                if( !( nameExpr instanceof IASTIdExpression ) )
-                    continue;
-                IASTIdExpression funcNameIdExpr = (IASTIdExpression)nameExpr;
-                IASTName funcName = funcNameIdExpr.getName();
+				int[] commas = computeCommaPositions(unparsed);
+				switch (commas.length) {
+				case 3:
+					completions.add(Completion.SIGNAL);
+					break;
+				case 5:
+					completions.add(Completion.SLOT);
+					break;
+				}
+			} else if (astNode.getPropertyInParent() == IASTFunctionCallExpression.ARGUMENT) {
+				IASTNode parent = astNode.getParent();
+				if (!(parent instanceof IASTFunctionCallExpression))
+					continue;
+				IASTFunctionCallExpression call = (IASTFunctionCallExpression) parent;
+				IASTExpression nameExpr = call.getFunctionNameExpression();
+				if (!(nameExpr instanceof IASTIdExpression))
+					continue;
+				IASTIdExpression funcNameIdExpr = (IASTIdExpression) nameExpr;
+				IASTName funcName = funcNameIdExpr.getName();
 
-                if( !is_QObject_connect( context, astContext, funcName ) )
-                    continue;
+				if (!is_QObject_connect(context, astContext, funcName))
+					continue;
 
-                IASTInitializerClause[] args = call.getArguments();
-                switch( args.length )
-                {
-                case 2:
-                    //if( QtKeywords.SIGNAL.equals( prefix ) )
-                        addCompletionsFor( completions, args[0], MethodFilter.Qt.Signal );
-                    break;
-                case 4:
-                    if( QtKeywords.SLOT.equals( prefix ) )
-                        addCompletionsFor( completions, args[2], MethodFilter.Qt.Slot );
-                    break;
-                }
-            }
-        }
+				IASTInitializerClause[] args = call.getArguments();
+				switch (args.length) {
+				case 2:
+					addCompletionsFor(completions, args[0],
+							MethodFilter.Qt.Signal);
+					break;
+				case 4:
+					addCompletionsFor(completions, args[2],
+							MethodFilter.Qt.Slot);
+					break;
+				}
+			}
+		}
 
-        for( Completion completion : completions )
-        {
-            ICompletionProposal proposal = completion.createProposal( context );
-            if( proposal != null )
-                proposals.add( proposal );
-        }
-    }
+		for (Completion completion : completions) {
+			ICompletionProposal proposal = completion.createProposal(context);
+			if (proposal != null)
+				proposals.add(proposal);
+		}
+	}
 
-    @Override
-    protected List<ICompletionProposal> computeCompletionProposals( CContentAssistInvocationContext context, IASTCompletionNode completionNode, String prefix ) throws CoreException
-    {
-        if( !isApplicable( context ) )
-            return Collections.emptyList();
+	@Override
+	protected List<ICompletionProposal> computeCompletionProposals(
+			CContentAssistInvocationContext context,
+			IASTCompletionNode completionNode, String prefix)
+			throws CoreException {
+		if (!isApplicable(context))
+			return Collections.emptyList();
 
-        List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
-        addConnectParameterCompletions( proposals, context, completionNode, prefix );
-        return proposals;
-    }
+		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		addConnectParameterCompletions(proposals, context, completionNode,
+				prefix);
+		return proposals;
+	}
 }

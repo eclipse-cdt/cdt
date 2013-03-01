@@ -4,8 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Andrew Eidsness - Initial implementation
  */
-
 package org.eclipse.cdt.internal.core.dom.ast.tag;
 
 import org.eclipse.cdt.core.dom.ast.tag.ITag;
@@ -16,31 +18,32 @@ import org.eclipse.cdt.core.dom.ast.tag.IWritableTag;
  *
  * @see NonCachedTaggable
  */
-public class Tag implements IWritableTag
-{
+public class Tag implements IWritableTag {
 	private final String taggerId;
 	private final byte[] buff;
 
-	public Tag( String taggerId, int dataLen )
-	{
+	public Tag(String taggerId, int dataLen) {
 		this.taggerId = taggerId;
 		this.buff = new byte[dataLen];
 	}
 
-	@Override public String getTaggerId() { return taggerId; }
-	@Override public int getDataLen() { return buff.length; }
-
-	private boolean isInBounds( int offset, int len )
-	{
-		return offset >= 0
-			&& offset < buff.length
-			&& ( offset + len ) <= buff.length;
+	@Override
+	public String getTaggerId() {
+		return taggerId;
 	}
 
 	@Override
-	public boolean putByte( int offset, byte b )
-	{
-		if( ! isInBounds( offset, 1 ) )
+	public int getDataLen() {
+		return buff.length;
+	}
+
+	private boolean isInBounds(int offset, int len) {
+		return offset >= 0 && offset < buff.length && (offset + len) <= buff.length;
+	}
+
+	@Override
+	public boolean putByte(int offset, byte b) {
+		if (!isInBounds(offset, 1))
 			return false;
 
 		buff[offset] = b;
@@ -48,31 +51,28 @@ public class Tag implements IWritableTag
 	}
 
 	@Override
-	public boolean putBytes( int offset, byte[] data, int len )
-	{
+	public boolean putBytes(int offset, byte[] data, int len) {
 		len = len >= 0 ? len : data.length;
-		if( ! isInBounds( offset, len ) )
+		if (!isInBounds(offset, len))
 			return false;
 
-		System.arraycopy( data, 0, buff, offset, len );
+		System.arraycopy(data, 0, buff, offset, len);
 		return true;
 	}
 
 	@Override
-	public int getByte( int offset )
-	{
-		return isInBounds( offset, 1 ) ? buff[offset] : ITag.Fail;
+	public int getByte(int offset) {
+		return isInBounds(offset, 1) ? buff[offset] : ITag.FAIL;
 	}
 
 	@Override
-	public byte[] getBytes( int offset, int len )
-	{
+	public byte[] getBytes(int offset, int len) {
 		len = len >= 0 ? len : buff.length - offset;
-		if( ! isInBounds( offset, len ) )
+		if (!isInBounds(offset, len))
 			return null;
 
 		byte[] data = new byte[len];
-		System.arraycopy( buff, offset, data, 0, len );
+		System.arraycopy(buff, offset, data, 0, len);
 		return data;
 	}
 }

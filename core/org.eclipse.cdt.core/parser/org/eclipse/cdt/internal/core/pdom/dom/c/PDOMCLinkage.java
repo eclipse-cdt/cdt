@@ -99,9 +99,9 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 					getPDOM().putCachedResult(inputBinding, pdomBinding);
 				}
 
-				// Synchronize the tags associated with the persistent binding to match the set that is
-				// associated with the input binding.
-				TagManager.getInstance().syncTags( pdomBinding, inputBinding );
+				// Synchronize the tags associated with the persistent binding to match the set that
+				// is associated with the input binding.
+				TagManager.getInstance().syncTags(pdomBinding, inputBinding);
 
 				return pdomBinding;
 			}
@@ -114,9 +114,10 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 
 			pdomBinding.update(this, fromBinding);
 
-			// Update the tags based on the tags from the new binding.  This was in PDOMBinding.update, but
-			// I found that not all subclasses (e.g., PDOMCPPFunction) call the parent implementation.
-			TagManager.getInstance().syncTags( pdomBinding, fromBinding );
+			// Update the tags based on the tags from the new binding.  This cannot be done in
+			// PDOMBinding.update, because not all subclasses (e.g., PDOMCFunction) call
+			// the superclass implementation.
+			TagManager.getInstance().syncTags(pdomBinding, fromBinding);
 		}
 		return pdomBinding;
 	}
@@ -344,23 +345,23 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	
 	@Override
 	public IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= buffer.getByte();
-		switch((firstByte & ITypeMarshalBuffer.KIND_MASK)) {
+		short firstBytes= buffer.getShort();
+		switch((firstBytes & ITypeMarshalBuffer.KIND_MASK)) {
 		case ITypeMarshalBuffer.ARRAY_TYPE:
-			return CArrayType.unmarshal(firstByte, buffer);
+			return CArrayType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.BASIC_TYPE:
-			return CBasicType.unmarshal(firstByte, buffer);
+			return CBasicType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.CVQUALIFIER_TYPE:
-			return CQualifierType.unmarshal(firstByte, buffer);
+			return CQualifierType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.FUNCTION_TYPE:
-			return CFunctionType.unmarshal(firstByte, buffer);
+			return CFunctionType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.POINTER_TYPE:
-			return CPointerType.unmarshal(firstByte, buffer);
+			return CPointerType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.PROBLEM_TYPE:
-			return ProblemType.unmarshal(firstByte, buffer);
+			return ProblemType.unmarshal(firstBytes, buffer);
 		}
 		
-		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first byte=" + firstByte)); //$NON-NLS-1$
+		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first bytes=" + firstBytes)); //$NON-NLS-1$
 	}
 	
 	@Override

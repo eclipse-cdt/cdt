@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Andrew Gvozdev and others.
+ * Copyright (c) 2010, 2013 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,8 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
+package org.eclipse.cdt.internal.ui.language.settings.providers;
 
-package org.eclipse.cdt.internal.ui.newui;
-
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -24,17 +22,66 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.cdt.core.settings.model.ACPathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.UNCPathConverter;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * Helper class to provide unified images for {@link ICLanguageSettingEntry}.
  */
 public class LanguageSettingsImages {
+	private static final String PROJ_NAME_PREFIX = "/${ProjName}/"; //$NON-NLS-1$
+
+	/**
+	 * Check if the language settings entry should be presented as "project-relative" in UI.
+	 * 
+	 * @param entry - language settings entry to check.
+	 * @return {@code true} if the entry should be displayed as "project-relative", {@code false} otherwise.
+	 */
+	public static boolean isProjectRelative(ICLanguageSettingEntry entry) {
+		if (entry instanceof ACPathEntry) {
+			String path = entry.getName();
+			return ((ACPathEntry) entry).isValueWorkspacePath() && path.startsWith(PROJ_NAME_PREFIX);
+		}
+		return false;
+	}
+
+	/**
+	 * Convert path used by {@link ICLanguageSettingEntry} to label representing project-relative portion.
+	 * 
+	 * @param path - path to convert to label in project-relative format.
+	 * @return label to be used to display the path in UI.
+	 */
+	public static String toProjectRelative(String path) {
+		if (path.startsWith(LanguageSettingsImages.PROJ_NAME_PREFIX)) {
+			return path.substring(LanguageSettingsImages.PROJ_NAME_PREFIX.length());
+		}
+		return path;
+	}
+
+	/**
+	 * Convert label for project-relative path back to path representation carried by {@link ICLanguageSettingEntry}.
+	 * 
+	 * @param label - label in project-relative format.
+	 * @return path to be used by {@link ICLanguageSettingEntry}.
+	 */
+	public static String fromProjectRelative(String label) {
+		return LanguageSettingsImages.PROJ_NAME_PREFIX + label;
+	}
+
+	/**
+	 * Returns image for the given {@link ICLanguageSettingEntry} from internally managed repository including
+	 * necessary overlays for given configuration description.
+	 *
+	 * @param kind - kind of {@link ICLanguageSettingEntry}, i.e. {@link ICSettingEntry#INCLUDE_PATH} etc.
+	 * @param flags - flags of {@link ICSettingEntry}.
+	 * @param isProjectRelative specifies if the image should present "project-relative" icon.
+	 * @return the image for the entry with appropriate overlays.
+	 */
 	public static Image getImage(int kind, int flags, boolean isProjectRelative) {
 		String imageKey = getImageKey(kind, flags, isProjectRelative);
 		if (imageKey != null) {
@@ -52,19 +99,35 @@ public class LanguageSettingsImages {
 	 * @return the image for the entry with appropriate overlays.
 	 */
 	public static Image getImage(ICLanguageSettingEntry entry, ICConfigurationDescription cfgDescription) {
-		String projectName = null;
+		int kind = entry.getKind();
+		int flags = entry.getFlags();
+		boolean isProjectRelative = isProjectRelative(entry);
 
-		if (cfgDescription != null) {
-			ICProjectDescription prjDescription = cfgDescription.getProjectDescription();
-			if (prjDescription != null) {
-				IProject project = prjDescription.getProject();
-				if (project != null) {
-					projectName = project.getName();
-				}
+		String imageKey = getImageKey(kind, flags, isProjectRelative);
+		if (imageKey != null) {
+			if ((flags & ICSettingEntry.UNDEFINED) != 0) {
+				return CDTSharedImages.getImageOverlaid(imageKey, CDTSharedImages.IMG_OVR_INACTIVE, IDecoration.BOTTOM_LEFT);
 			}
-		}
 
-		return getImage(entry, projectName, cfgDescription);
+			String overlayKey=null;
+			IStatus status = getStatus(entry, cfgDescription);
+			switch (status.getSeverity()) {
+			case IStatus.ERROR:
+				overlayKey = CDTSharedImages.IMG_OVR_ERROR;
+				break;
+			case IStatus.WARNING:
+				overlayKey = CDTSharedImages.IMG_OVR_WARNING;
+				break;
+			case IStatus.INFO:
+				overlayKey = CDTSharedImages.IMG_OVR_WARNING;
+				break;
+			}
+			if (overlayKey != null) {
+				return CDTSharedImages.getImageOverlaid(imageKey, overlayKey, IDecoration.BOTTOM_LEFT);
+			}
+			return CDTSharedImages.getImage(imageKey);
+		}
+		return null;
 	}
 
 	/**
@@ -112,50 +175,6 @@ public class LanguageSettingsImages {
 		if (imageKey == null)
 			imageKey = CDTSharedImages.IMG_OBJS_UNKNOWN_TYPE;
 		return imageKey;
-	}
-
-	/**
-	 * Returns image for the given entry from internally managed repository including
-	 * necessary overlays.
-	 *
-	 * @param entry - language settings entry to get an image for.
-	 * @param projectName - pass project name if available. That lets put "project" metaphor
-	 *    on the image. Pass {@code null} if no project name is available.
-	 * @param cfgDescription - configuration description of the entry.
-	 * @return the image for the entry with appropriate overlays.
-	 */
-	private static Image getImage(ICLanguageSettingEntry entry, String projectName, ICConfigurationDescription cfgDescription) {
-		int kind = entry.getKind();
-		int flags = entry.getFlags();
-		boolean isWorkspacePath = (flags & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0;
-		String path = entry.getName();
-		boolean isProjectRelative = (projectName != null) && isWorkspacePath && path.startsWith(IPath.SEPARATOR + projectName + IPath.SEPARATOR);
-
-		String imageKey = getImageKey(kind, flags, isProjectRelative);
-		if (imageKey != null) {
-			if ((flags & ICSettingEntry.UNDEFINED) != 0) {
-				return CDTSharedImages.getImageOverlaid(imageKey, CDTSharedImages.IMG_OVR_INACTIVE, IDecoration.BOTTOM_LEFT);
-			}
-
-			if (entry instanceof ACPathEntry) {
-				String overlayKey=null;
-				IStatus status = getStatus(entry, cfgDescription);
-				switch (status.getSeverity()) {
-				case IStatus.ERROR:
-					overlayKey = CDTSharedImages.IMG_OVR_ERROR;
-					break;
-				case IStatus.WARNING:
-					overlayKey = CDTSharedImages.IMG_OVR_WARNING;
-					break;
-				case IStatus.INFO:
-					overlayKey = CDTSharedImages.IMG_OVR_WARNING;
-					break;
-				}
-				return CDTSharedImages.getImageOverlaid(imageKey, overlayKey, IDecoration.BOTTOM_LEFT);
-			}
-			return CDTSharedImages.getImage(imageKey);
-		}
-		return null;
 	}
 
 	/**

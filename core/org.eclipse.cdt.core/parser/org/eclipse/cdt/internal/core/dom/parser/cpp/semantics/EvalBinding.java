@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -246,6 +247,12 @@ public class EvalBinding extends CPPDependentEvaluation {
 		}
 		if (binding instanceof ICPPTemplateNonTypeParameter) {
 			IType type= ((ICPPTemplateNonTypeParameter) binding).getType();
+			// If the binding is a non-type parameter pack, it must have been 
+			// referenced from inside the expansion pattern of a pack expansion. 
+			// In such a context, the type of the binding is the type of each 
+			// parameter in the parameter pack, not the type of the pack itself.
+			if (type instanceof ICPPParameterPackType)
+				type = ((ICPPParameterPackType) type).getType();
 			return prvalueType(type);
 		}
 		if (binding instanceof IVariable) {
@@ -293,24 +300,24 @@ public class EvalBinding extends CPPDependentEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		byte firstByte = ITypeMarshalBuffer.EVAL_BINDING;
+		short firstBytes = ITypeMarshalBuffer.EVAL_BINDING;
 		ICPPFunction parameterOwner = getParameterOwner();
 		if (parameterOwner != null) {
 			// A function parameter cannot be marshalled directly. We are storing the owning
 			// function and the parameter position instead.
-			buffer.putByte((byte) (ITypeMarshalBuffer.EVAL_BINDING | ITypeMarshalBuffer.FLAG1));
+			buffer.putShort((short) (ITypeMarshalBuffer.EVAL_BINDING | ITypeMarshalBuffer.FLAG1));
 			buffer.marshalBinding(parameterOwner);
 			buffer.putInt(getFunctionParameterPosition());
 		} else {
-			buffer.putByte(firstByte);
+			buffer.putShort(firstBytes);
 			buffer.marshalBinding(fBinding);
 		}
 		buffer.marshalType(fFixedType ? fType : null);
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0) {
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0) {
 			ICPPFunction parameterOwner= (ICPPFunction) buffer.unmarshalBinding();
 			int parameterPosition= buffer.getInt();
 			IType type= buffer.unmarshalType();
@@ -329,14 +336,16 @@ public class EvalBinding extends CPPDependentEvaluation {
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
 		IBinding origBinding = getBinding();
 		if (origBinding instanceof ICPPTemplateNonTypeParameter) {
-			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) origBinding);
+			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) origBinding, packOffset);
 			if (argument != null && argument.isNonTypeValue()) {
 				return argument.getNonTypeEvaluation();
 			}
-			// TODO(sprigogin): Do we need something similar for pack expansion?
 		} else if (origBinding instanceof ICPPParameter) {
 			ICPPParameter parameter = (ICPPParameter) origBinding;
 			IType origType = parameter.getType();
+			if (origType instanceof ICPPParameterPackType && packOffset != -1) {
+				origType = ((ICPPParameterPackType) origType).getType();
+			}
 			IType instantiatedType = CPPTemplates.instantiateType(origType, tpMap, packOffset, within, point);
 			if (origType != instantiatedType) {
 				return new EvalFixed(instantiatedType, ValueCategory.LVALUE, Value.create(this));
@@ -372,6 +381,10 @@ public class EvalBinding extends CPPDependentEvaluation {
 		}
 		if (binding instanceof ICPPUnknownBinding) {
 			return CPPTemplates.determinePackSize((ICPPUnknownBinding) binding, tpMap);
+		}
+		if (binding instanceof ICPPParameter && ((ICPPParameter) binding).isParameterPack()) {
+			ICPPParameterPackType type = (ICPPParameterPackType) ((ICPPParameter) binding).getType();
+			return CPPTemplates.determinePackSize(type.getType(), tpMap);
 		}
 		
 		if (binding instanceof ICPPSpecialization) {

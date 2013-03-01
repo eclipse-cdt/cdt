@@ -283,11 +283,15 @@ public class UserDefinedEnvironmentSupplier extends
 	}
 
 	public boolean setWorkspaceEnvironment(StorableEnvironment env) {
-		StorableEnvironment oldEnv = getEnvironment(null);
+		IEnvironmentVariable[] oldVariables = fWorkspaceVariables.getVariables();
+		IEnvironmentVariable[] newVariables = env.getVariables();
 
-		fWorkspaceVariables = new StorableEnvironment(env, false);
+		fWorkspaceVariables.deleteAll();
+		fWorkspaceVariables.setVariales(newVariables);
+		fWorkspaceVariables.setAppendEnvironment(env.appendEnvironment());
+		fWorkspaceVariables.setAppendContributedEnvironment(env.appendContributedEnvironment());
 
-		EnvironmentChangeEvent event = createEnvironmentChangeEvent(fWorkspaceVariables.getVariables(), oldEnv.getVariables());
+		EnvironmentChangeEvent event = createEnvironmentChangeEvent(newVariables, oldVariables);
 
 		storeWorkspaceEnvironment(true);
 

@@ -154,41 +154,41 @@ public class Value implements IValue {
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
-	public void marshall(ITypeMarshalBuffer buf) throws CoreException {
+	public void marshal(ITypeMarshalBuffer buf) throws CoreException {
 		if (UNKNOWN == this) {
-			buf.putByte((byte) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG1));
+			buf.putShort((short) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG1));
 		} else {
 			Long num= numericalValue();
 			if (num != null) {
 				long lv= num;
 				if (lv >= 0) {
-					buf.putByte((byte) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG2));
+					buf.putShort((short) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG2));
 					buf.putLong(lv);
 				} else {
-					buf.putByte((byte) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG3));
+					buf.putShort((short) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG3));
 					buf.putLong(-lv);
 				}
 			} else if (fFixedValue != null) {
-				buf.putByte((byte) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG4));
+				buf.putShort((short) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG4));
 				buf.putCharArray(fFixedValue);
 			} else {
-				buf.putByte((ITypeMarshalBuffer.VALUE));
+				buf.putShort(ITypeMarshalBuffer.VALUE);
 				fEvaluation.marshal(buf, true);
 			}
 		}
 	}
 
 	public static IValue unmarshal(ITypeMarshalBuffer buf) throws CoreException {
-		int firstByte= buf.getByte();
-		if (firstByte == TypeMarshalBuffer.NULL_TYPE)
+		short firstBytes= buf.getShort();
+		if (firstBytes == TypeMarshalBuffer.NULL_TYPE)
 			return null;
-		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0)
+		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0)
 			return Value.UNKNOWN;
-		if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0)
+		if ((firstBytes & ITypeMarshalBuffer.FLAG2) != 0)
 			return Value.create(buf.getLong());
-		if ((firstByte & ITypeMarshalBuffer.FLAG3) != 0)
+		if ((firstBytes & ITypeMarshalBuffer.FLAG3) != 0)
 			return Value.create(-buf.getLong());
-		if ((firstByte & ITypeMarshalBuffer.FLAG4) != 0)
+		if ((firstBytes & ITypeMarshalBuffer.FLAG4) != 0)
 			return new Value(buf.getCharArray(), null);
 
 		ISerializableEvaluation eval= buf.unmarshalEvaluation();
@@ -280,6 +280,8 @@ public class Value implements IValue {
 	}
 
 	public static IValue incrementedValue(IValue value, int increment) {
+		if (value == UNKNOWN)
+			return UNKNOWN;
 		Long val = value.numericalValue();
 		if (val != null) {
 			return create(val.longValue() + increment);

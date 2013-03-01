@@ -94,17 +94,17 @@ public class CPointerType implements ICPointerType, ITypeContainer, ISerializabl
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.POINTER_TYPE;
-		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
-		if (isVolatile()) firstByte |= ITypeMarshalBuffer.FLAG2;
-		if (isRestrict()) firstByte |= ITypeMarshalBuffer.FLAG3;
-		buffer.putByte((byte) firstByte);
+		short firstBytes = ITypeMarshalBuffer.POINTER_TYPE;
+		if (isConst()) firstBytes |= ITypeMarshalBuffer.FLAG1;
+		if (isVolatile()) firstBytes |= ITypeMarshalBuffer.FLAG2;
+		if (isRestrict()) firstBytes |= ITypeMarshalBuffer.FLAG3;
+		buffer.putShort(firstBytes);
 		buffer.marshalType(getType());
 	}
 	
-	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType nested= buffer.unmarshalType();
-		return new CPointerType(nested, firstByte/ITypeMarshalBuffer.FLAG1);
+		return new CPointerType(nested, firstBytes/ITypeMarshalBuffer.FLAG1);
 	}
 
 	@Override

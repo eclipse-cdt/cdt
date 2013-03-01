@@ -344,7 +344,7 @@ public class CPPVisitor extends ASTQueries {
 		if (inScope == null)
 			return false;
 
-		IBinding pb= names[names.length-2].resolvePreBinding();
+		IBinding pb= names[names.length - 2].resolvePreBinding();
 		if (pb instanceof IProblemBinding)
 			return false;
 
@@ -930,11 +930,11 @@ public class CPPVisitor extends ASTQueries {
 				if (name instanceof ICPPASTQualifiedName) {
 					IASTName[] names = ((ICPPASTQualifiedName) name).getNames();
 					if (names.length >= 2) {
-						IBinding b= names[names.length-2].resolvePreBinding();
+						IBinding b= names[names.length - 2].resolvePreBinding();
 						if (b instanceof IType) {
 							IType classType= getNestedType((IType) b, TDEF);
 							if (classType instanceof ICPPClassType) {
-							    final char[] dtorName = names[names.length-1].getLookupKey();
+							    final char[] dtorName = names[names.length - 1].getLookupKey();
 								final char[] className = ((ICPPClassType) classType).getNameCharArray();
 								return CharArrayUtils.equals(dtorName, className);
 							}
@@ -1303,7 +1303,7 @@ public class CPPVisitor extends ASTQueries {
 		    IASTName name = findInnermostDeclarator(fnDeclarator).getName();
 		    if (name instanceof ICPPASTQualifiedName) {
 		        IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-		        name = ns[ns.length -1];
+		        name = ns[ns.length - 1];
 		    }
 		    return getContainingScope(name);
 		}

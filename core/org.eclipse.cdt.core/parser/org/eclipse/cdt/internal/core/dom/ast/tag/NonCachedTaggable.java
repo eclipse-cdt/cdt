@@ -4,8 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Andrew Eidsness - Initial implementation
  */
-
 package org.eclipse.cdt.internal.core.dom.ast.tag;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -19,78 +21,68 @@ import org.eclipse.cdt.core.dom.ast.tag.ITagWriter;
 import org.eclipse.cdt.core.dom.ast.tag.IWritableTag;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 
-public class NonCachedTaggable implements ITagReader, ITagWriter
-{
+public class NonCachedTaggable implements ITagReader, ITagWriter {
 	private final IBinding binding;
 	private IASTName ast;
 
-	public NonCachedTaggable( IBinding binding )
-	{
+	public NonCachedTaggable(IBinding binding) {
 		this.binding = binding;
 	}
 
 	@Override
-	public IWritableTag createTag( String id, int len )
-	{
-		return new Tag( id, len );
+	public IWritableTag createTag(String id, int len) {
+		return new Tag(id, len);
 	}
 
 	@Override
-	public ITag getTag( String id )
-	{
-		return TagManager.getInstance().process( id, this, binding, getAST() );
+	public ITag getTag(String id) {
+		return TagManager.getInstance().process(id, this, binding, getAST());
 	}
 
 	@Override
-	public Iterable<ITag> getTags()
-	{
-		return TagManager.getInstance().process( this, binding, getAST() );
+	public Iterable<ITag> getTags() {
+		return TagManager.getInstance().process(this, binding, getAST());
 	}
 
 	@Override
-	public boolean setTags( Iterable<ITag> tags )
-	{
-		// this non-caching implementation has nothing to set, the tags will be regenerated
+	public boolean setTags(Iterable<ITag> tags) {
+		// This non-caching implementation has nothing to set, the tags will be regenerated
 		// when they are queried
 		return true;
 	}
 
-	private IASTName getAST()
-	{
-		if( ast != null )
+	private IASTName getAST() {
+		if (ast != null)
 			return ast;
 
-		if( ! ( binding instanceof ICPPInternalBinding ) )
+		if (!(binding instanceof ICPPInternalBinding))
 			return null;
 
-		IASTNode node = getPhysicalNode( (ICPPInternalBinding)binding );
-		if( node == null )
+		IASTNode node = getPhysicalNode((ICPPInternalBinding) binding);
+		if (node == null)
 			return null;
 
-		return ast = getName( node );
+		return ast = getName(node);
 	}
 
-	private static IASTNode getPhysicalNode( ICPPInternalBinding binding )
-	{
+	private static IASTNode getPhysicalNode(ICPPInternalBinding binding) {
 		IASTNode node = binding.getDefinition();
-		if( node != null )
+		if (node != null)
 			return node;
 
 		IASTNode[] nodes = binding.getDeclarations();
-		if( nodes == null
-		 || nodes.length <= 0 )
+		if (nodes == null || nodes.length <= 0)
 			return null;
 		return nodes[0];
 	}
 
-	private static IASTName getName( IASTNode node )
-	{
-		if( node instanceof IASTName )
-			return (IASTName)node;
-		if( node instanceof ICPPASTCompositeTypeSpecifier )
-			return ( (ICPPASTCompositeTypeSpecifier)node ).getName();
-		if( node instanceof IASTDeclarator )
-			return ( (IASTDeclarator)node ).getName();
+	private static IASTName getName(IASTNode node) {
+		if (node instanceof IASTName)
+			return (IASTName) node;
+		if (node instanceof ICPPASTCompositeTypeSpecifier)
+			return ((ICPPASTCompositeTypeSpecifier) node).getName();
+		if (node instanceof IASTDeclarator)
+			return ((IASTDeclarator) node).getName();
 		return null;
 	}
 }

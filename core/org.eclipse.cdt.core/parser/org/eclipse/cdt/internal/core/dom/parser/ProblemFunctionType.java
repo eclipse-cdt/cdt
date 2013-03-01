@@ -28,11 +28,11 @@ public class ProblemFunctionType extends ProblemType implements ICPPFunctionType
 	
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		buffer.putByte((byte) (ITypeMarshalBuffer.PROBLEM_TYPE | ITypeMarshalBuffer.FLAG1));
+		buffer.putShort((short) (ITypeMarshalBuffer.PROBLEM_TYPE | ITypeMarshalBuffer.FLAG1));
 		buffer.putInt(getID());
 	}
 	
-	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		return new ProblemFunctionType(buffer.getInt());
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,22 +31,18 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.corext.util.Strings;
 
-import org.eclipse.cdt.internal.ui.newui.LanguageSettingsImages;
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsImages;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
-/*
- * CViewLabelProvider
+/**
+ * Label provider for "C/C++ Projects" view.
  */
 public class CViewLabelProvider extends AppearanceAwareLabelProvider {
-
 	public CViewLabelProvider(long textFlags, int imageFlags) {
 		super(textFlags, imageFlags);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
 	@Override
 	public String getText(Object element) {
 		if (element instanceof IncludeReferenceProxy) {
@@ -103,22 +99,23 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 		return Strings.markLTR(new StyledString(getText(element)));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-	 */
 	@Override
 	public Image getImage(Object element) {
 		String imageKey = null;
 		if (element instanceof IncludeReferenceProxy) {
 			IIncludeReference reference = ((IncludeReferenceProxy)element).getReference();
-			IContainer containerInclude = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(reference.getPath());
-			if (containerInclude != null) {
-				ICProject cproject = reference.getCProject();
-				IProject project = (cproject != null) ? cproject.getProject() : null;
+			IPath path = reference.getPath();
+			ICProject cproject = reference.getCProject();
+			IProject project = (cproject != null) ? cproject.getProject() : null;
+			for (IContainer containerInclude : ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(URIUtil.toURI(path.makeAbsolute()))) {
 				IProject projectInclude = containerInclude.getProject();
 				boolean isProjectRelative = projectInclude != null && projectInclude.equals(project);
 				imageKey = LanguageSettingsImages.getImageKey(ICSettingEntry.INCLUDE_PATH, ICSettingEntry.VALUE_WORKSPACE_PATH, isProjectRelative);
-			} else {
+				if (isProjectRelative) {
+					break;
+				}
+			}
+			if (imageKey == null) {
 				imageKey = CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER;
 			}
 		} else if (element instanceof IIncludeReference) {

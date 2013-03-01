@@ -97,20 +97,20 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 	
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.POINTER_TO_MEMBER_TYPE;
-		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
-		if (isVolatile()) firstByte |= ITypeMarshalBuffer.FLAG2;
-		if (isRestrict()) firstByte |= ITypeMarshalBuffer.FLAG3;
-		buffer.putByte((byte) firstByte);
+		short firstBytes= ITypeMarshalBuffer.POINTER_TO_MEMBER_TYPE;
+		if (isConst()) firstBytes |= ITypeMarshalBuffer.FLAG1;
+		if (isVolatile()) firstBytes |= ITypeMarshalBuffer.FLAG2;
+		if (isRestrict()) firstBytes |= ITypeMarshalBuffer.FLAG3;
+		buffer.putShort(firstBytes);
 		buffer.marshalType(getType());
 		buffer.marshalType(getMemberOfClass());
 	}
 	
-	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType nested= buffer.unmarshalType();
 		IType memberOf= buffer.unmarshalType();
-		return new CPPPointerToMemberType(nested, memberOf, (firstByte & ITypeMarshalBuffer.FLAG1) != 0,
-				(firstByte & ITypeMarshalBuffer.FLAG2) != 0,
-				(firstByte & ITypeMarshalBuffer.FLAG3) != 0);
+		return new CPPPointerToMemberType(nested, memberOf, (firstBytes & ITypeMarshalBuffer.FLAG1) != 0,
+				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0,
+				(firstBytes & ITypeMarshalBuffer.FLAG3) != 0);
 	}
 }

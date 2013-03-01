@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils;
@@ -17,6 +18,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerExecutionState;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICPUDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICoreDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.ILoadInfo;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 
 /** Interface for classes that interact with DSFDebugModel.
@@ -64,5 +66,17 @@ public interface DSFDebugModelListener {
 							                IThreadDMData threadData,
 							                VisualizerExecutionState state,
 							                Object arg);
+	
+	/**
+	 * Invoked when getLoad() request completes.
+	 * @since 1.1
+	 */
+	public void getLoadDone(IDMContext context, ILoadInfo loads, Object arg);
 
+	/**
+	 * Invoked when the load timer triggers
+	 * @since 1.1
+	 */
+	public void updateLoads();
+	
 }

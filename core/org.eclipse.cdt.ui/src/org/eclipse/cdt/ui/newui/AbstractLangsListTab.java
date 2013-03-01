@@ -72,8 +72,8 @@ import org.eclipse.cdt.core.settings.model.MultiLanguageSetting;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsImages;
 import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage;
-import org.eclipse.cdt.internal.ui.newui.LanguageSettingsImages;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
 

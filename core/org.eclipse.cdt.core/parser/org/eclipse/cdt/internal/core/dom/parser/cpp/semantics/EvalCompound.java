@@ -81,12 +81,12 @@ public class EvalCompound extends CPPDependentEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		buffer.putByte(ITypeMarshalBuffer.EVAL_COMPOUND);
+		buffer.putShort(ITypeMarshalBuffer.EVAL_COMPOUND);
 		buffer.marshalEvaluation(fDelegate, includeValue);
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		ICPPEvaluation arg= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		IBinding templateDefinition= buffer.unmarshalBinding();
 		return new EvalCompound(arg, templateDefinition);

@@ -209,7 +209,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  113.0 - Changed marshaling of values, bug 327878
 	 *  #114.0# - Partial specializations for class template specializations, bug 332884.
 	 *          - Corrected signatures for function templates, bug 335062.  <<CDT 8.0>>
-	 *  
+	 *
 	 *  CDT 8.1 development (versions not supported on the 8.0.x branch)
 	 *  120.0 - Enumerators in global index, bug 356235
 	 *  120.1 - Specializations of using declarations, bug 357293.
@@ -218,7 +218,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  123.0 - Combined file size and encoding hash code.
 	 *  124.0 - GCC attributes and NO_RETURN flag for functions.
 	 *  #125.0# - Indexes for unresolved includes and files indexed with I/O errors. <<CDT 8.1>>
-	 *  
+	 *
 	 *  CDT 8.2 development (versions not supported on the 8.1.x branch)
 	 *  130.0 - Dependent expressions, bug 299911.
 	 *  131.0 - Dependent expressions part 2, bug 299911.
@@ -231,12 +231,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  138.0 - Constexpr functions, bug 395238.
 	 *  139.0 - More efficient and robust storage of types and template arguments, bug 395243.
 	 *  140.0 - Enumerators with dependent values, bug 389009.
-	 *  140.1 - Mechanism for tagging nodes with extended data, bug TODO
-	 *  141.0 - Storing enclosing template bindings for evaluations, bug 399829
+	 *  140.1 - Mechanism for tagging nodes with extended data, bug 400020
+	 *  141.0 - Storing enclosing template bindings for evaluations, bug 399829.
+	 *  142.0 - Changed marshalling of evaluations to allow more than 15 evaluation kinds, bug 401479.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(141, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(141, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(141, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(142, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(142, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(142, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;
@@ -465,10 +466,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public PDOMTagIndex getTagIndex() throws CoreException {
-		if (tagIndex == null)
-		{
-			// tag index can only be stored in database versions 139.1 or greater
-			tagIndex = new PDOMTagIndex( db.getVersion() >= version( 139, 1 ) ? db : null, TAG_INDEX );
+		if (tagIndex == null) {
+			tagIndex = new PDOMTagIndex(db, TAG_INDEX);
 		}
 		return tagIndex;
 	}
@@ -483,7 +482,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	/**
-	 * Returns the index of files containg unresolved includes.
+	 * Returns the index of files containing unresolved includes.
 	 */
 	public BTree getIndexOfFilesWithUnresolvedIncludes() throws CoreException {
 		if (indexOfFiledWithUnresolvedIncludes == null) {
@@ -562,7 +561,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		});
 		return files.toArray(new IIndexFragmentFile[files.size()]);
 	}
-		
+
 	protected IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location,
 			ISignificantMacros sigMacros) throws CoreException {
 		PDOMLinkage linkage= createLinkage(linkageID);

@@ -38,7 +38,6 @@ import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.AbstractPropertyDialog;
 
 import org.eclipse.cdt.internal.ui.ImageCombo;
-import org.eclipse.cdt.internal.ui.newui.LanguageSettingsImages;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**

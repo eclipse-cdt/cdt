@@ -31,7 +31,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.corext.util.Strings;
 
-import org.eclipse.cdt.internal.ui.newui.LanguageSettingsImages;
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsImages;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 

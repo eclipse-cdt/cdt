@@ -9,7 +9,7 @@
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.ui.newui;
+package org.eclipse.cdt.internal.ui.language.settings.providers;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -30,6 +30,8 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.UNCPathConverter;
+
+import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * Helper class to provide unified images for {@link ICLanguageSettingEntry}.

@@ -699,6 +699,9 @@ public class CPPSemantics {
     private static void getAssociatedScopes(IType t, Set<ICPPNamespaceScope> namespaces,
     		Set<ICPPFunction> friendFns, ObjectSet<IType> handled, CPPASTTranslationUnit tu) throws DOMException {
         t = getNestedType(t, TDEF | CVTYPE | PTR | ARRAY | REF);
+        // No point getting namespaces associated with a dependent type - we don't know what they are yet.
+        if (CPPTemplates.isDependentType(t))
+        	return;
     	if (t instanceof IBinding) {
             if (handled.containsKey(t))
             	return;

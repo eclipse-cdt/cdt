@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//7ok\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T22:28:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//7o8\u003d",
+      "revId": "49229bce49e34264fc8933a356048a5f98d54684",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//7o4\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2013-03-01T22:26:32Z",
       "side": 1,
       "message": "browser -\u003e Web browser",
+      "revId": "49229bce49e34264fc8933a356048a5f98d54684",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//7og\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T22:28:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//7o4\u003d",
       "revId": "49229bce49e34264fc8933a356048a5f98d54684",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//7oc\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T22:28:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//7pM\u003d",
+      "revId": "49229bce49e34264fc8933a356048a5f98d54684",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//7pI\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2013-03-01T22:26:32Z",
       "side": 1,
       "message": "Moves what? Would \"Navigates\" be more appropriate?",
+      "revId": "49229bce49e34264fc8933a356048a5f98d54684",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//7oY\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_navigate.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T22:28:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//7pI\u003d",
       "revId": "49229bce49e34264fc8933a356048a5f98d54684",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//74k\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-01T00:40:14Z",
+      "side": 1,
+      "message": "I probably missed that in other reviews and apologize for that. All command descriptions have to use third-person descriptive form of verbs instead of imperative one (Create -\u003e Creates).",
+      "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//74Q\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-01T00:40:14Z",
+      "side": 1,
+      "message": "I don\u0027t think we should get into so great details here. We can just say that the a submenu allowing user to select a workspace will be shown.",
+      "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//74c\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-01T00:40:14Z",
+      "side": 1,
+      "message": "Add a comma after \u0027dialog\u0027",
+      "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//74g\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-01T00:40:14Z",
+      "side": 1,
+      "message": "of -\u003e for",
+      "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

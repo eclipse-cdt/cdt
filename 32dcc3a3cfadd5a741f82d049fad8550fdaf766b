@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//73M\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T01:21:46Z",
+      "side": 1,
+      "message": "I found http://wiki.eclipse.org/Eclipse_Doc_Style_Guide -- but it doesn\u0027t mention anything about a suggested verb form for menu documentation... Is there somewhere else you were thinking of?",
+      "parentUuid": "AABOPX//74I\u003d",
+      "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//74Q\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
         "patchSetId": 1

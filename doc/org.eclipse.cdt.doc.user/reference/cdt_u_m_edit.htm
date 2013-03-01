@@ -12,7 +12,7 @@
 		<p>
 			<img src="../images/cdt_menu_edit.png" alt="Selecting Edit Menu">
 		</p>
-		<table class="menu" border="1" cellspacing="0" cellpadding="3">
+		<table class="menu" border="1" cellspacing="0">
 			<thead>
 				<tr>
 					<th id="name">Name</th>
@@ -23,57 +23,58 @@
 			<tbody>
 				<tr>
 					<td class="menu_name" headers="name">Undo</td>
-					<td headers="function">Revert the last change made in the
+					<td headers="function">Reverts the last change made in the
 						editor</td>
 					<td headers="keyboard">Ctrl+Z</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Redo</td>
-					<td headers="function">Redo a change previously reverted with
-						Undo</td>
+					<td headers="function">Re-applies a change previously reverted
+						with Undo</td>
 					<td headers="keyboard">Ctrl+Y</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Cut</td>
-					<td headers="function">Copy the currently selected text to the
-						clipboard and remove it from the editor</td>
+					<td headers="function">Copies the currently selected text to
+						the clipboard and removes it from the editor</td>
 					<td headers="keyboard">Ctrl+X</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Copy</td>
-					<td headers="function">Copy the currently selected text to the
-						clipboard</td>
+					<td headers="function">Copies the currently selected text to
+						the clipboard</td>
 					<td headers="keyboard">Ctrl+C</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Paste</td>
-					<td headers="function">Paste the contents of the clipboard, as
-						text, to the currently active editor window</td>
+					<td headers="function">Pastes the contents of the clipboard,
+						as text, to the currently active editor window</td>
 					<td headers="keyboard">Ctrl+V</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Delete</td>
-					<td headers="function">Delete the currently selected text</td>
+					<td headers="function">Deletes the currently selected text</td>
 					<td headers="keyboard">Delete</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Select All</td>
-					<td headers="function">Select all the text in the currently
+					<td headers="function">Selects all the text in the currently
 						active editor window</td>
 					<td headers="keyboard">Ctrl+A</td>
 				</tr>
 				<tr>
 					<td rowspan="5" class="menu_name" headers="name">Expand
 						Selection To</td>
-					<td headers="function"><p>Expand the selection (or create
-							a selection starting from the cursor) in the following ways:</p></td>
+					<td headers="function"><p>Expands the selection (or
+							creates a selection starting from the cursor) in the following
+							ways:</p></td>
 					<td headers="keyboard">Alt+Shift+<i>Arrow Keys</i></td>
 				</tr>
 				<tr>
 					<td headers="function">
 						<dl>
 							<dt>Enclosing Element</dt>
-							<dd>Add the enclosing expression or block to the selection
+							<dd>Adds the enclosing expression or block to the selection
 								(It relies on the embedded parser, so may fail when syntax
 								errors are present.)</dd>
 						</dl>
@@ -84,7 +85,7 @@
 					<td headers="function">
 						<dl>
 							<dt>Next Element</dt>
-							<dd>Add the following element to the selection</dd>
+							<dd>Adds the following element to the selection</dd>
 						</dl>
 					</td>
 					<td headers="keyboard">Alt+Shift+Right</td>
@@ -93,7 +94,7 @@
 					<td headers="function">
 						<dl>
 							<dt>Previous Element</dt>
-							<dd>Add the preceding element to the selection</dd>
+							<dd>Adds the preceding element to the selection</dd>
 						</dl>
 					</td>
 					<td headers="keyboard">Alt+Shift+Left</td>
@@ -112,13 +113,13 @@
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Find / Replace...</td>
-					<td headers="function">Open the basic in-editor Find / Replace
-						dialog</td>
+					<td headers="function">Opens the basic in-editor Find /
+						Replace dialog</td>
 					<td headers="keyboard">Ctrl+F</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Find Word</td>
-					<td headers="function">Find the next occurrence of either the
+					<td headers="function">Finds the next occurrence of either the
 						word containing the cursor, or the first word of the current
 						selection, if it covers multiple words (Added for Visual Studio
 						compatibility.)</td>
@@ -126,45 +127,45 @@
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Find Next</td>
-					<td headers="function">Find the next occurrence of the
+					<td headers="function">Finds the next occurrence of the
 						currently selected text, or the last text searched for, if there
 						is no selection</td>
 					<td headers="keyboard">Ctrl+K</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Find Previous</td>
-					<td headers="function">Find the previous occurrence of the
+					<td headers="function">Finds the previous occurrence of the
 						currently selected text, or the last text searched for, if there
 						is no selection</td>
 					<td headers="keyboard">Ctrl+Shift+K</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Incremental Find Next</td>
-					<td headers="function">Start the incremental find mode
+					<td headers="function">Starts the incremental find mode
 						(Whatever is typed afterward will be searched for.)</td>
 					<td headers="keyboard">Ctrl+J</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Incremental Find Previous</td>
-					<td headers="function">Start the incremental find mode,
+					<td headers="function">Starts the incremental find mode,
 						looking backward</td>
 					<td headers="keyboard">Ctrl+Shift+J</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Add Bookmark...</td>
-					<td headers="function">Add a bookmark pointing to the current
+					<td headers="function">Adds a bookmark pointing to the current
 						cursor position or selected text</td>
 					<td headers="keyboard">&nbsp;</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Add Task...</td>
-					<td headers="function">Add a user defined task located at the
+					<td headers="function">Adds a user defined task located at the
 						current line</td>
 					<td headers="keyboard">&nbsp;</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Smart Insert Mode</td>
-					<td headers="function">Toggle the Smart Insert mode (i.e. the
+					<td headers="function">Toggles the Smart Insert mode (i.e. the
 						auto-completion features defined in <strong>C/C++ &gt;
 							Editor &gt; Typing</strong>)
 					</td>
@@ -172,40 +173,40 @@
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Show Tooltip Description</td>
-					<td headers="function">Display the tooltip appropriate to the
+					<td headers="function">Displays the tooltip appropriate to the
 						cursor position.</td>
 					<td headers="keyboard">F2</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Word Completion</td>
-					<td headers="function">Complete the word containing the cursor
-						using the next available completion (Invoke it repeatedly to cycle
-						through them.)</td>
+					<td headers="function">Completes the word containing the
+						cursor using the next available completion (If invoked repeatedly
+						it will cycle through the possibilities.)</td>
 					<td headers="keyboard">Alt+/</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Quick Fix</td>
-					<td headers="function">Display the Quick Fix dialog
+					<td headers="function">Displays the Quick Fix dialog
 						appropriate to the cursor position.</td>
 					<td headers="keyboard">Ctrl+1</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Content Assist</td>
-					<td headers="function">Display the Content Assist dialog
-						appropriate to the cursor position (Invoke it repeatedly to cycle
-						through the available proposal types.)</td>
+					<td headers="function">Displays the Content Assist dialog
+						appropriate to the cursor position (If invoked repeatedly it will
+						cycle through the available proposal types.)</td>
 					<td headers="keyboard">Ctrl+Space</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Parameter Hints</td>
-					<td headers="function">When invoked in a parameter list,
-						display the possible signatures in a tooltip</td>
+					<td headers="function">Displays the possible signatures in a
+						tooltip (Enabled when the cursor is in a parameter list)</td>
 					<td headers="keyboard">Ctrl+Shift+Space</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Set Encoding...</td>
-					<td headers="function">Display a dialog in which the active
-						editor's encoding can be specified</td>
+					<td headers="function">Displays a dialog in which the encoding
+						of the active editor can be specified</td>
 					<td headers="keyboard">&nbsp;</td>
 				</tr>
 			</tbody>

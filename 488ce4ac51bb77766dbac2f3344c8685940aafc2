@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//72g\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 4
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-01T02:23:50Z",
+      "side": 1,
+      "message": "Add \"and Other, which brings up a workspace selection dialog\"",
+      "revId": "488ce4ac51bb77766dbac2f3344c8685940aafc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

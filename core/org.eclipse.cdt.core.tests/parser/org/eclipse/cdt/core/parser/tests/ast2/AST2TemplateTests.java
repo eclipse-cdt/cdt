@@ -7310,6 +7310,17 @@ public class AST2TemplateTests extends AST2TestBase {
 		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
 		helper.assertProblem("bind(s, 0, foo)", "bind");
     }
+	
+
+	//	template<typename T>
+	//	T forward(T);
+	//	template <typename, typename S1, typename S2>
+	//	int combine(S1&& r1, S2&& r2);
+	//	template <typename S1, typename S2>
+	//	auto combine(S1 r1, S2 r2) -> decltype(combine<int>(forward<S1>(r1), forward<S2>(r2)));
+	public void testUnsupportedOperationExceptionInASTAmbiguousNode_402085() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <bool... Args>
 	//	struct ice_or;

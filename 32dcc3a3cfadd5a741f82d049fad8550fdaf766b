@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//73A\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T01:40:56Z",
+      "side": 1,
+      "message": "Looking through other entries, 3rd-person descriptive tense is certainly the majority, but not close to universal. There\u0027s a lot of \"This command...\" and quite a few imperative ones. Specifically, the previous version of the CDT Edit menu starts out with about 6 imperative ones (which led me to assume *that* was the standard).\n\nSigh. Unless you know of another style guide, I\u0027ll go add this point to the one on the wiki (linked above). That way at least from now *on* it will be written down somewhere...",
+      "parentUuid": "AABOPX//73U\u003d",
+      "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//74Q\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
         "patchSetId": 1
@@ -120,6 +138,24 @@
       "side": 1,
       "message": "I would classify scenarios slightly differently:\n1. I want to switch to a different workspace - use Switch Workspace\n1a. The workspace I\u0027m switching to in the the submenu - great, select it\n1b. It not in the menu - choose Other. What happens after that doesn\u0027t have to be described with the command.\n2. Eclipse has to be restarted -\u003e Restart. What happens after restart doesn\u0027t have to be described with the command.",
       "parentUuid": "AABOPX//74E\u003d",
+      "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//728\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-01T01:40:56Z",
+      "side": 1,
+      "message": "But switching workspaces *also* restarts eclipse, and restarting eclipse *also* enables you to switch workspaces (maybe, depending on a setting). I\u0027m somewhat confused by the presence of both menu items...",
+      "parentUuid": "AABOPX//73Q\u003d",
       "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

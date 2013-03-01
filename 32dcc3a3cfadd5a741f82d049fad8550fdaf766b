@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//73U\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-01T01:29:53Z",
+      "side": 1,
+      "message": "Open Help \u003e Help Contents, search for \"File menu\" in all topics, click on the top result. Does it persuade you?",
+      "parentUuid": "AABOPX//74I\u003d",
+      "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//74Q\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
         "patchSetId": 1
@@ -84,6 +102,24 @@
       "side": 1,
       "message": "I went into the detail in order to explain the (rather subtle) difference between \"Switch workspace\" and \"Restart\". AFAICS, the difference is as follows: \n\n1) If you unconditionally want to bring up the Workspace selection dialog, use Switch workspace -\u003e Other. \n\n2) If you uncondtionally want to switch to a particular workspace (that happens to be listed in the submenu), use Switch workspace -\u003e that workspace.\n\n3) If you want to restart, but don\u0027t particularly care which workspace you end up in, use Restart.\n\nIf you can think of a clearer way to bring out this distinction in fewer words, I\u0027d love to use it!",
       "parentUuid": "AABOPX//74Q\u003d",
+      "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//73Q\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_file.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-01T01:29:53Z",
+      "side": 1,
+      "message": "I would classify scenarios slightly differently:\n1. I want to switch to a different workspace - use Switch Workspace\n1a. The workspace I\u0027m switching to in the the submenu - great, select it\n1b. It not in the menu - choose Other. What happens after that doesn\u0027t have to be described with the command.\n2. Eclipse has to be restarted -\u003e Restart. What happens after restart doesn\u0027t have to be described with the command.",
+      "parentUuid": "AABOPX//74E\u003d",
       "revId": "32dcc3a3cfadd5a741f82d049fad8550fdaf766b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

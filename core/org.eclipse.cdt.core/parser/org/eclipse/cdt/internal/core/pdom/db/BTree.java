@@ -176,8 +176,8 @@ public class BTree {
 				} else if (compare < 0) {
 					lower= middle + 1;
 				} else {
-					// Found it, no insert, just return the record.
-					return record;
+					// Found it, no insert, just return the matched record.
+					return checkRec;
 				}
 			}
 		}

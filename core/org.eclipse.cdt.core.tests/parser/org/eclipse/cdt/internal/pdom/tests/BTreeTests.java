@@ -103,7 +103,28 @@ public class BTreeTests extends BaseTestCase {
 	}
 
 	/**
-	 * Insert/Delete a random number of records into/from the B-tree 
+	 * Bug 402177: BTree.insert should return the matching record if the new record was not inserted.
+	 */
+	public void testEquivalentRecordInsert_Bug402177() throws Exception {
+
+		init( 8 );
+		try
+		{
+			BTMockRecord value1 = new BTMockRecord( db, 42 );
+			BTMockRecord value2 = new BTMockRecord( db, 42 );
+
+			long insert1 = btree.insert( value1.getRecord() );
+			long insert2 = btree.insert( value2.getRecord() );
+			assertEquals( insert1, insert2 );
+		}
+		finally
+		{
+			finish();
+		}
+	}
+
+	/**
+	 * Insert/Delete a random number of records into/from the B-tree
 	 * @param seed the seed for obtaining the deterministic random testing
 	 * @param checkCorrectnessEachIteration if true, then on every single insertion/deletion check that the B-tree invariants
 	 * still hold

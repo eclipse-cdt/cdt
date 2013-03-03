@@ -336,9 +336,11 @@ public class EvalBinding extends CPPDependentEvaluation {
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
 		IBinding origBinding = getBinding();
 		if (origBinding instanceof ICPPTemplateNonTypeParameter) {
-			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) origBinding, packOffset);
-			if (argument != null && argument.isNonTypeValue()) {
-				return argument.getNonTypeEvaluation();
+			if (tpMap != null) {
+				ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) origBinding, packOffset);
+				if (argument != null && argument.isNonTypeValue()) {
+					return argument.getNonTypeEvaluation();
+				}
 			}
 		} else if (origBinding instanceof ICPPParameter) {
 			ICPPParameter parameter = (ICPPParameter) origBinding;

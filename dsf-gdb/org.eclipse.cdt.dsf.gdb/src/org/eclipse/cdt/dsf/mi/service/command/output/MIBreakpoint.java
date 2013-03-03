@@ -549,7 +549,7 @@ public class MIBreakpoint  {
             	if (value instanceof MITuple) {
             		parseCommands((MITuple)value);
             	}
-            } else if (var.equals("thread-group")) { //$NON-NLS-1$
+            } else if (var.equals("thread-groups")) { //$NON-NLS-1$
                 if (value instanceof MIList) {
             		parseGroups((MIList)value);
             	}

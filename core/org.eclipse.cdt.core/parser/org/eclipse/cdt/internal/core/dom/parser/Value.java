@@ -82,6 +82,10 @@ import org.eclipse.core.runtime.CoreException;
 public class Value implements IValue {
 	public static final int MAX_RECURSION_DEPTH = 25;
 	public static final Value UNKNOWN= new Value("<unknown>".toCharArray(), null); //$NON-NLS-1$
+	// Note: the actual contents of a string literal Value don't need to be kept, but
+	// we do need to distinguish between string literal values and Value.UNKNOWN, which
+	// is treated as a dependent value.
+	public static final Value STRING_LITERAL= new Value("<string literal>".toCharArray(), null); //$NON-NLS-1$
 	public static final Value NOT_INITIALIZED= new Value("<__>".toCharArray(), null); //$NON-NLS-1$
 	private static final IType INT_TYPE= new CPPBasicType(ICPPBasicType.Kind.eInt, 0);
 
@@ -402,6 +406,18 @@ public class Value implements IValue {
 	public static boolean isDependentValue(IValue nonTypeValue) {
 		if (nonTypeValue == null)
 			return false;
+		// Unknown values may or may not be dependent. In the case of a template with
+		// a non-type template argument, whether or not the argument's value is dependent
+		// determines whether or not the template gets instantiated. In light of this, 
+		// it's safer to assume that an unknown value is dependent because:
+		//  1. Instantiating a template with a non-type template argument whose value is
+		//     unknown is useless.
+		//  2. Instantiating such a template can lead to an infinite recursion of
+		//     instantiations (e.g. consider a template A<N> that delegates to A<N - 1>,
+		//     with A<0> being specialized to end the recursion - if N is unknown,
+		//     N - 1 will be unknown as well, and we get an infinite recursion). 
+		if (nonTypeValue == UNKNOWN)
+			return true;
 		ICPPEvaluation eval = nonTypeValue.getEvaluation();
 		return eval != null && eval.isValueDependent();
 	}
@@ -501,6 +517,8 @@ public class Value implements IValue {
 				} catch (EvalException e) {
 					return VALUE_CANNOT_BE_DETERMINED;
 				}
+			case IASTLiteralExpression.lk_string_literal:
+				return null;  // The value will be obtained from the evaluation.
 			}
 		}
 		if (exp instanceof IASTTypeIdExpression) {

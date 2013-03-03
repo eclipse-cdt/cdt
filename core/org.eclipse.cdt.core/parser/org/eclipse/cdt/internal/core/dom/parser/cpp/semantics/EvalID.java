@@ -354,10 +354,8 @@ public class EvalID extends CPPDependentEvaluation {
 			return new EvalFunctionSet(new CPPFunctionSet(functions, templateArgs, null), fAddressOf, getTemplateDefinition());
 		}
 		IBinding binding = bindings.length == 1 ? bindings[0] : null;
-		if (binding instanceof IEnumerator) {
+		if (binding instanceof IEnumerator || binding instanceof ICPPMember) {
 			return new EvalBinding(binding, null, getTemplateDefinition());
-		} else if (binding instanceof ICPPMember) {
-			return new EvalMemberAccess(nameOwner, ValueCategory.PRVALUE, binding, false, getTemplateDefinition());
 		} else if (binding instanceof CPPFunctionSet) {
 			return new EvalFunctionSet((CPPFunctionSet) binding, fAddressOf, getTemplateDefinition());
 		}

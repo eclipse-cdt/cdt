@@ -51,12 +51,13 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		} else {
 			fKind= kind;
 		}
-		if (expression instanceof IASTLiteralExpression &&
-				((IASTLiteralExpression) expression).getKind() == IASTLiteralExpression.lk_string_literal) {
+		boolean isStringLiteral = expression instanceof IASTLiteralExpression
+				&& ((IASTLiteralExpression) expression).getKind() == IASTLiteralExpression.lk_string_literal;
+		if (isStringLiteral) {
 			qualifiers |= FROM_STRING_LITERAL;
 		}
 		fModifiers= qualifiers;
-		if (expression instanceof ICPPASTInitializerClause) {
+		if (expression instanceof ICPPASTInitializerClause && !isStringLiteral) {
 			fAssociatedValue = Value.create(expression, Value.MAX_RECURSION_DEPTH).numericalValue();
 		}
 	}

@@ -7351,4 +7351,71 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testVariadicNonTypeTemplateParameter_401400() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <int...> struct tuple_indices {};
+	//	template <int Sp, class IntTuple, int Ep>
+	//	struct make_indices_imp;
+	//	template <int Sp, int ...Indices, int Ep>
+	//	struct make_indices_imp<Sp, tuple_indices<Indices...>, Ep> {
+	//	    typedef typename make_indices_imp<Sp + 1, tuple_indices<Indices..., Sp>, Ep>::type type;
+	//	};
+	//	template <int Ep, int ...Indices> 
+	//	struct make_indices_imp<Ep, tuple_indices<Indices...>, Ep> {
+	//	    typedef tuple_indices<Indices...> type;
+	//	};
+	//	template <int Ep, int Sp = 0>
+	//	struct make_tuple_indices {
+	//	    typedef typename make_indices_imp<Sp, tuple_indices<>, Ep>::type type;
+	//	};
+	//	template <class ... Args>
+	//	class async_func {
+	//	    void operator()() {
+	//	        typedef typename make_tuple_indices<1 + sizeof...(Args), 1>::type Index;
+	//	    }
+	//	};
+	public void testVariadicTemplatesNPE_401743() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <typename T>
+	//	struct A {};
+	//
+	//	template <typename T>
+	//	struct B {
+	//	  typedef int type;
+	//	};
+	//
+	//	template <class T, const T& V>
+	//	struct C {};
+	//
+	//	extern const char* const K = "";
+	//
+	//	typedef A<C<const char*, K>> D;
+	//
+	//	typedef B<D>::type E;  // Problem on B<D>::type
+	public void testRegression_401743a() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <typename T>
+	//	struct A {};
+	//
+	//	template <typename T>
+	//	struct B {
+	//	  typedef int type;
+	//	};
+	//
+	//	template <class T, const T& V>
+	//	struct C {};
+	//
+	//	class F {};
+	//
+	//	extern F K;
+	//
+	//	typedef A<C<F, K>> D;
+	//
+	//	typedef B<D>::type E;  // Problem on B<D>::type
+	public void testRegression_401743b() throws Exception {
+		parseAndCheckBindings();
+	}
 }

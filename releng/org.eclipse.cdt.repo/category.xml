@@ -71,4 +71,7 @@
    <feature url="features/org.eclipse.cdt.testsrunner.source.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.testsrunner.source.feature" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.managedbuilder.llvm_0.0.0.qualifier.jar" id="org.eclipse.cdt.managedbuilder.llvm" version="0.0.0">
+      <category name="extra"/>
+   </feature>
 </site>

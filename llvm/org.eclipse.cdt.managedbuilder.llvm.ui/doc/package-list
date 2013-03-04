@@ -1,0 +1,5 @@
+org.eclipse.cdt.managedbuilder.llvm.makegen
+org.eclipse.cdt.managedbuilder.llvm.scannerconfig
+org.eclipse.cdt.managedbuilder.llvm.ui
+org.eclipse.cdt.managedbuilder.llvm.ui.preferences
+org.eclipse.cdt.managedbuilder.llvm.util

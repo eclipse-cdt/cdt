@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toc label="LLVM plug-in for Eclipse CDT">
+	<topic label="User manual" href="help/user_manual.html">
+		<topic label="General information about the plugin" href="help/general.html"/>
+		<topic label="Initial configuration" href="help/initial_configuration.html"/>
+		<topic label="LLVM specific information and options" href="help/llvm_specific.html">
+		</topic>
+	</topic>
+</toc>

@@ -1,0 +1,93 @@
+### Eclipse Workspace Patch 1.0
+#P org.eclipse.cdt.managedbuilder.core
+Index: src/org/eclipse/cdt/managedbuilder/core/IOption.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/IOption.java,v
+retrieving revision 1.27
+diff -u -r1.27 IOption.java
+--- src/org/eclipse/cdt/managedbuilder/core/IOption.java	26 Mar 2010 17:45:40 -0000	1.27
++++ src/org/eclipse/cdt/managedbuilder/core/IOption.java	27 Jul 2010 15:36:46 -0000
+@@ -355,6 +355,14 @@
+ 	public String[] getLibraryFiles() throws BuildException ;
+ 	
+ 	/**
++	 * @return an array or <code>String</code>s containing the library paths
++	 * that must be linked into the project.
++	 * 
++	 * @throws BuildException
++	 */
++	public String[] getLibraryPaths() throws BuildException ;
++	
++	/**
+ 	 * @return a <code>String</code> containing the unique ID of the selected 
+ 	 * enumeration in an enumerated option. For an option that has not been 
+ 	 * changed by the user, the receiver will answer with the default defined 
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/Option.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java,v
+retrieving revision 1.48
+diff -u -r1.48 Option.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/Option.java	8 Jul 2010 20:57:05 -0000	1.48
++++ src/org/eclipse/cdt/managedbuilder/internal/core/Option.java	27 Jul 2010 15:36:48 -0000
+@@ -1388,7 +1388,6 @@
+ 		}
+ 	}
+ 
+-	
+ 	/* (non-Javadoc)
+ 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getLibraryFiles()
+ 	 */
+@@ -1407,6 +1406,23 @@
+ 	}
+ 
+ 	/* (non-Javadoc)
++	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getLibraryPaths()
++	 */
++	public String[] getLibraryPaths() throws BuildException {
++		if (getValueType() != LIBRARY_PATHS) {
++			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
++		}
++		@SuppressWarnings("unchecked")
++		ArrayList<String> v = (ArrayList<String>)getValue();
++		if (v == null) {
++			return EMPTY_STRING_ARRAY;
++		} else {
++			v.trimToSize();
++			return v.toArray(new String[v.size()]);
++		}
++	}
++	
++	/* (non-Javadoc)
+ 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getDefaultEnumValue()
+ 	 */
+ 	public String getSelectedEnum() throws BuildException {
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/OptionReference.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/OptionReference.java,v
+retrieving revision 1.35
+diff -u -r1.35 OptionReference.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/OptionReference.java	8 Jul 2010 20:57:05 -0000	1.35
++++ src/org/eclipse/cdt/managedbuilder/internal/core/OptionReference.java	27 Jul 2010 15:36:49 -0000
+@@ -468,6 +468,21 @@
+ 	}
+ 
+ 	/* (non-Javadoc)
++	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getLibraryPaths()
++	 */
++	public String[] getLibraryPaths() throws BuildException {
++		if (value == null)
++			return option.getLibraryPaths();
++		else if (getValueType() == LIBRARY_PATHS) {
++			@SuppressWarnings("unchecked")
++			ArrayList<String> list = (ArrayList<String>)value;
++			return list.toArray(new String[list.size()]);
++		}
++		else
++			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
++	}
++	
++	/* (non-Javadoc)
+ 	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getName()
+ 	 */
+ 	public String getName() {
+

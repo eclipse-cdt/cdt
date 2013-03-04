@@ -1,0 +1,1250 @@
+### Eclipse Workspace Patch 1.0
+#P org.eclipse.cdt.managedbuilder.core
+Index: META-INF/MANIFEST.MF
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/META-INF/MANIFEST.MF,v
+retrieving revision 1.22
+diff -u -r1.22 MANIFEST.MF
+--- META-INF/MANIFEST.MF	7 Feb 2010 17:14:28 -0000	1.22
++++ META-INF/MANIFEST.MF	8 Jul 2010 20:51:01 -0000
+@@ -2,7 +2,7 @@
+ Bundle-ManifestVersion: 2
+ Bundle-Name: %pluginName
+ Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.core; singleton:=true
+-Bundle-Version: 7.0.0.qualifier
++Bundle-Version: 8.0.0.qualifier
+ Bundle-Activator: org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin
+ Bundle-Vendor: %providerName
+ Bundle-Localization: plugin
+Index: src/org/eclipse/cdt/managedbuilder/core/IBuildObject.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/IBuildObject.java,v
+retrieving revision 1.8
+diff -u -r1.8 IBuildObject.java
+--- src/org/eclipse/cdt/managedbuilder/core/IBuildObject.java	8 Feb 2010 02:56:14 -0000	1.8
++++ src/org/eclipse/cdt/managedbuilder/core/IBuildObject.java	8 Jul 2010 20:51:01 -0000
+@@ -10,7 +10,7 @@
+  *******************************************************************************/
+ package org.eclipse.cdt.managedbuilder.core;
+ 
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ /**
+  * @noextend This class is not intended to be subclassed by clients.
+@@ -24,7 +24,9 @@
+ 	public String getId();
+ 	public String getName();
+ 	public String getBaseId();
+-	public PluginVersionIdentifier getVersion();
+-	public void setVersion(PluginVersionIdentifier version);
++	/** @since 8.0 */
++	public Version getVersion();
++	/** @since 8.0 */
++	public void setVersion(Version version);
+ 	public String getManagedBuildRevision();
+ }
+Index: src/org/eclipse/cdt/managedbuilder/core/IManagedIsToolChainSupported.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/IManagedIsToolChainSupported.java,v
+retrieving revision 1.2
+diff -u -r1.2 IManagedIsToolChainSupported.java
+--- src/org/eclipse/cdt/managedbuilder/core/IManagedIsToolChainSupported.java	20 Jun 2005 20:52:52 -0000	1.2
++++ src/org/eclipse/cdt/managedbuilder/core/IManagedIsToolChainSupported.java	8 Jul 2010 20:51:01 -0000
+@@ -10,7 +10,7 @@
+  *******************************************************************************/
+ package org.eclipse.cdt.managedbuilder.core;
+ 
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ /**
+  * 
+@@ -18,11 +18,10 @@
+  */
+ public interface IManagedIsToolChainSupported {
+ 	/**
+-	 *
+ 	 * @return <code>true</code> if the given tool-chain is supported on the system
+ 	 * otherwise returns <code>false</code>
++	 * 
++	 * @since 8.0
+ 	 */
+-	public boolean isSupported(IToolChain toolChain, 
+-						PluginVersionIdentifier version, 
+-						String instance);
++	public boolean isSupported(IToolChain toolChain, Version version, String instance);
+ }
+Index: src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java,v
+retrieving revision 1.134
+diff -u -r1.134 ManagedBuildManager.java
+--- src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java	2 Jul 2010 14:46:28 -0000	1.134
++++ src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java	8 Jul 2010 20:51:01 -0000
+@@ -122,7 +122,7 @@
+ import org.eclipse.core.runtime.NullProgressMonitor;
+ import org.eclipse.core.runtime.Path;
+ import org.eclipse.core.runtime.Platform;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ import org.eclipse.core.runtime.Status;
+ import org.eclipse.core.runtime.SubProgressMonitor;
+ import org.eclipse.core.runtime.URIUtil;
+@@ -132,7 +132,6 @@
+ import org.eclipse.ui.IWorkbenchWindow;
+ import org.eclipse.ui.PlatformUI;
+ import org.osgi.framework.Bundle;
+-import org.osgi.framework.Version;
+ import org.w3c.dom.Document;
+ import org.w3c.dom.Element;
+ import org.w3c.dom.Node;
+@@ -194,7 +193,7 @@
+ 	private static final String ALL = "all";  //$NON-NLS-1$
+ 
+ 	// This is the version of the manifest and project files
+-	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier(4, 0, 0);
++	private static final Version buildInfoVersion = new Version(4, 0, 0);
+ 	private static final Version version = new Version(4, 0, 0);
+ 	private static Map depCalculatorsMap;
+ 	private static boolean projectTypesLoaded = false;
+@@ -1950,7 +1949,7 @@
+ 
+ 	private static boolean isVersionCompatible(IExtension extension) {
+ 		// We can ignore the qualifier
+-		PluginVersionIdentifier version = null;
++		Version version = null;
+ 
+ 		// Get the version of the manifest
+ 		IConfigurationElement[] elements = extension.getConfigurationElements();
+@@ -1958,7 +1957,7 @@
+ 		// Find the version string in the manifest
+ 		for (IConfigurationElement element : elements) {
+ 			if (element.getName().equals(REVISION_ELEMENT_NAME)) {
+-				version = new PluginVersionIdentifier(element.getAttribute(VERSION_ELEMENT_NAME));
++				version = new Version(element.getAttribute(VERSION_ELEMENT_NAME));
+ 				break;
+ 			}
+ 		}
+@@ -1967,7 +1966,7 @@
+ 			// This is a 1.2 manifest and we are compatible for now
+ 			return true;
+ 		}
+-		return(buildInfoVersion.isGreaterOrEqualTo(version));
++		return(buildInfoVersion.compareTo(version)>=0);
+ 	}
+ 
+ 	/**
+@@ -2011,8 +2010,9 @@
+ 			} else {
+ 				// Make sure that the version is compatible with the manager
+ 				fileVersion = rootElement.getNodeValue();
+-				PluginVersionIdentifier version = new PluginVersionIdentifier(fileVersion);
+-				if (buildInfoVersion.isGreaterThan(version)) {
++				Version version = new Version(fileVersion);
++				//if buildInfoVersion is greater than fileVersion
++				if (buildInfoVersion.compareTo(version)>0) {
+ 					// This is >= 2.0 project, but earlier than the current MBS version - it may need to be updated
+ 				} else {
+ 					// This is a
+@@ -2020,7 +2020,22 @@
+ 					//   o  The major versions are not equal
+ 					//   o  The major versions are equal, but the remainder of the .cdtbuild version # is
+ 					//      greater than the MBS version #
+-					if (!buildInfoVersion.isCompatibleWith(version)) {
++					boolean compatible=false;
++					if (version == null)
++						compatible=false;
++					if (buildInfoVersion.getMajor() != version.getMajor())
++						compatible=false;
++					if (buildInfoVersion.getMinor() > version.getMinor())
++						compatible=true;
++					if (buildInfoVersion.getMinor() < version.getMinor())
++						compatible=false;
++					if (buildInfoVersion.getMicro() > version.getMicro())
++						compatible=true;
++					if (buildInfoVersion.getMicro() < version.getMicro())
++						compatible=false;
++					if (buildInfoVersion.getQualifier().compareTo(version.getQualifier()) >= 0)
++						compatible=true;
++					if (!compatible) {
+ 						throw new BuildException(ManagedMakeMessages.getFormattedString(PROJECT_VERSION_ERROR, project.getName()));
+ 					}
+ 				}
+@@ -2035,10 +2050,10 @@
+ 				buildInfo = new ManagedBuildInfo(project, XmlStorageUtil.createCStorageTree((Element)node), true, fileVersion);
+ 				if (fileVersion != null) {
+ 	//				buildInfo.setVersion(fileVersion);
+-					PluginVersionIdentifier version = new PluginVersionIdentifier(fileVersion);
+-					PluginVersionIdentifier version21 = new PluginVersionIdentifier("2.1");		//$NON-NLS-1$
++					Version version = new Version(fileVersion);
++					Version version21 = new Version("2.1");		//$NON-NLS-1$
+ 					//  CDT 2.1 is the first version using the new MBS model
+-					if (version.isGreaterOrEqualTo(version21)) {
++					if (version.compareTo(version21)>=0) {
+ 						//  Check to see if all elements could be loaded correctly - for example,
+ 						//  if references in the project file could not be resolved to extension
+ 						//  elements
+@@ -3007,8 +3022,9 @@
+ 	 * Answers the current version of the managed builder plugin.
+ 	 *
+ 	 * @return the current version of the managed builder plugin
++	 * @since 8.0
+ 	 */
+-	public static PluginVersionIdentifier getBuildInfoVersion() {
++	public static Version getBuildInfoVersion() {
+ 		return buildInfoVersion;
+ 	}
+ 
+@@ -3179,7 +3195,7 @@
+ 		if ( index != -1) {
+ 			// Get the version number from tool id.
+ 			String version = idAndVersion.substring(index+1);
+-			IStatus status = PluginVersionIdentifier.validateVersion(version);
++			IStatus status = (IStatus) Version.parseVersion(version);
+ 
+ 			// If there is a valid version then return 'version'
+ 			if ( status.isOK())
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/BuildObject.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/BuildObject.java,v
+retrieving revision 1.9
+diff -u -r1.9 BuildObject.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/BuildObject.java	14 Jun 2007 19:08:49 -0000	1.9
++++ src/org/eclipse/cdt/managedbuilder/internal/core/BuildObject.java	8 Jul 2010 20:51:02 -0000
+@@ -14,14 +14,14 @@
+ import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+ import org.eclipse.core.runtime.IStatus;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ public class BuildObject implements IBuildObject {
+ 
+ 	protected String id;
+ 	protected String name;
+ 	
+-	protected PluginVersionIdentifier version = null;
++	protected Version version = null;
+ 	protected String managedBuildRevision = null;
+ 		
+ 	/* (non-Javadoc)
+@@ -69,14 +69,14 @@
+ 	/**
+ 	 * @return Returns the version.
+ 	 */
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 			return version;
+ 	}
+ 
+ 	/**
+ 	 * @param version The version to set.
+ 	 */
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		this.version = version;
+ 	}
+ 
+@@ -88,7 +88,7 @@
+ 	}
+ 
+ 	
+-	public PluginVersionIdentifier getVersionFromId() {
++	public Version getVersionFromId() {
+ 		String versionNumber;
+ 		IStatus status = null;
+ 	
+@@ -100,12 +100,12 @@
+ 			// So get the default version based on 'managedBuildRevision' attribute.
+ 								
+ 			if ( getManagedBuildRevision() != null) {
+-				PluginVersionIdentifier tmpManagedBuildRevision = new PluginVersionIdentifier( getManagedBuildRevision() );
+-				if (tmpManagedBuildRevision.isEquivalentTo(new PluginVersionIdentifier("1.2.0")) )	//$NON-NLS-1$
++				Version tmpManagedBuildRevision = new Version( getManagedBuildRevision() );
++				if (tmpManagedBuildRevision.equals(new Version("1.2.0")) )	//$NON-NLS-1$
+ 					versionNumber = "0.0.1";	//$NON-NLS-1$
+-				else if (tmpManagedBuildRevision.isEquivalentTo(new PluginVersionIdentifier("2.0.0")) )	//$NON-NLS-1$
++				else if (tmpManagedBuildRevision.equals(new Version("2.0.0")) )	//$NON-NLS-1$
+ 					versionNumber = "0.0.2";	//$NON-NLS-1$
+-				else if (tmpManagedBuildRevision.isEquivalentTo(new PluginVersionIdentifier("2.1.0")) )	//$NON-NLS-1$
++				else if (tmpManagedBuildRevision.equals(new Version("2.1.0")) )	//$NON-NLS-1$
+ 					versionNumber = "0.0.3";	//$NON-NLS-1$
+ 				else
+ 					versionNumber = "0.0.4";	//$NON-NLS-1$
+@@ -113,7 +113,7 @@
+ 				versionNumber = "0.0.0";	//$NON-NLS-1$
+ 			}
+ 		}
+-		return new PluginVersionIdentifier(versionNumber);
++		return new Version(versionNumber);
+ 	}
+ 
+ 	public void setManagedBuildRevision(String managedBuildRevision) {
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/Builder.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Builder.java,v
+retrieving revision 1.41
+diff -u -r1.41 Builder.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/Builder.java	2 Jun 2010 19:54:43 -0000	1.41
++++ src/org/eclipse/cdt/managedbuilder/internal/core/Builder.java	8 Jul 2010 20:51:02 -0000
+@@ -66,9 +66,9 @@
+ import org.eclipse.core.runtime.NullProgressMonitor;
+ import org.eclipse.core.runtime.Path;
+ import org.eclipse.core.runtime.Platform;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
+ import org.eclipse.core.variables.IStringVariableManager;
+ import org.eclipse.core.variables.VariablesPlugin;
++import org.osgi.framework.Version;
+ 
+ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider, IRealBuildObjectAssociation  {
+ 
+@@ -1513,8 +1513,7 @@
+ 						String[] tmpVersions = versionsSupported.split(","); //$NON-NLS-1$
+ 
+ 						for (int j = 0; j < tmpVersions.length; j++) {
+-							if (new PluginVersionIdentifier(version)
+-									.equals(new PluginVersionIdentifier(
++							if (new Version(version).equals(new Version(
+ 											tmpVersions[j]))) {
+ 								// version is supported.
+ 								// Do the automatic conversion without
+@@ -1604,13 +1603,11 @@
+ 							// If it matches
+ 							String mbsVersion = element
+ 									.getAttribute("mbsVersion"); //$NON-NLS-1$
+-							PluginVersionIdentifier currentMbsVersion = ManagedBuildManager
++							Version currentMbsVersion = ManagedBuildManager
+ 									.getBuildInfoVersion();
+ 
+ 							// set the converter element based on the MbsVersion
+-							if (currentMbsVersion
+-									.isGreaterThan(new PluginVersionIdentifier(
+-											mbsVersion))) {
++							if (currentMbsVersion.compareTo(new Version(mbsVersion))>0) {
+ 								previousMbsVersionConversionElement = element;
+ 							} else {
+ 								currentMbsVersionConversionElement = element;
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/Configuration.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Configuration.java,v
+retrieving revision 1.91
+diff -u -r1.91 Configuration.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/Configuration.java	21 May 2010 16:01:26 -0000	1.91
++++ src/org/eclipse/cdt/managedbuilder/internal/core/Configuration.java	8 Jul 2010 20:51:02 -0000
+@@ -89,7 +89,7 @@
+ import org.eclipse.core.runtime.IPath;
+ import org.eclipse.core.runtime.Path;
+ import org.eclipse.core.runtime.Platform;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ import org.osgi.service.prefs.Preferences;
+ 
+ public class Configuration extends BuildObject implements IConfiguration, IBuildPropertiesRestriction, IBuildPropertyChangeListener, IRealBuildObjectAssociation {
+@@ -1847,7 +1847,7 @@
+ 	/**
+ 	 * @return Returns the version.
+ 	 */
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 		if ( version == null) {
+ 			if ( rootFolderInfo.getToolChain() != null) {
+ 				return rootFolderInfo.getToolChain().getVersion();
+@@ -1856,7 +1856,7 @@
+ 		return version;
+ 	}
+ 	
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		// Do nothing
+ 	}
+ 	
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/InputType.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/InputType.java,v
+retrieving revision 1.29
+diff -u -r1.29 InputType.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/InputType.java	2 Jun 2010 19:54:43 -0000	1.29
++++ src/org/eclipse/cdt/managedbuilder/internal/core/InputType.java	8 Jul 2010 20:51:02 -0000
+@@ -38,7 +38,7 @@
+ import org.eclipse.core.runtime.IPath;
+ import org.eclipse.core.runtime.Path;
+ import org.eclipse.core.runtime.Platform;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ import org.eclipse.core.runtime.content.IContentType;
+ import org.eclipse.core.runtime.content.IContentTypeManager;
+ 
+@@ -1593,7 +1593,7 @@
+ 	 * @return Returns the version.
+ 	 */
+ 	@Override
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 		if ( version == null) {
+ 			if ( getParent() != null) {
+ 				return getParent().getVersion();
+@@ -1603,7 +1603,7 @@
+ 	}
+ 
+ 	@Override
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		// Do nothing
+ 	}
+ 
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/ManagedProject.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ManagedProject.java,v
+retrieving revision 1.24
+diff -u -r1.24 ManagedProject.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/ManagedProject.java	2 Jun 2010 19:54:43 -0000	1.24
++++ src/org/eclipse/cdt/managedbuilder/internal/core/ManagedProject.java	8 Jul 2010 20:51:02 -0000
+@@ -35,7 +35,7 @@
+ import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+ import org.eclipse.core.resources.IResource;
+ import org.eclipse.core.runtime.CoreException;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ public class ManagedProject extends BuildObject implements IManagedProject, IBuildPropertiesRestriction, IBuildPropertyChangeListener {
+ 	
+@@ -494,7 +494,7 @@
+ 	 * @return Returns the version.
+ 	 */
+ 	@Override
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 			if (version == null) {
+ 				if ( getProjectType() != null) {
+ 					return getProjectType().getVersion();
+@@ -504,7 +504,7 @@
+ 	}
+ 	
+ 	@Override
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		// Do nothing
+ 	}
+ 
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/MultiConfiguration.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/MultiConfiguration.java,v
+retrieving revision 1.12
+diff -u -r1.12 MultiConfiguration.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/MultiConfiguration.java	21 May 2010 16:01:26 -0000	1.12
++++ src/org/eclipse/cdt/managedbuilder/internal/core/MultiConfiguration.java	8 Jul 2010 20:51:02 -0000
+@@ -46,7 +46,7 @@
+ import org.eclipse.core.resources.IResource;
+ import org.eclipse.core.runtime.CoreException;
+ import org.eclipse.core.runtime.IPath;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ /**
+  * This class represents a set of configurations 
+@@ -1071,7 +1071,7 @@
+ 	/* (non-Javadoc)
+ 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getVersion()
+ 	 */
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 		if (DEBUG)
+ 			System.out.println("Strange multi access: MultiConfiguration.getVersion()"); //$NON-NLS-1$
+ 		return curr().getVersion();
+@@ -1080,7 +1080,7 @@
+ 	/* (non-Javadoc)
+ 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#setVersion(org.eclipse.core.runtime.PluginVersionIdentifier)
+ 	 */
+-	public void setVersion(PluginVersionIdentifier version) {} // do nothing
++	public void setVersion(Version version) {} // do nothing
+ 
+ 	/* (non-Javadoc)
+ 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObjectPropertiesContainer#getBuildProperties()
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/MultiResourceInfo.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/MultiResourceInfo.java,v
+retrieving revision 1.8
+diff -u -r1.8 MultiResourceInfo.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/MultiResourceInfo.java	2 Jun 2010 19:54:43 -0000	1.8
++++ src/org/eclipse/cdt/managedbuilder/internal/core/MultiResourceInfo.java	8 Jul 2010 20:51:02 -0000
+@@ -23,7 +23,7 @@
+ import org.eclipse.cdt.managedbuilder.core.IToolChain;
+ import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
+ import org.eclipse.core.runtime.IPath;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ /**
+  * This class holds a number of IResourceInfo objects
+@@ -352,14 +352,14 @@
+ 	/* (non-Javadoc)
+ 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getVersion()
+ 	 */
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 		return fRis[curr].getVersion();
+ 	}
+ 
+ 	/* (non-Javadoc)
+ 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#setVersion(org.eclipse.core.runtime.PluginVersionIdentifier)
+ 	 */
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		for (int i=0; i<fRis.length; i++)
+ 			fRis[i].setVersion(version);
+ 	}
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/Option.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java,v
+retrieving revision 1.47
+diff -u -r1.47 Option.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/Option.java	1 Jun 2010 13:48:08 -0000	1.47
++++ src/org/eclipse/cdt/managedbuilder/internal/core/Option.java	8 Jul 2010 20:51:02 -0000
+@@ -40,7 +40,7 @@
+ import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
+ import org.eclipse.core.runtime.CoreException;
+ import org.eclipse.core.runtime.IConfigurationElement;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ public class Option extends BuildObject implements IOption, IBuildPropertiesRestriction {
+ 	// Static default return values
+@@ -2272,7 +2272,7 @@
+ 	 * @return Returns the version.
+ 	 */
+ 	@Override
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 		if ( version == null) {
+ 			if ( getParent() != null) {
+ 				return getParent().getVersion();
+@@ -2282,7 +2282,7 @@
+ 	}
+ 	
+ 	@Override
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		// Do nothing
+ 	}
+ 	
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/OptionCategory.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/OptionCategory.java,v
+retrieving revision 1.19
+diff -u -r1.19 OptionCategory.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/OptionCategory.java	11 Jun 2008 15:48:36 -0000	1.19
++++ src/org/eclipse/cdt/managedbuilder/internal/core/OptionCategory.java	8 Jul 2010 20:51:02 -0000
+@@ -28,7 +28,7 @@
+ import org.eclipse.cdt.managedbuilder.core.IToolChain;
+ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+ import org.eclipse.core.runtime.Path;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ /**
+  * 
+@@ -469,7 +469,7 @@
+ 	/**
+ 	 * @return Returns the version.
+ 	 */
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 		if ( version == null) {
+ 			if ( getOptionHolder() != null) {
+ 				return getOptionHolder().getVersion();
+@@ -478,7 +478,7 @@
+ 		return version;
+ 	}
+ 	
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		// Do nothing
+ 	}
+ 
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/OptionReference.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/OptionReference.java,v
+retrieving revision 1.34
+diff -u -r1.34 OptionReference.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/OptionReference.java	26 Mar 2010 17:45:41 -0000	1.34
++++ src/org/eclipse/cdt/managedbuilder/internal/core/OptionReference.java	8 Jul 2010 20:51:02 -0000
+@@ -26,7 +26,7 @@
+ import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
+ import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
+ import org.eclipse.core.runtime.IConfigurationElement;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ import org.w3c.dom.Document;
+ import org.w3c.dom.Element;
+ import org.w3c.dom.Node;
+@@ -863,11 +863,11 @@
+ 	public void setContextId(String contextId) {
+ 	}
+ 	
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 		return option.getVersion();
+ 	}
+ 
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		option.setVersion(version);
+ 	}
+ 
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/OutputType.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/OutputType.java,v
+retrieving revision 1.13
+diff -u -r1.13 OutputType.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/OutputType.java	2 Jun 2010 19:54:43 -0000	1.13
++++ src/org/eclipse/cdt/managedbuilder/internal/core/OutputType.java	8 Jul 2010 20:51:02 -0000
+@@ -24,7 +24,7 @@
+ import org.eclipse.core.runtime.CoreException;
+ import org.eclipse.core.runtime.IConfigurationElement;
+ import org.eclipse.core.runtime.Platform;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ import org.eclipse.core.runtime.content.IContentType;
+ import org.eclipse.core.runtime.content.IContentTypeManager;
+ 
+@@ -875,7 +875,7 @@
+ 	/**
+ 	 * @return Returns the version.
+ 	 */
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 		if ( version == null) {
+ 			if ( getParent() != null) {
+ 				return getParent().getVersion();
+@@ -884,7 +884,7 @@
+ 		return version;
+ 	}
+ 	
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		// Do nothing
+ 	}
+ 	
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/ProjectType.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ProjectType.java,v
+retrieving revision 1.19
+diff -u -r1.19 ProjectType.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/ProjectType.java	2 Jun 2010 19:54:43 -0000	1.19
++++ src/org/eclipse/cdt/managedbuilder/internal/core/ProjectType.java	8 Jul 2010 20:51:02 -0000
+@@ -35,7 +35,7 @@
+ import org.eclipse.core.runtime.IExtension;
+ import org.eclipse.core.runtime.IExtensionPoint;
+ import org.eclipse.core.runtime.Platform;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ 
+ public class ProjectType extends BuildObject implements IProjectType, IBuildPropertiesRestriction, IBuildPropertyChangeListener {
+@@ -648,13 +648,11 @@
+ 							// If it matches
+ 							String mbsVersion = element
+ 									.getAttribute("mbsVersion"); //$NON-NLS-1$
+-							PluginVersionIdentifier currentMbsVersion = ManagedBuildManager
++							Version currentMbsVersion = ManagedBuildManager
+ 									.getBuildInfoVersion();
+ 
+ 							// set the converter element based on the MbsVersion
+-							if (currentMbsVersion
+-									.isGreaterThan(new PluginVersionIdentifier(
+-											mbsVersion))) {
++							if (currentMbsVersion.compareTo(new Version(mbsVersion))>0) {
+ 								previousMbsVersionConversionElement = element;
+ 							} else {
+ 								currentMbsVersionConversionElement = element;
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/ResourceConfiguration.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ResourceConfiguration.java,v
+retrieving revision 1.28
+diff -u -r1.28 ResourceConfiguration.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/ResourceConfiguration.java	16 Nov 2007 12:26:08 -0000	1.28
++++ src/org/eclipse/cdt/managedbuilder/internal/core/ResourceConfiguration.java	8 Jul 2010 20:51:02 -0000
+@@ -39,7 +39,7 @@
+ import org.eclipse.core.resources.IResource;
+ import org.eclipse.core.runtime.IPath;
+ import org.eclipse.core.runtime.Path;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
+ 
+@@ -829,7 +829,7 @@
+ 	/**
+ 	 * @return Returns the version.
+ 	 */
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 		if ( version == null) {
+ 			if ( getParent() != null) {
+ 				return getParent().getVersion();
+@@ -838,7 +838,7 @@
+ 		return version;
+ 	}
+ 	
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		// Do nothing
+ 	}
+ 
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/Target.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Target.java,v
+retrieving revision 1.40
+diff -u -r1.40 Target.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/Target.java	14 Jun 2006 12:15:56 -0000	1.40
++++ src/org/eclipse/cdt/managedbuilder/internal/core/Target.java	8 Jul 2010 20:51:02 -0000
+@@ -34,7 +34,7 @@
+ import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
+ import org.eclipse.core.resources.IResource;
+ import org.eclipse.core.runtime.Platform;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ import org.w3c.dom.Document;
+ import org.w3c.dom.Element;
+ import org.w3c.dom.Node;
+@@ -1164,7 +1164,7 @@
+ 	/**
+ 	 * @return Returns the version.
+ 	 */
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 		if ( version == null) {
+ 			if ( getParent() != null) {
+ 				return getParent().getVersion();
+@@ -1173,7 +1173,7 @@
+ 		return version;
+ 	}
+ 	
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		// Do nothing
+ 	}
+ 
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/TargetPlatform.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/TargetPlatform.java,v
+retrieving revision 1.10
+diff -u -r1.10 TargetPlatform.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/TargetPlatform.java	2 Jun 2010 19:54:43 -0000	1.10
++++ src/org/eclipse/cdt/managedbuilder/internal/core/TargetPlatform.java	8 Jul 2010 20:51:02 -0000
+@@ -24,7 +24,7 @@
+ import org.eclipse.cdt.managedbuilder.core.IToolChain;
+ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+ import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildTargetPlatformData;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ public class TargetPlatform extends BuildObject implements ITargetPlatform {
+ 
+@@ -606,7 +606,7 @@
+ 	/**
+ 	 * @return Returns the version.
+ 	 */
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 		if ( version == null) {
+ 			if ( getParent() != null) {
+ 				return getParent().getVersion();
+@@ -615,7 +615,7 @@
+ 		return version;
+ 	}
+ 	
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		// Do nothing
+ 	}
+ 
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java,v
+retrieving revision 1.99
+diff -u -r1.99 Tool.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java	2 Jun 2010 19:54:43 -0000	1.99
++++ src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java	8 Jul 2010 20:51:02 -0000
+@@ -79,7 +79,6 @@
+ import org.eclipse.core.runtime.IStatus;
+ import org.eclipse.core.runtime.Path;
+ import org.eclipse.core.runtime.Platform;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
+ import org.eclipse.core.runtime.Status;
+ import org.eclipse.core.runtime.content.IContentType;
+ import org.eclipse.core.runtime.content.IContentTypeSettings;
+@@ -3206,11 +3205,11 @@
+ 							// If it matches
+ 							String mbsVersion = element
+ 									.getAttribute("mbsVersion"); //$NON-NLS-1$
+-							PluginVersionIdentifier currentMbsVersion = ManagedBuildManager
++							Version currentMbsVersion = ManagedBuildManager
+ 									.getBuildInfoVersion();
+ 
+ 							// set the converter element based on the MbsVersion
+-							if (currentMbsVersion.isGreaterThan(new PluginVersionIdentifier(mbsVersion))) {
++							if (currentMbsVersion.compareTo(new Version(mbsVersion))>0) {
+ 								previousMbsVersionConversionElement = element;
+ 							} else {
+ 								currentMbsVersionConversionElement = element;
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/ToolChain.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ToolChain.java,v
+retrieving revision 1.52
+diff -u -r1.52 ToolChain.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/ToolChain.java	2 Jun 2010 19:54:43 -0000	1.52
++++ src/org/eclipse/cdt/managedbuilder/internal/core/ToolChain.java	8 Jul 2010 20:51:02 -0000
+@@ -55,7 +55,7 @@
+ import org.eclipse.core.runtime.IExtensionPoint;
+ import org.eclipse.core.runtime.IPath;
+ import org.eclipse.core.runtime.Platform;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropertiesRestriction, IMatchKeyProvider, IRealBuildObjectAssociation {
+ 
+@@ -1919,7 +1919,7 @@
+ 						String[] tmpVersions = versionsSupported.split(","); //$NON-NLS-1$
+ 
+ 						for (int j = 0; j < tmpVersions.length; j++) {
+-							if (new PluginVersionIdentifier(version).equals(new PluginVersionIdentifier(tmpVersions[j]))) {
++							if (new Version(version).equals(new Version(tmpVersions[j]))) {
+ 								// version is supported.
+ 								// Do the automatic conversion without
+ 								// prompting the user.
+@@ -2006,13 +2006,11 @@
+ 							// If it matches
+ 							String mbsVersion = element
+ 									.getAttribute("mbsVersion"); //$NON-NLS-1$
+-							PluginVersionIdentifier currentMbsVersion = ManagedBuildManager
++							Version currentMbsVersion = ManagedBuildManager
+ 									.getBuildInfoVersion();
+ 
+ 							// set the converter element based on the MbsVersion
+-							if (currentMbsVersion
+-									.isGreaterThan(new PluginVersionIdentifier(
+-											mbsVersion))) {
++							if (currentMbsVersion.compareTo(new Version(mbsVersion))>0) {
+ 								previousMbsVersionConversionElement = element;
+ 							} else {
+ 								currentMbsVersionConversionElement = element;
+Index: src/org/eclipse/cdt/managedbuilder/internal/core/ToolReference.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ToolReference.java,v
+retrieving revision 1.45
+diff -u -r1.45 ToolReference.java
+--- src/org/eclipse/cdt/managedbuilder/internal/core/ToolReference.java	11 Jun 2008 15:48:35 -0000	1.45
++++ src/org/eclipse/cdt/managedbuilder/internal/core/ToolReference.java	8 Jul 2010 20:51:02 -0000
+@@ -39,7 +39,7 @@
+ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
+ import org.eclipse.core.runtime.IConfigurationElement;
+ import org.eclipse.core.runtime.IPath;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ import org.w3c.dom.Document;
+ import org.w3c.dom.Element;
+ import org.w3c.dom.Node;
+@@ -1239,11 +1239,11 @@
+ 		return null;
+ 	}
+ 
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 		return null;
+ 	}
+ 
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		// TODO Auto-generated method stub
+ 	}
+ 
+Index: src/org/eclipse/cdt/managedbuilder/internal/macros/MbsMacroSupplier.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/macros/MbsMacroSupplier.java,v
+retrieving revision 1.23
+diff -u -r1.23 MbsMacroSupplier.java
+--- src/org/eclipse/cdt/managedbuilder/internal/macros/MbsMacroSupplier.java	2 Jun 2010 19:54:42 -0000	1.23
++++ src/org/eclipse/cdt/managedbuilder/internal/macros/MbsMacroSupplier.java	8 Jul 2010 20:51:02 -0000
+@@ -43,7 +43,7 @@
+ import org.eclipse.core.resources.IWorkspace;
+ import org.eclipse.core.runtime.IPath;
+ import org.eclipse.core.runtime.Path;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ import org.osgi.framework.Bundle;
+ 
+ /**
+@@ -575,7 +575,7 @@
+ 				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,cfg.getToolChain().getVersion().toString());
+ 		}
+ 		else if("BuilderVersion".equals(macroName)){	//$NON-NLS-1$
+-			PluginVersionIdentifier version = cfg.getToolChain().getBuilder().getVersion(); 
++			Version version = cfg.getToolChain().getBuilder().getVersion(); 
+ 			if(version != null)
+ 				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,version.toString());
+ 		}
+Index: src/org/eclipse/cdt/managedbuilder/projectconverter/UpdateManagedProjectManager.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/projectconverter/UpdateManagedProjectManager.java,v
+retrieving revision 1.16
+diff -u -r1.16 UpdateManagedProjectManager.java
+--- src/org/eclipse/cdt/managedbuilder/projectconverter/UpdateManagedProjectManager.java	7 Feb 2010 17:14:08 -0000	1.16
++++ src/org/eclipse/cdt/managedbuilder/projectconverter/UpdateManagedProjectManager.java	8 Jul 2010 20:51:03 -0000
+@@ -34,7 +34,7 @@
+ import org.eclipse.core.runtime.NullProgressMonitor;
+ import org.eclipse.core.runtime.OperationCanceledException;
+ import org.eclipse.core.runtime.Path;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ import org.eclipse.core.runtime.Status;
+ import org.eclipse.core.runtime.jobs.ISchedulingRule;
+ import org.eclipse.ui.dialogs.IOverwriteQuery;
+@@ -111,21 +111,24 @@
+ 		return map;
+ 	}
+ 	
+-	static protected PluginVersionIdentifier getManagedBuildInfoVersion(String version){
++	/**
++	 * @since 8.0
++	 */
++	static protected Version getManagedBuildInfoVersion(String version){
+ 		if(version == null)
+ 			version = "1.2"; //$NON-NLS-1$
+-		return new PluginVersionIdentifier(version);
++		return new Version(version);
+ 	}
+ 
+ 	static public boolean isCompatibleProject(IManagedBuildInfo info) {
+ 		if(info == null)
+ 			return false;
+ 
+-		PluginVersionIdentifier projVersion = getManagedBuildInfoVersion(info.getVersion());
++		Version projVersion = getManagedBuildInfoVersion(info.getVersion());
+ 
+-		PluginVersionIdentifier compVersion = ManagedBuildManager.getBuildInfoVersion();
++		Version compVersion = ManagedBuildManager.getBuildInfoVersion();
+ 
+-		if(compVersion.isEquivalentTo(projVersion))
++		if(compVersion.equals(projVersion))
+ 			return true;
+ 		return false;
+ 	}
+@@ -308,7 +311,7 @@
+ 					}	
+ 				});
+ 	
+-			PluginVersionIdentifier version = getManagedBuildInfoVersion(info.getVersion());
++			Version version = getManagedBuildInfoVersion(info.getVersion());
+ 
+ 			boolean shouldUpdate;
+ 			if(fUpdateProjectQuery != null)
+@@ -327,23 +330,23 @@
+ 			if(projectFile.exists())
+ 				backupFile(projectFile, "_initial", monitor, fProject); //$NON-NLS-1$
+ 
+-			if(version.isEquivalentTo(new PluginVersionIdentifier(1,2,0))){
++			if(version.equals(new Version(1,2,0))){
+ 				UpdateManagedProject12.doProjectUpdate(monitor, fProject);
+ 				version = getManagedBuildInfoVersion(info.getVersion());
+ 			}
+-			if(version.isEquivalentTo(new PluginVersionIdentifier(2,0,0))){
++			if(version.equals(new Version(2,0,0))){
+ 				UpdateManagedProject20.doProjectUpdate(monitor, fProject);
+ 				version = getManagedBuildInfoVersion(info.getVersion());
+ 			}
+-			if(version.isEquivalentTo(new PluginVersionIdentifier(2,1,0))){
++			if(version.equals(new Version(2,1,0))){
+ 				UpdateManagedProject21.doProjectUpdate(monitor, fProject);
+ 				version = getManagedBuildInfoVersion(info.getVersion());
+ 			}
+-			if(version.isEquivalentTo(new PluginVersionIdentifier(3,0,0))){
++			if(version.equals(new Version(3,0,0))){
+ 				UpdateManagedProject30.doProjectUpdate(monitor, fProject);
+ 				version = getManagedBuildInfoVersion(info.getVersion());
+ 			} 
+-			if (new PluginVersionIdentifier(4,0,0).isGreaterThan(version)){
++			if (new Version(4,0,0).compareTo(version)>0){
+ 				UpdateManagedProject31.doProjectUpdate(monitor, fProject);
+ 				version = getManagedBuildInfoVersion(info.getVersion());
+ 			}
+#P org.eclipse.cdt.managedbuilder.core.tests
+Index: META-INF/MANIFEST.MF
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core.tests/META-INF/MANIFEST.MF,v
+retrieving revision 1.15
+diff -u -r1.15 MANIFEST.MF
+--- META-INF/MANIFEST.MF	8 Feb 2010 01:02:30 -0000	1.15
++++ META-INF/MANIFEST.MF	8 Jul 2010 20:51:04 -0000
+@@ -2,7 +2,7 @@
+ Bundle-ManifestVersion: 2
+ Bundle-Name: Tests
+ Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.core.tests; singleton:=true
+-Bundle-Version: 7.0.0.qualifier
++Bundle-Version: 8.0.0.qualifier
+ Bundle-Activator: org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin
+ Bundle-Vendor: Eclipse CDT
+ Bundle-Localization: plugin
+Index: tests/org/eclipse/cdt/managedbuilder/core/tests/TestMacro.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core.tests/tests/org/eclipse/cdt/managedbuilder/core/tests/TestMacro.java,v
+retrieving revision 1.5
+diff -u -r1.5 TestMacro.java
+--- tests/org/eclipse/cdt/managedbuilder/core/tests/TestMacro.java	14 Jun 2007 20:10:11 -0000	1.5
++++ tests/org/eclipse/cdt/managedbuilder/core/tests/TestMacro.java	8 Jul 2010 20:51:04 -0000
+@@ -34,7 +34,7 @@
+ import org.eclipse.core.runtime.IPath;
+ import org.eclipse.core.runtime.IProgressMonitor;
+ import org.eclipse.core.runtime.MultiStatus;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ /**
+  * 
+@@ -206,9 +206,7 @@
+ 	/**
+ 	 * 
+ 	 */
+-	public boolean isSupported(IToolChain toolChain, 
+-			PluginVersionIdentifier version, 
+-			String instance) {
++	public boolean isSupported(IToolChain toolChain, Version version, String instance) {
+ 		if ("One".equals(toolChain.getParent().getName()))   return supported[0]; //$NON-NLS-1$
+ 		if ("Two".equals(toolChain.getParent().getName()))   return supported[1]; //$NON-NLS-1$
+ 		if ("Three".equals(toolChain.getParent().getName())) return supported[2]; //$NON-NLS-1$
+#P org.eclipse.cdt.managedbuilder.gnu.ui
+Index: META-INF/MANIFEST.MF
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.gnu.ui/META-INF/MANIFEST.MF,v
+retrieving revision 1.12
+diff -u -r1.12 MANIFEST.MF
+--- META-INF/MANIFEST.MF	7 Feb 2010 17:45:39 -0000	1.12
++++ META-INF/MANIFEST.MF	8 Jul 2010 20:51:05 -0000
+@@ -2,14 +2,14 @@
+ Bundle-ManifestVersion: 2
+ Bundle-Name: %pluginName
+ Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.gnu.ui; singleton:=true
+-Bundle-Version: 7.0.0.qualifier
++Bundle-Version: 8.0.0.qualifier
+ Bundle-Activator: org.eclipse.cdt.managedbuilder.gnu.ui.GnuUIPlugin
+ Bundle-Vendor: %providerName
+ Bundle-Localization: plugin
+ Export-Package: org.eclipse.cdt.managedbuilder.gnu.cygwin,
+  org.eclipse.cdt.managedbuilder.gnu.ui
+ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
+- org.eclipse.cdt.managedbuilder.core;bundle-version="[7.0.0,8.0.0)",
++ org.eclipse.cdt.managedbuilder.core;bundle-version="[8.0.0,9.0.0)",
+  org.eclipse.cdt.core;bundle-version="[5.0.0,6.0.0)",
+  org.eclipse.core.resources
+ Bundle-ActivationPolicy: lazy
+Index: src/org/eclipse/cdt/managedbuilder/gnu/cygwin/IsGnuCygwinToolChainSupported.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.gnu.ui/src/org/eclipse/cdt/managedbuilder/gnu/cygwin/IsGnuCygwinToolChainSupported.java,v
+retrieving revision 1.11
+diff -u -r1.11 IsGnuCygwinToolChainSupported.java
+--- src/org/eclipse/cdt/managedbuilder/gnu/cygwin/IsGnuCygwinToolChainSupported.java	4 Mar 2010 17:51:55 -0000	1.11
++++ src/org/eclipse/cdt/managedbuilder/gnu/cygwin/IsGnuCygwinToolChainSupported.java	8 Jul 2010 20:51:05 -0000
+@@ -18,7 +18,7 @@
+ 
+ import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
+ import org.eclipse.cdt.managedbuilder.core.IToolChain;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ /**
+  * This class implements the IManagedIsToolChainSupported for the Gnu Cygwin tool-chain
+@@ -44,8 +44,10 @@
+ 	/* (non-Javadoc)
+ 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported#isSupported(org.eclipse.cdt.managedbuilder.core.IToolChain, org.eclipse.core.runtime.PluginVersionIdentifier, java.lang.String)
+ 	 */
+-	public boolean isSupported(IToolChain toolChain,
+-			PluginVersionIdentifier version, String instance) {
++	/**
++	 * @since 8.0
++	 */
++	public boolean isSupported(IToolChain toolChain, Version version, String instance) {
+ 		
+ 		if (suppChecked) return toolchainIsSupported;
+ 
+Index: src/org/eclipse/cdt/managedbuilder/gnu/mingw/MingwIsToolChainSupported.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.gnu.ui/src/org/eclipse/cdt/managedbuilder/gnu/mingw/MingwIsToolChainSupported.java,v
+retrieving revision 1.3
+diff -u -r1.3 MingwIsToolChainSupported.java
+--- src/org/eclipse/cdt/managedbuilder/gnu/mingw/MingwIsToolChainSupported.java	8 Feb 2010 03:03:51 -0000	1.3
++++ src/org/eclipse/cdt/managedbuilder/gnu/mingw/MingwIsToolChainSupported.java	8 Jul 2010 20:51:05 -0000
+@@ -13,7 +13,7 @@
+ 
+ import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
+ import org.eclipse.cdt.managedbuilder.core.IToolChain;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ /**
+  * @author Doug Schaefer
+@@ -29,8 +29,7 @@
+ 		supported = MingwEnvironmentVariableSupplier.getBinDir() != null;
+ 	}
+ 	
+-	public boolean isSupported(IToolChain toolChain,
+-			PluginVersionIdentifier version, String instance) {
++	public boolean isSupported(IToolChain toolChain, Version version, String instance) {
+ 		return supported;
+ 	}
+ 
+#P org.eclipse.cdt.managedbuilder.ui
+Index: META-INF/MANIFEST.MF
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.ui/META-INF/MANIFEST.MF,v
+retrieving revision 1.23
+diff -u -r1.23 MANIFEST.MF
+--- META-INF/MANIFEST.MF	6 Jul 2010 22:16:06 -0000	1.23
++++ META-INF/MANIFEST.MF	8 Jul 2010 20:51:05 -0000
+@@ -16,7 +16,7 @@
+  org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",
+  org.eclipse.cdt.core;bundle-version="[5.0.0,6.0.0)",
+  org.eclipse.cdt.ui;bundle-version="[5.0.0,6.0.0)",
+- org.eclipse.cdt.managedbuilder.core;bundle-version="[7.0.0,8.0.0)",
++ org.eclipse.cdt.managedbuilder.core;bundle-version="[8.0.0,9.0.0)",
+  org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
+  org.eclipse.core.variables;bundle-version="[3.1.100,4.0.0)",
+  org.eclipse.ui.navigator;bundle-version="[3.2.0,4.0.0)";resolution:=optional,
+#P org.eclipse.cdt.managedbuilder.ui.tests
+Index: META-INF/MANIFEST.MF
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.ui.tests/META-INF/MANIFEST.MF,v
+retrieving revision 1.13
+diff -u -r1.13 MANIFEST.MF
+--- META-INF/MANIFEST.MF	8 Feb 2010 01:02:17 -0000	1.13
++++ META-INF/MANIFEST.MF	8 Jul 2010 20:51:06 -0000
+@@ -2,7 +2,7 @@
+ Bundle-ManifestVersion: 2
+ Bundle-Name: Managed Build UI Tests Plug-in
+ Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.ui.tests; singleton:=true
+-Bundle-Version: 7.0.0.qualifier
++Bundle-Version: 8.0.0.qualifier
+ Bundle-Activator: org.eclipse.cdt.managedbuilder.ui.tests.testplugin.TestsPlugin
+ Bundle-Vendor: Eclipse CDT
+ Bundle-Localization: plugin
+Index: src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestConfiguration.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.ui.tests/src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestConfiguration.java,v
+retrieving revision 1.6
+diff -u -r1.6 TestConfiguration.java
+--- src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestConfiguration.java	2 Jun 2010 19:48:12 -0000	1.6
++++ src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestConfiguration.java	8 Jul 2010 20:51:06 -0000
+@@ -34,7 +34,7 @@
+ import org.eclipse.core.resources.IFile;
+ import org.eclipse.core.resources.IResource;
+ import org.eclipse.core.runtime.IPath;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ public class TestConfiguration implements IConfiguration {
+ 
+@@ -518,12 +518,12 @@
+ 		return null;
+ 	}
+ 
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 		// TODO Auto-generated method stub
+ 		return null;
+ 	}
+ 
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		// TODO Auto-generated method stub
+ 
+ 	}
+Index: src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestFolderInfo.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.ui.tests/src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestFolderInfo.java,v
+retrieving revision 1.5
+diff -u -r1.5 TestFolderInfo.java
+--- src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestFolderInfo.java	13 Sep 2007 09:27:59 -0000	1.5
++++ src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestFolderInfo.java	8 Jul 2010 20:51:06 -0000
+@@ -23,7 +23,7 @@
+ import org.eclipse.cdt.managedbuilder.core.IToolChain;
+ import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
+ import org.eclipse.core.runtime.IPath;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ public class TestFolderInfo implements IFolderInfo {
+ 
+@@ -222,12 +222,12 @@
+ 		return null;
+ 	}
+ 
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 		// TODO Auto-generated method stub
+ 		return null;
+ 	}
+ 
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		// TODO Auto-generated method stub
+ 
+ 	}
+Index: src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestProjectType.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.ui.tests/src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestProjectType.java,v
+retrieving revision 1.3
+diff -u -r1.3 TestProjectType.java
+--- src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestProjectType.java	14 Jun 2007 20:10:07 -0000	1.3
++++ src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestProjectType.java	8 Jul 2010 20:51:06 -0000
+@@ -17,7 +17,7 @@
+ import org.eclipse.cdt.managedbuilder.core.IProjectType;
+ import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
+ import org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ public class TestProjectType implements IProjectType {
+ 	private IConfiguration[] cfgs = new IConfiguration[1];
+@@ -49,8 +49,8 @@
+ 	public String getId() { return null; }
+ 	public String getManagedBuildRevision() { return null; }
+ 	public String getName() { return null; }
+-	public PluginVersionIdentifier getVersion() { return null; }
+-	public void setVersion(PluginVersionIdentifier version) {}
++	public Version getVersion() { return null; }
++	public void setVersion(Version version) {}
+ 	public IBuildObjectProperties getBuildProperties() { return null; }
+ 
+ 	public IBuildPropertyValue getBuildArtefactType() {
+Index: src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestToolchain.java
+===================================================================
+RCS file: /cvsroot/tools/org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.ui.tests/src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestToolchain.java,v
+retrieving revision 1.8
+diff -u -r1.8 TestToolchain.java
+--- src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestToolchain.java	14 Jun 2007 20:10:07 -0000	1.8
++++ src/org/eclipse/cdt/managedbuilder/ui/tests/util/TestToolchain.java	8 Jul 2010 20:51:06 -0000
+@@ -24,7 +24,7 @@
+ import org.eclipse.cdt.managedbuilder.internal.core.HoldsOptions;
+ import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
+ import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
+-import org.eclipse.core.runtime.PluginVersionIdentifier;
++import org.osgi.framework.Version;
+ 
+ public class TestToolchain extends HoldsOptions implements IToolChain {
+ 
+@@ -38,12 +38,12 @@
+ 		return null;
+ 	}
+ 
+-	public PluginVersionIdentifier getVersion() {
++	public Version getVersion() {
+ 		// TODO Auto-generated method stub
+ 		return null;
+ 	}
+ 
+-	public void setVersion(PluginVersionIdentifier version) {
++	public void setVersion(Version version) {
+ 		// TODO Auto-generated method stub
+ 		
+ 	}
+

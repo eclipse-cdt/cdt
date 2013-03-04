@@ -2618,16 +2618,18 @@ public class CPPTemplates {
 
 	private static IBinding resolveDeferredClassInstance(ICPPDeferredClassInstance dci,
 			ICPPTemplateParameterMap tpMap, int packOffset, ICPPClassSpecialization within, IASTNode point) {
+		ICPPClassTemplate classTemplate = dci.getClassTemplate();
 		ICPPTemplateArgument[] arguments = dci.getTemplateArguments();
 		ICPPTemplateArgument[] newArgs;
 		try {
-			newArgs = instantiateArguments(arguments, tpMap, packOffset, within, point, false);
+			newArgs = instantiateArguments(arguments, tpMap, packOffset, within, point, true);
 		} catch (DOMException e) {
 			return e.getProblem();
 		}
+		if (newArgs == null)
+			return createProblem(classTemplate, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
 
 		boolean changed= arguments != newArgs;
-		ICPPClassTemplate classTemplate = dci.getClassTemplate();
 		IType classTemplateSpecialization= instantiateType(classTemplate, tpMap, packOffset, within, point);
 		if (classTemplateSpecialization != classTemplate && classTemplateSpecialization instanceof ICPPClassTemplate) {
 			classTemplate= (ICPPClassTemplate) classTemplateSpecialization;

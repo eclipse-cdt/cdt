@@ -18,19 +18,13 @@
    <feature url="features/org.eclipse.rse.tests_3.4.1.qualifier.jar" id="org.eclipse.rse.tests" version="3.4.1.qualifier">
       <category name="tm_34_optional"/>
    </feature>
-<!--   <feature url="features/org.eclipse.rse.wince_0.3.100.qualifier.jar" id="org.eclipse.rse.wince" version="0.3.100.qualifier">
-      <category name="tm_34_optional"/>
-   </feature>
--->   
    <feature url="features/org.eclipse.tm.terminal.local.sdk_0.3.1.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.3.1.qualifier">
       <category name="tm_34_optional"/>
    </feature>
    <feature url="features/org.eclipse.tm.terminal.sdk_3.3.2.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.3.2.qualifier">
       <category name="tm_34_main"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.core.sdk_3.3.2.qualifier.jar" id="org.eclipse.tm.terminal.core.sdk" version="3.3.2.qualifier">
-      <category name="tm_34_main"/>
-   </feature>
+   <feature url="features/org.eclipse.tm.terminal.core.sdk_3.3.2.qualifier.jar" id="org.eclipse.tm.terminal.core.sdk" version="3.3.2.qualifier"/>
    <category-def name="tm_34_main" label="TM and RSE 3.4.2 Main Features">
       <description>
          TM and RSE Main Features

@@ -6945,7 +6945,32 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testSFINAEInDefaultArgument() throws Exception {
 		parseAndCheckBindings();
 	}
-
+	
+	//	typedef char (&no_tag)[1];
+	//	typedef char (&yes_tag)[2];
+	//
+	//	template <typename T> 
+	//	struct type_wrapper {};
+	//
+	//	template <typename T>
+	//	struct has_type {
+	//	    template <typename U>
+	//	    static yes_tag test(type_wrapper<U> const volatile*, type_wrapper<typename U::type>* = 0);
+	//
+	//	    static no_tag test(...);
+	//
+	//	    static const bool value = sizeof(test(static_cast<type_wrapper<T>*>(0))) == sizeof(yes_tag);
+	//	};
+	//
+	//	const bool B = has_type<int>::value;
+	public void testSFINAEInNestedTypeInTemplateArgument_402257() throws Exception {
+		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
+		ICPPVariable B = helper.assertNonProblem("B", ICPPVariable.class);
+		Long val = B.getInitialValue().numericalValue();
+		assertNotNull(val);
+		assertEquals(0 /* false */, val.longValue());
+	}
+	
 	//	template <typename>
 	//	struct M {
 	//	    template <typename... Args>

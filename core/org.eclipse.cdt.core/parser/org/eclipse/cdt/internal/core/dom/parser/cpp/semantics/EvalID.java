@@ -324,6 +324,15 @@ public class EvalID extends CPPDependentEvaluation {
 			if (eval != null)
 				return eval;
 		}
+		
+		if (fieldOwner != null && !fieldOwner.isTypeDependent()) {
+			IType fieldOwnerType = fieldOwner.getTypeOrFunctionSet(point);
+			if (fieldOwnerType instanceof ICPPClassType) {
+				ICPPEvaluation eval = resolveName((ICPPClassType) fieldOwnerType, templateArgs, point);
+				if (eval != null)
+					return eval;
+			}
+		}
 
 		return new EvalID(fieldOwner, nameOwner, fName, fAddressOf, fQualified, templateArgs, getTemplateDefinition());
 	}

@@ -34,6 +34,24 @@
       "revId": "1bb12ca3390959667066366c4c0fd978d98a988c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//650\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1349,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-05T17:47:48Z",
+      "side": 1,
+      "message": "That makes sense to me. I mostly wrote it up for my own understanding -- I agree that it\u0027s on the borderline. Hopefully this can get a committer to review and merge it soon.",
+      "parentUuid": "AABOPX//7CE\u003d",
+      "revId": "1bb12ca3390959667066366c4c0fd978d98a988c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -95,6 +96,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
@@ -5874,6 +5876,25 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	struct vector {
+	//	    int* begin();
+	//	};
+	//
+	//	template<class Container>
+	//	auto begin(Container cont) -> decltype(cont.begin());
+	//
+	//	vector v;
+	//	auto x = begin(v);
+	public void testResolvingAutoTypeWithDependentExpression_402409() throws Exception {
+		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
+		ICPPVariable x = helper.assertNonProblem("x", ICPPVariable.class);
+		IType xType = x.getType();
+		assertInstance(xType, CPPPointerType.class);
+		IType xTypeInner = ((CPPPointerType) xType).getType();
+		assertInstance(xTypeInner, ICPPBasicType.class);
+		assertEquals(Kind.eInt, ((ICPPBasicType) xTypeInner).getKind());
+	}
+	
 	//	void foo(int, int);
 	//	template <typename... Args> void bar(Args... args) {
 	//	    foo(1,2,args...);

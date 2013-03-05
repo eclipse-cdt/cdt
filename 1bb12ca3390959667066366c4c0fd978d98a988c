@@ -16,6 +16,24 @@
       "revId": "1bb12ca3390959667066366c4c0fd978d98a988c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//7CE\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1349,
+      "author": {
+        "id": 580
+      },
+      "writtenOn": "2013-03-05T13:50:01Z",
+      "side": 1,
+      "message": "Hi Jesse,\n\nI usually like removing any duplicates, but I do think this is beyond the scope of the patch.\nThe readability of the original duplicate code is slightly better imho as well.\nI would personally feel better if this change is not included (unless you think it is important for the patch).\n\nIt would have been much easier if Java had function pointers :)",
+      "parentUuid": "AABOPX//8FM\u003d",
+      "revId": "1bb12ca3390959667066366c4c0fd978d98a988c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

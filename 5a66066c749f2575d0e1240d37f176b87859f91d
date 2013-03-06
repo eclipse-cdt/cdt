@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//6b0\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-06T18:05:40Z",
+      "side": 1,
+      "message": "This is not true. The list is populated irrespective of mode.",
+      "revId": "5a66066c749f2575d0e1240d37f176b87859f91d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//6bw\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-06T18:05:40Z",
+      "side": 1,
+      "message": "Weird compound \"workbench-\u0026-active-editor-specific\"",
+      "revId": "5a66066c749f2575d0e1240d37f176b87859f91d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//6bs\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-06T18:05:40Z",
+      "side": 1,
+      "message": "See the comment for line 45.",
+      "revId": "5a66066c749f2575d0e1240d37f176b87859f91d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//6bk\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-06T18:05:40Z",
+      "side": 1,
+      "message": "Is it that hard to add a description here?",
+      "revId": "5a66066c749f2575d0e1240d37f176b87859f91d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//6bo\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-06T18:05:40Z",
+      "side": 1,
+      "message": "Is it that hard to add a description here?",
+      "revId": "5a66066c749f2575d0e1240d37f176b87859f91d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

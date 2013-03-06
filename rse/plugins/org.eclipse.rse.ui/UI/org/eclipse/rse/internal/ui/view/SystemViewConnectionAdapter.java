@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -36,6 +36,7 @@
  * David McKnight (IBM)          - [226324] Default user ID from preferences not inherited
  * David McKnight   (IBM)        - [196166] [usability][dnd] Changing the sort order of hosts in the SystemView should work by drag & drop
  * David McKnight   (IBM)        - [286230] [dnd] Dropping resources on host nodes leads to classcast exception
+ * David McKnight   (IBM)        - [402555] RSE default local host should not be deletable from UI
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -619,6 +620,11 @@ public class SystemViewConnectionAdapter
         		if (ss[i].isConnected() && ss[i].getSubSystemConfiguration().supportsSubSystemConnect())
         			return false;
         	}
+        	if (host == sr.getLocalHost()){
+        		return false; // don't allow deleting the default local host
+        	}
+        	
+        	
 	    }
 		return true;
 	}

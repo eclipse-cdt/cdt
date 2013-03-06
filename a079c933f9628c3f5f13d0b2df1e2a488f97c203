@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//6Qw\u003d",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/autotools/core/AutotoolsNewProjectNature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-06T23:57:16Z",
+      "side": 1,
+      "message": "Merge this assignment with the initialization directly above it.",
+      "revId": "a079c933f9628c3f5f13d0b2df1e2a488f97c203",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//6Q0\u003d",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/autotools/core/AutotoolsNewProjectNature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-06T23:57:16Z",
+      "side": 1,
+      "message": "Since you factored out the checkCorrectOrder code, there\u0027s no need for the hasCorrectBuilderCommands boolean (or the 2nd if statement) -- simply inline the checkCorrectOrder call into this if statement, after an \u0026\u0026.",
+      "revId": "a079c933f9628c3f5f13d0b2df1e2a488f97c203",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//6Rg\u003d",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/autotools/core/AutotoolsNewProjectNature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-06T23:57:16Z",
+      "side": 1,
+      "message": "Please remove trailing whitespace, and avoid making unnecessary whitespace changes.",
+      "revId": "a079c933f9628c3f5f13d0b2df1e2a488f97c203",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//6Qo\u003d",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/autotools/core/AutotoolsNewProjectNature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-06T23:57:16Z",
+      "side": 1,
+      "message": "Since lines 110-119 are the same as lines 83-91, why don\u0027t you factor them out into a method and avoid the repetition?",
+      "revId": "a079c933f9628c3f5f13d0b2df1e2a488f97c203",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

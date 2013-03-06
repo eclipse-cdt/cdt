@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,7 @@
  * David McKnight     (IBM)      - [376410] cross-system copy/paste operation doesn't transfer remote encodings for binary files
  * David McKnight     (IBM)      - [386486] when the original timestamp of a file is 0 don't set it after an upload
  * David McKnight   (IBM)        - [389838] Fast folder transfer does not account for code page
+ * Samuel Wu        (IBM)        - [402533] UniversalFileTransferUtility threw NPE
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1551,7 +1552,9 @@ public class UniversalFileTransferUtility {
 		{
 			try
 			{
-				targetFolder = targetFS.getRemoteFileObject(targetFolder.getAbsolutePath(), monitor);
+				IRemoteFile currentTargetFolder = targetFS.getRemoteFileObject(targetFolder.getAbsolutePath(), monitor);
+				if (currentTargetFolder != null)
+					targetFolder = currentTargetFolder;
 			}
 			catch (Exception e)
 			{

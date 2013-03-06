@@ -270,9 +270,9 @@ public class LanguageMappingStore {
 
 	private void addFileMappings(Map<String, Map<String, String>> mappings, ICStorageElement rootElement) {
 		for (Map.Entry<String, Map<String, String>> entry : mappings.entrySet()) {
-			ICStorageElement mapping = rootElement.createChild(FILE_MAPPING);
 			String path = entry.getKey();
 			for (Entry<String, String> configurationEntry : entry.getValue().entrySet()) {
+				ICStorageElement mapping = rootElement.createChild(FILE_MAPPING);
 				String configuration = configurationEntry.getKey();
 				String language = configurationEntry.getValue();
 

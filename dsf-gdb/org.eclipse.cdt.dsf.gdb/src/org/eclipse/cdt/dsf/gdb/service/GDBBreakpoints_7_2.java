@@ -297,6 +297,7 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 	 * 
 	 * @return true if the information is available (GDB >= 7.6),
 	 *         false otherwise.
+	 * @since 4.2
 	 */
 	protected boolean bpThreadGroupInfoAvailable() {
 		return false;

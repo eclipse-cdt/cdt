@@ -161,7 +161,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
         fLaunchConfig = config;
         fLaunch       = null;
         fDebugTarget  = null;
-        fAddressSize  = 4;    // Get this from the launch configuration
+        fAddressSize  = 8;    // Get this from the launch configuration
         fWordSize     = 1;    // Get this from the launch configuration
         fSupportsValueModification = true;          // Get this from the launch configuration
         fSupportBaseAddressModification = false;    // Get this from the launch configuration

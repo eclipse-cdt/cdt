@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * Martin Oberhuber (Wind River) - [196963][181939] avoid subsystem plugin activation just for enablement checking
  * David Dykstal (IBM) - [231943] make "true" and "false" translatable
+ * David McKnight   (IBM)        - [210149] [accessibility] Remote Systems Preference page not fully accessible with keyboard
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
@@ -29,6 +30,7 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -53,6 +55,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -106,7 +110,36 @@ public class SystemTypeFieldEditor extends FieldEditor
 
 	private static final boolean[] enabledStates = {Boolean.TRUE.booleanValue(), Boolean.FALSE.booleanValue()};
     private static final String[] enabledStateStrings = {SystemResources.SystemTypeFieldEditor_true, SystemResources.SystemTypeFieldEditor_false};
-
+    
+    
+    private TableKeyListener _keyListener;
+	private class TableKeyListener implements Listener {
+		public void handleEvent(Event e){
+			if (e.character == SWT.SPACE){ // space character toggles				
+				TableItem[] selList = table.getSelection();
+				IRSESystemType type = getSelectedItem(selList);
+				Integer value = new Integer(type.isEnabled() ?  1: 0);				
+				modify(selList[0], P_ENABLED, value);			
+			}
+			else if (e.keyCode == SWT.F2) {
+				TableItem[] selList = table.getSelection();
+				IRSESystemType type = getSelectedItem(selList);
+				tableViewer.editElement(type, COLUMN_USERID);
+			}		
+		}
+		
+		private IRSESystemType getSelectedItem(TableItem[] selList){
+			if (selList.length == 1){
+				TableItem sel = selList[0];
+				Object data = sel.getData();
+				IRSESystemType row = (IRSESystemType)data;
+				return row;
+			}	
+			return null;
+		}
+	};
+    
+    
 	/**
 	 * Constructor
 	 *
@@ -116,7 +149,12 @@ public class SystemTypeFieldEditor extends FieldEditor
 	 */
 	public SystemTypeFieldEditor(String name, String labelText, Composite parent)
 	{
-		super(name, labelText, parent);
+		super(name, labelText, parent);		
+	}
+
+	public void dispose() {
+		table.removeListener(SWT.KeyDown, _keyListener);
+		super.dispose();
 	}
 
 	/* (non-Javadoc)
@@ -148,7 +186,11 @@ public class SystemTypeFieldEditor extends FieldEditor
         tableViewer.setLabelProvider(this);
         tableViewer.setContentProvider(this);
         tableViewer.setInput(new Object());
+                
+		_keyListener = new TableKeyListener();
+		table.addListener(SWT.KeyDown, _keyListener);
 	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#doLoad()

@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//544\u003d",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/autotools/core/AutotoolsNewProjectNature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-03-07T21:18:35Z",
+      "side": 1,
+      "message": "should be \"loses\"",
+      "revId": "b4782aa32a99da3da34ff2c1a22a544f531c2d54",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//53c\u003d",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/autotools/core/AutotoolsNewProjectNature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-03-07T21:18:35Z",
+      "side": 1,
+      "message": "Can you add a comment here regarding the situation that causes the problem.  It appears to be a timing issue since the build commands don\u0027t show up just before the background job, but appear to do so later - is this correct?  If so, can there still be a timing issue that may rear its ugly head later on and should we add a warning about it?",
+      "revId": "b4782aa32a99da3da34ff2c1a22a544f531c2d54",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//548\u003d",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/autotools/core/AutotoolsNewProjectNature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-03-07T21:18:35Z",
+      "side": 1,
+      "message": "If we return here, we have not restoredAutoBuild for the workspace.",
+      "revId": "b4782aa32a99da3da34ff2c1a22a544f531c2d54",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//53o\u003d",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/autotools/core/AutotoolsNewProjectNature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-03-07T21:18:35Z",
+      "side": 1,
+      "message": "This is awkward, returning a null for an array.  I think it would it would be cleaner to have prepareBuildCommands take in the seed commands and always return newCommands.  Then, have the caller call checkEqual() for the seed commands and the new commands.  checkEqual can do the length check as well.",
+      "revId": "b4782aa32a99da3da34ff2c1a22a544f531c2d54",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//53k\u003d",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/autotools/core/AutotoolsNewProjectNature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-03-07T21:18:35Z",
+      "side": 1,
+      "message": "As mentioned above, it would be cleaner to call this checkEqual() and do a length check here in addition to the name checks.",
+      "revId": "b4782aa32a99da3da34ff2c1a22a544f531c2d54",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

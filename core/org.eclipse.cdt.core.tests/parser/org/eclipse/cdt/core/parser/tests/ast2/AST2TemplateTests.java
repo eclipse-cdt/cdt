@@ -7488,4 +7488,12 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testRegression_401743b() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T>
+	//	void foo(T t) {
+	//	    bar(t);
+	//	}
+	public void testUnqualifiedFunctionCallInTemplate_402498() throws Exception {
+		parseAndCheckBindings();
+	}
 }

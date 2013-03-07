@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,23 +12,30 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight (IBM) - [192758][accessibility] Editing of the properties in the New Connection Wizard cannot be done entirely by keyboard
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
 
@@ -216,7 +223,38 @@ public class SystemPropertySheetForm extends Composite
 				  //e.doit = false;
 				  return;
 				}
-				//handleKeyPressed(e);
+				else if (e.keyCode == SWT.F2) {
+					// hack code to provide key access to property sheet fields
+					Tree theTree = ((Tree)tree.getControl());
+					TreeItem[] treeSel = theTree.getSelection();	
+					if (treeSel.length == 1){
+						Display display = theTree.getDisplay();
+						TreeItem item = treeSel[0];
+						
+						// editable area
+						Rectangle itemBounds = item.getTextBounds(1);
+						int x = itemBounds.x;
+						int y = itemBounds.y;
+						
+						// move mouse to selected editable area
+						Event event = new Event();						
+						event.type = SWT.MouseMove;
+						Point p = theTree.toDisplay(x,y);
+						event.x = p.x;
+						event.y = p.y;											
+						display.post(event);
+
+						// mouse click down
+						event.type = SWT.MouseDown;
+						event.button = 1;
+						display.post(event);
+						
+						// mouse click up
+						event.type = SWT.MouseUp;
+						event.button = 1;
+						display.post(event);								
+					}
+				}
 			}
 		};		
 	   tree.getControl().addKeyListener(keyListener);

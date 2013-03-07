@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//6PE\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-03-07T09:15:28Z",
+      "side": 0,
+      "message": "I\u0027m not confident about the removal of this line. Does anyone know why it was there?",
+      "revId": "b2448e8582ff540ad3d83da2db30a9b0e7c6cd5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

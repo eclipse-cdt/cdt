@@ -144,6 +144,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//50w\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-08T02:00:22Z",
+      "side": 1,
+      "message": "It tries to find an existing launch configuration of the chosen type suitable for running the application or the test. If it doesn\u0027t find such launch configuration, a new launch configuration is created.",
+      "parentUuid": "AABOPX//504\u003d",
+      "revId": "61d3778d611f8aefeb3cc5f9ff7c64b5ed8c5165",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//51k\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
         "patchSetId": 2

@@ -332,11 +332,13 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			final CPPFunctionSet fset = e.getFunctionSet();
 			ICPPFunction[] a = fset.getBindings();
 			ICPPTemplateArgument[] b = fset.getTemplateArguments();
+			IType c = e.getImpliedObjectType();
 			
 			ICPPFunction[] a2 = getCompositeFunctionArray(a);
 			ICPPTemplateArgument[] b2 = TemplateInstanceUtil.convert(this, b);
-			if (a != a2 || b != b2 || templateDefinition != templateDefinition2)
-				e= new EvalFunctionSet(new CPPFunctionSet(a2, b2, null), e.isAddressOf(), templateDefinition2);
+			IType c2 = getCompositeType(c);
+			if (a != a2 || b != b2 || c != c2 || templateDefinition != templateDefinition2)
+				e= new EvalFunctionSet(new CPPFunctionSet(a2, b2, null), e.isAddressOf(), c2, templateDefinition2);
 			return e;
 		}
 		if (eval instanceof EvalID) {

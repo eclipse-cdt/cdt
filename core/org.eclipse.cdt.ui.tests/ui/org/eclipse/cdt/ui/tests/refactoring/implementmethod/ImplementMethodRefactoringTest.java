@@ -788,4 +788,37 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 	public void testExplicitConstructor_Bug363111() throws Exception {
 		assertRefactoringSuccess();
 	}
+	
+	//A.h
+	//
+	//class TestClass {
+	//public:
+	//	/*$*/void foo() throws();/*$$*/
+	//};
+	//
+
+	//A.cpp
+	//====================
+	//void TestClass::foo() throws() {
+	//}
+	public void testEmptyThowsClause_Bug393833() throws Exception {
+		assertRefactoringSuccess();
+	}
+	
+	//A.h
+	//
+	//class TestClass {
+	//public:
+	//	/*$*/void foo() throws(TestClass);/*$$*/
+	//};
+	//
+
+	//A.cpp
+	//====================
+	//void TestClass::foo() throws(TestClass) {
+	//}
+	public void testNonEmptyThowsClause_Bug393833() throws Exception {
+		assertRefactoringSuccess();
+	}
+
 }

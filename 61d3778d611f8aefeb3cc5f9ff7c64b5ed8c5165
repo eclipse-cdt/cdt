@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//51I\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-08T01:32:25Z",
+      "side": 1,
+      "message": "\"allowing them to be launched in Run mode\" sounds clumsy. What about \"to choose from to run again\"?",
+      "parentUuid": "AABOPX//51c\u003d",
+      "revId": "61d3778d611f8aefeb3cc5f9ff7c64b5ed8c5165",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//51o\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
         "patchSetId": 2
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "Er, I\u0027m not sure what you are describing as incorrect. AFAIK, things like \"JUnit Test\" *are* launch configurations.  If you mean that things like \"JUnit Test\" are not \"favorite\" -- I\u0027m not sure what else they would be...  Please clarify.",
       "parentUuid": "AABOPX//51o\u003d",
+      "revId": "61d3778d611f8aefeb3cc5f9ff7c64b5ed8c5165",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//51E\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-08T01:32:25Z",
+      "side": 1,
+      "message": "\"JUnit Test\" is a launch configuration type, not a launch configuration.",
+      "parentUuid": "AABOPX//51Y\u003d",
       "revId": "61d3778d611f8aefeb3cc5f9ff7c64b5ed8c5165",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

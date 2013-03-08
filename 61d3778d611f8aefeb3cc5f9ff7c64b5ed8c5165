@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//508\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-08T01:46:11Z",
+      "side": 1,
+      "message": "Thanks, good idea. I ended up going with: \"Run a recently used launch configuration\". Let me know if that works.",
+      "parentUuid": "AABOPX//51I\u003d",
+      "revId": "61d3778d611f8aefeb3cc5f9ff7c64b5ed8c5165",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//51o\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
         "patchSetId": 2
@@ -102,6 +120,24 @@
       "side": 1,
       "message": "\"JUnit Test\" is a launch configuration type, not a launch configuration.",
       "parentUuid": "AABOPX//51Y\u003d",
+      "revId": "61d3778d611f8aefeb3cc5f9ff7c64b5ed8c5165",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//504\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-08T01:46:11Z",
+      "side": 1,
+      "message": "OK, now I\u0027m even more confused. So if you select a \"launch configuration type\" from this menu, what happens? It can\u0027t actually launch anything (I presume) because a type isn\u0027t an actual configuration -- so what *does* it do?\n\nI tried looking in the existing documentation, but couldn\u0027t find a clear explanation of the whole \"launch configuration\" concept. Suggestions for where to look?\n\nAlso, if you want to just suggest what wording to use here, I\u0027m happy to do that.",
+      "parentUuid": "AABOPX//51E\u003d",
       "revId": "61d3778d611f8aefeb3cc5f9ff7c64b5ed8c5165",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

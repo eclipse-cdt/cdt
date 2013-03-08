@@ -34,16 +34,21 @@ import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.junit.rules.TestRule;
@@ -57,6 +62,7 @@ import org.junit.rules.Timeout;
  * must call super.baseSetup or super.baseTeardown itself, if this
  * code is to be run.
  */
+@SuppressWarnings("restriction")
 public class BaseTestCase {
 	// Timeout value for each individual test
 	private final static int TEST_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
@@ -92,7 +98,9 @@ public class BaseTestCase {
 	
 	/** Event semaphore we set when the target has reached the breakpoint at main() */ 
 	final private String fTargetSuspendedSem = new String(); // just used as a semaphore
-	
+
+	private static boolean fgStatusHandlersEnabled = true;
+
     public GdbLaunch getGDBLaunch() { return fLaunch; }
     
     public void setLaunchAttribute(String key, Object value) { 
@@ -392,5 +400,19 @@ public class BaseTestCase {
  	 */
  	protected boolean reallyLaunchGDBServer() {
  		return true;
+ 	}
+
+	@BeforeClass
+ 	public static void setGlobalPreferences() {
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugPlugin.getUniqueIdentifier());
+		// Disable status handlers
+		fgStatusHandlersEnabled = Platform.getPreferencesService().getBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, true, null);
+		node.putBoolean(IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, false);
+ 	}
+
+	@AfterClass
+	public static void restoreGlobalPreferences() {
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugPlugin.getUniqueIdentifier());
+		node.putBoolean(IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, fgStatusHandlersEnabled);
  	}
 }

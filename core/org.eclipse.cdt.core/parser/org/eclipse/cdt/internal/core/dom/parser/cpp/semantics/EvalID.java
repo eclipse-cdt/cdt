@@ -15,6 +15,8 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -190,7 +192,7 @@ public class EvalID extends CPPDependentEvaluation {
 		if (binding instanceof IProblemBinding || binding instanceof IType || binding instanceof ICPPConstructor)
 			return EvalFixed.INCOMPLETE;
 		if (binding instanceof CPPFunctionSet) {
-			return new EvalFunctionSet((CPPFunctionSet) binding, isAddressOf(expr), expr);
+			return new EvalFunctionSet((CPPFunctionSet) binding, isAddressOf(expr), null, expr);
 		}
 		if (binding instanceof ICPPUnknownBinding) {
 			ICPPTemplateArgument[] templateArgs = null;
@@ -207,7 +209,7 @@ public class EvalID extends CPPDependentEvaluation {
 				CPPDeferredFunction deferredFunction = (CPPDeferredFunction) binding;
 				if (deferredFunction.getCandidates() != null) {
 					CPPFunctionSet functionSet = new CPPFunctionSet(deferredFunction.getCandidates(), templateArgs, null);
-					return new EvalFunctionSet(functionSet, isAddressOf(expr), expr);
+					return new EvalFunctionSet(functionSet, isAddressOf(expr), null, expr);
 				}
 			}
 
@@ -320,15 +322,16 @@ public class EvalID extends CPPDependentEvaluation {
 			return this;
 
 		if (nameOwner instanceof ICPPClassType) {
-			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, templateArgs, point);
+			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, templateArgs, null, point);
 			if (eval != null)
 				return eval;
 		}
 		
 		if (fieldOwner != null && !fieldOwner.isTypeDependent()) {
 			IType fieldOwnerType = fieldOwner.getTypeOrFunctionSet(point);
-			if (fieldOwnerType instanceof ICPPClassType) {
-				ICPPEvaluation eval = resolveName((ICPPClassType) fieldOwnerType, templateArgs, point);
+			IType fieldOwnerClassType = SemanticUtil.getNestedType(fieldOwnerType, TDEF | REF | CVTYPE);
+			if (fieldOwnerClassType instanceof ICPPClassType) {
+				ICPPEvaluation eval = resolveName((ICPPClassType) fieldOwnerClassType, templateArgs, fieldOwnerType, point);
 				if (eval != null)
 					return eval;
 			}
@@ -349,7 +352,7 @@ public class EvalID extends CPPDependentEvaluation {
 	}
 
 	private ICPPEvaluation resolveName(ICPPClassType nameOwner, ICPPTemplateArgument[] templateArgs,
-			IASTNode point) {
+			IType impliedObjectType, IASTNode point) {
 		LookupData data = new LookupData(fName, templateArgs, point);
 		data.qualified = fQualified;
 		try {
@@ -360,7 +363,8 @@ public class EvalID extends CPPDependentEvaluation {
 		if (bindings.length > 1 && bindings[0] instanceof ICPPFunction) {
 			ICPPFunction[] functions = new ICPPFunction[bindings.length];
 			System.arraycopy(bindings, 0, functions, 0, bindings.length);
-			return new EvalFunctionSet(new CPPFunctionSet(functions, templateArgs, null), fAddressOf, getTemplateDefinition());
+			return new EvalFunctionSet(new CPPFunctionSet(functions, templateArgs, null), fAddressOf, 
+					impliedObjectType, getTemplateDefinition());
 		}
 		IBinding binding = bindings.length == 1 ? bindings[0] : null;
 		if (binding instanceof IEnumerator) {
@@ -368,7 +372,7 @@ public class EvalID extends CPPDependentEvaluation {
 		} else if (binding instanceof ICPPMember) {
 			return new EvalMemberAccess(nameOwner, ValueCategory.PRVALUE, binding, false, getTemplateDefinition());
 		} else if (binding instanceof CPPFunctionSet) {
-			return new EvalFunctionSet((CPPFunctionSet) binding, fAddressOf, getTemplateDefinition());
+			return new EvalFunctionSet((CPPFunctionSet) binding, fAddressOf, impliedObjectType, getTemplateDefinition());
 		}
 		return null;
 	}

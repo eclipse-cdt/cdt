@@ -234,10 +234,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  140.1 - Mechanism for tagging nodes with extended data, bug 400020
 	 *  141.0 - Storing enclosing template bindings for evaluations, bug 399829.
 	 *  142.0 - Changed marshalling of evaluations to allow more than 15 evaluation kinds, bug 401479.
+	 *  143.0 - Store implied object type in EvalFunctionSet, bug 402409.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(142, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(142, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(142, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(143, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(143, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(143, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

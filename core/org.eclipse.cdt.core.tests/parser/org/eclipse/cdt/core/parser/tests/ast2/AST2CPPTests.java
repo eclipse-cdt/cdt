@@ -263,8 +263,7 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals(defNames.length, j);
 	}
 
-	@Override
-	protected void assertSameType(IType first, IType second){
+	protected static void assertSameType(IType first, IType second){
 		assertNotNull(first);
 		assertNotNull(second);
 		assertTrue("Expected types to be the same, but first was: '" + first.toString() + "' and second was: '" + second + "'", first.isSameType(second));

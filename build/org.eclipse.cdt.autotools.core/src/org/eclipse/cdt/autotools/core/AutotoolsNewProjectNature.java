@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Red Hat Inc.. and others
+ * Copyright (c) 2008, 2013 Red Hat Inc.. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Red Hat Incorporated - initial implementation
- *     IBM Rational Software - add and remove nature static methods
+ * Red Hat Incorporated         - initial implementation
+ * IBM Rational Software        - add and remove nature static methods
+ * Anna Dushistova (MontaVista) - [402595]Autotools nature loses builders added by contributed wizard pages
  *******************************************************************************/
 package org.eclipse.cdt.autotools.core;
 
@@ -80,39 +81,8 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 		// Add the builder to the project
 		IProjectDescription description = project.getDescription();
 		ICommand[] commands = description.getBuildSpec();
-		ArrayList<ICommand> commandList = new ArrayList<ICommand>();
-	
-		// Make sure the Autotools Configuration builder just precedes the Common Builder
-		for (int i = 0; i < commands.length; i++) {
-			ICommand command = commands[i];
-			if (command.getBuilderName().equals(AutotoolsConfigurationBuilder.BUILDER_ID)) {
-				// ignore it
-			} else {
-				if (command.getBuilderName().equals(OLD_AUTOTOOLS_BUILDER_ID)) {
-					ICommand newCommand = description.newCommand();
-					newCommand.setBuilderName(BUILDER_ID);
-					command = newCommand;
-				}
-				if (command.getBuilderName().equals(BUILDER_ID)) {
-					// add Autotools Configuration builder just before builder
-					ICommand newCommand = description.newCommand();
-					newCommand.setBuilderName(AutotoolsConfigurationBuilder.BUILDER_ID);
-					commandList.add(newCommand);
-				}
-				commandList.add(command);
-			}
-		}
-		final ICommand[] newCommands = commandList.toArray(new ICommand[commandList.size()]);
-		if (newCommands.length == commands.length) {
-			boolean hasCorrectBuilderCommands = true;
-			for (int j = 0; j < commands.length; ++j) {
-				if (!commands[j].getBuilderName().equals(newCommands[j].getBuilderName())) {
-					hasCorrectBuilderCommands = false;
-					break;
-				}
-			}
-			if (hasCorrectBuilderCommands)
-				return;
+		if(checkEquals(commands,getBuildCommandsList(description, commands))){
+			return;
 		}
 		final ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRoot();
 		final IProject proj = project;
@@ -129,9 +99,15 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 						public void run(IProgressMonitor monitor) throws CoreException {
 							IWorkspace workspace = ResourcesPlugin.getWorkspace();
 							turnOffAutoBuild(workspace);
-							IProjectDescription description = proj.getDescription();
-							description.setBuildSpec(newCommands);
-							proj.setDescription(description, new NullProgressMonitor());
+							IProjectDescription prDescription = proj.getDescription();
+							//Other pieces of wizard might have contributed new builder commands;
+							//need to make sure we are using the most recent ones
+							ICommand[] currentCommands = prDescription.getBuildSpec();
+							ICommand[] newCommands = getBuildCommandsList(prDescription, currentCommands); 
+							if(!checkEquals(currentCommands,newCommands)){
+								prDescription.setBuildSpec(newCommands);
+								proj.setDescription(prDescription, new NullProgressMonitor());
+							}
 							restoreAutoBuild(workspace);
 						}
 						
@@ -158,6 +134,46 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 		};
 		backgroundJob.setRule(rule);
 		backgroundJob.schedule();
+	}
+
+	static boolean checkEquals(ICommand[] commands,
+			ICommand[] newCommands) {
+			if (newCommands.length != commands.length){
+				return false;
+			}
+			for (int j = 0; j < commands.length; ++j) {
+				if (!commands[j].getBuilderName().equals(newCommands[j].getBuilderName())) {
+					return false;
+				}
+			}
+			return true;
+	}
+
+	static ICommand[] getBuildCommandsList(IProjectDescription description,
+			ICommand[] commands) {
+		ArrayList<ICommand> commandList = new ArrayList<ICommand>();
+
+		// Make sure the Autotools Configuration builder just precedes the Common Builder
+		for (int i = 0; i < commands.length; i++) {
+			ICommand command = commands[i];
+			if (command.getBuilderName().equals(AutotoolsConfigurationBuilder.BUILDER_ID)) {
+				// ignore it
+			} else {
+				if (command.getBuilderName().equals(OLD_AUTOTOOLS_BUILDER_ID)) {
+					ICommand newCommand = description.newCommand();
+					newCommand.setBuilderName(BUILDER_ID);
+					command = newCommand;
+				}
+				if (command.getBuilderName().equals(BUILDER_ID)) {
+					// add Autotools Configuration builder just before builder
+					ICommand newCommand = description.newCommand();
+					newCommand.setBuilderName(AutotoolsConfigurationBuilder.BUILDER_ID);
+					commandList.add(newCommand);
+				}
+				commandList.add(command);
+			}
+		}
+		return commandList.toArray(new ICommand[commandList.size()]);
 	}
 
 	/**

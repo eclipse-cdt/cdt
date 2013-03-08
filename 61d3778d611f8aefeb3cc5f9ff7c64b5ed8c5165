@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//51c\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-08T01:24:35Z",
+      "side": 1,
+      "message": "Shouldn\u0027t the actual action that happens (running the selected launch configuration in Run mode, as I understand it (which may be wrong)) be mentioned?",
+      "parentUuid": "AABOPX//51s\u003d",
+      "revId": "61d3778d611f8aefeb3cc5f9ff7c64b5ed8c5165",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//51o\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//51Y\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-08T01:24:35Z",
+      "side": 1,
+      "message": "Er, I\u0027m not sure what you are describing as incorrect. AFAIK, things like \"JUnit Test\" *are* launch configurations.  If you mean that things like \"JUnit Test\" are not \"favorite\" -- I\u0027m not sure what else they would be...  Please clarify.",
+      "parentUuid": "AABOPX//51o\u003d",
+      "revId": "61d3778d611f8aefeb3cc5f9ff7c64b5ed8c5165",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//51k\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2013-03-08T01:17:30Z",
       "side": 1,
       "message": "\"definition\" would be more accurate than \"declaration\", but I\u0027d just drop this word.",
+      "revId": "61d3778d611f8aefeb3cc5f9ff7c64b5ed8c5165",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//51U\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-08T01:24:35Z",
+      "side": 1,
+      "message": "In my tests, it was very unclear when exactly this command was available. I\u0027ll remove the word, but I\u0027ll try and look into it further and maybe file a bug to make the availability of this more consistent.",
+      "parentUuid": "AABOPX//51k\u003d",
       "revId": "61d3778d611f8aefeb3cc5f9ff7c64b5ed8c5165",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

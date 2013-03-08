@@ -5880,19 +5880,22 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	    int* begin();
 	//	};
 	//
-	//	template<class Container>
-	//	auto begin(Container cont) -> decltype(cont.begin());
+	//	template <class Container>
+	//	auto begin1(Container cont) -> decltype(cont.begin());
+	//	
+	//	template <class Container>
+	//	auto begin2(Container& cont) -> decltype(cont.begin());
 	//
 	//	vector v;
-	//	auto x = begin(v);
+	//	auto x1 = begin1(v);
+	//	auto x2 = begin2(v);
 	public void testResolvingAutoTypeWithDependentExpression_402409() throws Exception {
 		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
-		ICPPVariable x = helper.assertNonProblem("x", ICPPVariable.class);
-		IType xType = x.getType();
-		assertInstance(xType, CPPPointerType.class);
-		IType xTypeInner = ((CPPPointerType) xType).getType();
-		assertInstance(xTypeInner, ICPPBasicType.class);
-		assertEquals(Kind.eInt, ((ICPPBasicType) xTypeInner).getKind());
+		ICPPVariable x1 = helper.assertNonProblem("x1", ICPPVariable.class);
+		ICPPVariable x2 = helper.assertNonProblem("x2", ICPPVariable.class);
+		IType pointerToInt = new CPPPointerType(new CPPBasicType(Kind.eInt, 0));
+		assertSameType(pointerToInt, x1.getType());
+		assertSameType(pointerToInt, x2.getType());
 	}
 	
 	//	void foo(int, int);

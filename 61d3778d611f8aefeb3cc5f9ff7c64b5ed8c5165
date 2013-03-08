@@ -162,6 +162,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//50o\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-08T02:06:59Z",
+      "side": 1,
+      "message": "Thanks, that does clarify things somewhat. However, I have absolutely no idea how to describe the contents of this submenu now. I\u0027ll upload a patchset with the other changes, and with TODOs for this and the Debug As entry.  Maybe someone else will be able to come up with a good description at a later date.",
+      "parentUuid": "AABOPX//50w\u003d",
+      "revId": "61d3778d611f8aefeb3cc5f9ff7c64b5ed8c5165",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//51k\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_run.htm",
         "patchSetId": 2

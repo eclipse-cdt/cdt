@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -266,7 +267,13 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		for (IASTPointerOperator pop : functionDeclarator.getPointerOperators()) {
 			createdMethodDeclarator.addPointerOperator(pop.copy(CopyStyle.withLocations));
 		}
-		
+		IASTTypeId[] exceptionSpecification = functionDeclarator.getExceptionSpecification();
+		if (exceptionSpecification != ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION) {
+			createdMethodDeclarator.setEmptyExceptionSpecification();
+			for (IASTTypeId typeId : exceptionSpecification) {
+				createdMethodDeclarator.addExceptionSpecificationTypeId(typeId == null ? null : typeId.copy(CopyStyle.withLocations));
+			}
+		}
 		IASTFunctionDefinition functionDefinition = nodeFactory.newFunctionDefinition(declSpecifier, createdMethodDeclarator, nodeFactory.newCompoundStatement());
 		functionDefinition.setParent(unit);
 		

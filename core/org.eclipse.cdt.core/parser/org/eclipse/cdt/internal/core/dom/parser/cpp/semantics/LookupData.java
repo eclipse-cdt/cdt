@@ -358,6 +358,15 @@ public class LookupData extends ScopeLookupData {
     	}
     	return fImpliedObjectType;
     }
+    
+    /**
+     * Explicitly set the implied object type.
+     * This is for use in cases where implied object type cannot
+     * be determined automatically because there is no lookup name.
+     */
+    public void setImpliedObjectType(IType impliedObjectType) {
+    	fImpliedObjectType = impliedObjectType;
+    }
 
 	private IType determineImpliedObjectType() {
 		IASTName tn = getLookupName();

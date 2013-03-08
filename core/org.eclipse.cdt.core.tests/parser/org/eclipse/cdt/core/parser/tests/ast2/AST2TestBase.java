@@ -377,7 +377,7 @@ public class AST2TestBase extends BaseTestCase {
         assertEquals(num, count);
     }
 
-	protected void assertSameType(IType expected, IType actual) {
+	protected static void assertSameType(IType expected, IType actual) {
 		assertNotNull(expected);
 		assertNotNull(actual);
 		assertTrue("Expected same types, but the types were: '" +

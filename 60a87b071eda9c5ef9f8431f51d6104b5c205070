@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//5Xk\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/launch/StackFramesVMNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 905,
+      "author": {
+        "id": 569
+      },
+      "writtenOn": "2013-03-09T03:04:11Z",
+      "side": 1,
+      "message": "The update compareElements() encodes the stack frame name or address to remember the working sets by.\n\nIt\u0027s optimized for the case where multiple requests are made with the same element, but with different mementos.",
+      "revId": "60a87b071eda9c5ef9f8431f51d6104b5c205070",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

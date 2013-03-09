@@ -5904,11 +5904,15 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	};
 	//
 	//	template<class Container>
-	//	auto begin(Container cont) -> decltype(cont.begin());
+	//	auto begin1(Container cont) -> decltype(cont.begin());
+	//
+	//	template<class Container>
+	//	auto begin2(Container& cont) -> decltype(cont.begin());
 	//
 	//	int main() {
 	//	    vector v;
-	//	    begin(v);
+	//	    begin1(v);
+	//	    begin2(v);
 	//	}
 	public void testResolvingAutoTypeWithDependentExpression_402409b() throws Exception {
 		parseAndCheckBindings();

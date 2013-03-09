@@ -329,9 +329,10 @@ public class EvalID extends CPPDependentEvaluation {
 		
 		if (fieldOwner != null && !fieldOwner.isTypeDependent()) {
 			IType fieldOwnerType = fieldOwner.getTypeOrFunctionSet(point);
-			IType fieldOwnerClassType = SemanticUtil.getNestedType(fieldOwnerType, TDEF | REF | CVTYPE);
+			IType fieldOwnerClassTypeCV = SemanticUtil.getNestedType(fieldOwnerType, TDEF | REF);
+			IType fieldOwnerClassType = SemanticUtil.getNestedType(fieldOwnerClassTypeCV, CVTYPE);
 			if (fieldOwnerClassType instanceof ICPPClassType) {
-				ICPPEvaluation eval = resolveName((ICPPClassType) fieldOwnerClassType, templateArgs, fieldOwnerType, point);
+				ICPPEvaluation eval = resolveName((ICPPClassType) fieldOwnerClassType, templateArgs, fieldOwnerClassTypeCV, point);
 				if (eval != null)
 					return eval;
 			}

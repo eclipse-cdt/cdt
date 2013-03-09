@@ -57,6 +57,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
@@ -848,7 +849,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
         rm.done();
     }
     
-    private String produceFrameElementName( String viewName , IFrameDMContext frame ) {
+    private void produceFrameElementName( String viewName , final IFrameDMContext frame, final DataRequestMonitor<String> drm) {
     	/*
     	 *  We are addressing Bugzilla 211490 which wants the Register View  to keep the same expanded
     	 *  state for registers for stack frames within the same thread. Different  threads could have
@@ -859,13 +860,42 @@ public class StackFramesVMNode extends AbstractDMVMNode
     	 *  the level for the Expression/Variables view. Otherwise we do not delineate based on  which
     	 *  view and this captures the Register View in its filter.
 		 */
-    	if ( viewName.startsWith(IDebugUIConstants.ID_VARIABLE_VIEW)   ||
-    	     viewName.startsWith(IDebugUIConstants.ID_EXPRESSION_VIEW)    )
-    	{
-    		return "Frame." + frame.getLevel() + "." + frame.getSessionId(); //$NON-NLS-1$ //$NON-NLS-2$
+        if (viewName.startsWith(IDebugUIConstants.ID_EXPRESSION_VIEW)) {
+            getSession().getExecutor().execute(new Runnable () {
+                @Override
+                public void run() {
+                    IStack stack = getServicesTracker().getService(IStack.class);
+                    if (stack != null) {
+                        stack.getFrameData(
+                            frame, 
+                            new DataRequestMonitor<IStack.IFrameDMData>(getExecutor(), drm) {
+                                @Override
+                                protected void handleSuccess() {
+                                    if (getData().getFunction() != null) {
+                                        drm.setData("Frame." + getData().getFunction());//$NON-NLS-1$
+                                    } else if (getData().getAddress() != null) {
+                                        drm.setData("Frame." + getData().getAddress());//$NON-NLS-1$
+                                    } else {
+                                        drm.setData("Frame.?"); //$NON-NLS-1$
+                                    }
+                                    drm.done();
+                                }
+                            });
+                    }
+                    else {
+                        drm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Stack service not available", null)); //$NON-NLS-1$
+                        drm.done();
+                    }
+                }
+            });
+        }
+        else if ( viewName.startsWith(IDebugUIConstants.ID_VARIABLE_VIEW) ) {
+            drm.setData("Frame." + frame.getLevel() + "." + frame.getSessionId()); //$NON-NLS-1$ //$NON-NLS-2$
+            drm.done();            
     	}
     	else {
-    		return "Frame" + frame.getSessionId(); //$NON-NLS-1$
+    		drm.setData( "Frame" + frame.getSessionId() ); //$NON-NLS-1$
+    		drm.done();
     	}
     }
     
@@ -875,49 +905,75 @@ public class StackFramesVMNode extends AbstractDMVMNode
      */
     @Override
 	public void compareElements(IElementCompareRequest[] requests) {
-        
-        for ( IElementCompareRequest request : requests ) {
-        	
-            Object element = request.getElement();
-            IMemento memento = request.getMemento();
-            String mementoName = memento.getString("STACK_FRAME_MEMENTO_NAME"); //$NON-NLS-1$
-            
-            if (mementoName != null) {
-                if (element instanceof IDMVMContext) {
-                	
-                    IDMContext dmc = ((IDMVMContext)element).getDMContext();
-                    
-                    if ( dmc instanceof IFrameDMContext) {
-                    	
-                    	String elementName = produceFrameElementName( request.getPresentationContext().getId(), (IFrameDMContext) dmc );
-                    	request.setEqual( elementName.equals( mementoName ) );
-                    } 
-                }
+        int i = 0;
+        int start = 0; 
+        Object element = requests[0].getElement();
+        while (i <= requests.length) {
+            if (i == requests.length || element != requests[i].getElement()) {
+                doCompareElements(requests, start, i);
+                start = i;
+                element = requests[i].getElement();
             }
-            request.done();
+            i++;
         }
     }
     
+    private void doCompareElements(final IElementCompareRequest[] requests, final int start, final int end) {
+        Object element = requests[0].getElement();
+        if (element instanceof IDMVMContext && ((IDMVMContext)element).getDMContext() instanceof IFrameDMContext) {
+            IFrameDMContext dmc = (IFrameDMContext)((IDMVMContext)element).getDMContext();
+            produceFrameElementName(
+                requests[0].getPresentationContext().getId(), 
+                dmc, 
+                new ViewerDataRequestMonitor<String>(getExecutor(), requests[0]) {
+                    @Override
+                    protected void handleCompleted() {
+                        for ( final IElementCompareRequest request : requests ) {
+                            if (isSuccess()) {
+                                String mementoName = request.getMemento().getString("STACK_FRAME_MEMENTO_NAME"); //$NON-NLS-1$
+                                request.setEqual( getData().equals( mementoName ) );
+                            } else {
+                                request.setEqual(false);
+                            }
+                            request.done();
+                        }
+                    }
+                });
+            return; // avoid calling request.done() below
+        } else {
+            for ( final IElementCompareRequest request : requests ) {
+                request.done();
+            }
+        }
+    }
+
+     
+        
     /*
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
      */
     @Override
 	public void encodeElements(IElementMementoRequest[] requests) {
-    	
-    	for ( IElementMementoRequest request : requests ) {
-    		
+    	for ( final IElementMementoRequest request : requests ) {
             Object element = request.getElement();
-            IMemento memento = request.getMemento();
-            
+            final IMemento memento = request.getMemento();
             if (element instanceof IDMVMContext) {
-
             	IDMContext dmc = ((IDMVMContext)element).getDMContext();
-
             	if ( dmc instanceof IFrameDMContext) {
-
-            		String elementName = produceFrameElementName( request.getPresentationContext().getId(), (IFrameDMContext) dmc );
-            		memento.putString("STACK_FRAME_MEMENTO_NAME", elementName); //$NON-NLS-1$
+                    produceFrameElementName(
+                        request.getPresentationContext().getId(), 
+                        (IFrameDMContext) dmc, 
+                        new ViewerDataRequestMonitor<String>(getExecutor(), request) {
+                            @Override
+                            protected void handleCompleted() {
+                                if (isSuccess()) {
+                                    memento.putString("STACK_FRAME_MEMENTO_NAME", getData()); //$NON-NLS-1$
+                                }
+                                request.done();
+                            }
+                        });
+                    continue; // avoid calling request.done() below
             	} 
             }
             request.done();

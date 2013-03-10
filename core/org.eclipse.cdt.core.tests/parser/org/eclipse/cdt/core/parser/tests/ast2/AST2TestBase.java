@@ -57,6 +57,8 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -86,6 +88,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
@@ -99,6 +103,11 @@ public class AST2TestBase extends BaseTestCase {
 	public final static String TEST_CODE = "<testcode>";
     protected static final IParserLogService NULL_LOG = new NullLogService();
     protected static boolean sValidateCopy;
+    
+    protected static class CommonTypes {
+    	public static IType int_ = new CPPBasicType(Kind.eInt, 0);
+    	public static IType pointerToInt = new CPPPointerType(int_);
+    }
 
     private static final ScannerInfo GNU_SCANNER_INFO = new ScannerInfo(getGnuMap());
 	private static final ScannerInfo SCANNER_INFO = new ScannerInfo(getStdMap());
@@ -738,6 +747,11 @@ public class AST2TestBase extends BaseTestCase {
     		IBinding binding= binding(context, name);
     		assertTrue("ProblemBinding for name: " + name, !(binding instanceof IProblemBinding));
     		return assertType(binding, cs);
+    	}
+    	
+    	public void assertVariableType(String variableName, IType expectedType) {
+    		IVariable var = assertNonProblem(variableName, IVariable.class);
+    		assertSameType(expectedType, var.getType());
     	}
 
 		public <T, U extends T> U assertType(T obj, Class... cs) {

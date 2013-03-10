@@ -42,7 +42,6 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -96,7 +95,6 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
@@ -5891,11 +5889,8 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	auto x2 = begin2(v);
 	public void testResolvingAutoTypeWithDependentExpression_402409a() throws Exception {
 		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
-		ICPPVariable x1 = helper.assertNonProblem("x1", ICPPVariable.class);
-		ICPPVariable x2 = helper.assertNonProblem("x2", ICPPVariable.class);
-		IType pointerToInt = new CPPPointerType(new CPPBasicType(Kind.eInt, 0));
-		assertSameType(pointerToInt, x1.getType());
-		assertSameType(pointerToInt, x2.getType());
+		helper.assertVariableType("x1", CommonTypes.pointerToInt);
+		helper.assertVariableType("x2", CommonTypes.pointerToInt);
 	}
 	
 	//	struct vector {
@@ -7518,5 +7513,26 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	}
 	public void testUnqualifiedFunctionCallInTemplate_402498() throws Exception {
 		parseAndCheckBindings();
+	}
+	
+	//	template <typename>
+	//	struct no_type {}; 
+	//
+	//	struct type {};
+	//
+	//	template <typename T>
+	//	struct A {};
+	//
+	//	template <typename T>
+	//	int foo(T);
+	//
+	//	template <typename T>
+	//	typename no_type<T>::type const foo(A<T>);
+	//
+	//	A<int> a;
+	//	auto b = foo(a);
+	public void testQualifiedNameLookupInTemplate_402854() throws Exception {
+		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
+		helper.assertVariableType("b", CommonTypes.int_);
 	}
 }

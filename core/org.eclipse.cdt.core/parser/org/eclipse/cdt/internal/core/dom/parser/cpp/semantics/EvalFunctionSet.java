@@ -41,14 +41,20 @@ import org.eclipse.core.runtime.CoreException;
 public class EvalFunctionSet extends CPPDependentEvaluation {
 	private final CPPFunctionSet fFunctionSet;
 	private final boolean fAddressOf;
+	
+	// Where an EvalFunctionSet is created for an expression of the form 'obj.member_function', 
+	// the type of 'obj' (needed for correct overload resolution of 'member_function' later). 
+	// Otherwise null.
+	private final IType fImpliedObjectType;
 
-	public EvalFunctionSet(CPPFunctionSet set, boolean addressOf, IASTNode pointOfDefinition) {
-		this(set, addressOf, findEnclosingTemplate(pointOfDefinition));
+	public EvalFunctionSet(CPPFunctionSet set, boolean addressOf, IType impliedObjectType, IASTNode pointOfDefinition) {
+		this(set, addressOf, impliedObjectType, findEnclosingTemplate(pointOfDefinition));
 	}
-	public EvalFunctionSet(CPPFunctionSet set, boolean addressOf, IBinding templateDefinition) {
+	public EvalFunctionSet(CPPFunctionSet set, boolean addressOf, IType impliedObjectType, IBinding templateDefinition) {
 		super(templateDefinition);
 		fFunctionSet= set;
 		fAddressOf= addressOf;
+		fImpliedObjectType= impliedObjectType;
 	}
 
 	public CPPFunctionSet getFunctionSet() {
@@ -57,6 +63,10 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 
 	public boolean isAddressOf() {
 		return fAddressOf;
+	}
+	
+	public IType getImpliedObjectType() {
+		return fImpliedObjectType;
 	}
 
 	@Override
@@ -126,6 +136,7 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 				buffer.marshalTemplateArgument(arg);
 			}
 		}
+		buffer.marshalType(fImpliedObjectType);
 		marshalTemplateDefinition(buffer);
 	}
 
@@ -144,8 +155,9 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 				args[i]= buffer.unmarshalTemplateArgument();
 			}
 		}
+		IType impliedObjectType= buffer.unmarshalType();
 		IBinding templateDefinition= buffer.unmarshalBinding();
-		return new EvalFunctionSet(new CPPFunctionSet(bindings, args, null), addressOf, templateDefinition);
+		return new EvalFunctionSet(new CPPFunctionSet(bindings, args, null), addressOf, impliedObjectType, templateDefinition);
 	}
 
 	@Override
@@ -177,9 +189,11 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 						originalFunctions[i], point);
 			}
 		}
+		// No need to instantiate the implied object type. An EvalFunctioNSet should only be created
+		// with an implied object type when that type is not dependent.
 		if (Arrays.equals(arguments, originalArguments) && functions == originalFunctions)
 			return this;
-		return new EvalFunctionSet(new CPPFunctionSet(functions, arguments, null), fAddressOf, getTemplateDefinition());
+		return new EvalFunctionSet(new CPPFunctionSet(functions, arguments, null), fAddressOf, fImpliedObjectType, getTemplateDefinition());
 	}
 
 	@Override
@@ -201,6 +215,8 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 		LookupData data = new LookupData(functions[0].getNameCharArray(),
 				fFunctionSet.getTemplateArguments(), point);
 		data.setFunctionArguments(false, args);
+		if (fImpliedObjectType != null)
+			data.setImpliedObjectType(fImpliedObjectType);
 		try {
 			IBinding binding = CPPSemantics.resolveFunction(data, functions, true);
 			if (binding instanceof ICPPFunction && !(binding instanceof ICPPUnknownBinding))

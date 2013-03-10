@@ -102,6 +102,13 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 	@Override
 	public void getBreakpoints(final IBreakpointsTargetDMContext context, final DataRequestMonitor<IBreakpointDMContext[]> drm)
 	{
+		if (bpThreadGroupInfoAvailable()) {
+			// With GDB 7.6, we obtain the thread-groups to which a breakpoint applies
+			// directly in the -break-list command, so we don't need to do any special processing.
+			super.getBreakpoints(context, drm);
+			return;
+		}
+		
 		// Validate the context
 		if (context == null) {
        		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_EXECUTION_CONTEXT, null));
@@ -280,5 +287,19 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 				}
 			}
 		});
+	}
+	
+	/**
+	 * Does the MI command -break-list provide information
+	 * about which thread-group a breakpoint applies to?
+	 * The use of this method allows us to avoid duplicating code.
+	 * See Bug 402217
+	 * 
+	 * @return true if the information is available (GDB >= 7.6),
+	 *         false otherwise.
+	 * @since 4.2
+	 */
+	protected boolean bpThreadGroupInfoAvailable() {
+		return false;
 	}
 }

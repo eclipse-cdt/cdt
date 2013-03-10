@@ -518,6 +518,15 @@ public class CPPSemantics {
 			}
 		}
 
+		// If this is the unqualified name of a function in a function call in a template and some
+		// of the function arguments are dependent, the name could be resolved via argument-dependent
+		// lookup at the point of instantiation.
+		if (binding == null) {
+			if (!data.qualified && data.isFunctionCall() && CPPTemplates.containsDependentType(data.getFunctionArgumentTypes())) {
+				binding = CPPDeferredFunction.createForName(lookupName.getSimpleID());
+			}
+		}
+		
 		// If we're still null...
 		if (binding == null) {
 			if (name instanceof ICPPASTQualifiedName && declaration != null) {
@@ -555,7 +564,6 @@ public class CPPSemantics {
 
 	private static void doKoenigLookup(LookupData data) throws DOMException {
 		data.ignoreUsingDirectives = true;
-		data.qualified = true;
         Set<ICPPFunction> friendFns = new HashSet<ICPPFunction>(2);
 		Set<ICPPNamespaceScope> associated = getAssociatedScopes(data, friendFns);
 		for (ICPPNamespaceScope scope : associated) {
@@ -699,6 +707,9 @@ public class CPPSemantics {
     private static void getAssociatedScopes(IType t, Set<ICPPNamespaceScope> namespaces,
     		Set<ICPPFunction> friendFns, ObjectSet<IType> handled, CPPASTTranslationUnit tu) throws DOMException {
         t = getNestedType(t, TDEF | CVTYPE | PTR | ARRAY | REF);
+        // No point getting namespaces associated with a dependent type - we don't know what they are yet.
+        if (CPPTemplates.isDependentType(t))
+        	return;
     	if (t instanceof IBinding) {
             if (handled.containsKey(t))
             	return;

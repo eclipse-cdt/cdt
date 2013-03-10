@@ -17,12 +17,13 @@
 	<properties>
 		<tycho-version>0.16.0</tycho-version>
 		<tycho-extras-version>0.16.0</tycho-extras-version>
+		<download-site>http://download.eclipse.org</download-site>
 		<platform-version>3.8</platform-version>
-		<platform-site>http://download.eclipse.org/eclipse/updates/${platform-version}</platform-site>
+		<platform-site>${download-site}/eclipse/updates/${platform-version}</platform-site>
 		<orbit-version>R20110523182458</orbit-version>
-		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/${orbit-version}/repository</orbit-site>
+		<orbit-site>${download-site}/tools/orbit/downloads/drops/${orbit-version}/repository</orbit-site>
 		<tm-version>3.3</tm-version>
-		<tm-site>http://download.eclipse.org/tm/updates/${tm-version}</tm-site>
+		<tm-site>${download-site}/tm/updates/${tm-version}</tm-site>
 	</properties>
 
 	<licenses>
@@ -182,7 +183,10 @@
 		<module>testsrunner/org.eclipse.cdt.testsrunner.test</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.feature</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.source.feature</module>
-		
+
+		<module>llvm/org.eclipse.cdt.managedbuilder.llvm.ui</module>		
+		<module>llvm/org.eclipse.cdt.managedbuilder.llvm-feature</module>
+
 		<module>xlc/org.eclipse.cdt.errorparsers.xlc.tests</module>
 <!-- 
 		<module>lrparser/org.eclipse.cdt.core.lrparser.tests</module>

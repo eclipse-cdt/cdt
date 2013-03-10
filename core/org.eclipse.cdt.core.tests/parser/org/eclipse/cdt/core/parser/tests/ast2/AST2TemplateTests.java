@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -95,6 +96,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
@@ -5874,6 +5876,48 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	struct vector {
+	//	    int* begin();
+	//	};
+	//
+	//	template <class Container>
+	//	auto begin1(Container cont) -> decltype(cont.begin());
+	//	
+	//	template <class Container>
+	//	auto begin2(Container& cont) -> decltype(cont.begin());
+	//
+	//	vector v;
+	//	auto x1 = begin1(v);
+	//	auto x2 = begin2(v);
+	public void testResolvingAutoTypeWithDependentExpression_402409a() throws Exception {
+		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
+		ICPPVariable x1 = helper.assertNonProblem("x1", ICPPVariable.class);
+		ICPPVariable x2 = helper.assertNonProblem("x2", ICPPVariable.class);
+		IType pointerToInt = new CPPPointerType(new CPPBasicType(Kind.eInt, 0));
+		assertSameType(pointerToInt, x1.getType());
+		assertSameType(pointerToInt, x2.getType());
+	}
+	
+	//	struct vector {
+	//	    int* begin();
+	//	    const int* begin() const;
+	//	};
+	//
+	//	template<class Container>
+	//	auto begin1(Container cont) -> decltype(cont.begin());
+	//
+	//	template<class Container>
+	//	auto begin2(Container& cont) -> decltype(cont.begin());
+	//
+	//	int main() {
+	//	    vector v;
+	//	    begin1(v);
+	//	    begin2(v);
+	//	}
+	public void testResolvingAutoTypeWithDependentExpression_402409b() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 	//	void foo(int, int);
 	//	template <typename... Args> void bar(Args... args) {
 	//	    foo(1,2,args...);
@@ -6945,7 +6989,32 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testSFINAEInDefaultArgument() throws Exception {
 		parseAndCheckBindings();
 	}
-
+	
+	//	typedef char (&no_tag)[1];
+	//	typedef char (&yes_tag)[2];
+	//
+	//	template <typename T> 
+	//	struct type_wrapper {};
+	//
+	//	template <typename T>
+	//	struct has_type {
+	//	    template <typename U>
+	//	    static yes_tag test(type_wrapper<U> const volatile*, type_wrapper<typename U::type>* = 0);
+	//
+	//	    static no_tag test(...);
+	//
+	//	    static const bool value = sizeof(test(static_cast<type_wrapper<T>*>(0))) == sizeof(yes_tag);
+	//	};
+	//
+	//	const bool B = has_type<int>::value;
+	public void testSFINAEInNestedTypeInTemplateArgument_402257() throws Exception {
+		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
+		ICPPVariable B = helper.assertNonProblem("B", ICPPVariable.class);
+		Long val = B.getInitialValue().numericalValue();
+		assertNotNull(val);
+		assertEquals(0 /* false */, val.longValue());
+	}
+	
 	//	template <typename>
 	//	struct M {
 	//	    template <typename... Args>
@@ -7310,6 +7379,17 @@ public class AST2TemplateTests extends AST2TestBase {
 		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
 		helper.assertProblem("bind(s, 0, foo)", "bind");
     }
+	
+
+	//	template<typename T>
+	//	T forward(T);
+	//	template <typename, typename S1, typename S2>
+	//	int combine(S1&& r1, S2&& r2);
+	//	template <typename S1, typename S2>
+	//	auto combine(S1 r1, S2 r2) -> decltype(combine<int>(forward<S1>(r1), forward<S2>(r2)));
+	public void testUnsupportedOperationExceptionInASTAmbiguousNode_402085() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <bool... Args>
 	//	struct ice_or;
@@ -7349,6 +7429,94 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	    S<ice_or<false, false>::value>::type t;
 	//	}
 	public void testVariadicNonTypeTemplateParameter_401400() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <typename... Args>
+	//	struct foo {
+	//		static constexpr int i = sizeof...(Args);
+	//	};
+	//	constexpr int bar = foo<int, double>::i;
+	public void testSizeofParameterPackOnTypeid_401973() throws Exception {
+		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
+		ICPPVariable bar = helper.assertNonProblem("bar", ICPPVariable.class);
+		Long barValue = bar.getInitialValue().numericalValue();
+		assertNotNull(barValue);
+		assertEquals(2,  barValue.longValue());
+	}
+
+	//	template <int...> struct tuple_indices {};
+	//	template <int Sp, class IntTuple, int Ep>
+	//	struct make_indices_imp;
+	//	template <int Sp, int ...Indices, int Ep>
+	//	struct make_indices_imp<Sp, tuple_indices<Indices...>, Ep> {
+	//	    typedef typename make_indices_imp<Sp + 1, tuple_indices<Indices..., Sp>, Ep>::type type;
+	//	};
+	//	template <int Ep, int ...Indices> 
+	//	struct make_indices_imp<Ep, tuple_indices<Indices...>, Ep> {
+	//	    typedef tuple_indices<Indices...> type;
+	//	};
+	//	template <int Ep, int Sp = 0>
+	//	struct make_tuple_indices {
+	//	    typedef typename make_indices_imp<Sp, tuple_indices<>, Ep>::type type;
+	//	};
+	//	template <class ... Args>
+	//	class async_func {
+	//	    void operator()() {
+	//	        typedef typename make_tuple_indices<1 + sizeof...(Args), 1>::type Index;
+	//	    }
+	//	};
+	public void testVariadicTemplatesNPE_401743() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <typename T>
+	//	struct A {};
+	//
+	//	template <typename T>
+	//	struct B {
+	//	  typedef int type;
+	//	};
+	//
+	//	template <class T, const T& V>
+	//	struct C {};
+	//
+	//	extern const char* const K = "";
+	//
+	//	typedef A<C<const char*, K>> D;
+	//
+	//	typedef B<D>::type E;  // Problem on B<D>::type
+	public void testRegression_401743a() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <typename T>
+	//	struct A {};
+	//
+	//	template <typename T>
+	//	struct B {
+	//	  typedef int type;
+	//	};
+	//
+	//	template <class T, const T& V>
+	//	struct C {};
+	//
+	//	class F {};
+	//
+	//	extern F K;
+	//
+	//	typedef A<C<F, K>> D;
+	//
+	//	typedef B<D>::type E;  // Problem on B<D>::type
+	public void testRegression_401743b() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <typename T>
+	//	void foo(T t) {
+	//	    bar(t);
+	//	}
+	public void testUnqualifiedFunctionCallInTemplate_402498() throws Exception {
 		parseAndCheckBindings();
 	}
 }

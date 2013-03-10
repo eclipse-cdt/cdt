@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2011, 2013 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,14 +30,18 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
  */
 public interface ICListenerAgent {
 	/**
-	 * Registers a specific listener.
-	 *
+	 * Provides an opportunity for the provider to register specific listeners.
+	 * Called by CDT core when {@linkplain ICListenerAgent} added
+	 * to the list of {@link ILanguageSettingsProvider}s managed by the model.
+	 * 
 	 * @param cfgDescription - configuration description for the listener.
 	 */
 	public void registerListener(ICConfigurationDescription cfgDescription);
 
 	/**
-	 * Unregister listener and dispose all resources.
+	 * Unregister listeners and dispose all resources.
+	 * Called by CDT core when {@linkplain ICListenerAgent} removed
+	 * from the list of {@link ILanguageSettingsProvider}s managed by the model.
 	 */
 	public void unregisterListener();
 }

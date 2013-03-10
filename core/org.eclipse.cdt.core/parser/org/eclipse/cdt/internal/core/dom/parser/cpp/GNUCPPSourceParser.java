@@ -1279,19 +1279,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	if (LTcatchEOF(2) == IToken.tELLIPSIS) {
         		int offset= consume().getOffset(); 									// sizeof
         		consume();															// ...
-        		consume(IToken.tLPAREN);											// (
-        		IASTName id= identifier();
-        		IASTIdExpression idexpr= nodeFactory.newIdExpression(id);
-        		setRange(idexpr, id);
-        		IASTUnaryExpression expr= nodeFactory.newUnaryExpression(IASTUnaryExpression.op_sizeofParameterPack, idexpr);
-        		final int lt1= LT(1);
-        		if (lt1 == IToken.tEOC) {
-        			setRange(expr, offset, calculateEndOffset(id));
-        		} else {
-        			final int endOffset = consume(IToken.tRPAREN).getEndOffset();	// )
-					setRange(expr, offset, endOffset);
-        		}
-        		return expr;
+        		return parseTypeidInParenthesisOrUnaryExpression(true, offset, 
+        				IASTTypeIdExpression.op_sizeofParameterPack, 
+        				IASTUnaryExpression.op_sizeofParameterPack, ctx, strat);        		
         	}
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(),
         			IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof, ctx, strat);

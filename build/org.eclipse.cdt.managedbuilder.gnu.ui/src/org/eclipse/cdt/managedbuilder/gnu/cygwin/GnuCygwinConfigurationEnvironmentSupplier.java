@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 Intel Corporation and others.
+ * Copyright (c) 2005, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.envvar.BuildEnvVar;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -50,16 +49,15 @@ public class GnuCygwinConfigurationEnvironmentSupplier implements IConfiguration
 			return new BuildEnvVar(ENV_PATH, path, IBuildEnvironmentVariable.ENVVAR_PREPEND);
 
 		} else if (variableName.equals(Cygwin.ENV_CYGWIN_HOME)) {
-			String home = Cygwin.getCygwinHome();
-			// If the variable is not defined still show it in the environment variables list as a hint to user
-			if (home == null) {
-				home = ""; //$NON-NLS-1$
-			}
-			IPath homePath = new Path(home);
 			IEnvironmentVariable varCygwinHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(Cygwin.ENV_CYGWIN_HOME, null, false);
-			if (varCygwinHome == null || (!homePath.equals(new Path(varCygwinHome.getValue())))) {
+			if (varCygwinHome == null) {
 				// Contribute if the variable does not already come from workspace environment
-				return new BuildEnvVar(Cygwin.ENV_CYGWIN_HOME, homePath.toOSString());
+				String home = Cygwin.getCygwinHome();
+				if (home == null) {
+					// If the variable is not defined still show it in the environment variables list as a hint to user
+					home = ""; //$NON-NLS-1$
+				}
+				return new BuildEnvVar(Cygwin.ENV_CYGWIN_HOME, new Path(home).toOSString());
 			}
 			return null;
 

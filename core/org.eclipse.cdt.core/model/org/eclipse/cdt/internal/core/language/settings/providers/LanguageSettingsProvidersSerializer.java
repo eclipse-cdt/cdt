@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsBroadcastingProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeEvent;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeListener;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
@@ -482,11 +483,11 @@ public class LanguageSettingsProvidersSerializer {
 	/**
 	 * Compute events for language settings changes in workspace.
 	 */
-	private static List<LanguageSettingsChangeEvent> createLanguageSettingsChangeEvents(List<LanguageSettingsSerializableProvider> providers) {
+	private static List<LanguageSettingsChangeEvent> createLanguageSettingsChangeEvents(List<ILanguageSettingsBroadcastingProvider> providers) {
 		List<LanguageSettingsChangeEvent> events = new ArrayList<LanguageSettingsChangeEvent>();
 
 		List<String> providerIds = new ArrayList<String>();
-		for (LanguageSettingsSerializableProvider provider : providers) {
+		for (ILanguageSettingsBroadcastingProvider provider : providers) {
 			providerIds.add(provider.getId());
 		}
 
@@ -521,23 +522,27 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	public static void serializeLanguageSettingsWorkspace() throws CoreException {
 		URI uriStoreWsp = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
-		List<LanguageSettingsSerializableProvider> serializableWorkspaceProviders = new ArrayList<LanguageSettingsSerializableProvider>();
+		List<ILanguageSettingsBroadcastingProvider> broadcastingWorkspaceProviders = new ArrayList<ILanguageSettingsBroadcastingProvider>();
+		List<LanguageSettingsSerializableProvider> serializingWorkspaceProviders = new ArrayList<LanguageSettingsSerializableProvider>();
 		for (ILanguageSettingsProvider provider : rawGlobalWorkspaceProviders.values()) {
+			if (provider instanceof ILanguageSettingsBroadcastingProvider) {
+				broadcastingWorkspaceProviders.add((ILanguageSettingsBroadcastingProvider)provider);
+			}
 			if (provider instanceof LanguageSettingsSerializableProvider) {
 				if (!LanguageSettingsManager.isEqualExtensionProvider(provider, true)) {
-					serializableWorkspaceProviders.add((LanguageSettingsSerializableProvider)provider);
+					serializingWorkspaceProviders.add((LanguageSettingsSerializableProvider)provider);
 				}
 			}
 		}
 		try {
 			List<LanguageSettingsChangeEvent> events = null;
-			if (serializableWorkspaceProviders.isEmpty()) {
+			if (serializingWorkspaceProviders.isEmpty()) {
 				java.io.File fileStoreWsp = new java.io.File(uriStoreWsp);
 				try {
 					serializingLockWsp.acquire();
 					fileStoreWsp.delete();
 					// manufacture events while inside the lock
-					events = createLanguageSettingsChangeEvents(serializableWorkspaceProviders);
+					events = createLanguageSettingsChangeEvents(broadcastingWorkspaceProviders);
 				} finally {
 					serializingLockWsp.release();
 				}
@@ -547,7 +552,7 @@ public class LanguageSettingsProvidersSerializer {
 				Element elementExtension = XmlUtil.appendElement(rootElement, ELEM_EXTENSION,
 						new String[] {ATTR_EXTENSION_POINT, PROVIDER_EXTENSION_POINT_ID});
 
-				for (LanguageSettingsSerializableProvider provider : serializableWorkspaceProviders) {
+				for (LanguageSettingsSerializableProvider provider : serializingWorkspaceProviders) {
 					provider.serialize(elementExtension);
 				}
 
@@ -555,7 +560,7 @@ public class LanguageSettingsProvidersSerializer {
 					serializingLockWsp.acquire();
 					XmlUtil.serializeXml(doc, uriStoreWsp);
 					// manufacture events while inside the lock
-					events = createLanguageSettingsChangeEvents(serializableWorkspaceProviders);
+					events = createLanguageSettingsChangeEvents(broadcastingWorkspaceProviders);
 				} finally {
 					serializingLockWsp.release();
 				}

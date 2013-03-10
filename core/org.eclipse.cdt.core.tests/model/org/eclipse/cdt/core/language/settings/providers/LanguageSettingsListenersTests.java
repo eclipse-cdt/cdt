@@ -1099,7 +1099,8 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(1, event.getConfigurationDescriptionIds().length);
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);
 		}
-		// Change the provider's entries back (bug was found for this case)
+
+		// Clear the provider's entries
 		{
 			// retrieve a global provider
 			ILanguageSettingsProvider wspProvider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_EDITABLE_PROVIDER_ID);
@@ -1130,6 +1131,47 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
 			assertNotNull(event);
 
+			assertEquals(project.getName(), event.getProjectName());
+			assertEquals(1, event.getConfigurationDescriptionIds().length);
+			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);
+		}
+
+		// Change the provider's entries back to original state from extension point
+		{
+			
+			ILanguageSettingsProvider extensionProviderCopy = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID, true);
+			List<ICLanguageSettingEntry> extEntries = extensionProviderCopy.getSettingEntries(null, null, null);
+			
+			// retrieve a global provider
+			ILanguageSettingsProvider wspProvider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_EDITABLE_PROVIDER_ID);
+			assertNotNull(wspProvider);
+			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(wspProvider);
+			assertTrue(rawProvider instanceof MockLanguageSettingsEditableProvider);
+			// reset the provider to match extension
+			((MockLanguageSettingsEditableProvider) rawProvider).setSettingEntries(null, null, null, extEntries);
+			assertTrue(LanguageSettingsManager.isEqualExtensionProvider(rawProvider, true));
+			
+			// reset count
+			mockLseListener.resetCount();
+			assertEquals(0, mockLseListener.getCount());
+			assertEquals(null, mockLseListener.getLastEvent());
+			
+			// Serialize settings
+			LanguageSettingsManager.serializeLanguageSettingsWorkspace();
+			
+			// get cfgDescriptionId
+			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			assertNotNull(prjDescription);
+			ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+			String cfgDescriptionId = cfgDescription.getId();
+			
+			// inspect event
+			assertEquals(1, mockLseListener.getCount());
+			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
+			assertNotNull(event);
+			
 			assertEquals(project.getName(), event.getProjectName());
 			assertEquals(1, event.getConfigurationDescriptionIds().length);
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);

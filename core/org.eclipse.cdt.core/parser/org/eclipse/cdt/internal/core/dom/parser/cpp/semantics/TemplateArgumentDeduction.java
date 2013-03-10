@@ -922,7 +922,7 @@ public class TemplateArgumentDeduction {
 
 	private boolean fromFunctionType(ICPPFunctionType ftp, ICPPFunctionType fta, IASTNode point)
 			throws DOMException {
-		if (ftp.isConst() != fta.isConst() || ftp.isVolatile() != fta.isVolatile())
+		if (ftp.isConst() != fta.isConst() || ftp.isVolatile() != fta.isVolatile() || ftp.takesVarArgs() != fta.takesVarArgs())
 			return false;
 		
 		if (!fromType(ftp.getReturnType(), fta.getReturnType(), false, point)) 

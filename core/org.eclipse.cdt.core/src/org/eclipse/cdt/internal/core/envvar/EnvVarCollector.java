@@ -49,26 +49,28 @@ public class EnvVarCollector {
 		boolean isCaseInsensitive = !EnvironmentVariableManager.getDefault().isVariableCaseSensitive();
 		for(int i = 0; i < vars.length; i ++) {
 			IEnvironmentVariable var = vars[i];
-			String name = var.getName();
-			if(isCaseInsensitive)
-				name = name.toUpperCase();
-			
-			boolean noCheck = false;
-			
-			if(fMap == null){
-				noCheck = true;
-				fMap = new HashMap<String, EnvVarDescriptor>();
-			}
-			
-			EnvVarDescriptor des = null;
-			if(noCheck || (des = fMap.get(name)) == null){
-				des = new EnvVarDescriptor(var,info,num, supplier);
-				fMap.put(name,des);
-			}
-			else {
-				des.setContextInfo(info);
-				des.setSupplierNum(num);
-				des.setVariable(EnvVarOperationProcessor.performOperation(des.getOriginalVariable(),var));
+			if (var != null) {
+				String name = var.getName();
+				if(isCaseInsensitive)
+					name = name.toUpperCase();
+				
+				boolean noCheck = false;
+				
+				if(fMap == null){
+					noCheck = true;
+					fMap = new HashMap<String, EnvVarDescriptor>();
+				}
+				
+				EnvVarDescriptor des = null;
+				if(noCheck || (des = fMap.get(name)) == null){
+					des = new EnvVarDescriptor(var,info,num, supplier);
+					fMap.put(name,des);
+				}
+				else {
+					des.setContextInfo(info);
+					des.setSupplierNum(num);
+					des.setVariable(EnvVarOperationProcessor.performOperation(des.getOriginalVariable(),var));
+				}
 			}
 		}
 	}

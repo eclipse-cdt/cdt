@@ -64,4 +64,29 @@ public class RenameTemplatesTests extends RenameTests {
         Change ch= getRefactorChanges(cpp, offset1, "WELT");  //$NON-NLS-1$
         assertTotalChanges(4, ch);
     }
+    public void testRenameSpecializations_bug240692() throws Exception {
+    	StringWriter writer = new StringWriter();
+
+    	writer.write("template <class T>\n"); //$NON-NLS-1$
+    	writer.write("class CSome {\n"); //$NON-NLS-1$
+    	writer.write("public:\n"); //$NON-NLS-1$
+    	writer.write("    void Foo() {};\n"); //$NON-NLS-1$
+    	writer.write("};\n"); //$NON-NLS-1$
+
+    	writer.write("int main ()\n"); //$NON-NLS-1$
+    	writer.write("{\n"); //$NON-NLS-1$
+    	writer.write("    CSome <int> A;\n"); //$NON-NLS-1$
+    	writer.write("    A.Foo();\n"); //$NON-NLS-1$
+    	writer.write("    return 0;\n"); //$NON-NLS-1$
+    	writer.write("}\n"); //$NON-NLS-1$
+        String contents = writer.toString();
+        IFile cpp= importFile("test.cpp", contents ); //$NON-NLS-1$
+        
+        int offset1= contents.indexOf("Foo"); //$NON-NLS-1$
+        
+        RefactoringStatus stat= checkConditions(cpp, offset1, "Baz"); //$NON-NLS-1$
+        assertRefactoringOk(stat);
+        
+        assertTotalChanges(2, getRefactorChanges(cpp, offset1, "Baz")); //$NON-NLS-1$
+    }
 }

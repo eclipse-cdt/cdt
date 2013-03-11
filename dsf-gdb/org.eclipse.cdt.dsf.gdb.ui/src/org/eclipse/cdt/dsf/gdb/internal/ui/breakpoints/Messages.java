@@ -18,11 +18,8 @@ public class Messages extends NLS {
 	public static String TracepointPropertyPage_integer_negative;
 	public static String TracepointPropertyPage_NotAvailable;
 	public static String TracepointPropertyPage_FunctionName;
-	public static String TracepointPropertyPage_FunctionTracepoint;
 	public static String TracepointPropertyPage_Address;
-	public static String TracepointPropertyPage_AddressTracepoint;
 	public static String TracepointPropertyPage_File;
-	public static String TracepointPropertyPage_LineTracepoint;
 	public static String TracepointPropertyPage_LineNumber;
 	public static String TracepointPropertyPage_Project;
 	public static String TracepointPropertyPage_Condition;
@@ -31,7 +28,8 @@ public class Messages extends NLS {
 	public static String TracepointPropertyPage_PassCount;
 	public static String TracepointPropertyPage_Class;
 	public static String TracepointPropertyPage_Enabled;
-
+	public static String TracepointPropertyPage_function_value_errorMessage;
+	
 	public static String GdbThreadFilterEditor_Thread;
 	public static String GdbThreadFilterEditor_RestrictToSelected;
 

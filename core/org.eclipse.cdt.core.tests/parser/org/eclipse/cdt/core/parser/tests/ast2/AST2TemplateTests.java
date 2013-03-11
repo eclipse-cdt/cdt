@@ -6217,6 +6217,21 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testPointerToMemberAsDependentExpression_391001() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
+	
+	//	template<typename>
+	//	struct A {
+	//	    char x;
+	//	};
+	//
+	//	typedef A<int> B;
+	//
+	//	template <char B::*PtrToMember>
+	//	struct C {};
+	//
+	//	typedef C<&B::x> T;
+	public void testPointerToMemberOfTemplateClass_402861() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	class Memory { };
 	//	Memory memory;

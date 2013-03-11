@@ -44,7 +44,7 @@ public class CPPFieldSpecialization extends CPPSpecialization implements ICPPFie
 
 	@Override
 	public ICPPClassType getClassOwner() {
-		return getField().getClassOwner();
+		return (ICPPClassType) getOwner();
 	}
 
 	@Override

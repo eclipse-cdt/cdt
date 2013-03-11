@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.cdtvariables;
 
+/**
+ * Listener to listen to Build Variables changes events.
+ */
 public interface ICdtVariableChangeListener {
 	void variablesChanged(VariableChangeEvent event);
 }

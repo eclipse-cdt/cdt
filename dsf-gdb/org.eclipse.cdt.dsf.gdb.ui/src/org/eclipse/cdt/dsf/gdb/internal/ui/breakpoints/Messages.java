@@ -31,7 +31,8 @@ public class Messages extends NLS {
 	public static String TracepointPropertyPage_PassCount;
 	public static String TracepointPropertyPage_Class;
 	public static String TracepointPropertyPage_Enabled;
-
+	public static String TracepointPropertyPage_function_value_errorMessage;
+	
 	public static String GdbThreadFilterEditor_Thread;
 	public static String GdbThreadFilterEditor_RestrictToSelected;
 

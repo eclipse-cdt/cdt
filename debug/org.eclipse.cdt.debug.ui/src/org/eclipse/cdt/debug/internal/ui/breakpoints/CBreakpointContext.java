@@ -177,11 +177,23 @@ class CBreakpointContextWorkbenchAdapter implements IWorkbenchAdapter {
     
     private String getBreakpointMainLabel(ICBreakpoint breakpoint) {
         if (breakpoint instanceof ICFunctionBreakpoint) {
-            return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_function_label"); //$NON-NLS-1$
+        	if (breakpoint instanceof ICTracepoint) {
+        		return BreakpointsMessages.getString("TracepointPropertyPage.tracepointType_function_label"); //$NON-NLS-1$        		
+        	} else {
+        		return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_function_label"); //$NON-NLS-1$
+        	}
         } else if (breakpoint instanceof ICAddressBreakpoint) {
-            return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_address_label"); //$NON-NLS-1$
+        	if (breakpoint instanceof ICTracepoint) {
+        		return BreakpointsMessages.getString("TracepointPropertyPage.tracepointType_address_label"); //$NON-NLS-1$
+        	} else {
+        		return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_address_label"); //$NON-NLS-1$
+        	}
         } else if (breakpoint instanceof ICLineBreakpoint) {
-            return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_line_label"); //$NON-NLS-1$
+        	if (breakpoint instanceof ICTracepoint) {
+        		return BreakpointsMessages.getString("TracepointPropertyPage.tracepointType_line_label"); //$NON-NLS-1$
+        	} else {
+        		return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_line_label"); //$NON-NLS-1$
+        	}
         } else if (breakpoint instanceof ICEventBreakpoint) {
             return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_event_label"); //$NON-NLS-1$
         } else if (breakpoint instanceof ICWatchpoint) {

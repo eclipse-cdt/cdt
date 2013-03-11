@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     QNX Software Systems - Refactored to use platform implementation
+ *     Marc Khouzam (Ericsson) - Added support for Tracepoints (bug 376116)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
@@ -23,6 +24,7 @@ import java.util.Set;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint2;
+import org.eclipse.cdt.debug.core.model.ICTracepoint;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -36,7 +38,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
- * A preference store that presents the state of the properties of a C/C++ breakpoint. 
+ * A preference store that presents the state of the properties of a C/C++ breakpoint
+ * or Tracepoint. 
  */
 public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 
@@ -130,6 +133,9 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 						}
 						else if ( property.equals( ICBreakpoint.IGNORE_COUNT ) ) {
 							breakpoint.setIgnoreCount( getInt( ICBreakpoint.IGNORE_COUNT ) );
+						}
+						else if (  breakpoint instanceof ICTracepoint && property.equals( ICTracepoint.PASS_COUNT ) ) {
+							((ICTracepoint)breakpoint).setPassCount( getInt( ICTracepoint.PASS_COUNT ) );
 						}
 						else if ( property.equals( ICBreakpoint.CONDITION ) ) {
 							breakpoint.setCondition( getString( ICBreakpoint.CONDITION ) );

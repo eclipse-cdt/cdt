@@ -191,7 +191,13 @@
             id="org.eclipse.cdt.dsf.gdb.tracepoint.common"
             name="%tracepoints.property.common">
          <enabledWhen>
-            <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
+            <or>
+	           <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
+               <and>
+                  <instanceof value="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext"/>
+                  <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
+               </and>
+            </or>
          </enabledWhen>
       </page>
    </extension>

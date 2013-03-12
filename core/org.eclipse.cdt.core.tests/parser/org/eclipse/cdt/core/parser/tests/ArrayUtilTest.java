@@ -229,4 +229,25 @@ public class ArrayUtilTest extends TestCase {
 		assertSame(result[0], o1);
 		assertSame(result[1], o2);
 	}
+
+	public void testRemoveDuplicates() {
+		String[] array = { "1", "2", null, "3", "2", "1", "4", "3" };
+		String[] result = ArrayUtil.removeDuplicates(array);
+		assertEquals(4, result.length);
+		assertEquals("1", result[0]);
+		assertEquals("2", result[1]);
+		assertEquals("3", result[2]);
+		assertEquals("4", result[3]);
+
+		// Test a long array.
+		array = new String[100];
+		for (int i = 0; i < array.length; i++) {
+			array[i] = (i + 1) % 11 == 0 ? null : String.valueOf(i % 17);
+		}
+		result = ArrayUtil.removeDuplicates(array);
+		assertEquals(17, result.length);
+		for (int i = 0; i < result.length - 1; i++) {
+			assertEquals(String.valueOf(i < 10 ? i : i < 16 ? i + 1 : 10), result[i]);
+		}
+	}
 }

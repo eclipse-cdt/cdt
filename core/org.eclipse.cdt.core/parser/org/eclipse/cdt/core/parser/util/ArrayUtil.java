@@ -18,6 +18,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -257,13 +258,13 @@ public abstract class ArrayUtil {
 	}
 
     /**
-     * Takes contents of the two arrays up to the first <code>null</code> element and concatenates
+     * Takes contents of the two arrays up to the first {@code null} element and concatenates
      * them.
      * @param c The type of the element of the returned array if there was not enough free space
      *     in the destination array.
      * @param dest The destination array. The elements of the source array are added to this array
-     *     if there is enough free space in it. May be <code>null</code>. 
-     * @param source The source array. May not be <code>null</code>. 
+     *     if there is enough free space in it. May be {@code null}. 
+     * @param source The source array. May not be {@code null}. 
      * @return The concatenated array, which may be the same as the first parameter. 
      */
     @SuppressWarnings("unchecked")
@@ -300,11 +301,11 @@ public abstract class ArrayUtil {
     }
 
     /**
-     * Takes contents of the two arrays up to the first <code>null</code> element and concatenates
+     * Takes contents of the two arrays up to the first {@code null} element and concatenates
      * them.
      * @param dest The destination array. The elements of the source array are added to this array
-     *     if there is enough free space in it. May be <code>null</code>. 
-     * @param source The source array. May not be <code>null</code>. 
+     *     if there is enough free space in it. May be {@code null}. 
+     * @param source The source array. May not be {@code null}. 
      * @return The concatenated array, which may be the same as the first parameter. 
      * @since 5.2
      */
@@ -362,7 +363,7 @@ public abstract class ArrayUtil {
      * @param array the array to search
      * @param obj the object to search for
      * @return <code>true</code> if the specified array contains the specified object, or
-     *     the specified array is <code>null</code>
+     *     the specified array is {@code null}
      */
     public static <T> boolean contains(T[] array, T obj) {
     	return indexOf(array, obj) >= 0;
@@ -374,7 +375,7 @@ public abstract class ArrayUtil {
      * @param array the array to search
      * @param obj the object to search for
      * @return the index into the specified array of the specified object, or -1 if the array does
-     *     not contain the object, or if the array is <code>null</code>
+     *     not contain the object, or if the array is {@code null}
      */
     public static <T> int indexOf(T[] array, T obj) {
     	int result = -1;
@@ -391,10 +392,11 @@ public abstract class ArrayUtil {
      * Assumes that array contains nulls at the end, only. 
      * Returns whether the specified array contains the specified object. Comparison is by
      * object identity.
+     * 
      * @param array the array to search
      * @param obj the object to search for
      * @return true if the specified array contains the specified object, or the specified array is
-     *     <code>null</code>
+     *     {@code null}
      */
     public static <T> boolean containsEqual(T[] array, T obj) {
     	return indexOfEqual(array, obj) != -1;
@@ -404,16 +406,17 @@ public abstract class ArrayUtil {
      * Assumes that array contains nulls at the end, only. 
      * Returns the index into the specified array of the specified object, or -1 if the array does
      * not contain the object, or if the array is null.  Comparison is by equals().
-     * @param comments the array to search
-     * @param comment the object to search for
+     *
+     * @param array the array to search
+     * @param obj the object to search for
      * @return the index into the specified array of the specified object, or -1 if the array does
-     *     not contain an equal object, or if the array is <code>null</code>
+     *     not contain an equal object, or if the array is {@code null}
      */    
-	public static <T> int indexOfEqual(T[] comments, T comment) {
+	public static <T> int indexOfEqual(T[] array, T obj) {
     	int result = -1;
-    	if (comments != null) {
-    		for (int i= 0; (i < comments.length) && (comments[i] != null); i++) {
-    			if (comments[i].equals(comment))
+    	if (array != null) {
+    		for (int i= 0; (i < array.length) && (array[i] != null); i++) {
+    			if (array[i].equals(obj))
     				return i;
     		}
     	}
@@ -566,7 +569,7 @@ public abstract class ArrayUtil {
 	/**
 	 * Inserts the obj at the beginning of the array, shifting the whole thing one index
 	 * Assumes that array contains nulls at the end, only. 
-	 * array must not be <code>null</code>.
+	 * array must not be {@code null}.
 	 * @since 5.2
 	 */
 	public static <T> T[] prepend(T[] array, T obj) {
@@ -660,25 +663,62 @@ public abstract class ArrayUtil {
     }
 
     /**
-     * Returns a new array that contains all of the elements of the 
-     * given array except the first one.
+     * Returns a new array that contains all of the elements of the given array except
+     * the first one.
      * 
+	 * @throws NullPointerException if {@code array} is {@code null}
+	 * @throws IllegalArgumentException if {@code array} is empty
 	 * @since 5.1
-	 * @throws NullPointerException if args is null
-	 * @throws IllegalArgumentException if args.length <= 0
 	 */
     @SuppressWarnings("unchecked")
-	public static <T> T[] removeFirst(T[] args) {
-    	int n = args.length;
+	public static <T> T[] removeFirst(T[] array) {
+    	int n = array.length;
     	if (n <= 0)
     		throw new IllegalArgumentException();
     	
-    	T[] newArgs = (T[]) Array.newInstance(args.getClass().getComponentType(), n - 1);
+    	T[] newArgs = (T[]) Array.newInstance(array.getClass().getComponentType(), n - 1);
     	for (int i = 1; i < n; i++) {
-    		newArgs[i - 1] = args[i];
+    		newArgs[i - 1] = array[i];
     	}
     	return newArgs;
     }
+
+    /**
+     * Returns a new array that contains elements of the given array except duplicates and
+     * {@code null}s. Duplicates are determined by {@link Object#equals(Object)} method.
+     * 
+	 * @throws NullPointerException if {@code array} is {@code null}
+	 * @since 5.5
+	 */
+    @SuppressWarnings("unchecked")
+	public static <T> T[] removeDuplicates(T[] array) {
+		if (array.length >= 16) {
+			LinkedHashSet<T> set = new LinkedHashSet<T>(array.length);
+			for (int i = 0; i < array.length; i++) {
+				T obj = array[i];
+				if (obj != null)
+					set.add(obj);
+			}
+			if (set.size() == array.length)
+				return array;
+			return set.toArray((T[]) Array.newInstance(array.getClass().getComponentType(), set.size()));
+		} else {
+			int k = 0;
+			for (int i = 0; i < array.length; i++) {
+				T obj = array[i];
+				if (obj != null) {
+					array[k++] = obj;
+					for (int j = i + 1; j < array.length; j++) {
+						if (obj.equals(array[j]))
+							array[j] = null;
+					}
+				}
+			}
+			if (k == array.length)
+				return array;
+			return Arrays.copyOf(array, k);
+		}
+	}
 
     public static int[] setInt(int[] array, int idx, int val) {
         if (array == null) {

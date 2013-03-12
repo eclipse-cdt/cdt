@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//4cQ\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_window.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-12T23:20:52Z",
+      "side": 1,
+      "message": "Please avoid the term \"CDT\" is documentation and UI. Use \"C/C++\" instead.",
+      "revId": "401ca7b6ef6051bc467a5749084d068d2ae58f5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

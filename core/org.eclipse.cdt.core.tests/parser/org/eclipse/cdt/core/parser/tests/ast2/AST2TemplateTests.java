@@ -7539,8 +7539,45 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	void foo(T t) {
 	//	    bar(t);
 	//	}
-	public void testUnqualifiedFunctionCallInTemplate_402498() throws Exception {
+	public void testUnqualifiedFunctionCallInTemplate_402498a() throws Exception {
 		parseAndCheckBindings();
+	}
+	
+	//	template <typename T>
+	//	auto foo(T t) -> decltype(bar(t));
+	//
+	//	namespace N {
+	//	    class A {};
+	//	    int bar(A);
+	//	}
+	//
+	//	int main() {
+	//	    auto x = foo(N::A());
+	//	}
+	public void testUnqualifiedFunctionCallInTemplate_402498b() throws Exception {
+		new BindingAssertionHelper(getAboveComment(), true).assertVariableType("x", CommonTypes.int_);
+	}
+	
+	//	template <typename T>
+	//	auto foo(T t) -> decltype(bar(t));
+	//
+	//	namespace N {
+	//	    class A {};
+	//	}
+	//
+	//	int bar(A);
+	//
+	//	int main() {
+	//	    auto x = foo(N::A());
+	//	}
+	public void testUnqualifiedFunctionCallInTemplate_402498c() throws Exception {
+		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
+		ICPPVariable x = helper.assertNonProblem("x", ICPPVariable.class);
+		// We really should assert that x's type is a ProblemType, but the semantic
+		// analyzer is too lenient and makes it a TypeOfDependentExpression if it
+		// can't instantiate the return type of foo() properly.
+		// That's another bug for another day.
+		assertFalse(x.getType().isSameType(CommonTypes.int_));
 	}
 	
 	//	template <typename>

@@ -28,7 +28,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPFunction, ICPPComputableFunction {
 	private static final ICPPFunctionType FUNCTION_TYPE=
 			new CPPFunctionType(ProblemType.UNKNOWN_FOR_EXPRESSION, IType.EMPTY_TYPE_ARRAY);
-	private static final ICPPFunction[] NO_CANDIDATES= {};
 
 	/**
 	 * Creates a CPPDeferredFunction given a set of overloaded functions
@@ -52,7 +51,7 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPFuncti
 	 * @return the constructed CPPDeferredFunction
 	 */
 	public static ICPPFunction createForName(char[] name) {
-		return new CPPDeferredFunction(null, name, NO_CANDIDATES);
+		return new CPPDeferredFunction(null, name, null);
 	}
 
 	private final IBinding fOwner;

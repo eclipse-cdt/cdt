@@ -19,6 +19,40 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//4gw\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionSet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-12T22:08:19Z",
+      "side": 1,
+      "message": "Please add a blank line between constructors.",
+      "revId": "c3b54580b5df6518b489d5b4e1e95adae5b28216",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//4gs\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionSet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-12T22:08:19Z",
+      "side": 1,
+      "message": "Please add a blank line between constructors.",
+      "revId": "c3b54580b5df6518b489d5b4e1e95adae5b28216",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//4vQ\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionSet.java",
         "patchSetId": 1
@@ -30,6 +64,24 @@
       "writtenOn": "2013-03-12T10:07:38Z",
       "side": 1,
       "message": "I am not a Java expert - please let me know if there is a better way to do these array manipulations.\n\nAlso, please let me know if my code comments get too rambly. I like to document things that I come to understand about the code for the benefit of future developers, but I realize that too much explanation can be a source of noise.",
+      "revId": "c3b54580b5df6518b489d5b4e1e95adae5b28216",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//4g4\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionSet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-12T22:08:19Z",
+      "side": 1,
+      "message": "I\u0027ve added ArrayUtils.removeDuplicate method to hide the ugliness.",
+      "parentUuid": "AABOPX//4vQ\u003d",
       "revId": "c3b54580b5df6518b489d5b4e1e95adae5b28216",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

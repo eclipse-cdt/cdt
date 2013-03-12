@@ -1,122 +1,234 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
-
 <head>
 <meta http-equiv="Content-Language" content="en-us">
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Window Menu actions</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
-<div role="main"><h1>Window Menu actions</h1>
+	<div role="main">
+		<h1>Window Menu actions</h1>
+		<p>
+			<img src="../images/cdt_menu_window.png" alt="Selecting Window Menu">
+		</p>
+		<table class="menu" border="1" cellspacing="0" cellpadding="3">
+			<thead>
+				<tr>
+					<th id="name">Name</th>
+					<th id="function">Function</th>
+					<th id="keyboard">Keyboard Shortcut</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="menu_name" headers="name">New Window</td>
+					<td headers="function">Opens a new Workbench window</td>
+					<td headers="keyboard">&nbsp;</td>
+				</tr>
 
-<p><img src="../images/cdt_menu_window.png" alt="Window Menu" ></p>
-<p>
-<table class="menu" border="1" cellspacing="0" cellpadding="3">
-	<tr><th id="name">Name</th><th id="function">Function</th><th id="keyboard">Keyboard Shortcut</th></tr>
+				<tr>
+					<td class="menu_name" headers="name">New Editor</td>
+					<td headers="function">Opens a new copy of the active editor</td>
+					<td headers="keyboard">&nbsp;</td>
+				</tr>
 
-	<tr>
-		<td class="menu_name" headers="name">New Window</td>
-		<td headers="function">Opens new Window </td>
-		<td headers="keyboard">&nbsp;</td>
-	</tr>
+				<tr>
+					<td class="menu_name" headers="name">Open Perspective
+						(submenu)</td>
+					<td headers="function">Opens a new perspective (The contents
+						and order of entries in the submenu are dependent on the current
+						perspective. The <strong>Other...</strong> entry allows you to
+						open any perspective.)
+					</td>
+					<td headers="keyboard">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="menu_name" headers="name">Show View (submenu)</td>
+					<td headers="function">Displays a view in the current
+						perspective (The contents and order of entries in the submenu are
+						dependent on the current perspective. The <strong>Other...</strong>
+						entry allows you to open any view.)
+					</td>
+					<td headers="keyboard">&nbsp;</td>
+				</tr>
 
-	<tr>
-		<td class="menu_name" headers="name">New Editor</td>
-		<td headers="function">This command opens a new empty editor in this Workbench window. </td>
-		<td headers="keyboard">&nbsp;</td>
-	</tr>
+				<tr>
+					<td class="menu_name" headers="name">Customize Perspective...</td>
+					<td headers="function">Alters the visibility of various
+						elements of the current perspective</td>
+					<td headers="keyboard">&nbsp;</td>
+				</tr>
 
-	<tr>
-		<td class="menu_name" headers="name">Open Perspective</td>
-		<td headers="function">This command opens a new perspective in this Workbench window. 
-				This preference can be changed in the <strong>Window &gt; Preferences &gt; Workbench &gt; Perspectives</strong> page. 
-				All of the perspectives that are open within the Workbench window are shown on the shortcut bar. 
-				The perspectives you will likely want to open are listed first.This list is dependent on the current perspective. 
-				From the <strong>Other...</strong> submenu you can open any perspective.</td>
-		<td headers="keyboard">&nbsp;</td>
-	</tr>
-	<tr>
-		<td class="menu_name" headers="name">Show View</td>
-		<td headers="function">This command displays the selected view in the current perspective. 
-				You can configure how views are opened in the <strong>Window &gt; Preferences &gt; Workbench &gt; Perspectives page</strong>. 
-				Views you are likely to want to open are listed first.This list is dependent on the current perspective. 
-				From the <strong>Other...</strong> submenu you can open any view. 
-				The views are sorted into categories in the Show View dialog.</td>
-		<td headers="keyboard">&nbsp;</td>
-	</tr>
+				<tr>
+					<td class="menu_name" headers="name">Save Perspective As...</td>
+					<td headers="function">Saves the current perspective under a
+						new name (It can then be accessed through the <strong>Open
+							Perspective &gt; Other...</strong> dialog.)
+					</td>
+					<td headers="keyboard">&nbsp;</td>
+				</tr>
 
-	<tr>
-		<td class="menu_name" headers="name">Customize Perspective</td>
-		<td headers="function">Each perspective includes a predefined set of actions that are accessible from the menu bar and Workbench toolbar.
-				Related actions are grouped into action sets. 
-				This command allows you to customize the current perspective by showing or hiding various action sets. 
-				The first three (<strong>File &gt; New</strong>, <strong>Window &gt; Open Perspective</strong>, <strong>Window &gt; Show View</strong>) control which actions appear as top level items in their respective menus. 
-				The last category (<strong>Other</strong>) controls which action sets are visible in the perspective.</td>
-		<td headers="keyboard">&nbsp;</td>
-	</tr>
+				<tr>
+					<td class="menu_name" headers="name">Reset Perspective</td>
+					<td headers="function">Removes any customizations created by <strong>Customize
+							Perspective...</strong>
+					</td>
+					<td headers="keyboard">&nbsp;</td>
+				</tr>
 
-	<tr>
-		<td class="menu_name" headers="name">Save Perspective As</td>
-		<td headers="function">This command allows you to save the current perspective, creating your own custom perspective. 
-				You can open more perspectives of this type using the <strong>Window &gt; Open Perspective &gt; Other</strong> menu item once you have saved a perspective.</td>
-		<td headers="keyboard">&nbsp;</td>
-	</tr>
+				<tr>
+					<td class="menu_name" headers="name">Close Perspective</td>
+					<td headers="function">Closes the active perspective</td>
+					<td headers="keyboard">&nbsp;</td>
+				</tr>
 
-	<tr>
-		<td class="menu_name" headers="name">Reset Perspective</td>
-		<td headers="function">This command changes the layout of the current perspective to its original configuration.</td>
-		<td headers="keyboard">&nbsp;</td>
-	</tr>
+				<tr>
+					<td class="menu_name" headers="name">Close All Perspectives</td>
+					<td headers="function">Closes all the open perspectives, which
+						also closes all the Editors and Views</td>
+					<td headers="keyboard">&nbsp;</td>
+				</tr>
 
-	<tr>
-		<td class="menu_name" headers="name">Close Perspective</td>
-		<td headers="function">This command closes the active perspective.</td>
-		<td headers="keyboard">&nbsp;</td>
-	</tr>
+				<tr>
+					<td rowspan="13" class="menu_name" headers="name">Navigation</td>
+					<td headers="function">Navigates between views, perspectives,
+						and editors in the following ways:
+					<td headers="keyboard">&nbsp;</td>
+				</tr>
+				<tr>
+					<td headers="function">
+						<dl>
+							<dt>Show System Menu</dt>
+							<dd>Displays the menu that is used for closing the current
+								view or editor</dd>
+						</dl>
+					</td>
+					<td headers="keyboard">Alt+(hyphen)</td>
+				</tr>
+				<tr>
+					<td headers="function">
+						<dl>
+							<dt>Show View Menu</dt>
+							<dd>Displays the drop-down menu accessible from the triangle
+								button in the current view's toolbar</dd>
+						</dl>
+					</td>
+					<td headers="keyboard">Ctrl-F10</td>
+				</tr>
+				<tr>
+					<td headers="function">
+						<dl>
+							<dt>Maximize Active View or Editor</dt>
+							<dd>Maximizes the current view or editor to fill the window</dd>
+						</dl>
+					</td>
+					<td headers="keyboard">Ctrl+M</td>
+				</tr>
+				<tr>
+					<td headers="function">
+						<dl>
+							<dt>Minimize Active View or Editor</dt>
+							<dd>Minimizes the current view or editor down to an icon on
+								the side of the window</dd>
+						</dl>
+					</td>
+					<td headers="keyboard">&nbsp;</td>
+				</tr>
+				<tr>
+					<td headers="function">
+						<dl>
+							<dt>Activate Editor</dt>
+							<dd>Switches from the current view to the current editor</dd>
+						</dl>
+					</td>
+					<td headers="keyboard">F12</td>
+				</tr>
 
-	<tr>
-		<td class="menu_name" headers="name">Close All Perspectives</td>
-<td headers="function">This command closes all open perspectives in the Workbench window.</td>
-		<td headers="keyboard">&nbsp;</td>
-	</tr>
-
-	<tr>
-		<td class="menu_name" headers="name">Navigation</td>
-		<td headers="function">This submenu contains shortcut keys for navigating between the views, perspectives, and editors in the Workbench window.
-		<ul>
-			<li><strong>Show System Menu</strong>: Shows the menu that is used for resizing, closing or pinning the current view or editor.</li>
-			<li><strong>Show View Menu</strong>: Shows the drop down menu that is available in the toolbar of the active view.</li>
-			<li><strong>Maximize Active View or Editor</strong>: Maximizes the current view or editor to fill the workbench.</li>
-			<li><strong>Activate Editor</strong>: Makes the current editor active.</li>
-			<li><strong>Next Editor</strong>: Activates the next open editor in the list of most recently used editors.</li>
-			<li><strong>Previous Editor</strong>: Activates the previous open editor in the list of most recently used editors.</li>
-			<li><strong>Next View</strong>: Activates the next open view in the list of most recently used views.</li>
-			<li><strong>Previous View</strong>: Activates the previous open view in the list of most recently used views.</li>
-			<li><strong>Next Perspective</strong>: Activates the next open perspective in the list of most recently used perspectives.</li>
-			<li><strong>Previous Perspective</strong>: Activates the previous open perspective in the list of most recently used perspectives.</li>
-		</ul>
-		<td headers="keyboard">&nbsp;</td>
-	</tr>
-
-	<tr>
-		<td class="menu_name" headers="name">Working sets</td>
-		<td headers="function">Dialog displayed to edit working sets</td>
-		<td headers="keyboard">&nbsp;</td>
-	</tr>
-
-	<tr>
-		<td class="menu_name" headers="name">Preferences</td>
-		<td headers="function">This command allows you to indicate your preferences for using the Workbench.  	
-				There are a wide variety of preferences for configuring the appearance of the Workbench and its views, and for customizing the behavior of all tools that are installed in the Workbench.
-				See the <a href="cdt_u_c_pref.htm">C/C++ Page Preference Window</a> section for more details on the CDT preferences.</td>
-		<td headers="keyboard">&nbsp;</td>
-	</tr>
- </table><p></p>
-
-<p>
-<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
-</p>
-
-</BODY>
-</HTML>
+				<tr>
+					<td headers="function">
+						<dl>
+							<dt>Next Editor</dt>
+							<dd>Activates the most-recently-used editor (If held down,
+								displays the list of open editors, ordered by time.)</dd>
+						</dl>
+					</td>
+					<td headers="keyboard">Ctrl+F6</td>
+				</tr>
+				<tr>
+					<td headers="function">
+						<dl>
+							<dt>Previous Editor</dt>
+							<dd>Activates least-recently-used editor (If held down,
+								displays the list of open editors, ordered by time.)</dd>
+						</dl>
+					</td>
+					<td headers="keyboard">Ctrl+Shift+F6</td>
+				</tr>
+				<tr>
+					<td headers="function">
+						<dl>
+							<dt>Switch to Editor...</dt>
+							<dd>Displays a dialog that allows multiple editors to be
+								saved or closed</dd>
+						</dl>
+					</td>
+					<td headers="keyboard">Ctrl+Shift+E</td>
+				</tr>
+				<tr>
+					<td headers="function">
+						<dl>
+							<dt>Next View</dt>
+							<dd>Activates the most-recently-used view (If held down,
+								displays the list of open views, ordered by time.)</dd>
+						</dl>
+					</td>
+					<td headers="keyboard">Ctrl+F7</td>
+				</tr>
+				<tr>
+					<td headers="function">
+						<dl>
+							<dt>Previous View</dt>
+							<dd>Activates least-recently-used view (If held down,
+								displays the list of open views, ordered by time.)</dd>
+						</dl>
+					</td>
+					<td headers="keyboard">Ctrl+Shift+F7</td>
+				</tr>
+				<tr>
+					<td headers="function">
+						<dl>
+							<dt>Next Perspective</dt>
+							<dd>Activates the most-recently-used perspective (If held
+								down, displays the list of open perspectives, ordered by time.)</dd>
+						</dl>
+					</td>
+					<td headers="keyboard">Ctrl+F8</td>
+				</tr>
+				<tr>
+					<td headers="function">
+						<dl>
+							<dt>Previous Perspective</dt>
+							<dd>Activates least-recently-used perspective (If held down,
+								displays the list of open perspective, ordered by time.)</dd>
+						</dl>
+					</td>
+					<td headers="keyboard">Ctrl+Shift+F8</td>
+				</tr>
+				<tr>
+					<td class="menu_name" headers="name">Preferences</td>
+					<td headers="function">Opens the Preferences dialog, where
+						workspace-wide preferences can be set (The <a
+						href="cdt_u_c_pref.htm">C/C++ Page Preference Window</a> section
+						documents the C/C++-specific preferences.)
+					</td>
+					<td headers="keyboard">&nbsp;</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			<img alt="IBM Copyright Statement" src="../images/ng00_04a.gif">
+		</p>
+	</div>
+</body>
+</html>

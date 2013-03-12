@@ -7539,8 +7539,23 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	void foo(T t) {
 	//	    bar(t);
 	//	}
-	public void testUnqualifiedFunctionCallInTemplate_402498() throws Exception {
+	public void testUnqualifiedFunctionCallInTemplate_402498a() throws Exception {
 		parseAndCheckBindings();
+	}
+	
+	//	template <typename T>
+	//	auto foo(T t) -> decltype(bar(t));
+	//
+	//	namespace N {
+	//	    class A {};
+	//	    int bar(A);
+	//	}
+	//
+	//	int main() {
+	//	    auto x = foo(N::A());
+	//	}
+	public void testUnqualifiedFunctionCallInTemplate_402498b() throws Exception {
+		new BindingAssertionHelper(getAboveComment(), true).assertVariableType("x", CommonTypes.int_);
 	}
 	
 	//	template <typename>

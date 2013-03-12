@@ -562,8 +562,12 @@ public class CPPSemantics {
 		return false;
 	}
 
-	private static void doKoenigLookup(LookupData data) throws DOMException {
+	public static void doKoenigLookup(LookupData data) throws DOMException {
 		data.ignoreUsingDirectives = true;
+		// Set 'qualified' to true for the duration of this function call
+		// so the calls to lookup() don't ascend into enclosing scopes.
+		boolean originalQualified = data.qualified;
+		data.qualified = true;
         Set<ICPPFunction> friendFns = new HashSet<ICPPFunction>(2);
 		Set<ICPPNamespaceScope> associated = getAssociatedScopes(data, friendFns);
 		for (ICPPNamespaceScope scope : associated) {
@@ -572,6 +576,7 @@ public class CPPSemantics {
 			}
 		}
 		mergeResults(data, friendFns.toArray(), false);
+		data.qualified = originalQualified;
 	}
 
 	static IBinding checkDeclSpecifier(IBinding binding, IASTName name, IASTNode decl) {

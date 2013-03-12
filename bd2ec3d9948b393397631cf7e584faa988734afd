@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//4gk\u003d",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/rename/RenameTemplatesTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-12T22:14:27Z",
+      "side": 1,
+      "message": "Please add a blank line between tests.",
+      "revId": "bd2ec3d9948b393397631cf7e584faa988734afd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//4gM\u003d",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/rename/RenameTemplatesTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-12T22:14:27Z",
+      "side": 1,
+      "message": "NON-NLS comments are not needed in test files.",
+      "revId": "bd2ec3d9948b393397631cf7e584faa988734afd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

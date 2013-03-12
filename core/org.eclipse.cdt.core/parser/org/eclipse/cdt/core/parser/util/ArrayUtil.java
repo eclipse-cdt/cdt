@@ -18,7 +18,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -29,9 +29,9 @@ public abstract class ArrayUtil {
     private static final int DEFAULT_LENGTH = 2;
 
     /**
-     * Assumes that array contains nulls at the end, only. 
-     * Appends element after the last non-null element. 
-     * If the array is null or not large enough, a larger one is allocated, using
+     * Assumes that array contains {@code null}s at the end, only. 
+     * Appends element after the last non-{@code null} element. 
+     * If the array is {@code null} or not large enough, a larger one is allocated, using
      * the given class object.
      */
 	@SuppressWarnings("unchecked")
@@ -57,8 +57,8 @@ public abstract class ArrayUtil {
     }
 
     /**
-     * Assumes that array contains nulls at the end, only. 
-     * Appends element after the last non-null element. 
+     * Assumes that array contains {@code null}s at the end, only. 
+     * Appends element after the last non-{@code null} element. 
      * If the array is not large enough, a larger one is allocated.
      * Null <code>array</code> is supported for backward compatibility only and only when T is
      * Object.
@@ -88,8 +88,8 @@ public abstract class ArrayUtil {
     }
 
     /**
-     * Assumes that array contains nulls at the end, only.
-     * @returns index of first null, or -1
+     * Assumes that array contains {@code null}s at the end, only.
+     * @returns index of first {@code null}, or -1
      */ 
     private static int findFirstNull(Object[] array) {
     	boolean haveNull= false;
@@ -118,7 +118,7 @@ public abstract class ArrayUtil {
     }
 
     /**
-     * Assumes that array contains nulls at the end, only. 
+     * Assumes that array contains {@code null}s at the end, only. 
      * Appends object using the current length of the array.
      * @since 5.1
      */
@@ -146,7 +146,7 @@ public abstract class ArrayUtil {
     }
 
     /**
-     * Assumes that array contains nulls at the end, only. 
+     * Assumes that array contains {@code null}s at the end, only. 
      * Appends object using the current length of the array.
      * @param array The array to append to. Not {@code null}
      * @param currentLength The number of non-{@code null} elements in the array
@@ -167,12 +167,12 @@ public abstract class ArrayUtil {
     }
 
     /**
-     * Trims the given array and returns a new array with no null entries.
-     * Assumes that nulls can be found at the end, only.
-     * if array == null, a new array of length 0 is returned
-     * if forceNew == true, a new array will always be created.
-     * if forceNew == false, a new array will only be created if the original array
-     * contained null entries.
+     * Trims the given array and returns a new array with no {@code null} entries.
+     * Assumes that {@code null}s can be found at the end, only.
+     * if {@code array} is {@code null}, a new array of length 0 is returned
+     * if {@code forceNew} is {@code true}, a new array will always be created.
+     * if {@code forceNew} is {@code false}, a new array will only be created if the original array
+     * contained {@code null} entries.
      *  
      * @param c the type of the new array
      * @param array the array to be trimmed
@@ -203,11 +203,11 @@ public abstract class ArrayUtil {
     }
 
     /**
-     * Trims the given array and returns a new array with no null entries.
-     * Assumes that nulls can be found at the end, only.
-     * if forceNew == true, a new array will always be created.
-     * if forceNew == false, a new array will only be created if the original array
-     * contained null entries.
+     * Trims the given array and returns a new array with no {@code null} entries.
+     * Assumes that {@code null}s can be found at the end, only.
+     * if {@code forceNew} is {@code true}, a new array will always be created.
+     * if {@code forceNew} is {@code false}, a new array will only be created if the original array
+     * contained {@code null} entries.
      *  
      * @param array the array to be trimmed
      * @param forceNew
@@ -228,8 +228,8 @@ public abstract class ArrayUtil {
     }
 
     /**
-     * Trims the given array and returns a new array with no null entries.
-     * Assumes that nulls can be found at the end, only.
+     * Trims the given array and returns a new array with no {@code null} entries.
+     * Assumes that {@code null}s can be found at the end, only.
      *  
      * @param array the array to be trimmed
      * @since 5.2
@@ -301,8 +301,8 @@ public abstract class ArrayUtil {
     }
 
     /**
-     * Takes contents of the two arrays up to the first {@code null} element and concatenates
-     * them.
+     * Takes contents of the two arrays up to the first {@code null} element and concatenates them.
+     *
      * @param dest The destination array. The elements of the source array are added to this array
      *     if there is enough free space in it. May be {@code null}. 
      * @param source The source array. May not be {@code null}. 
@@ -360,6 +360,7 @@ public abstract class ArrayUtil {
 	/**
      * Returns whether the specified array contains the specified object. Comparison is by
      * object identity.
+     *
      * @param array the array to search
      * @param obj the object to search for
      * @return <code>true</code> if the specified array contains the specified object, or
@@ -371,7 +372,8 @@ public abstract class ArrayUtil {
 
     /**
      * Returns the index into the specified array of the specified object, or -1 if the array does
-     * not contain the object, or if the array is null.  Comparison is by object identity.
+     * not contain the object, or if the array is {@code null}.  Comparison is by object identity.
+     *
      * @param array the array to search
      * @param obj the object to search for
      * @return the index into the specified array of the specified object, or -1 if the array does
@@ -389,7 +391,7 @@ public abstract class ArrayUtil {
     }
 
     /**
-     * Assumes that array contains nulls at the end, only. 
+     * Assumes that array contains {@code null}s at the end, only. 
      * Returns whether the specified array contains the specified object. Comparison is by
      * object identity.
      * 
@@ -403,9 +405,9 @@ public abstract class ArrayUtil {
     }
 
     /**
-     * Assumes that array contains nulls at the end, only. 
+     * Assumes that array contains {@code null}s at the end, only. 
      * Returns the index into the specified array of the specified object, or -1 if the array does
-     * not contain the object, or if the array is null.  Comparison is by equals().
+     * not contain the object, or if the array is {@code null}.  Comparison is by equals().
      *
      * @param array the array to search
      * @param obj the object to search for
@@ -424,7 +426,9 @@ public abstract class ArrayUtil {
     }
 
 	/**
-	 * Moves all null elements to the end of the array. The order of non-null elements is preserved.
+	 * Moves all {@code null} elements to the end of the array. The order of non-{@code null}
+	 * elements is preserved.
+	 *
 	 * @since 5.4
 	 */
 	public static void compact(Object[] array) {
@@ -441,13 +445,13 @@ public abstract class ArrayUtil {
 	}
 	
 	/**
-	 * Removes all of the nulls from the array and returns a new array that contains all
-	 * of the non-null elements.
+	 * Removes all of the {@code null}s from the array and returns a new array that contains all
+	 * of the non-{@code null} elements.
      *
-     * If there are no nulls in the original array then the original array is returned.
+     * If there are no {@code null}s in the original array then the original array is returned.
 
-	 * Note that this method should only be used when the placement of nulls within the array
-	 * is unknown (due to performance efficiency).  
+	 * Note that this method should only be used when the placement of {@code null}s within
+	 * the array is unknown (due to performance efficiency).  
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T[] removeNulls(Class<T> c, T[] array) {
@@ -475,13 +479,13 @@ public abstract class ArrayUtil {
 	}
 
 	/**
-	 * Removes all of the nulls from the array and returns a new array that contains all
-	 * of the non-null elements.
-     *
-     * If there are no nulls in the original array then the original array is returned.
-     * 
-	 * Note that this method should only be used when the placement of nulls within the array
-	 * is unknown (due to performance efficiency).  
+	 * Removes all of the {@code null}s from the array and returns a new array that contains all
+	 * of the non-{@code null} elements.
+     * <p>
+     * If there are no {@code null}s in the original array then the original array is returned.
+     * <p>
+	 * Note that this method should only be used when the placement of {@code null}s within
+	 * the array is unknown (due to performance efficiency).  
 	 * @since 5.2
 	 */
 	@SuppressWarnings("unchecked")
@@ -517,11 +521,11 @@ public abstract class ArrayUtil {
 	/**
 	 * To improve performance, this method should be used instead of
 	 * {@link #removeNulls(Class, Object[])} when all of the non-{@code null} elements in
-	 * the array are grouped together at the beginning of the array and all of the nulls are at
-	 * the end of the array. The position of the last non-{@code null} element in the array must also
-	 * be known.
+	 * the array are grouped together at the beginning of the array and all of the s are at
+	 * the end of the array. The position of the last non-{@code null} element in the array must
+	 * also be known.
 	 * <p>
-	 * If you don't indend to pass {@code null} array, consider using {@link #trim(Object[], int)}
+	 * If you don't intend to pass {@code null} array, consider using {@link #trim(Object[], int)}
 	 * instead.
 	 *
 	 * @since 5.1
@@ -539,8 +543,8 @@ public abstract class ArrayUtil {
 	}
 
 	/**
-	 * Inserts the obj at the beginning of the array, shifting the whole thing one index
-	 * Assumes that array contains nulls at the end, only. 
+	 * Inserts the {@code obj} at the beginning of the array, shifting the whole thing one index
+	 * Assumes that array contains {@code null}s at the end, only. 
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T[] prepend(Class<T> c, T[] array, T obj) {
@@ -567,8 +571,8 @@ public abstract class ArrayUtil {
 	}
 
 	/**
-	 * Inserts the obj at the beginning of the array, shifting the whole thing one index
-	 * Assumes that array contains nulls at the end, only. 
+	 * Inserts the {@code obj} at the beginning of the array, shifting the whole thing one index
+	 * Assumes that array contains {@code null}s at the end, only. 
 	 * array must not be {@code null}.
 	 * @since 5.2
 	 */
@@ -624,7 +628,7 @@ public abstract class ArrayUtil {
      * @param target the runtime type of the new array
      * @param source the source array
      * @return the current array stored in a new array with the specified runtime type,
-     *     or null if source is null.
+     *     or {@code null} if source is {@code null}.
      */
     @SuppressWarnings("unchecked")
     public static <S, T> T[] convert(Class<T> target, S[] source) {
@@ -649,6 +653,7 @@ public abstract class ArrayUtil {
 
     /**
      * Reverses order of elements in a subsection of an array.
+     *
      * @param array the array
      * @param fromIndex the index of the first affected element (inclusive)
      * @param toIndex the index of the last affected element (exclusive)
@@ -690,20 +695,17 @@ public abstract class ArrayUtil {
 	 * @throws NullPointerException if {@code array} is {@code null}
 	 * @since 5.5
 	 */
-    @SuppressWarnings("unchecked")
 	public static <T> T[] removeDuplicates(T[] array) {
+		int k = 0;
 		if (array.length >= 16) {
-			LinkedHashSet<T> set = new LinkedHashSet<T>(array.length);
+			HashSet<T> set = new HashSet<T>(array.length);
 			for (int i = 0; i < array.length; i++) {
 				T obj = array[i];
-				if (obj != null)
-					set.add(obj);
+				if (obj != null && set.add(obj)) {
+					array[k++] = obj;
+				}
 			}
-			if (set.size() == array.length)
-				return array;
-			return set.toArray((T[]) Array.newInstance(array.getClass().getComponentType(), set.size()));
 		} else {
-			int k = 0;
 			for (int i = 0; i < array.length; i++) {
 				T obj = array[i];
 				if (obj != null) {
@@ -714,10 +716,10 @@ public abstract class ArrayUtil {
 					}
 				}
 			}
-			if (k == array.length)
-				return array;
-			return Arrays.copyOf(array, k);
 		}
+		if (k == array.length)
+			return array;
+		return Arrays.copyOf(array, k);
 	}
 
     public static int[] setInt(int[] array, int idx, int val) {

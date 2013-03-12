@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Test insertion/deletion of records of a mock record type in a B-tree
- * 
+ *
  * @author aferguso
  *
  */
@@ -65,11 +65,11 @@ public class BTreeTests extends BaseTestCase {
 		dbFile.deleteOnExit();
 	}
 
-	
+
 	public void testBySortedSetMirrorLite() throws Exception {
 		sortedMirrorTest(8);
 	}
-	
+
 	/**
 	 * Test random (but reproducible via known seed) sequences of insertions/deletions
 	 * and use TreeSet as a reference implementation to check behaviour against.
@@ -103,13 +103,31 @@ public class BTreeTests extends BaseTestCase {
 	}
 
 	/**
-	 * Insert/Delete a random number of records into/from the B-tree 
+	 * Bug 402177: BTree.insert should return the matching record if the new record was not inserted.
+	 */
+	public void testEquivalentRecordInsert_Bug402177() throws Exception {
+
+		init(8);
+		try {
+			BTMockRecord value1 = new BTMockRecord(db, 42);
+			BTMockRecord value2 = new BTMockRecord(db, 42);
+
+			long insert1 = btree.insert(value1.getRecord());
+			long insert2 = btree.insert(value2.getRecord());
+			assertEquals(insert1, insert2);
+		} finally {
+			finish();
+		}
+	}
+
+	/**
+	 * Insert/Delete a random number of records into/from the B-tree
 	 * @param seed the seed for obtaining the deterministic random testing
 	 * @param checkCorrectnessEachIteration if true, then on every single insertion/deletion check that the B-tree invariants
 	 * still hold
 	 * @throws Exception
 	 */
-	protected void trial(int seed, final boolean checkCorrectnessEachIteration) throws Exception {		
+	protected void trial(int seed, final boolean checkCorrectnessEachIteration) throws Exception {
 		Random random = new Random(seed);
 
 		// the probabilty that a particular iterations action will be an insertion
@@ -123,9 +141,9 @@ public class BTreeTests extends BaseTestCase {
 		final int nIterations = random.nextInt(100000);
 		final SortedSet expected = new TreeSet();
 		final List history = new ArrayList();
-		
+
 		init(degree);
-		
+
 		if (DEBUG > 0)
 			System.out.print("\t "+seed+" "+(nIterations/1000)+"K: ");
 		for(int i=0; i<nIterations; i++) {
@@ -163,7 +181,7 @@ public class BTreeTests extends BaseTestCase {
 
 		assertBTreeMatchesSortedSet("[Trial end] ", btree, expected);
 		assertBTreeInvariantsHold("[Trial end]");
-		
+
 		finish();
 	}
 
@@ -201,7 +219,7 @@ public class BTreeTests extends BaseTestCase {
 	}
 
 	private static class BTMockRecord {
-		public static final int VALUE_PTR = 0; 
+		public static final int VALUE_PTR = 0;
 		public static final int RECORD_SIZE = Database.INT_SIZE;
 		long record;
 		Database db;
@@ -213,7 +231,7 @@ public class BTreeTests extends BaseTestCase {
 			this.db = db;
 			record = db.malloc(BTMockRecord.RECORD_SIZE);
 			db.putInt(record + VALUE_PTR, value);
-		}   
+		}
 
 		/**
 		 * Get an existing record
@@ -235,7 +253,7 @@ public class BTreeTests extends BaseTestCase {
 	private class BTMockRecordComparator implements IBTreeComparator {
 		@Override
 		public int compare(long record1, long record2) throws CoreException {
-			return db.getInt(record1) - db.getInt(record2); 
+			return db.getInt(record1) - db.getInt(record2);
 		}
 	}
 }

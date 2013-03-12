@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//4vc\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 570,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-03-12T10:07:38Z",
+      "side": 1,
+      "message": "I discovered why data.qualified used to be set to true here: if it\u0027s set to false, lookup() will ascend into enclosing scopes and look there as well, which is inappropriate for argument-dependent lookup. Before, I removed it because I needed the original value of qualified later on. Now, I think the appropriate thing to do is to set it to true only for the duration of this call, for the benefit of the lookup()-s.",
+      "revId": "c3b54580b5df6518b489d5b4e1e95adae5b28216",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//4vQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionSet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-03-12T10:07:38Z",
+      "side": 1,
+      "message": "I am not a Java expert - please let me know if there is a better way to do these array manipulations.\n\nAlso, please let me know if my code comments get too rambly. I like to document things that I come to understand about the code for the benefit of future developers, but I realize that too much explanation can be a source of noise.",
+      "revId": "c3b54580b5df6518b489d5b4e1e95adae5b28216",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

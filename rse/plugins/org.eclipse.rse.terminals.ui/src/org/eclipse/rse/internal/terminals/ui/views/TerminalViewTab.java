@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [247700] Terminal uses ugly fonts in JEE package
  * Anna Dushistova  (MontaVista) - [267609] [rseterminal] The first "Launch Terminal" command creates no terminal tab 
  * Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Terminal Widget
+ * David McKnight   (IBM)        - [270618][terminal][accessibility] Accessibility issues with Terminal view
  ********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
@@ -48,6 +49,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -190,6 +193,21 @@ public class TerminalViewTab extends Composite {
 		}
 	}
 
+	protected class TerminalTraverseHandler implements TraverseListener {
+	    public void keyTraversed(TraverseEvent e){
+	    	int detail = e.detail;
+	    	switch (detail){
+	    		case SWT.TRAVERSE_TAB_NEXT:       
+	    		case SWT.TRAVERSE_TAB_PREVIOUS:
+	    			if ((e.stateMask & SWT.CTRL)!=0 ) {
+	    				e.doit=true; 
+	    				break;
+	    			}
+	    	}
+	    }
+		
+	}
+	
 	public CTabItem createTabItem(IAdaptable root,
 			final String initialWorkingDirCmd) {
 		final CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);
@@ -256,6 +274,7 @@ public class TerminalViewTab extends Composite {
 				/* ignore and allow fallback to default encoding */
 			}
 			terminalControl.setConnector(connector);
+			terminalControl.getControl().addTraverseListener(new TerminalTraverseHandler());
 			item.setData(DATA_KEY_CONTROL, terminalControl);
 			terminalControl.connectTerminal();
 		}

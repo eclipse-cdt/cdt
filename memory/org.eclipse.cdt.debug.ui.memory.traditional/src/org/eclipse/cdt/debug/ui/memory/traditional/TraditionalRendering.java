@@ -13,6 +13,8 @@ package org.eclipse.cdt.debug.ui.memory.traditional;
 
 import java.lang.reflect.Method;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.debug.core.model.provisional.IMemoryRenderingViewportProvider;
 import org.eclipse.core.commands.AbstractHandler;
@@ -65,6 +67,8 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -240,6 +244,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         if(this.fRendering != null)
             this.fRendering.dispose();
         disposeColors();
+        disposeFonts();
         super.dispose();
     }
 
@@ -494,6 +499,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     private Color colorText;
     private Color colorTextAlternate;
     
+    private Map<Integer,Font> fonts = new HashMap<Integer,Font>(3);
+
     public void allocateColors()
     {
     	IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
@@ -558,6 +565,12 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     	disposeChangedColors();
     }
 
+    public void disposeFonts()
+    {
+        for (Font font : fonts.values())
+            font.dispose();
+    }
+
     public void applyPreferences()
     {
     	if(fRendering != null && !fRendering.isDisposed())
@@ -578,6 +591,53 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     	}
     }
     
+
+    private Font makeFont(Font font, String boldKey, String italicKey)
+    {
+        IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
+        int style = SWT.NONE;
+        if (store.getBoolean(boldKey))
+            style |= SWT.BOLD;
+        if (store.getBoolean(italicKey))
+            style |= SWT.ITALIC;
+
+        if (style == SWT.NONE)
+            return font;
+
+        Font modified = fonts.get(style);
+        if (modified == null)
+        {
+            FontData fontData = font.getFontData()[0];
+            modified = new Font(font.getDevice(), fontData.getName(), fontData.getHeight(), fontData.getStyle() | style);
+            fonts.put(style, modified);
+        }
+        return modified;
+    }
+
+    public Font getFontChanged(Font font)
+    {
+        return makeFont(font, TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED_BOLD,
+                TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED_ITALIC);
+    }
+
+    public Font getFontEdit(Font font)
+    {
+        return makeFont(font, TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT_BOLD,
+                TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT_ITALIC);
+    }
+
+    public boolean getBoxChanged()
+    {
+        IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
+        return store.getBoolean(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED_BOX);
+    }
+
+    public boolean getBoxEdit()
+    {
+        IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
+        return store.getBoolean(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT_BOX);
+    }
+
     public Color getColorBackground()
     {
     	IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();

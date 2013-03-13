@@ -38,14 +38,20 @@ public class TraditionalRenderingPreferenceInitializer extends AbstractPreferenc
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_USE_GLOBAL_SELECTION, true);
 		
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED, "255,0,0");
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED_ITALIC, false);
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED_BOLD, false);
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED_BOX, true);
+
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT, "0,255,0");
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT_ITALIC, true);
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT_BOLD, false);
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT_BOX, true);
 		
 		Color systemSelection = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_SELECTION, systemSelection.getRed()
 				+ "," + systemSelection.getGreen() + "," + systemSelection.getBlue());
 		
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_LIGHTEN_DARKEN_ALTERNATE_CELLS, "5");
-		
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT, "0,255,0");
 		
 		Color systemText = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_TEXT, systemText.getRed()

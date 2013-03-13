@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//4Z8\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_o_menu.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-13T01:25:36Z",
+      "side": 1,
+      "message": "Please change \"CDT\" to \"C/C++ perspective\"",
+      "revId": "20c246bab97ddea0efe2b3b294057c7d35b850d5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

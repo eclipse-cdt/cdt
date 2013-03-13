@@ -34,6 +34,24 @@
       "revId": "bae1c53b7156903120f62a9213c727ca28bf3bb6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//4Eg\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_edit.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-13T21:24:33Z",
+      "side": 1,
+      "message": "Sorry, I could not fing any links that would pop up a dialog in http://help.eclipse.org/juno/index.jsp?topic\u003d%2Forg.eclipse.platform.doc.isv%2Fguide%2Fua_help_content_files.htm\u0026cp\u003d2_0_19_1_1_1",
+      "parentUuid": "AABOPX//4FQ\u003d",
+      "revId": "bae1c53b7156903120f62a9213c727ca28bf3bb6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

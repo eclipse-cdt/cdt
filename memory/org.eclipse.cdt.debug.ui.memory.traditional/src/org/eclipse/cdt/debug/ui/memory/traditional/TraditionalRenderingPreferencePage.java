@@ -76,13 +76,21 @@ public class TraditionalRenderingPreferencePage
 		
 		addField(new ColorFieldEditor(TraditionalRenderingPreferenceConstants.MEM_COLOR_BACKGROUND, 
 				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_BackgroundColor"), getFieldEditorParent())); //$NON-NLS-1$
-		
-		addField(new ColorFieldEditor(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED, 
-				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_ChangedColor"), getFieldEditorParent())); //$NON-NLS-1$
-		
-		addField(new ColorFieldEditor(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT, 
-				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_EditColor"), getFieldEditorParent())); //$NON-NLS-1$
-		
+
+		addField(new ColorAndEffectFieldEditor(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED,
+				TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED_BOLD,
+				TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED_ITALIC,
+				TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED_BOX,
+				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_ChangedColor"), //$NON-NLS-1$
+				getFieldEditorParent()));
+
+		addField(new ColorAndEffectFieldEditor(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT,
+				TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT_BOLD,
+				TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT_ITALIC,
+				TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT_BOX,
+				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_EditColor"), //$NON-NLS-1$
+				getFieldEditorParent()));
+
 		addField(new BooleanFieldEditor(TraditionalRenderingPreferenceConstants.MEM_USE_GLOBAL_SELECTION,
 				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_UseGlobalSelectionColor"), getFieldEditorParent())); //$NON-NLS-1$
 		

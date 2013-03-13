@@ -256,7 +256,6 @@ public class DataPane extends AbstractPane
     protected void doPaintData(PaintEvent pe)
     {
         GC gc = pe.gc;
-        gc.setFont(fRendering.getFont());
 
         int cellHeight = getCellHeight();
         int cellWidth = getCellWidth();
@@ -271,10 +270,12 @@ public class DataPane extends AbstractPane
             {
                 for(int col = 0; col < columns; col++)
                 {
-                	if(isOdd(col))
-                		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
-                	else
-                		gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
+                    gc.setFont(fRendering.getFont());
+
+                    if (isOdd(col))
+                        gc.setForeground(fRendering.getTraditionalRendering().getColorText());
+                    else
+                        gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
 
                     BigInteger cellAddress = start.add(BigInteger.valueOf((i
                         * fRendering.getColumnCount() + col)
@@ -282,6 +283,8 @@ public class DataPane extends AbstractPane
 
                     TraditionalMemoryByte bytes[] = fRendering.getBytes(cellAddress,
                         fRendering.getBytesPerColumn());
+
+                    boolean drawBox = false;
 
                     if(fRendering.getSelection().isSelected(cellAddress))
                     {
@@ -301,11 +304,18 @@ public class DataPane extends AbstractPane
                         
                         // Allow subclasses to override this method to do their own coloring
                         applyCustomColor(gc, bytes, col);
+                        drawBox = shouldDrawBox(bytes, col);
                     }
 
                     gc.drawText(getCellText(bytes), cellWidth * col
                         + fRendering.getCellPadding(), cellHeight * i
                         + fRendering.getCellPadding());
+
+                    if(drawBox)
+                    {
+                        gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
+                        gc.drawRectangle(cellWidth * col, cellHeight * i, cellWidth, cellHeight-1);
+                    }
 
                     BigInteger cellEndAddress = cellAddress.add(BigInteger
                         .valueOf(fRendering.getAddressesPerColumn()));
@@ -340,50 +350,55 @@ public class DataPane extends AbstractPane
             fRendering.logError(TraditionalRenderingMessages
                 .getString("TraditionalRendering.FAILURE_PAINT"), e); //$NON-NLS-1$
         }
-    	
+
     }
 
-   // Allow subclasses to override this method to do their own coloring
-   protected  void applyCustomColor(GC gc, TraditionalMemoryByte bytes[], int col)
+    // Allow subclasses to override this method to do their own coloring
+    protected void applyCustomColor(GC gc, TraditionalMemoryByte bytes[], int col)
     {
-	   // TODO consider adding finer granularity?
-       boolean anyByteEditing = false;
-       for(int n = 0; n < bytes.length && !anyByteEditing; n++)
-       	if(bytes[n] instanceof TraditionalMemoryByte)
-       		if(bytes[n].isEdited())
-       			anyByteEditing = true;
-        
-        if(isOdd(col))
-    		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
-    	else
-    		gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
-        gc.setBackground(fRendering.getTraditionalRendering().getColorBackground());
-        
-        if(anyByteEditing)
+        // TODO consider adding finer granularity?
+        boolean anyByteEditing = false;
+        for (int n = 0; n < bytes.length && !anyByteEditing; n++)
+            if (bytes[n] instanceof TraditionalMemoryByte)
+                if (bytes[n].isEdited())
+                    anyByteEditing = true;
+
+        TraditionalRendering ren = fRendering.getTraditionalRendering();
+
+        if (isOdd(col))
+            gc.setForeground(ren.getColorText());
+        else
+            gc.setForeground(ren.getColorTextAlternate());
+        gc.setBackground(ren.getColorBackground());
+
+        if (anyByteEditing)
         {
-        	gc.setForeground(fRendering.getTraditionalRendering().getColorEdit());
+            gc.setForeground(ren.getColorEdit());
+            gc.setFont(ren.getFontEdit(gc.getFont()));
         }
         else
         {
-        	boolean isColored = false;
-        	for(int i = 0; i < fRendering.getHistoryDepth() && !isColored; i++)
-        	{
-	        	// TODO consider adding finer granularity?
-	            for(int n = 0; n < bytes.length; n++)
-	            {
-	                if(bytes[n].isChanged(i))
-	                {
-	                	if(i == 0)
-	                		gc.setForeground(fRendering.getTraditionalRendering().getColorsChanged()[i]);
-	                	else
-	                		gc.setBackground(fRendering.getTraditionalRendering().getColorsChanged()[i]);
-	                	isColored = true;
-	                	break;
-	                }
-	            }
-        	}   
+            boolean isColored = false;
+            for (int i = 0; i < fRendering.getHistoryDepth() && !isColored; i++)
+            {
+                // TODO consider adding finer granularity?
+                for (int n = 0; n < bytes.length; n++)
+                {
+                    if (bytes[n].isChanged(i))
+                    {
+                        if (i == 0)
+                            gc.setForeground(ren.getColorsChanged()[i]);
+                        else
+                            gc.setBackground(ren.getColorsChanged()[i]);
+
+                        gc.setFont(ren.getFontChanged(gc.getFont()));
+
+                        isColored = true;
+                        break;
+                    }
+                }
+            }
         }
-        
     }
 
 }

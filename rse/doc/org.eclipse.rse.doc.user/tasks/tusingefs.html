@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html>
-
+<html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="copyright" content="Copyright (c) IBM Corporation and others 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page."/>
@@ -9,8 +9,9 @@
 </head>
 
 <body>
-
+<div role="main">
 <h1>Using RSE and EFS</h1>
+
 <p>
 The Eclipse File System (EFS) is an interface supported by Eclipse that allows Eclipse to use non-local file systems.
 Many Eclipse components are <strong>EFS-aware</strong>, that is, they can use resources supplied by EFS as if they were located on a local file system.
@@ -36,6 +37,6 @@ Using this support you could, for example, set up a Java project from a machine 
 </p><p>
 The advantages of using linked resources and an RSE-supplied EFS are that the tools that the workbench provides are available directly on the remote source. In addition, since you can edit directly on the remote system there will be no immediate synchronization/merge issues. However, this can lead to problems with update conflicts if the directories on the remote system are shared with others and are quite active. The disadvantages are what you would expect: that you can run into quite slow refreshes of the workspace. Since EFS maps the remote directory tree anytime Eclipse wants to do a refresh it may take several hours. Tools that are not EFS-aware may force these refreshes to happen at odd times which can lead to unpredictable performance.
 </p>
-
+</div>
 </body>
 </html>

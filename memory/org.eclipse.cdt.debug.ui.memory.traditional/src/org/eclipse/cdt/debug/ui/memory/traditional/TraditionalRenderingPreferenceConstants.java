@@ -17,12 +17,19 @@ package org.eclipse.cdt.debug.ui.memory.traditional;
 public class TraditionalRenderingPreferenceConstants {
 
 	public static final String MEM_COLOR_CHANGED = "memoryColorChanged";
+	public static final String MEM_COLOR_CHANGED_ITALIC = "memoryColorChanged.italic";
+	public static final String MEM_COLOR_CHANGED_BOLD = "memoryColorChanged.bold";
+	public static final String MEM_COLOR_CHANGED_BOX = "memoryColorChanged.box";
+
+	public static final String MEM_COLOR_EDIT = "memoryColorEdit";
+	public static final String MEM_COLOR_EDIT_ITALIC = "memoryColorEdit.italic";
+	public static final String MEM_COLOR_EDIT_BOLD = "memoryColorEdit.bold";
+	public static final String MEM_COLOR_EDIT_BOX = "memoryColorEdit.box";
+
 	
 	public static final String MEM_USE_GLOBAL_BACKGROUND = "memUseGlobalBackground";
 	
 	public static final String MEM_COLOR_BACKGROUND = "memoryColorBackground";
-	
-	public static final String MEM_COLOR_EDIT = "memoryColorEdit";
 	
 	public static final String MEM_COLOR_TEXT = "memoryColorText";
 

@@ -242,10 +242,12 @@ public class TextPane extends AbstractPane
             {
                 for(int col = 0; col < columns; col++)
                 {
-                	if(isOdd(col))
-                		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
-                	else
-                		gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
+                    gc.setFont(fRendering.getFont());
+
+                    if (isOdd(col))
+                        gc.setForeground(fRendering.getTraditionalRendering().getColorText());
+                    else
+                        gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
 
                     BigInteger cellAddress = start.add(BigInteger.valueOf((i
                         * columns + col)
@@ -253,6 +255,8 @@ public class TextPane extends AbstractPane
 
                     TraditionalMemoryByte bytes[] = fRendering.getBytes(cellAddress,
                         fRendering.getBytesPerColumn());
+
+                    boolean drawBox = false;
 
                     if(fRendering.getSelection().isSelected(cellAddress))
                     {
@@ -269,11 +273,18 @@ public class TextPane extends AbstractPane
                             cellWidth, cellHeight);
 
                         applyCustomColor(gc, bytes, col);
+                        drawBox = shouldDrawBox(bytes, col);
                     }
 
                     gc.drawText(fRendering.formatText(bytes,
                         isLittleEndian, fRendering.getTextMode()), cellWidth * col, cellHeight * i
                         + fRendering.getCellPadding());
+
+                    if(drawBox)
+                    {
+                        gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
+                        gc.drawRectangle(cellWidth * col - (col == 0 ? 0 : 1),	cellHeight * i, cellWidth - (col == 0 ? 1 : 0), cellHeight-1);
+                    }
 
                     if(fRendering.isDebug())
                         gc.drawRectangle(cellWidth * col, cellHeight * i
@@ -292,44 +303,50 @@ public class TextPane extends AbstractPane
 
     // Allow subclasses to override this method to do their own coloring
     protected void applyCustomColor(GC gc, TraditionalMemoryByte bytes[], int col)
-     {
- 	   // TODO consider adding finer granularity?
+    {
+        // TODO consider adding finer granularity?
         boolean anyByteEditing = false;
-        for(int n = 0; n < bytes.length && !anyByteEditing; n++)
-        	if(bytes[n] instanceof TraditionalMemoryByte)
-        		if(bytes[n].isEdited())
-        			anyByteEditing = true;
-         
-         if(isOdd(col))
-     		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
-     	else
-     		gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
-         gc.setBackground(fRendering.getTraditionalRendering().getColorBackground());
-         
-         if(anyByteEditing)
-         {
-         	gc.setForeground(fRendering.getTraditionalRendering().getColorEdit());
-         }
-         else
-         {
-         	boolean isColored = false;
-         	for(int i = 0; i < fRendering.getHistoryDepth() && !isColored; i++)
-         	{
- 	        	// TODO consider adding finer granularity?
- 	            for(int n = 0; n < bytes.length; n++)
- 	            {
- 	                if(bytes[n].isChanged(i))
- 	                {
- 	                	if(i == 0)
- 	                		gc.setForeground(fRendering.getTraditionalRendering().getColorsChanged()[i]);
- 	                	else
- 	                		gc.setBackground(fRendering.getTraditionalRendering().getColorsChanged()[i]);
- 	                	isColored = true;
- 	                	break;
- 	                }
- 	            }
-         	}
-            
-         }
-     }
+        for (int n = 0; n < bytes.length && !anyByteEditing; n++)
+            if (bytes[n] instanceof TraditionalMemoryByte)
+                if (bytes[n].isEdited())
+                    anyByteEditing = true;
+
+        TraditionalRendering ren = fRendering.getTraditionalRendering();
+
+        if (isOdd(col))
+            gc.setForeground(ren.getColorText());
+        else
+            gc.setForeground(ren.getColorTextAlternate());
+        gc.setBackground(ren.getColorBackground());
+
+        if (anyByteEditing)
+        {
+            gc.setForeground(ren.getColorEdit());
+            gc.setFont(ren.getFontEdit(gc.getFont()));
+        }
+        else
+        {
+            boolean isColored = false;
+            for (int i = 0; i < fRendering.getHistoryDepth() && !isColored; i++)
+            {
+                // TODO consider adding finer granularity?
+                for (int n = 0; n < bytes.length; n++)
+                {
+                    if (bytes[n].isChanged(i))
+                    {
+                        if (i == 0)
+                            gc.setForeground(ren.getColorsChanged()[i]);
+                        else
+                            gc.setBackground(ren.getColorsChanged()[i]);
+
+                        gc.setFont(ren.getFontChanged(gc.getFont()));
+
+                        isColored = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
 }

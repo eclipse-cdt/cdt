@@ -106,6 +106,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
@@ -133,6 +134,7 @@ import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNestedClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
@@ -10259,5 +10261,60 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPClassType Inner = bh.assertNonProblem("Inner;", 5);
 
 		assertEquals(NamespaceNS.getNamespaceScope(), Inner.getScope());
+	}
+
+	//  class Enclosing {
+	//    class Inner {};
+	// };
+	public void testNestedClassOwner() throws Exception {
+		String code = getAboveComment();
+		parseAndCheckBindings(code);
+		
+		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+
+		ICPPClassType Enclosing = bh.assertNonProblem("Enclosing", 9);
+		CPPNestedClassType Inner = bh.assertNonProblem("Inner", 5);
+		assertEquals(Enclosing, Inner.getClassOwner());
+
+	}
+	
+	//  class Enclosing;
+	//  class Enclosing {
+	//     class NestedElabPrivate;
+	//     class NestedCompositePrivate {};
+	//  protected:   
+	//     class NestedElabProtected;
+	//     class NestedCompositeProtected {};
+	//  public:   
+	//     class NestedElabPublic;
+	//     class NestedCompositePublic {};
+	//  };
+	//  class Enclosing::NestedElabPrivate{};
+	//  class Enclosing::NestedElabProtected{};
+	//  class Enclosing::NestedElabPublic{};
+	public void testNestedClasses() throws Exception {
+		String code = getAboveComment();
+		parseAndCheckBindings(code);
+		
+		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+
+		CPPNestedClassType nestedClassPrivateDeclaration = bh.assertNonProblem("NestedElabPrivate;", 17);
+		assertEquals(ICPPASTVisibilityLabel.v_private, nestedClassPrivateDeclaration.getVisibility());
+
+		CPPNestedClassType nestedClassPrivateDefinition = bh.assertNonProblem("NestedCompositePrivate {};", 22);
+		assertEquals(ICPPASTVisibilityLabel.v_private, nestedClassPrivateDefinition.getVisibility());
+		
+		CPPNestedClassType nestedClassProtectedDefinition = bh.assertNonProblem("NestedCompositeProtected {};", 24);
+		assertEquals(ICPPASTVisibilityLabel.v_protected, nestedClassProtectedDefinition.getVisibility());
+		
+		CPPNestedClassType nestedClassProtectedDeclaration = bh.assertNonProblem("NestedElabProtected;", 19);
+		assertEquals(ICPPASTVisibilityLabel.v_protected, nestedClassProtectedDeclaration.getVisibility());
+		
+		CPPNestedClassType nestedClassPublicDeclaration = bh.assertNonProblem("NestedElabPublic;", 16);
+		assertEquals(ICPPASTVisibilityLabel.v_public, nestedClassPublicDeclaration.getVisibility());
+
+		CPPNestedClassType nestedClassPublicDefinition = bh.assertNonProblem("NestedCompositePublic {};", 21);
+		assertEquals(ICPPASTVisibilityLabel.v_public, nestedClassPublicDefinition.getVisibility());
+
 	}
 }

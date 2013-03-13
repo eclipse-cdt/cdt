@@ -61,6 +61,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNestedClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -439,6 +440,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			}
 		} else if (binding instanceof ICPPClassTemplate) {
 			pdomBinding= new PDOMCPPClassTemplate(this, parent, (ICPPClassTemplate) binding);
+		} else if (binding instanceof ICPPNestedClassType){
+			pdomBinding = new PDOMCPPNestedClassType(this, parent, (ICPPNestedClassType) binding);
 		} else if (binding instanceof ICPPClassType) {
 			pdomBinding= new PDOMCPPClassType(this, parent, (ICPPClassType) binding);
 		} else if (binding instanceof ICPPVariable) {
@@ -669,6 +672,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		} else if (binding instanceof ICPPClassTemplate) {
 			// this must be before class type
 			return CPP_CLASS_TEMPLATE;
+		} else if (binding instanceof ICPPNestedClassType) {
+			return CPP_NESTEDCLASSTYPE;
 		} else if (binding instanceof ICPPClassType) {
 			return CPPCLASSTYPE;
 		} else if (binding instanceof ICPPNamespaceAlias) {
@@ -920,7 +925,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPEnumerationSpecialization(this, record);
 		case CPP_ENUMERATOR_SPECIALIZATION:
 			return new PDOMCPPEnumeratorSpecialization(this, record);
-		}
+		case CPP_NESTEDCLASSTYPE:
+			return new PDOMCPPNestedClassType(this, record);
+		}			
 		assert false : "nodeid= " + nodeType; //$NON-NLS-1$
 		return null;
 	}

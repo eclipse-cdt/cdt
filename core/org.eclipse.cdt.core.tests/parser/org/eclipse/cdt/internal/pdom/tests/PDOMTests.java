@@ -33,6 +33,7 @@ public class PDOMTests extends TestSuite {
 		suite.addTest(PDOMProviderTests.suite());
 		suite.addTest(EnumerationTests.suite());
 		suite.addTest(ClassTests.suite());
+		suite.addTest(NestedClassTests.suite());
 		suite.addTest(TypesTests.suite());
 		suite.addTest(IncludesTests.suite());
 		suite.addTest(OverloadsWithinSingleTUTests.suite());

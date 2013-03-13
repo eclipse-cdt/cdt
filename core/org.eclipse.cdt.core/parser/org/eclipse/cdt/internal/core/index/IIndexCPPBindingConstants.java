@@ -65,4 +65,5 @@ public interface IIndexCPPBindingConstants {
 	int CPP_TEMPLATE_ALIAS = IIndexBindingConstants.LAST_CONSTANT + 51;
 	int CPP_ENUMERATION_SPECIALIZATION = IIndexBindingConstants.LAST_CONSTANT + 52;
 	int CPP_ENUMERATOR_SPECIALIZATION = IIndexBindingConstants.LAST_CONSTANT + 53;
+	int CPP_NESTEDCLASSTYPE = IIndexBindingConstants.LAST_CONSTANT + 54;
 }

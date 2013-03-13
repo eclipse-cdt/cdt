@@ -195,6 +195,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespaceAlias;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNestedClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
@@ -534,7 +535,9 @@ public class CPPVisitor extends ASTQueries {
         	if (elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum) {
         		if (templateDecl != null)
         			binding = new CPPClassTemplate(name);
-        		else
+        		else if (scope instanceof ICPPClassScope)
+        			binding = new CPPNestedClassType(name, binding);
+        		else 
         			binding = new CPPClassType(name, binding);
         		// name may live in a different scope, so make sure to add it to the owner scope, as well.
         		ASTInternal.addName(scope,  elabType.getName());
@@ -630,6 +633,9 @@ public class CPPVisitor extends ASTQueries {
 		if (templateDecl != null)
 			return new CPPClassTemplate(name);
 
+		if(scope instanceof ICPPClassScope){
+			return new CPPNestedClassType(name, binding);
+		}
 		return  new CPPClassType(name, binding);
 	}
 

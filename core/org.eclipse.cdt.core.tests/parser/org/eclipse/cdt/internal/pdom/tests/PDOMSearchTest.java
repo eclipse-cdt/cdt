@@ -181,8 +181,8 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals(4, class2s.length);
 		assertTrue(class2s[0] instanceof ICPPClassType);
 		assertTrue(class2s[1] instanceof ICPPClassType);
-		assertTrue(class2s[2] instanceof ICPPClassType);
-		assertTrue(class2s[3] instanceof ICPPMethod);
+		assertTrue(class2s[2] instanceof ICPPMethod);
+		assertTrue(class2s[3] instanceof ICPPClassType);
 
 		/** result #1 * */
 		ICPPClassType cls1 = (ICPPClassType) class2s[0];
@@ -195,16 +195,16 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals("foo", methods[1].getName());
 
 		/** result #2 * */
-		ICPPMethod meth2 = (ICPPMethod) class2s[3];
+		ICPPMethod meth2 = (ICPPMethod) class2s[2];
 		assertEquals("Class2::Class2", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(meth2)));
 		assertEquals(meth2, methods[0]);
 
 		/** result #3 * */
-		ICPPClassType cls3 = (ICPPClassType) class2s[1];
+		ICPPClassType cls3 = (ICPPClassType) class2s[3];
 		assertEquals("namespace1::Class1::Class2", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(cls3)));
 
 		/** result #3 * */
-		ICPPClassType cls4 = (ICPPClassType) class2s[2];
+		ICPPClassType cls4 = (ICPPClassType) class2s[1];
 		assertEquals("namespace1::Class2", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(cls4)));
 		
 		/* Nested class references - namespace1::Class1::Class2 */

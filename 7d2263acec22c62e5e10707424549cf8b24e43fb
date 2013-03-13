@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//4Ek\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/AbstractPane.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 845,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-13T22:19:18Z",
+      "side": 1,
+      "message": "Braces, please! Especially because there are two commands here,  which only works because the first one is an if statement...",
+      "revId": "7d2263acec22c62e5e10707424549cf8b24e43fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//4EM\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/ColorAndEffectFieldEditor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-13T22:19:18Z",
+      "side": 1,
+      "message": "You\u0027ve got end-of-line oddities here. Please use unix-style line-endings. You can change this with the Edit -\u003e Set Encoding... menu item in Eclipse.",
+      "revId": "7d2263acec22c62e5e10707424549cf8b24e43fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//4CM\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/ColorAndEffectFieldEditor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-13T22:19:18Z",
+      "side": 1,
+      "message": "Since this is only called with two sets of values (edit and changed) it might be better to change all these parameters into a single boolean isEdit, thereby removing the duplication of references to TraditionalRenderingPreferenceConstants and TraditionalRenderingMessages.",
+      "revId": "7d2263acec22c62e5e10707424549cf8b24e43fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//4Dw\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-13T22:19:18Z",
+      "side": 1,
+      "message": "This line appears in both branches of the if, so it should be taken out, thereby removing duplication.",
+      "revId": "7d2263acec22c62e5e10707424549cf8b24e43fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//4Do\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TextPane.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-13T22:19:18Z",
+      "side": 1,
+      "message": "Same issue as in DataPane.",
+      "revId": "7d2263acec22c62e5e10707424549cf8b24e43fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//4C4\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 595,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-13T22:19:18Z",
+      "side": 1,
+      "message": "Since there are only two values for boldKey (and italicKey), it might be better to change these parameters into a single boolean isEdit, thereby removing the duplication of references to TraditionalRenderingPreferenceConstants.",
+      "revId": "7d2263acec22c62e5e10707424549cf8b24e43fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//4Dg\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-13T22:19:18Z",
+      "side": 1,
+      "message": "As these are used only once, they could be inlined into the if statements below, for clarity.",
+      "revId": "7d2263acec22c62e5e10707424549cf8b24e43fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//4DY\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-13T22:19:18Z",
+      "side": 1,
+      "message": "At first, I thought this was equivalent to \"else\" -- but I see that it is actually equivalent to: \"if (!bold \u0026\u0026 !italic)\". Maybe a comment to that effect would be useful... or I may just be overly confused.",
+      "revId": "7d2263acec22c62e5e10707424549cf8b24e43fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//4DA\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-13T22:19:18Z",
+      "side": 1,
+      "message": "Please indent all your code.",
+      "revId": "7d2263acec22c62e5e10707424549cf8b24e43fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//4Cs\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-13T22:19:18Z",
+      "side": 1,
+      "message": "Since store is used only once, it could be inlined.",
+      "revId": "7d2263acec22c62e5e10707424549cf8b24e43fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//4Co\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-13T22:19:18Z",
+      "side": 1,
+      "message": "Since store is used only once, it could be inlined.",
+      "revId": "7d2263acec22c62e5e10707424549cf8b24e43fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

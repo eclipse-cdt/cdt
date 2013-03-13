@@ -256,7 +256,6 @@ public class DataPane extends AbstractPane
     protected void doPaintData(PaintEvent pe)
     {
         GC gc = pe.gc;
-        gc.setFont(fRendering.getFont());
 
         int cellHeight = getCellHeight();
         int cellWidth = getCellWidth();
@@ -271,6 +270,8 @@ public class DataPane extends AbstractPane
             {
                 for(int col = 0; col < columns; col++)
                 {
+                	gc.setFont(fRendering.getFont());
+                	
                 	if(isOdd(col))
                 		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
                 	else
@@ -283,6 +284,8 @@ public class DataPane extends AbstractPane
                     TraditionalMemoryByte bytes[] = fRendering.getBytes(cellAddress,
                         fRendering.getBytesPerColumn());
 
+                    boolean drawBox = false;
+                    
                     if(fRendering.getSelection().isSelected(cellAddress))
                     {
                         gc.setBackground(fRendering.getTraditionalRendering().getColorSelection());
@@ -301,12 +304,19 @@ public class DataPane extends AbstractPane
                         
                         // Allow subclasses to override this method to do their own coloring
                         applyCustomColor(gc, bytes, col);
+                        drawBox = shouldDrawBox(bytes, col);
                     }
 
                     gc.drawText(getCellText(bytes), cellWidth * col
                         + fRendering.getCellPadding(), cellHeight * i
                         + fRendering.getCellPadding());
-
+                    
+                    if(drawBox) 
+                    {
+                    	gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
+                    	gc.drawRectangle(cellWidth * col, cellHeight * i, cellWidth, cellHeight-1);
+                    }
+                    
                     BigInteger cellEndAddress = cellAddress.add(BigInteger
                         .valueOf(fRendering.getAddressesPerColumn()));
                     cellEndAddress = cellEndAddress.subtract(BigInteger
@@ -353,15 +363,18 @@ public class DataPane extends AbstractPane
        		if(bytes[n].isEdited())
        			anyByteEditing = true;
         
-        if(isOdd(col))
-    		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
+        TraditionalRendering ren = fRendering.getTraditionalRendering();
+        
+		if(isOdd(col))
+    		gc.setForeground(ren.getColorText());
     	else
-    		gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
-        gc.setBackground(fRendering.getTraditionalRendering().getColorBackground());
+    		gc.setForeground(ren.getColorTextAlternate());
+        gc.setBackground(ren.getColorBackground());
         
         if(anyByteEditing)
         {
-        	gc.setForeground(fRendering.getTraditionalRendering().getColorEdit());
+        	gc.setForeground(ren.getColorEdit());
+        	gc.setFont(ren.getFontEdit(gc.getFont()));
         }
         else
         {
@@ -373,10 +386,17 @@ public class DataPane extends AbstractPane
 	            {
 	                if(bytes[n].isChanged(i))
 	                {
-	                	if(i == 0)
-	                		gc.setForeground(fRendering.getTraditionalRendering().getColorsChanged()[i]);
-	                	else
-	                		gc.setBackground(fRendering.getTraditionalRendering().getColorsChanged()[i]);
+	                	if(i == 0) 
+	                	{
+	                		gc.setForeground(ren.getColorsChanged()[i]);
+	                		gc.setFont(ren.getFontChanged(gc.getFont()));
+	                	}
+	                	else 
+	                	{
+	                		gc.setBackground(ren.getColorsChanged()[i]);
+	                		gc.setFont(ren.getFontChanged(gc.getFont()));
+	                	}
+	                		
 	                	isColored = true;
 	                	break;
 	                }

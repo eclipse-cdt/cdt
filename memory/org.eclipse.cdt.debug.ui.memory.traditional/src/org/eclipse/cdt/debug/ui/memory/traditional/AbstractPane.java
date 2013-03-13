@@ -837,4 +837,21 @@ public abstract class AbstractPane extends Canvas
         }
         return fTextHeight;
     }
+
+	protected boolean shouldDrawBox(TraditionalMemoryByte bytes[], int col) 
+	{
+		TraditionalRendering ren = fRendering.getTraditionalRendering();
+		if(ren.getBoxEdit())
+			for(TraditionalMemoryByte tmb : bytes)
+				if(tmb.isEdited())
+					return true;
+	    
+	    if(ren.getBoxChanged())
+	    	for(int i = 0; i < fRendering.getHistoryDepth(); i++)
+	    		for(TraditionalMemoryByte tmb : bytes)
+	    			if(tmb.isChanged(i))
+	    				return true;
+	
+	    return false;
+	}
 }

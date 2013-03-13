@@ -242,6 +242,8 @@ public class TextPane extends AbstractPane
             {
                 for(int col = 0; col < columns; col++)
                 {
+                	gc.setFont(fRendering.getFont());
+                	
                 	if(isOdd(col))
                 		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
                 	else
@@ -254,6 +256,8 @@ public class TextPane extends AbstractPane
                     TraditionalMemoryByte bytes[] = fRendering.getBytes(cellAddress,
                         fRendering.getBytesPerColumn());
 
+                    boolean drawBox = false;
+                    
                     if(fRendering.getSelection().isSelected(cellAddress))
                     {
                         gc.setBackground(fRendering.getTraditionalRendering().getColorSelection());
@@ -269,12 +273,20 @@ public class TextPane extends AbstractPane
                             cellWidth, cellHeight);
 
                         applyCustomColor(gc, bytes, col);
+                        drawBox = shouldDrawBox(bytes, col);
                     }
-
+                    
                     gc.drawText(fRendering.formatText(bytes,
                         isLittleEndian, fRendering.getTextMode()), cellWidth * col, cellHeight * i
                         + fRendering.getCellPadding());
 
+                    if(drawBox) 
+                    {
+                    	gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
+                    	gc.drawRectangle(cellWidth * col - (col == 0 ? 0 : 1), 
+                    			cellHeight * i, cellWidth - (col == 0 ? 1 : 0), cellHeight-1);
+                    }
+                    
                     if(fRendering.isDebug())
                         gc.drawRectangle(cellWidth * col, cellHeight * i
                             + fRendering.getCellPadding(), cellWidth,
@@ -300,15 +312,17 @@ public class TextPane extends AbstractPane
         		if(bytes[n].isEdited())
         			anyByteEditing = true;
          
-         if(isOdd(col))
-     		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
+        TraditionalRendering ren = fRendering.getTraditionalRendering();
+		if(isOdd(col))
+     		gc.setForeground(ren.getColorText());
      	else
-     		gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
-         gc.setBackground(fRendering.getTraditionalRendering().getColorBackground());
+     		gc.setForeground(ren.getColorTextAlternate());
+         gc.setBackground(ren.getColorBackground());
          
          if(anyByteEditing)
          {
-         	gc.setForeground(fRendering.getTraditionalRendering().getColorEdit());
+         	gc.setForeground(ren.getColorEdit());
+         	gc.setFont(ren.getFontEdit(gc.getFont()));
          }
          else
          {
@@ -321,9 +335,16 @@ public class TextPane extends AbstractPane
  	                if(bytes[n].isChanged(i))
  	                {
  	                	if(i == 0)
- 	                		gc.setForeground(fRendering.getTraditionalRendering().getColorsChanged()[i]);
+ 	                	{
+ 	                		gc.setForeground(ren.getColorsChanged()[i]);
+ 	                		gc.setFont(ren.getFontChanged(gc.getFont()));
+ 	                	}
  	                	else
- 	                		gc.setBackground(fRendering.getTraditionalRendering().getColorsChanged()[i]);
+ 	                	{
+ 	                		gc.setBackground(ren.getColorsChanged()[i]);
+ 	                		gc.setFont(ren.getFontChanged(gc.getFont()));
+ 	                	}
+ 	                	
  	                	isColored = true;
  	                	break;
  	                }

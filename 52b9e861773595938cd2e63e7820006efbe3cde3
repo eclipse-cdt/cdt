@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//4Oc\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPNestedClassType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-13T17:47:03Z",
+      "side": 1,
+      "message": "Visibility applies to all nested types, not just classes.",
+      "revId": "52b9e861773595938cd2e63e7820006efbe3cde3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

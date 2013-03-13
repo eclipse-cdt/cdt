@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//4Gw\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_edit.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-13T20:34:25Z",
+      "side": 1,
+      "message": "What would happen when the documentation is viewed in an external browser?",
+      "revId": "bae1c53b7156903120f62a9213c727ca28bf3bb6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

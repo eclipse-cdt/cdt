@@ -225,6 +225,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 			provider.execute();
 			assertEquals(true, provider.isExecuted());
+			assertEquals(null, provider.getSettingEntries(null, null, null));
 		}
 	}
 
@@ -307,7 +308,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		// check entries
 		{
 			MockDetectorCloneable clone = provider.clone();
-			clone.setSettingEntries(null, null, null, null);
+			List<ICLanguageSettingEntry> entries2 = new ArrayList<ICLanguageSettingEntry>();
+			entries2.add(new CMacroEntry("MACRO2", "VALUE2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY));
+			clone.setSettingEntries(null, null, null, entries2);
 			assertFalse(provider.equals(clone));
 		}
 

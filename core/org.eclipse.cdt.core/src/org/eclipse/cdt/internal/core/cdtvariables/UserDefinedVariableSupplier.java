@@ -651,10 +651,20 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 //	protected void updateProjectInfo(int type, Object context){
 //	}
 	
+	/**
+	 * Adds a listener that will be notified of changes in Build Variables.
+	 *
+	 * @param listener - the listener to add
+	 */
 	public void addListener(ICdtVariableChangeListener listener){
 		fListeners.add(listener);
 	}
 	
+	/**
+	 * Removes a Build Variables change listener.
+	 *
+	 * @param listener - the listener to remove.
+	 */
 	public void removeListener(ICdtVariableChangeListener listener){
 		fListeners.remove(listener);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2013 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,11 @@
 package org.eclipse.cdt.managedbuilder.internal.language.settings.providers;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
+import org.eclipse.cdt.core.EFSExtensionProvider;
+import org.eclipse.cdt.internal.core.Cygwin;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector;
-import org.eclipse.core.resources.IResource;
 
 /**
  * Class to detect built-in compiler settings for Cygwin toolchain.
@@ -24,14 +25,36 @@ import org.eclipse.core.resources.IResource;
 public class GCCBuiltinSpecsDetectorCygwin extends GCCBuiltinSpecsDetector {
 	// ID must match the tool-chain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
 	private static final String GCC_TOOLCHAIN_ID_CYGWIN = "cdt.managedbuild.toolchain.gnu.cygwin.base";  //$NON-NLS-1$
+	private static final String ENV_PATH = "PATH"; //$NON-NLS-1$
 
-	private static final URI CYGWIN_ROOT;
-	static {
-		try {
-			CYGWIN_ROOT = new URI("cygwin:/"); //$NON-NLS-1$
-		} catch (URISyntaxException e) {
-			// hey we know this URI works
-			throw new IllegalStateException(e);
+	/**
+	 * EFSExtensionProvider for Cygwin translations
+	 */
+	private class CygwinEFSExtensionProvider extends EFSExtensionProvider {
+		private String envPathValue;
+
+		/**
+		 * Constructor.
+		 * @param envPathValue - Value of environment variable $PATH.
+		 */
+		public CygwinEFSExtensionProvider(String envPathValue) {
+			this.envPathValue = envPathValue;
+		}
+
+		@Override
+		public String getMappedPath(URI locationURI) {
+			String windowsPath = null;
+			try {
+				String cygwinPath = getPathFromURI(locationURI);
+				windowsPath = Cygwin.cygwinToWindowsPath(cygwinPath, envPathValue);
+			} catch (Exception e) {
+				ManagedBuilderCorePlugin.log(e);
+			}
+			if (windowsPath != null) {
+				return windowsPath;
+			}
+
+			return super.getMappedPath(locationURI);
 		}
 	}
 
@@ -41,25 +64,9 @@ public class GCCBuiltinSpecsDetectorCygwin extends GCCBuiltinSpecsDetector {
 	}
 
 	@Override
-	protected URI getMappedRootURI(IResource sourceFile, String parsedResourceName) {
-		if (mappedRootURI == null) {
-			mappedRootURI = super.getMappedRootURI(sourceFile, parsedResourceName);
-			if (mappedRootURI == null) {
-				mappedRootURI = CYGWIN_ROOT;
-			}
-		}
-		return mappedRootURI;
-	}
-
-	@Override
-	protected URI getBuildDirURI(URI mappedRootURI) {
-		if (buildDirURI == null) {
-			buildDirURI = super.getBuildDirURI(mappedRootURI);
-			if (buildDirURI == null) {
-				buildDirURI = CYGWIN_ROOT;
-			}
-		}
-		return buildDirURI;
+	protected EFSExtensionProvider getEFSProvider() {
+		String envPathValue = environmentMap != null ? environmentMap.get(ENV_PATH) : null;
+		return new CygwinEFSExtensionProvider(envPathValue);
 	}
 
 	@Override

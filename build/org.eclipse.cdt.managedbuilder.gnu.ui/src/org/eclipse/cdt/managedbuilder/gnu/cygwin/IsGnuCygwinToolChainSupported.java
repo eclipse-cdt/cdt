@@ -12,14 +12,9 @@
 package org.eclipse.cdt.managedbuilder.gnu.cygwin;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
-import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.Cygwin;
-import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableManagerToolChain;
 import org.osgi.framework.Version;
 
@@ -33,16 +28,7 @@ public class IsGnuCygwinToolChainSupported implements IManagedIsToolChainSupport
 
 	@Override
 	public boolean isSupported(IToolChain toolChain, Version version, String instance) {
-		IConfiguration cfg = toolChain.getParent();
-		ICConfigurationDescription cfgDescription = cfg != null ? ManagedBuildManager.getDescriptionForConfiguration(cfg) : null;
-		
-		IEnvironmentVariableManager envMngr;
-		if (cfgDescription != null) {
-			envMngr = EnvironmentVariableManager.getDefault();
-		} else {
-			envMngr = new EnvironmentVariableManagerToolChain(toolChain);
-		}
-		IEnvironmentVariable var = envMngr.getVariable(ENV_PATH, cfgDescription, true);
+		IEnvironmentVariable var = new EnvironmentVariableManagerToolChain(toolChain).getVariable(ENV_PATH, true);
 		String envPath = var != null ? var.getValue() : null;
 		return Cygwin.isAvailable(envPath);
 	}

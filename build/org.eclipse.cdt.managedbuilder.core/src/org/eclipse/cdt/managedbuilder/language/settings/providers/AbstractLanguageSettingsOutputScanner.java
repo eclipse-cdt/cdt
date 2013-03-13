@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2013 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.EFSExtensionProvider;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
@@ -79,6 +80,37 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 	protected String parsedResourceName = null;
 	protected boolean isResolvingPaths = true;
+
+	/** @since 8.2 */
+	protected EFSExtensionProvider efsProvider = null;
+
+	private static final EFSExtensionProvider efsProviderDefault = new EFSExtensionProvider() {
+		final EFSExtensionManager efsManager = EFSExtensionManager.getDefault();
+		@Override
+		public String getPathFromURI(URI locationURI) {
+			return efsManager.getPathFromURI(locationURI);
+		}
+		@Override
+		public URI getLinkedURI(URI locationURI) {
+			return efsManager.getLinkedURI(locationURI);
+		}
+		@Override
+		public URI createNewURIFromPath(URI locationOnSameFilesystem, String path) {
+			return efsManager.createNewURIFromPath(locationOnSameFilesystem, path);
+		}
+		@Override
+		public String getMappedPath(URI locationURI) {
+			return efsManager.getMappedPath(locationURI);
+		}
+		@Override
+		public boolean isVirtual(URI locationURI) {
+			return efsManager.isVirtual(locationURI);
+		}
+		@Override
+		public URI append(URI baseURI, String extension) {
+			return efsManager.append(baseURI, extension);
+		}
+	};
 
 	/**
 	 * Abstract class defining common functionality for option parsers.
@@ -373,6 +405,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		this.currentCfgDescription = cfgDescription;
 		this.currentProject = cfgDescription != null ? cfgDescription.getProjectDescription().getProject() : null;
 		this.cwdTracker = cwdTracker;
+		this.efsProvider = getEFSProvider();
 	}
 
 	@Override
@@ -429,7 +462,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 							if (isResolvingPaths && (optionParser.isForFile() || optionParser.isForFolder())) {
 								URI baseURI = mappedRootURI;
 								if (buildDirURI != null && !new Path(optionParser.parsedName).isAbsolute()) {
-									baseURI = EFSExtensionManager.getDefault().append(mappedRootURI, buildDirURI.getPath());
+									baseURI = efsProvider.append(mappedRootURI, buildDirURI.getPath());
 								}
 								entry = createResolvedPathEntry(optionParser, optionParser.parsedName, 0, baseURI);
 							} else {
@@ -494,7 +527,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			}
 		}
 		// this creates URI with schema and other components from resourceURI but path as mappedRoot
-		URI uri = EFSExtensionManager.getDefault().createNewURIFromPath(resourceURI, mappedRoot);
+		URI uri = efsProvider.createNewURIFromPath(resourceURI, mappedRoot);
 		return uri;
 	}
 
@@ -513,9 +546,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		if (currentResource != null && parsedResourceName != null && !new Path(parsedResourceName).isAbsolute()) {
 			cwdURI = findBaseLocationURI(currentResource.getLocationURI(), parsedResourceName);
 		}
-		String cwdPath = cwdURI != null ? EFSExtensionManager.getDefault().getPathFromURI(cwdURI) : null;
+		String cwdPath = cwdURI != null ? efsProvider.getPathFromURI(cwdURI) : null;
 		if (cwdPath != null && mappedRootURI != null) {
-			buildDirURI = EFSExtensionManager.getDefault().append(mappedRootURI, cwdPath);
+			buildDirURI = efsProvider.append(mappedRootURI, cwdPath);
 		} else {
 			buildDirURI = cwdURI;
 		}
@@ -674,7 +707,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		if (sourceFile == null && cwdTracker != null) {
 			URI cwdURI = cwdTracker.getWorkingDirectoryURI();
 			if (cwdURI != null) {
-				URI uri = EFSExtensionManager.getDefault().append(cwdURI, parsedResourceName);
+				URI uri = efsProvider.append(cwdURI, parsedResourceName);
 				sourceFile = findFileForLocationURI(uri, currentProject);
 			}
 		}
@@ -804,7 +837,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 * @param baseURI - base {@link URI} where path to the resource is rooted
 	 * @return {@link URI} of the resource
 	 */
-	private static URI determineMappedURI(String pathStr, URI baseURI) {
+	private URI determineMappedURI(String pathStr, URI baseURI) {
 		URI uri = null;
 
 		if (baseURI == null) {
@@ -819,9 +852,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		} else {
 			// location on a remote file-system
 			IPath path = new Path(pathStr); // use canonicalized path here, in particular replace all '\' with '/' for Windows paths
-			URI remoteUri = EFSExtensionManager.getDefault().append(baseURI, path.toString());
+			URI remoteUri = efsProvider.append(baseURI, path.toString());
 			if (remoteUri != null) {
-				String localPath = EFSExtensionManager.getDefault().getMappedPath(remoteUri);
+				String localPath = efsProvider.getMappedPath(remoteUri);
 				if (localPath != null) {
 					uri = org.eclipse.core.filesystem.URIUtil.toURI(localPath);
 				}
@@ -929,13 +962,13 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * Get location on the local file-system considering possible mapping by {@link EFSExtensionManager}.
+	 * Get location on the local file-system considering possible mapping by EFS provider. See {@link EFSExtensionManager}.
 	 */
-	private static IPath getFilesystemLocation(URI uri) {
+	private IPath getFilesystemLocation(URI uri) {
 		if (uri == null)
 			return null;
 
-		String pathStr = EFSExtensionManager.getDefault().getMappedPath(uri);
+		String pathStr = efsProvider.getMappedPath(uri);
 		uri = org.eclipse.core.filesystem.URIUtil.toURI(pathStr);
 
 		if (uri != null && uri.isAbsolute()) {
@@ -1064,6 +1097,20 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		String pattern = expressionLogicalOr(fileExts);
 
 		return pattern;
+	}
+	
+	/**
+	 * This {@link EFSExtensionProvider} is capable to translate EFS paths to and from local
+	 * file-system. Added mostly for Cygwin translations.
+	 * 
+	 * This usage of {@link EFSExtensionProvider} is somewhat a misnomer. This provider is not
+	 * an "extension" provider but rather a wrapper on {@link EFSExtensionManager} which in fact
+	 * will use genuine {@link EFSExtensionProvider}s defined as extensions.
+	 *
+	 * @since 8.2
+	 */
+	protected EFSExtensionProvider getEFSProvider() {
+		return efsProviderDefault;
 	}
 
 	@Override

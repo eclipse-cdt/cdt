@@ -12,6 +12,9 @@ package org.eclipse.cdt.internal.core.cdtvariables;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 
+/**
+ * Event describing Build Variables changes.
+ */
 public class VariableChangeEvent {
 	private static final ICdtVariable[] EMPTY_VAR_ARRAY = new ICdtVariable[0];
 	

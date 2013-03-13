@@ -12,11 +12,13 @@ package org.eclipse.cdt.managedbuilder.internal.envvar;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
 import org.eclipse.cdt.internal.core.cdtvariables.ICoreVariableContextInfo;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.envvar.ICoreEnvironmentVariableSupplier;
 import org.eclipse.cdt.internal.core.envvar.IEnvironmentContextInfo;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
@@ -27,14 +29,17 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 /**
  * Helper class to resolve environment variables directly from toolchain. The intention is
  * to use that in New Project Wizard and other scenarios when no configuration is available yet.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class EnvironmentVariableManagerToolChain extends EnvironmentVariableManager {
 	private final IToolChain toolChain;
+	private final ICConfigurationDescription cfgDescription;
 
 	public EnvironmentVariableManagerToolChain(IToolChain toolchain) {
 		this.toolChain = toolchain;
+		IConfiguration cfg = toolChain.getParent();
+		cfgDescription = cfg != null ? ManagedBuildManager.getDescriptionForConfiguration(cfg) : null;
 	}
 
 	/**
@@ -154,6 +159,11 @@ public class EnvironmentVariableManagerToolChain extends EnvironmentVariableMana
 	 */
 	@Override
 	public IEnvironmentContextInfo getContextInfo(Object level) {
+		if (cfgDescription != null) {
+			// Use regular EnvironmentVariableManager when configuration is available
+			return super.getContextInfo(level);
+		}
+
 		return new ToolChainEnvironmentContextInfo(toolChain);
 	}
 
@@ -162,7 +172,15 @@ public class EnvironmentVariableManagerToolChain extends EnvironmentVariableMana
 	 */
 	@Override
 	public ICoreVariableContextInfo getMacroContextInfoForContext(Object context) {
+		if (cfgDescription != null) {
+			// Use regular EnvironmentVariableManager when configuration is available
+			return super.getMacroContextInfoForContext(context);
+		}
+
 		return new ToolChainCoreVariableContextInfo(toolChain);
 	}
 
+	public IEnvironmentVariable getVariable(String variableName, boolean resolveMacros) {
+		return getVariable(variableName, cfgDescription, resolveMacros);
+	}
 }

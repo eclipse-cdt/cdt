@@ -3737,6 +3737,7 @@ public class CPPSemantics {
 		LookupData data = new LookupData(unknownName, null, point);
 		data.setIgnorePointOfDeclaration(true);
 		data.typesOnly= unknown instanceof IType;
+		data.qualified= true;
 
 		try {
             // 2: Lookup

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//3w8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-03-14T22:14:18Z",
+      "side": 1,
+      "message": "Wouldn\u0027t it be better to log the error?",
+      "revId": "e42a08d459499a7eee0d81dd4e94c093b1e6758c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//3w4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-03-14T22:14:18Z",
+      "side": 1,
+      "message": "Same as above.",
+      "revId": "e42a08d459499a7eee0d81dd4e94c093b1e6758c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

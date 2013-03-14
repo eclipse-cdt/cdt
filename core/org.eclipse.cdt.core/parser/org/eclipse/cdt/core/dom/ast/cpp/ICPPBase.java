@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -24,7 +24,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPBase extends Cloneable {
-	public static final ICPPBase[] EMPTY_BASE_ARRAY = new ICPPBase[0];
+	public static final ICPPBase[] EMPTY_BASE_ARRAY = {};
 
 	public static final int v_private = ICPPASTBaseSpecifier.v_private;
 	public static final int v_protected = ICPPASTBaseSpecifier.v_protected;

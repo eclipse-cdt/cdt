@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,6 +52,7 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
+import org.eclipse.cdt.internal.core.dom.ast.ASTChildProviderManager;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.FileContentKey;
@@ -431,6 +433,11 @@ abstract public class PDOMWriter {
 					}
 				}
 
+				// visit the name's contributed children too
+				for (IASTNode child : ASTChildProviderManager.getInstance().getChildren(name))
+					if (child instanceof IASTName)
+						visit((IASTName) child, null);
+
 				// Assign a location to anonymous types.
 				name= PDOMASTAdapter.getAdapterIfAnonymous(name);
 				if (name != null) {
@@ -448,7 +455,18 @@ abstract public class PDOMWriter {
 			LocationMap lm= (LocationMap) ast.getAdapter(LocationMap.class);
 			if (lm != null) {
 				IASTName[] refs= lm.getMacroReferences();
+
+				// build a collection of all names and their children
+				List<IASTName> names = new LinkedList<IASTName>();
 				for (IASTName name : refs) {
+					names.add(name);
+					for (IASTNode child : name.getChildren())
+						if (!(child instanceof IASTName))
+							names.add((IASTName) child);
+				}
+
+				// put all names into the map for storage to the pdom
+				for (IASTName name : names) {
 					IASTFileLocation nameLoc = name.getFileLocation();
 					if (nameLoc != null) {
 						IASTPreprocessorIncludeStatement owner= nameLoc.getContextInclusionStatement();

@@ -66,4 +66,22 @@
             </enablement>
         </bindingTagger>            
     </extension>
+    <extension
+        point="org.eclipse.cdt.core.astChildProvider"
+        id="qt.signalslots.nameProvider"
+        name="Qt Signal/Slot Name Provider">
+        <childProvider
+            class="org.eclipse.cdt.qt.internal.core.QtSignalSlotNameProvider">
+            <enablement>
+                <with variable="projectNatures">
+                    <iterate operator="or">
+                        <equals value="org.eclipse.cdt.qt.core.qtNature"/>
+                    </iterate>
+                </with>
+                <with variable="name">
+                    <equals value="connect"/>
+                </with>
+            </enablement>
+        </childProvider>            
+    </extension>
 </plugin>

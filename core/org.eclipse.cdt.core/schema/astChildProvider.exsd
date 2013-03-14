@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.core" id="astChildProvider" name="AST Child Provider"/>
+      </appInfo>
+      <documentation>
+         This extension point allows extensions to contribute extra children to nodes in the AST.
+      </documentation>
+   </annotation>
+
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="childProvider" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="childProvider">
+      <complexType>
+         <sequence>
+            <element ref="enablement"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.dom.ast.IASTChildProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         5.5
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a Tagger contribution:
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.cdt.core.astChildProvider&quot;&gt;
+    &lt;childProvider
+        class=&quot;com.example.internal.ASTChildProvider&quot;&gt;
+        &lt;enablement&gt;
+            &lt;with variable=&quot;projectNatures&quot;&gt;
+                &lt;iterate operator=&quot;or&quot;&gt;
+                    &lt;equals value=&quot;com.example.my-nature&quot;/&gt;
+                &lt;/iterate&gt;
+            &lt;/with&gt;
+            &lt;with variable=&quot;parent&quot;&gt;
+    			&lt;instanceof value=&quot;org.eclipse.cdt.core.dom.ast.ISomeNode&quot;/&gt;
+            &lt;/with&gt;
+        &lt;/enablement&gt;
+    &lt;/childProvider&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The contributed class must implement &lt;code&gt;org.eclipse.cdt.core.dom.ast.IASTChildProvider&lt;/code&gt;.
+&lt;p&gt;
+The variables that are accessible during evaluation of the enablement expression are:
+
+&lt;li&gt;languageId: (optional) The language id specified for the orginating translation unit.  This will be the empty string when the originating translation unit cannot be found.&lt;/li&gt;
+&lt;li&gt;parent: (optional) The result of calling &lt;code&gt;IASTNode.getParent()&lt;/code&gt; on the target node.&lt;/li&gt;
+&lt;li&gt;projectNatures: (optional) A collection of the natures specified on the target project.  Will be empty when the target project cannot be found.&lt;/li&gt;
+&lt;li&gt;name: (optional) When the target is an instance of IASTName, this varianble holds a String with the result of calling &lt;code&gt;IASTName.getSimpleID&lt;/code&gt; on the target node.  Will be an empty String otherwise.&lt;/li&gt;
+      </documentation>
+   </annotation>
+
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2013 QNX Software Systems and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+      </documentation>
+   </annotation>
+
+</schema>

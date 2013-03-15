@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//3hs\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 527,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-15T18:57:30Z",
+      "side": 1,
+      "message": "Space is missing between if and the opening parenthesis.",
+      "revId": "015aa88bcdebf3977d86b46b0f4e0da7c52ac58b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//3ho\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/dialogs/IndexerBlock.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-15T18:57:30Z",
+      "side": 1,
+      "message": "Closing } and else should be on the same line.",
+      "revId": "015aa88bcdebf3977d86b46b0f4e0da7c52ac58b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -37,25 +37,25 @@ public interface IASTFileLocation extends IASTNodeLocation {
 	public int getNodeLength();
 
     /**
-     * Get the starting line number. Locations obtained via the index do not have line numbers
-     * and return <code>0</code>.
+     * Returns the starting line number. Locations obtained via the index do not have line numbers
+     * and return {@code 0}.
      * 
-     * @return int representing line number or <code>0</code> if not applicable
+     * @return the 1-based line number, or {@code 0} if not applicable
      */
     public int getStartingLineNumber();
     
     /**
-     * Get the ending line number. Locations obtained via the index do not have line numbers
-     * and return <code>0</code>.
+     * Returns the ending line number. Locations obtained via the index do not have line numbers
+     * and return {@code 0}.
      * 
-     * @return int representing line number or <code>0</code> if not applicable
+     * @return the 1-based line number, or {@code 0} if not applicable
      */
     public int getEndingLineNumber();
 
 	/**
 	 * Returns the inclusion statement that included this file, or <code>null</code> for
 	 * a top-level file.
-	 * Also <code>null</code> when the file location does not belong to an AST node, e.g.
+	 * Also {@code null} when the file location does not belong to an AST node, e.g.
 	 * if it is obtained from a name in the index.
 	 * @since 5.4
 	 */

@@ -771,11 +771,6 @@ public class Scribe {
 			printComment();
 			currentPosition= scanner.getCurrentPosition();
 		}
-		if (pendingSpace) {
-			addInsertEdit(currentPosition, SPACE);
-			pendingSpace= false;
-			needSpace= false;
-		}
 		if (startOffset + length < currentPosition) {
 			return;  // Don't move backwards
 		}

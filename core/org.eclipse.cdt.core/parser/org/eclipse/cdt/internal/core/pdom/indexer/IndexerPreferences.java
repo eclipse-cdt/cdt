@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,8 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *     Anton Gorenkov - Enable the "Index unused headers" preference by default (Bug 377992)     
+ *     Anton Gorenkov - Enable the "Index unused headers" preference by default (Bug 377992)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
@@ -61,13 +62,15 @@ public class IndexerPreferences {
 	private static final String KEY_INDEXER_PREFS_SCOPE = "preferenceScope"; //$NON-NLS-1$
 	private static final String KEY_INDEX_IMPORT_LOCATION = "indexImportLocation"; //$NON-NLS-1$
 
+	public static final String KEY_REINDEX_ON_CONFIG_CHANGE = "reindexOnConfigChange"; //$NON-NLS-1$
+	public static final String KEY_REINDEX_ON_INDEXER_CHANGE = "reindexOnIndexerChange"; //$NON-NLS-1$
+
 	private static final String DEFAULT_INDEX_IMPORT_LOCATION = ".settings/cdt-index.zip"; //$NON-NLS-1$
 	private static final int DEFAULT_UPDATE_POLICY= 0;
 	public static final int DEFAULT_FILE_SIZE_LIMIT = 8;
 
 	private static final String QUALIFIER = CCorePlugin.PLUGIN_ID;
 	private static final String INDEXER_NODE = "indexer"; //$NON-NLS-1$
-
 
 	/**
 	 * Returns the scope that is selected for the project.
@@ -387,7 +390,6 @@ public class IndexerPreferences {
 	public static void setIndexImportLocation(IProject project, String location) {
 		if (!location.equals(getIndexImportLocation(project))) {
 			getProjectPreferences(project).put(KEY_INDEX_IMPORT_LOCATION, location);
-			CCoreInternals.savePreferences(project, true);
 		}
 	}
 
@@ -433,5 +435,25 @@ public class IndexerPreferences {
 			return false;
 		}
 		return true;
+	}
+
+	public static void setReindexOnConfigChange(IProject project, boolean shouldReindexOnConfigChange) {
+		if (shouldReindexOnConfigChange != getReindexOnConfigChange(project)) {
+			getProjectPreferences(project).putBoolean(KEY_REINDEX_ON_CONFIG_CHANGE, shouldReindexOnConfigChange);
+		}
+	}
+
+	public static boolean getReindexOnConfigChange(IProject project) {
+		return getProjectPreferences(project).getBoolean(KEY_REINDEX_ON_CONFIG_CHANGE, true);
+	}
+
+	public static void setReindexOnIndexerChange(IProject project, boolean shouldReindexOnIndexerChange) {
+		if (shouldReindexOnIndexerChange != getReindexOnIndexerChange(project)) {
+			getProjectPreferences(project).putBoolean(KEY_REINDEX_ON_INDEXER_CHANGE, shouldReindexOnIndexerChange);
+		}
+	}
+
+	public static boolean getReindexOnIndexerChange(IProject project) {
+		return getProjectPreferences(project).getBoolean(KEY_REINDEX_ON_INDEXER_CHANGE, true);
 	}
 }

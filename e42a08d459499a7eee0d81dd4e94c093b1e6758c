@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//3v8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-03-15T00:06:51Z",
+      "side": 1,
+      "message": "It\u0027s logged in the \u0027gdb traces\u0027 console, and since it is not a problem, I\u0027m hesitant to worry the user further.  Unless the log actually says \"this is just a warning\" or something.\n\nWhat do you think?",
+      "parentUuid": "AABOPX//3w8\u003d",
+      "revId": "e42a08d459499a7eee0d81dd4e94c093b1e6758c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//3w4\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
         "patchSetId": 1

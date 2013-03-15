@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Andrew Gvozdev and others.
+ * Copyright (c) 2010, 2013 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
- package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
+package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -18,7 +18,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
+import org.eclipse.cdt.core.envvar.IContributedEnvironment;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -34,7 +41,11 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.XmlUtil;
+import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
+import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
+import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -54,15 +65,18 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	private static final String CUSTOM_COMMAND_1 = "echo 1";
 	private static final String CUSTOM_COMMAND_2 = "echo 2";
 	private static final String ELEM_TEST = "test";
+	private static final String ENV_SAMPLE = "SAMPLE";
+	private static final String ENV_SAMPLE_VALUE_1 = "Sample Value 1";
+	private static final String ENV_SAMPLE_VALUE_2 = "Sample Value 2";
 
 	// those attributes must match that in AbstractBuiltinSpecsDetector
 	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
 	private static final String ATTR_CONSOLE = "console"; //$NON-NLS-1$
 
 	/**
-	 * Mock built-in specs detector to test basic functionality of {@link AbstractBuiltinSpecsDetector}.
+	 * Dummy to keep boilerplate code.
 	 */
-	private class MockBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector {
+	private class DummyBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector {
 		@Override
 		protected List<String> parseOptions(String line) {
 			return null;
@@ -75,7 +89,12 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		protected String getCompilerCommand(String languageId) {
 			return null;
 		}
+	}
 
+	/**
+	 * Mock built-in specs detector to test basic functionality of {@link AbstractBuiltinSpecsDetector}.
+	 */
+	private class MockBuiltinSpecsDetector extends DummyBuiltinSpecsDetector {
 		@Override
 		protected void startupForLanguage(String languageId) throws CoreException {
 			super.startupForLanguage(languageId);
@@ -89,20 +108,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Mock built-in specs detector to test execute() functionality.
 	 */
-	private class MockBuiltinSpecsDetectorExecutedFlag extends AbstractBuiltinSpecsDetector {
-		@Override
-		protected List<String> parseOptions(String line) {
-			return null;
-		}
-		@Override
-		protected AbstractOptionParser[] getOptionParsers() {
-			return null;
-		}
-		@Override
-		protected String getCompilerCommand(String languageId) {
-			return null;
-		}
-
+	private class MockBuiltinSpecsDetectorExecutedFlag extends DummyBuiltinSpecsDetector {
 		@Override
 		protected void execute() {
 			super.execute();
@@ -113,6 +119,42 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		}
 		protected boolean isExecuted() {
 			return isExecuted;
+		}
+	}
+
+	/**
+	 * Mock built-in specs detector to test environment change functionality.
+	 */
+	private class MockBuiltinSpecsDetectorEnvironmentChangeListener extends DummyBuiltinSpecsDetector {
+		private String sampleEnvVarValue = null;
+
+		@Override
+		protected boolean validateEnvironment() {
+			return false;
+		}
+		@Override
+		protected void execute() {
+			super.execute();
+			sampleEnvVarValue = environmentMap.get(ENV_SAMPLE);
+		}
+		@Override
+		public MockBuiltinSpecsDetectorEnvironmentChangeListener cloneShallow() throws CloneNotSupportedException {
+			MockBuiltinSpecsDetectorEnvironmentChangeListener clone = (MockBuiltinSpecsDetectorEnvironmentChangeListener) super.cloneShallow();
+			clone.sampleEnvVarValue = sampleEnvVarValue;
+			return clone;
+		}
+		@Override
+		public MockBuiltinSpecsDetectorEnvironmentChangeListener clone() throws CloneNotSupportedException {
+			MockBuiltinSpecsDetectorEnvironmentChangeListener clone = (MockBuiltinSpecsDetectorEnvironmentChangeListener) super.clone();
+			clone.sampleEnvVarValue = sampleEnvVarValue;
+			return clone;
+		}
+
+		protected boolean isExecuted() {
+			return isExecuted;
+		}
+		public String getSampleEnvVar() {
+			return sampleEnvVarValue;
 		}
 	}
 
@@ -506,6 +548,260 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, null, LANGUAGE_ID);
 		ICLanguageSettingEntry expected = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 		assertEquals(expected, entries.get(0));
+	}
+
+	/**
+	 * Test environment changes for provider registered to configuration.
+	 */
+	public void testAbstractBuiltinSpecsDetector_EnvChangesConfiguration_1() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+
+		// Create provider
+		MockBuiltinSpecsDetectorEnvironmentChangeListener provider = new MockBuiltinSpecsDetectorEnvironmentChangeListener();
+		// register environment listener on configuration - note that provider is not included in the configuration
+		provider.registerListener(cfgDescription);
+		try {
+			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
+		} catch (Exception e) {
+		}
+		assertEquals(true, provider.isExecuted());
+		assertEquals(null, provider.getSampleEnvVar());
+		// unset "isExecuted" flag
+		provider.clear();
+		assertEquals(false, provider.isExecuted());
+		assertEquals(null, provider.getSampleEnvVar());
+
+		// Set an environment variable to the configuration
+		{
+			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
+			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
+			// create and set sample environment variable in the configuration
+			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+			IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
+
+			// Set an environment variable
+			IEnvironmentVariable var = new EnvironmentVariable(ENV_SAMPLE, ENV_SAMPLE_VALUE_1);
+			contribEnv.addVariable(var, cfgDescriptionWritable);
+			assertEquals(var, envManager.getVariable(ENV_SAMPLE, cfgDescriptionWritable, true));
+
+			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
+		}
+
+		try {
+			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
+		} catch (Exception e) {
+		}
+		// check if provider got executed with new value
+		assertEquals(true, provider.isExecuted());
+		assertEquals(ENV_SAMPLE_VALUE_1, provider.getSampleEnvVar());
+
+		// Repeat one more time with different value of environment variable
+
+		// unset "isExecuted" flag
+		provider.clear();
+		assertEquals(false, provider.isExecuted());
+		assertEquals(ENV_SAMPLE_VALUE_1, provider.getSampleEnvVar());
+
+		// Set an environment variable to the configuration
+		{
+			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
+			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
+			// create and set sample environment variable in the configuration
+			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+			IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
+
+			// Set an environment variable
+			IEnvironmentVariable var = new EnvironmentVariable(ENV_SAMPLE, ENV_SAMPLE_VALUE_2);
+			contribEnv.addVariable(var, cfgDescriptionWritable);
+			assertEquals(var, envManager.getVariable(ENV_SAMPLE, cfgDescriptionWritable, true));
+
+			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
+		}
+
+		try {
+			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
+		} catch (Exception e) {
+		}
+		// check if provider got executed with new value
+		assertEquals(true, provider.isExecuted());
+		assertEquals(ENV_SAMPLE_VALUE_2, provider.getSampleEnvVar());
+
+		// unregister listeners
+		provider.unregisterListener();
+	}
+
+	/**
+	 * Test running on environment changes as provider assigned to a configuration.
+	 */
+	public void testAbstractBuiltinSpecsDetector_EnvChangesConfiguration_2() throws Exception {
+		// Create a project with one configuration
+		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
+
+		// Assign a provider to configuration
+		{
+			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
+			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
+			// Create provider
+			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = new MockBuiltinSpecsDetectorEnvironmentChangeListener();
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			providers.add(provider);
+			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
+			// Write to project description
+			CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescriptionWritable);
+
+			try {
+				Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
+			} catch (Exception e) {
+			}
+			// Check that provider got executed
+			assertEquals(true, provider.isExecuted());
+			assertEquals(null, provider.getSampleEnvVar());
+		}
+
+		// Set environment variable to the configuration
+		{
+			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
+			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
+			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+			IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
+
+			// Set an environment variable
+			IEnvironmentVariable var = new EnvironmentVariable(ENV_SAMPLE, ENV_SAMPLE_VALUE_1);
+			contribEnv.addVariable(var, cfgDescriptionWritable);
+			assertEquals(var, envManager.getVariable(ENV_SAMPLE, cfgDescriptionWritable, true));
+
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).getLanguageSettingProviders();
+			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers.get(0);
+			// unset "isExecuted" flag
+			provider.clear();
+			assertEquals(false, provider.isExecuted());
+			assertEquals(null, provider.getSampleEnvVar());
+
+			// Save project description including saving environment to the configuration 
+			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
+		}
+		try {
+			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
+		} catch (Exception e) {
+		}
+
+		// Check if the provider got executed
+		{
+			// check if environment variable got there
+			ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, false);
+			ICConfigurationDescription cfgDescription = prjDescription.getActiveConfiguration();
+			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+			IEnvironmentVariable var = envManager.getVariable(ENV_SAMPLE, cfgDescription, true);
+			assertNotNull(var);
+			assertEquals(ENV_SAMPLE_VALUE_1, var.getValue());
+
+			// check if provider got executed with new value
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers.get(0);
+			assertEquals(true, provider.isExecuted());
+			assertEquals(ENV_SAMPLE_VALUE_1, provider.getSampleEnvVar());
+		}
+
+		// Repeat one more time with different value of environment variable
+		// Set another environment variable to the configuration
+		{
+			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
+			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
+			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+			IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
+
+			// Set an environment variable
+			IEnvironmentVariable var = new EnvironmentVariable(ENV_SAMPLE, ENV_SAMPLE_VALUE_2);
+			contribEnv.addVariable(var, cfgDescriptionWritable);
+			assertEquals(var, envManager.getVariable(ENV_SAMPLE, cfgDescriptionWritable, true));
+
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).getLanguageSettingProviders();
+			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers.get(0);
+			// unset "isExecuted" flag
+			provider.clear();
+			assertEquals(false, provider.isExecuted());
+			assertEquals(ENV_SAMPLE_VALUE_1, provider.getSampleEnvVar());
+
+			// Save project description including saving environment to the configuration 
+			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
+		}
+		try {
+			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
+		} catch (Exception e) {
+		}
+
+		// Check if the provider got executed
+		{
+			// check if environment variable got there
+			ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, false);
+			ICConfigurationDescription cfgDescription = prjDescription.getActiveConfiguration();
+			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+			IEnvironmentVariable var = envManager.getVariable(ENV_SAMPLE, cfgDescription, true);
+			assertNotNull(var);
+			assertEquals(ENV_SAMPLE_VALUE_2, var.getValue());
+
+			// check if provider got executed with new value
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers.get(0);
+			assertEquals(true, provider.isExecuted());
+			assertEquals(ENV_SAMPLE_VALUE_2, provider.getSampleEnvVar());
+		}
+	}
+
+	/**
+	 * Test running on environment changes as global provider on workspace level.
+	 */
+	public void testAbstractBuiltinSpecsDetector_EnvChangesGlobal() throws Exception {
+		// Create provider
+		MockBuiltinSpecsDetectorEnvironmentChangeListener provider = new MockBuiltinSpecsDetectorEnvironmentChangeListener();
+		// register environment listener on workspace
+		provider.registerListener(null);
+		try {
+			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
+		} catch (Exception e) {
+		}
+		assertEquals(true, provider.isExecuted());
+		assertEquals(null, provider.getSampleEnvVar());
+		// unset "isExecuted" flag
+		provider.clear();
+		assertEquals(false, provider.isExecuted());
+		assertEquals(null, provider.getSampleEnvVar());
+
+		// create and set sample environment variable in the workspace
+		UserDefinedEnvironmentSupplier fUserSupplier = EnvironmentVariableManager.fUserSupplier;
+		StorableEnvironment vars = fUserSupplier.getWorkspaceEnvironmentCopy();
+		vars.createVariable(ENV_SAMPLE, ENV_SAMPLE_VALUE_1);
+		fUserSupplier.setWorkspaceEnvironment(vars);
+
+		try {
+			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
+		} catch (Exception e) {
+		}
+
+		// check if provider got executed with new value
+		assertEquals(true, provider.isExecuted());
+		assertEquals(ENV_SAMPLE_VALUE_1, provider.getSampleEnvVar());
+
+		provider.clear();
+		// create and set sample environment variable in the workspace
+		vars.deleteAll();
+		vars.createVariable(ENV_SAMPLE, ENV_SAMPLE_VALUE_2);
+		fUserSupplier.setWorkspaceEnvironment(vars);
+
+		try {
+			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
+		} catch (Exception e) {
+		}
+		// check if provider got executed with new value
+		assertEquals(true, provider.isExecuted());
+		assertEquals(ENV_SAMPLE_VALUE_2, provider.getSampleEnvVar());
+
+		// unregister listeners
+		provider.unregisterListener();
 	}
 
 	/**

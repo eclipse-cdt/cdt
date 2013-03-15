@@ -46,9 +46,12 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.BuildRunnerHelper;
 import org.eclipse.cdt.internal.core.XmlUtil;
+import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.utils.CommandLineUtil;
+import org.eclipse.cdt.utils.envvar.IEnvironmentChangeEvent;
+import org.eclipse.cdt.utils.envvar.IEnvironmentChangeListener;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -83,7 +86,9 @@ import org.w3c.dom.Element;
  *
  * @since 8.1
  */
-public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSettingsOutputScanner implements ICListenerAgent {
+public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSettingsOutputScanner
+		implements ICListenerAgent, IEnvironmentChangeListener {
+
 	public static final String JOB_FAMILY_BUILTIN_SPECS_DETECTOR = "org.eclipse.cdt.managedbuilder.AbstractBuiltinSpecsDetector"; //$NON-NLS-1$
 
 	protected static final String COMPILER_MACRO = "${COMMAND}"; //$NON-NLS-1$
@@ -345,11 +350,21 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	@Override
 	public void registerListener(ICConfigurationDescription cfgDescription) {
 		currentCfgDescription = cfgDescription;
+		EnvironmentVariableManager.fUserSupplier.registerEnvironmentChangeListener(this);
+
 		execute();
 	}
 
 	@Override
 	public void unregisterListener() {
+		EnvironmentVariableManager.fUserSupplier.unregisterEnvironmentChangeListener(this);
+	}
+
+	/** @since 8.2 */
+	@Override
+	public void handleEvent(IEnvironmentChangeEvent event) {
+		// here comes workspace environment change
+		execute();
 	}
 
 	@Override

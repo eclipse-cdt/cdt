@@ -965,13 +965,15 @@ public class IncludeOrganizer {
 						break;
 					}
 				}
-				IPath header = fHeaderChooser.chooseHeader(request.getBinding().getName(), candidatePaths);
-				if (header == null)
-					throw new OperationCanceledException();
-
-				request.resolve(header);
-				if (!fContext.isAlreadyIncluded(header))
-					fContext.addHeaderToInclude(header);
+				if (!request.isResolved()) {
+					IPath header = fHeaderChooser.chooseHeader(request.getBinding().getName(), candidatePaths);
+					if (header == null)
+						throw new OperationCanceledException();
+	
+					request.resolve(header);
+					if (!fContext.isAlreadyIncluded(header))
+						fContext.addHeaderToInclude(header);
+				}
 			}
 		}
 	}

@@ -103,6 +103,8 @@ public class IncludeOrganizer {
 
 		/** Initializes an include prototype for a new include */
 		IncludePrototype(IPath header, IncludeInfo includeInfo, IncludeGroupStyle style) {
+			if (includeInfo == null)
+				throw new NullPointerException();
 			this.header = header;
 			this.includeInfo = includeInfo;
 			this.style = style;
@@ -115,6 +117,8 @@ public class IncludeOrganizer {
 		 */
 		IncludePrototype(IASTPreprocessorIncludeStatement include, IPath header,
 				IncludeInfo includeInfo, IncludeGroupStyle style) {
+			if (includeInfo == null)
+				throw new NullPointerException();
 			this.existingInclude = include;
 			this.header = header;
 			this.includeInfo = includeInfo;
@@ -146,10 +150,6 @@ public class IncludeOrganizer {
 				return header.equals(other.header);  // includeInfo is ignored if header is not null
 			if (other.header != null)
 				return false;
-			if (includeInfo == null) {
-				if (other.includeInfo != null)
-					return false;
-			}
 			return includeInfo.equals(other.includeInfo);
 		}
 

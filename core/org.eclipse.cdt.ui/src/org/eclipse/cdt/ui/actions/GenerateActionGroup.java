@@ -160,7 +160,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		editor.setAction("AddIncludeOnSelection", fAddInclude); //$NON-NLS-1$
 
 		fOrganizeIncludes= new OrganizeIncludesAction(editor);
-		// TODO: fOrganizeIncludes.setActionDefinitionId(ICEditorActionDefinitionIds.ORGANIZE_INCLUDES);
+		fOrganizeIncludes.setActionDefinitionId(ICEditorActionDefinitionIds.ORGANIZE_INCLUDES);
 		editor.setAction("OrganizeIncludes", fOrganizeIncludes); //$NON-NLS-1$
 
 //		fSortMembers= new SortMembersAction(editor);

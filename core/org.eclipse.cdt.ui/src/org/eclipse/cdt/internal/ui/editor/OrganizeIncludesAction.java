@@ -7,12 +7,25 @@
  *
  * Contributors:
  *     Mathias Kunter - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.TextEdit;
+import org.eclipse.text.undo.DocumentUndoManagerRegistry;
+import org.eclipse.text.undo.IDocumentUndoManager;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
@@ -25,7 +38,9 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.SharedASTJob;
 
+import org.eclipse.cdt.internal.ui.BusyCursorJobRunner;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeOrganizer;
 
 /**
@@ -37,9 +52,84 @@ public class OrganizeIncludesAction extends TextEditorAction {
 	 * @param editor The editor on which this organize includes action should operate.
 	 */
 	public OrganizeIncludesAction(ITextEditor editor) {
-		// TODO Fix ID's
 		super(CEditorMessages.getBundleForConstructedKeys(), "OrganizeIncludes.", editor); //$NON-NLS-1$
-		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.ADD_INCLUDE_ON_SELECTION_ACTION);
+		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.ORGANIZE_INCLUDES_ACTION);
+	}
+
+	@Override
+	public void run() {
+		final ITextEditor editor = getTextEditor();
+		final ITranslationUnit tu = getTranslationUnit(editor);
+		if (tu == null) {
+			return;
+		}
+		if (!validateEditorInputState()) {
+			return;
+		}
+
+		final IHeaderChooser headerChooser = new InteractiveHeaderChooser(editor.getSite().getShell());
+		final String lineDelimiter = getLineDelimiter(editor);
+		final List<TextEdit> edits = new ArrayList<TextEdit>();
+		SharedASTJob job = new SharedASTJob(CEditorMessages.OrganizeIncludes_action, tu) {
+			@Override
+			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
+				IIndex index= CCorePlugin.getIndexManager().getIndex(tu.getCProject(),
+						IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT);
+				try {
+					index.acquireReadLock();
+					IncludeOrganizer organizer = new IncludeOrganizer(tu, index, lineDelimiter, headerChooser);
+					edits.addAll(organizer.organizeIncludes(ast));
+					return Status.OK_STATUS;
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				} finally {
+					index.releaseReadLock();
+				}
+			}
+		};
+		IStatus status = BusyCursorJobRunner.execute(job);
+		if (status.isOK()) {
+			if (!edits.isEmpty()) {
+				// Apply text edits.
+				MultiTextEdit edit = new MultiTextEdit();
+				edit.addChildren(edits.toArray(new TextEdit[edits.size()]));
+				IEditorInput editorInput = editor.getEditorInput();
+				IDocument document = editor.getDocumentProvider().getDocument(editorInput);
+				IDocumentUndoManager manager= DocumentUndoManagerRegistry.getDocumentUndoManager(document);
+				manager.beginCompoundChange();
+				try {
+					edit.apply(document);
+				} catch (MalformedTreeException e) {
+					CUIPlugin.log(e);
+				} catch (BadLocationException e) {
+					CUIPlugin.log(e);
+				}
+				manager.endCompoundChange();
+			}
+		} else if (status.matches(IStatus.ERROR)) {
+			ErrorDialog.openError(editor.getEditorSite().getShell(),
+					CEditorMessages.OrganizeIncludes_error_title,
+					CEditorMessages.OrganizeIncludes_insertion_failed, status);
+		}
+	}
+
+	private static String getLineDelimiter(ITextEditor editor) {
+		try {
+			IEditorInput editorInput = editor.getEditorInput();
+			IDocument document = editor.getDocumentProvider().getDocument(editorInput);
+			String delim= document.getLineDelimiter(0);
+			if (delim != null) {
+				return delim;
+			}
+		} catch (BadLocationException e) {
+		}
+		return System.getProperty("line.separator", "\n");  //$NON-NLS-1$//$NON-NLS-2$
+	}
+
+	@Override
+	public void update() {
+		ITextEditor editor = getTextEditor();
+		setEnabled(editor != null && getTranslationUnit(editor) != null);
 	}
 
 	/**
@@ -52,47 +142,5 @@ public class OrganizeIncludesAction extends TextEditorAction {
 			return null;
 		}
 		return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
-	}
-
-	@Override
-	public void run() {
-		final ITextEditor editor = getTextEditor();
-		final ITranslationUnit tu = getTranslationUnit(editor);
-		if (tu == null) {
-			return;
-		}
-		try {
-			if (!validateEditorInputState()) {
-				return;
-			}
-
-			SharedASTJob job = new SharedASTJob(CEditorMessages.OrganizeIncludes_label, tu) {
-				@Override
-				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
-					IIndex index= CCorePlugin.getIndexManager().getIndex(tu.getCProject(),
-							IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT);
-					try {
-						index.acquireReadLock();
-						IncludeOrganizer organizer = new IncludeOrganizer(editor, tu, index);
-						organizer.organizeIncludes(ast);
-						return Status.OK_STATUS;
-					} catch (InterruptedException e) {
-						return Status.CANCEL_STATUS;
-					} finally {
-						index.releaseReadLock();
-					}
-				}
-			};
-			job.schedule();
-			job.join();
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
-	}
-
-	@Override
-	public void update() {
-		ITextEditor editor = getTextEditor();
-		setEnabled(editor != null && getTranslationUnit(editor) != null);
 	}
 }

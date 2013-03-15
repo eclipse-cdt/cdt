@@ -140,6 +140,13 @@ public class CdtActionConstants {
 	public static final String ADD_INCLUDE= "org.eclipse.cdt.ui.actions.AddInclude"; //$NON-NLS-1$
 
 	/**
+	 * Source menu: name of standard Organize Includes global action
+	 * (value <code>"org.eclipse.cdt.ui.actions.OrganizeIncludes"</code>).
+	 * @since 5.6
+	 */
+	public static final String ORGANIZE_INCLUDES= "org.eclipse.cdt.ui.actions.OrganizeIncludes"; //$NON-NLS-1$
+
+	/**
 	 * Source menu: name of standard Sort Lines global action
 	 * (value <code>"org.eclipse.cdt.ui.actions.SortLines"</code>).
 	 * @since 5.2

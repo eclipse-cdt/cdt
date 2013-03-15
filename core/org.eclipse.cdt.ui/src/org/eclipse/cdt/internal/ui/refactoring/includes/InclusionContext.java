@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc and others.
+ * Copyright (c) 2012, 2013 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility;
  * Context for managing include statements.
  */
 public class InclusionContext {
-	private static final IPath UNRESOLVED_INCLUDE = new Path(""); //$NON-NLS-1$
+	private static final IPath UNRESOLVED_INCLUDE = Path.EMPTY;
 
 	private final ITranslationUnit fTu;
 	private final IProject fProject;
@@ -132,22 +132,19 @@ public class InclusionContext {
         String headerLocation = fullPath.toOSString();
         String shortestInclude = null;
         boolean isSystem = false;
-        int count = 0; //XXX
 		for (IncludeSearchPathElement pathElement : fIncludeSearchPath.getElements()) {
 			String includeDirective = pathElement.getIncludeDirective(headerLocation);
 			if (includeDirective != null &&
 					(shortestInclude == null || shortestInclude.length() > includeDirective.length())) {
 				shortestInclude = includeDirective;
 				isSystem = !pathElement.isForQuoteIncludesOnly();
-				if (count < 1)  //XXX
-					isSystem = false;  //XXX Hack to introduce non-system includes
 			}
-			count++; //XXX
 		}
 		if (shortestInclude == null)
 			return null;
 		include = new IncludeInfo(shortestInclude, isSystem);
-		fIncludeResolutionCache.put(include, fullPath);
+		// Don't put an include to fullPath to fIncludeResolutionCache since it may be wrong
+		// if the header was included by #include_next.
 		fInverseIncludeResolutionCache.put(fullPath, include);
 		return include;
     }

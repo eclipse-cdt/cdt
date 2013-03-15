@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc and others.
+ * Copyright (c) 2013 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,18 +8,17 @@
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.refactoring.includes;
+package org.eclipse.cdt.ui.tests.refactoring.includes;
 
-import org.eclipse.osgi.util.NLS;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-final class Messages extends NLS {
-	public static String IncludeOrganizer_ChooseHeader;
+public class IncludesTestSuite extends TestSuite {
 
-	static {
-		NLS.initializeMessages(Messages.class.getName(), Messages.class);
-	}
-
-	// Do not instantiate
-	private Messages() {
+	public static Test suite() throws Exception {
+		IncludesTestSuite suite = new IncludesTestSuite(); 
+		suite.addTest(BindingClassifierTest.suite());
+		suite.addTest(OrganizeIncludesTest.suite());
+		return suite;
 	}
 }

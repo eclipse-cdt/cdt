@@ -17,9 +17,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
+import org.eclipse.cdt.ui.PreferenceConstants;
+
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences.UnusedStatementDisposition;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 
@@ -27,13 +28,14 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
  * The preference block for configuring Organize Includes command.
  */
 public class OrganizeIncludesBlock extends OptionsConfigurationBlock {
-	private static final Key KEY_HEURISTIC_HEADER_SUBSTITUTION = getCDTUIKey(IncludePreferences.PREF_HEURISTIC_HEADER_SUBSTITUTION);
-	private static final Key KEY_INCLUDES_REORDERING = getCDTUIKey(IncludePreferences.PREF_INCLUDES_REORDERING);
-	private static final Key KEY_UNUSED_STATEMENTS_DISPOSITION = getCDTUIKey(IncludePreferences.PREF_UNUSED_STATEMENTS_DISPOSITION);
-	private static final Key KEY_FORWARD_DECLARE_COMPOSITE_TYPES = getCDTUIKey(IncludePreferences.PREF_FORWARD_DECLARE_COMPOSITE_TYPES);
-	private static final Key KEY_FORWARD_DECLARE_ENUMS = getCDTUIKey(IncludePreferences.PREF_FORWARD_DECLARE_ENUMS);
-	private static final Key KEY_FORWARD_DECLARE_FUNCTIONS = getCDTUIKey(IncludePreferences.PREF_FORWARD_DECLARE_FUNCTIONS);
-	private static final Key KEY_FORWARD_DECLARE_NAMESPACE_ELEMENTS = getCDTUIKey(IncludePreferences.PREF_FORWARD_DECLARE_NAMESPACE_ELEMENTS);
+	private static final Key KEY_HEURISTIC_HEADER_SUBSTITUTION = getCDTUIKey(PreferenceConstants.INCLUDES_HEURISTIC_HEADER_SUBSTITUTION);
+	private static final Key KEY_INCLUDES_REORDERING = getCDTUIKey(PreferenceConstants.INCLUDES_ALLOW_REORDERING);
+	private static final Key KEY_UNUSED_STATEMENTS_DISPOSITION = getCDTUIKey(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION);
+	private static final Key KEY_FORWARD_DECLARE_COMPOSITE_TYPES = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_COMPOSITE_TYPES);
+	private static final Key KEY_FORWARD_DECLARE_ENUMS = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_ENUMS);
+	private static final Key KEY_FORWARD_DECLARE_FUNCTIONS = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS);
+	private static final Key KEY_FORWARD_DECLARE_TEMPLATES = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_TEMPLATES);
+	private static final Key KEY_FORWARD_DECLARE_NAMESPACE_ELEMENTS = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS);
 
 	private static final String[] DISPOSITION_VALUES = {
 		UnusedStatementDisposition.REMOVE.toString(),
@@ -53,6 +55,7 @@ public class OrganizeIncludesBlock extends OptionsConfigurationBlock {
 		KEY_FORWARD_DECLARE_COMPOSITE_TYPES,
 		KEY_FORWARD_DECLARE_ENUMS,
 		KEY_FORWARD_DECLARE_FUNCTIONS,
+		KEY_FORWARD_DECLARE_TEMPLATES,
 		KEY_FORWARD_DECLARE_NAMESPACE_ELEMENTS,
 	};
 
@@ -86,6 +89,9 @@ public class OrganizeIncludesBlock extends OptionsConfigurationBlock {
 		LayoutUtil.setHorizontalSpan(control, 2);
 		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_forward_declare_functions,
 				KEY_FORWARD_DECLARE_FUNCTIONS, TRUE_FALSE, 0);
+		LayoutUtil.setHorizontalSpan(control, 2);
+		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_forward_declare_templates,
+				KEY_FORWARD_DECLARE_TEMPLATES, TRUE_FALSE, 0);
 		LayoutUtil.setHorizontalSpan(control, 2);
 		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_forward_declare_namespace_elements,
 				KEY_FORWARD_DECLARE_NAMESPACE_ELEMENTS, TRUE_FALSE, 0);

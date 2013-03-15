@@ -1953,6 +1953,197 @@ public class PreferenceConstants {
 	 */
 	public static final String FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER = "function_pass_output_parameters_by_pointer"; //$NON-NLS-1$
 
+	/**
+	 * Whether composite types should be forward declared if possible.
+	 *
+	 * Examples:
+	 *  class X;
+	 *  struct Y;
+	 *  union Z;
+	 *
+	 * @since 5.6
+	 */
+	public static final String FORWARD_DECLARE_COMPOSITE_TYPES = "forwardDeclare.compositeTypes"; //$NON-NLS-1$
+
+	/**
+	 * Whether C++11-style enums should be forward declared if possible.
+	 *
+	 * Example:
+	 *  enum class X;
+	 *
+	 * @since 5.6
+	 */
+	public static final String FORWARD_DECLARE_ENUMS = "forwardDeclare.enums"; //$NON-NLS-1$
+
+	/**
+	 * Whether C-style functions should be forward declared if possible.
+	 *
+	 * Example:
+	 *  void foo();
+	 *
+	 * @since 5.6
+	 */
+	public static final String FORWARD_DECLARE_FUNCTIONS = "forwardDeclare.functions"; //$NON-NLS-1$
+
+	/**
+	 * Whether C++ templates should be forward declared if possible.
+	 *
+	 * Examples:
+	 *  template<typename T> class foo;
+	 *  template<typename T> void bar(T p);
+	 *
+	 * @since 5.6
+	 */
+	public static final String FORWARD_DECLARE_TEMPLATES = "forwardDeclare.templates"; //$NON-NLS-1$
+
+	/**
+	 * Whether elements nested within namespaces should be forward declared if possible.
+	 *
+	 * Examples:
+	 *  namespace N { class X; }
+	 *
+	 * @since 5.6
+	 */
+	public static final String FORWARD_DECLARE_NAMESPACE_ELEMENTS = "forwardDeclare.namespaceElements"; //$NON-NLS-1$
+
+	/**
+	 * Defines a list of file name suffixes. A header file and the including file are considered
+	 * partners if their file names without extensions are either identical or differ by one of
+	 * these suffixes.  
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDES_PARTNER_FILE_SUFFIXES = "includes.partnerFileSuffixes"; //$NON-NLS-1$
+
+	/**
+	 * Whether a heuristic approach should be used to decide which C++ header files to include.
+	 * The heuristic prefers headers which have no file extension and / or are named like the symbol
+	 * which should be defined. This often works out nicely since it's a commonly used naming
+	 * convention for C++ library headers.
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDES_HEURISTIC_HEADER_SUBSTITUTION = "organizeIncludes.heuristicHeader_substitution"; //$NON-NLS-1$
+
+	/**
+	 * Whether it's allowed to reorder existing include directives. If this preference is set to
+	 * false, the original order is kept as far as possible. This may be necessary to avoid breaking
+	 * code which makes assumptions about the order of the include directives. If this is set to
+	 * true, a different sort order can be applied. Groups of includes are ordered according to
+	 * the values returned by
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle#getOrder()} method.
+	 * Includes within each group are ordered alphabetically.
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDES_ALLOW_REORDERING = "organizeIncludes.allowReordering"; //$NON-NLS-1$
+
+	/**
+	 * Determines what should be done with any unused include directives and forward declarations.
+	 * This preference may have one of the three values defined by
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences.UnusedStatementDisposition}
+	 * enumeration ("REMOVE", "COMMENT_OUT", "KEEP").
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDES_UNUSED_STATEMENTS_DISPOSITION = "organizeIncludes.unusedStatements"; //$NON-NLS-1$
+
+	/**
+	 * Include style for headers closely related to the including file.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDE_STYLE_RELATED = "includeStyle.related"; //$NON-NLS-1$
+	/**
+	 * Include style for the header with the same name as the including file. 
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDE_STYLE_PARTNER = "includeStyle.partner"; //$NON-NLS-1$
+	/**
+	 * Include style for headers in the same folder as the including file.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDE_STYLE_SAME_FOLDER = "includeStyle.sameFolder"; //$NON-NLS-1$
+	/**
+	 * Include style for headers in subfolders of the folder containing the including file.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDE_STYLE_SUBFOLDER = "includeStyle.subfolder"; //$NON-NLS-1$
+	/**
+	 * Include style for system headers.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDE_STYLE_SYSTEM = "includeStyle.system"; //$NON-NLS-1$
+	/**
+	 * Include style for C-style system headers with a file name extension.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDE_STYLE_SYSTEM_WITH_EXTENSION = "includeStyle.systemWithExtension"; //$NON-NLS-1$
+	/**
+	 * Include style for C++-style system headers without a file name extension.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDE_STYLE_SYSTEM_WITHOUT_EXTENSION = "includeStyle.systemWithoutExtension"; //$NON-NLS-1$
+	/**
+	 * Include style for headers not closely related to the including file.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDE_STYLE_OTHER = "includeStyle.other"; //$NON-NLS-1$
+	/**
+	 * Include style for headers in the same project as the including file.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDE_STYLE_SAME_PROJECT = "includeStyle.inSameProject"; //$NON-NLS-1$
+	/**
+	 * Include style for headers in a different project than the including file.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDE_STYLE_OTHER_PROJECT = "includeStyle.inOtherProject"; //$NON-NLS-1$
+	/**
+	 * Include style for headers outside Eclipse workspace.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDE_STYLE_EXTERNAL = "includeStyle.external"; //$NON-NLS-1$
+	/**
+	 * Include styles for headers matching user-defined patterns.
+	 * The value of the preference is an XML representation of one or more
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}s.
+	 *
+	 * @since 5.6
+	 */
+	public static final String INCLUDE_STYLE_MATCHING_PATTERN = "includeStyle.matchingPattern"; //$NON-NLS-1$
 
 	/**
 	 * Returns the CDT-UI preference store.

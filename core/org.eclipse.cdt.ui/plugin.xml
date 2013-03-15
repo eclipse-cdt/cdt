@@ -1885,6 +1885,13 @@
                id="org.eclipse.cdt.ui.actions.SortLines">
          </action>
          <action
+               definitionId="org.eclipse.cdt.ui.edit.text.c.organize.includes"
+               label="%OrganizeIncludesAction.label"
+               retarget="true"
+               menubarPath="org.eclipse.jdt.ui.source.menu/importGroup"
+               id="org.eclipse.cdt.ui.actions.OrganizeIncludes">
+         </action>
+         <action
                definitionId="org.eclipse.cdt.ui.edit.text.c.add.include"
                label="%AddIncludeAction.label"
                retarget="true"
@@ -2452,6 +2459,11 @@
             commandId="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
+            sequence="M1+M2+O"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.organize.includes"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
             sequence="M1+M2+N"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.add.include"
@@ -2951,6 +2963,12 @@
             description="%ActionDefinition.addInclude.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.add.include">
+      </command>
+      <command
+            name="%ActionDefinition.organizeIncludes.name"
+            description="%ActionDefinition.OrganizeIncludes.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.organize.includes">
       </command>
       <command
             name="%ActionDefinition.sortLines.name"
@@ -4606,6 +4624,7 @@
             <key name="removeTrailingWhitespaceEditedLines"/>
             <key name="Refactoring.savealleditors"/>
             <key name="Refactor.lightweight"/>
+            <key name="organizeIncludes." match="prefix"/>
             <key name="spelling_" match="prefix"/>
             <key name="org.eclipse.cdt.ui.add_comments"/>
             <key name="codetemplates.includeGuardGenerationScheme"/>
@@ -4628,6 +4647,9 @@
           <entry node="org.eclipse.cdt.ui">
             <key name="codetemplates." match="prefix"/>
             <key name="nameStyle." match="prefix"/>
+            <key name="includeStyle." match="prefix"/>
+            <key name="forwardDeclare." match="prefix"/>
+            <key name="includes.partnerFileSuffixes"/>
             <key name="formatter_profile"/>
             <key name="class_member_ascending_visibility_order"/>
             <key name="function_output_parameters_before_input"/>

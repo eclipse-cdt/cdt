@@ -73,6 +73,12 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String ADD_INCLUDE= "org.eclipse.cdt.ui.edit.text.c.add.include"; //$NON-NLS-1$
 
 	/**
+	 * Action definition ID of the source -> organize includes action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.organize.includes"</code>).
+	 */
+	public static final String ORGANIZE_INCLUDES= "org.eclipse.cdt.ui.edit.text.c.organize.includes"; //$NON-NLS-1$
+
+	/**
 	 * Action definition ID of the open declaration action
 	 * (value <code>"org.eclipse.cdt.ui.edit.opendecl"</code>).
 	 */

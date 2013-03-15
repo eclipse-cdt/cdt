@@ -1,0 +1,298 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Google, Inc and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	   Sergey Prigogin (Google) - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.ui.tests.refactoring.includes;
+
+import java.util.List;
+
+import junit.framework.Test;
+
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.TextEdit;
+
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.PreferenceConstants;
+
+import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeOrganizer;
+
+/**
+ * Tests for Extract Function refactoring.
+ */
+public class OrganizeIncludesTest extends IncludesTestBase {
+
+	public OrganizeIncludesTest() {
+		super();
+	}
+
+	public OrganizeIncludesTest(String name) {
+		super(name);
+	}
+
+	public static Test suite() {
+		return suite(OrganizeIncludesTest.class);
+	}
+
+	@Override
+	protected void resetPreferences() {
+		super.resetPreferences();
+		getPreferenceStore().setToDefault(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION);
+		getPreferenceStore().setToDefault(PreferenceConstants.FORWARD_DECLARE_COMPOSITE_TYPES);
+		getPreferenceStore().setToDefault(PreferenceConstants.FORWARD_DECLARE_ENUMS);
+		getPreferenceStore().setToDefault(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS);
+		getPreferenceStore().setToDefault(PreferenceConstants.FORWARD_DECLARE_TEMPLATES);
+		getPreferenceStore().setToDefault(PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS);
+		getPreferenceStore().setToDefault(PreferenceConstants.INCLUDES_ALLOW_REORDERING);
+	}
+
+	private void assertExpectedResults() throws Exception {
+		String actual = organizeIncludes(ast.getOriginatingTranslationUnit());
+		assertEquals(selectedFile.getExpectedSource(), actual);
+	}
+
+	/**
+	 * Invokes include organizer and returns the new contents of the translation unit.
+	 */
+	private String organizeIncludes(ITranslationUnit tu) throws Exception {
+		IHeaderChooser headerChooser = new FirstHeaderChooser();
+		IncludeOrganizer organizer = new IncludeOrganizer(tu, index, LINE_DELIMITER, headerChooser);
+		List<TextEdit> edits = organizer.organizeIncludes(ast);
+		IDocument document = new Document(new String(tu.getContents()));
+		if (!edits.isEmpty()) {
+			// Apply text edits.
+			MultiTextEdit edit = new MultiTextEdit();
+			edit.addChildren(edits.toArray(new TextEdit[edits.size()]));
+			edit.apply(document);
+		}
+		return document.get();
+	}
+
+	//h1.h
+	//typedef int my_type;
+
+	//A.h
+	//class A {
+	//  my_type m1();
+	//};
+
+	//A.cpp
+	//// Comment line 1
+	//// Comment line 2
+	//
+	//// Comment for m1
+	//my_type A::m1() {
+	//  return 0;
+	//}
+	//====================
+	//// Comment line 1
+	//// Comment line 2
+	//
+	//#include "A.h"
+	//
+	//#include "h1.h"
+	//
+	//// Comment for m1
+	//my_type A::m1() {
+	//  return 0;
+	//}
+	public void testNoExistingIncludes() throws Exception {
+		assertExpectedResults();
+	}
+
+	//B.h
+	//class B {};
+
+	//C.h
+	//class C {};
+
+	//A.h
+	//#if !defined(INCLUDE_GUARD)
+	//#define INCLUDE_GUARD
+	//// Comment line 1
+	//// Comment line 2
+	//
+	//// Comment for A
+	//class A {
+	//  B f;
+	//  C m();
+	//};
+	//#endif  // INCLUDE_GUARD
+	//====================
+	//#if !defined(INCLUDE_GUARD)
+	//#define INCLUDE_GUARD
+	//// Comment line 1
+	//// Comment line 2
+	//
+	//#include "B.h"
+	//
+	//class C;
+	//
+	//// Comment for A
+	//class A {
+	//  B f;
+	//  C m();
+	//};
+	//#endif  // INCLUDE_GUARD
+	public void testIncludeGuards() throws Exception {
+		assertExpectedResults();
+	}
+
+	//B.h
+	//template <typename T> class B {};
+
+	//C.h
+	//class C {};
+
+	//A.h
+	//#pragma once
+	//namespace ns {
+	//// Comment line 1
+	//// Comment line 2
+	//
+	//// Comment for A
+	//class A : public B<C> {};
+	//}  // namespace ns
+	//====================
+	//#pragma once
+	//
+	//#include "B.h"
+	//#include "C.h"
+	//
+	//namespace ns {
+	//// Comment line 1
+	//// Comment line 2
+	//
+	//// Comment for A
+	//class A : public B<C> {};
+	//}  // namespace ns
+	public void testPragmaOnce() throws Exception {
+		assertExpectedResults();
+	}
+
+	//h1.h
+	//typedef int Type1;
+
+	//h2.h
+	//class Type2 {};
+
+	//h3.h
+	//enum Type3 { ONE, TWO };
+
+	//h4.h
+	//class Unrelated {};
+
+	//A.h
+	//#include "h1.h"
+	//class Type2;
+	//enum class Type3;
+	//extern Type1 f1();
+	//extern Type2 f2();
+	//extern Type3 f3();
+
+	//A.cpp
+	//// Comment
+	//
+	//#include "h2.h" /* Required */  // another comment
+	//#include "h1.h"  // Unused
+	//#include "h3.h"
+	//#include "h5.h"  // Unresolved includes are preserved
+	//#ifdef SOME_OTHER_TIME
+	//#include "h4.h"  // Unused but unsafe to remove
+	//#endif
+	//
+	//void test() {
+	//  f1();
+	//  f2();
+	//  f3();
+	//}
+	//====================
+	//// Comment
+	//
+	//#include "A.h"
+	//
+	////#include "h1.h"  // Unused
+	//#include "h2.h" /* Required */  // another comment
+	//#include "h3.h"
+	//#include "h5.h"  // Unresolved includes are preserved
+	//
+	//#ifdef SOME_OTHER_TIME
+	//#include "h4.h"  // Unused but unsafe to remove
+	//#endif
+	//
+	//void test() {
+	//  f1();
+	//  f2();
+	//  f3();
+	//}
+	public void testExistingIncludes() throws Exception {
+		assertExpectedResults();
+	}
+
+	//h1.h
+	//typedef int Type1;
+
+	//h2.h
+	//class Type2 {};
+
+	//h3.h
+	//enum class Type3 { ONE, TWO };
+
+	//h4.h
+	//class Unrelated {};
+
+	//A.h
+	//#include "h1.h"
+	//class Type2;
+	//enum class Type3;
+	//extern Type1 f1();
+	//extern Type2 f2();
+	//extern Type3 f3();
+
+	//A.cpp
+	//// Comment
+	//
+	//#include "h2.h" /* Required */  // another comment
+	//#include "h1.h"  // Unused
+	//#include "h3.h"
+	//#include "h5.h"  // Unresolved includes are preserved
+	//#ifdef SOME_OTHER_TIME
+	//#include "h4.h"  // Unused but unsafe to remove
+	//#endif
+	//
+	//void test() {
+	//  f1();
+	//  f2();
+	//  f3();
+	//}
+	//====================
+	//// Comment
+	//
+	//#include "h2.h" /* Required */  // another comment
+	////#include "h1.h"  // Unused
+	//#include "h3.h"
+	//#include "h5.h"  // Unresolved includes are preserved
+	//#include "A.h"
+	//
+	//#ifdef SOME_OTHER_TIME
+	//#include "h4.h"  // Unused but unsafe to remove
+	//#endif
+	//
+	//void test() {
+	//  f1();
+	//  f2();
+	//  f3();
+	//}
+	public void testExistingIncludesNoReordering() throws Exception {
+		getPreferenceStore().setValue(PreferenceConstants.INCLUDES_ALLOW_REORDERING, false);
+		assertExpectedResults();
+	}
+}

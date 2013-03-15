@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc and others.
+ * Copyright (c) 2012, 2013 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.TextSelection;
@@ -56,8 +55,6 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
  * Common base for refactoring tests.
  */
 public abstract class RefactoringTestBase extends BaseTestCase {
-	protected static final NullProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
-
 	/** Allows empty files to be created during test setup. */
 	protected boolean createEmptyFiles = true;
 	/** See {@link PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER} */
@@ -137,7 +134,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	public void tearDown() throws Exception {
 		if (cproject != null) {
 			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
-					NULL_PROGRESS_MONITOR);
+					npm());
 		}
 		resetPreferences();
 		super.tearDown();
@@ -175,7 +172,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	protected void executeRefactoring(Refactoring refactoring, RefactoringContext context,
 			boolean withUserInput, boolean expectedSuccess) throws CoreException, Exception {
 		try {
-			RefactoringStatus initialStatus = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
+			RefactoringStatus initialStatus = refactoring.checkInitialConditions(npm());
 			if (!expectedSuccess) {
 				assertStatusFatalError(initialStatus);
 				return;
@@ -190,7 +187,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 
 			if (withUserInput)
 				simulateUserInput();
-			RefactoringStatus finalStatus = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
+			RefactoringStatus finalStatus = refactoring.checkFinalConditions(npm());
 			if (expectedFinalWarnings != 0) {
 				assertStatusWarning(finalStatus, expectedFinalWarnings);
 			} else if (expectedFinalInfos != 0) {
@@ -198,8 +195,8 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 			} else {
 				assertStatusOk(finalStatus);
 			}
-			Change change = refactoring.createChange(NULL_PROGRESS_MONITOR);
-			change.perform(NULL_PROGRESS_MONITOR);
+			Change change = refactoring.createChange(npm());
+			change.perform(npm());
 		} finally {
 			if (context != null)
 				context.dispose();
@@ -212,7 +209,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 		RefactoringHistory history = RefactoringHistoryService.getInstance().readRefactoringHistory(
 				new ByteArrayInputStream(scriptSource.getBytes()), 0);
 		for (RefactoringDescriptorProxy proxy : history.getDescriptors()) {
-			RefactoringDescriptor descriptor = proxy.requestDescriptor(NULL_PROGRESS_MONITOR);
+			RefactoringDescriptor descriptor = proxy.requestDescriptor(npm());
 			RefactoringStatus status = new RefactoringStatus();
 			RefactoringContext context = descriptor.createRefactoringContext(status);
 			assertTrue(status.isOK());

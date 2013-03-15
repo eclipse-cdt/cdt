@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc and others.
+ * Copyright (c) 2012, 2013 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.includes;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import junit.framework.TestSuite;
+
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -51,7 +55,8 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		fIndex.acquireReadLock();
 		ITranslationUnit tu = ast.getOriginatingTranslationUnit();
 		fContext = new InclusionContext(tu, fIndex);
-		fBindingClassifier = new BindingClassifier(fContext, ast);
+		fBindingClassifier = new BindingClassifier(fContext);
+		fBindingClassifier.classifyNodeContents(ast);
 	}
 
 	@Override
@@ -69,15 +74,36 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	}
 
 	private void assertExpectedBindings(String[] expectedNames, Set<IBinding> bindings, String verb) {
-		Set<String> remaining = new HashSet<String>(Arrays.asList(expectedNames));
+		Set<String> expected = new TreeSet<String>(Arrays.asList(expectedNames));
+		Set<String> extra = new TreeSet<String>();
 		for (IBinding binding : bindings) {
-			String name = binding.getName();
-			if (!remaining.remove(name)) {
-				fail("Binding \"" + name + "\" should not be " + verb);
-			}
+			extra.add(binding.getName());
 		}
-		if (!remaining.isEmpty())
-			fail("Binding \"" + remaining.iterator().next() + "\" is not " + verb);
+		Set<String> missing = new TreeSet<String>(expected);
+		missing.removeAll(extra);
+		extra.removeAll(expected);
+		if (extra.isEmpty() && missing.isEmpty())
+			return;
+		List<String> errors = new ArrayList<String>(2);
+		if (!missing.isEmpty()) {
+			errors.add(MessageFormat.format("{0,choice,1#Binding|1<Bindings} \"{1}\" {0,choice,1#is|1<are} not {2}.",
+					missing.size(), join(missing, "\", \""), verb));
+		}
+		if (!extra.isEmpty()) {
+			errors.add(MessageFormat.format("{0,choice,1#Binding|1<Bindings} \"{1}\" should not be {2}.",
+					extra.size(), join(extra, "\", \""), verb));
+		}
+		fail(join(errors, " "));
+	}
+
+	private String join(Iterable<String> strings, String delimiter) {
+		StringBuilder buf = new StringBuilder();
+		for (String str : strings) {
+			if (buf.length() != 0)
+				buf.append(delimiter);
+			buf.append(str);
+		}
+		return buf.toString();
 	}
 
 	//	class A;
@@ -108,5 +134,47 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	int a = f()->x;
 	public void testClassMember() throws Exception {
 		assertDefined("f", "A");
+	}
+
+	//	class A { void m(); };
+
+	//	void test(A* a) {
+	//	  a->m();
+	//	}
+	public void testMethodCall() throws Exception {
+		assertDefined("A");
+	}
+
+	//	struct A {};
+	//	struct B {};
+
+	//	struct C {
+	//	  A a;
+	//	  static B b;
+	//	};
+	public void testFieldReference() throws Exception {
+		assertDefined("A");
+		assertDeclared("B");
+	}
+
+	//	int a;
+
+	//	void test() {
+	//	  void* x = &a;
+	//	}
+	public void testVariableReference() throws Exception {
+		assertDefined("a");  // Forward declaration of variables is not allowed by default.
+	}
+
+	//	struct A {
+	//	  void operator()(int p);
+	//	};
+	//	const A a;
+
+	//	void test() {
+	//	  a(1);
+	//	}
+	public void testCallOperator() throws Exception {
+		assertDefined("A", "a");  // Forward declaration of variables is not allowed by default.
 	}
 }

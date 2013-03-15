@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Rapperswil, University of applied sciences and others
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html  
- *  
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -181,7 +181,6 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 		assertRefactoringSuccess();
 	}
 
-
 	//A.h
 	//#ifndef A_H_
 	//#define A_H_
@@ -308,7 +307,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	public void testLocalVariableDeclaration_3() throws Exception {
 		assertRefactoringSuccess();
 	}
-	
+
 	//A.h
 	//#ifndef A_H_
 	//#define A_H_

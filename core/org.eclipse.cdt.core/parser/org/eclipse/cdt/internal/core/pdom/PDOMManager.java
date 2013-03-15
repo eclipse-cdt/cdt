@@ -14,6 +14,7 @@
  *     Anna Dushistova (MontaVista)
  *     Marc-Andre Laperle
  *     Martin Oberhuber (Wind River) - [397652] fix up-to-date check for PDOM
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -522,7 +523,10 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 						enqueue(new NotifyCModelManagerTask(cproject.getProject()));
 					}
 				}
-				enqueue(new PDOMRebuildTask(indexer));
+				
+				if (IndexerPreferences.getReindexOnIndexerChange(cproject.getProject())) {
+					enqueue(new PDOMRebuildTask(indexer));
+				}
 			}
 		}
 

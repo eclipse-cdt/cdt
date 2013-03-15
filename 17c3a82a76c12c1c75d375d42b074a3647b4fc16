@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//3lA\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/CProjectDescriptionListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-15T16:53:45Z",
+      "side": 1,
+      "message": "Put a space between if and the opening parenthesis.",
+      "revId": "17c3a82a76c12c1c75d375d42b074a3647b4fc16",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//3k8\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/indexer/IndexerPreferences.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-15T16:53:45Z",
+      "side": 1,
+      "message": "Remove extra blank lines.",
+      "revId": "17c3a82a76c12c1c75d375d42b074a3647b4fc16",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//3k0\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/indexer/IndexerPreferences.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-15T16:53:45Z",
+      "side": 1,
+      "message": "Saving preferences inside a setter  is not appropriate. Please follow the pattern used for other preferences.",
+      "revId": "17c3a82a76c12c1c75d375d42b074a3647b4fc16",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//3kw\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/indexer/IndexerPreferences.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 458,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-15T16:53:45Z",
+      "side": 1,
+      "message": "Ditto.",
+      "revId": "17c3a82a76c12c1c75d375d42b074a3647b4fc16",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//3ks\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/CPluginResources.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-15T16:53:45Z",
+      "side": 1,
+      "message": "Please use descriptive keys.",
+      "revId": "17c3a82a76c12c1c75d375d42b074a3647b4fc16",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//3lI\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/dialogs/IndexerBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-15T16:53:45Z",
+      "side": 1,
+      "message": "Please use descriptive names for externalized strings.",
+      "revId": "17c3a82a76c12c1c75d375d42b074a3647b4fc16",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//3lE\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/dialogs/IndexerBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-15T16:53:45Z",
+      "side": 1,
+      "message": "Please put a space between if and the opening parenthesis.",
+      "revId": "17c3a82a76c12c1c75d375d42b074a3647b4fc16",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

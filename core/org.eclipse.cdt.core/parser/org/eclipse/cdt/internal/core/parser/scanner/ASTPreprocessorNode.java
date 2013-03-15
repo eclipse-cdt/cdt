@@ -113,6 +113,7 @@ abstract class ASTPreprocessorNode extends ASTNode {
 class ASTComment extends ASTPreprocessorNode implements IASTComment {
 	private final boolean fIsBlockComment;
 	private String fFilePath;
+
 	public ASTComment(IASTTranslationUnit parent, String filePath, int offset, int endOffset, boolean isBlockComment) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, offset, endOffset);
 		fIsBlockComment= isBlockComment;

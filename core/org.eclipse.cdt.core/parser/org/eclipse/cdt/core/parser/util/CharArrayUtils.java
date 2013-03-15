@@ -75,6 +75,21 @@ public class CharArrayUtils {
 	}
 
 	/**
+	 * Returns {@code true} if the contents of a section of a character array are the same as
+	 * contents of a string.
+	 * @since 5.5
+	 */
+	public static final boolean equals(char[] str1, int start1, int length1, String str2) {
+		if (length1 != str2.length() || str1.length < length1 + start1)
+			return false;
+		for (int i = 0; i < length1; ++i) {
+			if (str1[start1++] != str2.charAt(i))
+				return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Returns {@code true} if a prefix of the character array is the same as contents
 	 * of a string.
 	 * @since 5.4
@@ -117,6 +132,10 @@ public class CharArrayUtils {
 		return str1.length - str2.length;
 	}
 
+	/**
+	 * Returns {@code true} if the contents of a section of a character array are the same as
+	 * contents of another character array.
+	 */
 	public static final boolean equals(char[] str1, int start1, int length1, char[] str2) {
 		if (length1 != str2.length || str1.length < length1 + start1)
 			return false;

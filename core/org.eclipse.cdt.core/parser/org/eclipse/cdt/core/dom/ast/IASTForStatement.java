@@ -11,8 +11,8 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * The for statement. The initialization clause can be an expression or a
- * declaration but not both.
+ * The 'for' statement. The initialization clause can be an expression
+ * or a declaration but not both.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -57,8 +57,7 @@ public interface IASTForStatement extends IASTStatement {
      * @param statement
      */
     public void setInitializerStatement( IASTStatement statement );
-    
-    
+
 	/**
 	 * Get the condition expression for the loop.
 	 * 

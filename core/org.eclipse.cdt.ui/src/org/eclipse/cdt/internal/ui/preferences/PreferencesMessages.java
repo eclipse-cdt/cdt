@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -364,6 +364,42 @@ public final class PreferencesMessages extends NLS {
 	public static String CodeTemplateBlock_export_error_hidden;
 	public static String CodeTemplateBlock_export_error_canNotWrite;
 
+	public static String IncludeStylePreferencePage_title;
+	public static String IncludeStyleBlock_categories_tab;
+	public static String IncludeStyleBlock_order_tab;
+	public static String IncludeCategoriesBlock_external_headers_node;
+	public static String IncludeCategoriesBlock_external_headers_node_description;
+	public static String IncludeCategoriesBlock_unrelated_headers_node;
+	public static String IncludeCategoriesBlock_unrelated_headers_node_description;
+	public static String IncludeCategoriesBlock_other_project_headers_node;
+	public static String IncludeCategoriesBlock_other_project_headers_node_description;
+	public static String IncludeCategoriesBlock_partner_header_node;
+	public static String IncludeCategoriesBlock_partner_header_node_description;
+	public static String IncludeCategoriesBlock_same_project_headers_node;
+	public static String IncludeCategoriesBlock_same_project_headers_node_description;
+	public static String IncludeCategoriesBlock_related_headers_node;
+	public static String IncludeCategoriesBlock_related_headers_node_description;
+	public static String IncludeCategoriesBlock_same_folder_header_node;
+	public static String IncludeCategoriesBlock_same_folder_header_node_description;
+	public static String IncludeCategoriesBlock_subfolder_header_node;
+	public static String IncludeCategoriesBlock_subfolder_header_node_description;
+	public static String IncludeCategoriesBlock_system_headers_node;
+	public static String IncludeCategoriesBlock_system_headers_node_description;
+	public static String IncludeCategoriesBlock_system_headers_with_extension_node;
+	public static String IncludeCategoriesBlock_system_headers_with_extension_node_description;
+	public static String IncludeCategoriesBlock_system_headers_without_extension_node;
+	public static String IncludeCategoriesBlock_system_headers_without_extension_node_description;
+	public static String IncludeCategoriesBlock_user_defined_categories_node;
+	public static String IncludeCategoriesBlock_user_defined_categories_node_description;
+	public static String IncludeGroupStyleBlock_keep_includes_together;
+	public static String IncludeCategoriesBlock_header_categories;
+	public static String IncludeGroupStyleBlock_blank_line_before;
+	public static String IncludeGroupStyleBlock_use_relative_path;
+	public static String IncludeGroupStyleBlock_use_angle_brackets;
+	public static String IncludeOrderBlock_up;
+	public static String IncludeOrderBlock_down;
+	public static String IncludeOrderBlock_order_of_includes;
+
 	public static String NameStylePreferencePage_title;
 	public static String NameStyleBlock_code_node;
 	public static String NameStyleBlock_files_node;
@@ -401,6 +437,19 @@ public final class PreferencesMessages extends NLS {
 	public static String NameStyleBlock_invalid_prefix;
 	public static String NameStyleBlock_invalid_word_delimiter;
 	public static String NameStyleBlock_invalid_suffix;
+
+	public static String OrganizeIncludesPreferencePage_title;
+	public static String OrganizeIncludesBlock_allow_reordering;
+	public static String OrganizeIncludesBlock_forward_declare_composite_types;
+	public static String OrganizeIncludesBlock_forward_declare_enums;
+	public static String OrganizeIncludesBlock_forward_declare_functions;
+	public static String OrganizeIncludesBlock_forward_declare_templates;
+	public static String OrganizeIncludesBlock_forward_declare_namespace_elements;
+	public static String OrganizeIncludesBlock_heuristic_header_substitution;
+	public static String OrganizeIncludesBlock_unused_statements;
+	public static String OrganizeIncludesBlock_comment_out;
+	public static String OrganizeIncludesBlock_keep;
+	public static String OrganizeIncludesBlock_remove;
 
 	public static String EditTemplateDialog_error_noname;
 	public static String EditTemplateDialog_error_invalidName;

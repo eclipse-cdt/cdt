@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
@@ -19,7 +20,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * <p>
  * This interface contains constants only; it is not intended to be implemented or extended.
  * </p>
- *  
  */
 public interface ICHelpContextIds {
 	public static final String PREFIX = CUIPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
@@ -33,9 +33,10 @@ public interface ICHelpContextIds {
 	public static final String OPEN_PROJECT_WIZARD_ACTION = PREFIX + "open_project_wizard_action"; //$NON-NLS-1$
 	public static final String CONVERT_TO_CCPP_WIZARD_PAGE = PREFIX + "cdt_t_conv_proj_context"; //$NON-NLS-1$
 	public static final String NEW_C_FILE_WIZARD_PAGE = PREFIX + "cdt_creating_cpp_file_context"; //$NON-NLS-1$
-	// Actions
 
+	// Actions
 	public static final String ADD_INCLUDE_ON_SELECTION_ACTION = PREFIX + "add_includes_on_selection_action_context"; //$NON-NLS-1$;
+	public static final String ORGANIZE_INCLUDES_ACTION = PREFIX + "organize_includes_action"; //$NON-NLS-1$;
 	public static final String FILTER_PUBLIC_ACTION= PREFIX + "filter_public_action"; //$NON-NLS-1$
 	public static final String FILTER_FIELDS_ACTION= PREFIX + "filter_fields_action"; //$NON-NLS-1$
 	public static final String FILTER_STATIC_ACTION= PREFIX + "filter_static_action"; //$NON-NLS-1$
@@ -87,6 +88,8 @@ public interface ICHelpContextIds {
 	public static final String SPELLING_CONFIGURATION_BLOCK= PREFIX + "spelling_configuration_block_context"; //$NON-NLS-1$
 	public static final String CODE_STYLE_PREFERENCE_PAGE = PREFIX + "code_style_preference_context"; //$NON-NLS-1$
 	public static final String CODE_TEMPLATES_PREFERENCE_PAGE = PREFIX + "code_templates_preference_context"; //$NON-NLS-1$
+	public static final String INCLUDE_STYLE_PREFERENCE_PAGE = PREFIX + "include_style_preference_context"; //$NON-NLS-1$
+	public static final String ORGANIZE_INCLUDES_PREFERENCE_PAGE = PREFIX + "organize_includes_preference_context"; //$NON-NLS-1$
 	public static final String NAME_STYLE_PREFERENCE_PAGE = PREFIX + "name_style_preference_context"; //$NON-NLS-1$
 
 	// Console view

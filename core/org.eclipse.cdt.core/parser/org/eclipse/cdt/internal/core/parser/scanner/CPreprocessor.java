@@ -68,8 +68,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
- * C-Preprocessor providing tokens for the parsers. The class should not be used directly, rather than that
- * you should be using the {@link IScanner} interface.
+ * C-Preprocessor providing tokens for the parsers. The class should not be used directly,
+ * rather than that you should be using the {@link IScanner} interface.
  * @since 5.0
  */
 public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
@@ -87,8 +87,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	
     private static final char[] ONE = "1".toCharArray(); //$NON-NLS-1$
 
-
-    // standard built-ins
+    // Standard built-ins
     private static final ObjectStyleMacro __CDT_PARSER__= new ObjectStyleMacro("__CDT_PARSER__".toCharArray(), ONE);   //$NON-NLS-1$
     private static final ObjectStyleMacro __cplusplus = new ObjectStyleMacro("__cplusplus".toCharArray(), ONE);   //$NON-NLS-1$
     private static final ObjectStyleMacro __STDC__ = new ObjectStyleMacro("__STDC__".toCharArray(), ONE);  //$NON-NLS-1$
@@ -374,7 +373,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		return fLocationMap;
 	}
 
-	private void configureKeywords(ParserLanguage language,	IScannerExtensionConfiguration configuration) {
+	private void configureKeywords(ParserLanguage language, IScannerExtensionConfiguration configuration) {
 		Keywords.addKeywordsPreprocessor(fPPKeywords);
 		if (language == ParserLanguage.C) {
         	Keywords.addKeywordsC(fKeywords);

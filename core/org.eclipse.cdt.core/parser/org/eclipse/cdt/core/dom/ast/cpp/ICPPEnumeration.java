@@ -28,7 +28,7 @@ public interface ICPPEnumeration extends IEnumeration, ICPPBinding {
     boolean isScoped();
     
     /**
-     * Returns the underlying type of the enumeration if it is fixed, or <code>null</code> otherwise.
+     * Returns the underlying type of the enumeration if it is fixed, or {@code null} otherwise.
      * The underlying type can only be fixed in C++.
      */
     IType getFixedType();

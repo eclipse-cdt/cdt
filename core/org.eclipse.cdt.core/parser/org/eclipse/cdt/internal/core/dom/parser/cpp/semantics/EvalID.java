@@ -206,10 +206,13 @@ public class EvalID extends CPPDependentEvaluation {
 			}
 
 			if (binding instanceof CPPDeferredFunction) {
-				CPPDeferredFunction deferredFunction = (CPPDeferredFunction) binding;
-				if (deferredFunction.getCandidates() != null) {
-					CPPFunctionSet functionSet = new CPPFunctionSet(deferredFunction.getCandidates(), templateArgs, null);
+				ICPPFunction[] candidates = ((CPPDeferredFunction) binding).getCandidates();
+				if (candidates != null) {
+					CPPFunctionSet functionSet = new CPPFunctionSet(candidates, templateArgs, null);
 					return new EvalFunctionSet(functionSet, isAddressOf(expr), null, expr);
+				} else {
+					// Just store the name. ADL at the time of instantiation might come up with bindings.
+					return new EvalFunctionSet(name.getSimpleID(), isAddressOf(expr), expr);
 				}
 			}
 

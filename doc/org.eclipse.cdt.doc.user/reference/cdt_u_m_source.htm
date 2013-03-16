@@ -5,6 +5,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>Source Menu actions</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script type="text/javascript"
+	src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
 </head>
 <body>
 	<div role="main">
@@ -63,9 +65,12 @@
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Format</td>
-					<td headers="function">Apply the full <strong>C/C++
-							&gt; Code Style &gt; Formatter</strong> preferences to the entire contents
-						of the active editor, or to the selection if there is one
+					<td headers="function">Apply the full <a class="command-link"
+						href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage)")'>
+							<img src="PLUGINS_ROOT/org.eclipse.help/command_link.png"
+							alt="command link" />C/C++ &gt; Code Style &gt; Formatter
+					</a> preferences to the entire contents of the active editor, or to the
+						selection if there is one
 					</td>
 					<td headers="keyboard">Ctrl+Shift+F</td>
 				</tr>
@@ -97,7 +102,12 @@
 				<tr>
 					<td class="menu_name" headers="name">Surround With</td>
 					<td headers="function">Surround the selected statements with a
-						code template</td>
+						code template (as defined in <a class="command-link"
+						href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferences.TemplatePreferencePage)")'>
+							<img src="PLUGINS_ROOT/org.eclipse.help/command_link.png"
+							alt="command link" />C/C++ &gt; Editor &gt; Templates
+					</a>)
+					</td>
 					<td headers="keyboard">Alt+Shift+Z</td>
 				</tr>
 			</tbody>

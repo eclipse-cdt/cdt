@@ -88,7 +88,7 @@ public class DefinitionFinderTest extends RefactoringTestBase {
 			for (IASTDeclaration declaration : ast.getDeclarations()) {
 				if (declaration instanceof IASTSimpleDeclaration) {
 					IASTName name = ((IASTSimpleDeclaration) declaration).getDeclarators()[0].getName();
-					assertNotNull(DefinitionFinder.getDefinition(name, refactoringContext, NULL_PROGRESS_MONITOR));	
+					assertNotNull(DefinitionFinder.getDefinition(name, refactoringContext, npm()));	
 				}
 			}
 		} finally {

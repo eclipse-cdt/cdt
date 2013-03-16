@@ -33,14 +33,14 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 import org.eclipse.cdt.ui.actions.CdtActionConstants;
 
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.FindWordAction;
+import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
+import org.eclipse.cdt.internal.ui.actions.GotoNextBookmarkAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectEnclosingAction;
 import org.eclipse.cdt.internal.ui.actions.StructureSelectHistoryAction;
 import org.eclipse.cdt.internal.ui.actions.StructureSelectNextAction;
 import org.eclipse.cdt.internal.ui.actions.StructureSelectPreviousAction;
 import org.eclipse.cdt.internal.ui.actions.StructureSelectionAction;
-import org.eclipse.cdt.internal.ui.actions.StructureSelectEnclosingAction;
-import org.eclipse.cdt.internal.ui.actions.FindWordAction;
-import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
-import org.eclipse.cdt.internal.ui.actions.GotoNextBookmarkAction;
 
 public class CEditorActionContributor extends TextEditorActionContributor {
 	
@@ -229,6 +229,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		bars.setGlobalActionHandler(CdtActionConstants.REMOVE_BLOCK_COMMENT, getAction(textEditor, "RemoveBlockComment")); //$NON-NLS-1$
 		bars.setGlobalActionHandler(CdtActionConstants.INDENT, getAction(textEditor, "Indent")); //$NON-NLS-1$
 		bars.setGlobalActionHandler(CdtActionConstants.ADD_INCLUDE, getAction(textEditor, "AddIncludeOnSelection")); //$NON-NLS-1$
+		bars.setGlobalActionHandler(CdtActionConstants.ORGANIZE_INCLUDES, getAction(textEditor, "OrganizeIncludes")); //$NON-NLS-1$
 		bars.setGlobalActionHandler(CdtActionConstants.SORT_LINES, getAction(textEditor, "SortLines")); //$NON-NLS-1$
 
 		IAction action= getAction(textEditor, ITextEditorActionConstants.REFRESH);

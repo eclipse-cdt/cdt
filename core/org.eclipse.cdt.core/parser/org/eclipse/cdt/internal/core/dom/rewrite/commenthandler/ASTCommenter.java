@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- *     Institute for Software - initial API and implementation 
+ *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.commenthandler;
 
@@ -64,7 +65,7 @@ public class ASTCommenter {
 		}
 
 		private int checkOffsets(IASTNode node) {
-			int offset = ((ASTNode)node).getOffset();
+			int offset = ((ASTNode) node).getOffset();
 			int status = PROCESS_CONTINUE;
 			
 			if (isCommentOnSameLine(node) 
@@ -82,8 +83,8 @@ public class ASTCommenter {
 		}
 
 		private boolean isCommentOnSameLine(IASTNode node) {
-			return commentNodeLocation.getStartingLineNumber() == node.getFileLocation()
-					.getEndingLineNumber();
+			return commentNodeLocation.getStartingLineNumber() ==
+					node.getFileLocation().getEndingLineNumber();
 		}
 
 		@Override
@@ -168,41 +169,29 @@ public class ASTCommenter {
 	}
 
 	/**
-	 * Creates a NodeCommentMap for the given TranslationUnit. This is the only way
-	 * to get a NodeCommentMap which contains all the comments mapped against nodes.
+	 * Creates a NodeCommentMap for the given AST. This is the only way to get a NodeCommentMap
+	 * which contains all the comments mapped against nodes.
 	 * 
-	 * @param tu TranslationUnit
+	 * @param ast the AST
 	 * @return NodeCommentMap
 	 */
-	public static NodeCommentMap getCommentedNodeMap(IASTTranslationUnit tu){
+	public static NodeCommentMap getCommentedNodeMap(IASTTranslationUnit ast) {
 		NodeCommentMap commentMap = new NodeCommentMap();
-		if (tu == null) {
+		if (ast == null) {
 			return commentMap;
 		}
-		IASTComment[] commentsArray = tu.getComments();
-		if (commentsArray == null) {
-			return commentMap;
-		}
-		// Note that constructing a real ArrayList is required here, since in filterNonTuComments, the
-		// remove-method will be invoked on the list's iterator. Calling it on the type Arrays$ArrayList (the
-		// resulting type of Arrays.asList() ) would throw a UnsupportedOperationException.
-		ArrayList<IASTComment> comments = new ArrayList<IASTComment>(Arrays.asList(commentsArray));
-		filterNonTuComments(comments);
-		return addCommentsToCommentMap(tu, comments);
-	}
-
-	/**
-	 * Note that passing an ArrayList (instead of just List or Collection) is required here, since this
-	 * guarantees that the call to the remove-method on the list's iterator will not result in an
-	 * UnsupportedOperationException which might be the case for other Collection/List types.
-	 */
-	private static void filterNonTuComments(ArrayList<IASTComment> comments) {
-		Iterator<IASTComment> iterator = comments.iterator();
-		while (iterator.hasNext()) {
-			if (!iterator.next().isPartOfTranslationUnitFile()) {
-				iterator.remove();
+		IASTComment[] commentsArray = ast.getComments();
+		List<IASTComment> comments = new ArrayList<IASTComment>(commentsArray.length);
+		for (IASTComment comment : commentsArray) {
+			if (comment.isPartOfTranslationUnitFile()) {
+				comments.add(comment);
 			}
 		}
+		assignPreprocessorComments(commentMap, comments, ast);
+		CommentHandler commentHandler = new CommentHandler(comments);
+		ASTCommenterVisitor commenter = new ASTCommenterVisitor(commentHandler, commentMap);
+		ast.accept(commenter);
+		return commentMap;
 	}
 
 	private static boolean isCommentDirectlyBeforePreprocessorStatement(IASTComment comment,
@@ -211,11 +200,11 @@ public class ASTCommenter {
 			return true;
 		}
 		IASTFileLocation commentLocation = comment.getFileLocation();
-		int preprcessorOffset = statement.getFileLocation().getNodeOffset();
-		if (preprcessorOffset > commentLocation.getNodeOffset()) {
-			PreprocessorRangeChecker vister = new PreprocessorRangeChecker(preprcessorOffset, commentLocation);
-			tu.accept(vister);
-			return vister.isPreStatementComment;
+		int preprocessorOffset = statement.getFileLocation().getNodeOffset();
+		if (preprocessorOffset > commentLocation.getNodeOffset()) {
+			PreprocessorRangeChecker visitor = new PreprocessorRangeChecker(preprocessorOffset, commentLocation);
+			tu.accept(visitor);
+			return visitor.isPreStatementComment;
 		}
 		return false;
 	}
@@ -224,24 +213,12 @@ public class ASTCommenter {
 		return node.isPartOfTranslationUnitFile();
 	}
 	
-	private static NodeCommentMap addCommentsToCommentMap(IASTTranslationUnit tu,
-			ArrayList<IASTComment> comments){
-		NodeCommentMap commentMap = new NodeCommentMap();
-		CommentHandler commHandler = new CommentHandler(comments);
-
-		assignPreprocessorComments(commentMap, comments, tu);
-		ASTCommenterVisitor commenter = new ASTCommenterVisitor(commHandler, commentMap);
-		tu.accept(commenter);
-		return commentMap;
-	}
-	
 	/**
-	 * Note that passing an ArrayList (instead of just List or Collection) is required here, since this
-	 * guarantees that the call to the remove-method on the list's iterator will not result in an
-	 * UnsupportedOperationException which might be the case for other Collection/List types.
+	 * Puts leading and trailing comments to {@code commentMap} and removes them from
+	 * the {@code comments} list. 
 	 */
 	private static void assignPreprocessorComments(NodeCommentMap commentMap,
-			ArrayList<IASTComment> comments, IASTTranslationUnit tu) {
+			List<IASTComment> comments, IASTTranslationUnit tu) {
 		IASTPreprocessorStatement[] preprocessorStatementsArray = tu.getAllPreprocessorStatements();
 		if (preprocessorStatementsArray == null) {
 			return;
@@ -252,6 +229,7 @@ public class ASTCommenter {
 			return;
 		}
 
+		List<IASTComment> freestandingComments = new ArrayList<IASTComment>(comments.size());
 		Iterator<IASTPreprocessorStatement> statementsIter = preprocessorStatements.iterator();
 		Iterator<IASTComment> commentIter = comments.iterator();
 		IASTPreprocessorStatement curStatement = getNextNodeInTu(statementsIter);
@@ -261,17 +239,25 @@ public class ASTCommenter {
 			int commentLineNr = curComment.getFileLocation().getStartingLineNumber();
 			if (commentLineNr == statementLineNr) {
 				commentMap.addTrailingCommentToNode(curStatement, curComment);
-				commentIter.remove();
 				curComment = getNextNodeInTu(commentIter);
 			} else if (commentLineNr > statementLineNr) {
 				curStatement = getNextNodeInTu(statementsIter);
 			} else if (isCommentDirectlyBeforePreprocessorStatement(curComment, curStatement, tu)) {
 				commentMap.addLeadingCommentToNode(curStatement, curComment);
-				commentIter.remove();
 				curComment = getNextNodeInTu(commentIter);
 			} else {
+				freestandingComments.add(curComment);
 				curComment = getNextNodeInTu(commentIter);
 			}
+		}
+		while (curComment != null) {
+			freestandingComments.add(curComment);
+			curComment = getNextNodeInTu(commentIter);
+		}
+
+		if (freestandingComments.size() != comments.size()) {
+			comments.clear();
+			comments.addAll(freestandingComments);
 		}
 	}
 

@@ -22,7 +22,9 @@ import java.util.Set;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.internal.core.envvar.EnvironmentChangeEvent;
 import org.eclipse.cdt.utils.envvar.StorableEnvironmentLoader.ISerializeInfo;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
@@ -72,6 +74,8 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 	private boolean fAppendChanged = false;
 	private boolean fAppendContributedChanged = false;
 
+	private static ListenerList fEnvironmentChangeListeners = new ListenerList(ListenerList.IDENTITY);
+	
 	/** A listener for changes in the backing store */
 	private static class PrefListener implements IPreferenceChangeListener, INodeChangeListener {
 
@@ -401,6 +405,9 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 	void serialize() {
 		if (!isDirty())
 			return;
+
+		HashMap<String, IEnvironmentVariable> oldEnv = new HashMap<String, IEnvironmentVariable>(fCachedSerialEnv);
+
 		Preferences element = fSerialEnv.getNode().node(fSerialEnv.getPrefName());
 		element.putBoolean(ATTRIBUTE_APPEND, fAppend);
 		fAppendChanged = false;
@@ -429,6 +436,11 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 			element.flush();
 		} catch (BackingStoreException e) {
 			CCorePlugin.log(e);
+		}
+
+		if (fAppendChanged || fAppendContributedChanged || !oldEnv.equals(fCachedSerialEnv)) {
+			IEnvironmentChangeEvent event = new EnvironmentChangeEvent(oldEnv.values(), fCachedSerialEnv.values());
+			notifyLanguageSettingsChangeListeners(event);
 		}
 	}
 
@@ -533,6 +545,37 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 		return fAppendChanged || fAppendContributedChanged ||
 					(fVariables != null && !fVariables.isEmpty()) ||
 					(fDeletedVariables != null && !fDeletedVariables.isEmpty());
+	}
+
+	/**
+	 * Adds a listener that will be notified of changes in environment variables.
+	 *
+	 * @param listener - the listener to add
+	 * @since 5.5
+	 */
+	public void registerEnvironmentChangeListener(IEnvironmentChangeListener listener) {
+		fEnvironmentChangeListeners.add(listener);
+	}
+
+	/**
+	 * Removes an environment variables change listener.
+	 *
+	 * @param listener - the listener to remove.
+	 * @since 5.5
+	 */
+	public void unregisterEnvironmentChangeListener(IEnvironmentChangeListener listener) {
+		fEnvironmentChangeListeners.remove(listener);
+	}
+
+	/**
+	 * Notifies all environment change listeners of a change in environment.
+	 *
+	 * @param event - the {@link IEnvironmentChangeEvent} event to be broadcast.
+	 */
+	private static void notifyLanguageSettingsChangeListeners(IEnvironmentChangeEvent event) {
+		for (Object listener : fEnvironmentChangeListeners.getListeners()) {
+			((IEnvironmentChangeListener) listener).handleEvent(event);
+		}
 	}
 
 	@Override

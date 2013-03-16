@@ -32,7 +32,7 @@ public interface IASTIdExpression extends IASTExpression, IASTNameOwner {
 	public IASTName getName();
 
 	/**
-	 * Set the name to be used inthe expression.
+	 * Sets the name to be used in the expression.
 	 * 
 	 * @param name
 	 */

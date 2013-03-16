@@ -62,13 +62,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTWhileStatement;
  */
 public class NodeCommenter {
 	protected ASTVisitor visitor;
-	protected CommentHandler commHandler;
+	protected CommentHandler commentHandler;
 	protected NodeCommentMap commentMap;
 	protected List<IASTNode> children;
 
 	public NodeCommenter(ASTVisitor visitor, CommentHandler commHandler, NodeCommentMap commentMap) {
 		this.visitor = visitor;
-		this.commHandler = commHandler;
+		this.commentHandler = commHandler;
 		this.commentMap = commentMap;
 		this.children = new ArrayList<IASTNode>();
 	}
@@ -122,17 +122,17 @@ public class NodeCommenter {
 
 	private void addLeadingCommentToMap(ASTNode node, IASTComment comment) {
 		commentMap.addLeadingCommentToNode(node, comment);
-		commHandler.allreadyAdded(comment);
+		commentHandler.allreadyAdded(comment);
 	}
 
 	private void addTrailingCommentToMap(ASTNode node, IASTComment comment) {
 		commentMap.addTrailingCommentToNode(node, comment);
-		commHandler.allreadyAdded(comment);
+		commentHandler.allreadyAdded(comment);
 	}
 
 	private void addFreestandingCommentToMap(ASTNode node, IASTComment comment) {
 		commentMap.addFreestandingCommentToNode(node, comment);
-		commHandler.allreadyAdded(comment);
+		commentHandler.allreadyAdded(comment);
 	}
 
 	private boolean isTrailing(ASTNode node, ASTNode com, int nodeLineNumber, int commentLineNumber) {
@@ -200,8 +200,8 @@ public class NodeCommenter {
 	}
 	
 	protected int appendComments(ASTNode node) {
-		while (commHandler.hasMore()) {
-			IASTComment comment = commHandler.getFirst();
+		while (commentHandler.hasMore()) {
+			IASTComment comment = commentHandler.getFirst();
 			
 			if (isNotSameFile(node, comment)) {
 				return ASTVisitor.PROCESS_SKIP;
@@ -215,8 +215,8 @@ public class NodeCommenter {
 	}
 	
 	protected int appendFreestandingComments(ASTNode node) {
-		while (commHandler.hasMore()) {
-			IASTComment comment = commHandler.getFirst();
+		while (commentHandler.hasMore()) {
+			IASTComment comment = commentHandler.getFirst();
 			
 			if (isNotSameFile(node, comment)) {
 				return ASTVisitor.PROCESS_SKIP;
@@ -234,9 +234,9 @@ public class NodeCommenter {
 	}
 	
 	public void appendRemainingComments(IASTDeclaration declaration) {
-		while (commHandler.hasMore()) {
-			IASTComment comment = commHandler.getFirst();
-			if (appendComment((ASTNode)declaration, comment)) {
+		while (commentHandler.hasMore()) {
+			IASTComment comment = commentHandler.getFirst();
+			if (appendComment((ASTNode) declaration, comment)) {
 				continue;
 			}
 			addFreestandingCommentToMap((ASTNode) declaration, comment);

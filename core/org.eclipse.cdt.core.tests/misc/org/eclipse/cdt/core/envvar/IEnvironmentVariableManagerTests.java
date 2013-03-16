@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Broadcom Corp. and others.
+ * Copyright (c) 2009, 2013 Broadcom Corp. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.envvar;
 
 import java.io.ByteArrayInputStream;
+import java.util.Arrays;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -22,6 +23,9 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
+import org.eclipse.cdt.utils.envvar.IEnvironmentChangeEvent;
+import org.eclipse.cdt.utils.envvar.IEnvironmentChangeListener;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -31,6 +35,29 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
 public class IEnvironmentVariableManagerTests extends TestCase {
+	/**
+	 * Mock listener to listen to environment variable change events.
+	 */
+	private class MockEnvironmentListener implements IEnvironmentChangeListener {
+		private int count = 0;
+		private IEnvironmentChangeEvent lastEvent = null;
+
+		public int getCount() {
+			return count;
+		}
+		public void resetCount() {
+			count = 0;
+			lastEvent = null;
+		}
+		public IEnvironmentChangeEvent getLastEvent() {
+			return lastEvent;
+		}
+		@Override
+		public void handleEvent(IEnvironmentChangeEvent event) {
+			count++;
+			lastEvent = event;
+		}
+	}
 
 	@Override
 	protected void setUp() throws Exception {
@@ -637,6 +664,90 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		
 		// Should keep the same value, not a list
 		assertEquals(varInvalidListValue,varInvalidList.getValue()); 
+	}
+
+	/**
+	 * Test case to test environment variable change notifications
+	 * 
+	 * @throws Exception
+	 */
+	public void testEnvironmentChangeListener() throws Exception {
+		// Register environment event listener
+		MockEnvironmentListener envListener = new MockEnvironmentListener();
+		EnvironmentVariableManager.fUserSupplier.registerEnvironmentChangeListener(envListener);
+		assertEquals(0, envListener.getCount());
+
+		// Define sample environment variable name
+		String variableName = "VAR";
+
+		// Test adding a variable
+		IEnvironmentVariable[] varsAdded = { new EnvironmentVariable(variableName, "value") };
+		{
+			// Reset the listener
+			envListener.resetCount();
+			assertEquals(0, envListener.getCount());
+
+			// Add environment variable
+			EnvironmentVariableManager.fUserSupplier.setVariables(varsAdded, null);
+			EnvironmentVariableManager.fUserSupplier.storeWorkspaceEnvironment(true);
+
+			// Doublecheck that variable added
+			IEnvironmentVariable[] actualVars = EnvironmentVariableManager.fUserSupplier.getVariables(null);
+			assertTrue(((Arrays.equals(varsAdded, actualVars))));
+
+			// Check event received by the listener
+			assertEquals(1, envListener.getCount());
+			IEnvironmentChangeEvent event = envListener.getLastEvent();
+			assertTrue(Arrays.equals(new IEnvironmentVariable[0], event.getOldVariables()));
+			assertTrue(Arrays.equals(varsAdded, event.getNewVariables()));
+		}
+
+		// Test changing a variable
+		IEnvironmentVariable[] varsChanged = { new EnvironmentVariable(variableName, "value-changed") };
+		{
+			// Reset the listener
+			envListener.resetCount();
+			assertEquals(0, envListener.getCount());
+
+			// Add environment variable
+			EnvironmentVariableManager.fUserSupplier.setVariables(varsChanged, null);
+			EnvironmentVariableManager.fUserSupplier.storeWorkspaceEnvironment(true);
+
+			// Doublecheck that variable added
+			IEnvironmentVariable[] actualVars = EnvironmentVariableManager.fUserSupplier.getVariables(null);
+			assertTrue(Arrays.equals(varsChanged, actualVars));
+
+			// Check event received by the listener
+			assertEquals(1, envListener.getCount());
+			IEnvironmentChangeEvent event = envListener.getLastEvent();
+			assertTrue(Arrays.equals(varsAdded, event.getOldVariables()));
+			assertTrue(Arrays.equals(varsChanged, event.getNewVariables()));
+		}
+
+		// Test removing a variable
+		IEnvironmentVariable[] varsRemoved = {};
+		{
+			// Reset the listener
+			envListener.resetCount();
+			assertEquals(0, envListener.getCount());
+
+			// Add environment variable
+			EnvironmentVariableManager.fUserSupplier.setVariables(varsRemoved, null);
+			EnvironmentVariableManager.fUserSupplier.storeWorkspaceEnvironment(true);
+
+			// Doublecheck that variable added
+			IEnvironmentVariable[] actualVars = EnvironmentVariableManager.fUserSupplier.getVariables(null);
+			assertTrue(Arrays.equals(varsRemoved, actualVars));
+
+			// Check event received by the listener
+			assertEquals(1, envListener.getCount());
+			IEnvironmentChangeEvent event = envListener.getLastEvent();
+			assertTrue(Arrays.equals(varsChanged, event.getOldVariables()));
+			assertTrue(Arrays.equals(varsRemoved, event.getNewVariables()));
+		}
+
+		// Release environment event listener
+		EnvironmentVariableManager.fUserSupplier.unregisterEnvironmentChangeListener(envListener);
 	}
 
 }

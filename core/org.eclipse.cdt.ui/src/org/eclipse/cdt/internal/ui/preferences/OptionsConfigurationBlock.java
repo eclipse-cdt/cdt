@@ -176,7 +176,7 @@ public abstract class OptionsConfigurationBlock {
 	private Shell fShell;
 
 	private final IWorkingCopyManager fManager;
-	private final IWorkbenchPreferenceContainer fContainer;
+	protected final IWorkbenchPreferenceContainer fContainer;
 
 	private Map<Key, String> fDisabledProjectSettings; // null when project specific settings are turned off
 
@@ -536,7 +536,7 @@ public abstract class OptionsConfigurationBlock {
 		return null;
 	}
 
-	private void makeScrollableCompositeAware(Control control) {
+	protected void makeScrollableCompositeAware(Control control) {
 		ScrolledPageContent parentScrolledComposite= getParentScrolledComposite(control);
 		if (parentScrolledComposite != null) {
 			parentScrolledComposite.adaptChild(control);

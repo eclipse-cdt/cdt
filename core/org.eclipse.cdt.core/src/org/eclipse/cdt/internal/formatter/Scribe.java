@@ -464,8 +464,8 @@ public class Scribe {
 					printIndentationIfNecessary(buffer);
 				buffer.append(lineSeparator);
 			}
-			lastNumberOfNewLines+= linesNumber;
-			line+= linesNumber;
+			lastNumberOfNewLines += linesNumber;
+			line += linesNumber;
 			column= 1;
 			needSpace= false;
 			pendingSpace= false;
@@ -475,8 +475,8 @@ public class Scribe {
 					printIndentationIfNecessary(buffer);
 				buffer.append(lineSeparator);
 			}
-			lastNumberOfNewLines+= linesNumber;
-			line+= linesNumber;
+			lastNumberOfNewLines += linesNumber;
+			line += linesNumber;
 			column= 1;
 			needSpace= false;
 			pendingSpace= false;
@@ -491,8 +491,8 @@ public class Scribe {
 					printIndentationIfNecessary(buffer);
 				buffer.append(lineSeparator);
 			}
-			lastNumberOfNewLines+= realNewLineNumber;
-			line+= realNewLineNumber;
+			lastNumberOfNewLines += realNewLineNumber;
+			line += realNewLineNumber;
 			column= 1;
 			needSpace= false;
 			pendingSpace= false;
@@ -771,14 +771,8 @@ public class Scribe {
 			printComment();
 			currentPosition= scanner.getCurrentPosition();
 		}
-		if (pendingSpace) {
-			addInsertEdit(currentPosition, SPACE);
-			pendingSpace= false;
-			needSpace= false;
-		}
 		if (startOffset + length < currentPosition) {
-			// don't move backwards
-			return;
+			return;  // Don't move backwards
 		}
 		boolean savedPreserveNL= preserveNewLines;
 		boolean savedSkipOverInactive= skipOverInactive;
@@ -994,7 +988,7 @@ public class Scribe {
 
 					addReplaceEdit(start, previousStart - 1, String.valueOf(buffer));
 				} else {
-					column+= (nextCharacterStart - previousStart);
+					column += (nextCharacterStart - previousStart);
 				}
 				isNewLine= false;
 			}
@@ -1041,7 +1035,7 @@ public class Scribe {
 					column= 1;
 					line++;
 				} else {
-					column+= (nextCharacterStart - previousStart);
+					column += (nextCharacterStart - previousStart);
 				}
 				isNewLine= false;
 			}
@@ -1513,7 +1507,7 @@ public class Scribe {
 				while (column <= indentationLevel - indentationLevel % tabLength) {
 					buffer.append('\t');
 					int complement= tabLength - ((column - 1) % tabLength); // amount of space
-					column+= complement;
+					column += complement;
 					needSpace= false;
 				}
 				while (column <= indentationLevel) {
@@ -1540,7 +1534,7 @@ public class Scribe {
 					if (column <= columnForLeadingIndents) {
 						if ((column - 1 + tabLength) <= indentationLevel) {
 							buffer.append('\t');
-							column+= tabLength;
+							column += tabLength;
 						} else if ((column - 1 + indentationSize) <= indentationLevel) {
 							// print one indentation
 							for (int i= 0, max= indentationSize; i < max; i++) {
@@ -1563,7 +1557,7 @@ public class Scribe {
 				while (column <= indentationLevel) {
 					if ((column - 1 + tabLength) <= indentationLevel) {
 						buffer.append('\t');
-						column+= tabLength;
+						column += tabLength;
 					} else if ((column - 1 + indentationSize) <= indentationLevel) {
 						// print one indentation
 						for (int i= 0, max= indentationSize; i < max; i++) {

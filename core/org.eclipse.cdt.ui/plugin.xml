@@ -4432,7 +4432,6 @@
 			icon="icons/obj16/ls_entries.gif"
 			name="%AllLanguageSettingEntries.name"
 			weight="010"
-			helpId="FIXME cdt_u_prop_pns_inc"
 			parent="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage"
 			tooltip="%AllLanguageSettingEntries.tooltip"/>
 		<tab
@@ -4440,7 +4439,6 @@
 			icon="icons/obj16/extension_obj.gif"
 			name="%AllLanguageSettingProviders.name"
 			weight="020"
-			helpId="FIXME cdt_u_prop_pns_inc"
 			parent="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage"
 			tooltip="%AllLanguageSettingEntries.tooltip"/>
 	</extension>

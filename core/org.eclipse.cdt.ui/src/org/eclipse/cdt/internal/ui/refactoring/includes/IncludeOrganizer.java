@@ -239,7 +239,7 @@ public class IncludeOrganizer {
 				String name = new String(include.getName().getSimpleID());
 				IncludeInfo includeInfo = new IncludeInfo(name, include.isSystemInclude());
 				String path = include.getPath();
-				IPath header = path.isEmpty() ? null : Path.fromPortableString(path);
+				IPath header = path.isEmpty() ? null : Path.fromOSString(path);
 				IncludeGroupStyle style =
 						header != null ? getIncludeStyle(header) : getIncludeStyle(includeInfo);
 				IncludePrototype prototype = new IncludePrototype(include, header, includeInfo, style);

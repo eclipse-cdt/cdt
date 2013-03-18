@@ -18,6 +18,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
+import org.eclipse.cdt.dsf.debug.service.IRunControl3;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
@@ -64,6 +65,7 @@ public class GDBRunControl_7_6 extends GDBRunControl_7_0 implements IEventListen
 
         register(new String[]{IRunControl.class.getName(),
         					  IRunControl2.class.getName(),
+       					   	  IRunControl3.class.getName(),
         					  IMIRunControl.class.getName(),
         					  MIRunControl.class.getName(),
         					  GDBRunControl_7_0.class.getName(),

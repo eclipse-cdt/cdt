@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//21M\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTChildProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-18T17:40:37Z",
+      "side": 1,
+      "message": "Don\u0027t return null to signify an empty collection.\n\nPlease use descriptive form of in method JavaDoc comments: Create -\u003e Creates, Return -\u003e Returns. Please fix in all method JavaDocs.",
+      "revId": "c4c9b9a88c8f3343f0953e0f582a0ebba9ded5a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//21I\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTChildProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-18T17:40:37Z",
+      "side": 1,
+      "message": "Does using of Collection mean that ordering of extra children is not important?",
+      "revId": "c4c9b9a88c8f3343f0953e0f582a0ebba9ded5a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//21A\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-18T17:40:37Z",
+      "side": 1,
+      "message": "Please use proper capitalization and punctuation in comments. Capitalize \"Visit\", put a period at the end. Please fix in all comments.",
+      "revId": "c4c9b9a88c8f3343f0953e0f582a0ebba9ded5a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//21E\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-18T17:40:37Z",
+      "side": 1,
+      "message": "One of fundamental AST assumptions is that child nodes are contained within their parents. This assumption seems to be violated by adding children to names.\n\nPlease always use curly braces when the body of \u0027for\u0027 statement contains multiple lines.",
+      "revId": "c4c9b9a88c8f3343f0953e0f582a0ebba9ded5a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//208\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-18T17:40:37Z",
+      "side": 1,
+      "message": "LinkedList is one of the least efficient data structures in Java. What is the reason for using it?",
+      "revId": "c4c9b9a88c8f3343f0953e0f582a0ebba9ded5a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

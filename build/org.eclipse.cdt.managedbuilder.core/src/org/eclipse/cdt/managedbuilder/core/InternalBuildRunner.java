@@ -128,6 +128,12 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 				status = dBuilder.build(stdout, stderr, new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			} else {
 				status = ParallelBuilder.build(des, null, null, stdout, stderr, new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK), resumeOnErr, buildIncrementaly);
+				// Bug 403670:
+				// Make sure the build configuration's rebuild status is updated with the result of
+				// this successful build.  In the non-parallel case this happens within dBuilder.build
+				// (the cBS is passed as an instance of IResourceRebuildStateContainer).
+				if (status == ParallelBuilder.STATUS_OK)
+					cBS.setState(0);
 				buildRunnerHelper.printLine(ManagedMakeMessages.getFormattedString("CommonBuilder.7", Integer.toString(ParallelBuilder.lastThreadsUsed))); //$NON-NLS-1$
 			}
 

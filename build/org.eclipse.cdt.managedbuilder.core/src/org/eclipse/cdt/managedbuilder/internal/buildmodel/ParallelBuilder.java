@@ -200,6 +200,9 @@ public class ParallelBuilder {
 	 * @param monitor Progress monitor
 	 * @param resumeOnErrors If true, build process will not stop when
 	 * compilation errors encountered
+	 * @return the status of the operation, one of {@link ParallelBuilder#STATUS_OK},
+	 *         {@link ParallelBuilder#STATUS_ERROR}, {@link ParallelBuilder#STATUS_CANCELED}, or {@link
+	 *         ParallelBuilder#STATUS_INVALID}. *
 	 */
 	static public int build(IBuildDescription des, IPath cwd, GenDirInfo dirs, OutputStream out, OutputStream err, IProgressMonitor monitor, boolean resumeOnErrors, boolean buildIncrementally) {
 		IConfiguration cfg = des.getConfiguration();
@@ -214,12 +217,12 @@ public class ParallelBuilder {
 		builder.sortQueue();
 		monitor.beginTask("", builder.queue.size()); //$NON-NLS-1$
 		BuildProcessManager buildProcessManager = new BuildProcessManager(out, err, true, threads);
-		builder.dispatch(buildProcessManager);
+		int status = builder.dispatch(buildProcessManager);
 		lastThreadsUsed = buildProcessManager.getThreadsUsed();
 		monitor.done();
-		return IBuildModelBuilder.STATUS_OK;
+		return status;
 	}
-	
+
 	/**
 	 * Initializes parallel builder
 	 */

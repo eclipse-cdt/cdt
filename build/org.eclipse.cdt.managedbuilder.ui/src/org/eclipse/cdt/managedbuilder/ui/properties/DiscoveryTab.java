@@ -98,7 +98,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	private static final String PROFILE_PAGE = "profilePage"; //$NON-NLS-1$
 	private static final String PROFILE_ID = "profileId"; //$NON-NLS-1$
 	private static final String PROFILE_NAME = "name"; //$NON-NLS-1$
-	private static final int DEFAULT_HEIGHT = 150;
+	private static final int DEFAULT_HEIGHT = 15;
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 10, 20 };
 	private Label fTableDefinition;
 	private Combo scopeComboBox;

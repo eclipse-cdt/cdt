@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//2rw\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3819,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-19T02:08:28Z",
+      "side": 1,
+      "message": "This is the current behavior, but I\u0027m not sure if it is actually what is desired... (or why, if it is)",
+      "revId": "771b998c5421cf69afea5a308cc13720fbf79d84",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2rs\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3830,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-19T02:08:28Z",
+      "side": 1,
+      "message": "I wish I could figure out a way to avoid repeating this if clause, but I can\u0027t.",
+      "revId": "771b998c5421cf69afea5a308cc13720fbf79d84",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2ro\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3848,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-19T02:08:28Z",
+      "side": 1,
+      "message": "This is needed to avoid the warning, but I\u0027m not sure what the desired behavior would be if nodeLocation turned out to be null.",
+      "revId": "771b998c5421cf69afea5a308cc13720fbf79d84",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

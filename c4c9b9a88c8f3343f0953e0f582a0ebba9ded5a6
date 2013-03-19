@@ -138,6 +138,24 @@
       "revId": "c4c9b9a88c8f3343f0953e0f582a0ebba9ded5a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2dQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-03-19T19:55:33Z",
+      "side": 1,
+      "message": "The time for GC?  Do you have ideas on how I could measure this time?  I have a performance harness to compare the time needed for various collections in various conditions, but I need a way to account for this GC time.  Right now the harness collects garbage after every test, but I don\u0027t have a way to compare the performance of that collection.\n\nBTW: You haven\u0027t suggested an alternative -- I guess ArrayList?",
+      "parentUuid": "AABOPX//2fE\u003d",
+      "revId": "c4c9b9a88c8f3343f0953e0f582a0ebba9ded5a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

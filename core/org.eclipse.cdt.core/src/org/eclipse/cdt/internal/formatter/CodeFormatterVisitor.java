@@ -3803,8 +3803,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 * @return <code>false</code> if the node should be skipped
 	 */
 	private boolean enterNode(IASTNode node) {
-		int currentPosition = getCurrentPosition();
-		IASTFileLocation nodeLocation = getFileLocation(node);
+		final int currentPosition = getCurrentPosition();
+		final IASTFileLocation nodeLocation = getFileLocation(node);
 		int nodeEndOffset = -1;
 		if (nodeLocation != null) {
 			nodeEndOffset = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
@@ -3814,17 +3814,18 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		scribe.enterNode();
 		if (node instanceof IASTProblemHolder)
 			return false;
-		IASTNodeLocation[] locations= node.getNodeLocations();
+		final IASTNodeLocation[] locations= node.getNodeLocations();
 		if (locations.length == 0) {
+			return true; //No locations, everything is fine. ???
 		} else if (!fInsideMacroArguments && locations[0] instanceof IASTMacroExpansionLocation) {
-			IASTMacroExpansionLocation location = (IASTMacroExpansionLocation) locations[0];
+			final IASTMacroExpansionLocation location = (IASTMacroExpansionLocation) locations[0];
 			if (locations.length <= 2 && node instanceof IASTStatement) {
-				IASTPreprocessorMacroExpansion macroExpansion = location.getExpansion();
-				IASTFileLocation macroLocation = macroExpansion.getFileLocation();
-				if (macroLocation.getNodeOffset() >= currentPosition &&
-						!scribe.shouldSkip(macroLocation.getNodeOffset()) &&
-						(nodeEndOffset == macroLocation.getNodeOffset() + macroLocation.getNodeLength() ||
-						locations.length == 2 && isSemicolonLocation(locations[1])) &&
+				final IASTPreprocessorMacroExpansion macroExpansion = location.getExpansion();
+				final IASTFileLocation macroLocation = macroExpansion.getFileLocation();
+				final int macroOffset = macroLocation.getNodeOffset();
+				if (macroOffset >= currentPosition && !scribe.shouldSkip(macroOffset) &&
+						(nodeEndOffset == macroOffset + macroLocation.getNodeLength() ||
+						 locations.length == 2 && isSemicolonLocation(locations[1])) &&
 						isFunctionStyleMacroExpansion(macroExpansion)) {
 					if (locations.length == 2 && isSemicolonLocation(locations[1])) {
 						scribe.setTailFormatter(
@@ -3835,16 +3836,16 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					return false;
 				}
 			}
-			IASTFileLocation expansionLocation= location.asFileLocation();
-			int startOffset= expansionLocation.getNodeOffset();
-			int endOffset= startOffset + expansionLocation.getNodeLength();
+			final IASTFileLocation expansionLocation= location.asFileLocation();
+			final int startOffset= expansionLocation.getNodeOffset();
+			final int endOffset= startOffset + expansionLocation.getNodeLength();
 			scribe.skipRange(startOffset, endOffset);
 			if (locations.length == 1 && endOffset <= currentPosition) {
 				scribe.restartAtOffset(endOffset);
 				continueNode(node.getParent());
 				return false;
 			}
-		} else {
+		} else if (nodeLocation != null) {
 			scribe.restartAtOffset(nodeLocation.getNodeOffset());
 		}
 		return true;

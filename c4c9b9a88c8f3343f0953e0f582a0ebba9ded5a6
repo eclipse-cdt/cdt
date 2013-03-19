@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//200\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTChildProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-03-19T17:46:32Z",
+      "side": 1,
+      "message": "Yes, the implementation of the extension point doesn\u0027t care about the order of the children.  Further, I don\u0027t think that the implementation could ensure any type of order, since several contributors could be providing children for the same node.",
+      "parentUuid": "AABOPX//21I\u003d",
+      "revId": "c4c9b9a88c8f3343f0953e0f582a0ebba9ded5a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//21A\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMWriter.java",
         "patchSetId": 1
@@ -81,6 +99,24 @@
       "writtenOn": "2013-03-18T17:40:37Z",
       "side": 1,
       "message": "LinkedList is one of the least efficient data structures in Java. What is the reason for using it?",
+      "revId": "c4c9b9a88c8f3343f0953e0f582a0ebba9ded5a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//20w\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-03-19T17:46:32Z",
+      "side": 1,
+      "message": "I guess you\u0027re talking about efficiency with respect to space?  What would you recommend in this case?",
+      "parentUuid": "AABOPX//208\u003d",
       "revId": "c4c9b9a88c8f3343f0953e0f582a0ebba9ded5a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -353,7 +353,7 @@ implements
 		GridData gd;
 		parentComposite = new Composite(c, SWT.NONE);
 		parentComposite.setLayoutData(gd= new GridData(GridData.FILL_BOTH));
-		gd.widthHint= 800;
+		gd.widthHint= 600;
 		itabs.clear();
 		if (!isSingle()) {
 			parentComposite.setLayout(new FillLayout());

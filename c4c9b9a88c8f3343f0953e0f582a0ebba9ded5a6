@@ -120,6 +120,24 @@
       "revId": "c4c9b9a88c8f3343f0953e0f582a0ebba9ded5a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2fE\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-19T17:56:37Z",
+      "side": 1,
+      "message": "Efficiency wrt GC overhead primarily.",
+      "parentUuid": "AABOPX//20w\u003d",
+      "revId": "c4c9b9a88c8f3343f0953e0f582a0ebba9ded5a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -86,6 +87,7 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 				public void modifyText(ModifyEvent e) {
 				}
 			});
+			((GridData)logLocationText.getLayoutData()).widthHint = new PixelConverter(parent).convertWidthInCharsToPixels(40);
 
 			// [Browse...]
 			browseButton = ControlFactory.createPushButton(contents, PreferencesMessages.BuildLogPreferencePage_Browse);

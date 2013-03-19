@@ -220,7 +220,7 @@ public class CFileTypesPreferenceBlock {
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.grabExcessVerticalSpace = true;
-		gridData.heightHint = SWTUtil.getTableHeightHint(table, 25);
+		gridData.heightHint = SWTUtil.getTableHeightHint(table, 15);
 		gridData.widthHint = new PixelConverter(parent).convertWidthInCharsToPixels(60);
 		
 		tblLayout.addColumnData(new ColumnWeightData(20));

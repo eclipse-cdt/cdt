@@ -156,6 +156,24 @@
       "revId": "c4c9b9a88c8f3343f0953e0f582a0ebba9ded5a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2cA\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-03-19T21:21:17Z",
+      "side": 1,
+      "message": "I\u0027ve modified my PerformanceHarness to use GarbageCollectorMXBean to collect GC stats.  I haven\u0027t used this before so I don\u0027t have any feel for how accurate these results are.  Let me know if you know of a problem with this interface.\n\nI\u0027m collecting the gc.count (number of times GC has run) and the gc.time (milliseconds spent GC\u0027ing) before and after each test.  I haven\u0027t found any significant difference between the two cases.  The time is generally 3200ms (+/-100ms) and the number of collections is 612 or 613.  This is in a 64-bit VM on linux.\n\nI think that the reason the results are so similar is that I\u0027ve only been testing cases that will be commonly encountered by this code.  I don\u0027t expect there to be many contributors (my test tries values from 0 to 10) and I don\u0027t expect that the contributors will add many children (the test tries 1 to 5).\n\nWith these small values I don\u0027t think that the choice of Collection has a chance to make any impact at all.\n\nIn particular I found that for the common case of creating a Collection that is not used (i.e., where there aren\u0027t any extra children to contribute) the LinkedList is about 60% times faster.  However, this benefit is largely lost when there is one child to contribute (only 5% faster), and is lost after that.\n\nI\u0027m going to apply these results in two ways:\n\n1) I won\u0027t create the collection until there is actually something to add.\n2) I\u0027ll use an ArrayList (with the default 10 element capacity); once there is one child to contribute it is more likely that there are also others.\n\nI would be interested in knowing if there is some aspect of GC that is not accounted for with these stats from the MXBean.",
+      "parentUuid": "AABOPX//2dQ\u003d",
+      "revId": "c4c9b9a88c8f3343f0953e0f582a0ebba9ded5a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

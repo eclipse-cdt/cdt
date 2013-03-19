@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Composite;
 /**
  * Interface for tabs in new CDT model.
  * All tabs available via extension point
- * "org.eclipse.cdt.managedbuilder.ui.cPropertyTab"
+ * "org.eclipse.cdt.ui.cPropertyTab"
  * should implement this interface.
  */
 public interface ICPropertyTab {

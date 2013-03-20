@@ -88,6 +88,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//2W0\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-03-20T12:09:15Z",
+      "side": 1,
+      "message": "I\u0027ve changed this so that the extension-point now only creates children for IASTExpressions.",
+      "parentUuid": "AABOPX//21E\u003d",
+      "revId": "c4c9b9a88c8f3343f0953e0f582a0ebba9ded5a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//208\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMWriter.java",
         "patchSetId": 1

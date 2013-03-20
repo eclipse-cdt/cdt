@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//2Sw\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/ColorAndEffectFieldEditor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-20T17:09:45Z",
+      "side": 1,
+      "message": "As mentioned previously, \"You\u0027ve got end-of-line oddities here. Please use unix-style line-endings. You can change this with the Edit -\u003e Set Encoding... menu item in Eclipse.\"",
+      "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2Ss\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/ColorAndEffectFieldEditor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-20T17:09:45Z",
+      "side": 1,
+      "message": "As mentioned previously, \"Since this is only called with two sets of values (edit and changed) it might be better to change all these parameters into a single boolean isEdit, thereby removing the duplication of references to TraditionalRenderingPreferenceConstants and TraditionalRenderingMessages.\"\n\nDo you think this is worth doing, or not?",
+      "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2Sk\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-20T17:09:45Z",
+      "side": 1,
+      "message": "Braces, please.",
+      "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2Sc\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-20T17:09:45Z",
+      "side": 1,
+      "message": "Thanks for removing the duplicated setFont, but please don\u0027t remove the braces, too.",
+      "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2SY\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TextPane.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-20T17:09:45Z",
+      "side": 1,
+      "message": "Braces.",
+      "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2SU\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TextPane.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-20T17:09:45Z",
+      "side": 1,
+      "message": "Braces.",
+      "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2SQ\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TextPane.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-20T17:09:45Z",
+      "side": 1,
+      "message": "Braces.",
+      "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2SE\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TextPane.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-20T17:09:45Z",
+      "side": 1,
+      "message": "Braces.",
+      "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2R4\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 570,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-20T17:09:45Z",
+      "side": 1,
+      "message": "Braces.",
+      "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2R0\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 595,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-20T17:09:45Z",
+      "side": 1,
+      "message": "As mentioned previously, \"Since there are only two values for boldKey (and italicKey), it might be better to change these parameters into a single boolean isEdit, thereby removing the duplication of references to TraditionalRenderingPreferenceConstants.\"",
+      "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2Rc\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-20T17:09:45Z",
+      "side": 1,
+      "message": "As mentioned previously, \"Since store is used only once, it could be inlined.\"",
+      "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2RY\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-20T17:09:45Z",
+      "side": 1,
+      "message": "As mentioned previously, \"Since store is used only once, it could be inlined.\"",
+      "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

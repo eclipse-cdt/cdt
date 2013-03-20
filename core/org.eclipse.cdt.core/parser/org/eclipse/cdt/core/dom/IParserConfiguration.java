@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom;
 
@@ -21,17 +21,13 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IParserConfiguration {
-
 	/**
-	 * @return IScannerInfo representing the build information required to
-	 *         parse.
+	 * @return IScannerInfo representing the build information required to parse.
 	 */
 	public IScannerInfo getScannerInfo();
 
-	// TODO this may change
 	/**
 	 * @return String representing dialect name for the language
 	 */
 	public String getParserDialect();
-
 }

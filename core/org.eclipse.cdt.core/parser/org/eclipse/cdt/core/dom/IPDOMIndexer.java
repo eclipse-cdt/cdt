@@ -6,11 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    Andrew Ferguson (Symbian)
- *    Markus Schorn (Wind River Systems)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.core.dom;
 
 import java.util.Properties;
@@ -18,14 +17,19 @@ import java.util.Properties;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
-
 /**
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPDOMIndexer {
-
+	/**
+	 * Sets the project for which to build the index.
+	 */
 	public void setProject(ICProject project);
+
+	/**
+	 * Returns the project associated with the indexer.
+	 */
 	public ICProject getProject();
 		
 	/**
@@ -58,5 +62,6 @@ public interface IPDOMIndexer {
 	 * Creates a task that handles the changes.
 	 * @since 4.0
 	 */
-	public IPDOMIndexerTask createTask(ITranslationUnit[] added, ITranslationUnit[] changed, ITranslationUnit[] removed);
+	public IPDOMIndexerTask createTask(ITranslationUnit[] added, ITranslationUnit[] changed,
+			ITranslationUnit[] removed);
 }

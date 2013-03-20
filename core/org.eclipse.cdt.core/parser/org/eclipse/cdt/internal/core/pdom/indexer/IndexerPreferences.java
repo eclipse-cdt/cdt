@@ -264,9 +264,9 @@ public class IndexerPreferences {
 		if (project != null) {
 			switch (scope) {
 			case SCOPE_PROJECT_PRIVATE:
-				return new Preferences[] {getLocalPreferences(project)};
+				return new Preferences[] { getLocalPreferences(project) };
 			case SCOPE_PROJECT_SHARED:
-				return new Preferences[] {getProjectPreferences(project)};
+				return new Preferences[] { getProjectPreferences(project) };
 			}
 		}
 		return getInstancePreferencesArray();

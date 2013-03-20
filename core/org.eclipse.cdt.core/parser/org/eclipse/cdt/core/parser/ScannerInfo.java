@@ -35,17 +35,11 @@ public class ScannerInfo implements IScannerInfo {
 		includePaths = includeSearchPath != null ? includeSearchPath : new String[] {};
 	}
 		
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.IScannerInfo#getDefinedSymbols()
-     */
     @Override
 	public Map<String, String> getDefinedSymbols() {
         return definedSymbols;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.IScannerInfo#getIncludePaths()
-     */
     @Override
 	public String[] getIncludePaths() {
         return includePaths;

@@ -49,13 +49,6 @@ import org.eclipse.core.runtime.CoreException;
  * {@link AbstractCLikeLanguage#createParser(IScanner scanner, ParserMode parserMode,
  *                                           IParserLogService logService, IIndex index)}.
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the CDT team.
- * </p>
- * 
  * @see AbstractScannerExtensionConfiguration
  * 
  * @since 5.0
@@ -69,7 +62,8 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 
 		private List<IASTName> nameList= new ArrayList<IASTName>();
 
-		@Override public int visit(IASTName name) {
+		@Override
+		public int visit(IASTName name) {
 			nameList.add(name);
 			return PROCESS_CONTINUE;
 		}
@@ -132,7 +126,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 
 		final ISourceCodeParser parser= createParser(scanner, log, index, false, options);
 
-		// make it possible to cancel parser by reconciler - http://bugs.eclipse.org/226682
+		// Make it possible to cancel parser by reconciler - http://bugs.eclipse.org/226682
 		ICanceler canceler= null;
 		if (log instanceof ICanceler) {
 			canceler= (ICanceler) log;
@@ -143,7 +137,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 					parser.cancel();
 				}});
 		}
-		
+
 		try {
 			// Parse
 			IASTTranslationUnit ast= parser.parse();

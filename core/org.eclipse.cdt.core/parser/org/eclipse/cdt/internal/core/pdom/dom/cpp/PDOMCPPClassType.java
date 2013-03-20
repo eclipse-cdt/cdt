@@ -15,10 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -45,6 +41,10 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Doug Schaefer
@@ -145,7 +145,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	}
 	
 	public void addBases(PDOMName classDefName, ICPPBase[] bases) throws CoreException {
-		getPDOM().removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
+		getPDOM().removeCachedResult(record + PDOMCPPLinkage.CACHE_BASES);
 		final PDOMLinkage linkage = getLinkage();
 		PDOMCPPBase firstBase = getFirstBase();
 		for (ICPPBase base : bases) {
@@ -159,7 +159,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	public void removeBases(PDOMName classDefName) throws CoreException {
 		final PDOM pdom = getPDOM();
 		final Database db = getDB();
-		pdom.removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
+		pdom.removeCachedResult(record + PDOMCPPLinkage.CACHE_BASES);
 		
 		PDOMCPPBase base= getFirstBase();
 		PDOMCPPBase prevBase= null;

@@ -53,7 +53,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		this.linkage = linkage;
 		this.record = db.malloc(RECORD_SIZE);
 		db.putRecPtr(record + CLASS_DEFINITION, classDefName.getRecord());
-		linkage.storeType(record+BASECLASS_TYPE, base.getBaseClassType());
+		linkage.storeType(record + BASECLASS_TYPE, base.getBaseClassType());
 		
 		byte flags = (byte)(base.getVisibility() | (base.isVirtual() ? 4 : 0));
 		db.putByte(record + FLAGS, flags);

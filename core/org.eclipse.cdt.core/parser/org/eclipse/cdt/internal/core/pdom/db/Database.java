@@ -14,6 +14,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
+import com.ibm.icu.text.MessageFormat;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,14 +31,6 @@ import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.osgi.util.NLS;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Database encapsulates access to a flat binary format file with a memory-manager-like API for
@@ -308,7 +308,7 @@ public class Database {
 		long freeblock = 0;
 		int useDeltas;
 		for (useDeltas= needDeltas; useDeltas <= MAX_BLOCK_DELTAS; useDeltas++) {
-			freeblock = getFirstBlock(useDeltas*BLOCK_SIZE_DELTA);
+			freeblock = getFirstBlock(useDeltas * BLOCK_SIZE_DELTA);
 			if (freeblock != 0)
 				break;
 		}
@@ -322,24 +322,24 @@ public class Database {
 			chunk = getChunk(freeblock);
 		} else {
 			chunk = getChunk(freeblock);
-			removeBlock(chunk, useDeltas*BLOCK_SIZE_DELTA, freeblock);
+			removeBlock(chunk, useDeltas * BLOCK_SIZE_DELTA, freeblock);
 		}
 
-		final int unusedDeltas = useDeltas-needDeltas;
+		final int unusedDeltas = useDeltas - needDeltas;
 		if (unusedDeltas >= MIN_BLOCK_DELTAS) {
 			// Add in the unused part of our block.
-			addBlock(chunk, unusedDeltas*BLOCK_SIZE_DELTA, freeblock + needDeltas*BLOCK_SIZE_DELTA);
+			addBlock(chunk, unusedDeltas * BLOCK_SIZE_DELTA, freeblock + needDeltas * BLOCK_SIZE_DELTA);
 			useDeltas= needDeltas;
 		}
 
 		// Make our size negative to show in use.
-		final int usedSize= useDeltas*BLOCK_SIZE_DELTA;
+		final int usedSize= useDeltas * BLOCK_SIZE_DELTA;
 		chunk.putShort(freeblock, (short) -usedSize);
 
 		// Clear out the block, lots of people are expecting this.
-		chunk.clear(freeblock + BLOCK_HEADER_SIZE, usedSize-BLOCK_HEADER_SIZE);
+		chunk.clear(freeblock + BLOCK_HEADER_SIZE, usedSize - BLOCK_HEADER_SIZE);
 
-		malloced+= usedSize;
+		malloced += usedSize;
 		return freeblock + BLOCK_HEADER_SIZE;
 	}
 
@@ -352,7 +352,7 @@ public class Database {
 			chunk.fDirty = true;
 
 			if (newChunkIndex >= fChunksAllocated) {
-				int increment = Math.max(1024, fChunksAllocated/20);
+				int increment = Math.max(1024, fChunksAllocated / 20);
 				Chunk[] newchunks = new Chunk[fChunksAllocated + increment];
 				System.arraycopy(fChunks, 0, newchunks, 0, fChunksAllocated);
 
@@ -374,8 +374,8 @@ public class Database {
 			if (address >= MAX_DB_SIZE) {
 				Object bindings[] = { this.getLocation().getAbsolutePath(), MAX_DB_SIZE };
 				throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
-						CCorePlugin.STATUS_PDOM_TOO_LARGE, NLS.bind(CCorePlugin
-								.getResourceString("pdom.DatabaseTooLarge"), bindings), null)); //$NON-NLS-1$
+						CCorePlugin.STATUS_PDOM_TOO_LARGE, NLS.bind(
+								CCorePlugin.getResourceString("pdom.DatabaseTooLarge"), bindings), null)); //$NON-NLS-1$
 			}
 			return address;
 		}
@@ -388,7 +388,7 @@ public class Database {
 		assert fExclusiveLock;
 		synchronized (fCache) {
 			final int oldLen= fChunks.length;
-			Chunk[] newchunks = new Chunk[oldLen+numChunks];
+			Chunk[] newchunks = new Chunk[oldLen + numChunks];
 			System.arraycopy(fChunks, 0, newchunks, 0, oldLen);
 			for (int i = oldLen; i < oldLen + numChunks; i++) {
 				newchunks[i]= null;
@@ -398,8 +398,8 @@ public class Database {
 			newchunks[ oldLen + numChunks - 1 ] = chunk;
 			fChunks= newchunks;
 			fCache.add(chunk, true);
-			fChunksAllocated=oldLen+numChunks;
-			fChunksUsed=oldLen+numChunks;
+			fChunksAllocated=oldLen + numChunks;
+			fChunksUsed=oldLen + numChunks;
 			return (long) (oldLen + numChunks - 1) * CHUNK_SIZE;
 		}
 	}

@@ -50,6 +50,15 @@
          </run>
       </runtime>
    </extension>
+    <extension point="org.eclipse.core.expressions.definitions">
+        <definition id="org.eclipse.cdt.qt.core.isQtProject">
+            <with variable="projectNatures">
+                <iterate operator="or">
+                    <equals value="org.eclipse.cdt.qt.core.qtNature"/>
+                </iterate>
+            </with>
+        </definition>
+    </extension>   
     <extension
         point="org.eclipse.cdt.core.tagger"
         id="qt.signalslots"
@@ -58,12 +67,22 @@
             local-id="signalslot.tagger"
             class="org.eclipse.cdt.qt.internal.core.QtSignalSlotTagger">
             <enablement>
-                <with variable="projectNatures">
-                    <iterate operator="or">
-                        <equals value="org.eclipse.cdt.qt.core.qtNature"/>
-                    </iterate>
-                </with>
+                <reference definitionId="org.eclipse.cdt.qt.core.isQtProject"/>
             </enablement>
         </bindingTagger>            
+    </extension>
+    <extension
+        point="org.eclipse.cdt.core.astChildProvider"
+        id="qt.signalslots.nameProvider"
+        name="Qt Signal/Slot Name Provider">
+        <childProvider
+            class="org.eclipse.cdt.qt.internal.core.QtSignalSlotNameProvider">
+            <enablement>
+                <reference definitionId="org.eclipse.cdt.qt.core.isQtProject"/>
+                <with variable="node">
+                    <instanceof value="org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression"/>
+                </with>
+            </enablement>
+        </childProvider>
     </extension>
 </plugin>

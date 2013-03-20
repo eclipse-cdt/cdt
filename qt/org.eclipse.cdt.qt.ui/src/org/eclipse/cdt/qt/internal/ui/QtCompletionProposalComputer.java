@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.tag.ITag;
@@ -75,22 +74,11 @@ public class QtCompletionProposalComputer extends ParsingBasedProposalComputer {
 		}
 	}
 
-	private static boolean is_QObject_connect(
-			ICEditorContentAssistInvocationContext context,
-			IASTCompletionContext astContext, IASTName name) {
-		IASTName connectName = name.getLastName();
-		if (!QtKeywords.CONNECT.equals(new String(connectName.getSimpleID())))
-			return false;
-
-		IBinding[] funcBindings = astContext.findBindings(connectName,
-				!context.isContextInformationStyle());
+	private static boolean is_QObject_connect(ICEditorContentAssistInvocationContext context, IASTCompletionContext astContext, IASTName name) {
+		IBinding[] funcBindings = astContext.findBindings(name, !context.isContextInformationStyle());
 		for (IBinding funcBinding : funcBindings)
-			if (funcBinding instanceof ICPPFunction) {
-				IBinding ownerBinding = ((ICPPFunction) funcBinding).getOwner();
-				if (ownerBinding != null
-						&& QtKeywords.QOBJECT.equals(ownerBinding.getName()))
-					return true;
-			}
+			if (QtKeywords.is_QObject_connect(funcBinding))
+				return true;
 
 		return false;
 	}

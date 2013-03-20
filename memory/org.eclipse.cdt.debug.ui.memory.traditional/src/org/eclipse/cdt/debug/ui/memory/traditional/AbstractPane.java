@@ -229,6 +229,14 @@ public abstract class AbstractPane extends Canvas
             	
                 editCell(fCaretAddress, fSubCellCaretPosition, ke.character);
             }
+            else if (ke.keyCode == SWT.TAB && (ke.stateMask & SWT.SHIFT) != 0) {
+            	// move backward cursor to the first position in the following pane
+            	handleSHIFTTabKey();
+            }
+            else if (ke.keyCode == SWT.TAB) {
+            	// move forward cursor to the first position in the following pane
+            	handleTabKey();
+            }
 
             if((ke.stateMask & SWT.SHIFT) != 0)
             {
@@ -253,7 +261,7 @@ public abstract class AbstractPane extends Canvas
             }
         }
 
-        public void keyReleased(KeyEvent ke)
+		public void keyReleased(KeyEvent ke)
         {
             // do nothing
         }
@@ -432,6 +440,70 @@ public abstract class AbstractPane extends Canvas
     	{
     		// do nothing
     	}
+    }
+    
+    protected static BigInteger tabAddress;
+    
+    /**
+     * Use SHIFT + TAB to shift cursor to the same address in next pane.
+     */
+    @SuppressWarnings("all")
+	protected void handleTabKey()
+    {
+    	AbstractPane[] panes = fRendering.getRenderingPanes();
+    	AbstractPane nextPane = null;
+    	
+    	if (this instanceof AddressPane) {
+    		// go to Data pane
+    		nextPane = panes[1];
+    		tabAddress = this.fCaretAddress;
+    	} else if (this instanceof DataPane) {
+    		// go to Text pane
+    		nextPane = panes[2];
+    		tabAddress = this.fCaretAddress;
+    	} else {
+    		nextPane = panes[0];
+    		tabAddress = this.fCaretAddress;
+    	}
+        
+    	// change pane focus
+    	nextPane.setCaretAddress(tabAddress);
+    	nextPane.fOldSubCellCaretPosition = 0;
+    	nextPane.fSubCellCaretPosition = 0;
+        nextPane.updateCaret();
+        nextPane.ensureCaretWithinViewport();
+        nextPane.setFocus();   	
+    }
+    
+    /**
+     * Use SHIFT + TAB to shift cursor back to the same address in previous pane.
+     */
+    @SuppressWarnings("all")
+   	protected void handleSHIFTTabKey()
+    {
+		AbstractPane[] panes = fRendering.getRenderingPanes();
+		AbstractPane prePane = null;
+		
+		if (this instanceof DataPane) {
+			// go to Data pane
+			prePane = panes[0];
+			tabAddress = this.fCaretAddress;
+		} else if (this instanceof TextPane) {
+			// go to Text pane
+			prePane = panes[1];
+			tabAddress = this.fCaretAddress;
+		} else {
+			prePane = panes[2];
+			tabAddress = this.fCaretAddress;
+		}
+	    
+		// change pane focus
+		prePane.setCaretAddress(tabAddress);
+		prePane.fOldSubCellCaretPosition = 0;
+		prePane.fSubCellCaretPosition = 0;
+		prePane.updateCaret();
+	    prePane.ensureCaretWithinViewport();
+	    prePane.setFocus();   
     }
     
     protected boolean isPaneVisible()

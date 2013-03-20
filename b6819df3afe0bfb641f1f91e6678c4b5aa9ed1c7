@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//2UY\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/AbstractPane.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 841,
+      "author": {
+        "id": 526
+      },
+      "writtenOn": "2013-03-20T15:01:36Z",
+      "side": 1,
+      "message": "Whitespace error",
+      "revId": "b6819df3afe0bfb641f1f91e6678c4b5aa9ed1c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2Ug\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 526
+      },
+      "writtenOn": "2013-03-20T15:01:36Z",
+      "side": 1,
+      "message": "The if and else still have the same code here... remove the conditional.",
+      "revId": "b6819df3afe0bfb641f1f91e6678c4b5aa9ed1c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2Uc\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TextPane.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 526
+      },
+      "writtenOn": "2013-03-20T15:01:36Z",
+      "side": 1,
+      "message": "The if and else still have the same code here... remove the conditional.",
+      "revId": "b6819df3afe0bfb641f1f91e6678c4b5aa9ed1c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2UU\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRenderingPreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 526
+      },
+      "writtenOn": "2013-03-20T15:01:36Z",
+      "side": 1,
+      "message": "Whitespace error",
+      "revId": "b6819df3afe0bfb641f1f91e6678c4b5aa9ed1c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2UQ\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRenderingPreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 526
+      },
+      "writtenOn": "2013-03-20T15:01:36Z",
+      "side": 1,
+      "message": "Whitespace error",
+      "revId": "b6819df3afe0bfb641f1f91e6678c4b5aa9ed1c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//2N8\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTChildProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-20T20:45:54Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "0805f260aa892f1ca6235c72cf21dd718a41a33c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2N4\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTChildProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-20T20:45:54Z",
+      "side": 1,
+      "message": "Isn\u0027t isEmpty() method sufficient to determine that no children were added?",
+      "revId": "0805f260aa892f1ca6235c72cf21dd718a41a33c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2OA\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTChildProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-20T20:45:54Z",
+      "side": 1,
+      "message": "emptyList() already returns an unmodifiable collection.\n\nExtra space after \u003cIASTNode\u003e.",
+      "revId": "0805f260aa892f1ca6235c72cf21dd718a41a33c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2Nw\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-20T20:45:54Z",
+      "side": 1,
+      "message": "Please use proper capitalization and punctuation in comments. Please fix in all comments.",
+      "revId": "0805f260aa892f1ca6235c72cf21dd718a41a33c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2No\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 475,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-20T20:45:54Z",
+      "side": 1,
+      "message": "Didn\u0027t you say that you are no longer adding children to names?",
+      "revId": "0805f260aa892f1ca6235c72cf21dd718a41a33c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

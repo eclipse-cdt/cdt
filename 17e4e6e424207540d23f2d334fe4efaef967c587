@@ -172,6 +172,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//2Qg\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 595,
+      "author": {
+        "id": 526
+      },
+      "writtenOn": "2013-03-20T17:40:48Z",
+      "side": 1,
+      "message": "The way Mike has done it is more flexible in case we want to have further font-based annotations down the road.",
+      "parentUuid": "AABOPX//2R0\u003d",
+      "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//2Rc\u003d",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
         "patchSetId": 3
@@ -189,6 +207,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//2Qw\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 526
+      },
+      "writtenOn": "2013-03-20T17:40:48Z",
+      "side": 1,
+      "message": "Inlining would make this line of code really long and hence less readable.  I recommend it stays as is.",
+      "parentUuid": "AABOPX//2Rc\u003d",
+      "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//2RY\u003d",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
         "patchSetId": 3
@@ -200,6 +236,24 @@
       "writtenOn": "2013-03-20T17:09:45Z",
       "side": 1,
       "message": "As mentioned previously, \"Since store is used only once, it could be inlined.\"",
+      "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2Qs\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 526
+      },
+      "writtenOn": "2013-03-20T17:40:48Z",
+      "side": 1,
+      "message": "Inlining would make this line of code really long and hence less readable.  I recommend it stays as is.",
+      "parentUuid": "AABOPX//2RY\u003d",
       "revId": "17e4e6e424207540d23f2d334fe4efaef967c587",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

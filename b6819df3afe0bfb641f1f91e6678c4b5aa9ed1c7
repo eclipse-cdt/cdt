@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//2RQ\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-20T17:08:02Z",
+      "side": 1,
+      "message": "I don\u0027t understand your comment here -- on the first iteration of the outer (i) loop, the Foreground will be set, and on the other iterations, the Background will be set. This does not seem to be redundant...",
+      "parentUuid": "AABOPX//2Ug\u003d",
+      "revId": "b6819df3afe0bfb641f1f91e6678c4b5aa9ed1c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//2Uc\u003d",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TextPane.java",
         "patchSetId": 2
@@ -47,6 +65,24 @@
       "writtenOn": "2013-03-20T15:01:36Z",
       "side": 1,
       "message": "The if and else still have the same code here... remove the conditional.",
+      "revId": "b6819df3afe0bfb641f1f91e6678c4b5aa9ed1c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2RM\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TextPane.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-20T17:08:02Z",
+      "side": 1,
+      "message": "Same question as in DataPane.",
+      "parentUuid": "AABOPX//2Uc\u003d",
       "revId": "b6819df3afe0bfb641f1f91e6678c4b5aa9ed1c7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

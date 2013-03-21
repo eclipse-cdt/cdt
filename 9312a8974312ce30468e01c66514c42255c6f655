@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//18I\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/internal/ui/Messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-21T20:02:04Z",
+      "side": 1,
+      "message": "Swap the order of words \"C/C++\" and \"new\"",
+      "revId": "9312a8974312ce30468e01c66514c42255c6f655",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//18E\u003d",
+        "filename": "core/org.eclipse.cdt.core/plugin.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-21T20:02:04Z",
+      "side": 1,
+      "message": "\"C/C++ GNU C/C++\" doesn\u0027t make much sense. We may have to keep CDT here.",
+      "revId": "9312a8974312ce30468e01c66514c42255c6f655",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//18A\u003d",
+        "filename": "core/org.eclipse.cdt.core/plugin.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-03-21T20:02:04Z",
+      "side": 1,
+      "message": "\"C/C++ GNU Assembler\" doesn\u0027t make much sense. We may have to keep CDT here. The same applies to other changes in this file.",
+      "revId": "9312a8974312ce30468e01c66514c42255c6f655",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

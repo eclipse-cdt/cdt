@@ -2261,24 +2261,16 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	}   
     }
 
-    public AbstractPane nextPane(AbstractPane currentPane) {
-    	List<AbstractPane> panes = Arrays.asList(getRenderingPanes());
-		int pos = panes.indexOf(currentPane);
-		if (pos == 2) {
-			return panes.get(0);
-		} else {
-			return panes.get(pos + 1);
-		}
-	}
-    
-	public AbstractPane prePane(AbstractPane currentPane) {
-		List<AbstractPane> panes = Arrays.asList(getRenderingPanes());
-		int pos = panes.indexOf(currentPane);
-		if (pos == 0) {
-			return panes.get(2);
-		} else {
-			return panes.get(pos - 1);
-		}
-	}
+    private AbstractPane incrPane(AbstractPane currentPane, int offset) {
+        final List<AbstractPane> panes = Arrays.asList(getRenderingPanes());
+        return panes.get((panes.indexOf(currentPane) + offset) % panes.size());
+    }
 
+    public AbstractPane nextPane(AbstractPane currentPane) {
+        return incrPane(currentPane,1);
+    }
+
+    public AbstractPane prevPane(AbstractPane currentPane) {
+        return incrPane(currentPane,-1);
+    }
 }

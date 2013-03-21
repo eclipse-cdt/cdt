@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -54,7 +54,7 @@ public abstract class AbstractPane extends Canvas
 
     // character may not fall on byte boundary
     protected int fSubCellCaretPosition = 0;
-    protected int fOldSubCellCaretPosition = 0; 
+    protected int fOldSubCellCaretPosition = 0;
 
     protected boolean fCaretEnabled = false;
 
@@ -62,13 +62,13 @@ public abstract class AbstractPane extends Canvas
 
     // storage
     protected int fRowCount = 0;
-    
+
     protected boolean fPaneVisible = true;
-    
+
     class AbstractPaneMouseListener implements MouseListener
     {
         public void mouseUp(MouseEvent me)
-        { 
+        {
             positionCaret(me.x, me.y);
 
             fCaret.setVisible(true);
@@ -77,7 +77,7 @@ public abstract class AbstractPane extends Canvas
             {
                 endSelection(me.x, me.y);
             }
-            
+
             fSelectionInProgress = fSelectionStarted = false;
         }
 
@@ -123,7 +123,7 @@ public abstract class AbstractPane extends Canvas
         {
         	handleMouseDoubleClick(me);
         }
-    	
+
     }
 
     class AbstractPaneMouseMoveListener implements MouseMoveListener
@@ -137,7 +137,7 @@ public abstract class AbstractPane extends Canvas
             }
         }
     }
-    
+
     class AbstractPaneFocusListener implements FocusListener
     {
         public void focusLost(FocusEvent fe)
@@ -146,13 +146,13 @@ public abstract class AbstractPane extends Canvas
         	if(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE_ON_ENTER_ONLY
         			.equals(store.getString(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE)))
 			{
-        		fRendering.getViewportCache().clearEditBuffer(); 
+        		fRendering.getViewportCache().clearEditBuffer();
 			}
         	else
         	{
         		fRendering.getViewportCache().writeEditBuffer();
         	}
-            
+
             // clear the pane local selection start
             AbstractPane.this.fSelectionStartAddress = null;
         }
@@ -160,7 +160,7 @@ public abstract class AbstractPane extends Canvas
         public void focusGained(FocusEvent fe)
         {
         }
-    	
+
     }
 
     class AbstractPaneKeyListener implements KeyListener
@@ -226,8 +226,16 @@ public abstract class AbstractPane extends Canvas
             		setCaretAddress(fRendering.getSelection().getLow());
             		fSubCellCaretPosition = 0;
             	}
-            	
+
                 editCell(fCaretAddress, fSubCellCaretPosition, ke.character);
+            }
+            else if (ke.keyCode == SWT.TAB && (ke.stateMask & SWT.SHIFT) != 0) {
+            	// move backward cursor to the first position in the following pane
+            	handleSHIFTTabKey();
+            }
+            else if (ke.keyCode == SWT.TAB) {
+            	// move forward cursor to the first position in the following pane
+            	handleTabKey();
             }
 
             if((ke.stateMask & SWT.SHIFT) != 0)
@@ -241,24 +249,24 @@ public abstract class AbstractPane extends Canvas
                     case SWT.PAGE_DOWN:
                     case SWT.PAGE_UP:
                         fRendering.getSelection().setEnd(fCaretAddress.add(BigInteger.valueOf(
-                        	fRendering.getAddressesPerColumn())), 
+                        	fRendering.getAddressesPerColumn())),
                             fCaretAddress);
                         break;
                 }
             }
-            else if(ke.keyCode != SWT.SHIFT && ke.keyCode != SWT.CTRL && ke.keyCode != SWT.COMMAND) 
+            else if(ke.keyCode != SWT.SHIFT && ke.keyCode != SWT.CTRL && ke.keyCode != SWT.COMMAND)
             // if shift key, keep selection, we might add to it
             {
                 fRendering.getSelection().clear();
             }
         }
 
-        public void keyReleased(KeyEvent ke)
+		public void keyReleased(KeyEvent ke)
         {
             // do nothing
         }
     }
-    
+
     class AbstractPanePaintListener implements PaintListener
     {
         public void paintControl(PaintEvent pe)
@@ -266,7 +274,7 @@ public abstract class AbstractPane extends Canvas
             AbstractPane.this.paint(pe);
         }
     }
-    
+
     public AbstractPane(Rendering rendering)
     {
         super(rendering, SWT.DOUBLE_BUFFERED);
@@ -281,7 +289,7 @@ public abstract class AbstractPane extends Canvas
         {
             // do nothing
         }
-        
+
         // pref
 
         this.setFont(fRendering.getFont());
@@ -302,15 +310,15 @@ public abstract class AbstractPane extends Canvas
 
         this.addFocusListener(createFocusListener());
     }
-    
+
     protected MouseListener createMouseListener(){
     	return new AbstractPaneMouseListener();
     }
-    
+
     protected MouseMoveListener createMouseMoveListener(){
     	return new AbstractPaneMouseMoveListener();
     }
-    
+
     protected FocusListener createFocusListener() {
     	return new AbstractPaneFocusListener();
     }
@@ -342,9 +350,9 @@ public abstract class AbstractPane extends Canvas
             }
         }
         updateCaret();
-        ensureCaretWithinViewport();    	
+        ensureCaretWithinViewport();
     }
-    
+
     protected void handleLeftArrowKey()
     {
         fSubCellCaretPosition--;
@@ -365,7 +373,7 @@ public abstract class AbstractPane extends Canvas
 
         }
         updateCaret();
-        ensureCaretWithinViewport();    	
+        ensureCaretWithinViewport();
     }
 
     protected void handleDownArrowKey()
@@ -376,20 +384,20 @@ public abstract class AbstractPane extends Canvas
         setCaretAddress(newCaretAddress);
 
         updateCaret();
-        ensureCaretWithinViewport();    	
+        ensureCaretWithinViewport();
     }
-    
+
     protected void handleUpArrowKey()
     {
         // Ensure that caret is within the addressable range
         BigInteger newCaretAddress = fCaretAddress.subtract(BigInteger
             .valueOf(fRendering.getAddressableCellsPerRow()));
         setCaretAddress(newCaretAddress);
-            
+
         updateCaret();
         ensureCaretWithinViewport();
     }
-    
+
     protected void handlePageDownKey()
     {
     	// Ensure that caret is within the addressable range
@@ -402,7 +410,7 @@ public abstract class AbstractPane extends Canvas
         updateCaret();
         ensureCaretWithinViewport();
     }
-    
+
     protected void handlePageUpKey()
     {
     	// Ensure that caret is within the addressable range
@@ -412,16 +420,16 @@ public abstract class AbstractPane extends Canvas
         setCaretAddress(newCaretAddress);
 
         updateCaret();
-        ensureCaretWithinViewport();    	
+        ensureCaretWithinViewport();
     }
-    
+
     protected void handleMouseDoubleClick(MouseEvent me)
     {
     	try
     	{
     		BigInteger address = getViewportAddress(me.x / getCellWidth(), me.y
     			/ getCellHeight());
-    		
+
     		fRendering.getSelection().clear();
     		fRendering.getSelection().setStart(address.add(BigInteger
                     .valueOf(fRendering.getAddressesPerColumn())), address);
@@ -433,12 +441,41 @@ public abstract class AbstractPane extends Canvas
     		// do nothing
     	}
     }
-    
+
+    /**
+	 * Use TAB to shift cursor to the same address in next pane.
+	 */
+	protected void handleTabKey() {
+		AbstractPane nextPane = fRendering.nextPane(this);
+		switchTo(nextPane);
+	}
+
+	/**
+	 * Use SHIFT + TAB to shift cursor back to the same address in previous
+	 * pane.
+	 */
+	protected void handleSHIFTTabKey() {
+		AbstractPane prePane = fRendering.prePane(this);
+		switchTo(prePane);
+	}
+
+	protected static BigInteger tabAddress;
+
+	private void switchTo(AbstractPane pane) {
+		tabAddress = this.fCaretAddress;
+		pane.setCaretAddress(tabAddress);
+		pane.fOldSubCellCaretPosition = 0;
+		pane.fSubCellCaretPosition = 0;
+		pane.updateCaret();
+		pane.ensureCaretWithinViewport();
+		pane.setFocus();
+	}
+
     protected boolean isPaneVisible()
     {
     	return fPaneVisible;
     }
-    
+
     protected void setPaneVisible(boolean visible)
     {
     	fPaneVisible = visible;
@@ -469,10 +506,10 @@ public abstract class AbstractPane extends Canvas
         {
         	// calculate offset from the beginning of the row
             int cellOffset = fCaretAddress.subtract(fRendering.getViewportStartAddress()).intValue();
-            int row = cellOffset / (fRendering.getBytesPerRow() / fRendering.getBytesPerCharacter());   
-            
+            int row = cellOffset / (fRendering.getBytesPerRow() / fRendering.getBytesPerCharacter());
+
             cellOffset -= row * fRendering.getBytesPerRow() / fRendering.getBytesPerCharacter();
-            
+
             fCaretAddress = fRendering.getMemoryBlockStartAddress().add(
             		BigInteger.valueOf(cellOffset / fRendering.getAddressableSize()));
          }
@@ -480,22 +517,22 @@ public abstract class AbstractPane extends Canvas
         {
         	// calculate offset from the end of the row
             int cellOffset = fCaretAddress.subtract(fRendering.getViewportEndAddress()).intValue() + 1;
-            int row = cellOffset / (fRendering.getBytesPerRow() / fRendering.getBytesPerCharacter());    
-            
+            int row = cellOffset / (fRendering.getBytesPerRow() / fRendering.getBytesPerCharacter());
+
             cellOffset -= row * fRendering.getBytesPerRow()/ fRendering.getBytesPerCharacter();
-            
+
             fCaretAddress = fRendering.getMemoryBlockEndAddress().add(
             		BigInteger.valueOf(cellOffset / fRendering.getAddressableSize()));
-         }  	
-        
+         }
+
         fRendering.setCaretAddress(fCaretAddress);
     }
-    
+
     protected boolean isOdd(int value)
     {
     	return (value / 2) * 2 == value;
     }
-    
+
     @SuppressWarnings("all")
     protected void updateCaret()
     {
@@ -521,24 +558,24 @@ public abstract class AbstractPane extends Canvas
     {
         BigInteger vpStart = fRendering.getViewportStartAddress();
         BigInteger vpEnd   = fRendering.getViewportEndAddress();
-        
+
         Rectangle vpBounds = fRendering.getBounds();
         Rectangle apBounds = fRendering.fAddressPane.getBounds();
         Rectangle dpBounds = fRendering.fBinaryPane.getBounds();
         Rectangle tpBounds = fRendering.fTextPane.getBounds();
-        
+
         ScrollBar hBar = fRendering.getHorizontalBar();
-        
+
         Point adjustedCaret = null;
-        
-        int leftPaneEdge  = 0; 
+
+        int leftPaneEdge  = 0;
         int rightPaneEdge = 0;
         int eolLocation   = 0;
         int bolSelection  = 0;
         int eolSelection  = 0;
-        
+
         // Determine if we're in the address, data (binary) or text panes; return if none of 'em.
-        
+
         if (this instanceof AddressPane)
         {
             adjustedCaret = new Point(fCaret.getLocation().x, fCaret.getLocation().y);
@@ -568,25 +605,25 @@ public abstract class AbstractPane extends Canvas
         {
             // The caret was moved outside the viewport bounds:  Scroll the
             // viewport up or down by a row, depending on where the caret is
-            
+
             boolean upArrow = fCaretAddress.compareTo(vpStart) <= 0;
             ScrollBar vBar = fRendering.getVerticalBar();
             vBar.setSelection(vBar.getSelection() + (upArrow ? -1 : 1));
             vBar.notifyListeners(SWT.Selection, new Event());
-            
+
             // Check to see if we're at the beginning or end of a line, and
             // move the scrollbar, if necessary, to keep the caret in view.
-            
+
             int currentCaretLocation = fCaret.getLocation().x + dpBounds.x + 16;
             int lowEolLimit  = eolLocation - 1;
             int highEolLimit = eolLocation + 1;
-            
+
             if (fCaret.getLocation().x == 2)
             {
                 hBar.setSelection(bolSelection);
                 hBar.notifyListeners(SWT.Selection, new Event());
             }
-            else if (upArrow && ((currentCaretLocation >= lowEolLimit && currentCaretLocation <= highEolLimit))) 
+            else if (upArrow && ((currentCaretLocation >= lowEolLimit && currentCaretLocation <= highEolLimit)))
             {
                 hBar.setSelection(eolSelection);
                 hBar.notifyListeners(SWT.Selection, new Event());
@@ -597,10 +634,10 @@ public abstract class AbstractPane extends Canvas
             // Left or Right arrow:  The caret is now outside the viewport and beyond the pane.  Calculate
             // a new pane position at [up to] 33% left or right in the viewport, to center the caret; use a
             // positive or negative offset depending on which direction we're scrolling.
-            
+
             int hBarOffset = (rightPaneEdge - leftPaneEdge) / 3;
             int newHBarSel = hBar.getSelection() + (adjustedCaret.x > rightPaneEdge ? hBarOffset : -hBarOffset);
-            
+
             if (fCaret.getLocation().x == 2)
             {
                 // Beginning of a line
@@ -623,7 +660,7 @@ public abstract class AbstractPane extends Canvas
             }
             else
                 return;
-            
+
             hBar.notifyListeners(SWT.Selection, new Event());
         }
         else
@@ -631,11 +668,11 @@ public abstract class AbstractPane extends Canvas
             // Caret is inside the viewport
             return;
         }
-        
+
         fRendering.ensureViewportAddressDisplayable();
         fRendering.setCaretAddress(fCaretAddress);
     }
-    
+
     protected void advanceCursor()
     {
     	handleRightArrowKey();
@@ -655,7 +692,7 @@ public abstract class AbstractPane extends Canvas
     {
     	fRowCount = getBounds().height / getCellHeight();
     }
-    
+
     protected void settingsChanged()
     {
         fSubCellCaretPosition = 0;
@@ -684,7 +721,7 @@ public abstract class AbstractPane extends Canvas
                     fRendering.getBytesPerColumn() / fRendering.getAddressableSize())), address);
 
                 fSelectionStarted = true;
-                
+
                 new CopyDefaultAction(fRendering, DND.SELECTION_CLIPBOARD).run();
             }
         }
@@ -746,7 +783,7 @@ public abstract class AbstractPane extends Canvas
             }
 
             updateCaret();
-            
+
             new CopyDefaultAction(fRendering, DND.SELECTION_CLIPBOARD).run();
         }
         catch(DebugException e)
@@ -761,7 +798,7 @@ public abstract class AbstractPane extends Canvas
     protected void paint(PaintEvent pe)
     {
     	fRowCount = getBounds().height / getCellHeight();
-    	
+
     	if(fRendering.isDirty())
         {
     		fRendering.setDirty(false);
@@ -794,7 +831,7 @@ public abstract class AbstractPane extends Canvas
     	fCellHeight = -1;
     	fTextHeight = -1;
     }
-    
+
     private int fCellHeight = -1; // called often, cache
 
     protected int getCellHeight()
@@ -815,7 +852,7 @@ public abstract class AbstractPane extends Canvas
         if(fCharacterWidth == -1)
         {
             GC gc = new GC(this);
-            gc.setFont(fRendering.getFont()); 
+            gc.setFont(fRendering.getFont());
             fCharacterWidth = gc.getAdvanceWidth('F');
             gc.dispose();
         }

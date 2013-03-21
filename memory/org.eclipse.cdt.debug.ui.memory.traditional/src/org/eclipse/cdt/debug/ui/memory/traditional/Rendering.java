@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -14,8 +14,10 @@ package org.eclipse.cdt.debug.ui.memory.traditional;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
@@ -61,7 +63,7 @@ import org.eclipse.swt.widgets.Text;
 public class Rendering extends Composite implements IDebugEventSetListener
 {
     // the IMemoryRendering parent
-    private TraditionalRendering fParent;
+    private final TraditionalRendering fParent;
 
     // controls
 
@@ -71,44 +73,44 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
     protected TextPane fTextPane;
 
-    private GoToAddressComposite fAddressBar;
-    
+    private final GoToAddressComposite fAddressBar;
+
     protected Control fAddressBarControl;
 
     private Selection fSelection = new Selection();
 
     // storage
- 
+
     BigInteger fViewportAddress = null; // default visibility for performance
 
     BigInteger fMemoryBlockStartAddress = null;
     BigInteger fMemoryBlockEndAddress = null;
-    
+
     protected BigInteger fBaseAddress = null; // remember the base address
-    
+
     protected int fColumnCount = 0; 	// auto calculate can be disabled by user,
     								// making this user settable
-    
+
     protected int fBytesPerRow = 0;	// current number of bytes per row are displayed
-    
+
     private int fCurrentScrollSelection = 0;	// current scroll selection;
-    
+
     private BigInteger fCaretAddress;
-    
+
     // user settings
-    
+
     private int fTextMode = 1;  // ASCII default, TODO make preference?
 
     private int fBytesPerColumn = 4; // 4 byte cell width default
 
     private int fRadix = RADIX_HEX;
-    
+
     private int fColumnsSetting = COLUMNS_AUTO_SIZE_TO_FIT;
 
     private boolean fIsTargetLittleEndian = false;
-    
+
     private boolean fIsDisplayLittleEndian = false;
-    
+
     // constants used to identify radix
     public final static int RADIX_HEX = 1;
 
@@ -134,26 +136,26 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	 */
 	static private final MathContext SCROLL_CONVERSION_PRECISION = new MathContext(2);
 
-	
+
     // constants used to identify text, maybe java should be queried for all available sets
     public final static int TEXT_ISO_8859_1 = 1;
     public final static int TEXT_USASCII = 2;
     public final static int TEXT_UTF8 = 3;
     protected final static int TEXT_UTF16 = 4;
-    
+
     // internal constants
     public final static int COLUMNS_AUTO_SIZE_TO_FIT = 0;
-    
-    // view internal settings
-    private int fCellPadding = 2;
 
-    private int fPaneSpacing = 16;
-    
+    // view internal settings
+    private final int fCellPadding = 2;
+
+    private final int fPaneSpacing = 16;
+
     private String fPaddingString = "?"; //$NON-NLS-1$
-    
+
     // flag whether the memory cache is dirty
     private boolean fCacheDirty = false;
-    
+
     // update modes
     public final static int UPDATE_ALWAYS = 1;
     public final static int UPDATE_ON_BREAKPOINT = 2;
@@ -164,7 +166,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     {
         super(parent, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND | SWT.H_SCROLL
         		| SWT.V_SCROLL);
-        
+
         this.setFont(JFaceResources
             .getFont(IInternalDebugUIConstants.FONT_NAME)); // TODO internal?
 
@@ -174,20 +176,20 @@ public class Rendering extends Composite implements IDebugEventSetListener
         if(fParent.getMemoryBlock() != null)
         {
             fViewportAddress = fParent.getMemoryBlockStartAddress();
-            
+
              // this will be null if memory may be retrieved at any address less than
              // this memory block's base.  if so use the base address.
              if (fViewportAddress == null)
                	 fViewportAddress = fParent.getBigBaseAddress();
              fBaseAddress = fViewportAddress;
         }
-        
+
         // instantiate the panes, TODO default visibility from state or
         // plugin.xml?
         this.fAddressPane = createAddressPane();
         this.fBinaryPane = createDataPane();
         this.fTextPane = createTextPane();
-        
+
         fAddressBar = new GoToAddressComposite();
 		fAddressBarControl = fAddressBar.createControl(parent);
 		Button button = fAddressBar.getButton(IDialogConstants.OK_ID);
@@ -200,7 +202,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 					doGoToAddress();
 				}
 			});
-			
+
 			button = fAddressBar.getButton(IDialogConstants.CANCEL_ID);
 			if (button != null)
 			{
@@ -211,13 +213,13 @@ public class Rendering extends Composite implements IDebugEventSetListener
 					}});
 			}
 		}
-		
+
 		fAddressBar.getExpressionWidget().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				doGoToAddress();
 			}});
-		
+
 		fAddressBar.getExpressionWidget().addKeyListener(new KeyAdapter() {
 
 			@Override
@@ -227,11 +229,11 @@ public class Rendering extends Composite implements IDebugEventSetListener
 				super.keyPressed(e);
 			}
 		});
-    	
+
         this.fAddressBarControl.setVisible(false);
 
         getHorizontalBar().addSelectionListener(createHorizontalBarSelectionListener());
-        
+
         getVerticalBar().addSelectionListener(createVerticalBarSelectinListener());
 
         this.addPaintListener(new PaintListener()
@@ -239,13 +241,13 @@ public class Rendering extends Composite implements IDebugEventSetListener
             public void paintControl(PaintEvent pe)
             {
             	pe.gc.setBackground(Rendering.this.getTraditionalRendering().getColorBackground());
-                pe.gc.fillRectangle(0, 0, Rendering.this.getBounds().width, 
+                pe.gc.fillRectangle(0, 0, Rendering.this.getBounds().width,
                 		Rendering.this.getBounds().height);
             }
         });
 
         setLayout();
-        
+
         this.addControlListener(new ControlListener()
         {
             public void controlMoved(ControlEvent ce)
@@ -271,10 +273,10 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	        	int xOffset = 0;
 	        	if(Rendering.this.getHorizontalBar().isVisible())
 	            	xOffset = Rendering.this.getHorizontalBar().getSelection();
-	        	
+
 	            int x = xOffset * -1;
 	            int y = 0;
-	            
+
 	            if(fAddressBarControl.isVisible())
 	            {
 	            	fAddressBarControl.setBounds(0, 0,
@@ -282,7 +284,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	                        .computeSize(100, 30).y); // FIXME
 	                //y = fAddressBarControl.getBounds().height;
 	            }
-	
+
 	            if(fAddressPane.isPaneVisible())
 	            {
 	                fAddressPane.setBounds(x, y,
@@ -292,7 +294,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	                x = fAddressPane.getBounds().x
 	                    + fAddressPane.getBounds().width;
 	            }
-	
+
 	            if(fBinaryPane.isPaneVisible())
 	            {
 	                fBinaryPane.setBounds(x, y,
@@ -302,14 +304,14 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	                x = fBinaryPane.getBounds().x
 	                    + fBinaryPane.getBounds().width;
 	            }
-	
+
 	            if(fTextPane.isPaneVisible())
 	            {
-	                fTextPane.setBounds(x, y, 
-	                	Math.max(fTextPane.computeSize(0, 0).x, Rendering.this.getClientArea().width 
+	                fTextPane.setBounds(x, y,
+	                	Math.max(fTextPane.computeSize(0, 0).x, Rendering.this.getClientArea().width
 	                		- x - xOffset), Rendering.this.getBounds().height - y);
 	            }
-	
+
 	            if(getClientArea().width >= fTextPane.getBounds().x + fTextPane.getBounds().width + xOffset)
 	            {
 	            	Rendering.this.getHorizontalBar().setVisible(false);
@@ -317,17 +319,17 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	            else
 	            {
 	            	ScrollBar horizontal = Rendering.this.getHorizontalBar();
-	            	
+
 	            	horizontal.setVisible(true);
 	            	horizontal.setMinimum(0);
-	            	horizontal.setMaximum(fTextPane.getBounds().x 
+	            	horizontal.setMaximum(fTextPane.getBounds().x
 	            		+ fTextPane.getBounds().width + xOffset);
 	            	horizontal.setThumb(getClientArea().width);
 	            	horizontal.setPageIncrement(40); // TODO ?
 	            	horizontal.setIncrement(20); // TODO ?
 	            }
 	        }
-	
+
 	        @Override
 			protected Point computeSize(Composite composite, int wHint,
 	            int hHint, boolean flushCache)
@@ -336,15 +338,15 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	        }
 	    });
     }
-    
+
     protected void handleDownArrow()
     {
         fViewportAddress = fViewportAddress.add(BigInteger
                 .valueOf(getAddressableCellsPerRow()));
             ensureViewportAddressDisplayable();
-            redrawPanes();    	
+            redrawPanes();
     }
-    
+
     protected void handleUpArrow()
     {
     	fViewportAddress = fViewportAddress.subtract(BigInteger
@@ -352,14 +354,14 @@ public class Rendering extends Composite implements IDebugEventSetListener
         ensureViewportAddressDisplayable();
         redrawPanes();
     }
-    
+
     protected void handlePageDown()
     {
         fViewportAddress = fViewportAddress.add(BigInteger
                 .valueOf(getAddressableCellsPerRow()
                     * (Rendering.this.getRowCount() - 1)));
             ensureViewportAddressDisplayable();
-            redrawPanes();    	
+            redrawPanes();
     }
 
     protected void handlePageUp()
@@ -368,7 +370,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 .valueOf(getAddressableCellsPerRow()
                     * (Rendering.this.getRowCount() - 1)));
             ensureViewportAddressDisplayable();
-            redrawPanes();    	
+            redrawPanes();
     }
     protected SelectionListener createHorizontalBarSelectionListener()
     {
@@ -378,14 +380,14 @@ public class Rendering extends Composite implements IDebugEventSetListener
             {
         		Rendering.this.layout();
             }
-        	
+
         	public void widgetDefaultSelected(SelectionEvent se)
             {
                 // do nothing
             }
         };
     }
-    
+
     protected SelectionListener createVerticalBarSelectinListener()
     {
     	return new SelectionListener()
@@ -407,7 +409,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                     	handlePageUp();
                         break;
                     case SWT.SCROLL_LINE:
-                    // See: BUG 203068 selection event details broken on GTK < 2.6 
+                    // See: BUG 203068 selection event details broken on GTK < 2.6
                     default:
                     	if(getVerticalBar().getSelection() == getVerticalBar().getMinimum())
                     	{
@@ -427,24 +429,24 @@ public class Rendering extends Composite implements IDebugEventSetListener
                         	int deltaScroll = getVerticalBar().getSelection() - fCurrentScrollSelection;
                         	if (deltaScroll == 0)
                         		break;
-                        	
+
 							BigInteger deltaRows = scrollbar2rows(deltaScroll);
-							
+
 							BigInteger newAddress = fViewportAddress.add(BigInteger.valueOf(
                     				getAddressableCellsPerRow()).multiply(deltaRows));
-							
+
 							fViewportAddress = newAddress;
                     	}
                         ensureViewportAddressDisplayable();
                         // Update tooltip
                         // FIXME conversion from slider to scrollbar
                         // getVerticalBar().setToolTipText(Rendering.this.getAddressString(fViewportAddress));
-                        
-                        // Update the addresses on the Address pane. 
+
+                        // Update the addresses on the Address pane.
                         if(fAddressPane.isPaneVisible())
                         {
                             fAddressPane.redraw();
-                        }                        
+                        }
                         redrawPanes();
                     	break;
                 }
@@ -457,12 +459,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
             }
         };
     }
-    
+
     protected AddressPane createAddressPane()
     {
     	return new AddressPane(this);
     }
-    
+
     protected DataPane createDataPane()
     {
     	return new DataPane(this);
@@ -477,12 +479,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
     {
     	return fParent;
     }
-    
+
     protected void setCaretAddress(BigInteger address)
     {
     	fCaretAddress = address;
     }
-    
+
     protected BigInteger getCaretAddress()
     {
 	// Return the caret address if it has been set, otherwise return the
@@ -491,18 +493,18 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	// (unset) when the user gives us a new viewport address
     	return (fCaretAddress != null) ? fCaretAddress : fViewportAddress;
     }
-    
+
     private void doGoToAddress() {
 		try {
 			BigInteger address = fAddressBar.getGoToAddress(this.getMemoryBlockStartAddress(), this.getCaretAddress());
 			getTraditionalRendering().gotoAddress(address);
 			setVisibleAddressBar(false);
 		} catch (NumberFormatException e1)
-		{ 
+		{
 			// FIXME log?
 		}
 	}
-    
+
     // Ensure that all addresses displayed are within the addressable range
     protected void ensureViewportAddressDisplayable()
     {
@@ -512,23 +514,23 @@ public class Rendering extends Composite implements IDebugEventSetListener
         }
         else if(getViewportEndAddress().compareTo(getMemoryBlockEndAddress().add(BigInteger.ONE)) > 0)
         {
-            fViewportAddress = getMemoryBlockEndAddress().subtract(BigInteger.valueOf(getAddressableCellsPerRow() 
+            fViewportAddress = getMemoryBlockEndAddress().subtract(BigInteger.valueOf(getAddressableCellsPerRow()
             		* getRowCount() - 1));
         }
 
         setCurrentScrollSelection();
     }
-    
+
     public IMemorySelection getSelection()
     {
         return fSelection;
     }
-    
+
     protected int getHistoryDepth()
     {
     	return fViewportCache.getHistoryDepth();
     }
-    
+
     protected void setHistoryDepth(int depth)
     {
     	fViewportCache.setHistoryDepth(depth);
@@ -553,32 +555,32 @@ public class Rendering extends Composite implements IDebugEventSetListener
         packColumns();
         layout(true);
     }
-    
+
     public void setPaddingString(String padding)
     {
     	fPaddingString = padding;
-    	
+
     	refresh();
     }
-    
+
     public char getPaddingCharacter()
     {
     	return fPaddingString.charAt(0); // use only the first character
     }
-    
+
     static int suspendCount = 0;
 
     public void handleDebugEvents(DebugEvent[] events)
     {
     	if(this.isDisposed())
     		return;
-    	
+
     	boolean isChangeOnly = false;
     	boolean isSuspend = false;
     	boolean isBreakpointHit = false;
-    	
+
     	for(int i = 0; i < events.length; i++)
-        {	
+        {
             if(events[0].getSource() instanceof IDebugElement)
             {
                 final int kind = events[i].getKind();
@@ -608,16 +610,16 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 }
             }
         }
-    	
+
     	if(isSuspend)
     		handleSuspend(isBreakpointHit);
     	else if(isChangeOnly)
     		handleChange();
     }
-    
+
     protected void handleSuspend(boolean isBreakpointHit)
     {
-    	if(getUpdateMode() == UPDATE_ALWAYS || 
+    	if(getUpdateMode() == UPDATE_ALWAYS ||
     		(getUpdateMode() == UPDATE_ON_BREAKPOINT && isBreakpointHit))
     	{
     		Display.getDefault().asyncExec(new Runnable()
@@ -630,7 +632,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             });
     	}
     }
-    
+
     protected void handleChange()
     {
     	if(getUpdateMode() == UPDATE_ALWAYS)
@@ -648,11 +650,11 @@ public class Rendering extends Composite implements IDebugEventSetListener
     protected void handleSuspendEvent(int detail)
     {
     }
-    
+
     protected void handleChangeEvent()
     {
     }
-    
+
     // return true to enable development debug print statements
     public boolean isDebug()
     {
@@ -678,7 +680,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     {
     	return fParent.getAddressableSize();
     }
-    
+
     protected IViewportCache getViewportCache()
     {
         return fViewportCache;
@@ -691,25 +693,25 @@ public class Rendering extends Composite implements IDebugEventSetListener
     }
 
     // default visibility for performance
-    ViewportCache fViewportCache = new ViewportCache(); 
+    ViewportCache fViewportCache = new ViewportCache();
 
     private interface Request
     {
     }
-    
+
     class ViewportCache extends Thread implements IViewportCache
     {
     	class ArchiveDeltas implements Request
     	{
-    		
+
     	}
-    	
+
         class AddressPair implements Request
         {
             BigInteger startAddress;
 
             BigInteger endAddress;
-            
+
             public AddressPair(BigInteger start, BigInteger end)
             {
             	startAddress = start;
@@ -725,10 +727,10 @@ public class Rendering extends Composite implements IDebugEventSetListener
 					return ((AddressPair) obj).startAddress.equals(startAddress)
 						&& ((AddressPair) obj).endAddress.equals(endAddress);
 				}
-				
+
 				return false;
-			}	
-            
+			}
+
         }
 
         class MemoryUnit
@@ -760,20 +762,20 @@ public class Rendering extends Composite implements IDebugEventSetListener
             }
         }
 
-        private HashMap<BigInteger, TraditionalMemoryByte[]> fEditBuffer = new HashMap<BigInteger,TraditionalMemoryByte[]>();
+        private final HashMap<BigInteger, TraditionalMemoryByte[]> fEditBuffer = new HashMap<BigInteger,TraditionalMemoryByte[]>();
 
         private boolean fDisposed = false;
-        
+
         private Object fLastQueued = null;
 
-        private Vector<Object> fQueue = new Vector<Object>();
+        private final Vector<Object> fQueue = new Vector<Object>();
 
         protected MemoryUnit fCache = null;
 
         protected MemoryUnit fHistoryCache[] = new MemoryUnit[0];
 
         protected int fHistoryDepth = 0;
-        
+
         public ViewportCache()
         {
             start();
@@ -787,12 +789,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
             	fQueue.notify();
             }
         }
-        
+
         public int getHistoryDepth()
         {
         	return fHistoryDepth;
         }
-        
+
         public void setHistoryDepth(int depth)
         {
         	fHistoryDepth = depth;
@@ -810,7 +812,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 queueRequest(fViewportAddress, getViewportEndAddress());
             }
         }
-        
+
         public void archiveDeltas()
         {
         	assert Thread.currentThread().equals(
@@ -822,19 +824,19 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 queueRequestArchiveDeltas();
             }
         }
-        
+
         private void queueRequest(BigInteger startAddress, BigInteger endAddress)
         {
             AddressPair pair = new AddressPair(startAddress, endAddress);
             queue(pair);
         }
-        
+
         private void queueRequestArchiveDeltas()
         {
         	ArchiveDeltas archive = new ArchiveDeltas();
         	queue(archive);
         }
-        
+
         private void queue(Object element)
         {
         	synchronized(fQueue)
@@ -861,13 +863,13 @@ public class Rendering extends Composite implements IDebugEventSetListener
                     {
                     	Request request = (Request) fQueue.elementAt(0);
                     	Class<?> type = request.getClass();
-                    	
+
                     	while(fQueue.size() > 0 && type.isInstance(fQueue.elementAt(0)))
                     	{
                     		request = (Request) fQueue.elementAt(0);
                     		fQueue.removeElementAt(0);
                     	}
-                    	
+
                     	if(request instanceof ArchiveDeltas)
                     		archiveDeltas = true;
                     	else if(request instanceof AddressPair)
@@ -878,7 +880,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 {
                 	for(int i = fViewportCache.getHistoryDepth() - 1; i > 0; i--)
                 		fHistoryCache[i] = fHistoryCache[i - 1];
-                		
+
                     fHistoryCache[0] = fCache.clone();
                 }
                 else if(pair != null)
@@ -917,16 +919,16 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
                 BigInteger lengthInBytes = endAddress.subtract(startAddress);
                 BigInteger addressableSize = BigInteger.valueOf(getAddressableSize());
-                
+
                 long units = lengthInBytes.divide(addressableSize).add(
                 		lengthInBytes.mod(addressableSize).compareTo(BigInteger.ZERO) > 0
                 			? BigInteger.ONE : BigInteger.ZERO).longValue();
-                
+
                 // CDT (and maybe other backends) will call setValue() on these MemoryBlock objects.
                 // We don't want this to happen, because it interferes with this rendering's own
                 // change history. Ideally, we should strictly use the back end change notification
                 // and history, but it is only guaranteed to work for bytes within the address range
-                // of the MemoryBlock. 
+                // of the MemoryBlock.
                 MemoryByte readBytes[] = memoryBlock.getBytesFromAddress(startAddress, units);
 
                 TraditionalMemoryByte cachedBytes[] = new TraditionalMemoryByte[readBytes.length];
@@ -939,7 +941,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 		setTargetLittleEndian(!cachedBytes[0].isBigEndian());
                 	}
             	}
-            	
+
             	// reorder bytes within unit to be a sequential byte stream if the endian is already little
             	if(isTargetLittleEndian())
             	{
@@ -958,14 +960,14 @@ public class Rendering extends Composite implements IDebugEventSetListener
             			cachedBytes = cachedBytesAsByteSequence;
             		}
             	}
-            	
+
             	final TraditionalMemoryByte[] cachedBytesFinal = cachedBytes;
-                
+
             	fCache = new MemoryUnit();
                 fCache.start = startAddress;
                 fCache.end = endAddress;
                 fCache.bytes = cachedBytesFinal;
-                
+
                 Display.getDefault().asyncExec(new Runnable()
                 {
                     public void run()
@@ -980,18 +982,18 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	                            BigInteger minEnd = endAddress
 	                                .min(fHistoryCache[historyIndex].end).subtract(
 	                                    BigInteger.valueOf(1));
-	
+
 	                            BigInteger overlapLength = minEnd
 	                                .subtract(maxStart);
 	                            if(overlapLength.compareTo(BigInteger.valueOf(0)) > 0)
 	                            {
 	                                // there is overlap
-	
+
 	                                int offsetIntoOld = maxStart.subtract(
 	                                    fHistoryCache[historyIndex].start).intValue();
 	                                int offsetIntoNew = maxStart.subtract(
 	                                    startAddress).intValue();
-	
+
 	                                for(int i = overlapLength.intValue(); i >= 0; i--)
 	                                {
 	                                	cachedBytesFinal[offsetIntoNew + i]
@@ -1002,7 +1004,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	                            }
 	                        }
                     	}
-                        
+
                         // If the history does not exist, populate the history with the just populated cache. This solves the
                         // use case of 1) connect to target; 2) edit memory before the first suspend debug event; 3) paint
                         // differences in changed color.
@@ -1059,7 +1061,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
                 return bytes;
             }
-            
+
             TraditionalMemoryByte bytes[] = new TraditionalMemoryByte[bytesRequested];
             for(int i = 0; i < bytes.length; i++)
             {
@@ -1070,7 +1072,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             fViewportCache.queueRequest(fViewportAddress,
                 getViewportEndAddress());
 
-            return bytes;    
+            return bytes;
         }
 
         public boolean containsEditedCell(BigInteger address)
@@ -1135,7 +1137,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                             .getString("TraditionalRendering.FAILURE_WRITE_MEMORY"), e); //$NON-NLS-1$
                 }
             }
-            
+
             clearEditBuffer();
         }
 
@@ -1158,22 +1160,22 @@ public class Rendering extends Composite implements IDebugEventSetListener
     		String selectedStr = "0x" + getCaretAddress().toString(16);
     		Text text = fAddressBar.getExpressionWidget();
     		text.setText(selectedStr);
-    		text.setSelection(0, text.getCharCount());	
+    		text.setSelection(0, text.getCharCount());
     		fAddressBar.getExpressionWidget().setFocus();
     	}
-    	
+
         layout(true);
         layoutPanes();
     }
-    
+
     public void setDirty(boolean needRefresh)
     {
-    	fCacheDirty = needRefresh; 	
+    	fCacheDirty = needRefresh;
     }
 
     public boolean isDirty()
     {
-    	return fCacheDirty; 	
+    	return fCacheDirty;
     }
 
     @Override
@@ -1201,19 +1203,19 @@ public class Rendering extends Composite implements IDebugEventSetListener
             fEndHigh = fEndLow = fStartHigh = fStartLow = null;
             redrawPanes();
         }
-        
+
         public boolean hasSelection()
         {
         	return fStartHigh != null && fStartLow != null
         		&& fEndHigh != null && fEndLow != null;
         }
-        
+
         public boolean isSelected(BigInteger address)
         {
             // do we have valid start and end addresses
             if(getEnd() == null || getStart() == null)
                 return false;
-    
+
             // if end is greater than start
             if(getEnd().compareTo(getStart()) >= 0)
             {
@@ -1228,10 +1230,10 @@ public class Rendering extends Composite implements IDebugEventSetListener
                     && address.compareTo(getStart()) < 0)
                     return true;
             }
-            
+
             return false;
         }
-    
+
         public void setStart(BigInteger high, BigInteger low)
         {
             if(high == null && low == null)
@@ -1242,28 +1244,28 @@ public class Rendering extends Composite implements IDebugEventSetListener
                     fStartLow = null;
                     redrawPanes();
                 }
-    
+
                 return;
             }
-    
+
             boolean changed = false;
-            
+
             if(fStartHigh == null || !fStartHigh.equals(high))
             {
                 fStartHigh = high;
                 changed = true;
             }
-            
+
             if(fStartLow == null || !low.equals(fStartLow))
             {
                 fStartLow = low;
                 changed = true;
             }
-            
+
             if(changed)
                 redrawPanes();
         }
-    
+
         public void setEnd(BigInteger high, BigInteger low)
         {
             if(high == null && low == null)
@@ -1274,95 +1276,95 @@ public class Rendering extends Composite implements IDebugEventSetListener
                     fEndLow = null;
                     redrawPanes();
                 }
-    
+
                 return;
             }
-    
+
             boolean changed = false;
-            
+
             if(fEndHigh == null || !fEndHigh.equals(high))
             {
                 fEndHigh = high;
                 changed = true;
             }
-            
+
             if(fEndLow == null || !low.equals(fEndLow))
             {
                 fEndLow = low;
                 changed = true;
             }
-            
+
             if(changed)
                 redrawPanes();
         }
-    
+
         public BigInteger getHigh()
         {
         	if(!hasSelection())
         		return null;
-        	
+
         	return getStart().max(getEnd());
         }
-        
+
         public BigInteger getLow()
         {
         	if(!hasSelection())
         		return null;
-        	
+
         	return getStart().min(getEnd());
         }
-        
+
         public BigInteger getStart()
         {
             // if there is no start, return null
             if(fStartHigh == null)
                 return null;
-            
+
             // if there is no end, return the high address of the start
             if(fEndHigh == null)
                 return fStartHigh;
-            
+
             // if Start High/Low equal End High/Low, return a low start and high end
-            if(fStartHigh.equals(fEndHigh) 
+            if(fStartHigh.equals(fEndHigh)
                 && fStartLow.equals(fEndLow))
                 return fStartLow;
-            
+
             BigInteger differenceEndToStartHigh = fEndHigh.subtract(fStartHigh).abs();
             BigInteger differenceEndToStartLow = fEndHigh.subtract(fStartLow).abs();
-            
+
             // return the start high or start low based on which creates a larger selection
             if(differenceEndToStartHigh.compareTo(differenceEndToStartLow) > 0)
                 return fStartHigh;
-            else 
+            else
                 return fStartLow;
         }
-    
+
         public BigInteger getStartLow() {
         	return fStartLow;
         }
-        
+
         public BigInteger getEnd()
         {
             // if there is no end, return null
             if(fEndHigh == null)
                 return null;
-            
+
             // if Start High/Low equal End High/Low, return a low start and high end
-            if(fStartHigh.equals(fEndHigh) 
+            if(fStartHigh.equals(fEndHigh)
                 && fStartLow.equals(fEndLow))
                 return fStartHigh;
-            
+
             BigInteger differenceStartToEndHigh = fStartHigh.subtract(fEndHigh).abs();
             BigInteger differenceStartToEndLow = fStartHigh.subtract(fEndLow).abs();
-            
+
             // return the start high or start low based on which creates a larger selection
             if(differenceStartToEndHigh.compareTo(differenceStartToEndLow) >= 0)
                 return fEndHigh;
-            else 
+            else
                 return fEndLow;
         }
     }
-    
+
     public void setPaneVisible(int pane, boolean visible)
     {
         switch(pane)
@@ -1430,15 +1432,15 @@ public class Rendering extends Composite implements IDebugEventSetListener
         {
         	fColumnCount = getColumnsSetting();
         }
-        
+
         try
         {
 	        // Update the number of bytes per row;
-	        // the max and min scroll range and the current thumb nail position.        
+	        // the max and min scroll range and the current thumb nail position.
 	        fBytesPerRow = getBytesPerColumn() * getColumnCount();
 
 	        getVerticalBar().setMinimum(1);
-	        // scrollbar maximum range is Integer.MAX_VALUE. 
+	        // scrollbar maximum range is Integer.MAX_VALUE.
 	        getVerticalBar().setMaximum(getMaxScrollRange().min(BigInteger.valueOf(Integer.MAX_VALUE)).intValue());
 	        getVerticalBar().setIncrement(1);
 	        getVerticalBar().setPageIncrement(this.getRowCount() -1);
@@ -1450,7 +1452,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         {
         	// FIXME precautionary
         }
-        
+
         Rendering.this.redraw();
      	Rendering.this.redrawPanes();
     }
@@ -1486,7 +1488,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     		}
     	}
     }
-    
+
     protected void archiveDeltas()
     {
     	this.getViewportCache().archiveDeltas();
@@ -1500,13 +1502,13 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	{
     		return;
     	}
-    	
+
         fViewportAddress = address;
-        
+
         // reset the caret and selection state (no caret and no selection)
         fCaretAddress = null;
         fSelection = new Selection();
-        
+
         redrawPanes();
     }
 
@@ -1514,7 +1516,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     {
         fViewportAddress = newAddress;
     }
-    
+
     public BigInteger getViewportStartAddress()
     {
         return fViewportAddress;
@@ -1542,7 +1544,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     {
         return fParent.getAddressSize();
     }
-    
+
     public Control getAddressBarControl()
     {
     	return fAddressBarControl;
@@ -1553,7 +1555,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         return fColumnCount;
     }
 
-    public int getColumnsSetting() 
+    public int getColumnsSetting()
     {
 		return fColumnsSetting;
 	}
@@ -1567,8 +1569,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
     {
         fColumnCount = count;
     }
-    
-	public void setColumnsSetting(int columns) 
+
+	public void setColumnsSetting(int columns)
 	{
 		if(fColumnsSetting != columns)
 		{
@@ -1613,12 +1615,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
     {
         return fBytesPerRow;
     }
-    
+
     protected int getAddressableCellsPerRow()
     {
     	return getBytesPerRow() / getAddressableSize();
     }
-    
+
     public int getAddressesPerColumn()
     {
     	return this.getBytesPerColumn() / getAddressableSize();
@@ -1631,11 +1633,11 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	{
 		BigInteger selection = getViewportStartAddress().divide(
 			BigInteger.valueOf(getAddressableCellsPerRow()));
-				
+
 		fCurrentScrollSelection = rows2scrollbar(selection);
 		getVerticalBar().setSelection(fCurrentScrollSelection);
 	}
-    
+
 	/**
 	 * compute the maximum scrolling range.
 	 * @return number of lines that rendering can display
@@ -1645,7 +1647,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 		BigInteger maxScrollRange = difference.divide(BigInteger.valueOf(getAddressableCellsPerRow()));
 		if(maxScrollRange.multiply(BigInteger.valueOf(getAddressableCellsPerRow())).compareTo(difference) != 0)
 			maxScrollRange = maxScrollRange.add(BigInteger.ONE);
-		
+
 		// support targets with an addressable size greater than 1
 		maxScrollRange = maxScrollRange.divide(BigInteger.valueOf(getAddressableSize()));
 		return maxScrollRange;
@@ -1655,7 +1657,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	 * The scroll range is limited by SWT. Because it can be less than the
 	 * number of rows (of memory) that we need to display, we need an arithmetic
 	 * mapping.
-	 * 
+	 *
 	 * @return ratio this function returns how many rows a scroll bar unit
 	 *         represents. The number will be some fractional value, up to but
 	 *         not exceeding the value 1. I.e., when the scroll range exceeds
@@ -1667,7 +1669,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         	return new BigDecimal(maxRange).divide(BigDecimal.valueOf(Integer.MAX_VALUE), SCROLL_CONVERSION_PRECISION);
         } else {
         	return BigDecimal.ONE;
-        }	
+        }
 	}
 
 	/**
@@ -1687,7 +1689,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	 * Convert scroll bar units to memory row units. The scroll range is limited
 	 * by SWT. Because it can be less than the number of rows (of memory) that
 	 * we need to display, we need an arithmetic mapping.
-	 * 
+	 *
 	 * @param scrollbarUnits
 	 *            scrollbar units
 	 * @return number of rows of memory
@@ -1695,7 +1697,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	private BigInteger scrollbar2rows(int scrollbarUnits) {
 		return getScrollRatio().multiply(BigDecimal.valueOf(scrollbarUnits), SCROLL_CONVERSION_PRECISION).toBigInteger();
 	}
-	
+
     /**
 	 * @return start address of the memory block
 	 */
@@ -1705,10 +1707,10 @@ public class Rendering extends Composite implements IDebugEventSetListener
 			fMemoryBlockStartAddress =  fParent.getMemoryBlockStartAddress();
 		if(fMemoryBlockStartAddress == null)
 			fMemoryBlockStartAddress = BigInteger.ZERO;
-		
+
 		return fMemoryBlockStartAddress;
 	}
-	
+
 	/**
 	 * @return end address of the memory block
 	 */
@@ -1716,7 +1718,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	{
 		if(fMemoryBlockEndAddress == null)
 			fMemoryBlockEndAddress = fParent.getMemoryBlockEndAddress();
-		
+
 		return fMemoryBlockEndAddress;
 	}
 
@@ -1756,16 +1758,16 @@ public class Rendering extends Composite implements IDebugEventSetListener
     public void setTextMode(int mode)
     {
     	fTextMode = mode;
-    	
+
         fireSettingsChanged();
         layoutPanes();
     }
-    
+
     public int getTextMode()
     {
     	return fTextMode;
     }
-    
+
     public int getUpdateMode() {
 		return fUpdateMode;
 	}
@@ -1794,7 +1796,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     {
     	if(fTextMode == Rendering.TEXT_UTF16)
     		return 2;
-    		
+
         return 1;
     }
 
@@ -1823,14 +1825,14 @@ public class Rendering extends Composite implements IDebugEventSetListener
     {
     	return fIsDisplayLittleEndian;
     }
-    
+
     public void setDisplayLittleEndian(boolean littleEndian)
     {
     	if(fIsDisplayLittleEndian == littleEndian)
     		return;
-    	
+
     	fIsDisplayLittleEndian = littleEndian;
-    	
+
     	fireSettingsChanged();
     	Display.getDefault().asyncExec(new Runnable(){
     		public void run()
@@ -1839,7 +1841,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     		}
     	});
     }
-    
+
     public void setBytesPerColumn(int byteCount)
     {
         if(fBytesPerColumn != byteCount)
@@ -1874,12 +1876,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	            if(pane.isFocusControl())
 	            	pane.updateCaret();
 	        }
-	
+
     	}
-    	
+
     	fParent.updateRenderingLabels();
 	}
-	
+
     protected void redrawPanes()
     {
     	if(!isDisposed() && this.isVisible())
@@ -1891,7 +1893,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	            if(fAddressPane.isFocusControl())
 	                fAddressPane.updateCaret();
 	        }
-	
+
 	        if(fBinaryPane.isPaneVisible())
 	        {
 	            fBinaryPane.redraw();
@@ -1899,7 +1901,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	            if(fBinaryPane.isFocusControl())
 	                fBinaryPane.updateCaret();
 	        }
-	
+
 	        if(fTextPane.isPaneVisible())
 	        {
 	            fTextPane.redraw();
@@ -1908,7 +1910,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	                fTextPane.updateCaret();
 	        }
     	}
-    	
+
     	fParent.updateRenderingLabels();
     }
 
@@ -1927,14 +1929,14 @@ public class Rendering extends Composite implements IDebugEventSetListener
         fBinaryPane.settingsChanged();
         fTextPane.settingsChanged();
     }
-    
+
     protected void copyAddressToClipboard()
     {
     	 Clipboard clip = null;
          try
          {
              clip = new Clipboard(getDisplay());
-             
+
              String addressString = "0x" + getCaretAddress().toString(16);
 
              TextTransfer plainTextTransfer = TextTransfer.getInstance();
@@ -1952,22 +1954,22 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
     static final char[] hexdigits = { '0', '1', '2', '3', '4', '5', '6', '7',
         '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-    
+
     public String getRadixText(MemoryByte bytes[], int radix,
             boolean isLittleEndian)
     {
-        boolean readableByte = false; 
-        boolean allBytesReadable = true; 
+        boolean readableByte = false;
+        boolean allBytesReadable = true;
         for(int i = 0; i < bytes.length; i++) {
             if(!bytes[i].isReadable()) {
-            	allBytesReadable = false; 
+            	allBytesReadable = false;
             } else {
         		readableByte = true;
             }
         }
 
         // convert byte to character if all bytes are readable or
-        // it is a mixed of readable&non-readable bytes and format is Hex or Binary. Bugzilla 342239        		
+        // it is a mixed of readable&non-readable bytes and format is Hex or Binary. Bugzilla 342239
         if (allBytesReadable || readableByte && (radix == Rendering.RADIX_HEX || radix == Rendering.RADIX_BINARY))
         {
         	// bytes from the cache are stored as a sequential byte sequence regardless of target endian.
@@ -2011,7 +2013,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	                    {
 	                        for(int i = buf.length - 1; i >= 0; i--)
 	                        {
-	                            int byteIndex = needsSwap ? bytes.length - 1 - i/8 : i/8; 
+	                            int byteIndex = needsSwap ? bytes.length - 1 - i/8 : i/8;
 	                            if (bytes[byteIndex].isReadable()) {
 	                                buf[i] = hexdigits[(int) (value & 1)];
 	                            } else {
@@ -2074,7 +2076,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                             value[i + 1] = bytes[i].getValue();
                         }
                     }
-                    
+
                     BigInteger bigValue;
                     boolean isNegative = false;
                     if(isSignedType && (value[1] & 0x80) != 0)
@@ -2088,7 +2090,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                         value[0] = 0;
                         bigValue = new BigInteger(value);
                     }
-                    
+
                     for(int i = 0; i < textWidth; i++)
                     {
                         BigInteger divideRemainder[] = bigValue.divideAndRemainder(
@@ -2097,7 +2099,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                         buf[textWidth - 1 - i] = hexdigits[remainder % 10];
                         bigValue = divideRemainder[0];
                     }
-                    
+
                     if(isSignedType)
                     {
                         buf[0] = isNegative ? '-' : ' ';
@@ -2177,7 +2179,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             || (character >= 'A' && character <= 'Z') || character == '-'
             || character == ' ';
     }
-    
+
     public String formatText(MemoryByte[] memoryBytes,
         boolean isLittleEndian, int textMode)
     {
@@ -2186,7 +2188,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         for(int i = 0; i < memoryBytes.length; i++)
             if(!memoryBytes[i].isReadable())
                 readable = false;
-        
+
         // if any bytes are not readable, return ?'s
         if(!readable)
         {
@@ -2198,18 +2200,18 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
         // TODO
         // does endian mean anything for text? ah, unicode?
-        
+
         // create byte array from MemoryByte array
         byte bytes[] = new byte[memoryBytes.length];
         for(int i = 0; i < bytes.length; i++)
         {
             bytes[i] = memoryBytes[i].getValue();
         }
-        
+
         // replace invalid characters with '.'
         // maybe there is a way to query the character set for
         // valid characters?
-        
+
         // replace invalid US-ASCII with '.'
         if(textMode == Rendering.TEXT_USASCII)
         {
@@ -2218,12 +2220,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
         		int byteValue = bytes[i];
         		if(byteValue < 0)
         			byteValue += 256;
-        		
+
         		if(byteValue < 0x20 || byteValue > 0x7e)
         			bytes[i] = '.';
         	}
         }
-        
+
         // replace invalid ISO-8859-1 with '.'
         if(textMode == Rendering.TEXT_ISO_8859_1)
         {
@@ -2232,18 +2234,18 @@ public class Rendering extends Composite implements IDebugEventSetListener
         		int byteValue = bytes[i];
         		if(byteValue < 0)
         			byteValue += 256;
-        		
-        		if(byteValue < 0x20 || 
+
+        		if(byteValue < 0x20 ||
         				(byteValue >= 0x7f && byteValue < 0x9f))
         			bytes[i] = '.';
         	}
         }
-        
+
         try
     	{
         	// convert bytes to string using desired character set
     		StringBuffer buf = new StringBuffer(new String(bytes, this.getCharacterSet(textMode)));
-    		
+
     		// pad string to (byte count - string length) with spaces
     		for(int i = 0; i < memoryBytes.length - buf.length(); i++)
     			buf.append(' ');
@@ -2256,7 +2258,27 @@ public class Rendering extends Composite implements IDebugEventSetListener
     		for(int i = 0; i < memoryBytes.length - buf.length(); i++)
     			buf.append(getPaddingCharacter());
     		return buf.toString();
-    	}   
+    	}
     }
+
+    public AbstractPane nextPane(AbstractPane currentPane) {
+    	List<AbstractPane> panes = Arrays.asList(getRenderingPanes());
+		int pos = panes.indexOf(currentPane);
+		if (pos == 2) {
+			return panes.get(0);
+		} else {
+			return panes.get(pos + 1);
+		}
+	}
+
+	public AbstractPane prePane(AbstractPane currentPane) {
+		List<AbstractPane> panes = Arrays.asList(getRenderingPanes());
+		int pos = panes.indexOf(currentPane);
+		if (pos == 0) {
+			return panes.get(2);
+		} else {
+			return panes.get(pos - 1);
+		}
+	}
 
 }

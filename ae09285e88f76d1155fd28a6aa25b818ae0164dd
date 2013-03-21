@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//2Ig\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/AbstractPane.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-21T01:08:00Z",
+      "side": 1,
+      "message": "Please don\u0027t use SuppressWarnings -- we want our warnings...we want to resolve them, not hide them.",
+      "revId": "ae09285e88f76d1155fd28a6aa25b818ae0164dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2Hg\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/AbstractPane.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-21T01:08:00Z",
+      "side": 1,
+      "message": "Instead of instanceof in an if statement (nearly repeated below), I suggest defining nextPane and prevPane methods in Rendering. That would seem cleaner and more flexible.",
+      "revId": "ae09285e88f76d1155fd28a6aa25b818ae0164dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2IY\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/AbstractPane.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-21T01:08:00Z",
+      "side": 1,
+      "message": "This line is the same in all three if branches -- move it outside the conditional.",
+      "revId": "ae09285e88f76d1155fd28a6aa25b818ae0164dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2HI\u003d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/AbstractPane.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 475,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-03-21T01:08:00Z",
+      "side": 1,
+      "message": "Since these lines are the same between both methods you added, I suggest factoring them out into a separate method called by both of them.",
+      "revId": "ae09285e88f76d1155fd28a6aa25b818ae0164dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

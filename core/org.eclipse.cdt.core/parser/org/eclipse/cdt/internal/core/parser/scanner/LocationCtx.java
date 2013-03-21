@@ -69,7 +69,7 @@ abstract class LocationCtx implements ILocationCtx {
 	 * child-contexts behind the given offset, you need to set checkChildren to <code>true</code>.
 	 */
 	public int getSequenceNumberForOffset(int offset, boolean checkChildren) {
-		return fSequenceNumber+offset;
+		return fSequenceNumber + offset;
 	}
 
 	/**
@@ -130,7 +130,8 @@ abstract class LocationCtx implements ILocationCtx {
 	 * Returns the sequence of file locations spanning the given range.
 	 * Assumes that the range starts within this context.
 	 */
-	public abstract void collectLocations(int sequenceNumber, int length, ArrayList<IASTNodeLocation> sofar);
+	public abstract void collectLocations(int sequenceNumber, int length,
+			ArrayList<IASTNodeLocation> sofar);
 
 	/**
 	 * Support for the dependency tree, add inclusion statements found in this context.

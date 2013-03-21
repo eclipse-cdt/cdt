@@ -24,16 +24,18 @@ import java.net.URI;
  */
 public interface IIndexFileLocation {
 	/**
-	 * The URI of the indexed file
-	 * @return the URI of the indexed file (non-null)
+	 * The URI of the indexed file.
+	 *
+	 * @return the URI of the indexed file (non-{@code null})
 	 */
 	public URI getURI();
 
 	/**
-	 * Return the workspace relative path of the indexed file or null if the file
-	 * is not in the workspace 
+	 * Returns the workspace relative path of the indexed file or {@code null} if the file
+	 * is not in the workspace.
+	 *
 	 * @return the workspace relative path of the file in the index, or null if the
-     * file is not in the workspace
+     *     file is not in the workspace
 	 */
 	public String getFullPath();
 }

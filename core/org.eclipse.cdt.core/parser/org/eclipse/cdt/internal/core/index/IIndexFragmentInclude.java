@@ -26,7 +26,7 @@ public interface IIndexFragmentInclude extends IIndexInclude {
 	IIndexFragment getFragment();
 
 	/**
-	 * Returns the file that is included by this include. May return <code>null</code> in case
+	 * Returns the file that is included by this include. May return {@code null} in case
 	 * the included file is not part of this fragment.
 	 */
 	IIndexFragmentFile getIncludes() throws CoreException;

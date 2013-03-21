@@ -18,10 +18,9 @@ import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.core.resources.IResource;
 
 public class TestScannerProvider extends AbstractCExtension implements IScannerInfoProvider {
-
-	public static String[] sIncludes= null;
-	public static String[] sIncludeFiles= null;
-	public static String[] sMacroFiles= null;
+	public static String[] sIncludes;
+	public static String[] sIncludeFiles;
+	public static String[] sMacroFiles;
 	public final static String SCANNER_ID = CTestPlugin.PLUGIN_ID + ".TestScanner";
 	
 	public static void clear() {

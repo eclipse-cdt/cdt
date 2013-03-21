@@ -8,7 +8,6 @@
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.internal.core.CharOperation;
 
 public class TodoTaskParser {
-	private static final Task[] EMPTY_TASK_ARRAY = new Task[0];
+	private static final Task[] EMPTY_TASK_ARRAY = {};
 
 	private final char[][] tags;
 	private final int[] priorities;
@@ -58,11 +57,12 @@ public class TodoTaskParser {
 		List<Task> tasks = new ArrayList<Task>();
 		for (IASTComment comment : comments) {
 			IASTFileLocation location = comment.getFileLocation();
-			if (location != null) { // be defensive, bug 213307
+			if (location != null) { // Be defensive, bug 213307
 				final String fileName = location.getFileName();
 				final int nodeOffset = location.getNodeOffset();
 				final String key= fileName + ':' + nodeOffset;
-				// full indexer can yield duplicate comments, make sure to handle each comment only once (bug 287181)
+				// Full indexer can yield duplicate comments, make sure to handle each comment only
+				// once (bug 287181).
 				if (locKeys.add(key)) {
 					parse(comment.getComment(), fileName, nodeOffset,
 							location.getStartingLineNumber(), tasks);

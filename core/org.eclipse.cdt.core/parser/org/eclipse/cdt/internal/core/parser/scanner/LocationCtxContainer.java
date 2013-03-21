@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * Base class for all location contexts that can contain children. 
- * <p>
+ *
  * @since 5.0
  */
 class LocationCtxContainer extends LocationCtx {
@@ -76,8 +76,8 @@ class LocationCtxContainer extends LocationCtx {
 		if (checkChildren && fChildren != null) {
 			for (int i= fChildren.size() - 1; i >= 0; i--) {
 				final LocationCtx child= fChildren.get(i);
-				if (child.fEndOffsetInParent > offset) {	// child was inserted behind the offset, adjust sequence number
-					result-= child.getSequenceLength();
+				if (child.fEndOffsetInParent > offset) {	// Child was inserted behind the offset, adjust sequence number
+					result -= child.getSequenceLength();
 				} else {
 					return result;
 				}
@@ -88,14 +88,14 @@ class LocationCtxContainer extends LocationCtx {
 	
 	@Override
 	public void addChildSequenceLength(int childLength) {
-		fChildSequenceLength+= childLength;
+		fChildSequenceLength += childLength;
 	}
 
 	@Override
 	public final LocationCtx findSurroundingContext(int sequenceNumber, int length) {
 		int testEnd= length > 1 ? sequenceNumber + length - 1 : sequenceNumber;
 		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber, false);
-		if (child != null && child.fSequenceNumber+child.getSequenceLength() > testEnd) {
+		if (child != null && child.fSequenceNumber + child.getSequenceLength() > testEnd) {
 			return child.findSurroundingContext(sequenceNumber, length);
 		}
 		return this;
@@ -105,7 +105,7 @@ class LocationCtxContainer extends LocationCtx {
 	public final LocationCtxMacroExpansion findEnclosingMacroExpansion(int sequenceNumber, int length) {
 		int testEnd= length > 1 ? sequenceNumber + length - 1 : sequenceNumber;
 		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber, true);
-		if (child != null && child.fSequenceNumber+child.getSequenceLength() > testEnd) {
+		if (child != null && child.fSequenceNumber + child.getSequenceLength() > testEnd) {
 			return child.findEnclosingMacroExpansion(sequenceNumber, length);
 		}
 		return null;
@@ -212,7 +212,7 @@ class LocationCtxContainer extends LocationCtx {
 			LocationCtx child= fChildren.get(middle);
 			int childSequenceNumber= child.fSequenceNumber;
 			if (beforeReplacedChars) {
-				childSequenceNumber-= child.fEndOffsetInParent - child.fOffsetInParent; 
+				childSequenceNumber -= child.fEndOffsetInParent - child.fOffsetInParent; 
 			}
 			if (childSequenceNumber <= sequenceNumber) {
 				lower= middle + 1;

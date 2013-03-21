@@ -153,16 +153,16 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	@Deprecated
 	@Override
 	public IASTCompletionNode getCompletionNode(org.eclipse.cdt.core.parser.CodeReader reader,
-			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index,
-			IParserLogService log, int offset) throws CoreException {
-		return getCompletionNode(FileContent.adapt(reader), scanInfo, IncludeFileContentProvider
-				.adapt(fileCreator), index, log, offset);
+			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator,
+			IIndex index, IParserLogService log, int offset) throws CoreException {
+		return getCompletionNode(FileContent.adapt(reader), scanInfo,
+				IncludeFileContentProvider.adapt(fileCreator), index, log, offset);
 	}
 		
 	@Override
 	public IASTCompletionNode getCompletionNode(FileContent reader, IScannerInfo scanInfo,
-			IncludeFileContentProvider fileCreator, IIndex index, IParserLogService log, int offset) throws CoreException {
-
+			IncludeFileContentProvider fileCreator, IIndex index, IParserLogService log, int offset)
+			throws CoreException {
 		IScanner scanner= createScanner(reader, scanInfo, fileCreator, log);
 		scanner.setContentAssistMode(offset);
 
@@ -244,7 +244,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	
 	@Override
 	public IContributedModelBuilder createModelBuilder(ITranslationUnit tu) {
-		// use default model builder
+		// Use default model builder.
 		return null;
 	}
 

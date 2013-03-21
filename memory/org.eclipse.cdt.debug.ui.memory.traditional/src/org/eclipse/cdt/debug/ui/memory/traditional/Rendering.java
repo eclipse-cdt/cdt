@@ -14,8 +14,10 @@ package org.eclipse.cdt.debug.ui.memory.traditional;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
@@ -2258,5 +2260,25 @@ public class Rendering extends Composite implements IDebugEventSetListener
     		return buf.toString();
     	}   
     }
+
+    public AbstractPane nextPane(AbstractPane currentPane) {
+    	List<AbstractPane> panes = Arrays.asList(getRenderingPanes());
+		int pos = panes.indexOf(currentPane);
+		if (pos == 2) {
+			return panes.get(0);
+		} else {
+			return panes.get(pos + 1);
+		}
+	}
+    
+	public AbstractPane prePane(AbstractPane currentPane) {
+		List<AbstractPane> panes = Arrays.asList(getRenderingPanes());
+		int pos = panes.indexOf(currentPane);
+		if (pos == 0) {
+			return panes.get(2);
+		} else {
+			return panes.get(pos - 1);
+		}
+	}
 
 }

@@ -229,6 +229,14 @@ public abstract class AbstractPane extends Canvas
             	
                 editCell(fCaretAddress, fSubCellCaretPosition, ke.character);
             }
+            else if (ke.keyCode == SWT.TAB && (ke.stateMask & SWT.SHIFT) != 0) {
+            	// move backward cursor to the first position in the following pane
+            	handleSHIFTTabKey();
+            }
+            else if (ke.keyCode == SWT.TAB) {
+            	// move forward cursor to the first position in the following pane
+            	handleTabKey();
+            }
 
             if((ke.stateMask & SWT.SHIFT) != 0)
             {
@@ -434,6 +442,35 @@ public abstract class AbstractPane extends Canvas
     	}
     }
     
+    /**
+	 * Use TAB to shift cursor to the same address in next pane.
+	 */
+	protected void handleTabKey() {
+		AbstractPane nextPane = fRendering.nextPane(this);
+		switchTo(nextPane);
+	}
+	
+	/**
+	 * Use SHIFT + TAB to shift cursor back to the same address in previous
+	 * pane.
+	 */
+	protected void handleSHIFTTabKey() {
+		AbstractPane prePane = fRendering.prePane(this);
+		switchTo(prePane);
+	}
+	
+	protected static BigInteger tabAddress;
+	
+	private void switchTo(AbstractPane pane) {
+		tabAddress = this.fCaretAddress;
+		pane.setCaretAddress(tabAddress);
+		pane.fOldSubCellCaretPosition = 0;
+		pane.fSubCellCaretPosition = 0;
+		pane.updateCaret();
+		pane.ensureCaretWithinViewport();
+		pane.setFocus();
+	}
+	
     protected boolean isPaneVisible()
     {
     	return fPaneVisible;

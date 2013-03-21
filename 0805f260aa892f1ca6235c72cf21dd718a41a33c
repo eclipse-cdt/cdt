@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//2G0\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTChildProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-03-21T01:38:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//2N8\u003d",
+      "revId": "0805f260aa892f1ca6235c72cf21dd718a41a33c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//2N4\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTChildProvider.java",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//2GI\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTChildProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-03-21T01:38:41Z",
+      "side": 1,
+      "message": "I figured that identity comparison would be faster than the isEmpty check.  But a quick test in my new PerfHarness shows that isn\u0027t true.  I\u0027ll get rid of this and contributors can return their own emptyList.",
+      "parentUuid": "AABOPX//2N4\u003d",
+      "revId": "0805f260aa892f1ca6235c72cf21dd718a41a33c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//2OA\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTChildProvider.java",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2013-03-20T20:45:54Z",
       "side": 1,
       "message": "emptyList() already returns an unmodifiable collection.\n\nExtra space after \u003cIASTNode\u003e.",
+      "revId": "0805f260aa892f1ca6235c72cf21dd718a41a33c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2Gs\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTChildProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-03-21T01:38:41Z",
+      "side": 1,
+      "message": "Cool, I didn\u0027t realize it was guaranteed to be unmodifiable.\n\nThe extra space comes from the Eclipse built-in formatter settings.",
+      "parentUuid": "AABOPX//2OA\u003d",
       "revId": "0805f260aa892f1ca6235c72cf21dd718a41a33c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -81,6 +135,24 @@
       "writtenOn": "2013-03-20T20:45:54Z",
       "side": 1,
       "message": "Didn\u0027t you say that you are no longer adding children to names?",
+      "revId": "0805f260aa892f1ca6235c72cf21dd718a41a33c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//2GA\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 475,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-03-21T01:38:41Z",
+      "side": 1,
+      "message": "This was left-over from my initial implementation, it shouldn\u0027t have been submitted in the first patch set either.  I\u0027ll remove it.",
+      "parentUuid": "AABOPX//2No\u003d",
       "revId": "0805f260aa892f1ca6235c72cf21dd718a41a33c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -8,6 +8,7 @@
 
 package org.eclipse.cdt.qt.internal.core;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
@@ -23,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.tag.IBindingTagger;
 import org.eclipse.cdt.core.dom.ast.tag.ITag;
+import org.eclipse.cdt.core.dom.ast.tag.ITagReader;
 import org.eclipse.cdt.core.dom.ast.tag.ITagWriter;
 import org.eclipse.cdt.core.dom.ast.tag.IWritableTag;
 import org.eclipse.cdt.qt.core.QtKeywords;
@@ -33,18 +35,18 @@ import org.eclipse.cdt.qt.core.QtPlugin;
  * the index. There are two ways that Qt understands for marking a function as a
  * signal or slot: 1) With a macro in the function's visibility label 2) With a
  * macro before the function itself E.g., both of these cases are valid:
- * 
+ *
  * <pre>
  * class T
  * {
  * private:
  *     Q_SLOT void some_slot();
- * 
+ *
  * signals:
  *     void some_signal();
  * };
  * </pre>
- * 
+ *
  * The 6 applicable macros are signals, Q_SIGNALS, Q_SIGNAL, slots, Q_SLOTS, and
  * Q_SLOT.
  */
@@ -226,5 +228,29 @@ public class QtSignalSlotTagger implements IBindingTagger {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Test the given binding for the Qt signal or slot bits. Return true if any
+	 * of the specified bits are set and false otherwise.
+	 */
+	public static boolean isQtSignalOrSlot(IBinding binding, boolean checkForSignal, boolean checkForSlot) {
+		// make sure the target is a signal or slot function
+		ITagReader tagReader = CCorePlugin.getTagService().findTagReader(binding);
+		if (tagReader == null)
+			return false;
+
+		ITag tag = tagReader.getTag(QtPlugin.SIGNAL_SLOT_TAGGER_ID);
+		if (tag == null)
+			return false;
+
+		int value = tag.getByte(0);
+		if (value == ITag.FAIL)
+			return false;
+
+		// Test for one of the appropriate bits (or both).
+		int mask = (checkForSignal ? QtPlugin.SignalSlot_Mask_signal : 0)
+				 | (checkForSlot   ? QtPlugin.SignalSlot_Mask_slot   : 0);
+		return (value & mask) != 0;
 	}
 }

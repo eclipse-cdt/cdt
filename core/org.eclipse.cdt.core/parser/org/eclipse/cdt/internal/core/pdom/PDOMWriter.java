@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -51,6 +52,7 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
+import org.eclipse.cdt.internal.core.dom.ast.ASTChildProviderManager;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.FileContentKey;
@@ -440,6 +442,20 @@ abstract public class PDOMWriter {
 						addToMap(symbolMap, owner, new IASTName[] { name, caller });
 					}
 				}
+			}
+
+			@Override
+			public int visit(IASTExpression expr) {
+				int result = super.visit(expr);
+				if (result != PROCESS_CONTINUE)
+					return result;
+
+				for (IASTNode child : ASTChildProviderManager.getInstance().getChildren(expr)) {
+					if (child instanceof IASTName)
+						visit((IASTName) child, null);
+				}
+
+				return result;
 			}
 		};
 		ast.accept(visitor);

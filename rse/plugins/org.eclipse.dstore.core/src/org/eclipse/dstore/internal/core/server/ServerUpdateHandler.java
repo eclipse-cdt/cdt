@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  * David McKnight  (IBM)   [246826][dstore] KeepAlive does not work correctly
  * David McKnight    (IBM)  - [358301] [DSTORE] Hang during debug source look up
  * David McKnight  (IBM)   [388873][dstore] ServerUpdateHandler _senders list should be synchronized
+ * David McKnight  (IBM)   [404082][dstore] race condition on finish, removing senders
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -352,19 +353,17 @@ public class ServerUpdateHandler extends UpdateHandler
 	 */
 	public void removeSenderWith(Socket socket)
 	{
-		synchronized (_senders){
-			for (int i = 0; i < _senders.size(); i++)
+		for (int i = 0; i < _senders.size(); i++)
+		{
+			Sender sender = (Sender) _senders.get(i);
+			if (sender.socket() == socket)
 			{
-				Sender sender = (Sender) _senders.get(i);
-				if (sender.socket() == socket)
-				{
-					// sender sends last ack before death
-					DataElement document = _dataStore.createObject(null, DataStoreResources.DOCUMENT_TYPE, "exit", "exit"); //$NON-NLS-1$ //$NON-NLS-2$
-					sender.sendDocument(document, 2);
-					removeSender(sender);
-				}
+				// sender sends last ack before death
+				DataElement document = _dataStore.createObject(null, DataStoreResources.DOCUMENT_TYPE, "exit", "exit"); //$NON-NLS-1$ //$NON-NLS-2$
+				sender.sendDocument(document, 2);
+				removeSender(sender);
 			}
-		}
+		}		
 	}
 	
 	/**

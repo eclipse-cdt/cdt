@@ -142,7 +142,7 @@ public class IndexLocationFactory {
 	public static IIndexFileLocation getIFL(ITranslationUnit tu) {
 		IResource res = tu.getResource();
 		if (res instanceof IFile) {
-			return getWorkspaceIFL((IFile)res);
+			return getWorkspaceIFL((IFile) res);
 		}
 		IPath location = tu.getLocation();
 		if (location != null) {

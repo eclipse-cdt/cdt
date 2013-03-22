@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,24 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
 import java.util.Map;
 
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
 
 /**
  * Interface between the parser and the preprocessor. 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will
- * work or that it will remain the same. Please do not use this API without
- * consulting with the CDT team.
- * </p>
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -75,12 +70,25 @@ public interface IScanner {
 	
 	/**
 	 * Turns on/off creation of image locations. 
-	 * @see IASTName#getImageLocation()
+	 * @see org.eclipse.cdt.core.dom.ast.IASTName#getImageLocation()
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 5.0
 	 */
 	public void setComputeImageLocations(boolean val);
-	
+
+	/**
+	 * Turns on/off tracking if exported included files. 
+	 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement#isIncludedFileExported()
+	 * @see IncludeExportPatterns
+	 *
+	 * @param patterns if not {{@code null}, include export tracking is enabled, otherwise it is
+	 *     disabled
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 5.5
+	 */
+	public void setTrackIncludeExport(IncludeExportPatterns patterns);
+
 	/**
 	 * Toggles generation of tokens for inactive code branches. When turned on,
 	 * each inactive code branch is preceded by a token of kind {@link IToken#tINACTIVE_CODE_START} and

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,21 +97,28 @@ public interface IIndexInclude {
 	 * Test whether this include has been resolved (found in the file system).
 	 * Inactive includes are not resolved, unless they constitute a hidden dependency.
 	 * This is the case when an include is inactive because it has been included before:
-	 * <code>
+	 * <pre>
 	 *   #ifndef _header_h
 	 *   #include "header.h"
 	 *   #endif
-	 * <code>
-	 * 
+	 * </pre>
+	 *
 	 * @return whether this is a resolved include
 	 * @throws CoreException
 	 */
 	boolean isResolved() throws CoreException;
-	
+
 	/**
 	 * Tests whether this include has been resolved using a heuristics rather than relying on
 	 * the include search path.
 	 * @since 5.1
 	 */
 	boolean isResolvedByHeuristics() throws CoreException;
+
+	/**
+	 * Returns {@code true} if the included file is exported by the including header.
+	 * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
+	 * @since 5.5
+	 */
+	boolean isIncludedFileExported() throws CoreException;
 }

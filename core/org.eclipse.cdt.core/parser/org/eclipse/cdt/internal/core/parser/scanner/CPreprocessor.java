@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.AbstractParserLogService;
 import org.eclipse.cdt.core.parser.EndOfFileException;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IMacro;
@@ -42,6 +43,7 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.IncludeExportPatterns;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
@@ -290,6 +292,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fLexOptions.fSupportSlashPercentComments= configuration.supportSlashPercentComments();
         fLexOptions.fSupportUTFLiterals = configuration.supportUTFLiterals();
         fLexOptions.fSupportRawStringLiterals = configuration.supportRawStringLiterals();
+        if (info instanceof ExtendedScannerInfo)
+        	fLexOptions.fIncludeExportPatterns = ((ExtendedScannerInfo) info).getIncludeExportPatterns();
         fLocationMap= new LocationMap(fLexOptions);
         fKeywords= new CharArrayIntMap(40, -1);
         fPPKeywords= new CharArrayIntMap(40, -1);
@@ -347,6 +351,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	@Override
 	public void setComputeImageLocations(boolean val) {
     	fLexOptions.fCreateImageLocations= val;
+    }
+
+	@Override
+	public void setTrackIncludeExport(IncludeExportPatterns patterns) {
+    	fLexOptions.fIncludeExportPatterns= patterns;
     }
 
 	@Override
@@ -1205,8 +1214,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     }
 
 	@Override
-	public void handleComment(boolean isBlockComment, int offset, int endOffset) {
-		fLocationMap.encounteredComment(offset, endOffset, isBlockComment);
+	public void handleComment(boolean isBlockComment, int offset, int endOffset, AbstractCharArray input) {
+		fLocationMap.encounteredComment(offset, endOffset, isBlockComment, input);
 	}
 
     @Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,18 +28,14 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
 public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
         HashSet<String> optionNames = CModelManager.OptionNames;
 
-		// Formatter settings
+		// Formatter settings.
 		Map<String, String> defaultOptionsMap = DefaultCodeFormatterConstants.getDefaultSettings(); // code formatter defaults
 
-		// Compiler settings
+		// Compiler settings.
 		defaultOptionsMap.put(CCorePreferenceConstants.TODO_TASK_TAGS, CCorePreferenceConstants.DEFAULT_TASK_TAGS);
 		defaultOptionsMap.put(CCorePreferenceConstants.TODO_TASK_PRIORITIES, CCorePreferenceConstants.DEFAULT_TASK_PRIORITY);
 		defaultOptionsMap.put(CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE, CCorePreferenceConstants.DEFAULT_TASK_CASE_SENSITIVE);
@@ -49,7 +45,7 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 		defaultOptionsMap.put(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS, CCorePreferenceConstants.DEFAULT_WORKSPACE_LANGUAGE_MAPPINGS);
 		defaultOptionsMap.put(CodeReaderCache.CODE_READER_BUFFER, CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB_STRING);
 
-		// Store default values to default preferences
+		// Store default values to default preferences.
 	 	IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
 		for (Map.Entry<String, String> entry : defaultOptionsMap.entrySet()) {
 			String optionName = entry.getKey();
@@ -62,11 +58,14 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 		defaultPreferences.putBoolean(CCorePreferenceConstants.FILE_PATH_CANONICALIZATION, true);
 		defaultPreferences.putBoolean(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT, true);
 
-		// build defaults
+		// Build defaults.
 		defaultPreferences.putBoolean(CCorePreferenceConstants.PREF_BUILD_ALL_CONFIGS, false);
 		defaultPreferences.putBoolean(CCorePreferenceConstants.PREF_BUILD_CONFIGS_RESOURCE_CHANGES, false);
 
-		// indexer defaults
+		// Indexer defaults.
 		IndexerPreferences.initializeDefaultPreferences(defaultPreferences);
+		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_EXPORT_PATTERN, CCorePreferenceConstants.DEFAULT_INCLUDE_EXPORT_PATTERN);
+		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_BEGIN_EXPORTS_PATTERN, CCorePreferenceConstants.DEFAULT_INCLUDE_BEGIN_EXPORTS_PATTERN);
+		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_END_EXPORTS_PATTERN, CCorePreferenceConstants.DEFAULT_INCLUDE_END_EXPORTS_PATTERN);
 	}
 }

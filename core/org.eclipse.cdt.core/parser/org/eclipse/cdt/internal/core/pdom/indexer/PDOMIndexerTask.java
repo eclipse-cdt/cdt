@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,13 @@ import java.util.Comparator;
 import java.util.HashSet;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.IncludeExportPatterns;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.model.CProject;
@@ -179,6 +181,20 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 	@Override
 	protected final ITodoTaskUpdater createTodoTaskUpdater() {
 		return new TodoTaskUpdater();
+	}
+
+	@Override
+	protected final IncludeExportPatterns getIncludeExportPatterns() {
+		ICProject project = getCProject();
+		String exportPattern = CCorePreferenceConstants.getPreference(
+				CCorePreferenceConstants.INCLUDE_EXPORT_PATTERN, project, null);
+		String beginExportsPattern = CCorePreferenceConstants.getPreference(
+				CCorePreferenceConstants.INCLUDE_BEGIN_EXPORTS_PATTERN, project, null);
+		String endExportsPattern = CCorePreferenceConstants.getPreference(
+				CCorePreferenceConstants.INCLUDE_END_EXPORTS_PATTERN, project, null);
+		if (exportPattern == null && beginExportsPattern == null && endExportsPattern == null)
+			return null;
+		return new IncludeExportPatterns(exportPattern, beginExportsPattern, endExportsPattern);
 	}
 
 	protected void traceEnd(long start, IWritableIndex index, boolean wasCancelled) {

@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.parser.IProblem;
 public interface ILexerLog {
 	ILexerLog NULL = new ILexerLog() {
 		@Override
-		public void handleComment(boolean isBlockComment, int offset, int endOffset) {}
+		public void handleComment(boolean isBlockComment, int offset, int endOffset, AbstractCharArray input) {}
 		@Override
 		public void handleProblem(int problemID, char[] info, int offset, int endOffset) {}
 	};
@@ -39,6 +39,7 @@ public interface ILexerLog {
 	 * @param source the input of the lexer.
 	 * @param offset the offset where the comment starts
 	 * @param endOffset the offset where the comment ends
+	 * @param input the contents of the file being parsed 
 	 */
-	void handleComment(boolean isBlockComment, int offset, int endOffset);
+	void handleComment(boolean isBlockComment, int offset, int endOffset, AbstractCharArray input);
 }

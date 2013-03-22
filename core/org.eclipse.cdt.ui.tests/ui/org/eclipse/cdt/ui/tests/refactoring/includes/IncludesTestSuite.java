@@ -18,7 +18,7 @@ public class IncludesTestSuite extends TestSuite {
 	public static Test suite() throws Exception {
 		IncludesTestSuite suite = new IncludesTestSuite(); 
 		suite.addTest(BindingClassifierTest.suite());
-		suite.addTest(OrganizeIncludesTest.suite());
+		suite.addTest(IncludeOrganizerTest.suite());
 		return suite;
 	}
 }

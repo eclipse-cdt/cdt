@@ -48,10 +48,17 @@ public abstract class AbstractCharArray {
 	public abstract char get(int offset);
 
 	/**
-	 * Copy a range of characters to the given destination. Subclasses do not have to do any
+	 * Copies a range of characters to the given destination. Subclasses do not have to do any
 	 * range checks.
 	 */
 	public abstract void arraycopy(int offset, char[] destination, int destinationPos, int length);
+
+	/**
+	 * Returns the {@link CharSequence} representing a range in the character array.
+	 */
+	public CharSequence subSequence(int start, int end) {
+		return new SubArray(start, end);
+	}
 
 	/**
 	 * Returns {@code true} if there were I/O errors while retrieving contents of this array.
@@ -68,5 +75,41 @@ public abstract class AbstractCharArray {
 			buf.append(get(pos));
 		}
 		return buf.toString();
+	}
+
+	private class SubArray implements CharSequence {
+		private final int start;
+		private final int end;
+
+		SubArray(int start, int end) {
+			checkStartEnd(start, end);
+			this.start = start;
+			this.end = end;
+		}
+
+		@Override
+		public int length() {
+			return end - start;
+		}
+
+		@Override
+		public char charAt(int index) {
+			return get(start + index);
+		}
+
+		@Override
+		public CharSequence subSequence(int start, int end) {
+			checkStartEnd(start, end);
+			if (end > this.end - this.start)
+				throw new IndexOutOfBoundsException(String.valueOf(end));
+			return new SubArray(this.start + start, this.start + end);
+		}
+
+		private void checkStartEnd(int start, int end) {
+			if (start < 0)
+				throw new IndexOutOfBoundsException(String.valueOf(start));
+			if (end < start)
+				throw new IndexOutOfBoundsException(String.valueOf(end) + " < " + String.valueOf(start)); //$NON-NLS-1$
+		}
 	}
 }

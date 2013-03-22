@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 QNX Software Systems and others.
+ * Copyright (c) 2006, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	private static final int FLAG_INACTIVE_INCLUDE 		= 0x02;
 	private static final int FLAG_RESOLVED_BY_HEURISTICS= 0x04;
 	private static final int FLAG_DEDUCIBLE_NAME		= 0x08;
+	private static final int FLAG_EXPORTED_FILE			= 0x10;
 	
 	private final PDOMLinkage linkage;
 	private final long record;
@@ -96,6 +97,9 @@ public class PDOMInclude implements IIndexFragmentInclude {
 			flags |= FLAG_INACTIVE_INCLUDE;
 		} else if (include.isResolvedByHeuristics()) {
 			flags |= FLAG_RESOLVED_BY_HEURISTICS;
+		}
+		if (include.isIncludedFileExported()) {
+			flags |= FLAG_EXPORTED_FILE;
 		}
 		if (deducible_name) {
 			flags |= FLAG_DEDUCIBLE_NAME;
@@ -254,6 +258,11 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		return (getFlag() & FLAG_RESOLVED_BY_HEURISTICS) != 0;
 	}
 
+	@Override
+	public boolean isIncludedFileExported() throws CoreException {
+		return (getFlag() & FLAG_EXPORTED_FILE) != 0;
+	}
+	
 	@Override
 	public int getNameOffset() throws CoreException {
 		return linkage.getDB().get3ByteUnsignedInt(record + NODE_OFFSET);

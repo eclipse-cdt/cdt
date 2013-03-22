@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Rational Software - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -16,12 +17,14 @@ import java.util.Map;
 /**
  * Implementation for the {@link IExtendedScannerInfo} interface. Allows to configure
  * the preprocessor.
+ * @since 5.5
  */
 public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScannerInfo {
 	private static final String[] EMPTY_STRING_ARRAY = {};
 	private String[] macroFiles;
 	private String[] includeFiles;
 	private String[] localIncludePaths;
+	private IncludeExportPatterns includeExportPatterns;
 
 	public ExtendedScannerInfo() {
 	}
@@ -56,6 +59,9 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 			includeFiles = einfo.getIncludeFiles();
 			localIncludePaths = einfo.getLocalIncludePath();
 		}
+		if (info instanceof ExtendedScannerInfo) {
+			includeExportPatterns = ((ExtendedScannerInfo) info).includeExportPatterns;
+		}
 	}
 	
 	@Override
@@ -78,4 +84,26 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 			return EMPTY_STRING_ARRAY;
 		return localIncludePaths;
 	}
+
+	/**
+	 * Returns the regular expression patterns matching export directives for included files.
+	 * @see IncludeExportPatterns
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 5.5
+	 */
+	public IncludeExportPatterns getIncludeExportPatterns() {
+		return includeExportPatterns;
+	}
+
+	/**
+	 * Sets the regular expression patterns matching export directives for included files.
+	 * @see IncludeExportPatterns
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 5.5
+	 */
+	public void setIncludeExportPatterns(IncludeExportPatterns patterns) {
+    	includeExportPatterns= patterns;
+    }
 }

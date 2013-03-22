@@ -875,7 +875,7 @@ public class IncludeOrganizer {
 	}
 
 	private void processInclusionRequests(List<InclusionRequest> requests,
-			HeaderSubstitutor headerSubstitutor) {
+			HeaderSubstitutor headerSubstitutor) throws CoreException {
 		// Add partner header if necessary.
 		HashSet<IIndexFile> includedByPartner = fContext.getPreferences().allowPartnerIndirectInclusion ?
 				new HashSet<IIndexFile>() : null;
@@ -954,8 +954,6 @@ public class IncludeOrganizer {
 		}
 
 		// Resolve ambiguous inclusion requests.
-
-		// Maps a set of header files presented to the user to the file selected by the user.
 		for (InclusionRequest request : requests) {
 			if (!request.isResolved()) {
 				List<IPath> candidatePaths = request.getCandidatePaths();
@@ -976,9 +974,12 @@ public class IncludeOrganizer {
 				}
 			}
 		}
+
+		// Remove headers that are exported by other headers.
+		fContext.removeExportedHeaders();
 	}
 
-	private IPath getPath(IIndexFileLocation location) {
+	private static IPath getPath(IIndexFileLocation location) {
 		return IndexLocationFactory.getAbsolutePath(location);
 	}
 

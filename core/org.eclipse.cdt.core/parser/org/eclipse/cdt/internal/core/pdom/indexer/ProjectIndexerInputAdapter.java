@@ -25,9 +25,9 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask.UnusedHeaderStrategy;
@@ -156,7 +156,7 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 	public IScannerInfo getBuildConfiguration(int linkageID, Object tu) {
 		IScannerInfo info= ((ITranslationUnit) tu).getScannerInfo(true);
 		if (info == null) {
-			info= new ScannerInfo();
+			info= new ExtendedScannerInfo();
 		}
 		return info;
 	}

@@ -11,16 +11,21 @@
 package org.eclipse.cdt.internal.ui.refactoring.includes;
 
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -149,6 +154,43 @@ public class InclusionContext {
 		return include;
     }
 
+    /**
+     * Removes headers that are exported by other headers that will be included
+     */
+    public void removeExportedHeaders() throws CoreException {
+    	// Index files keyed by their absolute paths.
+    	Map<IPath, IIndexFile> filesByPath = new HashMap<IPath, IIndexFile>();
+    	for (IIndexFile file : fIndex.getAllFiles()) {
+    		IPath path = getPath(file);
+    		filesByPath.put(path, file);
+    	}
+
+    	Set<IPath> exportedHeaders = new HashSet<IPath>();
+		for (IPath path : fHeadersToInclude) {
+			if (!exportedHeaders.contains(path)) {
+				IIndexFile file = filesByPath.get(path);
+				ArrayDeque<IIndexFile> queue = new ArrayDeque<IIndexFile>();
+				queue.add(file);
+				while ((file = queue.pollFirst()) != null) {
+					for (IIndexInclude include : file.getIncludes()) {
+						if (include.isIncludedFileExported()) {
+							file = fIndex.resolveInclude(include);
+							if (file != null) {
+								if (exportedHeaders.add(getPath(file)))
+									queue.add(file);
+							}
+						}
+					}
+				}
+			}
+		}
+		fHeadersToInclude.removeAll(exportedHeaders);
+    }
+
+	private static IPath getPath(IIndexFile file) throws CoreException {
+		return IndexLocationFactory.getAbsolutePath(file.getLocation());
+	}
+    
 	private static boolean fileExists(String absolutePath) {
 		return new File(absolutePath).exists();
 	}

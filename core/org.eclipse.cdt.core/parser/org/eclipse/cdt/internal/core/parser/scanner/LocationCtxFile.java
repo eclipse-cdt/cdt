@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -24,6 +25,8 @@ class LocationCtxFile extends LocationCtxContainer {
 	private final String fFilename;
 	private final ASTInclusionStatement fASTInclude;
 	private final boolean fIsSource;
+	private boolean fInsideIncludeExportBlock;
+	private int fOffsetOfIncludeExport = -1;
 
 	public LocationCtxFile(LocationCtxContainer parent, String filename, AbstractCharArray source,
 			int parentOffset, int parentEndOffset, int sequenceNumber,
@@ -46,9 +49,9 @@ class LocationCtxFile extends LocationCtxContainer {
 
 	@Override
 	public ASTFileLocation findMappedFileLocation(int sequenceNumber, int length) {
-		// try to delegate to a child.
+		// Try to delegate to a child.
 		final int testEnd= length > 1 ? sequenceNumber + length - 1 : sequenceNumber;
-		final int sequenceEnd= sequenceNumber+length;
+		final int sequenceEnd= sequenceNumber + length;
 		final LocationCtx child1= findChildLessOrEqualThan(sequenceNumber, false);
 		final LocationCtx child2= testEnd == sequenceNumber ?
 				child1 : findChildLessOrEqualThan(testEnd, false);
@@ -58,17 +61,17 @@ class LocationCtxFile extends LocationCtxContainer {
 			return child1.findMappedFileLocation(sequenceNumber, length);
 		}
 		
-		// handle here
+		// Handle here.
 		int startOffset;
 		int endOffset;
 		
 		if (child1 == null) {
-			startOffset= sequenceNumber-fSequenceNumber;
+			startOffset= sequenceNumber - fSequenceNumber;
 		} else {
 			int childSequenceEnd= child1.fSequenceNumber + child1.getSequenceLength();
 			if (sequenceNumber < childSequenceEnd) {
 				startOffset= child1.fOffsetInParent;
-			} else {	// start beyond child1
+			} else {	// Start beyond child1
 				startOffset= child1.fEndOffsetInParent + sequenceNumber - childSequenceEnd;
 			}
 		}
@@ -76,7 +79,7 @@ class LocationCtxFile extends LocationCtxContainer {
 			endOffset= sequenceEnd - fSequenceNumber;
 		} else {
 			int childSequenceEnd= child2.fSequenceNumber + child2.getSequenceLength();
-			if (childSequenceEnd < sequenceEnd) { // beyond child2
+			if (childSequenceEnd < sequenceEnd) { // Beyond child2
 				endOffset= child2.fEndOffsetInParent + sequenceEnd - childSequenceEnd;
 			} else {
 				endOffset= child2.fEndOffsetInParent;
@@ -112,12 +115,12 @@ class LocationCtxFile extends LocationCtxContainer {
 			ArrayList<IASTPreprocessorMacroExpansion> list) {
 		Collection<LocationCtx> children= getChildren();
 		for (LocationCtx ctx : children) {
-			// context must start before the end of the search range
+			// Context must start before the end of the search range.
 			if (ctx.fOffsetInParent >= offset+length) {
 				break;
 			}
 			if (ctx instanceof LocationCtxMacroExpansion) {
-				// expansion must end after the search start
+				// Expansion must end after the search start.
 				if (ctx.fEndOffsetInParent > offset) {
 					IASTNode macroExpansion =
 							((LocationCtxMacroExpansion) ctx).getMacroReference().getParent();
@@ -135,5 +138,21 @@ class LocationCtxFile extends LocationCtxContainer {
 	@Override
 	public String toString() {
 		return fFilename;
+	}
+
+	public boolean isInsideIncludeExportBlock() {
+		return fInsideIncludeExportBlock;
+	}
+
+	public void setInsideIncludeExportBlock(boolean fInsideIncludeExportBlock) {
+		this.fInsideIncludeExportBlock = fInsideIncludeExportBlock;
+	}
+
+	public int getOffsetOfIncludeExport() {
+		return fOffsetOfIncludeExport;
+	}
+
+	public void setOffsetOfIncludeExport(int fOffsetOfIncludeExport) {
+		this.fOffsetOfIncludeExport = fOffsetOfIncludeExport;
 	}
 }

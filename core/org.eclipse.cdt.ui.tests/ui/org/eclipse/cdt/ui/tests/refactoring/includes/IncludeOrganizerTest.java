@@ -26,20 +26,20 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeOrganizer;
 
 /**
- * Tests for Extract Function refactoring.
+ * Tests for IncludeOrganizer.
  */
-public class OrganizeIncludesTest extends IncludesTestBase {
+public class IncludeOrganizerTest extends IncludesTestBase {
 
-	public OrganizeIncludesTest() {
+	public IncludeOrganizerTest() {
 		super();
 	}
 
-	public OrganizeIncludesTest(String name) {
+	public IncludeOrganizerTest(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		return suite(OrganizeIncludesTest.class);
+		return suite(IncludeOrganizerTest.class);
 	}
 
 	@Override
@@ -293,6 +293,40 @@ public class OrganizeIncludesTest extends IncludesTestBase {
 	//}
 	public void testExistingIncludesNoReordering() throws Exception {
 		getPreferenceStore().setValue(PreferenceConstants.INCLUDES_ALLOW_REORDERING, false);
+		assertExpectedResults();
+	}
+
+	//h1.h
+	//class A {};
+
+	//h2.h
+	//class B {};
+
+	//h3.h
+	//#include "h2.h"	// IWYU pragma: export
+	//class C {};
+
+	//h4.h
+	//#include "h1.h"
+	///* IWYU pragma: begin_exports */
+	//#include "h3.h"
+	///* IWYU pragma: end_exports */
+	//class D {};
+
+	//source.cpp
+	//A a;
+	//B b;
+	//C c;
+	//D d;
+	//====================
+	//#include "h1.h"
+	//#include "h4.h"
+	//
+	//A a;
+	//B b;
+	//C c;
+	//D d;
+	public void testHeaderExport() throws Exception {
 		assertExpectedResults();
 	}
 }

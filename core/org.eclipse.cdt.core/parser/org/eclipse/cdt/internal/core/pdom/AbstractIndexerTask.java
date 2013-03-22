@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,10 +42,12 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
+import org.eclipse.cdt.core.parser.IncludeExportPatterns;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
@@ -394,6 +396,10 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		return null;
 	}
 
+	protected IncludeExportPatterns getIncludeExportPatterns() {
+		return null;
+	}
+
 	/**
 	 * @return array of linkage IDs that shall be parsed
 	 */
@@ -483,6 +489,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 			fASTOptions= ILanguage.OPTION_NO_IMAGE_LOCATIONS
 					| ILanguage.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS;
+
 			if (getSkipReferences() == SKIP_ALL_REFERENCES) {
 				fASTOptions |= ILanguage.OPTION_SKIP_FUNCTION_BODIES;
 			}
@@ -826,7 +833,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				if (monitor.isCanceled() || hasUrgentTasks())
 					return;
 				final Object tu = locTask.fTu;
-				final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, tu);
+				final IScannerInfo scannerInfo = getScannerInfo(linkageID, tu);
 				parseFile(tu, getLanguage(tu, linkageID), ifl, scannerInfo, null, monitor);
 			}
 		}
@@ -860,7 +867,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					if (monitor.isCanceled() || hasUrgentTasks())
 						return;
 					final Object tu = locTask.fTu;
-					final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, tu);
+					final IScannerInfo scannerInfo= getScannerInfo(linkageID, tu);
 					parseFile(tu, getLanguage(tu, linkageID), ifl, scannerInfo, null, monitor);
 					if (locTask.isCompleted())
 						it.remove();
@@ -904,7 +911,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 		final int safeguardSize= safeGuard.size();
 		while (true) {
-			// Look for a context and parse the file
+			// Look for a context and parse the file.
 			IIndexFragmentFile ctxFile = findContextFile(linkageID, map, versionTask, safeGuard, monitor);
 			if (ctxFile == null || ctxFile == headerFile)
 				return;
@@ -913,7 +920,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			if (contextTu == null)
 				return;
 
-			final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, contextTu);
+			final IScannerInfo scannerInfo = getScannerInfo(linkageID, contextTu);
 			final AbstractLanguage language = getLanguage(contextTu, linkageID);
 			final FileContext ctx= new FileContext(ctxFile, headerFile);
 			Set<IIndexFile> dependencies= null;
@@ -923,7 +930,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				DependsOnOutdatedFileException d= parseFile(tu, language, ifl, scannerInfo, ctx, monitor);
 				if (d != null) {
 					// File was not parsed, because there is a dependency that needs to be
-					// handled before
+					// handled before.
 					if (dependencies == null)
 						dependencies= new HashSet<IIndexFile>();
 					if (dependencies.add(d.fIndexFile)) {
@@ -938,6 +945,14 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			// Try the next context
 			restoreSet(safeGuard, safeguardSize);
 		}
+	}
+
+	private IScannerInfo getScannerInfo(int linkageID, Object contextTu) {
+		final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, contextTu);
+		if (scannerInfo instanceof ExtendedScannerInfo) {
+			((ExtendedScannerInfo) scannerInfo).setIncludeExportPatterns(getIncludeExportPatterns());
+		}
+		return scannerInfo;
 	}
 
 	private void restoreSet(LinkedHashSet<?> set, int restoreSize) {

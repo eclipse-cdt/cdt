@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.IncludeExportPatterns;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
@@ -56,6 +57,7 @@ final public class Lexer implements ITokenSequence {
 		public boolean fSupportSlashPercentComments= false;
 		public boolean fSupportUTFLiterals= true;
 		public boolean fSupportRawStringLiterals= false;
+		public IncludeExportPatterns fIncludeExportPatterns;
 		
 		@Override
 		public Object clone() {
@@ -694,21 +696,21 @@ final public class Lexer implements ITokenSequence {
 	}
 
 	private void blockComment(final int start, final char trigger) {
-		// we can ignore line-splices, trigraphs and windows newlines when searching for the '*'
+		// We can ignore line-splices, trigraphs and windows newlines when searching for the '*'
 		int pos= fEndOffset;
 		while (isValidOffset(pos)) {
 			if (fInput.get(pos++) == trigger) {
 				fEndOffset= pos;
 				if (nextCharPhase3() == '/') {
 					nextCharPhase3();
-					fLog.handleComment(true, start, fOffset);
+					fLog.handleComment(true, start, fOffset, fInput);
 					return;
 				}
 			}
 		}
 		fCharPhase3= END_OF_INPUT;
 		fOffset= fEndOffset= pos;
-		fLog.handleComment(true, start, pos);
+		fLog.handleComment(true, start, pos, fInput);
 	}
 
 	private void lineComment(final int start) {
@@ -717,7 +719,7 @@ final public class Lexer implements ITokenSequence {
 			switch (c) {
 			case END_OF_INPUT:
 			case '\n':
-				fLog.handleComment(false, start, fOffset);
+				fLog.handleComment(false, start, fOffset, fInput);
 				return;
 			}
 			c= nextCharPhase3();

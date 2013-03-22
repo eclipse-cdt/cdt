@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,6 +105,14 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	 * @since 5.4
 	 */
 	public boolean isErrorInIncludedFile();
+
+	/**
+	 * Returns {@code true} if the included file is exported by the including header.
+	 * 
+	 * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
+	 * @since 5.5
+	 */
+	public boolean isIncludedFileExported();
 
 	/**
 	 * Returns {@code true}, if an attempt will be or has been made to create AST for the target

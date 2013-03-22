@@ -38,7 +38,7 @@ public class IncludePreferences {
 	public final boolean forwardDeclareCompositeTypes;
 	public final boolean forwardDeclareEnums;
 	public final boolean forwardDeclareFunctions;
-	// TODO(sprigogin): Create a preference.
+	// TODO(sprigogin): Create a preference for this.
 	public final boolean forwardDeclareExternalVariables = false;
 	public final boolean forwardDeclareTemplates;
 	public final boolean forwardDeclareNamespaceElements;

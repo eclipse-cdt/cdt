@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
+import org.eclipse.cdt.internal.core.parser.scanner.AbstractCharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.ILexerLog;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
@@ -42,7 +43,8 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 
 	private static final class LexerLog implements ILexerLog {
 		@Override
-		public void handleComment(boolean isBlockComment, int offset, int endOffset) {
+		public void handleComment(boolean isBlockComment, int offset, int endOffset,
+				AbstractCharArray input) {
 		}
 		@Override
 		public void handleProblem(int problemID, char[] info, int offset, int endOffset) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -173,6 +173,50 @@ public class CCorePreferenceConstants {
 	 */
 	public static final String PREF_BUILD_CONFIGS_RESOURCE_CHANGES = "build.proj.ref.configs.enabled"; //$NON-NLS-1$
 
+	/**
+	 * Default value for {@link #INCLUDE_EXPORT_PATTERN}.
+	 * @since 5.5
+	 */
+	public static final String DEFAULT_INCLUDE_EXPORT_PATTERN = "IWYU\\s+(pragma:?\\s+)?export"; //$NON-NLS-1$
+
+	/**
+	 * Preference key for the regular expression pattern that, when appears in a comment on the same
+	 * line as include statement, indicates the the included header file is exported.
+	 * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
+	 *
+	 * @since 5.5
+	 */
+	public static final String INCLUDE_EXPORT_PATTERN = "includes.exportPattern"; //$NON-NLS-1$
+
+	/**
+	 * Default value for {@link #INCLUDE_BEGIN_EXPORTS_PATTERN}.
+	 * @since 5.5
+	 */
+	public static final String DEFAULT_INCLUDE_BEGIN_EXPORTS_PATTERN = "IWYU\\s+(pragma:?\\s+)?begin_exports?"; //$NON-NLS-1$
+
+	/**
+	 * Preference key for the regular expression pattern that, when appears in a comment, marks
+	 * the beginning of a sequence of include statements that export the included header files.
+	 * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
+	 *
+	 * @since 5.5
+	 */
+	public static final String INCLUDE_BEGIN_EXPORTS_PATTERN = "includes.beginExportsPattern"; //$NON-NLS-1$
+
+	/**
+	 * Default value for {@link #INCLUDE_END_EXPORTS_PATTERN}.
+	 * @since 5.5
+	 */
+	public static final String DEFAULT_INCLUDE_END_EXPORTS_PATTERN = "IWYU\\s+(pragma:?\\s+)?end_exports?"; //$NON-NLS-1$
+
+	/**
+	 * Preference key for the regular expression pattern that, when appears in a comment, marks
+	 * the end of a sequence of include statements that export the included header files.
+	 * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
+	 *
+	 * @since 5.5
+	 */
+	public static final String INCLUDE_END_EXPORTS_PATTERN = "includes.endExportsPattern"; //$NON-NLS-1$
 
     /**
      * Returns the node in the preference in the given context.

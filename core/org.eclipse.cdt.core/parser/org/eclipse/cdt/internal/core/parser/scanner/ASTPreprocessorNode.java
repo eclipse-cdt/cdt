@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -291,6 +291,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	private final boolean fIsResolved;
 	private final boolean fIsSystemInclude;
 	private final boolean fFoundByHeuristics;
+	private final boolean fIncludedFileExported;
 	private final IFileNomination fNominationDelegate;
 	private boolean fPragmaOnce;
 	private boolean fCreatesAST;
@@ -305,7 +306,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	public ASTInclusionStatement(IASTTranslationUnit parent, 
 			int startNumber, int nameStartNumber, int nameEndNumber, int endNumber,
 			char[] headerName, String filePath, boolean userInclude, boolean active, boolean heuristic, 
-			IFileNomination nominationDelegate) {
+			boolean exportedFile, IFileNomination nominationDelegate) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
 		fName= new ASTPreprocessorName(this, IASTPreprocessorIncludeStatement.INCLUDE_NAME,
 				nameStartNumber, nameEndNumber, headerName, null);
@@ -315,6 +316,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 		fFoundByHeuristics= heuristic;
 		fSignificantMacros= ISignificantMacros.NONE;
 		fNominationDelegate= nominationDelegate;
+		fIncludedFileExported= exportedFile;
 		if (!active) {
 			setInactive();
 		}
@@ -457,6 +459,11 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	public void setErrorInIncludedFile(boolean error) {
 		assert fNominationDelegate == null;
 		fErrorInIncludedFile= error;
+	}
+
+	@Override
+	public boolean isIncludedFileExported() {
+		return fIncludedFileExported;
 	}
 
 	@Override

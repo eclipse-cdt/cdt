@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -32,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFileNomination;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
+import org.eclipse.cdt.core.parser.IncludeExportPatterns;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -126,17 +128,21 @@ public class LocationMap implements ILocationResolver {
 	 * @param name name of the include without delimiters ("" or <>)
 	 * @param userInclude <code>true</code> when specified with double-quotes.
 	 */
-	public ILocationCtx pushInclusion(int startOffset,	int nameOffset, int nameEndOffset, int endOffset, 
-			AbstractCharArray buffer, String filename, char[] name, boolean userInclude, boolean heuristic, boolean isSource) {
+	public ILocationCtx pushInclusion(int startOffset,	int nameOffset, int nameEndOffset,
+			int endOffset, AbstractCharArray buffer, String filename, char[] name,
+			boolean userInclude, boolean heuristic, boolean isSource) {
 		assert fCurrentContext instanceof LocationCtxContainer;
 		int startNumber= getSequenceNumberForOffset(startOffset);	
 		int nameNumber= getSequenceNumberForOffset(nameOffset);		
 		int nameEndNumber= getSequenceNumberForOffset(nameEndOffset);
 		int endNumber= getSequenceNumberForOffset(endOffset);
+		boolean exported = isExportedIncludeAt(endOffset);
 		final ASTInclusionStatement inclusionStatement= 
-			new ASTInclusionStatement(fTranslationUnit, startNumber, nameNumber, nameEndNumber, endNumber, name, filename, userInclude, true, heuristic, null);
+			new ASTInclusionStatement(fTranslationUnit, startNumber, nameNumber, nameEndNumber,
+					endNumber, name, filename, userInclude, true, heuristic, exported, null);
 		fDirectives.add(inclusionStatement);
-		fCurrentContext= new LocationCtxFile((LocationCtxContainer) fCurrentContext, filename, buffer, startOffset, endOffset, endNumber, inclusionStatement, isSource);
+		fCurrentContext= new LocationCtxFile((LocationCtxContainer) fCurrentContext, filename, buffer,
+				startOffset, endOffset, endNumber, inclusionStatement, isSource);
 		fLastChildInsertionOffset= 0;
 		return fCurrentContext;
 	}
@@ -230,21 +236,70 @@ public class LocationMap implements ILocationResolver {
 	 * @param userInclude <code>true</code> when specified with double-quotes.
 	 * @param active <code>true</code> when include appears in active code.
 	 */
-	public ASTInclusionStatement encounterPoundInclude(int startOffset, int nameOffset, int nameEndOffset, int endOffset,
-			char[] name, String filename, boolean userInclude, boolean active, boolean heuristic,
-			IFileNomination nominationDelegate) {
+	public ASTInclusionStatement encounterPoundInclude(int startOffset, int nameOffset, int nameEndOffset,
+			int endOffset, char[] name, String filename, boolean userInclude, boolean active,
+			boolean heuristic, IFileNomination nominationDelegate) {
+		boolean exported = isExportedIncludeAt(endOffset);
 		startOffset= getSequenceNumberForOffset(startOffset);	
 		nameOffset= getSequenceNumberForOffset(nameOffset);		
 		nameEndOffset= getSequenceNumberForOffset(nameEndOffset);
 		endOffset= getSequenceNumberForOffset(endOffset);
-		final ASTInclusionStatement inc = new ASTInclusionStatement(fTranslationUnit, startOffset, nameOffset,
-				nameEndOffset, endOffset, name, filename, userInclude, active, heuristic, nominationDelegate);
+		final ASTInclusionStatement inc = new ASTInclusionStatement(fTranslationUnit, startOffset,
+				nameOffset,	nameEndOffset, endOffset, name, filename, userInclude, active, heuristic,
+				exported, nominationDelegate);
 		fDirectives.add(inc);
 		return inc;
 	}
 
-	public void encounteredComment(int offset, int endOffset, boolean isBlockComment) {
-		fComments.add(new ASTComment(fTranslationUnit, getCurrentFilePath(), offset, endOffset, isBlockComment));
+	private boolean isExportedIncludeAt(int includeEndOffset) {
+		boolean exported = false;
+		if (fLexerOptions.fIncludeExportPatterns != null && fCurrentContext instanceof LocationCtxFile) {
+			LocationCtxFile context = (LocationCtxFile) fCurrentContext;
+			exported = context.isInsideIncludeExportBlock();
+			if (!exported) {
+				int distance = context.getOffsetOfIncludeExport() - includeEndOffset;
+				if (distance >= 0 &&
+						CharArrayUtils.indexOf('\n', context.getSource(includeEndOffset, distance)) < 0) {
+					exported = true;
+				}
+			}
+		}
+		return exported;
+	}
+
+	public void encounteredComment(int offset, int endOffset, boolean isBlockComment, AbstractCharArray input) {
+		ASTComment comment = new ASTComment(fTranslationUnit, getCurrentFilePath(), offset, endOffset, isBlockComment);
+		if (fLexerOptions.fIncludeExportPatterns != null && fCurrentContext instanceof LocationCtxFile) {
+			CharSequence text = getTrimmedCommentText(input.subSequence(offset, endOffset), isBlockComment);
+			IncludeExportPatterns patterns = fLexerOptions.fIncludeExportPatterns;
+			if (patterns.getIncludeExportPattern() != null
+				&& patterns.getIncludeExportPattern().matcher(text).matches()) {
+				((LocationCtxFile) fCurrentContext).setOffsetOfIncludeExport(offset);
+			} else if (patterns.getIncludeBeginExportsPattern() != null
+						&& patterns.getIncludeBeginExportsPattern().matcher(text).matches()) {
+				((LocationCtxFile) fCurrentContext).setInsideIncludeExportBlock(true);
+			} else if (patterns.getIncludeEndExportsPattern() != null
+					&& patterns.getIncludeEndExportsPattern().matcher(text).matches()) {
+				((LocationCtxFile) fCurrentContext).setInsideIncludeExportBlock(false);
+			}
+		}
+		fComments.add(comment);
+	}
+
+	private CharSequence getTrimmedCommentText(CharSequence comment, boolean isBlockComment) {
+		int end = comment.length() - (isBlockComment ? 2 : 0);
+		int begin;
+		for (begin = 2; begin < end; begin++) {
+			if (!Character.isWhitespace(comment.charAt(begin)))
+				break;
+		}
+		if (end <= begin)
+			return ""; //$NON-NLS-1$
+		while (--end >= begin) {
+			if (!Character.isWhitespace(comment.charAt(end)))
+				break;
+		}
+		return comment.subSequence(begin, end + 1);
 	}
 
 	public void encounterProblem(int id, char[] arg, int offset, int endOffset) {

@@ -14,15 +14,15 @@ package org.eclipse.cdt.core.testplugin;
 import java.util.Collections;
 import java.util.Map;
 
-import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 
-public class TestScannerInfo implements IExtendedScannerInfo {
+public class TestScannerInfo extends ExtendedScannerInfo {
 	private static final String[] EMPTY = {};
 	private String[] fIncludes;
 	private String[] fIncludeFiles;
 	private String[] fMacroFiles;
 
-	public TestScannerInfo(String[] includes, String[] includeFiles, String[] macroFiles) {
+	public TestScannerInfo(String[] includes, String[] macroFiles, String[] includeFiles) {
 		fIncludes= includes;
 		fIncludeFiles= includeFiles;
 		fMacroFiles= macroFiles;

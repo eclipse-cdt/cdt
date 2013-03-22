@@ -12,10 +12,10 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.internal.core.parser.scanner.AbstractCharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.ILexerLog;
 
 public class TestLexerLog implements ILexerLog {
-
 	private ArrayList fComments= new ArrayList();
 	private ArrayList fProblems= new ArrayList();
 	private String fInput;
@@ -25,7 +25,7 @@ public class TestLexerLog implements ILexerLog {
 	}
 
 	@Override
-	public void handleComment(boolean isBlockComment, int offset, int endOffset) {
+	public void handleComment(boolean isBlockComment, int offset, int endOffset, AbstractCharArray input) {
 		fComments.add(fInput.substring(offset, endOffset));
 	}
 

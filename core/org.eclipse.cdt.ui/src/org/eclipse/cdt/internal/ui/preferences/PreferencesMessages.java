@@ -399,6 +399,12 @@ public final class PreferencesMessages extends NLS {
 	public static String IncludeOrderBlock_up;
 	public static String IncludeOrderBlock_down;
 	public static String IncludeOrderBlock_order_of_includes;
+	public static String IncludePragmasPreferencePage_title;
+	public static String IncludePragmasBlock_description; 
+	public static String IncludePragmasBlock_link_tooltip;
+	public static String IncludePragmasBlock_export_pattern;
+	public static String IncludePragmasBlock_begin_exports_pattern;
+	public static String IncludePragmasBlock_end_exports_pattern;
 
 	public static String NameStylePreferencePage_title;
 	public static String NameStyleBlock_code_node;

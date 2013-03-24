@@ -460,9 +460,13 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 						if (optionParser.parseOption(option)) {
 							ICLanguageSettingEntry entry = null;
 							if (isResolvingPaths && (optionParser.isForFile() || optionParser.isForFolder())) {
-								URI baseURI = mappedRootURI;
-								if (buildDirURI != null && !new Path(optionParser.parsedName).isAbsolute()) {
-									baseURI = efsProvider.append(mappedRootURI, buildDirURI.getPath());
+								URI baseURI = buildDirURI;
+								if (mappedRootURI != null) {
+									if (buildDirURI != null && !new Path(optionParser.parsedName).isAbsolute()) {
+										baseURI = efsProvider.append(mappedRootURI, buildDirURI.getPath());
+									} else {
+										baseURI = mappedRootURI;
+									}
 								}
 								entry = createResolvedPathEntry(optionParser, optionParser.parsedName, 0, baseURI);
 							} else {

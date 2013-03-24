@@ -164,9 +164,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 			}
 			break;
 		case PROJECT:
-			if (currentResource != null) {
-				rc = currentResource.getProject();
-			}
+			rc = currentProject;
 			break;
 		default:
 			break;
@@ -215,7 +213,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 
 	@Override
 	protected List<String> parseOptions(String line) {
-		if (line == null || currentResource == null) {
+		if (line == null || (currentResource == null && resourceScope != ResourceScope.PROJECT)) {
 			return null;
 		}
 

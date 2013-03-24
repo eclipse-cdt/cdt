@@ -2043,30 +2043,73 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	 * Test assigning entries for global provider.
 	 */
 	public void testEntriesProjectLevelGlobalProvider() throws Exception {
-		// Create model project and accompanied descriptions
-		String projectName = getName();
-		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
-		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
-		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-
-		IFile file=ResourceHelper.createFile(project, "file.cpp");
-		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
-		String languageId = ls.getLanguageId();
-
 		// create GCCBuildCommandParser
 		ILanguageSettingsProvider wspProvider = LanguageSettingsManager.getWorkspaceProvider(GCC_BUILD_COMMAND_PARSER_EXT);
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getRawProvider(wspProvider);
 		parser.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
+		parser.clear();
 
 		// parse line
-		parser.startup(cfgDescription, null);
+		parser.startup(null, null);
 		parser.processLine("gcc -I/path0 file.cpp");
 		parser.shutdown();
 
 		// check populated entries
 		List<ICLanguageSettingEntry> expected = new ArrayList<ICLanguageSettingEntry>();
 		expected.add(new CIncludePathEntry("/path0", 0));
-		assertEquals(expected, parser.getSettingEntries(null, project, languageId));
+		assertEquals(expected, parser.getSettingEntries(null, null, LANG_CPP));
 	}
 
+	/**
+	 * Parsing of file being compiled outside of workspace saving entries at project scope.
+	 */
+	public void testFileAbsolutePath_ProjectLevel() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		IFile file=ResourceHelper.createFile(project, "file.cpp");
+		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+		
+		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
+		String languageId = ls.getLanguageId();
+		
+		// create GCCBuildCommandParser
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
+		parser.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
+		
+		// parse line
+		parser.startup(cfgDescription, null);
+		parser.processLine("gcc "
+				+ "-I/path0 "
+				+ "/absolute/path/file.cpp");
+		parser.shutdown();
+		
+		// check entries
+		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, project, languageId);
+		assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
+	}
+
+	/**
+	 * Parsing of file being compiled outside of workspace saving entries at project scope.
+	 */
+	public void testFileAbsolutePath_ProjectLevelGlobalProvider() throws Exception {
+		// create GCCBuildCommandParser
+		ILanguageSettingsProvider wspProvider = LanguageSettingsManager.getWorkspaceProvider(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getRawProvider(wspProvider);
+		parser.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
+		parser.clear();
+		
+		// parse line
+		parser.startup(null, null);
+		parser.processLine("gcc "
+				+ "-I/path0 "
+				+ "/absolute/path/file.cpp");
+		parser.shutdown();
+		
+		// check entries
+		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(null, null, LANG_CPP);
+		assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
+	}
+	
 }

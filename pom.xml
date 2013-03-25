@@ -38,14 +38,14 @@
     </license>
   </licenses>
   <properties>
-    <tycho-version>0.16.0</tycho-version>
-    <tycho-extras-version>0.16.0</tycho-extras-version>
+    <tycho-version>0.17.0</tycho-version>
+    <tycho-extras-version>0.17.0</tycho-extras-version>
     <maven-resources-version>2.6</maven-resources-version>
     <maven-antrun-version>1.7</maven-antrun-version>
     <gmaven-version>1.4</gmaven-version>
     <eclipse-jarsigner-version>1.0.2</eclipse-jarsigner-version>
-    <platform-version-name>juno</platform-version-name>
-    <tm-stream>juno</tm-stream>
+    <platform-version-name>kepler</platform-version-name>
+    <tm-stream>kepler</tm-stream>
     <eclipse-site>http://download.eclipse.org/releases/${platform-version-name}</eclipse-site>
     <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20130118183705/repository</orbit-site>
     <rxtx-version>1.0.0.7837QcJa5vE7MnhE77YA7AU3SWUlbntVZAnlDoIGojcQd</rxtx-version>
@@ -97,61 +97,24 @@
   </repositories>
   <profiles>
     <profile>
-      <id>platform-indigo</id>
-      <activation>
-        <property>
-          <name>platform-version-name</name>
-          <value>indigo</value>
-        </property>
-      </activation>
-      <properties>
-        <eclipse-site>http://download.eclipse.org/releases/indigo</eclipse-site>
-        <platform-version>[3.7,3.8)</platform-version>
-        <sdk-version>3.7</sdk-version>
-        <cdt-site>http://download.eclipse.org/tools/cdt/updates/indigo/</cdt-site>
-      </properties>
-      <repositories>
-        <repository>
-          <id>indigo</id>
-          <layout>p2</layout>
-          <url>${eclipse-site}</url>
-        </repository>
-        <repository>
-          <id>orbit</id>
-          <layout>p2</layout>
-          <url>${orbit-site}</url>
-        </repository>
-        <repository>
-          <id>rxtx</id>
-          <layout>p2</layout>
-          <url>${rxtx-site}</url>
-        </repository>
-        <repository>
-          <id>cdt</id>
-          <layout>p2</layout>
-          <url>${cdt-site}</url>
-        </repository>
-      </repositories>
-    </profile>
-    <profile>
-      <id>platform-juno</id>
+      <id>platform-kepler</id>
       <activation>
         <activeByDefault>true</activeByDefault>
         <property>
           <name>platform-version-name</name>
-          <value>juno</value>
+          <value>kepler</value>
         </property>
       </activation>
       <properties>
         <eclipse-site>http://download.eclipse.org/releases/staging</eclipse-site>
-        <platform-version>[4.2,)</platform-version>
-        <sdk-version>4.2</sdk-version>
+        <platform-version>[4.3,)</platform-version>
+        <sdk-version>4.3</sdk-version>
         <cdt-site>http://download.eclipse.org/tools/cdt/releases/juno</cdt-site>
         <cdt-test-site>http://download.eclipse.org/tools/cdt/updates/indigo/</cdt-test-site>
       </properties>
       <repositories>
         <repository>
-          <id>juno</id>
+          <id>kepler</id>
           <layout>p2</layout>
           <url>${eclipse-site}</url>
         </repository>

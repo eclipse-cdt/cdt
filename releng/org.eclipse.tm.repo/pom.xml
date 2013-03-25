@@ -12,7 +12,7 @@
   <artifactId>org.eclipse.tm.repo</artifactId>
   <packaging>eclipse-repository</packaging>
   <properties>
-    <tm-stream>juno</tm-stream>
+    <tm-stream>kepler</tm-stream>
     <tm-zipfile>${project.artifactId}-${project.version}.zip</tm-zipfile>
     <tm-install>/home/data/httpd/download.eclipse.org/tm/builds/${tm-stream}/nightly</tm-install>
   </properties>
@@ -27,11 +27,6 @@
       <id>build-server</id>
       <build>
         <plugins>
-		<!-- <plugin>
-            <groupId>org.eclipse.cbi.maven.plugins</groupId>
-            <artifactId>eclipse-jarsigner-plugin</artifactId>
-    </plugin>
-    -->
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
             <executions>

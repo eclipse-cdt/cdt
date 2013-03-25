@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -20,9 +24,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
@@ -83,10 +92,23 @@ public class IncludePragmasBlock extends OptionsConfigurationBlock {
 		link.setText(text);
 		link.addListener(SWT.Selection, new Listener() {
 			@Override
-			public void handleEvent(Event event) {
-				// TODO(sprigogin): Implement opening of browser.
-				String u = event.text;
-//				PreferencesUtil.createPreferenceDialogOn(getShell(), u, null, null);
+			public void handleEvent(final Event event) {
+				BusyIndicator.showWhile(null, new Runnable() {
+					@Override
+					public void run() {
+						try {
+							URL url = new URL(event.text);
+							IWorkbenchBrowserSupport browserSupport= PlatformUI.getWorkbench().getBrowserSupport();
+							IWebBrowser browser= browserSupport.getExternalBrowser();
+							browser.openURL(url);
+						} catch (PartInitException e) {
+							// TODO(sprigogin): Should we show an error dialog?
+							CUIPlugin.log(e.getStatus());
+						} catch (MalformedURLException e) {
+							CUIPlugin.log(e);
+						}
+					}
+				});
 			}
 		});
 		// TODO replace by link-specific tooltips when

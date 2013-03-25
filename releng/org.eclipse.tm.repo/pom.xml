@@ -27,11 +27,6 @@
       <id>build-server</id>
       <build>
         <plugins>
-		<!-- <plugin>
-            <groupId>org.eclipse.cbi.maven.plugins</groupId>
-            <artifactId>eclipse-jarsigner-plugin</artifactId>
-    </plugin>
-    -->
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
             <executions>

@@ -474,6 +474,7 @@ public class HeaderSubstitutor {
 			"<ios>", "<iostream>",
 			"<ios>", "<istream>",
 			"<ios>", "<ostream>",
+			"<iosfwd>", "<iostream>",  // TODO(sprigogin): This should already be covered by <ios> -> <iostream> mapping
 			"<iosfwd>", "<ios>",
 			"<iosfwd>", "<streambuf>",
 			"<istream>", "<iostream>",

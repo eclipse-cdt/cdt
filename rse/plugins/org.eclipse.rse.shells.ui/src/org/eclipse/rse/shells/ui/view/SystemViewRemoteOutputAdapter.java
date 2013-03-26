@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@
  * Kevin Doyle		(IBM)		 - [247297] Double Clicking on a Shell doesn't open that Shell
  * Martin Oberhuber (Wind River) - [227135] Cryptic exception when sftp-server is missing
  * David McKnight   (IBM)        - [336640] SystemViewRemoteOutputAdapter should not use hard-coded editor id
+ * David McKnight   (IBM)        - [404310] [shells][performance] view adapter should not query file in getSubSystem()
  *******************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -577,18 +578,6 @@ implements ISystemRemoteElementAdapter
 		else if (element instanceof IRemoteOutput)
 		{
 			IRemoteOutput output = (IRemoteOutput) element;
-			String type = output.getType();
-
-
-			if (type.equals(ISystemOutputRemoteTypes.TYPE_FILE) ||
-					type.equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY)){
-				// bug 233475, fall back to the file subsystem
-				IRemoteFile file = outputToFile(output);
-				if (file != null){
-					return file.getParentRemoteFileSubSystem();
-				}
-			}
-
 			Object parent = output.getParent();
 			if (parent instanceof IRemoteCommandShell)
 			{

@@ -86,6 +86,7 @@
  * David McKnight   (IBM)        - [385774] select folder dialog doesn't update enablement properly after new folder created
  * David McKnight   (IBM)        - [388364] RDz property view flickers when a user disconnects from zOS system
  * David Mcknight   (IBM)        - [374681] Incorrect number of children on the properties page of a directory
+ * David McKnight   (IBM)        - [404396] delete doesn't always properly unmap tree items in SystemView
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -2060,8 +2061,10 @@ public class SystemView extends SafeTreeViewer
 					//setExpandedState(parent, true); // expand the parent
 					setExpanded((Item) parentItem, true); // expand the parent without calling resolveFilterString
 					TreeItem[] kids = ((TreeItem) parentItem).getItems(); // any kids? Like a dummy node?
-					if (kids != null) for (int idx = 0; idx < kids.length; idx++)
+					if (kids != null) for (int idx = 0; idx < kids.length; idx++){
+						disassociate(kids[idx]);
 						kids[idx].dispose();
+					}
 					//boolean addingConnections = (multiSource[0] instanceof SystemConnection);
 					for (int idx = 0; idx < multiSource.length; idx++) {
 						//if (debug && addingConnections)
@@ -3157,7 +3160,13 @@ public class SystemView extends SafeTreeViewer
 		for (int i = 0; i < toRemove.size(); i++)
 		{
 			Item childItem = (Item)toRemove.get(i);
-			disassociate(childItem);
+			disassociate(childItem);	
+			Widget wid = findItem(deleteObject);
+			if (wid != null){
+				// make sure all associated items are unmapped
+				unmapElement(deleteObject);				
+			}
+			
 			childItem.dispose();
 		}
 
@@ -4802,22 +4811,34 @@ public class SystemView extends SafeTreeViewer
 
 		return match;
 	}
+	
 
 	protected Item mappedFindFirstRemoteItemReference(Object elementObject)
 	{
-		return (Item)findItem(elementObject);
+		Widget item = findItem(elementObject);
+		if (item != null && !item.isDisposed()){
+			return (Item)item;
+		}
+		return null;
 	}
 
 	protected boolean mappedFindAllRemoteItemReferences(Object elementObject, List occurrences)
 	{
+		int numFound = 0;
 		Widget[] items = findItems(elementObject);
 		if (items.length > 0)
 		{
 			for (int i = 0; i < items.length; i++)
 			{
-				occurrences.add(items[i]);
+				Widget item = items[i];
+				if (!item.isDisposed()){
+					occurrences.add(item);
+					numFound++;
+				}
 			}
-			return true;
+			if (numFound > 0){
+				return true;
+			}
 		}
 
 		return false;

@@ -30,8 +30,7 @@ import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
 public class HeaderSubstitutor {
 	IncludeMap[] INCLUDE_MAPS = {
-			cIncludeMap, cIncludeMapWeak, cppIncludeMap, cppIncludeMapWeak,
-			google3IncludeMap, google3IncludeMapWeak
+			cIncludeMap, cIncludeMapWeak, cppIncludeMap, cppIncludeMapWeak
 		};
 
 	@SuppressWarnings("nls")
@@ -472,40 +471,19 @@ public class HeaderSubstitutor {
 			"<time.h>", "<ctime>",
 			"<wchar.h>", "<cwchar>",
 			"<wctype.h>", "<cwctype>",
+			"<ios>", "<iostream>",
 			"<ios>", "<istream>",
 			"<ios>", "<ostream>",
 			"<iosfwd>", "<ios>",
 			"<iosfwd>", "<streambuf>",
-			"<istream>", "<fstream>",
 			"<istream>", "<iostream>",
+			"<istream>", "<fstream>",
 			"<istream>", "<sstream>",
-			"<ostream>", "<fstream>",
 			"<ostream>", "<iostream>",
+			"<ostream>", "<fstream>",
 			"<ostream>", "<istream>",
 			"<ostream>", "<sstream>",
 			"<streambuf>", "<ios>",
-		});
-
-	@SuppressWarnings("nls")
-	private static final IncludeMap google3IncludeMap = new IncludeMap(true, true, new String[] {
-			"<ios>", "base/logging.h",
-			"<ios>", "base/logging.h",
-			"<iosfwd>", "base/logging.h",
-			"<iosfwd>", "base/logging.h",
-			"<istream>", "base/logging.h",
-			"<istream>", "base/logging.h",
-			"<istream>", "base/logging.h",
-			"<ostream>", "base/logging.h",
-			"<ostream>", "base/logging.h",
-			"<ostream>", "base/logging.h",
-			"<ostream>", "base/logging.h",
-			"<streambuf>", "base/logging.h",
-			"base/vlog_is_on.h", "base/logging.h"
-		});
-
-	@SuppressWarnings("nls")
-	private static final IncludeMap google3IncludeMapWeak = new IncludeMap(false, true, new String[] {
-			"base/commandlineflags_declare.h", "base/commandlineflags.h"
 		});
 
 	private final InclusionContext fContext;

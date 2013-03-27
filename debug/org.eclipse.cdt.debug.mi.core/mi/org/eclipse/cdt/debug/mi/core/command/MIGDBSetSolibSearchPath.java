@@ -11,6 +11,9 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
+
 /**
  * 
  *      -gdb-set
@@ -25,13 +28,22 @@ public class MIGDBSetSolibSearchPath extends MIGDBSet {
 		String sep = System.getProperty("path.separator", ":"); //$NON-NLS-1$ //$NON-NLS-2$
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < paths.length; i++) {
-			if (buffer.length() == 0) {
-				buffer.append(paths[i]);
-			} else {
-				buffer.append(sep).append(paths[i]);
+			if (buffer.length() > 0) {
+				buffer.append(sep);
 			}
+			buffer.append(resolve(paths[i]));
 		}
 		String[] p = new String [] {"solib-search-path", buffer.toString()}; //$NON-NLS-1$
 		setParameters(p);
+	}
+
+	protected String resolve(String path) {
+		try {
+			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+			path = manager.performStringSubstitution(path, false);
+		} catch (Exception e) {
+			// if anything happens here just use the non-resolved one
+		}
+		return path;
 	}
 }

@@ -14,8 +14,10 @@ import java.math.BigInteger;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlock;
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
@@ -27,6 +29,7 @@ import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces.IMemorySpaceDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBMemory;
 import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -265,5 +268,56 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 			return retrieval.encodeAddress(super.getExpression(), fMemorySpaceID);
 		}
 		return super.getExpression();
+	}
+
+	@Override
+	public int getAddressSize() throws DebugException {
+        final GdbMemoryBlockRetrieval retrieval = (GdbMemoryBlockRetrieval)getMemoryBlockRetrieval();
+        Query<Integer> query = new Query<Integer>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Integer> drm) {
+				IMemoryDMContext context = null;
+				if (fMemorySpaceID != null) {
+				    IMemorySpaces memorySpacesService = (IMemorySpaces) retrieval.getMemorySpaceServiceTracker().getService();
+				    if (memorySpacesService != null) {
+						context = new MemorySpaceDMContext(memorySpacesService.getSession().getId(), fMemorySpaceID, getContext());
+				    }
+					else {
+						drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, Messages.Err_MemoryServiceNotAvailable, null));
+				    	drm.done();
+				    	return;
+				    }
+				}
+				else {
+					 context = getContext();
+				}
+			    IGDBMemory memoryService = (IGDBMemory)retrieval.getServiceTracker().getService();
+			    if (memoryService != null) {
+			    	memoryService.getAddressSize(
+			    		context, 
+			    		new ImmediateDataRequestMonitor<Integer>(drm) {
+							@Override
+							@ConfinedToDsfExecutor("fExecutor")
+							protected void handleSuccess() {
+								drm.setData(getData());
+								drm.done();
+							}
+			    		});
+			    }
+			    else {
+					drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, Messages.Err_MemoryServiceNotAvailable, null));			    	
+			    	drm.done();
+			    }
+			}
+        };
+        retrieval.getExecutor().execute(query);
+
+		try {
+            return query.get().intValue();
+        } catch (InterruptedException e) {
+    		throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, Messages.Err_GetMemoryAddressSizeFailed, e));
+        } catch (ExecutionException e) {
+    		throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, Messages.Err_GetMemoryAddressSizeFailed, e));
+        }
 	}
 }

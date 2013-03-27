@@ -28,7 +28,7 @@ import org.eclipse.cdt.dsf.mi.service.MIMemory;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.debug.core.model.MemoryByte;
 
-public class GDBMemory_7_0 extends MIMemory {
+public class GDBMemory_7_0 extends GDBMemory {
 
 	public GDBMemory_7_0(DsfSession session) {
 		super(session);

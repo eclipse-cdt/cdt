@@ -47,32 +47,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/cdt/debug/core/model/ICTracepoint.java" type="org.eclipse.cdt.debug.core.model.ICTracepoint">
-        <filter comment="Binay backward compatible change." id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
-                <message_argument value="C_ADDRESS_TRACEPOINT_MARKER"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Binay backward compatible change." id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
-                <message_argument value="C_FUNCTION_TRACEPOINT_MARKER"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Binary backward compatible change." id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
-                <message_argument value="C_LINE_TRACEPOINT_MARKER"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Binary backward compatible change." id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
-                <message_argument value="C_TRACEPOINT_MARKER"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/cdt/debug/core/model/ICWatchpoint.java" type="org.eclipse.cdt.debug.core.model.ICWatchpoint">
         <filter comment="Binay backward compatible change." id="403767336">
             <message_arguments>

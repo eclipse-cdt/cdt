@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 QNX Software Systems and others.
+ * Copyright (c) 2004, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
  * QNX Software Systems - catchpoints - bug 226689
  * Ericsson             - tracepoints - bug 284286
+ * Marc Khouzam (Ericsson) - Support for dynamic printf (400628)
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -31,6 +32,7 @@ import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint2;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
+import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
@@ -39,11 +41,14 @@ import org.eclipse.cdt.debug.core.model.ICTracepoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressDynamicPrintf;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressTracepoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CEventBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionDynamicPrintf;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionTracepoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CLineDynamicPrintf;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineTracepoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
@@ -240,7 +245,17 @@ public class CDIDebugModel {
         if (bp instanceof ICBreakpoint2) {
             return ((ICBreakpoint2) bp).getMarkerType();
         }
-        if (bp instanceof ICTracepoint) {
+        if (bp instanceof ICDynamicPrintf) {
+            if (bp instanceof ICFunctionBreakpoint) {
+                return ICDynamicPrintf.C_FUNCTION_DYNAMICPRINTF_MARKER;
+            } else if (bp instanceof ICAddressBreakpoint) {
+                return ICDynamicPrintf.C_ADDRESS_DYNAMICPRINTF_MARKER;
+            } else if (bp instanceof ICLineBreakpoint) {
+                return ICDynamicPrintf.C_LINE_DYNAMICPRINTF_MARKER;
+            } else {
+                return ICDynamicPrintf.C_DYNAMICPRINTF_MARKER;
+            }
+        } else if (bp instanceof ICTracepoint) {
             if (bp instanceof ICFunctionBreakpoint) {
                 return ICTracepoint.C_FUNCTION_TRACEPOINT_MARKER;
             } else if (bp instanceof ICAddressBreakpoint) {
@@ -347,7 +362,7 @@ public class CDIDebugModel {
     }
 
     /**
-     * Creates a breakpoint without associated marker.
+     * Creates a line breakpoint without associated marker.
      * <p>
      * Note: Before a breakpoint created using this method can be used, the
      * client must first create a marker and register the breakpoint. The former
@@ -371,9 +386,9 @@ public class CDIDebugModel {
     }
 
     /**
-     * Creates a breakpoint without associated marker.
+     * Creates a line tracepoint without associated marker.
      * <p>
-     * Note: Before a breakpoint created using this method can be used, the
+     * Note: Before a tracepoint created using this method can be used, the
      * client must first create a marker and register the breakpoint. The former
      * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
      * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
@@ -384,6 +399,31 @@ public class CDIDebugModel {
         return new CLineTracepoint();
     }
 
+    /**
+     * @since 7.4
+     */
+    public static ICLineBreakpoint createLineDynamicPrintf(String sourceHandle, IResource resource, int type,
+        int lineNumber, boolean enabled, int ignoreCount, String condition, String printfStr, boolean register) throws CoreException {
+        HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+        setLineBreakpointAttributes(attributes, sourceHandle, type, lineNumber, enabled, ignoreCount, condition);
+        attributes.put(ICDynamicPrintf.PRINTF_STRING, printfStr);
+        return new CLineDynamicPrintf(resource, attributes, register);
+    }
+
+    /**
+     * Creates a line dynamic printf without associated marker.
+     * <p>
+     * Note: Before a dynamic printf created using this method can be used, the
+     * client must first create a marker and register the breakpoint. The former
+     * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
+     * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
+     * 
+     * @since 7.4
+     */
+    public static ICLineBreakpoint createBlankLineDynamicPrintf() {
+        return new CLineDynamicPrintf();
+    }
+    
     /**
      * Helper function for setting common line breakpoint attributes.
      * 
@@ -562,7 +602,7 @@ public class CDIDebugModel {
     }
 
     /**
-     * Creates a breakpoint without associated marker.
+     * Creates an address breakpoint without associated marker.
      * <p>
      * Note: Before a breakpoint created using this method can be used, the
      * client must first create a marker and register the breakpoint. The former
@@ -588,9 +628,9 @@ public class CDIDebugModel {
     }
 
     /**
-     * Creates a breakpoint without associated marker.
+     * Creates an address tracepoint without associated marker.
      * <p>
-     * Note: Before a breakpoint created using this method can be used, the
+     * Note: Before a tracepoint created using this method can be used, the
      * client must first create a marker and register the breakpoint. The former
      * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
      * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
@@ -601,6 +641,33 @@ public class CDIDebugModel {
         return new CAddressTracepoint();
     }
 
+    /**
+     * @since 7.4
+     */
+    public static ICAddressBreakpoint createAddressDynamicPrintf(String module, String sourceHandle, IResource resource,
+        int type, int lineNumber, IAddress address, boolean enabled, int ignoreCount, String condition, String printfStr, boolean register)
+        throws CoreException {
+        HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+        setAddressBreakpointAttributes(attributes, module, sourceHandle, type, lineNumber, address, enabled,
+            ignoreCount, condition);
+        attributes.put(ICDynamicPrintf.PRINTF_STRING, printfStr);
+        return new CAddressDynamicPrintf(resource, attributes, register);
+    }
+
+    /**
+     * Creates an address dynamic printf without associated marker.
+     * <p>
+     * Note: Before a dynamic printf created using this method can be used, the
+     * client must first create a marker and register the breakpoint. The former
+     * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
+     * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
+     * 
+     * @since 7.4
+     */
+    public static ICAddressBreakpoint createBlankAddressDynamicPrintf() {
+        return new CAddressDynamicPrintf();
+    }
+    
     /**
      * Helper function for setting common address breakpoint attributes.
      * 
@@ -641,9 +708,9 @@ public class CDIDebugModel {
     }
 
     /**
-     * Creates a breakpoint without associated marker.
+     * Creates a watchpoint without associated marker.
      * <p>
-     * Note: Before a breakpoint created using this method can be used, the
+     * Note: Before a watchpoint created using this method can be used, the
      * client must first create a marker and register the breakpoint. The former
      * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
      * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
@@ -1041,7 +1108,7 @@ public class CDIDebugModel {
     }
 
     /**
-     * Creates a breakpoint without associated marker.
+     * Creates a function breakpoint without associated marker.
      * <p>
      * Note: Before a breakpoint created using this method can be used, the
      * client must first create a marker and register the breakpoint. The former
@@ -1108,9 +1175,9 @@ public class CDIDebugModel {
     }
 
     /**
-     * Creates a breakpoint without associated marker.
+     * Creates a function tracepoint without associated marker.
      * <p>
-     * Note: Before a breakpoint created using this method can be used, the
+     * Note: Before a tracepoint created using this method can be used, the
      * client must first create a marker and register the breakpoint. The former
      * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
      * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
@@ -1119,6 +1186,33 @@ public class CDIDebugModel {
      */
     public static ICFunctionBreakpoint createBlankFunctionTracepoint() {
         return new CFunctionTracepoint();
+    }
+
+    /**
+     * @since 7.4
+     */
+    public static ICFunctionBreakpoint createFunctionDynamicPrintf(String sourceHandle, IResource resource, int type,
+        String function, int charStart, int charEnd, int lineNumber, boolean enabled, int ignoreCount,
+        String condition, String printfStr, boolean register) throws CoreException {
+        HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+        setFunctionBreakpointAttributes(attributes, sourceHandle, type, function, charStart, charEnd, lineNumber,
+            enabled, ignoreCount, condition);
+        attributes.put(ICDynamicPrintf.PRINTF_STRING, printfStr);
+        return new CFunctionDynamicPrintf(resource, attributes, register);
+    }
+
+    /**
+     * Creates a function dynamic printf without associated marker.
+     * <p>
+     * Note: Before a dynamic printf created using this method can be used, the
+     * client must first create a marker and register the breakpoint. The former
+     * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
+     * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
+     * 
+     * @since 7.4
+     */
+    public static ICFunctionBreakpoint createBlankFunctionDynamicPrintf() {
+        return new CFunctionDynamicPrintf();
     }
 
     /**
@@ -1443,9 +1537,9 @@ public class CDIDebugModel {
     }
 
     /**
-     * Creates a breakpoint without associated marker.
+     * Creates an event breakpoint without associated marker.
      * <p>
-     * Note: Before a breakpoint created using this method can be used, the
+     * Note: Before an event breakpoint created using this method can be used, the
      * client must first create a marker and register the breakpoint. The former
      * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
      * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.

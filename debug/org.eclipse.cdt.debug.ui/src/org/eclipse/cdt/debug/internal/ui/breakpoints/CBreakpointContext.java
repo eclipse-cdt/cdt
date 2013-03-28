@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems and others.
+ * Copyright (c) 2007, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson           - Added tracepoint support (284286)
+ *     Marc Khouzam (Ericsson) - Added dynamic printf support (400628)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
@@ -178,19 +180,25 @@ class CBreakpointContextWorkbenchAdapter implements IWorkbenchAdapter {
     private String getBreakpointMainLabel(ICBreakpoint breakpoint) {
         if (breakpoint instanceof ICFunctionBreakpoint) {
         	if (breakpoint instanceof ICTracepoint) {
-        		return BreakpointsMessages.getString("TracepointPropertyPage.tracepointType_function_label"); //$NON-NLS-1$        		
+        		return BreakpointsMessages.getString("TracepointPropertyPage.tracepointType_function_label"); //$NON-NLS-1$
+        	} else if (breakpoint instanceof ICDynamicPrintf) {
+        		return BreakpointsMessages.getString("DPrintfPropertyPage.dprintfType_function_label"); //$NON-NLS-1$
         	} else {
         		return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_function_label"); //$NON-NLS-1$
         	}
         } else if (breakpoint instanceof ICAddressBreakpoint) {
         	if (breakpoint instanceof ICTracepoint) {
         		return BreakpointsMessages.getString("TracepointPropertyPage.tracepointType_address_label"); //$NON-NLS-1$
+        	} else if (breakpoint instanceof ICDynamicPrintf) {
+        		return BreakpointsMessages.getString("DPrintfPropertyPage.dprintfType_address_label"); //$NON-NLS-1$
         	} else {
         		return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_address_label"); //$NON-NLS-1$
         	}
         } else if (breakpoint instanceof ICLineBreakpoint) {
         	if (breakpoint instanceof ICTracepoint) {
         		return BreakpointsMessages.getString("TracepointPropertyPage.tracepointType_line_label"); //$NON-NLS-1$
+        	} else if (breakpoint instanceof ICDynamicPrintf) {
+        		return BreakpointsMessages.getString("DPrintfPropertyPage.dprintfType_line_label"); //$NON-NLS-1$
         	} else {
         		return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_line_label"); //$NON-NLS-1$
         	}
@@ -212,8 +220,8 @@ class CBreakpointContextWorkbenchAdapter implements IWorkbenchAdapter {
 class CBreakpointContextAdapterFactory implements IAdapterFactory {
     
     private static final Class<?>[] fgAdapterList = new Class[] {
-        IBreakpoint.class, ICBreakpoint.class, ICTracepoint.class, IActionFilter.class, IPreferenceStore.class,
-        IWorkbenchAdapter.class,
+        IBreakpoint.class, ICBreakpoint.class, ICTracepoint.class, ICDynamicPrintf.class, 
+        IActionFilter.class, IPreferenceStore.class, IWorkbenchAdapter.class,
     };
 
     private static final IActionFilter fgActionFilter = new CBreakpointContextActionFilter();

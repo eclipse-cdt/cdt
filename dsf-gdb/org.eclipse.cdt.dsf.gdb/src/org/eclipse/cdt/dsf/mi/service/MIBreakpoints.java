@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Ericsson and others.
+ * Copyright (c) 2007, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Ericsson - Initial API and implementation 
+ *     Ericsson - Initial API and implementation
  *     Mike Wrighton (Mentor Graphics) - Formatting address for a watchpoint (Bug 376105)
+ *     Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400628)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
@@ -77,7 +78,9 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
     public static final String CATCHPOINT      = "catchpoint";          //$NON-NLS-1$
     /** @since 3.0 */
     public static final String TRACEPOINT      = "tracepoint";          //$NON-NLS-1$
-
+    /** @since 4.3 */
+    public static final String DYNAMICPRINTF   = "dynamicPrintf";        //$NON-NLS-1$
+    	
     // Basic set of breakpoint attribute markers
     public static final String FILE_NAME     = PREFIX + ".fileName";    //$NON-NLS-1$
     public static final String LINE_NUMBER   = PREFIX + ".lineNumber";  //$NON-NLS-1$
@@ -98,6 +101,10 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
     
     // Catchpoint properties
 
+    // DynamicPrintf properties
+    /** @since 4.3 */
+    public static final String PRINTF_STRING       = PREFIX + ".printf_string"; //$NON-NLS-1$
+    
 	/**
 	 * Property that indicates the kind of catchpoint (.e.g, fork call, C++
 	 * exception throw). Value is the gdb keyword associated with that type, as
@@ -174,6 +181,8 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 	public final static String INVALID_CONDITION            = "Invalid condition";            //$NON-NLS-1$
 	/** @since 3.0 */
 	public final static String TRACEPOINT_INSERTION_FAILURE = "Tracepoint insertion failure"; //$NON-NLS-1$
+	/** @since 4.3*/
+	public final static String DYNAMIC_PRINTF_INSERTION_FAILURE = "Dynamic printf insertion failure"; //$NON-NLS-1$
 	/** @since 3.0 */
 	public final static String INVALID_BREAKPOINT_TYPE      = "Invalid breakpoint type";      //$NON-NLS-1$
 	/** @since 3.0 */
@@ -522,6 +531,9 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		else if (type.equals(MIBreakpoints.CATCHPOINT)) {
 			addCatchpoint(context, attributes, drm);
 		}
+		else if (type.equals(MIBreakpoints.DYNAMICPRINTF)) {
+			addDynamicPrintf(context, attributes, drm);
+		}
 		else {
        		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
    			drm.done();
@@ -868,6 +880,17 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		fRunControl.executeWithTargetAvailable(context, new Step[] { insertBreakpointStep }, finalRm);
 	}
 
+	/**
+	 * Add a DynamicPrintf.  Currently not supported in this version, but only in the GDB 7.5 version.
+	 * 
+	 * @since 4.3
+	 */
+	protected void addDynamicPrintf(final IBreakpointsTargetDMContext context, final Map<String, Object> attributes, final DataRequestMonitor<IBreakpointDMContext> drm) {
+		// Not supported 
+   		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
+		drm.done();
+	}
+	
 	//-------------------------------------------------------------------------
 	// removeBreakpoint
 	//-------------------------------------------------------------------------

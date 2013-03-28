@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Ericsson             - Added Tracepoint support (284286)
  *     Abeer Bagul (Tensilica) - Differentiate between hw breakpoint and watchpoint
  *     Marc Khouzam (Ericsson) - Add 'thread-group' field (bug 360735)
+ *     Marc Khouzam (Ericsson) - Suport for dynamic printf (bug 400628)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -102,6 +103,9 @@ public class MIBreakpoint  {
 	/** See {@link #getCatchpointType()} */
 	private String catchpointType;
 	
+    /** See {@link #isDynamicPrintf()} */	
+	private boolean isDynPrintf;
+	
 	/** 
 	 * A pending breakpoint is a breakpoint that did not install properly,
 	 * but that will be kept in the hopes that it installs later, triggered by
@@ -145,6 +149,7 @@ public class MIBreakpoint  {
         isTpt    = other.isTpt;
         isCatchpoint = other.isCatchpoint;
         catchpointType = other.catchpointType;
+        isDynPrintf = other.isDynPrintf;
         pending = other.pending;
         originalLocation = other.originalLocation;
         if (other.groupIds != null) {
@@ -386,6 +391,15 @@ public class MIBreakpoint  {
     }
 
     /**
+     * Indicates if we are dealing with a dynamic printf.
+     * 
+	 * @since 4.3
+	 */
+    public boolean isDynamicPrintf() {
+    	return isDynPrintf;
+    }
+
+    /**
      * Returns the passcount of a tracepoint.  Will return 0 if this
      * breakpoint is not a tracepoint.
      * 
@@ -421,6 +435,27 @@ public class MIBreakpoint  {
 	 */
     public void setCommands(String cmds) {
         commands = cmds;
+    }
+    
+    /**
+     * Return the string the dynamic printf will print.
+     * Returns null if this breakpoint is not a dynamic printf
+     * 
+	 * @since 4.3
+	 */
+    public String getPrintfString() {
+        if (!isDynamicPrintf()) return null;
+        
+        // The string is burried inside the list of commands.
+		String[] commands = getCommands().split(TracepointActionManager.TRACEPOINT_ACTION_DELIMITER);
+		final String printfString = "printf";  //$NON-NLS-1$
+		for (String cmd : commands) {
+			int pos = cmd.indexOf(printfString); 
+			if (pos != -1) {
+				return cmd.substring(pos + printfString.length() + 1);
+			}
+		}
+		return null;
     }
     
     /**
@@ -498,6 +533,9 @@ public class MIBreakpoint  {
                 }
                 if (type.startsWith("catchpoint")) { //$NON-NLS-1$
                     isCatchpoint = true;
+                }
+                if (type.startsWith("dprintf")) { //$NON-NLS-1$
+                    isDynPrintf = true;
                 }
                 // type="breakpoint"
                 // default ok.

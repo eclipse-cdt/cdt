@@ -263,7 +263,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
                     return false;
                 }
             }, 
-            2, TimeUnit.SECONDS);
+            getGDBExitWaitTime(), TimeUnit.SECONDS);
         
         queueCommand(
        		getCommandFactory().createMIGDBExit(fControlDmc),
@@ -659,5 +659,14 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	 */
 	protected boolean isInitialized() {
 		return fInitialized;
+	}
+
+	/**
+	 * Returns the time (in seconds) the debugger will wait for "gdb-exit" to complete.
+	 * 
+	 * @since 4.2
+	 */
+	protected int getGDBExitWaitTime() {
+		return 2;
 	}
 }

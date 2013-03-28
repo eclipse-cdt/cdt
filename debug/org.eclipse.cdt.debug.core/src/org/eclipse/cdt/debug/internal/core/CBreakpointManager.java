@@ -68,6 +68,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointFilterExtension;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
@@ -877,8 +878,13 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					breakpointType = ((ICBreakpointType) icbreakpoint).getType();
 				}
 				if ( icbreakpoint instanceof ICTracepoint) {
-					ICTracepoint breakpoint = (ICTracepoint)icbreakpoint; 
-					IMarker marker = BreakpointProblems.reportUnsupportedTracepoint(breakpoint, getDebugTarget().getName(), getDebugTarget().getInternalID());
+					ICTracepoint tracepoint = (ICTracepoint)icbreakpoint; 
+					IMarker marker = BreakpointProblems.reportUnsupportedTracepoint(tracepoint, getDebugTarget().getName(), getDebugTarget().getInternalID());
+					if (marker != null)
+						fBreakpointProblems.add(marker);
+				}else if ( icbreakpoint instanceof ICDynamicPrintf) {
+					ICDynamicPrintf dprintf = (ICDynamicPrintf)icbreakpoint; 
+					IMarker marker = BreakpointProblems.reportUnsupportedDynamicPrintf(dprintf, getDebugTarget().getName(), getDebugTarget().getInternalID());
 					if (marker != null)
 						fBreakpointProblems.add(marker);
 				}

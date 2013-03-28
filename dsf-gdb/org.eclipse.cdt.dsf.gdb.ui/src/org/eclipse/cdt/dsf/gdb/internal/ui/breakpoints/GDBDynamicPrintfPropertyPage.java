@@ -1,23 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Ericsson and others.
+ * Copyright (c) 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Ericsson - Initial API and implementation
- * Marc Khouzam (Ericsson) - Updated to allow updating properties
- *                           before creating the tracepoint (Bug 376116)
+ * Marc Khouzam (Ericsson) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints; 
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICTracepoint;
 import org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointContext;
 import org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointPreferenceStore;
 import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext;
@@ -44,13 +42,13 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * The preference page used to present the properties of a GDB tracepoint as preferences. 
+ * The preference page used to present the properties of a GDB dynamic printf as preferences. 
  */
-public class GDBTracepointPropertyPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
+public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 
-	class TracepointIntegerFieldEditor extends IntegerFieldEditor {
+	class DynamicPrintfIntegerFieldEditor extends IntegerFieldEditor {
 
-		public TracepointIntegerFieldEditor(String name, String labelText, Composite parent) {
+		public DynamicPrintfIntegerFieldEditor(String name, String labelText, Composite parent) {
 			super(name, labelText, parent);
 			setErrorMessage(Messages.PropertyPage_integer_negative);
 		}
@@ -100,9 +98,9 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 		}
 	}
 
-	class TracepointStringFieldEditor extends StringFieldEditor {
+	class DynamicPrintfStringFieldEditor extends StringFieldEditor {
 
-		public TracepointStringFieldEditor(String name, String labelText, Composite parent) {
+		public DynamicPrintfStringFieldEditor(String name, String labelText, Composite parent) {
 			super(name, labelText, parent);
 		}
 
@@ -175,30 +173,26 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 
 	private BooleanFieldEditor fEnabled;
 
-	private TracepointStringFieldEditor fCondition;
+	private DynamicPrintfStringFieldEditor fCondition;
 
 	private Text fIgnoreCountTextControl;
-	private TracepointIntegerFieldEditor fIgnoreCount;
+	private DynamicPrintfIntegerFieldEditor fIgnoreCount;
 	
-	private Text fPassCountTextControl;
-	private TracepointIntegerFieldEditor fPassCount;
+	private Text fPrintStringTextControl;
+	private DynamicPrintfStringFieldEditor fPrintString;
 
 	private IAdaptable fElement;
 
 	/**
-	 * The preference store used to interface between the tracepoint and the 
-	 * tracepoint preference page.  This preference store is initialized only
+	 * The preference store used to interface between the dynamic printf and the 
+	 * dynamic printf preference page.  This preference store is initialized only
 	 * when the preference store cannot be retrieved from the preference 
 	 * dialog's element.
 	 * @see #getPreferenceStore()
 	 */
-	private CBreakpointPreferenceStore fTracepointPreferenceStore;
+	private CBreakpointPreferenceStore fDynamicPrintfPreferenceStore;
 
-	/**
-	 * Constructor for GDBTracepointPropertyPage.
-	 * 
-	 */
-	public GDBTracepointPropertyPage() {
+	public GDBDynamicPrintfPropertyPage() {
 		super(GRID);
 		noDefaultAndApplyButton();
 	}
@@ -210,34 +204,33 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	 */
 	@Override
 	protected void createFieldEditors() {
-		ICTracepoint tracepoint = getTracepoint();
-		createMainLabel(tracepoint);
-		createTypeSpecificLabelFieldEditors(tracepoint);
+		ICDynamicPrintf dprintf = getDprintf();
+		createMainLabel(dprintf);
+		createTypeSpecificLabelFieldEditors(dprintf);
 		createEnabledField(getFieldEditorParent());
 		createConditionEditor(getFieldEditorParent());
-		// GDB does not support ignore count right now
-		//createIgnoreCountEditor(getFieldEditorParent());
-		createPassCountEditor(getFieldEditorParent());
+		createIgnoreCountEditor(getFieldEditorParent());
+		createPrintStringEditor(getFieldEditorParent());
 	}
 
-	private void createMainLabel(ICTracepoint tracepoint) {
+	private void createMainLabel(ICDynamicPrintf dprintf) {
 		addField(createLabelEditor(getFieldEditorParent(), 
 				                   Messages.PropertyPage_Class,
-				                   getTracepointMainLabel(tracepoint)));
+				                   getDynamicPrintfMainLabel(dprintf)));
 	}
 
-	private void createTypeSpecificLabelFieldEditors(ICTracepoint tracepoint) {
-		if (tracepoint instanceof ICFunctionBreakpoint) {
+	private void createTypeSpecificLabelFieldEditors(ICDynamicPrintf dprintf) {
+		if (dprintf instanceof ICFunctionBreakpoint) {
 		    createFunctionEditor(getFieldEditorParent());
 		}
-		else if (tracepoint instanceof ICAddressBreakpoint) {
+		else if (dprintf instanceof ICAddressBreakpoint) {
 			String address = getPreferenceStore().getString(ICLineBreakpoint.ADDRESS);
 			if (address == null || address.trim().length() == 0) {
 				address = Messages.PropertyPage_NotAvailable;
 			}
 			addField(createLabelEditor(getFieldEditorParent(), Messages.PropertyPage_Address, address));
 		}
-		else { // LineTracepoint
+		else { // LineDprintf
 		    String fileName = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
 			if (fileName != null) {
 				addField(createLabelEditor(getFieldEditorParent(), Messages.PropertyPage_File, fileName));
@@ -249,19 +242,19 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 		}
 	}
 
-	private String getTracepointMainLabel(ICTracepoint tracepoint) {
+	private String getDynamicPrintfMainLabel(ICDynamicPrintf dprintf) {
 	    IWorkbenchAdapter labelProvider = (IWorkbenchAdapter)getElement().getAdapter(IWorkbenchAdapter.class);
 	    if (labelProvider != null) {
 	        return labelProvider.getLabel(getElement());
 	    }
-        // default main label is the label of marker type for the tracepoint
-        return CDIDebugModel.calculateMarkerType(tracepoint);
+        // default main label is the label of marker type for the dynamic printf
+        return CDIDebugModel.calculateMarkerType(dprintf);
 	}
 	
     protected void createFunctionEditor(Composite parent) {
-    	ICTracepoint tracepoint = getTracepoint();
-        if (tracepoint == null || tracepoint.getMarker() == null) {
-            TracepointStringFieldEditor expressionEditor = new TracepointStringFieldEditor(
+    	ICDynamicPrintf dprintf = getDprintf();
+        if (dprintf == null || dprintf.getMarker() == null) {
+            DynamicPrintfStringFieldEditor expressionEditor = new DynamicPrintfStringFieldEditor(
                 ICLineBreakpoint.FUNCTION, Messages.PropertyPage_FunctionName, parent);
             expressionEditor.setErrorMessage(Messages.PropertyPage_function_value_errorMessage);
             expressionEditor.setEmptyStringAllowed(false);
@@ -276,7 +269,7 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
     }
 	protected void createLineNumberEditor(Composite parent) {
 		 String title = Messages.PropertyPage_LineNumber;
-		 TracepointIntegerFieldEditor labelFieldEditor = new TracepointIntegerFieldEditor(IMarker.LINE_NUMBER, title, parent);
+		 DynamicPrintfIntegerFieldEditor labelFieldEditor = new DynamicPrintfIntegerFieldEditor(IMarker.LINE_NUMBER, title, parent);
 		 labelFieldEditor.setValidRange(1, Integer.MAX_VALUE);
 		 addField(labelFieldEditor);
 	}
@@ -287,47 +280,46 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	}
 
 	protected void createConditionEditor(Composite parent) {
-		fCondition = new TracepointStringFieldEditor(ICBreakpoint.CONDITION, Messages.PropertyPage_Condition, parent);
+		fCondition = new DynamicPrintfStringFieldEditor(ICBreakpoint.CONDITION, Messages.PropertyPage_Condition, parent);
 		fCondition.setEmptyStringAllowed(true);
 		fCondition.setErrorMessage(Messages.PropertyPage_InvalidCondition);
 		addField(fCondition);
 	}
 
 	protected void createIgnoreCountEditor(Composite parent) {
-		fIgnoreCount = new TracepointIntegerFieldEditor(ICBreakpoint.IGNORE_COUNT, Messages.PropertyPage_IgnoreCount, parent);
+		fIgnoreCount = new DynamicPrintfIntegerFieldEditor(ICBreakpoint.IGNORE_COUNT, Messages.PropertyPage_IgnoreCount, parent);
 		fIgnoreCount.setValidRange(0, Integer.MAX_VALUE);
 		fIgnoreCountTextControl = fIgnoreCount.getTextControl(parent);
 		fIgnoreCountTextControl.setEnabled( getPreferenceStore().getInt(ICBreakpoint.IGNORE_COUNT) >= 0 );
 		addField(fIgnoreCount);
 	}
 
-	protected void createPassCountEditor(Composite parent) {
-		fPassCount = new TracepointIntegerFieldEditor(ICTracepoint.PASS_COUNT, Messages.PropertyPage_PassCount, parent);
-		fPassCount.setValidRange(0, Integer.MAX_VALUE);
-		fPassCountTextControl = fPassCount.getTextControl(parent);
-		fPassCountTextControl.setEnabled(getPreferenceStore().getInt(ICTracepoint.PASS_COUNT) >= 0);
-		addField(fPassCount);
+	protected void createPrintStringEditor(Composite parent) {
+		fPrintString = new DynamicPrintfStringFieldEditor(ICDynamicPrintf.PRINTF_STRING, Messages.PropertyPage_PrintString, parent);
+		fPrintString.setEmptyStringAllowed(false);
+		fPrintString.setErrorMessage(Messages.PropertyPage_InvalidPrintString);
+		addField(fPrintString);
 	}
 
 	protected FieldEditor createLabelEditor(Composite parent, String title, String value) {
 		return new LabelFieldEditor(parent, title, value);
 	}
 
-	protected ICTracepoint getTracepoint() {
+	protected ICDynamicPrintf getDprintf() {
 		IAdaptable element = getElement();
-		if (element instanceof ICTracepoint) {
-		    return (ICTracepoint)element;
+		if (element instanceof ICDynamicPrintf) {
+		    return (ICDynamicPrintf)element;
 		}
 		
 		if (element instanceof ICBreakpointContext) {
 			ICBreakpoint breakpoint =((ICBreakpointContext)element).getBreakpoint();
-			if (breakpoint instanceof ICTracepoint) {
-			    return (ICTracepoint)breakpoint;
+			if (breakpoint instanceof ICDynamicPrintf) {
+			    return (ICDynamicPrintf)breakpoint;
 			}
-			assert false : "Should always have a tracepoint"; //$NON-NLS-1$
+			assert false : "Should always have a dprintf"; //$NON-NLS-1$
 		}
 
-		return (ICTracepoint)element.getAdapter(ICTracepoint.class);
+		return (ICDynamicPrintf)element.getAdapter(ICDynamicPrintf.class);
 	}
 
 	protected Object getDebugContext() {
@@ -345,8 +337,8 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	
 	protected IResource getResource() {
         IAdaptable element = getElement();
-        if (element instanceof ICTracepoint) {
-            IMarker marker = ((ICTracepoint)element).getMarker();
+        if (element instanceof ICDynamicPrintf) {
+            IMarker marker = ((ICDynamicPrintf)element).getMarker();
             if (marker != null) {
                 return marker.getResource();
             }
@@ -363,12 +355,12 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	        return ((ICBreakpointContext)element).getPreferenceStore();
 	    }
 
-	    if (fTracepointPreferenceStore == null) {
+	    if (fDynamicPrintfPreferenceStore == null) {
 	        CBreakpointContext bpContext = element instanceof CBreakpointContext ? 
 	            (CBreakpointContext)element : null;
-	        fTracepointPreferenceStore = new CBreakpointPreferenceStore(bpContext, null);
+	        fDynamicPrintfPreferenceStore = new CBreakpointPreferenceStore(bpContext, null);
 	    }
-	    return fTracepointPreferenceStore;
+	    return fDynamicPrintfPreferenceStore;
 	}
 
 	@Override

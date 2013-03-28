@@ -24,7 +24,6 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
-import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsole;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointChangedEvent;
@@ -32,7 +31,6 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIDetachedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIRunningEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MISignalChangedEvent;
-import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 
 /**
  * GDB debugger output listener.
@@ -44,11 +42,8 @@ public class CLIEventProcessor_7_0
 {
     private final ICommandControlService fCommandControl;
     
-    private final DsfServicesTracker fServicesTracker;
-    
     public CLIEventProcessor_7_0(ICommandControlService connection, ICommandControlDMContext controlDmc) {
         fCommandControl = connection;
-        fServicesTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fCommandControl.getSession().getId());
         fCommandControl.addCommandListener(this);
         fCommandControl.addEventListener(this);
     }
@@ -57,7 +52,6 @@ public class CLIEventProcessor_7_0
 	public void dispose() {
         fCommandControl.removeCommandListener(this);
         fCommandControl.removeEventListener(this);
-        fServicesTracker.dispose();
     }
     
 	@Override

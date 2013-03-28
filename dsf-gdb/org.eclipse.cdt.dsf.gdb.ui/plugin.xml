@@ -184,6 +184,9 @@
                <not>
                   <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
                </not>
+               <not>
+                  <adapt type="org.eclipse.cdt.debug.core.model.ICDynamicPrintf"/>
+               </not>
             </and>
          </enabledWhen>
       </page>
@@ -196,6 +199,19 @@
                <and>
                   <instanceof value="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext"/>
                   <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
+               </and>
+            </or>
+         </enabledWhen>
+      </page>
+      <page class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.GDBDynamicPrintfPropertyPage"
+            id="org.eclipse.cdt.dsf.gdb.dynamicprintf.common"
+            name="%dynamicPrintf.property.common">
+         <enabledWhen>
+            <or>
+               <adapt type="org.eclipse.cdt.debug.core.model.ICDynamicPrintf"/>
+               <and>
+                  <instanceof value="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext"/>
+                  <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICDynamicPrintf"/>
                </and>
             </or>
          </enabledWhen>
@@ -437,6 +453,15 @@
                      property="org.eclipse.cdt.dsf.debug.ui.isDisassemblyViewSupportsCBreakpoint">
                </test>
             </and>  
+         </enablement>
+      </toggleTargetFactory>
+      <toggleTargetFactory
+            id="org.eclipse.cdt.dsf.gdb.ui.ToggleDynamicPrintfTargetFactory"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.ToggleDynamicPrintfTargetFactory">
+         <enablement>
+            <test
+                  property="org.eclipse.cdt.dsf.debug.ui.isDisassemblyViewSupportsCBreakpoint">
+            </test>
          </enablement>
       </toggleTargetFactory>
    </extension>

@@ -13,6 +13,7 @@
  *     Marc Khouzam (Ericsson) - Include IGDBHardware service for the multicore visualizer (Bug 335027)
  *     Vladimir Prus (Mentor Graphics) - Support for OS resources.
  *     Marc Khouzam (Ericsson) - Support for GDB 7.6 memory service
+ *     Marc Khouzam (Ericsson) - Support dynamic printf in bp service 7.5 (Bug 400628)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -34,6 +35,7 @@ import org.eclipse.cdt.dsf.gdb.service.command.GDBControl;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_0;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_2;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_4;
+import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_5;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIExpressions;
@@ -126,6 +128,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		if (GDB_7_6_VERSION.compareTo(fVersion) <= 0) {
 			return new GDBBreakpoints_7_6(session);
 		}
+		if (GDB_7_5_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBBreakpoints_7_5(session);
+		}
 		if (GDB_7_4_VERSION.compareTo(fVersion) <= 0) {
 			return new GDBBreakpoints_7_4(session);
 		}
@@ -141,6 +146,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 	
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
+		if (GDB_7_5_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBControl_7_5(session, config, new CommandFactory_6_8());
+		}
 		if (GDB_7_4_VERSION.compareTo(fVersion) <= 0) {
 			return new GDBControl_7_4(session, config, new CommandFactory_6_8());
 		}

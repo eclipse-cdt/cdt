@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Nokia and others.
+ * Copyright (c) 2007, 2013 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Nokia - Initial API and implementation
+ *   Nokia - Initial API and implementation
+ *   Marc Khouzam (Ericsson) - Added support for Dynamic Printf (Bug 400628)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
@@ -50,6 +51,11 @@ public class BreakpointProblems {
 
 	public static IMarker reportUnsupportedTracepoint(ICBreakpoint breakpoint, String contextName, String contextID) throws CoreException {
 		IMarker marker = BreakpointProblems.reportBreakpointProblem(breakpoint, BreakpointMessages.getString("BreakpointProblems_UnsupportedTracepoint"), IMarker.SEVERITY_WARNING, UNRESOLVED, true, false, contextName, contextID); //$NON-NLS-1$
+		return marker;
+	}
+
+	public static IMarker reportUnsupportedDynamicPrintf(ICBreakpoint breakpoint, String contextName, String contextID) throws CoreException {
+		IMarker marker = BreakpointProblems.reportBreakpointProblem(breakpoint, BreakpointMessages.getString("BreakpointProblems_UnsupportedDynamicPrintf"), IMarker.SEVERITY_WARNING, UNRESOLVED, true, false, contextName, contextID); //$NON-NLS-1$
 		return marker;
 	}
 

@@ -17,7 +17,6 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension;
-import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 import org.eclipse.cdt.dsf.service.DsfSession;
 
@@ -26,10 +25,8 @@ import org.eclipse.cdt.dsf.service.DsfSession;
  *
  * @since 4.2
  */
-public class GDBBreakpoints_7_6 extends GDBBreakpoints_7_4
+public class GDBBreakpoints_7_6 extends GDBBreakpoints_7_5
 {
-	private IMICommandControl fConnection;
-
 	public GDBBreakpoints_7_6(DsfSession session) {
 		super(session);
 	}
@@ -45,9 +42,6 @@ public class GDBBreakpoints_7_6 extends GDBBreakpoints_7_4
 	}
 
 	private void doInitialize(final RequestMonitor rm) {
-    	// Get the services references
-		fConnection = getServicesTracker().getService(IMICommandControl.class);
-		
 		// Register this service
 		register(new String[] { IBreakpoints.class.getName(),
 		                        IBreakpointsExtension.class.getName(),
@@ -55,6 +49,7 @@ public class GDBBreakpoints_7_6 extends GDBBreakpoints_7_4
 								GDBBreakpoints_7_0.class.getName(),
 								GDBBreakpoints_7_2.class.getName(),
 								GDBBreakpoints_7_4.class.getName(),
+								GDBBreakpoints_7_5.class.getName(),
 								GDBBreakpoints_7_6.class.getName() },
 				new Hashtable<String, String>());
 

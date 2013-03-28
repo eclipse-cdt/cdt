@@ -20,6 +20,7 @@
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *     Vladimir Prus (Mentor Graphics) - Support for -info-os (Bug 360314)
  *     John Dallaway - Support for -data-write-memory-bytes (Bug 387793)
+ *     Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400638)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -42,6 +43,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIAttach;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICatch;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIDPrintf;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIDetach;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIExecAbort;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoBreak;
@@ -108,6 +110,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetArgs;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetBreakpointPending;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetCharset;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDPrintfStyle;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDetachOnFork;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetHostCharset;
@@ -170,6 +173,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowAttributes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowFormat;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarUpdate;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLICatchInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIDPrintfInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoBreakInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoProgramInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
@@ -240,6 +244,11 @@ public class CommandFactory {
 	
 	public ICommand<MIInfo> createCLIDetach(IDMContext ctx) {
 		return new CLIDetach(ctx);
+	}
+
+	/** @since 4.2 */
+	public ICommand<CLIDPrintfInfo> createCLIDPrintf(IBreakpointsTargetDMContext ctx, String location, String printfStr) {
+		return new CLIDPrintf(ctx, location, printfStr);
 	}
 
 	public ICommand<MIInfo> createCLIExecAbort(ICommandControlDMContext ctx) {
@@ -374,7 +383,7 @@ public class CommandFactory {
 			String location, int tid, boolean disabled, boolean isTracepoint) {
 		return new MIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, location, tid, disabled, isTracepoint, false);
 	}
-
+	
 	public ICommand<MIBreakListInfo> createMIBreakList(IBreakpointsTargetDMContext ctx) {
 		return new MIBreakList(ctx);
 	}
@@ -666,6 +675,11 @@ public class CommandFactory {
 	/** @since 4.0 */
 	public ICommand<MIInfo> createMIGDBSetDetachOnFork(ICommandControlDMContext ctx, boolean detach) {
 		return new MIGDBSetDetachOnFork(ctx, detach);
+	}	
+
+	/** @since 4.2 */
+	public ICommand<MIInfo> createMIGDBSetDPrintfStyle(ICommandControlDMContext ctx, String style) {
+		return new MIGDBSetDPrintfStyle(ctx, style);
 	}	
 
 	public ICommand<MIInfo> createMIGDBSetEnv(ICommandControlDMContext dmc, String name) {

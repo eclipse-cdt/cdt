@@ -460,12 +460,12 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 						if (optionParser.parseOption(option)) {
 							ICLanguageSettingEntry entry = null;
 							if (isResolvingPaths && (optionParser.isForFile() || optionParser.isForFolder())) {
-								URI baseURI = buildDirURI;
-								if (mappedRootURI != null) {
-									if (buildDirURI != null && !new Path(optionParser.parsedName).isAbsolute()) {
+								URI baseURI = mappedRootURI;
+								if (buildDirURI != null && !new Path(optionParser.parsedName).isAbsolute()) {
+									if (mappedRootURI != null) {
 										baseURI = efsProvider.append(mappedRootURI, buildDirURI.getPath());
 									} else {
-										baseURI = mappedRootURI;
+										baseURI = buildDirURI;
 									}
 								}
 								entry = createResolvedPathEntry(optionParser, optionParser.parsedName, 0, baseURI);
@@ -644,21 +644,21 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * Find resource in the workspace for a given URI with a preference for the resource
+	 * Find file resource in the workspace for a given URI with a preference for the resource
 	 * to reside in the given project.
 	 */
-	private static IResource findFileForLocationURI(URI uri, IProject preferredProject) {
+	private static IResource findFileForLocationURI(URI uri, IProject preferredProject, boolean checkExistence) {
 		IResource sourceFile = null;
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource[] resources = root.findFilesForLocationURI(uri);
-		if (resources.length > 0) {
-			sourceFile = resources[0];
-			if (preferredProject != null) {
-				for (IResource rc : resources) {
-					if (rc.getProject().equals(preferredProject)) {
-						sourceFile = rc;
-						break;
-					}
+		for (IResource rc : resources) {
+			if (!checkExistence || rc.isAccessible()) {
+				if (rc.getProject().equals(preferredProject)) {
+					sourceFile = rc;
+					break;
+				}
+				if (sourceFile == null) {
+					sourceFile = rc;
 				}
 			}
 		}
@@ -669,11 +669,11 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 * Return a resource in workspace corresponding the given folder {@link URI} preferable residing in
 	 * the provided project.
 	 */
-	private static IResource findContainerForLocationURI(URI uri, IProject preferredProject) {
+	private static IResource findContainerForLocationURI(URI uri, IProject preferredProject, boolean checkExistence) {
 		IResource resource = null;
 		IResource[] resources = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(uri);
 		for (IResource rc : resources) {
-			if ((rc instanceof IProject || rc instanceof IFolder)) { // treat IWorkspaceRoot as non-workspace path
+			if ((rc instanceof IProject || rc instanceof IFolder) && (!checkExistence || rc.isAccessible())) { // treat IWorkspaceRoot as non-workspace path
 				if (rc.getProject().equals(preferredProject)) {
 					resource = rc;
 					break;
@@ -704,7 +704,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		// try to find absolute path in the workspace
 		if (sourceFile == null && new Path(parsedResourceName).isAbsolute()) {
 			URI uri = org.eclipse.core.filesystem.URIUtil.toURI(parsedResourceName);
-			sourceFile = findFileForLocationURI(uri, currentProject);
+			sourceFile = findFileForLocationURI(uri, currentProject, /*checkExistence*/ true);
 		}
 
 		// try last known current working directory from build output
@@ -712,7 +712,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			URI cwdURI = cwdTracker.getWorkingDirectoryURI();
 			if (cwdURI != null) {
 				URI uri = efsProvider.append(cwdURI, parsedResourceName);
-				sourceFile = findFileForLocationURI(uri, currentProject);
+				sourceFile = findFileForLocationURI(uri, currentProject, /*checkExistence*/ true);
 			}
 		}
 
@@ -722,7 +722,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			if (builderCWD!=null) {
 				IPath path = builderCWD.append(parsedResourceName);
 				URI uri = org.eclipse.core.filesystem.URIUtil.toURI(path);
-				sourceFile = findFileForLocationURI(uri, currentProject);
+				sourceFile = findFileForLocationURI(uri, currentProject, /*checkExistence*/ true);
 			}
 		}
 
@@ -1002,12 +1002,12 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		URI uri = determineMappedURI(parsedPath, baseURI);
 		IResource rc = null;
 
-		// Try to resolve in the workspace
+		// Try to resolve as existing resource in the workspace
 		if (uri != null && uri.isAbsolute()) {
 			if (optionParser.isForFolder()) {
-				rc = findContainerForLocationURI(uri, currentProject);
+				rc = findContainerForLocationURI(uri, currentProject, /*checkExistence*/ true);
 			} else if (optionParser.isForFile()) {
-				rc = findFileForLocationURI(uri, currentProject);
+				rc = findFileForLocationURI(uri, currentProject, /*checkExistence*/ true);
 			}
 			if (rc != null) {
 				resolvedPath = rc.getFullPath().toString();
@@ -1015,11 +1015,11 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			}
 		}
 
-		// Try to resolve on the file-system
+		// Try to resolve as existing file/folder on the file-system
+		IPath fileSystemLocation = getFilesystemLocation(uri);
 		if (resolvedPath == null) {
-			IPath path = getFilesystemLocation(uri);
-			if (path != null && new File(path.toString()).exists()) {
-				resolvedPath = path.toString();
+			if (fileSystemLocation != null && new File(fileSystemLocation.toString()).exists()) {
+				resolvedPath = fileSystemLocation.toString();
 				resolvedFlag = flag;
 			}
 			if (resolvedPath == null) {
@@ -1034,13 +1034,30 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 					resolvedFlag = flag | ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED;
 				}
 			}
-			if (resolvedPath == null && path != null) {
-				resolvedPath = path.toString();
-				resolvedFlag = flag;
+		}
+
+		// Try to resolve in the workspace as a handle
+		if (resolvedPath == null) {
+			if (uri != null && uri.isAbsolute()) {
+				if (optionParser.isForFolder()) {
+					rc = findContainerForLocationURI(uri, currentProject, /*checkExistence*/ false);
+				} else if (optionParser.isForFile()) {
+					rc = findFileForLocationURI(uri, currentProject, /*checkExistence*/ false);
+				}
+				if (rc != null) {
+					resolvedPath = rc.getFullPath().toString();
+					resolvedFlag = flag | ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED;
+				}
 			}
 		}
 
-		// if cannot resolve keep parsed path
+		// Try to set to file-system location if available
+		if (resolvedPath == null && fileSystemLocation != null) {
+			resolvedPath = fileSystemLocation.toString();
+			resolvedFlag = flag;
+		}
+
+		// If still cannot resolve keep parsed path
 		if (resolvedPath == null) {
 			resolvedPath = parsedPath;
 			resolvedFlag = flag;

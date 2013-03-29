@@ -719,7 +719,18 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		// try path relative to build dir from configuration
 		if (sourceFile == null && currentCfgDescription != null) {
 			IPath builderCWD = currentCfgDescription.getBuildSetting().getBuilderCWD();
-			if (builderCWD!=null) {
+			if (builderCWD != null) {
+				String strBuilderCWD = builderCWD.toString();
+				try {
+					ICdtVariableManager varManager = CCorePlugin.getDefault().getCdtVariableManager();
+					strBuilderCWD = varManager.resolveValue(strBuilderCWD, "", null, currentCfgDescription); //$NON-NLS-1$
+				} catch (Exception e) {
+					@SuppressWarnings("nls")
+					String msg = "Exception trying to resolve value [" + strBuilderCWD + "]";
+					ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, msg, e));
+				}
+				builderCWD = new Path(strBuilderCWD);
+
 				IPath path = builderCWD.append(parsedResourceName);
 				URI uri = org.eclipse.core.filesystem.URIUtil.toURI(path);
 				sourceFile = findFileForLocationURI(uri, currentProject, /*checkExistence*/ true);

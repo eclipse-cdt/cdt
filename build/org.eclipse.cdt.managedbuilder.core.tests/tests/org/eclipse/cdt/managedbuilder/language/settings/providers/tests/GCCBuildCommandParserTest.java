@@ -2093,16 +2093,50 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.startup(cfgDescription, null);
 		parser.processLine("gcc "
 				+ "-I/path0 "
-				+ "-IC:/path1 "
+				+ "-I.. "
 				+ "/absolute/path/file.cpp");
 		parser.shutdown();
 
 		// check entries
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, project, languageId);
 		assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
-		assertEquals(new CIncludePathEntry("C:/path1", 0), entries.get(1));
+		assertEquals(new CIncludePathEntry(project.getLocation().removeLastSegments(1), 0), entries.get(1));
 	}
 
+	/**
+	 * Parsing of file being compiled outside of workspace saving entries at project scope.
+	 */
+	public void testFileAbsolutePath_ProjectLevel_DriveLetter() throws Exception {
+		// do not test on non-windows systems where drive letters are not supported
+		if (! Platform.getOS().equals(Platform.OS_WIN32))
+			return;
+
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		IFile file=ResourceHelper.createFile(project, "file.cpp");
+		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+		
+		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
+		String languageId = ls.getLanguageId();
+		
+		// create GCCBuildCommandParser
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
+		parser.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
+		
+		// parse line
+		parser.startup(cfgDescription, null);
+		parser.processLine("gcc "
+				+ "-IC:/path0 "
+				+ "/absolute/path/file.cpp");
+		parser.shutdown();
+		
+		// check entries
+		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, project, languageId);
+		assertEquals(new CIncludePathEntry("C:/path0", 0), entries.get(0));
+	}
+	
 	/**
 	 * Parsing of file being compiled outside of workspace saving entries at project scope.
 	 */
@@ -2124,44 +2158,5 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(null, null, LANG_CPP);
 		assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
 	}
-
-	/**
-	 * Parsing of file being compiled outside of workspace saving entries at project scope.
-	 */
-	public void testFileAbsolutePath_ProjectLevel_bug404125() throws Exception {
-		// Create model project and accompanied descriptions
-		String projectName = getName();
-		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
-		IFile file=ResourceHelper.createFile(project, "file.c");
-		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
-		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-
-		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
-		String languageId = ls.getLanguageId();
-
-		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
-		parser.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
-
-		ErrorParserManager epm = new ErrorParserManager(project, null);
-		// Set build directory
-		epm.pushDirectoryURI(project.getLocationURI());
-
-		// parse line
-		parser.startup(cfgDescription, epm);
-		parser.processLine("gcc "
-				// In scenario from bug 404125 drive letter somehow induced path to be appended to project directory
-				+ "-IC:/path "
-				+ "-I.. "
-				+ "/absolute/path/file.c");
-		parser.shutdown();
-
-		// check entries
-		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, project, languageId);
-		assertEquals(new CIncludePathEntry("C:/path", 0), entries.get(0));
-		assertEquals(new CIncludePathEntry(project.getLocation().removeLastSegments(1), 0), entries.get(1));
-		assertEquals(2, entries.size());
-	}
-
 
 }

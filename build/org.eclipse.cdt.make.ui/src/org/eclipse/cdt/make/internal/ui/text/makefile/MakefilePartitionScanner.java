@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.EndOfLineRule;
+import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
@@ -46,7 +47,22 @@ public class MakefilePartitionScanner extends RuleBasedPartitionScanner {
 
 		// Add rule for single line comments.
 
-		rules.add(new EndOfLineRule("#", tComment, '\\', true)); //$NON-NLS-1$
+		EndOfLineRule commentRule = new EndOfLineRule("#", tComment, '\\', true) { //$NON-NLS-1$
+			@Override
+			protected IToken doEvaluate(ICharacterScanner scanner, boolean resume) {
+				int c = scanner.read();
+				if (c == fEscapeCharacter) {
+					c = scanner.read();
+					if (c == fStartSequence[0]) {
+						return Token.UNDEFINED;
+					}
+					scanner.unread();
+				}
+				scanner.unread();
+				return super.doEvaluate(scanner, resume);
+			}
+		};
+		rules.add(commentRule);
 
 		IPredicateRule[] result = new IPredicateRule[rules.size()];
 		rules.toArray(result);

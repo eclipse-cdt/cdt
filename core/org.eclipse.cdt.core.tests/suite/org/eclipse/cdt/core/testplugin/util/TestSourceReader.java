@@ -381,7 +381,7 @@ public class TestSourceReader {
 			Thread.sleep(50);
 			timeLeft= (int) (endTime - System.currentTimeMillis());
 		}
-		Assert.fail("Indexing " + file.getFullPath() + " did not complete in " + maxmillis / 1000. + " sec");
+		Assert.fail("Indexing of " + file.getFullPath() + " did not complete in " + maxmillis / 1000. + " sec");
 	}
 
 	private static boolean areAllFilesNotOlderThan(IIndexFile[] files, long timestamp) throws CoreException {

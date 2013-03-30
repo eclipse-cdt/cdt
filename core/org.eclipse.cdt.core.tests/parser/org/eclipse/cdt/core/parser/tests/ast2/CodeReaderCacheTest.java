@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -27,166 +27,149 @@ import org.eclipse.core.runtime.jobs.Job;
  * @author dsteffle
  */
 public class CodeReaderCacheTest extends CDOMTestBase {
-	
-	public CodeReaderCacheTest() {
-	}
 
-	public CodeReaderCacheTest(String name, Class className) {
-		super(name, className);
+	public CodeReaderCacheTest() {
 	}
 
 	public CodeReaderCacheTest(String name) {
 		super(name, CodeReaderCacheTest.class);
 	}
-	
+
     public static Test suite() {
-        TestSuite suite = new TestSuite( CodeReaderCacheTest.class );
-        suite.addTest( new CodeReaderCacheTest("cleanupProject") );    //$NON-NLS-1$
+        TestSuite suite = new TestSuite(CodeReaderCacheTest.class);
+        suite.addTest(new CodeReaderCacheTest("cleanupProject"));
 	    return suite;
     }
 
 	private class UpdateFileJob extends Job {
-		private IFile file = null;
-		private String fileName = null;
-		private String code = null;
-		
+		private IFile file;
+		private final String fileName;
+		private final String code;
+
 		public UpdateFileJob(String name, IFile file, String fileName, String code) {
 			super(name);
 			this.file = file;
 			this.fileName = fileName;
 			this.code = code;
 		}
-		
+
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			while(!monitor.isCanceled()) {
+			while (!monitor.isCanceled()) {
 				try {
 					file = importFile(fileName, code);
 				} catch (Exception e) {
 				}
 			}
-			
 			return Status.OK_STATUS;
 		}
-		
+
 		public IFile getFile() {
 			return file;
 		}
 	}
 
-	// THIS MUST BE RUN FIRST IN THIS TEST
-	public void testSetCacheSize() {
-		ICodeReaderCache cache = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES).getCodeReaderCache();
-		// update the size of the cache... must be done for the first test since other test suites use 0MB cache size
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		ICodeReaderCache cache = getCodeReaderCache();
 		assertTrue(cache instanceof CodeReaderCache);
-		((CodeReaderCache)cache).setCacheSize(CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB);
+		((CodeReaderCache) cache).setCacheSize(CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB);
 	}
-	
-	public void testSimpleCacheFunctionality() {
-		StringBuffer code = new StringBuffer();
-		code.append("int x;"); //$NON-NLS-1$
-		
-		IFile file = null;
-		try {
-			file = importFile("test.c", code.toString()); //$NON-NLS-1$
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+
+	@Override
+	public void tearDown() throws Exception {
+		ICodeReaderCache cache = getCodeReaderCache();
+		assertTrue(cache instanceof CodeReaderCache);
+		((CodeReaderCache) cache).setCacheSize(0);
+		super.tearDown();
+	}
+
+	private ICodeReaderCache getCodeReaderCache() {
+		return CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES).getCodeReaderCache();
+	}
+
+	public void testSimpleCacheFunctionality() throws Exception {
+		StringBuilder code = new StringBuilder();
+		code.append("int x;");
+
+		IFile file = importFile("test.c", code.toString());
 		parse(file);
-		
-		ICodeReaderCache cache = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES).getCodeReaderCache();
+
+		ICodeReaderCache cache = getCodeReaderCache();
 		cache.flush();
+		assertEquals(0, cache.getCurrentSpace());
 		CodeReader reader = cache.get(file.getLocation().toOSString());
 		assertNotNull(reader);
-		assertEquals(cache.getCurrentSpace(), 1);
+		assertEquals(1, cache.getCurrentSpace());
 		assertEquals(String.valueOf(reader.filename), file.getLocation().toOSString());
 		cache.remove(String.valueOf(reader.filename));
-		assertEquals(cache.getCurrentSpace(), 0);
+		assertEquals(0, cache.getCurrentSpace());
 	}
-	
-	public void testResourceChangedUpdate() {
+
+	public void testResourceChangedUpdate() throws Exception {
 		boolean hasPassed = false;
-		StringBuffer code = new StringBuffer();
-		code.append("int x;"); //$NON-NLS-1$
-		ICodeReaderCache cache = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES).getCodeReaderCache();
-		
-		IFile file = null;
-		
-		try {
-			file = importFile("test.c", code.toString()); //$NON-NLS-1$
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+		StringBuilder code = new StringBuilder();
+		code.append("int x;");
+		ICodeReaderCache cache = getCodeReaderCache();
+
+		IFile file = importFile("test.c", code.toString());
+		parse(file);
+
 		// start a new job that repeatedly updates the file...
-		UpdateFileJob job = new UpdateFileJob("updater", file, "test.c", code.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+		UpdateFileJob job = new UpdateFileJob("updater", file, "test.c", code.toString());  //$NON-NLS-2$
 		job.schedule();
-		
-		while(!hasPassed) {
+
+		while (!hasPassed) {
 			if (file != null) {
 				parse(file);
 			}
-			
+
 			try {
 				Thread.sleep(1000); // give the updater thread some time to update the resource
 				file = job.getFile();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
-			if (cache.getCurrentSpace() == 0) // item was properly removed by the updater thread 
+
+			if (cache.getCurrentSpace() == 0) // item was properly removed by the updater thread
 				hasPassed = true;
 		}
-		
+
 		job.cancel();
 	}
-    
+
 	// This is broken.
 	// I have a mind to delete any test that has a Thread.sleep() in it.
-    public void testResourceChangedNestedPathUpdate(int off) {
+    public void testResourceChangedNestedPathUpdate(int off) throws Exception {
         boolean hasPassed = false;
-        StringBuffer code = new StringBuffer();
-        code.append("int x;"); //$NON-NLS-1$
-        ICodeReaderCache cache = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES).getCodeReaderCache();
-        
-        IFile file = null;
-        
-        try {
-            importFolder("test");
-            file = importFile("test/test.c", code.toString()); //$NON-NLS-1$
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
+        StringBuilder code = new StringBuilder();
+        code.append("int x;");
+        ICodeReaderCache cache = getCodeReaderCache();
+
+        importFolder("test");
+        IFile file = importFile("test/test.c", code.toString());
+
         // start a new job that repeatedly updates the file...
-        UpdateFileJob job = new UpdateFileJob("updater", file, "test/test.c", code.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+        UpdateFileJob job = new UpdateFileJob("updater", file, "test/test.c", code.toString());
         job.schedule();
-        
-        while(!hasPassed) {
+
+        while (!hasPassed) {
             if (file != null) {
                 parse(file);
             }
-            
+
             try {
                 Thread.sleep(1000); // give the updater thread some time to update the resource
                 file = job.getFile();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            
-            if (cache.getCurrentSpace() == 0) // item was properly removed by the updater thread 
+
+            if (cache.getCurrentSpace() == 0) // item was properly removed by the updater thread
                 hasPassed = true;
         }
-        
+
         job.cancel();
     }
-	
-	// THIS MUST BE RUN LAST IN THIS TEST
-	public void testClearCache() {
-		ICodeReaderCache cache = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES).getCodeReaderCache();
-		// now that the 
-		assertTrue(cache instanceof CodeReaderCache);
-		((CodeReaderCache)cache).setCacheSize(0);
-	}
 }

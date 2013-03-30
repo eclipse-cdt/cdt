@@ -14,8 +14,10 @@ package org.eclipse.cdt.internal.index.tests;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import junit.framework.Test;
@@ -46,10 +48,12 @@ import org.eclipse.core.runtime.Path;
  * Tests the behavior of the IIndex API when dealing with multiple projects
  */
 public class IndexCompositeTests extends BaseTestCase {
+	Set<IProject> createdProjects = new HashSet<IProject>();
+
 	/*
 	 * Convenience class for setting up projects.
 	 */
-	private static class ProjectBuilder {
+	private class ProjectBuilder {
 		private final String name;
 		private final boolean cpp;
 		private List<IProject> dependencies = new ArrayList<IProject>();
@@ -74,6 +78,7 @@ public class IndexCompositeTests extends BaseTestCase {
 			ICProject result = cpp ?
 					CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER) :
 					CProjectHelper.createCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
+			createdProjects.add(result.getProject());
 	
 			IFile lastFile= null;
 			for (Map.Entry<String, String> entry : path2content.entrySet()) {
@@ -131,12 +136,12 @@ public class IndexCompositeTests extends BaseTestCase {
 		List<ICProject> projects = new ArrayList<ICProject>();
 
 		try {
-			ProjectBuilder pb = new ProjectBuilder("projB" + System.currentTimeMillis(), true);
+			ProjectBuilder pb = new ProjectBuilder("projB_" + getName(), true);
 			pb.addFile("h1.h", contents[0]);
 			ICProject cprojB = pb.create();
 			projects.add(cprojB);
 
-			pb = new ProjectBuilder("projA" + System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projA_" + getName(), true);
 			pb.addFile("h2.h", contents[1]).addDependency(cprojB.getProject());
 			ICProject cprojA = pb.create();
 			projects.add(cprojA);
@@ -179,17 +184,17 @@ public class IndexCompositeTests extends BaseTestCase {
 		List<ICProject> projects = new ArrayList<ICProject>();
 
 		try {
-			ProjectBuilder pb = new ProjectBuilder("projC" + System.currentTimeMillis(), true);
+			ProjectBuilder pb = new ProjectBuilder("projC_" + getName(), true);
 			pb.addFile("h3.h", contents[0]);
 			ICProject cprojC = pb.create();
 			projects.add(cprojC);
 
-			pb = new ProjectBuilder("projB" + System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projB_" + getName(), true);
 			pb.addFile("h2.h", contents[1]).addDependency(cprojC.getProject());
 			ICProject cprojB = pb.create();
 			projects.add(cprojB);
 
-			pb = new ProjectBuilder("projA" + System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projA_" + getName(), true);
 			pb.addFile("h1.h", contents[2]).addDependency(cprojB.getProject());
 			ICProject cprojA = pb.create();
 			projects.add(cprojA);
@@ -294,17 +299,17 @@ public class IndexCompositeTests extends BaseTestCase {
 		List<ICProject> projects = new ArrayList<ICProject>();
 		
 		try {
-			ProjectBuilder pb = new ProjectBuilder("projB" + System.currentTimeMillis(), true);
+			ProjectBuilder pb = new ProjectBuilder("projB_" + getName(), true);
 			pb.addFile("h2.h", contents[0]);
 			ICProject cprojB = pb.create();
 			projects.add(cprojB);
 
-			pb = new ProjectBuilder("projA" + System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projA_" + getName(), true);
 			pb.addFile("h1.h", contents[1]).addDependency(cprojB.getProject());
 			ICProject cprojA = pb.create();
 			projects.add(cprojA);
 
-			pb = new ProjectBuilder("projC" + System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projC_" + getName(), true);
 			pb.addFile("h3.h", contents[2]).addDependency(cprojB.getProject());
 			ICProject cprojC = pb.create();
 			projects.add(cprojC);
@@ -392,17 +397,17 @@ public class IndexCompositeTests extends BaseTestCase {
 		List<ICProject> projects = new ArrayList<ICProject>();
 
 		try {
-			ProjectBuilder pb = new ProjectBuilder("projC" + System.currentTimeMillis(), true);
+			ProjectBuilder pb = new ProjectBuilder("projC_" + getName(), true);
 			pb.addFile("h3.h", contents[0]);
 			ICProject cprojC = pb.create();
 			projects.add(cprojC);
 
-			pb = new ProjectBuilder("projA" + System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projA_" + getName(), true);
 			pb.addFile("h1.h", contents[2]);
 			ICProject cprojA = pb.create();
 			projects.add(cprojA);
 
-			pb = new ProjectBuilder("projB" + System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projB_" + getName(), true);
 			pb.addFile("h2.h", contents[1]).addDependency(cprojC.getProject()).addDependency(cprojA.getProject());
 			ICProject cprojB = pb.create();
 			projects.add(cprojB);
@@ -509,6 +514,10 @@ public class IndexCompositeTests extends BaseTestCase {
 	protected void tearDown() throws Exception {
 		if (index != null) {
 			index.releaseReadLock();
+			index = null;
+		}
+		for (IProject project : createdProjects) {
+			project.delete(true, npm());
 		}
 		super.tearDown();
 	}

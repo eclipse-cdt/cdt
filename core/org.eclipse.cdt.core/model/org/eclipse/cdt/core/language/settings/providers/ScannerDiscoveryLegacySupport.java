@@ -24,6 +24,7 @@ import org.eclipse.cdt.internal.core.LocalProjectScope;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.language.settings.providers.ScannerInfoExtensionLanguageSettingsProvider;
+import org.eclipse.cdt.internal.core.model.PathEntryManager;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -44,8 +45,18 @@ public class ScannerDiscoveryLegacySupport {
 	public static final String USER_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.ui.UserLanguageSettingsProvider"; //$NON-NLS-1$
 	/** ID of MBS language settings provider (from org.eclipse.cdt.managedbuilder.core) */
 	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"; //$NON-NLS-1$
-	/** ID of ScannerInfo language settings provider wrapping ScannerInfoProvider defined by org.eclipse.cdt.core.ScannerInfoProvider extension point */
-	private static final String SI_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.core.LegacyScannerInfoLanguageSettingsProvider"; //$NON-NLS-1$
+
+	/**
+	 * ID of ScannerInfo language settings provider wrapping ScannerInfoProvider defined by org.eclipse.cdt.core.ScannerInfoProvider extension point 
+	 * @since 5.5
+	 */
+	public static final String SI_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.core.LegacyScannerInfoLanguageSettingsProvider"; //$NON-NLS-1$
+
+	/**
+	 * ID of language settings provider wrapping {@link org.eclipse.cdt.core.resources.ScannerProvider} of {@link PathEntryManager} for 3.X projects 
+	 * @since 5.5
+	 */
+	public static final String PATH_ENTRY_MANAGER_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.core.PathEntryScannerInfoLanguageSettingsProvider"; //$NON-NLS-1$
 
 	private static String DISABLE_LSP_PREFERENCE = "language.settings.providers.disabled"; //$NON-NLS-1$
 	//	the default for project needs to be "disabled" - for legacy projects to be open with old SD enabled for MBS provider
@@ -132,6 +143,24 @@ public class ScannerDiscoveryLegacySupport {
 	}
 
 	/**
+	 * Check if legacy Scanner Discovery should be active.
+	 * @noreference This is internal helper method to support compatibility with previous versions
+	 * which is not intended to be referenced by clients.
+	 */
+	public static boolean isLegacyProviderOn(ICConfigurationDescription cfgDescription) {
+		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			for (ILanguageSettingsProvider lsp : lsProviders) {
+				String id = lsp.getId();
+				if (MBS_LANGUAGE_SETTINGS_PROVIDER_ID.equals(id) || SI_LANGUAGE_SETTINGS_PROVIDER_ID.equals(id) || PATH_ENTRY_MANAGER_LANGUAGE_SETTINGS_PROVIDER_ID.equals(id)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * @noreference This is internal helper method to support compatibility with previous versions
 	 * which is not intended to be referenced by clients.
 	 */
@@ -143,7 +172,7 @@ public class ScannerDiscoveryLegacySupport {
 				project = prjDescription.getProject();
 			}
 		}
-		return !isLanguageSettingsProvidersFunctionalityEnabled(project) || isMbsLanguageSettingsProviderOn(cfgDescription);
+		return !isLanguageSettingsProvidersFunctionalityEnabled(project) || isLegacyProviderOn(cfgDescription);
 	}
 
 	/**
@@ -156,7 +185,7 @@ public class ScannerDiscoveryLegacySupport {
 		if (prjDescription != null) {
 			cfgDescription = prjDescription.getActiveConfiguration();
 		}
-		return !isLanguageSettingsProvidersFunctionalityEnabled(project) || isMbsLanguageSettingsProviderOn(cfgDescription);
+		return !isLanguageSettingsProvidersFunctionalityEnabled(project) || isLegacyProviderOn(cfgDescription);
 	}
 
 	/**
@@ -168,14 +197,16 @@ public class ScannerDiscoveryLegacySupport {
 	 */
 	public static String[] getDefaultProviderIdsLegacy(ICConfigurationDescription cfgDescription) {
 		boolean useScannerInfoProviderExtension = new ScannerInfoExtensionLanguageSettingsProvider().getScannerInfoProvider(cfgDescription) != null;
+		String legacyProviderId;
 		if (useScannerInfoProviderExtension) {
-			return new String[] {USER_LANGUAGE_SETTINGS_PROVIDER_ID, SI_LANGUAGE_SETTINGS_PROVIDER_ID};
+			legacyProviderId = SI_LANGUAGE_SETTINGS_PROVIDER_ID;
+		} else if (CProjectDescriptionManager.getInstance().isNewStyleCfg(cfgDescription)) {
+			legacyProviderId = MBS_LANGUAGE_SETTINGS_PROVIDER_ID;
+		} else {
+			legacyProviderId = PATH_ENTRY_MANAGER_LANGUAGE_SETTINGS_PROVIDER_ID;
 		}
-		if (CProjectDescriptionManager.getInstance().isNewStyleCfg(cfgDescription)) {
-			return new String[] {USER_LANGUAGE_SETTINGS_PROVIDER_ID, MBS_LANGUAGE_SETTINGS_PROVIDER_ID};
-		}
-		return null;
 
+		return new String[] {USER_LANGUAGE_SETTINGS_PROVIDER_ID, legacyProviderId};
 	}
 	
 	/**
@@ -192,9 +223,13 @@ public class ScannerDiscoveryLegacySupport {
 				return useScannerInfoProviderExtension;
 			}
 
+			boolean isNewStyleCfg = CProjectDescriptionManager.getInstance().isNewStyleCfg(cfgDescription);
 			if (MBS_LANGUAGE_SETTINGS_PROVIDER_ID.equals(providerId)) {
-				boolean isNewStyleCfg = CProjectDescriptionManager.getInstance().isNewStyleCfg(cfgDescription);
 				return !useScannerInfoProviderExtension && isNewStyleCfg;
+			}
+
+			if (PATH_ENTRY_MANAGER_LANGUAGE_SETTINGS_PROVIDER_ID.equals(providerId)) {
+				return !useScannerInfoProviderExtension && !isNewStyleCfg;
 			}
 		}
 

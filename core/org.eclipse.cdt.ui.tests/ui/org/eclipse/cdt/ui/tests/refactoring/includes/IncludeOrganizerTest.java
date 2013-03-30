@@ -26,7 +26,7 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeOrganizer;
 
 /**
- * Tests for IncludeOrganizer.
+ * Tests for {@link IncludeOrganizer}.
  */
 public class IncludeOrganizerTest extends IncludesTestBase {
 

@@ -33,6 +33,9 @@ import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.ui.refactoring.includes.BindingClassifier;
 import org.eclipse.cdt.internal.ui.refactoring.includes.InclusionContext;
 
+/**
+ * Tests for {@link BindingClassifier}.
+ */
 public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	private IIndex fIndex;
 	private InclusionContext fContext;

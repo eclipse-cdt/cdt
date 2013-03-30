@@ -10,7 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.includes;
 
-public class IncludeInfo {
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+
+import com.ibm.icu.text.Collator;
+
+public class IncludeInfo implements Comparable<IncludeInfo> {
+	private static final Collator COLLATOR = Collator.getInstance();
+
 	private final String name;
 	private final boolean isSystem;
 
@@ -83,5 +90,22 @@ public class IncludeInfo {
 	@Override
 	public String toString() {
 		return (isSystem ? '<' : '"') + name + (isSystem ? '>' : '"');
+	}
+
+	@Override
+	public int compareTo(IncludeInfo other) {
+		if (isSystem != other.isSystem) {
+			return isSystem ? -1 : 1;
+		}
+		IPath path1 = Path.fromOSString(name);
+		IPath path2 = Path.fromOSString(other.name);
+		int length1 = path1.segmentCount();
+		int length2 = path2.segmentCount();
+		for (int i = 0; i < length1 && i < length2; i++) {
+			int c = COLLATOR.compare(path1.segment(i), path2.segment(i));
+			if (c != 0)
+				return c;
+		}
+		return length1 - length2;
 	}
 }

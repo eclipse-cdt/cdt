@@ -19,7 +19,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.getSta
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +31,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.text.edits.DeleteEdit;
@@ -93,8 +93,9 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.Includ
  * Organizes the include directives and forward declarations of a source or header file.
  */
 public class IncludeOrganizer {
+	private static boolean DEBUG_HEADER_SUBSTITUTION = "true".equalsIgnoreCase(Platform.getDebugOption(CUIPlugin.PLUGIN_ID + "/debug/includeOrganizer/headerSubstitution")); //$NON-NLS-1$ //$NON-NLS-2$
 
-	private static class IncludePrototype {
+	private static class IncludePrototype implements Comparable<IncludePrototype> {
 		final IPath header;  // null for existing unresolved includes 
 		final IncludeInfo includeInfo; // never null
 		IASTPreprocessorIncludeStatement existingInclude; // null for newly added includes
@@ -158,30 +159,14 @@ public class IncludeOrganizer {
 		public String toString() {
 			return header != null ? header.toPortableString() : includeInfo.toString();
 		}
+
+		@Override
+		public int compareTo(IncludePrototype other) {
+			return includeInfo.compareTo(other.includeInfo);
+		}
 	}
 
 	private static final Collator COLLATOR = Collator.getInstance();
-
-	private static final Comparator<IncludePrototype> INCLUDE_COMPARATOR = new Comparator<IncludePrototype>() {
-		@Override
-		public int compare(IncludePrototype include1, IncludePrototype include2) {
-			IncludeInfo includeInfo1 = include1.includeInfo;
-			IncludeInfo includeInfo2 = include2.includeInfo;
-			if (includeInfo1.isSystem() != includeInfo2.isSystem()) {
-				return includeInfo1.isSystem() ? -1 : 1;
-			}
-			IPath path1 = Path.fromOSString(includeInfo1.getName());
-			IPath path2 = Path.fromOSString(includeInfo2.getName());
-			int length1 = path1.segmentCount();
-			int length2 = path2.segmentCount();
-			for (int i = 0; i < length1 && i < length2; i++) {
-				int c = COLLATOR.compare(path1.segment(i), path2.segment(i));
-				if (c != 0)
-					return c;
-			}
-			return length1 - length2;
-		}
-	};
 
 	private final IHeaderChooser fHeaderChooser;
 	private final InclusionContext fContext;
@@ -291,7 +276,7 @@ public class IncludeOrganizer {
 		IncludeGroupStyle previousParentStyle = null;
 		for (List<IncludePrototype> prototypes : groupedPrototypes) {
 			if (prototypes != null && !prototypes.isEmpty()) {
-				Collections.sort(prototypes, INCLUDE_COMPARATOR);
+				Collections.sort(prototypes);
 				IncludeGroupStyle style = prototypes.get(0).style;
 				IncludeGroupStyle groupingStyle = getGroupingStyle(style);
 				IncludeGroupStyle parentStyle = getParentStyle(groupingStyle);
@@ -912,6 +897,10 @@ public class IncludeOrganizer {
 				for (IPath path : candidatePaths) {
 					if (fContext.isIncluded(path)) {
 						request.resolve(path);
+						if (DEBUG_HEADER_SUBSTITUTION) {
+							System.out.println(request.toString() +
+									(fContext.isToBeIncluded(path) ? " (decided earlier)" : " (was previously included)")); //$NON-NLS-1$ //$NON-NLS-2$
+						}
 						break;
 					} else {
 						IPath header = headerSubstitutor.getUniqueRepresentativeHeader(path);
@@ -926,6 +915,8 @@ public class IncludeOrganizer {
 				if (!request.isResolved() && allRepresented && representativeHeaders.size() == 1) {
 					IPath path = representativeHeaders.iterator().next();
 					request.resolve(path);
+					if (DEBUG_HEADER_SUBSTITUTION)
+						System.out.println(request.toString() + " (unique representative)"); //$NON-NLS-1$
 					if (!fContext.isAlreadyIncluded(path))
 						fContext.addHeaderToInclude(path);
 				}
@@ -940,12 +931,19 @@ public class IncludeOrganizer {
 					IPath path = candidatePaths.iterator().next();
 					if (fContext.isIncluded(path)) {
 						request.resolve(path);
+						if (DEBUG_HEADER_SUBSTITUTION) {
+							System.out.println(request.toString() +
+									(fContext.isToBeIncluded(path) ? " (decided earlier)" : " (was previously included)")); //$NON-NLS-1$ //$NON-NLS-2$
+						}
 					} else {
 						IPath header = headerSubstitutor.getPreferredRepresentativeHeader(path);
 						if (header.equals(path) && fContext.getPreferences().heuristicHeaderSubstitution) {
 							header = headerSubstitutor.getPreferredRepresentativeHeaderByHeuristic(request);
 						}
 						request.resolve(header);
+						if (DEBUG_HEADER_SUBSTITUTION) {
+							System.out.println(request.toString() + " (preferred representative)"); //$NON-NLS-1$
+						}
 						if (!fContext.isAlreadyIncluded(header))
 							fContext.addHeaderToInclude(header);
 					}
@@ -960,6 +958,10 @@ public class IncludeOrganizer {
 				for (IPath path : candidatePaths) {
 					if (fContext.isIncluded(path)) {
 						request.resolve(path);
+						if (DEBUG_HEADER_SUBSTITUTION) {
+							System.out.println(request.toString() +
+									(fContext.isToBeIncluded(path) ? " (decided earlier)" : " (was previously included)")); //$NON-NLS-1$ //$NON-NLS-2$
+						}
 						break;
 					}
 				}
@@ -969,6 +971,9 @@ public class IncludeOrganizer {
 						throw new OperationCanceledException();
 	
 					request.resolve(header);
+					if (DEBUG_HEADER_SUBSTITUTION) {
+						System.out.println(request.toString() + " (user's choice)"); //$NON-NLS-1$
+					}
 					if (!fContext.isAlreadyIncluded(header))
 						fContext.addHeaderToInclude(header);
 				}

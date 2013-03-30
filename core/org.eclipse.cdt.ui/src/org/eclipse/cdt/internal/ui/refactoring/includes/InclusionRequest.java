@@ -75,4 +75,22 @@ class InclusionRequest {
 	public boolean isResolved() {
 		return fResolvedPath != null;
 	}
+
+	/** For debugging only */
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		buf.append(fBinding.getName());
+		buf.append(" defined in "); //$NON-NLS-1$
+		for (int i = 0; i < fCandidatePaths.size(); i++) {
+			if (i != 0)
+				buf.append(", "); //$NON-NLS-1$
+			buf.append(fCandidatePaths.get(i).toOSString());
+		}
+		if (fResolvedPath != null) {
+			buf.append(" represented by "); //$NON-NLS-1$
+			buf.append(fResolvedPath.toOSString());
+		}
+		return buf.toString();
+	}
 }

@@ -11,9 +11,12 @@
 package org.eclipse.cdt.internal.ui.refactoring.includes;
 
 import java.io.StringReader;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -22,7 +25,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 
-class IncludeMap {
+public class IncludeMap {
 	private static final String TAG_CPP_ONLY = "cpp_only"; //$NON-NLS-1$
 	private static final String TAG_FORCED_REPLACEMENT = "forced_replacement"; //$NON-NLS-1$
 	private static final String TAG_MAPPING = "mapping"; //$NON-NLS-1$
@@ -56,6 +59,13 @@ class IncludeMap {
 		}
 	}
 
+	public IncludeMap(IncludeMap other) {
+		this.forcedReplacement = other.forcedReplacement;
+		this.cppOnly = other.cppOnly;
+		this.map = new HashMap<IncludeInfo, List<IncludeInfo>>(other.map.size());
+		addAllMappings(other);
+	}
+
 	/**
 	 * Indicates that header file {@code to} should be used instead of {@code from}.
 	 * 
@@ -63,6 +73,8 @@ class IncludeMap {
 	 * @param to The header file to be used.
 	 */
 	protected void addMapping(IncludeInfo from, IncludeInfo to) {
+		if (from.equals(to))
+			return;  // Don't allow mapping to itself.
 		List<IncludeInfo> list = map.get(from);
 		if (list == null) {
 			list = new ArrayList<IncludeInfo>(2);
@@ -150,7 +162,7 @@ class IncludeMap {
 		return includeMap;
 	}
 
-	public static IncludeMap fromString(String str) {
+	public static IncludeMap fromSerializedMemento(String str) {
 		StringReader reader = new StringReader(str);
 		XMLMemento memento;
 		try {
@@ -159,5 +171,102 @@ class IncludeMap {
 			return null;
 		}
 		return fromMemento(memento);
+	}
+
+	public void addAllMappings(IncludeMap other) {
+		if (other.forcedReplacement != forcedReplacement)
+			throw new IllegalArgumentException();
+		for (Entry<IncludeInfo, List<IncludeInfo>> entry : other.map.entrySet()) {
+			IncludeInfo source = entry.getKey();
+			List<IncludeInfo> otherTargets = entry.getValue();
+			List<IncludeInfo> targets = map.get(source);
+			if (targets == null) {
+				targets = new ArrayList<IncludeInfo>(otherTargets);
+				map.put(source, targets);
+			} else {
+				targets.addAll(otherTargets);
+			}
+		}
+	}
+
+	public void transitivelyClose() {
+		for (Entry<IncludeInfo, List<IncludeInfo>> entry : map.entrySet()) {
+			IncludeInfo source = entry.getKey();
+			List<IncludeInfo> targets = entry.getValue();
+			ArrayDeque<IncludeInfo> queue = new ArrayDeque<IncludeInfo>(targets);
+			targets.clear();
+			HashSet<IncludeInfo> seen = new HashSet<IncludeInfo>();
+			if (!forcedReplacement)
+				seen.add(source);  // Don't allow mapping to itself.
+			int iterationsWithoutProgress = 0;
+			IncludeInfo target;
+			queueLoop: while ((target = queue.pollFirst()) != null) {
+				if (seen.contains(target))
+					continue;
+				List<IncludeInfo> newTargets = map.get(target);
+				if (newTargets != null) {
+					queue.addFirst(target);
+					boolean added = false;
+					for (int i = newTargets.size(); --i >=0;) {
+						IncludeInfo newTarget = newTargets.get(i);
+						if (!seen.contains(newTarget)) {
+							if (forcedReplacement && newTarget.equals(source)) {
+								break queueLoop;  // Leave the mapping empty. 
+							}
+							queue.addFirst(newTarget);
+							added = true;
+						}
+					}
+					// The second condition protects against an infinite loop.
+					if (!added || ++iterationsWithoutProgress >= map.size()) {
+						target = queue.pollFirst();
+						targets.add(target);
+						if (forcedReplacement)
+							break;
+						seen.add(target);
+						iterationsWithoutProgress = 0;
+					}
+				} else {
+					targets.add(target);
+					if (forcedReplacement)
+						break;
+					seen.add(target);
+					iterationsWithoutProgress = 0;
+				}
+			}
+		}
+		if (forcedReplacement) {
+			// Remove trivial mappings.
+			for (Iterator<Entry<IncludeInfo, List<IncludeInfo>>> iter = map.entrySet().iterator(); iter.hasNext();) {
+				Entry<IncludeInfo, List<IncludeInfo>> entry = iter.next();
+				IncludeInfo source = entry.getKey();
+				List<IncludeInfo> targets = entry.getValue();
+				if (targets.isEmpty() || (targets.size() == 1 && source.equals(targets.get(0)))) {
+					iter.remove();
+				}
+			}			
+		}
+	}
+
+	/** For debugging only. */
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		buf.append("forcedReplacement = ").append(forcedReplacement); //$NON-NLS-1$
+		buf.append(", cppOnly = ").append(cppOnly); //$NON-NLS-1$
+		ArrayList<IncludeInfo> sources = new ArrayList<IncludeInfo>(map.keySet());
+		Collections.sort(sources);
+		for (IncludeInfo source : sources) {
+			buf.append('\n');
+			buf.append(source);
+			buf.append(" -> "); //$NON-NLS-1$
+			List<IncludeInfo> targets = map.get(source);
+			for (int i = 0; i < targets.size(); i++) {
+				if (i > 0)
+					buf.append(", "); //$NON-NLS-1$
+				buf.append(targets.get(i));
+			} 
+		}
+		return buf.toString();
 	}
 }

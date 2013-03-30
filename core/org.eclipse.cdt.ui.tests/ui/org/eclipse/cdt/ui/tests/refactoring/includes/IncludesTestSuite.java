@@ -16,7 +16,8 @@ import junit.framework.TestSuite;
 public class IncludesTestSuite extends TestSuite {
 
 	public static Test suite() throws Exception {
-		IncludesTestSuite suite = new IncludesTestSuite(); 
+		IncludesTestSuite suite = new IncludesTestSuite();
+		suite.addTestSuite(IncludeMapTest.class);
 		suite.addTest(BindingClassifierTest.suite());
 		suite.addTest(IncludeOrganizerTest.suite());
 		return suite;

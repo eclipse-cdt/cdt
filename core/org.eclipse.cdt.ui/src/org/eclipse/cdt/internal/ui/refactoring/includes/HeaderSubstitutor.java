@@ -474,7 +474,6 @@ public class HeaderSubstitutor {
 			"<ios>", "<iostream>",
 			"<ios>", "<istream>",
 			"<ios>", "<ostream>",
-			"<iosfwd>", "<iostream>",  // TODO(sprigogin): This should already be covered by <ios> -> <iostream> mapping
 			"<iosfwd>", "<ios>",
 			"<iosfwd>", "<streambuf>",
 			"<istream>", "<iostream>",
@@ -489,10 +488,27 @@ public class HeaderSubstitutor {
 
 	private final InclusionContext fContext;
 
-	private List<IncludeMap> fIncludeMaps;
+	private final IncludeMap fIncludeMap;
+	private final IncludeMap fIncludeMapWeak;
+	private IncludeMap[] fIncludeMaps;
 
 	public HeaderSubstitutor(InclusionContext context) {
 		fContext = context;
+		fIncludeMap = new IncludeMap(cIncludeMap);
+		if (fContext.isCXXLanguage())
+			fIncludeMap.addAllMappings(cppIncludeMap);
+		fIncludeMapWeak = new IncludeMap(cIncludeMapWeak);
+		if (fContext.isCXXLanguage())
+			fIncludeMapWeak.addAllMappings(cppIncludeMapWeak);
+	}
+
+	public void addIncludeMap(IncludeMap map) {
+		if (fIncludeMaps != null)
+			throw new IllegalStateException("Modifications are not allowed after maps have been finalized"); //$NON-NLS-1$
+		if (map.isCppOnly() && !fContext.isCXXLanguage())
+			return;
+		IncludeMap receiver = map.isForcedReplacement() ? fIncludeMap : fIncludeMapWeak;
+		receiver.addAllMappings(map);
 	}
 
 	/**
@@ -507,7 +523,7 @@ public class HeaderSubstitutor {
 		IncludeInfo includeInfo = fContext.getIncludeForHeaderFile(path);
 		if (includeInfo == null)
 			return null;
-		List<IncludeMap> maps = getAllIncludeMaps();
+		IncludeMap[] maps = getAllIncludeMaps();
 		for (IncludeMap map : maps) {
 			if (map.isForcedReplacement()) {
 				List<IncludeInfo> replacements = map.getMapping(includeInfo);
@@ -535,7 +551,7 @@ public class HeaderSubstitutor {
 		// TODO(sprigogin): Take symbolIncludeMap into account.
 		List<IncludeInfo> candidates = new ArrayList<IncludeInfo>();
 		candidates.add(includeInfo);
-		List<IncludeMap> maps = getAllIncludeMaps();
+		IncludeMap[] maps = getAllIncludeMaps();
 		for (IncludeMap map : maps) {
 			for (int i = 0; i < candidates.size();) {
 				IncludeInfo candidate = candidates.get(i);
@@ -641,21 +657,17 @@ public class HeaderSubstitutor {
 		return request.getCandidatePaths().iterator().next();
 	}
 
-	private List<IncludeMap> getAllIncludeMaps() {
+	private IncludeMap[] getAllIncludeMaps() {
 		if (fIncludeMaps == null) {
-			fIncludeMaps = new ArrayList<IncludeMap>();
-			for (IncludeMap map : INCLUDE_MAPS) {
-				if (fContext.isCXXLanguage() || !map.isCppOnly())
-					fIncludeMaps.add(map);
-			}
+			fIncludeMap.transitivelyClose();
+			fIncludeMapWeak.transitivelyClose();
+			fIncludeMaps = new IncludeMap[] { fIncludeMap, fIncludeMapWeak };
 		}
 		return fIncludeMaps;
 	}
 
 	/**
-	 * Returns whether the given URI is an URI within the workspace
-	 * @param uri
-	 * @return
+	 * Returns whether the given URI points within the workspace.
 	 */
 	private static boolean isWorkspaceFile(URI uri) {
 		for (IFile file : ResourceLookup.findFilesForLocationURI(uri)) {
@@ -668,8 +680,6 @@ public class HeaderSubstitutor {
 
 	/**
 	 * Returns whether the given path has a file suffix, or not.
-	 * @param path
-	 * @return
 	 */
 	private static boolean hasExtension(String path) {
 		return path.indexOf('.', path.lastIndexOf('/') + 1) >= 0;
@@ -677,8 +687,6 @@ public class HeaderSubstitutor {
 
 	/**
 	 * Returns the filename of the given path, without extension.
-	 * @param path
-	 * @return
 	 */
 	private static String getFilename(String path) {
 		int startPos = path.lastIndexOf('/') + 1;

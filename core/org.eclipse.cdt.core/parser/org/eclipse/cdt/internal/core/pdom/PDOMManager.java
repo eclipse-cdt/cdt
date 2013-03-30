@@ -459,20 +459,14 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     	IProject prj= project.getProject();
     	IndexerPreferences.set(prj, IndexerPreferences.KEY_INDEXER_ID, indexerId);
     	CCoreInternals.savePreferences(prj, IndexerPreferences.getScope(prj) == IndexerPreferences.SCOPE_PROJECT_SHARED);
+		changeIndexer(project);
     }
 
 	protected void onPreferenceChange(ICProject cproject, PreferenceChangeEvent event) {
 		if (IndexerPreferences.KEY_UPDATE_POLICY.equals(event.getKey())) {
 			changeUpdatePolicy(cproject);
 		} else {
-			IProject project= cproject.getProject();
-			if (project.exists() && project.isOpen()) {
-				try {
-					changeIndexer(cproject);
-				} catch (Exception e) {
-					CCorePlugin.log(e);
-				}
-			}
+			changeIndexer(cproject);
 		}
 	}
 
@@ -489,49 +483,56 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 
-	private void changeIndexer(ICProject cproject) throws CoreException {
-		assert !Thread.holdsLock(fProjectToPDOM);
-
-		// if there is no indexer, don't touch the preferences.
-		IPDOMIndexer oldIndexer= getIndexer(cproject);
-		if (oldIndexer == null) {
-			return;
-		}
-
+	private void changeIndexer(ICProject cproject) {
 		IProject prj= cproject.getProject();
-		String newid= IndexerPreferences.get(prj, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_NO_INDEXER);
-		Properties props= IndexerPreferences.getProperties(prj);
+		if (!prj.exists() || !prj.isOpen())
+			return;
 
-		synchronized (fUpdatePolicies) {
-			if (fClosingProjects.contains(prj.getName())) {
+		try {
+			assert !Thread.holdsLock(fProjectToPDOM);
+
+			// If there is no indexer, don't touch the preferences.
+			IPDOMIndexer oldIndexer= getIndexer(cproject);
+			if (oldIndexer == null) {
 				return;
 			}
-			oldIndexer= getIndexer(cproject);
-			if (oldIndexer != null) {
-				if (oldIndexer.getID().equals(newid)) {
-					if (!oldIndexer.needsToRebuildForProperties(props)) {
-						oldIndexer.setProperties(props);
-						return;
-					}
+
+			String newid= IndexerPreferences.get(prj, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_NO_INDEXER);
+			Properties props= IndexerPreferences.getProperties(prj);
+
+			synchronized (fUpdatePolicies) {
+				if (fClosingProjects.contains(prj.getName())) {
+					return;
 				}
-				IPDOMIndexer indexer= newIndexer(newid, props);
-				registerIndexer(cproject, indexer);
-				createPolicy(cproject).clearTUs();
-				if (oldIndexer instanceof AbstractPDOMIndexer) {
-					if (IndexerPreferences.preferDefaultLanguage(((AbstractPDOMIndexer) oldIndexer).getProperties()) !=
-						IndexerPreferences.preferDefaultLanguage(props)) {
-						enqueue(new NotifyCModelManagerTask(cproject.getProject()));
+				oldIndexer= getIndexer(cproject);
+				if (oldIndexer != null) {
+					if (oldIndexer.getID().equals(newid)) {
+						if (!oldIndexer.needsToRebuildForProperties(props)) {
+							oldIndexer.setProperties(props);
+							return;
+						}
 					}
-				}
-				
-				if (IndexerPreferences.getReindexOnIndexerChange(cproject.getProject())) {
-					enqueue(new PDOMRebuildTask(indexer));
+					IPDOMIndexer indexer= newIndexer(newid, props);
+					registerIndexer(cproject, indexer);
+					createPolicy(cproject).clearTUs();
+					if (oldIndexer instanceof AbstractPDOMIndexer) {
+						if (IndexerPreferences.preferDefaultLanguage(((AbstractPDOMIndexer) oldIndexer).getProperties()) !=
+							IndexerPreferences.preferDefaultLanguage(props)) {
+							enqueue(new NotifyCModelManagerTask(cproject.getProject()));
+						}
+					}
+					
+					if (IndexerPreferences.getReindexOnIndexerChange(cproject.getProject())) {
+						enqueue(new PDOMRebuildTask(indexer));
+					}
 				}
 			}
-		}
 
-		if (oldIndexer != null) {
-			stopIndexer(oldIndexer);
+			if (oldIndexer != null) {
+				stopIndexer(oldIndexer);
+			}
+		} catch (Exception e) {
+			CCorePlugin.log(e);
 		}
 	}
 
@@ -953,7 +954,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 						return Status.OK_STATUS;
 					}
 				}
-				// don't attempt to hold lock on indexerMutex while canceling
+				// Don't attempt to hold lock on indexerMutex while canceling.
 				cancelIndexerJobs(indexer);
 
 				synchronized (fUpdatePolicies) {
@@ -965,6 +966,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				}
 				return Status.OK_STATUS;
 			}
+
 			@Override
 			public boolean belongsTo(Object family) {
 				return family == PDOMManager.this;

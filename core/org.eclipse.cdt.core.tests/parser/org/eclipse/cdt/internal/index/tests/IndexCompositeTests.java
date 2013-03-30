@@ -519,6 +519,7 @@ public class IndexCompositeTests extends BaseTestCase {
 		for (IProject project : createdProjects) {
 			project.delete(true, npm());
 		}
+		createdProjects.clear();
 		super.tearDown();
 	}
 }

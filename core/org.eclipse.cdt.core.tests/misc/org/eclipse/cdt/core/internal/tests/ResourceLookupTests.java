@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.internal.tests;
 
@@ -40,7 +40,7 @@ public class ResourceLookupTests extends TestCase {
     @Override
 	protected void setUp() {
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		fProject= root.getProject("reslookup");
+		fProject= root.getProject("reslookup_" + getName());
     }
     
     @Override
@@ -65,7 +65,7 @@ public class ResourceLookupTests extends TestCase {
 	}
     
 	public void testNameLookup() throws CoreException {
-		IProject[] prjs= new IProject[]{fProject};
+		IProject[] prjs= new IProject[] { fProject };
 
 		fProject.create(new NullProgressMonitor());
 		fProject.open(new NullProgressMonitor());

@@ -37,13 +37,10 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 	public CodeFormatterPreferencePage() {
 		setDescription(PreferencesMessages.CodeFormatterPreferencePage_description); 
 		
-		// only used when page is shown programatically
+		// Only used when page is shown programmatically.
 		setTitle(PreferencesMessages.CodeFormatterPreferencePage_title);		 
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		IPreferencePageContainer container= getContainer();
@@ -60,25 +57,16 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.CODEFORMATTER_PREFERENCE_PAGE);
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#createPreferenceContent(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createPreferenceContent(Composite composite) {
 		return fConfigurationBlock.createContents(composite);
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#hasProjectSpecificOptions(org.eclipse.core.resources.IProject)
-	 */
 	@Override
 	protected boolean hasProjectSpecificOptions(IProject project) {
 		return fConfigurationBlock.hasProjectSpecificOptions(project);
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#enableProjectSpecificSettings(boolean)
-	 */
 	@Override
 	protected void enableProjectSpecificSettings(boolean useProjectSpecificSettings) {
 		super.enableProjectSpecificSettings(useProjectSpecificSettings);
@@ -87,25 +75,16 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		}
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#getPreferencePageID()
-	 */
 	@Override
 	protected String getPreferencePageId() {
 		return PREF_ID;
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#getPropertyPageID()
-	 */
 	@Override
 	protected String getPropertyPageId() {
 		return PROP_ID;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fConfigurationBlock != null) {
@@ -114,9 +93,6 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		super.dispose();
 	}
 	
-	/*
-	 * @see org.eclipse.jface.preference.IPreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		if (fConfigurationBlock != null) {
@@ -125,9 +101,6 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		super.performDefaults();
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		if (fConfigurationBlock != null && !fConfigurationBlock.performOk()) {
@@ -136,9 +109,6 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		return super.performOk();
 	}
 	
-	/*
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
 	@Override
 	public void performApply() {
 		if (fConfigurationBlock != null) {
@@ -147,12 +117,9 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		super.performApply();
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#setElement(org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	public void setElement(IAdaptable element) {
 		super.setElement(element);
-		setDescription(null); // no description for property page
+		setDescription(null); // No description for property page
 	}
 }

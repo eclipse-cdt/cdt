@@ -25,6 +25,9 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 
+/**
+ * A set of header file substitution rules.
+ */
 public class IncludeMap {
 	private static final String TAG_CPP_ONLY = "cpp_only"; //$NON-NLS-1$
 	private static final String TAG_FORCED_REPLACEMENT = "forced_replacement"; //$NON-NLS-1$
@@ -195,43 +198,45 @@ public class IncludeMap {
 			List<IncludeInfo> targets = entry.getValue();
 			ArrayDeque<IncludeInfo> queue = new ArrayDeque<IncludeInfo>(targets);
 			targets.clear();
-			HashSet<IncludeInfo> seen = new HashSet<IncludeInfo>();
+			HashSet<IncludeInfo> processed = new HashSet<IncludeInfo>();
 			if (!forcedReplacement)
-				seen.add(source);  // Don't allow mapping to itself.
-			int iterationsWithoutProgress = 0;
+				processed.add(source);  // Don't allow mapping to itself.
+			HashSet<IncludeInfo> seenTargets = new HashSet<IncludeInfo>();
 			IncludeInfo target;
 			queueLoop: while ((target = queue.pollFirst()) != null) {
-				if (seen.contains(target))
+				if (processed.contains(target))
 					continue;
 				List<IncludeInfo> newTargets = map.get(target);
 				if (newTargets != null) {
 					queue.addFirst(target);
 					boolean added = false;
-					for (int i = newTargets.size(); --i >=0;) {
-						IncludeInfo newTarget = newTargets.get(i);
-						if (!seen.contains(newTarget)) {
-							if (forcedReplacement && newTarget.equals(source)) {
-								break queueLoop;  // Leave the mapping empty. 
+					// Check if we saw the same target earlier to protect against an infinite loop.
+					if (seenTargets.add(target)) {
+						for (int i = newTargets.size(); --i >=0;) {
+							IncludeInfo newTarget = newTargets.get(i);
+							if (!processed.contains(newTarget)) {
+								if (forcedReplacement && newTarget.equals(source)) {
+									break queueLoop;  // Leave the mapping empty. 
+								}
+								queue.addFirst(newTarget);
+								added = true;
 							}
-							queue.addFirst(newTarget);
-							added = true;
 						}
 					}
-					// The second condition protects against an infinite loop.
-					if (!added || ++iterationsWithoutProgress >= map.size()) {
+					if (!added) {
 						target = queue.pollFirst();
 						targets.add(target);
 						if (forcedReplacement)
 							break;
-						seen.add(target);
-						iterationsWithoutProgress = 0;
+						processed.add(target);
+						seenTargets.clear();
 					}
 				} else {
 					targets.add(target);
 					if (forcedReplacement)
 						break;
-					seen.add(target);
-					iterationsWithoutProgress = 0;
+					processed.add(target);
+					seenTargets.clear();
 				}
 			}
 		}

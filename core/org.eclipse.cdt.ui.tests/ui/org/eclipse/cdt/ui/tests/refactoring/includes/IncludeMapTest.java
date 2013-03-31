@@ -32,9 +32,9 @@ public class IncludeMapTest extends TestCase {
 		});
 		map.transitivelyClose();
 		IncludeMap expected = new IncludeMap(false, false, new String[] {
-				"a", "c",
 				"a", "b",
 				"a", "d",
+				"a", "c",
 				"b", "d",
 				"b", "c",
 				"c", "d",
@@ -54,7 +54,7 @@ public class IncludeMapTest extends TestCase {
 		});
 		map.transitivelyClose();
 		IncludeMap expected = new IncludeMap(true, false, new String[] {
-				"a", "c",
+				"a", "b",
 				"c", "b",
 				"d", "b",
 		});

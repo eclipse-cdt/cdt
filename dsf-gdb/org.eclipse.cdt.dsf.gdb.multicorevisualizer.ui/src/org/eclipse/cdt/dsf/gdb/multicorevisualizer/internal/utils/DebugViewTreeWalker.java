@@ -7,9 +7,13 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Bug 404565
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.jface.viewers.TreePath;
@@ -57,7 +61,10 @@ public class DebugViewTreeWalker
 	 */
 	public void walk()
 	{
-		walk(getRootPath());
+		TreePath roots[] = getRootPaths();
+        for(TreePath path : roots) {
+            walk(path);
+        }
 	}
 
 	/**
@@ -105,20 +112,26 @@ public class DebugViewTreeWalker
 
 	// --- tree path utilities ---
 
-	/** Gets tree path of root element. */
-	public TreePath getRootPath()
-	{
-		// (?) This doesn't always return the expected root element.
-		//return m_viewer.getTopElementPath();
+	/** 
+	 * Gets tree path of root element(s). 
+	 * Note: each returned path is the root of a distinct debug session 
+	 */
+	public TreePath[] getRootPaths()
+	{		
+		List<TreePath> paths = new ArrayList<TreePath>();
 		
-		TreePath path = null;
 		if (m_viewer != null) {
 			Tree tree = (Tree) m_viewer.getControl();
 			TreeItem[] items = tree.getItems();
-			Object root = (items == null || items.length == 0) ? null : items[0].getData();
-			if (root != null) path = new TreePath(new Object[] {root});
+			
+			for (TreeItem item : items) {
+				Object root = (item == null) ? null : item.getData();
+				if (root != null) {
+					paths.add(new TreePath(new Object[] {root}));
+				}
+			}
 		}
-		return path;
+		return paths.toArray(new TreePath[paths.size()]);
 	}
 
 	/** Gets tree path for child element. */

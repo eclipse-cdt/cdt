@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//0SA\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_source.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-04-02T16:31:35Z",
+      "side": 1,
+      "message": "I added the spaces to allow the table to be shrunk further, since sometimes the full keyboard shortcut is the longest single word in an entry. I\u0027ll take them out...",
+      "parentUuid": "AABOPX//0Z4\u003d",
+      "revId": "558e9f288e012bb2a510760e8e1d81bad41d15c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//0Z8\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_source.htm",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2013-04-02T02:14:07Z",
       "side": 1,
       "message": "Could you please add Organize Includes command here. Thanks.",
+      "revId": "558e9f288e012bb2a510760e8e1d81bad41d15c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0R8\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_source.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-04-02T16:31:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//0Z8\u003d",
       "revId": "558e9f288e012bb2a510760e8e1d81bad41d15c8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

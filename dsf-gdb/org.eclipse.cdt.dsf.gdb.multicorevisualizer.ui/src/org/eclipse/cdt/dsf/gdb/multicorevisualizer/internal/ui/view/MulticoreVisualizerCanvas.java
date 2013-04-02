@@ -13,6 +13,7 @@
  *     Marc Dumais (Ericsson) - Bug 396293
  *     Marc Dumais (Ericsson) - Bug 399281
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
+ *     Marc Dumais (Ericsson) - Bug 399419
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -977,6 +978,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 	public void setSelection(ISelection selection, boolean raiseEvent)
 	{
 		m_selectionManager.setSelection(selection, raiseEvent);
+		requestUpdate();
 	}
 	
     /** Sets whether selection events are enabled. */

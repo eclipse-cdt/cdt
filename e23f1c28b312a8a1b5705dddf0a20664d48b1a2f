@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//0Qs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-02T17:58:30Z",
+      "side": 1,
+      "message": "I\u0027m not familiar with how we use memory spaces currently, but my guess is that there will be one per process.  However, each process in a multi-process session can have different address sizes as shown below:\n\n\u003e file multi\nmulti: ELF 32-bit LSB executable\n\u003e file loopfirst\nloopfirst: ELF 64-bit LSB executable\n\u003e gdb.7.6 multi\nGNU gdb (GDB) 7.6.50.20130326-cvs\n(gdb) add-inferior -exec loopfirst\n(gdb) inferior 2\n[Switching to inferior 2 [\u003cnull\u003e] (/home/lmckhou/testing/loopfirst)]\n(gdb) print sizeof(void*)\n$1 \u003d 8\n(gdb) inferior 1\n[Switching to inferior 1 [\u003cnull\u003e] (/home/lmckhou/testing/multi)]\n(gdb) print sizeof(void*)\n$2 \u003d 4",
+      "parentUuid": "AABOPX//0Rk\u003d",
+      "revId": "e23f1c28b312a8a1b5705dddf0a20664d48b1a2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//0Xs\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 1

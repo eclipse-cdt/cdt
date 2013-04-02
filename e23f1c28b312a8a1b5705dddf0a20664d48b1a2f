@@ -91,6 +91,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//0PY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-02T19:26:18Z",
+      "side": 1,
+      "message": "I use \"data-evaluate-expression sizeof(void*)\" instead of \"print\" What I am interested in is how it works with two inferiors with different address sizes. Unfortunately, I can\u0027t try it myself.",
+      "parentUuid": "AABOPX//0Ps\u003d",
+      "revId": "e23f1c28b312a8a1b5705dddf0a20664d48b1a2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//0Xs\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 1

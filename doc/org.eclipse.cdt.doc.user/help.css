@@ -43,7 +43,7 @@ th	     { font-weight: bold }
 }
 
 .menu, .option td { vertical-align: top; }
-td.menu_name, td.option_name {font-weight: bold;}
+td.menu_name, td.option_name {vertical-align: top; font-weight: bold;}
 
 /* Mike Behm's addition to the style sheet */
 .userinput { font-family: monospace; }

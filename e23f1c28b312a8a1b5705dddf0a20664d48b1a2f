@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//0XE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-02T11:02:37Z",
+      "side": 1,
+      "message": "I\u0027m worried about using a query here.  Are we on the UI thread?  If so, we can lock the UI thread for a long time as we send the request to GDB.  If this is the case, how about doing the following instead:\n\n1- make IGDBMemory.getAddressSize() a synchronous call\n2- each time we add a process to the launch, immediately figure out what the addess size is and put in in the GDBMemory cache.\n3- always use the cache for the IGDBMemory.getAddressSize() call.\n\nI haven\u0027t really looked into that idea so I don\u0027t know if it actually makes sense.  Maybe there is a better way to address this problem (if there really is a problem).",
+      "revId": "e23f1c28b312a8a1b5705dddf0a20664d48b1a2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0Xs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-02T11:02:37Z",
+      "side": 1,
+      "message": "I think we should register the service using the IGDBMemory name here",
+      "revId": "e23f1c28b312a8a1b5705dddf0a20664d48b1a2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0Xo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-02T11:02:37Z",
+      "side": 1,
+      "message": "Will need to unregister()",
+      "revId": "e23f1c28b312a8a1b5705dddf0a20664d48b1a2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0Xc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-02T11:02:37Z",
+      "side": 1,
+      "message": "This works fine.  But I wonder if for consistency we shouldn\u0027t use a CommandCache instead?  Such a cache will remember GDB\u0027s answer for each -data-evaluate-expression command sent here, per context.  So, as long as we use a different context (which is a separate comment below), such a cache would work.\n\nUsing that cache in our services avoid having to re-implement different caching techniques and will actually make the code a little simpler.  Although the fAddessSize cache is quite simple.\n\nUp to you.",
+      "revId": "e23f1c28b312a8a1b5705dddf0a20664d48b1a2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0Xg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-02T11:02:37Z",
+      "side": 1,
+      "message": "I wonder about the context.  We\u0027re blindly using the CommandControl context, when we have an IMemoryDMContext, which is associated to an individual process.\n\nI don\u0027t know how it works for GDB.  In multi-process, can we debug one 32bit process and one 64bit process?  This patch seems to be prepared for that, except for the use of fCommandControl.getContext().  Maybe we should use IMIContainerDMContext (which is an IExecutionDMContext)?\n\nIt would be more elegant to use IMemoryDMContext directly but MIDataEvaluateExpression does not accept that...  Unless you prefer to extend that class.",
+      "revId": "e23f1c28b312a8a1b5705dddf0a20664d48b1a2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0Xk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-02T11:02:37Z",
+      "side": 1,
+      "message": "Although this class will be registered with the name IGDBMemory because it will inherit from GDBMemory, we usually explicitly add the name to the local register() call.",
+      "revId": "e23f1c28b312a8a1b5705dddf0a20664d48b1a2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0Xw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-02T11:02:37Z",
+      "side": 1,
+      "message": "Please add javadoc.  For interfaces, I think we should properly document each mehtod.",
+      "revId": "e23f1c28b312a8a1b5705dddf0a20664d48b1a2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0XU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-02T11:02:37Z",
+      "side": 1,
+      "message": "Since we\u0027re adding a new interface, maybe we should immediately add a method to handle endianess, as needed in Bug 225609.\n\nThe method need not be properly implemented in the services or used anywhere, but might as well have it in the interface we don\u0027t end up with IGDBMemory2 later on.",
+      "revId": "e23f1c28b312a8a1b5705dddf0a20664d48b1a2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

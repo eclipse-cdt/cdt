@@ -107,7 +107,55 @@
 	           </dynamic>
             </menu>
        </menuContribution>
-
+       <menuContribution
+             allPopups="false"
+             locationURI="menu:org.eclipse.ui.run?endof=emptyStepGroup">
+          <command
+                commandId="org.eclipse.cdt.dsf.debug.ui.actions.StepIntoSelection"
+                style="push">
+                <visibleWhen
+                   checkEnabled="false">
+                <and>
+                   <systemTest
+                         property="org.eclipse.cdt.debug.ui.debuggerActive"
+                         value="true">
+                   </systemTest>
+                   <with
+                   		variable="activeEditor">
+                		<instanceof
+                      		value="org.eclipse.ui.texteditor.ITextEditor">
+                		</instanceof>
+             		</with>
+                </and>
+             </visibleWhen>
+          </command>
+       </menuContribution>
+       
+       <menuContribution
+             allPopups="false"
+             locationURI="popup:#CEditorContext?before=additions">
+          <command
+                commandId="org.eclipse.cdt.dsf.debug.ui.actions.StepIntoSelection"
+                style="push">
+             <visibleWhen
+                   checkEnabled="false">
+                <and>
+                   <systemTest
+                         property="org.eclipse.cdt.debug.ui.debuggerActive"
+                         value="true">
+                   </systemTest>
+                   <with
+                   		variable="activeEditor">
+                		<instanceof
+                      		value="org.eclipse.ui.texteditor.ITextEditor">
+                		</instanceof>
+             		</with>
+                </and>
+             </visibleWhen>
+          </command>
+       </menuContribution>
+       
+      
 	   <!-- Registers view menu commands -->
        <menuContribution
             locationURI="menu:org.eclipse.debug.ui.RegisterView?after=additions">
@@ -341,8 +389,21 @@
 			    </with>
 			</activeWhen>
       </handler>
+    <handler
+          class="org.eclipse.cdt.dsf.debug.ui.actions.DsfStepIntoEditorSelectionHandler"
+          commandId="org.eclipse.cdt.dsf.debug.ui.actions.StepIntoSelection">
+       <enabledWhen>
+          <and>
+             <with
+                   variable="activeEditor">
+                <instanceof
+                      value="org.eclipse.ui.texteditor.ITextEditor">
+                </instanceof>
+             </with>
+          </and>
+       </enabledWhen>
+    </handler>    
    </extension>
-
    <extension point="org.eclipse.core.expressions.definitions">
       <definition id="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive">
          <and>
@@ -515,6 +576,13 @@
             id="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.rulerToggleBreakpoint"
             name="%command.rulerToggleBreakpoint.name">
       </command>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%popup.stepIntoSelection.description"
+            helpContextId="step_into_selection_action_context"
+            id="org.eclipse.cdt.dsf.debug.ui.actions.StepIntoSelection"
+            name="%popup.stepIntoSelection.name">
+      </command>
    </extension>
 
    <extension point="org.eclipse.ui.bindings">
@@ -525,6 +593,10 @@
        <key sequence="M1+G"
             contextId="org.eclipse.cdt.dsf.debug.ui.disassembly.context"
             commandId="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoAddress"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key sequence="M1+5"
+            contextId="org.eclipse.debug.ui.debugging"
+            commandId="org.eclipse.cdt.dsf.debug.ui.actions.StepIntoSelection"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
 
@@ -878,5 +950,17 @@
          </targetClass>
       </column>
    </extension>
-
+ <!-- Hyperlinking support -->
+      <extension
+         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+       <hyperlinkDetector
+            activate="true"
+            class="org.eclipse.cdt.dsf.debug.ui.actions.DsfStepIntoSelectionHyperlinkDetector"
+            description="%stepIntoSelectionHyperlinkDetector.description"
+            id="org.eclipse.cdt.dsf.debug.ui.hyperlinkdetector.stepIntoSelection"
+            modifierKeys="M1+M3"
+            name="%stepIntoSelectionHyperlinkDetector.label"
+            targetId="org.eclipse.cdt.ui.cCode">            
+      </hyperlinkDetector>
+   </extension>
 </plugin>

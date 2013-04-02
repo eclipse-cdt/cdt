@@ -16,6 +16,8 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	public static String ToggleBreakpointsTargetFactory_description;
 	public static String ToggleBreakpointsTargetFactory_name;
+	public static String DsfUIStepIntoEditorSelection;
+	public static String DsfUIStepIntoEditorSelection_label;
 	
 	static {
 		// initialize resource bundle

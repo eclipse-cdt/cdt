@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
+import org.eclipse.cdt.dsf.debug.service.AbstractRunControl;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
@@ -51,13 +53,16 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
+import org.eclipse.cdt.dsf.debug.service.IRunControl3;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.Messages;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.events.MITracepointSelectedEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
@@ -86,17 +91,23 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadCreatedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointTriggerEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIArg;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIStackInfoDepthInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThread;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadInfoInfo;
-import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -111,8 +122,13 @@ import org.osgi.framework.BundleContext;
  * sync with the service state.
  * @since 1.1
  */
-public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunControl, IMultiRunControl, ICachingService
-{
+public class GDBRunControl_7_0_NS extends AbstractRunControl implements IMIRunControl, IMultiRunControl, ICachingService {
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTANTS
+	// /////////////////////////////////////////////////////////////////////////
+
+	private static final String cppSep = "::"; //$NON-NLS-1$
+
 	@Immutable
 	private static class ExecutionData implements IExecutionDMData2 {
 		private final StateChangeReason fReason;
@@ -295,6 +311,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		boolean fSuspended = false;
 		boolean fResumePending = false;
 		boolean fStepping = false;
+		RunControlEvent<IExecutionDMContext, ?> fLatestEvent = null;
 
 		/**
 		 * What caused the state change. E.g., a signal was thrown.
@@ -336,7 +353,105 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		public boolean shouldSkipBreakpoints() { return fSkipBreakpoints; }
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	/**
+	 * @since 4.2
+	 */
+	protected static class StepIntoSelectionActiveOperation {
+		private final IFunctionDeclaration fTargetFunction;
+		private final IMIExecutionDMContext fThreadContext;
+		private String fBaseFileLocation = null;
+		private String fBaseFunctionName = null;
+		private final boolean fSkipBreakpoints;
+		private int fBaseLine = 0;
+		private int fOriginalStackDepth=0;
+		private String fFunctionSignature = null;
+		private MIFrame fRunToLineFrame = null;
+
+		public StepIntoSelectionActiveOperation(IMIExecutionDMContext threadContext, int line, boolean skipBreakpoints, IFunctionDeclaration targetFunction,
+				int stackDepth, MIFrame runToLineFrame) {
+			fThreadContext = threadContext;
+			fBaseLine = line;
+			fSkipBreakpoints = skipBreakpoints;
+			fTargetFunction = targetFunction;
+			fOriginalStackDepth = stackDepth;
+
+			fRunToLineFrame = runToLineFrame;
+			init();
+		}
+
+		private void init() {
+			if (fRunToLineFrame == null) {
+				return;
+			}
+
+			fBaseFileLocation = fRunToLineFrame.getFile() + ":" + fBaseLine; //$NON-NLS-1$
+			fBaseFunctionName = fRunToLineFrame.getFunction();
+		}
+
+		public IFunctionDeclaration getTargetFunctionDeclaration() {
+			return fTargetFunction;
+		}
+
+		public IMIExecutionDMContext getThreadContext() {
+			return fThreadContext;
+		}
+
+		public String getFileLocation() {
+			return fBaseFileLocation;
+		}
+
+		public boolean shouldSkipBreakpoints() {
+			return fSkipBreakpoints;
+		}
+
+		public int getLine() {
+			return fBaseLine;
+		}
+
+		public int getOriginalStackDepth() {
+			return fOriginalStackDepth;
+		}
+
+		public void setOriginalStackDepth(Integer originalStackDepth) {
+			fOriginalStackDepth = originalStackDepth;
+		}
+
+		public String getBaseFunctionName() {
+			return fBaseFunctionName;
+		}
+
+		public MIFrame getRunToLineFrame() {
+			return fRunToLineFrame;
+		}
+
+		public void setRunToLineFrame(MIFrame runToLineFrame) {
+			if (runToLineFrame != null) {
+				fRunToLineFrame = runToLineFrame;
+				init();
+			}
+		}
+
+		public String getTargetFunctionSignature() {
+			if (fFunctionSignature != null) {
+				return fFunctionSignature;
+			} else {
+				if (fTargetFunction != null) {
+					StringBuilder sb = null;
+					sb = new StringBuilder();
+					if (fTargetFunction.getParent() != null) {
+						sb.append(fTargetFunction.getParent().getElementName() + cppSep);
+					}
+
+					sb.append(fTargetFunction.getElementName());
+					fFunctionSignature = sb.toString();
+				}
+			}
+
+			return fFunctionSignature;
+		}
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
 	// MIRunControlNS
 	///////////////////////////////////////////////////////////////////////////
 
@@ -350,6 +465,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	protected Map<IMIExecutionDMContext, MIThreadRunState> fThreadRunStates = new HashMap<IMIExecutionDMContext, MIThreadRunState>();
 
 	private RunToLineActiveOperation fRunToLineActiveOperation = null;
+	private StepIntoSelectionActiveOperation fStepInToSelectionActiveOperation = null;
 
 	/** @since 4.0 */
 	protected RunToLineActiveOperation getRunToLineActiveOperation() {
@@ -404,7 +520,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
         register(new String[]{ IRunControl.class.getName(), 
         					   IRunControl2.class.getName(),
         					   IMIRunControl.class.getName(),
-        					   IMultiRunControl.class.getName() }, 
+        					   IMultiRunControl.class.getName(),
+        					   IRunControl3.class.getName()}, 
         	     new Hashtable<String,String>());
 		fConnection = getServicesTracker().getService(ICommandControlService.class);
 		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
@@ -712,6 +829,10 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
 	@Override
 	public void step(IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
+		step(context, stepType, true, rm);
+	}
+
+	private void step(IExecutionDMContext context, StepType stepType, boolean resume, final RequestMonitor rm) {
 
 		assert context != null;
 
@@ -722,9 +843,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			return;
 		}
 
-		if (!doCanResume(dmc)) {
-			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
-				"Cannot resume context", null)); //$NON-NLS-1$
+		if (resume && !doCanResume(dmc)) {
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Cannot resume context", null)); //$NON-NLS-1$
 			return;
 		}
 
@@ -849,9 +969,85 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	}
 
 	// ------------------------------------------------------------------------
+	// Step into Selection
+	// ------------------------------------------------------------------------
+	private void stepIntoLocation(final IExecutionDMContext context, final int baseLine, final String baseLineLocation, final boolean skipBreakpoints, final IFunctionDeclaration targetFunction,
+			final RequestMonitor rm) {
+
+		assert context != null;
+
+		final IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+		if (dmc == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Given context: " + context + " is not an MI execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+			rm.done();
+			return;
+		}
+
+		if (!doCanResume(dmc)) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Cannot resume context", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
+
+		MIThreadRunState threadState = fThreadRunStates.get(dmc);
+		if (threadState == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Given context: " + context + " can't be found.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+			rm.done();
+			return;
+		}
+
+		if (threadState.fLatestEvent == null || !(threadState.fLatestEvent instanceof SuspendedEvent)) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Given context: " + context + " invalid suspended event.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+			rm.done();
+			return;
+		}
+
+		SuspendedEvent suspendedEvent = (SuspendedEvent) threadState.fLatestEvent;
+		final MIFrame currentFrame = suspendedEvent.getMIEvent().getFrame();
+		if (currentFrame == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Given event: " + suspendedEvent + " invalid frame in suspended event.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+			rm.done();
+			return;
+		}
+
+		getStackDepth(context, new DataRequestMonitor<Integer>(getExecutor(), null) {
+			@Override
+			public void handleCompleted() {
+				if (getData() != null) {
+					final int framesSize = getData().intValue();
+
+					// make sure the operation is removed upon
+					// failure detection
+					final RequestMonitor rms = new RequestMonitor(getExecutor(), rm) {
+						@Override
+						protected void handleFailure() {
+							fStepInToSelectionActiveOperation = null;
+							super.handleFailure();
+						}
+					};
+
+					if (currentFrame.getLine() == baseLine) {
+						// Save the step into selection information
+						fStepInToSelectionActiveOperation = new StepIntoSelectionActiveOperation(dmc, baseLine, skipBreakpoints, targetFunction, framesSize,
+								currentFrame);
+						// Ready to step into a function selected
+						// within a current line
+						step(context, StepType.INSTRUCTION_STEP_INTO, rms);
+					} else {
+						// Save the step into selection information
+						fStepInToSelectionActiveOperation = new StepIntoSelectionActiveOperation(dmc, baseLine, skipBreakpoints, targetFunction, framesSize, null);
+						// Pointing to a line different than the current line
+						// Needs to RunToLine before stepping to the selection
+						runToLocation(context, baseLineLocation, skipBreakpoints, rms);
+					}
+				}
+			}
+		});
+	}
+
+	// ------------------------------------------------------------------------
 	// Resume at location
 	// ------------------------------------------------------------------------
-
 	private void resumeAtLocation(IExecutionDMContext context, String location, RequestMonitor rm) {
 		assert context != null;
 
@@ -958,6 +1154,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		threadState.fStateChangeReason = reason;
 		threadState.fStateChangeDetails = null;	// we have no details of interest for a resume
 		threadState.fStepping = isStepping;
+		threadState.fLatestEvent = event;
 	}
 
 	private void updateThreadState(IMIExecutionDMContext context, SuspendedEvent event) {
@@ -971,7 +1168,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		threadState.fResumePending = false;
 		threadState.fStepping = false;
 		threadState.fStateChangeReason = reason;
-		threadState.fStateChangeDetails = event.getDetails();		
+		threadState.fStateChangeDetails = event.getDetails();
+		threadState.fLatestEvent = event;
 	}
 
 	/* ******************************************************************************
@@ -1439,85 +1637,295 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
      */
 	@DsfServiceEventHandler
 	public void eventDispatched(final MIStoppedEvent e) {
-    	if (fRunToLineActiveOperation != null) {
-    		// First check if it is the right thread that stopped
-    		IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);
-    		if (fRunToLineActiveOperation.getThreadContext().equals(threadDmc)) {
-        		int bpId = 0;
-        		if (e instanceof MIBreakpointHitEvent) {
-        			bpId = ((MIBreakpointHitEvent)e).getNumber();
-        		}
-    			String fileLocation = e.getFrame().getFile() + ":" + e.getFrame().getLine();  //$NON-NLS-1$
-    			String addrLocation = e.getFrame().getAddress();
-    			// Here we check three different things to see if we are stopped at the right place
-    			// 1- The actual location in the file.  But this does not work for breakpoints that
-    			//    were set on non-executable lines
-    			// 2- The address where the breakpoint was set.  But this does not work for breakpoints
-    			//    that have multiple addresses (GDB returns <MULTIPLE>.)  I think that is for multi-process
-    			// 3- The breakpoint id that was hit.  But this does not work if another breakpoint
-    			//    was also set on the same line because GDB may return that breakpoint as being hit.
-    			//
-    			// So this works for the large majority of cases.  The case that won't work is when the user
-    			// does a runToLine to a line that is non-executable AND has another breakpoint AND
-    			// has multiple addresses for the breakpoint.  I'm mean, come on!
-    			if (fileLocation.equals(fRunToLineActiveOperation.getFileLocation()) ||
-    				addrLocation.equals(fRunToLineActiveOperation.getAddrLocation()) ||
-    				bpId == fRunToLineActiveOperation.getBreakointId()) {
-        			// We stopped at the right place.  All is well.
-    				fRunToLineActiveOperation = null;
-    			} else {
-    				// The right thread stopped but not at the right place yet
-    				if (fRunToLineActiveOperation.shouldSkipBreakpoints() && e instanceof MIBreakpointHitEvent) {
-    					fConnection.queueCommand(
-    							fCommandFactory.createMIExecContinue(fRunToLineActiveOperation.getThreadContext()),
-    							new DataRequestMonitor<MIInfo>(getExecutor(), null));
+		if (fRunToLineActiveOperation != null) {
+			if (runToLineContinue(e)) {
+				// If RunToLine is not completed
+				return;
+			}
+		}
 
-    					// Don't send the stop event since we are resuming again.
-    					return;
-    				} else {
-    					// Stopped for any other reasons.  Just remove our temporary one
-    					// since we don't want it to hit later
-    					//
-    					// Note that in Non-stop, we don't cancel a run-to-line when a new
-    					// breakpoint is inserted.  This is because the new breakpoint could
-    					// be for another thread altogether and should not affect the current thread.
-    					IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
-    							IBreakpointsTargetDMContext.class);
+		if (fStepInToSelectionActiveOperation != null) {
+			evaluateStepIntoSelection(e);
+			return;
+		}
 
-    					fConnection.queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new int[] {fRunToLineActiveOperation.getBreakointId()}),
-    							new DataRequestMonitor<MIInfo>(getExecutor(), null));
-    					fRunToLineActiveOperation = null;
-    				}
-    			}
-    		}
-    	}
-    	
+		broadcastStop(e);
+	}
+
+	private void broadcastStop(final MIStoppedEvent e) {
 		IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);
-		if (e instanceof MISignalEvent && fDisableNextSignalEventDmcSet.remove(threadDmc)) {			
+		if (e instanceof MISignalEvent && fDisableNextSignalEventDmcSet.remove(threadDmc)) {
 			fSilencedSignalEventMap.put(threadDmc, e);
-
 			// Don't broadcast the stopped event
 			return;
 		}
-		
-        IDMEvent<?> event = null;
-        MIBreakpointDMContext bp = null;
-        if (e instanceof MIBreakpointHitEvent) {
-            int bpId = ((MIBreakpointHitEvent)e).getNumber();
-            IBreakpointsTargetDMContext bpsTarget = DMContexts.getAncestorOfType(e.getDMContext(), IBreakpointsTargetDMContext.class);
-            if (bpsTarget != null && bpId >= 0) {
-                bp = new MIBreakpointDMContext(getSession().getId(), new IDMContext[] {bpsTarget}, bpId); 
-                event = new BreakpointHitEvent(e.getDMContext(), (MIBreakpointHitEvent)e, bp);
-            }
-        }
-        if (event == null) {
-            event = new SuspendedEvent(e.getDMContext(), e);
-        }
-        
-        getSession().dispatchEvent(event, getProperties());
+
+		IDMEvent<?> event = null;
+		MIBreakpointDMContext bp = null;
+		if (e instanceof MIBreakpointHitEvent) {
+			int bpId = ((MIBreakpointHitEvent) e).getNumber();
+			IBreakpointsTargetDMContext bpsTarget = DMContexts.getAncestorOfType(e.getDMContext(), IBreakpointsTargetDMContext.class);
+			if (bpsTarget != null && bpId >= 0) {
+				bp = new MIBreakpointDMContext(getSession().getId(), new IDMContext[] { bpsTarget }, bpId);
+				event = new BreakpointHitEvent(e.getDMContext(), (MIBreakpointHitEvent) e, bp);
+			}
+		}
+		if (event == null) {
+			event = new SuspendedEvent(e.getDMContext(), e);
+		}
+
+		getSession().dispatchEvent(event, getProperties());
 	}
 
+	private void evaluateStepIntoSelection(final MIStoppedEvent e) {
+		// First check if it is the right thread that stopped
+		final IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);
+		if (fStepInToSelectionActiveOperation.getThreadContext().equals(threadDmc)) {
+			final MIFrame frame = e.getFrame();
 
+			// make sure base line search has been initialized
+			if (prepStepIntoSelection(e) == false) {
+				//Aborted
+				return;
+			}
+
+			// Step - Not at the right place just yet
+			// Initiate an async call chain parent
+			getStackDepth(threadDmc, new DataRequestMonitor<Integer>(getExecutor(), null) {
+				private int originalStackDepth = fStepInToSelectionActiveOperation.getOriginalStackDepth();
+
+				@Override
+				protected void handleCompleted() {
+					int framesSize = getStackDepth();
+					
+					// Check for a match
+					if (sameSignature(frame)) {				
+						// Hit !!
+						stopStepIntoSelection(e);
+						return;
+					}
+
+					if (framesSize > originalStackDepth) {
+						// Located deeper in the stack, Shall continue step / search
+						// Step return
+						continueStepping(frame, e, StepType.STEP_RETURN);
+					} else if (framesSize == originalStackDepth) {
+						// Continue step / search as long as
+						// this is the starting base line for the search
+						String currentLocation = frame.getFile() + ":" + frame.getLine(); //$NON-NLS-1$
+						String searchLineLocation = fStepInToSelectionActiveOperation.getFileLocation();
+						if (currentLocation.equals(searchLineLocation)) {
+							continueStepping(frame, e, StepType.STEP_INTO);
+						} else {
+							// We have moved to a line
+							// different from the base
+							// search line i.e. missed the
+							// target function !!
+							missedSelectedTarget();
+							stopStepIntoSelection(e);	
+						}
+					} else {
+						// missed the target point
+						missedSelectedTarget();
+					}
+				}
+
+				@Override
+				protected void handleFailure() {
+					// log error
+					if (getStatus() != null) {
+						GdbPlugin.getDefault().getLog().log(getStatus());
+					}
+
+					stopStepIntoSelection(e);
+				}
+
+				private int getStackDepth() {
+					Integer stackDepth = null;
+					if (isSuccess() && getData() != null) {
+						stackDepth = getData();
+						// This is the base frame, the original stack depth shall be updated
+						if (frame == fStepInToSelectionActiveOperation.getRunToLineFrame()) {
+							fStepInToSelectionActiveOperation.setOriginalStackDepth(stackDepth);
+							originalStackDepth = stackDepth;
+						}
+					}
+
+					if (stackDepth == null) {
+						// Unsuccessful resolution of stack depth, default to same stack depth to detect a change of line within the original frame
+						return fStepInToSelectionActiveOperation.getOriginalStackDepth();
+					}
+
+					return stackDepth.intValue();
+				}
+			});
+		} else {
+			//Outside of context
+			stopStepIntoSelection(e);
+		}
+	}
+
+	private boolean prepStepIntoSelection(MIStoppedEvent e) {
+		MIFrame frame = e.getFrame();
+		boolean status = true;
+		// if RunToLine preparation for StepIntoSelection was needed,
+		// save the base frame / line needed to establish the scope of the
+		// search
+		if (fStepInToSelectionActiveOperation.getRunToLineFrame() == null) {
+			// Shall now be at the runto line location
+			if (fStepInToSelectionActiveOperation.getLine() == frame.getLine()) {
+				fStepInToSelectionActiveOperation.setRunToLineFrame(frame);
+				status = true;
+			} else {
+				// Did not stopped at the runto line location. probably a break point before reaching the actual target
+				// Abort the action
+				stopStepIntoSelection(e);
+				status = false;
+			}
+		}
+		
+		return status;		
+	}
+
+	private void stopStepIntoSelection(final MIStoppedEvent e) {
+		fStepInToSelectionActiveOperation = null;
+		// Need to broadcast the stop
+		broadcastStop(e);
+	}
+
+	private void continueStepping(final MIFrame atFrame, final MIStoppedEvent event, StepType steptype) {
+		step(fStepInToSelectionActiveOperation.getThreadContext(), steptype, false, new RequestMonitor(getExecutor(), null) {
+			@Override
+			protected void handleFailure() {
+				// log error
+				if (getStatus() != null) {
+					GdbPlugin.getDefault().getLog().log(getStatus());
+				}
+
+				stopStepIntoSelection(event);
+			}
+		});
+	}
+
+	private void missedSelectedTarget() {
+		final String functionName = fStepInToSelectionActiveOperation.getTargetFunctionDeclaration().getElementName();
+		IStatus status = new Status(IStatus.INFO, GdbPlugin.PLUGIN_ID, IGdbDebugConstants.STATUS_HANDLER_CODE, Messages.StepIntoSelection_1 + "\n" + NLS.bind(Messages.StepIntoSelection_Execution_did_not_enter_1, functionName), null); //$NON-NLS-1$
+		IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
+		if (statusHandler != null) {
+			try {
+				statusHandler.handleStatus(status, null);
+			} catch (CoreException ex) {
+				GdbPlugin.getDefault().getLog().log(ex.getStatus());
+			}
+		}
+	}
+
+	private boolean runToLineContinue(final MIStoppedEvent e) {
+		// First check if it is the right thread that stopped
+		IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);
+		if (fRunToLineActiveOperation.getThreadContext().equals(threadDmc)) {
+			int bpId = 0;
+			if (e instanceof MIBreakpointHitEvent) {
+				bpId = ((MIBreakpointHitEvent) e).getNumber();
+			}
+
+			String fileLocation = e.getFrame().getFile() + ":" + e.getFrame().getLine(); //$NON-NLS-1$
+			String addrLocation = e.getFrame().getAddress();
+
+			// Here we check three different things to see if we are stopped at the right place
+			// 1- The actual location in the file.  But this does not work for breakpoints that
+			//    were set on non-executable lines
+			// 2- The address where the breakpoint was set.  But this does not work for breakpoints
+			//    that have multiple addresses (GDB returns <MULTIPLE>.)  I think that is for multi-process
+			// 3- The breakpoint id that was hit.  But this does not work if another breakpoint
+			//    was also set on the same line because GDB may return that breakpoint as being hit.
+			//
+			// So this works for the large majority of cases.  The case that won't work is when the user
+			// does a runToLine to a line that is non-executable AND has another breakpoint AND
+			// has multiple addresses for the breakpoint.  I'm mean, come on!
+			if (fileLocation.equals(fRunToLineActiveOperation.getFileLocation()) || addrLocation.equals(fRunToLineActiveOperation.getAddrLocation())
+					|| bpId == fRunToLineActiveOperation.getBreakointId()) {
+				// We stopped at the right place. All is well.
+			} else {
+				// The right thread stopped but not at the right place yet
+				if (fRunToLineActiveOperation.shouldSkipBreakpoints() && e instanceof MIBreakpointHitEvent) {
+					fConnection.queueCommand(fCommandFactory.createMIExecContinue(fRunToLineActiveOperation.getThreadContext()), new DataRequestMonitor<MIInfo>(getExecutor(), null));
+
+					// Continue i.e. Don't send the stop event since we are
+					// resuming again.
+					return true;
+				} else {
+					// Stopped for any other reasons.  Just remove our temporary one
+					// since we don't want it to hit later
+					//
+					// Note that in Non-stop, we don't cancel a run-to-line when a new
+					// breakpoint is inserted.  This is because the new breakpoint could
+					// be for another thread altogether and should not affect the current thread.
+					IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(), IBreakpointsTargetDMContext.class);
+
+					fConnection.queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new int[] { fRunToLineActiveOperation.getBreakointId() }), new DataRequestMonitor<MIInfo>(getExecutor(), null));
+					fRunToLineActiveOperation = null;
+				}
+			}
+		}
+
+		// Run to line completed
+		fRunToLineActiveOperation = null;
+
+		// send the stop event
+		broadcastStop(e);
+		return false;
+	}
+
+	private boolean sameSignature(MIFrame currentFrame) {
+		String currentFunctionName = currentFrame.getFunction();
+		String targetFunctionName = fStepInToSelectionActiveOperation.getTargetFunctionSignature();
+			
+		if (!sameNumberOfArgumets(currentFrame)) {
+			return false;
+		}
+		
+		// Simplified validation
+		if (currentFunctionName.equals(targetFunctionName)) {
+			return true;				
+		}
+
+		// Check if the last segment of the function name match
+		String[] currentFunctTokens = currentFunctionName.split(cppSep);
+		String[] targetFunctTokens = targetFunctionName.split(cppSep);
+		if (currentFunctTokens.length > 1) {
+			currentFunctionName = currentFunctTokens[currentFunctTokens.length - 1];
+		}
+		
+		if (targetFunctTokens.length > 1 ) {
+			targetFunctionName = targetFunctTokens[targetFunctTokens.length - 1];
+		}
+
+		if (currentFunctionName.equals(targetFunctionName)) {
+			// Function name matches and parent name does not. One of the parents may be a super class
+			// Simple enough for initial implementation.
+			return true;
+		}
+		// TODO: A more detailed check can be implemented in order to cover for parameter types return types, etc..
+		// This with the intention to avoid early stops, however this implementation need to be tested extensively in
+		// order to avoid missing the target due to unexpected formatting mismatch between declaration and GDB representation.
+
+		return false;
+	}
+
+	private boolean sameNumberOfArgumets(MIFrame currentFrame) {
+		int argSizeAdjustment = 0;
+		MIArg[] args = currentFrame.getArgs();
+		if (args.length > 0) {
+			//GDB may add the argument "this" e.g. in c++ programs
+			if (args[0].getName().equals("this")) { //$NON-NLS-1$
+				argSizeAdjustment = 1;
+			}
+		}
+		
+		return ((currentFrame.getArgs().length-argSizeAdjustment) == fStepInToSelectionActiveOperation.getTargetFunctionDeclaration().getNumberOfParameters());
+	}
+	
     /**
      * @nooverride This method is not intended to be re-implemented or extended by clients.
      * @noreference This method is not intended to be referenced by clients.
@@ -2209,4 +2617,56 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     	}
     	return execDmcForOperationList;
     }
+
+	/**
+	 * @since 4.2
+	 */
+	@Override
+	public void stepIntoSelection(final IExecutionDMContext context, String sourceFile, final int lineNumber, final boolean skipBreakpoints, final IFunctionDeclaration selectedFunction, final RequestMonitor rm) {
+		determineDebuggerPath(context, sourceFile, new ImmediateDataRequestMonitor<String>(rm) {
+			@Override
+			protected void handleSuccess() {
+				stepIntoLocation(context, lineNumber, getData() + ":" + Integer.toString(lineNumber), skipBreakpoints, selectedFunction, rm); //$NON-NLS-1$
+			}
+		});
+	}
+	
+	/**
+	 * Help method used when the stopped event has not been broadcasted e.g. in the middle of step into selection
+	 * 
+	 * @param dmc
+	 * @param rm
+	 */
+	private void getStackDepth(final IDMContext dmc, final DataRequestMonitor<Integer> rm) {
+		final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionDMContext.class);
+		if (execDmc != null) {
+			ICommand<MIStackInfoDepthInfo> depthCommand = fCommandFactory.createMIStackInfoDepth(execDmc);
+			;
+
+			fConnection.queueCommand(depthCommand, new DataRequestMonitor<MIStackInfoDepthInfo>(getExecutor(), rm) {
+				@Override
+				protected void handleSuccess() {
+					rm.setData(getData().getDepth());
+					rm.done();
+				}
+
+				@Override
+				protected void handleError() {
+					// when visualizing trace data with GDB 7.2, the command
+					// -stack-info-depth will return an error if we ask for any level
+					// that GDB does not know about. We would have to iteratively
+					// try different depths until we found the deepest that succeeds.
+					// That is too much of a hack, especially since GDB 7.3 answers correctly.
+					// For 7.2, we can say we have one stack
+					// But flag the error
+					rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+					rm.setData(1);
+					rm.done();
+				}
+			});
+		} else {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
+			rm.done();
+		}
+	}
 }

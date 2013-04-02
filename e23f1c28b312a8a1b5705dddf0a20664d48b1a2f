@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//0Ps\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-02T19:14:27Z",
+      "side": 1,
+      "message": "No, I didn\u0027t try it with multi-process, or cross-debug directly from eclipse.  I just tried the \"print sizeof(void*)\" from the gdb command-line in those different scenarios.  Let me know if there is something you prefer I try myself.",
+      "parentUuid": "AABOPX//0P8\u003d",
+      "revId": "e23f1c28b312a8a1b5705dddf0a20664d48b1a2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//0Xs\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 1

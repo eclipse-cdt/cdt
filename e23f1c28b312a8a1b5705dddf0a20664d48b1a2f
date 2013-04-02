@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//0P8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-02T18:55:40Z",
+      "side": 1,
+      "message": "I think I have a solution that would work with memory spaces. The only problem is that I would need to create an IMemorySpaceDMContext in GDBMemory but for some reason MemorySpaceDMContext is defined in GdbMemoryBlock. I\u0027ll post the new version of the patch soon.\nBTW, did you try the current patch with your multiprocess example?",
+      "parentUuid": "AABOPX//0Qs\u003d",
+      "revId": "e23f1c28b312a8a1b5705dddf0a20664d48b1a2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//0Xs\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 1

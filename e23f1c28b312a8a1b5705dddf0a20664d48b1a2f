@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//0Rk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-02T17:13:35Z",
+      "side": 1,
+      "message": "You\u0027re right. IMemoryBlockExtension.getAddressSize() is called from some dialogs. At that point the size is already in the cache but it\u0027s not a good idea to leave as it it is now.\nI considered something similar to your suggestion. The reason I didn\u0027t implement it is the possibility of having multiple memory spaces in one process. Is it possible that different spaces have different address sizes?",
+      "parentUuid": "AABOPX//0XE\u003d",
+      "revId": "e23f1c28b312a8a1b5705dddf0a20664d48b1a2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//0Xs\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 1

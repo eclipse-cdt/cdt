@@ -109,6 +109,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//0Og\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-02T20:02:41Z",
+      "side": 1,
+      "message": "Sure, I can try this for you.  I guess I should wait for a new version of the code?",
+      "parentUuid": "AABOPX//0PY\u003d",
+      "revId": "e23f1c28b312a8a1b5705dddf0a20664d48b1a2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//0Xs\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 1

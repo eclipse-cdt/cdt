@@ -11,9 +11,6 @@
 <body>
 	<div role="main">
 		<h1>Source Menu actions</h1>
-		<p>
-			<img src="../images/cdt_menu_source.png" alt="Selecting Source Menu">
-		</p>
 		<table border="1" cellspacing="0" cellpadding="3">
 			<thead>
 				<tr>
@@ -25,47 +22,48 @@
 			<tbody>
 				<tr>
 					<td class="menu_name" headers="name">Toggle Comment</td>
-					<td headers="function">Add or remove single-line, C++-style,
+					<td headers="function">Adds or removes single-line, C++-style,
 						comment markers on each line in the selection, or the line
 						containing the cursor, if there is no selection</td>
 					<td headers="keyboard">Ctrl+/</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Add Block Comment</td>
-					<td headers="function">Add a block comment around the
+					<td headers="function">Adds a block comment around the
 						selection</td>
 					<td headers="keyboard">Ctrl+Shift+/</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Remove Block Comment</td>
-					<td headers="function">If the selection contains one or more
-						block comments, remove them</td>
+					<td headers="function">Removes the comment markers around any
+						block comments in the selection</td>
 					<td headers="keyboard">Ctrl+Shift+\</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Shift Right</td>
-					<td headers="function">Increase indentation on each line in
+					<td headers="function">Increases indentation on each line in
 						the selection, or the line containing the cursor, if there is no
 						selection</td>
 					<td headers="keyboard">&nbsp;</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Shift Left</td>
-					<td headers="function">Decrease indentation on each line in
+					<td headers="function">Decreases indentation on each line in
 						the selection, or the line containing the cursor, if there is no
 						selection</td>
 					<td headers="keyboard">Shift+Tab</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Correct Indentation</td>
-					<td headers="function">Apply simple indentation rules to the
+					<td headers="function">Applies simple indentation rules to the
 						current selection, or the line containing the cursor, if there is
 						no selection</td>
 					<td headers="keyboard">Ctrl+I</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Format</td>
-					<td headers="function">Apply the full <a class="command-link"
+					<td headers="function">Applies the full <a
+						class="command-link"
 						href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage)")'>
 							<img src="PLUGINS_ROOT/org.eclipse.help/command_link.png"
 							alt="command link" />C/C++ &gt; Code Style &gt; Formatter
@@ -76,24 +74,30 @@
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Add Include</td>
-					<td headers="function">Add an include statement and,
+					<td headers="function">Adds an include statement and,
 						optionally, a "using" declaration for the currently selected name</td>
 					<td headers="keyboard">Ctrl+Shift+N</td>
 				</tr>
 				<tr>
+					<td class="menu_name" headers="name">Organize Includes</td>
+					<td headers="function">Adds all the required includes for the
+						selected file</td>
+					<td headers="keyboard">&nbsp;</td>
+				</tr>
+				<tr>
 					<td class="menu_name" headers="name">Sort Lines</td>
-					<td headers="function">Sort the selected lines</td>
+					<td headers="function">Sorts the selected lines</td>
 					<td headers="keyboard">Ctrl+Alt+S</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Implement Method...</td>
-					<td headers="function">Open the Implement Method dialog</td>
+					<td headers="function">Opens the Implement Method dialog</td>
 					<td headers="keyboard">&nbsp;</td>
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Generate Getters and
 						Setters...</td>
-					<td headers="function">Open the Generate Getters and Setters
+					<td headers="function">Opens the Generate Getters and Setters
 						dialog that allows you to create Getters and Setters for fields in
 						the current type. Available on fields and types or on a text
 						selection inside a type</td>
@@ -101,8 +105,8 @@
 				</tr>
 				<tr>
 					<td class="menu_name" headers="name">Surround With</td>
-					<td headers="function">Surround the selected statements with a
-						code template (as defined in <a class="command-link"
+					<td headers="function">Surrounds the selected statements with
+						a code template (as defined in <a class="command-link"
 						href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferences.TemplatePreferencePage)")'>
 							<img src="PLUGINS_ROOT/org.eclipse.help/command_link.png"
 							alt="command link" />C/C++ &gt; Editor &gt; Templates

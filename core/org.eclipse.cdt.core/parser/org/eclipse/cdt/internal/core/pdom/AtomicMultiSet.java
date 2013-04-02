@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	  Sergey Prigogin (Google) - initial API and implementation
+ * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -21,8 +21,8 @@ public class AtomicMultiSet<T> {
 	private final HashMap<T, Integer> map = new HashMap<T, Integer>();
 
 	/**
-	 * Adds object to the set if it was not present, or increments its reference count
-	 * otherwise.
+	 * Adds object to the set if it was not present, or increments its reference count otherwise.
+	 *
 	 * @param object The object to add to the set.
 	 * @return Reference count of the object after the operation.
 	 */
@@ -38,11 +38,12 @@ public class AtomicMultiSet<T> {
 	}
 
 	/**
-	 * Decrements reference count of the object in the set and removes the object if its
-	 * reference count reaches zero.
+	 * Decrements reference count of the object in the set and removes the object if its reference
+	 * count reaches zero.
+	 *
 	 * @param object The object to remove from the set.
 	 * @return Reference count of the object after the operation, or -1 if the object was not
-	 * present in the set.
+	 *     present in the set.
 	 */
 	public synchronized int remove(T object) {
 		Integer count = map.remove(object);

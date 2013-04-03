@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Marc-Andre Laperle and others.
+ * Copyright (c) 2011, 2013 Marc-Andre Laperle and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Marc-Andre Laperle - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.internal.checkers;
 
@@ -20,15 +21,11 @@ public class ProblemBindingCheckerTest extends CheckerTestCase {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.codan.core.test.CodanTestCase#setUp()
-	 */
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		enableProblems(ProblemBindingChecker.ERR_ID_AmbiguousProblem, ProblemBindingChecker.ERR_ID_Candidates,
+		enableProblems(
+				ProblemBindingChecker.ERR_ID_AmbiguousProblem, ProblemBindingChecker.ERR_ID_Candidates,
 				ProblemBindingChecker.ERR_ID_CircularReferenceProblem, ProblemBindingChecker.ERR_ID_FieldResolutionProblem,
 				ProblemBindingChecker.ERR_ID_FunctionResolutionProblem, ProblemBindingChecker.ERR_ID_InvalidArguments,
 				ProblemBindingChecker.ERR_ID_InvalidTemplateArgumentsProblem, ProblemBindingChecker.ERR_ID_LabelStatementNotFoundProblem,
@@ -42,9 +39,21 @@ public class ProblemBindingCheckerTest extends CheckerTestCase {
 	//     struct X {} x;
 	//     fun(x.y);
 	// }
-	public void testBug338683FieldInFunctionCall() {
+	public void testFieldInFunctionCall_338683() {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3, ProblemBindingChecker.ERR_ID_FieldResolutionProblem);
+	}
+
+	//	struct A {
+	//	  A(int x, int y);
+	//	};
+	//
+	//	void test() {
+	//	  A a("hi", 1, 2);
+	//	}
+	public void testImplicitConstructorCall_404774() {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(6, ProblemBindingChecker.ERR_ID_InvalidArguments);
 	}
 
 	// int main () {
@@ -61,7 +70,7 @@ public class ProblemBindingCheckerTest extends CheckerTestCase {
 	//                   x.y,
 	//                   a.b()))));
 	// }
-	public void testBug338683VariousFieldMethodCombinations() {
+	public void testVariousFieldMethodCombinations_338683() {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3, ProblemBindingChecker.ERR_ID_MethodResolutionProblem);
 		checkErrorLine(4, ProblemBindingChecker.ERR_ID_MethodResolutionProblem);
@@ -81,7 +90,7 @@ public class ProblemBindingCheckerTest extends CheckerTestCase {
 	//   MACRO(foo());
 	//   return 0;
 	// }
-	public void testBug341089DontUnderlineWholeMacro() {
+	public void testDontUnderlineWholeMacro_341089() {
 		loadCodeAndRun(getAboveComment());
 		IMarker marker = checkErrorLine(3, ProblemBindingChecker.ERR_ID_FunctionResolutionProblem);
 		assertFalse(marker.getAttribute(IMarker.MESSAGE, "").contains("MACRO"));  //$NON-NLS-1$//$NON-NLS-2$

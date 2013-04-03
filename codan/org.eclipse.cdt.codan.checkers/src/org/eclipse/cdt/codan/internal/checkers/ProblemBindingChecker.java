@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Marc-Andre Laperle and others.
+ * Copyright (c) 2010, 2013 Marc-Andre Laperle and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Marc-Andre Laperle - Initial API and implementation
  *     Tomasz Wesolowski  - Extension for fixes
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -25,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -32,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -74,6 +77,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 			ast.accept(new ASTVisitor() {
 				{
 					shouldVisitNames = true;
+					shouldVisitImplicitNames = true;
 				}
 
 				@Override
@@ -82,7 +86,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 						IBinding binding = name.resolveBinding();
 						if (binding instanceof IProblemBinding) {
 							IASTNode parentNode = name.getParent();
-							// Don't report multiple problems with qualified names
+							// Don't report multiple problems with qualified names.
 							if (parentNode instanceof ICPPASTQualifiedName) {
 								if (((ICPPASTQualifiedName) parentNode).resolveBinding() instanceof IProblemBinding)
 									return PROCESS_CONTINUE;
@@ -137,11 +141,11 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 								return PROCESS_CONTINUE;
 							}
 							// From this point, we'll deal only with NAME_NOT_FOUND problems. 
-							// If it's something else continue because we don't want to give bad messages
+							// If it's something else continue because we don't want to give bad messages.
 							if (id != IProblemBinding.SEMANTIC_NAME_NOT_FOUND) {
 								return PROCESS_CONTINUE;
 							}
-							if (isFunctionCall(parentNode)) {
+							if (isFunctionCall(name, parentNode)) {
 								handleFunctionProblem(name, problemBinding, contextFlagsString);
 							} else if (parentNode instanceof IASTFieldReference) {
 								handleMemberProblem(name, parentNode, problemBinding, contextFlagsString);
@@ -227,14 +231,16 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 		reportProblem(ERR_ID_VariableResolutionProblem, name, name.getBinding().getName(), contextFlagsString, name.getRawSignature());
 	}
 
-	private boolean isFunctionCall(IASTNode parentNode) {
+	private boolean isFunctionCall(IASTName name, IASTNode parentNode) {
 		if (parentNode instanceof IASTIdExpression) {
 			IASTIdExpression expression = (IASTIdExpression) parentNode;
 			IASTNode parentParentNode = expression.getParent();
 			if (parentParentNode instanceof IASTFunctionCallExpression
-					&& expression.getPropertyInParent().getName().equals(IASTFunctionCallExpression.FUNCTION_NAME.getName())) {
+					&& expression.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
 				return true;
 			}
+		} else if (parentNode instanceof ICPPASTDeclarator && name instanceof IASTImplicitName) {
+			return true;
 		}
 		return false;
 	}
@@ -280,8 +286,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 	}
 
 	/**
-	 * Returns a string of the function signature : returntype + function +
-	 * parameters
+	 * Returns a string of the function signature : returntype + function + parameters
 	 * 
 	 * @param functionBinding The function to get the signature
 	 * @return A string of the function signature

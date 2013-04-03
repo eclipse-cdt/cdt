@@ -5880,7 +5880,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//
 	//	template <class Container>
 	//	auto begin1(Container cont) -> decltype(cont.begin());
-	//	
+	//
 	//	template <class Container>
 	//	auto begin2(Container& cont) -> decltype(cont.begin());
 	//
@@ -5892,7 +5892,7 @@ public class AST2TemplateTests extends AST2TestBase {
 		helper.assertVariableType("x1", CommonTypes.pointerToInt);
 		helper.assertVariableType("x2", CommonTypes.pointerToInt);
 	}
-	
+
 	//	struct vector {
 	//	    int* begin();
 	//	    const int* begin() const;
@@ -5912,7 +5912,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testResolvingAutoTypeWithDependentExpression_402409b() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	void foo(int, int);
 	//	template <typename... Args> void bar(Args... args) {
 	//	    foo(1,2,args...);
@@ -6212,7 +6212,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testPointerToMemberAsDependentExpression_391001() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
-	
+
 	//	template<typename>
 	//	struct A {
 	//	    char x;
@@ -6999,11 +6999,11 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testSFINAEInDefaultArgument() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	typedef char (&no_tag)[1];
 	//	typedef char (&yes_tag)[2];
 	//
-	//	template <typename T> 
+	//	template <typename T>
 	//	struct type_wrapper {};
 	//
 	//	template <typename T>
@@ -7024,7 +7024,7 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertNotNull(val);
 		assertEquals(0 /* false */, val.longValue());
 	}
-	
+
 	//	template <typename>
 	//	struct M {
 	//	    template <typename... Args>
@@ -7140,7 +7140,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	}
 
 	//	template <int...> struct A {};
-	//	template <int... I> void foo(A<I...>); 
+	//	template <int... I> void foo(A<I...>);
 	//	int main() {
 	//		foo(A<0>());
 	//	}
@@ -7160,10 +7160,10 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	struct contains_foo {
 	//	    static const bool value = ice_or<is_foo<Args>::value...>::value;
 	//	};
-	//	template <bool> 
+	//	template <bool>
 	//	struct meta;
 	//	struct S { void bar(); };
-	//	template <> 
+	//	template <>
 	//	struct meta<false> {
 	//	    typedef S type;
 	//	};
@@ -7204,7 +7204,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testClassTemplateSpecializationPartialOrdering_398044b() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <typename T>
 	//	struct waldo {
 	//	    typedef int type;
@@ -7217,7 +7217,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testPartialSpecializationForVarargFunctionType_402807() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <typename>
 	//	struct meta {
 	//	    static const bool value = 1;
@@ -7241,7 +7241,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testRegression_399142() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <class T>
 	//	struct A {
 	//	    struct impl {
@@ -7257,7 +7257,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testDependentExpressionInvolvingFieldInNestedClass_399362() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//    template <typename _Tp>
 	//    struct remove_reference {
 	//        typedef _Tp type;
@@ -7357,7 +7357,7 @@ public class AST2TemplateTests extends AST2TestBase {
     public void testNameLookupInDependentExpression_399829b() throws Exception {
         parseAndCheckBindings();
     }
-    
+
 	//    template <bool> int assertion_failed(void*);
 	//    struct assert_ {};
 	//    assert_ arg;
@@ -7402,7 +7402,6 @@ public class AST2TemplateTests extends AST2TestBase {
 		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
 		helper.assertProblem("bind(s, 0, foo)", "bind");
     }
-	
 
 	//	template<typename T>
 	//	T forward(T);
@@ -7432,7 +7431,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testVariadicNonTypeTemplateParameter_401142() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <bool... Args>
 	//	struct ice_or;
 	//	template <>
@@ -7454,7 +7453,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testVariadicNonTypeTemplateParameter_401400() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <typename... Args>
 	//	struct foo {
 	//		static constexpr int i = sizeof...(Args);
@@ -7475,7 +7474,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	struct make_indices_imp<Sp, tuple_indices<Indices...>, Ep> {
 	//	    typedef typename make_indices_imp<Sp + 1, tuple_indices<Indices..., Sp>, Ep>::type type;
 	//	};
-	//	template <int Ep, int ...Indices> 
+	//	template <int Ep, int ...Indices>
 	//	struct make_indices_imp<Ep, tuple_indices<Indices...>, Ep> {
 	//	    typedef tuple_indices<Indices...> type;
 	//	};
@@ -7492,7 +7491,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testVariadicTemplatesNPE_401743() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <typename T>
 	//	struct A {};
 	//
@@ -7512,7 +7511,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testRegression_401743a() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <typename T>
 	//	struct A {};
 	//
@@ -7534,7 +7533,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testRegression_401743b() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <typename T>
 	//	void foo(T t) {
 	//	    bar(t);
@@ -7542,7 +7541,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testUnqualifiedFunctionCallInTemplate_402498a() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <typename T>
 	//	auto foo(T t) -> decltype(bar(t));
 	//
@@ -7557,7 +7556,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testUnqualifiedFunctionCallInTemplate_402498b() throws Exception {
 		new BindingAssertionHelper(getAboveComment(), true).assertVariableType("x", CommonTypes.int_);
 	}
-	
+
 	//	template <typename T>
 	//	auto foo(T t) -> decltype(bar(t));
 	//
@@ -7579,9 +7578,9 @@ public class AST2TemplateTests extends AST2TestBase {
 		// That's another bug for another day.
 		assertFalse(x.getType().isSameType(CommonTypes.int_));
 	}
-	
+
 	//	template <typename>
-	//	struct no_type {}; 
+	//	struct no_type {};
 	//
 	//	struct type {};
 	//

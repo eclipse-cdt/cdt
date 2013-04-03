@@ -1276,7 +1276,7 @@ public class AST2CPPTests extends AST2TestBase {
 		assertInstances(collector, x2, 1);
 	}
 
-	// class A { };
+	// class A {};
 	public void testImplicitConstructors() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
 
@@ -1559,6 +1559,18 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals(1, implicitNames.length);
 		IBinding ctor2 = implicitNames[0].getBinding();
 		assertSame(ctor, ctor2);
+	}
+
+	//	struct A {
+	//	  A(int x, int y);
+	//	};
+	//
+	//	void test() {
+	//	  A a("hi", 5, 10);
+	//	}
+	public void testInvalidImplicitConstructorCall() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertImplicitName("a", 1, IProblemBinding.class);
 	}
 
 	//	struct A {
@@ -8391,9 +8403,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		fH({1});    // H(G(1))
 	//	}
 	public void testListInitialization_302412f() throws Exception {
-		IProblemBinding problem;
-		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= getAssertionHelper();
 		bh.assertProblem("f({1,1})", 1);
 		bh.assertImplicitName("F({1,1})", 1, ICPPConstructor.class);
 		bh.assertNonProblem("fF({1,1})", 2);
@@ -8402,13 +8412,9 @@ public class AST2CPPTests extends AST2TestBase {
 		bh.assertNonProblem("fG({1})", 2);
 
 		bh.assertImplicitName("H(1)", 1, ICPPConstructor.class);
-		bh.assertNoImplicitName("H({1})", 1);
-		// TODO(nathanridge): Perhaps we should store implicit names even if they
-		// resolve to ProblemBindings. Then we can do the stronger check in the
-		// 3 commented lines below.
-		//IASTImplicitName n= bh.assertImplicitName("H({1})", 1, IProblemBinding.class);
-		//problem= (IProblemBinding) n.resolveBinding();
-		//assertEquals(IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, problem.getID());
+		IASTImplicitName n= bh.assertImplicitName("H({1})", 1, IProblemBinding.class);
+		IProblemBinding problem= (IProblemBinding) n.resolveBinding();
+		assertEquals(IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, problem.getID());
 		bh.assertProblem("fH(1)", 2);
 		bh.assertNonProblem("fH({1})", 2);
 	}

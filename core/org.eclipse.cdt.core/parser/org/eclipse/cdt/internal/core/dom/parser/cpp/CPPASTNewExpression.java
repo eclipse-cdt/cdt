@@ -28,10 +28,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
@@ -175,7 +175,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 			}
 
 			CPPASTImplicitName constructorName = null;
-			ICPPConstructor constructor = CPPSemantics.findImplicitlyCalledConstructor(this);
+			IBinding constructor = CPPSemantics.findImplicitlyCalledConstructor(this);
 			if (constructor != null) {
 				constructorName = new CPPASTImplicitName(constructor.getNameCharArray(), this);
 				constructorName.setBinding(constructor);

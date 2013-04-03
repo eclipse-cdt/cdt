@@ -241,7 +241,7 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 	@Override
 	public IASTImplicitName[] getImplicitNames() {
 		if (implicitNames == null) {
-			ICPPConstructor ctor = CPPSemantics.findImplicitlyCalledConstructor(this);
+			IBinding ctor = CPPSemantics.findImplicitlyCalledConstructor(this);
 			if (ctor == null) {
 				implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			} else {

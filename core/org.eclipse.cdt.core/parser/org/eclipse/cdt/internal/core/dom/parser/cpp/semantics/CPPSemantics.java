@@ -3074,9 +3074,9 @@ public class CPPSemantics {
     }
 
     /**
-     * Returns constructor called by a declarator, or <code>null</code> if no constructor is called.
+     * Returns constructor called by a declarator, or {@code null} if no constructor is called.
      */
-    public static ICPPConstructor findImplicitlyCalledConstructor(final ICPPASTDeclarator declarator) {
+    public static IBinding findImplicitlyCalledConstructor(final ICPPASTDeclarator declarator) {
     	if (declarator.getNestedDeclarator() != null)
     		return null;
     	IASTDeclarator dtor= ASTQueries.findOutermostDeclarator(declarator);
@@ -3100,17 +3100,17 @@ public class CPPSemantics {
 
     /**
      * Returns constructor called by a class member initializer in a constructor initializer chain.
-     * Returns <code>null</code> if no constructor is called.
+     * Returns {@code null} if no constructor is called.
      */
-    public static ICPPConstructor findImplicitlyCalledConstructor(ICPPASTConstructorChainInitializer initializer) {
+    public static IBinding findImplicitlyCalledConstructor(ICPPASTConstructorChainInitializer initializer) {
     	return findImplicitlyCalledConstructor(initializer.getMemberInitializerId(), initializer.getInitializer());
     }
 
     /**
-     * Returns constructor called by a variable declarator or an initializer in a constructor initializer
-     * chain. Returns <code>null</code> if no constructor is called.
+     * Returns constructor called by a variable declarator or an initializer in a constructor
+     * initializer chain. Returns {@code null} if no constructor is called.
      */
-    private static ICPPConstructor findImplicitlyCalledConstructor(IASTName name, IASTInitializer initializer) {
+    private static IBinding findImplicitlyCalledConstructor(IASTName name, IASTInitializer initializer) {
     	IBinding binding = name.resolveBinding();
     	if (!(binding instanceof ICPPVariable))
     		return null;
@@ -3125,7 +3125,7 @@ public class CPPSemantics {
     	return findImplicitlyCalledConstructor((ICPPClassType) type, initializer, name);
     }
     
-	public static ICPPConstructor findImplicitlyCalledConstructor(ICPPASTNewExpression expr) {
+	public static IBinding findImplicitlyCalledConstructor(ICPPASTNewExpression expr) {
 		IType type = getNestedType(expr.getExpressionType(), TDEF | REF | CVTYPE);
 		if (!(type instanceof IPointerType))
 			return null;
@@ -3137,7 +3137,7 @@ public class CPPSemantics {
 		return null;
 	}
 
-    private static ICPPConstructor findImplicitlyCalledConstructor(ICPPClassType type, IASTInitializer initializer,
+    private static IBinding findImplicitlyCalledConstructor(ICPPClassType type, IASTInitializer initializer,
     		IASTNode typeId) {
     	try {
 	    	if (initializer instanceof IASTEqualsInitializer) {
@@ -3157,7 +3157,7 @@ public class CPPSemantics {
 	    			if (c.converts()) {
 						ICPPFunction f = c.getUserDefinedConversion();
 						if (f instanceof ICPPConstructor)
-							return (ICPPConstructor) f;
+							return f;
 						// If a conversion is used, the constructor is elided.
 	    			}
 	    		}
@@ -3169,7 +3169,7 @@ public class CPPSemantics {
 	    			if (c.converts()) {
 	    				ICPPFunction f = c.getUserDefinedConversion();
 	    				if (f instanceof ICPPConstructor)
-	    					return (ICPPConstructor) f;
+	    					return f;
 	    			}
 	    		}
 	    	} else if (initializer instanceof ICPPASTConstructorInitializer) {
@@ -3190,7 +3190,7 @@ public class CPPSemantics {
     	return null;
     }
 
-	private static ICPPConstructor findImplicitlyCalledConstructor(ICPPClassType classType,
+	private static IBinding findImplicitlyCalledConstructor(ICPPClassType classType,
 			ICPPASTConstructorInitializer initializer, IASTNode typeId) {
 		final IASTInitializerClause[] arguments = initializer.getArguments();
 		CPPASTName astName = new CPPASTName();
@@ -3204,14 +3204,11 @@ public class CPPSemantics {
 		data.setFunctionArguments(false, arguments);
 		data.qualified = true;
 		data.foundItems = ClassTypeHelper.getConstructors(classType, typeId);
-		IBinding binding;
 		try {
-			binding = resolveAmbiguities(data);
-			if (binding instanceof ICPPConstructor)
-				return (ICPPConstructor) binding;
+			return resolveAmbiguities(data);
 		} catch (DOMException e) {
+			return null;
 		}
-		return null;
 	}
 
     public static ICPPFunction findImplicitlyCalledDestructor(ICPPASTDeleteExpression expr) {

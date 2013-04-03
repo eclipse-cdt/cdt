@@ -28,11 +28,11 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
@@ -305,7 +305,7 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
 	@Override
 	public IASTImplicitName[] getImplicitNames() {
 		if (implicitNames == null) {
-			ICPPConstructor ctor = CPPSemantics.findImplicitlyCalledConstructor(this);
+			IBinding ctor = CPPSemantics.findImplicitlyCalledConstructor(this);
 			if (ctor == null) {
 				implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			} else {

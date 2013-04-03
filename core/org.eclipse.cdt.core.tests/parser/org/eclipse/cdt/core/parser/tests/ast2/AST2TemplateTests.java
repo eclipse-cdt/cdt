@@ -7599,4 +7599,15 @@ public class AST2TemplateTests extends AST2TestBase {
 		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
 		helper.assertVariableType("b", CommonTypes.int_);
 	}
+
+	//	template<typename T> struct A {
+	//	  A(int c);
+	//	};
+	//
+	//	struct B : public A<int> {
+	//	  B(int c) : A(c) {}
+	//	};
+	public void testTemplateBaseClassConstructorCall_402602() throws Exception {
+		parseAndCheckBindings();
+	}
 }

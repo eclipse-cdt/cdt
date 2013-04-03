@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//0P0\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/reference/cdt_u_m_source.htm",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-04-03T01:46:25Z",
+      "side": 1,
+      "message": "Please use the descriptive form (Add -\u003e Adds, Sort -\u003e Sorts...)",
+      "revId": "dbdadc0221b302591e74335878e7a8f209c9ca44",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -37,6 +37,7 @@ public class MIGDBSetSolibSearchPath extends MIGDBSet {
 		setParameters(p);
 	}
 
+	/** @since 7.3 */
 	protected String resolve(String path) {
 		try {
 			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();

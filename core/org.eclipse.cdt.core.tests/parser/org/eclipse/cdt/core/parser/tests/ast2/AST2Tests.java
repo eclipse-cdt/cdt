@@ -2790,11 +2790,10 @@ public class AST2Tests extends AST2TestBase {
 	}
 
 	public void testProblems() throws Exception {
-
 		IASTTranslationUnit tu = parse(
 				"    a += ;", C, true, false); //$NON-NLS-1$
 		IASTProblem[] ps = CVisitor.getProblems(tu);
-		assertEquals(ps.length, 1);
+		assertEquals(1, ps.length);
 		ps[0].getMessage();
 	}
 

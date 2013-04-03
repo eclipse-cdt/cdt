@@ -17,8 +17,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 
 /**
- * For searching ast-nodes by offset and length, instances of this class can be used to
- * determine whether a node matches or not.
+ * For searching ast-nodes by offset and length, instances of this class can be used to determine
+ * whether a node matches or not.
  *
  * @since 5.0
  */
@@ -35,7 +35,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 	private int fBestEndOffset;
 	private T fBestNode;
 	private boolean fSearchInExpansion;
-	private boolean fZeroToLeft= false;
+	private boolean fZeroToLeft;
 
 	public ASTNodeSpecification(Relation relation, Class<T> clazz, int fileOffset, int fileLength) {
 		fRelation= relation;
@@ -80,7 +80,8 @@ public class ASTNodeSpecification<T extends IASTNode> {
 
 	@SuppressWarnings("unchecked")
 	public void visit(ASTNode astNode) {
-		if (isAcceptableNode(astNode) && isMatchingRange(astNode.getOffset(), astNode.getLength(), fSeqNumber, fSeqEndNumber)) {
+		if (isAcceptableNode(astNode) &&
+				isMatchingRange(astNode.getOffset(), astNode.getLength(), fSeqNumber, fSeqEndNumber)) {
 			IASTFileLocation loc= astNode.getFileLocation();
 			if (loc != null) {
 				storeIfBest(loc, (T) astNode);
@@ -98,8 +99,8 @@ public class ASTNodeSpecification<T extends IASTNode> {
 	}
 
 	private boolean isMatchingRange(int offset, int length, int selOffset, int selEndOffset) {
-		final int endOffset= offset+length;
-		switch(fRelation) {
+		final int endOffset= offset + length;
+		switch (fRelation) {
 		case EXACT_MATCH:
 			return selOffset == offset && selEndOffset == endOffset;
 		case FIRST_CONTAINED:
@@ -134,8 +135,8 @@ public class ASTNodeSpecification<T extends IASTNode> {
 	 */
 	public boolean canContainMatches(ASTNode node) {
 		final int offset= node.getOffset();
-		final int endOffset= offset+node.getLength();
-		switch(fRelation) {
+		final int endOffset= offset + node.getLength();
+		switch (fRelation) {
 		case EXACT_MATCH:
 		case ENCLOSING:
 			return offset <= fSeqNumber && fSeqEndNumber <= endOffset;
@@ -158,7 +159,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 			if (isBetterMatch(offset, length, astNode)) {
 				fBestNode= astNode;
 				fBestOffset= offset;
-				fBestEndOffset= offset+length;
+				fBestEndOffset= offset + length;
 			}
 		}
 	}
@@ -172,7 +173,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 			return true;
 		}
 
-		final int endOffset= offset+length;
+		final int endOffset= offset + length;
 		switch(fRelation) {
 		case EXACT_MATCH:
 			return isParent(fBestNode, cand);
@@ -211,7 +212,8 @@ public class ASTNodeSpecification<T extends IASTNode> {
 	}
 
 	public IASTPreprocessorMacroExpansion findLeadingMacroExpansion(ASTNodeSelector nodeSelector) {
-		IASTPreprocessorMacroExpansion exp= nodeSelector.findEnclosingMacroExpansion(fZeroToLeft ? fFileOffset-1 : fFileOffset, 1);
+		IASTPreprocessorMacroExpansion exp=
+				nodeSelector.findEnclosingMacroExpansion(fZeroToLeft ? fFileOffset - 1 : fFileOffset, 1);
 		if (fRelation == Relation.ENCLOSING || fRelation == Relation.STRICTLY_ENCLOSING)
 			return exp;
 
@@ -219,7 +221,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 			IASTFileLocation loc= exp.getFileLocation();
 			if (loc != null) {
 				final int offset= loc.getNodeOffset();
-				final int endOffset= offset+loc.getNodeLength();
+				final int endOffset= offset + loc.getNodeLength();
 				if (offset == fFileOffset && endOffset <= fFileEndOffset)
 					return exp;
 			}
@@ -228,7 +230,8 @@ public class ASTNodeSpecification<T extends IASTNode> {
 	}
 
 	public IASTPreprocessorMacroExpansion findTrailingMacroExpansion(ASTNodeSelector nodeSelector) {
-		IASTPreprocessorMacroExpansion exp= nodeSelector.findEnclosingMacroExpansion(fFileEndOffset==fFileOffset && !fZeroToLeft ? fFileEndOffset : fFileEndOffset-1, 1);
+		IASTPreprocessorMacroExpansion exp=
+				nodeSelector.findEnclosingMacroExpansion(fFileEndOffset == fFileOffset && !fZeroToLeft ? fFileEndOffset : fFileEndOffset - 1, 1);
 		if (fRelation == Relation.ENCLOSING || fRelation == Relation.STRICTLY_ENCLOSING)
 			return exp;
 
@@ -236,7 +239,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 			IASTFileLocation loc= exp.getFileLocation();
 			if (loc != null) {
 				final int offset= loc.getNodeOffset();
-				final int endOffset= offset+loc.getNodeLength();
+				final int endOffset= offset + loc.getNodeLength();
 				if (endOffset == fFileEndOffset && offset >= fFileOffset)
 					return exp;
 			}

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -24,8 +24,8 @@ import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
  * @since 5.0
  */
 public class ASTNodeSelector implements IASTNodeSelector {
-	private ASTTranslationUnit fTu;
-	private ILocationResolver fLocationResolver;
+	private final ASTTranslationUnit fTu;
+	private final ILocationResolver fLocationResolver;
 	private String fFilePath;
 	private final boolean fIsValid;
 
@@ -46,14 +46,15 @@ public class ASTNodeSelector implements IASTNodeSelector {
 		return false;
 	}
 
-	private <T extends IASTNode> T findNode(int offsetInFile, int lengthInFile, Relation relation, Class<T> requiredClass) {
+	private <T extends IASTNode> T findNode(int offsetInFile, int lengthInFile, Relation relation,
+			Class<T> requiredClass) {
 		return findNode(offsetInFile, lengthInFile, relation, requiredClass, false);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getNode(int, int)
 	 */
-	private <T extends IASTNode> T findNode(int offsetInFile, int lengthInFile, Relation relation, 
+	private <T extends IASTNode> T findNode(int offsetInFile, int lengthInFile, Relation relation,
 			Class<T> requiredClass, boolean searchInExpansion) {
 		if (!fIsValid) {
 			return null;
@@ -68,11 +69,12 @@ public class ASTNodeSelector implements IASTNodeSelector {
     		return null;
     	}
 		if (lengthInFile > 0) {
-			sequenceLength= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offsetInFile+lengthInFile-1) + 1 - sequenceNumber;
+			sequenceLength= fLocationResolver.getSequenceNumberForFileOffset(fFilePath,
+					offsetInFile + lengthInFile - 1) + 1 - sequenceNumber;
 		} else {
 			sequenceLength= 0;
 			if (offsetInFile > 0) {
-				altSequenceNumber= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offsetInFile-1);
+				altSequenceNumber= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offsetInFile - 1);
 				if (altSequenceNumber + 1 == sequenceNumber) {
 					altSequenceNumber= -1;
 				} else {
@@ -82,7 +84,8 @@ public class ASTNodeSelector implements IASTNodeSelector {
 				}
 			}
 		}
-		final ASTNodeSpecification<T> nodeSpec= new ASTNodeSpecification<T>(relation, requiredClass, offsetInFile, lengthInFile);
+		final ASTNodeSpecification<T> nodeSpec=
+				new ASTNodeSpecification<T>(relation, requiredClass, offsetInFile, lengthInFile);
 		nodeSpec.setRangeInSequence(sequenceNumber, sequenceLength, false);
 		nodeSpec.setSearchInExpansion(searchInExpansion);
     	getNode(nodeSpec);
@@ -102,15 +105,17 @@ public class ASTNodeSelector implements IASTNodeSelector {
     		IASTPreprocessorMacroExpansion expansion= nodeSpec.findLeadingMacroExpansion(this);
     		if (expansion != null) {
     			IASTFileLocation floc= expansion.getFileLocation();
-    			seqbegin= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, floc.getNodeOffset() + floc.getNodeLength()-1)+1;
+    			seqbegin= fLocationResolver.getSequenceNumberForFileOffset(fFilePath,
+    					floc.getNodeOffset() + floc.getNodeLength() - 1) + 1;
     		}
     		expansion= nodeSpec.findTrailingMacroExpansion(this);
     		if (expansion != null) {
     			IASTFileLocation floc= expansion.getFileLocation();
-    			seqend= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, floc.getNodeOffset() + floc.getNodeLength());
+    			seqend= fLocationResolver.getSequenceNumberForFileOffset(fFilePath,
+    					floc.getNodeOffset() + floc.getNodeLength());
     		}
-    		nodeSpec.setRangeInSequence(seqbegin, seqend-seqbegin);
-    		
+    		nodeSpec.setRangeInSequence(seqbegin, seqend - seqbegin);
+
     		FindNodeForOffsetAction nodeFinder= new FindNodeForOffsetAction(nodeSpec);
     		fTu.accept(nodeFinder);
     	}
@@ -131,7 +136,7 @@ public class ASTNodeSelector implements IASTNodeSelector {
 	public IASTNode findEnclosingNode(int offset, int length) {
 		return findNode(offset, length, Relation.ENCLOSING, IASTNode.class);
 	}
-	
+
 	@Override
 	public IASTNode findStrictlyEnclosingNode(int offset, int length) {
 		return findNode(offset, length, Relation.STRICTLY_ENCLOSING, IASTNode.class);
@@ -171,12 +176,12 @@ public class ASTNodeSelector implements IASTNodeSelector {
 	public IASTImplicitName findImplicitName(int offset, int length) {
 		return findNode(offset, length, Relation.EXACT_MATCH, IASTImplicitName.class);
 	}
-	
+
 	@Override
 	public IASTImplicitName findEnclosingImplicitName(int offset, int length) {
 		return findNode(offset, length, Relation.ENCLOSING, IASTImplicitName.class);
 	}
-	
+
 	@Override
 	public IASTPreprocessorMacroExpansion findEnclosingMacroExpansion(int offset, int length) {
 		return findNode(offset, length, Relation.ENCLOSING, IASTPreprocessorMacroExpansion.class);

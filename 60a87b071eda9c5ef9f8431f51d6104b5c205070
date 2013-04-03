@@ -2,6 +2,57 @@
   "comments": [
     {
       "key": {
+        "uuid": "AABOPX//0A4\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-03T19:56:58Z",
+      "side": 1,
+      "message": "It is possible that the rest of the \"working set for expression\" feature will not be supported.  Can we put a little more info in this commit to explain what this provides even without the main feature?",
+      "revId": "60a87b071eda9c5ef9f8431f51d6104b5c205070",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0BQ\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/launch/StackFramesVMNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 879,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-03T19:56:58Z",
+      "side": 1,
+      "message": "Can we have a comment explaining that all frames not associated to a function or address will have the same memento which is why we create this memento",
+      "revId": "60a87b071eda9c5ef9f8431f51d6104b5c205070",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0BM\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/launch/StackFramesVMNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 892,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-03T19:56:58Z",
+      "side": 1,
+      "message": "Why aren\u0027t we using the new memento name for the Variables view?",
+      "revId": "60a87b071eda9c5ef9f8431f51d6104b5c205070",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//5Xk\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/launch/StackFramesVMNode.java",
         "patchSetId": 1
@@ -13,6 +64,108 @@
       "writtenOn": "2013-03-09T03:04:11Z",
       "side": 1,
       "message": "The update compareElements() encodes the stack frame name or address to remember the working sets by.\n\nIt\u0027s optimized for the case where multiple requests are made with the same element, but with different mementos.",
+      "revId": "60a87b071eda9c5ef9f8431f51d6104b5c205070",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0EE\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/launch/StackFramesVMNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 910,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-03T19:56:58Z",
+      "side": 1,
+      "message": "This could NPE if requests.length() \u003d\u003d 0.  Could it happen?",
+      "revId": "60a87b071eda9c5ef9f8431f51d6104b5c205070",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0BI\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/launch/StackFramesVMNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 912,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-03T19:56:58Z",
+      "side": 1,
+      "message": "I don\u0027t understand why the check !\u003d ?  Is the goal to avoid comparing two requests with the same element? If so, then I think we should use .equals(), if not, then I think it just avoids comparing when i\u003d\u003d0 which could be done by simply starting with i\u003d1",
+      "revId": "60a87b071eda9c5ef9f8431f51d6104b5c205070",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0A0\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/launch/StackFramesVMNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 921,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-03T19:56:58Z",
+      "side": 1,
+      "message": "\"start\" and \"end\" are not used...\nI\u0027m confused about what this new comparing algo is trying to do.",
+      "revId": "60a87b071eda9c5ef9f8431f51d6104b5c205070",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0BE\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/launch/StackFramesVMNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 933,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-03T19:56:58Z",
+      "side": 1,
+      "message": "Not related to the patch, but can we make \"STACK_FRAME_MEMENTO_NAME\" a constant?\nNo need to risk a small typo breaking this feature",
+      "revId": "60a87b071eda9c5ef9f8431f51d6104b5c205070",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0BA\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/launch/StackFramesVMNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 942,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-03T19:56:58Z",
+      "side": 1,
+      "message": "Comment is not quite right and could be a copy/paste error.  Probably should be removed",
+      "revId": "60a87b071eda9c5ef9f8431f51d6104b5c205070",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//0A8\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/launch/StackFramesVMNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 960,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-03T19:56:58Z",
+      "side": 1,
+      "message": "Can we move the above line right before it is used?  (no need for final in that case)",
       "revId": "60a87b071eda9c5ef9f8431f51d6104b5c205070",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

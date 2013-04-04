@@ -163,13 +163,13 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			function(type, 		"__atomic_fetch_xor", typePtr, type, "int");
 			function(type, 		"__atomic_fetch_or", typePtr, type, "int");
 			function(type, 		"__atomic_fetch_nadd", typePtr, type, "int");
-			function("bool",	"__atomic_test_and_set", "void*", "int");
-			function("void",	"__atomic_clear", "bool*", "int");
-			function("void",	"__atomic_thread_fence", "int");
-			function("void",	"__atomic_signal_fence", "int");
-			function("bool",	"__atomic_always_lock_free", "size_t", "void*");
-			function("bool",	"__atomic_is_lock_free", "size_t", "void*");
 		}
+		function("bool",	"__atomic_test_and_set", "void*", "int");
+		function("void",	"__atomic_clear", "bool*", "int");
+		function("void",	"__atomic_thread_fence", "int");
+		function("void",	"__atomic_signal_fence", "int");
+		function("bool",	"__atomic_always_lock_free", "size_t", "void*");
+		function("bool",	"__atomic_is_lock_free", "size_t", "void*");
 
 		// GCC 4.8, Section 6.55 (incomplete)
 		function("void", 		"__builtin_abort", "void");

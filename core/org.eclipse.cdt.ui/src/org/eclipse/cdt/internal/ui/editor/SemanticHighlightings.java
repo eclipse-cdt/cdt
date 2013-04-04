@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ISemanticToken;
@@ -1321,7 +1322,7 @@ public class SemanticHighlightings {
 		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node.getTranslationUnit().isBasedOnIncompleteIndex()) {
-				// Do not highlight problems is the AST is unreliable.
+				// Do not highlight problems if the AST is unreliable.
 				return false;
 			}
 			if (node instanceof IASTProblem) {
@@ -1329,6 +1330,11 @@ public class SemanticHighlightings {
 			}
 			IBinding binding= token.getBinding();
 			if (binding instanceof IProblemBinding) {
+				IProblemBinding problemBinding = (IProblemBinding) binding;
+				if (problemBinding.getID() == IProblemBinding.SEMANTIC_NAME_NOT_FOUND &&
+						CharArrayUtils.startsWith(problemBinding.getNameCharArray(), "__builtin_")) { //$NON-NLS-1$
+					return false;  // Ignore an unknown built-in.
+				}
 				return true;
 			}
 			return false;

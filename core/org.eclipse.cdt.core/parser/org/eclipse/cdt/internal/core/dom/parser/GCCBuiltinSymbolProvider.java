@@ -109,13 +109,13 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("void", 		"__builtin_va_end",  "va_list");
 		function("void", 		"__builtin_va_copy",  "va_list", "va_list");
 
-		// Gcc 4.6.0, Section 6.48
+		// GCC 4.6.0, Section 6.48
 		function("void*", 		"__builtin_return_address",  "unsigned int");
 		function("void*", 		"__builtin_extract_return_address",  "void*");
 		function("void*", 		"__builtin_frob_return_address",  "void*");
 		function("void*", 		"__builtin_frame_address",  "unsigned int");
 
-		// Gcc 4.6.0, Section 6.51
+		// GCC 4.6.0, Section 6.51
 		String[] types= {"int", "long", "long long", "unsigned int", "unsigned long", "unsigned long long"};
 		for (String type : types) {
 			// Manual does not mention volatile, however functions can be used for ptr to volatile
@@ -137,7 +137,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		}
 		function("void", 	"__sync_synchronize");
 
-		// Gcc 4.6.0, Section 6.52
+		// GCC 4.8, Section 6.52
 		for (String type : types) {
 			// Manual does not mention volatile, however functions can be used for ptr to volatile
 			String typePtr= "volatile " + type + "*";
@@ -171,7 +171,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			function("bool",	"__atomic_is_lock_free", "size_t", "void*");
 		}
 
-		// GCC 4.8.0, Section 6.55 (incomplete)
+		// GCC 4.8, Section 6.55 (incomplete)
 		function("void", 		"__builtin_abort", "void");
 		function("int", 		"__builtin_abs", "int");
 		function("double", 		"__builtin_acos", "double");

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.FileContentKey;
@@ -72,6 +73,7 @@ import org.eclipse.osgi.util.NLS;
  * @since 4.0
  */
 abstract public class PDOMWriter {
+	private static final boolean REPORT_UNKNOWN_BUILTINS = false;
 
 	public static class FileInAST {
 		final IASTPreprocessorIncludeStatement includeStatement;
@@ -343,9 +345,14 @@ abstract public class PDOMWriter {
 								binding instanceof ICPPFunctionTemplate)) {
 								na[0]= null;
 						} else if (binding instanceof IProblemBinding) {
-							fStatistics.fProblemBindingCount++;
-							if (fShowProblems) {
-								reportProblem((IProblemBinding) binding);
+							IProblemBinding problemBinding = (IProblemBinding) binding;
+							if (REPORT_UNKNOWN_BUILTINS ||
+									problemBinding.getID() != IProblemBinding.BINDING_NOT_FOUND ||
+									!CharArrayUtils.startsWith(problemBinding.getNameCharArray(), "__builtin_")) { //$NON-NLS-1$
+								fStatistics.fProblemBindingCount++;
+								if (fShowProblems) {
+									reportProblem(problemBinding);
+								}
 							}
 						} else if (name.isReference()) {
 							if (binding instanceof ICPPTemplateParameter ||

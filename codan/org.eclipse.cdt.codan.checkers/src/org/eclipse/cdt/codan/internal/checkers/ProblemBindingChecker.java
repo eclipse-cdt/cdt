@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 public class ProblemBindingChecker extends AbstractIndexAstChecker {
@@ -145,6 +146,10 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 							if (id != IProblemBinding.SEMANTIC_NAME_NOT_FOUND) {
 								return PROCESS_CONTINUE;
 							}
+							if (problemBinding.getID() == IProblemBinding.SEMANTIC_NAME_NOT_FOUND &&
+									CharArrayUtils.startsWith(problemBinding.getNameCharArray(), "__builtin_")) { //$NON-NLS-1$
+								return PROCESS_CONTINUE;  // Ignore an unknown built-in.
+							}
 							if (isFunctionCall(name, parentNode)) {
 								handleFunctionProblem(name, problemBinding, contextFlagsString);
 							} else if (parentNode instanceof IASTFieldReference) {
@@ -152,7 +157,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 							} else if (parentNode instanceof IASTNamedTypeSpecifier) {
 								reportProblem(ERR_ID_TypeResolutionProblem, name, name.getRawSignature(), contextFlagsString);
 							} else {
-								// Probably a variable
+								// Probably a variable.
 								handleVariableProblem(name, contextFlagsString);
 							}
 						}

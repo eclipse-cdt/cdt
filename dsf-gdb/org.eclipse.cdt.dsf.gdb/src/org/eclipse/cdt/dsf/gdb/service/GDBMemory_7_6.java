@@ -61,6 +61,8 @@ public class GDBMemory_7_6 extends GDBMemory_7_0 implements IEventListener {
 	private void doInitialize(final RequestMonitor requestMonitor) {
 		register(new String[] { MIMemory.class.getName(), 
 				                IMemory.class.getName(), 
+				                IGDBMemory.class.getName(),
+				                GDBMemory.class.getName(),
 				                GDBMemory_7_0.class.getName(),
 				                GDBMemory_7_6.class.getName()}, 
 				 new Hashtable<String, String>());

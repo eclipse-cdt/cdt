@@ -16,7 +16,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -25,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -128,8 +131,13 @@ public class NodeHelper {
 		if (simpleDeclaration == null) {
 			return false;
 		}
-		return simpleDeclaration.getDeclarators().length == 1 &&
-				simpleDeclaration.getDeclarators()[0] instanceof ICPPASTFunctionDeclarator;
+		final IASTDeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
+		final IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
+		if ((declSpecifier instanceof ICPPASTDeclSpecifier)
+				&& ((ICPPASTDeclSpecifier) declSpecifier).isFriend()) {
+			return false;
+		}
+		return declarators.length == 1 && declarators[0] instanceof ICPPASTFunctionDeclarator;
 	}
 
 	public static boolean isContainedInTemplateDeclaration(IASTNode node) {

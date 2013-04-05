@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//zVk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1111,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T20:06:06Z",
+      "side": 1,
+      "message": "Why do we need this check for threads only?  Can you put a comment to explain?\n\nAnd if the thread is already there, may we need to update it with some info that might be new?  Like state or core?",
+      "revId": "215e99dfb2403dc89f8affe5d1e8ad8be6793b4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zVg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvas.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 974,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T20:06:06Z",
+      "side": 1,
+      "message": "do we need requestUpdate() here too?  If so, how about calling setSelection(selection, true) instead to avoid code duplication?",
+      "revId": "215e99dfb2403dc89f8affe5d1e8ad8be6793b4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zU4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T20:06:06Z",
+      "side": 1,
+      "message": "This technique works.  However, I noticed that the MI stopped event actually shows which core the thread stopped in:\n*stopped,reason\u003d\"breakpoint-hit\",...,thread-id\u003d\"1\",stopped-threads\u003d[\"1\"],core\u003d\"1\"\n\nThe code does not currently give access to this field, but it wouldn\u0027t be hard to add.  We\u0027d have to update MIStoppedEvent to parse that field and provide a getCore() method.\n\nThen you could do something like:\n\nif (event instanceof IMIDMEvent) {\n  Object miEvent \u003d ((IMIDMEvent)event).getMIEvent();\n  if (miEvent instanceof MIStoppedEvent) {\n    vCore \u003d ((MIStoppedEvent)miEvent).getCore();\n  }\n}\n\nThis field is not available on the MI \u003dthread-started event, which is why we have to go through the IProcesses service to find the core.",
+      "revId": "215e99dfb2403dc89f8affe5d1e8ad8be6793b4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zVM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T20:06:06Z",
+      "side": 1,
+      "message": "Can you put a comment on when this could happen?",
+      "revId": "215e99dfb2403dc89f8affe5d1e8ad8be6793b4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,514 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//zxE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "Can be removed",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zxU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "Can be removed",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zxM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "No need to pass skipBreakpoints",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z50\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 468,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "Can you put a protected getter/setter for this member?  It will allow people to override this class more easily.",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z5w\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 835,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "We need a better name than \u0027resume\u0027 to describe what this parameter is used for.  How about \u0027checkCanResume\u0027?",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z5c\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 974,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "runToLocation() is named like that because we can run to a line or an address.  For stepIntoSelection, I think we will not share the operation, so naming it stepIntoLocation does not seem right.  How about stepIntoSelection() (overloaded)",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zz8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1013,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "Also, use dmc instead of context.",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z1A\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1015,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "You should normally check for isSuccess() when dealing with handleCompleted().  I think you can use handleSuccess() in this case.  But don\u0027t forget to pass rm to the parent DRM above (instead of null).",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zzc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1029,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "Don\u0027t we also need to check the filename here?  You may be able to use baseLineLocation to check both and get rid of the baseLine parameter to the method.  Or pass sourceFile and line separately.",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zz4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1035,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "Use STEP_INTO not INSTRUCTION_STEP_INTO.\n\nAlso, use dmc instead of context",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zz0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1041,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "Use dmc instead of context",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z08\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1043,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "Missing rm.done() for the else case, but this won\u0027t be necessary if you use handleSuccess() above",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z1o\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1640,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "I\u0027d put the above line in the below method.  The below method should only be used when a runToLine op is active, so it is better to check inside",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zik\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1687,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "By setting fStepInToSelectionActiveOperation to null when the runToLine op is aborted (see comment in runToLineContinue()), I think we don\u0027t need to check this anymore.  You can set the runToLine frame directly her, as long as fStepInToSelectionActiveOperation.getRunToLineFrame() \u003d\u003d null.  You can also put an assert fStepInToSelectionActiveOperation.getLine() \u003d\u003d frame.getLine() in that case.\n\nAlso putting an assert fRunToLineActiveOperation \u003d\u003d null all the time.",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zh4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1698,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "handleSuccess() instead",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//ziE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1701,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "I believe you should only check for a match if the framesSized \u003e originalStackDepth.\n\nIf not, you might have problems when dealing with recursion.",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zh8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1708,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "Can you put an\n\nassert framesSize \u003d\u003d originalStackDepth + 1;",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z1M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1764,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "For non-stop, if the wrong thread stopped, I think we should continue the s-into-s for the other thread.  The two events are unrelated.\n\nWe could technically support concurrent s-into-s operations for each thread, but that might be overkill.  There is maybe a risk of a bug in this scenario though.  Start a long-running s-into-selection for thread 1 and then a second one for thread 2.  Our single structure will cause the first s-into-s to stop early probably.  Not such a big deal, in my opinion",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zhc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1796,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "atFrame is not used",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zho\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1812,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "The error message is not quite right for all cases.  \"The current  method returned\" may not be true, we might be in the same method but at a different line.",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z2Y\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1823,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "How about calling this \"processRunToLineStoppedEvent\" with a return value of false, indicating we didn\u0027t finish the runToLine processing",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z2M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1867,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "I think we must abort a stepIntoSeletion in this case, i.e., \n\nfStepInToSelectionActiveOperation \u003d null;",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z2g\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1873,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "This should be moved back to where the operation succeeded (// We stopped at the right place.  All is well)\n\nWhere it is now will turn off run-to-line even if the thread does not match.  Also, it is already set to null in the else clause above",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z2c\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1876,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "I think we must remove the above call",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z0A\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2640,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "Can take an IMIExecutionDMContext as a parameter to simplify the below code",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z0M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2643,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "Can be put directly in the queueCommand() call",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z0Q\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2644,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "Please remove ;",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z0E\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2654,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "Can be removed.",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z5s\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRunControl3.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "Please update javadoc for the two below methods",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//z6E\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRunControl3.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-05T10:45:44Z",
+      "side": 1,
+      "message": "We should probably pass in sourceFile, lineNumber and selectedFunction too",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

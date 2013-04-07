@@ -2683,8 +2683,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Private helper method that first checks to see if a build information
 	 * object has been associated with the project for the current workspace
 	 * session. If one cannot be found, one is created from the project file
-	 * associated with the argument. If there is no prject file or the load
-	 * fails for some reason, the method will re{@code null}code>
+	 * associated with the argument. If there is no project file or the load
+	 * fails for some reason, the method will return {@code null}.
 	 */
 	private static ManagedBuildInfo findBuildInfo(IResource rc, boolean forceLoad) {
 
@@ -2696,6 +2696,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 		ManagedBuildInfo buildInfo = null;
 		IProject proj = rc.getProject();
+
+		if (!proj.exists()) {
+			if(BuildDbgUtil.DEBUG)
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, project does not exist"); //$NON-NLS-1$
+			return null;
+		}
 
 		if(BuildDbgUtil.DEBUG)
 			BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, querying the update mngr"); //$NON-NLS-1$

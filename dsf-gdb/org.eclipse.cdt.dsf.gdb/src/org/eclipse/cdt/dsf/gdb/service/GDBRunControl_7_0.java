@@ -273,6 +273,12 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     /** @since 2.0 */
 	@Override
 	public void canReverseResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
+		if (fRunControlOperationsEnabled == false) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
+
 		rm.setData(fReverseModeEnabled && doCanResume(context));
 		rm.done();
 	}
@@ -280,7 +286,13 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     /** @since 2.0 */
 	@Override
 	public void canReverseStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
-	   	if (context instanceof IContainerDMContext) {
+		if (fRunControlOperationsEnabled == false) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
+
+		if (context instanceof IContainerDMContext) {
     		rm.setData(false);
     		rm.done();
     		return;

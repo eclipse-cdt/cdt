@@ -52,6 +52,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.CLIMaintenance;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIPasscount;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIRecord;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIRemoteGet;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIShowEndian;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLISource;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIThread;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLITrace;
@@ -172,6 +173,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoBreakInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoProgramInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoThreadsInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIShowEndianInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIThreadInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceDumpInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceInfo;
@@ -289,6 +291,13 @@ public class CommandFactory {
 	/** @since 4.1 */
 	public ICommand<MIInfo> createCLIRemoteGet(ICommandControlDMContext ctx, String remoteFile, String localFile) {
 		return new CLIRemoteGet(ctx, remoteFile, localFile);
+	}
+
+	/**
+	 * @since 4.2
+	 */
+	public ICommand<CLIShowEndianInfo> createCLIShowEndian(ICommandControlDMContext ctx) {
+		return new CLIShowEndian(ctx);
 	}
 
 	public ICommand<MIInfo> createCLISource(ICommandControlDMContext ctx, String file) {

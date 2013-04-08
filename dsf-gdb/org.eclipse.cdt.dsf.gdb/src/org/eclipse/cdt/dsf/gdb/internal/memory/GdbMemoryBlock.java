@@ -27,6 +27,7 @@ import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces.IMemorySpaceDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBMemory;
 import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -265,5 +266,26 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 			return retrieval.encodeAddress(super.getExpression(), fMemorySpaceID);
 		}
 		return super.getExpression();
+	}
+
+	@Override
+	public int getAddressSize() throws DebugException {
+		GdbMemoryBlockRetrieval retrieval = (GdbMemoryBlockRetrieval)getMemoryBlockRetrieval();
+		IMemoryDMContext context = null;
+		if (fMemorySpaceID != null) {
+			IMemorySpaces memorySpacesService = (IMemorySpaces) retrieval.getMemorySpaceServiceTracker().getService();
+			if (memorySpacesService != null) {
+				context = new MemorySpaceDMContext(memorySpacesService.getSession().getId(), fMemorySpaceID, getContext());
+			}
+		}
+		else {
+			context = getContext();
+		}
+		IGDBMemory memoryService = (IGDBMemory)retrieval.getServiceTracker().getService();
+		if (memoryService != null) {
+			return memoryService.getAddressSize(context);
+		}
+		
+		throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, Messages.Err_MemoryServiceNotAvailable, null));
 	}
 }

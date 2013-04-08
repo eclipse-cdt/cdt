@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems and others.
+ * Copyright (c) 2006, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,6 +121,16 @@ public class GDBRunControl extends MIRunControl {
         super.shutdown(requestMonitor);
     }
     
+	/**
+	 * Allows us to know if run control operations should be
+	 * enabled or disabled.  Run control operations are
+	 * disabled, for example, when dealing with post-mortem sessions.
+	 * @since 4.2
+	 */
+	protected boolean runControlOperationsEnabled() {
+		return fGdb.getSessionType() != SessionType.CORE;
+	}
+
     @Override
 	public IMIExecutionDMContext createMIExecutionContext(IContainerDMContext container, int threadId) {
         IProcessDMContext procDmc = DMContexts.getAncestorOfType(container, IProcessDMContext.class);
@@ -222,7 +232,7 @@ public class GDBRunControl extends MIRunControl {
 	 */
     @Override
 	public void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
-    	if (fGdb.getSessionType() == SessionType.CORE) {
+		if (!runControlOperationsEnabled()) {
     		rm.setData(false);
     		rm.done();
     		return;
@@ -235,7 +245,7 @@ public class GDBRunControl extends MIRunControl {
 	 */
     @Override
 	public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
-    	if (fGdb.getSessionType() == SessionType.CORE) {
+		if (!runControlOperationsEnabled()) {
     		rm.setData(false);
     		rm.done();
     		return;
@@ -248,7 +258,7 @@ public class GDBRunControl extends MIRunControl {
 	 */
     @Override
 	public void canStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
-    	if (fGdb.getSessionType() == SessionType.CORE) {
+		if (!runControlOperationsEnabled()) {
     		rm.setData(false);
     		rm.done();
     		return;

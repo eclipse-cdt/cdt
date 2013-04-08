@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//zdU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zxE\u003d",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//zxU\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2013-04-05T10:45:44Z",
       "side": 1,
       "message": "Can be removed",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zdQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zxU\u003d",
       "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//zdM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zxM\u003d",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//z50\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2013-04-05T10:45:44Z",
       "side": 1,
       "message": "Can you put a protected getter/setter for this member?  It will allow people to override this class more easily.",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zdI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 468,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//z50\u003d",
       "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//zdE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 835,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//z5w\u003d",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//z5c\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 3
@@ -98,6 +188,24 @@
       "writtenOn": "2013-04-05T10:45:44Z",
       "side": 1,
       "message": "runToLocation() is named like that because we can run to a line or an address.  For stepIntoSelection, I think we will not share the operation, so naming it stepIntoLocation does not seem right.  How about stepIntoSelection() (overloaded)",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zdA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 974,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//z5c\u003d",
       "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//zc8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1013,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zz8\u003d",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//z1A\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 3
@@ -132,6 +258,24 @@
       "writtenOn": "2013-04-05T10:45:44Z",
       "side": 1,
       "message": "You should normally check for isSuccess() when dealing with handleCompleted().  I think you can use handleSuccess() in this case.  But don\u0027t forget to pass rm to the parent DRM above (instead of null).",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zcc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1015,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done, \nI was passing null as the rm is used in the \u0027rms\u0027 monitor as well, not 100% clear on the sequence unwinding the rm success / failures from two different child requests.",
+      "parentUuid": "AABOPX//z1A\u003d",
       "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//zQo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1029,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zzc\u003d",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//zz4\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 3
@@ -166,6 +328,24 @@
       "writtenOn": "2013-04-05T10:45:44Z",
       "side": 1,
       "message": "Use STEP_INTO not INSTRUCTION_STEP_INTO.\n\nAlso, use dmc instead of context",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zcA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1035,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zz4\u003d",
       "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//zb8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1041,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zz0\u003d",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//z08\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 3
@@ -200,6 +398,24 @@
       "writtenOn": "2013-04-05T10:45:44Z",
       "side": 1,
       "message": "Missing rm.done() for the else case, but this won\u0027t be necessary if you use handleSuccess() above",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zYU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1043,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "I think it applies even if we use hadleSuccess unless we assert that getData shall never be null, right ?",
+      "parentUuid": "AABOPX//z08\u003d",
       "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//zYE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1640,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//z1o\u003d",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//zik\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 3
@@ -234,6 +468,24 @@
       "writtenOn": "2013-04-05T10:45:44Z",
       "side": 1,
       "message": "By setting fStepInToSelectionActiveOperation to null when the runToLine op is aborted (see comment in runToLineContinue()), I think we don\u0027t need to check this anymore.  You can set the runToLine frame directly her, as long as fStepInToSelectionActiveOperation.getRunToLineFrame() \u003d\u003d null.  You can also put an assert fStepInToSelectionActiveOperation.getLine() \u003d\u003d frame.getLine() in that case.\n\nAlso putting an assert fRunToLineActiveOperation \u003d\u003d null all the time.",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zXg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1687,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zik\u003d",
       "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +509,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//zXc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1698,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zh4\u003d",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//ziE\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 3
@@ -268,6 +538,24 @@
       "writtenOn": "2013-04-05T10:45:44Z",
       "side": 1,
       "message": "I believe you should only check for a match if the framesSized \u003e originalStackDepth.\n\nIf not, you might have problems when dealing with recursion.",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zXQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1701,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "I had it like that originally and changed it as I had concerns for the case where the depth provided by gdb was not correct as mentioned in one of the comments for depth resolution, However , I think it is nicer the way you proposed and would hopefully work the majority of the times, worst case, it will miss the search for hopefully a minimal number of cases. \n\nNeed to come back to this one as I found issues with function name resolution while testing recursive calls.",
+      "parentUuid": "AABOPX//ziE\u003d",
       "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -291,6 +579,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//zV4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1708,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zh8\u003d",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//z1M\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 3
@@ -302,6 +608,24 @@
       "writtenOn": "2013-04-05T10:45:44Z",
       "side": 1,
       "message": "For non-stop, if the wrong thread stopped, I think we should continue the s-into-s for the other thread.  The two events are unrelated.\n\nWe could technically support concurrent s-into-s operations for each thread, but that might be overkill.  There is maybe a risk of a bug in this scenario though.  Start a long-running s-into-selection for thread 1 and then a second one for thread 2.  Our single structure will cause the first s-into-s to stop early probably.  Not such a big deal, in my opinion",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zVQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1764,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Ok, So I have replaced this with a simple\n    \u003e broadcastStop(e);\nSo the thread related to the event is stopped but the step into selection remains active waiting for its stop.\n\nNote, The method runToLineContinue  does not longer broadcast the stop event, this is now delegated to the evaluateStepIntoSelection method in order to avoid duplicate calls to broadcastStop(e).",
+      "parentUuid": "AABOPX//z1M\u003d",
       "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -325,6 +649,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//zSc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1796,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zhc\u003d",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//zho\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 3
@@ -336,6 +678,24 @@
       "writtenOn": "2013-04-05T10:45:44Z",
       "side": 1,
       "message": "The error message is not quite right for all cases.  \"The current  method returned\" may not be true, we might be in the same method but at a different line.",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zRI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1812,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "True, The text is taken from the implementation in Java, \nI am updating it to the following:\n\nDid not find \\\"{0}\\\" when stepping forward into the remaining functions of the selected line",
+      "parentUuid": "AABOPX//zho\u003d",
       "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -359,6 +719,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//zRE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1823,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//z2Y\u003d",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//z2M\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 3
@@ -370,6 +748,24 @@
       "writtenOn": "2013-04-05T10:45:44Z",
       "side": 1,
       "message": "I think we must abort a stepIntoSeletion in this case, i.e., \n\nfStepInToSelectionActiveOperation \u003d null;",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zRA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1867,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//z2M\u003d",
       "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -410,6 +806,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//zQ8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1876,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//z2c\u003d",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//z0A\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 3
@@ -421,6 +835,24 @@
       "writtenOn": "2013-04-05T10:45:44Z",
       "side": 1,
       "message": "Can take an IMIExecutionDMContext as a parameter to simplify the below code",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zQ4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2640,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//z0A\u003d",
       "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -444,6 +876,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//zQ0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2643,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//z0M\u003d",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//z0Q\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 3
@@ -455,6 +905,24 @@
       "writtenOn": "2013-04-05T10:45:44Z",
       "side": 1,
       "message": "Please remove ;",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zQw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2644,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//z0Q\u003d",
       "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -478,6 +946,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//zQs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2654,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "True, continuing or stopping is pretty much the same after this error.\n  So it\u0027s Done",
+      "parentUuid": "AABOPX//z0E\u003d",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//z5s\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRunControl3.java",
         "patchSetId": 3
@@ -489,6 +975,24 @@
       "writtenOn": "2013-04-05T10:45:44Z",
       "side": 1,
       "message": "Please update javadoc for the two below methods",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zMs\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRunControl3.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-08T12:53:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//z5s\u003d",
       "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//zSE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "Done. I don\u0027t understand why the copyright headers are missing.",
+      "parentUuid": "AABOPX//zfw\u003d",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//zcE\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2013-04-05T16:08:18Z",
       "side": 1,
       "message": "This will trigger for thread exists also.  We should make sure we are dealing with a process using:\n\nif (event.getDMContext() instanceof IContainerDMContext)",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zAA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zcE\u003d",
       "revId": "82993915296d852b727c6f762a33523497a913bd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//y/0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "Changed according to your recommendation.",
+      "parentUuid": "AABOPX//zb0\u003d",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//zcI\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2013-04-05T16:08:18Z",
       "side": 1,
       "message": "Do you need this?  @DsfServiceEventHandler methods are called on the DSF executor",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//y/k\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zcI\u003d",
       "revId": "82993915296d852b727c6f762a33523497a913bd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//y/g\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zfo\u003d",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//zbg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2013-04-05T16:08:18Z",
       "side": 1,
       "message": "I\u0027d use an immediateExecutor here to get the result as fast as possible",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//y/Y\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zbg\u003d",
       "revId": "82993915296d852b727c6f762a33523497a913bd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//y/U\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zbo\u003d",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//zbc\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 2
@@ -132,6 +258,24 @@
       "writtenOn": "2013-04-05T16:08:18Z",
       "side": 1,
       "message": "This is tricky.  We don\u0027t need to do this for every thread, but createMIDataEvaluateExpression() does not accept a process or memory dmc.  What might work is to use an IExpressionDMC instead, with its parent being the IMemoryDMC.\n\nYou can create such a context using\nIExpressions.createExpression(IMemoryDMC, \"sizeof (void*)\"\n\nThen you\u0027d be able to restrict this call to the creation of new processes",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//y/Q\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zbc\u003d",
       "revId": "82993915296d852b727c6f762a33523497a913bd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//y/M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zbk\u003d",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//zbw\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 2
@@ -166,6 +328,24 @@
       "writtenOn": "2013-04-05T16:08:18Z",
       "side": 1,
       "message": "execContext is not used.  Did you mean to make it available overriding methods or is it an over-sight?",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//zas\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "I removed execContext. In general, I implemented doReadAddressSize() and doReadEndianness() as separate methods to allow overriding. For instance, if the address size and/or the endianness are known from other sources there is no need to read it from GDB.",
+      "parentUuid": "AABOPX//zbw\u003d",
       "revId": "82993915296d852b727c6f762a33523497a913bd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//y/E\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zbs\u003d",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//zgE\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBMemory.java",
         "patchSetId": 2
@@ -200,6 +398,24 @@
       "writtenOn": "2013-04-05T16:08:18Z",
       "side": 1,
       "message": "Copyright header",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//y+4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zgE\u003d",
       "revId": "82993915296d852b727c6f762a33523497a913bd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//y+k\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zgM\u003d",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//zgA\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
         "patchSetId": 2
@@ -234,6 +468,24 @@
       "writtenOn": "2013-04-05T16:08:18Z",
       "side": 1,
       "message": "Shouldn\u0027t the context be IMemoryDMC to be future-proof?",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//y98\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "See my comment for CLIShowEndian.",
+      "parentUuid": "AABOPX//zgA\u003d",
       "revId": "82993915296d852b727c6f762a33523497a913bd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +509,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//y+Q\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIShowEndian.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "I am not sure. IMemoryDMContext is passed to \u0027doReadEndianness()\u0027. For the current GDB version we need ICommandControlDMContext. If/when a new GDB command is added to get the endianness of a memory space or a process we will add a new constructor. That\u0027s why created a private constructor that accepts IDMContext. What do you think?",
+      "parentUuid": "AABOPX//zf8\u003d",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//zf4\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIShowEndian.java",
         "patchSetId": 2
@@ -268,6 +538,24 @@
       "writtenOn": "2013-04-05T16:08:18Z",
       "side": 1,
       "message": "Why have this?",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//y+M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIShowEndian.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T18:07:33Z",
+      "side": 1,
+      "message": "See my comment above.",
+      "parentUuid": "AABOPX//zf4\u003d",
       "revId": "82993915296d852b727c6f762a33523497a913bd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

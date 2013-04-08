@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//y9s\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T16:32:05Z",
+      "side": 1,
+      "message": "Very minor comment. fRunControlOperationsEnabled is boolean, why not just use \u0027!\u0027 instead of \u0027\u003d\u003d false\u0027?",
+      "revId": "9236ccdf3b1e27c233d3fb08745f4f3766b69081",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//y9o\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-08T16:32:05Z",
+      "side": 1,
+      "message": "Same as above.",
+      "revId": "9236ccdf3b1e27c233d3fb08745f4f3766b69081",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

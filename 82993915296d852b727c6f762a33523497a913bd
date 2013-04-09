@@ -527,6 +527,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//y6k\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIShowEndian.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-09T14:51:21Z",
+      "side": 1,
+      "message": "It is just strange that we send \"show endian\" for each new process, but then don\u0027t tell GDB which process to use for the evaluation.\n\nIt would be safe to use IMemoryDMContext right now.  All it would do tell GDB to set the right process before evaluating the \"show endian\" command.  Even if it doesn\u0027t change anything, it would be future-proof.\n\nThe tricky part is that we don\u0027t support per-process CLI commands.  CLI commands don\u0027t accept the MI --thread-group flag to set a process.  Although we could use the \u0027inferior\u0027 command instead, I find that more work than needed.  Instead, what we can do is create an MI command \"-interpreter-exec console show endian\".  I\u0027ve done this for MIExecReverseContinue for example.  Although I should have named it CLIExecReverseContinue to keep to other name available for newer GDB versions.\n\nI can post a patch to clarify this, if it would help.\n\nBTW, there is a bug opened to have all our CLI command use the \"-interpreter-exec console\" format, but I never got around to fixing it.",
+      "parentUuid": "AABOPX//y+Q\u003d",
+      "revId": "82993915296d852b727c6f762a33523497a913bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//zf4\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIShowEndian.java",
         "patchSetId": 2

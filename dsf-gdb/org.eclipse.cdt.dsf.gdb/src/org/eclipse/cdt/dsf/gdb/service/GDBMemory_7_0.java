@@ -28,7 +28,7 @@ import org.eclipse.cdt.dsf.mi.service.MIMemory;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.debug.core.model.MemoryByte;
 
-public class GDBMemory_7_0 extends MIMemory {
+public class GDBMemory_7_0 extends GDBMemory {
 
 	public GDBMemory_7_0(DsfSession session) {
 		super(session);
@@ -45,8 +45,15 @@ public class GDBMemory_7_0 extends MIMemory {
 	}
 
 	private void doInitialize(final RequestMonitor requestMonitor) {
-		register(new String[] { MIMemory.class.getName(), IMemory.class.getName(), GDBMemory_7_0.class.getName()}, 
-				 new Hashtable<String, String>());
+		register(
+			new String[] { 
+				MIMemory.class.getName(), 
+				IMemory.class.getName(),
+				IGDBMemory.class.getName(),
+				GDBMemory.class.getName(),
+				GDBMemory_7_0.class.getName()
+			}, 
+			new Hashtable<String, String>());
 
 		requestMonitor.done();
 	}

@@ -42,7 +42,6 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsSynchronizer;
 import org.eclipse.cdt.dsf.mi.service.MIDisassembly;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions;
-import org.eclipse.cdt.dsf.mi.service.MIMemory;
 import org.eclipse.cdt.dsf.mi.service.MIModules;
 import org.eclipse.cdt.dsf.mi.service.MIRegisters;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
@@ -186,7 +185,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 			return new GDBMemory_7_0(session);
 		}
 
-		return new MIMemory(session);
+		return new GDBMemory(session);
 	}
 
 	@Override

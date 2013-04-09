@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     IBM Corporation
  *     Patrick Hofer - Bug 326265
+ *     Andrew Gvozdev
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
@@ -19,6 +20,7 @@ import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.cdt.make.internal.ui.preferences.MakefileEditorPreferenceConstants;
+import org.eclipse.cdt.make.internal.ui.text.ColorManager;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileWordDetector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
@@ -32,6 +34,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.rules.IWordDetector;
+import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -52,11 +55,11 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class MakefileEditor extends TextEditor implements ISelectionChangedListener, IReconcilingParticipant {
-
 	/**
 	 * The page that shows the outline.
 	 */
@@ -64,6 +67,12 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	ProjectionSupport projectionSupport;
 	ProjectionMakefileUpdater fProjectionMakefileUpdater;
 	private FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
+
+	/** Pairs of brackets, used to match. */
+	protected static final char[] BRACKETS = { '{', '}', '(', ')', '[', ']', '<', '>' };
+
+	/** Matches the brackets. */
+	protected DefaultCharacterPairMatcher fBracketMatcher = new DefaultCharacterPairMatcher(BRACKETS);
 
 	/**
 	 * The action group for folding.
@@ -99,9 +108,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
-	 */
 	@Override
 	protected void initializeEditor() {
 		setRangeIndicator(new DefaultRangeIndicator());
@@ -113,15 +119,17 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		setSourceViewerConfiguration(new MakefileSourceConfiguration(chainedStore, this));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fProjectionMakefileUpdater != null) {
 			fProjectionMakefileUpdater.uninstall();
 			fProjectionMakefileUpdater= null;
 		}
+		if (fBracketMatcher != null) {
+			fBracketMatcher.dispose();
+			fBracketMatcher = null;
+		}
+
 		super.dispose();
 	}
 
@@ -129,9 +137,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		return MakeUIPlugin.getDefault().getPreferenceStore().getBoolean(MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#rulerContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
 		super.rulerContextMenuAboutToShow(menu);
@@ -149,9 +154,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
@@ -165,7 +167,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
 		}
 
-//		ProjectionAnnotationModel model= (ProjectionAnnotationModel) getAdapter(ProjectionAnnotationModel.class);
+		//		ProjectionAnnotationModel model= (ProjectionAnnotationModel) getAdapter(ProjectionAnnotationModel.class);
 
 		fProjectionMakefileUpdater= new ProjectionMakefileUpdater();
 		if (fProjectionMakefileUpdater != null) {
@@ -184,9 +186,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		return viewer;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IAdaptable
-	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class key) {
@@ -203,9 +202,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		return super.getAdapter(key);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
@@ -214,9 +210,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
-	 */
 	@Override
 	protected void createActions() {
 		super.createActions();
@@ -249,9 +242,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		fFoldingGroup = new FoldingActionGroup(this, getSourceViewer());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		ISelection selection = event.getSelection();
@@ -334,9 +324,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
@@ -432,26 +419,23 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		ISourceViewer sourceViewer= getSourceViewer();
 		if (sourceViewer == null)
 			return;
 
-        String property = event.getProperty();
+		String property = event.getProperty();
 
-        MakefileSourceConfiguration makeConf = getMakefileSourceConfiguration();
-        if (makeConf != null) {
-        	if (makeConf.affectsBehavior(event)) {
-        		makeConf.adaptToPreferenceChange(event);
-        		sourceViewer.invalidateTextPresentation();
-        	}
-        }
+		MakefileSourceConfiguration makeConf = getMakefileSourceConfiguration();
+		if (makeConf != null) {
+			if (makeConf.affectsBehavior(event)) {
+				makeConf.adaptToPreferenceChange(event);
+				sourceViewer.invalidateTextPresentation();
+			}
+		}
 
-        if (MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED.equals(property)) {
+		if (MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED.equals(property)) {
 			if (sourceViewer instanceof ProjectionViewer) {
 				ProjectionViewer projectionViewer= (ProjectionViewer) sourceViewer;
 				if (fProjectionMakefileUpdater != null)
@@ -468,9 +452,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		super.handlePreferenceStoreChanged(event);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#collectContextMenuPreferencePages()
-	 */
 	@Override
 	protected String[] collectContextMenuPreferencePages() {
 		// Add Makefile Editor relevant pages
@@ -483,9 +464,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		return prefPageIds;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#isTabsToSpacesConversionEnabled()
-	 */
 	@Override
 	protected boolean isTabsToSpacesConversionEnabled() {
 		// always false for Makefiles
@@ -494,7 +472,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	}
 
 	/*
-	 * @see org.eclipse.ui.editors.text.TextEditor#initializeKeyBindingScopes()
 	 * @see http://bugs.eclipse.org/172331
 	 */
 	@Override
@@ -502,9 +479,17 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		setKeyBindingScopes(new String [] { "org.eclipse.cdt.make.ui.makefileEditorScope" } ); //$NON-NLS-1$
 	}
 
-    @Override
-    public int getOrientation() {
-        return SWT.LEFT_TO_RIGHT; // bug 271449: Makefile editor should always be left to right
-    }
+	@Override
+	public int getOrientation() {
+		return SWT.LEFT_TO_RIGHT; // bug 271449: Makefile editor should always be left to right
+	}
+
+	@Override
+	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
+		super.configureSourceViewerDecorationSupport(support);
+		//Enhance the stock source viewer decorator with a bracket matcher
+		support.setCharacterPairMatcher(fBracketMatcher);
+		support.setMatchingCharacterPainterPreferenceKeys(MakefileEditorPreferenceConstants.EDITOR_MATCHING_BRACKETS, ColorManager.MAKE_MATCHING_BRACKETS_COLOR);
+	}
 
 }

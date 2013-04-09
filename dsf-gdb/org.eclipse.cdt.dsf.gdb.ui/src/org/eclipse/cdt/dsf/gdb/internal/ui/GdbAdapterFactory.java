@@ -9,6 +9,7 @@
  *     Wind River Systems - initial API and implementation
  *     Navid Mehregani (TI) - Bug 289526 - Migrate the Restart feature to the new one, as supported by the platform
  *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
+ *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui;
 
@@ -31,10 +32,12 @@ import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
 import org.eclipse.cdt.debug.core.model.IStopTracingHandler;
 import org.eclipse.cdt.debug.core.model.IUncallHandler;
 import org.eclipse.cdt.debug.ui.IPinProvider;
+import org.eclipse.cdt.dsf.commands.IStepIntoSelectionHandler;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfResumeCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepIntoCommand;
+import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepIntoSelectionCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepOverCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepReturnCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfSuspendCommand;
@@ -105,6 +108,7 @@ public class GdbAdapterFactory
         final GdbViewModelAdapter fViewModelAdapter;
         final DsfSourceDisplayAdapter fSourceDisplayAdapter;
         final DsfStepIntoCommand fStepIntoCommand;
+        final DsfStepIntoSelectionCommand fStepIntoSelectionCommand;
         final GdbReverseStepIntoCommand fReverseStepIntoCommand;
         final DsfStepOverCommand fStepOverCommand;
         final GdbReverseStepOverCommand fReverseStepOverCommand;
@@ -154,6 +158,7 @@ public class GdbAdapterFactory
             
             fSteppingModeTarget = new GdbSteppingModeTarget(session);
             fStepIntoCommand = new DsfStepIntoCommand(session, fSteppingModeTarget);
+            fStepIntoSelectionCommand = new DsfStepIntoSelectionCommand(session, fSteppingModeTarget);
             fReverseStepIntoCommand = new GdbReverseStepIntoCommand(session, fSteppingModeTarget);
             fStepOverCommand = new DsfStepOverCommand(session, fSteppingModeTarget);
             fReverseStepOverCommand = new GdbReverseStepOverCommand(session, fSteppingModeTarget);
@@ -181,6 +186,7 @@ public class GdbAdapterFactory
 
             session.registerModelAdapter(ISteppingModeTarget.class, fSteppingModeTarget);
             session.registerModelAdapter(IStepIntoHandler.class, fStepIntoCommand);
+            session.registerModelAdapter(IStepIntoSelectionHandler.class, fStepIntoSelectionCommand);
             session.registerModelAdapter(IReverseStepIntoHandler.class, fReverseStepIntoCommand);
             session.registerModelAdapter(IStepOverHandler.class, fStepOverCommand);
             session.registerModelAdapter(IReverseStepOverHandler.class, fReverseStepOverCommand);
@@ -242,6 +248,7 @@ public class GdbAdapterFactory
 
             session.unregisterModelAdapter(ISteppingModeTarget.class);
             session.unregisterModelAdapter(IStepIntoHandler.class);
+            session.unregisterModelAdapter(IStepIntoSelectionHandler.class);
             session.unregisterModelAdapter(IReverseStepIntoHandler.class);
             session.unregisterModelAdapter(IStepOverHandler.class);
             session.unregisterModelAdapter(IReverseStepOverHandler.class);
@@ -273,6 +280,7 @@ public class GdbAdapterFactory
 
             fSteppingModeTarget.dispose();
             fStepIntoCommand.dispose();
+            fStepIntoSelectionCommand.dispose();
             fReverseStepIntoCommand.dispose();
             fStepOverCommand.dispose();
             fReverseStepOverCommand.dispose();

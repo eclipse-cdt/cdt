@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.debug.core,
  org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.cdt.dsf.concurrent,
+Export-Package: org.eclipse.cdt.dsf.commands,
+ org.eclipse.cdt.dsf.concurrent,
  org.eclipse.cdt.dsf.datamodel,
  org.eclipse.cdt.dsf.debug.internal.provisional.model;x-friends:="org.eclipse.cdt.dsf.ui",
  org.eclipse.cdt.dsf.debug.internal.provisional.service;x-internal:=true,

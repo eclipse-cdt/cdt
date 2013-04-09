@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson			  - Initial Implementation
+ *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf;
 

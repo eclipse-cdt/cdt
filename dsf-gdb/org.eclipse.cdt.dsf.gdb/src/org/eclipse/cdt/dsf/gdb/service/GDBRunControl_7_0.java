@@ -30,6 +30,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
+import org.eclipse.cdt.dsf.debug.service.IRunControl3;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
@@ -141,6 +142,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 
         register(new String[]{IRunControl.class.getName(),
         					  IRunControl2.class.getName(),
+        					  IRunControl3.class.getName(),
         					  IMIRunControl.class.getName(),
         					  MIRunControl.class.getName(),
         					  IReverseRunControl.class.getName()}, 

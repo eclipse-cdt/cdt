@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Alvaro Sanchez-Leon (Ericsson AB)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -18,6 +19,7 @@ class Messages extends NLS {
 	public static String CElementGrouping_includeGroupingLabel;
 	public static String CElementGrouping_macroGroupingLabel;
 	public static String CUIPlugin_jobStartMakeUI;
+	public static String StepIntoSelection_unable_to_resolve_1;
 
 	static {
 		// Initialize resource bundle

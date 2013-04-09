@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Bug 315446: Invalid event breakpoint type (group) name 
+ *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui;
 
@@ -16,6 +17,8 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	public static String ToggleBreakpointsTargetFactory_description;
 	public static String ToggleBreakpointsTargetFactory_name;
+	public static String DsfUIStepIntoEditorSelection;
+	public static String DsfUIStepIntoEditorSelection_label;
 	
 	static {
 		// initialize resource bundle

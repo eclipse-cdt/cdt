@@ -9,6 +9,7 @@
  *     Wind River Systems - initial API and implementation
  *     Ericsson AB		  - Modified for additional functionality	
  *     Nokia - create and use backend service. 
+ *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.service;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
+import org.eclipse.cdt.dsf.debug.service.IRunControl3;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -109,6 +111,7 @@ public class GDBRunControl extends MIRunControl {
 
         register(new String[]{IRunControl.class.getName(), 
            		IRunControl2.class.getName(),
+           		IRunControl3.class.getName(),
            		IMIRunControl.class.getName(),
            		MIRunControl.class.getName(), 
         		GDBRunControl.class.getName()}, new Hashtable<String,String>());

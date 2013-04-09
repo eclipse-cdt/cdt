@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Mentor Graphics - Initial API and implementation
+ * Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.internal;
@@ -22,6 +23,11 @@ public class Messages extends NLS {
 	public static String CustomTimeoutsMap_Invalid_custom_timeout_value;
 
 	public static String GDBControl_Session_is_terminated;
+	
+	public static String StepIntoSelection_1;
+	
+	public static String StepIntoSelection_Execution_did_not_enter_1;
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages( Messages.class.getName(), Messages.class );

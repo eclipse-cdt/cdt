@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
+ *     Marc Dumais (Ericsson) - Bug 399419
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.events;
@@ -24,8 +25,14 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 @Immutable
 public class MISteppingRangeEvent extends MIStoppedEvent {
 
-    protected MISteppingRangeEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame) {
+	protected MISteppingRangeEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame) {
         super(ctx, token, results, frame);
+    } 
+	/**
+	 * @since 4.2
+	 */
+	protected MISteppingRangeEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, Integer coreId) {
+        super(ctx, token, results, frame, coreId);
     }  
     
     /**
@@ -34,6 +41,6 @@ public class MISteppingRangeEvent extends MIStoppedEvent {
     public static MISteppingRangeEvent parse(IExecutionDMContext dmc, int token, MIResult[] results)
     {
     	MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
-    	return new MISteppingRangeEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());
+    	return new MISteppingRangeEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), stoppedEvent.getCoreId());
     }
 }

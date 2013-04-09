@@ -8,12 +8,14 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
+ *     Marc Dumais (Ericsson) - Bug 399419
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.events;
 
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 import org.eclipse.cdt.dsf.mi.service.command.output.MITuple;
@@ -27,10 +29,20 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 public class MIStoppedEvent extends MIEvent<IExecutionDMContext> {
 
     final private MIFrame frame;
+    final private Integer coreId;
 
     protected MIStoppedEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame) {
     	super(ctx, token, results);
     	this.frame = frame;
+    	coreId = null;
+    }
+    /**
+	 * @since 4.2
+	 */
+    protected MIStoppedEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, Integer coreId) {
+    	super(ctx, token, results);
+    	this.frame = frame;
+    	this.coreId = coreId;
     }
 
     public MIFrame getFrame() {
@@ -38,11 +50,19 @@ public class MIStoppedEvent extends MIEvent<IExecutionDMContext> {
     }
     
     /**
+	 * @since 4.2
+	 */
+	public Integer getCoreId() {
+		return coreId;
+	}
+    
+    /**
      * @since 1.1
      */
     public static MIStoppedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
     {
     	MIFrame frame = null;
+    	int coreId = 0;
 
     	for (int i = 0; i < results.length; i++) {
     		String var = results[i].getVariable();
@@ -53,7 +73,18 @@ public class MIStoppedEvent extends MIEvent<IExecutionDMContext> {
     				frame = new MIFrame((MITuple)value);
     			}
     		}
+    		else if (var.equals("core")) { //$NON-NLS-1$
+				if (value instanceof MIConst) {
+					String str = ((MIConst)value).getString();
+					try {
+						coreId = Integer.parseInt(str.trim());
+						
+					} catch (NumberFormatException e) {
+					}
+				}
+			}
+    		
     	}
-    	return new MIStoppedEvent(dmc, token, results, frame);
+    	return new MIStoppedEvent(dmc, token, results, frame, coreId);
     }
 }

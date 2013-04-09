@@ -8,12 +8,14 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     Marc Dumais (Ericsson) - Bug 400231
+ *     Marc Dumais (Ericsson) - Bug 399419
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
 
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
@@ -34,6 +36,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MISignalEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 
@@ -87,6 +90,19 @@ public class MulticoreVisualizerEventListener {
     							newState = VisualizerExecutionState.CRASHED;
     						}
     						
+    					}
+    				}
+    			}
+    			// update core
+    			if (event instanceof IMIDMEvent) {
+    				Object miEvent = ((IMIDMEvent)event).getMIEvent();
+    				if (miEvent instanceof MIStoppedEvent) {
+    					Integer coreId = ((MIStoppedEvent)miEvent).getCoreId();
+    					if (coreId != null) {
+    						VisualizerCore vCore = fVisualizer.getModel().getCore(coreId);
+    						if (vCore != null) {
+    							thread.setCore(vCore);
+    						}
     					}
     				}
     			}
@@ -165,9 +181,11 @@ public class MulticoreVisualizerEventListener {
 									// That is ok, we'll be refreshing right away at startup
 								}
 
-								fVisualizer.getModel().addThread(new VisualizerThread(vCore, pid, osTid, tid, VisualizerExecutionState.RUNNING));
-								
-								fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();
+								// if thread not yet in model, add it
+								if (fVisualizer.getModel().getThread(tid) == null ) {
+									fVisualizer.getModel().addThread(new VisualizerThread(vCore, pid, osTid, tid, VisualizerExecutionState.RUNNING));
+									fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();	
+								}
 							}
 						}
 					}
@@ -193,6 +211,15 @@ public class MulticoreVisualizerEventListener {
 				canvas.requestUpdate();
 			}
     	}
-	}	
+	}
+
+	
+	/** Invoked when the debug data model is ready */
+	@DsfServiceEventHandler
+	public void handleEvent(DataModelInitializedEvent event) {
+		// re-create the visualizer model now that CPU and core info is available
+		fVisualizer.update();
+	}
+
 }
 

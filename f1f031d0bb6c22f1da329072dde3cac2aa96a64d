@@ -16,6 +16,24 @@
       "revId": "f1f031d0bb6c22f1da329072dde3cac2aa96a64d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//yjY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/events/MIStoppedEvent.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-04-10T12:40:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//ykk\u003d",
+      "revId": "f1f031d0bb6c22f1da329072dde3cac2aa96a64d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

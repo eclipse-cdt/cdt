@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//yjk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1111,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-04-10T12:40:07Z",
+      "side": 1,
+      "message": "Done.  Only needed for threads because they are the only element that is updated through the listener and model creation; all the others are created with the model and don\u0027t change after.",
+      "parentUuid": "AABOPX//zVk\u003d",
+      "revId": "215e99dfb2403dc89f8affe5d1e8ad8be6793b4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//zVg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvas.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2013-04-05T20:06:06Z",
       "side": 1,
       "message": "do we need requestUpdate() here too?  If so, how about calling setSelection(selection, true) instead to avoid code duplication?",
+      "revId": "215e99dfb2403dc89f8affe5d1e8ad8be6793b4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//yj0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvas.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 974,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-04-10T12:40:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zVg\u003d",
       "revId": "215e99dfb2403dc89f8affe5d1e8ad8be6793b4d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -71,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//yjs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-04-10T12:40:07Z",
+      "side": 1,
+      "message": "Rolled-back to previous version, as per discussion.",
+      "parentUuid": "AABOPX//ytI\u003d",
+      "revId": "215e99dfb2403dc89f8affe5d1e8ad8be6793b4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//zVM\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
         "patchSetId": 1
@@ -82,6 +136,24 @@
       "writtenOn": "2013-04-05T20:06:06Z",
       "side": 1,
       "message": "Can you put a comment on when this could happen?",
+      "revId": "215e99dfb2403dc89f8affe5d1e8ad8be6793b4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//yjo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-04-10T12:40:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//zVM\u003d",
       "revId": "215e99dfb2403dc89f8affe5d1e8ad8be6793b4d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

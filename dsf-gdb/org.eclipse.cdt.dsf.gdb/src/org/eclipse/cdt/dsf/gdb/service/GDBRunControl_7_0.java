@@ -11,7 +11,8 @@
  *     Ericsson           - Version 7.0
  *     Nokia              - create and use backend service. 
  *     Ericsson           - Added IReverseControl support
- *     Marc Khouzam (Ericsson) - Added IReverseModeChangedDMEvent (Bug 399163) 
+ *     Marc Khouzam (Ericsson) - Added IReverseModeChangedDMEvent (Bug 399163)
+ *     Marc Khouzam (Ericsson) - Started inheriting from GDBRunControl (Bug 405123)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.service;
@@ -25,9 +26,6 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
-import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
-import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -42,17 +40,13 @@ import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
-import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
-import org.eclipse.cdt.dsf.mi.service.command.events.MIInferiorExitEvent;
-import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunControl {
+public class GDBRunControl_7_0 extends GDBRunControl implements IReverseRunControl {
 	
 	/** @since 4.2 */
 	protected static class GdbReverseModeChangedDMEvent extends AbstractDMEvent<ICommandControlDMContext>
@@ -68,29 +62,6 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 		public boolean isReverseModeEnabled() {
 			return fIsEnabled;
 		}
-	}
-
-	private static class RunToLineActiveOperation {
-		private IMIExecutionDMContext fThreadContext;
-		private int fBpId;
-		private String fFileLocation;
-		private String fAddrLocation;
-		private boolean fSkipBreakpoints;
-		
-		public RunToLineActiveOperation(IMIExecutionDMContext threadContext,
-				int bpId, String fileLoc, String addr, boolean skipBreakpoints) {
-			fThreadContext = threadContext;
-			fBpId = bpId;
-			fFileLocation = fileLoc;
-			fAddrLocation = addr;
-			fSkipBreakpoints = skipBreakpoints;
-		}
-		
-		public IMIExecutionDMContext getThreadContext() { return fThreadContext; }
-		public int getBreakointId() { return fBpId; }
-		public String getFileLocation() { return fFileLocation; }
-		public String getAddrLocation() { return fAddrLocation; }
-		public boolean shouldSkipBreakpoints() { return fSkipBreakpoints; }
 	}
 
 	private IMICommandControl fCommandControl;
@@ -109,8 +80,6 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 	 * session, or when visualizing tracepoints.
 	 */
 	private boolean fRunControlOperationsEnabled = true;
-
-	private RunToLineActiveOperation fRunToLineActiveOperation = null;
 
     public GDBRunControl_7_0(DsfSession session) {
         super(session);
@@ -143,7 +112,9 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
         					  IRunControl2.class.getName(),
         					  IMIRunControl.class.getName(),
         					  MIRunControl.class.getName(),
-        					  IReverseRunControl.class.getName()}, 
+        					  IReverseRunControl.class.getName(),
+        					  GDBRunControl.class.getName(),
+        					  GDBRunControl_7_0.class.getName()}, 
         		 new Hashtable<String,String>());
         requestMonitor.done();
     }
@@ -155,17 +126,9 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     }
     
     @Override
-	public IMIExecutionDMContext createMIExecutionContext(IContainerDMContext container, int threadId) {
-        IProcessDMContext procDmc = DMContexts.getAncestorOfType(container, IProcessDMContext.class);
-        
-        IThreadDMContext threadDmc = null;
-        if (procDmc != null) {
-        	// For now, reuse the threadId as the OSThreadId
-        	threadDmc = fProcService.createThreadContext(procDmc, Integer.toString(threadId));
-        }
-
-        return fProcService.createExecutionContext(container, threadDmc, Integer.toString(threadId));
-    }
+	protected boolean runControlOperationsEnabled() {
+		return fRunControlOperationsEnabled;
+	}
 
     @Override
     public void suspend(IExecutionDMContext context, final RequestMonitor rm){
@@ -201,79 +164,11 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 					}
 				});
     }
-
-	/**
-	 * @since 2.0
-	 */
-	@Override
-	public void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
-		if (!fRunControlOperationsEnabled) {
-			rm.setData(false);
-			rm.done();
-			return;
-		}
-		super.canResume(context, rm);
-	}
-
-	/**
-	 * @since 2.0
-	 */
-	@Override
-	public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
-		if (!fRunControlOperationsEnabled) {
-			rm.setData(false);
-			rm.done();
-			return;
-		}
-		super.canSuspend(context, rm);
-	}
-
-	/**
-	 * @since 2.0
-	 */
-	@Override
-	public void canStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
-		if (!fRunControlOperationsEnabled) {
-			rm.setData(false);
-			rm.done();
-			return;
-		}
-
-    	if (context instanceof IContainerDMContext) {
-    		rm.setData(false);
-    		rm.done();
-    		return;
-    	}
-    	
-    	if (stepType == StepType.STEP_RETURN) {
-    		// A step return will always be done in the top stack frame.
-    		// If the top stack frame is the only stack frame, it does not make sense
-    		// to do a step return since GDB will reject it.
-            MIStack stackService = getServicesTracker().getService(MIStack.class);
-            if (stackService != null) {
-            	// Check that the stack is at least two deep.
-            	stackService.getStackDepth(context, 2, new DataRequestMonitor<Integer>(getExecutor(), rm) {
-            		@Override
-            		public void handleCompleted() {
-            			if (isSuccess() && getData() == 1) {
-            				rm.setData(false);
-            				rm.done();
-            			} else {
-            	    		canResume(context, rm);
-            			}
-            		}
-            	});
-            	return;
-            }
-    	}
-    	
-    	canResume(context, rm);
-    }
     
     /** @since 2.0 */
 	@Override
 	public void canReverseResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
-		if (!fRunControlOperationsEnabled) {
+		if (!runControlOperationsEnabled()) {
 			rm.setData(false);
 			rm.done();
 			return;
@@ -286,7 +181,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     /** @since 2.0 */
 	@Override
 	public void canReverseStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
-		if (!fRunControlOperationsEnabled) {
+		if (!runControlOperationsEnabled()) {
 			rm.setData(false);
 			rm.done();
 			return;
@@ -482,57 +377,8 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     				}
     			});
 	}
-    	
-	/** @since 3.0 */
-	@Override
-	public void runToLocation(final IExecutionDMContext context, final String location, final boolean skipBreakpoints, final RequestMonitor rm){
-	    
-    	assert context != null;
 
-    	final IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
-		if (dmc == null){
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Given context: " + context + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
-            rm.done();
-            return;
-		}
-
-        if (doCanResume(dmc)) {
-        	IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(context, IBreakpointsTargetDMContext.class);
-        	getConnection().queueCommand(
-        			fCommandFactory.createMIBreakInsert(bpDmc, true, false, null, 0, 
-        					          location, dmc.getThreadId()), 
-        		    new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
-        				@Override
-        				public void handleSuccess() {
-        					// We must set are RunToLineActiveOperation *before* we do the resume
-        					// or else we may get the stopped event, before we have set this variable.
-           					int bpId = getData().getMIBreakpoints()[0].getNumber();
-           					String addr = getData().getMIBreakpoints()[0].getAddress();
-        		        	fRunToLineActiveOperation = new RunToLineActiveOperation(dmc, bpId, location, addr, skipBreakpoints);
-
-        					resume(dmc, new RequestMonitor(getExecutor(), rm) {
-                				@Override
-                				public void handleFailure() {
-                		    		IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
-                		    				IBreakpointsTargetDMContext.class);
-                		    		int bpId = fRunToLineActiveOperation.getBreakointId();
-
-                		    		getConnection().queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new int[] {bpId}),
-                		    				new DataRequestMonitor<MIInfo>(getExecutor(), null));
-                		    		fRunToLineActiveOperation = null;
-
-                		    		super.handleFailure();
-                		    	}
-        					});
-        				}
-        			});
-        } else {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
-            		"Cannot resume given DMC.", null)); //$NON-NLS-1$
-            rm.done();
-        }
-	}
-
+	// Overridden to use the new MI command -exec-jump
 	/** @since 3.0 */
 	@Override
 	public void resumeAtLocation(IExecutionDMContext context, String location, RequestMonitor rm) {
@@ -549,6 +395,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 			setResumePending(true);
 			getCache().setContextAvailable(dmc, false);
 			getConnection().queueCommand(
+					// The MI command -exec-jump was added in GDB 7.0
 					fCommandFactory.createMIExecJump(dmc, location),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 						@Override
@@ -565,84 +412,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 					rm.done();
 		}		
 	}
-	
-    /**
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     * @noreference This method is not intended to be referenced by clients.
-     * 
-     * @since 2.0
-     */
-    @DsfServiceEventHandler
-    public void eventDispatched(MIInferiorExitEvent e) {
-    	if (fRunToLineActiveOperation != null) {
-    		IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
-    				IBreakpointsTargetDMContext.class);
-    		int bpId = fRunToLineActiveOperation.getBreakointId();
 
-    		getConnection().queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new int[] {bpId}),
-    				new DataRequestMonitor<MIInfo>(getExecutor(), null));
-    		fRunToLineActiveOperation = null;
-    	}
-    }
-
-	/** @since 2.0 */
-    @Override
-    @DsfServiceEventHandler
-    public void eventDispatched(final MIStoppedEvent e) {
-    	if (fRunToLineActiveOperation != null) {
-    		int bpId = 0;
-    		if (e instanceof MIBreakpointHitEvent) {
-    			bpId = ((MIBreakpointHitEvent)e).getNumber();
-    		}
-			String fileLocation = e.getFrame().getFile() + ":" + e.getFrame().getLine();  //$NON-NLS-1$
-			String addrLocation = e.getFrame().getAddress();
-			// Here we check three different things to see if we are stopped at the right place
-			// 1- The actual location in the file.  But this does not work for breakpoints that
-			//    were set on non-executable lines
-			// 2- The address where the breakpoint was set.  But this does not work for breakpoints
-			//    that have multiple addresses (GDB returns <MULTIPLE>.)  I think that is for multi-process
-			// 3- The breakpoint id that was hit.  But this does not work if another breakpoint
-			//    was also set on the same line because GDB may return that breakpoint as being hit.
-			//
-			// So this works for the large majority of cases.  The case that won't work is when the user
-			// does a runToLine to a line that is non-executable AND has another breakpoint AND
-			// has multiple addresses for the breakpoint.  I'm mean, come on!
-			if (fileLocation.equals(fRunToLineActiveOperation.getFileLocation()) ||
-				addrLocation.equals(fRunToLineActiveOperation.getAddrLocation()) ||
-				bpId == fRunToLineActiveOperation.getBreakointId()) {
-    			// We stopped at the right place.  All is well.
-				fRunToLineActiveOperation = null;
-    		} else {
-    			// Didn't stop at the right place yet
-    			if (fRunToLineActiveOperation.shouldSkipBreakpoints() && e instanceof MIBreakpointHitEvent) {
-    				getConnection().queueCommand(
-    						fCommandFactory.createMIExecContinue(fRunToLineActiveOperation.getThreadContext()),
-    						new DataRequestMonitor<MIInfo>(getExecutor(), null));
-
-    				// Don't send the stop event since we are resuming again.
-    				return;
-    			} else {
-    				// Stopped at another breakpoint that we should not skip.
-    				// Or got an interrupt signal from a suspend command.
-    				// Or got an interrupt signal because the user set/changed a breakpoint.  This last case is tricky.
-    				// We could let the run-to-line continue its job, however, I'm thinking that if the user creates
-    				// a new breakpoint, she may want to force the program to stop, in a way to abort the run-to-line.
-    				// So, let's cancel the run-to-line in this case.
-    				//
-    				// Just remove our temporary one since we don't want it to hit later
-    				IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
-    						IBreakpointsTargetDMContext.class);
-
-    				getConnection().queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new int[] {fRunToLineActiveOperation.getBreakointId()}),
-    						new DataRequestMonitor<MIInfo>(getExecutor(), null));
-    				fRunToLineActiveOperation = null;
-    			}
-    		}
-    	}
-
-    	super.eventDispatched(e);
-    }
-    
     /**
 	 * @since 3.0
 	 */

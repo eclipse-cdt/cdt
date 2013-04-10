@@ -62,14 +62,8 @@ public final class DisassemblyMessages extends NLS {
 	public static String DisassemblyPreferencePage_radix_octal;
 	public static String DisassemblyPreferencePage_radix_decimal;
 	public static String DisassemblyPreferencePage_radix_hexadecimal;
-	public static String DisassemblyPreferencePage_showFunctionOffsets;
-	public static String DisassemblyPreferencePage_showFunctionOffsetsTooltip;
-	public static String DisassemblyPreferencePage_showCodeBytes;
-	public static String DisassemblyPreferencePage_showCodeBytesTooltip;
 	public static String DisassemblyPreferencePage_OpcodeFormat;
 	public static String DisassemblyPreferencePage_OpcodeFormatTooltip;
-	public static String DisassemblyPreferencePage_showAddress;
-	public static String DisassemblyPreferencePage_showAddressTooltip;
 	public static String DisassemblyPreferencePage_showRadixTooltip;
 	public static String DisassemblyIPAnnotation_primary;
 	public static String DisassemblyIPAnnotation_secondary;
@@ -84,8 +78,6 @@ public final class DisassemblyMessages extends NLS {
 	public static String Disassembly_Error_Dialog_ok_button;
 	public static String DisassemblyBackendDsf_error_UnableToRetrieveData;
     public static String Disassembly_action_AddBreakpoint_label;
-    public static String Disassembly_action_AddBreakpoint_errorTitle;
-    public static String Disassembly_action_AddBreakpoint_errorMessage;
     public static String Disassembly_action_ToggleBreakpoint_accelerator;
 
 	

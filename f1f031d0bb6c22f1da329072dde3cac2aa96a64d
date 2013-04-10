@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//ykk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/events/MIStoppedEvent.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-10T10:21:40Z",
+      "side": 1,
+      "message": "I hadn\u0027t realized that we\u0027d need a new constructor to support \"core\".  That means changing any inheriting class.\n\nThis complicates things too much.\n\nWe can forget about this improvement for now and revert back to your first patch.\n\nSorry about that.",
+      "revId": "f1f031d0bb6c22f1da329072dde3cac2aa96a64d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

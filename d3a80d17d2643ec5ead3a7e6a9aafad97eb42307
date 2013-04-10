@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//ygo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-10T16:01:04Z",
+      "side": 1,
+      "message": "Does it make sense to move \u0027fRunControlOperationsEnabled\u0027 to GDBControl and have a setter for it - setRunControlOperationsEnabled(boolean)? Otherwise we have to add another private member to other subclasses if we need it in future.",
+      "revId": "d3a80d17d2643ec5ead3a7e6a9aafad97eb42307",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

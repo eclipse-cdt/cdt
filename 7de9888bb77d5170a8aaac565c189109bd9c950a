@@ -142,6 +142,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//yi4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 468,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-10T14:22:57Z",
+      "side": 1,
+      "message": "We shall talk about this one once more as we have now moved StepIntoSelectionOperation to an internal package to be used by the \"all stop\" as well as for \"non-stop\" implementation.\n \nWe decided to move it to an internal package to avoid the maintenance of this new interface.\n\nThe private setting for this field is also consistent with the one above for RunToLineActiveOperation",
+      "parentUuid": "AABOPX//zdI\u003d",
+      "revId": "7de9888bb77d5170a8aaac565c189109bd9c950a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//z5w\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 3

@@ -10,6 +10,7 @@
  *     IBM Corporation
  *     Marc Dumais (Ericsson) - Bug 399281
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
+ *     Marc Dumais (Ericsson) - Bug 399419
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -665,7 +666,8 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 					{
 						// Execute a refresh after any pending UI updates.
 						GUIUtils.exec( new Runnable() { @Override public void run() {
-							MulticoreVisualizer.this.refresh();
+							// check if we need to update the debug context
+							updateDebugContext();
 						}});
 					}
 				};
@@ -705,10 +707,15 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		// the workbench selection. This will be done asynchronously.
 		boolean changed = updateDebugContext();
 		
-		// Even if debug info doesn't change, we still want to
-		// check whether the canvas selection needs to change
-		// to reflect the current workbench selection.
-		if (!changed) updateCanvasSelection();
+		if (changed) {
+			update();
+		}
+		else {
+			// Even if debug info doesn't change, we still want to
+			// check whether the canvas selection needs to change
+			// to reflect the current workbench selection.
+			updateCanvasSelection();
+		}
 	}
 	
 
@@ -829,7 +836,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	 *  Returns true if canvas context actually changes, false if not.
 	 */
 	public boolean setDebugSession(String sessionId) {
-		boolean changed = true;
+		boolean changed = false;
 
 		if (m_sessionState != null &&
 			! m_sessionState.getSessionID().equals(sessionId))
@@ -854,8 +861,6 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			initializeLoadMeterTimer();
 			changed = true;
 		}
-	
-		if (changed) update();
 		
 		return changed;
 	}
@@ -1102,7 +1107,12 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		// If we can't get the real Linux OS tid, fallback to using the gdb thread id
 		int osTid = (osTIDValue == null) ? tid : Integer.parseInt(osTIDValue);
 
-		model.addThread(new VisualizerThread(core, pid, osTid, tid, state));
+		// add thread if not already there - there is a potential race condition where a 
+		// thread can be added twice to the model: once at model creation and once more 
+		// through the listener.   Checking at both places to prevent this.
+		if (model.getThread(tid) == null) {
+			model.addThread(new VisualizerThread(core, pid, osTid, tid, state));
+		}
 		
 		// keep track of threads visited
 		done(1, model);

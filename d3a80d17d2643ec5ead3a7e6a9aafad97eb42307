@@ -16,6 +16,24 @@
       "revId": "d3a80d17d2643ec5ead3a7e6a9aafad97eb42307",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//yP4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-11T01:26:20Z",
+      "side": 1,
+      "message": "I was going back and forth between what you suggest and the proposed solution.\n\nSay a new GDBRunControl_7_7 needs to setRunControlOperationsEnabled(false) permanently in the constructor; I worry that a  base class could reset that value to true later on.  This would break the subclass behavior.  We could work around that by overriding setRunControlOperationsEnabled() itself, but it would require the designer to realize the risk.\n\nWith runControlOperationsEnabled(), a new GDBRunControl_7_7 could return false all the time for the case where run control ops should be off all the time, and when not in that case, it could return super.runControlOperationsEnabled(), I believe that this would prevent the base class from re-setting the value of \u0027fRunControlOperationsEnabled\u0027 and affecting the subclass wrongly.\n\nBut I realize that without a real use case to address, it is very difficult to choose the right inheritance technique.\n\nI\u0027m willing to make the modification.  But I\u0027d like to know what you think about the case above.",
+      "parentUuid": "AABOPX//ygo\u003d",
+      "revId": "d3a80d17d2643ec5ead3a7e6a9aafad97eb42307",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

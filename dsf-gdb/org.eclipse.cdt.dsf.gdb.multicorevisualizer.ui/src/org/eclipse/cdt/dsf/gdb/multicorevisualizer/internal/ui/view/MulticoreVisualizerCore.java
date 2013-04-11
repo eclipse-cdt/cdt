@@ -8,6 +8,7 @@
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
+ *     Marc Dumais (Ericsson) - Bug 404894
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -182,6 +183,12 @@ public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject
 		gc.setBackground(bg);
 		// We want the load meter to share the same BG color
 		m_loadMeter.setParentBgColor(bg);
+
+		// highlight in a different color if selected
+		if (m_selected)
+		{
+			gc.setForeground(IMulticoreVisualizerConstants.COLOR_SELECTED);
+		}
 
 		gc.fillRectangle(m_bounds);
 		gc.drawRectangle(m_bounds);

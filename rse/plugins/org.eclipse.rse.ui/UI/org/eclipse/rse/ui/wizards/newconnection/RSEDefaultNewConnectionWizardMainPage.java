@@ -14,6 +14,7 @@
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Uwe Stieber (Wind River) - Fix stack overflow in canFlipToNextPage() and getNextPage()
+ * Mohamed Hussein (Mentor Graphics) - [396143] Fix second time validation
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -147,9 +148,12 @@ public class RSEDefaultNewConnectionWizardMainPage extends WizardPage implements
 		// this is done because the main page may have input that is not valid, but can
 		// only be verified when next is pressed since it requires a long running operation
 		if (!formVerificationGateKeeper) {
-			formVerificationGateKeeper = true;
-			if (!getSystemConnectionForm().verify(true)) return null;
-			formVerificationGateKeeper = false;
+			try {
+				formVerificationGateKeeper = true;
+				if (!getSystemConnectionForm().verify(true)) return null;
+			} finally {
+				formVerificationGateKeeper = false;
+			}
 		}
 
 		RSEDefaultNewConnectionWizard newConnWizard = getWizard() instanceof RSEDefaultNewConnectionWizard ? (RSEDefaultNewConnectionWizard)getWizard() : null;

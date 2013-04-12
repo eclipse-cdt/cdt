@@ -16,7 +16,7 @@
  * Uwe Stieber (Wind River) - Fix stack overflow in canFlipToNextPage() and getNextPage()
  * Mohamed Hussein (Mentor Graphics) - [396143] Fix second time validation
  ********************************************************************************/
-
+ 
 package org.eclipse.rse.ui.wizards.newconnection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;

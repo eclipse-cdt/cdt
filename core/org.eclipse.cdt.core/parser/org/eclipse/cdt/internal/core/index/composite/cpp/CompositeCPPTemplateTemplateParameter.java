@@ -179,4 +179,9 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 	public boolean isFinal() {
 		return false;
 	}
+
+	@Override
+	public int getVisibility(IBinding member) {
+		throw new IllegalArgumentException(member.getName() + " is not a member of " + getName()); //$NON-NLS-1$
+	}
 }

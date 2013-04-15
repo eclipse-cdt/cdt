@@ -16,57 +16,17 @@ import java.util.List;
 
 import junit.framework.Test;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.Path;
 
-public class CPPFunctionTemplateTests extends PDOMTestBase {
-	protected PDOM pdom;
-	protected ICProject cproject;
+public class CPPFunctionTemplateTests extends PDOMInlineCodeTestBase {
 	
 	public static Test suite() {
 		return suite(CPPFunctionTemplateTests.class);
-	}
-	
-	@Override
-	public void setUp() throws Exception {
-		cproject= CProjectHelper.createCCProject("functionTemplateTests"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);		
-	}
-	
-	protected void setUpSections(int sections) throws Exception {
-		StringBuilder[] contents= TestSourceReader.getContentsForTest(
-				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
-		for (StringBuilder content : contents) {
-			IFile file= TestSourceReader.createFile(cproject.getProject(), new Path("refs.cpp"), content.toString());
-		}
-		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
-		CCorePlugin.getIndexManager().reindex(cproject);
-		waitForIndexer(cproject);
-		pdom= (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
-		pdom.acquireReadLock();
-	}
-	
-	@Override
-	protected void tearDown() throws Exception {
-		if(pdom!=null) {
-			pdom.releaseReadLock();
-		}
-		pdom= null;
-		cproject.getProject().delete(true, npm());
 	}
 	
 	/*************************************************************************/

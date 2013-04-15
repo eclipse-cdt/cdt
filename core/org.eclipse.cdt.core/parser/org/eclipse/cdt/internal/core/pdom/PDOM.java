@@ -236,10 +236,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  142.0 - Changed marshalling of evaluations to allow more than 15 evaluation kinds, bug 401479.
 	 *  143.0 - Store implied object type in EvalFunctionSet, bug 402409.
 	 *  144.0 - Add support for storing function sets with zero functions in EvalFunctionSet, bug 402498.
+	 *  145.0 - Added visibility support on class type level, bug 402878.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(144, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(144, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(144, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(145, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(145, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(145, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

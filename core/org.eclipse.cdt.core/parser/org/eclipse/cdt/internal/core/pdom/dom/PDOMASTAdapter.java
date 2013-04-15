@@ -621,6 +621,11 @@ public class PDOMASTAdapter {
 		public boolean isFinal() {
 			return false;
 		}
+
+		@Override
+		public int getVisibility(IBinding member) {
+			return ((ICPPClassType) fDelegate).getVisibility(member);
+		}
 	}
 
 

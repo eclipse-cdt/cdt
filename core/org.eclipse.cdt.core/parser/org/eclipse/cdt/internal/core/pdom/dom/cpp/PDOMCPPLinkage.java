@@ -360,8 +360,16 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 						getPDOM().putCachedResult(inputBinding, pdomBinding);
 						if (inputBinding instanceof CPPClosureType) {
 							addImplicitMethods(pdomBinding, (ICPPClassType) binding, fromName);
+						} else {
+							addMember(pdomBinding, binding, parent);
+							if (parent instanceof ICPPEnumeration) {
+								PDOMNode parent2 = parent.getParentNode();
+								if (parent2 != null) {
+									IBinding bindingOwner = binding.getOwner();
+									addMember(pdomBinding, bindingOwner, parent2);
+								}
+							}
 						}
-
 						// Synchronize the tags associated with the persistent binding to match
 						// the set that is associated with the input binding.
 						TagManager.getInstance().syncTags(pdomBinding, inputBinding);
@@ -385,6 +393,18 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 
 		return pdomBinding;
+	}
+
+	private void addMember(PDOMBinding pdomBinding, IBinding binding, final PDOMNode parent) throws CoreException {
+		if (parent instanceof IPDOMCPPClassType) {
+			if (binding instanceof ICPPTemplateInstance) {
+				binding = ((ICPPTemplateInstance) binding).getSpecializedBinding();
+			}
+			IBinding bindingOwner = binding.getOwner();
+			if (bindingOwner instanceof ICPPClassType) {
+				((IPDOMCPPClassType) parent).addMember(pdomBinding, ((ICPPClassType) bindingOwner).getVisibility(binding));
+			}
+		}
 	}
 
 	private boolean shouldUpdate(PDOMBinding pdomBinding, IASTName fromName) throws CoreException {
@@ -573,6 +593,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 						PDOMBinding pdomBinding= adaptBinding(method);
 						if (pdomBinding == null) {
 							pdomBinding = createBinding(type, method, fileLocalRec);
+							if (type instanceof IPDOMCPPClassType) {
+								((IPDOMCPPClassType) type).addMember(pdomBinding, ICPPClassType.v_public);
+							}
 						} else if (!getPDOM().hasLastingDefinition(pdomBinding)) {
 							pdomBinding.update(this, method);
 							old.remove(pdomBinding);

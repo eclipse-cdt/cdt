@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -33,4 +34,11 @@ public interface IPDOMCPPClassType extends ICPPClassType, IPDOMBinding, IIndexTy
 	 * Returns the scope name, for use in {@link IScope#getScopeName()}
 	 */
 	IIndexName getScopeName();
+
+	/**
+	 * Sets the accessibility specifier of a given member.
+	 * @param member The binding specifying the member.
+	 * @param accessibility The accessibility of the <code>member</code>.
+	 */
+	void setAccessibility(IBinding member, int accessibility);
 }

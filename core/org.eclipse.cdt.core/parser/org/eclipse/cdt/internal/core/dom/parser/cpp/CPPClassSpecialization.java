@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -446,5 +447,19 @@ public class CPPClassSpecialization extends CPPSpecialization
 			return typeSpecifier.isFinal();
 		}
 		return false;
+	}
+
+	@Override
+	public int getAccessibility(IBinding member) {
+		Map<IBinding, Integer> memberAccessibilities = ClassTypeHelper.getMemberAccessibilities(this);
+		if(memberAccessibilities.containsKey(member)){
+			return memberAccessibilities.get(member);
+		}
+		return a_unspecified;
+	}
+
+	@Override
+	public Map<IBinding, Integer> getMemberAccessibilities() {
+		return ClassTypeHelper.getMemberAccessibilities(this);
 	}
 }

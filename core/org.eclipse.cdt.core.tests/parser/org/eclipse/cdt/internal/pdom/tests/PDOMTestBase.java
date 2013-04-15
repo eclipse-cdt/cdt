@@ -202,11 +202,11 @@ public class PDOMTestBase extends BaseTestCase {
 		assertTrue(c.isAssignableFrom(bindings[0].getClass()));
 	}
 
-	protected void assertVisibility(PDOM pdom, String name, int visibility) throws CoreException, DOMException {
+	protected void assertAccessibility(PDOM pdom, String name, int accessibility) throws CoreException, DOMException {
 		IBinding[] bindings = findQualifiedName(pdom, name);
 		assertEquals(1, bindings.length);
 		ICPPMember member = (ICPPMember) bindings[0];
-		assertEquals(visibility, member.getVisibility());
+		assertEquals(accessibility, member.getVisibility());
 	}
 
 	public static final void assertFunctionRefCount(PDOM pdom, Class[] args, IBinding[] bindingPool, int refCount) throws CoreException {

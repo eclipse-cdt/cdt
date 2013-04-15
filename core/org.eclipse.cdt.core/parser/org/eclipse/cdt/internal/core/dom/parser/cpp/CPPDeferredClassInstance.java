@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.Map;
+
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -245,5 +247,15 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 			args[i]= buffer.unmarshalTemplateArgument();
 		}
 		return new PDOMCPPDeferredClassInstance(fragment, (ICPPClassTemplate) template, args);
+	}
+
+	@Override
+	public int getAccessibility(IBinding member) {
+		return a_unspecified;
+	}
+
+	@Override
+	public Map<IBinding, Integer> getMemberAccessibilities() {
+		return EMPTY_ACCESSIBILITY_MAP;
 	}
 }

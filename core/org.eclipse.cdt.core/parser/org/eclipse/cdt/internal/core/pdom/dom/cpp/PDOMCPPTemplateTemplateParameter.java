@@ -11,6 +11,8 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import java.util.Map;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -364,5 +366,15 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 	@Override
 	public ICPPDeferredClassInstance asDeferredInstance() {
 		return null;
+	}
+
+	@Override
+	public int getAccessibility(IBinding member) {
+		return a_unspecified;
+	}
+
+	@Override
+	public Map<IBinding, Integer> getMemberAccessibilities() {
+		return EMPTY_ACCESSIBILITY_MAP;
 	}
 }

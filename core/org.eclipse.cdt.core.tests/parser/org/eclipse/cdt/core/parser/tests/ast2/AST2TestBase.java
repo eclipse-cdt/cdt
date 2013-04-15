@@ -62,6 +62,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.GCCParserExtensionConfiguration;
@@ -864,5 +865,27 @@ public class AST2TestBase extends BaseTestCase {
 		IASTStatement stmt= getStatement(fdef, i);
 		assertInstance(stmt, IASTExpressionStatement.class);
 		return (T) ((IASTExpressionStatement) stmt).getExpression();
+	}
+
+	protected void assertAccessibility(int expected, int actual) {
+		String expectedAccessibility = accessibilityName(expected);
+		String actualAccessibility = accessibilityName(actual);
+		String message = "Expected access specifier:<" + expectedAccessibility + "> but was:<" + actualAccessibility + "> -";
+		assertEquals(message, expected, actual);
+	}
+
+	private String accessibilityName(int expected) {
+		switch(expected){
+		case ICPPClassType.a_private:
+			return "private";
+		case ICPPClassType.a_protected:
+			return "protected";
+		case ICPPClassType.a_public:
+			return "public";
+		case ICPPClassType.a_unspecified:
+			return "unspecified";
+		default:
+			return "illegal access specifier";
+		}
 	}
 }

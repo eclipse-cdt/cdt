@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.Map;
-
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -110,14 +108,6 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		@Override
 		public boolean isFinal() {
 			return false;
-		}
-		@Override
-		public int getAccessibility(IBinding member) {
-			return a_unspecified;
-		}
-		@Override
-		public Map<IBinding, Integer> getMemberAccessibilities() {
-			return EMPTY_ACCESSIBILITY_MAP;
 		}
 	}
 
@@ -421,19 +411,5 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	        name = ns[ ns.length - 1 ];
 	    }
 		return name;
-	}
-
-	@Override
-	public int getAccessibility(IBinding member) {
-		Map<IBinding, Integer> memberAccessibilities = ClassTypeHelper.getMemberAccessibilities(this);
-		if(memberAccessibilities.containsKey(member)){
-			return memberAccessibilities.get(member);
-		}
-		return a_unspecified;
-	}
-
-	@Override
-	public Map<IBinding, Integer> getMemberAccessibilities() {
-		return ClassTypeHelper.getMemberAccessibilities(this);
 	}
 }

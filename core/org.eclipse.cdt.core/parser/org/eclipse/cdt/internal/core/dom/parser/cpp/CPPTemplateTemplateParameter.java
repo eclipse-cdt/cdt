@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.Map;
-
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -247,15 +245,5 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	@Override
 	public boolean isFinal() {
 		return false;
-	}
-
-	@Override
-	public int getAccessibility(IBinding member) {
-		return a_unspecified;
-	}
-
-	@Override
-	public Map<IBinding, Integer> getMemberAccessibilities() {
-		return EMPTY_ACCESSIBILITY_MAP;
 	}
 }

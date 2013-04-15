@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
@@ -343,16 +342,6 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	@Override
 	public boolean isFinal() {
 		return false;
-	}
-
-	@Override
-	public int getAccessibility(IBinding member) {
-		return a_unspecified;
-	}
-
-	@Override
-	public Map<IBinding, Integer> getMemberAccessibilities() {
-		return EMPTY_ACCESSIBILITY_MAP;
 	}
 
 

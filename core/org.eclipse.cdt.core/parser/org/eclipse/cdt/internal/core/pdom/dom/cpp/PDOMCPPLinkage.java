@@ -361,12 +361,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 						if (inputBinding instanceof CPPClosureType) {
 							addImplicitMethods(pdomBinding, (ICPPClassType) binding, fromName);
 						}
-						else if (parent instanceof IPDOMCPPClassType) {
-							IBinding bindingOwner = binding.getOwner();
-							if(bindingOwner instanceof ICPPClassType){
-								((IPDOMCPPClassType) parent).setAccessibility(pdomBinding, ((ICPPClassType) bindingOwner).getAccessibility(binding));
-							}
-						}
+
 						// Synchronize the tags associated with the persistent binding to match
 						// the set that is associated with the input binding.
 						TagManager.getInstance().syncTags(pdomBinding, inputBinding);
@@ -578,9 +573,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 						PDOMBinding pdomBinding= adaptBinding(method);
 						if (pdomBinding == null) {
 							pdomBinding = createBinding(type, method, fileLocalRec);
-							if (type instanceof IPDOMCPPClassType) {
-								((IPDOMCPPClassType) type).setAccessibility(pdomBinding, ICPPClassType.a_public);
-							}
 						} else if (!getPDOM().hasLastingDefinition(pdomBinding)) {
 							pdomBinding.update(this, method);
 							old.remove(pdomBinding);

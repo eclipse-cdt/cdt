@@ -47,7 +47,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -881,58 +880,6 @@ public class ClassTypeHelper {
 			}
 		}
 		return resultArray;
-	}
-
-
-	/**
-	 * Collects the accessibility specifiers for the declarations in a class.
-	 * 
-	 * @param host The class to get the members accessibility specifiers of.
-	 * @return A map containing all members of the class and their corresponding accessibility.
-	 */
-	public static Map<IBinding, Integer> getMemberAccessibilities(ICPPInternalClassTypeMixinHost host) {
-		if (host.getDefinition() == null) {
-			host.checkForDefinition();
-			if (host.getDefinition() == null) {
-				ICPPClassType backup = getBackupDefinition(host);
-				if (backup != null) {
-					return backup.getMemberAccessibilities();
-				}
-				return new HashMap<IBinding, Integer>();
-			}
-		}
-
-		Map<IBinding, Integer> accessibilities = new HashMap<IBinding, Integer>();
-		int accessibility = host.getKey() == ICPPClassType.k_class ? ICPPClassType.a_private
-				: ICPPClassType.a_public;
-
-		IASTDeclaration[] members = host.getCompositeTypeSpecifier().getMembers();
-		for (IASTDeclaration member : members) {
-			if (member instanceof ICPPASTVisibilityLabel) {
-				accessibility = ((ICPPASTVisibilityLabel) member).getVisibility();
-			}
-			if (member instanceof IASTSimpleDeclaration) {
-				IASTSimpleDeclaration memberDeclaration = (IASTSimpleDeclaration) member;
-				for (IASTDeclarator memberDeclarator : memberDeclaration.getDeclarators()) {
-					IBinding memberBinding = ASTQueries.findInnermostDeclarator(memberDeclarator)
-							.getName().resolveBinding();
-					accessibilities.put(memberBinding, accessibility);
-				}
-
-				IASTDeclSpecifier declSpec = memberDeclaration.getDeclSpecifier();
-				if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-					IBinding memberBinding = ((ICPPASTCompositeTypeSpecifier) declSpec).getName()
-							.resolveBinding();
-					accessibilities.put(memberBinding, accessibility);
-				} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier
-						&& memberDeclaration.getDeclarators().length == 0) {
-					IBinding memberBinding = ((ICPPASTElaboratedTypeSpecifier) declSpec).getName()
-							.resolveBinding();
-					accessibilities.put(memberBinding, accessibility);
-				}
-			}
-		}
-		return accessibilities;
 	}
 
 	private static Map<String, List<ICPPMethod>> collectPureVirtualMethods(ICPPClassType classType,

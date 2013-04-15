@@ -11,8 +11,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
-import java.util.Map;
-
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -622,16 +620,6 @@ public class PDOMASTAdapter {
 		@Override
 		public boolean isFinal() {
 			return false;
-		}
-
-		@Override
-		public int getAccessibility(IBinding member) {
-			return ((ICPPClassType) fDelegate).getAccessibility(member);
-		}
-
-		@Override
-		public Map<IBinding, Integer> getMemberAccessibilities() {
-			return ((ICPPClassType) fDelegate).getMemberAccessibilities();
 		}
 	}
 

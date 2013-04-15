@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.Map;
-
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -255,19 +253,5 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 			return typeSpecifier.isFinal();
 		}
 		return false;
-	}
-
-	@Override
-	public int getAccessibility(IBinding member) {
-		Map<IBinding, Integer> memberAccessibilities = ClassTypeHelper.getMemberAccessibilities(this);
-		if(memberAccessibilities.containsKey(member)){
-			return memberAccessibilities.get(member);
-		}
-		return a_unspecified;
-	}
-
-	@Override
-	public Map<IBinding, Integer> getMemberAccessibilities() {
-		return ClassTypeHelper.getMemberAccessibilities(this);
 	}
 }

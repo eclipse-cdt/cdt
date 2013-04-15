@@ -11,9 +11,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -27,26 +24,6 @@ import org.eclipse.cdt.core.dom.ast.IField;
 public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	public static final ICPPClassType[] EMPTY_CLASS_ARRAY = {};
 	public static final int k_class = ICPPASTCompositeTypeSpecifier.k_class;
-	/**
-	 * @since 5.5
-	 */
-	public static final Map<IBinding, Integer> EMPTY_ACCESSIBILITY_MAP = new HashMap<IBinding, Integer>();
-	/**
-	 * @since 5.5
-	 */
-	public static final int a_unspecified = 0;
-	/**
-	 * @since 5.5
-	 */
-	public static final int a_public = 1;
-	/**
-	 * @since 5.5
-	 */
-	public static final int a_protected = 2;
-	/**
-	 * @since 5.5
-	 */
-	public static final int a_private = 3;
 
 	/**
 	 * Returns an array of base class relationships. The returned array is empty if there
@@ -130,27 +107,4 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * @since 5.5
 	 */
 	public boolean isFinal();
-
-	/**
-	 * Gets the access specifier of the <code>member</code>.
-	 * 
-	 * @param member The binding of the member to get the accessibility for.
-	 * 
-	 * @return Returns the accessibility of the specified member. If 
-	 * <code>member</code> is not a member of this type ICPPClassType.v_unspecified 
-	 * is returned. 
-	 * 
-	 * @since 5.5
-	 */
-	public int getAccessibility(IBinding member);
-
-	/**
-	 * Gets the access specifiers of all the class members.
-	 * 
-	 * @return Returns a map of all the class members to their corresponding
-	 * accessibility.
-	 * 
-	 * @since 5.5
-	 */
-	public Map<IBinding, Integer> getMemberAccessibilities();
 }

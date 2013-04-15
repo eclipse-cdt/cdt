@@ -17,7 +17,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import java.util.Arrays;
-import java.util.Map;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -215,15 +214,5 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	@Override
 	public boolean isFinal() {
 		return ((ICPPClassType) rbinding).isFinal();
-	}
-
-	@Override
-	public int getAccessibility(IBinding member) {
-		return ((ICPPClassType) rbinding).getAccessibility(member);
-	}
-
-	@Override
-	public Map<IBinding, Integer> getMemberAccessibilities() {
-		return ((ICPPClassType) rbinding).getMemberAccessibilities();
 	}
 }

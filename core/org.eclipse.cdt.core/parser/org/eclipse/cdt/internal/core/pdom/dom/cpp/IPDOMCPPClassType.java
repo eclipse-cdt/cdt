@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -32,4 +33,11 @@ public interface IPDOMCPPClassType extends ICPPClassType, IPDOMBinding, IIndexTy
 	 * Returns the scope name, for use in {@link IScope#getScopeName()}
 	 */
 	IIndexName getScopeName();
+
+	/**
+	 * Sets the visibility specifier of a given member.
+	 * @param member The binding specifying the member.
+	 * @param visibility The visibility of the <code>member</code>.
+	 */
+	void addMember(PDOMNode member, int visibility) throws CoreException;
 }

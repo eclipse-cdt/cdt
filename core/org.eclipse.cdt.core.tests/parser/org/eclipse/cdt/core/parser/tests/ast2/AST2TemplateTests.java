@@ -91,6 +91,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.parser.tests.VisibilityHelper;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
@@ -7609,5 +7610,66 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	};
 	public void testTemplateBaseClassConstructorCall_402602() throws Exception {
 		parseAndCheckBindings();
+	}
+
+	//  template<typename T>
+	//  class ATemplate {
+	//    int defaultMemberVariable;
+	//  public:
+	//    int publicMemberVariable;
+	//  protected:
+	//    int protectedMemberVariable;
+	//  private:
+	//    int privateMemberVariable;
+	//  };
+	public void testTemplateMemberAccessibilities() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+
+		ICPPClassTemplate aTemplate = bh.assertNonProblem("ATemplate");
+
+		ICPPField defaultMemberVariable = bh.assertNonProblem("defaultMemberVariable");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_private, aTemplate.getVisibility(defaultMemberVariable));
+
+		ICPPField publicMemberVariable = bh.assertNonProblem("publicMemberVariable");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_public, aTemplate.getVisibility(publicMemberVariable));
+
+		ICPPField protectedMemberVariable = bh.assertNonProblem("protectedMemberVariable");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_protected, aTemplate.getVisibility(protectedMemberVariable));
+
+		ICPPField privateMemberVariable = bh.assertNonProblem("privateMemberVariable");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_private, aTemplate.getVisibility(privateMemberVariable));
+	}
+
+	//  template<typename T>
+	//  class ATemplate {};
+	//
+	//  class A{};
+	//
+	//  template<>
+	//  class ATemplate<A> {
+	//    int specializedDefaultVariable;
+	//  public:
+	//    int specializedPublicVariable;
+	//  protected:
+	//    int specializedProtectedVariable;
+	//  private:
+	//    int specializedPrivateVariable;
+	//  };
+	public void testTemplateSpecializationMemberAccessibilities() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+
+		ICPPClassSpecialization aTemplateSpecialization = bh.assertNonProblem("ATemplate<A>");
+
+		ICPPField defaultMemberVariable = bh.assertNonProblem("specializedDefaultVariable");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_private, aTemplateSpecialization.getVisibility(defaultMemberVariable));
+
+		ICPPField publicMemberVariable = bh.assertNonProblem("specializedPublicVariable");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_public, aTemplateSpecialization.getVisibility(publicMemberVariable));
+
+		ICPPField protectedMemberVariable = bh.assertNonProblem("specializedProtectedVariable");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_protected, aTemplateSpecialization.getVisibility(protectedMemberVariable));
+
+		ICPPField privateMemberVariable = bh.assertNonProblem("specializedPrivateVariable");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_private, aTemplateSpecialization.getVisibility(privateMemberVariable));
 	}
 }

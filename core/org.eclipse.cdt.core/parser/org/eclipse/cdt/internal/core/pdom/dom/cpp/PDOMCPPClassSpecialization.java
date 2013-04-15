@@ -43,7 +43,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -57,14 +56,14 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		ICPPClassSpecialization, IPDOMMemberOwner, IPDOMCPPClassType {
 	private static final int FIRST_BASE = PDOMCPPSpecialization.RECORD_SIZE + 0;
-	private static final int MEMBER_LIST = PDOMCPPSpecialization.RECORD_SIZE + 4;
-	private static final int FINAL = PDOMCPPSpecialization.RECORD_SIZE + 8; // byte
+	private static final int MEMBERLIST = FIRST_BASE + 4;
+	private static final int FINAL = MEMBERLIST + PDOMCPPMemberBlock.RECORD_SIZE; // byte
 
 	/**
 	 * The size in bytes of a PDOMCPPClassSpecialization record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 9;
+	protected static final int RECORD_SIZE = FINAL + 1;
 
 	private volatile ICPPClassScope fScope;
 	private ObjectMap specializationMap; // Obtained from the synchronized PDOM cache
@@ -441,15 +440,9 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	}
 
 	@Override
-	public void addChild(PDOMNode member) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBER_LIST);
-		list.addMember(member);
-	}
-
-	@Override
 	public void acceptUncached(IPDOMVisitor visitor) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBER_LIST);
-		list.accept(visitor);
+		PDOMCPPMemberBlock members = new PDOMCPPMemberBlock(getLinkage(), record + MEMBERLIST);
+		members.accept(visitor);
 	}
 
 	@Override
@@ -474,5 +467,29 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	private void setFinal(ICPPClassType ct) throws CoreException {
 		getDB().putByte(record + FINAL, (byte) (ct.isFinal() ? 1 : 0));
+	}
+
+	@Override
+	public void addMember(PDOMNode member, int visibility) {
+		try {
+			PDOMCPPMemberBlock members = new PDOMCPPMemberBlock(getLinkage(), record + MEMBERLIST);
+			members.addMember(member, visibility);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+	}
+
+	@Override
+	public int getVisibility(IBinding member) {
+		if (member instanceof ICPPSpecialization) {
+			return getSpecializedBinding().getVisibility(((ICPPSpecialization)member).getSpecializedBinding());
+		}
+		try {
+			PDOMCPPMemberBlock members = new PDOMCPPMemberBlock(getLinkage(), record + MEMBERLIST);
+			return members.getAccessibility(member);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			throw new IllegalArgumentException(member.getName() + " is not a member of " + getName()); //$NON-NLS-1$
+		}
 	}
 }

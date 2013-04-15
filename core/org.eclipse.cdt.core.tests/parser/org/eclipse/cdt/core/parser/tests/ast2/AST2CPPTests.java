@@ -128,6 +128,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.tests.VisibilityHelper;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
@@ -10260,10 +10261,60 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings(code);
 
 		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
-
 		ICPPNamespace NamespaceNS = bh.assertNonProblem("NS {", 2);
 		ICPPClassType Inner = bh.assertNonProblem("Inner;", 5);
 
 		assertEquals(NamespaceNS.getNamespaceScope(), Inner.getScope());
+	}
+
+	//  class AClass {
+	//    int defaultMemberVariable;
+	//    void defaultMemberFunction();
+	//    class defaultNestedClass {};
+	//  public:
+	//    int publicMemberVariable;
+	//    void publicMemberFunction();
+	//    class publicNestedClass {};
+	//  protected:
+	//    int protectedMemberVariable;
+	//    void protectedMemberFunction();
+	//    class protectedNestedClass {};
+	//  private:
+	//    int privateMemberVariable;
+	//    void privateMemberFunction();
+	//    class privateNestedClass {};
+	//  };
+	public void testMemberAccessibilities() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+
+		ICPPClassType aClass = bh.assertNonProblem("AClass");
+
+		ICPPField defaultMemberVariable = bh.assertNonProblem("defaultMemberVariable");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_private, aClass.getVisibility(defaultMemberVariable));
+		ICPPMethod defaultMemberFunction = bh.assertNonProblem("defaultMemberFunction");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_private, aClass.getVisibility(defaultMemberFunction));
+		ICPPClassType defaultNestedClass = bh.assertNonProblem("defaultNestedClass");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_private, aClass.getVisibility(defaultNestedClass));
+
+		ICPPField publicMemberVariable = bh.assertNonProblem("publicMemberVariable");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_public, aClass.getVisibility(publicMemberVariable));
+		ICPPMethod publicMemberFunction = bh.assertNonProblem("publicMemberFunction");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_public, aClass.getVisibility(publicMemberFunction));
+		ICPPClassType publicNestedClass = bh.assertNonProblem("publicNestedClass");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_public, aClass.getVisibility(publicNestedClass));
+
+		ICPPField protectedMemberVariable = bh.assertNonProblem("protectedMemberVariable");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_protected, aClass.getVisibility(protectedMemberVariable));
+		ICPPMethod protectedMemberFunction = bh.assertNonProblem("protectedMemberFunction");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_protected, aClass.getVisibility(protectedMemberFunction));
+		ICPPClassType protectedNestedClass = bh.assertNonProblem("protectedNestedClass");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_protected, aClass.getVisibility(protectedNestedClass));
+
+		ICPPField privateMemberVariable = bh.assertNonProblem("privateMemberVariable");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_private, aClass.getVisibility(privateMemberVariable));
+		ICPPMethod privateMemberFunction = bh.assertNonProblem("privateMemberFunction");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_private, aClass.getVisibility(privateMemberFunction));
+		ICPPClassType privateNestedClass = bh.assertNonProblem("privateNestedClass");
+		VisibilityHelper.assertVisibility(ICPPClassType.v_private, aClass.getVisibility(privateNestedClass));
 	}
 }

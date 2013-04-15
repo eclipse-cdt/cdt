@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Baltasar Belyavsky (Texas Instruments) - [405511] ResourceLookup.selectFile(...) causes deadlocks during project builds
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.resources;
 
@@ -99,6 +100,23 @@ public class ResourceLookup {
 			return files[0];
 
 		IFile best= null;
+
+		/* FIX for Bug 405511: Try to find the file within the preferred project first - we want to avoid 
+		 * reaching the next for-loop - that loop is expensive as it might cause the loading of unnecessary 
+		 * project-descriptions.
+		 */
+		if(preferredProject != null) {
+			for (int i = 0; i < files.length; i++) {
+				IFile file = files[i];
+				if (file.getProject().equals(preferredProject) && 
+						(best == null || best.getFullPath().toString().compareTo(file.getFullPath().toString()) > 0)) {
+					best= file;
+				}
+			}
+		}
+		if(best != null)
+			return best;
+		
 		int bestRelevance= -1;
 
 		for (int i = 0; i < files.length; i++) {

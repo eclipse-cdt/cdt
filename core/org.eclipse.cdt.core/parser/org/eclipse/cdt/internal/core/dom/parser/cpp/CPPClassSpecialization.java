@@ -447,4 +447,9 @@ public class CPPClassSpecialization extends CPPSpecialization
 		}
 		return false;
 	}
+
+	@Override
+	public int getVisibility(IBinding member) {
+		return ClassTypeHelper.getVisibility(this, member);
+	}
 }

@@ -251,4 +251,9 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 		}
 		return false;
 	}
+
+	@Override
+	public int getVisibility(IBinding member) {
+		return ClassTypeHelper.getVisibility(this, member);
+	}
 }

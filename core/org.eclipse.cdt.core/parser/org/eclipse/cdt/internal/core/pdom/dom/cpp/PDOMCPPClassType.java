@@ -15,6 +15,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -35,29 +39,24 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * @author Doug Schaefer
  */
 class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDOMMemberOwner {
-	private static final int FIRSTBASE = PDOMCPPBinding.RECORD_SIZE + 0;
-	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 4;
-	private static final int FIRSTFRIEND = PDOMCPPBinding.RECORD_SIZE + 8;
-	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 12; // byte
-	private static final int ANONYMOUS= PDOMCPPBinding.RECORD_SIZE + 13; // byte
-	private static final int FINAL = PDOMCPPBinding.RECORD_SIZE + 14; // byte
+	private static final int FIRSTBASE = PDOMCPPBinding.RECORD_SIZE;
+	private static final int MEMBERLIST = FIRSTBASE + 4;
+	private static final int FIRSTFRIEND = MEMBERLIST + PDOMCPPMemberBlock.RECORD_SIZE;
+	private static final int KEY = FIRSTFRIEND + 4; // byte
+	private static final int ANONYMOUS = KEY + 1; // byte
+	private static final int FINAL = ANONYMOUS + 1; // byte
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 15;
+	protected static final int RECORD_SIZE = FINAL + 1;
 
 	private PDOMCPPClassScope fScope; // No need for volatile, all fields of PDOMCPPClassScope are final.
 
@@ -111,14 +110,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	public boolean mayHaveChildren() {
 		return true;
 	}
-	
-	@Override
-	public final void addChild(PDOMNode member) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
-		list.addMember(member);
-		PDOMCPPClassScope.updateCache(this, member);
-	}
-	
+
 	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		PDOMCPPClassScope.acceptViaCache(this, visitor, false);
@@ -130,7 +122,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	@Override
 	public void acceptUncached(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
+		PDOMCPPMemberBlock list = new PDOMCPPMemberBlock(getLinkage(), record + MEMBERLIST);
 		list.accept(visitor);
 	}
 
@@ -143,7 +135,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		long rec = base != null ? base.getRecord() : 0;
 		getDB().putRecPtr(record + FIRSTBASE, rec);
 	}
-	
+
 	public void addBases(PDOMName classDefName, ICPPBase[] bases) throws CoreException {
 		getPDOM().removeCachedResult(record + PDOMCPPLinkage.CACHE_BASES);
 		final PDOMLinkage linkage = getLinkage();
@@ -192,7 +184,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 			}
 		}
 	}
-	
+
 	public void addFriend(PDOMCPPFriend friend) throws CoreException {
 		PDOMCPPFriend firstFriend = getFirstFriend();
 		friend.setNextFriend(firstFriend);
@@ -255,7 +247,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 			return getDB().getByte(record + ANONYMOUS) != 0;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return false; 
+			return false;
 		}
 	}
 
@@ -263,7 +255,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	public boolean isFinal() {
 		try {
 			return getDB().getByte(record + FINAL) != 0;
-		} catch (CoreException e){
+		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return false;
 		}
@@ -309,7 +301,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		ICPPBase[] bases= (ICPPBase[]) getPDOM().getCachedResult(key);
 		if (bases != null) 
 			return bases;
-		
+
 		try {
 			List<PDOMCPPBase> list = new ArrayList<PDOMCPPBase>();
 			for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase())
@@ -388,7 +380,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	}
 
 	@Override
-	public ICPPMethod[] getMethods() { 
+	public ICPPMethod[] getMethods() {
 		return ClassTypeHelper.getMethods(this, null);
 	}
 
@@ -396,23 +388,45 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	public ICPPMethod[] getAllDeclaredMethods() {
 		return ClassTypeHelper.getAllDeclaredMethods(this, null);
 	}
-	
+
 	@Override
 	public IField[] getFields() {
 		return ClassTypeHelper.getFields(this, null);
 	}
-	
+
 	@Override
 	public IField findField(String name) {
 		return ClassTypeHelper.findField(this, name);
 	}
 
 	@Override
-	public Object clone() {		
+	public Object clone() {
 		try {
 			return super.clone();
 		} catch (CloneNotSupportedException e) {
 		}
 		return null;
+	}
+
+	@Override
+	public void addMember(PDOMNode member, int visibility) {
+		try {
+			PDOMCPPMemberBlock members = new PDOMCPPMemberBlock(getLinkage(), record + MEMBERLIST);
+			members.addMember(member, visibility);
+			PDOMCPPClassScope.updateCache(this, member);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+	}
+
+	@Override
+	public int getVisibility(IBinding member) {
+		try {
+			PDOMCPPMemberBlock members = new PDOMCPPMemberBlock(getLinkage(), record + MEMBERLIST);
+			return members.getVisibility(member);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return v_private; // Fallback visibility
+		}
 	}
 }

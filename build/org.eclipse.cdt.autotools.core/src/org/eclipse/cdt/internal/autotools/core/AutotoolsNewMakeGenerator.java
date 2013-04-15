@@ -1009,6 +1009,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
     // Get the path string.  We add a Win check to handle MingW.
     // For MingW, we would rather represent C:\a\b as /C/a/b which
     // doesn't cause Makefile to choke. For Cygwin we use /cygdrive/C/a/b
+	// Add backslashes to escape any special characters in the command path
+	// that will give the shell distress (e.g. runtime-New_Configuration(1)).
     private String getPathString(IPath path) {
             String s = path.toString();
             if (Platform.getOS().equals(Platform.OS_WIN32)) {
@@ -1018,6 +1020,10 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
                     s = s.replaceAll("^([A-Z])(:)", "/$1");            		
             	}
             }
+            s = s.replaceAll("\\\\", "\\\\\\\\");
+            s = s.replaceAll("\\(",  "\\\\(");
+            s = s.replaceAll("\\)", "\\\\)");
+            s = s.replaceAll("\\$", "\\\\$");
             return s;
     }
 

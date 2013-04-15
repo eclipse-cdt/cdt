@@ -50,6 +50,7 @@ public class PDOMTests extends TestSuite {
 		suite.addTest(CPPFunctionTemplateTests.suite());
 		suite.addTest(MethodTests.suite());
 		suite.addTest(NamespaceTests.suite());
+		suite.addTest(AccessibilityTests.suite());
 
 		suite.addTest(CFunctionTests.suite());
 		suite.addTest(CVariableTests.suite());

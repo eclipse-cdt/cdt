@@ -163,19 +163,19 @@ public class MethodTests extends PDOMTestBase {
 	}
 	
 	public void testDefaultPrivateMethod() throws Exception {
-		assertVisibility(pdom, "Class3::defaultMethod", ICPPMember.v_private);
+		assertAccessibility(pdom, "Class3::defaultMethod", ICPPMember.v_private);
 	}
 	
 	public void testPrivateMethod() throws Exception {
-		assertVisibility(pdom, "Class3::privateMethod", ICPPMember.v_private);
+		assertAccessibility(pdom, "Class3::privateMethod", ICPPMember.v_private);
 	}
 	
 	public void testProtectedMethod() throws Exception {
-		assertVisibility(pdom, "Class3::protectedMethod", ICPPMember.v_protected);
+		assertAccessibility(pdom, "Class3::protectedMethod", ICPPMember.v_protected);
 	}
 	
 	public void testPublicMethod() throws Exception {
-		assertVisibility(pdom, "Class3::publicMethod", ICPPMember.v_public);
+		assertAccessibility(pdom, "Class3::publicMethod", ICPPMember.v_public);
 	}
 	
 	public void testInlineMethod() throws Exception {

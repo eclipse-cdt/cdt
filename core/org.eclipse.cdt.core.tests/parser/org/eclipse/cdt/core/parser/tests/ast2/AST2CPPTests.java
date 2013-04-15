@@ -10266,4 +10266,56 @@ public class AST2CPPTests extends AST2TestBase {
 
 		assertEquals(NamespaceNS.getNamespaceScope(), Inner.getScope());
 	}
+
+	//  class AClass {
+	//    int defaultMemberVariable;
+	//    void defaultMemberFunction();
+	//    class defaultNestedClass {};
+	//  public:
+	//    int publicMemberVariable;
+	//    void publicMemberFunction();
+	//    class publicNestedClass {};
+	//  protected:
+	//    int protectedMemberVariable;
+	//    void protectedMemberFunction();
+	//    class protectedNestedClass {};
+	//  private:
+	//    int privateMemberVariable;
+	//    void privateMemberFunction();
+	//    class privateNestedClass {};
+	//  };
+	public void testMemberAccessibilities() throws Exception {
+		String code = getAboveComment();
+		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+		
+		ICPPClassType aClass = bh.assertNonProblem("AClass", 6);
+		
+		ICPPField defaultMemberVariable = bh.assertNonProblem("defaultMemberVariable", 21);
+		assertAccessibility(ICPPClassType.a_private, aClass.getAccessibility(defaultMemberVariable));
+		ICPPMethod defaultMemberFunction = bh.assertNonProblem("defaultMemberFunction", 21);
+		assertAccessibility(ICPPClassType.a_private, aClass.getAccessibility(defaultMemberFunction));
+		ICPPClassType defaultNestedClass = bh.assertNonProblem("defaultNestedClass", 18);
+		assertAccessibility(ICPPClassType.a_private, aClass.getAccessibility(defaultNestedClass));
+		
+		ICPPField publicMemberVariable = bh.assertNonProblem("publicMemberVariable", 20);
+		assertAccessibility(ICPPClassType.a_public, aClass.getAccessibility(publicMemberVariable));
+		ICPPMethod publicMemberFunction = bh.assertNonProblem("publicMemberFunction", 20);
+		assertAccessibility(ICPPClassType.a_public, aClass.getAccessibility(publicMemberFunction));
+		ICPPClassType publicNestedClass = bh.assertNonProblem("publicNestedClass", 17);
+		assertAccessibility(ICPPClassType.a_public, aClass.getAccessibility(publicNestedClass));
+		
+		ICPPField protectedMemberVariable = bh.assertNonProblem("protectedMemberVariable", 23);
+		assertAccessibility(ICPPClassType.a_protected, aClass.getAccessibility(protectedMemberVariable));
+		ICPPMethod protectedMemberFunction = bh.assertNonProblem("protectedMemberFunction", 23);
+		assertAccessibility(ICPPClassType.a_protected, aClass.getAccessibility(protectedMemberFunction));
+		ICPPClassType protectedNestedClass = bh.assertNonProblem("protectedNestedClass", 20);
+		assertAccessibility(ICPPClassType.a_protected, aClass.getAccessibility(protectedNestedClass));
+
+		ICPPField privateMemberVariable = bh.assertNonProblem("privateMemberVariable", 21);
+		assertAccessibility(ICPPClassType.a_private, aClass.getAccessibility(privateMemberVariable));
+		ICPPMethod privateMemberFunction = bh.assertNonProblem("privateMemberFunction", 21);
+		assertAccessibility(ICPPClassType.a_private, aClass.getAccessibility(privateMemberFunction));
+		ICPPClassType privateNestedClass = bh.assertNonProblem("privateNestedClass", 18);
+		assertAccessibility(ICPPClassType.a_private, aClass.getAccessibility(privateNestedClass));
+	}
 }

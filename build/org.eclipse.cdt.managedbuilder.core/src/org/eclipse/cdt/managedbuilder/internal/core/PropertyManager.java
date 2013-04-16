@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Baltasar Belyavsky (Texas Instruments) - [405744] PropertyManager causes many unnecessary file-writes into workspace metadata
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -14,7 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -249,7 +250,7 @@ public class PropertyManager {
 		
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		try {
-			props.store(stream, ""); //$NON-NLS-1$
+			props.store(stream, null); 
 		} catch (IOException e1) {
 		}
 
@@ -261,6 +262,18 @@ public class PropertyManager {
 		} catch (UnsupportedEncodingException e) {
 			value= new String(bytes);
 		}
+		
+		/* FIX for Bug 405744: Properties.store() always starts the serialzed string with 
+		 * a timestamp comment. That constantly changing comment causes the preference-store 
+		 * to perform many unnecessary file-writes into the workspace metadata, even when 
+		 * the properties don't change. The comment is ignored by Properties.load(), so
+		 * just remove it here.
+		 */
+		String sep = System.getProperty("line.separator"); //$NON-NLS-1$
+		while(value.charAt(0) == '#') {
+			value = value.substring(value.indexOf(sep) + sep.length());
+		}
+		
 		return value;
 	}
 	
@@ -364,7 +377,7 @@ public class PropertyManager {
 		map = propsToMap(props);
 
 		if(map == null)
-			map = new HashMap<String, Object>();
+			map = new LinkedHashMap<String, Object>();
 		
 		return map;
 	}
@@ -372,7 +385,7 @@ public class PropertyManager {
 	protected Map<String, Object> propsToMap(Properties props){
 		if(props != null) {
 			@SuppressWarnings({ "rawtypes", "unchecked" })
-			HashMap<String, Object> map = new HashMap(props);
+			Map<String, Object> map = new LinkedHashMap(props);
 			return map;
 		}
 		return null;

@@ -8,6 +8,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * James Blackburn (Broadcom Corp.)
+ * Baltasar Belyavsky (Texas Instruments) - [405638] CExternalSettingsManager causes all workspace project-descriptions to load prematurely
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -402,8 +403,9 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 						int flags = info.getChangeFlags();
 						if((flags & CExternalSettingsContainerChangeInfo.CONTAINER_CONTENTS) != 0){
 							if(lists == null)
-								// Potentially all configuration in all projects need to be considered for be
-								lists = createCfgListsForEvent(project, cfgId);
+								// Potentially all configuration in all projects need to be considered... 
+								// but ignore projects which haven't loaded yet - forcing them to load here is expensive and unnecessary [Bug 405638] 
+								lists = createCfgListsForEvent(project, cfgId, false);
 							for (ProjDesCfgList list : lists) {
 								for(int i = 0; i < list.size(); i++){
 									CfgListCfgContainer cr = new CfgListCfgContainer(list, i);
@@ -451,9 +453,10 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	 * Returns an array of ProjDescCfgList corresponding to the passed in project + cfgId
 	 * @param project project, or null
 	 * @param cfgId configuration ID, or null
+	 * @param forceProjectLoad passing 'false' ignores projects which haven't yet been loaded 
 	 * @return ProjDescCfgList[]
 	 */
-	private ProjDesCfgList[] createCfgListsForEvent(IProject project, String cfgId){
+	private ProjDesCfgList[] createCfgListsForEvent(IProject project, String cfgId, boolean forceProjectLoad){
 		ProjDesCfgList lists[];
 		Set<String> set = null;
 		if(project != null) {
@@ -461,7 +464,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 				set = new HashSet<String>();
 				set.add(cfgId);
 			}
-			ProjDesCfgList l = createCfgList(project, set);
+			ProjDesCfgList l = createCfgList(project, set, forceProjectLoad);
 			if(l != null)
 				lists = new ProjDesCfgList[] { l };
 			else
@@ -471,7 +474,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 			List<ProjDesCfgList> list = new ArrayList<ProjDesCfgList>();
 			for (IProject p : projects){
-				ProjDesCfgList l = createCfgList(p, set);
+				ProjDesCfgList l = createCfgList(p, set, forceProjectLoad);
 				if(l != null)
 					list.add(l);
 			}
@@ -480,8 +483,8 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		return lists;
 	}
 
-	private ProjDesCfgList createCfgList(IProject project, Set<String> cfgIdSet){
-		ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+	private ProjDesCfgList createCfgList(IProject project, Set<String> cfgIdSet, boolean forceProjectLoad){
+		ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(project, forceProjectLoad, false);
 		if(des == null)
 			return null;
 

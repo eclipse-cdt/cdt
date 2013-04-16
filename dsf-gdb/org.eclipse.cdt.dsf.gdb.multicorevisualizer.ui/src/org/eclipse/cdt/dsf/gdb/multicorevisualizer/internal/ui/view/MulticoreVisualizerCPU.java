@@ -8,6 +8,7 @@
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
+ *     Marc Dumais (Ericsson) - Bug 404894
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -118,12 +119,20 @@ public class MulticoreVisualizerCPU extends MulticoreVisualizerGraphicObject
 	/** Invoked to allow element to paint itself on the viewer canvas */
 	@Override
 	public void paintContent(GC gc) {
-		gc.setForeground(FG_COLOR);
 		gc.setBackground(BG_COLOR);
 		
 		// We want the load meter to share the same BG color
 		m_loadMeter.setParentBgColor(BG_COLOR);
 		
+		// highlight in a different color if selected
+		if (m_selected)
+		{
+			gc.setForeground(IMulticoreVisualizerConstants.COLOR_SELECTED);
+		}
+		else {
+			gc.setForeground(FG_COLOR);
+		}
+
 		gc.fillRectangle(m_bounds);
 		gc.drawRectangle(m_bounds);
 	}
@@ -141,8 +150,8 @@ public class MulticoreVisualizerCPU extends MulticoreVisualizerGraphicObject
 			gc.setForeground(IMulticoreVisualizerConstants.COLOR_CPU_FG);
 			gc.setBackground(IMulticoreVisualizerConstants.COLOR_CPU_BG);
 			
-			int text_indent_x = 6;
-			int text_indent_y = 2;
+			int text_indent_x = 2;
+			int text_indent_y = 0;
 			int tx = m_bounds.x + m_bounds.width  - text_indent_x;
 			int ty = m_bounds.y + m_bounds.height - text_indent_y;
 			GUIUtils.drawTextAligned(gc, Integer.toString(m_id), tx, ty, false, false);

@@ -14,6 +14,7 @@
  *     Marc Dumais (Ericsson) - Bug 399281
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *     Marc Dumais (Ericsson) - Bug 399419
+ *     Marc Dumais (Ericsson) - Bug 404894
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -59,6 +60,8 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 	
 	/** Spacing to allow between threads, when many are displayed on same tile. */
 	protected static final int THREAD_SPACING = 8;
+	
+	protected static final int SELECTION_SLOP = 20;
 	
 
 	// --- members ---
@@ -160,7 +163,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		// perform any initialization here
 		
 		// text font
-		m_textFont = CDTVisualizerUIPlugin.getResources().getFont("Luxi Sans", 8); //$NON-NLS-1$
+		m_textFont = CDTVisualizerUIPlugin.getResources().getFont("Luxi Sans", 6); //$NON-NLS-1$
 		setFont(m_textFont);
 		
 		// initialize cached state storage
@@ -473,8 +476,8 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 			int cpu_separation = 6;   // spacing between CPUS
 			
 			// make room when load meters are present, else use a more compact layout
-			int core_margin = m_model.getLoadMetersEnabled() ? 20 : 4;      // margin around cores in a CPU 
-			int core_separation = m_model.getLoadMetersEnabled() ? 4 : 2;  // spacing between cores
+			int core_margin = m_model.getLoadMetersEnabled() ? 20 : 12;      // margin around cores in a CPU 
+			int core_separation = 4;  // spacing between cores
 
 			int loadMeterWidth = core_margin*3/5;
 			int loadMeterHMargin = core_margin/5;
@@ -724,41 +727,39 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 	public void selectRegion(Rectangle region,
 							 boolean addToSelection, boolean toggleSelection)
 	{
-		// currently, we select/deselect threads, not processes or tiles
-		if (m_threads != null) {
+		boolean changed = false;
 
-			boolean changed = false;
-			
-			for (MulticoreVisualizerThread tobj : m_threads) {
-				boolean within = tobj.isWithin(region);
+		List<MulticoreVisualizerGraphicObject> selectableObjects = getSelectableObjects();
 
-				if (addToSelection && toggleSelection) {
-					if (within) {
-						tobj.setSelected(false);
-						changed = true;
-					}
-				}
-				else if (addToSelection) {
-					if (within) {
-						tobj.setSelected(true);
-						changed = true;
-					}
-				}
-				else if (toggleSelection) {
-					if (within) {
-						tobj.setSelected(! tobj.isSelected());
-						changed = true;
-					}
-				}
-				else {
-					tobj.setSelected(within);
+		for (MulticoreVisualizerGraphicObject gobj : selectableObjects) {
+			boolean within = gobj.isWithin(region);
+
+			if (addToSelection && toggleSelection) {
+				if (within) {
+					gobj.setSelected(false);
 					changed = true;
 				}
 			}
-
-			if (changed)
-				selectionChanged();
+			else if (addToSelection) {
+				if (within) {
+					gobj.setSelected(true);
+					changed = true;
+				}
+			}
+			else if (toggleSelection) {
+				if (within) {
+					gobj.setSelected(! gobj.isSelected());
+					changed = true;
+				}
+			}
+			else {
+				gobj.setSelected(within);
+				changed = true;
+			}
 		}
+
+		if (changed)
+			selectionChanged();
 	}
 	
 	/**
@@ -776,88 +777,82 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 	 * Otherwise, selects item(s) and deselects other items.
 	 */
 	public void selectPoint(int x, int y,
-							boolean addToSelection, boolean toggleSelection)
+			boolean addToSelection, boolean toggleSelection)
 	{
-		// Currently we only allow selection of threads.
-		if (m_threads != null) {
+		List<MulticoreVisualizerGraphicObject> selectedObjects = new ArrayList<MulticoreVisualizerGraphicObject>();
+		List<MulticoreVisualizerGraphicObject> selectableObjects = getSelectableObjects();
 
-			List<MulticoreVisualizerThread> threads = new ArrayList<MulticoreVisualizerThread>();
-			
-			// first see if selection click landed on a thread dot.
-			for (MulticoreVisualizerThread tobj : m_threads) {
-				if (tobj.contains(x,y)) {
-					threads.add(tobj);
-					break;
+		// the list of selectable objects is ordered to have contained objects 
+		// before container objects, so the first match we find is the specific 
+		// one we want.
+		for (MulticoreVisualizerGraphicObject gobj : selectableObjects) {
+			if (gobj.contains(x,y)) {
+				selectedObjects.add(gobj);
+				break;
+			}
+		}
+		
+		// else we assume it landed outside any CPU; de-select everything
+		if (selectedObjects.isEmpty()) {
+			clearSelection();
+		}
+
+		// in addToSelection case, include any object in region
+		// bracketed by last selection click and current click
+		// (with some extra slop added so we pick up objects that
+		// overlap the edge of this region)
+		if (addToSelection) {
+			int slop = SELECTION_SLOP;
+			Rectangle r1 = new Rectangle(m_lastSelectionClick.x - slop/2,
+					m_lastSelectionClick.y - slop/2,
+					slop, slop);
+			Rectangle r2 = new Rectangle(x - slop/2, y - slop/2, slop, slop);
+			Rectangle region = r1.union(r2);
+
+			for (MulticoreVisualizerGraphicObject gobj : selectableObjects) {
+				if (gobj.isWithin(region)) {
+					selectedObjects.add(gobj);
 				}
 			}
-			
-			// if not, see if it landed on a core; if so, select its threads
-			if (threads.isEmpty()) {
-				for (MulticoreVisualizerCore tobj : m_cores) {
-					if (tobj.contains(x,y)) {
-						List<MulticoreVisualizerThread> corethreads = tobj.getThreads();
-						threads.addAll(corethreads);
-						break;
-					}
-				}
-			}
-			
-			// in addToSelection case, include any threads in region
-			// bracketed by last selection click and current click
-			// (with some extra slop added so we pick up threads that
-			// overlap the edge of this region)
-			if (addToSelection) {
-				int spotSize = MulticoreVisualizerThread.THREAD_SPOT_SIZE * 3;
-				Rectangle r1 = new Rectangle(m_lastSelectionClick.x - spotSize/2,
-										 	 m_lastSelectionClick.y - spotSize/2,
-										 	spotSize, spotSize);
-				Rectangle r2 = new Rectangle(x - spotSize/2, y - spotSize/2, spotSize, spotSize);
-				Rectangle region = r1.union(r2);
-				
-				for (MulticoreVisualizerThread tobj : m_threads) {
-					if (tobj.isWithin(region)) {
-						threads.add(tobj);
-					}
-				}
-			}
-			
-			boolean changed = false;
+		}
 
-			for (MulticoreVisualizerThread tobj : m_threads) {
-				boolean within = threads.contains(tobj);
+		boolean changed = false;
 
-				if (addToSelection && toggleSelection) {
-					if (within) {
-						tobj.setSelected(false);
-						changed = true;
-					}
-				}
-				else if (addToSelection) {
-					if (within) {
-						tobj.setSelected(true);
-						changed = true;
-					}
-				}
-				else if (toggleSelection) {
-					if (within) {
-						tobj.setSelected(! tobj.isSelected());
-						changed = true;
-					}
-				}
-				else {
-					tobj.setSelected(within);
+		for (MulticoreVisualizerGraphicObject gobj : selectableObjects) {
+			boolean within = selectedObjects.contains(gobj);
+
+			if (addToSelection && toggleSelection) {
+				if (within) {
+					gobj.setSelected(false);
 					changed = true;
 				}
 			}
-
-			if (changed)
-				selectionChanged();
+			else if (addToSelection) {
+				if (within) {
+					gobj.setSelected(true);
+					changed = true;
+				}
+			}
+			else if (toggleSelection) {
+				if (within) {
+					gobj.setSelected(! gobj.isSelected());
+					changed = true;
+				}
+			}
+			else {
+				gobj.setSelected(within);
+				changed = true;
+			}
 		}
-		
+
+		if (changed)
+			selectionChanged();
+
 		// remember last mouse-up point for shift-click selection
 		m_lastSelectionClick.x = x;
 		m_lastSelectionClick.y = y;
 	}
+		
 	
 	
 	// --- selection management methods ---
@@ -865,28 +860,25 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 	/** Selects all items in the canvas. */
 	public void selectAll()
 	{
-		// currently, we select/deselect threads, not processes or tiles
-		if (m_threads != null) {
+		List<MulticoreVisualizerGraphicObject> selectableObjects = getSelectableObjects();
 
-			for (MulticoreVisualizerThread tobj : m_threads) {
-				tobj.setSelected(true);
-			}
-			
-			selectionChanged();
+		for (MulticoreVisualizerGraphicObject gobj : selectableObjects) {
+			gobj.setSelected(true);
 		}
+
+		selectionChanged();
 	}
 
 	/** Clears selection. */
 	public void clearSelection() {
-		// currently, we select/deselect threads, not processes or tiles
-		if (m_threads != null) {
 
-			for (MulticoreVisualizerThread tobj : m_threads) {
-				tobj.setSelected(false);
-			}
-			
-			selectionChanged();
+		List<MulticoreVisualizerGraphicObject> selectableObjects = getSelectableObjects();
+
+		for (MulticoreVisualizerGraphicObject gobj : selectableObjects) {
+			gobj.setSelected(false);
 		}
+
+		selectionChanged();
 	}
 	
 	/** Things to do whenever the selection changes. */
@@ -905,30 +897,78 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 	/** Saves current canvas selection as list of model objects. */
 	protected void updateSelection(boolean raiseEvent) {
 		// get model objects (if any) corresponding to canvas selection
-		HashSet<VisualizerThread> selectedThreads = new HashSet<VisualizerThread>();
+		HashSet<Object> selectedObjects = new HashSet<Object>();
+		
+		// threads
 		if (m_threads != null) {
 			for (MulticoreVisualizerThread tobj : m_threads) {
 				if (tobj.isSelected()) {
-					selectedThreads.add(tobj.getThread());
+					selectedObjects.add(tobj.getThread());
+				}
+			}
+		}
+		
+		// cpus and cores
+		if (m_model != null) {
+			for (VisualizerCPU modelCpu : m_model.getCPUs()) {
+				MulticoreVisualizerCPU cpu = m_cpuMap.get(modelCpu);
+				if (cpu != null && cpu.isSelected()) {
+					selectedObjects.add(modelCpu);
+				}
+				for (VisualizerCore modelCore : modelCpu.getCores()) {
+					MulticoreVisualizerCore core = m_coreMap.get(modelCore);
+					if (core != null && core.isSelected()) {
+						selectedObjects.add(modelCore);
+					}
 				}
 			}
 		}
 		
 		// update model object selection
-		ISelection selection = SelectionUtils.toSelection(selectedThreads);
+		ISelection selection = SelectionUtils.toSelection(selectedObjects);
 		setSelection(selection, raiseEvent);
 	}
 	
 	/** Restores current selection from saved list of model objects. */
 	protected void restoreSelection() {
 		ISelection selection = getSelection();
-		List<Object> selectedThreads = SelectionUtils.getSelectedObjects(selection);
-		if (m_threads != null) {
-			for (MulticoreVisualizerThread tobj : m_threads) {
-				tobj.setSelected(selectedThreads.contains(tobj.getThread()));
+		List<Object> selectedObjects = SelectionUtils.getSelectedObjects(selection);
+		
+		for (Object modelObj : selectedObjects) {
+			if (modelObj instanceof VisualizerThread) {
+				MulticoreVisualizerThread thread = m_threadMap.get(modelObj);
+				if (thread != null) {
+					thread.setSelected(true);
+				}
+			}
+			else if (modelObj instanceof VisualizerCore) {
+				MulticoreVisualizerCore core = m_coreMap.get(modelObj);
+				if (core != null) {
+					core.setSelected(true);
+				}
+			}
+			else if (modelObj instanceof VisualizerCPU) {
+				MulticoreVisualizerCPU cpu = m_cpuMap.get(modelObj);
+				if (cpu != null) {
+					cpu.setSelected(true);
+				}
 			}
 		}
 	}
+	
+	/** 
+	 * Gets the current list of selectable objects.  The list is ordered by object type,
+	 * so that more specific objects will appear first, followed by enclosing objects.
+	 * For instance, threads are before cores and cores before CPUs. 
+	 */
+    protected List<MulticoreVisualizerGraphicObject> getSelectableObjects () {
+    	List<MulticoreVisualizerGraphicObject> selectableObjects = new ArrayList<MulticoreVisualizerGraphicObject>();
+		selectableObjects.addAll(m_threads);
+		selectableObjects.addAll(m_cores);
+		selectableObjects.addAll(m_cpus);
+		
+		return selectableObjects;
+    }
 	
 	
 	// --- ISelectionProvider implementation ---

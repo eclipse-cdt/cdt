@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Symbian Ltd - Initial API and implementation
+ * Baltasar Belyavsky (Texas Instruments) - [405643] HoldsOptions performance improvements
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -260,69 +261,58 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	 */
 	@Override
 	public IOption[] getOptions() {
-		IOption[] options = null;
-		// Merge our options with our superclass' options.
-		if (superClass != null) {
-			options = superClass.getOptions();
-		}
-		// Our options take precedence.
-		Collection<Option> ourOpts = getOptionCollection();
-		if (options != null) {
-			for (Option ourOpt : ourOpts) {
-				int j = options.length;
-				if (ourOpt.getSuperClass() != null) {
-					String matchId = ourOpt.getSuperClass().getId();
-					search:
-						for (j = 0; j < options.length; j++) {
-							IOption superHolderOption = options[j];
-							if (((Option)superHolderOption).wasOptRef()) {
-								superHolderOption = superHolderOption.getSuperClass();
-							}
-							while (superHolderOption != null) {
-								if (matchId.equals(superHolderOption.getId())) {
-									options[j] = ourOpt;
-									break search;
-								}
-								superHolderOption = superHolderOption.getSuperClass();
-							}
-						}
+		Collection<IOption> opts = doGetOptions().values();
+		return opts.toArray(new IOption[opts.size()]);
+	}	
+	
+	/**
+	 * This method returns an intermediate object, ultimately used by {@link #getOptions()}.
+	 * 
+	 * NOTE: The keys in the returned map are only used to efficiently override the values as this method
+	 * is invoked recursively. Once the recursion unwinds, the keys in the resulting map are a mixture of
+	 * actual option IDs and option superClass IDs. So the keys of the resulting map should not be relied 
+	 * upon - only the values hold significance at this point. 
+	 */
+	private Map<String,IOption> doGetOptions() {
+		Map<String,IOption> map = null;
+		
+		if(this.superClass == null) {
+			map = new LinkedHashMap<String,IOption>(); // LinkedHashMap ensures we maintain option ordering
+			
+			for(Option ourOpt : getOptionCollection()) {
+				if(ourOpt.isValid()) {
+					map.put(ourOpt.getId(), ourOpt);
 				}
-				//  No Match?  Add it.
-				if (j == options.length) {
-					IOption[] newOptions = new IOption[options.length + 1];
-					for (int k = 0; k < options.length; k++) {
-						newOptions[k] = options[k];
+			}
+		}
+		else {
+			
+			// 1. Get the option-map from superClass.
+			map = ((HoldsOptions)this.superClass).doGetOptions();
+			
+			// 2. Override the superClass' options with ours, maintaining the option ordering
+			for(Option ourOpt : getOptionCollection()) {
+				String key = ourOpt.getId();
+				
+				for(IOption superOpt = ourOpt.getSuperClass(); superOpt != null; superOpt = superOpt.getSuperClass()) {
+					if(map.containsKey(superOpt.getId())) {
+						key = superOpt.getId();
+						break;
 					}
-					newOptions[j] = ourOpt;
-					options = newOptions;
+				}
+	
+				if(ourOpt.isValid()) { 
+					map.put(key, ourOpt);
+				}
+				else {
+					map.remove(key);
 				}
 			}
-  		} else {
-			options = ourOpts.toArray(new IOption[ourOpts.size()]);
 		}
-		// Check for any invalid options.
-		int numInvalidOptions = 0;
-		int i;
-		for (i=0; i < options.length; i++) {
-			if (options[i].isValid() == false) {
-				numInvalidOptions++;
-			}
-		}
-		// Take invalid options out of the array, if there are any
-		if (numInvalidOptions > 0) {
-			int j = 0;
-			IOption[] newOptions = new IOption[options.length - numInvalidOptions];
-			for (i=0; i < options.length; i++) {
-				if (options[i].isValid() == true) {
-					newOptions[j] = options[i];
-					j++;
-				}
-			}
-			options = newOptions;
-		}
-		return options;
+		
+		return map;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IHoldsOptions#getOption(java.lang.String)
 	 */
@@ -353,21 +343,30 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	public IOption getOptionBySuperClassId(String optionId) {
 		if (optionId == null) return null;
 
-		//  Look for an option with this ID, or an option with a superclass with this id
-		IOption[] options = getOptions();
-		for (IOption targetOption : options) {
-			IOption option = targetOption;
-			do {
-				if (optionId.equals(option.getId())) {
-					return targetOption.isValid() ? targetOption : null;
-				}
-				option = option.getSuperClass();
-			} while (option != null);
+		// 1. Try a quick look-up - at first iteration in the recursion, this will yield nothing, but once 
+		//    we go into recursion (step 3), this look-up would efficiently find non-overridden options.
+		IOption option = getOptionMap().get(optionId);
+		if(option != null) {
+			return option;
 		}
 
+		// 2. Try to find the option among those that we override.
+		for(Option ourOpt : getOptionCollection()) {
+			for(IOption superOpt = ourOpt.getSuperClass(); superOpt != null; superOpt = superOpt.getSuperClass()) {
+				if(optionId.equals(superOpt.getId())) {
+					return ourOpt.isValid()? ourOpt: null;
+				}
+			}
+		}
+		
+		// 3. If not found in step 2, recurse into superClass.
+		if(this.superClass != null) {
+			return this.superClass.getOptionBySuperClassId(optionId);
+		}
+		
 		return null;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IHoldsOptions#getChildCategories()
 	 */

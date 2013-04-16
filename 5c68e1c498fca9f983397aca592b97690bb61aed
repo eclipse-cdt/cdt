@@ -16,6 +16,24 @@
       "revId": "5c68e1c498fca9f983397aca592b97690bb61aed",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//w0s\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-04-16T13:35:39Z",
+      "side": 1,
+      "message": "Definitely.",
+      "parentUuid": "AABOPX//w3Q\u003d",
+      "revId": "5c68e1c498fca9f983397aca592b97690bb61aed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

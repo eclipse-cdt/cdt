@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Baltasar Belyavsky (Texas Instruments) - [405511] ResourceLookup.selectFile(...) causes deadlocks during project builds
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.resources;
 
@@ -91,6 +92,16 @@ public class ResourceLookup {
 		return selectFile(findFilesForLocation(location), preferredProject);
 	}
 
+	/**
+	 * Iterates through a list of 'file' resources, and selects the one with the highest "relevance score". 
+	 * 
+	 * NOTE: To compute the "relevance scores" this method may cause additional project-descriptions to load.
+	 * To avoid the expense of loading additional project-descriptions, we first perform a quick first-pass 
+	 * through the list of IFiles (which would normally be a very small list), to see if any of them is in 
+	 * the preferred project. In other words, if we know that the file within the preferred project is the 
+	 * one that's most relevant, then first try to find it directly - before getting to the more expensive 
+	 * loop of computing the "relevance scores" for all the files.
+	 */
 	private static IFile selectFile(IFile[] files, IProject preferredProject) {
 		if (files.length == 0)
 			return null;
@@ -99,6 +110,23 @@ public class ResourceLookup {
 			return files[0];
 
 		IFile best= null;
+
+		/* FIX for Bug 405511: Try to find the file within the preferred project first - we want to avoid 
+		 * reaching the next for-loop - that loop is expensive as it might cause the loading of unnecessary 
+		 * project-descriptions.
+		 */
+		if(preferredProject != null) {
+			for (int i = 0; i < files.length; i++) {
+				IFile file = files[i];
+				if (file.getProject().equals(preferredProject) && file.isAccessible() &&
+						(best == null || best.getFullPath().toString().compareTo(file.getFullPath().toString()) > 0)) {
+					best= file;
+				}
+			}
+		}
+		if(best != null)
+			return best;
+		
 		int bestRelevance= -1;
 
 		for (int i = 0; i < files.length; i++) {

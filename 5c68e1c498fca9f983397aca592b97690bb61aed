@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//w3Q\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-04-16T02:28:37Z",
+      "side": 1,
+      "message": "Doesn\u0027t this change require to bump the PDOM version number?",
+      "revId": "5c68e1c498fca9f983397aca592b97690bb61aed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

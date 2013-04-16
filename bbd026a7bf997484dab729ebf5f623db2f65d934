@@ -2,6 +2,57 @@
   "comments": [
     {
       "key": {
+        "uuid": "AABOPX//wpY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/control/StepIntoSelectionUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-16T22:07:16Z",
+      "side": 1,
+      "message": "This is used in GDBRunControl but not in GDBRunControl_NS.  I think we should be consistent, whichever way you prefer.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wpg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/control/StepIntoSelectionUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-16T22:07:16Z",
+      "side": 1,
+      "message": "This is used in GDBRunControl but not in GDBRunControl_NS.  I think we should be consistent, whichever way you prefer.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wqg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1926,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-16T22:07:16Z",
+      "side": 1,
+      "message": "I believe this line should be outside the if statement, no?\n\nAlso, this code doesn\u0027t look right for multi-process.  Multi-process only starts with GDB 7.2 so this code is ok in this file, but we may want to override it in the 7.2 version of this file.  Since this looks broken for runToLine, I suggest opening a different bug for it.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xEY\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/StepIntoSelectionTest.java",
         "patchSetId": 5
@@ -155,6 +206,91 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//wqI\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/DsfUiUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-16T22:07:16Z",
+      "side": 1,
+      "message": "Note that we end up getting rid of this class.  See comments in DsfStepIntoSelectionHyperlinkDetector first",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wqU\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/DsfUiUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-16T22:07:16Z",
+      "side": 1,
+      "message": "author",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wqQ\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/DsfUiUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-16T22:07:16Z",
+      "side": 1,
+      "message": "DsfUIUtils to keep the same naming pattern as other classes",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wqM\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/DsfUiUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-16T22:07:16Z",
+      "side": 1,
+      "message": "Should be named appropriately.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wpU\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/Messages.properties",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-16T22:07:16Z",
+      "side": 1,
+      "message": "I\u0027m not sure if the extra space will be added to the string... I suggest we remove it to be safe",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xEE\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoEditorSelectionHandler.java",
         "patchSetId": 5
@@ -217,6 +353,40 @@
       "writtenOn": "2013-04-15T15:01:04Z",
       "side": 1,
       "message": "I don\u0027t think we need to pass the steppingMode since this command does not make sense for instruction stepping",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wqc\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-16T22:07:16Z",
+      "side": 1,
+      "message": "Might as well store the session passed in the constructor in a member fSession, since you will need it later",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wqY\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-16T22:07:16Z",
+      "side": 1,
+      "message": "we should put \nif (targets.length !\u003d 1) {\n  return;\n}\nIf not, we will accept a step-into-selection if there is a multi-selection in the debug view",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -308,6 +478,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//wqE\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionHyperlinkDetector.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-16T22:07:16Z",
+      "side": 1,
+      "message": "I find there is still some duplication of code with this class.  What do you think if we moved away from how JDT handles this case, and try to call the StepIntoSelection command here?  That way, the hyperlink logic would simply be another way to call that command.  Doing this requires a bit extra work, but I did it for GdbConnectCommand which inherits from IConnect _and_ IConnectHandler.  The IConnect interface is specifically meant to allow calling that command ourselves (from FinalLaunchSequence in this case).  Let me know what you think about using the same pattern for IStepIntoSelectionHandler and probably a matching IStepIntoSelection.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xGM\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf/META-INF/MANIFEST.MF",
         "patchSetId": 5
@@ -336,6 +523,57 @@
       "writtenOn": "2013-04-15T15:01:04Z",
       "side": 1,
       "message": "I recomment you move this file to package o.e.cdt.debug.core.model.  I assume you won\u0027t be needing to add o.e.cdt.dsf.commands anymore",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wp8\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRunControl3.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-16T22:07:16Z",
+      "side": 1,
+      "message": "Keep the two calls using the same parameter types.  Even if you don\u0027t want to force the user to pass in lineNumber, you can use \u0027int\u0027 and specify in the javadoc that if selectedFunctionDeclaration is null, lineNumber and sourceFile will be ignored.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wqA\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRunControl3.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-16T22:07:16Z",
+      "side": 1,
+      "message": "Why throw an OperationNotSupportedException?  I think the RM can be used for errors.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wp4\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRunControl3.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-16T22:07:16Z",
+      "side": 1,
+      "message": "The code often has pretty long lines, but this file is using particularly long lines which make it hard to read.  Can you put the parameters one below the other?",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

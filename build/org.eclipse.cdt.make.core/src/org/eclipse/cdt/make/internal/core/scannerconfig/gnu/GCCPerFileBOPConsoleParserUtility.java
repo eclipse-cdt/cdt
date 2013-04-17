@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
@@ -58,7 +58,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
         String workingDir = getWorkingDirectory().toString();
         List<Map<String, List<String>>> directoryCommandList = directoryCommandListMap.get(workingDir);
         if (directoryCommandList == null) {
-            directoryCommandList = new ArrayList<Map<String, List<String>>>();
+            directoryCommandList = new CopyOnWriteArrayList<Map<String, List<String>>>();
             directoryCommandListMap.put(workingDir, directoryCommandList);
             ++workingDirsN;
         }
@@ -77,7 +77,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
         command21FileListMap = new HashMap<String, List<String>>(1);
         directoryCommandList.add(command21FileListMap);
         ++commandsN;
-        List<String> fileList = new ArrayList<String>();
+        List<String> fileList = new CopyOnWriteArrayList<String>();
         command21FileListMap.put(genericCommand, fileList);
         fileList.add(longFileName);
         ++filesN;
@@ -121,8 +121,8 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
      * @return CCommandDSC compile command description 
      */
     public CCommandDSC getNewCCommandDSC(String[] tokens, final int idxOfCompilerCommand, boolean cppFileType) {
-		ArrayList<KVStringPair> dirafter = new ArrayList<KVStringPair>();
-		ArrayList<String> includes = new ArrayList<String>();
+		CopyOnWriteArrayList<KVStringPair> dirafter = new CopyOnWriteArrayList<KVStringPair>();
+		CopyOnWriteArrayList<String> includes = new CopyOnWriteArrayList<String>();
         CCommandDSC command = new CCommandDSC(cppFileType, getProject());
         command.addSCOption(new KVStringPair(SCDOptionsEnum.COMMAND.toString(), tokens[idxOfCompilerCommand]));
         for (int i = idxOfCompilerCommand+1; i < tokens.length; ++i) {
@@ -161,7 +161,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
                             KVStringPair pair = new KVStringPair(SCDOptionsEnum.IQUOTE.toString(), option);
                             command.addSCOption(pair);
                         }
-                        includes = new ArrayList<String>();
+                        includes = new CopyOnWriteArrayList<String>();
                         // -I- has no parameter
                     }
                     else {
@@ -285,7 +285,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
      * @return List of CCommandDSC
      */
     public List<CCommandDSC> getCCommandDSCList() {
-        return new ArrayList<CCommandDSC>(commandsList2);
+        return new CopyOnWriteArrayList<CCommandDSC>(commandsList2);
     }
 
 }

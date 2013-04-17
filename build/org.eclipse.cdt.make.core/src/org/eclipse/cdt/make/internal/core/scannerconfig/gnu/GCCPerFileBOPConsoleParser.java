@@ -14,11 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
@@ -138,7 +138,7 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
             }
             if (file != null) {
                 CCommandDSC cmd = fUtil.getNewCCommandDSC(tokens, compilerInvocationIndex, extensionsIndex > 0);
-	            List<CCommandDSC> cmdList = new ArrayList<CCommandDSC>();
+	            List<CCommandDSC> cmdList = new CopyOnWriteArrayList<CCommandDSC>();
 	            cmdList.add(cmd);
 	            Map<ScannerInfoTypes, List<CCommandDSC>> sc = new HashMap<ScannerInfoTypes, List<CCommandDSC>>(1);
 	            sc.put(ScannerInfoTypes.COMPILER_COMMAND, cmdList);

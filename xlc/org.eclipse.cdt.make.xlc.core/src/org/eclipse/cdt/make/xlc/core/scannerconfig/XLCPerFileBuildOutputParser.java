@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.xlc.core.scannerconfig;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IPath;
  * @author crecoskie
  *
  */
+@SuppressWarnings("restriction")
 public class XLCPerFileBuildOutputParser extends AbstractXLCBuildOutputParser {
 
 	/* (non-Javadoc)
@@ -127,7 +128,7 @@ public class XLCPerFileBuildOutputParser extends AbstractXLCBuildOutputParser {
 			}
 			if (true /*file != null*/) {
 				CCommandDSC cmd = getUtility().getNewCCommandDSC(tokens, compilerInvocationIndex, extensionsIndex > 0);
-				List<CCommandDSC> cmdList = new ArrayList<CCommandDSC>();
+				List<CCommandDSC> cmdList = new CopyOnWriteArrayList<CCommandDSC>();
 				cmdList.add(cmd);
 				Map<ScannerInfoTypes, List<CCommandDSC>> sc = new HashMap<ScannerInfoTypes, List<CCommandDSC>>(1);
 				sc.put(ScannerInfoTypes.COMPILER_COMMAND, cmdList);

@@ -36,6 +36,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//wk0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1594,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-17T10:31:31Z",
+      "side": 1,
+      "message": "The above assert keeps hitting for me.  I think it must be within the if statement below",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//wqg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 5
@@ -70,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//wk4\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-17T10:31:31Z",
+      "side": 1,
+      "message": "You must also change the version in pom.xml",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xGE\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.properties",
         "patchSetId": 5
@@ -81,6 +115,40 @@
       "writtenOn": "2013-04-15T15:01:04Z",
       "side": 1,
       "message": "I recommend you move these changes to o.e.cdt.ui",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wkc\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.properties",
+        "patchSetId": 5
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-17T10:31:31Z",
+      "side": 1,
+      "message": "What do you say about naming it \"C/C++ Step Into Selection\" to be similar to JDT",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wkY\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.properties",
+        "patchSetId": 5
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-17T10:31:31Z",
+      "side": 1,
+      "message": "Let\u0027s use the same as JDT:\n\"Performs the step into selection command on demand via a hyperlink\"",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -291,6 +359,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//wks\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/Messages.properties",
+        "patchSetId": 5
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-17T10:31:31Z",
+      "side": 1,
+      "message": "The JDT only uses \"Step Into\".  Since you see the hyperlink the method, I also find it is ok no to say \"selection\".  So, let\u0027s be consistent and use the same thing.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xEE\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoEditorSelectionHandler.java",
         "patchSetId": 5
@@ -489,6 +574,57 @@
       "writtenOn": "2013-04-16T22:07:16Z",
       "side": 1,
       "message": "I find there is still some duplication of code with this class.  What do you think if we moved away from how JDT handles this case, and try to call the StepIntoSelection command here?  That way, the hyperlink logic would simply be another way to call that command.  Doing this requires a bit extra work, but I did it for GdbConnectCommand which inherits from IConnect _and_ IConnectHandler.  The IConnect interface is specifically meant to allow calling that command ourselves (from FinalLaunchSequence in this case).  Let me know what you think about using the same pattern for IStepIntoSelectionHandler and probably a matching IStepIntoSelection.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wkw\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionHyperlinkDetector.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-17T10:31:31Z",
+      "side": 1,
+      "message": "From my testing, this string should be the one saying \"Step Into Selection\" (or \"Step Into\")",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wko\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionHyperlinkDetector.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-17T10:31:31Z",
+      "side": 1,
+      "message": "JDT returns null.  We can do the same to simplify things",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wkI\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionHyperlinkDetector.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-17T10:31:31Z",
+      "side": 1,
+      "message": "In this method, JDT also makes sure that the hyperlink is on a method/function.  This allows it to prevent showing the \"Step Into\" hyperlink option for non-methods.  Can we do the same?",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "AABOPX//wZM\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/SelectionToDeclarationJob.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-17T18:11:47Z",
+      "side": 1,
+      "message": "Let\u0027s not create any new APIs without someone with more experience approving them.\n\nFor now move this class to org.eclipse.cdt.internal.ui.editor.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//wpY\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/control/StepIntoSelectionUtils.java",
         "patchSetId": 5
@@ -495,6 +512,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//was\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/sourcelookup/DsfSourceSelectionResolver.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-17T18:11:47Z",
+      "side": 1,
+      "message": "Since this is internal, we can keep it for now.  Later we may want to see if it can be moved into core CDT.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xEE\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoEditorSelectionHandler.java",
         "patchSetId": 5
@@ -870,6 +904,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//wak\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionHyperlinkDetector.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-17T18:11:47Z",
+      "side": 1,
+      "message": "Please make this class private",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//wkw\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionHyperlinkDetector.java",
         "patchSetId": 5
@@ -949,6 +1000,23 @@
       "writtenOn": "2013-04-15T15:01:04Z",
       "side": 1,
       "message": "I recomment you move this file to package o.e.cdt.debug.core.model.  I assume you won\u0027t be needing to add o.e.cdt.dsf.commands anymore",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wZ0\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/AbstractRunControl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-04-17T18:11:47Z",
+      "side": 1,
+      "message": "This is a good idea, but since we have little time left, lets postpone it.  Please remove this class, have MIRunControl and GDBRunControl_7_0_NS implement IRunControl3.\n\nYou can open a bug to suggest doing this common abstract class after the release.",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

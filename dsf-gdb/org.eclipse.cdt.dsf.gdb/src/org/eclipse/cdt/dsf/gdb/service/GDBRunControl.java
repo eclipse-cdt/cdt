@@ -152,6 +152,7 @@ public class GDBRunControl extends MIRunControl {
                 @Override
                 protected void handleSuccess() {
                     if (getData()) {
+                    	int interruptTimeout = getInterruptTimeout();
 						// A local Windows attach session requires us to interrupt
 						// the inferior instead of gdb. This deficiency was fixed
                     	// in gdb 7.0. Note that there's a GDBRunControl_7_0,
@@ -164,15 +165,15 @@ public class GDBRunControl extends MIRunControl {
                     		IMIProcessDMContext processDmc = DMContexts.getAncestorOfType(context, IMIProcessDMContext.class);
                     		String inferiorPid = processDmc.getProcId();
                     		if (inferiorPid != null) {
-                    			fGdb.interruptInferiorAndWait(Long.parseLong(inferiorPid), IGDBBackend.INTERRUPT_TIMEOUT_DEFAULT, rm);
+                    			fGdb.interruptInferiorAndWait(Long.parseLong(inferiorPid), interruptTimeout, rm);
                     		}
                     		else {
                     			assert false : "why don't we have the inferior's pid?";  //$NON-NLS-1$
-                    			fGdb.interruptAndWait(IGDBBackend.INTERRUPT_TIMEOUT_DEFAULT, rm);
+                    			fGdb.interruptAndWait(interruptTimeout, rm);
                     		}
                     	}
                     	else {
-                            fGdb.interruptAndWait(IGDBBackend.INTERRUPT_TIMEOUT_DEFAULT, rm);
+                            fGdb.interruptAndWait(interruptTimeout, rm);
                     	}
                     } else {
                         rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Context cannot be suspended.", null)); //$NON-NLS-1$
@@ -427,5 +428,12 @@ public class GDBRunControl extends MIRunControl {
     	}
 
     	super.eventDispatched(e);
+    }
+
+    /**
+	 * @since 4.2
+	 */
+    protected int getInterruptTimeout() {
+    	return IGDBBackend.INTERRUPT_TIMEOUT_DEFAULT;
     }
 }

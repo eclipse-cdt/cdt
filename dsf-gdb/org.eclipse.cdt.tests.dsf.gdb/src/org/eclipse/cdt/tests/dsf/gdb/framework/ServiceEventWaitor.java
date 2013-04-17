@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Ericsson and others.
+ * Copyright (c) 2007, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *     Marc Khouzam (Ericsson) - Add support to receive multiple events
+ *     Alvaro Sanchez-Leon (Ericsson) - Add filter out and wait for a given type of event
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
@@ -94,6 +95,30 @@ public class ServiceEventWaitor<V> {
 		}
 	}
 
+	/**
+	 * Will wait and discard events that are not either of the specified type or a subtype
+	 * It will stop and return the first one found or exit after the specified timeout 
+	 *  
+	 * @param type - The parent type of an acceptable event
+	 * @param timeout the maximum time to wait in milliseconds to wait for a specified event
+	 */
+	@SuppressWarnings("unchecked")
+	public synchronized <T extends V> T waitForEvent(Class<T> type, int timeout) throws Exception {
+		long startMs = System.currentTimeMillis();
+		//The Specified Event received or Timeout exception will exit the loop
+		while (true) {
+			int timeRemaining = (int) (timeout - (System.currentTimeMillis() - startMs));
+			if (timeRemaining > 0) {				
+				V sevent = waitForEvent(timeRemaining);
+				if (type.isAssignableFrom(sevent.getClass())) {
+					return (T) sevent;
+				} 
+			} else {
+				throw new Exception("Timed out waiting for ServiceEvent: " + type.getName());
+			}
+		}
+	}
+	
 	/*
 	 * Block until 'timeout' or the expected event occurs. The expected event is
 	 * specified at construction time.
@@ -163,7 +188,10 @@ public class ServiceEventWaitor<V> {
 			}
 		}
 		
-		return fEventQueue.remove(0);
+		V vevent = fEventQueue.remove(0);
+
+		
+		return vevent;
 	}
 
 	/*
@@ -177,6 +205,8 @@ public class ServiceEventWaitor<V> {
 				fEventQueue.add(event);
 				notifyAll();
 			}
+		} else {
+			System.out.println("NOT QUEUEING: SevericeEventWaitor: Class: " + fEventTypeClass.getName() + " is NOT assignable from event class: " + event.getClass());
 		}
 	}
 }

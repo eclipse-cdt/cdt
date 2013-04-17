@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Alvaro Sanchez-Leon (Ericsson AB)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -18,6 +19,7 @@ class Messages extends NLS {
 	public static String CElementGrouping_includeGroupingLabel;
 	public static String CElementGrouping_macroGroupingLabel;
 	public static String CUIPlugin_jobStartMakeUI;
+	public static String StepIntoSelection_unable_to_resolve_1;
 
 	static {
 		// Initialize resource bundle

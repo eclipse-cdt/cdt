@@ -2585,6 +2585,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 					!(applicabilityCalculator instanceof BooleanExpressionApplicabilityCalculator)) {
 					if (option.getSuperClass() != null)
 						option = getOptionBySuperClassId(option.getSuperClass().getId());
+					// bug #405904 - if the option is an extension element (first time we build),
+					// use the option id as a superclass id, otherwise we won't find the option we may have just
+					// set and will end up with the default setting
+					else if (option.isExtensionElement())
+						option = getOptionBySuperClassId(option.getId());
 					else
 						option = getOptionById(option.getId());
 				}

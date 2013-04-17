@@ -87,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//xAE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/StepIntoSelectionTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "Removed",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//wk4\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/META-INF/MANIFEST.MF",
         "patchSetId": 5
@@ -189,6 +206,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//wrk\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xFg\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
         "patchSetId": 5
@@ -200,6 +234,23 @@
       "writtenOn": "2013-04-15T15:01:04Z",
       "side": 1,
       "message": "Should we use the CDT editor instead? org.eclipse.cdt.ui.editor.CEditor",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wrg\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "CEditor is internal and try to minimize its use, \nThis is also the way it\u0027s done in JDT. \nHowever we can can try to change it if you prefer.",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +274,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//wrc\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xE8\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
         "patchSetId": 5
@@ -234,6 +302,23 @@
       "writtenOn": "2013-04-15T15:01:04Z",
       "side": 1,
       "message": "CEditor?",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wrY\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "same comment in ITextEditor above",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +342,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//w4A\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "see\nhttp://help.eclipse.org/juno/index.jsp?topic\u003d%2Forg.eclipse.platform.doc.isv%2Fguide%2Fworkbench_cmd_handlers.htm\n\nActivation seems relevant when using delegates, which is not the case for this command, enable seems enough and appropriate for the case.\n",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xF4\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
         "patchSetId": 5
@@ -268,6 +370,23 @@
       "writtenOn": "2013-04-15T15:01:04Z",
       "side": 1,
       "message": "Should we restrict this to:\norg.eclipse.cdt.ui.editor.CEditor?",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wrU\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "same comment as other two locations above",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -410,6 +529,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//wrQ\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoEditorSelectionHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xEQ\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoEditorSelectionHandler.java",
         "patchSetId": 5
@@ -421,6 +557,23 @@
       "writtenOn": "2013-04-15T15:01:04Z",
       "side": 1,
       "message": "Not needed",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wrM\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoEditorSelectionHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "Done",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -444,6 +597,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//wmM\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//wqc\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
         "patchSetId": 5
@@ -455,6 +625,23 @@
       "writtenOn": "2013-04-16T22:07:16Z",
       "side": 1,
       "message": "Might as well store the session passed in the constructor in a member fSession, since you will need it later",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wmI\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "Done",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -478,6 +665,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//wmE\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xDs\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
         "patchSetId": 5
@@ -489,6 +693,24 @@
       "writtenOn": "2013-04-15T15:01:04Z",
       "side": 1,
       "message": "I think we need:\n\t\tif (targets.length !\u003d 1) {\n\t\t\treturn false;\n\t\t}\n\nIf not, we will accept a step-into-selection if there is a multi-selection in the debug view",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//whk\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//xDs\u003d",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -512,6 +734,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//wmA\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xDg\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
         "patchSetId": 5
@@ -523,6 +762,23 @@
       "writtenOn": "2013-04-15T15:01:04Z",
       "side": 1,
       "message": "Remove",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wl8\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "Done",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -546,6 +802,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//wjk\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "I tried but resolving this parameters needs the UI thread and hangs the hyperlink selection. \n   Not sure how to solve this, we may consider removing does parameters from the api.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xD8\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
         "patchSetId": 5
@@ -557,6 +830,23 @@
       "writtenOn": "2013-04-15T15:01:04Z",
       "side": 1,
       "message": "I wonder if we shouldn\u0027t set this to false.  Do we really want to keep it enabled right after we use it, or can we rely on it be re-enabled once a new selection is made?",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//whw\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-17T13:30:00Z",
+      "side": 1,
+      "message": "I tried it and does not work reliably if set to false.\ne.g. try to step into a line above a method and will have some random effects.  Not sure on the exact cause. Might need deeper investigation",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

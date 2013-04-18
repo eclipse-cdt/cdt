@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight (IBM) - [240414] NPE in SystemHistoryCombo
+ * David Dykstal (IBM)  - [377804] Fix inconsistent text in work with history dialog
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.dialogs;
@@ -156,7 +157,7 @@ public class SystemWorkWithHistoryDialog extends SystemPromptDialog implements  
 	    clearButton = createPushButton(rightHandSide,SystemResources.ACTION_HISTORY_CLEAR_LABEL, SystemResources.ACTION_HISTORY_CLEAR_TOOLTIP);
 	    rmvButton = createPushButton(rightHandSide,SystemResources.ACTION_HISTORY_DELETE_LABEL, SystemResources.ACTION_HISTORY_DELETE_TOOLTIP);
 	    mupButton = createPushButton(rightHandSide,SystemResources.ACTION_HISTORY_MOVEUP_LABEL, SystemResources.ACTION_HISTORY_MOVEUP_TOOLTIP);
-	    mdnButton = createPushButton(rightHandSide,SystemResources.ACTION_HISTORY_MOVEDOWN_LABEL, SystemResources.ACTION_HISTORY_MOVEDOWN_LABEL);            
+	    mdnButton = createPushButton(rightHandSide,SystemResources.ACTION_HISTORY_MOVEDOWN_LABEL, SystemResources.ACTION_HISTORY_MOVEDOWN_TOOLTIP);            
 		
 		clearMI = createMenuItem(SystemResources.ACTION_HISTORY_CLEAR_LABEL, SystemResources.ACTION_HISTORY_CLEAR_TOOLTIP);
 		rmvMI = createMenuItem(SystemResources.ACTION_HISTORY_DELETE_LABEL, SystemResources.ACTION_HISTORY_DELETE_TOOLTIP);

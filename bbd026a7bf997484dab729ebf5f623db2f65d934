@@ -853,6 +853,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//wCw\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-19T01:58:04Z",
+      "side": 1,
+      "message": "Correction, the hanging was on similar code under hyperlinkdetector, however for this case since we are not receiving the event attempts to resolve the selection on editor fail  producing pop-up notifications from cdt,  I think we should move on as we don\u0027t need this information for the time being. \n  The ideal solution is to find a way to keep and make available  the actual event under AbstractDebugCommand or use a different command structure.",
+      "parentUuid": "AABOPX//wjk\u003d",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xD8\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
         "patchSetId": 5
@@ -904,6 +922,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//v8M\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionHyperlinkDetector.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-19T01:58:04Z",
+      "side": 1,
+      "message": "It\u0027s done however, the drawback with making the command available for the hyerlink is the need to create a new public interface, \n  Specially since the resolution of the location is not always reliable at the stage of isExecutable check.  It hopefully does not need to be updated.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//wak\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionHyperlinkDetector.java",
         "patchSetId": 5
@@ -915,6 +950,23 @@
       "writtenOn": "2013-04-17T18:11:47Z",
       "side": 1,
       "message": "Please make this class private",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//v8I\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionHyperlinkDetector.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-19T01:58:04Z",
+      "side": 1,
+      "message": "Done",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1034,6 +1086,23 @@
       "writtenOn": "2013-04-16T22:07:16Z",
       "side": 1,
       "message": "Keep the two calls using the same parameter types.  Even if you don\u0027t want to force the user to pass in lineNumber, you can use \u0027int\u0027 and specify in the javadoc that if selectedFunctionDeclaration is null, lineNumber and sourceFile will be ignored.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//v7Q\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRunControl3.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-19T01:58:04Z",
+      "side": 1,
+      "message": "Done",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

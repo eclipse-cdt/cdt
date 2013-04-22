@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,79 +19,70 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public class CDefaultConfigurationDataProvider extends
-		CConfigurationDataProvider {
+public class CDefaultConfigurationDataProvider extends CConfigurationDataProvider {
 	private static final String DEFAULT_STORAGE_ID = "defaultConfigurationDataProvider";  //$NON-NLS-1$
-	
-	@Override
-	public CConfigurationData applyConfiguration(
-			ICConfigurationDescription des, 
-			ICConfigurationDescription baseDescription,
-			CConfigurationData base,
-			IProgressMonitor monitor)
-			throws CoreException {
-		ICStorageElement el = getStorageElement(des, true);
-		CDataSerializer serializer = getDataSerializer();
-		serializer.store(base, el);
-		return base;
-	}
 
 	@Override
-	public CConfigurationData createConfiguration(
-			ICConfigurationDescription des, 
-			ICConfigurationDescription baseDescription,
-			CConfigurationData base,
-			boolean clone,
+	public CConfigurationData applyConfiguration(ICConfigurationDescription cfgDescription,
+			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData,
 			IProgressMonitor monitor) throws CoreException {
-		CDataFactory factory = getDataFactory();
-		return factory.createConfigurationdata(des.getId(), des.getName(), base, clone);
+
+		ICStorageElement el = getStorageElement(cfgDescription, true);
+		CDataSerializer serializer = getDataSerializer();
+		serializer.store(baseData, el);
+		return baseData;
 	}
 
 	@Override
-	public CConfigurationData loadConfiguration(ICConfigurationDescription des,
-			IProgressMonitor monitor)
-			throws CoreException {
-		ICStorageElement el = getStorageElement(des, false);
-		if(el != null){
+	public CConfigurationData createConfiguration(ICConfigurationDescription cfgDescription,
+			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData,
+			boolean clone, IProgressMonitor monitor) throws CoreException {
+
+		CDataFactory factory = getDataFactory();
+		return factory.createConfigurationdata(cfgDescription.getId(), cfgDescription.getName(), baseData, clone);
+	}
+
+	@Override
+	public CConfigurationData loadConfiguration(ICConfigurationDescription cfgDescription, IProgressMonitor monitor) throws CoreException {
+		ICStorageElement el = getStorageElement(cfgDescription, false);
+		if(el != null) {
 			CDataSerializer serializer = getDataSerializer();
 			CDataFactory factory = getDataFactory();
 			try {
 				return serializer.loadConfigurationData(factory, el);
-			} catch (CoreException e){
-				if(des.isPreferenceConfiguration())
+			} catch (CoreException e) {
+				if(cfgDescription.isPreferenceConfiguration())
 					return createPreferenceConfig(factory);
 				throw e;
 			}
-		} else if (des.isPreferenceConfiguration()){
+		} else if (cfgDescription.isPreferenceConfiguration()) {
 			return createPreferenceConfig(getDataFactory());
 		}
 		return null;
 	}
 
 	@Override
-	public void removeConfiguration(ICConfigurationDescription des,
-			CConfigurationData data,
-			IProgressMonitor monitor) {
+	public void removeConfiguration(ICConfigurationDescription cfgDescription, CConfigurationData data, IProgressMonitor monitor) {
 		//do nothing
 	}
-	
-	protected CDataFactory getDataFactory(){
+
+	protected CDataFactory getDataFactory() {
 		return CDataFactory.getDefault();
 	}
-	
-	protected CDataSerializer getDataSerializer(){
+
+	protected CDataSerializer getDataSerializer() {
 		return CDataSerializer.getDefault();
 	}
-	
-	protected String getStorageId(){
+
+	protected String getStorageId() {
 		return DEFAULT_STORAGE_ID;
 	}
-	
-	protected ICStorageElement getStorageElement(ICConfigurationDescription des, boolean create) throws CoreException{
-		return des.getStorage(getStorageId(), create);
+
+	protected ICStorageElement getStorageElement(ICConfigurationDescription cfgDescription, boolean create) throws CoreException {
+		return cfgDescription.getStorage(getStorageId(), create);
 	}
-	
-	protected CConfigurationData createPreferenceConfig(CDataFactory factory){
+
+	protected CConfigurationData createPreferenceConfig(CDataFactory factory) {
 		return CDataUtil.createEmptyData(null, "preference", factory, true); //$NON-NLS-1$
 	}
 }

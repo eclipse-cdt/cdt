@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,43 +45,41 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
-public class PathEntryConfigurationDataProvider extends
-		CConfigurationDataProvider {
+public class PathEntryConfigurationDataProvider extends CConfigurationDataProvider {
 	private static PathEntryDataFactory fFactory;
-	
-	
-	public static CDataFactory getDataFactory(){
-		if(fFactory == null){
+
+	public static CDataFactory getDataFactory() {
+		if(fFactory == null) {
 			fFactory = new PathEntryDataFactory();
 		}
 		return fFactory;
 	}
 
-	public PathEntryConfigurationDataProvider(){
+	public PathEntryConfigurationDataProvider() {
 		getDataFactory();
 	}
 
 	private static class PathEntryFolderData extends CDefaultFolderData {
 		private EntryStore fStore;
-		
-//		public PathEntryFolderData(CConfigurationData cfg, CDataFacroty factory) {
-//			super(cfg, factory);
-//		}
 
-//		public PathEntryFolderData(String id, IPath path,
-//				CConfigurationData cfg, CDataFacroty factory) {
-//			super(id, path, cfg, factory);
-//		}
+		//		public PathEntryFolderData(CConfigurationData cfg, CDataFacroty factory) {
+		//			super(cfg, factory);
+		//		}
+
+		//		public PathEntryFolderData(String id, IPath path,
+		//				CConfigurationData cfg, CDataFacroty factory) {
+		//			super(id, path, cfg, factory);
+		//		}
 
 		public PathEntryFolderData(String id, IPath path, PathEntryFolderData base,
-				CConfigurationData cfg, CDataFactory factory, boolean clone) {
-			super(id, path, cfg, factory);
-			
+				CConfigurationData cfgData, CDataFactory factory, boolean clone) {
+			super(id, path, cfgData, factory);
+
 			if(base != null)
 				fStore = new EntryStore(base.fStore, true);
 			else
 				fStore = new EntryStore(true);
-			
+
 			copyDataFrom(base, clone);
 		}
 	}
@@ -89,45 +87,44 @@ public class PathEntryConfigurationDataProvider extends
 	private static class PathEntryFileData extends CDefaultFileData {
 		private EntryStore fStore;
 
-//		public PathEntryFileData(CConfigurationData cfg, CDataFacroty factory) {
-//			super(cfg, factory);
-//		}
+		//		public PathEntryFileData(CConfigurationData cfg, CDataFacroty factory) {
+		//			super(cfg, factory);
+		//		}
 
-//		public PathEntryFileData(String id, IPath path, CConfigurationData cfg,
-//				CDataFacroty factory) {
-//			super(id, path, cfg, factory);
-//		}
+		//		public PathEntryFileData(String id, IPath path, CConfigurationData cfg,
+		//				CDataFacroty factory) {
+		//			super(id, path, cfg, factory);
+		//		}
 
 		public PathEntryFileData(String id, IPath path, PathEntryFileData base,
 				CConfigurationData cfg, CDataFactory factory, boolean clone) {
 			super(id, path, cfg, factory);
 
 			fStore = new EntryStore(base.fStore, true);
-			
+
 			copyDataFrom(base, clone);
 		}
 
 		public PathEntryFileData(String id, IPath path, PathEntryFolderData base,
-				CLanguageData baseLangData, CConfigurationData cfg,
+				CLanguageData baseLangData, CConfigurationData cfgData,
 				CDataFactory factory) {
-			super(id, path, cfg, factory);
+			super(id, path, cfgData, factory);
 
 			fStore = new EntryStore(base.fStore, true);
-			
+
 			copyDataFrom(base, baseLangData);
 		}
-		
-	}
-	
-	private static class PathEntryLanguageData extends CDefaultLanguageData {
 
+	}
+
+	private static class PathEntryLanguageData extends CDefaultLanguageData {
 		public PathEntryLanguageData(String id, CLanguageData base, EntryStore store) {
 			fId = id;
 			fStore = store;
 			copySettingsFrom(base);
 		}
 
-		public PathEntryLanguageData(String id, String name, String languageId, int kinds, 
+		public PathEntryLanguageData(String id, String name, String languageId, int kinds,
 				String[] ids, boolean isContentTypes, EntryStore store) {
 			super(id, languageId, ids, isContentTypes);
 			fStore = store;
@@ -144,11 +141,10 @@ public class PathEntryConfigurationDataProvider extends
 		protected EntryStore createStore(CLanguageData data) {
 			return fStore;
 		}
-		
-	}
-	
-	private static class PathEntryDataFactory extends CDataFactory {
 
+	}
+
+	private static class PathEntryDataFactory extends CDataFactory {
 		@Override
 		public CConfigurationData createConfigurationdata(String id,
 				String name, CConfigurationData base, boolean clone) {
@@ -157,21 +153,21 @@ public class PathEntryConfigurationDataProvider extends
 			} else if(id == null){
 				id = CDataUtil.genId(null);
 			}
-			
+
 			return new CfgData(id, name, base, clone);
 		}
 
 		@Override
 		public CFileData createFileData(CConfigurationData cfg,
-				CResourceData base, CLanguageData base2, 
+				CResourceData base, CLanguageData base2,
 				String id, boolean clone,
 				IPath path) {
 			if(id == null)
 				id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
-			if(base.getType() == ICSettingBase.SETTING_FILE)
-				return new PathEntryFileData(id, path, (PathEntryFileData)base, cfg, this, clone);
-			return new PathEntryFileData(id, path, (PathEntryFolderData)base,
-					base2, cfg,	this);
+				if(base.getType() == ICSettingBase.SETTING_FILE)
+					return new PathEntryFileData(id, path, (PathEntryFileData)base, cfg, this, clone);
+				return new PathEntryFileData(id, path, (PathEntryFolderData)base,
+						base2, cfg,	this);
 		}
 
 		@Override
@@ -179,7 +175,7 @@ public class PathEntryConfigurationDataProvider extends
 				CFolderData base, String id, boolean clone, IPath path) {
 			if(id == null)
 				id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
-			return new PathEntryFolderData(id, path, (PathEntryFolderData)base, cfg, this, clone);
+				return new PathEntryFolderData(id, path, (PathEntryFolderData)base, cfg, this, clone);
 		}
 
 		@Override
@@ -187,12 +183,12 @@ public class PathEntryConfigurationDataProvider extends
 				CResourceData rcBase, CLanguageData base, String id, boolean clone) {
 			if(id == null)
 				id = clone ? base.getId() : CDataUtil.genId(rcBase.getId());
-			EntryStore store;
-			if(rcBase.getType() == ICSettingBase.SETTING_FOLDER)
-				store = ((PathEntryFolderData)rcBase).fStore;
-			else
-				store = ((PathEntryFileData)rcBase).fStore;
-			return new PathEntryLanguageData(id, base, store);
+				EntryStore store;
+				if(rcBase.getType() == ICSettingBase.SETTING_FOLDER)
+					store = ((PathEntryFolderData)rcBase).fStore;
+				else
+					store = ((PathEntryFileData)rcBase).fStore;
+				return new PathEntryLanguageData(id, base, store);
 		}
 
 		@Override
@@ -208,53 +204,49 @@ public class PathEntryConfigurationDataProvider extends
 				store = ((PathEntryFileData)rcBase).fStore;
 			return new PathEntryLanguageData(id, name, languageId, supportedEntryKinds, rcTypes, isContentTypes, store);
 		}
-		
+
 	}
 
 	private static class CfgData extends CDefaultConfigurationData {
-//		private PathEntryResolveInfo fResolveInfo;
+		//		private PathEntryResolveInfo fResolveInfo;
 
 		public CfgData(String id, String name, CConfigurationData base, boolean clone) {
 			super(id, name, base, fFactory, clone);
 		}
-
 		public CfgData(String id, String name) {
 			super(id, name, fFactory);
 		}
-		
-//		public PathEntryResolveInfo getResolveInfo(){
-//			return fResolveInfo;
-//		}
-//		
-//		public void setResolveInfo(PathEntryResolveInfo info){
-//			fResolveInfo = info;
-//		}
+
+		//		public PathEntryResolveInfo getResolveInfo(){
+		//			return fResolveInfo;
+		//		}
+		//
+		//		public void setResolveInfo(PathEntryResolveInfo info){
+		//			fResolveInfo = info;
+		//		}
 	}
-	
+
 	public static boolean isPathEntryData(CConfigurationData data){
 		return data instanceof CfgData;
 	}
-	
+
 	@Override
-	public CConfigurationData applyConfiguration(
-			ICConfigurationDescription des,
-			ICConfigurationDescription baseDescription,
-			CConfigurationData base,
-			IProgressMonitor monitor)
-			throws CoreException {
+	public CConfigurationData applyConfiguration(ICConfigurationDescription cfgDescription,
+			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData,
+			IProgressMonitor monitor) throws CoreException {
+
 		//TODO: check external/reference info here as well.
-		if(!fFactory.isModified(base)){
-			return createData(des, base, false, true);
+		if (!fFactory.isModified(baseData)) {
+			return createData(cfgDescription, baseData, false, true);
 		}
-		
-		
-		IProject project = des.getProjectDescription().getProject();
-//		ReferenceSettingsInfo refInfo = new ReferenceSettingsInfo(des);
-		IPathEntry entries[] = PathEntryTranslator.getPathEntries(project, baseDescription, PathEntryTranslator.INCLUDE_USER);
+
+		IProject project = cfgDescription.getProjectDescription().getProject();
+		//		ReferenceSettingsInfo refInfo = new ReferenceSettingsInfo(des);
+		IPathEntry entries[] = PathEntryTranslator.getPathEntries(project, baseCfgDescription, PathEntryTranslator.INCLUDE_USER);
 		CModelManager manager = CModelManager.getDefault();
 		ICProject cproject = manager.create(project);
 		IPathEntry[] curRawEntries = PathEntryManager.getDefault().getRawPathEntries(cproject);
-		
+
 		List<IPathEntry> list = new ArrayList<IPathEntry>();
 		list.addAll(Arrays.asList(entries));
 		for(int i = 0; i < curRawEntries.length; i++){
@@ -262,16 +254,16 @@ public class PathEntryConfigurationDataProvider extends
 				list.add(curRawEntries[i]);
 			}
 		}
-		
+
 		IPathEntry[] newEntries = list.toArray(new IPathEntry[list.size()]);
 		PathEntryManager.getDefault().setRawPathEntries(cproject, newEntries, new NullProgressMonitor());
-		return createData(des, base, false, false);
+		return createData(cfgDescription, baseData, false, false);
 	}
-	
-	private CConfigurationData createData(ICConfigurationDescription des, CConfigurationData fallbackData, boolean modifiedFlag, boolean useCache) throws CoreException {
+
+	private CConfigurationData createData(ICConfigurationDescription cfgDescription, CConfigurationData fallbackData, boolean modifiedFlag, boolean useCache) throws CoreException {
 		CConfigurationData dataToReturn;
 		try {
-			dataToReturn = createData(des, useCache);
+			dataToReturn = createData(cfgDescription, useCache);
 		} catch (Exception e){
 			if(fallbackData != null)
 				dataToReturn = fallbackData;
@@ -282,73 +274,71 @@ public class PathEntryConfigurationDataProvider extends
 		}
 		fFactory.setModified(dataToReturn, modifiedFlag);
 		return dataToReturn;
-		
+
 	}
 
 	@Override
-	public CConfigurationData createConfiguration(
-			ICConfigurationDescription des, 
-			ICConfigurationDescription baseDescription,
-			CConfigurationData base,
-			boolean clone,
-			IProgressMonitor monitor) throws CoreException {
-		CfgData copy = new CfgData(des.getId(), des.getName(), base, clone);
+	public CConfigurationData createConfiguration(ICConfigurationDescription cfgDescription,
+			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData,
+			boolean clone, IProgressMonitor monitor) throws CoreException {
+
+		CfgData copy = new CfgData(cfgDescription.getId(), cfgDescription.getName(), baseData, clone);
 		copy.setModified(false);
 		return copy;
 	}
-	
-	private CfgData createData(ICConfigurationDescription des, boolean useCache) throws CoreException{
-		IProject project = des.getProjectDescription().getProject();
+
+	private CfgData createData(ICConfigurationDescription cfgDescription, boolean useCache) throws CoreException {
+		IProject project = cfgDescription.getProjectDescription().getProject();
 		CModelManager manager = CModelManager.getDefault();
 		ICProject cproject = manager.create(project);
 		PathEntryResolveInfo rInfo = PathEntryManager.getDefault().getResolveInfo(cproject, useCache);
-		
-		CfgData data = new CfgData(des.getId(), des.getName());
+
+		CfgData data = new CfgData(cfgDescription.getId(), cfgDescription.getName());
 		data.initEmptyData();
 		CDataUtil.adjustConfig(data, getDataFactory());
 		//CProjectDescriptionManager.getInstance().adjustDefaultConfig(data);
-	
-//		data.setResolveInfo(rInfo);
+
+		//		data.setResolveInfo(rInfo);
 		PathEntryTranslator tr = new PathEntryTranslator(project, data);
 		ReferenceSettingsInfo refInfo = tr.applyPathEntries(rInfo, PathEntryTranslator.OP_REPLACE);
 		ICExternalSetting extSettings[] = refInfo.getExternalSettings();
-		des.removeExternalSettings();
-		if(extSettings.length != 0){
+		cfgDescription.removeExternalSettings();
+		if (extSettings.length != 0) {
 			ICExternalSetting setting;
 			for(int i = 0; i < extSettings.length; i++){
 				setting = extSettings[i];
-				des.createExternalSetting(setting.getCompatibleLanguageIds(), 
-						setting.getCompatibleContentTypeIds(), 
-						setting.getCompatibleExtensions(), 
+				cfgDescription.createExternalSetting(setting.getCompatibleLanguageIds(),
+						setting.getCompatibleContentTypeIds(),
+						setting.getCompatibleExtensions(),
 						setting.getEntries());
 			}
 		}
 
-//		IPath projPaths[] = refInfo.getReferencedProjectsPaths();
-//		if(projPaths.length != 0){
-//			Map map = new HashMap(projPaths.length);
-//			for(int i = 0; i < projPaths.length; i++){
-//				map.put(projPaths[i].segment(0), "");	//$NON-NLS-1$
-//			}
-//			des.setReferenceInfo(map);
-//		}
+		//		IPath projPaths[] = refInfo.getReferencedProjectsPaths();
+		//		if(projPaths.length != 0){
+		//			Map map = new HashMap(projPaths.length);
+		//			for(int i = 0; i < projPaths.length; i++){
+		//				map.put(projPaths[i].segment(0), "");	//$NON-NLS-1$
+		//			}
+		//			des.setReferenceInfo(map);
+		//		}
 
 		cproject.close();
-		
-		String[] ids = getIds(des.get(CCorePlugin.BINARY_PARSER_UNIQ_ID));
+
+		String[] ids = getIds(cfgDescription.get(CCorePlugin.BINARY_PARSER_UNIQ_ID));
 		data.getTargetPlatformData().setBinaryParserIds(ids);
-		
-		ids = getIds(des.get(CCorePlugin.ERROR_PARSER_UNIQ_ID));
+
+		ids = getIds(cfgDescription.get(CCorePlugin.ERROR_PARSER_UNIQ_ID));
 		data.getBuildData().setErrorParserIDs(ids);
-		
+
 		data.setModified(false);
 		return data;
 	}
-	
+
 	private String[] getIds(ICConfigExtensionReference refs[]){
 		if(refs == null || refs.length == 0)
 			return new String[0];
-		
+
 		String[] ids = new String[refs.length];
 		for(int i = 0; i < refs.length; i++){
 			ids[i] = refs[i].getID();
@@ -357,22 +347,17 @@ public class PathEntryConfigurationDataProvider extends
 	}
 
 	@Override
-	public CConfigurationData loadConfiguration(ICConfigurationDescription des,
-			IProgressMonitor monitor)
-			throws CoreException {
-		return createData(des, null, false, true);
+	public CConfigurationData loadConfiguration(ICConfigurationDescription cfgDescription, IProgressMonitor monitor) throws CoreException {
+		return createData(cfgDescription, null, false, true);
 	}
 
 	@Override
-	public void removeConfiguration(ICConfigurationDescription des,
-			CConfigurationData data,
-			IProgressMonitor monitor) {
+	public void removeConfiguration(ICConfigurationDescription cfgDescription, CConfigurationData data, IProgressMonitor monitor) {
 		//do nothing for now
 	}
 
 	@Override
-	public void dataCached(ICConfigurationDescription cfgDes,
-			CConfigurationData data, IProgressMonitor monitor) {
+	public void dataCached(ICConfigurationDescription cfgDescription, CConfigurationData data, IProgressMonitor monitor) {
 		fFactory.setModified(data, false);
 	}
 

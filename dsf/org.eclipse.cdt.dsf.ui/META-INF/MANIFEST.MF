@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-SymbolicName: org.eclipse.cdt.dsf.ui;singleton:=true
-Bundle-Version: 2.3.0.qualifier
+Bundle-Version: 2.4.0.qualifier
 Bundle-Activator: org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui;bundle-version="3.5.0",
@@ -35,6 +35,7 @@ Export-Package: org.eclipse.cdt.dsf.debug.internal.ui;x-internal:=true,
  org.eclipse.cdt.dsf.debug.internal.ui.disassembly.text;x-internal:=true,
  org.eclipse.cdt.dsf.debug.internal.ui.disassembly.util;x-internal:=true,
  org.eclipse.cdt.dsf.debug.internal.ui.preferences;x-friends:="org.eclipse.cdt.dsf.gdb.ui",
+ org.eclipse.cdt.dsf.debug.internal.ui.sourcelookup;x-internal:=true,
  org.eclipse.cdt.dsf.debug.internal.ui.viewmodel;x-friends:="org.eclipse.cdt.dsf.gdb.ui",
  org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions;x-friends:="org.eclipse.cdt.dsf.gdb.ui",
  org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport;x-internal:=true,

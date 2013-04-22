@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems and others.
+ * Copyright (c) 2006, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Vladimir Prus (Mentor Graphics) - Add proper stop reason for step return (Bug 362274) 
  *     Indel AG           - [369622] fixed moveToLine using MinGW
  *     Marc Khouzam (Ericsson) - Make each thread an IDisassemblyDMContext (bug 352748)
+ *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -19,6 +20,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
@@ -41,6 +43,7 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension.IBreakpointHitDME
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
+import org.eclipse.cdt.dsf.debug.service.IRunControl3;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -96,7 +99,7 @@ import org.osgi.framework.BundleContext;
  * state.
  * @since 3.0
  */
-public class MIRunControl extends AbstractDsfService implements IMIRunControl, ICachingService
+public class MIRunControl extends AbstractDsfService implements IMIRunControl, ICachingService, IRunControl3
 {
 	private static class MIExecutionDMC extends AbstractDMContext implements IMIExecutionDMContext, IDisassemblyDMContext
 	{
@@ -375,6 +378,10 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
     private boolean fResumePending = false;
 	private boolean fStepping = false;
 	private boolean fTerminated = false;
+	/**
+	 * @since 4.2
+	 */
+	protected RunControlEvent<IExecutionDMContext, ?> fLatestEvent = null;
 	
 	
 	/**
@@ -411,7 +418,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
         super(session);
     }
     
-    @Override
+	@Override
     public void initialize(final RequestMonitor rm) {
         super.initialize(
             new ImmediateRequestMonitor(rm) {
@@ -593,6 +600,8 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
         fStateChangeReason = e.getReason();
         fStateChangeDetails = null; // we have no details of interest for a resume
         fMICommandCache.setContextAvailable(e.getDMContext(), false);
+        fLatestEvent = e;
+        
         //fStateChangeTriggeringContext = e.getTriggeringContext();
         if (e.getReason().equals(StateChangeReason.STEP)) {
             fStepping = true;
@@ -615,7 +624,8 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
             ? e.getTriggeringContexts()[0] : null;
         fSuspended = true;
         fStepping = false;
-        
+        fLatestEvent = e;
+
         fResumePending = false;
     }
     
@@ -780,7 +790,14 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
     }
     
 	@Override
-    public void step(final IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
+	public void step(IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
+		step(context, stepType, true, rm);
+	}
+	
+    /**
+	 * @since 4.2
+	 */
+    protected void step(final IExecutionDMContext context, StepType stepType, boolean checkCanResume, final RequestMonitor rm) {
     	assert context != null;
 
     	IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
@@ -790,7 +807,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
             return;
 		}
     	
-    	if (!doCanResume(context)) {
+    	if (checkCanResume && !doCanResume(context)) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Cannot resume context", null)); //$NON-NLS-1$
             rm.done();
             return;
@@ -1594,8 +1611,9 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	 * @param dmc A context that can be used to obtain the sourcelookup context.
 	 * @param hostPath The path of the file on the host, which must be converted.
 	 * @param rm The result of the conversion.
+	 * @since 4.2
 	 */
-    private void determineDebuggerPath(IDMContext dmc, String hostPath, final DataRequestMonitor<String> rm)
+    protected void determineDebuggerPath(IDMContext dmc, String hostPath, final DataRequestMonitor<String> rm)
     {
     	ISourceLookup sourceLookup = getServicesTracker().getService(ISourceLookup.class);
     	ISourceLookupDMContext srcDmc = DMContexts.getAncestorOfType(dmc, ISourceLookupDMContext.class);
@@ -1615,4 +1633,22 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
     		}
     	});
     }
+    
+	/**
+	 * @since 4.2
+	 */
+	@Override
+	public void canStepIntoSelection(IExecutionDMContext context, String sourceFile, int lineNumber, IFunctionDeclaration selectedFunction, DataRequestMonitor<Boolean> rm) {
+		rm.done(false);
+	}
+
+	/**
+	 * @since 4.2
+	 */
+	@Override
+	public void stepIntoSelection(IExecutionDMContext context, String sourceFile, int lineNumber, boolean skipBreakpoints, IFunctionDeclaration selectedFunction, RequestMonitor rm) {
+		IStatus status = new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Step Into Selection not supported", null);  //$NON-NLS-1$
+		rm.done(status);
+	}
+    
 }

@@ -106,8 +106,8 @@
 	               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
 	           </dynamic>
             </menu>
-       </menuContribution>
-
+       </menuContribution>      
+      
 	   <!-- Registers view menu commands -->
        <menuContribution
             locationURI="menu:org.eclipse.debug.ui.RegisterView?after=additions">
@@ -340,9 +340,8 @@
 			        </count>
 			    </with>
 			</activeWhen>
-      </handler>
+      </handler>  
    </extension>
-
    <extension point="org.eclipse.core.expressions.definitions">
       <definition id="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive">
          <and>
@@ -527,7 +526,7 @@
             commandId="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoAddress"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
-
+   
    <extension
          point="org.eclipse.ui.contexts">
       <context
@@ -878,5 +877,17 @@
          </targetClass>
       </column>
    </extension>
-
+ <!-- Hyperlinking support -->
+      <extension
+         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+       <hyperlinkDetector
+            activate="true"
+            class="org.eclipse.cdt.dsf.debug.ui.actions.DsfStepIntoSelectionHyperlinkDetector"
+            description="%stepIntoSelectionHyperlinkDetector.description"
+            id="org.eclipse.cdt.dsf.debug.ui.hyperlinkdetector.stepIntoSelection"
+            modifierKeys="M1+M3"
+            name="%stepIntoSelectionHyperlinkDetector.label"
+            targetId="org.eclipse.cdt.ui.cCode">            
+      </hyperlinkDetector>
+   </extension>
 </plugin>

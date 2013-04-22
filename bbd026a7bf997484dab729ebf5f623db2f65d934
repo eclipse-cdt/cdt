@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//vUA\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/SelectionToDeclarationJob.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//wZM\u003d",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//wpY\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/control/StepIntoSelectionUtils.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2013-04-16T22:07:16Z",
       "side": 1,
       "message": "This is used in GDBRunControl but not in GDBRunControl_NS.  I think we should be consistent, whichever way you prefer.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//vT8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/control/StepIntoSelectionUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//wpY\u003d",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//vT4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/control/StepIntoSelectionUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//wpg\u003d",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//wk0\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2013-04-17T10:31:31Z",
       "side": 1,
       "message": "The above assert keeps hitting for me.  I think it must be within the if statement below",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//vTc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1594,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//wk0\u003d",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +227,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//vTE\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.properties",
+        "patchSetId": 5
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "The command has been moved\nThe hyperlink remains in DSF, this can be discussed further.",
+      "parentUuid": "AABOPX//xGE\u003d",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//wkc\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.properties",
         "patchSetId": 5
@@ -166,6 +256,24 @@
       "writtenOn": "2013-04-17T10:31:31Z",
       "side": 1,
       "message": "What do you say about naming it \"C/C++ Step Into Selection\" to be similar to JDT",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//vS4\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.properties",
+        "patchSetId": 5
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//wkc\u003d",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +297,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//vS0\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.properties",
+        "patchSetId": 5
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//wkY\u003d",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xGU\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
         "patchSetId": 5
@@ -200,6 +326,24 @@
       "writtenOn": "2013-04-15T15:01:04Z",
       "side": 1,
       "message": "I recommend we move the changes of this file to cdt.ui/plugin.xml.  If we leave them in DSF, we run the risk of seeing this new menu option more than once if some other debugger provides it on top of CDT.  By sharing the command definition, we allow others to use it.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//vSo\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//xGU\u003d",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -234,6 +378,24 @@
       "writtenOn": "2013-04-17T13:30:00Z",
       "side": 1,
       "message": "Done",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//vSk\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//xFI\u003d",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -427,6 +589,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//vSc\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/DsfUiUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//wqI\u003d",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//wqU\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/DsfUiUtils.java",
         "patchSetId": 5
@@ -444,6 +624,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//vSY\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/DsfUiUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//wqU\u003d",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//wqQ\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/DsfUiUtils.java",
         "patchSetId": 5
@@ -455,6 +653,24 @@
       "writtenOn": "2013-04-16T22:07:16Z",
       "side": 1,
       "message": "DsfUIUtils to keep the same naming pattern as other classes",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//vSU\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/DsfUiUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "class removed",
+      "parentUuid": "AABOPX//wqQ\u003d",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -489,6 +705,24 @@
       "writtenOn": "2013-04-16T22:07:16Z",
       "side": 1,
       "message": "I\u0027m not sure if the extra space will be added to the string... I suggest we remove it to be safe",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//vSM\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/Messages.properties",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//wpU\u003d",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -540,6 +774,24 @@
       "writtenOn": "2013-04-15T15:01:04Z",
       "side": 1,
       "message": "Should be moved to org.eclipse.cdt.debug.internal.ui.commands",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//vSE\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoEditorSelectionHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//xEE\u003d",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -871,6 +1123,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//vRg\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Update: The hanging could be avoided, however we are trying to resolve the editor selection without a handle to the selection event, we manage to resolve the selection although it\u0027s not updated yet and lead to error messages. Since this is not needed for the current implementation I can open a Bug to track this down and implement a similar structure which provides us with a handle to the actual triggering event.",
+      "parentUuid": "AABOPX//xDU\u003d",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xD8\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
         "patchSetId": 5
@@ -990,6 +1260,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//vQc\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionHyperlinkDetector.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//wkw\u003d",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//wko\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionHyperlinkDetector.java",
         "patchSetId": 5
@@ -1041,6 +1329,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//vOk\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//xGM\u003d",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xGQ\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/commands/IStepIntoSelectionHandler.java",
         "patchSetId": 5
@@ -1058,6 +1364,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//vOg\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/commands/IStepIntoSelectionHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//xGQ\u003d",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//wZ0\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/AbstractRunControl.java",
         "patchSetId": 5
@@ -1069,6 +1393,24 @@
       "writtenOn": "2013-04-17T18:11:47Z",
       "side": 1,
       "message": "This is a good idea, but since we have little time left, lets postpone it.  Please remove this class, have MIRunControl and GDBRunControl_7_0_NS implement IRunControl3.\n\nYou can open a bug to suggest doing this common abstract class after the release.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//vOc\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/AbstractRunControl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//wZ0\u003d",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1126,6 +1468,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//vOY\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRunControl3.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//wqA\u003d",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//wp4\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRunControl3.java",
         "patchSetId": 5
@@ -1143,6 +1503,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//vOU\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRunControl3.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//wp4\u003d",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//xGI\u003d",
         "filename": "dsf/org.eclipse.cdt.tests.dsf/src/org/eclipse/cdt/tests/dsf/ServiceEventWaitor.java",
         "patchSetId": 5
@@ -1154,6 +1532,24 @@
       "writtenOn": "2013-04-15T15:01:04Z",
       "side": 1,
       "message": "No need for this or above, since you didn\u0027t change the file.",
+      "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//vOQ\u003d",
+        "filename": "dsf/org.eclipse.cdt.tests.dsf/src/org/eclipse/cdt/tests/dsf/ServiceEventWaitor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-22T18:52:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//xGI\u003d",
       "revId": "bbd026a7bf997484dab729ebf5f623db2f65d934",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

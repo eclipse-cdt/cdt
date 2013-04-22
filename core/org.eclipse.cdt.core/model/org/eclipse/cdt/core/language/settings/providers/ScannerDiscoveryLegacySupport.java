@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.core.language.settings.providers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +20,6 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.LocalProjectScope;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.language.settings.providers.ScannerInfoExtensionLanguageSettingsProvider;
 import org.eclipse.cdt.internal.core.model.PathEntryManager;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
@@ -144,10 +141,9 @@ public class ScannerDiscoveryLegacySupport {
 
 	/**
 	 * Check if legacy Scanner Discovery should be active.
-	 * @noreference This is internal helper method to support compatibility with previous versions
 	 * which is not intended to be referenced by clients.
 	 */
-	public static boolean isLegacyProviderOn(ICConfigurationDescription cfgDescription) {
+	private static boolean isLegacyProviderOn(ICConfigurationDescription cfgDescription) {
 		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			for (ILanguageSettingsProvider lsp : lsProviders) {
@@ -237,19 +233,17 @@ public class ScannerDiscoveryLegacySupport {
 	}
 
 	/**
-	 * Return list containing User and MBS providers. Used to initialize older MBS tool-chains (backward compatibility).
+	 * If not defined yet, define property that controls if language settings providers functionality enabled for a given project.
+	 * Workspace preference is checked and the project property is set to match it.
 	 * 
-	 * @noreference This is internal helper method to support compatibility with previous versions
-	 * which is not intended to be referenced by clients.
+	 * @param project - project to define enablement.
+	 * @since 5.5
 	 */
-	public static List<ILanguageSettingsProvider> getDefaultProvidersLegacy() {
-		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(2);
-		ILanguageSettingsProvider provider = LanguageSettingsExtensionManager.getExtensionProviderCopy((USER_LANGUAGE_SETTINGS_PROVIDER_ID), false);
-		if (provider != null) {
-			providers.add(provider);
+	public static void defineLanguageSettingsEnablement(IProject project) {
+		if (project != null && ! ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityDefined(project)) {
+			boolean isPreferenceEnabled = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(null);
+			ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isPreferenceEnabled);
 		}
-		providers.add(LanguageSettingsProvidersSerializer.getWorkspaceProvider(MBS_LANGUAGE_SETTINGS_PROVIDER_ID));
-		return providers;
 	}
 
 	/**

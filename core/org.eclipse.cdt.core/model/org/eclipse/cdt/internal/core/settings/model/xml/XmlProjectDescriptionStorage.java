@@ -490,9 +490,9 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				CProjectDescription des = new CProjectDescription(project, new XmlStorage(storage), storage, true, false);
 				try {
 					setThreadLocalProjectDesc(des);
-					des.loadDatas();
 
 					LanguageSettingsProvidersSerializer.loadLanguageSettings(des);
+					des.loadDatas();
 					des.doneLoading();
 				} finally {
 					setThreadLocalProjectDesc(null);

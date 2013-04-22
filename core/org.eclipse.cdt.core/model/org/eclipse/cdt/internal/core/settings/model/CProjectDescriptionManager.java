@@ -52,7 +52,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
-import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
@@ -2470,7 +2469,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 
 	public boolean isNewStyleCfg(ICConfigurationDescription cfgDes){
-		if(cfgDes == null)
+		if(cfgDes == null || cfgDes.isPreferenceConfiguration())
 			return false;
 
 		CConfigurationData data = ((IInternalCCfgInfo)cfgDes).getConfigurationData(false);

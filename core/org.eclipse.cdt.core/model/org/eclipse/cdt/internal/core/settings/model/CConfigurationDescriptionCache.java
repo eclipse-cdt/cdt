@@ -135,6 +135,18 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		CConfigurationDataProvider dataProvider = CProjectDescriptionManager.getInstance().getProvider(this);
 		fData = dataProvider.loadConfiguration(this, new NullProgressMonitor());
 
+		if (getDefaultLanguageSettingsProvidersIds() == null) {
+			// default ids would come from toolchain configuration, ensure sensible defaults
+			String[] defaultIds = ScannerDiscoveryLegacySupport.getDefaultProviderIdsLegacy(this);
+			setDefaultLanguageSettingsProvidersIds(defaultIds);
+		}
+		if (!fSpecSettings.isLanguageSettingProvidersLoaded()) {
+			// when loading - providers come from xml file, ensure defaults if no xml file present
+			String[] defaultIds = getDefaultLanguageSettingsProvidersIds();
+			List<ILanguageSettingsProvider> providers = LanguageSettingsManager.createLanguageSettingsProviders(defaultIds);
+			setLanguageSettingProviders(providers);
+		}
+
 		copySettingsFrom(fData, true);
 
 		fSpecSettings.reconcileExtensionSettings(true);

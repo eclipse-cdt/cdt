@@ -457,23 +457,34 @@ public class IndexBugsTests extends BaseTestCase {
 
 	public void test160281_1() throws Exception {
 		waitForIndexer();
-		IFile include= TestSourceReader.createFile(fCProject.getProject(), "inc/test160281_1.h", "");
+		IProject project = fCProject.getProject();
+		IFile include= TestSourceReader.createFile(project, "inc/test160281_1.h", "");
 		TestScannerProvider.sIncludes= new String[]{include.getLocation().removeLastSegments(1).toString()};
 		TestScannerProvider.sIncludeFiles= new String[]{include.getName()};
-		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test160281_1.cpp", "");
+		IFile file= TestSourceReader.createFile(project, "test160281_1.cpp", "");
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEXER_TIMEOUT_SEC * 1000);
 
 		fIndex.acquireReadLock();
 		try {
 			IIndexFile ifile= getIndexFile(file);
 			IIndexInclude[] includes= ifile.getIncludes();
-			assertEquals(1, includes.length);
-			IIndexInclude i= includes[0];
-			assertEquals(file.getLocationURI(), i.getIncludedByLocation().getURI());
-			assertEquals(include.getLocationURI(), i.getIncludesLocation().getURI());
-			assertEquals(true, i.isSystemInclude());
-			assertEquals(0, i.getNameOffset());
-			assertEquals(0, i.getNameLength());
+
+			// the first directory searched for file is the preprocessor's working directory (build directory), see gcc manual -include option
+			IIndexInclude i1= includes[0];
+			assertEquals(file.getLocationURI(), i1.getIncludedByLocation().getURI());
+			assertEquals(project.getFile(TestScannerProvider.sIncludeFiles[0]).getLocation(), new Path(i1.getFullName()));
+			// the include file is not in the working directory
+			assertEquals(null, i1.getIncludesLocation());
+
+			// the second directory is the directory containing the main source file
+			IIndexInclude i2= includes[1];
+			assertEquals(file.getLocationURI(), i2.getIncludedByLocation().getURI());
+			assertEquals(include.getLocationURI(), i2.getIncludesLocation().getURI());
+			assertEquals(true, i2.isSystemInclude());
+			assertEquals(0, i2.getNameOffset());
+			assertEquals(0, i2.getNameLength());
+
+			assertEquals(2, includes.length);
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -481,26 +492,37 @@ public class IndexBugsTests extends BaseTestCase {
 
 	public void test160281_2() throws Exception {
 		waitForIndexer();
-		IFile include= TestSourceReader.createFile(fCProject.getProject(), "inc/test160281_2.h", "#define X y\n");
+		IProject project = fCProject.getProject();
+		IFile include= TestSourceReader.createFile(project, "inc/test160281_2.h", "#define X y\n");
 		TestScannerProvider.sIncludes= new String[]{include.getLocation().removeLastSegments(1).toString()};
 		TestScannerProvider.sMacroFiles= new String[]{include.getName()};
-		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test160281_2.cpp", "int X;");
+		IFile file= TestSourceReader.createFile(project, "test160281_2.cpp", "int X;");
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEXER_TIMEOUT_SEC * 1000);
 
 		fIndex.acquireReadLock();
 		try {
 			IIndexFile ifile= getIndexFile(file);
 			IIndexInclude[] includes= ifile.getIncludes();
-			assertEquals(1, includes.length);
-			IIndexInclude i= includes[0];
-			assertEquals(file.getLocationURI(), i.getIncludedByLocation().getURI());
-			assertEquals(include.getLocationURI(), i.getIncludesLocation().getURI());
-			assertEquals(true, i.isSystemInclude());
-			assertEquals(0, i.getNameOffset());
-			assertEquals(0, i.getNameLength());
+
+			// the first directory searched for file is the preprocessor's working directory (build directory), see gcc manual -imacros option
+			IIndexInclude i1= includes[0];
+			assertEquals(file.getLocationURI(), i1.getIncludedByLocation().getURI());
+			assertEquals(project.getFile(TestScannerProvider.sMacroFiles[0]).getLocation(), new Path(i1.getFullName()));
+			// the include file is not in the working directory
+			assertEquals(null, i1.getIncludesLocation());
+
+			// the second directory is the directory containing the main source file
+			IIndexInclude i2= includes[1];
+			assertEquals(file.getLocationURI(), i2.getIncludedByLocation().getURI());
+			assertEquals(include.getLocationURI(), i2.getIncludesLocation().getURI());
+			assertEquals(true, i2.isSystemInclude());
+			assertEquals(0, i2.getNameOffset());
+			assertEquals(0, i2.getNameLength());
 			IIndexBinding[] bindings= fIndex.findBindings("y".toCharArray(), IndexFilter.ALL, npm());
 			assertEquals(1, bindings.length);
 			assertTrue(bindings[0] instanceof IVariable);
+
+			assertEquals(2, includes.length);
 		} finally {
 			fIndex.releaseReadLock();
 		}

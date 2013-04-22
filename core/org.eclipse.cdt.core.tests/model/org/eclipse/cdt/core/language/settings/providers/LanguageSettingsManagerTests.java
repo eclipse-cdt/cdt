@@ -695,12 +695,16 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 		assertTrue(cfgDescription instanceof CConfigurationDescription);
 
+		// Select a sample workspace provider for the test
 		ILanguageSettingsProvider workspaceProvider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_BASE_PROVIDER_ID);
 		assertNotNull(workspaceProvider);
+
 		{
-			// ensure no test provider is set yet
+			// ensure no test provider is set yet but default providers
 			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
-			assertEquals(0, providers.size());
+			assertEquals(ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID, providers.get(0).getId());
+			assertEquals(ScannerDiscoveryLegacySupport.PATH_ENTRY_MANAGER_LANGUAGE_SETTINGS_PROVIDER_ID, providers.get(1).getId());
+			assertEquals(2, providers.size());
 		}
 		{
 			// set test provider

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.tests;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
@@ -94,6 +95,27 @@ public class ManagedBuildCoreTests20 extends TestCase {
 
 		return suite;
 	}
+
+	/**
+	 * Convert path to OS specific representation
+	 */
+	private String toOSLocation(String path) {
+		java.io.File file = new java.io.File(path);
+		try {
+			path = file.getCanonicalPath();
+		} catch (IOException e) {
+		}
+		
+		return path;
+	}
+
+	/**
+	 * Convert path to OS specific representation
+	 */
+	private String toOSString(String path) {
+		return new Path(path).toOSString();
+	}
+
 
 	/**
 	 * Navigates through the build info as defined in the extensions
@@ -218,18 +240,37 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		}
 
 		//These are the expected path settings
-		 final String[] expectedPaths = new String[5];
-
-		 // This first path is a built-in, so it will not be manipulated by build manager
-		 expectedPaths[0] = (new Path("/usr/include")).toOSString();
-		 expectedPaths[1] = (new Path("/opt/gnome/include")).toOSString();
-		 IPath path = new Path("C:\\home\\tester/include");
-		 if(path.isAbsolute()) // for win32 path is treated as absolute
-			 expectedPaths[2] = path.toOSString();
-		 else // for Linux path is relative
-			 expectedPaths[2] = project.getLocation().append("Sub Config").append(path).toOSString();
-		 expectedPaths[3] = project.getLocation().append( "includes" ).toOSString();
-		 expectedPaths[4] = (new Path("/usr/gnu/include")).toOSString();
+		IPath buildCWD = project.getLocation().append("Sub Config");
+		final String[] expectedPaths;
+		if (new Path("C:\\home\\tester/include").isAbsolute()) {
+			// Windows
+			expectedPaths = new String[] {
+					toOSLocation("/usr/include"),
+					toOSLocation("/opt/gnome/include"),
+					toOSLocation("C:\\home\\tester/include"),
+					// relative paths from MBS will make 3 entries
+					project.getLocation().append("includes").toOSString(),
+					buildCWD.append("includes").toOSString(),
+					toOSString("includes"),
+					"/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
+			};
+		} else {
+			// Unix
+			expectedPaths = new String[] {
+					toOSLocation("/usr/include"),
+					toOSLocation("/opt/gnome/include"),
+					// on unix "C:\\home\\tester/include" is relative path
+					// looks like nonsense but it this way due to MBS converting entry to keep "Sub Config/C:\\home\\tester/include" in its storage
+					project.getLocation().append("Sub Config/C:\\home\\tester/include").toOSString(),
+					buildCWD.append("Sub Config/C:\\home\\tester/include").toOSString(),
+					toOSString("Sub Config/C:\\home\\tester/include"),
+					// relative paths from MBS will make 3 entries
+					project.getLocation().append("includes").toOSString(),
+					buildCWD.append("includes").toOSString(),
+					toOSString("includes"),
+					"/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
+			};
+		}
 
 		// Create a new managed project based on the sub project type
 		IProjectType projType = ManagedBuildManager.getExtensionProjectType("test.sub");

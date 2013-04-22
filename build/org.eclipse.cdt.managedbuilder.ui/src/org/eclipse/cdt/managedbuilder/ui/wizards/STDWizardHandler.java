@@ -24,7 +24,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
-import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -102,10 +101,7 @@ public class STDWizardHandler extends MBSWizardHandler {
 			}
 			cfg.setArtifactName(mProj.getDefaultArtifactName());
 			CConfigurationData data = cfg.getConfigurationData();
-			ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
-
-			ConfigurationDataProvider.setDefaultLanguageSettingsProviders(project, cfg, cfgDes);
-
+			des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 			monitor.worked(work);
 		}
 		mngr.setProjectDescription(project, des);

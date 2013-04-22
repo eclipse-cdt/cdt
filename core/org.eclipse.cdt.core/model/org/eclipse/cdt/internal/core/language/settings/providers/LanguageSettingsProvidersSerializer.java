@@ -35,7 +35,6 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationSpecSettings;
 import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
@@ -834,11 +833,6 @@ public class LanguageSettingsProvidersSerializer {
 		try {
 			// Add the storage module to .cpoject and persist on disk as a side effect of adding
 			prjDescription.getStorage(CPROJECT_STORAGE_MODULE_LANGUAGE_SETTINGS_PROVIDERS, true);
-			if (!ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityDefined(project)) {
-				// set the flag if was not previously set by the user - to the default value
-				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project,
-						ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project));
-			}
 		} catch (CoreException e) {
 			CCorePlugin.log("Internal error while trying to serialize language settings", e); //$NON-NLS-1$
 		}
@@ -1136,7 +1130,6 @@ public class LanguageSettingsProvidersSerializer {
 		IProject project = prjDescription.getProject();
 		IFile storeInPrjArea = getStoreInProjectArea(project);
 		boolean isStoreInProjectAreaExist = storeInPrjArea.exists();
-		boolean enableLSP = isStoreInProjectAreaExist;
 		if (isStoreInProjectAreaExist) {
 			Document doc = null;
 			try {
@@ -1161,17 +1154,8 @@ public class LanguageSettingsProvidersSerializer {
 			} catch (Exception e) {
 				CCorePlugin.log("Can't load preferences from file " + storeInPrjArea.getLocation(), e); //$NON-NLS-1$
 			}
-
-		} else { // Storage in project area does not exist
-			ICStorageElement lspStorageModule = null;
-			try {
-				lspStorageModule = prjDescription.getStorage(CPROJECT_STORAGE_MODULE_LANGUAGE_SETTINGS_PROVIDERS, false);
-			} catch (CoreException e) {
-				String msg = "Internal error while trying to load language settings"; //$NON-NLS-1$
-				CCorePlugin.log(msg, e);
-			}
-
-			// set default providers defined in the tool-chain
+		} else {
+			// If storage in project area does not exist set default providers defined in the tool-chain
 			for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
 				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 					String[] ids = ((ILanguageSettingsProvidersKeeper) cfgDescription).getDefaultLanguageSettingsProvidersIds();
@@ -1188,15 +1172,10 @@ public class LanguageSettingsProvidersSerializer {
 					}
 				}
 			}
-
-			enableLSP = lspStorageModule != null;
 		}
 
-		if (!ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityDefined(project)) {
-			// set the flag if was not previously set by the user
-			ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, enableLSP);
-		}
-
+		// propagate the preference to project properties
+		ScannerDiscoveryLegacySupport.defineLanguageSettingsEnablement(project);
 	}
 
 	/**

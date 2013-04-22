@@ -22,13 +22,9 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * Test creation of a new project in respect with language settings providers.
@@ -53,36 +49,11 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 	}
 
 	/**
-	 * Imitate a new Project Wizard. New Project Wizards really do these things in CDT.
-	 */
-	private static IProject imitateNewProjectWizard(String name, String projectTypeId) throws CoreException {
-		IProject project = ManagedBuildTestHelper.createProject(name, projectTypeId);
-		ManagedBuildTestHelper.addManagedBuildNature(project);
-
-		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, true);
-		assertNotNull(prjDescription);
-		ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
-		for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
-			assertNotNull(cfgDescription);
-			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
-
-			IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDescription);
-			ConfigurationDataProvider.setDefaultLanguageSettingsProviders(project, cfg, cfgDescription);
-
-			assertTrue(((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders().size() > 0);
-		}
-
-		CoreModel.getDefault().setProjectDescription(project, prjDescription);
-
-		return project;
-	}
-
-	/**
 	 * Test new GNU Executable project.
 	 */
 	public void testGnuToolchainProviders() throws Exception {
-		// create a new project imitating wizard
-		IProject project = imitateNewProjectWizard(this.getName(), PROJECT_TYPE_EXECUTABLE_GNU);
+		// create a new project
+		IProject project = ManagedBuildTestHelper.createProject(this.getName(), PROJECT_TYPE_EXECUTABLE_GNU);
 
 		// check that the language settings providers are in place.
 		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, false);
@@ -123,8 +94,8 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 	 * of language settings providers.
 	 */
 	public void testProjectPersistence_Defaults() throws Exception {
-		// create a new project imitating wizard
-		IProject project = imitateNewProjectWizard(this.getName(), PROJECT_TYPE_EXECUTABLE_GNU);
+		// create a new project
+		IProject project = ManagedBuildTestHelper.createProject(this.getName(), PROJECT_TYPE_EXECUTABLE_GNU);
 
 		// double-check that the project contains language settings providers
 		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, false);
@@ -158,8 +129,8 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 	 * Test that storage file is created for language settings for empty set of language settings providers.
 	 */
 	public void testProjectPersistence_NoProviders() throws Exception {
-		// create a new project imitating wizard
-		IProject project = imitateNewProjectWizard(this.getName(), PROJECT_TYPE_EXECUTABLE_GNU);
+		// create a new project
+		IProject project = ManagedBuildTestHelper.createProject(this.getName(), PROJECT_TYPE_EXECUTABLE_GNU);
 
 		// remove language settings providers from the project
 		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, true);

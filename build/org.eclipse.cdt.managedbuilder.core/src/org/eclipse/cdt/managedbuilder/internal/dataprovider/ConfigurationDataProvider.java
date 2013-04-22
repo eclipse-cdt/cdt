@@ -158,19 +158,45 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 
 		BuildConfigurationData baseCfgData = (BuildConfigurationData)baseData;
 		IConfiguration baseCfg = baseCfgData.getConfiguration();
-		BuildConfigurationData appliedCfg;
+		BuildConfigurationData appliedCfgData;
 		if(context.isBaseDataCached() && !baseCfg.isDirty()){
-			appliedCfg = baseCfgData;
+			appliedCfgData = baseCfgData;
 			context.setConfigurationSettingsFlags(IModificationContext.CFG_DATA_STORAGE_UNMODIFIED | IModificationContext.CFG_DATA_SETTINGS_UNMODIFIED);
 		} else {
-			appliedCfg = writeConfiguration(cfgDescription, baseCfgData);
+			appliedCfgData = writeConfiguration(cfgDescription, baseCfgData);
 
 			IManagedBuildInfo info = getBuildInfo(cfgDescription);
 			ManagedProject mProj = (ManagedProject)info.getManagedProject();
-			mProj.applyConfiguration((Configuration)appliedCfg.getConfiguration());
+			mProj.applyConfiguration((Configuration)appliedCfgData.getConfiguration());
 			writeManagedProjectInfo(cfgDescription.getProjectDescription(), mProj);
+			if (baseCfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+				String[] defaultIds = ((ILanguageSettingsProvidersKeeper)baseCfgDescription).getDefaultLanguageSettingsProvidersIds();
+				List<ILanguageSettingsProvider> providers;
+				if (defaultIds == null) {
+					ICProjectDescription prjDescription = baseCfgDescription.getProjectDescription();
+					if (prjDescription != null) {
+						IProject project = prjDescription.getProject();
+						// propagate the preference to project properties
+						ScannerDiscoveryLegacySupport.defineLanguageSettingsEnablement(project);
+					}
+
+					IConfiguration cfg = appliedCfgData.getConfiguration();
+					defaultIds = cfg != null ? cfg.getDefaultLanguageSettingsProviderIds() : null;
+					if (defaultIds == null) {
+						defaultIds = ScannerDiscoveryLegacySupport.getDefaultProviderIdsLegacy(baseCfgDescription);
+					}
+					providers = LanguageSettingsManager.createLanguageSettingsProviders(defaultIds);
+				} else {
+					providers = ((ILanguageSettingsProvidersKeeper)baseCfgDescription).getLanguageSettingProviders();
+				}
+				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+					((ILanguageSettingsProvidersKeeper)cfgDescription).setDefaultLanguageSettingsProvidersIds(defaultIds);
+					((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+				}
+			}
+
 			try {
-				CfgScannerConfigInfoFactory2.save(appliedCfg, cfgDescription.getProjectDescription(), baseCfgDescription.getProjectDescription(), !isPersistedCfg(cfgDescription));
+				CfgScannerConfigInfoFactory2.save(appliedCfgData, cfgDescription.getProjectDescription(), baseCfgDescription.getProjectDescription(), !isPersistedCfg(cfgDescription));
 			} catch (CoreException e){
 				ManagedBuilderCorePlugin.log(e);
 			}
@@ -184,7 +210,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		}
 
 		if(cfgDescription.isActive()){
-			IConfiguration cfg = appliedCfg.getConfiguration();
+			IConfiguration cfg = appliedCfgData.getConfiguration();
 			IBuilder builder = cfg.getEditableBuilder();
 			IProject project = context.getProject();
 			IProjectDescription eDes = context.getEclipseProjectDescription();
@@ -199,7 +225,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 			}
 		}
 
-		return appliedCfg;
+		return appliedCfgData;
 	}
 
 	private void setPersistedFlag(ICConfigurationDescription cfgDescription){
@@ -530,64 +556,26 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		IManagedBuildInfo info = getBuildInfo(cfgDescription);
 		Configuration cfg = load(cfgDescription, (ManagedProject)info.getManagedProject(), false);
 
-		if(cfg != null) {
+		if (cfg != null) {
+			IProject project = cfgDescription.getProjectDescription().getProject();
 			cfg.setConfigurationDescription(cfgDescription);
 			info.setValid(true);
 			setPersistedFlag(cfgDescription);
 			cacheNaturesIdsUsedOnCache(cfgDescription);
 			// Update the ManagedBuildInfo in the ManagedBuildManager map. Doing this creates a barrier for subsequent
 			// ManagedBuildManager#getBuildInfo(...) see Bug 305146 for more
-			ManagedBuildManager.setLoaddedBuildInfo(cfgDescription.getProjectDescription().getProject(), info);
-			setDefaultLanguageSettingsProvidersIds(cfg, cfgDescription);
+			ManagedBuildManager.setLoaddedBuildInfo(project, info);
+
+			if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+				String[] defaultIds = cfg.getDefaultLanguageSettingsProviderIds();
+				if (defaultIds != null) {
+					((ILanguageSettingsProvidersKeeper) cfgDescription).setDefaultLanguageSettingsProvidersIds(defaultIds);
+				}
+			}
+			
 			return cfg.getConfigurationData();
 		}
 		return null;
-	}
-
-	private static List<ILanguageSettingsProvider> getDefaultLanguageSettingsProviders(IConfiguration cfg) {
-		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
-		String[] ids = cfg != null ? cfg.getDefaultLanguageSettingsProviderIds() : null;
-		if (ids != null) {
-			for (String id : ids) {
-				ILanguageSettingsProvider provider = null;
-				if (!LanguageSettingsManager.isPreferShared(id)) {
-					provider = LanguageSettingsManager.getExtensionProviderCopy(id, false);
-				}
-				if (provider == null) {
-					provider = LanguageSettingsManager.getWorkspaceProvider(id);
-				}
-				providers.add(provider);
-			}
-		} else {
-			providers = ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy();
-		}
-
-		return providers;
-	}
-
-	private static void setDefaultLanguageSettingsProvidersIds(IConfiguration cfg, ICConfigurationDescription cfgDescription) {
-		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-			List<ILanguageSettingsProvider> providers = getDefaultLanguageSettingsProviders(cfg);
-			String[] ids = new String[providers.size()];
-			for (int i = 0; i < ids.length; i++) {
-				ILanguageSettingsProvider provider = providers.get(i);
-				ids[i] = provider.getId();
-			}
-			((ILanguageSettingsProvidersKeeper) cfgDescription).setDefaultLanguageSettingsProvidersIds(ids);
-		}
-
-	}
-
-	public static void setDefaultLanguageSettingsProviders(IProject project, IConfiguration cfg, ICConfigurationDescription cfgDescription) {
-		// propagate the preference to project properties
-		boolean isPreferenceEnabled = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(null);
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isPreferenceEnabled);
-
-		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-			ConfigurationDataProvider.setDefaultLanguageSettingsProvidersIds(cfg, cfgDescription);
-			List<ILanguageSettingsProvider> providers = ConfigurationDataProvider.getDefaultLanguageSettingsProviders(cfg);
-			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
-		}
 	}
 
 	private boolean isPersistedCfg(ICConfigurationDescription cfgDescription) {

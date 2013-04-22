@@ -41,7 +41,6 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
-import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
@@ -616,9 +615,6 @@ public class MBSWizardHandler extends CWizardHandler {
 				cfgDebug = cfgDes;
 			if (cfgFirst == null) // select at least first configuration
 				cfgFirst = cfgDes;
-
-			ConfigurationDataProvider.setDefaultLanguageSettingsProviders(project, config, cfgDes);
-
 			monitor.worked(work);
 		}
 		mngr.setProjectDescription(project, des);

@@ -10,9 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model.extension;
 
+import java.util.List;
+
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.IModificationContext;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -108,7 +115,28 @@ public abstract class CConfigurationDataProvider {
 			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData,
 			IModificationContext context, IProgressMonitor monitor) throws CoreException {
 
-		return applyConfiguration(cfgDescription, baseCfgDescription, baseData, monitor);
+		CConfigurationData data = applyConfiguration(cfgDescription, baseCfgDescription, baseData, monitor);
+		if (baseCfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			String[] defaultIds = ((ILanguageSettingsProvidersKeeper)baseCfgDescription).getDefaultLanguageSettingsProvidersIds();
+			List<ILanguageSettingsProvider> providers;
+			if (defaultIds != null) {
+				providers = ((ILanguageSettingsProvidersKeeper)baseCfgDescription).getLanguageSettingProviders();
+			} else {
+				ICProjectDescription prjDescription = baseCfgDescription.getProjectDescription();
+				if (prjDescription != null) {
+					IProject project = prjDescription.getProject();
+					// propagate the preference to project properties
+					ScannerDiscoveryLegacySupport.defineLanguageSettingsEnablement(project);
+				}
+				defaultIds = ScannerDiscoveryLegacySupport.getDefaultProviderIdsLegacy(baseCfgDescription);
+				providers = LanguageSettingsManager.createLanguageSettingsProviders(defaultIds);
+			}
+			if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+				((ILanguageSettingsProvidersKeeper)cfgDescription).setDefaultLanguageSettingsProvidersIds(defaultIds);
+				((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+			}
+		}
+		return data;
 	}
 
 	/**

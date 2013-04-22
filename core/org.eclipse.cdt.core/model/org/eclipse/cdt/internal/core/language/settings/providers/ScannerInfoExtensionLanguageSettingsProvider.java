@@ -70,7 +70,7 @@ public class ScannerInfoExtensionLanguageSettingsProvider extends LanguageSettin
 	 * @return an instance of ScannerInfoProvider or {@code null}.
 	 */
 	public IScannerInfoProvider getScannerInfoProvider(ICConfigurationDescription cfgDescription) {
-		if (cfgDescription == null) {
+		if (cfgDescription == null || cfgDescription.isPreferenceConfiguration()) {
 			return null;
 		}
 

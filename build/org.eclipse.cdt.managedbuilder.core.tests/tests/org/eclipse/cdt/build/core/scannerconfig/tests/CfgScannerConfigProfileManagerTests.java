@@ -59,6 +59,7 @@ public class CfgScannerConfigProfileManagerTests extends BaseTestCase {
 	 * @throws CoreException
 	 */
 	public void testBasicCfgScannerConfigProfileChanges() throws CoreException {
+		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(fProject, false);
 		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(fProject);
 		ICConfigurationDescription[] cfgDescs = prjDesc.getConfigurations();
 		assertTrue(cfgDescs.length > 0);
@@ -107,7 +108,6 @@ public class CfgScannerConfigProfileManagerTests extends BaseTestCase {
 		Assert.isTrue("dummyFile".equals(scbi.getBuildOutputFilePath()));
 
 		// Test restore defaults
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(fProject, false);
 		scbis.applyInfo(cic, null);
 		// Save the project description
 		CoreModel.getDefault().setProjectDescription(fProject, prjDesc);

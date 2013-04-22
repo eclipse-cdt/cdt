@@ -130,7 +130,7 @@ public class LanguageSettingsManager {
 	 * @return raw underlying provider for workspace provider or provider itself if no wrapper is used.
 	 */
 	public static ILanguageSettingsProvider getRawProvider(ILanguageSettingsProvider provider) {
-		if (LanguageSettingsManager.isWorkspaceProvider(provider)) {
+		if (isWorkspaceProvider(provider)) {
 			provider = LanguageSettingsProvidersSerializer.getRawWorkspaceProvider(provider.getId());
 		}
 		return provider;
@@ -376,4 +376,32 @@ public class LanguageSettingsManager {
 	public static void serializeLanguageSettingsWorkspaceInBackground() {
 		LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspaceInBackground();
 	}
+
+	/**
+	 * Create a list of providers with intention to assign to a configuration description.
+	 * 
+	 * The list will contain global providers for ones where attribute "prefer-non-shared" is {@code true}
+	 * and a new copy for those where attribute "prefer-non-shared" is {@code false}. Attribute "prefer-non-shared"
+	 * is defined in extension point {@code org.eclipse.cdt.core.LanguageSettingsProvider}.
+	 * 
+	 * @param ids - list of providers id which cannot be {@code null}.
+	 * @return a list of language settings providers with given ids.
+	 * 
+	 * @since 5.5
+	 */
+	public static List<ILanguageSettingsProvider> createLanguageSettingsProviders(String[] ids) {
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		for (String id : ids) {
+			ILanguageSettingsProvider provider = null;
+			if (!isPreferShared(id)) {
+				provider = getExtensionProviderCopy(id, false);
+			}
+			if (provider == null) {
+				provider = getWorkspaceProvider(id);
+			}
+			providers.add(provider);
+		}
+		return providers;
+	}
+
 }

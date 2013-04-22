@@ -505,6 +505,11 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			if(baseCfg.sourceEntries != null)
 				sourceEntries = baseCfg.sourceEntries.clone();
 
+			defaultLanguageSettingsProvidersAttribute = baseCfg.defaultLanguageSettingsProvidersAttribute;
+			if(baseCfg.defaultLanguageSettingsProviderIds != null) {
+				defaultLanguageSettingsProviderIds = baseCfg.defaultLanguageSettingsProviderIds.clone();
+			}
+
 	//		enableInternalBuilder(baseCfg.isInternalBuilderEnabled());
 	//		setInternalBuilderIgnoreErr(baseCfg.getInternalBuilderIgnoreErr());
 	//		setInternalBuilderParallel(baseCfg.getInternalBuilderParallel());
@@ -645,6 +650,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		postannouncebuildStep = cloneConfig.postannouncebuildStep;
 		if(cloneConfig.sourceEntries != null) {
 			sourceEntries = cloneConfig.sourceEntries.clone();
+		}
+		defaultLanguageSettingsProvidersAttribute = cloneConfig.defaultLanguageSettingsProvidersAttribute;
+		if(cloneConfig.defaultLanguageSettingsProviderIds != null) {
+			defaultLanguageSettingsProviderIds = cloneConfig.defaultLanguageSettingsProviderIds.clone();
 		}
 
 //		enableInternalBuilder(cloneConfig.isInternalBuilderEnabled());
@@ -1352,7 +1361,6 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 */
 	@Override
 	public String[] getDefaultLanguageSettingsProviderIds() {
-		defaultLanguageSettingsProviderIds = null;
 		if (defaultLanguageSettingsProviderIds == null) {
 			defaultLanguageSettingsProvidersAttribute = getDefaultLanguageSettingsProvidersAttribute();
 			if (defaultLanguageSettingsProvidersAttribute != null) {

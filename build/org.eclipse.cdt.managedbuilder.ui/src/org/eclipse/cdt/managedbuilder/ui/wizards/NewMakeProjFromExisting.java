@@ -26,7 +26,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
-import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.core.resources.IProject;
@@ -112,10 +111,7 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 					IBuilder builder = config.getEditableBuilder();
 					builder.setManagedBuildOn(false);
 					CConfigurationData data = config.getConfigurationData();
-					ICConfigurationDescription cfgDes = projDesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
-
-					ConfigurationDataProvider.setDefaultLanguageSettingsProviders(project, config, cfgDes);
-
+					projDesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 					monitor.worked(1);
 
 					pdMgr.setProjectDescription(project, projDesc);

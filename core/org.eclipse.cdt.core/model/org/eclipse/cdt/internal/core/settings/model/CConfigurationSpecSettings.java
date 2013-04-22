@@ -97,7 +97,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 //	private CConfigBasedDescriptor fDescriptor;
 //	private Map fExternalSettingsProviderMap;
 
-	private List<ILanguageSettingsProvider> fLanguageSettingsProviders = new ArrayList<ILanguageSettingsProvider>(0);
+	private List<ILanguageSettingsProvider> fLanguageSettingsProviders = null;
 	private LinkedHashMap<String /*provider*/, LanguageSettingsStorage> lspPersistedState = new LinkedHashMap<String, LanguageSettingsStorage>();
 	private String[] defaultLanguageSettingsProvidersIds = null;
 
@@ -195,7 +195,16 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 
 		copyExtensionInfo(base);
 
-		fLanguageSettingsProviders = LanguageSettingsProvidersSerializer.cloneProviders(base.getLanguageSettingProviders());
+		if (base.defaultLanguageSettingsProvidersIds != null) {
+			defaultLanguageSettingsProvidersIds = base.defaultLanguageSettingsProvidersIds.clone();
+		} else {
+			defaultLanguageSettingsProvidersIds = null;
+		}
+		if (base.fLanguageSettingsProviders != null) {
+			fLanguageSettingsProviders = LanguageSettingsProvidersSerializer.cloneProviders(base.fLanguageSettingsProviders);
+		} else {
+			fLanguageSettingsProviders = base.fLanguageSettingsProviders;
+		}
 		for (String providerId : base.lspPersistedState.keySet()) {
 			try {
 				LanguageSettingsStorage clone = base.lspPersistedState.get(providerId).clone();
@@ -203,11 +212,6 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 			} catch (CloneNotSupportedException e) {
 				CCorePlugin.log("Not able to clone language settings storage:" + e); //$NON-NLS-1$
 			}
-		}
-		if (base.defaultLanguageSettingsProvidersIds != null) {
-			defaultLanguageSettingsProvidersIds = base.defaultLanguageSettingsProvidersIds.clone();
-		} else {
-			defaultLanguageSettingsProvidersIds = null;
 		}
 	}
 
@@ -1035,12 +1039,22 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 
 	@Override
 	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
-		return Collections.unmodifiableList(fLanguageSettingsProviders);
+		List<ILanguageSettingsProvider> providers = isLanguageSettingProvidersLoaded() ? fLanguageSettingsProviders : new ArrayList<ILanguageSettingsProvider>(0);
+		return Collections.unmodifiableList(providers);
 	}
 
 	@Override
 	public void setDefaultLanguageSettingsProvidersIds(String[] ids) {
 		defaultLanguageSettingsProvidersIds = ids;
+	}
+
+	/**
+	 * Check if language settings providers loaded into configuration settings yet
+	 * 
+	 * @return {@code true} if loaded, {@code false} otherwise.
+	 */
+	public boolean isLanguageSettingProvidersLoaded() {
+		return fLanguageSettingsProviders != null;
 	}
 
 	@Override

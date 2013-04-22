@@ -1136,20 +1136,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 					if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 						List<ILanguageSettingsProvider> cfgProviders = new ArrayList<ILanguageSettingsProvider>(((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders());
 						String[] defaultIds = ((ILanguageSettingsProvidersKeeper) cfgDescription).getDefaultLanguageSettingsProvidersIds();
-
-						List<ILanguageSettingsProvider> newProviders = new ArrayList<ILanguageSettingsProvider>(defaultIds.length);
-						for (String id : defaultIds) {
-							boolean preferShared = LanguageSettingsManager.isPreferShared(id);
-							ILanguageSettingsProvider newProvider = null;
-							if (!preferShared) {
-								newProvider = LanguageSettingsManager.getExtensionProviderCopy(id, true);
-							}
-							if (newProvider == null) {
-								newProvider = LanguageSettingsManager.getWorkspaceProvider(id);
-							}
-							newProviders.add(newProvider);
-						}
-
+						List<ILanguageSettingsProvider> newProviders = LanguageSettingsManager.createLanguageSettingsProviders(defaultIds);
 						if (!cfgProviders.equals(newProviders)) {
 							((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(newProviders);
 						}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Tomasz Wesolowski
+ *     Alvaro Sanchez-Leon (Ericsson AB)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -106,6 +107,7 @@ public final class CEditorMessages extends NLS {
 	public static String CEditor_markOccurrences_job_name;
 	public static String CEditor_index_expander_job_name;
 	public static String CEditorActionContributor_ExpandSelectionMenu_label;
+	public static String StepIntoSelection_unable_to_resolve_1;
 
 	static {
 		NLS.initializeMessages(CEditorMessages.class.getName(), CEditorMessages.class);

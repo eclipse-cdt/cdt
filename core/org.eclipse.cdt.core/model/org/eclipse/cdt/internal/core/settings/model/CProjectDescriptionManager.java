@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1137,31 +1137,6 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		}
 	}
 
-	CConfigurationData loadData(ICConfigurationDescription des, IProgressMonitor monitor) throws CoreException{
-		if(monitor == null)
-			monitor = new NullProgressMonitor();
-
-		CConfigurationDataProvider provider = getProvider(des);
-		CConfigurationData data = provider.loadConfiguration(des, monitor);
-
-		if (des instanceof ILanguageSettingsProvidersKeeper && ! des.isPreferenceConfiguration()) {
-			String[] defaultIds = ((ILanguageSettingsProvidersKeeper) des).getDefaultLanguageSettingsProvidersIds();
-			if (defaultIds == null) {
-				((ILanguageSettingsProvidersKeeper) des).setDefaultLanguageSettingsProvidersIds(ScannerDiscoveryLegacySupport.getDefaultProviderIdsLegacy(des));
-			}
-		}
-		return data;
-	}
-
-	CConfigurationData applyData(CConfigurationDescriptionCache des, ICConfigurationDescription baseDescription, CConfigurationData base, SettingsContext context, IProgressMonitor monitor) throws CoreException {
-		if(monitor == null)
-			monitor = new NullProgressMonitor();
-
-		CConfigurationDataProvider provider = getProvider(des);
-		context.init(des);
-		return provider.applyConfiguration(des, baseDescription, base, context, monitor);
-	}
-
 	void notifyCached(ICConfigurationDescription des, CConfigurationData data, IProgressMonitor monitor) {
 		if(monitor == null)
 			monitor = new NullProgressMonitor();
@@ -1190,7 +1165,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return provider.createConfiguration(des, baseDescription, base, clone, monitor);
 	}
 
-	private CConfigurationDataProvider getProvider(ICConfigurationDescription des) throws CoreException{
+	CConfigurationDataProvider getProvider(ICConfigurationDescription des) throws CoreException{
 		CConfigurationDataProviderDescriptor providerDes = getCfgProviderDescriptor(des);
 		if(providerDes == null)
 			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.1")); //$NON-NLS-1$

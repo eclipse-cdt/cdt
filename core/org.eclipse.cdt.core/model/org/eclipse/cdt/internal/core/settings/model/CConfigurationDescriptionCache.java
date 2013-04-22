@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,8 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
@@ -40,6 +42,7 @@ import org.eclipse.cdt.core.settings.model.IModificationContext;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
 import org.eclipse.cdt.core.settings.model.extension.CFileData;
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
@@ -53,6 +56,7 @@ import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 
 /**
@@ -91,6 +95,7 @@ import org.eclipse.core.runtime.QualifiedName;
  */
 public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		implements ICConfigurationDescription, IInternalCCfgInfo, ILanguageSettingsProvidersKeeper, ICachedData {
+
 	private CProjectDescription fParent;
 	private PathSettingsContainer fPathSettingContainer = PathSettingsContainer.createRootContainer();
 	private ResourceDescriptionHolder fRcHolder = new ResourceDescriptionHolder(fPathSettingContainer, true);
@@ -105,7 +110,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	private ICConfigurationDescription fBaseDescription;
 	private ICSourceEntry[] fResolvedSourceEntries;
 
-	CConfigurationDescriptionCache(ICStorageElement storage, CProjectDescription parent) throws CoreException{
+	CConfigurationDescriptionCache(ICStorageElement storage, CProjectDescription parent) throws CoreException {
 		super(null);
 		fInitializing = true;
 		fParent = parent;
@@ -117,17 +122,18 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 //		loadData();
 	}
 
-	public boolean isInitializing(){
+	public boolean isInitializing() {
 		return fInitializing;
 	}
 
-	void loadData() throws CoreException{
+	void loadData() throws CoreException {
 		if(fDataLoadded)
 			return;
 
 		fDataLoadded = true;
 
-		fData = CProjectDescriptionManager.getInstance().loadData(this, null);
+		CConfigurationDataProvider dataProvider = CProjectDescriptionManager.getInstance().getProvider(this);
+		fData = dataProvider.loadConfiguration(this, new NullProgressMonitor());
 
 		copySettingsFrom(fData, true);
 
@@ -161,11 +167,12 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return fBaseCache;
 	}
 
-	boolean applyData(SettingsContext context) throws CoreException{
+	boolean applyData(SettingsContext context) throws CoreException {
 		boolean modified = true;
-		if(fBaseDescription != null){
-
-			fData = CProjectDescriptionManager.getInstance().applyData(this, fBaseDescription, fData, context, null);
+		if (fBaseDescription != null){
+			context.init(this);
+			CConfigurationDataProvider dataProvider = CProjectDescriptionManager.getInstance().getProvider(this);
+			fData = dataProvider.applyConfiguration(this, fBaseDescription, fData, context, new NullProgressMonitor());
 			fDataLoadded = true;
 			fName = fData.getName();
 			fId = fData.getId();
@@ -183,7 +190,6 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 			fMacros = new StorableCdtVariables(vars, true);
 			fSpecSettings.serialize();
 			fSpecSettings.setModified(false);
-
 		}
 
 		fBaseDescription = null;

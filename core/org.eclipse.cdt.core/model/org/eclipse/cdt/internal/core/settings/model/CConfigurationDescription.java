@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
 import org.eclipse.cdt.core.settings.model.extension.CDataObject;
 import org.eclipse.cdt.core.settings.model.extension.CFileData;
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
@@ -51,6 +52,7 @@ import org.eclipse.cdt.internal.core.settings.model.xml.InternalXmlStorageElemen
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 
 /**
@@ -120,8 +122,8 @@ public class CConfigurationDescription extends CDataProxyContainer
 		setData(CProjectDescriptionManager.getInstance().createData(this, base, baseData, false, null));
 	}
 
-	/*
-	 * conveter cnfig constructor
+	/**
+	 * Converter config constructor.
 	 */
 	CConfigurationDescription(String id, String name, ICStorageElement el, CProjectDescription projectDes) throws CoreException {
 		super(null, projectDes, null);
@@ -139,8 +141,8 @@ public class CConfigurationDescription extends CDataProxyContainer
 		fCfgSpecSettings.reconcileExtensionSettings(false);
 	}
 
-	/*
-	 * preference config constructor
+	/**
+	 * Preference config constructor.
 	 */
 	CConfigurationDescription(String id, String name, String bsId, ICStorageElement el, ICDataProxyContainer cr) throws CoreException {
 		super(null, cr, null);
@@ -152,11 +154,14 @@ public class CConfigurationDescription extends CDataProxyContainer
 		fCfgSpecSettings.setId(id);
 		fCfgSpecSettings.setName(name);
 		fCfgSpecSettings.setBuildSystemId(bsId);
-		setData(CProjectDescriptionManager.getInstance().loadData(this, null));
+
+		CConfigurationDataProvider dataProvider = CProjectDescriptionManager.getInstance().getProvider(this);
+		CConfigurationData data = dataProvider.loadConfiguration(this, new NullProgressMonitor());
+		setData(data);
 	}
 
-	void doWritable() throws CoreException{
-		if(!containsWritableData()){
+	void doWritable() throws CoreException {
+		if (!containsWritableData()) {
 			CConfigurationData data = getConfigurationData(false);
 			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache)data;
 			data = cache.getConfigurationData();

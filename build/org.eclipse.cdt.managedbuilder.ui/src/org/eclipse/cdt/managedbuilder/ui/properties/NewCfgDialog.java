@@ -15,9 +15,14 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -545,12 +550,12 @@ public class NewCfgDialog implements INewCfgDialog {
 		if (imp == null || !(imp instanceof ManagedProject)) return;
 		ManagedProject mp = (ManagedProject) imp;
 		try {
-			ICConfigurationDescription cfgDes = null;
-			Configuration config = new Configuration(mp, (Configuration)parentConfig, id, false, true);
+			ICConfigurationDescription cfgDescription = null;
+			Configuration cfg = new Configuration(mp, (Configuration)parentConfig, id, false, true);
 			if (b_cloneFromProject.getSelection()) {
 				ICConfigurationDescription base = ManagedBuildManager.getDescriptionForConfiguration(parentConfig);
-				cfgDes = des.createConfiguration(id, newName, base);
-				cfgDes.setDescription(newDescription);
+				cfgDescription = des.createConfiguration(id, newName, base);
+				cfgDescription.setDescription(newDescription);
 			} else if (b_importFromOtherProject.getSelection()) {
 				IResource owner = parentConfig.getOwner();
 				if (owner!=null) {
@@ -558,29 +563,39 @@ public class NewCfgDialog implements INewCfgDialog {
 					ICProjectDescription prjDesOther = CCorePlugin.getDefault().getProjectDescription(owner.getProject(), true);
 					ICConfigurationDescription base = prjDesOther.getConfigurationByName(parentConfig.getName());
 					if (base != null) {
-						cfgDes = des.createConfiguration(id, newName, base);
-						cfgDes.setDescription(newDescription);
+						cfgDescription = des.createConfiguration(id, newName, base);
+						cfgDescription.setDescription(newDescription);
 					}
 				}
 			}
-			if (cfgDes == null) {
+			if (cfgDescription == null) {
 				// when "Default" or "Predefined" selected or import from other project failed
-				CConfigurationData data = config.getConfigurationData();
-				cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
-			}
-			if (cfgDes != null) {
-				config.setConfigurationDescription(cfgDes);
-				config.setName(newName);
-				config.setDescription(newDescription);
+				CConfigurationData data = cfg.getConfigurationData();
+				cfgDescription = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 
-				String target = config.getArtifactName();
+				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+					String[] defaultIds = cfg.getDefaultLanguageSettingsProviderIds();
+					if (defaultIds == null) {
+						defaultIds = ScannerDiscoveryLegacySupport.getDefaultProviderIdsLegacy(cfgDescription);
+					}
+					((ILanguageSettingsProvidersKeeper) cfgDescription).setDefaultLanguageSettingsProvidersIds(defaultIds);
+					List<ILanguageSettingsProvider> providers = LanguageSettingsManager.createLanguageSettingsProviders(defaultIds);
+					((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+				}
+			}
+			if (cfgDescription != null) {
+				cfg.setConfigurationDescription(cfgDescription);
+				cfg.setName(newName);
+				cfg.setDescription(newDescription);
+
+				String target = cfg.getArtifactName();
 				if (target == null || target.length() == 0)
-					config.setArtifactName(mp.getDefaultArtifactName());
+					cfg.setArtifactName(mp.getDefaultArtifactName());
 
 				// Export artifact info as needed by project references
-				config.exportArtifactInfo();
+				cfg.exportArtifactInfo();
 			}
-			if (cfgDes == null) {
+			if (cfgDescription == null) {
 				throw new CoreException(new Status(IStatus.ERROR,
 					"org.eclipse.cdt.managedbuilder.ui", -1, //$NON-NLS-1$
 					Messages.NewCfgDialog_2, null));

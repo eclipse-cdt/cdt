@@ -11,6 +11,7 @@
  *     Marc Dumais (Ericsson) - Bug 399281
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *     Marc Dumais (Ericsson) - Bug 399419
+ *     Marc Dumais (Ericsson) - Bug 405390
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.dsf.gdb.launching.GDBProcess;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.MulticoreVisualizerUIPlugin;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.EnableLoadMetersAction;
+import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.FilterCanvasAction;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.RefreshAction;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.SelectAllAction;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.SetLoadMeterPeriodAction;
@@ -197,6 +199,11 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	/** Menu action */
 	List<SetLoadMeterPeriodAction> m_setLoadMeterPeriodActions = null;
 	
+	/** Menu action */
+	FilterCanvasAction m_setThreadFilterAction = null;
+	FilterCanvasAction m_setCoreFilterAction = null;
+	FilterCanvasAction m_setCPUFilterAction = null;
+	FilterCanvasAction m_clearFilterAction = null;	
 
 	// --- constructors/destructors ---
 	
@@ -339,6 +346,28 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		return (MulticoreVisualizerCanvas) getCanvas();
 	}
 	
+	/** Returns the current canvas selection */
+	public ISelection getCanvasSelection() {
+		return m_canvas.getSelection();
+	}
+	
+	/** Sets-up a canvas filter */
+	public void applyCanvasFilter(Class<?> type) {
+		m_canvas.applyFilter(type);
+		refresh();
+	}
+	
+	/** Removes current canvas filter */
+	public void clearCanvasFilter() {
+		m_canvas.clearFilter();
+		refresh();
+	}
+
+	/** Tells if a canvas filter is in effect */
+	public boolean isCanvasFilterActive() {
+		return m_canvas.isFilterActive();
+	}
+	
 	/** Return the data model backing this multicore visualizer */
 	public VisualizerModel getModel() {
 		return fDataModel;
@@ -415,6 +444,24 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		defaultAction.setChecked(true);
 		defaultAction.run();
 		
+		// canvas filter actions - they will be dynamically enabled/disabled
+		// according to canvas selection
+		m_setThreadFilterAction = new FilterCanvasAction(VisualizerThread.class);
+		m_setThreadFilterAction.init(this);
+		m_setThreadFilterAction.setEnabled(false);
+
+		m_setCoreFilterAction = new FilterCanvasAction(VisualizerCore.class);
+		m_setCoreFilterAction.init(this);
+		m_setCoreFilterAction.setEnabled(false);
+
+		m_setCPUFilterAction = new FilterCanvasAction(VisualizerCPU.class);
+		m_setCPUFilterAction.init(this);
+		m_setCPUFilterAction.setEnabled(false);
+
+		m_clearFilterAction = new FilterCanvasAction(null);
+		m_clearFilterAction.init(this);
+		m_clearFilterAction.setEnabled(false);
+		
 		// Note: debug view may not be initialized at startup,
 		// so we'll pretend the actions are not yet updated,
 		// and reinitialize them later.
@@ -429,6 +476,41 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		boolean enabled = hasSelection();
 		m_selectAllAction.setEnabled(enabled);
 		m_refreshAction.setEnabled(enabled);
+		
+		// Allow only one level of filtering
+		if (isCanvasFilterActive()) {
+			m_setThreadFilterAction.setEnabled(false);
+			m_setCoreFilterAction.setEnabled(false);
+			m_setCPUFilterAction.setEnabled(false);
+		}
+		// else offer filtering options based on selection
+		else  {
+			boolean threadSelected = false;
+			boolean coreSelected = false;
+			boolean cpuSelected = false;
+
+			ISelection selection = getCanvasSelection();
+			List<Object> objs = SelectionUtils.getSelectedObjects(selection);
+			for(Object o : objs) {
+				if (o instanceof VisualizerThread) {
+					threadSelected = true;
+				}
+				else if (o instanceof VisualizerCore) {
+					coreSelected = true;
+				}
+				else if (o instanceof VisualizerCPU) {
+					cpuSelected = true;
+				}	
+			}
+
+			// display "Clear selected" menu item(s)
+			m_setThreadFilterAction.setEnabled(threadSelected);
+			m_setCoreFilterAction.setEnabled(coreSelected);
+			m_setCPUFilterAction.setEnabled(cpuSelected);
+		}
+
+		// enable "Clear filter" menu item if filter is active
+		m_clearFilterAction.setEnabled(isCanvasFilterActive());
 		
     	// show the load meter refresh speed sub-menu only 
     	// if the load meters are enabled
@@ -515,6 +597,24 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			m_setLoadMeterPeriodActions = null;
 		}
 		
+		if (m_setThreadFilterAction != null) {
+			m_setThreadFilterAction.dispose();
+			m_setThreadFilterAction = null;
+		}
+
+		if (m_setCoreFilterAction != null) {
+			m_setCoreFilterAction.dispose();
+			m_setCoreFilterAction = null;
+		}
+		if (m_setCPUFilterAction != null) {
+			m_setCPUFilterAction.dispose();
+			m_setCPUFilterAction = null;
+		}
+		if (m_clearFilterAction != null) {
+			m_clearFilterAction.dispose();
+			m_clearFilterAction = null;
+		}
+
 		m_actionsInitialized = false;
 	}
 
@@ -591,6 +691,13 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		for (SetLoadMeterPeriodAction act : m_setLoadMeterPeriodActions) {
 			m_loadMetersRefreshSubSubmenu.add(act);
 		}
+		
+		// add filtering options
+		menuManager.add(m_separatorAction);
+		menuManager.add(m_setThreadFilterAction);
+		menuManager.add(m_setCoreFilterAction);
+		menuManager.add(m_setCPUFilterAction);
+		menuManager.add(m_clearFilterAction);
 		
 		updateActions();
 		Point location = m_viewer.getContextMenuLocation();

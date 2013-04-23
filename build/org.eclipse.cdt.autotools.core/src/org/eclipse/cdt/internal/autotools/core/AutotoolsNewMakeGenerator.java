@@ -853,6 +853,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 
 		ConsoleOutputStream consoleOutStream = null;
+		ErrorParserManager epm = null;
 		StringBuffer buf = new StringBuffer();
 
 		// Launch command - main invocation
@@ -891,7 +892,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 			// Hook up an error parser manager
 			URI uri = URIUtil.toURI(runPath);
-			ErrorParserManager epm = new ErrorParserManager(project, uri, this, new String[] {ErrorParser.ID});
+			epm = new ErrorParserManager(project, uri, this, new String[] {ErrorParser.ID});
 			epm.setOutputStream(consoleOutStream);
 			epm.addErrorParser(ErrorParser.ID, new ErrorParser(getSourcePath(), getBuildPath()));
 
@@ -968,13 +969,17 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			// Write message on the console
 			consoleOutStream.write(buf.toString().getBytes());
 			consoleOutStream.flush();
+			
 			// // Generate any error markers that the build has discovered
 			// monitor.subTask(ManagedMakeMessages
 			// .getResourceString(MARKERS));
 			// epm.reportProblems();
 
 		} finally {
-			consoleOutStream.close();
+			if (consoleOutStream != null)
+				consoleOutStream.close();
+			if (epm != null)
+				epm.close();
 		}
 		
 		// If we have an error and no specific error markers, use the default error marker.
@@ -1009,6 +1014,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
     // Get the path string.  We add a Win check to handle MingW.
     // For MingW, we would rather represent C:\a\b as /C/a/b which
     // doesn't cause Makefile to choke. For Cygwin we use /cygdrive/C/a/b
+	// Add backslashes to escape any special characters in the command path
+	// that will give the shell distress (e.g. runtime-New_Configuration(1)).
     private String getPathString(IPath path) {
             String s = path.toString();
             if (Platform.getOS().equals(Platform.OS_WIN32)) {
@@ -1018,6 +1025,9 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
                     s = s.replaceAll("^([A-Z])(:)", "/$1");            		
             	}
             }
+            s = s.replaceAll("\\\\", "\\\\\\\\");
+            s = s.replaceAll("\\(",  "\\\\(");
+            s = s.replaceAll("\\)", "\\\\)");
             return s;
     }
 
@@ -1091,6 +1101,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 
 		ConsoleOutputStream consoleOutStream = null;
+		ErrorParserManager epm = null;
 		StringBuffer buf = new StringBuffer();
 
 		// Launch command - main invocation
@@ -1149,7 +1160,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 			// Hook up an error parser manager
 			URI uri = URIUtil.toURI(runPath);
-			ErrorParserManager epm = new ErrorParserManager(project, uri, this, new String[] {ErrorParser.ID});
+			epm = new ErrorParserManager(project, uri, this, new String[] {ErrorParser.ID});
 			epm.setOutputStream(consoleOutStream);
 			epm.addErrorParser(ErrorParser.ID, new ErrorParser(getSourcePath(), getBuildPath()));
 
@@ -1233,7 +1244,10 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			// .getResourceString(MARKERS));
 			// epm.reportProblems();
 		} finally {
-			consoleOutStream.close();
+			if (consoleOutStream != null)
+				consoleOutStream.close();
+			if (epm != null)
+				epm.close();
 		}
 		
 		// If we have an error and no specific error markers, use the default error marker.

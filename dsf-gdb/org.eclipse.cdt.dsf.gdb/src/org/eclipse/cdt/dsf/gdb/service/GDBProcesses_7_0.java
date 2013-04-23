@@ -911,6 +911,18 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	    						// Store the fully formed container context so it can be returned to the caller.
 							    dataRm.setData(fContainerDmc);
 
+								// Initialize memory data for this process.
+								IGDBMemory memory = getServicesTracker().getService(IGDBMemory.class);
+								if (memory == null) {
+									rm.done();
+									return;
+								}
+								memory.initializeMemoryData(fContainerDmc, rm);
+	    					}
+	    				},
+	    				new Step() { 
+	    					@Override
+	    					public void execute(RequestMonitor rm) {
 								// Start tracking breakpoints.
 								MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
 								IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);

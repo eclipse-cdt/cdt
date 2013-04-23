@@ -311,6 +311,18 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		    							new ImmediateDataRequestMonitor<MIInfo>(rm));
 		                    }
 		                },
+						// Initialize memory data for this process.
+	    				new Step() { 
+	    					@Override
+	    					public void execute(RequestMonitor rm) {
+								IGDBMemory memory = getServicesTracker().getService(IGDBMemory.class);
+								if (memory == null) {
+									rm.done();
+									return;
+								}
+								memory.initializeMemoryData(fContainerDmc, rm);
+	    					}
+	    				},
                     	// Start tracking this process' breakpoints.
 		                new Step() { 
 		                    @Override

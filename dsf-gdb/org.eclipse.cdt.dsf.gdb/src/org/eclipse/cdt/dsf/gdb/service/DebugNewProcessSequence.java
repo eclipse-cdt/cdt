@@ -107,6 +107,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 					"stepSpecifyCoreFile",   //$NON-NLS-1$
 					
 					"stepStartTrackingBreakpoints", //$NON-NLS-1$
+					"stepInitializeMemory", //$NON-NLS-1$
 					"stepStartExecution",   //$NON-NLS-1$
 					"stepCleanupBaseSequence",   //$NON-NLS-1$
 			};
@@ -441,6 +442,20 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 		} else {
 			rm.done();
 		}
+	}
+
+	/**
+	 * Initialize the memory service with the data for given process.
+	 * @since 4.2
+	 */
+	@Execute
+	public void stepInitializeMemory(final RequestMonitor rm) {
+		IGDBMemory memory = fTracker.getService(IGDBMemory.class);
+		if (memory == null) {
+			rm.done();
+			return;
+		}
+		memory.initializeMemoryData(getContainerContext(), rm);
 	}
 
 	/**

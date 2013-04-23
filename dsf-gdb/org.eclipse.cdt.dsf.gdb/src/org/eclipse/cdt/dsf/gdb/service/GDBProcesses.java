@@ -245,13 +245,43 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 							protected void handleSuccess() {
 								// For an attach, we actually know the pid, so let's remember it
 								fProcId = ((IMIProcessDMContext)procCtx).getProcId();
-								IDMContext containerDmc = getData();
-								rm.setData(containerDmc);
+								final IDMContext ctx = getData();
+								rm.setData(ctx);
 
-								// Start tracking breakpoints.
-								MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
-								IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
-								bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
+								ImmediateExecutor.getInstance().execute(
+									new Sequence(getExecutor(),new ImmediateRequestMonitor(rm)) {
+										
+										private Step[] fSteps = new Step[] {
+											// Initialize memory data for this process
+											new Step() {
+												@Override
+												public void execute(RequestMonitor rm1) {
+													IGDBMemory memory = getServicesTracker().getService(IGDBMemory.class);
+													IContainerDMContext containerDmc = DMContexts.getParentOfType(ctx, IContainerDMContext.class);
+													if (memory == null || containerDmc == null) {
+														rm.done();
+														return;
+													}
+													memory.initializeMemoryData(containerDmc, rm1);
+												};
+											},
+												
+											// Start tracking breakpoints.
+											new Step() {
+												@Override
+												public void execute(RequestMonitor rm1) {
+													MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
+													IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(ctx, IBreakpointsTargetDMContext.class);
+													bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
+												};
+											}
+										};
+										@Override
+										public Step[] getSteps() {
+											return fSteps;
+										}
+										
+									});
 							}
 						});
 			}

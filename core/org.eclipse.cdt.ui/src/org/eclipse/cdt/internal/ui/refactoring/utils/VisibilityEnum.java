@@ -16,8 +16,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 
 /**
- * Enum that represents C++ visibilities, with methods to convert to
- * and from ICPPASTVisiblityLabel.
+ * Enum that represents C++ visibilities, with methods to convert to and from ICPPASTVisiblityLabel.
  */
 public enum VisibilityEnum {
 	// The values are ordered by increasing visibility.

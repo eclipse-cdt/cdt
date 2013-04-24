@@ -3753,13 +3753,13 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	}
 	public void testTypedefPreservation_380498_1() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
-		ICPPVariable s1 = ba.assertNonProblem("s1", ICPPVariable.class);
+		ICPPVariable s1 = ba.assertNonProblem("s1");
 		assertTrue(s1.getType() instanceof ITypedef);
 		assertEquals("string", ((ITypedef) s1.getType()).getName());
-		ICPPVariable s2 = ba.assertNonProblem("s2", ICPPVariable.class);
+		ICPPVariable s2 = ba.assertNonProblem("s2");
 		assertTrue(s2.getType() instanceof ITypedef);
 		assertEquals("string", ((ITypedef) s2.getType()).getName());
-		ICPPVariable s3 = ba.assertNonProblem("s3", ICPPVariable.class);
+		ICPPVariable s3 = ba.assertNonProblem("s3");
 		assertTrue(s3.getType() instanceof ITypedef);
 		assertEquals("string", ((ITypedef) s3.getType()).getName());
 	}
@@ -6267,7 +6267,7 @@ public class AST2TemplateTests extends AST2TestBase {
 		ICPPTemplateParameter aliasParameterT= templateParameterAlias.getTemplateParameters()[0];
 		assertEquals(1, aliasParameterT.getTemplateNestingLevel());
 
-		ICPPAliasTemplateInstance aliasIntInstance = bh.assertNonProblem("Alias<int>", ICPPAliasTemplateInstance.class);
+		ICPPAliasTemplateInstance aliasIntInstance = bh.assertNonProblem("Alias<int>");
 		IType typeOfAliasIntInstance = aliasIntInstance.getType();
 		assertTrue(typeOfAliasIntInstance instanceof ICPPBasicType);
 		assertEquals(((ICPPBasicType)typeOfAliasIntInstance).getKind(), IBasicType.Kind.eInt);
@@ -7019,7 +7019,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	const bool B = has_type<int>::value;
 	public void testSFINAEInNestedTypeInTemplateArgument_402257() throws Exception {
 		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
-		ICPPVariable B = helper.assertNonProblem("B", ICPPVariable.class);
+		ICPPVariable B = helper.assertNonProblem("B");
 		Long val = B.getInitialValue().numericalValue();
 		assertNotNull(val);
 		assertEquals(0 /* false */, val.longValue());
@@ -7461,7 +7461,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	constexpr int bar = foo<int, double>::i;
 	public void testSizeofParameterPackOnTypeid_401973() throws Exception {
 		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
-		ICPPVariable bar = helper.assertNonProblem("bar", ICPPVariable.class);
+		ICPPVariable bar = helper.assertNonProblem("bar");
 		Long barValue = bar.getInitialValue().numericalValue();
 		assertNotNull(barValue);
 		assertEquals(2,  barValue.longValue());
@@ -7571,7 +7571,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	}
 	public void testUnqualifiedFunctionCallInTemplate_402498c() throws Exception {
 		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
-		ICPPVariable x = helper.assertNonProblem("x", ICPPVariable.class);
+		ICPPVariable x = helper.assertNonProblem("x");
 		// We really should assert that x's type is a ProblemType, but the semantic
 		// analyzer is too lenient and makes it a TypeOfDependentExpression if it
 		// can't instantiate the return type of foo() properly.

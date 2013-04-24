@@ -87,9 +87,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		}
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
-	 */
+
 	@Override
 	public int getVisibility() {
 		IASTDeclaration decl = getPrimaryDeclaration();

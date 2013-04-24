@@ -13,8 +13,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 
 /**
- * C++ allows for visibility labels to be mixed interdeclaration in class
- * specifiers.
+ * C++ allows for visibility labels to be mixed with declarations in class specifiers.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.

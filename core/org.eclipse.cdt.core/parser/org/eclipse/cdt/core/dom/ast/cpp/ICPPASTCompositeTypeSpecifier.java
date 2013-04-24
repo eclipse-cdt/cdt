@@ -60,9 +60,9 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 		public static final ASTNodeProperty NAME = new ASTNodeProperty(
 				"ICPPASTBaseSpecifier.NAME - Name of base class"); //$NON-NLS-1$
 		
-		public static final int v_public = 1;
-		public static final int v_protected = 2;
-		public static final int v_private = 3;
+		public static final int v_public = ICPPASTVisibilityLabel.v_public;
+		public static final int v_protected = ICPPASTVisibilityLabel.v_protected;
+		public static final int v_private = ICPPASTVisibilityLabel.v_private;
 
 		/**
 		 * Returns whether this specifies a virtual base.
@@ -108,17 +108,16 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 	}
 
 	/**
-	 * Get the base specifiers.
+	 * Returns the base specifiers.
 	 * 
 	 * @return <code>ICPPASTBaseSpecifier []</code>
 	 */
 	public ICPPASTBaseSpecifier[] getBaseSpecifiers();
 
 	/**
-	 * Add a base specifier.
+	 * Adds a base specifier.
 	 * 
-	 * @param baseSpec
-	 *            <code>ICPPASTBaseSpecifier</code>
+	 * @param baseSpec <code>ICPPASTBaseSpecifier</code>
 	 */
 	public void addBaseSpecifier(ICPPASTBaseSpecifier baseSpec);
 

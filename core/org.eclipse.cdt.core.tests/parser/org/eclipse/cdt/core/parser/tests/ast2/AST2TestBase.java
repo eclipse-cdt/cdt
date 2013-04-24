@@ -103,7 +103,7 @@ public class AST2TestBase extends BaseTestCase {
 	public final static String TEST_CODE = "<testcode>";
     protected static final IParserLogService NULL_LOG = new NullLogService();
     protected static boolean sValidateCopy;
-    
+
     protected static class CommonTypes {
     	public static IType int_ = new CPPBasicType(Kind.eInt, 0);
     	public static IType pointerToInt = new CPPPointerType(int_);
@@ -748,7 +748,7 @@ public class AST2TestBase extends BaseTestCase {
     		assertTrue("ProblemBinding for name: " + name, !(binding instanceof IProblemBinding));
     		return assertType(binding, cs);
     	}
-    	
+
     	public void assertVariableType(String variableName, IType expectedType) {
     		IVariable var = assertNonProblem(variableName, IVariable.class);
     		assertSameType(expectedType, var.getType());

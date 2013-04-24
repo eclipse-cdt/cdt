@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -18,12 +18,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * @author jcamelon
  */
 public class CPPASTVisibilityLabel extends ASTNode implements ICPPASTVisibilityLabel {
-
     private int visibility;
-
-
-    public CPPASTVisibilityLabel() {
-	}
 
 	public CPPASTVisibilityLabel(int visibility) {
 		this.visibility = visibility;
@@ -36,12 +31,7 @@ public class CPPASTVisibilityLabel extends ASTNode implements ICPPASTVisibilityL
 	
 	@Override
 	public CPPASTVisibilityLabel copy(CopyStyle style) {
-		CPPASTVisibilityLabel copy = new CPPASTVisibilityLabel(visibility);
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(new CPPASTVisibilityLabel(visibility), style);
 	}
 
 	@Override

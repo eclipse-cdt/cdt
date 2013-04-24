@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//uiU\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/concepts/cdt_c_templates.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-04-24T18:08:22Z",
+      "side": 1,
+      "message": "Code and Content Assist templates are represented by two separate preference pages.",
+      "revId": "cdc9f54f7181db068f11d5c22c85e866bf87f8b6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

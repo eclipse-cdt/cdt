@@ -29,7 +29,7 @@ public interface ICASTDesignatedInitializer extends IASTInitializer, IASTInitial
 			"ICASTDesignatedInitializer.DESIGNATOR [ICASTDesignator]"); //$NON-NLS-1$
 
 	public static final ASTNodeProperty OPERAND = new ASTNodeProperty(
-		"ICASTDesignatedInitializer.OPERAND - [IASTInitializerClause]"); //$NON-NLS-1$
+			"ICASTDesignatedInitializer.OPERAND - [IASTInitializerClause]"); //$NON-NLS-1$
 
 	/**
 	 * Add a designator to this initializer.

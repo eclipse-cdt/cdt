@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Andrew Gvozdev and others.
+ * Copyright (c) 2010, 2013 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.core.language.settings.providers;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.SettingsModelMessages;
+import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -161,7 +163,9 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 					buildCWD = new Path(buildPathString);
 				} else {
 					IProject project = cfgDescription.getProjectDescription().getProject();
-					buildCWD = project.getLocation();
+					URI locationURI = project.getLocationURI();
+					String path = EFSExtensionManager.getDefault().getPathFromURI(locationURI);
+					buildCWD = new Path(path);
 				}
 			} catch (CdtVariableException e) {
 				CCorePlugin.log(e);

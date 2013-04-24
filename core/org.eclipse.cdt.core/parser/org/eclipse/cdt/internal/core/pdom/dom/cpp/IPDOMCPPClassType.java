@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
  * Interface that allows to implement a class-scope.
  */
 public interface IPDOMCPPClassType extends ICPPClassType, IPDOMBinding, IIndexType {
-
 	/**
 	 * Visits the children of the class type without using the cache. This method is
 	 * used to populate the cache.

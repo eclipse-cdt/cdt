@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -21,17 +21,14 @@ interface ICPPInternalClassTypeMixinHost extends ICPPClassType, ICPPInternalBind
 	/**
 	 * @return the composite type specifier for the class type
 	 */
-	 ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier();
-	 
-	 /**
-	  * {@inheritDoc}
-	  */
-	 @Override
+	ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier();
+
+	@Override
 	ICPPClassScope getCompositeScope();
 
-	 /**
-	  * Ensures the ICPPInternalBinding definition is set, if this is possible.
-	  * @see ICPPInternalBinding#getDefinition()
-	  */
-	 void checkForDefinition();
+	/**
+	 * Ensures the ICPPInternalBinding definition is set, if this is possible.
+	 * @see ICPPInternalBinding#getDefinition()
+	 */
+	void checkForDefinition();
 }

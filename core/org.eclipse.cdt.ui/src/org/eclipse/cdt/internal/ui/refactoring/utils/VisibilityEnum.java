@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 
 /**
@@ -20,19 +19,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
  */
 public enum VisibilityEnum {
 	// The values are ordered by increasing visibility.
-	v_private("private", ICPPASTVisibilityLabel.v_private, ICPPASTBaseSpecifier.v_private),  //$NON-NLS-1$
-	v_protected("protected", ICPPASTVisibilityLabel.v_protected, ICPPASTBaseSpecifier.v_protected),   //$NON-NLS-1$
-	v_public("public", ICPPASTVisibilityLabel.v_public, ICPPASTBaseSpecifier.v_public); //$NON-NLS-1$
+	v_private("private", ICPPASTVisibilityLabel.v_private),  //$NON-NLS-1$
+	v_protected("protected", ICPPASTVisibilityLabel.v_protected),   //$NON-NLS-1$
+	v_public("public", ICPPASTVisibilityLabel.v_public); //$NON-NLS-1$
 
 	private final String stringRepresentation;
 	private final int visibilityLabelValue;
-	private final int baseSpecifierValue;
 	
-	private VisibilityEnum(String stringRepresentation, int visibilityLabelValue,
-			int baseSpecifierValue) {
+	private VisibilityEnum(String stringRepresentation, int visibilityLabelValue) {
 		this.stringRepresentation = stringRepresentation;
 		this.visibilityLabelValue = visibilityLabelValue;
-		this.baseSpecifierValue = baseSpecifierValue;
 	}
 	
 	public static VisibilityEnum from(ICPPASTVisibilityLabel visibility) {
@@ -45,10 +41,6 @@ public enum VisibilityEnum {
 			return VisibilityEnum.v_public;
 		}
 		return null;
-	}
-	
-	public int getBaseSpecifierValue() {
-		return baseSpecifierValue;
 	}
 	
 	public int getVisibilityLabelValue() {

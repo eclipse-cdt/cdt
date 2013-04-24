@@ -113,7 +113,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 
 	private IASTName definition;
 	private IASTName[] declarations;
-	private boolean checked = false;
+	private boolean checked;
 	private ICPPClassType typeInIndex;
 
 	public CPPClassType(IASTName name, IBinding indexBinding) {
@@ -122,10 +122,11 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		while (parent instanceof IASTName)
 			parent = parent.getParent();
 
-		if (parent instanceof IASTCompositeTypeSpecifier)
+		if (parent instanceof IASTCompositeTypeSpecifier) {
 			definition = name;
-		else 
+		} else {
 			declarations = new IASTName[] { name };
+		}
 		name.setBinding(this);
 		if (indexBinding instanceof ICPPClassType && indexBinding instanceof IIndexBinding) {
 			typeInIndex= (ICPPClassType) indexBinding;
@@ -408,7 +409,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	private IASTName stripQualifier(IASTName name) {
 		if (name instanceof ICPPASTQualifiedName) {
 	        IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
-	        name = ns[ ns.length - 1 ];
+	        name = ns[ns.length - 1];
 	    }
 		return name;
 	}

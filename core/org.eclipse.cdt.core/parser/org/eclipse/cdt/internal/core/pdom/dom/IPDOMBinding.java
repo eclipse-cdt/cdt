@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -15,10 +15,9 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 
 /**
- * Marker for bindings in the pdom
+ * Interface for bindings in the PDOM.
  */
 public interface IPDOMBinding extends IPDOMNode, IIndexFragmentBinding {
-
 	/**
 	 * Returns the database this binding belongs to.
 	 */

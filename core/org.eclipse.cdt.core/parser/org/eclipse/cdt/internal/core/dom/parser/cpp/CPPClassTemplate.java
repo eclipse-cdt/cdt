@@ -46,8 +46,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  */
 public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClassTemplate,
 		ICPPInternalClassTemplate, ICPPInternalClassTypeMixinHost {
-
-	private ICPPClassTemplatePartialSpecialization[] partialSpecializations = null;
+	private ICPPClassTemplatePartialSpecialization[] partialSpecializations;
 	private ICPPDeferredClassInstance fDeferredInstance;
 	private boolean addedPartialSpecializationsOfIndex;
 
@@ -212,9 +211,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * For debug purposes only
-	 */
+	/* For debug purposes only */
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
@@ -249,7 +246,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 	@Override
 	public boolean isFinal() {
 		ICPPASTCompositeTypeSpecifier typeSpecifier = getCompositeTypeSpecifier();
-		if(typeSpecifier != null){
+		if (typeSpecifier != null) {
 			return typeSpecifier.isFinal();
 		}
 		return false;

@@ -1014,8 +1014,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
     // Get the path string.  We add a Win check to handle MingW.
     // For MingW, we would rather represent C:\a\b as /C/a/b which
     // doesn't cause Makefile to choke. For Cygwin we use /cygdrive/C/a/b
-	// Add backslashes to escape any special characters in the command path
-	// that will give the shell distress (e.g. runtime-New_Configuration(1)).
     private String getPathString(IPath path) {
             String s = path.toString();
             if (Platform.getOS().equals(Platform.OS_WIN32)) {
@@ -1025,10 +1023,15 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
                     s = s.replaceAll("^([A-Z])(:)", "/$1");            		
             	}
             }
-            s = s.replaceAll("\\\\", "\\\\\\\\");
-            s = s.replaceAll("\\(",  "\\\\(");
-            s = s.replaceAll("\\)", "\\\\)");
             return s;
+    }
+
+    // Fix any escape characters in sh -c command arguments
+    private String fixEscapeChars(String s) {
+        s = s.replaceAll("\\\\", "\\\\\\\\");
+        s = s.replaceAll("\\(",  "\\\\(");
+        s = s.replaceAll("\\)", "\\\\)");
+        return s;
     }
 
 	// Run an autotools script (e.g. configure, autogen.sh, config.status).
@@ -1088,7 +1091,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				// fix for bug #356278
 				if (resolved.length() > 0 && resolved.charAt(0) != '-')
 					resolved = stripEnvVarsFromOption(resolved, additionalEnvs);
-				configTargets[i] = resolved;
+				configTargets[i] = fixEscapeChars(resolved);
 			} catch (BuildMacroException e) {
 			}
 		}

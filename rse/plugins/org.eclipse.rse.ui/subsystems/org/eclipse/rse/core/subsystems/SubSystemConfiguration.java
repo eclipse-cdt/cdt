@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -38,6 +38,7 @@
  * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
  * Martin Oberhuber (Wind River) - [218309] ConcurrentModificationException during workbench startup
  * David McKnight   (IBM)        - [338510] "Copy Connection" operation deletes the registered property set in the original connection
+ * David McKnight   (IBM)        - [406585] copy host should not copy private filter pool references
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -1142,7 +1143,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 							// if just copying a connnection, then copy references to pools as-is
 							if (!copyProfileOperation)
 							{
-								newRefMgr.addReferenceToSystemFilterPool(pool);
+								// only copy non-private filter pool references
+								if (!pool.getName().startsWith("CN-")){ //$NON-NLS-1$
+									newRefMgr.addReferenceToSystemFilterPool(pool);
+								}
 							}
 							// if copying a profile, update references to pools in old profile to become references to pools in new profile...
 							else

@@ -40,7 +40,7 @@
  * David McKnight   (IBM)        - [338510] "Copy Connection" operation deletes the registered property set in the original connection
  * David McKnight   (IBM)        - [406585] copy host should not copy private filter pool references
  ********************************************************************************/
-
+ 
 package org.eclipse.rse.core.subsystems;
 
 import java.util.ArrayList;

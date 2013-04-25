@@ -65,7 +65,7 @@ class MacroDefinitionRule implements IPredicateRule {
 				case END_VAR_STATE :
 					if (c != '\n' && Character.isWhitespace((char) c)) {
 						state = END_VAR_STATE;
-					} else if (c == ':' || c == '+') {
+					} else if (c == ':' || c == '+' || c == '?') {
 						state = EQUAL_STATE;
 					} else if (c == '=') {
 						state = FINISH_STATE;

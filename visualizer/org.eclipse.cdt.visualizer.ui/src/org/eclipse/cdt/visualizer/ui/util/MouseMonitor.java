@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) : Bug 405735
  *******************************************************************************/
 
 package org.eclipse.cdt.visualizer.ui.util;
@@ -250,7 +251,8 @@ public class MouseMonitor
 	
 	/** Invoked when mouse button is pressed */
 	protected void mouseDownHandler(int button, int x, int y, int keys) {
-		if (! m_mouseDown) {
+		// Drag not applicable to right-click
+		if (! m_mouseDown && button != RIGHT_BUTTON) {
 			m_mouseDown = true;
 			m_mouseDownPoint.x = x;
 			m_mouseDownPoint.y = y;

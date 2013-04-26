@@ -11,11 +11,13 @@
 package org.eclipse.cdt.internal.pdom.tests;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.dom.ast.tag.ITag;
+import org.eclipse.cdt.core.dom.ast.tag.IWritableTag;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.model.LanguageManager;
@@ -142,5 +144,38 @@ public class PDOMTagIndexTests extends BaseTestCase {
 		assertTrue(taga_pdom.getRecord() != longer_pdom.getRecord());
 
 		// TODO figure out how to confirm that the original tag was free'd
+	}
+
+	// Tests the fix for a bug where tags were not found until the index had been rebuilt within the session.
+	public void testReadColdCache_bug406652() throws Exception {
+
+		// put a tag into the PDOM
+		String tagger_a = "tagger_a";
+		long rec = computeValidRecord();
+		byte[] data = new byte[]{ 'a', 'b' };
+		IWritableTag writeableTag = PDOMTagIndex.createTag(pdom, rec, tagger_a, data.length);
+		assertNotNull(writeableTag);
+		assertTrue(writeableTag.putBytes(0, data, data.length));
+
+		// create a new index and make sure the tag can be loaded
+		PDOMTagIndex tagIndex = new PDOMTagIndex( pdom.getDB(), PDOM.TAG_INDEX );
+
+		// Depending on the setup of the test server, #setAccessible could throw a SecurityException.  If
+		// so then just skip the rest of the test case.
+		try {
+			// Call the private method directly to avoid sharing the PDOM's current instance of TagIndex.
+			// 		PDOMTagIndex.getTag(long record, String id)
+			Method getTag_method = PDOMTagIndex.class.getDeclaredMethod("getTag", long.class, String.class);
+			assertNotNull(getTag_method);
+
+			getTag_method.setAccessible(true);
+			ITag tag = (ITag)getTag_method.invoke(tagIndex, rec, tagger_a);
+			assertNotNull(tag);
+			byte[] readData = tag.getBytes(0, data.length);
+			assertNotNull(readData);
+			assertEquals(data.length, readData.length);
+			assertEquals(data[0], readData[0]);
+			assertEquals(data[1], readData[1]);
+		} catch( SecurityException e ) { }
 	}
 }

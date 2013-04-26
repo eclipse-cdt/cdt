@@ -79,8 +79,7 @@ public class PDOMTagIndex {
 		assert taggerId != null;
 		assert !taggerId.isEmpty();
 
-		if (db == null || taggerId == null || taggerId.isEmpty()
-				|| (taggerIds == null && !createIfNeeded))
+		if (db == null || taggerId == null || taggerId.isEmpty())
 			return 0L;
 
 		try {

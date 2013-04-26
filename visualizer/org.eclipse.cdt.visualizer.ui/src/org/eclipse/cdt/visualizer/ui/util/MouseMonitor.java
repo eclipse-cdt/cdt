@@ -250,7 +250,8 @@ public class MouseMonitor
 	
 	/** Invoked when mouse button is pressed */
 	protected void mouseDownHandler(int button, int x, int y, int keys) {
-		if (! m_mouseDown) {
+		// Drag not applicable to right-click
+		if (! m_mouseDown && button != RIGHT_BUTTON) {
 			m_mouseDown = true;
 			m_mouseDownPoint.x = x;
 			m_mouseDownPoint.y = y;

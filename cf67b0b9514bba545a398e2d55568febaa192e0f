@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//tzE\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMTagIndexTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-04-26T16:20:19Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "cf67b0b9514bba545a398e2d55568febaa192e0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//tyo\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMTagIndexTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-04-26T16:20:19Z",
+      "side": 1,
+      "message": "Use sentence capitalization and punctuation in comments.",
+      "revId": "cf67b0b9514bba545a398e2d55568febaa192e0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//tyk\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMTagIndexTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-04-26T16:20:19Z",
+      "side": 1,
+      "message": "A space is required before {",
+      "revId": "cf67b0b9514bba545a398e2d55568febaa192e0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//ty4\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMTagIndexTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-04-26T16:20:19Z",
+      "side": 1,
+      "message": "Tests should not call private methods.",
+      "revId": "cf67b0b9514bba545a398e2d55568febaa192e0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//ty0\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMTagIndexTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-04-26T16:20:19Z",
+      "side": 1,
+      "message": "A space is required after (ITag)",
+      "revId": "cf67b0b9514bba545a398e2d55568febaa192e0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//tyw\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMTagIndexTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-04-26T16:20:19Z",
+      "side": 1,
+      "message": "Why is it necessary to catch SequrityException?\n\nBy convention this line should be formatted as:\n} catch (SecurityException e) {\nthe closing brace has to be on a separate line.",
+      "revId": "cf67b0b9514bba545a398e2d55568febaa192e0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//tzI\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/tag/PDOMTagIndex.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-04-26T16:20:19Z",
+      "side": 1,
+      "message": "\u0027L\u0027 suffix is on overkill.",
+      "revId": "cf67b0b9514bba545a398e2d55568febaa192e0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

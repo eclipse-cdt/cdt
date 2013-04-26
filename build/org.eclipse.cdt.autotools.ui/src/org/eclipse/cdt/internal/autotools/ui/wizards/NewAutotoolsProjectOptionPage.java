@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Red Hat Inc. - Fix Bug 406711
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.wizards;
 
@@ -17,7 +18,6 @@ import org.eclipse.cdt.internal.autotools.ui.ErrorParserBlock;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPageManager;
 import org.eclipse.cdt.ui.dialogs.ICOptionPage;
-import org.eclipse.cdt.ui.dialogs.IndexerBlock;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.cdt.ui.newui.CDTHelpContextIds;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
@@ -38,7 +38,6 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 	public static class ManagedWizardOptionBlock extends ManagedProjectOptionBlock {
 		
 		NewAutotoolsProjectOptionPage parent;
-		IndexerBlock indexBlock;
 		
 
 		public ManagedWizardOptionBlock(NewAutotoolsProjectOptionPage parentPage) {
@@ -68,14 +67,8 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 		 */
 		protected void addTabs() {
 			addTab(new AutotoolsReferenceBlock());
-			// NOTE: The setting of error parsers is commented out here
-			//       because they need to be set per-configuration.
-			//       The other tabs on this page are per-project.
-			//       Error parsers can be selected per configuration in the 
-			//        project properties
-			//errorParsers = new ErrorParserBlock();
-			//addTab(errorParsers);
-			addTab(indexBlock = new IndexerBlock());
+			// Bug 406711 - Remove the IndexerBlock as this causes an exception to occur
+			//             because the project handle isn't set up.  It is not needed.
 		}
 		
 		public void setupHelpContextIds(){
@@ -90,8 +83,6 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 					id = CDTHelpContextIds.MAN_PROJ_WIZ_PROJECTS_TAB;
 				} else if (page instanceof ErrorParserBlock) {
 					id = CDTHelpContextIds.MAN_PROJ_WIZ_ERRORPARSERS_TAB;
-				} else if (page instanceof IndexerBlock) {
-					id = CDTHelpContextIds.MAN_PROJ_WIZ_INDEXER_TAB;
 				}
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(page.getControl(), id);
 			}

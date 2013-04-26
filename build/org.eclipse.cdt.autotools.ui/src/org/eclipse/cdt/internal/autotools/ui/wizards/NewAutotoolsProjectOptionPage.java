@@ -38,7 +38,6 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 	public static class ManagedWizardOptionBlock extends ManagedProjectOptionBlock {
 		
 		NewAutotoolsProjectOptionPage parent;
-		IndexerBlock indexBlock;
 		
 
 		public ManagedWizardOptionBlock(NewAutotoolsProjectOptionPage parentPage) {
@@ -68,14 +67,8 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 		 */
 		protected void addTabs() {
 			addTab(new AutotoolsReferenceBlock());
-			// NOTE: The setting of error parsers is commented out here
-			//       because they need to be set per-configuration.
-			//       The other tabs on this page are per-project.
-			//       Error parsers can be selected per configuration in the 
-			//        project properties
-			//errorParsers = new ErrorParserBlock();
-			//addTab(errorParsers);
-			addTab(indexBlock = new IndexerBlock());
+			// Bug 40711 - Remove the IndexerBlock as this causes an exception to occur
+			//             because the project handle isn't set up.  It is not needed.
 		}
 		
 		public void setupHelpContextIds(){

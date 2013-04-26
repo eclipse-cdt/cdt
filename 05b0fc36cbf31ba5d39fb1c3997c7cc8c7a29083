@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//t1U\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/resources/messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2013-04-26T15:56:28Z",
+      "side": 1,
+      "message": "You need to add yourself to the header in this file.",
+      "revId": "05b0fc36cbf31ba5d39fb1c3997c7cc8c7a29083",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

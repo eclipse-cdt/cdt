@@ -22,6 +22,9 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  * ^done,value="10"
  *
  *   Show the current value of a $_exitcode
+ *   
+ *  With GDB 7.3, the exit code is provided by the MI =thread-group-exited event,
+ *  which allows to handle multi-process situations.
  * 
  */
 public class MIGDBShowExitCode extends MIDataEvaluateExpression<MIGDBShowExitCodeInfo> {

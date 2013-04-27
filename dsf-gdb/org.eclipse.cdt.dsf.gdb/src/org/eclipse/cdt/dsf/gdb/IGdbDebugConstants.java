@@ -58,6 +58,13 @@ public interface IGdbDebugConstants {
      * @since 4.1
      */
     public static final String GDB_PROCESS_CREATION_VALUE = PREFIX + "gdbProcess"; //$NON-NLS-1$
-    
+
+    /**
+     * Attribute key that when set, indicates that the inferior process has properly exited,
+     * and its exit value can be used.
+	 * @since 4.2
+	 */
+    public static final String INFERIOR_EXITED_ATTR = PREFIX + "inferiorExited"; //$NON-NLS-1$
+
 }
 

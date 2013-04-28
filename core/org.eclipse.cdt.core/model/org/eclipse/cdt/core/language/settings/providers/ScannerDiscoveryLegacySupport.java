@@ -57,7 +57,7 @@ public class ScannerDiscoveryLegacySupport {
 
 	private static String DISABLE_LSP_PREFERENCE = "language.settings.providers.disabled"; //$NON-NLS-1$
 	//	the default for project needs to be "disabled" - for legacy projects to be open with old SD enabled for MBS provider
-	private static boolean DISABLE_LSP_DEFAULT_PROJECT = true;
+	private static boolean DISABLE_LSP_DEFAULT_PROJECT = false;
 	private static boolean DISABLE_LSP_DEFAULT_WORKSPACE = false;
 	private static final String PREFERENCES_QUALIFIER_CCORE = CCorePlugin.PLUGIN_ID;
 
@@ -202,6 +202,7 @@ public class ScannerDiscoveryLegacySupport {
 			legacyProviderId = PATH_ENTRY_MANAGER_LANGUAGE_SETTINGS_PROVIDER_ID;
 		}
 
+//		legacyProviderId = MBS_LANGUAGE_SETTINGS_PROVIDER_ID;
 		return new String[] {USER_LANGUAGE_SETTINGS_PROVIDER_ID, legacyProviderId};
 	}
 	

@@ -842,7 +842,15 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	ThreadLocal<Boolean> settingProjectDescription = new ThreadLocal<Boolean>(){@Override protected Boolean initialValue() {return false;}};
 	@Override
 	public void setProjectDescription(IProject project, ICProjectDescription des, int flags, IProgressMonitor monitor) throws CoreException {
+		boolean originalState = isCurrentThreadSetProjectDescription();
 		try {
+			if (originalState) { 
+				// Technically this is not critical problem since the recursive setProjectDescription() gets scheduled in background thread.
+				// But it is quite likely to be an error on part of the caller unaware that their listener can be called from inside setProjectDescription().
+				// To avoid the log entry the callers should check CProjectDescriptionManager.isCurrentThreadSetProjectDescription()
+				// and schedule the update in background thread themselves.
+				CCorePlugin.logStackTrace(IStatus.INFO, "Recursive setProjectDescription from event listener, project=" + project); //$NON-NLS-1$
+			}
 			settingProjectDescription.set(true);
 			if(des != null){
 				if (!project.isAccessible())
@@ -864,7 +872,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			}
 			CProjectDescriptionStorageManager.getInstance().setProjectDescription(project, des, flags, monitor);
 		} finally {
-			settingProjectDescription.set(false);
+			settingProjectDescription.set(originalState);
 		}
 	}
 
@@ -2469,7 +2477,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 
 	public boolean isNewStyleCfg(ICConfigurationDescription cfgDes){
-		if(cfgDes == null || cfgDes.isPreferenceConfiguration())
+		if(cfgDes == null)
 			return false;
 
 		CConfigurationData data = ((IInternalCCfgInfo)cfgDes).getConfigurationData(false);

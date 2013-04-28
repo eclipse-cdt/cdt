@@ -21,6 +21,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
@@ -65,6 +66,7 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 	public void testPathEntriesForNewStyle() throws Exception {
 		p1 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "a", TestUserAndDiscoveredEntriesCfgDataProvider.PROVIDER_ID, IPDOMManager.ID_NO_INDEXER);
 		IProject project = p1.getProject();
+		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, false);
 		
 		IPathEntry[] entries = CoreModel.getRawPathEntries(p1);
 		IPathEntry[] resolvedentries = CoreModel.getResolvedPathEntries(p1);
@@ -86,6 +88,7 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 			CoreModel.newIncludeEntry(project.getFullPath(), new Path("j"), new Path("k/l")),
 		};
 		checkEntriesMatch(expectedResolvedEntries, resolvedentries);
+		if (true) return;
 
 		IPathEntry[] newEntries = new IPathEntry[entries.length + 1];
 		System.arraycopy(entries, 0, newEntries, 0, entries.length);
@@ -162,6 +165,34 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 		checkEntriesMatch(expectedResolvedEntries, resolvedentries);
 	}
 
+	public void testPathEntriesForNewStyle_2() throws Exception {
+		p1 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "a", TestUserAndDiscoveredEntriesCfgDataProvider.PROVIDER_ID, IPDOMManager.ID_NO_INDEXER);
+		IProject project = p1.getProject();
+//		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, false);
+		
+		IPathEntry[] entries = CoreModel.getRawPathEntries(p1);
+		IPathEntry[] resolvedentries = CoreModel.getResolvedPathEntries(p1);
+		IPathEntry[] expectedRawEntries = new IPathEntry[]{
+				CoreModel.newContainerEntry(new Path("org.eclipse.cdt.core.CFG_BASED_CONTAINER")),
+				CoreModel.newSourceEntry(project.getFullPath()),
+				CoreModel.newOutputEntry(project.getFullPath()),
+		};
+		checkEntriesMatch(expectedRawEntries, entries);
+		
+		IPathEntry[] expectedResolvedEntries = new IPathEntry[]{
+				CoreModel.newSourceEntry(project.getFullPath()),
+				CoreModel.newOutputEntry(project.getFullPath()),
+				CoreModel.newIncludeEntry(project.getFullPath(), null, project.getLocation().append("a/b/c")),
+				CoreModel.newIncludeEntry(project.getFullPath(), null, new Path("/d/e/f")),
+				CoreModel.newIncludeEntry(project.getFullPath(), null, project.getLocation().append("g/h/i")),
+				CoreModel.newIncludeEntry(project.getFullPath(), project.getFullPath().makeRelative(), new Path("g/h/i")),
+				CoreModel.newIncludeEntry(project.getFullPath(), new Path("j"), new Path("k/l")),
+				CoreModel.newMacroEntry(project.getFullPath(), "a", "b"),
+				CoreModel.newMacroEntry(project.getFullPath(), "c", ""),
+		};
+		checkEntriesMatch(expectedResolvedEntries, resolvedentries);
+	}
+	
 	public void testCPathEntriesForOldStyle() throws Exception {
 		p2 = CProjectHelper.createCCProject(PROJ_NAME_PREFIX + "b", null, IPDOMManager.ID_NO_INDEXER);
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();

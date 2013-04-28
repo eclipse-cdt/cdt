@@ -703,7 +703,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 			// ensure no test provider is set yet but default providers
 			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			assertEquals(ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID, providers.get(0).getId());
-			assertEquals(ScannerDiscoveryLegacySupport.PATH_ENTRY_MANAGER_LANGUAGE_SETTINGS_PROVIDER_ID, providers.get(1).getId());
+			assertEquals(ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER_ID, providers.get(1).getId());
 			assertEquals(2, providers.size());
 		}
 		{

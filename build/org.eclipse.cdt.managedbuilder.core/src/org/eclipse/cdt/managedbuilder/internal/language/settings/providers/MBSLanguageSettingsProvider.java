@@ -12,9 +12,7 @@
 package org.eclipse.cdt.managedbuilder.internal.language.settings.providers;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.cdt.core.AbstractExecutableExtensionBase;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -30,6 +28,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICPathEntry;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.resources.IFile;
@@ -61,7 +60,8 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 			languageSettings = getLanguageSettings(rcDescription);
 		}
 
-		Set<ICLanguageSettingEntry> set = new LinkedHashSet<ICLanguageSettingEntry>();
+		// this list is allowed to contain duplicate entries, cannot be LinkedHashSet
+		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
 
 		if (languageSettings != null) {
 			for (ICLanguageSetting langSetting : languageSettings) {
@@ -87,9 +87,11 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 												if (!new Path(location).isAbsolute()) {
 													IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
 													String projectRootedPath = mngr.generateVariableExpression("workspace_loc", rc.getProject().getName()) + Path.SEPARATOR + pathStr; //$NON-NLS-1$
-													ICLanguageSettingEntry projectRootedEntry = (ICLanguageSettingEntry) CDataUtil.createEntry(kind, projectRootedPath, projectRootedPath, null, entry.getFlags());
-													if (!set.contains(projectRootedEntry)) {
-														set.add(projectRootedEntry);
+													// clear "RESOLVED" flag
+													int flags = entry.getFlags() & ~(ICSettingEntry.RESOLVED | ICSettingEntry.VALUE_WORKSPACE_PATH);
+													ICLanguageSettingEntry projectRootedEntry = (ICLanguageSettingEntry) CDataUtil.createEntry(kind, projectRootedPath, projectRootedPath, null, flags);
+													if (! list.contains(projectRootedEntry)) {
+														list.add(projectRootedEntry);
 													}
 												}
 											} catch (CdtVariableException e) {
@@ -99,8 +101,8 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 											
 										}
 									}
-									if (!set.contains(entry)) {
-										set.add(entry);
+									if (! list.contains(entry)) {
+										list.add(entry);
 									}
 								}
 							}
@@ -109,7 +111,7 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 				}
 			}
 		}
-		return LanguageSettingsStorage.getPooledList(new ArrayList<ICLanguageSettingEntry>(set));
+		return LanguageSettingsStorage.getPooledList(list);
 	}
 
 	/**

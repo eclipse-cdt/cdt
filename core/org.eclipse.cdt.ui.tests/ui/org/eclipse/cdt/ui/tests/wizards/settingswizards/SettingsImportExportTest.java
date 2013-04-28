@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IMessageProvider;
 
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -102,7 +103,9 @@ public class SettingsImportExportTest extends BaseUITestCase {
 	
 	public void testNormalExportImport() throws Exception {
 		ICProject exportProject = CProjectHelper.createCCProject("TempProject1", "unused");
+//		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(exportProject.getProject(), false);
 		ICProject importProject = CProjectHelper.createCCProject("TempProject2", "unused");
+//		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(importProject.getProject(), false);
 		setUpProjectSettings(exportProject);
 		
 		ProjectSettingsWizardPageMock page = new ProjectSettingsWizardPageMock() {

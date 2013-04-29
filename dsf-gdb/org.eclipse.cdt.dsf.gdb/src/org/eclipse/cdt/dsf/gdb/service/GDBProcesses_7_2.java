@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 TUBITAK BILGEM-ITI and others.
+ * Copyright (c) 2010, 2013 TUBITAK BILGEM-ITI and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -311,6 +311,18 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		    							new ImmediateDataRequestMonitor<MIInfo>(rm));
 		                    }
 		                },
+						// Initialize memory data for this process.
+	    				new Step() { 
+	    					@Override
+	    					public void execute(RequestMonitor rm) {
+								IGDBMemory memory = getServicesTracker().getService(IGDBMemory.class);
+								if (memory == null) {
+									rm.done();
+									return;
+								}
+								memory.initializeMemoryData(fContainerDmc, rm);
+	    					}
+	    				},
                     	// Start tracking this process' breakpoints.
 		                new Step() { 
 		                    @Override

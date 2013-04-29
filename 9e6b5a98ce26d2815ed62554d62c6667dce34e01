@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "AABOPX//soc\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-29T23:54:06Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//uAg\u003d",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.java",
         "patchSetId": 10
@@ -36,6 +53,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//snk\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SelectionToDeclarationJob.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-29T23:54:06Z",
+      "side": 1,
+      "message": "Done, \nI am glad you saw this, Very good catch !",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//t94\u003d",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SelectionToDeclarationJob.java",
         "patchSetId": 10
@@ -47,6 +81,23 @@
       "writtenOn": "2013-04-29T20:54:53Z",
       "side": 1,
       "message": "This should be removed or a description should be added.",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//snM\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SelectionToDeclarationJob.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-29T23:54:06Z",
+      "side": 1,
+      "message": "Done\nDescription was added",
       "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -70,6 +121,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//sm8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/Messages.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-29T23:54:06Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//ssc\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/Messages.java",
         "patchSetId": 10
@@ -81,6 +149,23 @@
       "writtenOn": "2013-04-29T20:54:53Z",
       "side": 1,
       "message": "Same here.",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//sm4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/Messages.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-29T23:54:06Z",
+      "side": 1,
+      "message": "Done",
       "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -104,6 +189,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//sm0\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionHyperlinkDetector.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-29T23:54:06Z",
+      "side": 1,
+      "message": "Done\nReformatted the whole file",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//stM\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionHyperlinkDetector.java",
         "patchSetId": 10
@@ -115,6 +217,23 @@
       "writtenOn": "2013-04-29T20:54:53Z",
       "side": 1,
       "message": "It would be cool to support stepping into overloaded operators, this method doesn\u0027t allow that. But I think this could be a separate enhancement.",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//smM\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionHyperlinkDetector.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-04-29T23:54:06Z",
+      "side": 1,
+      "message": "Not sure if I see the problem on this method, as this resolved to a selected text within the editor.  but agress that the feature could be improved to provide a more specific selection validating the argument types, good for a second phase.",
       "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

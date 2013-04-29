@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//s6Y\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/DebugNewProcessSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-29T15:47:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//uvs\u003d",
+      "revId": "7fdbd1ee515545db829f9892eabdb8a102be251b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//uvY\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/DebugNewProcessSequence.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2013-04-24T04:20:34Z",
       "side": 1,
       "message": "Is this line necessary in StartOrRestartProcessSequence_7_0 as well?",
+      "revId": "7fdbd1ee515545db829f9892eabdb8a102be251b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//s6I\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/DebugNewProcessSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-29T15:47:02Z",
+      "side": 1,
+      "message": "The \"start\" part of \u0027StartOrRestartSequence\u0027 is executed in \u0027stepStartExecution\u0027, so the memory for the process is already initialized. As for \"restart\", there is no need of re-initializing the memory since the address size and the endianness don\u0027t change.",
+      "parentUuid": "AABOPX//uvY\u003d",
       "revId": "7fdbd1ee515545db829f9892eabdb8a102be251b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//s6E\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-29T15:47:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//uvo\u003d",
+      "revId": "7fdbd1ee515545db829f9892eabdb8a102be251b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//uvk\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
         "patchSetId": 1
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//s6A\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-29T15:47:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//uvk\u003d",
+      "revId": "7fdbd1ee515545db829f9892eabdb8a102be251b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//uvg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
         "patchSetId": 1
@@ -81,6 +153,24 @@
       "writtenOn": "2013-04-24T04:01:46Z",
       "side": 1,
       "message": "Copyright should be updated to 2013",
+      "revId": "7fdbd1ee515545db829f9892eabdb8a102be251b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//s58\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-04-29T15:47:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//uvg\u003d",
       "revId": "7fdbd1ee515545db829f9892eabdb8a102be251b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

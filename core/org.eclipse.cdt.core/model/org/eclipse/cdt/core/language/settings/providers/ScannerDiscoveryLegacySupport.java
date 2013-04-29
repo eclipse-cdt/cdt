@@ -202,7 +202,6 @@ public class ScannerDiscoveryLegacySupport {
 			legacyProviderId = PATH_ENTRY_MANAGER_LANGUAGE_SETTINGS_PROVIDER_ID;
 		}
 
-//		legacyProviderId = MBS_LANGUAGE_SETTINGS_PROVIDER_ID;
 		return new String[] {USER_LANGUAGE_SETTINGS_PROVIDER_ID, legacyProviderId};
 	}
 	

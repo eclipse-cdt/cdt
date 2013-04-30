@@ -493,6 +493,7 @@ Latin's
 Laurie
 Laurie's
 Lenten
+Linux
 Liz
 Liz's
 Lyle
@@ -2754,6 +2755,7 @@ and
 anded
 anders
 anding
+android
 ands
 anecdotal
 anecdotally
@@ -7965,6 +7967,7 @@ calico
 caliph
 caliphs
 call
+callback
 called
 caller
 caller's
@@ -9824,6 +9827,7 @@ combines
 combing
 combings
 combining
+combo
 combs
 combustion
 combustions
@@ -10014,6 +10018,7 @@ commuters
 commutes
 commuting
 compact
+compaction
 compacted
 compacter
 compacters
@@ -10152,6 +10157,7 @@ complexly
 complexness
 compliance
 compliances
+compliant
 complicate
 complicated
 complicatedly
@@ -10223,6 +10229,7 @@ compression
 compressions
 compressive
 compressively
+compressor
 comprise
 comprised
 comprises
@@ -11701,6 +11708,8 @@ creatureliness
 creaturely
 creatures
 credence
+credential
+credentials
 credibility
 credible
 credibly
@@ -12410,6 +12419,10 @@ dazzlingly
 deacon
 deacon's
 deacons
+deactivate
+deactivates
+deactivated
+deactivating
 dead
 deaden
 deadened
@@ -12625,6 +12638,8 @@ decorations
 decorative
 decoratively
 decorativeness
+decorator
+decorators
 decorum
 decorums
 decouple
@@ -13145,6 +13160,10 @@ depravedness
 depraver
 depraves
 depraving
+deprecate
+deprecated
+deprecates
+deprecating
 depreciate
 depreciated
 depreciates
@@ -14542,6 +14561,7 @@ divining
 divinities
 divinity
 divinity's
+divisible
 division
 division's
 divisions
@@ -14763,6 +14783,9 @@ downfall
 downfallen
 downier
 downing
+download
+downloading
+downloads
 downplay
 downplayed
 downplaying
@@ -15304,6 +15327,7 @@ edifice
 edifice's
 edifices
 edit
+editable
 edited
 editing
 edition
@@ -16211,6 +16235,7 @@ equatorial
 equators
 equilibrium
 equilibriums
+equinox
 equip
 equipment
 equipments
@@ -18590,6 +18615,7 @@ fragilely
 fragment
 fragmentariness
 fragmentary
+fragmentation
 fragmented
 fragmenting
 fragments
@@ -19652,6 +19678,9 @@ goodness
 goods
 goody
 goody's
+google
+googles
+googling
 goose
 gooses
 goosing
@@ -20956,6 +20985,7 @@ hewer
 hewing
 hews
 hex
+hexadecimal
 hexagonal
 hexagonally
 hexer
@@ -23437,6 +23467,7 @@ intermingle
 intermingled
 intermingles
 intermingling
+intermission
 intermittent
 intermittently
 intermix
@@ -24311,6 +24342,7 @@ kicked
 kicker
 kickers
 kicking
+kickoff
 kicks
 kid
 kid's
@@ -25439,6 +25471,7 @@ lobster
 lobster's
 lobsters
 local
+locale
 localities
 locality
 locality's
@@ -25499,6 +25532,7 @@ log
 log's
 logarithm
 logarithm's
+logarithmic
 logarithmically
 logarithms
 logged
@@ -27223,6 +27257,7 @@ moat's
 moats
 mob
 mob's
+mobile
 mobility
 mobs
 moccasin
@@ -28489,6 +28524,7 @@ nowheres
 nows
 nroff
 nroff's
+nth
 nuances
 nuclear
 nucleotide
@@ -30755,6 +30791,7 @@ pig's
 pigeon
 pigeon's
 pigeons
+piggyback
 pigment
 pigmented
 pigments
@@ -30936,6 +30973,7 @@ placard's
 placards
 place
 placed
+placeholder
 placement
 placement's
 placements
@@ -32292,6 +32330,7 @@ program
 program's
 programmability
 programmable
+programmatic
 programmed
 programmer
 programmer's
@@ -33683,6 +33722,7 @@ reawaken
 reawakened
 reawakening
 reawakens
+rebase
 rebate
 rebate's
 rebated
@@ -34389,6 +34429,7 @@ registers
 registration
 registration's
 registrations
+registry
 regreets
 regress
 regressed
@@ -36886,6 +36927,8 @@ screener
 screening
 screenings
 screens
+screenshot
+screenshots
 screw
 screwed
 screwer
@@ -37295,6 +37338,7 @@ separative
 separator
 separator's
 separators
+septic
 sequel
 sequel's
 sequels
@@ -38683,6 +38727,7 @@ sniffed
 sniffer
 sniffing
 sniffs
+snippet
 snoop
 snooped
 snooper
@@ -43571,6 +43616,7 @@ typing
 typist
 typist's
 typists
+typo
 typographic
 typographical
 typographically
@@ -44997,6 +45043,7 @@ up
 upbraid
 upbraider
 upbringing
+upcoming
 update
 updated
 updater
@@ -45418,6 +45465,7 @@ verb
 verb's
 verbal
 verbally
+verbatim
 verbose
 verbosely
 verboseness
@@ -45906,6 +45954,7 @@ waker
 wakes
 waking
 walk
+walkable
 walked
 walker
 walkers
@@ -46349,6 +46398,7 @@ while
 whiled
 whiles
 whiling
+whilst
 whim
 whim's
 whimper
@@ -46710,6 +46760,7 @@ woeful
 woefully
 woeness
 woke
+woken
 wolf
 wolfer
 wolves
@@ -46839,6 +46890,8 @@ works
 workshop
 workshop's
 workshops
+workspace
+workspaces
 workstation
 workstation's
 workstations
@@ -47373,6 +47426,7 @@ calibers
 canaled
 canaling
 canceled
+cancelled
 canceler
 canceling
 candor
@@ -49281,6 +49335,7 @@ institutionalizations
 internationalization
 internationalization's
 internationalizations
+internationalize
 internationalized
 ionize
 ionized
@@ -49750,3 +49805,5 @@ Sat
 Sun
 initially
 I
+formatter:off
+formatter:on

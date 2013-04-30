@@ -44,6 +44,7 @@ import org.junit.runners.Suite;
 	PostMortemCoreTest_6_8.class,
 	CommandTimeoutTest_6_8.class,
 	Suite_Sessionless_Tests.class,
+	StepIntoSelectionTest_6_8.class,
 	/* Add your test class here */
 })
 

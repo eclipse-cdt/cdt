@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,14 +29,6 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 		"ifeq", "ifneq", "else", "endif", "include", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		"-include", "sinclude", "override", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		"export", "unexport", "vpath" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	};
-
-	private final static String[] functions = { "subst", "patsubst", "strip", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		"findstring", "filter", "sort", "dir", "notdir", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		"suffix", "basename", "addsuffix", "addprefix", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		"join", "word", "words", "wordlist", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		"firstword", "wildcard", "error", "warning", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		"shell", "origin", "foreach", "call" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	};
 
 	public static final String[] fTokenProperties = new String[] {
@@ -97,18 +89,7 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 		keyWordRule.setColumnConstraint(0);
 		rules.add(keyWordRule);
 
-		WordRule functionRule = new WordRule(new IWordDetector() {
-			@Override
-			public boolean isWordPart(char c) {
-				return Character.isLetterOrDigit(c) || c == '_';
-			}
-			@Override
-			public boolean isWordStart(char c) {
-				return Character.isLetterOrDigit(c) || c == '_';
-			}}, other);
-		for (int i = 0; i < functions.length; i++)
-			functionRule.addWord(functions[i], function);
-		rules.add(functionRule);
+		rules.add(new FunctionReferenceRule(function));
 
 		rules.add(new MacroReferenceRule(macroRef, "$(", ")")); //$NON-NLS-1$ //$NON-NLS-2$
 		rules.add(new MacroReferenceRule(macroRef, "${", "}")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -118,9 +99,6 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 		return rules;
 	}
 
-	/*
-	 * @see AbstractMakefileCodeScanner#getTokenProperties()
-	 */
 	@Override
 	protected String[] getTokenProperties() {
 		return fTokenProperties;

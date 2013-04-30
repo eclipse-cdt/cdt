@@ -2088,6 +2088,20 @@
             class="org.eclipse.cdt.debug.internal.ui.commands.DebugNewExecutableHandler"
             commandId="org.eclipse.cdt.debug.ui.command.debugNewExecutable">
       </handler>
+      <handler
+           class="org.eclipse.cdt.debug.internal.ui.commands.StepIntoSelectionCommandHandler"
+           commandId="org.eclipse.cdt.debug.ui.command.StepIntoSelection">
+           <enabledWhen>
+             <and>
+               <with
+                   variable="activeEditor">
+                  <instanceof
+                      value="org.eclipse.ui.texteditor.ITextEditor">
+                  </instanceof>
+               </with>
+             </and>
+           </enabledWhen>
+      </handler>   
  </extension>
  <extension
          point="org.eclipse.core.expressions.definitions">
@@ -2180,6 +2194,10 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="SHIFT+F7">
       </key>
+      <key sequence="M1+F5"
+            contextId="org.eclipse.cdt.debug.ui.debugging"
+            commandId="org.eclipse.cdt.debug.ui.command.StepIntoSelection"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
  </extension>
  <extension
        point="org.eclipse.ui.commands">
@@ -2190,6 +2208,13 @@
           helpContextId="breakpoint_properties_action_context"
           id="org.eclipse.cdt.debug.command.breakpointProperties"
           name="%BreakpointPropertiesCommand.name">
+    </command>
+    <command
+          categoryId="org.eclipse.debug.ui.category.run"
+          description="%popup.stepIntoSelection.description"
+          helpContextId="step_into_selection_action_context"
+          id="org.eclipse.cdt.debug.ui.command.StepIntoSelection"
+          name="%popup.stepIntoSelection.name">
     </command>
  </extension>
  <extension
@@ -2572,6 +2597,52 @@
                style="push"
                tooltip="%Connect.tooltip">
          </command>
+         
+       <!-- Step Into Selection debugging contributions -->  
+       </menuContribution>
+              <menuContribution
+             locationURI="menu:org.eclipse.ui.run?endof=emptyStepGroup">
+          <command
+                commandId="org.eclipse.cdt.debug.ui.command.StepIntoSelection"
+                style="push">
+                <visibleWhen
+                   checkEnabled="false">
+                <and>
+                   <systemTest
+                         property="org.eclipse.cdt.debug.ui.debuggerActive"
+                         value="true">
+                   </systemTest>
+                   <with
+                   		variable="activeEditor">
+                		<instanceof
+                      		value="org.eclipse.ui.texteditor.ITextEditor">
+                		</instanceof>
+             		</with>
+                </and>
+             </visibleWhen>
+          </command>
+       </menuContribution>
+              <menuContribution
+             locationURI="popup:#CEditorContext?before=additions">
+          <command
+                commandId="org.eclipse.cdt.debug.ui.command.StepIntoSelection"
+                style="push">
+             <visibleWhen
+                   checkEnabled="false">
+                <and>
+                   <systemTest
+                         property="org.eclipse.cdt.debug.ui.debuggerActive"
+                         value="true">
+                   </systemTest>
+                   <with
+                   		variable="activeEditor">
+                		<instanceof
+                      		value="org.eclipse.ui.texteditor.ITextEditor">
+                		</instanceof>
+             		</with>
+                </and>
+             </visibleWhen>
+          </command>
        </menuContribution>
  </extension>
  

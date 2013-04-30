@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//sbA\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SelectionToDeclarationJob.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-04-30T14:51:59Z",
+      "side": 1,
+      "message": "I\u0027m getting a javadoc warning here:\nJavadoc: Description expected after @return",
+      "revId": "43ee670d3991f8f720a79da25b4412315251cc79",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//saw\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-04-30T14:51:59Z",
+      "side": 1,
+      "message": "Unnecessary $NON-NLS$ tag",
+      "revId": "43ee670d3991f8f720a79da25b4412315251cc79",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

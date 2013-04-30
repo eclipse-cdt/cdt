@@ -22,10 +22,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -339,7 +342,19 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 			fUserDictionary= null;
 		}
 
-		final String filePath= SpellingPreferences.getSpellingUserDictionary();
+		String filePath= SpellingPreferences.getSpellingUserDictionary();
+
+		VariablesPlugin variablesPlugin= VariablesPlugin.getDefault();
+		if (variablesPlugin == null)
+			return;
+
+		IStringVariableManager variableManager= variablesPlugin.getStringVariableManager();
+		try {
+			filePath= variableManager.performStringSubstitution(filePath);
+		} catch (CoreException e) {
+			CUIPlugin.log(e);
+			return;
+		}
 		if (filePath.length() > 0) {
 			try {
 				File file= new File(filePath);

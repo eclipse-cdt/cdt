@@ -76,14 +76,16 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 		checkEntriesMatch(expectedRawEntries, entries);
 		
 		IPathEntry[] expectedResolvedEntries = new IPathEntry[]{
-			CoreModel.newSourceEntry(project.getFullPath()),
-			CoreModel.newOutputEntry(project.getFullPath()),
-			CoreModel.newMacroEntry(project.getFullPath(), "a", "b"),
-			CoreModel.newMacroEntry(project.getFullPath(), "c", ""),
-			CoreModel.newIncludeEntry(project.getFullPath(), null, project.getLocation().append("a/b/c")),
-			CoreModel.newIncludeEntry(project.getFullPath(), null, new Path("/d/e/f")),
-			CoreModel.newIncludeEntry(project.getFullPath(), project.getFullPath().makeRelative(), new Path("g/h/i")),
-			CoreModel.newIncludeEntry(project.getFullPath(), new Path("j"), new Path("k/l")),
+				CoreModel.newSourceEntry(project.getFullPath()),
+				CoreModel.newOutputEntry(project.getFullPath()),
+				CoreModel.newIncludeEntry(project.getFullPath(), null, project.getLocation().append("a/b/c")),
+				CoreModel.newIncludeEntry(project.getFullPath(), null, new Path("/d/e/f")),
+				// Relative path with VALUE_WORKSPACE_PATH generates 2 entries, see MBSLanguageSettingsProvider
+				CoreModel.newIncludeEntry(project.getFullPath(), null, project.getLocation().append("g/h/i")),
+				CoreModel.newIncludeEntry(project.getFullPath(), project.getFullPath().makeRelative(), new Path("g/h/i")),
+				CoreModel.newIncludeEntry(project.getFullPath(), new Path("j"), new Path("k/l")),
+				CoreModel.newMacroEntry(project.getFullPath(), "a", "b"),
+				CoreModel.newMacroEntry(project.getFullPath(), "c", ""),
 		};
 		checkEntriesMatch(expectedResolvedEntries, resolvedentries);
 

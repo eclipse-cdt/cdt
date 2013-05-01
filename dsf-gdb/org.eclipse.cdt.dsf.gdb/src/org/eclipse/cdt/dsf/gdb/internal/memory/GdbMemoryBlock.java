@@ -26,12 +26,17 @@ import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces.IMemorySpaceDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBMemory;
+import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.MemoryByte;
 
 /**
@@ -287,5 +292,20 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 		}
 		
 		throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, Messages.Err_MemoryServiceNotAvailable, null));
+	}
+
+	@Override
+	@DsfServiceEventHandler
+	public void eventDispatched(ISuspendedDMEvent e) {
+		super.eventDispatched(e);
+		if (e.getReason() == StateChangeReason.BREAKPOINT ||
+			e.getReason() == StateChangeReason.EVENT_BREAKPOINT ||
+			e.getReason() == StateChangeReason.WATCHPOINT) {
+			// If the session is suspended because of a breakpoint we need to 
+			// fire DebugEvent.SUSPEND to force update for the "On Breakpoint" update mode.
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=406999. 
+			DebugEvent debugEvent = new DebugEvent(this, DebugEvent.SUSPEND, DebugEvent.BREAKPOINT);
+			DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] { debugEvent });
+		}
 	}
 }

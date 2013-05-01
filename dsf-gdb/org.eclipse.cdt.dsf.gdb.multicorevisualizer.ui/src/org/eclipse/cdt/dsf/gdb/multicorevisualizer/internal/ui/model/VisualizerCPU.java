@@ -8,6 +8,7 @@
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
+ *     Marc Dumais (Ericsson) -  Bug 405390
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
@@ -23,7 +24,7 @@ import java.util.List;
 
 /** Represents single CPU. */
 public class VisualizerCPU
-	implements Comparable<VisualizerCPU>
+	implements Comparable<VisualizerCPU>, IVisualizerModelObject
 {
 	// --- members ---
 	
@@ -78,8 +79,15 @@ public class VisualizerCPU
 	// --- accessors ---
 	
 	/** Gets ID of this CPU. */
+	@Override
 	public int getID() {
 		return m_id;
+	}
+	
+	/** CPU had no parent */
+	@Override
+	public IVisualizerModelObject getParent() {
+		return null;
 	}
 	
 	/** sets the load info for this CPU 

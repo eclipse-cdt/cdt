@@ -72,6 +72,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/Messages.java" type="org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view.Messages">
+        <filter comment="Multicore Visualizer was meant to be internal" id="305365105">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view.Messages"/>
+                <message_argument value="org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui_1.1.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java" type="org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view.MulticoreVisualizer">
         <filter comment="Multicore Visualizer was meant to be internal" id="305365105">
             <message_arguments>

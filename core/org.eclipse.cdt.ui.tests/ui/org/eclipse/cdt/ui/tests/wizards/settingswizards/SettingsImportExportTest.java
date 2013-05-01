@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IMessageProvider;
 
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -101,8 +102,8 @@ public class SettingsImportExportTest extends BaseUITestCase {
 	
 	
 	public void testNormalExportImport() throws Exception {
-		ICProject exportProject = CProjectHelper.createCCProject("TempProject1", "unused");
-		ICProject importProject = CProjectHelper.createCCProject("TempProject2", "unused");
+		ICProject exportProject = CProjectHelper.createNewStileCProject("TempProject1", IPDOMManager.ID_NO_INDEXER);
+		ICProject importProject = CProjectHelper.createNewStileCProject("TempProject2", IPDOMManager.ID_NO_INDEXER);
 		setUpProjectSettings(exportProject);
 		
 		ProjectSettingsWizardPageMock page = new ProjectSettingsWizardPageMock() {
@@ -164,7 +165,7 @@ public class SettingsImportExportTest extends BaseUITestCase {
 		String filePath = getFilePath("test.txt");
 		createFile(xmlContent, filePath);
 		
-		ICProject project = CProjectHelper.createCCProject("VaidateProject", "unused");
+		ICProject project = CProjectHelper.createNewStileCProject("VaidateProject", IPDOMManager.ID_NO_INDEXER);
 		
 		ICProjectDescription desc = CoreModel.getDefault().getProjectDescription(project.getProject(), false);
 		ICConfigurationDescription config = desc.getActiveConfiguration();

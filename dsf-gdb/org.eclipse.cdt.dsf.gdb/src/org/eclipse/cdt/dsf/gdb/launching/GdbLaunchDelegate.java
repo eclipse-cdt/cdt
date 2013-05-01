@@ -143,7 +143,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         	checkBinaryDetails(config);
         }
     	
-        monitor.worked( 1 );
+        monitor.worked(1);
 
         // Must set this here for users that call directly the deprecated newServiceFactory(String)
         fIsNonStopSession = LaunchUtils.getIsNonStopMode(config);
@@ -153,12 +153,14 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         // First make sure non-stop is supported, if the user want to use this mode
         if (LaunchUtils.getIsNonStopMode(config) && !isNonStopSupportedInGdbVersion(gdbVersion)) {
 			cleanupLaunch();
-            throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Non-stop mode is only supported starting with GDB " + NON_STOP_FIRST_VERSION, null)); //$NON-NLS-1$        	
+            throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
+            		"Non-stop mode is not supported for GDB " + gdbVersion + ", GDB " + NON_STOP_FIRST_VERSION + " or higher is required.", null)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$        	
         }
 
         if (LaunchUtils.getIsPostMortemTracing(config) && !isPostMortemTracingSupportedInGdbVersion(gdbVersion)) {
 			cleanupLaunch();
-            throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Post-mortem tracing is only supported starting with GDB " + TRACING_FIRST_VERSION, null)); //$NON-NLS-1$        	
+            throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
+            		"Post-mortem tracing is not supported for GDB " + gdbVersion + ", GDB " + NON_STOP_FIRST_VERSION + " or higher is required.", null)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$        	
         }
 
         launch.setServiceFactory(newServiceFactory(config, gdbVersion));

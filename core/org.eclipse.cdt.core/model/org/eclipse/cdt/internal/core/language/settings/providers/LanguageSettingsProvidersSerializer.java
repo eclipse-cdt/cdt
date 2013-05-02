@@ -788,7 +788,7 @@ public class LanguageSettingsProvidersSerializer {
 
 			String[] defaultIds = ((ILanguageSettingsProvidersKeeper) cfgDescription).getDefaultLanguageSettingsProvidersIds();
 			if (defaultIds == null) {
-				defaultIds = new String[0];
+				defaultIds = ScannerDiscoveryLegacySupport.getDefaultProviderIdsLegacy(cfgDescription);
 			}
 
 			// check size

@@ -172,13 +172,12 @@
              markerSeverity="2"
              markerType="org.eclipse.cdt.codan.core.codanProblem"
              name="org.eclipse.cdt.codan.ui.annotation.error"
-             super="org.eclipse.ui.workbench.texteditor.error">
+             >
        </type>
        <type
              markerSeverity="1"
              markerType="org.eclipse.cdt.codan.core.codanProblem"
-             name="org.eclipse.cdt.codan.ui.annotation.warning"
-             super="org.eclipse.ui.workbench.texteditor.warning">
+             name="org.eclipse.cdt.codan.ui.annotation.warning">
        </type>
        <type
              markerSeverity="0"
@@ -191,6 +190,16 @@
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
       		annotationType="org.eclipse.cdt.codan.ui.annotation.error"
+      		colorPreferenceValue="255,0,0"
+      		colorPreferenceKey="org.eclipse.cdt.codan.ui.annotation.error.color"
+      		overviewRulerPreferenceKey="org.eclipse.cdt.codan.ui.annotation.error.overview"
+            overviewRulerPreferenceValue="true"
+            textPreferenceKey="org.eclipse.cdt.codan.ui.annotation.error.text"
+	        textPreferenceValue="true"
+	        textStylePreferenceKey="org.eclipse.cdt.codan.ui.annotation.error.textstyle"
+	        textStylePreferenceValue="SQUIGGLES"
+	        verticalRulerPreferenceKey="org.eclipse.cdt.codan.ui.annotation.error.ruler"
+	        verticalRulerPreferenceValue="true"
             label="%marker.editor.error"
             icon="icons/red_bug.gif"
             quickFixIcon="icons/red_bug_assist.gif"
@@ -198,6 +207,16 @@
       </specification>
             <specification
       		annotationType="org.eclipse.cdt.codan.ui.annotation.warning"
+      		colorPreferenceValue="255,255,0"
+      		colorPreferenceKey="org.eclipse.cdt.codan.ui.annotation.warning.color"
+			overviewRulerPreferenceKey="org.eclipse.cdt.codan.ui.annotation.warning.overview"
+            overviewRulerPreferenceValue="true"
+            textPreferenceKey="org.eclipse.cdt.codan.ui.annotation.warning.text"
+	        textPreferenceValue="true"
+	        textStylePreferenceKey="org.eclipse.cdt.codan.ui.annotation.error.textstyle"
+	        textStylePreferenceValue="SQUIGGLES"
+	        verticalRulerPreferenceKey="org.eclipse.cdt.codan.ui.annotation.warning.ruler"
+	        verticalRulerPreferenceValue="true"
             label="%marker.editor.warning"
             icon="icons/yellow_bug.gif"
             quickFixIcon="icons/yellow_bug_assist.gif"

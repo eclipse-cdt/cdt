@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//rhY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-05-02T19:03:28Z",
+      "side": 1,
+      "message": "Oups - just noticed I left this method there, when it\u0027s no longer necessary with latest design.  Will remove.",
+      "revId": "c0f92a192a6552cb87aa8b88f8de5b5b82e5e01c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

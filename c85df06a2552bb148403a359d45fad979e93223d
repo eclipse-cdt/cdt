@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//rkQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/DebugNewProcessSequence.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-05-02T17:14:42Z",
+      "side": 1,
+      "message": "For all the attach cases you do the InitializeMemoryFirst and trackBreakpoints after.  Here you do the reverse.  Not a big deal, but I wondered if there is a reason?",
+      "revId": "c85df06a2552bb148403a359d45fad979e93223d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rlE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-05-02T17:14:42Z",
+      "side": 1,
+      "message": "Just a thought on an improvement.  We could make fIsBigEndian an Integer, and then only send the readEndianness command if fIsBigEndian is null.  That way we won\u0027t be sending it for each process when we assume all processes have the same endianness.",
+      "revId": "c85df06a2552bb148403a359d45fad979e93223d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rk0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-05-02T17:14:42Z",
+      "side": 1,
+      "message": "Why wrap rm in an extra ImmediateRM?  I don\u0027t think it adds anything...",
+      "revId": "c85df06a2552bb148403a359d45fad979e93223d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rkk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-05-02T17:14:42Z",
+      "side": 1,
+      "message": "This must be rm1.done().  I only noticed by luck.  I suggest renaming rm to something like \u0027dataRm\u0027 or \u0027finalRm\u0027 and rm1 to rm.  Names that are too similar tend to cause such problems :)",
+      "revId": "c85df06a2552bb148403a359d45fad979e93223d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rkU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-05-02T17:14:42Z",
+      "side": 1,
+      "message": "This must be rm1.  Things do work as is but I believe the sequence is left hanging.",
+      "revId": "c85df06a2552bb148403a359d45fad979e93223d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rlg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-05-02T17:14:42Z",
+      "side": 1,
+      "message": "Shouldn\u0027t the context be IMemoryDMContext, to match the other methods?",
+      "revId": "c85df06a2552bb148403a359d45fad979e93223d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

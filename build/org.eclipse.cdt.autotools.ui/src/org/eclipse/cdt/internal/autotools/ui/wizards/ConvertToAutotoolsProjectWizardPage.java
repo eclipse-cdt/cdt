@@ -111,8 +111,15 @@ public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPag
 	public void convertProject(IProject project, IProgressMonitor monitor, String projectID) throws CoreException {
 		monitor.beginTask(AutotoolsUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 7); //$NON-NLS-1$
 		IConfiguration defaultCfg = null;
+		Boolean convertingNewAutotoolsProject = false;
 		try {
 			super.convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
+			// Bug 289834 - Converting C Autotools project to C++ loses configurations
+			if (project.hasNature(AutotoolsNewProjectNature.AUTOTOOLS_NATURE_ID)) {
+				convertingNewAutotoolsProject = true;  // set this for finally clause
+				return; // We have converted C to C++ or vice-versa for an existing Autotools project and are done
+			}
+			// Otherwise, we must scrap existing configurations as they will have tool settings we cannot use
 			monitor.subTask(AutotoolsUIPlugin.getResourceString(MSG_ADD_NATURE));
 			ManagedCProjectNature.addManagedNature(project, new SubProgressMonitor(monitor, 1));
 			AutotoolsNewProjectNature.addAutotoolsNature(project, new SubProgressMonitor(monitor, 1));
@@ -196,19 +203,21 @@ public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPag
 				ManagedBuildManager.saveBuildInfo(project, true);
 			}
 		} finally {
-			// Create a default Autotools configuration and save it.
-			// We must do this after the ManagedBuildManager does a save because
-			// we might not yet have a Configuration Description set up for the
-			// default configuration and we need the id to create our own form
-			// of configuration.
-			ICConfigurationDescription cfgd = ManagedBuildManager.getDescriptionForConfiguration(defaultCfg);
-			String id = cfgd.getId();
-			AutotoolsConfigurationManager.getInstance().getConfiguration(project, id, true);
-			AutotoolsConfigurationManager.getInstance().saveConfigs(project);
-			IStatus initResult = ManagedBuildManager.initBuildInfoContainer(project);
-			if (initResult.getCode() != IStatus.OK) {
-				// At this point, I can live with a failure
-				AutotoolsUIPlugin.log(initResult);
+			if (!convertingNewAutotoolsProject) { // Bug 289834 - don't create new config if switching between C and C++
+				// Create a default Autotools configuration and save it.
+				// We must do this after the ManagedBuildManager does a save because
+				// we might not yet have a Configuration Description set up for the
+				// default configuration and we need the id to create our own form
+				// of configuration.
+				ICConfigurationDescription cfgd = ManagedBuildManager.getDescriptionForConfiguration(defaultCfg);
+				String id = cfgd.getId();
+				AutotoolsConfigurationManager.getInstance().getConfiguration(project, id, true);
+				AutotoolsConfigurationManager.getInstance().saveConfigs(project);
+				IStatus initResult = ManagedBuildManager.initBuildInfoContainer(project);
+				if (initResult.getCode() != IStatus.OK) {
+					// At this point, I can live with a failure
+					AutotoolsUIPlugin.log(initResult);
+				}
 			}
 			monitor.done();
 		}

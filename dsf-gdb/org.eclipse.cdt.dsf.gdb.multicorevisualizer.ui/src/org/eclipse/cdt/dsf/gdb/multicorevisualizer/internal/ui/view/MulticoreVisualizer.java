@@ -11,6 +11,7 @@
  *     Marc Dumais (Ericsson) - Bug 399281
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *     Marc Dumais (Ericsson) - Bug 399419
+ *     Marc Dumais (Ericsson) - Bug 405390
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.dsf.gdb.launching.GDBProcess;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.MulticoreVisualizerUIPlugin;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.EnableLoadMetersAction;
+import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.FilterCanvasAction;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.RefreshAction;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.SelectAllAction;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.SetLoadMeterPeriodAction;
@@ -197,6 +199,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	/** Menu action */
 	List<SetLoadMeterPeriodAction> m_setLoadMeterPeriodActions = null;
 	
+	/** Menu action */
+	FilterCanvasAction m_setFilterAction = null;
+	FilterCanvasAction m_clearFilterAction = null;	
 
 	// --- constructors/destructors ---
 	
@@ -339,6 +344,28 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		return (MulticoreVisualizerCanvas) getCanvas();
 	}
 	
+	/** Returns the current canvas selection */
+	public ISelection getCanvasSelection() {
+		return m_canvas.getSelection();
+	}
+	
+	/** Sets-up a canvas filter */
+	public void applyCanvasFilter() {
+		m_canvas.applyFilter();
+		refresh();
+	}
+	
+	/** Removes current canvas filter */
+	public void clearCanvasFilter() {
+		m_canvas.clearFilter();
+		refresh();
+	}
+
+	/** Tells if a canvas filter is in effect */
+	public boolean isCanvasFilterActive() {
+		return m_canvas.isFilterActive();
+	}
+	
 	/** Return the data model backing this multicore visualizer */
 	public VisualizerModel getModel() {
 		return fDataModel;
@@ -415,6 +442,16 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		defaultAction.setChecked(true);
 		defaultAction.run();
 		
+		// canvas filter actions - they will be dynamically enabled/disabled
+		// according to canvas selection
+		m_setFilterAction = new FilterCanvasAction(true);
+		m_setFilterAction.init(this);
+		m_setFilterAction.setEnabled(false);
+
+		m_clearFilterAction = new FilterCanvasAction(false);
+		m_clearFilterAction.init(this);
+		m_clearFilterAction.setEnabled(false);
+		
 		// Note: debug view may not be initialized at startup,
 		// so we'll pretend the actions are not yet updated,
 		// and reinitialize them later.
@@ -429,6 +466,13 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		boolean enabled = hasSelection();
 		m_selectAllAction.setEnabled(enabled);
 		m_refreshAction.setEnabled(enabled);
+				
+		// enable "filter-to selection" menu item if there is a 
+		// canvas selection
+		m_setFilterAction.setEnabled(m_canvas.hasSelection());
+		
+		// enable "Clear filter" menu item if filter is active
+		m_clearFilterAction.setEnabled(isCanvasFilterActive());
 		
     	// show the load meter refresh speed sub-menu only 
     	// if the load meters are enabled
@@ -515,6 +559,16 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			m_setLoadMeterPeriodActions = null;
 		}
 		
+		if (m_setFilterAction != null) {
+			m_setFilterAction.dispose();
+			m_setFilterAction = null;
+		}
+
+		if (m_clearFilterAction != null) {
+			m_clearFilterAction.dispose();
+			m_clearFilterAction = null;
+		}
+
 		m_actionsInitialized = false;
 	}
 
@@ -591,6 +645,11 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		for (SetLoadMeterPeriodAction act : m_setLoadMeterPeriodActions) {
 			m_loadMetersRefreshSubSubmenu.add(act);
 		}
+		
+		// add filtering options
+		menuManager.add(m_separatorAction);
+		menuManager.add(m_setFilterAction);
+		menuManager.add(m_clearFilterAction);
 		
 		updateActions();
 		Point location = m_viewer.getContextMenuLocation();

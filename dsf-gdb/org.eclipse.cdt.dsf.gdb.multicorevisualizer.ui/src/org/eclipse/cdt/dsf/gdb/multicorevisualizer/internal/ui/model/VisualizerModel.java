@@ -127,6 +127,21 @@ public class VisualizerModel
 		return m_cpus.size();
 	}
 	
+	/** Gets number of cores. */
+	public int getCoreCount() {
+		int count = 0;
+		
+		for(VisualizerCPU cpu : m_cpus) {
+			count += cpu.getCoreCount();
+		}
+		return count;
+	}
+	
+	/** Gets number of threads. */
+	public int getThreadCount () {
+		return m_threads.size();
+	}
+	
 	/** Gets CPU with specified ID. */
 	public VisualizerCPU getCPU(int id) {
 		return m_cpuMap.get(id);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Marc-Andre Laperle
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.mi.core.output;
@@ -49,8 +50,16 @@ public class MIDataListRegisterNamesInfo extends MIInfo {
 					String var = results[i].getVariable();
 					if (var.equals("register-names")) { //$NON-NLS-1$
 						MIValue value = results[i].getMIValue();
+						MIValue[] values = null; 
+						if (value instanceof MITuple) {
+							values = ((MITuple) value).getMIValues();
+						}
 						if (value instanceof MIList) {
-							parseRegisters((MIList) value, aList);
+							values = ((MIList) value).getMIValues();
+						}
+						
+						if (values != null) {
+							parseRegisters(values, aList);
 						}
 					}
 				}
@@ -59,8 +68,7 @@ public class MIDataListRegisterNamesInfo extends MIInfo {
 		names = (String[]) aList.toArray(new String[aList.size()]);
 	}
 
-	void parseRegisters(MIList list, List aList) {
-		MIValue[] values = list.getMIValues();
+	void parseRegisters(MIValue[] values, List aList) {
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] instanceof MIConst) {
 				String str = ((MIConst) values[i]).getCString();

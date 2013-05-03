@@ -140,10 +140,10 @@ public class EvalBinary extends CPPDependentEvaluation {
 		}
 
 		IValue v1 = fArg1.getValue(point);
-		if (v1 == Value.UNKNOWN)
+		if (v1 == null || v1 == Value.UNKNOWN)
 			return Value.UNKNOWN;
 		IValue v2 = fArg2.getValue(point);
-		if (v2 == Value.UNKNOWN)
+		if (v2 == null || v2 == Value.UNKNOWN)
 			return Value.UNKNOWN;
 
 		switch (fOperator) {

@@ -18,7 +18,6 @@ import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWhitespaceDetector;
 import org.eclipse.jface.text.rules.IWordDetector;
-import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
@@ -65,11 +64,6 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 				return Character.isWhitespace(character);
 			}
 		}, defaultToken));
-
-		// Put before the the word rules
-		MultiLineRule defineRule = new MultiLineRule("define", "endef", macroDefToken); //$NON-NLS-1$ //$NON-NLS-2$
-		defineRule.setColumnConstraint(0);
-		rules.add(defineRule);
 
 		rules.add(new MacroDefinitionRule(macroDefToken, Token.UNDEFINED));
 

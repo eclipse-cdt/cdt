@@ -43,7 +43,7 @@ public class FunctionReferenceRule extends WordRule {
 		}
 		@Override
 		public boolean isWordPart(char c) {
-			return !isClosedBracket && (c == '(' || Character.isJavaIdentifierPart(c));
+			return !isClosedBracket && (c == '(' || Character.isJavaIdentifierPart(c) || c == '-');
 		}
 	}
 

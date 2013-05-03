@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//rPY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/FilterCanvasAction.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2013-05-03T16:02:35Z",
+      "side": 1,
+      "message": "m_enable should really be something like m_haveFilter, etc. since it\u0027s not controlling enabling, it\u0027s controlling what label is displayed.",
+      "revId": "d7d95927bea860c16ebfda9566d9df540819cc68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rPU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerModel.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2013-05-03T16:02:35Z",
+      "side": 1,
+      "message": "You\u0027ve been adding a new header entry for each bug elsewhere.\nI\u0027m not sure what the specific policy is, beyond adding yourself as a contributor, but you should be consistent.",
+      "revId": "d7d95927bea860c16ebfda9566d9df540819cc68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rPI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2013-05-03T16:02:35Z",
+      "side": 1,
+      "message": "Technically, you should have a separate Javadoc comment for each member; the single comment won\u0027t apply to both.",
+      "revId": "d7d95927bea860c16ebfda9566d9df540819cc68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rPE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvasFilter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2013-05-03T16:02:35Z",
+      "side": 1,
+      "message": "Comments on class members/methods should be /** Javadoc */ comments.",
+      "revId": "d7d95927bea860c16ebfda9566d9df540819cc68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rPA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvasFilter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2013-05-03T16:02:35Z",
+      "side": 1,
+      "message": "Just a reminder, there should be a separate /** Javadoc */ comment for each member, for proper doc generation.",
+      "revId": "d7d95927bea860c16ebfda9566d9df540819cc68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rO8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvasFilter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2013-05-03T16:02:35Z",
+      "side": 1,
+      "message": "Minor formatting suggestion: I generally don\u0027t put a space between the method name and open paren, since it helps distinguish method calls from variables in code.",
+      "revId": "d7d95927bea860c16ebfda9566d9df540819cc68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rO4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvasFilter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2013-05-03T16:02:35Z",
+      "side": 1,
+      "message": "Suggestion: I use // comments for \"section headers\" like this.\nIf I need to make them stand out more I use // --- comment ---.",
+      "revId": "d7d95927bea860c16ebfda9566d9df540819cc68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rO0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvasFilter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2013-05-03T16:02:35Z",
+      "side": 1,
+      "message": "Might want to add a comment pointing out that we\u0027re comparing IDs, not references, which is why we can\u0027t use contains().",
+      "revId": "d7d95927bea860c16ebfda9566d9df540819cc68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rOw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvasFilter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2013-05-03T16:02:35Z",
+      "side": 1,
+      "message": "Same as above, note that we\u0027re comparing IDs, not references.",
+      "revId": "d7d95927bea860c16ebfda9566d9df540819cc68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rOo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerStatusBar.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2013-05-03T16:02:35Z",
+      "side": 1,
+      "message": "Do these calls want to go away? (I.e. you\u0027re not drawing the box anymore?)",
+      "revId": "d7d95927bea860c16ebfda9566d9df540819cc68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rOk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerStatusBar.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2013-05-03T16:02:35Z",
+      "side": 1,
+      "message": "I\u0027d have a separate constant for the status bar text color, even if it happens to be the same as the load text color now.",
+      "revId": "d7d95927bea860c16ebfda9566d9df540819cc68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

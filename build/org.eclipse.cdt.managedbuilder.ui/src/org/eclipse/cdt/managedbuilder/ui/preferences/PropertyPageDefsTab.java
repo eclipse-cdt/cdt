@@ -17,6 +17,8 @@ import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -52,6 +54,8 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 	private Button s_1;
 	private Button s_2;
 
+	private Group discGrp;
+
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
@@ -80,6 +84,16 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		show_sd = new Button(usercomp, SWT.CHECK);
 		show_sd.setText(Messages.PropertyPageDefsTab_showScannerDiscoveryTab);
 		show_sd.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		show_sd.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				showDiscoveryProfiles(show_sd.getSelection());
+			}
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				showDiscoveryProfiles(show_sd.getSelection());
+			}
+		});
 
 		show_providers_tab = new Button(usercomp, SWT.CHECK);
 		show_providers_tab.setText(Messages.PropertyPageDefsTab_showProvidersTab);
@@ -105,7 +119,7 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		s_2 = new Button(saveGrp, SWT.RADIO);
 		s_2.setText(Messages.PropertyPageDefsTab_14);
 
-		Group discGrp = new Group(usercomp, SWT.NONE);
+		discGrp = new Group(usercomp, SWT.NONE);
 		discGrp.setText(Messages.PropertyPageDefsTab_5);
 		discGrp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fl = new FillLayout(SWT.VERTICAL);
@@ -122,14 +136,14 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		b_2.setText(Messages.PropertyPageDefsTab_8);
 		b_3 = new Button(discGrp, SWT.RADIO);
 		b_3.setText(Messages.PropertyPageDefsTab_9);
+		showDiscoveryProfiles(show_sd.getSelection());
 
 		show_inc_files.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_SHOW_INC_FILES));
 		show_tree.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_DTREE));
 		show_mng.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG));
 		show_tool.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOTOOLM));
 		show_exp.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_EXPORT));
-		// ensure default is "true" for scanner discovery tab
-		show_sd.setSelection(!CDTPrefUtil.getStr(CDTPrefUtil.KEY_SHOW_SD).equals(Boolean.FALSE.toString()));
+		show_sd.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_SHOW_SD));
 		show_providers_tab.setSelection(ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(null));
 		show_tipbox.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_TIPBOX));
 
@@ -147,6 +161,14 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		}
 	}
 
+	private void showDiscoveryProfiles(boolean visible) {
+		discGrp.setVisible(visible);
+		b_0.setVisible(visible);
+		b_1.setVisible(visible);
+		b_2.setVisible(visible);
+		b_3.setVisible(visible);
+	}
+
 	@Override
 	protected void performOK() {
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_SHOW_INC_FILES, show_inc_files.getSelection());
@@ -154,8 +176,7 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOMNG, !show_mng.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOTOOLM, !show_tool.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_EXPORT, show_exp.getSelection());
-		// ensure default is "true" for scanner discovery tab
-		CDTPrefUtil.setStr(CDTPrefUtil.KEY_SHOW_SD, Boolean.toString(show_sd.getSelection()));
+		CDTPrefUtil.setBool(CDTPrefUtil.KEY_SHOW_SD, show_sd.getSelection());
 		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(null, show_providers_tab.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_TIPBOX, show_tipbox.getSelection());
 		int x = 0;

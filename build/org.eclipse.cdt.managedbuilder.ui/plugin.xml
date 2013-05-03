@@ -584,10 +584,7 @@
             <adapt type="org.eclipse.core.resources.IProject">
                <and>
                   <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
-                  <or>
-                     <test property="org.eclipse.cdt.ui.checkPreference" value="org.eclipse.cdt.ui:properties.sd.page.enable="/>
-                     <test property="org.eclipse.cdt.ui.checkPreference" value="org.eclipse.cdt.ui:properties.sd.page.enable=true"/>
-                  </or>
+                  <test property="org.eclipse.cdt.ui.checkPreference" value="org.eclipse.cdt.ui:properties.sd.page.enable=true"/>
                </and>
             </adapt>
          </enabledWhen>

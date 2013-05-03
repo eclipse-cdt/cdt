@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//rN0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-05-03T17:13:21Z",
+      "side": 1,
+      "message": "Should we really send a second event here?  super.eventDispatched() already sent one, jut not the right one :)\n\nWould it make sense to move this to DSF itself (inside super.eventDispatched(ISuspendedDMEvent)) and create one event appropriately?",
+      "revId": "8c1d6e876bdd674f9cf593064c705e22f21ac111",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

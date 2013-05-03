@@ -95,7 +95,9 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 
 		rules.add(new AutomaticVariableReferenceRule(macroRefToken));
 		rules.add(new MacroReferenceRule(macroRefToken, "$(", ")")); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new MacroReferenceRule(macroRefToken, "$$(", ")")); //$NON-NLS-1$ //$NON-NLS-2$
 		rules.add(new MacroReferenceRule(macroRefToken, "${", "}")); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new MacroReferenceRule(macroRefToken, "$${", "}")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		setDefaultReturnToken(defaultToken);
 

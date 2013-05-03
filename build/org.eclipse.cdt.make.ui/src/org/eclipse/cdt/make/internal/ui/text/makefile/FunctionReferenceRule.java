@@ -43,7 +43,7 @@ public class FunctionReferenceRule extends WordRule {
 		}
 		@Override
 		public boolean isWordPart(char c) {
-			return !isClosedBracket && (c == '(' || Character.isJavaIdentifierPart(c) || c == '-');
+			return !isClosedBracket && (c == '$' || c == '(' || Character.isJavaIdentifierPart(c) || c == '-');
 		}
 	}
 
@@ -51,6 +51,7 @@ public class FunctionReferenceRule extends WordRule {
 		super(new TagDetector());
 		for (String f : functions) {
 			addWord("$(" + f, token); //$NON-NLS-1$
+			addWord("$$(" + f, token); //$NON-NLS-1$
 		}
 		addWord(")", token); //$NON-NLS-1$
 	}

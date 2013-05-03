@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//rJE\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-03T20:43:52Z",
+      "side": 1,
+      "message": "Please move \u003e to the previous line.",
+      "revId": "443486c4817fb84ad92967d9c815929e98a87e8f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

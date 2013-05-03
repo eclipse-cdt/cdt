@@ -77,13 +77,16 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 	public static String FILE_SEPARATOR = System.getProperty("file.separator", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	String[] includeDirectories = new String[0];
+	@SuppressWarnings("nls")
 	IDirective[] builtins = new IDirective[]{
-		new AutomaticVariable(this, "<", MakefileMessages.getString("GNUMakefile.automatic.lt")),//$NON-NLS-1$//$NON-NLS-2$
-		new AutomaticVariable(this, "*", MakefileMessages.getString("GNUMakefile.automatic.star")),//$NON-NLS-1$//$NON-NLS-2$
-		new AutomaticVariable(this, "@", MakefileMessages.getString("GNUMakefile.automatic.at")),//$NON-NLS-1$//$NON-NLS-2$
-		new AutomaticVariable(this, "?", MakefileMessages.getString("GNUMakefile.automatic.qm")),//$NON-NLS-1$//$NON-NLS-2$
-		new AutomaticVariable(this, "%", MakefileMessages.getString("GNUMakefile.automatic.percent")),//$NON-NLS-1$//$NON-NLS-2$
-		new AutomaticVariable(this, "^", MakefileMessages.getString("GNUMakefile.automatic.up")),//$NON-NLS-1$//$NON-NLS-2$
+			new AutomaticVariable(this, "@", MakefileMessages.getString("GNUMakefile.automaticVariable.at")),
+			new AutomaticVariable(this, "%", MakefileMessages.getString("GNUMakefile.automaticVariable.percent")),
+			new AutomaticVariable(this, "<", MakefileMessages.getString("GNUMakefile.automaticVariable.less")),
+			new AutomaticVariable(this, "?", MakefileMessages.getString("GNUMakefile.automaticVariable.question")),
+			new AutomaticVariable(this, "^", MakefileMessages.getString("GNUMakefile.automaticVariable.carrot")),
+			new AutomaticVariable(this, "+", MakefileMessages.getString("GNUMakefile.automaticVariable.plus")),
+			new AutomaticVariable(this, "|", MakefileMessages.getString("GNUMakefile.automaticVariable.pipe")),
+			new AutomaticVariable(this, "*", MakefileMessages.getString("GNUMakefile.automaticVariable.star")),
 	};
 	private IMakefileReaderProvider makefileReaderProvider;
 
@@ -91,9 +94,6 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		super(null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#getMakefileReaderProvider()
-	 */
 	@Override
 	public IMakefileReaderProvider getMakefileReaderProvider() {
 		return makefileReaderProvider;
@@ -104,9 +104,6 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		parse(URIUtil.toURI(filePath), new MakefileReader(reader));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#parse(java.net.URI, org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider)
-	 */
 	@Override
 	public void parse(URI fileURI,
 			IMakefileReaderProvider makefileReaderProvider) throws IOException {
@@ -818,9 +815,6 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		return list.toArray(new IDirective[list.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile#getBuiltins()
-	 */
 	@Override
 	public IDirective[] getBuiltins() {
 		return builtins;

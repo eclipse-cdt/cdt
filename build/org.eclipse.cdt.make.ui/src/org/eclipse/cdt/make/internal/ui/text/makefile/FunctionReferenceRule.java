@@ -82,6 +82,14 @@ public class FunctionReferenceRule extends WordRule {
 				IToken token= (IToken)fWords.get(buffer);
 
 				if (token != null) {
+					if (buffer.equals("$(call") || buffer.equals("$$(call")) {
+						if ((char)scanner.read() == ' ') {
+							do {
+								c= scanner.read();
+							} while (c == '(' || c == ')' || fDetector.isWordPart((char) c));
+						}
+						scanner.unread();
+					}
 					((TagDetector)fDetector).bracketNesting++;
 					return token;
 				}

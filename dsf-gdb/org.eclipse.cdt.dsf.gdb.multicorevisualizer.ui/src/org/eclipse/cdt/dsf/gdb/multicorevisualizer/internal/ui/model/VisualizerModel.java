@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
- *     Marc Dumais (Ericsson) - Initial API and implementation (Bug 396268)
+ *     Marc Dumais (Ericsson) - Bug 405390
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
@@ -125,6 +125,21 @@ public class VisualizerModel
 	/** Gets number of CPUs. */
 	public int getCPUCount() {
 		return m_cpus.size();
+	}
+	
+	/** Gets number of cores. */
+	public int getCoreCount() {
+		int count = 0;
+		
+		for(VisualizerCPU cpu : m_cpus) {
+			count += cpu.getCoreCount();
+		}
+		return count;
+	}
+	
+	/** Gets number of threads. */
+	public int getThreadCount () {
+		return m_threads.size();
 	}
 	
 	/** Gets CPU with specified ID. */

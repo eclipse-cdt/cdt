@@ -15,12 +15,16 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.internal.core.dom.parser.VariableReadWriteFlags;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTArraySubscriptExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 
 /**
  * Helper class to determine whether a variable is accessed for reading and/or writing.
@@ -39,6 +43,14 @@ public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 		final IASTNode parent= node.getParent();
 		if (parent instanceof ICASTFieldDesignator) {
 			return WRITE;	// node is initialized via designated initializer
+		}else if (parent instanceof CASTIdExpression) {
+			IASTNode grandparent = parent.getParent();
+			if ( grandparent instanceof CASTArraySubscriptExpression){
+				return super.rwAnyNode(parent, 1);
+			}else if ( grandparent instanceof CASTUnaryExpression 
+					&& ((CASTUnaryExpression)grandparent).getOperator() == IASTUnaryExpression.op_star) {
+				return WRITE;
+			}
 		}
 		return super.rwAnyNode(node, indirection);
 	}

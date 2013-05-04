@@ -215,4 +215,18 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 		a.assertReadWriteFlags("ap->m()", "ap", READ);
 		a.assertReadWriteFlags("(*ap).m()", "ap", READ);
 	}
+
+	//	void test(int b) {
+	//	  int * a = new int[10];
+	//	  *a = 5;
+	//	  a[1] = 1;
+	//	  b = a[0]
+	//	};
+	public void testArray_385750() throws Exception {
+		AssertionHelper a = getCPPAssertionHelper();
+		a.assertReadWriteFlags("int * a = new int[10]", "a", WRITE);
+		a.assertReadWriteFlags("*a = 5", "a", WRITE);
+		a.assertReadWriteFlags("a[1] = 1", "a", WRITE);
+		a.assertReadWriteFlags("b = a[0]", "a", READ);
+	}
 }

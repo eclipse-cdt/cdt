@@ -114,9 +114,15 @@ public abstract class VariableReadWriteFlags {
 	}
 
 	protected int rwInExpression(IASTExpression expr, IASTNode node, int indirection) {
-		if (expr instanceof IASTIdExpression) {
-			return rwAnyNode(expr, indirection);
-		}
+		if (expr instanceof IASTIdExpression) { 
+			final IASTNode parent = expr.getParent();	
+			if (expr.getPropertyInParent() == IASTArraySubscriptExpression.ARRAY) {
+				  if (indirection >= 0)
+				    return rwAnyNode(parent, indirection);
+				  return READ;
+			} else
+				return rwAnyNode(expr, indirection);
+			}
 		if (expr instanceof IASTBinaryExpression) {
 			return rwInBinaryExpression(node, (IASTBinaryExpression) expr, indirection);			
 		}
@@ -130,6 +136,9 @@ public abstract class VariableReadWriteFlags {
 			return rwInUnaryExpression(node, (IASTUnaryExpression) expr, indirection);			
 		}
 		if (expr instanceof IASTArraySubscriptExpression) {
+			if (node instanceof IASTArraySubscriptExpression) { // multidimensional array
+				++indirection;
+			}
 			if (indirection > 0 && node.getPropertyInParent() == IASTArraySubscriptExpression.ARRAY) {
 				return rwAnyNode(expr, indirection - 1);
 			}

@@ -26,8 +26,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -66,6 +64,7 @@ import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.cdtvariables.CoreVariableSubstitutor;
 import org.eclipse.cdt.internal.core.cdtvariables.DefaultVariableContextInfo;
 import org.eclipse.cdt.internal.core.cdtvariables.ICoreVariableContextInfo;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.model.APathEntry;
 import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.cdt.internal.core.model.PathEntry;
@@ -2035,54 +2034,6 @@ public class PathEntryTranslator {
 		return collector;
 	}
 
-	/**
-	 * Returns the list of setting entries of a certain kind (such as include paths)
-	 * for the given configuration description, resource and language. This is a
-	 * combined list for all providers.
-	 * This list does not include settings of parent folder.
-	 *
-	 * @param cfgDescription - configuration description.
-	 * @param rc - resource such as file or folder.
-	 * @param languageId - language id.
-	 * @param kind - kind of language settings entries, such as {@link ICSettingEntry#INCLUDE_PATH} etc.
-	 *
-	 * @return the list of setting entries found.
-	 */
-	private static List<ICLanguageSettingEntry> getSettingEntriesByKind(ICConfigurationDescription cfgDescription,
-			IResource rc, String languageId, int kind) {
-
-		if (!(cfgDescription instanceof ILanguageSettingsProvidersKeeper)) {
-			return null;
-		}
-
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
-		List<String> alreadyAdded = new ArrayList<String>();
-
-		List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
-		for (ILanguageSettingsProvider provider: providers) {
-			List<ICLanguageSettingEntry> providerEntries = provider.getSettingEntries(cfgDescription, rc, languageId);
-			if (providerEntries != null) {
-				for (ICLanguageSettingEntry entry : providerEntries) {
-					if (entry != null) {
-						String entryName = entry.getName();
-						boolean isRightKind = (entry.getKind() & kind) == kind;
-						// Only first entry is considered
-						// Entry flagged as "UNDEFINED" prevents adding entry with the same name down the line
-						if (isRightKind && !alreadyAdded.contains(entryName)) {
-							int flags = entry.getFlags();
-							if ((flags & ICSettingEntry.UNDEFINED) != ICSettingEntry.UNDEFINED) {
-								entries.add(entry);
-							}
-							alreadyAdded.add(entryName);
-						}
-					}
-				}
-			}
-		}
-
-		return entries;
-	}
-
 	private static boolean collectResourceDataEntries(ICConfigurationDescription cfgDescription, int kind, CResourceData rcData, Set<ICLanguageSettingEntry> list) {
 		CLanguageData[] lDatas = null;
 		if (rcData instanceof CFolderData) {
@@ -2110,7 +2061,7 @@ public class PathEntryTranslator {
 				rc = project.getFolder(rcData.getPath());
 			}
 			for (CLanguageData lData : lDatas) {
-				list.addAll(getSettingEntriesByKind(cfgDescription, rc, lData.getLanguageId(), kind));
+				list.addAll(LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, lData.getLanguageId(), kind));
 			}
 			return list.size() > 0;
 

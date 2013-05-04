@@ -33,7 +33,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.VariableReadWriteFlags;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTArraySubscriptExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
+import org.eclipse.cdt.internal.core.model.Openable;
 
 /**
  * Helper class to determine whether a variable is accessed for reading and/or writing.
@@ -52,6 +56,14 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 		final IASTNode parent = node.getParent();
 		if (parent instanceof ICPPASTConstructorInitializer) {
 			return rwInCtorInitializer(node, indirection, (ICPPASTConstructorInitializer) parent);
+		}else if (parent instanceof CPPASTIdExpression) {
+			IASTNode grandparent = parent.getParent();
+			if ( grandparent instanceof CPPASTArraySubscriptExpression){
+				return super.rwAnyNode(parent, 1);
+			}else if ( grandparent instanceof CPPASTUnaryExpression 
+					&& ((CPPASTUnaryExpression)grandparent).getOperator() == IASTUnaryExpression.op_star) {
+				return WRITE;
+			}
 		}
 		return super.rwAnyNode(node, indirection);
 	}

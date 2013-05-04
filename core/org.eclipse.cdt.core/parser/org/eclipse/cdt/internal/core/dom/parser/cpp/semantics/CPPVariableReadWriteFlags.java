@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.VariableReadWriteFlags;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 
 /**
@@ -52,6 +54,14 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 		final IASTNode parent = node.getParent();
 		if (parent instanceof ICPPASTConstructorInitializer) {
 			return rwInCtorInitializer(node, indirection, (ICPPASTConstructorInitializer) parent);
+		} else if (parent instanceof IASTIdExpression) {
+			IASTNode grandparent = parent.getParent();
+			if (grandparent instanceof ICPPASTArraySubscriptExpression) {
+				return super.rwAnyNode(parent, 1);
+			} else if (grandparent instanceof ICPPASTUnaryExpression
+					&& ((CPPASTUnaryExpression) grandparent).getOperator() == IASTUnaryExpression.op_star) {
+				return WRITE;
+			}
 		}
 		return super.rwAnyNode(node, indirection);
 	}

@@ -419,6 +419,34 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 	
+	public void testMarkDynArrayWriteOccurrences() {
+		try {
+			fMatch= fFindReplaceDocumentAdapter.find(0, "dynArray", true, true, true, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+		assertNotNull(fMatch);
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+		
+		assertOccurrences(5, 4);
+		assertOccurrencesInWidget();
+	}
+	
+	public void testMarkStaticArrayWriteOccurrences() {
+		try {
+			fMatch= fFindReplaceDocumentAdapter.find(0, "statArray", true, true, true, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+		assertNotNull(fMatch);
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+		
+		assertOccurrences(4, 2);
+		assertOccurrencesInWidget();
+	}
+	
 	public void testMarkMacroOccurrences() {
 		try {
 			fMatch= fFindReplaceDocumentAdapter.find(0, "INT", true, true, true, false);

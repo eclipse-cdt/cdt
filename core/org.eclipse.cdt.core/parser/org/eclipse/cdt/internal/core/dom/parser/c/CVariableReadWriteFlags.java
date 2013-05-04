@@ -10,11 +10,14 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -39,6 +42,14 @@ public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 		final IASTNode parent= node.getParent();
 		if (parent instanceof ICASTFieldDesignator) {
 			return WRITE;	// node is initialized via designated initializer
+		} else if (parent instanceof IASTIdExpression) {
+			IASTNode grandparent = parent.getParent();
+			if (grandparent instanceof IASTArraySubscriptExpression) {
+				return super.rwAnyNode(parent, 1);
+			} else if (grandparent instanceof IASTUnaryExpression
+					&& ((CASTUnaryExpression) grandparent).getOperator() == IASTUnaryExpression.op_star) {
+				return WRITE;
+			}
 		}
 		return super.rwAnyNode(node, indirection);
 	}

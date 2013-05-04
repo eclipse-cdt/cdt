@@ -114,8 +114,18 @@ public abstract class VariableReadWriteFlags {
 	}
 
 	protected int rwInExpression(IASTExpression expr, IASTNode node, int indirection) {
-		if (expr instanceof IASTIdExpression) {
-			return rwAnyNode(expr, indirection);
+		if (expr instanceof IASTIdExpression) { 
+			final IASTNode parent = expr.getParent();	
+			if (parent instanceof IASTArraySubscriptExpression) { // arrays
+				++indirection;
+				if (indirection > 0 && expr.getPropertyInParent() == IASTArraySubscriptExpression.ARRAY) {
+					return rwAnyNode(parent, indirection - 1);
+				}
+				return READ;
+			} else if (parent instanceof IASTUnaryExpression) { // prefix/postfix operators
+				return rwInUnaryExpression(expr, (IASTUnaryExpression) parent, indirection);
+			} else
+				return rwAnyNode(expr, indirection);
 		}
 		if (expr instanceof IASTBinaryExpression) {
 			return rwInBinaryExpression(node, (IASTBinaryExpression) expr, indirection);			
@@ -130,6 +140,9 @@ public abstract class VariableReadWriteFlags {
 			return rwInUnaryExpression(node, (IASTUnaryExpression) expr, indirection);			
 		}
 		if (expr instanceof IASTArraySubscriptExpression) {
+			if ( node instanceof IASTArraySubscriptExpression ) { // multidimensional array
+				++indirection; 
+			}
 			if (indirection > 0 && node.getPropertyInParent() == IASTArraySubscriptExpression.ARRAY) {
 				return rwAnyNode(expr, indirection - 1);
 			}
@@ -279,6 +292,11 @@ public abstract class VariableReadWriteFlags {
 			return rwAnyNode(expr, indirection + 1);
 
 		case IASTUnaryExpression.op_star:
+			final IASTNode parent = expr.getParent();
+			if (parent instanceof IASTBinaryExpression
+					&& ((IASTBinaryExpression) parent).getOperator() == IASTBinaryExpression.op_assign) {
+				return WRITE;
+			}
 			if (indirection > 0) {
 				return rwAnyNode(expr, indirection - 1);
 			}

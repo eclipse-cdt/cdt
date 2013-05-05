@@ -34,7 +34,6 @@ import org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider;
  */
 
 public class NullMakefile extends AbstractMakefile {
-
 	public final static IDirective[] EMPTY_DIRECTIVES = new IDirective[0];
 
 	public NullMakefile() {
@@ -59,36 +58,22 @@ public class NullMakefile extends AbstractMakefile {
 		return new String();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#parse(java.io.Reader)
-	 */
 	@Override
 	public void parse(String name, Reader makefile) throws IOException {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#getMakefileReaderProvider()
-	 */
 	@Override
 	public IMakefileReaderProvider getMakefileReaderProvider() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#parse(java.lang.String, org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider)
-	 */
-	public void parse(String name,
-			IMakefileReaderProvider makefileReaderProvider) throws IOException {
+	public void parse(String name, IMakefileReaderProvider makefileReaderProvider) throws IOException {
 	}
 	@Override
 	public void parse(URI fileURI, Reader makefile) throws IOException {
-    }
+	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#parse(java.net.URI, org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider)
-	 */
 	@Override
-	public void parse(URI fileURI,
-			IMakefileReaderProvider makefileReaderProvider) throws IOException {
+	public void parse(URI fileURI, IMakefileReaderProvider makefileReaderProvider) throws IOException {
 	}
 }

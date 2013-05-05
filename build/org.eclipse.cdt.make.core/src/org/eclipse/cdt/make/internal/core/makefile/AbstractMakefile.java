@@ -38,7 +38,6 @@ import org.eclipse.cdt.make.core.makefile.ITargetRule;
  */
 
 public abstract class AbstractMakefile extends Parent implements IMakefile {
-
 	private URI filename;
 
 	public AbstractMakefile(Directive parent) {
@@ -52,9 +51,9 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	public IRule[] getRules() {
 		IDirective[] stmts = getDirectives(true);
 		List<IDirective> array = new ArrayList<IDirective>(stmts.length);
-		for (int i = 0; i < stmts.length; i++) {
-			if (stmts[i] instanceof IRule) {
-				array.add(stmts[i]);
+		for (IDirective stmt : stmts) {
+			if (stmt instanceof IRule) {
+				array.add(stmt);
 			}
 		}
 		return array.toArray(new IRule[0]);
@@ -64,9 +63,9 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	public IRule[] getRules(String target) {
 		IRule[] rules = getRules();
 		List<IRule> array = new ArrayList<IRule>(rules.length);
-		for (int i = 0; i < rules.length; i++) {
-			if (rules[i].getTarget().equals(target)) {
-				array.add(rules[i]);
+		for (IRule rule : rules) {
+			if (rule.getTarget().equals(target)) {
+				array.add(rule);
 			}
 		}
 		return array.toArray(new IRule[0]);
@@ -76,9 +75,9 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	public IInferenceRule[] getInferenceRules() {
 		IRule[] rules = getRules();
 		List<IRule> array = new ArrayList<IRule>(rules.length);
-		for (int i = 0; i < rules.length; i++) {
-			if (rules[i] instanceof IInferenceRule) {
-				array.add(rules[i]);
+		for (IRule rule : rules) {
+			if (rule instanceof IInferenceRule) {
+				array.add(rule);
 			}
 		}
 		return array.toArray(new IInferenceRule[0]);
@@ -88,9 +87,9 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	public IInferenceRule[] getInferenceRules(String target) {
 		IInferenceRule[] irules = getInferenceRules();
 		List<IInferenceRule> array = new ArrayList<IInferenceRule>(irules.length);
-		for (int i = 0; i < irules.length; i++) {
-			if (irules[i].getTarget().equals(target)) {
-				array.add(irules[i]);
+		for (IInferenceRule irule : irules) {
+			if (irule.getTarget().equals(target)) {
+				array.add(irule);
 			}
 		}
 		return array.toArray(new IInferenceRule[0]);
@@ -100,9 +99,9 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	public ITargetRule[] getTargetRules() {
 		IRule[] trules = getRules();
 		List<IRule> array = new ArrayList<IRule>(trules.length);
-		for (int i = 0; i < trules.length; i++) {
-			if (trules[i] instanceof ITargetRule) {
-				array.add(trules[i]);
+		for (IRule trule : trules) {
+			if (trule instanceof ITargetRule) {
+				array.add(trule);
 			}
 		}
 		return array.toArray(new ITargetRule[0]);
@@ -112,9 +111,9 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	public ITargetRule[] getTargetRules(String target) {
 		ITargetRule[] trules = getTargetRules();
 		List<ITargetRule> array = new ArrayList<ITargetRule>(trules.length);
-		for (int i = 0; i < trules.length; i++) {
-			if (trules[i].getTarget().equals(target)) {
-				array.add(trules[i]);
+		for (ITargetRule trule : trules) {
+			if (trule.getTarget().equals(target)) {
+				array.add(trule);
 			}
 		}
 		return array.toArray(new ITargetRule[0]);
@@ -124,9 +123,9 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	public IMacroDefinition[] getMacroDefinitions() {
 		IDirective[] stmts = getDirectives(true);
 		List<IDirective> array = new ArrayList<IDirective>(stmts.length);
-		for (int i = 0; i < stmts.length; i++) {
-			if (stmts[i] instanceof IMacroDefinition) {
-				array.add(stmts[i]);
+		for (IDirective stmt : stmts) {
+			if (stmt instanceof IMacroDefinition) {
+				array.add(stmt);
 			}
 		}
 		return array.toArray(new IMacroDefinition[0]);
@@ -136,9 +135,9 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	public IMacroDefinition[] getMacroDefinitions(String name) {
 		IMacroDefinition[] variables = getMacroDefinitions();
 		List<IMacroDefinition> array = new ArrayList<IMacroDefinition>(variables.length);
-		for (int i = 0; i < variables.length; i++) {
-			if (variables[i].getName().equals(name)) {
-				array.add(variables[i]);
+		for (IMacroDefinition variable : variables) {
+			if (variable.getName().equals(name)) {
+				array.add(variable);
 			}
 		}
 		return array.toArray(new IMacroDefinition[0]);
@@ -148,9 +147,9 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	public IMacroDefinition[] getBuiltinMacroDefinitions() {
 		IDirective[] stmts = getBuiltins();
 		List<IDirective> array = new ArrayList<IDirective>(stmts.length);
-		for (int i = 0; i < stmts.length; i++) {
-			if (stmts[i] instanceof IMacroDefinition) {
-				array.add(stmts[i]);
+		for (IDirective stmt : stmts) {
+			if (stmt instanceof IMacroDefinition) {
+				array.add(stmt);
 			}
 		}
 		return array.toArray(new IMacroDefinition[0]);
@@ -160,9 +159,9 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	public IMacroDefinition[] getBuiltinMacroDefinitions(String name) {
 		IMacroDefinition[] variables = getBuiltinMacroDefinitions();
 		List<IMacroDefinition> array = new ArrayList<IMacroDefinition>(variables.length);
-		for (int i = 0; i < variables.length; i++) {
-			if (variables[i].getName().equals(name)) {
-				array.add(variables[i]);
+		for (IMacroDefinition variable : variables) {
+			if (variable.getName().equals(name)) {
+				array.add(variable);
 			}
 		}
 		return array.toArray(new IMacroDefinition[0]);
@@ -171,9 +170,9 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	public IInferenceRule[] getBuiltinInferenceRules() {
 		IDirective[] stmts = getBuiltins();
 		List<IDirective> array = new ArrayList<IDirective>(stmts.length);
-		for (int i = 0; i < stmts.length; i++) {
-			if (stmts[i] instanceof IInferenceRule) {
-				array.add(stmts[i]);
+		for (IDirective stmt : stmts) {
+			if (stmt instanceof IInferenceRule) {
+				array.add(stmt);
 			}
 		}
 		return array.toArray(new IInferenceRule[0]);
@@ -182,9 +181,9 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	public IInferenceRule[] getBuiltinInferenceRules(String target) {
 		IInferenceRule[] irules = getBuiltinInferenceRules();
 		List<IInferenceRule> array = new ArrayList<IInferenceRule>(irules.length);
-		for (int i = 0; i < irules.length; i++) {
-			if (irules[i].getTarget().equals(target)) {
-				array.add(irules[i]);
+		for (IInferenceRule irule : irules) {
+			if (irule.getTarget().equals(target)) {
+				array.add(irule);
 			}
 		}
 		return array.toArray(new IInferenceRule[0]);
@@ -205,53 +204,28 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		for (int i = 0; i < len; i++) {
 			char c = line.charAt(i);
 			switch(c) {
-				case '$':
-					// '$$' --> '$'
-					if (foundDollar) {
-						buffer.append(c);
-						foundDollar = false;
-					} else {
-						foundDollar = true;
-					}
-					break;
-				case '(':
-				case '{':
-					if (foundDollar) {
-						inMacro = true;
-					} else {
-						buffer.append(c);
-					}
-					break;
-				case ')':
-				case '}':
-					if (inMacro) {
-						String name = macroName.toString();
-						if (name.length() > 0) {
-							IMacroDefinition[] defs = getMacroDefinitions(name);
-							if (defs.length == 0) {
-								defs = getBuiltinMacroDefinitions(name);
-							}
-							if (defs.length > 0) {
-								String result = defs[0].getValue().toString();
-								if (result.indexOf('$') != -1 && recursive) {
-									result = expandString(result, recursive);
-								}
-								buffer.append(result);
-							} else { // Do not expand
-								buffer.append('$').append('(').append(name).append(')');
-							}
-						}
-						macroName.setLength(0);
-						inMacro = false;
-					} else {
-						buffer.append(c);
-					}
-					break;
-				default:
-					if (inMacro) {
-						macroName.append(c);
-					} else if (foundDollar) {
-						String name = String.valueOf(c);
+			case '$':
+				// '$$' --> '$'
+				if (foundDollar) {
+					buffer.append(c);
+					foundDollar = false;
+				} else {
+					foundDollar = true;
+				}
+				break;
+			case '(':
+			case '{':
+				if (foundDollar) {
+					inMacro = true;
+				} else {
+					buffer.append(c);
+				}
+				break;
+			case ')':
+			case '}':
+				if (inMacro) {
+					String name = macroName.toString();
+					if (name.length() > 0) {
 						IMacroDefinition[] defs = getMacroDefinitions(name);
 						if (defs.length == 0) {
 							defs = getBuiltinMacroDefinitions(name);
@@ -262,16 +236,41 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 								result = expandString(result, recursive);
 							}
 							buffer.append(result);
-						} else {
-							// nothing found
-							buffer.append('$').append(c);
+						} else { // Do not expand
+							buffer.append('$').append('(').append(name).append(')');
 						}
-						inMacro = false;
-					} else {
-						buffer.append(c);
 					}
-					foundDollar = false;
-					break;
+					macroName.setLength(0);
+					inMacro = false;
+				} else {
+					buffer.append(c);
+				}
+				break;
+			default:
+				if (inMacro) {
+					macroName.append(c);
+				} else if (foundDollar) {
+					String name = String.valueOf(c);
+					IMacroDefinition[] defs = getMacroDefinitions(name);
+					if (defs.length == 0) {
+						defs = getBuiltinMacroDefinitions(name);
+					}
+					if (defs.length > 0) {
+						String result = defs[0].getValue().toString();
+						if (result.indexOf('$') != -1 && recursive) {
+							result = expandString(result, recursive);
+						}
+						buffer.append(result);
+					} else {
+						// nothing found
+						buffer.append('$').append(c);
+					}
+					inMacro = false;
+				} else {
+					buffer.append(c);
+				}
+				foundDollar = false;
+				break;
 			}
 		}
 		return buffer.toString();
@@ -283,8 +282,8 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	}
 
 	public void setFileURI(URI filename) {
-	    this.filename = filename;
-    }
+		this.filename = filename;
+	}
 
 	@Override
 	public IMakefile getMakefile() {

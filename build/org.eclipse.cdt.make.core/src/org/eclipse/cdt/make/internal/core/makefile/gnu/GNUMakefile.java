@@ -72,21 +72,20 @@ import org.eclipse.core.runtime.CoreException;
  */
 
 public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
-
 	public static String PATH_SEPARATOR = System.getProperty("path.separator", ":"); //$NON-NLS-1$ //$NON-NLS-2$
 	public static String FILE_SEPARATOR = System.getProperty("file.separator", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 
-	String[] includeDirectories = new String[0];
+	private String[] includeDirectories = new String[0];
 	@SuppressWarnings("nls")
-	IDirective[] builtins = new IDirective[]{
-			new AutomaticVariable(this, "@", MakefileMessages.getString("GNUMakefile.automaticVariable.at")),
-			new AutomaticVariable(this, "%", MakefileMessages.getString("GNUMakefile.automaticVariable.percent")),
-			new AutomaticVariable(this, "<", MakefileMessages.getString("GNUMakefile.automaticVariable.less")),
-			new AutomaticVariable(this, "?", MakefileMessages.getString("GNUMakefile.automaticVariable.question")),
-			new AutomaticVariable(this, "^", MakefileMessages.getString("GNUMakefile.automaticVariable.carrot")),
-			new AutomaticVariable(this, "+", MakefileMessages.getString("GNUMakefile.automaticVariable.plus")),
-			new AutomaticVariable(this, "|", MakefileMessages.getString("GNUMakefile.automaticVariable.pipe")),
-			new AutomaticVariable(this, "*", MakefileMessages.getString("GNUMakefile.automaticVariable.star")),
+	private IDirective[] builtins = new IDirective[]{
+		new AutomaticVariable(this, "@", MakefileMessages.getString("GNUMakefile.automaticVariable.at")),
+		new AutomaticVariable(this, "%", MakefileMessages.getString("GNUMakefile.automaticVariable.percent")),
+		new AutomaticVariable(this, "<", MakefileMessages.getString("GNUMakefile.automaticVariable.less")),
+		new AutomaticVariable(this, "?", MakefileMessages.getString("GNUMakefile.automaticVariable.question")),
+		new AutomaticVariable(this, "^", MakefileMessages.getString("GNUMakefile.automaticVariable.carrot")),
+		new AutomaticVariable(this, "+", MakefileMessages.getString("GNUMakefile.automaticVariable.plus")),
+		new AutomaticVariable(this, "|", MakefileMessages.getString("GNUMakefile.automaticVariable.pipe")),
+		new AutomaticVariable(this, "*", MakefileMessages.getString("GNUMakefile.automaticVariable.star")),
 	};
 	private IMakefileReaderProvider makefileReaderProvider;
 
@@ -113,8 +112,9 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 			try {
 				final IFileStore store = EFS.getStore(fileURI);
 				final IFileInfo info = store.fetchInfo();
-				if (!info.exists() || info.isDirectory())
+				if (!info.exists() || info.isDirectory()) {
 					throw new IOException();
+				}
 
 				reader = new MakefileReader(new InputStreamReader(
 						store.openInputStream(EFS.NONE, null)));
@@ -534,20 +534,20 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 	}
 
 	/**
-	   * There are three forms of the "vpath" directive:
-	   *      "vpath PATTERN DIRECTORIES"
-	   * Specify the search path DIRECTORIES for file names that match PATTERN.
-	   *
-	   * The search path, DIRECTORIES, is a list of directories to be
-	   * searched, separated by colons (semi-colons on MS-DOS and
-	   * MS-Windows) or blanks, just like the search path used in the `VPATH' variable.
-	   *
-	   *      "vpath PATTERN"
-	   * Clear out the search path associated with PATTERN.
-	   *
-	   *      "vpath"
-	   * Clear all search paths previously specified with `vpath' directives.
-	   */
+	 * There are three forms of the "vpath" directive:
+	 *      "vpath PATTERN DIRECTORIES"
+	 * Specify the search path DIRECTORIES for file names that match PATTERN.
+	 *
+	 * The search path, DIRECTORIES, is a list of directories to be
+	 * searched, separated by colons (semi-colons on MS-DOS and
+	 * MS-Windows) or blanks, just like the search path used in the `VPATH' variable.
+	 *
+	 *      "vpath PATTERN"
+	 * Clear out the search path associated with PATTERN.
+	 *
+	 *      "vpath"
+	 * Clear all search paths previously specified with `vpath' directives.
+	 */
 	protected VPath parseVPath(String line) {
 		String pattern = null;
 		String[] directories;
@@ -717,8 +717,8 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 			if (index > 0) {
 				type = line.charAt(index - 1);
 				if (type == VariableDefinition.TYPE_SIMPLE_EXPAND
-					|| type == VariableDefinition.TYPE_APPEND
-					|| type == VariableDefinition.TYPE_CONDITIONAL) {
+						|| type == VariableDefinition.TYPE_APPEND
+						|| type == VariableDefinition.TYPE_CONDITIONAL) {
 					separator = index - 1;
 				} else {
 					type = VariableDefinition.TYPE_RECURSIVE_EXPAND;
@@ -802,13 +802,11 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		}
 		IDirective[] dirs = getDirectives();
 		ArrayList<IDirective> list = new ArrayList<IDirective>(Arrays.asList(dirs));
-		for (int i = 0; i < dirs.length; ++i) {
-			if (dirs[i] instanceof Include) {
-				Include include = (Include)dirs[i];
-				IDirective[] includedMakefiles = include.getDirectives();
-				for (int j = 0; j < includedMakefiles.length; ++j) {
-					IMakefile includedMakefile = (IMakefile)includedMakefiles[j];
-					list.addAll(Arrays.asList(includedMakefile.getDirectives()));
+		for (IDirective dir : dirs) {
+			if (dir instanceof Include) {
+				IDirective[] includedMakefiles = ((Include)dir).getDirectives();
+				for (IDirective includedMakefile : includedMakefiles) {
+					list.addAll(Arrays.asList(((IMakefile)includedMakefile).getDirectives()));
 				}
 			}
 		}

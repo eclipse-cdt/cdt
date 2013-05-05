@@ -63,17 +63,13 @@ import org.eclipse.core.runtime.CoreException;
  */
 
 public class PosixMakefile extends AbstractMakefile {
-
-	IDirective[] builtins = new IDirective[0];
+	private IDirective[] builtins = new IDirective[0];
 	private IMakefileReaderProvider makefileReaderProvider;
 
 	public PosixMakefile() {
 		super(null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#getMakefileReaderProvider()
-	 */
 	@Override
 	public IMakefileReaderProvider getMakefileReaderProvider() {
 		return makefileReaderProvider;
@@ -84,9 +80,6 @@ public class PosixMakefile extends AbstractMakefile {
 		parse(URIUtil.toURI(name), new MakefileReader(reader));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#parse(java.net.URI, org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider)
-	 */
 	@Override
 	public void parse(URI fileURI,
 			IMakefileReaderProvider makefileReaderProvider) throws IOException {
@@ -133,9 +126,9 @@ public class PosixMakefile extends AbstractMakefile {
 					cmd.setLines(startLine, endLine);
 					// The command is added to the rules
 					if (rules != null) {
-						for (int i = 0; i < rules.length; i++) {
-							rules[i].addDirective(cmd);
-							rules[i].setEndLine(endLine);
+						for (Rule rule : rules) {
+							rule.addDirective(cmd);
+							rule.setEndLine(endLine);
 						}
 						continue;
 					}
@@ -149,9 +142,9 @@ public class PosixMakefile extends AbstractMakefile {
 					Comment cmt = new Comment(this, line.substring(pound + 1));
 					cmt.setLines(startLine, endLine);
 					if (rules != null) {
-						for (int i = 0; i < rules.length; i++) {
-							rules[i].addDirective(cmt);
-							rules[i].setEndLine(endLine);
+						for (Rule rule : rules) {
+							rule.addDirective(cmt);
+							rule.setEndLine(endLine);
 						}
 					} else {
 						addDirective(cmt);
@@ -170,9 +163,9 @@ public class PosixMakefile extends AbstractMakefile {
 					Directive empty =  new EmptyLine(this);
 					empty.setLines(startLine, endLine);
 					if (rules != null) {
-						for (int i = 0; i < rules.length; i++) {
-							rules[i].addDirective(empty);
-							rules[i].setEndLine(endLine);
+						for (Rule rule : rules) {
+							rule.addDirective(empty);
+							rule.setEndLine(endLine);
 						}
 					} else {
 						addDirective(empty);
@@ -214,9 +207,9 @@ public class PosixMakefile extends AbstractMakefile {
 				// 8- Target Rule ?
 				if (PosixMakefileUtil.isTargetRule(line)) {
 					TargetRule[] trules = parseTargetRule(line);
-					for (int i = 0; i < trules.length; i++) {
-						trules[i].setLines(startLine, endLine);
-						addDirective(trules[i]);
+					for (TargetRule trule : trules) {
+						trule.setLines(startLine, endLine);
+						addDirective(trule);
 					}
 					rules = trules;
 					continue;
@@ -233,9 +226,6 @@ public class PosixMakefile extends AbstractMakefile {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile#getBuiltins()
-	 */
 	@Override
 	public IDirective[] getBuiltins() {
 		return builtins;

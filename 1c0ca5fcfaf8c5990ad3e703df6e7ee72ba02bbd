@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//rCk\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/CVariableReadWriteFlags.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-05T15:53:35Z",
+      "side": 1,
+      "message": "Three unused imports.",
+      "revId": "1c0ca5fcfaf8c5990ad3e703df6e7ee72ba02bbd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rC8\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/CVariableReadWriteFlags.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-05T15:53:35Z",
+      "side": 1,
+      "message": "Use an interface instead of a concrete class. Same below. Space is missing before \"else\".",
+      "revId": "1c0ca5fcfaf8c5990ad3e703df6e7ee72ba02bbd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rCw\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/CVariableReadWriteFlags.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-05T15:53:35Z",
+      "side": 1,
+      "message": "Remove space after (. Space is missing before {",
+      "revId": "1c0ca5fcfaf8c5990ad3e703df6e7ee72ba02bbd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rC4\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/CVariableReadWriteFlags.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-05T15:53:35Z",
+      "side": 1,
+      "message": "Space is missing before \"else\". Remove space after (.",
+      "revId": "1c0ca5fcfaf8c5990ad3e703df6e7ee72ba02bbd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//rB4\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVariableReadWriteFlags.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-05T15:53:35Z",
+      "side": 1,
+      "message": "See comments for CVariableReadWriteFlags. They apply to this file too.",
+      "revId": "1c0ca5fcfaf8c5990ad3e703df6e7ee72ba02bbd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

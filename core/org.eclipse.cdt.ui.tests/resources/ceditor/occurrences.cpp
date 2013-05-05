@@ -92,6 +92,19 @@ int namespaceFunc() {
 }
 
 INT ClassContainer::pubMethod() {
+	int * dynArray = new int[10];  // write occurrence
+	int statArray[10];
+	*dynArray=5; // NEW: write occurrence
+	&statArray=3;  // NEW: write occurrence
+	for (int i = 0; i < 10; ++i)
+	{
+	  dynArray[i] = i; // NEW: write occurrence
+	  statArray[i] = i;// NEW: write occurrence
+	}
+	int a = dynArray[0];
+	a = statArray[0];
+	delete [] dynArray;
+	
 	int localVar = 0;
 	ns::namespaceVar= 1;
 	return pubField + localVar;

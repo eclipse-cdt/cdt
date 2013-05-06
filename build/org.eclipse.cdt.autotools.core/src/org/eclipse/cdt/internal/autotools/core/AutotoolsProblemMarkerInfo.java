@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Siemens AG.
+ * Copyright (c) 2006, 2013 Siemens AG.
  * All rights reserved. This content and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Norbert Ploett - Initial implementation
- * Red Hat Inc. - Modified for use with autotools plug-in
+ *     Norbert Ploett - Initial implementation
+ *     Red Hat Inc. - Modified for use with autotools plug-in
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.autotools.core;
@@ -21,7 +21,17 @@ import org.eclipse.core.runtime.IPath;
  */
 public class AutotoolsProblemMarkerInfo {
 
-	public static enum Type{PACKAGE, HEADER, PROG, LIB, FILE, GENERIC}
+	public static enum Type{
+		PACKAGE,
+		HEADER,
+		PROG,
+		/**
+		 * @since 1.2
+		 */
+		LIB,
+		FILE,
+		GENERIC
+	}
 
 	private ProblemMarkerInfo marker;
 

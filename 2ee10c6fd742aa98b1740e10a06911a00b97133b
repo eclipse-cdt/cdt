@@ -1,0 +1,259 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//qss\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/VisibilityAsserts.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T20:49:47Z",
+      "side": 1,
+      "message": "Throwing an IllegalArgumentException is more appropriate here.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qsU\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T20:49:47Z",
+      "side": 1,
+      "message": "Make the name of the template a parameter of the function to make calling code easier to understand.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qsQ\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T20:49:47Z",
+      "side": 1,
+      "message": "Make the name of the class a parameter of the function to make calling code easier to understand.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qsM\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T20:49:47Z",
+      "side": 1,
+      "message": "A better approach would be to resolve the member name, then get to the class by calling getOwner(). Member index is irrelevant for the purpose of the test and should not be used.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qsE\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPClassType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T20:49:47Z",
+      "side": 1,
+      "message": "Return the last statement by a @throws clause.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qqo\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassSpecialization.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 492,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T20:49:47Z",
+      "side": 1,
+      "message": "A CoreException doesn\u0027t necessarily indicate that the member is not owned by the class.\n\nLogging and re-throwing the same exception causes double reporting since the re-thrown exception will be logged or reported some other way elsewhere.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qqk\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 429,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T20:49:47Z",
+      "side": 1,
+      "message": "A CoreException doesn\u0027t necessarily indicate that the member is not owned by the class.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qqg\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T20:49:47Z",
+      "side": 1,
+      "message": "Better: nextMemberPosition \u003c 0",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qqc\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T20:49:47Z",
+      "side": 1,
+      "message": "It\u0027s preferable to sacrifice code reuse for readability and always check memberIndex \u003c MAX_MEMBER_COUNT before calling getMemberRecord.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qp4\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T20:49:47Z",
+      "side": 1,
+      "message": "Use \u0026\u003d instead.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qqI\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T20:49:47Z",
+      "side": 1,
+      "message": "Inline this variable since the name is not informative.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qp8\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T20:49:47Z",
+      "side": 1,
+      "message": "Rename to visibilityBitOffset",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qqQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T20:49:47Z",
+      "side": 1,
+      "message": "Redundant cast.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qqU\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T20:49:47Z",
+      "side": 1,
+      "message": "It should be ! instead of -. Inline this variable since it\u0027s used only once.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qp0\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T20:49:47Z",
+      "side": 1,
+      "message": "Apply changes similar to setVisibility.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

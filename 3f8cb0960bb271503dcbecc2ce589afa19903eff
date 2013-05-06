@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//q/g\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerCPU.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-05-06T05:23:43Z",
+      "side": 1,
+      "message": "Could you update the copyright year? Now it will be (c) 2012, 2013 Tilera...\nSome other files also need updating.",
+      "revId": "3f8cb0960bb271503dcbecc2ce589afa19903eff",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

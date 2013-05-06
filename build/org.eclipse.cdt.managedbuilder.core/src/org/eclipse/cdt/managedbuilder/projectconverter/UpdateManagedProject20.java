@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 Intel Corporation and others.
+ * Copyright (c) 2004, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ *     Intel Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.projectconverter;
 
@@ -52,10 +52,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/**
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
- */
 class UpdateManagedProject20 {
 	private static final String ID_SEPARATOR = ".";	//$NON-NLS-1$
 	

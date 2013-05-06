@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Tilera Corporation and others.
+ * Copyright (c) 2012, 2013 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,13 +9,15 @@
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
  *     Marc Khouzam (Ericsson)                 - Added knowledge about execution 
  *                                               state and os/gdb thread ids
+ *     Marc Dumais (Ericsson) -  Bug 405390
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
 
+
 /** Represents single thread. */
 public class VisualizerThread
-	implements Comparable<VisualizerThread>
+	implements Comparable<VisualizerThread>, IVisualizerModelObject
 {
 	// --- members ---
 	
@@ -113,6 +115,18 @@ public class VisualizerThread
 		return m_tid;
 	}
 
+	/** Gets thread id (tid). */
+	@Override
+	public int getID() {
+		return getTID();
+	}
+
+	/** Return core the thread is on */
+	@Override
+	public IVisualizerModelObject getParent() {
+		return getCore();
+	}
+	
 	/** Gets gdb thread id. */
 	public int getGDBTID()	{
 		return m_gdbtid;
@@ -154,5 +168,16 @@ public class VisualizerThread
 			}
 		}
 		return result;
+	}
+	
+	/** IVisualizerModelObject version of compareTo() */
+	@Override
+	public int compareTo(IVisualizerModelObject o) {
+		if (o != null) {
+			if (o.getClass() == this.getClass()) {
+				return compareTo((VisualizerThread)o);
+			}
+		}
+		return 1;
 	}
 }

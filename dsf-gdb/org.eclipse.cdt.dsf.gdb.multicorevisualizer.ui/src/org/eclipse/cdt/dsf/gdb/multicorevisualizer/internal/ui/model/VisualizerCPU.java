@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Tilera Corporation and others.
+ * Copyright (c) 2012, 2013 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
+ *     Marc Dumais (Ericsson) -  Bug 405390
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
@@ -23,7 +24,7 @@ import java.util.List;
 
 /** Represents single CPU. */
 public class VisualizerCPU
-	implements Comparable<VisualizerCPU>
+	implements Comparable<VisualizerCPU>, IVisualizerModelObject
 {
 	// --- members ---
 	
@@ -78,8 +79,15 @@ public class VisualizerCPU
 	// --- accessors ---
 	
 	/** Gets ID of this CPU. */
+	@Override
 	public int getID() {
 		return m_id;
+	}
+	
+	/** CPU has no parent  - always returns null */
+	@Override
+	public IVisualizerModelObject getParent() {
+		return null;
 	}
 	
 	/** sets the load info for this CPU 
@@ -154,4 +162,14 @@ public class VisualizerCPU
 		return result;
 	}
 	
+	/** IVisualizerModelObject version of compareTO() */
+	@Override
+	public int compareTo(IVisualizerModelObject o) {
+		if (o != null) {
+			if (o.getClass() == this.getClass()) {
+				return compareTo((VisualizerCPU)o);
+			}
+		}
+		return 1;
+	}
 }

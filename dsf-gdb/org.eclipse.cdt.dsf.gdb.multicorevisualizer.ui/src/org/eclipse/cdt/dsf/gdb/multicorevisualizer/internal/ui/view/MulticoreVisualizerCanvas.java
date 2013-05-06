@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Tilera Corporation and others.
+ * Copyright (c) 2012, 2013 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *     Marc Dumais (Ericsson) - Bug 399419
  *     Marc Dumais (Ericsson) - Bug 404894
+ *     Marc Dumais (Ericsson) - Bug 405390
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -139,6 +140,11 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 	/** Selected PIDs. */
 	protected HashSet<Integer> m_selectedPIDs = null;
 	
+	/** Display filter for the graphical objects */
+	protected MulticoreVisualizerCanvasFilter m_canvasFilter = null;
+	
+	/** Canvas status bar */
+	protected MulticoreVisualizerStatusBar m_statusBar = null;
 
 	// --- constructors/destructors ---
 	
@@ -228,6 +234,12 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		};
 		m_updateTimer.setRepeating(false); // one-shot timer
 		m_updateTimer.start();
+		
+		// canvas filter
+		m_canvasFilter = new MulticoreVisualizerCanvasFilter(this);
+		
+		// status bar
+		m_statusBar = new MulticoreVisualizerStatusBar();
 	}
 	
 	/** Cleans up control */
@@ -276,6 +288,14 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
         	m_selectedPIDs.clear();
         	m_selectedPIDs = null;
         }
+        if (m_canvasFilter != null) {
+        	m_canvasFilter.dispose();
+        	m_canvasFilter = null;
+        }
+        if (m_statusBar != null) {
+        	m_statusBar.dispose();
+        	m_statusBar = null;
+        }
 	}
 	
 
@@ -291,6 +311,8 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 	public void setModel(VisualizerModel model)
 	{
 		m_model = model;
+		// TODO : Consider clearing the filter if the model changes,
+		// by calling clearFilter() 
 		requestRecache();
 		requestUpdate();
 	}
@@ -355,6 +377,10 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		m_recacheState |= state;
 		m_recacheSizes |= sizes;
 		m_recacheLoadMeters |= load;
+		// clear status bar message
+		m_statusBar.setMessage(null);
+		// re-compute filter to reflect latest model changes
+		m_canvasFilter.updateFilter();
 	}
 	
 	/** Fits n square items into a rectangle of the specified size.
@@ -411,13 +437,19 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 				for (VisualizerCPU cpu : m_model.getCPUs()) {
 					//if (force_cpu_count >= cpu_count) break;
 					//cpu_count++;
-					MulticoreVisualizerCPU mcpu = new MulticoreVisualizerCPU(cpu.getID());
-					m_cpus.add(mcpu);
-					m_cpuMap.put(cpu, mcpu);
-					for (VisualizerCore core : cpu.getCores()) {
-						MulticoreVisualizerCore mcore = new MulticoreVisualizerCore(mcpu, core.getID());
-						m_cores.add(mcore);
-						m_coreMap.put(core, mcore);
+					// filter permits displaying this CPU? 
+					if (m_canvasFilter.displayObject(cpu)) {
+						MulticoreVisualizerCPU mcpu = new MulticoreVisualizerCPU(cpu.getID());
+						m_cpus.add(mcpu);
+						m_cpuMap.put(cpu, mcpu);
+						for (VisualizerCore core : cpu.getCores()) {
+							// filter permits displaying this core?
+							if (m_canvasFilter.displayObject(core)) {
+								MulticoreVisualizerCore mcore = new MulticoreVisualizerCore(mcpu, core.getID());
+								m_cores.add(mcore);
+								m_coreMap.put(core, mcore);
+							}
+						}
 					}
 				}
 			}
@@ -442,19 +474,25 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 				while (modelCpus.hasMoreElements()) {
 					VisualizerCPU modelCpu = modelCpus.nextElement();
 					MulticoreVisualizerCPU visualizerCpu = m_cpuMap.get(modelCpu);
-					// update CPUs load meter 
-					MulticoreVisualizerLoadMeter meter = visualizerCpu.getLoadMeter();
-					meter.setEnabled(m_model.getLoadMetersEnabled());
-					meter.setLoad(modelCpu.getLoad());
-					meter.setHighLoadWatermark(modelCpu.getHighLoadWatermark());
-					
-					for (VisualizerCore modelCore : modelCpu.getCores()) {
-						MulticoreVisualizerCore visualizerCore = m_coreMap.get(modelCore);
-						// update cores load meter
-						meter = visualizerCore.getLoadMeter();
+					// when filtering is active, not all objects might be in the map
+					if (visualizerCpu != null) {
+						// update CPUs load meter 
+						MulticoreVisualizerLoadMeter meter = visualizerCpu.getLoadMeter();
 						meter.setEnabled(m_model.getLoadMetersEnabled());
-						meter.setLoad(modelCore.getLoad());
-						meter.setHighLoadWatermark(modelCore.getHighLoadWatermark());
+						meter.setLoad(modelCpu.getLoad());
+						meter.setHighLoadWatermark(modelCpu.getHighLoadWatermark());
+
+						for (VisualizerCore modelCore : modelCpu.getCores()) {
+							MulticoreVisualizerCore visualizerCore = m_coreMap.get(modelCore);
+							// when filtering is active, not all objects might be in the map
+							if (visualizerCore != null) {
+								// update cores load meter
+								meter = visualizerCore.getLoadMeter();
+								meter.setEnabled(m_model.getLoadMetersEnabled());
+								meter.setLoad(modelCore.getLoad());
+								meter.setHighLoadWatermark(modelCore.getHighLoadWatermark());
+							}
+						}
 					}
 				}
 			}
@@ -474,6 +512,14 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 			// General margin/spacing constants.
 			int cpu_margin = 8;       // margin around edges of CPU grid
 			int cpu_separation = 6;   // spacing between CPUS
+			int statusBarHeight;
+			// reserve space for status bar only if filter is active
+			if (isFilterActive()) {
+				statusBarHeight = 20; 
+			}
+			else {
+				statusBarHeight = 0; 
+			}
 			
 			// make room when load meters are present, else use a more compact layout
 			int core_margin = m_model.getLoadMetersEnabled() ? 20 : 12;      // margin around cores in a CPU 
@@ -490,13 +536,27 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 			// Figure out area to allocate to each CPU box.
 			int ncpus  = m_cpus.size();
 			int width  = bounds.width  + cpu_separation;
-			int height = bounds.height + cpu_separation;
+			int height = bounds.height + cpu_separation - statusBarHeight;
+			
+			// put status bar at the bottom of the canvas area
+			m_statusBar.setBounds(cpu_margin, bounds.y + bounds.height - 2 * cpu_margin , width  , statusBarHeight);
+			
 			int cpu_edge = fitSquareItems(ncpus, width, height);
 			int cpu_size = cpu_edge - cpu_separation;
 			if (cpu_size < 0) cpu_size = 0;
 			
 			// Calculate area on each CPU for placing cores.
-			int ncores = m_cores.size() / ((ncpus == 0) ? 1 : ncpus);
+			int ncores = 0;
+			// find the greatest number of cores on a given CPU and use
+			// that number for size calculations for all CPUs - this way
+			// we avoid displaying cores of varying sizes, in different 
+			// CPUs.
+			for (MulticoreVisualizerCPU cpu : m_cpus) {
+				int n = cpu.getCores().size();
+				if (n > ncores) {
+					ncores = n;
+				}
+			}
 			int cpu_width  = cpu_size - core_margin * 2 + core_separation;
 			int cpu_height = cpu_size - core_margin * 2 + core_separation;
 			int core_edge  = fitSquareItems(ncores, cpu_width, cpu_height);
@@ -572,14 +632,17 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 			// like processes and threads
 			
 			for (VisualizerThread thread : m_model.getThreads()) {
-				VisualizerCore core = thread.getCore();
-				MulticoreVisualizerCore mcore = m_coreMap.get(core);
-				if (mcore != null) {
-					MulticoreVisualizerThread mthread =
-						new MulticoreVisualizerThread(mcore, thread);
-					mcore.addThread(mthread);
-					m_threads.add(mthread);
-					m_threadMap.put(thread, mthread);
+				// filter permits displaying this thread? 
+				if(m_canvasFilter.displayObject(thread)) {
+					VisualizerCore core = thread.getCore();
+					MulticoreVisualizerCore mcore = m_coreMap.get(core);
+					if (mcore != null) {
+						MulticoreVisualizerThread mthread =
+								new MulticoreVisualizerThread(mcore, thread);
+						mcore.addThread(mthread);
+						m_threads.add(mthread);
+						m_threadMap.put(thread, mthread);
+					}
 				}
 			}
 
@@ -656,6 +719,12 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		// paint threads on top of cores
 		for (MulticoreVisualizerThread thread : m_threads) {
 			thread.paintContent(gc);
+		}
+		
+		// paint status bar
+		if (m_canvasFilter.isFilterActive()) {
+			m_statusBar.setMessage(m_canvasFilter.toString());
+			m_statusBar.paintContent(gc);
 		}
 		
 		// paint drag-selection marquee last, so it's on top.
@@ -1024,5 +1093,23 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
     /** Sets whether selection events are enabled. */
     public void setSelectionEventsEnabled(boolean enabled) {
         m_selectionManager.setSelectionEventsEnabled(enabled);
+    }
+    
+    
+    // --- canvas filter methods ---
+    
+    /** Set-up a canvas white-list filter. */
+    public void applyFilter() {
+    	m_canvasFilter.applyFilter();
+    }
+    
+    /** Removes any canvas filter currently in place */
+    public void clearFilter() {
+    	m_canvasFilter.clearFilter();
+    }
+
+    /** Tells if a canvas filter is currently in place */
+    public boolean isFilterActive() {
+    	return m_canvasFilter.isFilterActive();
     }
 }

@@ -93,7 +93,6 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	private ICOptionPage currentOptionsPage = null;
 	private Composite compositeOptionsPage;
 
-	private Button enableProvidersCheckBox;
 	private StatusMessageLine fStatusLine;
 
 	private Button sharedProviderCheckBox = null;
@@ -652,30 +651,6 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		}
 	}
 
-	/**
-	 * Create check-box to allow disable/enable language settings providers functionality.
-	 */
-	private void createEnableProvidersCheckBox() {
-		// take the flag from master page if available (normally for resource properties)
-		if (masterPropertyPage != null) {
-			enableProvidersCheckBox = setupCheck(usercomp, Messages.LanguageSettingsProviders_EnableForProject, 2, GridData.FILL_HORIZONTAL);
-			enableProvidersCheckBox.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					boolean enabled = enableProvidersCheckBox.getSelection();
-					masterPropertyPage.setLanguageSettingsProvidersEnabled(enabled);
-					enableTabControls(enabled);
-				}
-			});
-
-			enableProvidersCheckBox.setSelection(masterPropertyPage.isLanguageSettingsProvidersEnabled());
-
-			// display but disable the checkbox for file/folder resource
-			enableProvidersCheckBox.setEnabled(page.isForProject());
-			enableTabControls(enableProvidersCheckBox.getSelection());
-		}
-	}
-
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
@@ -695,7 +670,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 		fStatusLine = new StatusMessageLine(usercomp, SWT.LEFT, 2);
 		if (!page.isForPrefs()) {
-			createEnableProvidersCheckBox();
+			enableTabControls(masterPropertyPage.isLanguageSettingsProvidersEnabled());
 		}
 
 		String[] buttonLabels;
@@ -1107,7 +1082,6 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 			if (masterPropertyPage != null) {
 				boolean enabled = masterPropertyPage.isLanguageSettingsProvidersEnabled();
-				enableProvidersCheckBox.setSelection(enabled);
 				enableTabControls(enabled);
 			}
 		}
@@ -1123,15 +1097,14 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 	@Override
 	protected void performDefaults() {
-		if (page.isForProject() && (enableProvidersCheckBox==null || enableProvidersCheckBox.getSelection() == false))
-			return;
-
 		if (page.isForPrefs() || page.isForProject()) {
 			if (MessageDialog.openQuestion(usercomp.getShell(),
 					Messages.LanguageSettingsProviderTab_TitleResetProviders,
 					Messages.LanguageSettingsProviderTab_AreYouSureToResetProviders)) {
 
 				if (page.isForProject()) {
+					// set project LSP enablement to that of workspace
+					masterPropertyPage.setLanguageSettingsProvidersEnabled(ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(null));
 					ICConfigurationDescription cfgDescription = getConfigurationDescription();
 					if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 						List<ILanguageSettingsProvider> cfgProviders = new ArrayList<ILanguageSettingsProvider>(((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders());
@@ -1207,7 +1180,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			initializeProviders();
 		}
 
-		if (masterPropertyPage != null && enableProvidersCheckBox.getEnabled()) {
+		if (masterPropertyPage != null && masterPropertyPage.isLanguageSettingsProvidersEnabled()) {
 			masterPropertyPage.applyLanguageSettingsProvidersEnabled();
 		}
 	}

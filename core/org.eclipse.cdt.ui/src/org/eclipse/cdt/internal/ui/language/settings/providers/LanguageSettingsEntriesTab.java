@@ -79,7 +79,6 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	private static String currentLanguageIdGlobal = null;
 
 	private Button builtInCheckBox;
-	private Button enableProvidersCheckBox;
 	private StatusMessageLine fStatusLine;
 
 	private LanguageSettingsProvidersPage masterPropertyPage = null;
@@ -451,31 +450,6 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		builtInCheckBox.setEnabled(true);
 	}
 
-	/**
-	 * Create check-box to allow disable/enable language settings providers functionality.
-	 */
-	private void createEnableProvidersCheckBox() {
-		// take the flag from master page if available (normally for resource properties)
-		if (masterPropertyPage != null) {
-			enableProvidersCheckBox = setupCheck(usercomp, Messages.LanguageSettingsProviders_EnableForProject, 2, GridData.FILL_HORIZONTAL);
-			enableProvidersCheckBox.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					boolean enabled = enableProvidersCheckBox.getSelection();
-					masterPropertyPage.setLanguageSettingsProvidersEnabled(enabled);
-					enableTabControls(enabled);
-					updateStatusLine();
-				}
-			});
-
-			enableProvidersCheckBox.setSelection(masterPropertyPage.isLanguageSettingsProvidersEnabled());
-
-			// display but disable the checkbox for file/folder resource
-			enableProvidersCheckBox.setEnabled(page.isForProject());
-			enableTabControls(enableProvidersCheckBox.getSelection());
-		}
-	}
-
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
@@ -495,8 +469,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		createSashForm();
 		fStatusLine = new StatusMessageLine(usercomp, SWT.LEFT, 2);
 		createBuiltInsCheckBox();
-		// "I want to try new scanner discovery" temporary checkbox
-		createEnableProvidersCheckBox();
+
+		enableTabControls(masterPropertyPage.isLanguageSettingsProvidersEnabled());
 
 		initButtons(BUTTON_LABELS);
 		updateData(getResDesc());
@@ -574,7 +548,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 */
 	private void updateStatusLine() {
 		IStatus status=null;
-		if (enableProvidersCheckBox.getSelection() == true) {
+		if (masterPropertyPage.isLanguageSettingsProvidersEnabled()) {
 			ICConfigurationDescription cfgDescription = getConfigurationDescription();
 			status = LanguageSettingsImages.getStatus(getSelectedEntry(), cfgDescription);
 		}
@@ -1034,7 +1008,6 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 
 			if (masterPropertyPage != null) {
 				boolean enabled = masterPropertyPage.isLanguageSettingsProvidersEnabled();
-				enableProvidersCheckBox.setSelection(enabled);
 				enableTabControls(enabled);
 			}
 		}
@@ -1114,7 +1087,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 
 	@Override
 	protected void performOK() {
-		if (masterPropertyPage != null && enableProvidersCheckBox.getEnabled()) {
+		if (masterPropertyPage != null && masterPropertyPage.isLanguageSettingsProvidersEnabled()) {
 			masterPropertyPage.applyLanguageSettingsProvidersEnabled();
 		}
 	}

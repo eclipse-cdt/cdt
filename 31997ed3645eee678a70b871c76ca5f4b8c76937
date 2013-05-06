@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//qk0\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/VariableReadWriteFlagsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T23:04:18Z",
+      "side": 1,
+      "message": "Remove the space before *.",
+      "revId": "31997ed3645eee678a70b871c76ca5f4b8c76937",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qk8\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T23:04:18Z",
+      "side": 1,
+      "message": "Move lines 66-73 inside rwInExpression since IASTIdExpression is a subclass of IASTExpression.",
+      "revId": "31997ed3645eee678a70b871c76ca5f4b8c76937",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qk4\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-06T23:04:18Z",
+      "side": 1,
+      "message": "What about +\u003d, -\u003d, ++, etc?",
+      "revId": "31997ed3645eee678a70b871c76ca5f4b8c76937",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

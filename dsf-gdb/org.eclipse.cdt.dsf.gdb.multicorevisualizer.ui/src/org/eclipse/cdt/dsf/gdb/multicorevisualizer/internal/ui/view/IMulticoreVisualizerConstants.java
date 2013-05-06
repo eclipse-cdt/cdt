@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Ericsson and others.
+ * Copyright (c) 2012, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,6 +75,9 @@ public class IMulticoreVisualizerConstants
 	 * @since 1.1
 	 */
 	public static final Color COLOR_LOAD_TEXT = Colors.GREEN;
+	
+	/** Color used to draw text to the status bar */
+	public static final Color COLOR_STATUS_BAR_TEXT = Colors.GREEN;
 	
 	// Colors for load meters
 	

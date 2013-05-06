@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Ericsson and others.
+ * Copyright (c) 2012, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     Marc Dumais (Ericsson) - Bug 400231
  *     Marc Dumais (Ericsson) - Bug 399419
+ *     Marc Dumais (Ericsson) - Bug 405390
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -122,7 +123,7 @@ public class MulticoreVisualizerEventListener {
 
 					    			thread.setState(newState);
 					    			thread.setCore(vCore);
-					    			fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();
+					    			fVisualizer.refresh();
 					    		}
 							}
 						}

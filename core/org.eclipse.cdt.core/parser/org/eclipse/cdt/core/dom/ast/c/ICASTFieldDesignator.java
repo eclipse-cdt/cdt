@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.c;
 
@@ -14,13 +14,12 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 
 /**
- * Specific Designator that represents a field reference.
+ * Specific designator that represents a field reference.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICASTFieldDesignator extends ICASTDesignator {
-
 	/**
 	 * <code>FIELD_NAME</code> represent the relationship between an
 	 * <code>ICASTFieldDesignator</code> and an <code>IASTName</code>.
@@ -29,17 +28,16 @@ public interface ICASTFieldDesignator extends ICASTDesignator {
 			"ICASTFieldDesignator.FIELD_NAME - ICASTFieldDesignator Field Name"); //$NON-NLS-1$
 
 	/**
-	 * Get the field name.
+	 * Returns the field name.
 	 * 
 	 * @return <code>IASTName</code>
 	 */
 	public IASTName getName();
 
 	/**
-	 * Set the field name.
+	 * Sets the field name.
 	 * 
-	 * @param name
-	 *            <code>IASTName</code>
+	 * @param name <code>IASTName</code>
 	 */
 	public void setName(IASTName name);
 	

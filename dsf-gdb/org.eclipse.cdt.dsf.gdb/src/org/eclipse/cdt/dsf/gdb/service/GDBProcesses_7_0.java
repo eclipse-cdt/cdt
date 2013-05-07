@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Ericsson and others.
+ * Copyright (c) 2008, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -911,6 +911,19 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	    						// Store the fully formed container context so it can be returned to the caller.
 							    dataRm.setData(fContainerDmc);
 
+								// Initialize memory data for this process.
+								IGDBMemory memory = getServicesTracker().getService(IGDBMemory.class);
+								IMemoryDMContext memContext = DMContexts.getAncestorOfType(fContainerDmc, IMemoryDMContext.class);
+								if (memory == null || memContext == null) {
+									rm.done();
+									return;
+								}
+								memory.initializeMemoryData(memContext, rm);
+	    					}
+	    				},
+	    				new Step() { 
+	    					@Override
+	    					public void execute(RequestMonitor rm) {
 								// Start tracking breakpoints.
 								MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
 								IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);

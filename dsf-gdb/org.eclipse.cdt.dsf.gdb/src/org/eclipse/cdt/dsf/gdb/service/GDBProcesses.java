@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Ericsson and others.
+ * Copyright (c) 2008, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -245,13 +245,48 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 							protected void handleSuccess() {
 								// For an attach, we actually know the pid, so let's remember it
 								fProcId = ((IMIProcessDMContext)procCtx).getProcId();
-								IDMContext containerDmc = getData();
-								rm.setData(containerDmc);
+								final IDMContext ctx = getData();
+								rm.setData(ctx);
 
-								// Start tracking breakpoints.
-								MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
-								IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
-								bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
+								ImmediateExecutor.getInstance().execute(
+									new Sequence(getExecutor(), rm) {
+										
+										private Step[] fSteps = new Step[] {
+											// Initialize memory data for this process
+											new Step() {
+												@Override
+												public void execute(RequestMonitor memoryDataRm) {
+													IGDBMemory memory = getServicesTracker().getService(IGDBMemory.class);
+													IContainerDMContext containerDmc = DMContexts.getParentOfType(ctx, IContainerDMContext.class);
+													if (memory == null || containerDmc == null) {
+														memoryDataRm.done();
+														return;
+													}
+													IMemoryDMContext memContext = DMContexts.getAncestorOfType(ctx, IMemoryDMContext.class);
+													if (memContext == null) {
+														memoryDataRm.done();
+														return;
+													}
+													memory.initializeMemoryData(memContext, memoryDataRm);
+												};
+											},
+												
+											// Start tracking breakpoints.
+											new Step() {
+												@Override
+												public void execute(RequestMonitor trackBpRm) {
+													MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
+													IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(ctx, IBreakpointsTargetDMContext.class);
+													bpmService.startTrackingBreakpoints(bpTargetDmc, trackBpRm);
+												};
+											}
+										};
+										@Override
+										public Step[] getSteps() {
+											return fSteps;
+										}
+										
+									});
 							}
 						});
 			}

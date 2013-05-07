@@ -21,6 +21,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
@@ -28,7 +29,6 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.MIMemory;
@@ -56,7 +56,7 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 	/**
 	 * We assume the endianness is the same for all processes because GDB supports only one target.
 	 */
-	private boolean fIsBigEndian = false;
+	private Boolean fIsBigEndian;
 
 	public GDBMemory(DsfSession session) {
 		super(session);
@@ -121,15 +121,59 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 			});
 	}
 
-	@DsfServiceEventHandler
-	public void eventDispatched(IStartedDMEvent event) {
-		if (event.getDMContext() instanceof IContainerDMContext) {
-			IMemoryDMContext memContext = DMContexts.getAncestorOfType(event.getDMContext(), IMemoryDMContext.class);
-			if (memContext != null) {
-				readAddressSize(memContext);
-				readEndianness(memContext);
+	@Override
+	public void initializeMemoryData(final IMemoryDMContext memContext, RequestMonitor rm) {
+		ImmediateExecutor.getInstance().execute(new Sequence(getExecutor(), rm) {
+			
+			private Step[] fSteps = new Step[] {
+				new Step() {
+					@Override
+					public void execute(final RequestMonitor requestMonitor) {
+						Integer addrSize = fAddressSizes.get(memContext);
+						if (addrSize != null) {
+							requestMonitor.done();
+							return;
+						}
+						readAddressSize(
+							memContext, 
+							new DataRequestMonitor<Integer>(ImmediateExecutor.getInstance(), requestMonitor) {
+								@Override
+								@ConfinedToDsfExecutor("fExecutor")
+								protected void handleSuccess() {
+									fAddressSizes.put(memContext, getData());
+									requestMonitor.done();
+								}
+							});
+					}
+				},
+				
+				new Step() {
+					@Override
+					public void execute(final RequestMonitor requestMonitor) {
+						if ( fIsBigEndian != null) {
+							requestMonitor.done();
+							return;
+						}
+						readEndianness(
+								memContext, 
+								new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), requestMonitor) {
+									@Override
+									@ConfinedToDsfExecutor("fExecutor")
+									protected void handleSuccess() {
+										fIsBigEndian = getData();
+										requestMonitor.done();
+									}
+								});
+					}
+				},
+					
+			};
+
+			@Override
+			public Step[] getSteps() {
+				return fSteps;
 			}
-		}
+		});
 	}
 
 	@DsfServiceEventHandler
@@ -153,40 +197,7 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 		return fIsBigEndian;
 	}
 
-	/**
-	 * Retrieves the address size for given memory and execution contexts. 
-	 */
-	private void readAddressSize(final IMemoryDMContext memContext) {
-		Integer addrSize = fAddressSizes.get(memContext);
-		if (addrSize == null) {
-			doReadAddressSize(
-				memContext, 
-				new DataRequestMonitor<Integer>(ImmediateExecutor.getInstance(), null) {
-					@Override
-					@ConfinedToDsfExecutor("fExecutor")
-					protected void handleSuccess() {
-						fAddressSizes.put(memContext, getData());
-					}
-				});
-		}
-	}
-
-	/**
-	 * Retrieves the endianness for given memory and execution contexts. 
-	 */
-	private void readEndianness(IMemoryDMContext memContext) {
-		doReadEndianness(
-			memContext, 
-			new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), null) {
-				@Override
-				@ConfinedToDsfExecutor("fExecutor")
-				protected void handleSuccess() {
-					fIsBigEndian = getData();
-				}
-			});
-	}
-
-	protected void doReadAddressSize(IMemoryDMContext memContext, final DataRequestMonitor<Integer> drm) {
+	protected void readAddressSize(IMemoryDMContext memContext, final DataRequestMonitor<Integer> drm) {
 		IExpressions exprService = getServicesTracker().getService(IExpressions.class);
 		IExpressionDMContext exprContext = exprService.createExpression(memContext, "sizeof (void*)"); //$NON-NLS-1$
 		CommandFactory commandFactory = fCommandControl.getCommandFactory();
@@ -207,7 +218,7 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 			});
 	}
 
-	protected void doReadEndianness(IMemoryDMContext memContext, final DataRequestMonitor<Boolean> drm) {
+	protected void readEndianness(IMemoryDMContext memContext, final DataRequestMonitor<Boolean> drm) {
 		CommandFactory commandFactory = fCommandControl.getCommandFactory();
 		fCommandControl.queueCommand(
 			commandFactory.createCLIShowEndian(memContext),

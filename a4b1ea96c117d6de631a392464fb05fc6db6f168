@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPn///zE\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/VisibilityAsserts.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-07T23:39:48Z",
+      "side": 1,
+      "message": "Please capitalize \"Illegal\"",
+      "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///y4\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-07T23:39:48Z",
+      "side": 1,
+      "message": "Inline the visibility variables in this and other tests.",
+      "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///y8\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-07T23:39:48Z",
+      "side": 1,
+      "message": "Statically import assertVisibility method.",
+      "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///zA\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-07T23:39:48Z",
+      "side": 1,
+      "message": "0 -\u003e 1",
+      "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///y0\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPClassType.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-07T23:39:48Z",
+      "side": 1,
+      "message": "Join with the previous line.",
+      "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///yk\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassSpecialization.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 492,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-07T23:39:48Z",
+      "side": 1,
+      "message": "We should probably return v_private since this is the default for classes and getKey returns k_class in case of a CoreException.",
+      "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///yc\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-07T23:39:48Z",
+      "side": 1,
+      "message": "Simpler to apply the mask after the shift.",
+      "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

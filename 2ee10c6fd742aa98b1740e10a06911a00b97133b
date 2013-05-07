@@ -492,6 +492,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPn///yg\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-07T23:39:13Z",
+      "side": 1,
+      "message": "I apologize for creating confusion. I\u0027ve mistaken tilde for minus and then typed ! having ~ in mind.",
+      "parentUuid": "AABOPX//qcI\u003d",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//qp0\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
         "patchSetId": 3

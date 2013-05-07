@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//qf0\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/VisibilityAsserts.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-07T10:41:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//qss\u003d",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//qsU\u003d",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2013-05-06T20:49:47Z",
       "side": 1,
       "message": "Make the name of the template a parameter of the function to make calling code easier to understand.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qeE\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-07T10:41:10Z",
+      "side": 1,
+      "message": "Done - Got rid of the method",
+      "parentUuid": "AABOPX//qsU\u003d",
       "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//qeA\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-07T10:41:10Z",
+      "side": 1,
+      "message": "Done - Got rid of the method",
+      "parentUuid": "AABOPX//qsQ\u003d",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//qsM\u003d",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2013-05-06T20:49:47Z",
       "side": 1,
       "message": "A better approach would be to resolve the member name, then get to the class by calling getOwner(). Member index is irrelevant for the purpose of the test and should not be used.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qd8\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-07T10:41:10Z",
+      "side": 1,
+      "message": "Done - Much better approach! Reduced the test to the essential part.",
+      "parentUuid": "AABOPX//qsM\u003d",
       "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//qd4\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPClassType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-07T10:41:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//qsE\u003d",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//qqo\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassSpecialization.java",
         "patchSetId": 3
@@ -98,6 +188,24 @@
       "writtenOn": "2013-05-06T20:49:47Z",
       "side": 1,
       "message": "A CoreException doesn\u0027t necessarily indicate that the member is not owned by the class.\n\nLogging and re-throwing the same exception causes double reporting since the re-thrown exception will be logged or reported some other way elsewhere.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qdQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassSpecialization.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 492,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-07T10:41:10Z",
+      "side": 1,
+      "message": "Done - I see that throwing an IllegalArgumentException in the case of a CoreException does not make sense, as it implies a situation that does not exist. I had not seen CoreException declarations in the base interfaces like ICPPClassType, therefore, I did not want to add a throws declaration to getVisibility(). Other methods in the two affected types (PDOMCPPClassSpecialization and PDOMCPPClassType) catch those exception and return an empty array or null. I thought it would make sense not to return a value which could be expected as a result if all goes right. Thus I found the v_unspecified constant quite usefull for indicating such a problem. I\u0027ll stick with v_pubilc as fallback, similar to the implementation of isFinal(). Or does that have any implications I currently don\u0027t see.",
+      "parentUuid": "AABOPX//qqo\u003d",
       "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//qdM\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 429,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-07T10:41:10Z",
+      "side": 1,
+      "message": "Done - See PDOMCPPClassSpecialization",
+      "parentUuid": "AABOPX//qqk\u003d",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//qqg\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
         "patchSetId": 3
@@ -132,6 +258,24 @@
       "writtenOn": "2013-05-06T20:49:47Z",
       "side": 1,
       "message": "Better: nextMemberPosition \u003c 0",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qdI\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-07T10:41:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//qqg\u003d",
       "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//qc0\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-07T10:41:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//qqc\u003d",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//qp4\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
         "patchSetId": 3
@@ -166,6 +328,24 @@
       "writtenOn": "2013-05-06T20:49:47Z",
       "side": 1,
       "message": "Use \u0026\u003d instead.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qcw\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-07T10:41:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//qp4\u003d",
       "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//qcs\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-07T10:41:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//qqI\u003d",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//qp8\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
         "patchSetId": 3
@@ -200,6 +398,24 @@
       "writtenOn": "2013-05-06T20:49:47Z",
       "side": 1,
       "message": "Rename to visibilityBitOffset",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qco\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-07T10:41:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//qp8\u003d",
       "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//qck\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-07T10:41:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//qqQ\u003d",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//qqU\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
         "patchSetId": 3
@@ -240,6 +474,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//qcI\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-07T10:41:10Z",
+      "side": 1,
+      "message": "Inline is ok, but I don\u0027t get the rest of it. I used ~ (tilde operator) to invert the bits of the current bit set. This is necessary to reset the current bits of the target member - and only those of the current member. I\u0027m aware of any possibilty to use ! (not operator) unary or binary with integers in Java. Could you clearify?",
+      "parentUuid": "AABOPX//qqU\u003d",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//qp0\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
         "patchSetId": 3
@@ -251,6 +503,24 @@
       "writtenOn": "2013-05-06T20:49:47Z",
       "side": 1,
       "message": "Apply changes similar to setVisibility.",
+      "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//qcE\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-07T10:41:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//qp0\u003d",
       "revId": "2ee10c6fd742aa98b1740e10a06911a00b97133b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

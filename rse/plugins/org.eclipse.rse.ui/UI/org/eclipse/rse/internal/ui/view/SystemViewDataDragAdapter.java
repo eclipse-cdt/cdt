@@ -21,7 +21,7 @@
  * David McKnight   (IBM)        - [248339] [dnd][encodings] Cannot drag&drop / copy&paste files or folders with turkish or arabic names
  * David McKnight   (IBM)        - [407428] [shells] allow dragging of files in shell
  *******************************************************************************/
-
+ 
 package org.eclipse.rse.internal.ui.view;
  
 import java.io.UnsupportedEncodingException;

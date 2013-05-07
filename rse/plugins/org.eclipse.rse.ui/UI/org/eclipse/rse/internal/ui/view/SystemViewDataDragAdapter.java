@@ -23,7 +23,7 @@
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
-
+ 
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 

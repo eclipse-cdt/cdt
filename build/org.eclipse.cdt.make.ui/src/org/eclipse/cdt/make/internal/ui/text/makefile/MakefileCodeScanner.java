@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.make.internal.ui.text.ColorManager;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWhitespaceDetector;
@@ -38,6 +40,41 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 		ColorManager.MAKE_MACRO_DEF_COLOR,
 		ColorManager.MAKE_DEFAULT_COLOR
 	};
+
+	private final class KeywordDetector implements IWordDetector {
+		@Override
+		public boolean isWordPart(char c) {
+			return Character.isLetterOrDigit(c);
+		}
+		@Override
+		public boolean isWordStart(char c) {
+			return Character.isLetterOrDigit(c) || c == '-';
+		}
+	}
+
+	private class KeywordRule extends WordRule {
+		private KeywordRule() {
+			super(new KeywordDetector());
+		}
+		@Override
+		public IToken evaluate(ICharacterScanner scanner) {
+			int offset = fOffset;
+			IToken token = super.evaluate(scanner);
+			if (token != fDefaultToken) {
+				// check if the keyword starts from beginning of line possibly indented
+				try {
+					int line= fDocument.getLineOfOffset(offset);
+					int start= fDocument.getLineOffset(line);
+					String ident = fDocument.get(start, offset - start);
+					if (ident.trim().length() > 0) {
+						token = fDefaultToken;
+					}
+				} catch (BadLocationException ex) {
+				}
+			}
+			return token;
+		}
+	}
 
 	/**
 	 * Constructor for MakefileCodeScanner
@@ -68,21 +105,10 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 		rules.add(new MacroDefinitionRule(macroDefToken, Token.UNDEFINED));
 
 		// Add word rule for keywords, types, and constants.
-		// We restrict the detection of the keywords to be the first column to be valid.
-		WordRule keyWordRule = new WordRule(new IWordDetector() {
-			@Override
-			public boolean isWordPart(char c) {
-				return Character.isLetterOrDigit(c) || c == '_';
-			}
-			@Override
-			public boolean isWordStart(char c) {
-				return Character.isLetterOrDigit(c) || c == '_' || c == '-';
-			}
-		});
+		WordRule keyWordRule = new KeywordRule();
 		for (String keyword : keywords) {
 			keyWordRule.addWord(keyword, keywordToken);
 		}
-		keyWordRule.setColumnConstraint(0);
 		rules.add(keyWordRule);
 
 		rules.add(new FunctionReferenceRule(functionToken));

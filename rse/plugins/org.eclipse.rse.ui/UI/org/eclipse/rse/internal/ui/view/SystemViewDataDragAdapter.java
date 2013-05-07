@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
  * David Dykstal (IBM) - [142065] fix drag and drop on Mac OS X
  * Kevin Doyle (IBM) - [187536] Drag & Drop file to Editor launchs file in system editor
  * David McKnight   (IBM)        - [248339] [dnd][encodings] Cannot drag&drop / copy&paste files or folders with turkish or arabic names
+ * David McKnight   (IBM)        - [407428] [shells] allow dragging of files in shell
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -108,7 +109,10 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 	    else
 	    {
 	        subSystem = adapter.getSubSystem(dragObject);	   
-	    
+	        if (adapter instanceof ISystemRemoteElementAdapter){
+	        	ISystemEditableRemoteObject editable = ((ISystemRemoteElementAdapter)adapter).getEditableRemoteObject(dragObject);
+	        	subSystem = editable.getSubSystem();	        	
+	        } 
 			if (subSystem != null)
 			{
 			    String subSystemId = RSECorePlugin.getTheSystemRegistry().getAbsoluteNameForSubSystem(subSystem);

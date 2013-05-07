@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 TUBITAK BILGEM-ITI and others.
+ * Copyright (c) 2010, 2013 TUBITAK BILGEM-ITI and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
@@ -311,6 +312,19 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		    							new ImmediateDataRequestMonitor<MIInfo>(rm));
 		                    }
 		                },
+						// Initialize memory data for this process.
+	    				new Step() { 
+	    					@Override
+	    					public void execute(RequestMonitor rm) {
+								IGDBMemory memory = getServicesTracker().getService(IGDBMemory.class);
+								IMemoryDMContext memContext = DMContexts.getAncestorOfType(fContainerDmc, IMemoryDMContext.class);
+								if (memory == null || memContext == null) {
+									rm.done();
+									return;
+								}
+								memory.initializeMemoryData(memContext, rm);
+	    					}
+	    				},
                     	// Start tracking this process' breakpoints.
 		                new Step() { 
 		                    @Override

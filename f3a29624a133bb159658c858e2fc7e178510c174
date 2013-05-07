@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPn///8I\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-05-07T18:07:59Z",
+      "side": 1,
+      "message": "I am not sure about this. Do I need to get IContainerDMContext first?",
+      "revId": "f3a29624a133bb159658c858e2fc7e178510c174",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

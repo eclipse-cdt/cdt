@@ -6,14 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Mentor Graphics - Initial API and implementation
+ * 		Mentor Graphics - Initial API and implementation
+ * 		Salvatore Culcasi (ST) - Bug 407163 - GDB Console: breakpoint not added with MinGW and gdb
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
 
 import java.io.File;
 import java.math.BigInteger;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -1319,7 +1319,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			resource = ResourcesPlugin.getWorkspace().getRoot();
 		else {
 			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(
-					URI.create(String.format("file:/%s", fileName))); //$NON-NLS-1$
+				new File(fileName).toURI());
 			if (files.length > 0) {
 				resource = files[0];
 			}

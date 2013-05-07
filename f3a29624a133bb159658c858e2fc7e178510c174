@@ -16,6 +16,24 @@
       "revId": "f3a29624a133bb159658c858e2fc7e178510c174",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///6M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-05-07T18:46:38Z",
+      "side": 1,
+      "message": "No.  getAncestorOfType() called below will find whatever you ask for as long as it is in the hierarchy as an ancestor or as the current context itself.\n\nIn fact, call getParentOfType here will always return null because the current context is the container.",
+      "parentUuid": "AABOPn///8I\u003d",
+      "revId": "f3a29624a133bb159658c858e2fc7e178510c174",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

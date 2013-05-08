@@ -1152,9 +1152,20 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					// For Windows/Mac, check for PWD environment variable being passed.
 					// Remove it for now as it is causing errors in configuration.
 					// Fix for bug #343879
-					if (!removePWD || !variables[i].getName().equals("PWD")) // $NON-NLS-1$
+					if (!removePWD || !variables[i].getName().equals("PWD")) { // $NON-NLS-1$
+						String value = variables[i].getValue();
+						// The following is a work-around for bug #407580.  Configure doesn't recognize
+						// a directory with a trailing separator at the end is equivalent to the same
+						// directory without that trailing separator.  This problem can cause
+						// configure to try and link a file to itself (e.g. projects with a GnuMakefile) and
+						// obliterate the contents.  Thus, we remove the trailing separator to be safe.
+						if (variables[i].getName().equals("PWD")) { // $NON-NLS-1$
+							if (value.charAt(value.length()-1) == IPath.SEPARATOR)
+								value = value.substring(0, value.length() - 1);	
+						}
 						envList.add(variables[i].getName()
-								+ "=" + variables[i].getValue()); //$NON-NLS-1$
+								+ "=" + value); //$NON-NLS-1$
+					}
 				}
 				if (additionalEnvs != null)
 					envList.addAll(additionalEnvs); // add any additional environment variables specified ahead of script

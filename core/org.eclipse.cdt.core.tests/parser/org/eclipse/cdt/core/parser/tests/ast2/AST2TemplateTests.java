@@ -3523,7 +3523,7 @@ public class AST2TemplateTests extends AST2TestBase {
     //    	  template<typename T> void f(T);
     //    };
     //    template<typename T> void A<float>::f(T){}   //problem on f
-    public void testClassTemplateMemberFunctionTemplate_Bug104262() throws Exception {
+    public void testClassTemplateMemberFunctionTemplate_104262() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code);
         BindingAssertionHelper bh= new BindingAssertionHelper(code, CPP);
@@ -3574,7 +3574,7 @@ public class AST2TemplateTests extends AST2TestBase {
     //    		this->a= 1;
     //    	}
     //    };
-    public void testFieldReference_Bug257186() throws Exception {
+    public void testFieldReference_257186() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code);
         BindingAssertionHelper bh= new BindingAssertionHelper(code, CPP);
@@ -3596,7 +3596,7 @@ public class AST2TemplateTests extends AST2TestBase {
     //    		f(b); g(b); h(b); m(b);
     //    	}
     //    };
-    public void testUnknownReferences_Bug257194() throws Exception {
+    public void testUnknownReferences_257194() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code);
         BindingAssertionHelper bh= new BindingAssertionHelper(code, CPP);
@@ -3620,7 +3620,7 @@ public class AST2TemplateTests extends AST2TestBase {
     //			v.x; v.y();
     //    	}
     //    };
-    public void testTypeOfUnknownReferences_Bug257194a() throws Exception {
+    public void testTypeOfUnknownReferences_257194a() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code);
         BindingAssertionHelper bh= new BindingAssertionHelper(code, CPP);
@@ -3645,7 +3645,7 @@ public class AST2TemplateTests extends AST2TestBase {
     //          v->x; v->y();
     //    	}
     //    };
-    public void testTypeOfUnknownReferences_Bug257194b() throws Exception {
+    public void testTypeOfUnknownReferences_257194b() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code);
         BindingAssertionHelper bh= new BindingAssertionHelper(code, CPP);
@@ -5214,7 +5214,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	void test() {
 	//	    sort(MySort<int>);
 	//	}
-	public void testAdressOfUniqueTemplateInst_Bug326076() throws Exception {
+	public void testAdressOfUniqueTemplateInst_326076() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -5229,7 +5229,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	  f(g, '1');
 	//	  f(g, 1);
 	//	}
-	public void testInstantiationOfFunctionTemplateWithOverloadedFunctionSetArgument_Bug326492() throws Exception {
+	public void testInstantiationOfFunctionTemplateWithOverloadedFunctionSetArgument_326492() throws Exception {
 		String code= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, CPP);
 		ICPPFunctionTemplate f1= bh.assertNonProblem("f(T (*)(int), char)", 1);
@@ -5259,7 +5259,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	  Ptr<ns::T> parm;
 	//	  f(parm);
 	//	}
-	public void testADLForTemplateSpecializations_Bug327069() throws Exception {
+	public void testADLForTemplateSpecializations_327069() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -5269,7 +5269,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	void x(int* (*) (int*)) {
 	//	  x(f);
 	//	}
-	public void testPartialOrderingInNonCallContext_Bug326900() throws Exception {
+	public void testPartialOrderingInNonCallContext_326900() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -5281,7 +5281,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	  X x;
 	//	  y(x);
 	//	}
-	public void testPartialOrderingForConversions_Bug326900() throws Exception {
+	public void testPartialOrderingForConversions_326900() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -5297,7 +5297,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//		  L<S>::CI l;
 	//		  l.m().foo = 1;
 	//	}
-	public void testNestedTypedefSpecialization_Bug329795() throws Exception {
+	public void testNestedTypedefSpecialization_329795() throws Exception {
 		String code= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, CPP);
 		ICPPField f1= bh.assertNonProblem("foo;", 3);
@@ -5319,7 +5319,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	  TestImpl::Inner2* ptr2=ptr1->ptr2;
 	//	  func(ptr2->ptr1);
 	//	}
-	public void testSpecializationViaNotDirectlyEnclosingTemplate_Bug333186() throws Exception {
+	public void testSpecializationViaNotDirectlyEnclosingTemplate_333186() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -5332,21 +5332,21 @@ public class AST2TemplateTests extends AST2TestBase {
 	//
 	//	struct C {};
 	//	template <class C& c> class Z{};
-	public void testNonTypeTemplateParameterWithTypenameKeyword_Bug333186() throws Exception {
+	public void testNonTypeTemplateParameterWithTypenameKeyword_333186() throws Exception {
 		parseAndCheckBindings();
 	}
 
 	//	template <typename T, typename U = int> void f() {
 	//	    f<int>();
 	//	}
-	public void testDefaultTmplArgumentOfFunctionTemplate_Bug333325() throws Exception {
+	public void testDefaultTmplArgumentOfFunctionTemplate_333325() throws Exception {
 		parseAndCheckBindings();
 	}
 
 	//	template <void (*Func)()> class X {};
 	//	template <typename T> void Y();
 	//	X< Y<int> > x;
-	public void testFunctionInstanceAsTemplateArg_Bug333529() throws Exception {
+	public void testFunctionInstanceAsTemplateArg_333529() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -5372,7 +5372,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	void test() {
 	//	  P(C());
 	//	}
-	public void testFunctionInstanceAsTemplateArg_Bug334472() throws Exception {
+	public void testFunctionInstanceAsTemplateArg_334472() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -5382,7 +5382,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	    g<int>();
 	//	    g<int, int>();
 	//	}
-	public void testFunctionTemplateSignatures_Bug335062() throws Exception {
+	public void testFunctionTemplateSignatures_335062() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -5404,7 +5404,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	void g() {
 	//		function(0);  // ERROR HERE
 	//	}
-	public void testSyntaxErrorInReturnTypeOfFunctionInstance_Bug336426() throws Exception {
+	public void testSyntaxErrorInReturnTypeOfFunctionInstance_336426() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -5412,7 +5412,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	template <typename Functor> void f(Functor functor) {
 	//	    A<decltype(functor())> a;
 	//	}
-	public void testFunctionCallOnDependentName_Bug337686() throws Exception {
+	public void testFunctionCallOnDependentName_337686() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -5424,7 +5424,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	    h(s, 1);
 	//	    h(s, 1, 2);
 	//	}
-	public void testVariadicFunctionTemplate_Bug333389() throws Exception {
+	public void testVariadicFunctionTemplate_333389() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -5547,7 +5547,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	    ft(&Foo::function);
 	//	    return 0;
 	//	}
-	public void testAddressOfMethodForInstantiation_Bug344310() throws Exception {
+	public void testAddressOfMethodForInstantiation_344310() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -7328,7 +7328,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	// }
 	// void test() {
 	//     N::impl<T>::type operand;
-	//     operand.kind();  // ERROR HERE: Method 'kind' could not be resolved
+	//     operand.kind();
 	// }
     public void testNameLookupInDependentExpression_399829a() throws Exception {
         parseAndCheckBindings();
@@ -7352,7 +7352,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	// }
 	// void test() {
 	//     N::impl<S>::type operand;
-	//     operand.kind();  // ERROR HERE: Method 'kind' could not be resolved
+	//     operand.kind();
 	// }
     public void testNameLookupInDependentExpression_399829b() throws Exception {
         parseAndCheckBindings();

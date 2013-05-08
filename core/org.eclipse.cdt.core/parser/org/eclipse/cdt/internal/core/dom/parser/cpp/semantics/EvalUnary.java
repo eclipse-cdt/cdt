@@ -75,11 +75,12 @@ public class EvalUnary extends CPPDependentEvaluation {
 	private ICPPFunction fOverload= CPPFunction.UNINITIALIZED_FUNCTION;
 	private IType fType;
 
-	public EvalUnary(int operator, ICPPEvaluation operand, IBinding addressOfQualifiedNameBinding, 
+	public EvalUnary(int operator, ICPPEvaluation operand, IBinding addressOfQualifiedNameBinding,
 			IASTNode pointOfDefinition) {
 		this(operator, operand, addressOfQualifiedNameBinding, findEnclosingTemplate(pointOfDefinition));
 	}
-	public EvalUnary(int operator, ICPPEvaluation operand, IBinding addressOfQualifiedNameBinding, 
+
+	public EvalUnary(int operator, ICPPEvaluation operand, IBinding addressOfQualifiedNameBinding,
 			IBinding templateDefinition) {
 		super(templateDefinition);
 		fOperator= operator;
@@ -161,7 +162,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 
 		if (fAddressOfQualifiedNameBinding instanceof ICPPMember) {
 			ICPPMember member= (ICPPMember) fAddressOfQualifiedNameBinding;
-			if (!member.isStatic()) 
+			if (!member.isStatic())
 				return null;
 		}
 
@@ -176,7 +177,8 @@ public class EvalUnary extends CPPDependentEvaluation {
 	    } else {
 	    	args = new ICPPEvaluation[] { fArgument };
 	    }
-    	return CPPSemantics.findOverloadedOperator(point, getTemplateDefinitionScope(), args, type, op, LookupMode.LIMITED_GLOBALS);
+    	return CPPSemantics.findOverloadedOperator(point, getTemplateDefinitionScope(), args, type,
+    			op, LookupMode.LIMITED_GLOBALS);
 	}
 
 	@Override
@@ -207,7 +209,8 @@ public class EvalUnary extends CPPDependentEvaluation {
 				ICPPMember member= (ICPPMember) fAddressOfQualifiedNameBinding;
 				if (!member.isStatic()) {
 					try {
-						return new CPPPointerToMemberType(member.getType(), member.getClassOwner(), false, false, false);
+						return new CPPPointerToMemberType(member.getType(), member.getClassOwner(),
+								false, false, false);
 					} catch (DOMException e) {
 						return e.getProblem();
 					}
@@ -245,7 +248,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 	public IValue getValue(IASTNode point) {
 		if (isValueDependent())
 			return Value.create(this);
-			
+
 		if (getOverload(point) != null) {
 			// TODO(sprigogin): Simulate execution of a function call.
 			return Value.create(this);
@@ -253,11 +256,13 @@ public class EvalUnary extends CPPDependentEvaluation {
 
 		switch (fOperator) {
 			case op_sizeof: {
-				SizeAndAlignment info = SizeofCalculator.getSizeAndAlignment(fArgument.getTypeOrFunctionSet(point), point);
+				SizeAndAlignment info =
+						SizeofCalculator.getSizeAndAlignment(fArgument.getTypeOrFunctionSet(point), point);
 				return info == null ? Value.UNKNOWN : Value.create(info.size);
 			}
 			case op_alignOf: {
-				SizeAndAlignment info = SizeofCalculator.getSizeAndAlignment(fArgument.getTypeOrFunctionSet(point), point);
+				SizeAndAlignment info =
+						SizeofCalculator.getSizeAndAlignment(fArgument.getTypeOrFunctionSet(point), point);
 				return info == null ? Value.UNKNOWN : Value.create(info.alignment);
 			}
 			case op_noexcept:
@@ -273,7 +278,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 		IValue val = fArgument.getValue(point);
 		if (val == null)
 			return Value.UNKNOWN;
-		
+
 		Long num = val.numericalValue();
 		if (num != null) {
 			return Value.evaluateUnaryExpression(fOperator, num);
@@ -307,7 +312,8 @@ public class EvalUnary extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer)
+			throws CoreException {
 		int op= buffer.getByte();
 		ICPPEvaluation arg= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		IBinding binding= buffer.unmarshalBinding();
@@ -328,17 +334,17 @@ public class EvalUnary extends CPPDependentEvaluation {
 		}
 		if (argument == fArgument && aoqn == fAddressOfQualifiedNameBinding)
 			return this;
-		
+
 		return new EvalUnary(fOperator, argument, aoqn, getTemplateDefinition());
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap, int maxdepth,
+			IASTNode point) {
 		ICPPEvaluation argument = fArgument.computeForFunctionCall(parameterMap, maxdepth, point);
 		if (argument == fArgument)
 			return this;
-		
+
 		return new EvalUnary(fOperator, argument, fAddressOfQualifiedNameBinding, getTemplateDefinition());
 	}
 

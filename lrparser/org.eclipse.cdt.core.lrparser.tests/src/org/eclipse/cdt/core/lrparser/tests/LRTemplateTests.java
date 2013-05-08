@@ -103,10 +103,10 @@ public class LRTemplateTests extends AST2TemplateTests {
 	public void testFunctionParameterPacksInNonFinalPosition_324096() throws Exception {}
 	//decltype related
 	@Override
-	public void testFunctionCallOnDependentName_Bug337686() throws Exception {}
+	public void testFunctionCallOnDependentName_337686() throws Exception {}
 	//variadic template 
 	@Override
-	public void testVariadicFunctionTemplate_Bug333389() throws Exception {}
+	public void testVariadicFunctionTemplate_333389() throws Exception {}
 	//auto
 	@Override	
 	public void testRRefVsRef_351927() throws Exception {}

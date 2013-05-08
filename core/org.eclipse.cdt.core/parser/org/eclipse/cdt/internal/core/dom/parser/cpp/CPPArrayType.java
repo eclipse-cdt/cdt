@@ -46,7 +46,7 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
     }
     
     @Override
-	public void setType(IType t) {
+	public final void setType(IType t) {
     	assert t != null;
         this.type = t;
     }

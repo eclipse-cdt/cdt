@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPn///v4\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/VisibilityAsserts.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-08T07:42:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPn///zE\u003d",
+      "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPn///y4\u003d",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2013-05-07T23:39:48Z",
       "side": 1,
       "message": "Inline the visibility variables in this and other tests.",
+      "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///v0\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-08T07:42:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPn///y4\u003d",
       "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPn///vQ\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-08T07:42:26Z",
+      "side": 1,
+      "message": "Done - Unfortunately assertVisibility resolved to the method of the base class PDOMTestBase. I can\u0027t use that one instead, since it is composed for ICPPMembers. Therefore, I renamed PDOMTestBase.assertVisibility() to assertCPPMemberVisibility and changed it to use VisibilityAsserts.assertVisibility().",
+      "parentUuid": "AABOPn///y8\u003d",
+      "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPn///zA\u003d",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2013-05-07T23:39:48Z",
       "side": 1,
       "message": "0 -\u003e 1",
+      "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///vg\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-08T07:42:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPn///zA\u003d",
       "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPn///vI\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPClassType.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-08T07:42:26Z",
+      "side": 1,
+      "message": "Done - I\u0027m a bit confused about the line width I should use in general. The wiki suggests to use \"Eclipse\" style for formatting. This would imply 80 characters wide line. I can hardly find a code file in CDT though which contains only 80 characters wide code lines.",
+      "parentUuid": "AABOPn///y0\u003d",
+      "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPn///yk\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassSpecialization.java",
         "patchSetId": 4
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPn///vE\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassSpecialization.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 492,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-08T07:42:26Z",
+      "side": 1,
+      "message": "Done - In PDOMCPPClassType as well.",
+      "parentUuid": "AABOPn///yk\u003d",
+      "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPn///yc\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
         "patchSetId": 4
@@ -115,6 +223,24 @@
       "writtenOn": "2013-05-07T23:39:48Z",
       "side": 1,
       "message": "Simpler to apply the mask after the shift.",
+      "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///vA\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPMemberBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-08T07:42:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPn///yc\u003d",
       "revId": "a4b1ea96c117d6de631a392464fb05fc6db6f168",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

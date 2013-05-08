@@ -34,6 +34,24 @@
       "revId": "8c1d6e876bdd674f9cf593064c705e22f21ac111",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///cs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-05-08T17:37:23Z",
+      "side": 1,
+      "message": "I\u0027m not familiar with how DebugEvents are used.  If you think we need both, that is fine with me.\n\nAs for DSF, I also don\u0027t care too much.  If you find it safer we can leave it in gdb.",
+      "parentUuid": "AABOPn///eE\u003d",
+      "revId": "8c1d6e876bdd674f9cf593064c705e22f21ac111",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

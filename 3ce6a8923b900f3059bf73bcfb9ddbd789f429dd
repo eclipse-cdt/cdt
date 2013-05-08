@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPn///dQ\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-08T17:16:57Z",
+      "side": 1,
+      "message": "Consider using a shorter class name, for example A.",
+      "revId": "3ce6a8923b900f3059bf73bcfb9ddbd789f429dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///dU\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-08T17:16:57Z",
+      "side": 1,
+      "message": "I usually assume 100-character line width limit, which I treat as a soft one and allow lines to be slightly longer where it improves readability.",
+      "revId": "3ce6a8923b900f3059bf73bcfb9ddbd789f429dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///dE\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-08T17:16:57Z",
+      "side": 1,
+      "message": "I would combine testVisibilityDefaultMemberFunction, testVisibilityPublicMemberFunction, testVisibilityProtectedMemberFunction, and testVisibilityPrivateMemberFunction to a single test since the tests would run slightly faster as a result and readability would not suffer.",
+      "revId": "3ce6a8923b900f3059bf73bcfb9ddbd789f429dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///dA\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ClassMemberVisibilityTests.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-08T17:16:57Z",
+      "side": 1,
+      "message": "Combine this test with the previous one for clarity.",
+      "revId": "3ce6a8923b900f3059bf73bcfb9ddbd789f429dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

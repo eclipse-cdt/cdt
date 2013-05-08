@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPn///xU\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/VariableReadWriteFlagsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-08T00:07:37Z",
+      "side": 1,
+      "message": "This statement is invalid, isn\u0027t it?",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///xA\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/VariableReadWriteFlagsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-08T00:07:37Z",
+      "side": 1,
+      "message": "It is wrong to return WRITE in this case since \"a\" itself doesn\u0027t change. Returning WRITE would affect Extract Function refactoring by forcing \"a\" to become an output parameter or a return value. Treating array expressions differently only makes sense for variable declared as arrays not as pointers, but the problem is that for most uses int x[4]; is almost the same as int* const x;",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///xQ\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/VariableReadWriteFlagsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-08T00:07:37Z",
+      "side": 1,
+      "message": "Also consider mixed cases like *d[1][2]",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///x8\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-08T00:07:37Z",
+      "side": 1,
+      "message": "Lines 119-124 can be rewritten as:\nif (expr.getPropertyInParent() \u003d\u003d IASTArraySubscriptExpression.ARRAY) {\n  if (indirection \u003e\u003d 0)\n    return rwAnyNode(parent, indirection);\n  return READ;\n}",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///yI\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-08T00:07:37Z",
+      "side": 1,
+      "message": "Isn\u0027t indirection guaranteed to be positive after an increment?",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///xw\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-08T00:07:37Z",
+      "side": 1,
+      "message": "Why do we have to special-case IASTUnaryExpression? Wouldn\u0027t it be handled properly by rwAnyNode(expr, indirection)?",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///yM\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-08T00:07:37Z",
+      "side": 1,
+      "message": "Surround this branch with curly braces since other branches have them.",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///xs\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-08T00:07:37Z",
+      "side": 1,
+      "message": "Remove space after ( and before )",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///xY\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-08T00:07:37Z",
+      "side": 1,
+      "message": "Why do we have to special-case op_assign but not op_plusAssign?",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

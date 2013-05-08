@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -765,14 +766,20 @@ public class TemplateArgumentDeduction {
 				p = ptrP.getType();
 				a = ptrA.getType();
 			} else if (p instanceof IPointerType) {
-				if (!(a instanceof IPointerType)) 
-					return false;
 				final IPointerType ptrP = (IPointerType) p;
-				final IPointerType ptrA = (IPointerType) a;
-				if (!allowCVQConversion && (ptrP.isConst() != ptrA.isConst() || ptrP.isVolatile() != ptrA.isVolatile()))
-					return false;
 				p = ptrP.getType();
-				a = ptrA.getType();
+				if (a instanceof TypeOfDependentExpression) {
+					ICPPEvaluation eval = ((TypeOfDependentExpression) a).getEvaluation();
+					eval = new EvalUnary(IASTUnaryExpression.op_star, eval, null, eval.getTemplateDefinition());
+					a = new TypeOfDependentExpression(eval);
+				} else {
+					if (!(a instanceof IPointerType)) 
+						return false;
+					final IPointerType ptrA = (IPointerType) a;
+					if (!allowCVQConversion && (ptrP.isConst() != ptrA.isConst() || ptrP.isVolatile() != ptrA.isVolatile()))
+						return false;
+					a = ptrA.getType();
+				}
 			} else if (p instanceof ICPPReferenceType) {
 				if (!(a instanceof ICPPReferenceType)) {
 					return false;

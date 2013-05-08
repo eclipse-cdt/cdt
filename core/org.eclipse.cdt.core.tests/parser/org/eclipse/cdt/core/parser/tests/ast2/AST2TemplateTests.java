@@ -5416,6 +5416,15 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template <typename T>
+	//	void test(T* a) {
+	//	  auto* b = a->f;
+	//	  b->g;
+	//	}
+	public void testDependentNameWithAuto_407480() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	struct S {};
 	//	template <typename... Args> void h(S s, Args... args) {}
 	//	void g() {

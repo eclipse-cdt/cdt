@@ -215,7 +215,6 @@ public class Messages extends NLS {
 	public static String LanguageSettingsImages_FileDoesNotExist;
 	public static String LanguageSettingsImages_FolderDoesNotExist;
 	public static String LanguageSettingsImages_UsingRelativePathsNotRecommended;
-	public static String LanguageSettingsProviders_EnableForProject;
 	public static String LanguageSettingsProvidersLabelProvider_TextDecorator_Shared;
 	public static String LanguageSettingsProviderTab_AreYouSureToResetProviders;
 	public static String LanguageSettingsProviderTab_Clear;

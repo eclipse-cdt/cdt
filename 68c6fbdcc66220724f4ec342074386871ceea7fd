@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPn///Fo\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/VariableReadWriteFlagsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 1187
+      },
+      "writtenOn": "2013-05-09T19:52:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPn///xU\u003d",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPn///xA\u003d",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/VariableReadWriteFlagsTest.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2013-05-08T00:07:37Z",
       "side": 1,
       "message": "It is wrong to return WRITE in this case since \"a\" itself doesn\u0027t change. Returning WRITE would affect Extract Function refactoring by forcing \"a\" to become an output parameter or a return value. Treating array expressions differently only makes sense for variable declared as arrays not as pointers, but the problem is that for most uses int x[4]; is almost the same as int* const x;",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///FQ\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/VariableReadWriteFlagsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1187
+      },
+      "writtenOn": "2013-05-09T19:52:21Z",
+      "side": 1,
+      "message": "You are correct when you say that \"a\" doesn\u0027t change here. But when I enable \"Mark occurrences\" in the editor I expect that this expression is marked as write occurence. In the case of a pointer there are two things that can be read/written. The pointer itself and the value it points to. But we do not distinguish this in the editor. On the other side \"a[0]\u003d1\" is marked as write occurrence. But this expression is identical to \"*a\u003d1\". So we would have nonconformity here.",
+      "parentUuid": "AABOPn///xA\u003d",
       "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPn///Fk\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/VariableReadWriteFlagsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1187
+      },
+      "writtenOn": "2013-05-09T19:52:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPn///xQ\u003d",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPn///x8\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2013-05-08T00:07:37Z",
       "side": 1,
       "message": "Lines 119-124 can be rewritten as:\nif (expr.getPropertyInParent() \u003d\u003d IASTArraySubscriptExpression.ARRAY) {\n  if (indirection \u003e\u003d 0)\n    return rwAnyNode(parent, indirection);\n  return READ;\n}",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///F4\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1187
+      },
+      "writtenOn": "2013-05-09T19:52:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPn///x8\u003d",
       "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -104,6 +176,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPn///GE\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1187
+      },
+      "writtenOn": "2013-05-09T19:52:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPn///xw\u003d",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPn///yM\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
         "patchSetId": 5
@@ -115,6 +205,24 @@
       "writtenOn": "2013-05-08T00:07:37Z",
       "side": 1,
       "message": "Surround this branch with curly braces since other branches have them.",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///GI\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1187
+      },
+      "writtenOn": "2013-05-09T19:52:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPn///yM\u003d",
       "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -138,6 +246,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPn///GA\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1187
+      },
+      "writtenOn": "2013-05-09T19:52:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPn///xs\u003d",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPn///xY\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
         "patchSetId": 5
@@ -149,6 +275,24 @@
       "writtenOn": "2013-05-08T00:07:37Z",
       "side": 1,
       "message": "Why do we have to special-case op_assign but not op_plusAssign?",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn///Fs\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 1187
+      },
+      "writtenOn": "2013-05-09T19:52:21Z",
+      "side": 1,
+      "message": "You are right op_plusAssign is missing. There is also missing a check on which side of the equal operator the expression is. \nI have commented this part out until we clarified the case *a\u003d1 (see comment in test).",
+      "parentUuid": "AABOPn///xY\u003d",
       "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

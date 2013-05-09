@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Marc Dumais (Ericsson) - Initial API and implementation (Bug 405390)
+ *     Marc Dumais (Ericsson) - Bug 407673
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -213,6 +214,12 @@ public class MulticoreVisualizerCanvasFilter {
 				if (thread != null) {
 					// Note: we are comparing the content (IDs), not references.
 					if (thread.compareTo(element) == 0) {
+						// replace element by current model one,
+						// so we for sure have the correct parent
+						// information - only needed for threads,
+						// since cores and CPUs do not change parents
+						m_filterList.remove(element);
+                        m_filterList.add(thread);
 						return true;
 					}
 				}

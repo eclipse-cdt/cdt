@@ -15,8 +15,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -34,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.IInternalVariable;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
@@ -256,7 +261,37 @@ public class EvalBinding extends CPPDependentEvaluation {
 			return prvalueType(type);
 		}
 		if (binding instanceof IVariable) {
-			final IType type = ((IVariable) binding).getType();
+			IType type = ((IVariable) binding).getType();
+			if (type instanceof IArrayType && ((IArrayType) type).getSize() == null &&
+					binding instanceof IIndexBinding && point != null) {
+				// Refine the type of the array variable by filling in missing size information.
+				// This may be necessary if the variable is declared outside of the current
+				// translation unit	without providing array size information, but is defined in
+				// the current translation unit with such information.
+				// For example:
+				// header.h
+				// --------
+				// struct S {
+				//   static const char[] c;
+				// };
+				//
+				// source.cpp
+				// ----------
+				// #include "header.h"
+				// const char S::c[] = "abc";
+				IASTTranslationUnit ast = point.getTranslationUnit();
+				IASTName[] definitions = ast.getDefinitionsInAST(binding);
+				for (IASTName definition : definitions) {
+					IASTDeclarator declarator = CPPVisitor.findAncestorWithType(definition, IASTDeclarator.class);
+					if (declarator != null) {
+						IType localType = CPPVisitor.createType(declarator);
+						if (localType instanceof IArrayType && ((IArrayType) localType).getSize() != null) {
+							type = localType;
+							break;
+						}
+					}
+				}
+			}
 			return SemanticUtil.mapToAST(glvalueType(type), point);
 		}
 		if (binding instanceof IFunction) {

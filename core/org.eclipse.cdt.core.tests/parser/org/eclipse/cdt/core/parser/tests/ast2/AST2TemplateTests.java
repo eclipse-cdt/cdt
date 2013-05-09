@@ -5188,7 +5188,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	int x = sizeof(f(c));
 	//  const int d[] = { 0 };
 	//	int y = sizeof(f(d));
-	public void testFunctionOverloadResolution() throws Exception {
+	public void testOverloadedFunctionTemplate_407579() throws Exception {
 		parseAndCheckBindings();
 	}
 

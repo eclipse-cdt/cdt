@@ -450,6 +450,20 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b0, ICPPSpecialization.class);
 	}
 
+	//	template <typename T, int N>
+	//	char (&f(T (&a)[N]))[N];
+	//
+	//	template <typename T, int N>
+	//	char (&f(const T (&a)[N]))[N];
+	//
+	//	struct C { static const char c[]; };
+
+	//	const char C::c[] = "";
+	//	int x = sizeof(f(C::c));
+	public void testOverloadedFunctionTemplate_407579() throws Exception {
+		checkBindings();
+	}
+
 	//	template<typename T, template<typename U> class S>
 	//	class Foo {
 	//	public:

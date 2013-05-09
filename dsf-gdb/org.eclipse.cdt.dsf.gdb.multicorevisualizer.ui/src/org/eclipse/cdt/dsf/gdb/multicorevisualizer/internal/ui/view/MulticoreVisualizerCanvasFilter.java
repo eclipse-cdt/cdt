@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Marc Dumais (Ericsson) - Initial API and implementation (Bug 405390)
+ *     Marc Dumais (Ericsson) - Bug 407673
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -134,8 +135,10 @@ public class MulticoreVisualizerCanvasFilter {
      * for all filter objects. 
      */
     public void updateFilter() {
-    	if (m_filterList == null)
+    	if (m_filterList == null || m_canvas == null)
     		return;
+    	
+    	VisualizerModel model = m_canvas.getModel();
     	
     	resetCounters();
     	m_dynamicFilterList.clear();
@@ -147,7 +150,16 @@ public class MulticoreVisualizerCanvasFilter {
     			addElementToFilterList(elem);
 
     			// also add all its ancestors
-    			IVisualizerModelObject parent = elem.getParent();
+    			IVisualizerModelObject parent;
+    			
+    			// Bug 407673 - if element is a thread, lookup the parent (core) 
+    			// from the current model, to be sure it's up-to-date
+    			if (elem instanceof VisualizerThread && model != null) {
+    				parent = model.getThread(((VisualizerThread) elem).getGDBTID()).getParent();
+    			}
+    			else {
+    				parent = elem.getParent();
+    			}
     			while (parent != null) {
     				addElementToFilterList(parent);
     				parent = parent.getParent();

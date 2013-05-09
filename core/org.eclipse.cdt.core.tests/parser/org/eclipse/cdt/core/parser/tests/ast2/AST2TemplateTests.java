@@ -5178,6 +5178,20 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template <typename T, int N>
+	//	char (&f(T (&a)[N]))[N];
+	//
+	//	template <typename T, int N>
+	//	char (&f(const T (&a)[N]))[N];
+	//
+	//	const char c[] = "";
+	//	int x = sizeof(f(c));
+	//  int d[] = { 0 };
+	//	int y = sizeof(f(d));
+	public void testOverloadResolution() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template<typename ...T> void f(T..., T...);
 	//	void test() {
 	//	  f(1,1);

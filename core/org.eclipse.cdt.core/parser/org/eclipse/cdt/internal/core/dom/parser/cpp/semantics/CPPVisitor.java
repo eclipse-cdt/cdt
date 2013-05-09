@@ -95,6 +95,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
@@ -116,6 +117,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -1924,11 +1926,31 @@ public class CPPVisitor extends ASTQueries {
 		return type.getModifiers() & (IBasicType.IS_SIGNED | IBasicType.IS_UNSIGNED);
 	}
 
-	private static IType getArrayTypes(IType type, IASTArrayDeclarator declarator) {
+	private static IType getArrayType(IType type, IASTArrayDeclarator declarator) {
 	    IASTArrayModifier[] mods = declarator.getArrayModifiers();
-	    for (int i = mods.length - 1; i >= 0; i--) {
+	    for (int i = mods.length; --i >= 0;) {
 	    	IASTArrayModifier mod = mods[i];
-	        type = new CPPArrayType(type, mod.getConstantExpression());
+	        IASTExpression sizeExpression = mod.getConstantExpression();
+	        if (sizeExpression != null) {
+	        	type = new CPPArrayType(type, sizeExpression);
+	        } else {
+		        IValue sizeValue = null;
+	        	IASTInitializer initializer = declarator.getInitializer();
+	        	if (initializer instanceof IASTEqualsInitializer) {
+	        		IASTInitializerClause clause = ((IASTEqualsInitializer) initializer).getInitializerClause();
+	        		if (clause instanceof IASTInitializerList) {
+	        			IASTInitializerClause[] clauses = ((IASTInitializerList) clause).getClauses();
+	        			sizeValue = Value.create(clauses.length);
+	        		} else if (clause instanceof ICPPASTLiteralExpression) {
+	        			ICPPEvaluation value = ((ICPPASTLiteralExpression) clause).getEvaluation();
+	        			IType valueType = value.getTypeOrFunctionSet(clause);
+	        			if (valueType instanceof IArrayType) {
+	        				sizeValue = ((IArrayType) valueType).getSize();
+	        			}
+	        		}
+	        	}
+	        	type = new CPPArrayType(type, sizeValue);
+	        }
 	    }
 	    return type;
 	}
@@ -2177,7 +2199,7 @@ public class CPPVisitor extends ASTQueries {
 		type = applyAttributes(type, declarator);
 		type = getPointerTypes(type, declarator);
 		if (declarator instanceof IASTArrayDeclarator)
-		    type = getArrayTypes(type, (IASTArrayDeclarator) declarator);
+		    type = getArrayType(type, (IASTArrayDeclarator) declarator);
 
 	    IASTDeclarator nested = declarator.getNestedDeclarator();
 	    if (nested != null) {

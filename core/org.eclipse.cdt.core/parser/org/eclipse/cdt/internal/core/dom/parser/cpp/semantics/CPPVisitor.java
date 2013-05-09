@@ -1574,17 +1574,17 @@ public class CPPVisitor extends ASTQueries {
 			return decls;
 		}
 	}
-
+	
 	private static boolean areEquivalentBindings(IBinding binding1, IBinding binding2, IIndex index) {
 		if (binding1.equals(binding2)) {
 			return true;
 		}
 		if ((binding1 instanceof IIndexBinding) != (binding2 instanceof IIndexBinding) && index != null) {
-			if (binding1 instanceof IIndexBinding) {
-				binding2 = index.adaptBinding(binding2);
-			} else {
-				binding1 = index.adaptBinding(binding1);
-			}
+			// Even though we know one of them is an index binding, we need to adapt both because they might not come from an
+			// index with the same number of fragments. So one of them could be a composite binding and the other one not.
+			binding1 = index.adaptBinding(binding1);
+			binding2 = index.adaptBinding(binding2);
+
 			if (binding1 == null || binding2 == null) {
 				return false;
 			}

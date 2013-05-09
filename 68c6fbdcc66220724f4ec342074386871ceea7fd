@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPn///D8\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/VariableReadWriteFlagsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-09T20:26:57Z",
+      "side": 1,
+      "message": "We cannot make any change that would improve Mark Occurrences, but break Extract Function refactoring.",
+      "parentUuid": "AABOPn///FQ\u003d",
+      "revId": "68c6fbdcc66220724f4ec342074386871ceea7fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPn///xQ\u003d",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/VariableReadWriteFlagsTest.java",
         "patchSetId": 5

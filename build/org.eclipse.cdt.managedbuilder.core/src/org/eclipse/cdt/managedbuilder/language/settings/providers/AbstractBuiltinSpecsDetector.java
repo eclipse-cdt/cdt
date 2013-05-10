@@ -129,7 +129,9 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	protected List<ICLanguageSettingEntry> detectedSettingEntries = null;
 	protected int collected = 0;
 	protected volatile boolean isExecuted = false;
-	private int envPathHash = 0;
+
+	private static final int HASH_NOT_INITIALIZED = -1;
+	private int envPathHash = HASH_NOT_INITIALIZED;
 
 	private BuildRunnerHelper buildRunnerHelper;
 	private SDMarkerGenerator markerGenerator = new SDMarkerGenerator();
@@ -399,7 +401,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	protected boolean validateEnvironment() {
 		String envPathValue = environmentMap.get(ENV_PATH);
 		int envPathValueHash = envPathValue != null ? envPathValue.hashCode() : 0;
-		if (envPathValueHash != envPathHash || envPathValueHash == 0) {
+		if (envPathValueHash != envPathHash) {
 			envPathHash = envPathValueHash;
 			return false;
 		}
@@ -669,7 +671,11 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	private Map<String, String> createEnvironmentMap(ICConfigurationDescription cfgDescription) {
 		Map<String, String> envMap = new HashMap<String, String>();
 		for (IEnvironmentVariable var : getEnvironmentVariables()) {
-			envMap.put(var.getName(), var.getValue());
+			String name = var.getName();
+			if (!envMngr.isVariableCaseSensitive()) {
+				name = name.toUpperCase();
+			}
+			envMap.put(name, var.getValue());
 		}
 		return envMap;
 	}
@@ -799,7 +805,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	public Element serializeAttributes(Element parentElement) {
 		Element elementProvider = super.serializeAttributes(parentElement);
 		elementProvider.setAttribute(ATTR_CONSOLE, Boolean.toString(isConsoleEnabled));
-		if (envPathHash != 0) {
+		if (envPathHash != HASH_NOT_INITIALIZED) {
 			elementProvider.setAttribute(ATTR_ENV_HASH, Integer.toString(envPathHash));
 		}
 		return elementProvider;
@@ -814,7 +820,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			isConsoleEnabled = Boolean.parseBoolean(consoleValue);
 		}
 
-		envPathHash = 0;
+		envPathHash = HASH_NOT_INITIALIZED;
 		String envPathHashStr = XmlUtil.determineAttributeValue(providerNode, ATTR_ENV_HASH);
 		if (envPathHashStr != null) {
 			try {
@@ -852,7 +858,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		clone.isExecuted = false;
 		clone.envMngr = null;
 		clone.environmentMap = null;
-		clone.envPathHash = 0;
+		clone.envPathHash = HASH_NOT_INITIALIZED;
 		return clone;
 	}
 

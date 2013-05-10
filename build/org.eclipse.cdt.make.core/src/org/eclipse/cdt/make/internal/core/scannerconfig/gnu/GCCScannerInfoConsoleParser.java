@@ -15,6 +15,7 @@ package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -167,7 +168,8 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 
         IProject project = getProject();
         IFile file = null;
-        List<String> translatedIncludes = includes;
+        List<String> translatedIncludes = new LinkedList<String>();
+        translatedIncludes.addAll(includes);
         if (includes.size() > 0) {
         	if (fUtil != null) {
         		file = fUtil.findFile(fileName);
@@ -188,10 +190,13 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
         		}
         	}
         }
+        
+        CopyOnWriteArrayList<String> translatedIncludesToPut = new CopyOnWriteArrayList<String>(translatedIncludes);
+        
         // Contribute discovered includes and symbols to the ScannerInfoCollector
         if (translatedIncludes.size() > 0 || symbols.size() > 0) {
         	Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
-        	scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, translatedIncludes);
+        	scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, translatedIncludesToPut);
         	scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
         	scannerInfo.put(ScannerInfoTypes.TARGET_SPECIFIC_OPTION, targetSpecificOptions);
         	getCollector().contributeToScannerConfig(project, scannerInfo);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -582,61 +582,64 @@ public class ClassTypeHelper {
 
 		final ArrayList<ICPPMethod> result= new ArrayList<ICPPMethod>();
 		final HashMap<ICPPClassType, Boolean> virtualInClass= new HashMap<ICPPClassType, Boolean>();
-		final ICPPFunctionType mft= method.getType();
+		final ICPPFunctionType methodType= method.getType();
 
 		virtualInClass.put(mcl, method.isVirtual());
 		ICPPBase[] bases= getBases(mcl, point);
 		for (ICPPBase base : bases) {
 			IBinding b= base.getBaseClass();
 			if (b instanceof ICPPClassType) {
-				findOverridden((ICPPClassType) b, mname, mft, virtualInClass, result);
+				findOverridden((ICPPClassType) b, point, mname, methodType, virtualInClass, result);
 			}
 		}
 
-		// list is filled from most derived up to here, reverse it
+		// List is filled from most derived up to here, reverse it.
 		Collections.reverse(result);
 		return result.toArray(new ICPPMethod[result.size()]);
 	}
 
 	/**
-	 * Searches for overridden methods starting in {@code cl}. The map {@code virtualInClass} contains a mapping
-	 * of classes that have been visited to the information whether they (or a base-class) contain an overridden
-	 * method.
-	 * Returns whether {@code cl} contains an overridden method.
+	 * Searches for overridden methods starting in {@code classType}. The map {@code virtualInClass}
+	 * contains a mapping of classes that have been visited to the information whether they
+	 * (or a base-class) contain an overridden method.
+	 *
+	 * @return whether {@code classType} contains an overridden method.
 	 */
-	private static boolean findOverridden(ICPPClassType cl, char[] mname, ICPPFunctionType mft,
-			HashMap<ICPPClassType, Boolean> virtualInClass, ArrayList<ICPPMethod> result) {
-		Boolean visitedBefore= virtualInClass.get(cl);
+	private static boolean findOverridden(ICPPClassType classType, IASTNode point, char[] methodName,
+			ICPPFunctionType methodType, Map<ICPPClassType, Boolean> virtualInClass,
+			List<ICPPMethod> result) {
+		Boolean visitedBefore= virtualInClass.get(classType);
 		if (visitedBefore != null)
 			return visitedBefore;
 
-		ICPPMethod[] methods= cl.getDeclaredMethods();
+		ICPPMethod[] methods= classType.getDeclaredMethods();
 		ICPPMethod candidate= null;
 		boolean hasOverridden= false;
 		for (ICPPMethod method : methods) {
-			if (CharArrayUtils.equals(mname, method.getNameCharArray()) && functionTypesAllowOverride(mft,method.getType())) {
+			if (CharArrayUtils.equals(methodName, method.getNameCharArray()) &&
+					functionTypesAllowOverride(methodType, method.getType())) {
 				candidate= method;
 				hasOverridden= method.isVirtual();
 				break;
 			}
 		}
 
-		// prevent recursion
-		virtualInClass.put(cl, hasOverridden);
-		ICPPBase[] bases= cl.getBases();
+		// Prevent recursion.
+		virtualInClass.put(classType, hasOverridden);
+		ICPPBase[] bases= getBases(classType, point);
 		for (ICPPBase base : bases) {
 			IBinding b= base.getBaseClass();
 			if (b instanceof ICPPClassType) {
-				if (findOverridden((ICPPClassType) b, mname, mft, virtualInClass, result)) {
+				if (findOverridden((ICPPClassType) b, point, methodName, methodType, virtualInClass, result)) {
 					hasOverridden= true;
 				}
 			}
 		}
 		if (hasOverridden) {
-			// the candidate is virtual
+			// The candidate is virtual.
 			if (candidate != null)
 				result.add(candidate);
-			virtualInClass.put(cl, hasOverridden);
+			virtualInClass.put(classType, hasOverridden);
 		}
 		return hasOverridden;
 	}

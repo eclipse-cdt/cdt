@@ -7587,7 +7587,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	    class A {};
 	//	}
 	//
-	//	int bar(A);
+	//	int bar(N::A);
 	//
 	//	int main() {
 	//	    auto x = foo(N::A());

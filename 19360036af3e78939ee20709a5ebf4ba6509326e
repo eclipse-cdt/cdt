@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPn//+no\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/HoldsOptions.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-05-11T10:47:26Z",
+      "side": 0,
+      "message": "This seems to replace the option with super option for option reference. Does it still happen in your version? Could you clarify why the logic of condition on wasOptRef() was dropped?\n\nAlso, could you use your full name as git author rather than id bbelyavsky?",
+      "revId": "19360036af3e78939ee20709a5ebf4ba6509326e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

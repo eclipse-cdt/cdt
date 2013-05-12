@@ -224,25 +224,34 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
+		final short SECOND_LAST_FLAG= ITypeMarshalBuffer.LAST_FLAG / 2;
 		final int kind= getKind().ordinal();
-		final int shiftedKind=  kind * ITypeMarshalBuffer.FIRST_FLAG;
+		final int shiftedKind= kind * ITypeMarshalBuffer.FIRST_FLAG;
 		final int modifiers= getModifiers();
-		if (modifiers == 0) {
-			buffer.putShort((short) (ITypeMarshalBuffer.BASIC_TYPE | shiftedKind));
-		} else {
-			buffer.putShort((short) (ITypeMarshalBuffer.BASIC_TYPE | shiftedKind | ITypeMarshalBuffer.LAST_FLAG));
+		short firstBytes = (short) (ITypeMarshalBuffer.BASIC_TYPE | shiftedKind);
+		if (modifiers != 0)
+			firstBytes |= ITypeMarshalBuffer.LAST_FLAG;
+		if (getAssociatedNumericalValue() != null)
+			firstBytes |= SECOND_LAST_FLAG;
+		buffer.putShort(firstBytes);
+		if (modifiers != 0)
 			buffer.putByte((byte) modifiers);
-		} 
+		if (getAssociatedNumericalValue() != null)
+			buffer.putLong(getAssociatedNumericalValue());
 	}
 	
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		final short SECOND_LAST_FLAG= ITypeMarshalBuffer.LAST_FLAG / 2;
 		final boolean haveModifiers= (firstBytes & ITypeMarshalBuffer.LAST_FLAG) != 0;
-		int modifiers= 0;
-		int kind= (firstBytes & (ITypeMarshalBuffer.LAST_FLAG - 1)) / ITypeMarshalBuffer.FIRST_FLAG;
-		if (haveModifiers) {
+		final boolean haveAssociatedNumericalValue= (firstBytes & SECOND_LAST_FLAG) != 0;
+ 		int modifiers= 0;
+		int kind= (firstBytes & (SECOND_LAST_FLAG - 1)) / ITypeMarshalBuffer.FIRST_FLAG;
+		if (haveModifiers)
 			modifiers= buffer.getByte();
-		} 
-		return new CPPBasicType(Kind.values()[kind], modifiers);
+		CPPBasicType result = new CPPBasicType(Kind.values()[kind], modifiers);
+		if (haveAssociatedNumericalValue)
+			result.setAssociatedNumericalValue(buffer.getLong());
+		return result;
 	}
 
 	@Override

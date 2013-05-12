@@ -2227,4 +2227,42 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testDependentExpression_395875() throws Exception {
 		getBindingFromASTName("f(n.foo(0))", 1, ICPPFunction.class);
 	}
+	
+	//	struct true_ {
+	//	    static const bool value = true;
+	//	};
+	//
+	//	struct false_ {
+	//	    static const bool value = false;
+	//	};
+	//
+	//	template <typename T>
+	//	struct has_type {
+	//	    template <typename U>
+	//	    static true_ test(U*);
+	//
+	//	    template <typename U>
+	//	    static false_ test(...);
+	//
+	//	    typedef decltype(test<T>(0)) type;
+	//	};
+
+	//	struct T {
+	//	    typedef int type;
+	//	};
+	//
+	//	template <bool>
+	//	struct A;
+	//
+	//	template <>
+	//	struct A<true> {
+	//	    typedef int type;
+	//	};
+	//
+	//	int main() {
+	//	    A<has_type<T>::type::value>::type a;
+	//	}
+	public void testIntNullPointerConstant_407808() throws Exception {
+		checkBindings();
+	}
 }

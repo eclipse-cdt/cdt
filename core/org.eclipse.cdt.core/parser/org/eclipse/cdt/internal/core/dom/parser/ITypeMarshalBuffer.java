@@ -61,18 +61,19 @@ public interface ITypeMarshalBuffer {
 
 	static final short KIND_MASK = 0x001F;
 
-	final static short FIRST_FLAG = 0x0020;
+	final static short FLAG1 = 0x0020;
+	final static short FLAG2 = 0x0040;
+	final static short FLAG3 = 0x0080;
+	final static short FLAG4 = 0x0100;
+	final static short FLAG5 = 0x0200;
+	final static short FLAG6 = 0x0400;
+	final static short FLAG7 = 0x0800;
+	final static short FLAG8 = 0x1000;
+	final static short FLAG9 = 0x2000;
 	
-	final static short FLAG1	  = 0x0020;
-	final static short FLAG2	  = 0x0040;
-	final static short FLAG3	  = 0x0080;
-	final static short FLAG4	  = 0x0100;
-	final static short FLAG5	  = 0x0200;
-	final static short FLAG6	  = 0x0400;
-	final static short FLAG7	  = 0x0800;
-	// Can add more flags up to LAST_FLAG.
-	
-	final static short LAST_FLAG  = 0x2000;
+	final static short FIRST_FLAG       = FLAG1;
+	final static short SECOND_LAST_FLAG = FLAG8;
+	final static short LAST_FLAG        = FLAG9;
 
 	CoreException unmarshallingError();
 

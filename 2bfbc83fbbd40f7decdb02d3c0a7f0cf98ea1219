@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPn//+jk\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPBasicType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-12T18:02:52Z",
+      "side": 1,
+      "message": "Makes sense to use fAssociatedValue instead of getAssociatedNumericalValue() since it makes the code more explicit.",
+      "revId": "2bfbc83fbbd40f7decdb02d3c0a7f0cf98ea1219",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn//+jg\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPBasicType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-12T18:02:52Z",
+      "side": 1,
+      "message": "There is only one bit left between FLAG7 and LAST_FLAG. It makes sense to define ITypeMarshalBuffer.FLAG8 and use it instead of SECOND_LAST_FLAG.",
+      "revId": "2bfbc83fbbd40f7decdb02d3c0a7f0cf98ea1219",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

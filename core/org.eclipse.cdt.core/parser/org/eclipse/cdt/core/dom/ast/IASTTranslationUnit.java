@@ -154,8 +154,8 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	public IASTNode selectNodeForLocation(String path, int offset, int length);
 
 	/**
-	 * Returns the macro definitions encountered in parsing this translation unit. The result will not contain
-	 * definitions for built-in macros.
+	 * Returns the macro definitions encountered in parsing this translation unit. The result will
+	 * not contain definitions for built-in macros.
 	 * <p>
 	 * In case the information for a header-file is pulled in from the index,
 	 * macro definitions contained therein are not returned.
@@ -253,7 +253,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
     public IIndex getIndex();
     
     /**
-     * Return the set of files that have been skipped because they have been part of the index
+     * Returns the set of files that have been skipped because they have been part of the index
      * prior to creating this AST, or {@code null} if not available.
      * Applies only, if AST was created with an index and the option to skip headers found in
      * the index.
@@ -262,7 +262,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
     IIndexFileSet getIndexFileSet();
 
     /**
-     * Return the set of files in the index that are superseded by this AST,  or {@code null}
+     * Returns the set of files in the index that are superseded by this AST, or {@code null}
      * if not available. Applies only, if AST was created with an index.
      * @since 5.3
      */

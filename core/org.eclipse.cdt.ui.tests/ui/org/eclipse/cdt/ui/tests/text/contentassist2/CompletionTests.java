@@ -1380,4 +1380,25 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= { "typename" };
 		assertContentAssistResults(fCursorOffset, 0, expected, true, false, false, COMPARE_REP_STRINGS);
 	}
+	
+	//	class Base {
+	//	    int c;
+	//	};
+	//
+	//	struct Cat {
+	//	    void meow();
+	//	};
+	//
+	//	struct Derived : Base {
+	//	    void foo() {
+	//	        c./*cursor*/
+	//	    }
+	//
+	//	    Cat c;
+	//	};
+	public void testShadowingBaseClassMember_Bug407807() throws Exception {
+		final String[] expected = { "Cat", "meow(void)" };
+		assertContentAssistResults(fCursorOffset, expected, true, COMPARE_ID_STRINGS);
+	}
+
 }

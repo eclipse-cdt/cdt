@@ -2274,7 +2274,10 @@ public class CPPSemantics {
 			return true;
 		}
 		IIndexFileSet indexFileSet = ast.getIndexFileSet();
-		return indexFileSet != null && indexFileSet.containsDeclaration(indexBinding);
+		IIndexFileSet astFileSet = ast.getASTFileSet();
+		return indexFileSet != null && 
+				(indexFileSet.containsDeclaration(indexBinding) || 
+				 astFileSet.containsDeclaration(indexBinding));
 	}
 
 	/**

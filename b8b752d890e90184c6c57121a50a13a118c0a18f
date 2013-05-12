@@ -16,6 +16,24 @@
       "revId": "b8b752d890e90184c6c57121a50a13a118c0a18f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn//+iQ\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/VariableReadWriteFlagsTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 1187
+      },
+      "writtenOn": "2013-05-12T19:58:51Z",
+      "side": 1,
+      "message": "That sounds familiar :)\nWe are using a lot of pointers and dynamic arrays in our code and accessing the content with the * operator is very common. I use the feature \"Mark write occurrence\" very often to see where a variable is accessed for writing during a debug session. In this circumstances \"write occurrence\" on pointers means every change. It can be the pointer itself or the value it points to.\nTherefore I would welcome a separate implementation of VariableReadWriteFlags for Mark Occurrences. I think it has a different goal then refactoring.",
+      "parentUuid": "AABOPn//+iY\u003d",
+      "revId": "b8b752d890e90184c6c57121a50a13a118c0a18f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

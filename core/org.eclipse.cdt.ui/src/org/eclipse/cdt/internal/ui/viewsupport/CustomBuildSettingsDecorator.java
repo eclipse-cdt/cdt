@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -27,6 +28,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -39,7 +41,8 @@ public class CustomBuildSettingsDecorator implements ILightweightLabelDecorator 
 	public void decorate(Object element, IDecoration decoration) {
 		if (element instanceof IFile || element instanceof IFolder) {
 			IResource rc = (IResource) element;
-			ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(rc.getProject(), false);
+			ICProjectDescriptionManager projectDescriptionManager = CoreModel.getDefault().getProjectDescriptionManager();
+			ICProjectDescription prjDescription = projectDescriptionManager.getProjectDescription(rc.getProject(), ICProjectDescriptionManager.GET_IF_LOADDED);
 			if (prjDescription != null) {
 				ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 				if (cfgDescription != null) {
@@ -57,11 +60,13 @@ public class CustomBuildSettingsDecorator implements ILightweightLabelDecorator 
 		}
 
 		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			IContainer parent = rc.getParent();
+			List<String> languages = LanguageSettingsManager.getLanguages(rc, cfgDescription);
 			for (ILanguageSettingsProvider provider: ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders()) {
-				for (String languageId : LanguageSettingsManager.getLanguages(rc, cfgDescription)) {
+				for (String languageId : languages) {
 					List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
 					if (list != null) {
-						List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(cfgDescription, rc.getParent(), languageId);
+						List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(cfgDescription, parent, languageId);
 						// != is OK here due as the equal lists will have the same reference in WeakHashSet
 						if (list != listDefault)
 							return true;

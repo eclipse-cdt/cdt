@@ -16,6 +16,24 @@
       "revId": "19360036af3e78939ee20709a5ebf4ba6509326e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn//+PI\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/HoldsOptions.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 1149
+      },
+      "writtenOn": "2013-05-13T23:09:08Z",
+      "side": 0,
+      "message": "I don\u0027t know how to produce a legacy project that uses OptionReferences, but I don\u0027t think the wasOptRef() check is necessary (even in the old implementation). The way I think about it - the optRef\u0027s ID would either be the same as its referenced option\u0027s, or it would be different. In the case when it\u0027s the same - the map entry will just be overridden with ourOpt (in block #2 on the RHS), which is what we want in this case. And in the case when the ID is different, the map.containsKey() check in the inner \"for\" loop in block #2 would return \u0027false\u0027, and we\u0027d just continue to the superOpt, which is also what we\u0027d want in that case. \n\nThe only case, i can think of, where not checking for wasOptRef() could create a problem, is if the optRef\u0027s ID is different from the referenced option\u0027s, but actually happens to match another completely unrelated option. I don\u0027t think this is possible though.\n\nLet me know what you think. To feel safer, i could add that check. It won\u0027t affect performance at all.",
+      "parentUuid": "AABOPn//+no\u003d",
+      "revId": "19360036af3e78939ee20709a5ebf4ba6509326e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

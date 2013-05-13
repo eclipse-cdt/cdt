@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPn//+TY\u003d",
+        "filename": "build/org.eclipse.cdt.make.core/src/org/eclipse/cdt/make/internal/core/scannerconfig/gnu/GCCScannerInfoConsoleParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-05-13T18:19:53Z",
+      "side": 1,
+      "message": "Should this not be translatedIncludesToPut?",
+      "revId": "ab158f04ca25080e2234ef616a61e62fb0e2e12f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn//+TU\u003d",
+        "filename": "build/org.eclipse.cdt.make.core/src/org/eclipse/cdt/make/internal/core/scannerconfig/gnu/GCCScannerInfoConsoleParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-05-13T18:19:53Z",
+      "side": 1,
+      "message": "and here as well?",
+      "revId": "ab158f04ca25080e2234ef616a61e62fb0e2e12f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -83,8 +83,12 @@ public class ASTCommenter {
 		}
 
 		private boolean isCommentOnSameLine(IASTNode node) {
-			return commentNodeLocation.getStartingLineNumber() ==
-					node.getFileLocation().getEndingLineNumber();
+			if (node.getFileLocation() == null) {
+				return false;
+			} else {
+				return commentNodeLocation.getStartingLineNumber() == node.getFileLocation()
+						.getEndingLineNumber();
+			}
 		}
 
 		@Override

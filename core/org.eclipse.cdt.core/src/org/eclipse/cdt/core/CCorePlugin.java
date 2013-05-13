@@ -91,7 +91,8 @@ import org.osgi.framework.BundleContext;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * CCorePlugin is the life-cycle owner of the core plug-in, and starting point for access to many core APIs.
+ * CCorePlugin is the life-cycle owner of the core plug-in, and starting point for access to many
+ * core APIs.
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -405,7 +406,7 @@ public class CCorePlugin extends Plugin {
         HashSet<String> optionNames = CModelManager.OptionNames;
 
         // get preferences set to their default
-        for (String propertyName : preferences.defaultPropertyNames()){
+        for (String propertyName : preferences.defaultPropertyNames()) {
             if (optionNames.contains(propertyName))
                 defaultOptions.put(propertyName, preferences.getDefaultString(propertyName));
         }
@@ -433,10 +434,10 @@ public class CCorePlugin extends Plugin {
      */
     public static String getOption(String optionName) {
 
-        if (CORE_ENCODING.equals(optionName)){
+        if (CORE_ENCODING.equals(optionName)) {
             return ResourcesPlugin.getEncoding();
         }
-        if (CModelManager.OptionNames.contains(optionName)){
+        if (CModelManager.OptionNames.contains(optionName)) {
             Preferences preferences = getDefault().getPluginPreferences();
             return preferences.getString(optionName).trim();
         }
@@ -464,14 +465,14 @@ public class CCorePlugin extends Plugin {
             HashSet<String> optionNames = CModelManager.OptionNames;
 
             // get preferences set to their default
-            for (String propertyName : preferences.defaultPropertyNames()){
-                if (optionNames.contains(propertyName)){
+            for (String propertyName : preferences.defaultPropertyNames()) {
+                if (optionNames.contains(propertyName)) {
                     options.put(propertyName, preferences.getDefaultString(propertyName));
                 }
             }
             // get preferences not set to their default
-            for (String propertyName : preferences.propertyNames()){
-                if (optionNames.contains(propertyName)){
+            for (String propertyName : preferences.propertyNames()) {
+                if (optionNames.contains(propertyName)) {
                     options.put(propertyName, preferences.getString(propertyName).trim());
                 }
             }
@@ -498,10 +499,10 @@ public class CCorePlugin extends Plugin {
         // see #initializeDefaultPluginPreferences() for changing default settings
         Preferences preferences = getDefault().getPluginPreferences();
 
-        if (newOptions == null){
+        if (newOptions == null) {
             newOptions = getDefaultOptions();
         }
-        for (String key : newOptions.keySet()){
+        for (String key : newOptions.keySet()) {
             if (!CModelManager.OptionNames.contains(key)) continue; // unrecognized option
             if (key.equals(CORE_ENCODING)) continue; // skipped, contributed by resource prefs
             String value = newOptions.get(key);
@@ -867,25 +868,25 @@ public class CCorePlugin extends Plugin {
 					// Add C Nature ... does not add duplicates
 					CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
 
-					if (bsId != null){
+					if (bsId != null) {
 						ICProjectDescription projDes = createProjectDescription(projectHandle, true);
 						ICConfigurationDescription cfgs[] = projDes.getConfigurations();
 						ICConfigurationDescription cfg = null;
 						for (ICConfigurationDescription cfg2 : cfgs) {
-							if (bsId.equals(cfg2.getBuildSystemId())){
+							if (bsId.equals(cfg2.getBuildSystemId())) {
 								cfg = cfg2;
 								break;
 							}
 						}
 
-						if (cfg == null){
+						if (cfg == null) {
 							ICConfigurationDescription prefCfg = getPreferenceConfiguration(bsId);
-							if (prefCfg != null){
+							if (prefCfg != null) {
 								cfg = projDes.createConfiguration(CDataUtil.genId(prefCfg.getId()), prefCfg.getName(), prefCfg);
 							}
 						}
 
-						if (cfg != null){
+						if (cfg != null) {
 							setProjectDescription(projectHandle, projDes);
 						}
 					}
@@ -1170,11 +1171,11 @@ public class CCorePlugin extends Plugin {
 	    return org.eclipse.cdt.core.dom.CDOM.getInstance();
 	}
 
-	public ICdtVariableManager getCdtVariableManager(){
+	public ICdtVariableManager getCdtVariableManager() {
 		return CdtVariableManager.getDefault();
 	}
 
-	public IEnvironmentVariableManager getBuildEnvironmentManager(){
+	public IEnvironmentVariableManager getBuildEnvironmentManager() {
 		return EnvironmentVariableManager.getDefault();
 	}
 
@@ -1232,7 +1233,7 @@ public class CCorePlugin extends Plugin {
 	 *
 	 * @see #getProjectDescription(IProject, boolean)
 	 */
-	public ICProjectDescription getProjectDescription(IProject project){
+	public ICProjectDescription getProjectDescription(IProject project) {
 		return fNewCProjectDescriptionManager.getProjectDescription(project);
 	}
 
@@ -1283,7 +1284,7 @@ public class CCorePlugin extends Plugin {
 	 * @return {@link ICProjectDescription} or null if the project does not contain the
 	 * CDT data associated with it.
 	 */
-	public ICProjectDescription getProjectDescription(IProject project, boolean write){
+	public ICProjectDescription getProjectDescription(IProject project, boolean write) {
 		return fNewCProjectDescriptionManager.getProjectDescription(project, write);
 	}
 
@@ -1303,18 +1304,18 @@ public class CCorePlugin extends Plugin {
 	/**
 	 * Answers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
 	 */
-	public boolean isNewStyleProject(IProject project){
+	public boolean isNewStyleProject(IProject project) {
 		return fNewCProjectDescriptionManager.isNewStyleProject(project);
 	}
 
 	/**
 	 * Answers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
 	 */
-	public boolean isNewStyleProject(ICProjectDescription des){
+	public boolean isNewStyleProject(ICProjectDescription des) {
 		return fNewCProjectDescriptionManager.isNewStyleProject(des);
 	}
 
-	public ICProjectDescriptionManager getProjectDescriptionManager(){
+	public ICProjectDescriptionManager getProjectDescriptionManager() {
 		return fNewCProjectDescriptionManager;
 	}
 

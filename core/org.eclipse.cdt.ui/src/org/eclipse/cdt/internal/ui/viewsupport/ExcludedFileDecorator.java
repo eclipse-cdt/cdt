@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Atmel Corporation and others.
+ * Copyright (c) 2010, 2013 Atmel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IDecoration;
@@ -38,20 +39,21 @@ public class ExcludedFileDecorator implements ILightweightLabelDecorator {
 		if (element instanceof IFile || element instanceof IFolder) {
 			IResource resource = (IResource) element;
 			ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
-			ICProjectDescription desc = mngr.getProjectDescription(resource.getProject(), false);
+			ICProjectDescription desc = mngr.getProjectDescription(resource.getProject(), ICProjectDescriptionManager.GET_IF_LOADDED);
 			if (desc == null)
 				return;
 			ICConfigurationDescription conf = desc.getDefaultSettingConfiguration();
 			ICSourceEntry[] entries = conf.getSourceEntries();
 			boolean isUnderSourceRoot = false;
+			IPath fullPath = resource.getFullPath();
 			for (ICSourceEntry icSourceEntry : entries) {
-				if (icSourceEntry.getFullPath().isPrefixOf(resource.getFullPath())) {
+				if (icSourceEntry.getFullPath().isPrefixOf(fullPath)) {
 					isUnderSourceRoot = true;
 					break;
 				}
 			}
 			// Only bother to mark items that would be included otherwise
-			if (isUnderSourceRoot && CDataUtil.isExcluded(resource.getFullPath(), entries)) {
+			if (isUnderSourceRoot && CDataUtil.isExcluded(fullPath, entries)) {
 				decoration.addOverlay(CPluginImages.DESC_OVR_INACTIVE);
 				decoration.setForegroundColor(JFaceResources.getColorRegistry().get(JFacePreferences.QUALIFIER_COLOR));
 			}

@@ -96,7 +96,6 @@ import org.eclipse.core.runtime.jobs.Job;
 
 public class CModelManager implements IResourceChangeListener, IContentTypeChangeListener,
 		ICProjectDescriptionListener, ILanguageSettingsChangeListener {
-
 	public static boolean VERBOSE = false;
 
 	/**

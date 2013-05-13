@@ -42,7 +42,6 @@ public abstract class ProfileManager extends Observable {
 	private static final Map<String, String> EMPTY_MAP = Collections.emptyMap();
 	
     public static final class KeySet {
-
 		private final List<String> fKeys;
 		private final String fNodeName;
 
@@ -71,7 +70,6 @@ public abstract class ProfileManager extends Observable {
 	 * containing the code formatter settings.
 	 */
 	public static abstract class Profile implements Comparable<Profile> {
-		
 		public abstract String getName();
 		public abstract Profile rename(String name, ProfileManager manager);
 		
@@ -180,7 +178,6 @@ public abstract class ProfileManager extends Observable {
 		public int getVersion() {
 	        return fCurrentVersion;
         }
-	
 	}
 
 	/**
@@ -311,7 +308,6 @@ public abstract class ProfileManager extends Observable {
 			return true;
 		}
 	}
-	
 
 	/**
 	 * The possible events for observers listening to this class.
@@ -322,7 +318,6 @@ public abstract class ProfileManager extends Observable {
 	public final static int PROFILE_CREATED_EVENT= 4;
 	public final static int SETTINGS_CHANGED_EVENT= 5;
 
-	
 	/**
 	 * The key of the preference where the selected profile is stored.
 	 */
@@ -371,7 +366,6 @@ public abstract class ProfileManager extends Observable {
 			KeySet[] keySets,
 			String profileKey,
 			String profileVersionKey) {
-		
 		fPreferencesAccess= preferencesAccess;
 		fProfileVersioner= profileVersioner;
 		fKeySets= keySets;

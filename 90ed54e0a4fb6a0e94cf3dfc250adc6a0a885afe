@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//wyc\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/resources/ResourceLookup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1149
+      },
+      "writtenOn": "2013-05-13T23:10:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//w3k\u003d",
+      "revId": "90ed54e0a4fb6a0e94cf3dfc250adc6a0a885afe",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//w3g\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/resources/ResourceLookup.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2013-04-16T00:45:41Z",
       "side": 1,
       "message": "I see that this lexicographic comparison is present in the existing code, but I don\u0027t understand what it is doing there. It appears to be breaking ties, but why is lexicographic order the right tie-breaker here? \n\n(Feel free to ignore this question -- it\u0027s not a problem with the code, it\u0027s just something *I* don\u0027t yet understand.)",
+      "revId": "90ed54e0a4fb6a0e94cf3dfc250adc6a0a885afe",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//wyI\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/resources/ResourceLookup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1149
+      },
+      "writtenOn": "2013-05-13T23:10:39Z",
+      "side": 1,
+      "message": "Jesse, I don\u0027t understand this tie-breaker myself either...but decided to keep the same logic just to preserve the behaviour and avoid breaking any existing code that may be relying on it.",
+      "parentUuid": "AABOPX//w3g\u003d",
       "revId": "90ed54e0a4fb6a0e94cf3dfc250adc6a0a885afe",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

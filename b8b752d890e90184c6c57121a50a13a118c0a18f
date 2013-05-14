@@ -34,6 +34,24 @@
       "revId": "b8b752d890e90184c6c57121a50a13a118c0a18f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn//+KQ\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/VariableReadWriteFlagsTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-14T00:59:11Z",
+      "side": 1,
+      "message": "This comment has not been addressed yet.",
+      "parentUuid": "AABOPn//+iY\u003d",
+      "revId": "b8b752d890e90184c6c57121a50a13a118c0a18f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

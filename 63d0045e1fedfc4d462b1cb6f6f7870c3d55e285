@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPn//+Do\u003d",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/settings/model/CExternalSettingsManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1149
+      },
+      "writtenOn": "2013-05-14T15:53:39Z",
+      "side": 1,
+      "message": "I don\u0027t really have a strong argument for that...I just thought that since the logic is encapsulated in a method (createCfgList()), then it was probably meant to be reusable. Especially since it\u0027s invoked from createCfgListsForEvent(), which seems to be generic enough that it has logic to handle both null and non-null \u0027project\u0027 arguments, even though in the current codebase the \u0027project\u0027 argument is always null (as stated in the ICExternalSettingsListener comment). So I figured that since the code author made createCfgListsForEvent() \"unnecessarily\" generic, I should also keep createCfgList() more generic as well.\n\nIf you prefer, i could simplify by just hardcoding a \u0027false\u0027 within createCfgList(), and add a descriptive comment mentioning that any not-yet-loaded projects are not included in the return value.",
+      "parentUuid": "AABOPn//+EY\u003d",
+      "revId": "63d0045e1fedfc4d462b1cb6f6f7870c3d55e285",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPn//+Ec\u003d",
         "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/settings/model/CExternalSettingsManager.java",
         "patchSetId": 2

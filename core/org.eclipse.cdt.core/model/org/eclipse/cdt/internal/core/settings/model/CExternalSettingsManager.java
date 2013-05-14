@@ -8,6 +8,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * James Blackburn (Broadcom Corp.)
+ * Baltasar Belyavsky (Texas Instruments) - [405638] CExternalSettingsManager causes all workspace project-descriptions to load prematurely
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -481,7 +482,8 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	}
 
 	private ProjDesCfgList createCfgList(IProject project, Set<String> cfgIdSet){
-		ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		// ignore projects which haven't loaded yet - forcing them to load here is expensive and unnecessary [Bug 405638]
+		ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(project, false, false);
 		if(des == null)
 			return null;
 

@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPn//+C4\u003d",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/settings/model/CExternalSettingsManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1149
+      },
+      "writtenOn": "2013-05-14T17:26:56Z",
+      "side": 1,
+      "message": "Makes sense - new patch uploaded. Thanks!",
+      "parentUuid": "AABOPn//+DQ\u003d",
+      "revId": "63d0045e1fedfc4d462b1cb6f6f7870c3d55e285",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPn//+Ec\u003d",
         "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/settings/model/CExternalSettingsManager.java",
         "patchSetId": 2

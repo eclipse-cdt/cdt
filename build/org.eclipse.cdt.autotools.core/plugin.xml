@@ -392,12 +392,13 @@
                cleanCommand="rm -rf"
                errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
                id="org.eclipse.linuxtools.cdt.autotools.core.configuration.build"
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain}"
                name="%Configuration.build.name">
             <toolChain
                   archList="all"
                   id="org.eclipse.linuxtools.cdt.autotools.core.toolChain"
+                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
                   name="%Autotools.gnu.toolchain.name"
-                  scannerConfigDiscoveryProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"
                   supportsManagedBuild="false"
                   targetTool="org.eclipse.linuxtools.cdt.autotools.core.tool.configure">
                <tool

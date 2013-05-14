@@ -15,8 +15,8 @@
 	<name>CDT Parent</name>
 
 	<properties>
-		<tycho-version>0.16.0</tycho-version>
-		<tycho-extras-version>0.16.0</tycho-extras-version>
+		<tycho-version>0.17.0</tycho-version>
+		<tycho-extras-version>0.17.0</tycho-extras-version>
 		<download-site>http://download.eclipse.org</download-site>
 		<platform-version>3.8</platform-version>
 		<platform-site>${download-site}/eclipse/updates/${platform-version}</platform-site>
@@ -373,6 +373,43 @@
 						</execution>
 					</executions>
 				</plugin>
+				<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-eclipserun-plugin</artifactId>
+				<version>${tycho-extras-version}</version>
+				<configuration>
+					<appArgLine>-application org.eclipse.ant.core.antRunner -buildfile customBuildCallbacks.xml build.index</appArgLine>
+					<dependencies>
+						<dependency>
+							<artifactId>org.apache.ant</artifactId>
+							<type>eclipse-plugin</type>
+						</dependency>
+						<dependency>
+							<artifactId>org.eclipse.help.base</artifactId>
+							<type>eclipse-plugin</type>
+						</dependency>
+						<dependency>
+							<artifactId>org.eclipse.ant.core</artifactId>
+							<type>eclipse-plugin</type>
+						</dependency>
+					</dependencies>
+					<repositories>
+                                                <repository>
+                                                        <id>platform</id>
+                                                        <layout>p2</layout>
+                                                        <url>${platform-site}</url>
+                                                </repository>
+                                        </repositories>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>eclipse-run</goal>
+						</goals>
+						<phase>compile</phase>
+					</execution>
+				</executions>
+			</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>

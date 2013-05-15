@@ -344,6 +344,10 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		return false;
 	}
 
+	@Override
+	public int getVisibility(IBinding member) {
+		throw new IllegalArgumentException(member.getName() + " is not a member of " + getName()); //$NON-NLS-1$
+	}
 
 	private final class ClassScope implements ICPPClassScope {
 		@Override

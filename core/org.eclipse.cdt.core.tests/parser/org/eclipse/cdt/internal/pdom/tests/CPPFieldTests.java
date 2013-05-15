@@ -79,19 +79,19 @@ public class CPPFieldTests extends PDOMTestBase {
 	}
 	
 	public void testDefaultPrivateField() throws Exception {
-		assertVisibility(pdom, "Class1::defaultField", ICPPMember.v_private);
+		assertCPPMemberVisibility(pdom, "Class1::defaultField", ICPPMember.v_private);
 	}
 	
 	public void testPrivateField() throws Exception {
-		assertVisibility(pdom, "Class1::privateField", ICPPMember.v_private);
+		assertCPPMemberVisibility(pdom, "Class1::privateField", ICPPMember.v_private);
 	}
 	
 	public void testProtectedField() throws Exception {
-		assertVisibility(pdom, "Class1::protectedField", ICPPMember.v_protected);
+		assertCPPMemberVisibility(pdom, "Class1::protectedField", ICPPMember.v_protected);
 	}
 	
 	public void testPublicField() throws Exception {
-		assertVisibility(pdom, "Class1::publicField", ICPPMember.v_public);
+		assertCPPMemberVisibility(pdom, "Class1::publicField", ICPPMember.v_public);
 	}
 	
 	public void testMutableField() throws Exception {

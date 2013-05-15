@@ -16,20 +16,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMNode;
@@ -96,6 +82,20 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Database for storing semantic information for one project.
@@ -237,6 +237,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  143.0 - Store implied object type in EvalFunctionSet, bug 402409.
 	 *  144.0 - Add support for storing function sets with zero functions in EvalFunctionSet, bug 402498.
 	 *  145.0 - Changed marshalling of CPPBasicType to store the associated numerical value, bug 407808. 
+	 *  146.0 - Added visibility support on class type level, bug 402878.
 	 */
 	private static final int MIN_SUPPORTED_VERSION= version(145, 0);
 	private static final int MAX_SUPPORTED_VERSION= version(145, Short.MAX_VALUE);

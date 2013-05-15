@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -67,6 +64,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tests for exercising resolution of template bindings against IIndex

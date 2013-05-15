@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-     Copyright (c) 2005, 2012 IBM Corporation and others.
+     Copyright (c) 2005, 2013 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse.ftp.source"
       label="%featureName"
-      version="3.1.0.qualifier"
+      version="3.2.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.services.files.ftp.source">
 
@@ -29,14 +29,14 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.4"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.4"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
    </url>
 
    <plugin
          id="org.apache.commons.net.source"
          download-size="207"
-         install-size="348"
+         install-size="419"
          version="0.0.0"
          unpack="false"/>
 

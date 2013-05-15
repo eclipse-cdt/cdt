@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@
  * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
  * Martin Oberhuber (Wind River) - [203500] Support encodings for FTP paths
  * Martin Oberhuber (Wind River) - [235463][ftp][dstore] Incorrect case sensitivity reported on windows-remote
+ * Martin Oberhuber (Wind River) - [269442][ftp] Set passive mode by default
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;
@@ -78,7 +79,7 @@ public class FTPConnectorService extends StandardConnectorService
 
 			//Active - passive mode
 			propertySet = createPropertySet("FTP Settings"); //$NON-NLS-1$
-			propertySet.addProperty("passive","false",PropertyType.getEnumPropertyType(new String[]{"true","false"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			propertySet.addProperty("passive","true",PropertyType.getEnumPropertyType(new String[]{"true","false"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 			// FTP List parser
 			String[] keys = FTPClientConfigFactory.getParserFactory().getKeySet();

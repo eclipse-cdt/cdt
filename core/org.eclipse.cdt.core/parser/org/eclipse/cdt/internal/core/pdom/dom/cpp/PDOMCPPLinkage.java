@@ -14,10 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -87,6 +83,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
@@ -132,6 +129,10 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Container for c++-entities.
@@ -487,9 +488,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 		if (pdomBinding != null) {
 			pdomBinding.setLocalToFileRec(fileLocalRec);
-			parent.addChild(pdomBinding);
+			addChild(parent, pdomBinding, binding);
 			if (parent2 != null) {
-				parent2.addChild(pdomBinding);
+				addChild(parent2, pdomBinding, binding);
 			}
 			if (parent != this && parent2 != this) {
 				insertIntoNestedBindingsIndex(pdomBinding);
@@ -497,6 +498,45 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 
 		return pdomBinding;
+	}
+
+	/**
+	 * Returns visibility of the member binding in its containing class, or -1 if the binding is
+	 * not a class member.
+	 */
+	private static int getVisibility(IBinding binding) {
+        while (binding instanceof ICPPSpecialization) {
+            binding = ((ICPPSpecialization) binding).getSpecializedBinding();
+        }
+		if (binding instanceof CPPImplicitMethod)
+			return ICPPClassType.v_public;
+
+		int visibility = -1;
+
+		IBinding bindingOwner = binding.getOwner();
+
+		if (bindingOwner instanceof ICPPClassType) {
+			if (bindingOwner instanceof CPPClosureType)
+				return ICPPClassType.v_public;
+			visibility = ((ICPPClassType) bindingOwner).getVisibility(binding);
+		}
+		return visibility;
+	}
+
+	private static void addChild(PDOMNode parent, PDOMBinding binding, IBinding originalBinding)
+			throws CoreException {
+		if (parent instanceof IPDOMCPPClassType) {
+			if (originalBinding instanceof IEnumerator)
+				originalBinding = originalBinding.getOwner();
+			int visibility = getVisibility(originalBinding);
+			if (visibility >= 0) {
+				((IPDOMCPPClassType) parent).addMember(binding, visibility);
+				return;
+			}
+			originalBinding.getOwner();
+	        visibility = getVisibility(originalBinding);
+		}
+		parent.addChild(binding);
 	}
 
 	@Override
@@ -972,7 +1012,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				file.setLastUsingDirective(ud.getRecord());
 			}
 		} else if (parentNode instanceof ICPPASTElaboratedTypeSpecifier) {
-			ICPPASTElaboratedTypeSpecifier elaboratedSpecifier = (ICPPASTElaboratedTypeSpecifier)parentNode;
+			ICPPASTElaboratedTypeSpecifier elaboratedSpecifier = (ICPPASTElaboratedTypeSpecifier) parentNode;
 			if (elaboratedSpecifier.isFriend()) {
 				pdomName.setIsFriendSpecifier();
 				PDOMName enclClassName = (PDOMName) pdomName.getEnclosingDefinition();

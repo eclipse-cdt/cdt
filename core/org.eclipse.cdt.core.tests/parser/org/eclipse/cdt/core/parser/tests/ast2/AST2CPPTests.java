@@ -7628,7 +7628,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		C c= *new C();
 	//		foo(c);
 	//	}
-	public void testUserdefinedConversion_222444a() throws Exception {
+	public void testUserDefinedConversion_222444a() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, CPP);
 	}
@@ -7656,7 +7656,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		x2(f);
 	//		x3(f);
 	//	}
-	public void testUserdefinedConversion_222444b() throws Exception {
+	public void testUserDefinedConversion_222444b() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, CPP);
 	}
@@ -7677,7 +7677,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		foo(c);
 	//      foo(cc);
 	//	}
-	public void testUserdefinedConversion_222444c() throws Exception {
+	public void testUserDefinedConversion_222444c() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		bh.assertNonProblem("foo(c);", 3);
@@ -9308,8 +9308,33 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	namespace ns {
 	//	class A {
-	//		A(int a = f());  // problem on f
+	//	  void m() {
+	//	    int a;
+	//	    extern int b;
+	//	    void f();
+	//	  }
+	//	  typedef int x;
+	//	  int y;
+	//	};
+	//	}
+	public void testOwner() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		ICPPBinding ns = bh.assertNonProblemOnFirstIdentifier("ns");
+		ICPPBinding A = bh.assertNonProblemOnFirstIdentifier("A");
+		assertEquals(ns, A.getOwner());
+		IBinding m = bh.assertNonProblemOnFirstIdentifier("m()");
+		assertEquals(A, m.getOwner());
+		assertEquals(A, bh.assertNonProblemOnFirstIdentifier("x;").getOwner());
+		assertEquals(A, bh.assertNonProblemOnFirstIdentifier("y;").getOwner());
+		assertEquals(m, bh.assertNonProblemOnFirstIdentifier("a;").getOwner());
+		assertNull(bh.assertNonProblemOnFirstIdentifier("b;").getOwner());
+		assertNull(bh.assertNonProblemOnFirstIdentifier("f()").getOwner());
+	}
+
+	//	class A {
+	//		A(int a = f());
 	//		static int f();
 	//	};
 	public void testFwdLookupForDefaultArgument() throws Exception {

@@ -608,10 +608,6 @@ public class AST2TestBase extends BaseTestCase {
 			return assertNonProblem(section, getIdentifierLength(section), cs);
 		}
 
-		public IBinding assertNonProblemOnFirstIdentifier(String section) {
-			return assertNonProblem(section, getIdentifierLength(section), IBinding.class);
-		}
-
     	public void assertNoName(String section, int len) {
 			IASTName name= findName(section, len);
 			if (name != null) {

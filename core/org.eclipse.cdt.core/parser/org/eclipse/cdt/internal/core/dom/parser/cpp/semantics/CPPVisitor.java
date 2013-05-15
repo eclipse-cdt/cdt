@@ -2578,7 +2578,7 @@ public class CPPVisitor extends ASTQueries {
 		for (; node != null; node= node.getParent()) {
 			if (node instanceof IASTFunctionDefinition) {
 				if (!allowFunction)
-					continue;
+					return null;
 
 				IASTDeclarator dtor= findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator());
 				if (dtor != null) {

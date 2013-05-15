@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -85,6 +85,7 @@
  * Martin Oberhuber (Wind River) - [285948] Avoid recursive deletion over symbolic links
  * Martin Oberhuber (Wind River) - [300398] Avoid product hang-up on isConnected()
  * Martin Oberhuber (Wind River) - [305986] NPE due to race condition in isConnected()
+ * Martin Oberhuber (Wind River) - [408092] Fix incorrect parsing of "PWD" with Commons Net 3.2
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -105,6 +106,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.net.ProtocolCommandEvent;
 import org.apache.commons.net.ProtocolCommandListener;
@@ -484,6 +487,20 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		}
 
 		_userHome = _ftpClient.printWorkingDirectory();
+		if(_userHome.indexOf('"')>=0) {
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=408092
+			// Work around incorrect "PWD" parsing in Commons Net <= 3.2
+			String[] origReplys = _ftpClient.getReplyStrings();
+			String origReply = origReplys[origReplys.length-1];
+			// Other than the original Commons Net fix, we use a Regex Pattern to avoid any IP issues:
+			// Capturing group for the filename (in single quotes), followed by optional comment
+			// The filename is a repeating non-capturing group, which may contain text or doubled quotes
+			Pattern p = Pattern.compile("... \"((?:[^\"]*(?:\"\")*)+)\"{1}.*"); //$NON-NLS-1$
+			Matcher m = p.matcher(origReply);
+			if (m.matches()) {
+				_userHome = m.group(1).replaceAll("\"\"",  "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 
 		//For VMS, normalize the home location
 		if(_userHome.indexOf(':')!=-1 && _userHome.indexOf(']')!=-1)

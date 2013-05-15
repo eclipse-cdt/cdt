@@ -8,6 +8,7 @@
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
  *     Marc Dumais (Ericsson) - Bug 405390
+ *     Marc Dumais (Ericsson) - Bug 407321
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
@@ -50,10 +51,14 @@ public class VisualizerModel
 	
 	protected boolean m_loadMetersEnabled = false;
 	
+	/** data source corresponding to this model  */
+	protected String m_sessionId = null;
+	
 	// --- constructors/destructors ---
 	
 	/** Constructor */
-	public VisualizerModel() {
+	public VisualizerModel(String sessionId) {
+		m_sessionId = sessionId;
 		m_cpus = new ArrayList<VisualizerCPU>();
 		m_cpuMap = new Hashtable<Integer, VisualizerCPU>();
 		m_threads = new ArrayList<VisualizerThread>();
@@ -87,6 +92,7 @@ public class VisualizerModel
 			m_loadTodo.dispose();
 			m_loadTodo = null;
 		}
+		m_sessionId = null;
 	}
 	
 	
@@ -110,6 +116,11 @@ public class VisualizerModel
 		return m_loadMetersEnabled;
 	}
 	
+	/**	Gets the unique id for the source this model was build from */
+	public String getSessionId() {
+		return m_sessionId;
+	}
+		
 	// --- methods ---
 	
 	/** Sorts cores, cpus, etc. by IDs. */

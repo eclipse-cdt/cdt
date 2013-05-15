@@ -13,6 +13,7 @@
  *     Marc Dumais (Ericsson) - Bug 399419
  *     Marc Dumais (Ericsson) - Bug 405390
  *     Marc Dumais (Ericsson) - Bug 409006
+ *     Marc Dumais (Ericsson) - Bug 407321
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -997,7 +998,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	 */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	public void getVisualizerModel() {
-		fDataModel = new VisualizerModel();
+		fDataModel = new VisualizerModel(m_sessionState.getSessionID());
 		DSFDebugModel.getCPUs(m_sessionState, this, fDataModel);
 	}
 	

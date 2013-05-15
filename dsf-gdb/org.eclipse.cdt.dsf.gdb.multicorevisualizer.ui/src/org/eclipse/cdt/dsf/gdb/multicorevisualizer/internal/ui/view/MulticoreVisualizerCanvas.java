@@ -16,6 +16,7 @@
  *     Marc Dumais (Ericsson) - Bug 399419
  *     Marc Dumais (Ericsson) - Bug 404894
  *     Marc Dumais (Ericsson) - Bug 405390
+ *     Marc Dumais (Ericsson) - Bug 407321
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -140,8 +141,8 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 	/** Selected PIDs. */
 	protected HashSet<Integer> m_selectedPIDs = null;
 	
-	/** Display filter for the graphical objects */
-	protected MulticoreVisualizerCanvasFilter m_canvasFilter = null;
+	/** Canvas filter manager */
+	protected MulticoreVisualizerCanvasFilterManager m_canvasFilterManager = null;
 	
 	/** Canvas status bar */
 	protected MulticoreVisualizerStatusBar m_statusBar = null;
@@ -234,9 +235,9 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		};
 		m_updateTimer.setRepeating(false); // one-shot timer
 		m_updateTimer.start();
-		
-		// canvas filter
-		m_canvasFilter = new MulticoreVisualizerCanvasFilter(this);
+				
+		// filter manager
+		m_canvasFilterManager = new MulticoreVisualizerCanvasFilterManager(this);
 		
 		// status bar
 		m_statusBar = new MulticoreVisualizerStatusBar();
@@ -288,9 +289,9 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
         	m_selectedPIDs.clear();
         	m_selectedPIDs = null;
         }
-        if (m_canvasFilter != null) {
-        	m_canvasFilter.dispose();
-        	m_canvasFilter = null;
+        if (m_canvasFilterManager != null) {
+        	m_canvasFilterManager.dispose();
+        	m_canvasFilterManager = null;
         }
         if (m_statusBar != null) {
         	m_statusBar.dispose();
@@ -311,8 +312,15 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 	public void setModel(VisualizerModel model)
 	{
 		m_model = model;
-		// TODO : Consider clearing the filter if the model changes,
-		// by calling clearFilter() 
+		
+		// Set filter associated to new model
+		if (m_model != null) {
+			m_canvasFilterManager.setCurrentFilter(m_model.getSessionId());
+		}
+		else {
+			m_canvasFilterManager.setCurrentFilter(null);
+		}
+		
 		requestRecache();
 		requestUpdate();
 	}
@@ -380,7 +388,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		// clear status bar message
 		m_statusBar.setMessage(null);
 		// re-compute filter to reflect latest model changes
-		m_canvasFilter.updateFilter();
+		m_canvasFilterManager.updateCurrentFilter();
 	}
 	
 	/** Fits n square items into a rectangle of the specified size.
@@ -437,14 +445,14 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 				for (VisualizerCPU cpu : m_model.getCPUs()) {
 					//if (force_cpu_count >= cpu_count) break;
 					//cpu_count++;
-					// filter permits displaying this CPU? 
-					if (m_canvasFilter.displayObject(cpu)) {
+					// current filter permits displaying this CPU? 
+					if (m_canvasFilterManager.displayObject(cpu)) {
 						MulticoreVisualizerCPU mcpu = new MulticoreVisualizerCPU(cpu.getID());
 						m_cpus.add(mcpu);
 						m_cpuMap.put(cpu, mcpu);
 						for (VisualizerCore core : cpu.getCores()) {
-							// filter permits displaying this core?
-							if (m_canvasFilter.displayObject(core)) {
+							// current filter permits displaying this core?
+							if(m_canvasFilterManager.displayObject(core)) {
 								MulticoreVisualizerCore mcore = new MulticoreVisualizerCore(mcpu, core.getID());
 								m_cores.add(mcore);
 								m_coreMap.put(core, mcore);
@@ -632,8 +640,8 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 			// like processes and threads
 			
 			for (VisualizerThread thread : m_model.getThreads()) {
-				// filter permits displaying this thread? 
-				if(m_canvasFilter.displayObject(thread)) {
+				// current filter permits displaying this thread? 
+				if(m_canvasFilterManager.displayObject(thread)) {
 					VisualizerCore core = thread.getCore();
 					MulticoreVisualizerCore mcore = m_coreMap.get(core);
 					if (mcore != null) {
@@ -722,8 +730,8 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		}
 		
 		// paint status bar
-		if (m_canvasFilter.isFilterActive()) {
-			m_statusBar.setMessage(m_canvasFilter.toString());
+		if (m_canvasFilterManager.isCurrentFilterActive()) {
+			m_statusBar.setMessage(m_canvasFilterManager.getCurrentFilter().toString());
 			m_statusBar.paintContent(gc);
 		}
 		
@@ -1100,16 +1108,16 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
     
     /** Set-up a canvas white-list filter. */
     public void applyFilter() {
-    	m_canvasFilter.applyFilter();
+    	m_canvasFilterManager.applyFilter();
     }
     
-    /** Removes any canvas filter currently in place */
+    /** Removes the canvas filter currently in place */
     public void clearFilter() {
-    	m_canvasFilter.clearFilter();
+    	m_canvasFilterManager.clearFilter();
     }
 
     /** Tells if a canvas filter is currently in place */
     public boolean isFilterActive() {
-    	return m_canvasFilter.isFilterActive();
+    	return m_canvasFilterManager.isCurrentFilterActive();
     }
 }

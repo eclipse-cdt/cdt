@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Niefer (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -31,9 +31,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * Base class for all specializations in the AST. Note the specialization may also be created on behalf
- * of the index. The index may be concurrently be accessed (read-only) from different threads. So there
- * is a need to synchronize non-final members.
+ * Base class for all specializations in the AST. Note the specialization may also be created on
+ * behalf of the index. The index may be concurrently be accessed (read-only) from different
+ * threads. So there is a need to synchronize non-final members.
  */
 public abstract class CPPSpecialization extends PlatformObject implements ICPPSpecialization, ICPPInternalBinding {
 	private final IBinding owner;
@@ -73,7 +73,7 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 		if (declarations == null) {
 	        declarations = new IASTNode[] { node };
 		} else {
-	        // keep the lowest offset declaration in [0]
+	        // Keep the lowest offset declaration in [0]
 			if (declarations.length > 0 &&
 					((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
 				declarations = ArrayUtil.prepend(IASTNode.class, declarations, node);

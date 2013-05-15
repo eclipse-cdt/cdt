@@ -31,7 +31,8 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		implements ICPPFunctionTemplate, ICPPInternalTemplate {
 	private ObjectMap instances;
 	
-	public CPPFunctionTemplateSpecialization(ICPPFunction original, ICPPClassType owner, ICPPTemplateParameterMap argumentMap, ICPPFunctionType type, IType[] exceptionSpecs) {
+	public CPPFunctionTemplateSpecialization(ICPPFunction original, ICPPClassType owner,
+			ICPPTemplateParameterMap argumentMap, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(original, owner, argumentMap, type, exceptionSpecs);
 	}
 
@@ -62,7 +63,7 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 	public synchronized ICPPTemplateInstance[] getAllInstances() {
 		if (instances != null) {
 			ICPPTemplateInstance[] result= new ICPPTemplateInstance[instances.size()];
-			for (int i=0; i < instances.size(); i++) {
+			for (int i= 0; i < instances.size(); i++) {
 				result[i]= (ICPPTemplateInstance) instances.getAt(i);
 			}
 			return result;

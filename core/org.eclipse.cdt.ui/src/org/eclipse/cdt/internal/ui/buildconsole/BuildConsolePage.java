@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 QNX Software Systems and others.
+ * Copyright (c) 2002, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -133,6 +133,7 @@ public class BuildConsolePage extends Page
 	private NextErrorAction fNextErrorAction;
 	private PreviousErrorAction fPreviousErrorAction;
 	private ShowErrorAction fShowErrorAction;
+	private WrapLinesAction fWrapAction;
 
 	/**
 	 * @param view
@@ -296,6 +297,8 @@ public class BuildConsolePage extends Page
 			setTabs(CUIPlugin.getDefault().getPreferenceStore().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
 		} else if (IConsoleConstants.P_BACKGROUND_COLOR.equals(property)) {
 			fViewer.getTextWidget().setBackground(fConsole.getBackground());
+		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_WRAP_LINES)) {
+			fWrapAction.setChecked(BuildConsolePreferencePage.isConsoleWrapLines());
 		}
 	}
 
@@ -303,6 +306,7 @@ public class BuildConsolePage extends Page
 		fClearOutputAction = new ClearOutputAction(getViewer());
 		fScrollLockAction = new ScrollLockAction(getViewer());
 		fScrollLockAction.setChecked(fIsLocked);
+		fWrapAction = new WrapLinesAction(getViewer());
 		fNextErrorAction = new NextErrorAction(this);
 		fPreviousErrorAction = new PreviousErrorAction(this);
 		fShowErrorAction = new ShowErrorAction(this);
@@ -363,6 +367,7 @@ public class BuildConsolePage extends Page
 		mgr.appendToGroup(BuildConsole.ERROR_GROUP, fShowErrorAction);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fSaveLogAction);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fScrollLockAction);
+		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fWrapAction);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fClearOutputAction);
 	}
 

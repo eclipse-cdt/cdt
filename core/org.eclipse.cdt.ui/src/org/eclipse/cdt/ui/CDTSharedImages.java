@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Andrew Gvozdev and others.
+ * Copyright (c) 2010, 2013 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -128,6 +128,8 @@ public class CDTSharedImages {
 	public static final String IMG_OBJS_INCCONT = "icons/obj16/incc_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_EXTENSION = "icons/obj16/extension_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_USER = "icons/obj16/person-me.gif"; //$NON-NLS-1$
+	/** @since 5.6 */
+	public static final String IMG_OBJS_WRAP_LINE = "icons/elcl16/wrap_lines.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_CDT_TESTING = "icons/obj16/flask.png"; //$NON-NLS-1$
 
 	public static final String IMG_OBJS_NLS_NEVER_TRANSLATE = "icons/obj16/never_translate.gif"; //$NON-NLS-1$

@@ -11,10 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -30,11 +26,16 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+
 public class BuildConsolePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	private static final String PREF_CLEAR_CONSOLE = "clearConsole"; //$NON-NLS-1$
 	private static final String PREF_CONSOLE_ON_TOP = "consoleOnTop"; //$NON-NLS-1$
 	private static final String PREF_AUTO_OPEN_CONSOLE = "autoOpenConsole"; //$NON-NLS-1$
+	public static final String PREF_BUILDCONSOLE_WRAP_LINES = "buildConsoleWrapLines"; //$NON-NLS-1$
 
 	// In font registry
 	public static final String PREF_BUILDCONSOLE_FONT = "org.eclipse.cdt.ui.buildconsole.ConsoleFont"; //$NON-NLS-1$
@@ -74,6 +75,9 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		BooleanFieldEditor consoleOnTop = new BooleanFieldEditor(PREF_CONSOLE_ON_TOP,
 				CUIPlugin.getResourceString("ConsolePreferencePage.consoleOnTop.label"), parent); //$NON-NLS-1$
 		addField(consoleOnTop);
+		BooleanFieldEditor consoleWrapLines = new BooleanFieldEditor(PREF_BUILDCONSOLE_WRAP_LINES,
+				CUIPlugin.getResourceString("ConsolePreferencePage.consoleWrapLines.label"), parent); //$NON-NLS-1$
+		addField(consoleWrapLines);
 
 		IntegerFieldEditor buildCount = new IntegerFieldEditor(PREF_BUILDCONSOLE_LINES,
 				CUIPlugin.getResourceString("ConsolePreferencePage.consoleLines.label"), parent); //$NON-NLS-1$
@@ -133,12 +137,17 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	public static boolean isClearBuildConsole() {
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PREF_CLEAR_CONSOLE);
 	}
+
 	public static boolean isAutoOpenConsole() {
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PREF_AUTO_OPEN_CONSOLE);
 	}
 
 	public static boolean isConsoleOnTop() {
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PREF_CONSOLE_ON_TOP);
+	}
+
+	public static boolean isConsoleWrapLines() {
+		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PREF_BUILDCONSOLE_WRAP_LINES);
 	}
 
 	public static int buildConsoleLines() {
@@ -153,6 +162,7 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		prefs.setDefault(PREF_CLEAR_CONSOLE, true);
 		prefs.setDefault(PREF_AUTO_OPEN_CONSOLE, true);
 		prefs.setDefault(PREF_CONSOLE_ON_TOP, false);
+		prefs.setDefault(PREF_BUILDCONSOLE_WRAP_LINES, true);
 		prefs.setDefault(PREF_BUILDCONSOLE_LINES, 500);
 		prefs.setDefault(PREF_BUILDCONSOLE_TAB_WIDTH, 4);
 		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_OUTPUT_COLOR, new RGB(0, 0, 0));

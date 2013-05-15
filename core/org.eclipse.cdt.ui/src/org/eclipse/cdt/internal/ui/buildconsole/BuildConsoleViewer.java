@@ -92,7 +92,6 @@ public class BuildConsoleViewer extends TextViewer
 			styledText.setFont(parent.getFont());
 			styledText.setDoubleClickEnabled(true);
 			styledText.setEditable(false);
-			styledText.setWordWrap(true);
 		}
 	}
 

@@ -34,6 +34,24 @@
       "revId": "19360036af3e78939ee20709a5ebf4ba6509326e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn//9bE\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/HoldsOptions.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 1149
+      },
+      "writtenOn": "2013-05-16T14:59:12Z",
+      "side": 0,
+      "message": "Andrew, let me look into this some more. I found CDT v2.0.1 on some abandoned FTP site, and will try to reproduce the OptionReference scenario. \n\nI thought that all I would have to do is create a project using CDT 2.x, but that\u0027s not enough - the wasOptRef() flag is set for \"extension\" OptionReferences when converting a legacy tool-chain definition. So I would have to define a complete legacy tool-chain to see how the new method implementations behave in that case.",
+      "parentUuid": "AABOPn//+PI\u003d",
+      "revId": "19360036af3e78939ee20709a5ebf4ba6509326e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

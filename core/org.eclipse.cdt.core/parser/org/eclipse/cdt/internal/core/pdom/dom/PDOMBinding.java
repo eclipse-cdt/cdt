@@ -12,9 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -39,6 +36,9 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.tag.PDOMTaggable;
 import org.eclipse.core.runtime.CoreException;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 /**
  * Base class for bindings in the PDOM.
@@ -255,11 +255,9 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	}
 
 	@Override
-	abstract protected int getRecordSize(); // superclass's implementation is no longer valid
+	abstract protected int getRecordSize(); // Superclass's implementation is no longer valid
 
-	/* For debug purposes only.
-	 * @see java.lang.Object#toString()
-	 */
+	/** For debug purposes only. */
 	@Override
 	public final String toString() {
 		String name = toStringBase();
@@ -300,9 +298,9 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 							return field.getName();
 					}
 				}
-			} catch (IllegalAccessException iae) {
+			} catch (IllegalAccessException e) {
 				continue;
-			} catch (IllegalArgumentException iae) {
+			} catch (IllegalArgumentException e) {
 				continue;
 			}
 		}

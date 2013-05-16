@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -23,25 +23,25 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
  * An example is GCC built-in functions.
  */
 public class CPPImplicitFunction extends CPPFunction {
-
-	private ICPPParameter[] parms=null;
-	private IScope scope=null;
-    private ICPPFunctionType functionType=null;
+	private ICPPParameter[] parms;
+	private IScope scope;
+    private ICPPFunctionType functionType;
 	private final boolean takesVarArgs;
 	private boolean isDeleted;
 	private final char[] name;
 	
-	public CPPImplicitFunction(char[] name, IScope scope, ICPPFunctionType type, ICPPParameter[] parms, boolean takesVarArgs) {
-        super( null );
-        this.name=name;
-		this.scope=scope;
+	public CPPImplicitFunction(char[] name, IScope scope, ICPPFunctionType type,
+			ICPPParameter[] parms, boolean takesVarArgs) {
+        super(null);
+        this.name= name;
+		this.scope= scope;
 		this.functionType= type;
-		this.parms=parms;
-		this.takesVarArgs=takesVarArgs;
+		this.parms= parms;
+		this.takesVarArgs= takesVarArgs;
 	}
 
     @Override
-	public ICPPParameter [] getParameters() {
+	public ICPPParameter[] getParameters() {
         return parms;
     }
     
@@ -52,27 +52,19 @@ public class CPPImplicitFunction extends CPPFunction {
     
     @Override
 	public String getName() {
-        return String.valueOf( name );
+        return String.valueOf(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-     */
     @Override
 	public char[] getNameCharArray() {
         return name;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-     */
+
     @Override
 	public IScope getScope() {
         return scope;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#getFunctionScope()
-     */
     @Override
 	public IScope getFunctionScope() {
         return null;

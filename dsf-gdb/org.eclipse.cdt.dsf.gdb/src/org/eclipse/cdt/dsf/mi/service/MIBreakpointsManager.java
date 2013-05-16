@@ -85,7 +85,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -1623,23 +1622,17 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     }
 
 	/**
-	 * See bug 232415
+	 * For some platforms (MinGW) the debugger path needs to be adjusted to work 
+	 * with earlier GDB versions. 
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=232415
 	 * 
 	 * @param path
 	 *            the absolute path to the source file
-	 * @return the simple filename if running on Windows and [path] is not an
-	 *         absolute UNIX one. Otherwise, [path] is returned
+	 * @return the adjusted path provided by the breakpoints service.
 	 */
-    static String adjustDebuggerPath(String path) {
-    	String result = path;
-    	// Make it MinGW-specific
-    	if (Platform.getOS().startsWith("win")) { //$NON-NLS-1$
-        	if (!path.startsWith("/")) { //$NON-NLS-1$
-        		path = path.replace('\\', '/');
-        		result = path.substring(path.lastIndexOf('/') + 1);
-        	}
-    	}
-    	return result;
+    String adjustDebuggerPath(String path) {
+    	return (fBreakpoints instanceof IMIBreakpointPathAdjuster) ? 
+    			((IMIBreakpointPathAdjuster)fBreakpoints).adjustDebuggerPath(path) : path;
     }
 
     /**

@@ -51,6 +51,7 @@ import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
@@ -58,7 +59,7 @@ import org.osgi.framework.BundleContext;
  * Initial breakpoint service implementation.
  * Implements the IBreakpoints interface.
  */
-public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, IBreakpointsExtension
+public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, IBreakpointsExtension, IMIBreakpointPathAdjuster
 {
     /**
      * Breakpoint attributes markers used in the map parameters of insert/updateBreakpoint().
@@ -1357,4 +1358,23 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
     	}
     	return null;
     }
+
+	/**
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=232415
+	 * Returns the simple filename if running on Windows and [originalPath] is not an
+	 * absolute UNIX one. Otherwise, [originalPath] is returned
+	 * @since 4.2
+	 */
+	@Override
+	public String adjustDebuggerPath(String originalPath) {
+    	String result = originalPath;
+    	// Make it MinGW-specific
+    	if (Platform.getOS().startsWith("win")) { //$NON-NLS-1$
+        	if (!originalPath.startsWith("/")) { //$NON-NLS-1$
+        		originalPath = originalPath.replace('\\', '/');
+        		result = originalPath.substring(originalPath.lastIndexOf('/') + 1);
+        	}
+    	}
+    	return result;
+	}
 }

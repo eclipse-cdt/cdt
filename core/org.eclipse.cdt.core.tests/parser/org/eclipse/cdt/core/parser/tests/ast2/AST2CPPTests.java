@@ -9321,10 +9321,10 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testOwner() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
-		ICPPBinding ns = bh.assertNonProblemOnFirstIdentifier("ns");
-		ICPPBinding A = bh.assertNonProblemOnFirstIdentifier("A");
+		ICPPNamespace ns = bh.assertNonProblemOnFirstIdentifier("ns");
+		ICPPClassType A = bh.assertNonProblemOnFirstIdentifier("A");
 		assertEquals(ns, A.getOwner());
-		IBinding m = bh.assertNonProblemOnFirstIdentifier("m()");
+		ICPPMethod m = bh.assertNonProblemOnFirstIdentifier("m()");
 		assertEquals(A, m.getOwner());
 		assertEquals(A, bh.assertNonProblemOnFirstIdentifier("x;").getOwner());
 		assertEquals(A, bh.assertNonProblemOnFirstIdentifier("y;").getOwner());

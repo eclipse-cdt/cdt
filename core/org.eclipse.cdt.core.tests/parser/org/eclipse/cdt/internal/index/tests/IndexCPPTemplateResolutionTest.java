@@ -1369,7 +1369,19 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 
 		final IType type = t2.getType();
 		assertTrue(type instanceof IBasicType);
-		assertEquals(((IBasicType)type).getType(), IBasicType.t_int);
+		assertEquals(((IBasicType) type).getType(), IBasicType.t_int);
+	}
+
+	//	struct A {
+	//	  template<typename T>
+	//	  struct S;
+	//	};
+	//	template<typename T>
+	//	struct A::S {};
+
+	//  A::S<int> a;
+	public void testXXX() throws Exception {
+		checkBindings();
 	}
 
 	//	template <int x>

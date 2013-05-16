@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -31,7 +30,7 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		implements ICPPFunctionTemplate, ICPPInternalTemplate {
 	private ObjectMap instances;
 	
-	public CPPFunctionTemplateSpecialization(ICPPFunction original, ICPPClassType owner,
+	public CPPFunctionTemplateSpecialization(ICPPFunction original, IBinding owner,
 			ICPPTemplateParameterMap argumentMap, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(original, owner, argumentMap, type, exceptionSpecs);
 	}

@@ -4136,6 +4136,26 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings(getAboveComment());
 	}
 
+	//	template<typename T>
+	//	struct A {
+	//	  template<typename U>
+	//	  friend void f(const A<U>& p) {}
+	//	  template<typename U>
+	//	  void m(const A<U>& p) const;
+	//	};
+	//
+	//	void test(const A<int>& a) {
+	//	  f(a);
+	//	  a.m(a);
+	//	}
+	public void testOwnerOfFriendTemplateFunction_408181() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		ICPPFunction f = bh.assertNonProblemOnFirstIdentifier("f(a)");
+		assertNull(f.getOwner());
+		ICPPClassType A = bh.assertNonProblem("A<int>");
+		assertEquals(A, bh.assertNonProblemOnFirstIdentifier("m(a);").getOwner());
+	}
+
 	// template <typename T> void f(T t) {
 	//     g(t);
 	// }

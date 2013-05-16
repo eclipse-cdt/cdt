@@ -1615,13 +1615,18 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	 */
     protected void determineDebuggerPath(IDMContext dmc, String hostPath, final DataRequestMonitor<String> rm)
     {
+    	final IBreakpoints breakpoints = getServicesTracker().getService(IBreakpoints.class);
+    	if (!(breakpoints instanceof IMIBreakpointPathAdjuster)) {
+    		rm.done(hostPath);
+    		return;
+    	}
     	ISourceLookup sourceLookup = getServicesTracker().getService(ISourceLookup.class);
     	ISourceLookupDMContext srcDmc = DMContexts.getAncestorOfType(dmc, ISourceLookupDMContext.class);
     	if (sourceLookup == null || srcDmc == null) {
     		// Source lookup not available for given context, use the host
     		// path for the debugger path.
     		// Hack around a MinGW bug; see 369622 (and also 196154 and 232415)
-    		rm.done(MIBreakpointsManager.adjustDebuggerPath(hostPath));
+    		rm.done(((IMIBreakpointPathAdjuster)breakpoints).adjustDebuggerPath(hostPath));
     		return;
     	}
 
@@ -1629,7 +1634,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
     		@Override
     		protected void handleSuccess() {
     			// Hack around a MinGW bug; see 369622 (and also 196154 and 232415)
-    			rm.done(MIBreakpointsManager.adjustDebuggerPath(getData()));
+    			rm.done(((IMIBreakpointPathAdjuster)breakpoints).adjustDebuggerPath(getData()));
     		}
     	});
     }

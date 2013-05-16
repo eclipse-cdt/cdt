@@ -961,7 +961,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			&& (address == null || !address.equals(getPlatformAddress(miBpt.getAddress()).toHexAddressString()))) 
 			return false;
 		if (isLineBreakpoint(miBpt)) {
-			if (fileName == null || !fileName.equals(miBptFileName))
+			if (fileName == null || miBptFileName == null || !new File(fileName).equals(new File(miBptFileName)))
 				return false;
 			if (lineNumber == null || lineNumber.intValue() != getLineNumber(miBpt))
 				return false;
@@ -996,7 +996,8 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
     			isPlatformFunctionBreakpoint((ICFunctionBreakpoint)plBpt, miBpt) : false;
     	}
     	try {
-    		if (fileName == null || !fileName.equals(plBpt.getSourceHandle()))
+    		if (fileName == null || plBpt.getSourceHandle() == null 
+    				|| !new File(fileName).equals(new File(plBpt.getSourceHandle())))
     			return false;
 			if (plBpt.getLineNumber() != getLineNumber(miBpt))
 				return false;

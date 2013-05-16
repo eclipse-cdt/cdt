@@ -101,7 +101,6 @@ import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.osgi.framework.BundleContext;
@@ -2141,19 +2140,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 * 
 	 * @param path
 	 *            the absolute path to the source file
-	 * @return the simple filename if running on Windows and [path] is not an
-	 *         absolute UNIX one. Otherwise, [path] is returned
+	 * @return the adjusted path provided by the breakpoints service
 	 */
-    private static String adjustDebuggerPath(String path) {
-    	String result = path;
-    	// Make it MinGW-specific
-    	if (Platform.getOS().startsWith("win")) { //$NON-NLS-1$
-        	if (!path.startsWith("/")) { //$NON-NLS-1$
-        		path = path.replace('\\', '/');
-        		result = path.substring(path.lastIndexOf('/') + 1);
-        	}
-    	}
-    	return result;
+    private String adjustDebuggerPath(String path) {
+    	MIBreakpoints breakpoints = getServicesTracker().getService(MIBreakpoints.class);
+    	return (breakpoints != null) ? breakpoints.adjustDebuggerPath(path) : path;
     }
     
 	///////////////////////////////////////////////////////////////////////////

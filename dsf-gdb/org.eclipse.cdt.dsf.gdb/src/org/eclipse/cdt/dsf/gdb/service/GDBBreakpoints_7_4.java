@@ -295,4 +295,10 @@ public class GDBBreakpoints_7_4 extends GDBBreakpoints_7_2 implements IEventList
 		}
 		super.deleteBreakpointFromTarget(context, reference, finalRm);
 	}
+
+	@Override
+	public String adjustDebuggerPath(String originalPath) {
+		// No adjustment is required
+		return originalPath;
+	}
 }

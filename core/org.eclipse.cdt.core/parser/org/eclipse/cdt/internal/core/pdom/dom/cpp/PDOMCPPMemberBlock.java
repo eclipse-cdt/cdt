@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -76,6 +77,10 @@ public class PDOMCPPMemberBlock {
 		return linkage.getDB();
 	}
 
+	private PDOM getPDOM() {
+		return linkage.getPDOM();
+	}
+
 	public long getRecord() {
 		return record;
 	}
@@ -96,6 +101,7 @@ public class PDOMCPPMemberBlock {
 
 	private static void addMember(PDOMCPPMemberBlock block, PDOMNode member, int visibility)
 			throws CoreException {
+		assert member.getPDOM() == block.getPDOM();
 		while (true) {
 			int pos = block.getNextPosition();
 			if (pos < MAX_MEMBER_COUNT) {
@@ -150,16 +156,6 @@ public class PDOMCPPMemberBlock {
 		return record + MEMBER_POINTERS + Database.PTR_SIZE * memberIndex;
 	}
 
-	private PDOMNode getMember(int memberIndex) throws CoreException {
-		if (memberIndex < getNextPosition() && memberIndex < MAX_MEMBER_COUNT) {
-			long memberRecord = getMemberRecord(memberIndex);
-			if (memberRecord != 0) {
-				return linkage.getNode(memberRecord);
-			}
-		}
-		return null;
-	}
-
 	private void setVisibility(int memberIndex, int newVisibility) throws CoreException {
 		newVisibility &= VISIBILITY_MASK;
 
@@ -182,12 +178,20 @@ public class PDOMCPPMemberBlock {
 	}
 
 	private static int getVisibility(PDOMCPPMemberBlock block, IBinding member) throws CoreException {
+		if (!(member instanceof PDOMNode))
+			return -1;
+		
+		PDOMNode memberNode = (PDOMNode) member;
+		if (memberNode.getPDOM() != block.getPDOM())
+			return -1;
+		long memberRecord = memberNode.getRecord();
+
 		do {
-			for (int memberIndex = 0; memberIndex < block.getNextPosition(); memberIndex++) {
-				PDOMNode candidate = block.getMember(memberIndex);
-				if (candidate == null)
+			for (int memberIndex = 0; memberIndex < MAX_MEMBER_COUNT; memberIndex++) {
+				long rec = block.getMemberRecord(memberIndex);
+				if (rec == 0)
 					return -1;
-				if (candidate.equals(member))
+				if (rec == memberRecord)
 					return block.getVisibility(memberIndex);
 			}
 		} while ((block = block.getNextBlock()) != null);

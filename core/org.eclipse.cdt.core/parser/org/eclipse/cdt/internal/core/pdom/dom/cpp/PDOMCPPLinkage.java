@@ -569,11 +569,11 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			result= new PDOMCPPFieldSpecialization(this, parent, (ICPPField) special, orig);
 		} else if (special instanceof ICPPFunctionTemplate) {
 			if (special instanceof ICPPConstructor) {
-				result= new PDOMCPPConstructorTemplateSpecialization( this, parent, (ICPPConstructor) special, orig);
+				result= new PDOMCPPConstructorTemplateSpecialization(this, parent, (ICPPConstructor) special, orig);
 			} else if (special instanceof ICPPMethod) {
-				result= new PDOMCPPMethodTemplateSpecialization( this, parent, (ICPPMethod) special, orig);
+				result= new PDOMCPPMethodTemplateSpecialization(this, parent, (ICPPMethod) special, orig);
 			} else if (special instanceof ICPPFunction) {
-				result= new PDOMCPPFunctionTemplateSpecialization( this, parent, (ICPPFunctionTemplate) special, orig);
+				result= new PDOMCPPFunctionTemplateSpecialization(this, parent, (ICPPFunctionTemplate) special, orig);
 			}
 		} else if (special instanceof ICPPConstructor) {
 			result= new PDOMCPPConstructorSpecialization(this, parent, (ICPPConstructor) special, orig);
@@ -617,9 +617,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 							pdomBinding.update(this, method);
 							old.remove(pdomBinding);
 
-							// Update the tags based on the tags from the new binding.  This was in PDOMBinding.update, but
-							// I found that not all subclasses (e.g., PDOMCPPFunction) call the parent implementation.
-							TagManager.getInstance().syncTags( pdomBinding, method );
+							// Update the tags based on the tags from the new binding.  This was in
+							// PDOMBinding.update, but not all subclasses (e.g., PDOMCPPFunction)
+							// call the parent implementation.
+							TagManager.getInstance().syncTags(pdomBinding, method);
 						}
 					}
 				}
@@ -1155,7 +1156,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		case ITypeMarshalBuffer.BASIC_TYPE:
 			return CPPBasicType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.CVQUALIFIER_TYPE:
-			return CPPQualifierType.unmarshal(firstBytes, buffer);			
+			return CPPQualifierType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.FUNCTION_TYPE:
 			return CPPFunctionType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.POINTER_TYPE:

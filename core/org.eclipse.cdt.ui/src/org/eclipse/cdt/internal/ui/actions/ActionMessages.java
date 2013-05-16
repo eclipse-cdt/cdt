@@ -68,6 +68,7 @@ public class ActionMessages extends NLS {
 	public static String ChangeBuildConfigMenuAction_text;
 	public static String CreateParserLogAction_existingFile;
 	public static String CreateParserLogAction_readOnlyFile;
+	public static String CreateParserLogAction_title;
 	public static String DeleteResConfigsAction_0;
 	public static String DeleteResConfigsAction_1;
 	public static String ExcludeFromBuildAction_0;

@@ -4444,6 +4444,146 @@
 	</extension>
  <extension
        point="org.eclipse.ui.commands">
+	<command
+		name="%RebuildIndex.name"
+		categoryId="org.eclipse.ui.category.project"
+		id="org.eclipse.cdt.ui.menu.rebuildIndex">
+	</command>
+	<command
+		name="%FreshenIndex.name"
+		categoryId="org.eclipse.ui.category.project"
+		id="org.eclipse.cdt.ui.menu.freshenAllFiles">
+	</command>
+	<command
+		name="%SyncIndex.name"
+		categoryId="org.eclipse.ui.category.project"
+		id="org.eclipse.cdt.ui.menu.updateWithModifiedFiles">
+	</command>
+	<command
+		name="%UpdateUnresolvedIncludes.name"
+		categoryId="org.eclipse.ui.category.project"
+		id="org.eclipse.cdt.ui.menu.updateUnresolvedIncludes">
+	</command>
+	<command
+		name="%SearchUnresolvedIncludes.name"
+		categoryId="org.eclipse.ui.category.project"
+		id="org.eclipse.cdt.ui.menu.findUnresolvedIncludes">
+	</command>
+	<command
+		name="%CreateParserLog.name"
+		categoryId="org.eclipse.ui.category.project"
+		id="org.eclipse.cdt.ui.menu.createParserLog">
+	</command>
+ </extension>
+ <extension
+       point="org.eclipse.ui.handlers">
+    <handler
+		class="org.eclipse.cdt.internal.ui.actions.RebuildIndexHandler"
+		commandId="org.eclipse.cdt.ui.menu.rebuildIndex">
+			<enabledWhen>
+				<test property="org.eclipse.cdt.internal.ui.index.rebuild" value="enabled"/>
+			</enabledWhen>
+    </handler>
+	<handler
+		class="org.eclipse.cdt.internal.ui.actions.FreshenAllFilesHandler"
+		commandId="org.eclipse.cdt.ui.menu.freshenAllFiles">
+			<enabledWhen>
+				<test property="org.eclipse.cdt.internal.ui.index.freshen" value="enabled"/>
+			</enabledWhen>
+    </handler>
+	<handler
+		class="org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesHandler"
+		commandId="org.eclipse.cdt.ui.menu.updateWithModifiedFiles">
+			<enabledWhen>
+				<test property="org.eclipse.cdt.internal.ui.index.udpateWithModifiedFiles" value="enabled"/>
+			</enabledWhen>
+    </handler>
+	<handler
+		class="org.eclipse.cdt.internal.ui.actions.UpdateUnresolvedIncludesHandler"
+		commandId="org.eclipse.cdt.ui.menu.updateUnresolvedIncludes">
+			<enabledWhen>
+				<test property="org.eclipse.cdt.internal.ui.index.updateUnresolvedIncludes" value="enabled"/>
+			</enabledWhen>
+    </handler>
+	<handler
+		class="org.eclipse.cdt.internal.ui.search.actions.FindUnresolvedIncludesHandler"
+		commandId="org.eclipse.cdt.ui.menu.findUnresolvedIncludes">
+			<enabledWhen>
+				<test property="org.eclipse.cdt.internal.ui.index.findUnresolvedIncludes" value="enabled"/>
+			</enabledWhen>
+    </handler>
+	<handler
+		class="org.eclipse.cdt.internal.ui.actions.CreateParserLogHandler"
+		commandId="org.eclipse.cdt.ui.menu.createParserLog">
+			<enabledWhen>
+				<test property="org.eclipse.cdt.internal.ui.index.log" value="enabled"/>
+			</enabledWhen>
+    </handler>
+ </extension>
+ <extension
+	point="org.eclipse.ui.menus">
+	<menuContribution locationURI="menu:project?after=additions">
+		<separator name="index" visible="true"/>
+		<menu
+			label="%C.Cpp.Index.menu">
+            <visibleWhen>
+            	<test property="org.eclipse.cdt.internal.ui.index.enabled" value="enabled"/>
+            </visibleWhen>
+			<separator
+                  name="rebuild"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.cdt.ui.menu.rebuildIndex"
+                  label="%RebuildIndex.name">
+            </command>
+            <separator
+                  name="update"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.cdt.ui.menu.freshenAllFiles"
+                  label="%FreshenIndex.name">
+            </command>
+			<command
+                  commandId="org.eclipse.cdt.ui.menu.updateWithModifiedFiles"
+                  label="%SyncIndex.name">
+            </command>
+            <command
+                  commandId="org.eclipse.cdt.ui.menu.updateUnresolvedIncludes"
+                  label="%UpdateUnresolvedIncludes.name">
+            </command>
+            <separator
+                  name="search"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.cdt.ui.menu.findUnresolvedIncludes"
+                  label="%SearchUnresolvedIncludes.name">
+            </command>
+            <separator
+                  name="log"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.cdt.ui.menu.createParserLog"
+                  label="%CreateParserLog.name">
+            </command>
+		</menu>
+	</menuContribution>
+ </extension>
+ <extension
+	point="org.eclipse.core.expressions.propertyTesters">
+	<propertyTester
+		class="org.eclipse.cdt.internal.ui.actions.IndexActionsEnabledTester"
+		id="org.eclipse.cdt.internal.ui.actions.IndexActionsEnabledTester"
+		namespace="org.eclipse.cdt.internal.ui.index" 
+		properties="enabled,rebuild,freshen,udpateWithModifiedFiles,updateUnresolvedIncludes,findUnresolvedIncludes,log"
+		type="java.lang.Object">
+	</propertyTester>
+ </extension> 
+ <extension
+       point="org.eclipse.ui.commands">
     <command
           id="org.eclipse.cdt.ui.deleteConfigsCommand"
           name="%deleteConfigsCommand.name">

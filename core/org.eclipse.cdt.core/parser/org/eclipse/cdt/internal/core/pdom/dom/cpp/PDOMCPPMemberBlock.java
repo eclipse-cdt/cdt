@@ -48,18 +48,18 @@ public class PDOMCPPMemberBlock {
 
 	private final PDOMLinkage linkage;
 	private final long record;
-	private int nextMemberPosition = -1;
+	private int nextMemberPosition;
 
 	public PDOMCPPMemberBlock(PDOMLinkage linkage, long record) throws CoreException {
 		this.linkage = linkage;
 		this.record = record;
+		this.nextMemberPosition = -1;  // nextMemberPosition is unknown.
 	}
 
 	public PDOMCPPMemberBlock(PDOMLinkage linkage) throws CoreException {
 		Database db = linkage.getDB();
 		this.linkage = linkage;
 		this.record = db.malloc(RECORD_SIZE);
-		db.clearBytes(record, RECORD_SIZE);
 	}
 
 	private int getNextPosition() throws CoreException {
@@ -91,19 +91,26 @@ public class PDOMCPPMemberBlock {
 	}
 
 	public void addMember(PDOMNode member, int visibility) throws CoreException {
-		if (getNextPosition() == MAX_MEMBER_COUNT) {
-			PDOMCPPMemberBlock nextBlock = getNextBlock();
-			if (nextBlock == null) {
-				nextBlock = new PDOMCPPMemberBlock(linkage);
-				setNextBlock(nextBlock);
+		addMember(this, member, visibility);
+	}
+
+	private static void addMember(PDOMCPPMemberBlock block, PDOMNode member, int visibility)
+			throws CoreException {
+		while (true) {
+			int pos = block.getNextPosition();
+			if (pos < MAX_MEMBER_COUNT) {
+				long memberLocationOffset = block.getMemberOffset(pos);
+				block.getDB().putRecPtr(memberLocationOffset, member.getRecord());
+				block.setVisibility(pos, visibility);
+				block.nextMemberPosition++;
+				break;
 			}
-			nextBlock.addMember(member, visibility);
-		} else {
-			long memberLocationOffset = getMemberOffset(getNextPosition());
-			long rec = member.getRecord();
-			getDB().putRecPtr(memberLocationOffset, rec);
-			setVisibility(getNextPosition(), visibility);
-			nextMemberPosition++;
+			PDOMCPPMemberBlock previousBlock = block;
+			block = block.getNextBlock();
+			if (block == null) {
+				block = new PDOMCPPMemberBlock(previousBlock.linkage);
+				previousBlock.setNextBlock(block);
+			}
 		}
 	}
 
@@ -123,10 +130,11 @@ public class PDOMCPPMemberBlock {
 		long memberRecord;
 		while (item < MAX_MEMBER_COUNT && (memberRecord = getMemberRecord(item++)) != 0) {
 			PDOMNode node = linkage.getNode(memberRecord);
-			if (visitor.visit(node) && node != null) {
-				node.accept(visitor);
+			if (node != null) {
+				if (visitor.visit(node))
+					node.accept(visitor);
+				visitor.leave(node);
 			}
-			visitor.leave(node);
 		}
 	}
 
@@ -146,8 +154,7 @@ public class PDOMCPPMemberBlock {
 		if (memberIndex < getNextPosition() && memberIndex < MAX_MEMBER_COUNT) {
 			long memberRecord = getMemberRecord(memberIndex);
 			if (memberRecord != 0) {
-				PDOMNode node = linkage.getNode(memberRecord);
-				return node;
+				return linkage.getNode(memberRecord);
 			}
 		}
 		return null;
@@ -159,9 +166,9 @@ public class PDOMCPPMemberBlock {
 		int visibilityBitOffset = memberIndex % VISIBILITY_VALUES_PER_BYTE;
 		long visibilityOffset = record + MEMBER_VISIBILITIES + memberIndex / VISIBILITY_VALUES_PER_BYTE;
 		int visibility = getDB().getByte(visibilityOffset);
-		// Resetting the previous visibility bits of the target member
+		// Resetting the previous visibility bits of the target member.
 		visibility &= ~(VISIBILITY_MASK << visibilityBitOffset * VISIBILITY_BITS);
-		// Setting the new visibility bits of the target member
+		// Setting the new visibility bits of the target member.
 		visibility |= newVisibility << visibilityBitOffset * VISIBILITY_BITS;
 
 		getDB().putByte(visibilityOffset, (byte) visibility);
@@ -171,7 +178,11 @@ public class PDOMCPPMemberBlock {
 	 * Returns visibility of the member, or -1 if the given binding is not a member.
 	 */
 	public int getVisibility(IBinding member) throws CoreException {
-		for (PDOMCPPMemberBlock block = this; block != null; block = block.getNextBlock()) {
+		return getVisibility(this, member);
+	}
+
+	private static int getVisibility(PDOMCPPMemberBlock block, IBinding member) throws CoreException {
+		do {
 			for (int memberIndex = 0; memberIndex < block.getNextPosition(); memberIndex++) {
 				PDOMNode candidate = block.getMember(memberIndex);
 				if (candidate == null)
@@ -179,7 +190,8 @@ public class PDOMCPPMemberBlock {
 				if (candidate.equals(member))
 					return block.getVisibility(memberIndex);
 			}
-		}
+		} while ((block = block.getNextBlock()) != null);
+
 		return -1;
 	}
 
@@ -189,9 +201,8 @@ public class PDOMCPPMemberBlock {
 		int visibility = getDB().getByte(visibilityOffset);
 
 		visibility >>>= visibilityBitOffset * VISIBILITY_BITS;
-		// Filtering the visibility bits of the target member
+		// Filtering the visibility bits of the target member.
 		visibility &= VISIBILITY_MASK;
-
 		return visibility;
 	}
 }

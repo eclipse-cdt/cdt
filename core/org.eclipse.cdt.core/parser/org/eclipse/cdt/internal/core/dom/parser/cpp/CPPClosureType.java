@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Markus Schorn (Wind River Systems) - initial API and implementation
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *     Thomas Corbat (IFS)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -17,7 +18,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -305,10 +305,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	 */
 	@Override
 	public String toString() {
-		char[] name= ASTTypeUtil.createNameForAnonymous(this);
-		if (name != null)
-			return new String(name);
-		return null;
+		return fLambdaExpression.getRawSignature();
 	}
 
 	@Override

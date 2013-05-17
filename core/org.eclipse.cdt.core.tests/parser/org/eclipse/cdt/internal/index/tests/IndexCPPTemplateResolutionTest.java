@@ -2277,4 +2277,28 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testIntNullPointerConstant_407808() throws Exception {
 		checkBindings();
 	}
+	
+	//	namespace bar {
+	//	    template<class T>
+	//	    void join(T);
+	//	}
+	//
+	//	namespace foo {
+	//	    template<typename T>
+	//	    void join(T);
+	//	    
+	//	    struct cat {};
+	//	}
+
+	//	template <typename T>
+	//	auto waldo(T t) -> decltype(bar::join(t));
+	//
+	//	int main() {
+	//	    waldo(foo::cat{});
+	//	}
+	public void testADLForQualifiedName_408296() throws Exception {
+		checkBindings();
+	}
 }
+
+

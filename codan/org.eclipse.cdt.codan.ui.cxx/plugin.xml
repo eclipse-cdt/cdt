@@ -27,6 +27,27 @@
              </visibleWhen>
             </command>
       </menuContribution>
+      <menuContribution
+            locationURI="menu:project?after=additions">
+            <separator
+                  name="runCodan"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.cdt.codan.commands.runCodanCommand"
+                  icon="platform:/plugin/org.eclipse.cdt.codan.ui/icons/search_bug.gif"
+                  id="org.eclipse.cdt.codan.ui.cxx.menus.runCodanCxxCommand"
+                  label="%command.name"
+                  mnemonic="%command.mnemonic">
+             <visibleWhen checkEnabled="false">
+               <iterate ifEmpty="false">
+		       <adapt type="org.eclipse.core.resources.IResource">
+		          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+		       </adapt> 
+		       </iterate>
+             </visibleWhen>
+            </command>
+      </menuContribution>
      <!-- <menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
          <toolbar

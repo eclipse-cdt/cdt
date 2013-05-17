@@ -676,11 +676,7 @@ public class LocationMap implements ILocationResolver {
 					}
 				}
 				contexts.addAll(ctx.getChildren());
-				if (contexts.isEmpty()) {
-					ctx= null;
-				} else {
-					ctx= contexts.removeFirst();
-				}
+				ctx= contexts.pollFirst();
 			}
 		}
 		if (ctx != null) {

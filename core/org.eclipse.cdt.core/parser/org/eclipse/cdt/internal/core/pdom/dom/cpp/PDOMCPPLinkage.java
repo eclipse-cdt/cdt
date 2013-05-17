@@ -844,12 +844,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 		if (binding instanceof IIndexBinding) {
 			IIndexBinding ib= (IIndexBinding) binding;
-			// don't adapt file local bindings from other fragments to this one.
+			// Don't adapt file local bindings from other fragments to this one.
 			if (ib.isFileLocal()) {
 				return null;
 			}
 		} else {
-			// skip unnamed namespaces
+			// Skip unnamed namespaces.
 			while (owner instanceof ICPPNamespace) {
 				char[] name= owner.getNameCharArray();
 				if (name.length > 0) {

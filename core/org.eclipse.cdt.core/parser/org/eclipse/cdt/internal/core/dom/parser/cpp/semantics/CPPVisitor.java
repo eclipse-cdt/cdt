@@ -2556,7 +2556,7 @@ public class CPPVisitor extends ASTQueries {
 	public static IBinding findDeclarationOwner(IASTNode node, boolean allowFunction) {
 		// Search for declaration
 		boolean isNonSimpleElabDecl= false;
-		while (!(node instanceof IASTDeclaration)) {
+		while (!(node instanceof IASTDeclaration) && !(node instanceof ICPPASTLambdaExpression)) {
 			if (node == null)
 				return null;
 			if (node instanceof IASTElaboratedTypeSpecifier) {

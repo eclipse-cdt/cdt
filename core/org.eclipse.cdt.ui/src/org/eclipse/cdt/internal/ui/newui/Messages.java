@@ -213,6 +213,7 @@ public class Messages extends NLS {
 	public static String LanguageSettingEntryDialog_WorkspacePath;
 	public static String LanguageSettingsEntriesTab_Cannot_Determine_Languages;
 	public static String LanguageSettingsEntriesTab_Entries_Not_Editable;
+	public static String LanguageSettingsEntriesTab_UnspecifiedLanguage;
 	public static String LanguageSettingsImages_FileDoesNotExist;
 	public static String LanguageSettingsImages_FolderDoesNotExist;
 	public static String LanguageSettingsImages_UsingRelativePathsNotRecommended;

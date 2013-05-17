@@ -23,6 +23,7 @@ public class Messages extends NLS {
 	public static String AbstractExportTab_3;
 	public static String AbstractLangsListTab_ShowBuiltin;
 	public static String AbstractLangsListTab_Languages;
+	public static String AbstractLangsListTab_LspPageMayDefineAdditionalEntries;
 	public static String AbstractLangsListTab_Export;
 	public static String AbstractLangsListTab_ExportIndicator;
 	public static String AbstractLangsListTab_Unexport;

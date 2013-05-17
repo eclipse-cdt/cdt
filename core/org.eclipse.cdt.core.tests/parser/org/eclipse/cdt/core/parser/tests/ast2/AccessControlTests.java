@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Google, Inc and others.
+ * Copyright (c) 2009, 2013 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,13 +51,21 @@ public class AccessControlTests extends AST2TestBase {
 		return suite(AccessControlTests.class);
 	}
 
+	private AccessAssertionHelper getAssertionHelper() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+		return new AccessAssertionHelper(code);
+	}
+
 	//	class A {
 	//	public:
 	//	  int a;
+	//    typedef char E;
 	//	};
 	//	class B : private A {
 	//    friend void test();
 	//    int b;
+	//    typedef char* F;
 	//	};
 	//  class C : protected B {
 	//  };
@@ -66,25 +74,35 @@ public class AccessControlTests extends AST2TestBase {
 	//      void m() {
 	//        a; //1
 	//        b; //1
+	//        E(); //1
+	//        F(); //1
 	//      }
 	//	  };
 	//    B b;
 	//    b.a; //2
 	//    b.b; //2
+	//    B::E(); //2
+	//    B::F(); //2
 	//    C c;
 	//    c.a; //3
 	//    c.b; //3
+	//    C::E(); //3
+	//    C::F(); //3
 	//	}
 	public void testFriends() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, ParserLanguage.CPP);
-		AccessAssertionHelper ah= new AccessAssertionHelper(code);
+		AccessAssertionHelper ah = getAssertionHelper();
 		ah.assertAccessible("a; //1", 1);
 		ah.assertAccessible("b; //1", 1);
+		ah.assertAccessible("E(); //1", 1);
+		ah.assertAccessible("F(); //1", 1);
 		ah.assertAccessible("a; //2", 1);
 		ah.assertAccessible("b; //2", 1);
+		ah.assertAccessible("E(); //2", 1);
+		ah.assertAccessible("F(); //2", 1);
 		ah.assertNotAccessible("a; //3", 1);
 		ah.assertNotAccessible("b; //3", 1);
+		ah.assertNotAccessible("E(); //3", 1);
+		ah.assertNotAccessible("F(); //3", 1);
 	}
 
 	//	class A {
@@ -101,9 +119,7 @@ public class AccessControlTests extends AST2TestBase {
 	//	  x.a = 0;
 	//	}
 	public void testHiddenMember() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, ParserLanguage.CPP);
-		AccessAssertionHelper ah= new AccessAssertionHelper(code);
+		AccessAssertionHelper ah = getAssertionHelper();
 		ah.assertNotAccessible("a = 0", 1);
 	}
 	
@@ -120,9 +136,7 @@ public class AccessControlTests extends AST2TestBase {
 	//		};
 	//	};
 	public void testEnclosingAsNamingClass_292232() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, ParserLanguage.CPP);
-		AccessAssertionHelper ah= new AccessAssertionHelper(code);
+		AccessAssertionHelper ah = getAssertionHelper();
 		ah.assertAccessible("Ex a;", 2);
 	}
 	
@@ -147,9 +161,7 @@ public class AccessControlTests extends AST2TestBase {
 	//   bp->mi=5;
 	// }
 	public void testEnclosingAsNamingClass_292232a() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, ParserLanguage.CPP);
-		AccessAssertionHelper ah= new AccessAssertionHelper(code);
+		AccessAssertionHelper ah = getAssertionHelper();
 		ah.assertNotAccessible("mi=3;", 2);
 		ah.assertNotAccessible("si=3;", 2);
 		ah.assertAccessible("mi=4;", 2);

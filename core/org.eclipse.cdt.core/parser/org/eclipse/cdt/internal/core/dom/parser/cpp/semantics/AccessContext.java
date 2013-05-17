@@ -88,8 +88,12 @@ public class AccessContext {
 		if (binding instanceof ICPPMember) {
 			bindingVisibility = ((ICPPMember) binding).getVisibility();
 		} else {
-			// TODO(sprigogin): Handle visibility of nested types
-			bindingVisibility = v_public;
+			IBinding owner = binding.getOwner();
+			if (owner instanceof ICPPClassType) {
+				bindingVisibility = ((ICPPClassType) owner).getVisibility(binding);
+			} else {
+				bindingVisibility = v_public;
+			}
 		}
 		return isAccessible(binding, bindingVisibility);
 	}

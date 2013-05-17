@@ -533,8 +533,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				((IPDOMCPPClassType) parent).addMember(binding, visibility);
 				return;
 			}
-			originalBinding.getOwner();
-	        visibility = getVisibility(originalBinding);
 		}
 		parent.addChild(binding);
 	}

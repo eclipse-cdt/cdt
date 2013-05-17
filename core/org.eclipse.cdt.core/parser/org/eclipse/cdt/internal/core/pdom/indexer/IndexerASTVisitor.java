@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
@@ -26,6 +27,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -33,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 abstract public class IndexerASTVisitor extends ASTVisitor {
 	private static class Definition {
@@ -212,7 +216,11 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		// Definition of call operator
 		IASTName callOp= lambdaExpr.getFunctionCallOperatorName();
 		visit(callOp, closureName);
-		push(callOp, lambdaExpr);
+
+		IBinding owner = CPPVisitor.findDeclarationOwner(lambdaExpr, true);
+		boolean localToFunction = owner instanceof IFunction;
+		if (!localToFunction)
+			push(callOp, lambdaExpr); // Local closures don't appear in the index, so don't refer to them.
 
 		ICPPASTFunctionDeclarator dtor = lambdaExpr.getDeclarator();
 		if (dtor != null && !dtor.accept(this))
@@ -222,7 +230,8 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		if (body != null && !body.accept(this))
 			return PROCESS_ABORT;
 		
-		pop(lambdaExpr);
+		if (!localToFunction)
+			pop(lambdaExpr);
 		return PROCESS_SKIP;
 	}
 }

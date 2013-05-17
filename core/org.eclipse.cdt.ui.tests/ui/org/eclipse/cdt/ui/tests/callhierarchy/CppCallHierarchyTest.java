@@ -488,9 +488,6 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		node= checkTreeNode(node, 0, "c() : void");
 		checkTreeNode(node, 1, null);
 		expandTreeItem(node);
-		node= checkTreeNode(node, 0, "(anonymous)::operator ()() : void");
-		checkTreeNode(node, 1, null);
-		expandTreeItem(node);
 		node= checkTreeNode(node, 0, "d() : void");
 		checkTreeNode(node, 1, null);
 		expandTreeItem(node);

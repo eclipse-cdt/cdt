@@ -52,6 +52,24 @@
       "revId": "19360036af3e78939ee20709a5ebf4ba6509326e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn//9IE\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/HoldsOptions.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 1149
+      },
+      "writtenOn": "2013-05-17T14:52:33Z",
+      "side": 0,
+      "message": "Hi Andrew, I\u0027ve created a sample tool-chain using CDT 2.0.1, and a sample user project using that tool-chain. The plugin project defining the tool-chain, and the user project, are attached to the bugzilla, in case you wish to look into those. The sample user project overrides the optimization-level option to exercise the option-reference case - so the optLevel option is defined on one extension tool, then it\u0027s overridden for the \"Debug\" configuration on another extension tool (using an OptionReference), and then that option-reference is further overridden in the user project\u0027s \"non-extension\" tool. To test out the scenario, I placed the plugin project into my KeplerM7-based dev-environment, then launched the KeplerM7-based runtime, and imported the sample user project. The user-project gets converted to new model, and all the option settings are preserved.\n\nI\u0027ve confirmed that the new implementations properly handle option-references. I first did a quick brute force comparison - i added the old implementation (called it getOptions_1()), and the new implementation (called it getOptions_2()), and invoked them both from getOptions(), dumping their return values into two ArrayLists, and comparing the lists for equivalence for every invocation of getOptions(). The two lists always came back equal, confirming that the returned objects are the same and the order of the objects is also the same. I did a similar brute comparison for the getOptionBySuperClassId() method.\n\nSo, for getOptions(), the reason why option-references are handled without needing to call wasOptRef(), is because when I override the super-tool\u0027s options (see block under comment numbered 2. on RHS), i always reuse the same key to store the overriding option back into the option-map (see the inner \u0027for\u0027 loop). So that key, always happens to be the ID of the original super-option in the chain of overrides - that original super-option is never an option-reference (because option-references can never be \"original\" options...they always have a super-class which they override). So, when an option-reference overrides an option, it gets inserted into the map using the overridden option\u0027s ID as the key - not the option-reference\u0027s ID (which is a concatenation of the configuration ID and the overridden option\u0027s ID). And then when that option-reference is overridden again (by the user project\u0027s optLevel setting), again I use the original super-option\u0027s ID to find and override the option-reference in the option-map. So the option-reference IDs are never even relevant in the construction of the temporary option-map of doGetOptions().\n\nSo, in other words, when an option-holder gets the option-map from its super-class (block under comment 1 on RHS), and when that map does contain \"option-references\", these option-references are never stored in the map under their own ID...they\u0027re always stored under one of their super-option\u0027s IDs. So there is no need to be checking for wasOptRef() and going up one level to the super-option...because the option-reference is already stored under that super-option\u0027s ID, and if it needs to be further overridden, it is found and overridden using that super-option\u0027s ID.\n\nActually, the reason why i had to reuse the root super-option\u0027s ID during the construction of the map of overrides, is unrelated to option-references - i had to do that in order to preserve the ordering of options in the LinkedHashMap - as options get overridden, i reinsert the overriding options into the LinkedHashMap under the same original key, and that ensures that the optLevel option, for example, always remains in the same place in the map, and the same place in the UI as well. And as a nice side-effect, this \"key reuse\" also happens to handle option-references.\n\nI hope the explanation makes sense. Let me know if I should try to further clarify anything... Thanks!",
+      "parentUuid": "AABOPn//9bE\u003d",
+      "revId": "19360036af3e78939ee20709a5ebf4ba6509326e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

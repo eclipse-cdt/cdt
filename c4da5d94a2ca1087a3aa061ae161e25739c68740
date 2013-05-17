@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPn//9NQ\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPTemplateResolutionTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-17T06:53:40Z",
+      "side": 1,
+      "message": "Why did you move these imports?",
+      "revId": "c4da5d94a2ca1087a3aa061ae161e25739c68740",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn//9NU\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPLinkage.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 536,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-17T06:53:40Z",
+      "side": 1,
+      "message": "Does getOwner have a side-effect? The calls seems a bit strange, as getOwner implies a querry method.",
+      "revId": "c4da5d94a2ca1087a3aa061ae161e25739c68740",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn//9NY\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPLinkage.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-05-17T06:53:40Z",
+      "side": 1,
+      "message": "visibility is not used after this point. Furthermore, what\u0027s the difference between getVisibility(originalBinding) and the same call on line 531?",
+      "revId": "c4da5d94a2ca1087a3aa061ae161e25739c68740",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

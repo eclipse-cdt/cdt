@@ -238,10 +238,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  144.0 - Add support for storing function sets with zero functions in EvalFunctionSet, bug 402498.
 	 *  145.0 - Changed marshalling of CPPBasicType to store the associated numerical value, bug 407808. 
 	 *  146.0 - Added visibility support on class type level, bug 402878.
+	 *  147.0 - Store whether function name is qualified in EvalFunctionSet, bug 408296.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(145, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(145, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(145, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(147, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(147, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(147, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

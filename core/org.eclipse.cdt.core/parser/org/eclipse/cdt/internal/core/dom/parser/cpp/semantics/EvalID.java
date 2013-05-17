@@ -189,10 +189,11 @@ public class EvalID extends CPPDependentEvaluation {
 	public static ICPPEvaluation create(IASTIdExpression expr) {
 		final IASTName name = expr.getName();
 		IBinding binding = name.resolvePreBinding();
+		boolean qualified = name instanceof ICPPASTQualifiedName;
 		if (binding instanceof IProblemBinding || binding instanceof IType || binding instanceof ICPPConstructor)
 			return EvalFixed.INCOMPLETE;
 		if (binding instanceof CPPFunctionSet) {
-			return new EvalFunctionSet((CPPFunctionSet) binding, isAddressOf(expr), null, expr);
+			return new EvalFunctionSet((CPPFunctionSet) binding, qualified, isAddressOf(expr), null, expr);
 		}
 		if (binding instanceof ICPPUnknownBinding) {
 			ICPPTemplateArgument[] templateArgs = null;
@@ -209,10 +210,10 @@ public class EvalID extends CPPDependentEvaluation {
 				ICPPFunction[] candidates = ((CPPDeferredFunction) binding).getCandidates();
 				if (candidates != null) {
 					CPPFunctionSet functionSet = new CPPFunctionSet(candidates, templateArgs, null);
-					return new EvalFunctionSet(functionSet, isAddressOf(expr), null, expr);
+					return new EvalFunctionSet(functionSet, qualified, isAddressOf(expr), null, expr);
 				} else {
 					// Just store the name. ADL at the time of instantiation might come up with bindings.
-					return new EvalFunctionSet(name.getSimpleID(), isAddressOf(expr), expr);
+					return new EvalFunctionSet(name.getSimpleID(), qualified, isAddressOf(expr), expr);
 				}
 			}
 
@@ -367,7 +368,7 @@ public class EvalID extends CPPDependentEvaluation {
 		if (bindings.length > 1 && bindings[0] instanceof ICPPFunction) {
 			ICPPFunction[] functions = new ICPPFunction[bindings.length];
 			System.arraycopy(bindings, 0, functions, 0, bindings.length);
-			return new EvalFunctionSet(new CPPFunctionSet(functions, templateArgs, null), fAddressOf, 
+			return new EvalFunctionSet(new CPPFunctionSet(functions, templateArgs, null), fQualified, fAddressOf, 
 					impliedObjectType, getTemplateDefinition());
 		}
 		IBinding binding = bindings.length == 1 ? bindings[0] : null;
@@ -376,7 +377,8 @@ public class EvalID extends CPPDependentEvaluation {
 		} else if (binding instanceof ICPPMember) {
 			return new EvalMemberAccess(nameOwner, ValueCategory.PRVALUE, binding, false, getTemplateDefinition());
 		} else if (binding instanceof CPPFunctionSet) {
-			return new EvalFunctionSet((CPPFunctionSet) binding, fAddressOf, impliedObjectType, getTemplateDefinition());
+			return new EvalFunctionSet((CPPFunctionSet) binding, fQualified, fAddressOf, impliedObjectType, 
+					getTemplateDefinition());
 		}
 		return null;
 	}

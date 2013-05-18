@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPn//878\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3239,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-18T18:20:14Z",
+      "side": 1,
+      "message": "The prevailing pattern for multiple test cases associated with a single bug is to use a suffix after the bug number, e.g. testDependentBaseLookup_408314a",
+      "revId": "7c105f58c7df46352dacf86131ea5688ffe2d243",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

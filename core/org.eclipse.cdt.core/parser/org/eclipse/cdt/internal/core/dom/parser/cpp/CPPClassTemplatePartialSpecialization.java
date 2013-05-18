@@ -13,25 +13,21 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
  * A partial class template specialization.
  */
 public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate 
-		implements ICPPClassTemplatePartialSpecialization, ICPPSpecialization {
+		implements ICPPClassTemplatePartialSpecialization {
 
 	private final ICPPTemplateArgument[] arguments;
 
@@ -55,24 +51,8 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 	}
 
 	@Override
-	public IBinding getSpecializedBinding() {
-		return getPrimaryClassTemplate();
-	}
-
-	@Override
-	public ICPPTemplateParameterMap getTemplateParameterMap() {
-		return CPPTemplates.createParameterMap(getPrimaryClassTemplate(), getTemplateArguments());
-	}
-	
-	@Override
 	public String toString() {
 		return super.toString() + ASTTypeUtil.getArgumentListString(getTemplateArguments(), true);
-	}
-	
-	@Override
-	@Deprecated
-	public ObjectMap getArgumentMap() {
-		return CPPTemplates.getArgumentMap(getPrimaryClassTemplate(), getTemplateParameterMap());
 	}
 	
 	@Override

@@ -16,6 +16,7 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -515,7 +516,10 @@ public class MIBreakpoint  {
             } else if (var.equals("file")) { //$NON-NLS-1$
                 file = str;
             } else if (var.equals("fullname")) { //$NON-NLS-1$
-                fullName = str;
+            	// GDB 7.6 and higher may return fullname pointing to a non-existing file.
+				// Verify the path before starting to rely on it.
+            	if (new File(str).exists())
+            		fullName = str;
             } else if (var.equals("thread")) { //$NON-NLS-1$
                 threadId = str;
             } else if (var.equals("line")) { //$NON-NLS-1$

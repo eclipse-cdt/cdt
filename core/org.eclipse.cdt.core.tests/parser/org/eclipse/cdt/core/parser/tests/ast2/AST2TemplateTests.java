@@ -13,6 +13,7 @@
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
  *     Nathan Ridge
+ *     Danny Ferreira
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -3224,7 +3225,45 @@ public class AST2TemplateTests extends AST2TestBase {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), CPP);
 		ba.assertNonProblem("foo(s", 3);
 	}
-
+	
+	//	template<typename U>
+	//	struct result : U {
+	//	    typedef typename result::result_type type;
+	//	};
+	//
+	//	struct B {
+	//	    typedef int result_type;
+	//	};
+	//
+	//	typedef result<B>::type waldo;
+	public void testDependentBaseLookup1_408314() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		ITypedef waldo = bh.assertNonProblem("waldo");
+		assertSameType(waldo.getType(), CommonTypes.int_);
+	}
+	
+	//	template <typename T>
+	//	struct A {
+	//		template <typename U>
+	//		struct result; 
+	//	
+	//		template <typename V>
+	//		struct result<V*> : T {
+	//	    	typedef typename result::result_type type;
+	//		};
+	//	};
+	//
+	//	struct B {
+	//	    typedef int result_type;
+	//	};
+	//
+	//	typedef A<B>::result<int*>::type waldo;
+	public void testDependentBaseLookup2_408314() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		ITypedef waldo = bh.assertNonProblem("waldo");
+		assertSameType(waldo.getType(), CommonTypes.int_);
+	}
+	
 	//	template <class T>
 	//	class A {
 	//	public:

@@ -46,7 +46,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecializationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
@@ -435,6 +434,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				return null;
 
 			pdomBinding = createSpecialization(parent, pdomSpecialized, binding);
+		} else if (binding instanceof ICPPClassTemplatePartialSpecialization) {
+			ICPPClassTemplate primary = ((ICPPClassTemplatePartialSpecialization) binding).getPrimaryClassTemplate();
+			PDOMBinding pdomPrimary = addBinding(primary, null);
+			if (pdomPrimary instanceof PDOMCPPClassTemplate) {
+				pdomBinding = new PDOMCPPClassTemplatePartialSpecialization(
+						this, parent, (ICPPClassTemplatePartialSpecialization) binding, (PDOMCPPClassTemplate) pdomPrimary);
+			}
 		} else if (binding instanceof ICPPField) {
 			if (parent instanceof PDOMCPPClassType || parent instanceof PDOMCPPClassSpecialization) {
 				pdomBinding = new PDOMCPPField(this, parent, (ICPPField) binding);
@@ -559,11 +565,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			} else if (special instanceof ICPPClassType && orig instanceof ICPPClassType) {
 				result= new PDOMCPPClassInstance(this, parent, (ICPPClassType) special, orig);
 			}
-		} else if (special instanceof ICPPClassTemplatePartialSpecialization) {
-			if (orig instanceof PDOMCPPClassTemplate) {
-				result= new PDOMCPPClassTemplatePartialSpecialization(
-						this, parent, (ICPPClassTemplatePartialSpecialization) special, (PDOMCPPClassTemplate) orig);
-			}
 		} else if (special instanceof ICPPField) {
 			result= new PDOMCPPFieldSpecialization(this, parent, (ICPPField) special, orig);
 		} else if (special instanceof ICPPFunctionTemplate) {
@@ -573,6 +574,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				result= new PDOMCPPMethodTemplateSpecialization(this, parent, (ICPPMethod) special, orig);
 			} else if (special instanceof ICPPFunction) {
 				result= new PDOMCPPFunctionTemplateSpecialization(this, parent, (ICPPFunctionTemplate) special, orig);
+			}
+		} else if (special instanceof ICPPClassTemplatePartialSpecialization) {
+			ICPPClassTemplatePartialSpecialization partialSpecSpec = (ICPPClassTemplatePartialSpecialization) special;
+			ICPPClassTemplate primarySpec = partialSpecSpec.getPrimaryClassTemplate();
+			PDOMBinding pdomPrimarySpec = addBinding(primarySpec, null);
+			if (pdomPrimarySpec instanceof PDOMCPPClassTemplateSpecialization) {
+				result= new PDOMCPPClassTemplatePartialSpecializationSpecialization(this, parent, orig, 
+						partialSpecSpec, (PDOMCPPClassTemplateSpecialization) pdomPrimarySpec);
 			}
 		} else if (special instanceof ICPPConstructor) {
 			result= new PDOMCPPConstructorSpecialization(this, parent, (ICPPConstructor) special, orig);
@@ -649,9 +658,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					return CPP_CLASS_INSTANCE;
 				}
 			} else if (binding instanceof ICPPClassTemplatePartialSpecialization) {
-				if (binding instanceof ICPPClassTemplatePartialSpecializationSpecialization)
-					return CPP_CLASS_TEMPLATE_PARTIAL_SPEC_SPEC;
-				return CPP_CLASS_TEMPLATE_PARTIAL_SPEC;
+				return CPP_CLASS_TEMPLATE_PARTIAL_SPEC_SPEC;
 			} else if (binding instanceof ICPPField) {
 				return CPP_FIELD_SPECIALIZATION;
 		    } else if (binding instanceof ICPPFunctionTemplate) {
@@ -675,6 +682,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			} else if (binding instanceof ITypedef) {
 				return CPP_TYPEDEF_SPECIALIZATION;
 			}
+		} else if (binding instanceof ICPPClassTemplatePartialSpecialization) {
+			return CPP_CLASS_TEMPLATE_PARTIAL_SPEC;
 		} else if (binding instanceof ICPPTemplateParameter) {
 			if (binding instanceof ICPPTemplateTypeParameter) {
 				return CPP_TEMPLATE_TYPE_PARAMETER;

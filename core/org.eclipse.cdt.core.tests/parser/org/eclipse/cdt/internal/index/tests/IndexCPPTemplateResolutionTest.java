@@ -599,17 +599,14 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
  		IBinding b3= getBindingFromASTName("D<B", 1);
 
  		List spBindings= new ArrayList();
- 		assertInstance(b0, ICPPSpecialization.class);
- 		assertInstance(b0, ICPPClassTemplate.class);
- 		spBindings.add(((ICPPSpecialization)b0).getSpecializedBinding());
+ 		assertInstance(b0, ICPPClassTemplatePartialSpecialization.class);
+ 		spBindings.add(((ICPPClassTemplatePartialSpecialization)b0).getPrimaryClassTemplate());
 
- 		assertInstance(b1, ICPPSpecialization.class);
- 		assertInstance(b1, ICPPClassTemplate.class);
- 		spBindings.add(((ICPPSpecialization)b1).getSpecializedBinding());
+ 		assertInstance(b1, ICPPClassTemplatePartialSpecialization.class);
+ 		spBindings.add(((ICPPClassTemplatePartialSpecialization)b1).getPrimaryClassTemplate());
 
- 		assertInstance(b2, ICPPSpecialization.class);
- 		assertInstance(b2, ICPPClassTemplate.class);
- 		spBindings.add(((ICPPSpecialization)b2).getSpecializedBinding());
+ 		assertInstance(b2, ICPPClassTemplatePartialSpecialization.class);
+ 		spBindings.add(((ICPPClassTemplatePartialSpecialization)b2).getPrimaryClassTemplate());
 
  		for(int i=0; i<spBindings.size(); i++) {
  			for(int j=0; j<spBindings.size(); j++) {

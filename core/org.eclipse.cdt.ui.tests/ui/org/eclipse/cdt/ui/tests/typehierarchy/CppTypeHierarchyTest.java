@@ -839,4 +839,48 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(0, item1.getItemCount());
 		checkMethodTable(new String[] {"field1 : T", "method1() : T"});
 	}
+
+	//	template<typename T>
+	//	class A {
+	// 	public:
+	//    int field1;
+	//    int method1();
+	// 	};
+	// 	class B : public A<int> {
+	//	public:
+	//	  int field2;
+	//	  int method2();
+	//	};
+	public void testTemplateInstance_403418() throws Exception {
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject(), "class.cpp", content);
+		waitUntilFileIsIndexed(fIndex, file);
+		CEditor editor= openEditor(file);
+		Tree tree;
+		TreeItem item1, item2;
+
+		editor.selectAndReveal(content.indexOf("A"), 1);
+		openTypeHierarchy(editor);
+		tree= getHierarchyViewer().getTree();
+
+		item1= checkTreeNode(tree, 0, "A");
+		assertEquals(1, tree.getItemCount());
+		getHierarchyViewer().expandAll();
+
+		item2= checkTreeNode(item1, 0, "B");
+		checkMethodTable(new String[] {"field1 : int", "method1() : int"});
+		assertEquals(1, item1.getItemCount());
+		assertEquals(0, item2.getItemCount());
+
+		editor.selectAndReveal(content.indexOf("B"), 1);
+		openTypeHierarchy(editor);
+		tree= getHierarchyViewer().getTree();
+		item1= checkTreeNode(tree, 0, "A");
+		assertEquals(1, tree.getItemCount());
+
+		item2= checkTreeNode(item1, 0, "B");
+		assertEquals(1, item1.getItemCount());
+		assertEquals(0, item2.getItemCount());
+		checkMethodTable(new String[] {"field2 : int", "method2() : int"});
+	}
 }

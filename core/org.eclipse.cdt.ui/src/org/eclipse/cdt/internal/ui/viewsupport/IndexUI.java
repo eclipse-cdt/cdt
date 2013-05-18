@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Ed Swartz (Nokia)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
@@ -59,6 +60,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndex;
@@ -268,12 +270,18 @@ public class IndexUI {
 	}
 
 	public static ICElementHandle[] findRepresentative(IIndex index, IBinding binding) throws CoreException {
-		ICElementHandle[] defs = findAllDefinitions(index, binding);
-		if (defs.length == 0) {
-			ICElementHandle elem = findAnyDeclaration(index, null, binding);
-			if (elem != null) {
-				defs = new ICElementHandle[] { elem };
+		ICElementHandle[] defs;
+		while (true) {
+			defs = findAllDefinitions(index, binding);
+			if (defs.length == 0) {
+				ICElementHandle elem = findAnyDeclaration(index, null, binding);
+				if (elem != null) {
+					defs = new ICElementHandle[] { elem };
+				}
 			}
+			if (defs.length != 0 || !(binding instanceof ICPPSpecialization))
+				break;
+			binding = ((ICPPSpecialization) binding).getSpecializedBinding();
 		}
 		return defs;
 	}

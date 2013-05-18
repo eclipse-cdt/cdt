@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Niefer (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -26,10 +26,10 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplate {
-	public static final ICPPClassTemplatePartialSpecialization[] EMPTY_PARTIAL_SPECIALIZATION_ARRAY = new ICPPClassTemplatePartialSpecialization[0];
+	public static final ICPPClassTemplatePartialSpecialization[] EMPTY_PARTIAL_SPECIALIZATION_ARRAY = {};
 	
 	/**
-	 * get the ICPPTemplateDefinition which this is a specialization of
+	 * Returns the ICPPTemplateDefinition which this is a specialization of
 	 */
 	public ICPPClassTemplate getPrimaryClassTemplate();
 

@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Ed Swartz (Nokia)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.util.ArrayList;
@@ -93,7 +93,7 @@ import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 
 public class IndexUI {
-	private static final ICElementHandle[] EMPTY_ELEMENTS = new ICElementHandle[0];
+	private static final ICElementHandle[] EMPTY_ELEMENT_ARRAY = {};
 
 	public static IIndexBinding elementToBinding(IIndex index, ICElement element) throws CoreException {
 		return elementToBinding(index, element, -1);
@@ -110,7 +110,7 @@ public class IndexUI {
 				}
 			} else {
 				String name= element.getElementName();
-				name= name.substring(name.lastIndexOf(':')+1);
+				name= name.substring(name.lastIndexOf(':') + 1);
 				IIndexBinding[] bindings= index.findBindings(name.toCharArray(), IndexFilter.ALL, new NullProgressMonitor());
 				for (IIndexBinding binding : bindings) {
 					if (checkBinding(binding, element)) {
@@ -130,24 +130,24 @@ public class IndexUI {
 			return binding instanceof ICPPNamespace;
 		case ICElement.C_STRUCT_DECLARATION:
 		case ICElement.C_STRUCT:
-			return binding instanceof ICompositeType && 
+			return binding instanceof ICompositeType &&
 				((ICompositeType) binding).getKey() == ICompositeType.k_struct;
 		case ICElement.C_CLASS:
 		case ICElement.C_CLASS_DECLARATION:
-			return binding instanceof ICPPClassType && 
+			return binding instanceof ICPPClassType &&
 				((ICompositeType) binding).getKey() == ICPPClassType.k_class;
 		case ICElement.C_UNION:
 		case ICElement.C_UNION_DECLARATION:
-			return binding instanceof ICompositeType && 
+			return binding instanceof ICompositeType &&
 				((ICompositeType) binding).getKey() == ICompositeType.k_union;
 		case ICElement.C_TYPEDEF:
 			return binding instanceof ITypedef;
-		case ICElement.C_METHOD:	
+		case ICElement.C_METHOD:
 		case ICElement.C_METHOD_DECLARATION:
 			return binding instanceof ICPPMethod;
 		case ICElement.C_FIELD:
 			return binding instanceof IField;
-		case ICElement.C_FUNCTION:	
+		case ICElement.C_FUNCTION:
 		case ICElement.C_FUNCTION_DECLARATION:
 			return binding instanceof ICPPFunction && !(binding instanceof ICPPMethod);
 		case ICElement.C_VARIABLE:
@@ -177,7 +177,7 @@ public class IndexUI {
 	public static IIndexName elementToName(IIndex index, ICElement element) throws CoreException {
 		return elementToName(index, element, -1);
 	}
-	
+
 	public static IIndexName elementToName(IIndex index, ICElement element, int linkageID) throws CoreException {
 		if (element instanceof ISourceReference) {
 			ISourceReference sf = ((ISourceReference)element);
@@ -221,7 +221,7 @@ public class IndexUI {
 		}
 		return false;
 	}
-	
+
 	private static IRegion getConvertedRegion(ITranslationUnit tu, IIndexFile file, int pos,
 			int length) throws CoreException {
 		IRegion region= new Region(pos, length);
@@ -232,7 +232,7 @@ public class IndexUI {
 		}
 		return region;
 	}
-	
+
 	public static IIndexInclude elementToInclude(IIndex index, IInclude include) throws CoreException {
 		if (include != null) {
 			ITranslationUnit tu= include.getTranslationUnit();
@@ -267,11 +267,10 @@ public class IndexUI {
 		return null;
 	}
 
-
 	public static ICElementHandle[] findRepresentative(IIndex index, IBinding binding) throws CoreException {
-		ICElementHandle[] defs = IndexUI.findAllDefinitions(index, binding);
+		ICElementHandle[] defs = findAllDefinitions(index, binding);
 		if (defs.length == 0) {
-			ICElementHandle elem = IndexUI.findAnyDeclaration(index, null, binding);
+			ICElementHandle elem = findAnyDeclaration(index, null, binding);
 			if (elem != null) {
 				defs = new ICElementHandle[] { elem };
 			}
@@ -292,7 +291,7 @@ public class IndexUI {
 			}
 			return result.toArray(new ICElementHandle[result.size()]);
 		}
-		return EMPTY_ELEMENTS;
+		return EMPTY_ELEMENT_ARRAY;
 	}
 
 	/**
@@ -303,7 +302,7 @@ public class IndexUI {
 	 * @param declName
 	 * @return the ICElementHandle or <code>null</code>.
 	 */
-	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IASTName declName) 
+	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IASTName declName)
 			throws CoreException {
 		assert !declName.isReference();
 		IBinding binding= declName.resolveBinding();
@@ -323,7 +322,7 @@ public class IndexUI {
 		}
 		return null;
 	}
-	
+
 	public static ITranslationUnit getTranslationUnit(ICProject cproject, IASTName name) {
 		return getTranslationUnit(cproject, name.getFileLocation());
 	}
@@ -349,7 +348,7 @@ public class IndexUI {
 		return null;
 	}
 
-	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IIndexName declName) 
+	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IIndexName declName)
 			throws CoreException {
 		assert !declName.isReference();
 		ITranslationUnit tu= getTranslationUnit(preferProject, declName);
@@ -359,14 +358,14 @@ public class IndexUI {
 		return null;
 	}
 
-	public static ICElementHandle getCElementForName(ITranslationUnit tu, IIndex index, IIndexName declName) 
+	public static ICElementHandle getCElementForName(ITranslationUnit tu, IIndex index, IIndexName declName)
 			throws CoreException {
 		IRegion region= new Region(declName.getNodeOffset(), declName.getNodeLength());
 		long timestamp= declName.getFile().getTimestamp();
 		return CElementHandleFactory.create(tu, index.findBinding(declName), declName.isDefinition(), region, timestamp);
 	}
 
-	public static ICElementHandle getCElementForMacro(ICProject preferProject, IIndex index, IIndexMacro macro) 
+	public static ICElementHandle getCElementForMacro(ICProject preferProject, IIndex index, IIndexMacro macro)
 			throws CoreException {
 		ITranslationUnit tu= getTranslationUnit(preferProject, macro.getFileLocation());
 		if (tu != null) {
@@ -380,7 +379,7 @@ public class IndexUI {
 		return null;
 	}
 
-	public static ICElementHandle findAnyDeclaration(IIndex index, ICProject preferProject, IBinding binding) 
+	public static ICElementHandle findAnyDeclaration(IIndex index, ICProject preferProject, IBinding binding)
 			throws CoreException {
 		if (binding != null) {
 			IIndexName[] names= index.findNames(binding, IIndex.FIND_DECLARATIONS);
@@ -406,7 +405,7 @@ public class IndexUI {
 		IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
 		if (workingCopy == null)
 			return null;
-		
+
 		final IASTName[] result= {null};
 		ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_ACTIVE_ONLY, null, new ASTRunnable() {
 			@Override
@@ -458,10 +457,10 @@ public class IndexUI {
 		}
 		if (tu == null) {
 			return NLS.bind(Messages.IndexUI_infoNotInSource, input.getElementName());
-		} 
-		
+		}
+
 		String msg= NLS.bind(Messages.IndexUI_infoNotInIndex, tu.getElementName());
-		
+
 		IResource res= tu.getResource();
 		if (res != null) {
 			Properties props= IndexerPreferences.getProperties(res.getProject());
@@ -469,7 +468,7 @@ public class IndexUI {
 					(!"true".equals(props.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG)) && //$NON-NLS-1$
 					 !"true".equals(props.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG)))) { //$NON-NLS-1$
 				msg= msg + " " + Messages.IndexUI_infoSelectIndexAllFiles; //$NON-NLS-1$
-			} 
+			}
 		}
 		return msg;
 	}
@@ -478,16 +477,16 @@ public class IndexUI {
 		if (input instanceof ICElementHandle) {
 			return input;
 		}
-		IIndexName name= IndexUI.elementToName(index, input);
+		IIndexName name= elementToName(index, input);
 		if (name != null) {
 			ICElement handle= getCElementForName(input.getCProject(), index, name);
 			if (handle != null) {
 				return handle;
 			}
-		} 
+		}
 		return input;
 	}
-	
+
 	/**
 	 * Searches for all specializations that depend on the definition of the given binding.
 	 */
@@ -536,8 +535,7 @@ public class IndexUI {
 				}
 			}
 		}
-		
-		
+
 		if (result != null) {
 			return result;
 		}

@@ -154,7 +154,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 			int prop= getProperty(newPar);
 			for (int j = 0; j < props.length; j++) {
 				if (props[j] == prop) {
-					// reuse param
+					// Reuse param
 					result[i]= j;
 					props[j]= -1;
 					allParams[j].update(linkage, newPar);
@@ -226,7 +226,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 			return partials.toArray(new ICPPClassTemplatePartialSpecialization[partials.size()]);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return new ICPPClassTemplatePartialSpecialization[0];
+			return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 		}
 	}
 
@@ -243,11 +243,11 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 			}
 		}
 
-		// need a class template
+		// Need a class template.
 		if (type instanceof ICPPClassTemplate == false || type instanceof ProblemBinding) 
 			return false;
 		
-		// exclude other kinds of class templates
+		// Exclude other kinds of class templates.
 		if (type instanceof ICPPClassTemplatePartialSpecialization ||
 				type instanceof ICPPTemplateTemplateParameter ||
 				type instanceof ICPPClassSpecialization) {

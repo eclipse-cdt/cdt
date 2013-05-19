@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse.telnet"
       label="%featureName"
-      version="2.3.0.qualifier"
+      version="2.3.100.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.services.telnet">
 
@@ -29,8 +29,8 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.4"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.4"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
    </url>
 
    <requires>

@@ -10,6 +10,6 @@
   </parent>
   <groupId>org.eclipse.tm.features</groupId>
   <artifactId>org.eclipse.rse.tests</artifactId>
-  <version>3.4.1.qualifier</version>
+  <version>3.4.100.qualifier</version>
   <packaging>eclipse-feature</packaging>
 </project>

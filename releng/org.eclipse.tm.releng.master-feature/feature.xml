@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.tm.releng.master"
       label="%featureName"
-      version="3.2.0.qualifier"
+      version="3.2.100.qualifier"
       provider-name="%providerName"
       image="eclipse_update_120.jpg">
 
@@ -29,8 +29,8 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.4"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.4"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
    </url>
 
    <includes
@@ -49,24 +49,10 @@
          id="org.eclipse.rse.examples"
          version="0.0.0"/>
 
-<!--
-   <includes
-         id="org.eclipse.rse.tests"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.tm.terminal.test"
-         version="0.0.0"/>
--->
    <includes
          id="org.eclipse.tm.releng.test"
          version="0.0.0"/>
 
-<!--
-   <includes
-         id="org.eclipse.rse.wince"
-         version="0.0.0"/>
--->
    <includes
          id="org.eclipse.rse.scp"
          version="0.0.0"/>
@@ -74,30 +60,23 @@
    <includes
          id="org.eclipse.tm.tcf.feature"
          version="0.0.0"/>
+
    <includes
          id="org.eclipse.tm.tcf.source"
          version="0.0.0"/>
+
    <plugin
          id="org.apache.commons.net"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
    <plugin
          id="org.apache.commons.net.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-<!--
-   <plugin
-         id="org.eclipse.tm.tcf.agent"
-         version="0.3.0"
-         unpack="true"/>
 
-   <plugin
-         id="org.eclipse.tm.tcf.docs"
-         version="0.3.0"
-         unpack="true"/>
--->
 </feature>

@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.tm.terminal.ssh"
       label="%featureName"
-      version="2.1.200.qualifier"
+      version="2.1.300.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -28,8 +28,8 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.4"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.4"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
    </url>
 
    <requires>

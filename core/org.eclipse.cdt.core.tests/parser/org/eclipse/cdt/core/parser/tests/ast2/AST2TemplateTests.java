@@ -7656,7 +7656,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	}
 
 	//  template<typename T>
-	//  class ATemplate {
+	//  class A {
 	//    int defaultMemberVariable;
 	//  public:
 	//    int publicMemberVariable;
@@ -7665,10 +7665,10 @@ public class AST2TemplateTests extends AST2TestBase {
 	//  private:
 	//    int privateMemberVariable;
 	//  };
-	public void testTemplateMemberAccessibilities() throws Exception {
+	public void testTemplateMemberAccessibility() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
 
-		ICPPClassTemplate aTemplate = bh.assertNonProblem("ATemplate");
+		ICPPClassTemplate aTemplate = bh.assertNonProblem("A");
 
 		ICPPField defaultMemberVariable = bh.assertNonProblem("defaultMemberVariable");
 		assertVisibility(ICPPClassType.v_private, aTemplate.getVisibility(defaultMemberVariable));
@@ -7684,12 +7684,10 @@ public class AST2TemplateTests extends AST2TestBase {
 	}
 
 	//  template<typename T>
-	//  class ATemplate {};
-	//
-	//  class A{};
+	//  class A {};
 	//
 	//  template<>
-	//  class ATemplate<A> {
+	//  class A<int> {
 	//    int specializedDefaultVariable;
 	//  public:
 	//    int specializedPublicVariable;
@@ -7698,10 +7696,10 @@ public class AST2TemplateTests extends AST2TestBase {
 	//  private:
 	//    int specializedPrivateVariable;
 	//  };
-	public void testTemplateSpecializationMemberAccessibilities() throws Exception {
+	public void testTemplateSpecializationMemberAccessibility() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
 
-		ICPPClassSpecialization aTemplateSpecialization = bh.assertNonProblem("ATemplate<A>");
+		ICPPClassSpecialization aTemplateSpecialization = bh.assertNonProblem("A<int>");
 
 		ICPPField defaultMemberVariable = bh.assertNonProblem("specializedDefaultVariable");
 		assertVisibility(ICPPClassType.v_private, aTemplateSpecialization.getVisibility(defaultMemberVariable));

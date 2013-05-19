@@ -98,7 +98,7 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 	public static boolean isSameClassInstance(ICPPClassSpecialization classInstance, IType type) {
 		assert classInstance instanceof ICPPTemplateInstance;
 		
-		// require a class instance
+		// Require a class instance.
 		if (!(type instanceof ICPPClassSpecialization) || !(type instanceof ICPPTemplateInstance) ||
 				type instanceof IProblemBinding) {
 			return false;

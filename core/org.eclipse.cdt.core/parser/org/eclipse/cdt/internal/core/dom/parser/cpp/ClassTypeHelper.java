@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -54,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -905,12 +905,23 @@ public class ClassTypeHelper {
 				if (backup != null) {
 					return backup.getVisibility(member);
 				}
+				if (classType instanceof ICPPClassSpecialization) {
+					// A class instance doesn't have a definition. Delegate to the class template.
+					ICPPClassType specialized = ((ICPPClassSpecialization) classType).getSpecializedBinding();
+					if (!specialized.equals(member.getOwner())) {
+						if (!(member instanceof ICPPSpecialization))
+							throw new IllegalArgumentException(member.getName() + " is not a member of " + specialized.getName()); //$NON-NLS-1$
+						member = ((ICPPSpecialization) member).getSpecializedBinding();
+					}
+					return specialized.getVisibility(member);
+				}
+
 				return ICPPClassType.v_public; // Fallback visibility
 			}
 		}
 
-		int visibility = 
-				classType.getKey() == ICPPClassType.k_class ? ICPPClassType.v_private : ICPPClassType.v_public;
+		int visibility = classType.getKey() == ICPPClassType.k_class ?
+				ICPPClassType.v_private : ICPPClassType.v_public;
 
 		IASTDeclaration[] hostMembers = classType.getCompositeTypeSpecifier().getMembers();
 		for (IASTDeclaration hostMember : hostMembers) {

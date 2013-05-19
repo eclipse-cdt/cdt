@@ -7713,4 +7713,39 @@ public class AST2TemplateTests extends AST2TestBase {
 		ICPPField privateMemberVariable = bh.assertNonProblem("specializedPrivateVariable");
 		assertVisibility(ICPPClassType.v_private, aTemplateSpecialization.getVisibility(privateMemberVariable));
 	}
+
+	//  template<typename T>
+	//  class A {
+	//    int defaultMemberVariable;
+	//  public:
+	//    int publicMemberVariable;
+	//  protected:
+	//    int protectedMemberVariable;
+	//  private:
+	//    int privateMemberVariable;
+	//  };
+	//
+	//	void test(A<int>* a) {
+	//	  a->defaultMemberVariable = 0;
+	//	  a->publicMemberVariable = 0;
+	//	  a->protectedMemberVariable = 0;
+	//	  a->privateMemberVariable = 0;
+	//	}
+	public void testInstanceMemberAccessibility() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+
+		ICPPClassType aTemplate = bh.assertNonProblem("A<int>");
+
+		ICPPField defaultMemberVariable = bh.assertNonProblemOnFirstIdentifier("defaultMemberVariable =");
+		assertVisibility(ICPPClassType.v_private, aTemplate.getVisibility(defaultMemberVariable));
+
+		ICPPField publicMemberVariable = bh.assertNonProblemOnFirstIdentifier("publicMemberVariable =");
+		assertVisibility(ICPPClassType.v_public, aTemplate.getVisibility(publicMemberVariable));
+
+		ICPPField protectedMemberVariable = bh.assertNonProblemOnFirstIdentifier("protectedMemberVariable =");
+		assertVisibility(ICPPClassType.v_protected, aTemplate.getVisibility(protectedMemberVariable));
+
+		ICPPField privateMemberVariable = bh.assertNonProblemOnFirstIdentifier("privateMemberVariable =");
+		assertVisibility(ICPPClassType.v_private, aTemplate.getVisibility(privateMemberVariable));
+	}
 }

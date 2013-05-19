@@ -909,15 +909,21 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	/**
 	 * Determine which resource in workspace is the best fit to parsedName passed.
 	 */
-	private static IResource resolveResourceInWorkspace(String parsedName, IProject preferredProject, Set<String> referencedProjectsNames) {
+	private IResource findBestFitInWorkspace(String parsedName) {
+		Set<String> referencedProjectsNames = new LinkedHashSet<String>();
+		if (currentCfgDescription != null) {
+			Map<String,String> refs = currentCfgDescription.getReferenceInfo();
+			referencedProjectsNames.addAll(refs.keySet());
+		}
+
 		IPath path = new Path(parsedName);
 		if (path.equals(new Path(".")) || path.equals(new Path(".."))) { //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
 
 		// prefer current project
-		if (preferredProject != null) {
-			List<IResource> result = findPathInFolder(path, preferredProject);
+		if (currentProject != null) {
+			List<IResource> result = findPathInFolder(path, currentProject);
 			int size = result.size();
 			if (size == 1) { // found the one
 				return result.get(0);
@@ -955,7 +961,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		if (projects.length > 0) {
 			IResource rc = null;
 			for (IProject prj : projects) {
-				if (!prj.equals(preferredProject) && !referencedProjectsNames.contains(prj.getName()) && prj.isOpen()) {
+				if (!prj.equals(currentProject) && !referencedProjectsNames.contains(prj.getName()) && prj.isOpen()) {
 					List<IResource> result = findPathInFolder(path, prj);
 					int size = result.size();
 					if (size == 1 && rc == null) {
@@ -1004,77 +1010,104 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	/**
 	 * Resolve and create language settings path entry.
 	 */
-	private ICLanguageSettingEntry createResolvedPathEntry(AbstractOptionParser optionParser,
-			String parsedPath, int flag, URI baseURI) {
-
-		String resolvedPath = null;
-		int resolvedFlag = 0;
-
+	private ICLanguageSettingEntry createResolvedPathEntry(AbstractOptionParser optionParser, String parsedPath, int flag, URI baseURI) {
 		URI uri = determineMappedURI(parsedPath, baseURI);
-		IResource rc = null;
+		ICLanguageSettingEntry entry = resolvePathEntryInWorkspace(optionParser, uri, flag);
+		if (entry != null) {
+			return entry;
+		}
+		entry = resolvePathEntryInFilesystem(optionParser, uri, flag);
+		if (entry != null) {
+			return entry;
+		}
+		entry = resolvePathEntryInWorkspaceAsBestFit(optionParser, parsedPath, flag);
+		if (entry != null) {
+			return entry;
+		}
+		entry = resolvePathEntryInWorkspaceToNonexistingResource(optionParser, uri, flag);
+		if (entry != null) {
+			return entry;
+		}
+		entry = resolvePathEntryInFilesystemToNonExistingResource(optionParser, uri, flag);
+		if (entry != null) {
+			return entry;
+		}
+		return optionParser.createEntry(parsedPath, parsedPath, flag);
+	}
 
-		// Try to resolve as existing resource in the workspace
+	/**
+	 * Find an existing resource in the workspace and create a language settings entry for it.
+	 */
+	private ICLanguageSettingEntry resolvePathEntryInWorkspace(AbstractOptionParser optionParser, URI uri, int flag) {
 		if (uri != null && uri.isAbsolute()) {
+			IResource rc = null;
 			if (optionParser.isForFolder()) {
 				rc = findContainerForLocationURI(uri, currentProject, /*checkExistence*/ true);
 			} else if (optionParser.isForFile()) {
 				rc = findFileForLocationURI(uri, currentProject, /*checkExistence*/ true);
 			}
 			if (rc != null) {
-				resolvedPath = rc.getFullPath().toString();
-				resolvedFlag = flag | ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED;
+				String path = rc.getFullPath().toString();
+				return optionParser.createEntry(path, path, flag | ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 			}
 		}
+		return null;
+	}
 
-		// Try to resolve as existing file/folder on the file-system
-		IPath fileSystemLocation = getFilesystemLocation(uri);
-		if (resolvedPath == null) {
-			if (fileSystemLocation != null && new File(fileSystemLocation.toString()).exists()) {
-				resolvedPath = fileSystemLocation.toString();
-				resolvedFlag = flag;
-			}
-			if (resolvedPath == null) {
-				Set<String> referencedProjectsNames = new LinkedHashSet<String>();
-				if (currentCfgDescription!=null) {
-					Map<String,String> refs = currentCfgDescription.getReferenceInfo();
-					referencedProjectsNames.addAll(refs.keySet());
-				}
-				IResource resource = resolveResourceInWorkspace(parsedPath, currentProject, referencedProjectsNames);
-				if (resource != null) {
-					resolvedPath = resource.getFullPath().toString();
-					resolvedFlag = flag | ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED;
-				}
+	/**
+	 * Find a resource on the file-system and create a language settings entry for it.
+	 */
+	private ICLanguageSettingEntry resolvePathEntryInFilesystem(AbstractOptionParser optionParser, URI uri, int flag) {
+		IPath location = getFilesystemLocation(uri);
+		if (location != null) {
+			String loc = location.toString();
+			if (new File(loc).exists()) {
+				return optionParser.createEntry(loc, loc, flag);
 			}
 		}
+		return null;
+	}
 
-		// Try to resolve in the workspace as a handle
-		if (resolvedPath == null) {
-			if (uri != null && uri.isAbsolute()) {
-				if (optionParser.isForFolder()) {
-					rc = findContainerForLocationURI(uri, currentProject, /*checkExistence*/ false);
-				} else if (optionParser.isForFile()) {
-					rc = findFileForLocationURI(uri, currentProject, /*checkExistence*/ false);
-				}
-				if (rc != null) {
-					resolvedPath = rc.getFullPath().toString();
-					resolvedFlag = flag | ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED;
-				}
+	/**
+	 * Find a best fit for the resource in the workspace and create a language settings entry for it.
+	 */
+	private ICLanguageSettingEntry resolvePathEntryInWorkspaceAsBestFit(AbstractOptionParser optionParser, String parsedPath, int flag) {
+		IResource rc = findBestFitInWorkspace(parsedPath);
+		if (rc != null) {
+			String path = rc.getFullPath().toString();
+			return optionParser.createEntry(path, path, flag | ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
+		}
+		return null;
+	}
+
+	/**
+	 * Try to map a resource in the workspace even if it does not exist and create a language settings entry for it.
+	 */
+	private ICLanguageSettingEntry resolvePathEntryInWorkspaceToNonexistingResource(AbstractOptionParser optionParser, URI uri, int flag) {
+		if (uri != null && uri.isAbsolute()) {
+			IResource rc = null;
+			if (optionParser.isForFolder()) {
+				rc = findContainerForLocationURI(uri, currentProject, /*checkExistence*/ false);
+			} else if (optionParser.isForFile()) {
+				rc = findFileForLocationURI(uri, currentProject, /*checkExistence*/ false);
+			}
+			if (rc != null) {
+				String path = rc.getFullPath().toString();
+				return optionParser.createEntry(path, path, flag | ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 			}
 		}
+		return null;
+	}
 
-		// Try to set to file-system location if available
-		if (resolvedPath == null && fileSystemLocation != null) {
-			resolvedPath = fileSystemLocation.toString();
-			resolvedFlag = flag;
+	/**
+	 * Try to map a resource on the file-system even if it does not exist and create a language settings entry for it.
+	 */
+	private ICLanguageSettingEntry resolvePathEntryInFilesystemToNonExistingResource(AbstractOptionParser optionParser, URI uri, int flag) {
+		IPath location = getFilesystemLocation(uri);
+		if (location != null) {
+			return optionParser.createEntry(location.toString(), location.toString(), flag);
 		}
-
-		// If still cannot resolve keep parsed path
-		if (resolvedPath == null) {
-			resolvedPath = parsedPath;
-			resolvedFlag = flag;
-		}
-
-		return optionParser.createEntry(resolvedPath, resolvedPath, resolvedFlag);
+		return null;
 	}
 
 	/**

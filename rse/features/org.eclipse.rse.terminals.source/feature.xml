@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="org.eclipse.rse.terminals.source" version="1.1.1.qualifier" label="%featureName" provider-name="%providerName" image="eclipse_update_120.jpg"    >
+<feature id="org.eclipse.rse.terminals.source" version="1.2.100.qualifier" label="%featureName" provider-name="%providerName" image="eclipse_update_120.jpg"    >
 	<description >
 		%description
 	</description>
@@ -10,8 +10,8 @@
 		%license
 	</license>
 	<url>
-		<update url="http://download.eclipse.org/tm/updates/3.3" label="%tmUpdateSiteName"/>
-		<discovery url="http://download.eclipse.org/tm/updates/3.3" label="%tmUpdateSiteName"/>
+		<update url="http://download.eclipse.org/tm/updates/3.5" label="%tmUpdateSiteName"/>
+		<discovery url="http://download.eclipse.org/tm/updates/3.5" label="%tmUpdateSiteName"/>
 	</url>
 	<plugin id="org.eclipse.rse.subsystems.terminals.core.source" version="0.0.0"     unpack="false"/>
 	<plugin id="org.eclipse.rse.subsystems.terminals.ssh.source" version="0.0.0"     unpack="false"/>

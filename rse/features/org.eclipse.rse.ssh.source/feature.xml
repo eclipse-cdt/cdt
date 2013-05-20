@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="org.eclipse.rse.ssh.source" version="3.0.301.qualifier" label="%featureName" provider-name="%providerName"     >
+<feature id="org.eclipse.rse.ssh.source" version="3.0.500.qualifier" label="%featureName" provider-name="%providerName"     >
 	<description >
 		%description
 	</description>
@@ -10,8 +10,8 @@
 		%license
 	</license>
 	<url>
-		<update url="http://download.eclipse.org/tm/updates/3.3" label="%tmUpdateSiteName"/>
-		<discovery url="http://download.eclipse.org/tm/updates/3.3" label="%tmUpdateSiteName"/>
+		<update url="http://download.eclipse.org/tm/updates/3.5" label="%tmUpdateSiteName"/>
+		<discovery url="http://download.eclipse.org/tm/updates/3.5" label="%tmUpdateSiteName"/>
 	</url>
 	<plugin id="org.eclipse.rse.services.ssh.source" version="0.0.0"     unpack="false"/>
 	<plugin id="org.eclipse.rse.connectorservice.ssh.source" version="0.0.0"     unpack="false"/>

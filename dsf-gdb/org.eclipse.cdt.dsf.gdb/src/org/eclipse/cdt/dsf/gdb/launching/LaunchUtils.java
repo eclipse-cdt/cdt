@@ -327,6 +327,7 @@ public class LaunchUtils {
         	String line;
         	while ((line = reader.readLine()) != null) {
         		cmdOutput.append(line);
+        		cmdOutput.append('\n');
         	}
         } catch (IOException e) {
         	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 

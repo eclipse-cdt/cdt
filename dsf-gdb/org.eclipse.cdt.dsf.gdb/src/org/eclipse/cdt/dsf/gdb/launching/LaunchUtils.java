@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Ericsson and others.
+ * Copyright (c) 2010, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,11 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class LaunchUtils {
+	/**
+	 * Environment variables with very large values cause error in the shell wrapping GDB.
+	 * Environment variables with values longer than ENV_VAR_LENGTH_LIMIT are skipped.
+	 */
+	private static final int ENV_VAR_LENGTH_LIMIT = 512 * 1024 - 50;
 	/**
 	 * A prefix that we use to indicate that a GDB version is for MAC OS
 	 * @since 3.0
@@ -449,9 +454,12 @@ public class LaunchUtils {
 		// Turn it into an envp format
 		List<String> strings= new ArrayList<String>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {
-			StringBuffer buffer= new StringBuffer(entry.getKey());
-			buffer.append('=').append(entry.getValue());
-			strings.add(buffer.toString());
+			String value = entry.getValue();
+			if (value != null && value.length() < ENV_VAR_LENGTH_LIMIT) {
+				StringBuilder buffer= new StringBuilder(entry.getKey());
+				buffer.append('=').append(value);
+				strings.add(buffer.toString());
+			}
 		}
 
 		return strings.toArray(new String[strings.size()]);

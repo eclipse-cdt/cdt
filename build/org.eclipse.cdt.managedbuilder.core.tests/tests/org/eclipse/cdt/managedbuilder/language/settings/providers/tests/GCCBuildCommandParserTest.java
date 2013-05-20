@@ -1644,7 +1644,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
-		CIncludePathEntry expected = new CIncludePathEntry(folder.getFullPath(), ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
+		CIncludePathEntry expected = new CIncludePathEntry("/${ProjName}/" + folder.getProjectRelativePath(), ICSettingEntry.VALUE_WORKSPACE_PATH);
 		assertEquals(expected, entries.get(0));
 	}
 

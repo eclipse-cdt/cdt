@@ -15,11 +15,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -31,16 +41,12 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -53,7 +59,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -66,16 +71,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.CoreException;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Holds common implementation of methods for ICPPClassType implementations that have
@@ -888,117 +883,6 @@ public class ClassTypeHelper {
 			}
 		}
 		return resultArray;
-	}
-
-	/**
-	 * Returns the visibility for a given <code>member</code> in the <code>host</code>.
-	 * Throws an IllegalArgumentException if <code>member</code> is not a member of <code>host</code>
-	 *
-	 * @param classType The class to get the member's visibility specifier of.
-	 * @return the visibility of the <code>member</code>.
-	 */
-	public static int getVisibility(ICPPInternalClassTypeMixinHost classType, IBinding member) {
-		if (classType.getDefinition() == null) {
-			classType.checkForDefinition();
-			if (classType.getDefinition() == null) {
-				ICPPClassType backup = getBackupDefinition(classType);
-				if (backup != null) {
-					return backup.getVisibility(member);
-				}
-				if (classType instanceof ICPPClassSpecialization) {
-					// A class instance doesn't have a definition. Delegate to the class template.
-					ICPPClassType specialized = ((ICPPClassSpecialization) classType).getSpecializedBinding();
-					if (!specialized.equals(member.getOwner())) {
-						if (!(member instanceof ICPPSpecialization))
-							throw new IllegalArgumentException(member.getName() + " is not a member of " + specialized.getName()); //$NON-NLS-1$
-						member = ((ICPPSpecialization) member).getSpecializedBinding();
-					}
-					return specialized.getVisibility(member);
-				}
-
-				return ICPPClassType.v_public; // Fallback visibility
-			}
-		}
-
-		int visibility = classType.getKey() == ICPPClassType.k_class ?
-				ICPPClassType.v_private : ICPPClassType.v_public;
-
-		IASTDeclaration[] hostMembers = classType.getCompositeTypeSpecifier().getMembers();
-		for (IASTDeclaration hostMember : hostMembers) {
-			if (hostMember instanceof ICPPASTVisibilityLabel) {
-				visibility = ((ICPPASTVisibilityLabel) hostMember).getVisibility();
-			}
-			while (hostMember instanceof ICPPASTTemplateDeclaration) {
-				hostMember = ((ICPPASTTemplateDeclaration) hostMember).getDeclaration();
-			}
-			if (hostMember instanceof IASTSimpleDeclaration) {
-				IASTSimpleDeclaration memberDeclaration = (IASTSimpleDeclaration) hostMember;
-				for (IASTDeclarator memberDeclarator : memberDeclaration.getDeclarators()) {
-					IBinding memberBinding =
-							ASTQueries.findInnermostDeclarator(memberDeclarator).getName().resolveBinding();
-					if (member.equals(memberBinding)){
-						return visibility;
-					}
-				}
-
-				IASTDeclSpecifier declSpec = memberDeclaration.getDeclSpecifier();
-				if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-					IBinding memberBinding =
-							((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
-					if (member.equals(memberBinding)) {
-						return visibility;
-					}
-					if (member instanceof IType && memberBinding instanceof IType &&
-							((IType) member).isSameType((IType) memberBinding)) {
-						return visibility;
-					}
-				} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier
-						&& memberDeclaration.getDeclarators().length == 0) {
-					IBinding memberBinding =
-							((ICPPASTElaboratedTypeSpecifier) declSpec).getName().resolveBinding();
-					if (member.equals(memberBinding)) {
-						return visibility;
-					}
-				} else if (declSpec instanceof ICPPASTEnumerationSpecifier) {
-					IBinding enumerationBinding = ((ICPPASTEnumerationSpecifier) declSpec).getName().resolveBinding();
-					if (member.equals(enumerationBinding)) {
-						return visibility;
-					}
-					if (member instanceof IType && enumerationBinding instanceof IType &&
-							((IType) member).isSameType((IType) enumerationBinding)) {
-						return visibility;
-					}
-				}
-			} else if (hostMember instanceof IASTFunctionDefinition) {
-				IASTFunctionDeclarator declarator = ((IASTFunctionDefinition) hostMember).getDeclarator();
-				IBinding functionBinding = declarator.getName().resolveBinding();
-				if (member.equals(functionBinding)){
-					return visibility;
-				}
-			} else if (hostMember instanceof ICPPASTAliasDeclaration) {
-				IBinding aliasBinding = ((ICPPASTAliasDeclaration) hostMember).getAlias().resolveBinding();
-				if (member.equals(aliasBinding)) {
-					return visibility;
-				}
-			} else if (hostMember instanceof ICPPASTUsingDeclaration) {
-				IBinding usingBinding = ((ICPPASTUsingDeclaration) hostMember).getName().resolveBinding();
-				if (member.equals(usingBinding)) {
-					return visibility;
-				}
-			} else if (hostMember instanceof ICPPASTNamespaceDefinition) { // Not valid but possible due to the parser
-				IBinding namespaceBinding = ((ICPPASTNamespaceDefinition) hostMember).getName().resolveBinding();
-				if (member.equals(namespaceBinding)) {
-					return visibility;
-				}
-			}
-		}
-		ICPPMethod[] implicitMethods = getImplicitMethods(classType, null);
-		for (ICPPMethod implicitMethod : implicitMethods) {
-			if (member.equals(implicitMethod)) {
-				return ICPPClassType.v_public;
-			}
-		}
-		throw new IllegalArgumentException(member.getName() + " is not a member of " + classType.getName()); //$NON-NLS-1$
 	}
 
 	private static Map<String, List<ICPPMethod>> collectPureVirtualMethods(ICPPClassType classType,

@@ -109,10 +109,6 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		public boolean isFinal() {
 			return false;
 		}
-		@Override
-		public int getVisibility(IBinding member) {
-			throw new IllegalArgumentException(member.getName() + " is not a member of " + getName()); //$NON-NLS-1$
-		}
 	}
 
 	private IASTName definition;
@@ -416,10 +412,5 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	        name = ns[ns.length - 1];
 	    }
 		return name;
-	}
-
-	@Override
-	public int getVisibility(IBinding member) {
-		return ClassTypeHelper.getVisibility(this, member);
 	}
 }

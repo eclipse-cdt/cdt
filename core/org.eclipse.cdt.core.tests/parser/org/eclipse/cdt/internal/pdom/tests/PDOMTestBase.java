@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.parser.tests.VisibilityAsserts;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
@@ -203,11 +202,11 @@ public class PDOMTestBase extends BaseTestCase {
 		assertTrue(c.isAssignableFrom(bindings[0].getClass()));
 	}
 
-	protected void assertCPPMemberVisibility(PDOM pdom, String name, int visibility) throws CoreException, DOMException {
+	protected void assertVisibility(PDOM pdom, String name, int visibility) throws CoreException, DOMException {
 		IBinding[] bindings = findQualifiedName(pdom, name);
 		assertEquals(1, bindings.length);
 		ICPPMember member = (ICPPMember) bindings[0];
-		VisibilityAsserts.assertVisibility(visibility, member.getVisibility());
+		assertEquals(visibility, member.getVisibility());
 	}
 
 	public static final void assertFunctionRefCount(PDOM pdom, Class[] args, IBinding[] bindingPool, int refCount) throws CoreException {

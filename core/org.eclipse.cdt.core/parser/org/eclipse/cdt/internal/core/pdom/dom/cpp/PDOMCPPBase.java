@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX - Initial API and implementation
- *     Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -55,7 +55,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		db.putRecPtr(record + CLASS_DEFINITION, classDefName.getRecord());
 		linkage.storeType(record + BASECLASS_TYPE, base.getBaseClassType());
 		
-		byte flags = (byte) (base.getVisibility() | (base.isVirtual() ? 4 : 0));
+		byte flags = (byte)(base.getVisibility() | (base.isVirtual() ? 4 : 0));
 		db.putByte(record + FLAGS, flags);
 	}
 
@@ -128,6 +128,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 			CCorePlugin.log(e);
 			return 0;
 		}
+		
 	}
 
 	@Override
@@ -165,7 +166,6 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		public PDOMCPPBaseClone(ICPPBase base) {
 			this.base = base;
 		}
-
 		@Override
 		public IBinding getBaseClass() {
 			IType type= getBaseClassType();
@@ -174,7 +174,6 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 				return (IBinding) type;
 			return null;
 		}
-
 		@Override
 		public IType getBaseClassType() {
 			if (baseClass == null) {
@@ -187,7 +186,6 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		public IName getBaseClassSpecifierName() {
 			return base.getBaseClassSpecifierName();
 		}
-
 		@Override
 		public IName getClassDefinitionName() {
 			return base.getClassDefinitionName();
@@ -197,23 +195,19 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		public int getVisibility() {
 			return base.getVisibility();
 		}
-
 		@Override
 		public boolean isVirtual() {
 			return base.isVirtual();
 		}
-
 		@Override
 		public void setBaseClass(IBinding binding) {
 			if (binding instanceof IType)
 				baseClass = (IType) binding;
 		}
-
 		@Override
 		public void setBaseClass(IType binding) {
 			baseClass = binding;
 		}
-
 		@Override
 		public ICPPBase clone() {
 			return new PDOMCPPBaseClone(this);

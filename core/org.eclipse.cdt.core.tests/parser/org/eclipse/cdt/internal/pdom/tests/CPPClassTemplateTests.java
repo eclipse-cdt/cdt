@@ -15,18 +15,19 @@ import java.util.Arrays;
 
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -34,16 +35,27 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Tests PDOM class template related bindings
  */
-public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
+public class CPPClassTemplateTests extends PDOMTestBase {
+	protected PDOM pdom;
+	protected ICProject cproject;
 	
 	public static Test suite() {
 		return suite(CPPClassTemplateTests.class);
@@ -51,8 +63,29 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	
 	@Override
 	public void setUp() throws Exception {
-		super.setUp();
+		cproject= CProjectHelper.createCCProject("classTemplateTests"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 		setUpSections(1);
+	}
+	
+	protected void setUpSections(int sections) throws Exception {
+		CharSequence[] contents= TestSourceReader.getContentsForTest(
+				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
+		for (CharSequence content : contents) {
+			IFile file= TestSourceReader.createFile(cproject.getProject(), new Path("refs.cpp"), content.toString());
+		}
+		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
+		waitForIndexer(cproject);
+		pdom= (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
+		pdom.acquireReadLock();
+	}
+	
+	@Override
+	protected void tearDown() throws Exception {
+		if(pdom != null) {
+			pdom.releaseReadLock();
+		}
+		pdom= null;
+		cproject.getProject().delete(true, npm());
 	}
 	
 	/*************************************************************************/

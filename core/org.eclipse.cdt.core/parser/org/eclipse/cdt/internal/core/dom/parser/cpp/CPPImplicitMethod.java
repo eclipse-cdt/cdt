@@ -61,18 +61,17 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		}
 		if (parent instanceof IASTCompositeTypeSpecifier) {
 			IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
-			IASTDeclaration[] members = cls.getMembers();
+			IASTDeclaration [] members = cls.getMembers();
 			ICPPASTVisibilityLabel vis = null;
 			for (IASTDeclaration member : members) {
-				if (member instanceof ICPPASTVisibilityLabel) {
+				if( member instanceof ICPPASTVisibilityLabel )
 					vis = (ICPPASTVisibilityLabel) member;
-				} else if (member == decl) {
+				else if( member == decl )
 					break;
-				}
 			}
-			if (vis != null) {
+			if( vis != null ){
 				return vis.getVisibility();
-			} else if (cls.getKey() == ICPPASTCompositeTypeSpecifier.k_class) {
+			} else if( cls.getKey() == ICPPASTCompositeTypeSpecifier.k_class ){
 				return ICPPASTVisibilityLabel.v_private;
 			} 
 		}
@@ -81,7 +80,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 	
 	@Override
 	public ICPPClassType getClassOwner() {
-		ICPPClassScope scope = (ICPPClassScope) getScope();
+		ICPPClassScope scope = (ICPPClassScope)getScope();
 		return scope.getClassType();
 	}
 	
@@ -168,8 +167,8 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 
 	@Override
 	public boolean isDestructor() {
-		char[] n = getNameCharArray();
-		if (n != null && n.length > 0)
+		char [] n = getNameCharArray();
+		if( n != null && n.length > 0 )
 			return n[0] == '~';
 		return false;
 	}

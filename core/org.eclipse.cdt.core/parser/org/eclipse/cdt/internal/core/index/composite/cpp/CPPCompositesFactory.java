@@ -339,8 +339,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				ICPPTemplateArgument[] b2 = TemplateInstanceUtil.convert(this, b);
 				IType c2 = getCompositeType(c);
 				if (a != a2 || b != b2 || c != c2 || templateDefinition != templateDefinition2)
-					e= new EvalFunctionSet(new CPPFunctionSet(a2, b2, null), e.isQualified(), e.isAddressOf(), 
-							c2, templateDefinition2);
+					e= new EvalFunctionSet(new CPPFunctionSet(a2, b2, null), e.isAddressOf(), c2, templateDefinition2);
 			}
 			return e;
 		}

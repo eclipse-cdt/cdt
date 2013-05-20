@@ -839,8 +839,7 @@ public class CPPTemplates {
 				} else if (decl instanceof ICPPMethod) {
 					spec = new CPPMethodTemplateSpecialization((ICPPMethod) decl, owner, tpMap, type, exceptionSpecs);
 				} else {
-					IBinding oldOwner = decl.getOwner();
-					spec = new CPPFunctionTemplateSpecialization((ICPPFunctionTemplate) decl, oldOwner, tpMap, type, exceptionSpecs);
+					spec = new CPPFunctionTemplateSpecialization((ICPPFunctionTemplate) decl, owner, tpMap, type, exceptionSpecs);
 				}
 			} else if (decl instanceof ICPPConstructor) {
 				spec = new CPPConstructorSpecialization((ICPPConstructor) decl, owner, tpMap, type, exceptionSpecs);

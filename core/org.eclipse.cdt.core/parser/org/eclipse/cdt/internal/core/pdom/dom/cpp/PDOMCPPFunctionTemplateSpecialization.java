@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX - Initial API and implementation
- *     Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -24,15 +24,14 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * The specialization of a friend function template in the context of a class specialization.
- *
  * @author Bryan Wilkinson
+ * 
  */
 class PDOMCPPFunctionTemplateSpecialization extends	PDOMCPPFunctionSpecialization 
 		implements ICPPFunctionTemplate, ICPPInstanceCache, IPDOMMemberOwner {
 	
-	public PDOMCPPFunctionTemplateSpecialization(PDOMLinkage linkage, PDOMNode parent,
-			ICPPFunctionTemplate template, PDOMBinding specialized) throws CoreException {
+	public PDOMCPPFunctionTemplateSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPFunctionTemplate template, PDOMBinding specialized)
+			throws CoreException {
 		super(linkage, parent, template, specialized);
 	}
 

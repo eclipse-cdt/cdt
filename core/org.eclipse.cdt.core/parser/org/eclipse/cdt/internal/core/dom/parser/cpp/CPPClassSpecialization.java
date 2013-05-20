@@ -414,7 +414,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 	}
 
 	public static boolean isSameClassSpecialization(ICPPClassSpecialization t1, ICPPClassSpecialization t2) {
-		// Exclude class template specialization or class instance.
+		// exclude class template specialization or class instance
 		if (t2 instanceof ICPPTemplateInstance || t2 instanceof ICPPTemplateDefinition || 
 				t2 instanceof IProblemBinding) {
 			return false;
@@ -426,13 +426,13 @@ public class CPPClassSpecialization extends CPPSpecialization
 		if (!CharArrayUtils.equals(t1.getNameCharArray(), t2.getNameCharArray()))
 			return false;
 		
-		// The argument map is not significant for comparing specializations, the map is
+		// the argument map is not significant for comparing specializations, the map is
 		// determined by the owner of the specialization. This is different for instances,
 		// which have a separate implementation for isSameType().
 		final IBinding owner1= t1.getOwner();
 		final IBinding owner2= t2.getOwner();
 		
-		// For a specialization that is not an instance the owner has to be a class-type.
+		// for a specialization that is not an instance the owner has to be a class-type
 		if (!(owner1 instanceof ICPPClassType) || !(owner2 instanceof ICPPClassType))
 			return false;
 
@@ -446,10 +446,5 @@ public class CPPClassSpecialization extends CPPSpecialization
 			return typeSpecifier.isFinal();
 		}
 		return false;
-	}
-
-	@Override
-	public int getVisibility(IBinding member) {
-		return ClassTypeHelper.getVisibility(this, member);
 	}
 }

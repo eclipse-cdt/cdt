@@ -246,9 +246,4 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 		}
 		return new PDOMCPPDeferredClassInstance(fragment, (ICPPClassTemplate) template, args);
 	}
-
-	@Override
-	public int getVisibility(IBinding member) {
-		throw new IllegalArgumentException(member.getName() + " is not a member of " + getName()); //$NON-NLS-1$
-	}
 }

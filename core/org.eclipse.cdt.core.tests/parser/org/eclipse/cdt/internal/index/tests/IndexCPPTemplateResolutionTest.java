@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -64,9 +67,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Tests for exercising resolution of template bindings against IIndex
@@ -1369,19 +1369,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 
 		final IType type = t2.getType();
 		assertTrue(type instanceof IBasicType);
-		assertEquals(((IBasicType) type).getType(), IBasicType.t_int);
-	}
-
-	//	struct A {
-	//	  template<typename T>
-	//	  struct S;
-	//	};
-	//	template<typename T>
-	//	struct A::S {};
-
-	//  A::S<int> a;
-	public void testXXX() throws Exception {
-		checkBindings();
+		assertEquals(((IBasicType)type).getType(), IBasicType.t_int);
 	}
 
 	//	template <int x>
@@ -2277,28 +2265,4 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testIntNullPointerConstant_407808() throws Exception {
 		checkBindings();
 	}
-	
-	//	namespace bar {
-	//	    template<class T>
-	//	    void join(T);
-	//	}
-	//
-	//	namespace foo {
-	//	    template<typename T>
-	//	    void join(T);
-	//	    
-	//	    struct cat {};
-	//	}
-
-	//	template <typename T>
-	//	auto waldo(T t) -> decltype(bar::join(t));
-	//
-	//	int main() {
-	//	    waldo(foo::cat{});
-	//	}
-	public void testADLForQualifiedName_408296() throws Exception {
-		checkBindings();
-	}
 }
-
-

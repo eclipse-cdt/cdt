@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 QNX Software Systems and others.
+ * Copyright (c) 2007, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,12 @@
  *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
@@ -37,6 +43,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
+import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -44,26 +51,20 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * @author Bryan Wilkinson
  */
 class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		ICPPClassSpecialization, IPDOMMemberOwner, IPDOMCPPClassType {
 	private static final int FIRST_BASE = PDOMCPPSpecialization.RECORD_SIZE + 0;
-	private static final int MEMBERLIST = FIRST_BASE + 4;
-	private static final int FINAL = MEMBERLIST + PDOMCPPMemberBlock.RECORD_SIZE; // byte
+	private static final int MEMBER_LIST = PDOMCPPSpecialization.RECORD_SIZE + 4;
+	private static final int FINAL = PDOMCPPSpecialization.RECORD_SIZE + 8; // byte
 
 	/**
 	 * The size in bytes of a PDOMCPPClassSpecialization record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = FINAL + 1;
+	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 9;
 
 	private volatile ICPPClassScope fScope;
 	private ObjectMap specializationMap; // Obtained from the synchronized PDOM cache
@@ -244,7 +245,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 			return ((ICPPClassSpecializationScope) scope).getBases(point);
 		}
 
-		// This is an explicit specialization.
+		// This is an explicit specialization
 		Long key= record + PDOMCPPLinkage.CACHE_BASES;
 		ICPPBase[] bases= (ICPPBase[]) getPDOM().getCachedResult(key);
 		if (bases != null)
@@ -441,13 +442,14 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
-		throw new UnsupportedOperationException("addMember method should be called instead."); //$NON-NLS-1$
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBER_LIST);
+		list.addMember(member);
 	}
 
 	@Override
 	public void acceptUncached(IPDOMVisitor visitor) throws CoreException {
-		PDOMCPPMemberBlock members = new PDOMCPPMemberBlock(getLinkage(), record + MEMBERLIST);
-		members.accept(visitor);
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBER_LIST);
+		list.accept(visitor);
 	}
 
 	@Override
@@ -472,33 +474,5 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	private void setFinal(ICPPClassType ct) throws CoreException {
 		getDB().putByte(record + FINAL, (byte) (ct.isFinal() ? 1 : 0));
-	}
-
-	@Override
-	public void addMember(PDOMNode member, int visibility) {
-		try {
-			PDOMCPPMemberBlock members = new PDOMCPPMemberBlock(getLinkage(), record + MEMBERLIST);
-			members.addMember(member, visibility);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-	}
-
-	@Override
-	public int getVisibility(IBinding member) {
-		try {
-			PDOMCPPMemberBlock members = new PDOMCPPMemberBlock(getLinkage(), record + MEMBERLIST);
-			int visibility = members.getVisibility(member);
-			if (visibility < 0) {
-				if (member instanceof ICPPSpecialization) {
-					return getSpecializedBinding().getVisibility(((ICPPSpecialization) member).getSpecializedBinding());
-				}
-				throw new IllegalArgumentException(member.getName() + " is not a member of " + getName()); //$NON-NLS-1$
-			}
-			return visibility;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return v_private; // Fallback visibility
-		}
 	}
 }

@@ -22,6 +22,13 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -206,13 +213,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Collection of methods to extract information from a C++ translation unit.
@@ -2521,11 +2521,7 @@ public class CPPVisitor extends ASTQueries {
 				}
 				if (--i < 0)
 					break;
-				IBinding binding = qn[i].resolveBinding();
-				if (binding instanceof IIndexBinding && binding instanceof ICPPClassType) {
-					binding = ((CPPASTTranslationUnit) name.getTranslationUnit()).mapToAST((ICPPClassType) binding, name);
-				}
-				return bindingToOwner(binding);
+				return bindingToOwner(qn[i].resolveBinding());
 			}
 			name= (IASTName) node;
 			node= node.getParent();
@@ -2556,7 +2552,7 @@ public class CPPVisitor extends ASTQueries {
 	public static IBinding findDeclarationOwner(IASTNode node, boolean allowFunction) {
 		// Search for declaration
 		boolean isNonSimpleElabDecl= false;
-		while (!(node instanceof IASTDeclaration) && !(node instanceof ICPPASTLambdaExpression)) {
+		while (!(node instanceof IASTDeclaration)) {
 			if (node == null)
 				return null;
 			if (node instanceof IASTElaboratedTypeSpecifier) {

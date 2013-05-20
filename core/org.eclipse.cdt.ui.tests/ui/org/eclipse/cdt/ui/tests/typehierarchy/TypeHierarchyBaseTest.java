@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Markus Schorn - initial API and implementation
+ *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.ui.tests.typehierarchy;
 
@@ -43,6 +43,8 @@ import org.eclipse.cdt.internal.ui.typehierarchy.THViewPart;
 import org.eclipse.cdt.internal.ui.typehierarchy.TypeHierarchyUI;
 
 public class TypeHierarchyBaseTest extends BaseUITestCase {
+	protected static final int INDEXER_WAIT_TIME = 8000;
+
 	protected ICProject fCProject;
 	protected IIndex fIndex;
 
@@ -108,7 +110,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		runEventQueue(0);
 		THViewPart th= null;
-		for (int i= 0; i < 50; i++) {
+		for (int i=0; i<50; i++) {
 			th= (THViewPart)page.findView(CUIPlugin.ID_TYPE_HIERARCHY);
 			if (th != null) 
 				break;
@@ -121,7 +123,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 	protected Tree getQuickTypeHierarchyViewer(CEditor editor) {
 		runEventQueue(0);
 		THViewPart th= null;
-		for (int i= 0; i < 50; i++) {
+		for (int i=0; i<50; i++) {
 			Control focus= editor.getSite().getShell().getDisplay().getFocusControl();
 			if (focus instanceof Text) {
 				Composite parent= focus.getParent();
@@ -141,7 +143,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		runEventQueue(0);
 		THViewPart th= null;
-		for (int i= 0; i < 50; i++) {
+		for (int i=0; i<50; i++) {
 			th= (THViewPart)page.findView(CUIPlugin.ID_TYPE_HIERARCHY);
 			if (th != null) 
 				break;
@@ -154,15 +156,16 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 	protected TreeItem checkTreeNode(TreeItem root, int i1, String label) {
 		TreeItem item= null;
 		try {
-			for (int i= 0; i < 200; i++) {
+			for (int i=0; i<200; i++) {
 				item= root.getItem(i1);
 				try {
-					if (item.getText().isEmpty()) {
+					if ("".equals(item.getText())) {
 						TreeItem parent= item.getParentItem();
 						if (!parent.getExpanded()) {
 							expandTreeItem(parent);
 						}
-					} else if (!"...".equals(item.getText())) {
+					}
+					else if (!"...".equals(item.getText())) {
 						break;
 					}
 				} catch (SWTException e) {

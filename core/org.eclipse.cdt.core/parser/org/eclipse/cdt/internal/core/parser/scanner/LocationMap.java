@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -668,7 +668,7 @@ public class LocationMap implements ILocationResolver {
 	public int getSequenceNumberForFileOffset(String filePath, int fileOffset) {
 		LocationCtx ctx= fRootContext;
 		if (filePath != null) {
-			ArrayDeque<LocationCtx> contexts= new ArrayDeque<LocationCtx>();
+			LinkedList<LocationCtx> contexts= new LinkedList<LocationCtx>();
 			while (ctx != null) {
 				if (ctx instanceof LocationCtxFile) {
 					if (filePath.equals(ctx.getFilePath())) {
@@ -676,7 +676,11 @@ public class LocationMap implements ILocationResolver {
 					}
 				}
 				contexts.addAll(ctx.getChildren());
-				ctx= contexts.pollFirst();
+				if (contexts.isEmpty()) {
+					ctx= null;
+				} else {
+					ctx= contexts.removeFirst();
+				}
 			}
 		}
 		if (ctx != null) {

@@ -18,10 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IDecoration;
@@ -116,19 +114,21 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				return overlayKeys;
 			}
 
-			IResource rc = getResource();
-			List<ICLanguageSettingEntry> entries = getSettingEntries(provider);
-			if (entries == null && !(rc instanceof IProject)) {
-				List<ICLanguageSettingEntry> entriesParent = getSettingEntriesUpResourceTree(provider);
-				if (entriesParent != null) {
-					overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_PARENT;
-				}
-			} else if (provider instanceof ILanguageSettingsBroadcastingProvider && (page.isForFile() || page.isForFolder())) {
-				// Assuming that the default entries for a resource are always null.
-				// Using that for performance reasons. See note in performDefaults().
-				List<ICLanguageSettingEntry> entriesParent = provider.getSettingEntries(null, null, currentLanguageId);
-				if (entries != null && !entries.equals(entriesParent)) {
-					overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_SETTING;
+			if (currentLanguageId != null) {
+				IResource rc = getResource();
+				List<ICLanguageSettingEntry> entries = getSettingEntries(provider);
+				if (entries == null && !(rc instanceof IProject)) {
+					List<ICLanguageSettingEntry> entriesParent = getSettingEntriesUpResourceTree(provider);
+					if (entriesParent != null) {
+						overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_PARENT;
+					}
+				} else if (provider instanceof ILanguageSettingsBroadcastingProvider && (page.isForFile() || page.isForFolder())) {
+					// Assuming that the default entries for a resource are always null.
+					// Using that for performance reasons. See note in performDefaults().
+					List<ICLanguageSettingEntry> entriesParent = provider.getSettingEntries(null, null, currentLanguageId);
+					if (entries != null && !entries.equals(entriesParent)) {
+						overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_SETTING;
+					}
 				}
 			}
 
@@ -291,6 +291,9 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 * @return list of setting entries for the current context.
 	 */
 	private List<ICLanguageSettingEntry> getSettingEntriesUpResourceTree(ILanguageSettingsProvider provider) {
+		if (currentLanguageId == null)
+			return null;
+
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
 		IResource rc = getResource();
 		List<ICLanguageSettingEntry> entries = LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, cfgDescription, rc, currentLanguageId);
@@ -302,6 +305,9 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 * @return list of setting entries for the current context.
 	 */
 	private List<ICLanguageSettingEntry> getSettingEntries(ILanguageSettingsProvider provider) {
+		if (currentLanguageId==null)
+			return null;
+
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
 		IResource rc = getResource();
 		return provider.getSettingEntries(cfgDescription, rc, currentLanguageId);
@@ -900,20 +906,22 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 */
 	private List<ILanguageSettingsProvider> getProviders(String languageSettingId) {
 		List<ILanguageSettingsProvider> itemsList = new LinkedList<ILanguageSettingsProvider>();
-		IResource rc = getResource();
-		ICConfigurationDescription cfgDescription = getConfigurationDescription();
-		if (rc != null && cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-			List<ILanguageSettingsProvider> cfgProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
-			for (ILanguageSettingsProvider cfgProvider : cfgProviders) {
-				ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(cfgProvider);
-				if (rawProvider instanceof LanguageSettingsBaseProvider) {
-					// filter out providers incapable of providing entries for this language
-					List<String> languageIds = ((LanguageSettingsBaseProvider)rawProvider).getLanguageScope();
-					if (languageIds != null && !languageIds.contains(currentLanguageId)) {
-						continue;
+		if (currentLanguageId != null) {
+			IResource rc = getResource();
+			ICConfigurationDescription cfgDescription = getConfigurationDescription();
+			if (rc != null && cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+				List<ILanguageSettingsProvider> cfgProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+				for (ILanguageSettingsProvider cfgProvider : cfgProviders) {
+					ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(cfgProvider);
+					if (rawProvider instanceof LanguageSettingsBaseProvider) {
+						// filter out providers incapable of providing entries for this language
+						List<String> languageIds = ((LanguageSettingsBaseProvider)rawProvider).getLanguageScope();
+						if (languageIds != null && !languageIds.contains(currentLanguageId)) {
+							continue;
+						}
 					}
+					itemsList.add(cfgProvider);
 				}
-				itemsList.add(cfgProvider);
 			}
 		}
 		return itemsList;
@@ -937,18 +945,15 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		currentLanguageId = null;
 
 		List<String> languageIds = LanguageSettingsManager.getLanguages(rcDes);
-		if (languageIds.size() > 1) {
-			// remove null language when some real ones are defined
-			languageIds.remove(null);
-			Collections.sort(languageIds);
-		} else if (languageIds.isEmpty()) {
-			// if no languages are defined keep null language as "Unspecified language"
-			languageIds.add(null);
-		}
+		// Not sure what to do with null language ID, ignoring for now
+		languageIds.remove(null);
+		Collections.sort(languageIds);
 		for (String langId : languageIds) {
 			ILanguage language = LanguageManager.getInstance().getLanguage(langId);
+			if (language == null)
+				continue;
 
-			String langName = language != null ? language.getName() : Messages.LanguageSettingsEntriesTab_UnspecifiedLanguage;
+			String langName = language.getName();
 			if (langName == null || langName.length() == 0)
 				continue;
 
@@ -975,7 +980,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		currentLanguageIdGlobal = currentLanguageId;
 
 		for (TreeItem t : treeLanguages.getItems()) {
-			if ((t.getData() == null && langId == null) || t.getData().equals(langId)) {
+			if (t.getData().equals(langId)) {
 				treeLanguages.setSelection(t);
 				break;
 			}
@@ -1035,16 +1040,18 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				if (provider instanceof ILanguageSettingsEditableProvider) {
 					for (TreeItem langItems : treeLanguages.getItems()) {
 						String langId = (String)langItems.getData();
-						if (provider.getSettingEntries(cfgDescription, rc, langId) != null) {
-							if (providerCopy == null) {
-								// copy providers to be able to "Cancel" in UI
-								providerCopy = LanguageSettingsManager.getProviderCopy((ILanguageSettingsEditableProvider) provider, true);
+						if (langId != null) {
+							if (provider.getSettingEntries(cfgDescription, rc, langId) != null) {
 								if (providerCopy == null) {
-									continue providers;
+									// copy providers to be able to "Cancel" in UI
+									providerCopy = LanguageSettingsManager.getProviderCopy((ILanguageSettingsEditableProvider) provider, true);
+									if (providerCopy == null) {
+										continue providers;
+									}
 								}
+								providerCopy.setSettingEntries(cfgDescription, rc, langId, null);
+								changed = true;
 							}
-							providerCopy.setSettingEntries(cfgDescription, rc, langId, null);
-							changed = true;
 						}
 					}
 				}
@@ -1094,26 +1101,11 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		// filter out files not associated with any languages such as *.o
 		if (page.isForFile()) {
 			List<String> languageIds = LanguageSettingsManager.getLanguages(getResDesc());
-			if (languageIds.isEmpty() || (languageIds.size() == 1 && languageIds.get(0) == null)) {
-				// for legacy projects check if the file is associated with any CDT language
-				IResource rc = getResource();
-				if (rc instanceof IFile) {
-					try {
-						ILanguage language = LanguageManager.getInstance().getLanguageForFile((IFile)rc, null);
-						return language != null;
-					} catch (CoreException e) {
-						// who cares, not even logging
-					}
-				}
-				return false;
-			} else {
-				// for regular MBS project verify language against toolchain language
-				for (String langId : languageIds) {
-					if (langId != null) {
-						ILanguage language = LanguageManager.getInstance().getLanguage(langId);
-						if (language != null) {
-							return true;
-						}
+			for (String langId : languageIds) {
+				if (langId != null) {
+					ILanguage language = LanguageManager.getInstance().getLanguage(langId);
+					if (language != null) {
+						return true;
 					}
 				}
 			}

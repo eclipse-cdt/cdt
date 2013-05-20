@@ -131,8 +131,8 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		dtor= ASTQueries.findInnermostDeclarator(dtor);
 	    IASTName name= dtor.getName();
 	    if (name instanceof ICPPASTQualifiedName) {
-	        IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-	        name = ns[ns.length - 1];
+	        IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
+	        name = ns[ ns.length - 1 ];
 	    }
 	    return name;
 	}
@@ -142,6 +142,9 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		return CPPVisitor.getContainingScope(getASTName());
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
+     */
     @Override
 	public boolean isVirtual() {
     	IASTDeclaration decl = getPrimaryDeclaration();
@@ -164,6 +167,9 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		return declSpec;
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isInline()
+     */
     @Override
 	public boolean isInline() {
         IASTDeclaration decl = getPrimaryDeclaration();
@@ -176,6 +182,9 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
         return declSpec.isInline();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isMutable()
+     */
     @Override
 	public boolean isMutable() {
         return hasStorageClass(this, IASTDeclSpecifier.sc_mutable);
@@ -193,6 +202,9 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		return false;
 	}
 
+	/* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
+     */
 	@Override
 	public boolean isDestructor() {
 		char[] name = getNameCharArray();
@@ -207,6 +219,9 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		return false;
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isPureVirtual()
+     */
     @Override
 	public boolean isPureVirtual() {
 		ICPPASTFunctionDeclarator declarator = findFunctionDeclarator();

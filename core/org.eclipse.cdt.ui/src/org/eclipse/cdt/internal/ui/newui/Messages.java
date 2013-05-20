@@ -23,7 +23,6 @@ public class Messages extends NLS {
 	public static String AbstractExportTab_3;
 	public static String AbstractLangsListTab_ShowBuiltin;
 	public static String AbstractLangsListTab_Languages;
-	public static String AbstractLangsListTab_LspPageMayDefineAdditionalEntries;
 	public static String AbstractLangsListTab_Export;
 	public static String AbstractLangsListTab_ExportIndicator;
 	public static String AbstractLangsListTab_Unexport;
@@ -213,7 +212,6 @@ public class Messages extends NLS {
 	public static String LanguageSettingEntryDialog_WorkspacePath;
 	public static String LanguageSettingsEntriesTab_Cannot_Determine_Languages;
 	public static String LanguageSettingsEntriesTab_Entries_Not_Editable;
-	public static String LanguageSettingsEntriesTab_UnspecifiedLanguage;
 	public static String LanguageSettingsImages_FileDoesNotExist;
 	public static String LanguageSettingsImages_FolderDoesNotExist;
 	public static String LanguageSettingsImages_UsingRelativePathsNotRecommended;

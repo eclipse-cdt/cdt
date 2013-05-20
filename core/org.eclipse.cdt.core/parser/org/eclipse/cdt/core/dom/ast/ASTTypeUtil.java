@@ -803,7 +803,7 @@ public class ASTTypeUtil {
 				char[] fname= loc.getFileName().toCharArray();
 				int fnamestart= findFileNameStart(fname);
 				buf.append('{');
-				buf.append(fname, fnamestart, fname.length - fnamestart);
+				buf.append(fname, fnamestart, fname.length-fnamestart);
 				buf.append(':');
 				buf.append(loc.getNodeOffset());
 				buf.append('}');

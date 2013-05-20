@@ -274,8 +274,6 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			boolean isEnabled = !LanguageSettingsProvidersPage.isLanguageSettingsProvidersEnabled(project) || ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
 			if (!isEnabled) {
 				status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, Messages.AbstractLangsListTab_MbsProviderNotEnabled);
-			} else if (LanguageSettingsProvidersPage.isLanguageSettingsProvidersEnabled(project)) {
-				status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, Messages.AbstractLangsListTab_LspPageMayDefineAdditionalEntries);
 			}
 		}
 

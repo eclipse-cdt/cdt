@@ -386,7 +386,7 @@ abstract public class PDOMWriter {
 				}
 			}
 		}
-		fStatistics.fResolutionTime += System.currentTimeMillis() - start;
+		fStatistics.fResolutionTime += System.currentTimeMillis()-start;
 	}
 
 	private void extractSymbols(Data data) throws CoreException {

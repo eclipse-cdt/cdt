@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.utils.EFSExtensionManager;
+import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
@@ -71,6 +72,8 @@ import org.w3c.dom.Element;
  */
 public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSettingsSerializableProvider implements ICBuildOutputParser {
 	protected static final String ATTR_KEEP_RELATIVE_PATHS = "keep-relative-paths"; //$NON-NLS-1$
+	// evaluates to "/${ProjName)/"
+	private static final String PROJ_NAME_PREFIX = '/' + CdtVariableResolver.createVariableReference(CdtVariableResolver.VAR_PROJ_NAME) + '/';
 
 	protected ICConfigurationDescription currentCfgDescription = null;
 	protected IWorkingDirectoryTracker cwdTracker = null;
@@ -1012,7 +1015,12 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 */
 	private ICLanguageSettingEntry createResolvedPathEntry(AbstractOptionParser optionParser, String parsedPath, int flag, URI baseURI) {
 		URI uri = determineMappedURI(parsedPath, baseURI);
-		ICLanguageSettingEntry entry = resolvePathEntryInWorkspace(optionParser, uri, flag);
+		boolean isRelative = !new Path(parsedPath).isAbsolute();
+		// is mapped something that is not a project root
+		boolean isRemapped = baseURI != null && currentProject != null && !baseURI.equals(currentProject.getLocationURI());
+		boolean presentAsRelative = isRelative || isRemapped;
+
+		ICLanguageSettingEntry entry = resolvePathEntryInWorkspace(optionParser, uri, flag, presentAsRelative);
 		if (entry != null) {
 			return entry;
 		}
@@ -1020,11 +1028,11 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		if (entry != null) {
 			return entry;
 		}
-		entry = resolvePathEntryInWorkspaceAsBestFit(optionParser, parsedPath, flag);
+		entry = resolvePathEntryInWorkspaceAsBestFit(optionParser, parsedPath, flag, presentAsRelative);
 		if (entry != null) {
 			return entry;
 		}
-		entry = resolvePathEntryInWorkspaceToNonexistingResource(optionParser, uri, flag);
+		entry = resolvePathEntryInWorkspaceToNonexistingResource(optionParser, uri, flag, presentAsRelative);
 		if (entry != null) {
 			return entry;
 		}
@@ -1036,9 +1044,25 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
+	 * Create a language settings entry for a given resource.
+	 * This will represent relative path using CDT variable ${ProjName}.
+	 */
+	private ICLanguageSettingEntry createPathEntry(AbstractOptionParser optionParser, IResource rc, boolean isRelative, int flag) {
+		String path;
+		if (isRelative && rc.getProject().equals(currentProject)) {
+			path = PROJ_NAME_PREFIX + rc.getFullPath().removeFirstSegments(1);
+			flag = flag | ICSettingEntry.VALUE_WORKSPACE_PATH;
+		} else {
+			path = rc.getFullPath().toString();
+			flag = flag | ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED;
+		}
+		return optionParser.createEntry(path, path, flag);
+	}
+
+	/**
 	 * Find an existing resource in the workspace and create a language settings entry for it.
 	 */
-	private ICLanguageSettingEntry resolvePathEntryInWorkspace(AbstractOptionParser optionParser, URI uri, int flag) {
+	private ICLanguageSettingEntry resolvePathEntryInWorkspace(AbstractOptionParser optionParser, URI uri, int flag, boolean isRelative) {
 		if (uri != null && uri.isAbsolute()) {
 			IResource rc = null;
 			if (optionParser.isForFolder()) {
@@ -1047,8 +1071,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 				rc = findFileForLocationURI(uri, currentProject, /*checkExistence*/ true);
 			}
 			if (rc != null) {
-				String path = rc.getFullPath().toString();
-				return optionParser.createEntry(path, path, flag | ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
+				return createPathEntry(optionParser, rc, isRelative, flag);
 			}
 		}
 		return null;
@@ -1071,11 +1094,10 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	/**
 	 * Find a best fit for the resource in the workspace and create a language settings entry for it.
 	 */
-	private ICLanguageSettingEntry resolvePathEntryInWorkspaceAsBestFit(AbstractOptionParser optionParser, String parsedPath, int flag) {
+	private ICLanguageSettingEntry resolvePathEntryInWorkspaceAsBestFit(AbstractOptionParser optionParser, String parsedPath, int flag, boolean isRelative) {
 		IResource rc = findBestFitInWorkspace(parsedPath);
 		if (rc != null) {
-			String path = rc.getFullPath().toString();
-			return optionParser.createEntry(path, path, flag | ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
+			return createPathEntry(optionParser, rc, isRelative, flag);
 		}
 		return null;
 	}
@@ -1083,7 +1105,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	/**
 	 * Try to map a resource in the workspace even if it does not exist and create a language settings entry for it.
 	 */
-	private ICLanguageSettingEntry resolvePathEntryInWorkspaceToNonexistingResource(AbstractOptionParser optionParser, URI uri, int flag) {
+	private ICLanguageSettingEntry resolvePathEntryInWorkspaceToNonexistingResource(AbstractOptionParser optionParser, URI uri, int flag, boolean isRelative) {
 		if (uri != null && uri.isAbsolute()) {
 			IResource rc = null;
 			if (optionParser.isForFolder()) {
@@ -1092,8 +1114,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 				rc = findFileForLocationURI(uri, currentProject, /*checkExistence*/ false);
 			}
 			if (rc != null) {
-				String path = rc.getFullPath().toString();
-				return optionParser.createEntry(path, path, flag | ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
+				return createPathEntry(optionParser, rc, isRelative, flag);
 			}
 		}
 		return null;

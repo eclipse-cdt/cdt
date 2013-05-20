@@ -48,6 +48,7 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
+import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -519,7 +520,7 @@ public class ManagedBuildTestHelper {
 		final String INCLUDE_PATTERN = "-include \\$\\(.*\\)";
 		final String MACRO_PATTERN = "\\S* [:+]=.*";
 		final String EMPTY_MACRO_PATTERN = "\\S* :=";
-		final String WORKSPACE_DIR_STR = "${WorkspaceDirPath}";
+		final String WORKSPACE_DIR_STR = CdtVariableResolver.createVariableReference(CdtVariableResolver.VAR_WORKSPACE_DIR_PATH);
 		ArrayList<String> testArray = mergeContinuationLines(getContents(testFile));
 		ArrayList<String> benchmarkArray = mergeContinuationLines(getContents(benchmarkFile));
 

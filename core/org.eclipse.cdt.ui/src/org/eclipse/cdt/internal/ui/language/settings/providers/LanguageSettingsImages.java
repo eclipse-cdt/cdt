@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.UNCPathConverter;
+import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
@@ -34,7 +35,8 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  * Helper class to provide unified images for {@link ICLanguageSettingEntry}.
  */
 public class LanguageSettingsImages {
-	private static final String PROJ_NAME_PREFIX = "/${ProjName}/"; //$NON-NLS-1$
+	// evaluates to "/${ProjName)/"
+	private static final String PROJ_NAME_PREFIX = '/' + CdtVariableResolver.createVariableReference(CdtVariableResolver.VAR_PROJ_NAME) + '/';
 
 	/**
 	 * Check if the language settings entry should be presented as "project-relative" in UI.

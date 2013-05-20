@@ -34,6 +34,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.osgi.framework.Version;
@@ -422,7 +423,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	 */
 	@Override
 	public String getDefaultArtifactName(){
-		return "${ProjName}"; //$NON-NLS-1$
+		return CdtVariableResolver.createVariableReference(CdtVariableResolver.VAR_PROJ_NAME);
 	}
 
 	/* (non-Javadoc)

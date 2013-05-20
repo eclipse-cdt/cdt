@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 Intel Corporation and others.
+ * Copyright (c) 2005, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,16 +20,44 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableStatus;
+import org.eclipse.cdt.internal.core.cdtvariables.CdtMacroSupplier;
 
 /**
- * Utility class to resolve macro references. Provides fixture to parse ${macro}
+ * Utility class to resolve macro and variable references. Provides fixture to parse ${macro}
  * expressions and replace macros with actual values using {@link IVariableSubstitutor}.
  * 
  * @since 3.0
  */
 public class CdtVariableResolver {
+	/** @since 5.5 */
+	public static final String VAR_CONFIG_NAME = CdtMacroSupplier.VAR_CONFIG_NAME;
+	/** @since 5.5 */
+	public static final String VAR_CONFIG_DESCRIPTION = CdtMacroSupplier.VAR_CONFIG_DESCRIPTION;
+	/** @since 5.5 */
+	public static final String VAR_PROJ_NAME = CdtMacroSupplier.VAR_PROJ_NAME;
+	/** @since 5.5 */
+	public static final String VAR_PROJ_DIR_PATH = CdtMacroSupplier.VAR_PROJ_DIR_PATH;
+	/** @since 5.5 */
+	public static final String VAR_WORKSPACE_DIR_PATH = CdtMacroSupplier.VAR_WORKSPACE_DIR_PATH;
+	/** @since 5.5 */
+	public static final String VAR_DIRECTORY_DELIMITER = CdtMacroSupplier.VAR_DIRECTORY_DELIMITER;
+	/** @since 5.5 */
+	public static final String VAR_PATH_DELIMITER = CdtMacroSupplier.VAR_PATH_DELIMITER;
+	/** @since 5.5 */
+	public static final String VAR_ECLIPSE_VERSION = CdtMacroSupplier.VAR_ECLIPSE_VERSION;
+	/** @since 5.5 */
+	public static final String VAR_CDT_VERSION = CdtMacroSupplier.VAR_CDT_VERSION;
+	/** @since 5.5 */
+	public static final String VAR_HOST_OS_NAME = CdtMacroSupplier.VAR_HOST_OS_NAME;
+	/** @since 5.5 */
+	public static final String VAR_HOST_ARCH_NAME = CdtMacroSupplier.VAR_HOST_ARCH_NAME;
+	/** @since 5.5 */
+	public static final String VAR_OS_TYPE = CdtMacroSupplier.VAR_OS_TYPE;
+	/** @since 5.5 */
+	public static final String VAR_ARCH_TYPE = CdtMacroSupplier.VAR_ARCH_TYPE;
+
 	private static final String EMPTY_STRING = "";	//$NON-NLS-1$
-	
+
 	public  static final String VARIABLE_PREFIX = "${";	//$NON-NLS-1$
 	private static final String VARIABLE_PREFIX_MASKED = "$\1";	//$NON-NLS-1$
 	public  static final char VARIABLE_SUFFIX = '}';

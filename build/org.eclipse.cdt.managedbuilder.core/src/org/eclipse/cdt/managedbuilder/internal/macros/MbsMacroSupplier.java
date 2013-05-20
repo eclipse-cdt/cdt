@@ -80,8 +80,8 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 	};
 
 	private static final String fConfigurationMacros[] = new String[]{
-//		"ConfigName",	//$NON-NLS-1$
-//		"ConfigDescription",	//$NON-NLS-1$
+//		CdtVariableResolver.VAR_CONFIG_NAME,
+//		CdtVariableResolver.VAR_CONFIG_DESCRIPTION,
 		"BuildArtifactFileName",	//$NON-NLS-1$
 		"BuildArtifactFileExt",	//$NON-NLS-1$
 		"BuildArtifactFileBaseName",	//$NON-NLS-1$
@@ -93,24 +93,24 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 	};
 
 	private static final String fProjectMacros[] = new String[]{
-//		"ProjName",	//$NON-NLS-1$
-//		"ProjDirPath",	//$NON-NLS-1$
+//		CdtVariableResolver.VAR_PROJ_NAME,
+//		CdtVariableResolver.VAR_PROJ_DIR_PATH,
 	};
 
 	private static final String fWorkspaceMacros[] = new String[]{
-//		"WorkspaceDirPath",	//$NON-NLS-1$
-//		"DirectoryDelimiter",	//$NON-NLS-1$
-//		"PathDelimiter",	//$NON-NLS-1$
+//		CdtVariableResolver.VAR_WORKSPACE_DIR_PATH,
+//		CdtVariableResolver.VAR_DIRECTORY_DELIMITER,
+//		CdtVariableResolver.VAR_PATH_DELIMITER,
 	};
 
 	private static final String fCDTEclipseMacros[] = new String[]{
-//		"EclipseVersion",	//$NON-NLS-1$
-//		"CDTVersion",	//$NON-NLS-1$
+//		CdtVariableResolver.VAR_ECLIPSE_VERSION,
+//		CdtVariableResolver.VAR_CDT_VERSION,
 		"MBSVersion",	//$NON-NLS-1$
-//		"HostOsName",	//$NON-NLS-1$
-//		"HostArchName",	//$NON-NLS-1$
-//		"OsType",	//$NON-NLS-1$
-//		"ArchType",	//$NON-NLS-1$
+//		CdtVariableResolver.VAR_HOST_OS_NAME,
+//		CdtVariableResolver.VAR_HOST_ARCH_NAME,
+//		CdtVariableResolver.VAR_HOST_OS_TYPE,
+//		CdtVariableResolver.VAR_HOST_ARCH_TYPE,
 	};
 
 	private class OptionData extends OptionContextData {
@@ -419,10 +419,10 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 
 	public IBuildMacro getMacro(String macroName, IBuilder builder, IConfiguration cfg){
 		IBuildMacro macro = null;
-		if("ConfigName".equals(macroName)){	//$NON-NLS-1$
+		if (CdtVariableResolver.VAR_CONFIG_NAME.equals(macroName)) {
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,cfg.getName());
 		}
-		else if("ConfigDescription".equals(macroName)){	//$NON-NLS-1$
+		else if (CdtVariableResolver.VAR_CONFIG_DESCRIPTION.equals(macroName)){
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,cfg.getDescription());
 		}
 		else if("BuildArtifactFileName".equals(macroName)){	//$NON-NLS-1$
@@ -604,10 +604,10 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 
 	public IBuildMacro getMacro(String macroName, IManagedProject mngProj){
 		IBuildMacro macro = null;
-		if("ProjName".equals(macroName)){	//$NON-NLS-1$
+		if(CdtVariableResolver.VAR_PROJ_NAME.equals(macroName)){	
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,mngProj.getOwner().getName());
 		}
-		else if("ProjDirPath".equals(macroName)){	//$NON-NLS-1$
+		else if(CdtVariableResolver.VAR_PROJ_DIR_PATH.equals(macroName)){
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_PATH_DIR,mngProj.getOwner().getLocation().toOSString());
 		}
 		return macro;
@@ -615,15 +615,15 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 
 	public IBuildMacro getMacro(String macroName, IWorkspace wsp){
 		IBuildMacro macro = null;
-		if("WorkspaceDirPath".equals(macroName)){	//$NON-NLS-1$
+		if (CdtVariableResolver.VAR_WORKSPACE_DIR_PATH.equals(macroName)) {
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_PATH_DIR,wsp.getRoot().getLocation().toOSString());
-		} else if("DirectoryDelimiter".equals(macroName)){	//$NON-NLS-1$
+		} else if (CdtVariableResolver.VAR_DIRECTORY_DELIMITER.equals(macroName)) {
 			if(isWin32()){
 				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,"\\");	//$NON-NLS-1$
 			} else {
 				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,"/");	//$NON-NLS-1$
 			}
-		} else if("PathDelimiter".equals(macroName)){	//$NON-NLS-1$
+		} else if (CdtVariableResolver.VAR_PATH_DELIMITER.equals(macroName)) {
 			if(isWin32()){
 				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,";");	//$NON-NLS-1$
 			} else {
@@ -642,34 +642,34 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 
 	public IBuildMacro getMacro(String macroName){
 		IBuildMacro macro = null;
-		if("EclipseVersion".equals(macroName)){	//$NON-NLS-1$
+		if (CdtVariableResolver.VAR_ECLIPSE_VERSION.equals(macroName)) {
 			Bundle bundle = Platform.getBundle("org.eclipse.platform");	//$NON-NLS-1$
 			String version = bundle != null ?
 					(String)bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION) :
 						null;
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,version);
 		}
-		else if("CDTVersion".equals(macroName)){	//$NON-NLS-1$
+		else if (CdtVariableResolver.VAR_CDT_VERSION.equals(macroName)) {
 			String version = CCorePlugin.getDefault().getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,version);
 		}
-		else if("MBSVersion".equals(macroName)){	//$NON-NLS-1$
+		else if ("MBSVersion".equals(macroName)) {	//$NON-NLS-1$
 			String version = ManagedBuildManager.getBuildInfoVersion().toString();
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,version);
 		}
-		else if("HostOsName".equals(macroName)){	//$NON-NLS-1$
+		else if (CdtVariableResolver.VAR_HOST_OS_NAME.equals(macroName)) {
 			String os = System.getProperty("os.name"); //$NON-NLS-1$
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,os);
 		}
-		else if("HostArchName".equals(macroName)){	//$NON-NLS-1$
+		else if (CdtVariableResolver.VAR_HOST_ARCH_NAME.equals(macroName)) {
 			String arch = System.getProperty("os.arch"); //$NON-NLS-1$
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,arch);
 		}
-		else if("OsType".equals(macroName)){	//$NON-NLS-1$
+		else if (CdtVariableResolver.VAR_OS_TYPE.equals(macroName)) {
 			String os = Platform.getOS();
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,os);
 		}
-		else if("ArchType".equals(macroName)){	//$NON-NLS-1$
+		else if (CdtVariableResolver.VAR_ARCH_TYPE.equals(macroName)) {
 			String arch = Platform.getOSArch();
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,arch);
 		}

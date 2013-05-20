@@ -10,7 +10,7 @@
   </parent>
   <groupId>org.eclipse.tm</groupId>
   <artifactId>org.eclipse.rse.subsystems.wince</artifactId>
-  <version>0.1.400-SNAPSHOT</version>
+  <version>0.1.500-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   <build>
           <plugins>

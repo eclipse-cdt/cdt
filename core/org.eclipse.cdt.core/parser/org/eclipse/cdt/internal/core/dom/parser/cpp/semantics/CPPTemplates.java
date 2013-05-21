@@ -2638,7 +2638,15 @@ public class CPPTemplates {
 		}
 
 		if (changed) {
-			IBinding inst= instantiate(classTemplate, newArgs, point);
+			IBinding inst= null;
+			if (classTemplate instanceof ICPPClassTemplatePartialSpecialization) {
+				try {
+					inst= instantiatePartialSpecialization((ICPPClassTemplatePartialSpecialization) classTemplate, newArgs, false, null, point);
+				} catch (DOMException e) {
+				}
+			} else {
+				inst= instantiate(classTemplate, newArgs, point);
+			}
 			if (inst != null)
 				return inst;
 		}

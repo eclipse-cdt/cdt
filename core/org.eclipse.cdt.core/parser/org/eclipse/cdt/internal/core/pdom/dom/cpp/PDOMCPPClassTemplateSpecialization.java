@@ -161,9 +161,8 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 		ICPPClassTemplate origTemplate= (ICPPClassTemplate) getSpecializedBinding();
 		ICPPClassTemplatePartialSpecialization[] orig = origTemplate.getPartialSpecializations();
 		ICPPClassTemplatePartialSpecialization[] spec = new ICPPClassTemplatePartialSpecialization[orig.length];
-		ICPPClassSpecialization owner = (ICPPClassSpecialization) getOwner();
 		for (int i = 0; i < orig.length; i++) {
-			spec[i]= (ICPPClassTemplatePartialSpecialization) owner.specializeMember(orig[i], point);
+			spec[i]= (ICPPClassTemplatePartialSpecialization) specializeMember(orig[i], point);
 		}
 		return spec;
 	}

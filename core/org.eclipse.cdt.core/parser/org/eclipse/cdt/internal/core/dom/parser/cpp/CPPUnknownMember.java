@@ -14,12 +14,10 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPUnknownField;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPUnknownMemberClass;
@@ -34,9 +32,6 @@ public class CPPUnknownMember extends CPPUnknownBinding	implements ICPPUnknownMe
 
     protected CPPUnknownMember(IType owner, char[] name) {
         super(name);
-        if (owner instanceof ICPPClassTemplate) {
-        	owner= CPPTemplates.createDeferredInstance((ICPPClassTemplate) owner);
-        }
         fOwner= owner;
     }
 

@@ -169,15 +169,17 @@ public class InclusionContext {
 		for (IPath path : fHeadersToInclude) {
 			if (!exportedHeaders.contains(path)) {
 				IIndexFile file = filesByPath.get(path);
-				ArrayDeque<IIndexFile> queue = new ArrayDeque<IIndexFile>();
-				queue.add(file);
-				while ((file = queue.pollFirst()) != null) {
-					for (IIndexInclude include : file.getIncludes()) {
-						if (include.isIncludedFileExported()) {
-							file = fIndex.resolveInclude(include);
-							if (file != null) {
-								if (exportedHeaders.add(getPath(file)))
-									queue.add(file);
+				if (file != null) {  // file can be null if the header was not indexed.
+					ArrayDeque<IIndexFile> queue = new ArrayDeque<IIndexFile>();
+					queue.add(file);
+					while ((file = queue.pollFirst()) != null) {
+						for (IIndexInclude include : file.getIncludes()) {
+							if (include.isIncludedFileExported()) {
+								file = fIndex.resolveInclude(include);
+								if (file != null) {
+									if (exportedHeaders.add(getPath(file)))
+										queue.add(file);
+								}
 							}
 						}
 					}

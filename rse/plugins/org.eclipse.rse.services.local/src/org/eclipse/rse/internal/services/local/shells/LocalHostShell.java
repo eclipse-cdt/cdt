@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,13 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [161838] local shell reports isActive() wrong
+ * Ioana Grigoropol (Intel) - [399231] Race conditions occur when trying to read from local processes using LocalShellOutputReader
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.shells;
 
+import java.io.BufferedReader;
+import java.util.concurrent.locks.Lock;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.internal.services.local.shells.LocalShellOutputReader;
 import org.eclipse.rse.internal.services.local.shells.LocalShellThread;
@@ -38,7 +41,7 @@ public class LocalHostShell extends AbstractHostShell implements IHostShell
 	{
 		_shellThread = new LocalShellThread(initialWorkingDirectory, invocation, encoding, environment);	
 		_stdoutHandler = new LocalShellOutputReader(this, _shellThread.getOutputStream(), false);
-		_stderrHandler = new LocalShellOutputReader(this, _shellThread.getErrorStream(),true);
+		_stderrHandler = new LocalShellOutputReader(this, _shellThread.getErrorStream(), true);
 	}
 	
 	protected void run(IProgressMonitor monitor)
@@ -84,5 +87,15 @@ public class LocalHostShell extends AbstractHostShell implements IHostShell
 		writeToShell("exit"); //$NON-NLS-1$
 	}
 
+	public Lock getLock() {
+		return _shellThread.getLock();
+	}
+
+	public BufferedReader getReader(boolean isErrorReader) {
+		if (isErrorReader)
+			return _shellThread.getErrorStream();
+		else
+			return _shellThread.getOutputStream();
+	}
 
 }

@@ -449,8 +449,18 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
     	fRegisterValueCache.reset();
     }
     
-    private void generateRegisterChangedEvent(IRegisterDMContext dmc ) {
+    private void generateRegisterChangedEvent(final IRegisterDMContext dmc ) {
         getSession().dispatchEvent(new RegisterChangedDMEvent(dmc), getProperties());
+
+        IRegistersChangedDMEvent event = new IRegistersChangedDMEvent() {
+			@Override
+			public IRegisterGroupDMContext getDMContext() {
+				return DMContexts.getAncestorOfType(dmc, MIRegisterGroupDMC.class);
+			}
+		};
+
+        // Fix Bug 400840
+        getSession().dispatchEvent(event, null);
     }
     
     /*

@@ -9,6 +9,7 @@
  *     Anton Gorenkov   - initial implementation
  *     Marc-Andre Laperle
  *     Nathan Ridge
+ *     Danny Ferreira
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.internal.checkers;
 
@@ -599,6 +600,27 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//	    S(const volatile S&&) = default;
 	//	};
 	public void testBug395018_defaultedCopyOrMoveConstructor() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	//	struct A {
+	//	    A(int n) : waldo(n) {}
+	//	    A() : A(42) {} // warning: "Member 'waldo' was not initialized in this constructor"
+	//	    int waldo;
+	//	};
+	public void testBug402607_delegatingConstructor() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	//	struct A {
+	//      typedef A B;
+	//	    A(int n) : waldo(n) {}
+	//	    A() : B(42) {} // warning: "Member 'waldo' was not initialized in this constructor"
+	//	    int waldo;
+	//	};
+	public void testBug402607_delegatingConstructorTypedef() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}

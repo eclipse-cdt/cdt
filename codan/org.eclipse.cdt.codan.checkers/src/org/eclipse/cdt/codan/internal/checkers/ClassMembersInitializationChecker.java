@@ -9,6 +9,7 @@
  *     Anton Gorenkov  - initial implementation
  *     Marc-Andre Laperle
  *     Nathan Ridge
+ *     Danny Ferreira
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -39,8 +40,10 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -261,6 +264,20 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 						return null;
 					if (constructor.getClassOwner().getKey() == ICompositeType.k_union)
 						return null;
+					// Skip delegating constructors.
+					for (ICPPASTConstructorChainInitializer memberInitializer : functionDefinition.getMemberInitializers()) {
+						IASTName memberName = memberInitializer.getMemberInitializerId();
+						if (memberName != null) {
+							IBinding memberBinding = memberName.resolveBinding();
+							ICPPClassType classType = null; 
+							if (memberBinding instanceof ICPPClassType)
+								classType = (ICPPClassType) memberBinding;
+							else if (memberBinding instanceof ICPPConstructor)
+								classType = ((ICPPConstructor) memberBinding).getClassOwner();
+							if (classType != null && classType.isSameType(constructor.getClassOwner()))
+								return null;
+						}
+					}
 					return constructor;
 				}
 			}

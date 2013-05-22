@@ -184,6 +184,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
+import org.eclipse.cdt.internal.core.dom.parser.IRecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
@@ -1241,7 +1242,31 @@ public class CPPSemantics {
 				}
 			}
 		}
+		
+		if (data.ignoreRecursionResolvingBindings()) {
+			bindings = filterOutRecursionResovingBindings(bindings);
+		}
+		
 		return expandUsingDeclarationsAndRemoveObjects(bindings, data);
+	}
+
+	private static IBinding[] filterOutRecursionResovingBindings(IBinding[] bindings) {
+		IBinding[] result = bindings;
+		int resultIndex = 0;
+		for (int i = 0; i < bindings.length; ++i) {
+			if (bindings[i] instanceof IRecursionResolvingBinding) {
+				if (result == bindings) {
+					result = new IBinding[bindings.length - 1];
+					System.arraycopy(bindings, 0, result, 0, i);
+				}
+			} else {
+				if (result != bindings) {
+					result[resultIndex] = bindings[i];
+				}
+				++resultIndex;
+			}
+		}
+		return ArrayUtil.trim(result);
 	}
 
 	private static IBinding[] expandUsingDeclarationsAndRemoveObjects(final IBinding[] bindings,

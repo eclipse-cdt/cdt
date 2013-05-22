@@ -518,9 +518,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 					}
 				} else if (binding instanceof ICPPTemplateDefinition) {
 					if (binding instanceof ICPPClassTemplatePartialSpecialization) {
-						if (binding instanceof ICPPClassTemplatePartialSpecializationSpecialization)
-							return new CompositeCPPClassTemplatePartialSpecializationSpecialization(this, (ICPPClassTemplatePartialSpecializationSpecialization) binding);
-						return new CompositeCPPClassTemplatePartialSpecialization(this, (ICPPClassTemplatePartialSpecialization) findOneBinding(binding));
+						return new CompositeCPPClassTemplatePartialSpecializationSpecialization(this, (ICPPClassTemplatePartialSpecializationSpecialization) binding);
 					} else if (binding instanceof ICPPClassType) {
 						return new CompositeCPPClassTemplateSpecialization(this, (ICPPClassType) binding);
 					} else if (binding instanceof ICPPConstructor) {
@@ -557,6 +555,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 						throw new CompositingNotImplementedError("Composite binding unavailable for " + binding + " " + binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
+			} else if (binding instanceof ICPPClassTemplatePartialSpecialization) {
+				return new CompositeCPPClassTemplatePartialSpecialization(this, (ICPPClassTemplatePartialSpecialization) findOneBinding(binding));
 			} else if (binding instanceof ICPPTemplateParameter) {
 				if (binding instanceof ICPPTemplateTypeParameter) {
 					result = new CompositeCPPTemplateTypeParameter(this, (ICPPTemplateTypeParameter) binding);

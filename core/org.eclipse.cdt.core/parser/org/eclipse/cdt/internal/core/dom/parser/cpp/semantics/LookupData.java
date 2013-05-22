@@ -551,4 +551,15 @@ public class LookupData extends ScopeLookupData {
 		}
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
+	
+	public boolean ignoreRecursionResolvingBindings() {
+		// When name lookup is performed during template instantiation
+		// rather than for an AST name, infinite recursion can sometimes
+		// result when a binding with a given name uses the same name
+		// in its definition (e.g. "typedef C::name name" where C is
+		// the current (template) class). In such cases, we want to
+		// ignore the resulting IRecursionResolvingBindings and allow
+		// name lookup to proceed to outer (or base class) scopes.
+		return getLookupName() == null;
+	}
 }

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
+import org.eclipse.cdt.internal.core.dom.parser.IRecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.Assert;
 
@@ -40,7 +41,7 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
 	public static boolean sAllowNameComputation = true;
 	private static final byte MAX_RESOLUTION_DEPTH= 6;
 
-	protected final static class RecursionResolvingBinding extends ProblemBinding {
+	protected final static class RecursionResolvingBinding extends ProblemBinding implements IRecursionResolvingBinding {
 		public RecursionResolvingBinding(IASTName node) {
 			super(node, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP);
 			Assert.isTrue(sAllowRecursionBindings, getMessage());

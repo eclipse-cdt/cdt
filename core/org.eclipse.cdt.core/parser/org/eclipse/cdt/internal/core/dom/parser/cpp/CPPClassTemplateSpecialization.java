@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -47,8 +48,9 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 			ICPPClassTemplate origTemplate= (ICPPClassTemplate) getSpecializedBinding();
 			ICPPClassTemplatePartialSpecialization[] orig = origTemplate.getPartialSpecializations();
 			ICPPClassTemplatePartialSpecialization[] spec = new ICPPClassTemplatePartialSpecialization[orig.length];
+			ICPPClassSpecialization owner = (ICPPClassSpecialization) getOwner();
 			for (int i = 0; i < orig.length; i++) {
-				spec[i]= (ICPPClassTemplatePartialSpecialization) specializeMember(orig[i], point);
+				spec[i]= (ICPPClassTemplatePartialSpecialization) owner.specializeMember(orig[i], point);
 			}
 			fPartialSpecs = spec;
 		}

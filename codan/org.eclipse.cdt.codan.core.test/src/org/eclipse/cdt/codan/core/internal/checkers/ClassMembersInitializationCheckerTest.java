@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov and others
+ * Copyright (c) 2011, 2013 Anton Gorenkov and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -606,7 +606,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 
 	//	struct A {
 	//	    A(int n) : waldo(n) {}
-	//	    A() : A(42) {} // warning: "Member 'waldo' was not initialized in this constructor"
+	//	    A() : A(42) {}
 	//	    int waldo;
 	//	};
 	public void testBug402607_delegatingConstructor() throws Exception {
@@ -617,7 +617,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//	struct A {
 	//      typedef A B;
 	//	    A(int n) : waldo(n) {}
-	//	    A() : B(42) {} // warning: "Member 'waldo' was not initialized in this constructor"
+	//	    A() : B(42) {}
 	//	    int waldo;
 	//	};
 	public void testBug402607_delegatingConstructorTypedef() throws Exception {

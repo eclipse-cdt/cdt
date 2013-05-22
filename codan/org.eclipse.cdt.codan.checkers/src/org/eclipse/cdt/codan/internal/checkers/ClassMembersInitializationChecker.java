@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov and others
+ * Copyright (c) 2011, 2013 Anton Gorenkov and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -249,7 +249,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 		}
 
 		/** Checks that specified declaration is a class constructor 
-		 *  (it is a class member and its name is equal to class name)
+		 *  (it is a class member and its name is equal to the class name)
 		 */
 		private ICPPConstructor getConstructor(IASTDeclaration decl) {
 			if (decl instanceof ICPPASTFunctionDefinition) {
@@ -270,10 +270,11 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 						if (memberName != null) {
 							IBinding memberBinding = memberName.resolveBinding();
 							ICPPClassType classType = null; 
-							if (memberBinding instanceof ICPPClassType)
+							if (memberBinding instanceof ICPPClassType) {
 								classType = (ICPPClassType) memberBinding;
-							else if (memberBinding instanceof ICPPConstructor)
+							} else if (memberBinding instanceof ICPPConstructor) {
 								classType = ((ICPPConstructor) memberBinding).getClassOwner();
+							}
 							if (classType != null && classType.isSameType(constructor.getClassOwner()))
 								return null;
 						}

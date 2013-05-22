@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson			  - Modified for additional features in DSF Reference Implementation
+ *     Roland Grunberg (RedHat) - Refresh all registers once one is changed (Bug 400840)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -449,8 +450,25 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
     	fRegisterValueCache.reset();
     }
     
-    private void generateRegisterChangedEvent(IRegisterDMContext dmc ) {
+    private void generateRegisterChangedEvent(final IRegisterDMContext dmc ) {
         getSession().dispatchEvent(new RegisterChangedDMEvent(dmc), getProperties());
+
+        // Temporary fix for Bug 400840
+        // When one register is modified, it could affect other registers.
+        // To properly reflect that, we send a change for all registers.
+        // We cheat since we know there is currently only one group.  Once we handle
+        // more groups, this may not work properly.
+        final IRegisterGroupDMContext groupDmc = DMContexts.getAncestorOfType(dmc, IRegisterGroupDMContext.class);
+        if (groupDmc != null) {
+        	IRegistersChangedDMEvent event = new IRegistersChangedDMEvent() {
+        		@Override
+        		public IRegisterGroupDMContext getDMContext() {
+        			return groupDmc;
+        		}
+        	};
+        	getSession().dispatchEvent(event, getProperties());
+        }
+        
     }
     
     /*

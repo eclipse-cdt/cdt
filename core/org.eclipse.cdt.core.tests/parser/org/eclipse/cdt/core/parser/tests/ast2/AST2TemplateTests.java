@@ -2326,7 +2326,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	template<class U> void f1(void(*f)(const U&)) {}
 	//	void f2(const int& b){}
 	//	void test() {
-	//	  f1(&f2); // problem on f1
+	//	  f1(&f2);
 	//	}
 	public void testSimplifiedFunctionTemplateWithFunctionPointer_281783() throws Exception {
 		parseAndCheckBindings();
@@ -4207,7 +4207,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	};
 	//	template <typename T> class Y : X1<int> {
 	//		void test() {
-	//			X<int> x; // problem binding on X<int>
+	//			X<int> x;
 	//		}
 	//	};
 	public void testFriendClassTemplate_266992() throws Exception {
@@ -7551,7 +7551,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//
 	//	typedef A<C<const char*, K>> D;
 	//
-	//	typedef B<D>::type E;  // Problem on B<D>::type
+	//	typedef B<D>::type E;
 	public void testRegression_401743a() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -7573,7 +7573,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//
 	//	typedef A<C<F, K>> D;
 	//
-	//	typedef B<D>::type E;  // Problem on B<D>::type
+	//	typedef B<D>::type E;
 	public void testRegression_401743b() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -7597,7 +7597,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	  C<int>::pointer p;
 	//	  p->a = 0;
 	//	}
-	public void testRegression_408314() throws Exception {
+	public void testPseudoRecursiveTypedef_408314() throws Exception {
 		parseAndCheckBindings();
 	}
 

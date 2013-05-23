@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Ericsson and others.
+ * Copyright (c) 2010, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
+import org.eclipse.cdt.internal.core.cdtvariables.EclipseVariablesVariableSupplier.EclipseVarMacro;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -440,7 +441,13 @@ public class LaunchUtils {
 		ICdtVariable[] build_vars = CCorePlugin.getDefault().getCdtVariableManager().getVariables(cfg);
 		for (ICdtVariable var : build_vars) {
 			try {
-				envMap.put(var.getName(), var.getStringValue());
+				// EclipseVarMacro variables are internal to Eclipse and have nothing to do with
+				// environment variables. Some of them, e.g. project_classpath, may be lethal
+				// when they have very large values exceeding shell limit.
+				// See http://bugs.eclipse.org/bugs/show_bug.cgi?id=408522
+				if (!(var instanceof EclipseVarMacro)) {
+					envMap.put(var.getName(), var.getStringValue());
+				}
 			} catch (CdtVariableException e) {
 				// Some Eclipse dynamic variables can't be resolved dynamically... we don't care.
 			}
@@ -449,7 +456,7 @@ public class LaunchUtils {
 		// Turn it into an envp format
 		List<String> strings= new ArrayList<String>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {
-			StringBuffer buffer= new StringBuffer(entry.getKey());
+			StringBuilder buffer= new StringBuilder(entry.getKey());
 			buffer.append('=').append(entry.getValue());
 			strings.add(buffer.toString());
 		}

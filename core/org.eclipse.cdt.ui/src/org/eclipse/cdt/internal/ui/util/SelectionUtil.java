@@ -13,6 +13,10 @@ package org.eclipse.cdt.internal.ui.util;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 public class SelectionUtil {
 	/**
@@ -29,5 +33,27 @@ public class SelectionUtil {
 			return null;
 
 		return selection.getFirstElement();
+	}
+
+
+	/**
+	 * Returns the selection in the currently active workbench window part.
+	 * If the no selection exists or no selection exists in the active part <code>null</code> is returned.
+	 * 
+	 * @return the current selection in the active workbench window part or null
+	 */
+	public static ISelection getActiveSelection() {
+		ISelection selection = null;
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage activePage = window.getActivePage();
+			if (activePage != null) {
+				IWorkbenchPart activePart = activePage.getActivePart();
+				if (activePart != null) {
+					selection = window.getSelectionService().getSelection(activePart.getSite().getId());
+				}
+			}
+		}
+		return selection;
 	}
 }

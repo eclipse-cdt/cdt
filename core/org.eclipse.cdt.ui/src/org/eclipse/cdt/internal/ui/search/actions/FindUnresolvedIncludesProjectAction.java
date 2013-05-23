@@ -15,37 +15,29 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.ui.IActionDelegate;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CDTUITools;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
 
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.search.CSearchUnresolvedIncludesQuery;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.SelectionUtil;
 import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
 
 /**
@@ -72,24 +64,11 @@ public class FindUnresolvedIncludesProjectAction implements IObjectActionDelegat
 				}
 			}
 		} else if(fSelection instanceof ITextSelection) {
-			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			if(window != null) {
-				IWorkbenchPart workbenchPart= window.getPartService().getActivePart();
-				if (workbenchPart instanceof IEditorPart) {
-					IEditorPart editorPart = (IEditorPart) workbenchPart;
-					if(editorPart instanceof ITextEditor) {
-						IEditorInput editorInput = ((ITextEditor)editorPart).getEditorInput();
-						Object adapter = editorInput.getAdapter(IResource.class);
-						if (adapter instanceof IResource) {
-							IProject project = ((IResource)adapter).getProject();
-							if(project != null) {
-								ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
-								if(cproject != null) {
-									projects.add(cproject);
-								}
-							}
-						}
-					}
+			IProject project = EditorUtility.getProjectForActiveEditor();
+			if(project != null) {
+				ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
+				if(cproject != null) {
+					projects.add(cproject);
 				}
 			}
 		}
@@ -117,24 +96,9 @@ public class FindUnresolvedIncludesProjectAction implements IObjectActionDelegat
 		fSelection= selection;
 		isEnabled = false;
 		if(selection == null || selection instanceof ITextSelection) {
-			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			if(window != null) {
-				IWorkbenchPart workbenchPart = window.getPartService().getActivePart();
-				if (workbenchPart instanceof IEditorPart) {
-					IEditorPart editorPart= (IEditorPart) workbenchPart;
-					IEditorInput editorInput = editorPart.getEditorInput();
-					IWorkingCopyManager manager = CDTUITools.getWorkingCopyManager();
-					IWorkingCopy tu = manager.getWorkingCopy(editorInput);
-					if(tu != null) { // open file is a translation unit
-						isEnabled = true;
-					} else { // open file is part of a CDT project
-						Object adapter = editorInput.getAdapter(IResource.class);
-						if (adapter instanceof IResource) {
-							IProject project = ((IResource)adapter).getProject();
-							isEnabled = CoreModel.hasCNature(project);
-						}
-					}
-				}
+			IProject project = EditorUtility.getProjectForActiveEditor();
+			if(project != null) {
+				isEnabled = CoreModel.hasCNature(project);
 			}
 		} else if(selection instanceof IStructuredSelection) {
 			Object selectedElement = ((IStructuredSelection)selection).getFirstElement();
@@ -158,18 +122,7 @@ public class FindUnresolvedIncludesProjectAction implements IObjectActionDelegat
 	 * @return {@code true} if the action is enabled or {@code false} otherwise.
 	 */
 	public boolean isEnabled() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window != null) {
-			ISelection sel = StructuredSelection.EMPTY;
-			IWorkbenchPage activePage = window.getActivePage();
-			if (activePage != null) {
-				IWorkbenchPart activePart = activePage.getActivePart();
-				if (activePart != null) {
-					sel = window.getSelectionService().getSelection(activePart.getSite().getId());
-				}
-			}
-			selectionChanged(sel);
-		}
+		selectionChanged(SelectionUtil.getActiveSelection());
 		return isEnabled;
 	}
 

@@ -1015,4 +1015,31 @@ public class EditorUtility {
 
 		return new NullProgressMonitor();
 	}
+	
+	
+	/**
+	 * Returns the project contains the resource, which is currently open in the active editor.
+	 * If the active part is no ITextEditor or if the editorInput is no FileEditorInput, 
+	 * <code>null</code> is returned.
+	 * 
+	 * @return the project which the selected editor input belongs to or null
+	 */
+	public static IProject getProjectForActiveEditor() {
+		IProject project = null;
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if(window != null) {
+			IWorkbenchPage activePage = window.getActivePage();
+			if(activePage != null) {
+				IEditorPart activeEditor = activePage.getActiveEditor();
+				if(activeEditor instanceof ITextEditor) {
+					IEditorInput editorInput = ((ITextEditor)activeEditor).getEditorInput();
+					IFile file = ResourceUtil.getFile(editorInput);
+					if(file != null) {
+						project = file.getProject();
+					}
+				}
+			}
+		}
+		return project;
+	}
 }

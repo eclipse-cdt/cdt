@@ -39,7 +39,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
@@ -55,7 +54,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -97,6 +95,7 @@ import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.util.SelectionUtil;
 
 @SuppressWarnings("nls")
 public class CreateParserLogAction implements IObjectActionDelegate, IWorkbenchWindowActionDelegate {
@@ -181,24 +180,12 @@ public class CreateParserLogAction implements IObjectActionDelegate, IWorkbenchW
 				}
 			}
 		} else if(fSelection instanceof ITextSelection) {
-			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			if(window != null) {
-				IWorkbenchPart workbenchPart= window.getPartService().getActivePart();
-				if (workbenchPart instanceof IEditorPart) {
-					IEditorPart editorPart = (IEditorPart) workbenchPart;
-					if(editorPart instanceof ITextEditor) {
-						IEditorInput editorInput = ((ITextEditor)editorPart).getEditorInput();
-						IWorkingCopyManager manager = CDTUITools.getWorkingCopyManager();
-						IWorkingCopy tu = manager.getWorkingCopy(editorInput);
-						if(tu != null) {
-							tuSelection.add(tu);
-						}
-					}
-				}
+			IWorkingCopy tu = getTranslationUnitForSelectedEditorInput();
+			if(tu != null) {
+				tuSelection.add(tu);
 			}
 		}
-		
-
+	
 		ITranslationUnit[] tuArray= tuSelection.toArray(new ITranslationUnit[tuSelection.size()]);
 		if (tuArray.length == 0) {
 			return;
@@ -518,24 +505,30 @@ public class CreateParserLogAction implements IObjectActionDelegate, IWorkbenchW
 		isEnabled = false;
 		
 		if(selection == null || selection instanceof ITextSelection) {
-			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			if(window != null) {
-				IWorkbenchPart workbenchPart = window.getPartService().getActivePart();
-				if (workbenchPart instanceof IEditorPart) {
-					IEditorPart editorPart = (IEditorPart) workbenchPart;
-					IEditorInput editorInput = editorPart.getEditorInput();
-					IWorkingCopyManager manager = CDTUITools.getWorkingCopyManager();
-					IWorkingCopy tu = manager.getWorkingCopy(editorInput);
-					if(tu != null) {
-						isEnabled = true;
-					}
-				}
+			IWorkingCopy tu = getTranslationUnitForSelectedEditorInput();
+			if(tu != null) {
+				isEnabled = true;
 			}
 		} else if(selection instanceof IStructuredSelection) {
 			if(((IStructuredSelection)selection).getFirstElement() instanceof ITranslationUnit) {
 				isEnabled = true;
 			}
 		}
+	}
+
+	private IWorkingCopy getTranslationUnitForSelectedEditorInput() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if(window != null) {
+			IWorkbenchPart workbenchPart = window.getPartService().getActivePart();
+			if (workbenchPart instanceof IEditorPart) {
+				IEditorPart editorPart = (IEditorPart) workbenchPart;
+				IEditorInput editorInput = editorPart.getEditorInput();
+				IWorkingCopyManager manager = CDTUITools.getWorkingCopyManager();
+				IWorkingCopy tu = manager.getWorkingCopy(editorInput);
+				return tu;
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -550,18 +543,7 @@ public class CreateParserLogAction implements IObjectActionDelegate, IWorkbenchW
 	 * @return {@code true} if the action is enabled or {@code false} otherwise.
 	 */
 	public boolean isEnabled() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window != null) {
-			ISelection sel = StructuredSelection.EMPTY;
-			IWorkbenchPage activePage = window.getActivePage();
-			if (activePage != null) {
-				IWorkbenchPart activePart = activePage.getActivePart();
-				if (activePart != null) {
-					sel= window.getSelectionService().getSelection(activePart.getSite().getId());
-				}
-			}
-			selectionChanged(sel);
-		}
+		selectionChanged(SelectionUtil.getActiveSelection());
 		return isEnabled;
 	}
 

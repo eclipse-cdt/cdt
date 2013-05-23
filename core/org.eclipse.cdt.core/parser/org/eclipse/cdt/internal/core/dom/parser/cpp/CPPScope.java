@@ -222,7 +222,6 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 		return ArrayUtil.trim(IBinding.class, result);
 	}
 
-
 	public IBinding[] getBindingsInAST(ScopeLookupData lookup) {
 		populateCache();
 	    final char[] c = lookup.getLookupKey();

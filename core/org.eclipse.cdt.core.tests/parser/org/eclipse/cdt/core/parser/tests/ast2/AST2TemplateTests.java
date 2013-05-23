@@ -7601,6 +7601,29 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template<class T>
+	//	struct A {
+	//	  T a;
+	//	};
+	//
+	//	template<typename T>
+	//	struct B {
+	//	  typedef T* pointer;
+	//	};
+	//
+	//	template <class U>
+	//	struct C : public B<A<U>> {
+	//	  typedef typename C::pointer pointer;
+	//	};
+	//
+	//	void test() {
+	//	  C<int>::pointer p;
+	//	  p->a = 0;
+	//	}
+	public void testRegression_408314() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <typename T>
 	//	void foo(T t) {
 	//	    bar(t);

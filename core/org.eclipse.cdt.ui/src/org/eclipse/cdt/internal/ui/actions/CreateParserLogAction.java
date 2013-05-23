@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,17 +36,23 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -77,7 +83,9 @@ import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
 
 import org.eclipse.cdt.internal.core.model.ASTCache;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
@@ -87,10 +95,12 @@ import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.util.SelectionUtil;
 
 @SuppressWarnings("nls")
-public class CreateParserLogAction implements IObjectActionDelegate {
+public class CreateParserLogAction implements IObjectActionDelegate, IWorkbenchWindowActionDelegate {
 	private static final String INDENT = "   ";
+	private boolean isEnabled;
 
 	private static final class MyVisitor extends ASTVisitor {
 		List<IASTProblem> fProblems= new ArrayList<IASTProblem>();
@@ -143,14 +153,10 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 	}
 
 	@Override
-	public void selectionChanged(IAction action, ISelection selection) {
-		fSelection = selection;
-	}
-
-	@Override
 	public void run(IAction action) {
-		if (!(fSelection instanceof IStructuredSelection))
+		if(!(fSelection instanceof IStructuredSelection) && !(fSelection instanceof ITextSelection)) {
 			return;
+		}
 
 		List<IWorkingCopy> workingCopies = new ArrayList<IWorkingCopy>();
 		final IWorkbenchPage activePage = fSite.getWorkbenchWindow().getActivePage();
@@ -162,16 +168,24 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 					workingCopies.add((IWorkingCopy) inputElement);
 			}
 		}
-		final String title= action.getText().replace("&", "");
-		IStructuredSelection cElements= SelectionConverter.convertSelectionToCElements(fSelection);
-		Iterator<?> i= cElements.iterator();
 		ArrayList<ITranslationUnit> tuSelection= new ArrayList<ITranslationUnit>();
-		while (i.hasNext()) {
-			Object o= i.next();
-			if (o instanceof ITranslationUnit) {
-				tuSelection.add(convertToWorkingCopy((ITranslationUnit) o, workingCopies));
+		String title = ActionMessages.CreateParserLogAction_title;
+		if(fSelection instanceof IStructuredSelection) {
+			IStructuredSelection cElements= SelectionConverter.convertSelectionToCElements(fSelection);
+			Iterator<?> i= cElements.iterator();
+			while (i.hasNext()) {
+				Object o= i.next();
+				if (o instanceof ITranslationUnit) {
+					tuSelection.add(convertToWorkingCopy((ITranslationUnit) o, workingCopies));
+				}
+			}
+		} else if(fSelection instanceof ITextSelection) {
+			IWorkingCopy tu = getTranslationUnitForSelectedEditorInput();
+			if(tu != null) {
+				tuSelection.add(tu);
 			}
 		}
+	
 		ITranslationUnit[] tuArray= tuSelection.toArray(new ITranslationUnit[tuSelection.size()]);
 		if (tuArray.length == 0) {
 			return;
@@ -221,7 +235,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 			} catch (Exception e) {
 			}
 		} catch (IOException e) {
-			MessageDialog.openError(fSite.getShell(), action.getText(), e.getMessage());
+			MessageDialog.openError(fSite.getShell(), title, e.getMessage());
 		}
 		
 	}
@@ -481,5 +495,60 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 			}
 			out.println();
 		}
+	}
+	
+	/**
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 */
+	public void selectionChanged(ISelection selection) {
+		fSelection= selection;
+		isEnabled = false;
+		
+		if(selection == null || selection instanceof ITextSelection) {
+			IWorkingCopy tu = getTranslationUnitForSelectedEditorInput();
+			if(tu != null) {
+				isEnabled = true;
+			}
+		} else if(selection instanceof IStructuredSelection) {
+			if(((IStructuredSelection)selection).getFirstElement() instanceof ITranslationUnit) {
+				isEnabled = true;
+			}
+		}
+	}
+
+	private IWorkingCopy getTranslationUnitForSelectedEditorInput() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if(window != null) {
+			IWorkbenchPart workbenchPart = window.getPartService().getActivePart();
+			if (workbenchPart instanceof IEditorPart) {
+				IEditorPart editorPart = (IEditorPart) workbenchPart;
+				IEditorInput editorInput = editorPart.getEditorInput();
+				IWorkingCopyManager manager = CDTUITools.getWorkingCopyManager();
+				IWorkingCopy tu = manager.getWorkingCopy(editorInput);
+				return tu;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void init(IWorkbenchWindow window) {
+	}
+	
+	@Override
+	public void dispose() {
+	}
+	
+	/**
+	 * @return {@code true} if the action is enabled or {@code false} otherwise.
+	 */
+	public boolean isEnabled() {
+		selectionChanged(SelectionUtil.getActiveSelection());
+		return isEnabled;
+	}
+
+	@Override
+	public void selectionChanged(IAction action, ISelection selection) {
+		selectionChanged(selection);
 	}
 }

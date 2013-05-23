@@ -62,7 +62,7 @@ public class LRTemplateTests extends AST2TemplateTests {
 	
 	//the below test case are for C++0x features which are not included in XLC++ yet
 	@Override
-	public void testRValueReferences_1_294730() throws Exception {}	
+	public void testRValueReferences_294730() throws Exception {}	
 	@Override
 	public void testVariadicTemplateExamples_280909a() throws Exception {}
 	@Override

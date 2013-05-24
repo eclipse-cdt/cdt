@@ -1407,16 +1407,19 @@
          </visibility>
          <action
                class="org.eclipse.cdt.internal.ui.actions.UpdateUnresolvedIncludesAction"
+               definitionId="org.eclipse.cdt.ui.menu.updateUnresolvedIncludes"
                id="org.eclipse.cdt.ui.updateUnresolvedIncludesAction"
                label="%UpdateUnresolvedIncludes.name"
                menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <action
                class="org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction"
+               definitionId="org.eclipse.cdt.ui.menu.updateWithModifiedFiles"
                id="org.eclipse.cdt.ui.syncIndexWithDiskAction"
                label="%SyncIndex.name"
                menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <action
                class="org.eclipse.cdt.internal.ui.actions.FreshenIndexAction"
+               definitionId="org.eclipse.cdt.ui.menu.freshenAllFiles"
                id="org.eclipse.cdt.ui.updateIndexAction"
                label="%FreshenIndex.name"
                menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
@@ -1438,6 +1441,7 @@
          </visibility>
          <action
              class="org.eclipse.cdt.internal.ui.actions.CreateParserLogAction"
+             definitionId="org.eclipse.cdt.ui.menu.createParserLog"
              id="org.eclipse.cdt.ui.parserLogAction"
              label="%CreateParserLog.name"
              menubarPath="org.eclipse.cdt.ui.indexmenu/log"/>
@@ -1456,11 +1460,13 @@
           objectClass="org.eclipse.cdt.core.model.ICProject">
          <action
              class="org.eclipse.cdt.internal.ui.actions.RebuildIndexAction"
+             definitionId="org.eclipse.cdt.ui.menu.rebuildIndex"
              id="org.eclipse.cdt.ui.rebuildIndexAction"
              label="%RebuildIndex.name"
              menubarPath="org.eclipse.cdt.ui.indexmenu/rebuild"/>
          <action
              class="org.eclipse.cdt.internal.ui.search.actions.FindUnresolvedIncludesProjectAction"
+             definitionId="org.eclipse.cdt.ui.menu.findUnresolvedIncludes"
              id="org.eclipse.cdt.ui.searchUnresolvedIncludes"
              label="%SearchUnresolvedIncludes.name"
              menubarPath="org.eclipse.cdt.ui.indexmenu/search"/>
@@ -1485,26 +1491,31 @@
          </visibility>          
          <action
              class="org.eclipse.cdt.internal.ui.actions.UpdateUnresolvedIncludesAction"
+             definitionId="org.eclipse.cdt.ui.menu.updateUnresolvedIncludes"
              id="org.eclipse.cdt.ui.updateUnresolvedIncludesAction"
              label="%UpdateUnresolvedIncludes.name"
              menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <action
              class="org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction"
+             definitionId="org.eclipse.cdt.ui.menu.updateWithModifiedFiles"
              id="org.eclipse.cdt.ui.syncIndexWithDiskAction"
              label="%SyncIndex.name"
              menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <action
              class="org.eclipse.cdt.internal.ui.actions.FreshenIndexAction"
+             definitionId="org.eclipse.cdt.ui.menu.freshenAllFiles"
              id="org.eclipse.cdt.ui.updateIndexAction"
              label="%FreshenIndex.name"
              menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <action
              class="org.eclipse.cdt.internal.ui.actions.RebuildIndexAction"
+             definitionId="org.eclipse.cdt.ui.menu.rebuildIndex"
              id="org.eclipse.cdt.ui.rebuildIndexAction"
              label="%RebuildIndex.name"
              menubarPath="org.eclipse.cdt.ui.indexmenu/rebuild"/>
          <action
              class="org.eclipse.cdt.internal.ui.search.actions.FindUnresolvedIncludesProjectAction"
+             definitionId="org.eclipse.cdt.ui.menu.findUnresolvedIncludes"
              id="org.eclipse.cdt.ui.searchUnresolvedIncludes"
              label="%SearchUnresolvedIncludes.name"
              menubarPath="org.eclipse.cdt.ui.indexmenu/search"/>
@@ -4491,44 +4502,26 @@
     <handler
 		class="org.eclipse.cdt.internal.ui.actions.RebuildIndexHandler"
 		commandId="org.eclipse.cdt.ui.menu.rebuildIndex">
-			<enabledWhen>
-				<test property="org.eclipse.cdt.internal.ui.index.rebuild" value="enabled"/>
-			</enabledWhen>
     </handler>
 	<handler
 		class="org.eclipse.cdt.internal.ui.actions.FreshenAllFilesHandler"
 		commandId="org.eclipse.cdt.ui.menu.freshenAllFiles">
-			<enabledWhen>
-				<test property="org.eclipse.cdt.internal.ui.index.freshen" value="enabled"/>
-			</enabledWhen>
     </handler>
 	<handler
 		class="org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesHandler"
 		commandId="org.eclipse.cdt.ui.menu.updateWithModifiedFiles">
-			<enabledWhen>
-				<test property="org.eclipse.cdt.internal.ui.index.udpateWithModifiedFiles" value="enabled"/>
-			</enabledWhen>
     </handler>
 	<handler
 		class="org.eclipse.cdt.internal.ui.actions.UpdateUnresolvedIncludesHandler"
 		commandId="org.eclipse.cdt.ui.menu.updateUnresolvedIncludes">
-			<enabledWhen>
-				<test property="org.eclipse.cdt.internal.ui.index.updateUnresolvedIncludes" value="enabled"/>
-			</enabledWhen>
     </handler>
 	<handler
 		class="org.eclipse.cdt.internal.ui.search.actions.FindUnresolvedIncludesHandler"
 		commandId="org.eclipse.cdt.ui.menu.findUnresolvedIncludes">
-			<enabledWhen>
-				<test property="org.eclipse.cdt.internal.ui.index.findUnresolvedIncludes" value="enabled"/>
-			</enabledWhen>
     </handler>
 	<handler
 		class="org.eclipse.cdt.internal.ui.actions.CreateParserLogHandler"
 		commandId="org.eclipse.cdt.ui.menu.createParserLog">
-			<enabledWhen>
-				<test property="org.eclipse.cdt.internal.ui.index.log" value="enabled"/>
-			</enabledWhen>
     </handler>
  </extension>
  <extension
@@ -4538,7 +4531,27 @@
 		<menu
 			label="%C.Cpp.Index.menu">
             <visibleWhen>
-            	<test property="org.eclipse.cdt.internal.ui.index.enabled" value="enabled"/>
+                <or>
+                    <with variable="selection">
+                        <iterate operator="and" ifEmpty="false">
+                            <adapt type="org.eclipse.core.resources.IResource">
+                                <test
+                                     property="org.eclipse.core.resources.projectNature"
+                                     value="org.eclipse.cdt.core.cnature"/>
+                            </adapt>
+                        </iterate>
+                    </with>
+                    <with variable="activeEditorInput">
+                        <or>
+                            <adapt type="org.eclipse.core.resources.IFile">
+                                <test
+                                     property="org.eclipse.core.resources.projectNature"
+                                     value="org.eclipse.cdt.core.cnature"/>
+                            </adapt>
+                            <instanceof value="org.eclipse.cdt.internal.ui.util.ExternalEditorInput"/>
+                        </or>
+                    </with>
+                </or>
             </visibleWhen>
 			<separator
                   name="rebuild"
@@ -4583,16 +4596,6 @@
 		</menu>
 	</menuContribution>
  </extension>
- <extension
-	point="org.eclipse.core.expressions.propertyTesters">
-	<propertyTester
-		class="org.eclipse.cdt.internal.ui.actions.IndexActionsEnabledTester"
-		id="org.eclipse.cdt.internal.ui.actions.IndexActionsEnabledTester"
-		namespace="org.eclipse.cdt.internal.ui.index" 
-		properties="enabled,rebuild,freshen,udpateWithModifiedFiles,updateUnresolvedIncludes,findUnresolvedIncludes,log"
-		type="java.lang.Object">
-	</propertyTester>
- </extension> 
  <extension
        point="org.eclipse.ui.commands">
     <command

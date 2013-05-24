@@ -20,31 +20,28 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.cdt.internal.ui.util.SelectionUtil;
 
 /**
- * Handler for {@link org.eclipse.cdt.internal.ui.actions.CreateParserLogAction}
- *
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
+ * Abstract handler for {@link org.eclipse.cdt.internal.ui.actions.AbstractUpdateIndexAction}
  */
-public class CreateParserLogHandler extends AbstractHandler {
+public abstract class AbstractUpdateIndexHandler extends AbstractHandler {
 	
-	private final CreateParserLogAction createParserLogAction = new CreateParserLogAction();
-
+	abstract protected AbstractUpdateIndexAction getAction();
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
-		createParserLogAction.setActivePart(null, part);
-		createParserLogAction.selectionChanged(null, selection);
-		createParserLogAction.run(null);
+		getAction().setActivePart(null, part);
+		getAction().selectionChanged(null, selection);
+		getAction().run(null);
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
 	 */
 	@Override
 	public void setEnabled(Object evaluationContext) {
     	ISelection selection = SelectionUtil.getActiveSelection();
-    	setBaseEnabled(createParserLogAction.isEnabledFor(selection));
+    	setBaseEnabled(getAction().isEnabledFor(selection));
 	}
 }

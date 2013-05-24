@@ -42,7 +42,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -51,7 +50,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
@@ -95,12 +93,10 @@ import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.util.SelectionUtil;
 
 @SuppressWarnings("nls")
-public class CreateParserLogAction implements IObjectActionDelegate, IWorkbenchWindowActionDelegate {
+public class CreateParserLogAction implements IObjectActionDelegate {
 	private static final String INDENT = "   ";
-	private boolean isEnabled;
 
 	private static final class MyVisitor extends ASTVisitor {
 		List<IASTProblem> fProblems= new ArrayList<IASTProblem>();
@@ -168,29 +164,20 @@ public class CreateParserLogAction implements IObjectActionDelegate, IWorkbenchW
 					workingCopies.add((IWorkingCopy) inputElement);
 			}
 		}
-		ArrayList<ITranslationUnit> tuSelection= new ArrayList<ITranslationUnit>();
-		String title = ActionMessages.CreateParserLogAction_title;
-		if(fSelection instanceof IStructuredSelection) {
-			IStructuredSelection cElements= SelectionConverter.convertSelectionToCElements(fSelection);
-			Iterator<?> i= cElements.iterator();
-			while (i.hasNext()) {
-				Object o= i.next();
-				if (o instanceof ITranslationUnit) {
-					tuSelection.add(convertToWorkingCopy((ITranslationUnit) o, workingCopies));
-				}
-			}
-		} else if(fSelection instanceof ITextSelection) {
-			IWorkingCopy tu = getTranslationUnitForSelectedEditorInput();
-			if(tu != null) {
-				tuSelection.add(tu);
+		
+		ArrayList<ITranslationUnit> tuSelection = getSelectedTranslationUnits();
+		for(int i = 0; i < tuSelection.size(); i++) {
+			if(!(tuSelection.get(i) instanceof IWorkingCopy)) {
+				tuSelection.set(i, convertToWorkingCopy(tuSelection.get(i), workingCopies));
 			}
 		}
-	
+
 		ITranslationUnit[] tuArray= tuSelection.toArray(new ITranslationUnit[tuSelection.size()]);
 		if (tuArray.length == 0) {
 			return;
 		}
 		FileDialog dlg= new FileDialog(fSite.getShell(), SWT.SAVE);
+		String title = ActionMessages.CreateParserLogAction_title;
 		dlg.setText(title);
 		dlg.setFilterExtensions(new String[]{"*.log"});
 		String path= null;
@@ -496,27 +483,13 @@ public class CreateParserLogAction implements IObjectActionDelegate, IWorkbenchW
 			out.println();
 		}
 	}
-	
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
-	public void selectionChanged(ISelection selection) {
-		fSelection= selection;
-		isEnabled = false;
-		
-		if(selection == null || selection instanceof ITextSelection) {
-			IWorkingCopy tu = getTranslationUnitForSelectedEditorInput();
-			if(tu != null) {
-				isEnabled = true;
-			}
-		} else if(selection instanceof IStructuredSelection) {
-			if(((IStructuredSelection)selection).getFirstElement() instanceof ITranslationUnit) {
-				isEnabled = true;
-			}
-		}
-	}
 
-	private IWorkingCopy getTranslationUnitForSelectedEditorInput() {
+	@Override
+	public void selectionChanged(IAction action, ISelection selection) {
+		fSelection = selection;
+	}
+	
+	public IWorkingCopy getTranslationUnitForSelectedEditorInput() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if(window != null) {
 			IWorkbenchPart workbenchPart = window.getPartService().getActivePart();
@@ -531,24 +504,29 @@ public class CreateParserLogAction implements IObjectActionDelegate, IWorkbenchW
 		return null;
 	}
 
-	@Override
-	public void init(IWorkbenchWindow window) {
+	public boolean isEnabledFor(ISelection selection) {
+		selectionChanged(null, selection);
+		ArrayList<ITranslationUnit> tus = getSelectedTranslationUnits();
+		return tus.size() > 0;
 	}
 	
-	@Override
-	public void dispose() {
-	}
-	
-	/**
-	 * @return {@code true} if the action is enabled or {@code false} otherwise.
-	 */
-	public boolean isEnabled() {
-		selectionChanged(SelectionUtil.getActiveSelection());
-		return isEnabled;
-	}
-
-	@Override
-	public void selectionChanged(IAction action, ISelection selection) {
-		selectionChanged(selection);
+	private ArrayList<ITranslationUnit> getSelectedTranslationUnits() {
+		ArrayList<ITranslationUnit> tuSelection= new ArrayList<ITranslationUnit>();
+		if(fSelection instanceof IStructuredSelection) {
+			IStructuredSelection cElements= SelectionConverter.convertSelectionToCElements(fSelection);
+			Iterator<?> i= cElements.iterator();
+			while (i.hasNext()) {
+				Object o= i.next();
+				if (o instanceof ITranslationUnit) {
+					tuSelection.add((ITranslationUnit)o);
+				}
+			}
+		} else if(fSelection == null || fSelection instanceof ITextSelection) {
+			IWorkingCopy tu = getTranslationUnitForSelectedEditorInput();
+			if(tu != null) {
+				tuSelection.add(tu);
+			}
+		}
+		return tuSelection;
 	}
 }

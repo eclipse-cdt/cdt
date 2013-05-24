@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Handler for {@link org.eclipse.cdt.internal.ui.actions.FreshenIndexAction}
@@ -23,17 +17,12 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class FreshenAllFilesHandler extends AbstractHandler {
+public class FreshenAllFilesHandler extends AbstractUpdateIndexHandler {
 
 	private final FreshenIndexAction freshenIndexAction = new FreshenIndexAction();
 	
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ISelection selection = HandlerUtil.getCurrentSelection(event);
-		IWorkbenchPart part = HandlerUtil.getActivePart(event);
-		freshenIndexAction.setActivePart(null, part);
-		freshenIndexAction.selectionChanged(null, selection);
-		freshenIndexAction.run(null);
-		return null;
+	public AbstractUpdateIndexAction getAction() {
+		return freshenIndexAction;
 	}
 }

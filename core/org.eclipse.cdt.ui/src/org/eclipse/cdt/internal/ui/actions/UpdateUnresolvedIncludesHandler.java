@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Handler for {@link org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction}
@@ -23,17 +17,12 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class UpdateUnresolvedIncludesHandler extends AbstractHandler {
+public class UpdateUnresolvedIncludesHandler extends AbstractUpdateIndexHandler {
 
-	private final UpdateUnresolvedIncludesAction udpateAction = new UpdateUnresolvedIncludesAction();
+	private final UpdateUnresolvedIncludesAction updateAction = new UpdateUnresolvedIncludesAction();
 	
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ISelection selection = HandlerUtil.getCurrentSelection(event);
-		IWorkbenchPart part = HandlerUtil.getActivePart(event);
-		udpateAction.setActivePart(null, part);
-		udpateAction.selectionChanged(null, selection);
-		udpateAction.run(null);
-		return null;
+	public AbstractUpdateIndexAction getAction() {
+		return updateAction;
 	}
 }

@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Handler for {@link org.eclipse.cdt.internal.ui.actions.RebuildIndexAction}
@@ -23,17 +17,12 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class RebuildIndexHandler extends AbstractHandler {
+public class RebuildIndexHandler extends AbstractUpdateIndexHandler {
 
 	private final RebuildIndexAction rebuildIndexAction = new RebuildIndexAction();
 	
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ISelection selection = HandlerUtil.getCurrentSelection(event);
-		IWorkbenchPart part = HandlerUtil.getActivePart(event);
-		rebuildIndexAction.setActivePart(null, part);
-		rebuildIndexAction.selectionChanged(null, selection);
-		rebuildIndexAction.run(null);
-		return null;
+	public AbstractUpdateIndexAction getAction() {
+		return rebuildIndexAction;
 	}
 }

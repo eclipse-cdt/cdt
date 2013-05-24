@@ -143,23 +143,20 @@ public class TodoTaskInputDialog extends StatusDialog {
 	private void doValidation() {
 		StatusInfo status = new StatusInfo();
 		String newText = fNameDialogField.getText();
-		if (newText.length() == 0) {
+		if (newText.isEmpty()) {
 			status.setError(PreferencesMessages.TodoTaskInputDialog_error_enterName); 
 		} else {
 			if (newText.indexOf(',') != -1) {
 				status.setError(PreferencesMessages.TodoTaskInputDialog_error_comma); 
 			} else if (fExistingNames.contains(newText)) {
 				status.setError(PreferencesMessages.TodoTaskInputDialog_error_entryExists); 
-			} else if (Character.isWhitespace(newText.charAt(0)) ||  Character.isWhitespace(newText.charAt(newText.length() - 1))) {
+			} else if (Character.isWhitespace(newText.charAt(0)) || Character.isWhitespace(newText.charAt(newText.length() - 1))) {
 				status.setError(PreferencesMessages.TodoTaskInputDialog_error_noSpace); 
 			}
 		}
 		updateStatus(status);
 	}
 
-	/*
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);

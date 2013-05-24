@@ -7660,6 +7660,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	  p->a = 0;
 	//	}
 	public void testPseudoRecursiveTypedef_408314() throws Exception {
+		CPPASTNameBase.sAllowRecursionBindings = true;
 		parseAndCheckBindings();
 	}
 

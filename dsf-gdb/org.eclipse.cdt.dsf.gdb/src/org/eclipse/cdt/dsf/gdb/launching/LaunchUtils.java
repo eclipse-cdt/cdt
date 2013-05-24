@@ -440,7 +440,11 @@ public class LaunchUtils {
 		ICdtVariable[] build_vars = CCorePlugin.getDefault().getCdtVariableManager().getVariables(cfg);
 		for (ICdtVariable var : build_vars) {
 			try {
-				envMap.put(var.getName(), var.getStringValue());
+				// The project_classpath variable contributed by JDT is useless for running C/C++
+				// binaries, but it can be lethal if it has a very large value that exceeds shell
+				// limit. See http://bugs.eclipse.org/bugs/show_bug.cgi?id=408522
+				if (!"project_classpath".equals(var.getName())) //$NON-NLS-1$
+					envMap.put(var.getName(), var.getStringValue());
 			} catch (CdtVariableException e) {
 				// Some Eclipse dynamic variables can't be resolved dynamically... we don't care.
 			}

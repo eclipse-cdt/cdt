@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPn//7ig\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2146,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-05-24T19:44:06Z",
+      "side": 1,
+      "message": "I wouldn\u0027t look for MIBreakpoints, since it is not generic.  I\u0027d look for IBreakpoints, and then check that it is an instanceof IMIBreakpointPathAdjuster.\n\nOr, you could have the breakpoints service register under the name IMIBreakpointPathAdjuster, and ask for that service.  But I think that is more brittle a solution, because it will be easy to forget to register a new bp service version under that name.",
+      "revId": "4281cc2a7d623801490339b17b3c1a31c39042aa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn//7iY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/IMIBreakpointPathAdjuster.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-05-24T19:44:06Z",
+      "side": 1,
+      "message": "There\u0027s a bunch of Windows \\r in this file",
+      "revId": "4281cc2a7d623801490339b17b3c1a31c39042aa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn//7iI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRunControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1618,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-05-24T19:44:06Z",
+      "side": 1,
+      "message": "Here too, I wouldn\u0027t look for MIBreakpoints, but IBreakpoints, then IMIBreakpointPathAdjuster.",
+      "revId": "4281cc2a7d623801490339b17b3c1a31c39042aa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

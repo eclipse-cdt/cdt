@@ -2977,7 +2977,7 @@
       </command>
       <command
             name="%ActionDefinition.organizeIncludes.name"
-            description="%ActionDefinition.OrganizeIncludes.description"
+            description="%ActionDefinition.organizeIncludes.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.organize.includes">
       </command>

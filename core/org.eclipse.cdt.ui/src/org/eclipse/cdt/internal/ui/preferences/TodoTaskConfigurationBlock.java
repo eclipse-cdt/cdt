@@ -51,9 +51,12 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogFie
 public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 	private static final Key PREF_TODO_TASK_TAGS = getCDTCoreKey(CCorePreferenceConstants.TODO_TASK_TAGS);
 	private static final Key PREF_TODO_TASK_PRIORITIES = getCDTCoreKey(CCorePreferenceConstants.TODO_TASK_PRIORITIES);
-	
 	private static final Key PREF_TODO_TASK_CASE_SENSITIVE = getCDTCoreKey(CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE);	
-	
+
+	private static final Key[] ALL_KEYS = new Key[] {
+		PREF_TODO_TASK_TAGS, PREF_TODO_TASK_PRIORITIES, PREF_TODO_TASK_CASE_SENSITIVE
+	};
+
 	private static final String TASK_PRIORITY_HIGH = CCorePreferenceConstants.TASK_PRIORITY_HIGH;
 	private static final String TASK_PRIORITY_NORMAL = CCorePreferenceConstants.TASK_PRIORITY_NORMAL;
 	private static final String TASK_PRIORITY_LOW = CCorePreferenceConstants.TASK_PRIORITY_LOW;
@@ -68,32 +71,21 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		public TodoTaskLabelProvider() {
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-		 */
 		@Override
 		public Image getImage(Object element) {
-			return null; // JavaPluginImages.get(JavaPluginImages.IMG_OBJS_REFACTORING_INFO);
+			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-		 */
 		@Override
 		public String getText(Object element) {
 			return getColumnText(element, 0);
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
-		 */
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-		 */
+
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			TodoTask task = (TodoTask) element;
@@ -114,9 +106,6 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 			return ""; //$NON-NLS-1$	
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
-		 */
 		@Override
 		public Font getFont(Object element) {
 			if (isDefaultTask((TodoTask) element)) {
@@ -133,7 +122,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 			return getComparator().compare(((TodoTask) e1).name, ((TodoTask) e2).name);
 		}
 	}
-	
+
 	private static final int IDX_ADD = 0;
 	private static final int IDX_EDIT = 1;
 	private static final int IDX_REMOVE = 2;
@@ -145,7 +134,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 
 
 	public TodoTaskConfigurationBlock(IStatusChangeListener context, IProject project, IWorkbenchPreferenceContainer container) {
-		super(context, project, getKeys(), container);
+		super(context, project, ALL_KEYS, container);
 						
 		TaskTagAdapter adapter = new TaskTagAdapter();
 		String[] buttons = new String[] {
@@ -199,12 +188,6 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		fTodoTasksList.enableButton(IDX_DEFAULT, false);
 	}
 	
-	private static Key[] getKeys() {
-		return new Key[] {
-			PREF_TODO_TASK_TAGS, PREF_TODO_TASK_PRIORITIES, PREF_TODO_TASK_CASE_SENSITIVE
-		};	
-	}	
-	
 	public class TaskTagAdapter implements IListAdapter<TodoTask>, IDialogFieldListener {
 		private boolean canEdit(List<TodoTask> selectedElements) {
 			return selectedElements.size() == 1;
@@ -242,37 +225,30 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 	@Override
 	protected Control createContents(Composite parent) {
 		setShell(parent.getShell());
-		
-		Composite markersComposite = createMarkersTabContent(parent);
-		
-		validateSettings(null, null, null);
-	
-		return markersComposite;
-	}
-
-	private Composite createMarkersTabContent(Composite folder) {
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		layout.numColumns = 2;
 		
-		PixelConverter conv = new PixelConverter(folder);
+		PixelConverter conv = new PixelConverter(parent);
 		
-		Composite markersComposite = new Composite(folder, SWT.NULL);
-		markersComposite.setLayout(layout);
-		markersComposite.setFont(folder.getFont());
+		Composite composite = new Composite(parent, SWT.NULL);
+		composite.setLayout(layout);
+		composite.setFont(parent.getFont());
 		
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = conv.convertWidthInCharsToPixels(50);
-		Control listControl = fTodoTasksList.getListControl(markersComposite);
+		Control listControl = fTodoTasksList.getListControl(composite);
 		listControl.setLayoutData(data);
-
-		Control buttonsControl = fTodoTasksList.getButtonBox(markersComposite);
+		
+		Control buttonsControl = fTodoTasksList.getButtonBox(composite);
 		buttonsControl.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING));
 		
-		fCaseSensitiveCheckBox.doFillIntoGrid(markersComposite, 2);
-
-		return markersComposite;
+		fCaseSensitiveCheckBox.doFillIntoGrid(composite, 2);
+		
+		validateSettings(null, null, null);
+	
+		return composite;
 	}
 
 	@Override
@@ -298,7 +274,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		return new StatusInfo();
 	}
 	
-	protected final void updateModel(DialogField field) {
+	private void updateModel(DialogField field) {
 		if (field == fTodoTasksList) {
 			StringBuffer tags = new StringBuffer();
 			StringBuffer prios = new StringBuffer();
@@ -321,9 +297,6 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock#updateControls()
-	 */
 	@Override
 	protected void updateControls() {
 		unpackTodoTasks();

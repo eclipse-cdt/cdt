@@ -15,32 +15,25 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.util.SelectionUtil;
 
-public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate, IWorkbenchWindowActionDelegate {
+public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate {
 	private ISelection fSelection;
-	private boolean isEnabled;
 
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
@@ -51,28 +44,13 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 		if(!(fSelection instanceof IStructuredSelection) && !(fSelection instanceof ITextSelection)) {
 			return;
 		}
-		
-		ArrayList<ICElement> tuSelection= new ArrayList<ICElement>();
-		if(fSelection instanceof IStructuredSelection) {
-			IStructuredSelection cElements= SelectionConverter.convertSelectionToCElements(fSelection);
-			for (Iterator<?> i= cElements.iterator(); i.hasNext();) {
-				Object o= i.next();
-				if (o instanceof ICProject || o instanceof ICContainer || o instanceof ITranslationUnit) {
-					tuSelection.add((ICElement) o);
-				}
-			}
-		} else if(fSelection instanceof ITextSelection) {
-			IProject project = EditorUtility.getProjectForActiveEditor();
-			if(project != null) {
-				ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
-				if(cproject != null) {
-					tuSelection.add(cproject);
-				}
-			}
-		}
-		ICElement[] tuArray= tuSelection.toArray(new ICElement[tuSelection.size()]);
+		ICProject[] projects = getSelectedCProjects();
+		doRun(projects);
+	}
+
+	protected void doRun(ICProject[] projects) {
 		try {
-			CCorePlugin.getIndexManager().update(tuArray, getUpdateOptions());
+			CCorePlugin.getIndexManager().update(projects, getUpdateOptions());
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
 		}
@@ -84,47 +62,40 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 	 * @since 4.0
 	 */
 	abstract protected int getUpdateOptions();
-	
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
-	public void selectionChanged(ISelection selection) {
-		fSelection= selection;
-		isEnabled = false;
-		
-		if(selection == null || selection instanceof ITextSelection) {
-			IProject project = EditorUtility.getProjectForActiveEditor();
-			if(project != null) {
-				isEnabled = CoreModel.hasCNature(project);
-			}
-		} else if(selection instanceof IStructuredSelection) {
-			Object selectedElement = ((IStructuredSelection)selection).getFirstElement();
-			if(selectedElement instanceof IProject) {
-				isEnabled = CoreModel.hasCNature((IProject)selectedElement) && ((IProject)selectedElement).isOpen();
-			} else if(selectedElement instanceof ITranslationUnit) {
-				isEnabled = true;
-			}
-		}
-	}
-
-	@Override
-	public void init(IWorkbenchWindow window) {
-	}
-	
-	@Override
-	public void dispose() {
-	}
-
-	/**
-	 * @return {@code true} if the action is enabled or {@code false} otherwise.
-	 */
-	public boolean isEnabled() {
-		selectionChanged(SelectionUtil.getActiveSelection());
-		return isEnabled;
-	}
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		selectionChanged(selection);
+		fSelection = selection;
+	}
+	
+	public boolean isEnabledFor(ISelection selection) {
+		selectionChanged(null, selection);
+		ICProject[] project = getSelectedCProjects();
+		return project.length > 0;
+	}
+	
+	protected ICProject[] getSelectedCProjects() {
+		ArrayList<ICProject> tuSelection= new ArrayList<ICProject>();
+		if(fSelection instanceof IStructuredSelection) {
+			IStructuredSelection resources = SelectionConverter.convertSelectionToResources(fSelection);
+			for (Iterator<?> i= resources.iterator(); i.hasNext();) {
+				Object o= i.next();
+				if(o instanceof IResource) {
+					ICProject cproject= CCorePlugin.getDefault().getCoreModel().create(((IResource)o).getProject());
+					if(cproject != null) {
+						tuSelection.add(cproject);
+					}
+				}
+			}
+		} else if(fSelection == null || fSelection instanceof ITextSelection) {
+			IProject project = EditorUtility.getProjectForActiveEditor();
+			if(project != null) {
+				ICProject cproject= CCorePlugin.getDefault().getCoreModel().create(project);
+				if(cproject != null) {
+					tuSelection.add(cproject);
+				}
+			}
+		}
+		return tuSelection.toArray(new ICProject[tuSelection.size()]);
 	}
 }

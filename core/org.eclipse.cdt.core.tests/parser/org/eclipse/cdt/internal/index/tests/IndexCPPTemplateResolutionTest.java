@@ -609,7 +609,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
  		spBindings.add(((ICPPClassTemplatePartialSpecialization) b2).getPrimaryClassTemplate());
 
  		for (int i= 0; i < spBindings.size(); i++) {
- 			for(int j= 0; j < spBindings.size(); j++) {
+ 			for (int j= 0; j < spBindings.size(); j++) {
  	 			IType ty1= (IType) spBindings.get(i);
  	 			IType ty2= (IType) spBindings.get(j);
  	 			assertTrue(ty1.isSameType(ty2));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@
  *  David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
  *  David McKnight   (IBM) - [373459] [dstore][multithread] duplicate finish() calls during idle timeout
  *  David McKnight   (IBM) - [378136] [dstore] miner.finish is stuck
+ *  David McKnight   (IBM) - [408801] [dstore] change ServerIdleThread so that it can extend SecuredThread
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -40,6 +41,7 @@ import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.core.model.DataStoreSchema;
 import org.eclipse.dstore.core.model.IDataStoreConstants;
+import org.eclipse.dstore.core.server.SecuredThread;
 import org.eclipse.dstore.core.server.SystemServiceManager;
 
 /**
@@ -49,19 +51,21 @@ import org.eclipse.dstore.core.server.SystemServiceManager;
  */
 public class ServerCommandHandler extends CommandHandler
 {
-	public class ServerIdleThread extends Thread
+	public class ServerIdleThread extends SecuredThread
 	{
 		private long _timeout;
 		private boolean _serverTimedOut = false;
 		private boolean _serverDone = false;
 		
-		public ServerIdleThread(long timeout)
+		public ServerIdleThread(long timeout, DataStore dataStore)
 		{
+			super(dataStore);
 			_timeout = timeout;			
 		}
 		
 		public void run()
 		{	
+			super.run();
 			while (!_serverTimedOut && !_serverDone)
 			{
 				if (_dataStore.getClient() != null) {
@@ -621,7 +625,7 @@ public class ServerCommandHandler extends CommandHandler
 			}
 			else
 			{
-				_serverIdleThread = new ServerIdleThread(serverIdleShutdownTimeout);
+				_serverIdleThread = new ServerIdleThread(serverIdleShutdownTimeout, _dataStore);
 				_serverIdleThread.start();
 			}
 		}		

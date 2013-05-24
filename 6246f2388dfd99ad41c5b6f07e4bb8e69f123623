@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPn//7mI\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 7623,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-05-24T16:47:06Z",
+      "side": 1,
+      "message": "This test is the same as testPseudoRecursiveTypedef_408314 that I added yesterday.",
+      "revId": "6246f2388dfd99ad41c5b6f07e4bb8e69f123623",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1853,7 +1853,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// S<int(1)> y; // expression (illformed)
 	public void test8_2s4() throws Exception {
 		IASTTranslationUnit tu= parse(getAboveComment(), ParserLanguage.CPP, true, 1);
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertInstance(col.getName(4), ICPPASTTemplateId.class);

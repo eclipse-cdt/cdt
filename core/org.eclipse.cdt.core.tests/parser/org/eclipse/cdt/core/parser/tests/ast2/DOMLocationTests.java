@@ -662,7 +662,7 @@ public class DOMLocationTests extends AST2TestBase {
     
 	public void testTemplateIdNameLocation_Bug211444() throws Exception {
 		IASTTranslationUnit tu = parse( "Foo::template test<T> bar;", ParserLanguage.CPP );
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept( col );
 		
 		ICPPASTQualifiedName qn = (ICPPASTQualifiedName) col.getName(0);

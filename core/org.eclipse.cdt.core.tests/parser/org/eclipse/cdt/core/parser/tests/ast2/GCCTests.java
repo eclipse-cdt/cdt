@@ -57,7 +57,7 @@ public class GCCTests extends AST2TestBase {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
 
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 33);
@@ -98,7 +98,7 @@ public class GCCTests extends AST2TestBase {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
 
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 5);
@@ -125,7 +125,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                                     \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 12);
@@ -163,7 +163,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                         \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 16);
@@ -197,7 +197,7 @@ public class GCCTests extends AST2TestBase {
 		buffer.append("}                                   \n");
 
 		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 11);
@@ -225,7 +225,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                                     \n");
 
 		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 11);
@@ -255,7 +255,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                                     \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 19);
@@ -290,7 +290,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                                  \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 7);
@@ -316,7 +316,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                                 \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 15);
@@ -354,7 +354,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("unsigned long bb[] = { (1UL << (sizeof(long) *8 - 1)) = 0xfff };   \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 34);
@@ -396,7 +396,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                                               \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 11);
@@ -425,7 +425,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                        \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 14);
@@ -465,7 +465,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                        \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 36);
@@ -510,7 +510,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                                    \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 43);
@@ -556,7 +556,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                                       \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 10);
@@ -585,7 +585,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                                     \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 25);
@@ -628,7 +628,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                                   \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 6);
@@ -670,7 +670,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                                   \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 95);
@@ -711,7 +711,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                                       \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 22);
@@ -750,7 +750,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                                       \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 27);
@@ -789,7 +789,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                                       \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 14);
@@ -821,7 +821,7 @@ public class GCCTests extends AST2TestBase {
         buffer.append("}                                                       \n");
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector collector = new CNameCollector();
+        NameCollector collector = new NameCollector();
         tu.accept(collector);
 
         assertEquals(collector.size(), 11);

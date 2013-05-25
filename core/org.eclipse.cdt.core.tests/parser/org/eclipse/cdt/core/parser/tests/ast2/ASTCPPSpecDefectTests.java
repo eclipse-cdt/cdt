@@ -10,13 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
-import java.util.Iterator;
-
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
 public class ASTCPPSpecDefectTests extends AST2TestBase {
@@ -34,7 +30,7 @@ public class ASTCPPSpecDefectTests extends AST2TestBase {
 		
 	protected IASTTranslationUnit parseAndCheckBindings(String code) throws Exception {
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 		assertNoProblemBindings(col);
 		return tu;
@@ -45,14 +41,6 @@ public class ASTCPPSpecDefectTests extends AST2TestBase {
 		return parseAndCheckBindings(code);
 	}
 	
-	protected void assertNoProblemBindings(CPPNameCollector col) {
-		Iterator i = col.nameList.iterator();
-		while (i.hasNext()) {
-			IASTName n = (IASTName) i.next();
-			assertFalse(n.resolveBinding() instanceof IProblemBinding);
-		}
-	}
-		
 	//  // C++ defect #33
 	//	namespace ns {
 	//		struct S {};

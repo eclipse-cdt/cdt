@@ -608,7 +608,7 @@ public class AST2KnRTests extends AST2TestBase {
     	buffer.append("void f(int);        \n"); //$NON-NLS-1$
     	
 		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C, true);
-        CNameCollector col = new CNameCollector();
+        NameCollector col = new NameCollector();
         tu.accept(col);
 
         IFunction def = (IFunction) col.getName(0).resolveBinding();

@@ -302,31 +302,7 @@ public class AST2TestBase extends BaseTestCase {
 		return (T) copy;
 	}
 
-
-    static protected class CNameCollector extends ASTVisitor {
-        {
-            shouldVisitNames = true;
-        }
-        public List<IASTName> nameList = new ArrayList<IASTName>();
-
-        @Override
-		public int visit(IASTName name) {
-            nameList.add(name);
-            return PROCESS_CONTINUE;
-        }
-
-        public IASTName getName(int idx) {
-            if (idx < 0 || idx >= nameList.size())
-                return null;
-            return nameList.get(idx);
-        }
-
-        public int size() {
-        	return nameList.size();
-        }
-    }
-
-    protected void assertInstances(CNameCollector collector, IBinding binding, int num) throws Exception {
+    protected void assertInstances(NameCollector collector, IBinding binding, int num) throws Exception {
         int count = 0;
 
         assertNotNull(binding);
@@ -339,12 +315,12 @@ public class AST2TestBase extends BaseTestCase {
         assertEquals(count, num);
     }
 
-    static protected class CPPNameCollector extends ASTVisitor {
-    	public CPPNameCollector() {
+    static protected class NameCollector extends ASTVisitor {
+    	public NameCollector() {
     		this(false);  // don't visit implicit names by default
         }
 
-    	public CPPNameCollector(boolean shouldVisitImplicitNames) {
+    	public NameCollector(boolean shouldVisitImplicitNames) {
     		this.shouldVisitNames = true;
     		this.shouldVisitImplicitNames = shouldVisitImplicitNames;
     	}
@@ -374,16 +350,6 @@ public class AST2TestBase extends BaseTestCase {
         		System.out.println(i + ": #" + name.getRawSignature() + "# " + parent);
         	}
         }
-    }
-
-    protected void assertInstances(CPPNameCollector collector, IBinding binding, int num) throws Exception {
-        int count = 0;
-        for (int i = 0; i < collector.size(); i++) {
-            if (collector.getName(i).resolveBinding() == binding)
-                count++;
-        }
-
-        assertEquals(num, count);
     }
 
 	protected static void assertSameType(IType expected, IType actual) {
@@ -792,21 +758,22 @@ public class AST2TestBase extends BaseTestCase {
 	final protected IASTTranslationUnit parseAndCheckBindings(String code, ParserLanguage lang, boolean useGnuExtensions,
 			boolean skipTrivialInitializers) throws Exception {
 		IASTTranslationUnit tu = parse(code, lang, useGnuExtensions, true, skipTrivialInitializers);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 		assertNoProblemBindings(col);
 		return tu;
 	}
-
-	final protected void assertNoProblemBindings(CNameCollector col) {
+	
+	final protected void assertNoProblemBindings(NameCollector col) {
 		for (IASTName n : col.nameList) {
 			assertFalse("ProblemBinding for " + n.getRawSignature(), n.resolveBinding() instanceof IProblemBinding);
 		}
 	}
 
-	final protected void assertProblemBindings(CNameCollector col, int count) {
+	final protected void assertProblemBindings(NameCollector col, int count) {
 		int sum = 0;
 		for (IASTName n : col.nameList) {
+			assertNotNull(n.resolveBinding());
 			if (n.getBinding() instanceof IProblemBinding)
 				++sum;
 		}

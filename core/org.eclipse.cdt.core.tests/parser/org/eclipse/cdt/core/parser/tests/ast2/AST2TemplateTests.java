@@ -126,6 +126,14 @@ public class AST2TemplateTests extends AST2TestBase {
 		return parseAndCheckBindings(code, CPP);
 	}
 	
+	protected IASTTranslationUnit parseAndCheckImplicitNameBindings() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, false, true, false);
+		NameCollector col = new NameCollector(true /* visit implicit names */);
+		tu.accept(col);
+		assertNoProblemBindings(col);
+		return tu;
+	}
+
 	protected BindingAssertionHelper getAssertionHelper() throws ParserException, IOException {
 		String code= getAboveComment();
 		return new BindingAssertionHelper(code, true);
@@ -7131,6 +7139,31 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertEquals(0 /* false */, val.longValue());
 	}
 	
+	//	struct S {
+	//	    S(int);
+	//	};
+	//
+	//	template <typename>
+	//	struct meta {};
+	//
+	//	template <>
+	//	struct meta<S> {
+	//	    typedef void type;
+	//	};
+	//	    
+	//	struct B {
+	//	    template <typename T, typename = typename meta<T>::type>
+	//	    operator T() const;
+	//	};
+	//
+	//	struct  A {
+	//	    S waldo;
+	//	    A() : waldo(B{}) {}
+	//	};
+	public void testSFINAEInTemplatedConversionOperator_409056() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
+
 	//	template <typename>
 	//	struct M {
 	//	    template <typename... Args>

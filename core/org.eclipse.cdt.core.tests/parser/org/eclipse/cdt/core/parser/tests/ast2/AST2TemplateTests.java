@@ -6160,6 +6160,27 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template <typename T>
+	//	struct id {
+	//	    typedef T type;
+	//	};
+	//
+	//	template <typename T>
+	//	struct B {
+	//	    struct base : id<id<T>> {};
+	//	      
+	//	    typedef typename base::type base2;
+	//	    
+	//	    struct result : base2 {};
+	//	};
+	//
+	//	typedef B<int>::result::type waldo;
+	public void testSpecializationOfBaseClass_409078() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		ITypedef waldo = bh.assertNonProblem("waldo");
+		assertSameType(waldo.getType(), CommonTypes.int_);
+	}
+
 	//struct A {
 	//	int m(int i) const;
 	//	void m() const;

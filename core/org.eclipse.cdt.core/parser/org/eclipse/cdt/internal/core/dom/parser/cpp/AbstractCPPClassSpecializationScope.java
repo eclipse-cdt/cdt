@@ -155,7 +155,11 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 					}
 					if (origClass instanceof IType) {
 						ICPPBase specBase = base.clone();
-						IType specClass= CPPTemplates.instantiateType((IType) origClass, tpmap, -1, specialClass, point);
+						ICPPClassSpecialization specializationContext = specialClass;
+						if (specialClass.getOwner() instanceof ICPPClassSpecialization) {
+							specializationContext = (ICPPClassSpecialization) specialClass.getOwner();
+						}
+						IType specClass= CPPTemplates.instantiateType((IType) origClass, tpmap, -1, specializationContext, point);
 						specClass = SemanticUtil.getUltimateType(specClass, false);
 						if (specClass instanceof IBinding && !(specClass instanceof IProblemBinding)) {
 							specBase.setBaseClass((IBinding) specClass);

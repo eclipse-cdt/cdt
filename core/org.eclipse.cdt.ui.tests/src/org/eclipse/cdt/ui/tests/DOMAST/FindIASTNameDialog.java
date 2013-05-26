@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.tests.DOMAST;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +57,6 @@ import org.eclipse.ui.texteditor.IEditorStatusLine;
  * target but can be re-targeted. Internally used by the <code>FindReplaceAction</code>
  */
 class FindIASTNameDialog extends Dialog {
-
 	private static final String REGULAR_EXPRESSIONS_LABEL = "Regular expressions"; //$NON-NLS-1$
 	private static final String WHOLE_WORD_LABEL = "Whole Word"; //$NON-NLS-1$
 	private static final String CASE_SENSITIVE_LABEL = "Case Sensitive"; //$NON-NLS-1$
@@ -77,13 +74,11 @@ class FindIASTNameDialog extends Dialog {
 		 */
 		@Override
 		public void shellActivated(ShellEvent e) {
-			
 			String oldText= fFindField.getText(); // XXX workaround for 10766
-			List oldList= new ArrayList();
+			List<String> oldList= new ArrayList<String>();
 			oldList.addAll(fFindHistory);
 
 			readConfiguration();
-			
 
 			fFindField.removeModifyListener(fFindModifyListener);
 
@@ -151,7 +146,6 @@ class FindIASTNameDialog extends Dialog {
 	 * @since 2.0
 	 */
 	private class FindModifyListener implements ModifyListener {
-		
 		/*
 		 * @see ModifyListener#modifyText(ModifyEvent)
 		 */
@@ -197,7 +191,7 @@ class FindIASTNameDialog extends Dialog {
 	 */
 	boolean fIsRegExInit;
 
-	private List fFindHistory;
+	private List<String> fFindHistory;
 	private IRegion fOldScope;
 
 	private IFindReplaceTarget fTarget;
@@ -239,8 +233,6 @@ class FindIASTNameDialog extends Dialog {
 	 * @since 3.0
 	 */
 	private boolean fGiveFocusToFindField= true;
-
-
 	
 	/**
 	 * Creates a new dialog with the given shell as parent.
@@ -253,7 +245,7 @@ class FindIASTNameDialog extends Dialog {
 		updateTarget(target, false);
 
 		fDialogPositionInit= null;
-		fFindHistory= new ArrayList(HISTORY_SIZE - 1);
+		fFindHistory= new ArrayList<String>(HISTORY_SIZE - 1);
 
 		fWrapInit= false;
 		fCaseInit= false;
@@ -278,7 +270,6 @@ class FindIASTNameDialog extends Dialog {
 		return super.getParentShell();
 	}
 	
-	
 	/**
 	 * Returns <code>true</code> if control can be used.
 	 *
@@ -289,12 +280,8 @@ class FindIASTNameDialog extends Dialog {
 		return control != null && !control.isDisposed();
 	}
 	
-	/*
-	 * @see org.eclipse.jface.window.Window#create()
-	 */
 	@Override
 	public void create() {
-		
 		super.create();
 		
 		Shell shell= getShell();
@@ -329,7 +316,6 @@ class FindIASTNameDialog extends Dialog {
 	 * @return the button section
 	 */
 	private Composite createButtonSection(Composite parent) {
-		
 		Composite panel= new Composite(parent, SWT.NULL);		
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 1;
@@ -382,12 +368,8 @@ class FindIASTNameDialog extends Dialog {
 		return panel;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
-
 		Composite panel= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 1;
@@ -421,7 +403,6 @@ class FindIASTNameDialog extends Dialog {
 	 * @return the direction defining part
 	 */
 	private Composite createDirectionGroup(Composite parent) {
-
 		Composite panel= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		layout.marginWidth= 0;
@@ -477,7 +458,6 @@ class FindIASTNameDialog extends Dialog {
 		IFindReplaceTargetExtension extensionTarget= (IFindReplaceTargetExtension) fTarget;
 
 		if (selectedLines) {
-
 			IRegion scope;
 			if (fOldScope == null) {
 				Point lineSelection= extensionTarget.getLineSelection();
@@ -531,7 +511,6 @@ class FindIASTNameDialog extends Dialog {
 	 * @return the options group
 	 */
 	private Composite createOptionsGroup(Composite parent) {
-
 		Composite panel= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		layout.marginWidth= 0;
@@ -611,7 +590,6 @@ class FindIASTNameDialog extends Dialog {
 	 * @return the status and close button
 	 */
 	private Composite createStatusAndCloseButton(Composite parent) {
-
 		Composite panel= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
@@ -629,9 +607,6 @@ class FindIASTNameDialog extends Dialog {
 		return panel;
 	}
 
-	/*
-	 * @see Dialog#buttonPressed
-	 */
 	@Override
 	protected void buttonPressed(int buttonID) {
 		if (buttonID == 101)
@@ -655,7 +630,6 @@ class FindIASTNameDialog extends Dialog {
 	 * @since 3.0
 	 */
 	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch) {
-
 		if (forwardSearch) {
 			if (wrapSearch) {
 				int index= findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
@@ -740,7 +714,6 @@ class FindIASTNameDialog extends Dialog {
 	 * @since 3.0
 	 */
 	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean incremental, boolean regExSearch) {
-
 		if (fTarget == null)
 			return false;
 
@@ -778,7 +751,7 @@ class FindIASTNameDialog extends Dialog {
 	 * Returns the dialog's history.
 	 * @return the dialog's history
 	 */
-	private List getFindHistory() {
+	private List<String> getFindHistory() {
 		return fFindHistory;
 	}
 
@@ -826,7 +799,6 @@ class FindIASTNameDialog extends Dialog {
 	 * Removes focus changed listener from browser and stores settings for re-open.
 	 */
 	private void handleDialogClose() {
-
 		// remove listeners
 		if (okToUse(fFindField)) {
 			fFindField.removeModifyListener(fFindModifyListener);
@@ -1195,7 +1167,7 @@ class FindIASTNameDialog extends Dialog {
 	 * @param combo combo to be updated
 	 * @param content to be put into the combo
 	 */
-	private void updateCombo(Combo combo, List content) {
+	private void updateCombo(Combo combo, List<String> content) {
 		combo.removeAll();
 		for (int i= 0; i < content.size(); i++) {
 			combo.add(content.get(i).toString());
@@ -1220,7 +1192,7 @@ class FindIASTNameDialog extends Dialog {
 	 * @param combo to be updated
 	 * @param history to be put into the combo
 	 */
-	private void updateHistory(Combo combo, List history) {
+	private void updateHistory(Combo combo, List<String> history) {
 		String findString= combo.getText();
 		int index= history.indexOf(findString);
 		if (index != 0) {
@@ -1240,7 +1212,6 @@ class FindIASTNameDialog extends Dialog {
 	 * @since 2.0
 	 */
 	public void updateTarget(IFindReplaceTarget target, boolean isTargetEditable) {
-		
 		fNeedsInitialFindBeforeReplace= true;
 		
 		if (target != fTarget) {
@@ -1293,7 +1264,6 @@ class FindIASTNameDialog extends Dialog {
 		fActiveShell= shell;
 	}
 	
-	
 	//--------------- configuration handling --------------
 	
 	/**
@@ -1333,10 +1303,11 @@ class FindIASTNameDialog extends Dialog {
 		
 		String[] findHistory= s.getArray("findhistory"); //$NON-NLS-1$
 		if (findHistory != null) {
-			List history= getFindHistory();
+			List<String> history= getFindHistory();
 			history.clear();
-			for (int i= 0; i < findHistory.length; i++)
+			for (int i= 0; i < findHistory.length; i++) {
 				history.add(findHistory[i]);
+			}
 		}		
 	}
 	
@@ -1355,12 +1326,12 @@ class FindIASTNameDialog extends Dialog {
 		s.put("wholeword", fWholeWordInit); //$NON-NLS-1$
 		s.put("incremental", fIncrementalInit); //$NON-NLS-1$
 		s.put("isRegEx", fIsRegExInit); //$NON-NLS-1$
-		List history= getFindHistory();
-		while (history.size() > 8)
+		List<String> history= getFindHistory();
+		while (history.size() > 8) {
 			history.remove(8);
+		}
 		String[] names= new String[history.size()];
 		history.toArray(names);
 		s.put("findhistory", names); //$NON-NLS-1$
 	}
-	
 }

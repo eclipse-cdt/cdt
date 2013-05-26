@@ -370,8 +370,8 @@ public class TemplateArgumentDeduction {
 				final ICPPTemplateParameter tpar = tmplParams[i];
 				ICPPTemplateArgument deducedArg= map.getArgument(tpar);
 				if (deducedArg == null) {
-					deducedArg= tpar.getDefaultValue();
-					if (deducedArg == null)
+					deducedArg= CPPTemplates.instantiateArgument(tpar.getDefaultValue(), map, -1, null, point);
+					if (!CPPTemplates.isValidArgument(deducedArg))
 						return null;
 				}			
 				result[i]= deducedArg;

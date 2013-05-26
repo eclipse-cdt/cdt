@@ -29,126 +29,19 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 
 /**
  * @author dsteffle
  */
 public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTargetExtension3 {
-
-	IASTTranslationUnit tu = null;
-	DOMASTNodeParent tuTreeParent = null;
-	TreeViewer viewer = null;
-	IASTName[] matchingNames = null;
-	boolean wasForward = true;
-	int index = 0;
+	IASTTranslationUnit tu;
+	DOMASTNodeParent tuTreeParent;
+	TreeViewer viewer;
+	IASTName[] matchingNames;
+	boolean wasForward;
+	int index;
 	
-    static protected class CNameCollector extends ASTVisitor {
-        private static final int REGULAR_NAME_ADD = -1;
-		private static final String BLANK_STRING = ""; //$NON-NLS-1$
-		{
-            shouldVisitNames = true;
-        }
-        public List<IASTName> nameList = new ArrayList<IASTName>();
-        
-        String findString = null;
-		boolean caseSensitive = true;
-		boolean wholeWord = true;
-		boolean regExSearch = false;
-		
-		public CNameCollector(String findString, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
-			this.findString = findString;
-			this.caseSensitive = caseSensitive;
-			this.wholeWord = wholeWord;
-			this.regExSearch = regExSearch;
-		}
-
-		public int processName( IASTName name, int offset) {
-        	if (name.toString() == null || name.toString() == BLANK_STRING) return PROCESS_CONTINUE;
-        	String searchString = null;
-        	String match = null;
-        	boolean addName = false;
-        	
-        	if (caseSensitive) {
-        		searchString = findString;
-        		match = name.toString();
-        	} else {
-        		searchString = findString.toUpperCase();
-        		match = name.toString().toUpperCase();
-        	}	
-        	
-           	if (regExSearch) {
-           		if (match.matches(searchString))
-           			addName = true;
-           	} else if (!wholeWord) {
-           		if (match.indexOf(searchString) >= 0)
-           			addName = true;
-           	} else {
-           		if (match.equals(searchString))
-           			addName = true;
-           	}
-           	
-           	if (addName) {
-           		if (offset >= 0)
-           			nameList.add(offset, name);
-           		else
-           			nameList.add( name );
-           	}
-        	
-            return PROCESS_CONTINUE;
-		}
-		
-        @Override
-		public int visit( IASTName name ){
-        	return processName(name, REGULAR_NAME_ADD);
-        }
-        public IASTName getName( int idx ){
-            if( idx < 0 || idx >= nameList.size() )
-                return null;
-            return nameList.get( idx );
-        }
-        public int size() { return nameList.size(); } 
-        
-        private void mergeName(IASTName name) {
-        	if (name instanceof ASTNode) {
-        		int offset = ((ASTNode)name).getOffset();
-        		for( int i=0; i<nameList.size(); i++) {
-        			if (nameList.get(i) instanceof ASTNode && 
-        					((ASTNode)nameList.get(i)).getOffset() > offset) {
-        				processName(name, i);
-        				return;
-        			}
-        		}
-        		// if couldn't find the proper place to put the name, then add default
-        		visit(name);
-        	}
-        }
-        
-        public IASTName[] getNameArray(IASTPreprocessorStatement[] statements) {
-        	// first merge all of the preprocessor names into the array list
-        	for (IASTPreprocessorStatement statement : statements) {
-        		if (statement instanceof IASTPreprocessorMacroDefinition) {
-        			IASTName name = ((IASTPreprocessorMacroDefinition)statement).getName();
-        			if (name != null) {
-        				mergeName(name);
-        			}
-        		}
-        	}
-        	
-        	// convert the array list into an array of IASTNames
-        	IASTName[] namedArray = new IASTName[nameList.size()];
-        	
-        	for(int i=0; i<nameList.size(); i++) {
-        		if (nameList.get(i) instanceof IASTName)
-        			namedArray[i] = nameList.get(i);
-        	}
-        	
-        	return namedArray;
-        }
-    }
-    
-    static protected class CPPNameCollector extends ASTVisitor {
+    static protected class NameCollector extends ASTVisitor {
         private static final int REGULAR_NAME_ADD = -1;
 		private static final String BLANK_STRING = ""; //$NON-NLS-1$
 		{
@@ -163,14 +56,14 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		Pattern p = null;
 		Matcher m = null;
 		
-		public CPPNameCollector(String findString, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
+		public NameCollector(String findString, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 			this.findString = findString;
 			this.caseSensitive = caseSensitive;
 			this.wholeWord = wholeWord;
 			this.regExSearch = regExSearch;
 		}
         
-		public int processName( IASTName name, int index) {
+		public int processName(IASTName name, int index) {
         	if (name.toString() == null || name.toString() == BLANK_STRING) return PROCESS_CONTINUE;
         	String searchString = null;
         	String match = null;
@@ -196,10 +89,11 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
            	}
            	
            	if (addName) {
-           		if (index >= 0)
+           		if (index >= 0) {
            			nameList.add(index, name);
-           		else
-           			nameList.add( name );
+           		} else {
+           			nameList.add(name);
+           		}
            	}
         	
             return PROCESS_CONTINUE;
@@ -209,12 +103,16 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		public int visit( IASTName name ){
         	return processName(name, REGULAR_NAME_ADD);
         }
+
         public IASTName getName( int idx ){
             if( idx < 0 || idx >= nameList.size() )
                 return null;
             return nameList.get( idx );
         }
-        public int size() { return nameList.size(); } 
+
+        public int size() {
+        	return nameList.size();
+        } 
         
         private void mergeName(IASTName name) {
         	if (name instanceof ASTNode) {
@@ -263,9 +161,6 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		this.viewer = viewer;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IFindReplaceTarget#canPerformFind()
-	 */
 	@Override
 	public boolean canPerformFind() {
 		return true;
@@ -274,23 +169,16 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	// recursively search for the next node
 	public IASTName findNextMatchingName(String findString,
 			boolean searchForward, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
-		
 		if (matchingNames == null && tu != null) {
-			if (tu instanceof CPPASTTranslationUnit) {
-				CPPNameCollector col = new CPPNameCollector(findString, caseSensitive, wholeWord, regExSearch);
-				tu.accept(col);
-				matchingNames = col.getNameArray(tu.getAllPreprocessorStatements());
-			} else if(tu instanceof CASTTranslationUnit) {
-				CNameCollector col = new CNameCollector(findString, caseSensitive, wholeWord, regExSearch);
-				tu.accept(col);
-				matchingNames = col.getNameArray(tu.getAllPreprocessorStatements());
-			}
+			NameCollector col = new NameCollector(findString, caseSensitive, wholeWord, regExSearch);
+			tu.accept(col);
+			matchingNames = col.getNameArray(tu.getAllPreprocessorStatements());
 		}
 	
 		if (searchForward) {
 			if (!wasForward) {
 				wasForward = true;
-				index+=2;
+				index += 2;
 			}
 			
 			if (index >=0 && index < matchingNames.length && matchingNames[index] != null)
@@ -298,7 +186,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		} else {
 			if (wasForward) {
 				wasForward = false;
-				index-=2;
+				index -= 2;
 			}
 			
 			if (index >= 0 && index < matchingNames.length && matchingNames[index] != null)
@@ -338,18 +226,12 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
  		return expandTreeToTreeObject(viewer.getTree().getItems(), treeObj);
  	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IFindReplaceTarget#findAndSelect(int, java.lang.String, boolean, boolean, boolean)
-	 */
 	@Override
 	public int findAndSelect(int widgetOffset, String findString,
 			boolean searchForward, boolean caseSensitive, boolean wholeWord) {
 		return findAndSelect(widgetOffset, findString, searchForward, caseSensitive, wholeWord, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelection()
-	 */
 	@Override
 	public Point getSelection() {
 		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
@@ -361,31 +243,18 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		return new Point(((ASTNode)((DOMASTNodeLeaf)selection.getFirstElement()).getNode()).getOffset(), 0);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelectionText()
-	 */
 	@Override
 	public String getSelectionText() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IFindReplaceTarget#isEditable()
-	 */
 	@Override
 	public boolean isEditable() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IFindReplaceTarget#replaceSelection(java.lang.String)
-	 */
 	@Override
 	public void replaceSelection(String text) {
-		// TODO Auto-generated method stub
-
 	}
 	
 	public void clearMatchingNames() {
@@ -442,8 +311,5 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	 */
 	@Override
 	public void replaceSelection(String text, boolean regExReplace) {
-		// TODO Auto-generated method stub
-		
 	}
-	
 }

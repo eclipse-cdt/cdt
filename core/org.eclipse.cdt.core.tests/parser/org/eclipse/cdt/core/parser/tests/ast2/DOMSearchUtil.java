@@ -66,53 +66,36 @@ public class DOMSearchUtil {
     }
 
     /**
-     * The CPPNameCollector used to get IASTNames from an IASTNode.
+     * The NameCollector used to get IASTNames from an IASTNode.
      *
      * @author dsteffle
      */
-    static public class CPPNameCollector extends ASTVisitor {
+    static public class NameCollector extends ASTVisitor {
         {
             shouldVisitNames = true;
         }
         public List nameList = new ArrayList();
-        @Override
-		public int visit(IASTName name) {
-            nameList.add(name);
-            return PROCESS_CONTINUE;
-        }
-        public IASTName getName(int idx) {
-            if (idx < 0 || idx >= nameList.size())
-                return null;
-            return (IASTName) nameList.get(idx);
-        }
-        public int size() { return nameList.size(); }
-    }
 
-    /**
-     * The CNameCollector used to get IASTNames from an IASTNode.
-     *
-     * @author dsteffle
-     */
-    static public class CNameCollector extends ASTVisitor {
-        {
-            shouldVisitNames = true;
-        }
-        public List nameList = new ArrayList();
         @Override
 		public int visit(IASTName name) {
             nameList.add(name);
             return PROCESS_CONTINUE;
         }
+
         public IASTName getName(int idx) {
             if (idx < 0 || idx >= nameList.size())
                 return null;
             return (IASTName) nameList.get(idx);
         }
-        public int size() { return nameList.size(); }
+
+        public int size() {
+        	return nameList.size();
+        }
     }
 
 	/**
-	 * Returns the ParserLanguage corresponding to the IPath and IProject.  Returns ParserLanguage.CPP if the file type is a header.
+	 * Returns the ParserLanguage corresponding to the IPath and IProject.
+	 * Returns ParserLanguage.CPP if the file type is a header.
 	 */
     public static ParserLanguage getLanguage(IPath path, IProject project) {
     	//FIXME: ALAIN, for headers should we assume CPP ??

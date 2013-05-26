@@ -300,7 +300,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	final protected void checkBindings() throws Exception {
 		for (int i = 0; i < strategy.getAstCount(); i++) {
 			IASTTranslationUnit ast = strategy.getAst(i);
-			CNameCollector col = new CNameCollector();
+			NameCollector col = new NameCollector();
 			ast.accept(col);
 			for (IASTName n : col.nameList) {
 				assertFalse("ProblemBinding for " + n.getRawSignature(), n.resolveBinding() instanceof IProblemBinding);
@@ -308,7 +308,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		}
 	}
 
-	static protected class CNameCollector extends ASTVisitor {
+	static protected class NameCollector extends ASTVisitor {
         {
             shouldVisitNames = true;
         }

@@ -1,11 +1,11 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
+ * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
@@ -18,12 +18,11 @@ import junit.framework.Assert;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -41,19 +40,14 @@ import org.eclipse.core.runtime.content.IContentType;
  * @author dsteffle
  */
 public class DOMSearchUtil {
-	private static final IASTName[] BLANK_NAME_ARRAY = new IASTName[0];
-//    private static final IASTName[] EMPTY_NAME_LIST = BLANK_NAME_ARRAY;
-
     public static final int DECLARATIONS = 1;
     public static final int DEFINITIONS = 2;
     public static final int DECLARATIONS_DEFINITIONS = 3;
     public static final int REFERENCES = 4;
     public static final int ALL_OCCURRENCES = 5;
+    
     /**
-    * This retrieves the ParserLanguage from an IFile.
-    *
-    * @param file
-    * @return
+    * Retrieves the ParserLanguage from an IFile.
     */
     public static ParserLanguage getLanguageFromFile(IFile file) {
         IProject project = file.getProject();
@@ -69,58 +63,36 @@ public class DOMSearchUtil {
     }
 
     /**
-     * The CPPNameCollector used to get IASTNames from an IASTNode.
-     * 
-     * @author dsteffle
+     * The NameCollector used to get IASTNames from an IASTNode.
      */
-    static public class CPPNameCollector extends CPPASTVisitor {
+    static public class NameCollector extends ASTVisitor {
         {
             shouldVisitNames = true;
         }
-        public List nameList = new ArrayList();
-        public int visit( IASTName name ){
+        public List<IASTName> nameList = new ArrayList<IASTName>();
+
+        @Override
+		public int visit(IASTName name) {
             nameList.add( name );
             return PROCESS_CONTINUE;
         }
+
         public IASTName getName( int idx ){
             if( idx < 0 || idx >= nameList.size() )
                 return null;
-            return (IASTName) nameList.get( idx );
+            return nameList.get(idx);
         }
-        public int size() { return nameList.size(); } 
+
+        public int size() {
+        	return nameList.size();
+        } 
     }
 
-    /**
-     * The CNameCollector used to get IASTNames from an IASTNode.
-     * 
-     * @author dsteffle
-     */
-    static public class CNameCollector extends CASTVisitor {
-        {
-            shouldVisitNames = true;
-        }
-        public List nameList = new ArrayList();
-        public int visit( IASTName name ){
-            nameList.add( name );
-            return PROCESS_CONTINUE;
-        }
-        public IASTName getName( int idx ){
-            if( idx < 0 || idx >= nameList.size() )
-                return null;
-            return (IASTName) nameList.get( idx );
-        }
-        public int size() { return nameList.size(); } 
-    }
-    
 	/**
-	 * Returns the ParserLanguage corresponding to the IPath and IProject.  Returns ParserLanguage.CPP if the file type is a header.
-	 * 
-	 * @param path
-	 * @param project
-	 * @return
+	 * Returns the ParserLanguage corresponding to the IPath and IProject.
+	 * Returns ParserLanguage.CPP if the file type is a header.
 	 */
-    public static ParserLanguage getLanguage( IPath path, IProject project )
-    {  
+    public static ParserLanguage getLanguage(IPath path, IProject project) {  
     	//FIXME: ALAIN, for headers should we assume CPP ??
     	// The problem is that it really depends on how the header was included.
     	String id = null;
@@ -148,7 +120,7 @@ public class DOMSearchUtil {
     /**
      * This is used to get the names from the TU that the IASTName searchName belongs to.
      * 
-     * @param searchName the IASTName whose references/delcarations are to be retrieved
+     * @param searchName the IASTName whose references/declarations are to be retrieved
      * @param limitTo used to specify whether to get declarations, references, or both, one of: 
      * ( CSearchPattern.DECLARATION | CSearchPattern.REFERENCES | CSearchPattern.ALL_OCCURRENCES ) 
      * @return IASTName[] declarations, references, or both depending on limitTo that correspond to the IASTName searchName searched for
@@ -158,7 +130,7 @@ public class DOMSearchUtil {
 		IASTTranslationUnit tu = searchName.getTranslationUnit();
 		
 		if (tu == null) {
-			return BLANK_NAME_ARRAY;
+			return IASTName.EMPTY_NAME_ARRAY;
 		}
 		
 		IBinding binding = searchName.resolveBinding();
@@ -206,13 +178,12 @@ public class DOMSearchUtil {
             names = tu.getDefinitionsInAST(binding);
         } else if (limitTo == ALL_OCCURRENCES){
             names = tu.getDeclarationsInAST(binding);
-            names = (IASTName[])ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
+            names = ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
         } else {  // assume ALL
             names = tu.getDeclarationsInAST(binding);
-            names = (IASTName[])ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
+            names = ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
         }
 		
 		return names;
 	}
-
 }

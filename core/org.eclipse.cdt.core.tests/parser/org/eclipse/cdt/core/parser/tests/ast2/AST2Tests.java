@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -194,7 +194,7 @@ public class AST2Tests extends AST2TestBase {
 	// int (*(zzz4)) (char);
 	public void testBug40768() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), C);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 		assertNoProblemBindings(col);
 	}
@@ -1265,7 +1265,7 @@ public class AST2Tests extends AST2TestBase {
 		IASTTranslationUnit tu = parse(getAboveComment(), C);
 		assertTrue(tu.isFrozen());
 		for (int i = 0; i < NUM_TESTS; i++) {
-			CNameCollector collector = new CNameCollector();
+			NameCollector collector = new NameCollector();
 			tu.accept(collector);
 
 			assertEquals(collector.size(), 3);
@@ -2608,7 +2608,7 @@ public class AST2Tests extends AST2TestBase {
 	//    // }
 	//    public void testExternalVariable() throws Exception {
 	//        IASTTranslationUnit tu = parse(getAboveComment(), C);
-	//        CNameCollector col = new CNameCollector();
+	//        NameCollector col = new NameCollector();
 	//        tu.accept(col);
 	//
 	//        IVariable a = (IVariable) col.getName(1).resolveBinding();
@@ -2630,7 +2630,7 @@ public class AST2Tests extends AST2TestBase {
 		IASTTranslationUnit tu = parse(getAboveComment(), C);
 		assertTrue(tu.isFrozen());
 		for (int i = 0; i < NUM_TESTS; i++) {
-			CNameCollector col = new CNameCollector();
+			NameCollector col = new NameCollector();
 			tu.accept(col);
 
 			IVariable a = (IVariable) col.getName(1).resolveBinding();
@@ -2655,7 +2655,7 @@ public class AST2Tests extends AST2TestBase {
 		IASTTranslationUnit tu = parse(getAboveComment(), C);
 		assertTrue(tu.isFrozen());
 		for (int i = 0; i < NUM_TESTS; i++) {
-			CNameCollector col = new CNameCollector();
+			NameCollector col = new NameCollector();
 			tu.accept(col);
 
 			assertEquals(col.size(), 9);
@@ -2680,7 +2680,7 @@ public class AST2Tests extends AST2TestBase {
 		IASTTranslationUnit tu = parse(getAboveComment(), C);
 		assertTrue(tu.isFrozen());
 		for (int i = 0; i < NUM_TESTS; i++) {
-			CNameCollector col = new CNameCollector();
+			NameCollector col = new NameCollector();
 			tu.accept(col);
 
 			assertEquals(col.size(), 6);
@@ -2736,7 +2736,7 @@ public class AST2Tests extends AST2TestBase {
 		IASTTranslationUnit tu = parse(getAboveComment(), C);
 		assertTrue(tu.isFrozen());
 		for (int i = 0; i < NUM_TESTS; i++) {
-			CNameCollector col = new CNameCollector();
+			NameCollector col = new NameCollector();
 			tu.accept(col);
 
 			assertEquals(col.size(), 3);
@@ -2756,7 +2756,7 @@ public class AST2Tests extends AST2TestBase {
 		IASTTranslationUnit tu = parse(getAboveComment(), C);
 		assertTrue(tu.isFrozen());
 		for (int i = 0; i < NUM_TESTS; i++) {
-			CNameCollector collector = new CNameCollector();
+			NameCollector collector = new NameCollector();
 			tu.accept(collector);
 
 			assertEquals(collector.size(), 5);
@@ -2775,7 +2775,7 @@ public class AST2Tests extends AST2TestBase {
 				"struct s { int a; } ss = { .a = 1 }; \n", C); //$NON-NLS-1$
 		assertTrue(tu.isFrozen());
 		for (int i = 0; i < NUM_TESTS; i++) {
-			CNameCollector collector = new CNameCollector();
+			NameCollector collector = new NameCollector();
 			tu.accept(collector);
 
 			assertEquals(collector.size(), 4);
@@ -2803,7 +2803,7 @@ public class AST2Tests extends AST2TestBase {
 		IASTTranslationUnit tu = parse(getAboveComment(), C);
 		assertTrue(tu.isFrozen());
 		for (int i = 0; i < NUM_TESTS; i++) {
-			CNameCollector col = new CNameCollector();
+			NameCollector col = new NameCollector();
 			tu.accept(col);
 
 			assertEquals(col.size(), 3);
@@ -2824,7 +2824,7 @@ public class AST2Tests extends AST2TestBase {
 	// }
 	public void testBug84185() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), C);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 3);
@@ -2843,7 +2843,7 @@ public class AST2Tests extends AST2TestBase {
 	// }
 	public void testBug84185_2() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), C);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 3);
@@ -2872,7 +2872,7 @@ public class AST2Tests extends AST2TestBase {
 	public void testBug84266() throws Exception {
 		final String code = getAboveComment();
 		IASTTranslationUnit tu = parse(code, C);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 		assertEquals(col.size(), 7);
 
@@ -2881,7 +2881,7 @@ public class AST2Tests extends AST2TestBase {
 		assertSame(s_ref, s_decl);
 
 		tu = parse(code, C);
-		col = new CNameCollector();
+		col = new NameCollector();
 		tu.accept(col);
 		assertEquals(col.size(), 7);
 
@@ -2892,7 +2892,7 @@ public class AST2Tests extends AST2TestBase {
 
 	public void testBug84266_2() throws Exception {
 		IASTTranslationUnit tu = parse("struct s f(void);", C); //$NON-NLS-1$
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 3);
@@ -2901,7 +2901,7 @@ public class AST2Tests extends AST2TestBase {
 		assertNotNull(s);
 
 		tu = parse("struct s f(void) {}", C); //$NON-NLS-1$
-		col = new CNameCollector();
+		col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 3);
@@ -2921,7 +2921,7 @@ public class AST2Tests extends AST2TestBase {
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			final String code = getAboveComment();
 			IASTTranslationUnit tu = parse(code, lang);
-			CNameCollector col = new CNameCollector();
+			NameCollector col = new NameCollector();
 			tu.accept(col);
 			assertEquals(col.size(), 6);
 
@@ -2931,7 +2931,7 @@ public class AST2Tests extends AST2TestBase {
 
 
 			tu = parse(code, lang);
-			col = new CNameCollector();
+			col = new NameCollector();
 			tu.accept(col);
 			assertEquals(col.size(), 6);
 
@@ -2948,7 +2948,7 @@ public class AST2Tests extends AST2TestBase {
 	// }
 	public void testBug84267() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), C);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 11);
@@ -2975,7 +2975,7 @@ public class AST2Tests extends AST2TestBase {
 	// }
 	public void testBug84228() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), C);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 13);
@@ -3029,7 +3029,7 @@ public class AST2Tests extends AST2TestBase {
 	public void testBug86766() throws Exception {
 		IASTTranslationUnit tu = parse(
 				"char foo; void foo() {}", C); //$NON-NLS-1$
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		IVariable foo = (IVariable) col.getName(0).resolveBinding();
@@ -3042,7 +3042,7 @@ public class AST2Tests extends AST2TestBase {
 	public void testBug88338_C() throws Exception {
 		IASTTranslationUnit tu = parse(
 				"struct A; struct A* a;", C); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertTrue(col.getName(0).isDeclaration());
@@ -3051,7 +3051,7 @@ public class AST2Tests extends AST2TestBase {
 		assertFalse(col.getName(1).isDeclaration());
 
 		tu = parse("struct A* a; struct A;", C); //$NON-NLS-1$
-		col = new CPPNameCollector();
+		col = new NameCollector();
 		tu.accept(col);
 
 		col.getName(2).resolveBinding();
@@ -3065,7 +3065,7 @@ public class AST2Tests extends AST2TestBase {
 
 	public void test88460() throws Exception {
 		IASTTranslationUnit tu = parse("void f();", C); //$NON-NLS-1$
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		IFunction f = (IFunction) col.getName(0).resolveBinding();
@@ -3075,7 +3075,7 @@ public class AST2Tests extends AST2TestBase {
 	public void testBug90253() throws Exception {
 		IASTTranslationUnit tu = parse(
 				"void f(int par) { int v1; };", C); //$NON-NLS-1$
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		IFunction f = (IFunction) col.getName(0).resolveBinding();
@@ -3104,7 +3104,7 @@ public class AST2Tests extends AST2TestBase {
 	// }
 	public void testFind() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), C);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		ICompositeType S1 = (ICompositeType) col.getName(0).resolveBinding();
@@ -3128,14 +3128,14 @@ public class AST2Tests extends AST2TestBase {
 	public void test92791() throws Exception {
 		IASTTranslationUnit tu = parse(
 				"void f() { int x, y; x * y; }", C); //$NON-NLS-1$
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 		for (int i = 0; i < col.size(); ++i)
 			assertFalse(col.getName(i).resolveBinding() instanceof IProblemBinding);
 
 		tu = parse(
 				"int y; void f() { typedef int x; x * y; }", C); //$NON-NLS-1$
-		col = new CNameCollector();
+		col = new NameCollector();
 		tu.accept(col);
 		for (int i = 0; i < col.size(); ++i)
 			assertFalse(col.getName(i).resolveBinding() instanceof IProblemBinding);
@@ -3144,7 +3144,7 @@ public class AST2Tests extends AST2TestBase {
 	public void testBug85786() throws Exception {
 		IASTTranslationUnit tu = parse(
 				"void f(int); void foo () { void * p = &f; ((void (*) (int)) p) (1); }", C); //$NON-NLS-1$
-		CNameCollector nameResolver = new CNameCollector();
+		NameCollector nameResolver = new NameCollector();
 		tu.accept(nameResolver);
 		assertNoProblemBindings(nameResolver);
 	}
@@ -3156,7 +3156,7 @@ public class AST2Tests extends AST2TestBase {
 	// }
 	public void testBug95720() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), C);
-		CNameCollector nameResolver = new CNameCollector();
+		NameCollector nameResolver = new NameCollector();
 		tu.accept(nameResolver);
 		assertNoProblemBindings(nameResolver);
 	}
@@ -3229,7 +3229,7 @@ public class AST2Tests extends AST2TestBase {
 	//          x; }) zoot;
 	public void testBug93980() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), C, true);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		IFunction foo = (IFunction) col.getName(0).resolveBinding();
@@ -3243,14 +3243,14 @@ public class AST2Tests extends AST2TestBase {
 
 	public void testBug95866() throws Exception {
 		IASTTranslationUnit tu = parse("int test[10] = { [0 ... 9] = 2 };", C, true, true); //$NON-NLS-1$
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 		assertNoProblemBindings(col);
 	}
 
 	public void testBug98502() throws Exception {
 		IASTTranslationUnit tu = parse("typedef enum { ONE } e;", C, true, true); //$NON-NLS-1$
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		IEnumeration etion = (IEnumeration) col.getName(0).resolveBinding();
@@ -3266,7 +3266,7 @@ public class AST2Tests extends AST2TestBase {
 	// }
 	public void testBug98365() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), C, true);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		IEnumerator etor = (IEnumerator) col.getName(2).resolveBinding();
@@ -3293,7 +3293,7 @@ public class AST2Tests extends AST2TestBase {
 	// }
 	public void testBug98960() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), C, true);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		IVariable a1 = (IVariable) col.getName(1).resolveBinding();
@@ -3306,7 +3306,7 @@ public class AST2Tests extends AST2TestBase {
 
 	public void testBug100408() throws Exception {
 		IASTTranslationUnit tu = parse("int foo() { int x=1; (x)*3; }", C);  //$NON-NLS-1$
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 		assertNoProblemBindings(col);
 	}
@@ -3322,7 +3322,7 @@ public class AST2Tests extends AST2TestBase {
 	// }
 	public void testBug98760() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), C, true);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		IFunction free = (IFunction) col.getName(4).resolveBinding();
@@ -3399,7 +3399,7 @@ public class AST2Tests extends AST2TestBase {
 	// }
 	public void testBug104390_2() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), C, true);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		IVariable x = (IVariable) col.getName(1).resolveBinding();
@@ -3749,7 +3749,7 @@ public class AST2Tests extends AST2TestBase {
 		IASTTranslationUnit tu= parseAndCheckBindings(getAboveComment(), CPP);
 		assertTrue(tu.isFrozen());
 		for (int i = 0; i < NUM_TESTS; i++) {
-			CNameCollector col = new CNameCollector();
+			NameCollector col = new NameCollector();
 			tu.accept(col);
 			IBinding methodb= col.getName(27).resolveBinding();
 			IBinding methodc= col.getName(30).resolveBinding();
@@ -3801,7 +3801,7 @@ public class AST2Tests extends AST2TestBase {
 		IASTTranslationUnit tu= parseAndCheckBindings(getAboveComment(), CPP);
 		assertTrue(tu.isFrozen());
 		for (int i = 0; i < NUM_TESTS; i++) {
-			CNameCollector col = new CNameCollector();
+			NameCollector col = new NameCollector();
 			tu.accept(col);
 			IBinding methodA= col.getName(30).resolveBinding();
 			IBinding methodAA= col.getName(33).resolveBinding();
@@ -3868,7 +3868,7 @@ public class AST2Tests extends AST2TestBase {
 	public void testBug192165() throws Exception {
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			IASTTranslationUnit tu = parse(getAboveComment(), lang, true, false);
-			CNameCollector col = new CNameCollector();
+			NameCollector col = new NameCollector();
 			tu.accept(col);
 			assertInstance(col.getName(0).resolveBinding(), IProblemBinding.class);
 			assertInstance(col.getName(1).resolveBinding(), ITypedef.class);
@@ -3967,7 +3967,7 @@ public class AST2Tests extends AST2TestBase {
 		IASTTranslationUnit tu= parseAndCheckBindings(getAboveComment(), CPP, true);
 		assertTrue(tu.isFrozen());
 		for (int i = 0; i < NUM_TESTS; i++) {
-			CNameCollector col = new CNameCollector();
+			NameCollector col = new NameCollector();
 			tu.accept(col);
 			assertInstance(col.getName(0).resolveBinding(), ICPPClassType.class);
 			assertInstance(col.getName(1).resolveBinding(), ICPPNamespace.class);
@@ -4075,7 +4075,7 @@ public class AST2Tests extends AST2TestBase {
 	// }
 	public void _testBug210019_nestedDesignatedInitializers() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), C);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		// Point p1
@@ -4155,7 +4155,7 @@ public class AST2Tests extends AST2TestBase {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), C);
 		assertTrue(tu.isFrozen());
 		for (int i = 0; i < NUM_TESTS; i++) {
-			CNameCollector col = new CNameCollector();
+			NameCollector col = new NameCollector();
 			tu.accept(col);
 
 			assertField(col.getName(6).resolveBinding(), "f", "S1");
@@ -4206,7 +4206,7 @@ public class AST2Tests extends AST2TestBase {
 	// }
 	public void testBug213029_cvConversion() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP, false);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 		for (Object o : col.nameList) {
 			IASTName n = (IASTName) o;

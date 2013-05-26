@@ -89,7 +89,6 @@ import org.eclipse.core.runtime.Platform;
  * @author jcamelon
  */
 public class CompleteParser2Tests extends BaseTestCase {
-
     private static final NullLogService NULL_LOG = new NullLogService();
 
     public CompleteParser2Tests() {
@@ -102,60 +101,45 @@ public class CompleteParser2Tests extends BaseTestCase {
     	return suite(CompleteParser2Tests.class);
     }
 
-	static private class CPPNameCollector extends ASTVisitor {
-    	public CPPNameCollector() {
-    		this(false);  // don't visit implicit names by default
+	static private class NameCollector extends ASTVisitor {
+        public List nameList = new ArrayList();
+
+        public NameCollector() {
+    		this(false);  // Don't visit implicit names by default
         }
-    	public CPPNameCollector(boolean shouldVisitImplicitNames) {
+
+    	public NameCollector(boolean shouldVisitImplicitNames) {
     		this.shouldVisitNames = true;
     		this.shouldVisitImplicitNames = shouldVisitImplicitNames;
     	}
-        public List nameList = new ArrayList();
-        @Override
+
+    	@Override
 		public int visit(IASTName name){
             nameList.add(name);
             return PROCESS_CONTINUE;
         }
-        public IASTName getName(int idx){
+
+    	public IASTName getName(int idx){
             if (idx < 0 || idx >= nameList.size())
                 return null;
             return (IASTName) nameList.get(idx);
         }
-        public int size() { return nameList.size(); }
+
+    	public int size() {
+    		return nameList.size();
+    	}
     }
-    static protected class CNameCollector extends ASTVisitor {
-        {
-            shouldVisitNames = true;
-        }
-        public List nameList = new ArrayList();
-        @Override
-		public int visit(IASTName name){
-            nameList.add(name);
-            return PROCESS_CONTINUE;
-        }
-        public IASTName getName(int idx){
-            if (idx < 0 || idx >= nameList.size())
-                return null;
-            return (IASTName) nameList.get(idx);
-        }
-        public int size() { return nameList.size(); }
-    }
-    protected void assertInstances(CPPNameCollector nameCollector, IBinding binding, int num) throws Exception {
+
+    protected void assertInstances(NameCollector nameCollector, IBinding binding, int num) throws Exception {
         int count = 0;
-        for (int i = 0; i < nameCollector.size(); i++)
+        for (int i = 0; i < nameCollector.size(); i++) {
             if (nameCollector.getName(i).resolveBinding() == binding)
                 count++;
+        }
 
         assertEquals(num, count);
     }
-    protected void assertInstances(CNameCollector nameCollector, IBinding binding, int num) throws Exception {
-        int count = 0;
-        for (int i = 0; i < nameCollector.size(); i++)
-            if (nameCollector.getName(i).resolveBinding() == binding)
-                count++;
 
-        assertEquals(num, count);
-    }
     protected IASTTranslationUnit parse(String code, boolean expectedToPass,
             ParserLanguage lang) throws Exception {
         return parse(code, expectedToPass, lang, false);
@@ -180,18 +164,20 @@ public class CompleteParser2Tests extends BaseTestCase {
         IScanner scanner= AST2TestBase.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
         if (lang == ParserLanguage.CPP) {
             ICPPParserExtensionConfiguration config = null;
-            if (gcc)
+            if (gcc) {
                 config = new GPPParserExtensionConfiguration();
-            else
+            } else {
                 config = new ANSICPPParserExtensionConfiguration();
+            }
             parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE,
                     NULL_LOG, config);
         } else {
             ICParserExtensionConfiguration config = null;
-            if (gcc)
+            if (gcc) {
                 config = new GCCParserExtensionConfiguration();
-            else
+            } else {
                 config = new ANSICParserExtensionConfiguration();
+            }
 
             parser2 = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE,
                      NULL_LOG, config);
@@ -217,7 +203,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
     public void testSimpleNamespace() throws Exception {
     	IASTTranslationUnit tu = parse("namespace A { }");
-    	CPPNameCollector col = new CPPNameCollector();
+    	NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 1);
@@ -226,7 +212,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testMultipleNamespaceDefinitions() throws Exception {
 	    IASTTranslationUnit tu = parse("namespace A { } namespace A { }");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 2);
@@ -236,7 +222,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
     public void testNestedNamespaceDefinitions() throws Exception {
         IASTTranslationUnit tu = parse("namespace A { namespace B { } }");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 2);
@@ -248,7 +234,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
     public void testEmptyClassDeclaration() throws Exception {
         IASTTranslationUnit tu = parse("class A { };");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 1);
@@ -257,7 +243,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
     public void testSimpleSubclass() throws Exception {
         IASTTranslationUnit tu = parse("class A { };  class B : public A { };");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 3);
@@ -275,7 +261,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
     public void testNestedSubclass() throws Exception {
         IASTTranslationUnit tu = parse("namespace N { class A { }; } class B : protected virtual N::A { };");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 6);
@@ -297,7 +283,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
     public void testSimpleVariable() throws Exception {
         IASTTranslationUnit tu = parse("int x;");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 1);
@@ -310,7 +296,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testSimpleClassReferenceVariable() throws Exception {
 	    IASTTranslationUnit tu = parse("class A { }; A x;");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 3);
@@ -323,7 +309,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testNestedClassReferenceVariable() throws Exception {
 	    IASTTranslationUnit tu = parse("namespace N { class A { }; } N::A x;");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 6);
@@ -339,7 +325,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testMultipleDeclaratorsVariable() throws Exception {
 	    IASTTranslationUnit tu = parse("class A { }; A x, y, z;");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 5);
@@ -356,7 +342,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testSimpleField() throws Exception {
 	    IASTTranslationUnit tu = parse("class A { double x; };");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 2);
@@ -375,7 +361,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	    		                        "using A::B::x;" +
 	    		                        "using A::B::C;" +
 	    		                        "using A::B::C::y;");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 21);
@@ -403,7 +389,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testEnumerations() throws Exception {
 	    IASTTranslationUnit tu = parse("namespace A { enum E { e1, e2, e3 }; E varE;}");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 7);
@@ -424,7 +410,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testSimpleFunction() throws Exception {
 	    IASTTranslationUnit tu = parse("void foo(void);");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 2);
@@ -438,7 +424,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testSimpleFunctionWithTypes() throws Exception {
 	    IASTTranslationUnit tu = parse("class A { public: \n class B { }; }; const A::B &  foo(A * myParam);");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 8);
@@ -464,7 +450,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testSimpleMethod() throws Exception {
 	    IASTTranslationUnit tu = parse("class A { void foo(); };");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 2);
@@ -476,7 +462,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testSimpleMethodWithTypes() throws Exception {
 	    IASTTranslationUnit tu = parse("class U { }; class A { U foo(U areDumb); };");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 6);
@@ -494,7 +480,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testUsingDeclarationWithFunctionsAndMethods() throws Exception {
 		IASTTranslationUnit tu = parse("namespace N { int foo(void); } class A { static int bar(void); }; using N::foo; using ::A::bar;");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 12);
@@ -517,7 +503,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testLinkageSpec() throws Exception {
 		IASTTranslationUnit tu = parse("extern \"C\" { int foo(); }");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 1);
@@ -527,7 +513,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBogdansExample() throws Exception {
 		IASTTranslationUnit tu = parse("namespace A { namespace B {	enum e1{e_1,e_2};	int x;	class C	{	static int y = 5;	}; }} ");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 8);
@@ -551,7 +537,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testAndrewsExample() throws Exception {
 		IASTTranslationUnit tu = parse("namespace N{ class A {}; }	using namespace N;	class B: public A{};");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 5);
@@ -568,7 +554,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testSimpleTypedef() throws Exception {
 		IASTTranslationUnit tu = parse("typedef int myInt;\n myInt var;");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 3);
@@ -582,7 +568,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testComplexTypedef() throws Exception {
 		IASTTranslationUnit tu = parse("class A{ }; typedef A ** A_DOUBLEPTR;");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 3);
@@ -622,7 +608,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testNestedClassname() throws Exception {
 		IASTTranslationUnit tu = parse("namespace A {  \n class A::B { };}");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
         tu.accept(col);
 
         ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
@@ -643,7 +629,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testElaboratedType() throws Exception {
 		IASTTranslationUnit tu = parse("class A; class A * a;");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 3);
@@ -656,7 +642,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testForewardDeclarationWithUsage() throws Exception {
 		IASTTranslationUnit tu = parse("class A; A * anA;class A { };");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 4);
@@ -710,7 +696,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testOverride() throws Exception {
 		IASTTranslationUnit tu = parse("void foo();\n void foo(int);\n");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 3);
@@ -722,7 +708,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testSimpleExpression() throws Exception {
 		IASTTranslationUnit tu = parse("int x; int y = x;");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 3);
@@ -734,7 +720,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testParameterExpressions() throws Exception {
 		IASTTranslationUnit tu = parse("int x = 5; void foo(int sub = x) { }");
-        CPPNameCollector col = new CPPNameCollector();
+        NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 4);
@@ -744,7 +730,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testNestedNamespaceExpression() throws Exception {
 		IASTTranslationUnit tu = parse("namespace A { int x = 666; } int y  = A::x;");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 6);
@@ -756,7 +742,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testConstructorChain() throws Exception {
 		IASTTranslationUnit tu = parse("int x = 5;\n class A \n{ public : \n int a; \n A() : a(x) { } };");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 6);
@@ -770,7 +756,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testArrayModExpression() throws Exception {
 		IASTTranslationUnit tu = parse("const int x = 5; int y[ x ]; ");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 3);
@@ -783,7 +769,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testPointerVariable() throws Exception {
 		IASTTranslationUnit tu = parse("class A { }; A * anA;");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 3);
@@ -796,7 +782,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testExceptionSpecification() throws Exception {
 		IASTTranslationUnit tu = parse("class A { }; void foo(void) throw (A);");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 4);
@@ -806,7 +792,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testNewExpressions() throws Exception {
 		IASTTranslationUnit tu = parse("typedef int A; int B; int C; int D; int P; int*p = new  (P) (A[B][C][D]);");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 11);
@@ -836,7 +822,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertFalse(dtor instanceof IASTFunctionDeclarator);
 		assertNotNull(dtor.getInitializer());
 
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 4);
@@ -848,7 +834,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testNewXReferences() throws Exception {
 		IASTTranslationUnit tu = parse("const int max = 5;\n int * x = new int[max];");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 3);
@@ -859,7 +845,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	public void testQualifiedNameReferences() throws Exception {
 		// Used to cause AST Semantic exception
 		IASTTranslationUnit tu = parse("class A{ class B{ class C { public: int cMethod(); }; }; }; \n  int A::B::C::cMethod() {}; \n");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 9);
@@ -880,7 +866,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testIsConstructor() throws Exception {
 		IASTTranslationUnit tu = parse("class A{ public: A(); }; \n  A::A() {}; \n");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 5);
@@ -893,7 +879,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testIsDestructor() throws Exception {
 		IASTTranslationUnit tu = parse("class A{ public: ~A(); }; \n  A::~A() {}; \n");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 5);
@@ -906,7 +892,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug41445() throws Exception {
 		IASTTranslationUnit tu = parse("class A { }; namespace N { class B : public A { struct A {}; }; }");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 5);
@@ -925,7 +911,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testSimpleFunctionBody() throws Exception {
 		IASTTranslationUnit tu = parse("class A { int f1(); }; const int x = 4; int f() { return x; } int A::f1() { return x; }");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 9);
@@ -940,7 +926,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testSimpleForLoop() throws Exception {
 		IASTTranslationUnit tu = parse("const int FIVE = 5;  void f() {  int x = 0; for (int i = 0; i < FIVE; ++i) { x += i; }  }");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 9);
@@ -955,7 +941,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug42541() throws Exception {
 		IASTTranslationUnit tu = parse("union{ int v; char a; } id;");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 4);
@@ -985,7 +971,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertTrue(ifstmt.getThenClause() instanceof IASTReturnStatement);
 		assertTrue(ifstmt.getElseClause() instanceof IASTCompoundStatement);
 
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 4);
@@ -996,7 +982,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testSimpleWhileStatement() throws Exception {
 		IASTTranslationUnit tu = parse("const bool T = true; void foo() { int x = 0; while(T) {  ++x;  if (x == 100) break; } }");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 6);
@@ -1019,7 +1005,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 										"   }                               " +
 										"   blah : ;                        " +
 										"}                                  ");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 7);
@@ -1034,7 +1020,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testSimpleDoStatement() throws Exception {
 	    IASTTranslationUnit tu = parse("const int x = 3; int counter = 0; void foo() { do { ++counter; } while(counter != x); } ");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 6);
@@ -1046,7 +1032,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testThrowStatement() throws Exception {
 		IASTTranslationUnit tu = parse("class A { }; void foo() throw (A) { A a; throw a; throw; } ");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(6, col.size());
@@ -1059,7 +1045,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testScoping() throws Exception {
 	    IASTTranslationUnit tu = parse("void foo() { int x = 3; if (x == 1) { int x = 4; } else int x = 2; }");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 5);
@@ -1074,7 +1060,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testEnumeratorReferences() throws Exception {
 	    IASTTranslationUnit tu = parse("enum E { e1, e2, e3 }; E anE = e1;");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 7);
@@ -1093,7 +1079,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug42840() throws Exception {
 	    IASTTranslationUnit tu = parse("void foo(); void foo() { } class SearchMe { };");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 3);
@@ -1104,7 +1090,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug42872() throws Exception {
 	    IASTTranslationUnit tu = parse("struct B {}; struct D : B {}; void foo(D* dp) { B* bp = dynamic_cast<B*>(dp); }");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 10);
@@ -1117,7 +1103,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug43503A() throws Exception {
 	    IASTTranslationUnit tu = parse("class SD_01 { void f_SD_01() {}}; int main(){ SD_01 * a = new SD_01(); a->f_SD_01();	} ");
-		CPPNameCollector col = new CPPNameCollector(true);
+		NameCollector col = new NameCollector(true);
  		tu.accept(col);
 
  		assertEquals(col.size(), 9);
@@ -1142,7 +1128,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		code.write("{ return false; }\n");
 
 		IASTTranslationUnit tu = parse(code.toString());
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 12);
@@ -1159,7 +1145,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	 */
 	public void testBug43373() throws Exception {
 	    IASTTranslationUnit tu = parse("class A { static int x; }; int A::x = 5;");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 5);
@@ -1172,7 +1158,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug39504() throws Exception {
 	    IASTTranslationUnit tu = parse("const int w = 2; int x[ 5 ]; int y = sizeof (x[w]);");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 5);
@@ -1209,7 +1195,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		buff.append("}                          \n");
 		IASTTranslationUnit tu = parse(buff.toString());
 
-		CPPNameCollector col = new CPPNameCollector(true);
+		NameCollector col = new NameCollector(true);
  		tu.accept(col);
 
  		assertEquals(col.size(), 18);
@@ -1230,7 +1216,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug43679_A () throws Exception {
 	    IASTTranslationUnit tu = parse("struct Sample { int size() const; }; extern const Sample * getSample(); int trouble() {  return getSample()->size(); } ");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
  		tu.accept(col);
 
  		assertEquals(col.size(), 7);
@@ -1245,7 +1231,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug43679_B () throws Exception {
 	    IASTTranslationUnit tu = parse("struct Sample{int size() const; }; struct Sample; ");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 3);
@@ -1258,7 +1244,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug43951() throws Exception {
 		IASTTranslationUnit tu = parse("class B{ B(); ~B(); }; B::B(){} B::~B(){}");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 9);
@@ -1273,7 +1259,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug44342() throws Exception {
 		IASTTranslationUnit tu = parse("class A { void f(){} void f(int){} }; int main(){ A * a = new A(); a->f();} ");
-		CPPNameCollector col = new CPPNameCollector(true);
+		NameCollector col = new NameCollector(true);
 		tu.accept(col);
 
 		assertEquals(col.size(), 11);
@@ -1329,7 +1315,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 							"int initialize(){ return 1; } " +
 							"void main(){ int i = initialize(); }");
 
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 7);
@@ -1348,7 +1334,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		buffer.append("enum MyEnum myObj2;");
 		IASTTranslationUnit tu = parse(buffer.toString());
 
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 7);
@@ -1371,7 +1357,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		buffer.append("A::A(int x) : myX(x) { if (x == 5) myX++; }\n");
 		IASTTranslationUnit tu = parse(buffer.toString());
 
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 12);
@@ -1401,7 +1387,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		buffer.append("}\n");
 		IASTTranslationUnit tu = parse(buffer.toString());
 
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 5);
@@ -1425,7 +1411,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		buffer.append("void main() { N::A * a = new N::A();  a->f(); } ");
 		IASTTranslationUnit tu = parse(buffer.toString());
 
-		CPPNameCollector col = new CPPNameCollector(true);
+		NameCollector col = new NameCollector(true);
 		tu.accept(col);
 
 		assertEquals(col.size(), 14);
@@ -1451,7 +1437,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		buffer.append("void z(...);");
 		IASTTranslationUnit tu = parse(buffer.toString());
 
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 5);
@@ -1470,7 +1456,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 		IASTTranslationUnit tu = parse(buffer.toString());
 
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 3);
@@ -1481,7 +1467,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	public void testErrorHandling_1() throws Exception	{
 		IASTTranslationUnit tu = parse("A anA; int x = c; class A {}; A * anotherA = &anA; int b;", false);
 
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 9);
@@ -1505,7 +1491,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		// Inline function with reference to variables declared after them
 		IASTTranslationUnit tu = parse ("class A{ int getX() {return x[1];} int x[10];};");
 
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 4);
@@ -1528,7 +1514,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		writer.write("void f(char[]); \n");
 		writer.write("void f(char *){} \n");
 		IASTTranslationUnit tu = parse(writer.toString());
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 4);
@@ -1546,7 +1532,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		writer.write(" int f(char){ } ");
 
 		IASTTranslationUnit tu = parse(writer.toString());
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 4);
@@ -1564,7 +1550,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		writer.write("typedef enum _A { } A, *pA; ");
 
 		IASTTranslationUnit tu = parse(writer.toString());
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 3);
@@ -1588,7 +1574,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		writer.write("}\n");
 
 		IASTTranslationUnit tu = parse(writer.toString());
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 11);
@@ -1606,7 +1592,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 		parse(writer.toString());
 		IASTTranslationUnit tu = parse(writer.toString());
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 4);
@@ -1623,7 +1609,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug56516() throws Exception {
 		IASTTranslationUnit tu = parse("typedef struct blah sb;");
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 2);
@@ -1652,7 +1638,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 		IASTTranslationUnit tu = parse(writer.toString());
 
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 10);
@@ -1675,7 +1661,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		writer.write("};                  ");
 		writer.write("void X::f(T) { }  ");
 		IASTTranslationUnit tu = parse(writer.toString());
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 10);
@@ -1694,7 +1680,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		writer.write("typedef G2 AltG2;");
 		writer.write("class AltG3 : AltG2 {  int x;};");
 		IASTTranslationUnit tu = parse(writer.toString());
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 7);
@@ -1715,7 +1701,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		writer.write("struct B b1;               ");
 
 		IASTTranslationUnit tu = parse(writer.toString(), true, ParserLanguage.C);
-		CNameCollector col = new CNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertEquals(col.size(), 9);
@@ -2475,7 +2461,7 @@ public class CompleteParser2Tests extends BaseTestCase {
     	writer.write("struct __declspec(foobar) Foo3 {};\n");
     	IASTTranslationUnit tu = parse(writer.toString(), true, ParserLanguage.CPP, true);
 
-    	CPPNameCollector col = new CPPNameCollector();
+    	NameCollector col = new NameCollector();
     	tu.accept(col);
 
     	assertEquals(3, col.size());
@@ -2500,7 +2486,7 @@ public class CompleteParser2Tests extends BaseTestCase {
     	writer.write("__declspec(foobar) class Foo {} bar;\n");
     	IASTTranslationUnit tu = parse(writer.toString(), true, ParserLanguage.CPP, true);
 
-    	CPPNameCollector col = new CPPNameCollector();
+    	NameCollector col = new NameCollector();
     	tu.accept(col);
 
     	assertEquals(2, col.size());
@@ -2525,7 +2511,7 @@ public class CompleteParser2Tests extends BaseTestCase {
     	IASTProblem[] problems = CPPVisitor.getProblems(tu);
     	assertFalse("__declspec rejected inside declarator", problems.length>0);
 
-    	CPPNameCollector col = new CPPNameCollector();
+    	NameCollector col = new NameCollector();
     	tu.accept(col);
 
     	assertEquals(1, col.size());
@@ -2538,7 +2524,7 @@ public class CompleteParser2Tests extends BaseTestCase {
     	String code = "class aClass { class bClass; int x; };";
     	IASTTranslationUnit tu = parse(code, true, ParserLanguage.CPP, true);
 
-    	CPPNameCollector col = new CPPNameCollector();
+    	NameCollector col = new NameCollector();
     	tu.accept(col);
 
     	ICPPClassType cls = (ICPPClassType)col.getName(0).resolveBinding();

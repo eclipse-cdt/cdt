@@ -73,7 +73,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	public void testBinaryExpressions() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		IASTTranslationUnit tu = ba.getTranslationUnit();
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 		IASTImplicitName n;
 
@@ -135,7 +135,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	public void testPointerToMember() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		IASTTranslationUnit tu = ba.getTranslationUnit();
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		ba.assertNoImplicitName("&Y::x;", 1);
@@ -168,7 +168,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	public void testArrowOperator() throws Exception {
 		String contents = getAboveComment();
 		IASTTranslationUnit tu = parse(contents, ParserLanguage.CPP);
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		IASTImplicitName[] implicits = getImplicitNames(tu, contents, "->doA();", 2);
@@ -231,7 +231,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 		ba.assertNoImplicitName(", d; // expr", 1);
 
 		IASTTranslationUnit tu = ba.getTranslationUnit();
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertSame(opAB.resolveBinding(), col.getName(5).resolveBinding());
@@ -262,7 +262,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 		IASTImplicitName opDD = ba.assertImplicitName(", d", 1, ICPPMethod.class);
 
 		IASTTranslationUnit tu = ba.getTranslationUnit();
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		// 6, 11, 15
@@ -288,7 +288,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	public void testFunctionCallOperator() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		IASTTranslationUnit tu = ba.getTranslationUnit();
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		IASTImplicitName n1 = ba.assertImplicitName("(b); // 1", 1, ICPPMethod.class);
@@ -347,7 +347,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	public void testArraySubscript() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		IASTTranslationUnit tu = ba.getTranslationUnit();
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		IASTImplicitName n1 = ba.assertImplicitName("[0]); //1", 1, ICPPMethod.class);
@@ -387,7 +387,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 		IASTImplicitName delete = names[1];
 
 		IASTTranslationUnit tu = ba.getTranslationUnit();
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertSame(col.getName(1).resolveBinding(), destructor.resolveBinding());
@@ -485,7 +485,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 		IASTImplicitName n3 = ba.assertImplicitName("new (5, 6) int", 3, ICPPFunction.class);
 
 		IASTTranslationUnit tu = ba.getTranslationUnit();
-		CPPNameCollector col = new CPPNameCollector();
+		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertSame(col.getName(4).resolveBinding(), n1.resolveBinding());

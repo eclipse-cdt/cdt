@@ -335,8 +335,9 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 			return this;
 
 		IBinding member = fMember;
-		if (ownerType instanceof ICPPClassSpecialization) {
-			member = CPPTemplates.createSpecialization((ICPPClassSpecialization) ownerType, fMember, point);
+		IType ownerClass = SemanticUtil.getNestedType(ownerType, ALLCVQ);
+		if (ownerClass instanceof ICPPClassSpecialization) {
+			member = CPPTemplates.createSpecialization((ICPPClassSpecialization) ownerClass, fMember, point);
 		}
 		return new EvalMemberAccess(ownerType, fOwnerValueCategory, member, fIsPointerDeref, getTemplateDefinition());
 	}

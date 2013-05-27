@@ -7418,6 +7418,26 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	struct foo {
+	//	    int operator()() const;
+	//	};
+	//
+	//	template <typename F>
+	//	struct W {
+	//	    F f;
+	//	    
+	//	    auto operator()() const -> decltype(f()) {                                               
+	//	        return f();                         
+	//	    }
+	//	};
+	//
+	//	typedef decltype(W<foo>()()) waldo;
+	public void testInstantiationOfConstMemberAccess_409107() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		IType waldo = bh.assertNonProblem("waldo");
+		assertSameType(waldo, CommonTypes.int_);
+	}
+	
 	//    template <typename _Tp>
 	//    struct remove_reference {
 	//        typedef _Tp type;

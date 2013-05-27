@@ -10154,6 +10154,16 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testIsBaseOf_399353() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
+	
+	//	struct base {};
+	//	struct derived : base {};
+	//	typedef derived derived2;
+	//	const bool value = __is_base_of(base, derived2);
+	public void testIsBaseOf_409100() throws Exception {
+		BindingAssertionHelper b = getAssertionHelper();
+		IVariable var = b.assertNonProblem("value");
+		assertEquals(1 /*true */, var.getInitialValue().numericalValue().longValue());
+	}
 
 	//	template <bool> struct B{};
 	//	template <>

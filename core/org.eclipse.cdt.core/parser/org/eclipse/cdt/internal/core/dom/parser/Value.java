@@ -69,11 +69,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeTraits;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 import org.eclipse.cdt.internal.core.pdom.db.TypeMarshalBuffer;
 import org.eclipse.core.runtime.CoreException;
+
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 /**
  * Represents values of variables, enumerators or expressions. The primary purpose of
@@ -349,6 +352,8 @@ public class Value implements IValue {
 			IType type1, IType type2, IASTNode point) {
 		switch (operator) {
 		case __is_base_of:
+			type1 = SemanticUtil.getNestedType(type1, TDEF);
+			type2 = SemanticUtil.getNestedType(type2, TDEF);
 			if (type1 instanceof ICPPClassType && type2 instanceof ICPPClassType) {
 				return ClassTypeHelper.isSubclass((ICPPClassType) type2, (ICPPClassType) type1) ? 1 : 0;
 			} else {

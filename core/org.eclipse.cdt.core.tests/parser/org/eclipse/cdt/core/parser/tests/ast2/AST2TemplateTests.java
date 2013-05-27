@@ -4503,10 +4503,57 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	int main() {
 	//	    foo(0);
 	//	}
-	public void testFunctionTemplatePartialOrdering_388805() throws Exception {
+	public void testFunctionTemplateOrdering_388805() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <typename T>
+	//	struct identity {
+	//	    typedef T type;
+	//	};
+	//
+	//	template <typename T>
+	//	void foo(typename identity<T>::type);
+	//
+	//	template <typename T>
+	//	void foo(T);
+	//
+	//	int main() {
+	//	    foo<int>(0);  // ERROR HERE
+	//	}
+	public void testFunctionTemplateOrdering_409094a() throws Exception {
 		parseAndCheckBindings();
 	}
 
+	//	template <typename T>
+	//	struct identity { 
+	//	    typedef T type; 
+	//	};
+	//
+	//	template <typename> struct W;
+	//
+	//	template <typename T>
+	//	struct A {
+	//	    typedef typename identity<T>::type type1;
+	//	    typedef W<type1> type2;
+	//	};
+	//
+	//	template<typename T>
+	//	void foo(typename identity<T>::type);
+	//
+	//	template <class T>
+	//	void foo(T);
+	//
+	//	struct waldo {};
+	//
+	//	int main() {
+	//	    waldo w;
+	//	    foo<waldo>(w);  // ERROR HERE
+	//	}
+	public void testFunctionTemplateOrdering_409094b() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 	//	template<typename T> class CT {};
 	//	template<int I> class CTI {};
 	//

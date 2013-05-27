@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
@@ -70,6 +71,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMember;
 
 /**
  * Algorithms for deducing template arguments in various contexts.
@@ -425,6 +427,7 @@ public class TemplateArgumentDeduction {
 			int result= 0;
 			TemplateArgumentDeduction deduct= new TemplateArgumentDeduction(tmplPars, new CPPTemplateParameterMap(0), new CPPTemplateParameterMap(fnParCount), 0);
 			IType fnParPack= null;
+			Set<Integer> usedTemplateParIds= new HashSet<Integer>();
 			for (int j= 0; j < fnArgCount; j++) {
 				IType par;
 				if (fnParPack != null) {
@@ -445,18 +448,94 @@ public class TemplateArgumentDeduction {
 				} 
 				
 				IType arg = fnArgs[j];
+				addReferencedTemplateParameters(par, usedTemplateParIds);
 				int cmpSpecialized= deduceForPartialOrdering(par, arg, deduct, point);
 				if (cmpSpecialized < 0)
 					return cmpSpecialized;
 				if (cmpSpecialized > 0)
 					result= cmpSpecialized;
 			}
-			return result;
+			return verifyDeductionForPartialOrdering(tmplPars, usedTemplateParIds, deduct.fDeducedArgs) ? result : -1;
 		} catch (DOMException e) {
 		}
 		return -1;
 	}
+
+	private static void addReferencedTemplateParameters(IType t, Set<Integer> usedTemplateParIds) {
+		while (true) {
+			if (t instanceof ICPPTemplateParameter) {
+				usedTemplateParIds.add(((ICPPTemplateParameter) t).getParameterID());
+				return;
+			} else if (t instanceof ICPPFunctionType) {
+				final ICPPFunctionType ft = (ICPPFunctionType) t;
+				for (IType par : ft.getParameterTypes())
+					addReferencedTemplateParameters(par, usedTemplateParIds);
+				t = ft.getReturnType();
+			} else if (t instanceof ICPPPointerToMemberType) {
+				ICPPPointerToMemberType ptmt = (ICPPPointerToMemberType) t;
+				addReferencedTemplateParameters(ptmt.getMemberOfClass(), usedTemplateParIds);
+				t = ptmt.getType();
+			} else if (t instanceof ICPPTemplateInstance) {
+				ICPPTemplateInstance inst = (ICPPTemplateInstance) t;
+				for (ICPPTemplateArgument arg : inst.getTemplateArguments()) {
+					if (arg instanceof CPPTemplateTypeArgument)
+						addReferencedTemplateParameters(arg.getTypeValue(), usedTemplateParIds);
+					else
+						addReferencedTemplateParameters(arg.getNonTypeValue(), usedTemplateParIds);
+				}
+				if (inst.getTemplateDefinition() instanceof IType) {
+					t = (IType) inst.getTemplateDefinition();
+				} else {
+					return;
+				}
+			} else if (t instanceof ICPPUnknownMember) {
+				t = ((ICPPUnknownMember) t).getOwnerType();
+			} else if (t instanceof ITypeContainer) {
+				if (t instanceof IArrayType)
+					addReferencedTemplateParameters(((IArrayType) t).getSize(), usedTemplateParIds);
+				t = ((ITypeContainer) t).getType();
+			} else {
+				return;
+			}
+		}
+	}
 	
+	private static void addReferencedTemplateParameters(IValue v, Set<Integer> usedTemplatePars) {
+		if (v != null && v.getEvaluation() instanceof EvalBinding) {
+			IBinding binding = ((EvalBinding) v.getEvaluation()).getBinding();
+			if (binding instanceof ICPPTemplateParameter) {
+				usedTemplatePars.add(((ICPPTemplateParameter) binding).getParameterID());
+			}
+		}
+	}
+
+	/**
+	 *  14.8.2.4-11 [temp.deduction.partial]
+	 *  In most cases, all template parameters must have values in order for deduction to succeed,
+	 *  but for partial ordering purposes a template parameter may remain without a value provided
+	 *  it is not used in the types being used for partial ordering.
+	 */
+	private static boolean verifyDeductionForPartialOrdering(ICPPTemplateParameter[] pars,
+			Set<Integer> usedParIds, CPPTemplateParameterMap tpMap) {
+		for (ICPPTemplateParameter tpar : pars) {
+			if (usedParIds.contains(tpar.getParameterID())) {
+				if (tpar.isParameterPack()) {
+					ICPPTemplateArgument[] deducedArgs = tpMap.getPackExpansion(tpar);
+					if (deducedArgs != null) {
+						for (ICPPTemplateArgument arg : deducedArgs) {
+							if (arg == null)
+								return false;
+						}
+					}
+				} else {
+					if (tpMap.getArgument(tpar) == null)
+						return false;
+				}
+			}
+		}
+		return true;
+	}
+
 	private static int deduceForPartialOrdering(IType par, IType arg, TemplateArgumentDeduction deduct, IASTNode point) throws DOMException {
 		par= getNestedType(par, TDEF);
 		arg= getNestedType(arg, TDEF);

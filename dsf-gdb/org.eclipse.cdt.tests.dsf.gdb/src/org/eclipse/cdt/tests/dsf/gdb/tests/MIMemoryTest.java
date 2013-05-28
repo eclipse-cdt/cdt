@@ -504,8 +504,8 @@ public class MIMemoryTest extends BaseTestCase {
 		//	Ensure that we receive a block of invalid memory bytes
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		MemoryByte[] buffer = (MemoryByte[]) fWait.getReturnInfo();
-		assertTrue("Wrong value: expected '-1, 0', received '" + buffer[0].getValue() + ", " + buffer[0].getFlags() + "'",
-				(buffer[0].getValue() == (byte) 0) && (buffer[0].getFlags() == (byte) 0));
+		assertTrue("Wrong value: expected '0, 32', received '" + buffer[0].getValue() + ", " + buffer[0].getFlags() + "'",
+				(buffer[0].getValue() == (byte) 0) && (buffer[0].getFlags() == (byte) 32));
 
 		// Ensure no MemoryChangedEvent event was received
 		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
@@ -797,9 +797,7 @@ public class MIMemoryTest extends BaseTestCase {
 		writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
-		String expected = "Cannot access memory at address";	// Error msg returned by gdb
-		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-				fWait.getMessage().contains(expected));
+		// Don't test the error message since it changes from one GDB version to another
 
 		// Ensure no MemoryChangedEvent event was received
 		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);

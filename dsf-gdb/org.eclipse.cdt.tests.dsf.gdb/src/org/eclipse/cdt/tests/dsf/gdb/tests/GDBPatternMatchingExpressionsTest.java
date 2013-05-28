@@ -39,20 +39,22 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.mi.service.ClassAccessor.MIExpressionDMCAccessor;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExpressions;
 import org.eclipse.cdt.dsf.mi.service.MIRegisters.MIRegisterDMC;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
-import org.eclipse.core.runtime.Platform;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -102,18 +104,44 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	// Utility methods
 	//**************************************************************************************
 	
-	protected List<String> get_X86_REGS() {
-		// Because we are dealing with expressions for the registers, we must prefix them with '$'
-		List<String> list = new LinkedList<String>(Arrays.asList("$eax","$ecx","$edx","$ebx","$esp","$ebp","$esi","$edi","$eip","$eflags",
-																 "$cs","$ss","$ds","$es","$fs","$gs","$st0","$st1","$st2","$st3",
-																 "$st4","$st5","$st6","$st7","$fctrl","$fstat","$ftag","$fiseg","$fioff","$foseg",
-																 "$fooff","$fop","$xmm0","$xmm1","$xmm2","$xmm3","$xmm4","$xmm5","$xmm6","$xmm7",
-																 "$mxcsr","$orig_eax","$mm0","$mm1","$mm2","$mm3","$mm4","$mm5","$mm6","$mm7"));
-		// On Windows, gdb doesn't report "orig_eax" as a register. Apparently it does on Linux
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-    		list.remove("$orig_eax");
-	    }
-		return list;
+	// Static list of register names as obtained directly from GDB.
+	// We make it static so it does not get re-set for every test
+	protected static List<String> fRegisterNames = null;
+	
+	protected List<String> get_X86_REGS() throws Throwable {
+		
+		if (fRegisterNames == null) {
+			// The tests must run on different machines, so the set of registers can change.
+			// To deal with this we ask GDB for the list of registers.
+			// Note that we send an MI Command in this code and do not use the IRegister service;
+			// this is because we want to test the service later, comparing it to what we find
+			// by asking GDB directly.
+			final IContainerDMContext container = SyncUtil.getContainerContext();
+			Query<MIDataListRegisterNamesInfo> query = new Query<MIDataListRegisterNamesInfo>() {
+				@Override
+				protected void execute(DataRequestMonitor<MIDataListRegisterNamesInfo> rm) {
+					IMICommandControl controlService = fServicesTracker.getService(IMICommandControl.class);
+					controlService.queueCommand(
+							controlService.getCommandFactory().createMIDataListRegisterNames(container), rm);
+				}
+			};
+			fSession.getExecutor().execute(query);
+
+			MIDataListRegisterNamesInfo data = query.get();
+			String[] names = data.getRegisterNames();
+
+			// Remove registers with empty names since the service also
+			// remove them.  I don't know why GDB returns such empty names.
+			fRegisterNames = new LinkedList<String>();
+			for (String name : names) {
+				if (!name.isEmpty()) {
+					// Add the '$' prefix
+					fRegisterNames.add("$"+name);
+				}
+			}
+		}
+		// Return a copy since it will be modified by each test
+		return new LinkedList<String>(fRegisterNames);
 	}
 	
 	final static String[] fAllVariables = new String[] { "firstarg", "firstvar", "ptrvar", "secondarg", "secondvar", "var", "var2" };
@@ -376,8 +404,10 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testMatchRegWithStar() throws Throwable {
-		final String exprString = "=$e*";
-		final String[] children = new String[] { "$eax","$ebp","$ebx","$ecx","$edi","$edx","$eflags","$eip","$es", "$esi","$esp" };
+		// Add the $eip register first as it is present for 32bit but not 64bit machines.
+		// When we put it first like that, we force it to be included in the list all the time.
+		final String exprString = "$eip;=$e*";
+		final String[] children = new String[] { "$eip","$eax","$ebp","$ebx","$ecx","$edi","$edx","$eflags","$es", "$esi","$esp" };
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -492,8 +522,10 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testMatchRegWithQuestionMark() throws Throwable {
-		final String exprString = "=$e??";
-		final String[] children = new String[] { "$eax","$ebp","$ebx","$ecx","$edi","$edx","$eip", "$esi","$esp" };
+		// Add the $eip register first as it is present for 32bit but not 64bit machines.
+		// When we put it first like that, we force it to be included in the list all the time.
+		final String exprString = "$eip;=$e??";
+		final String[] children = new String[] { "$eip","$eax","$ebp","$ebx","$ecx","$edi","$edx", "$esi","$esp" };
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);

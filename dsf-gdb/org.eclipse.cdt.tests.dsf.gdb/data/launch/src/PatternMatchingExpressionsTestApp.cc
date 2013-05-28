@@ -13,7 +13,7 @@ int testArrayMatching() {
     int array[20];
     int arrayInt[10];
     bool arrayBool[20];
-    int arrayNot,array2,array3;
+    int arrayNot=1,array2=2,array3=3;
     
     array[0] = 20;
     array[1] = 21;

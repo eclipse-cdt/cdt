@@ -15,6 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -39,20 +40,22 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.mi.service.ClassAccessor.MIExpressionDMCAccessor;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExpressions;
 import org.eclipse.cdt.dsf.mi.service.MIRegisters.MIRegisterDMC;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
-import org.eclipse.core.runtime.Platform;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -102,21 +105,59 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	// Utility methods
 	//**************************************************************************************
 	
-	protected List<String> get_X86_REGS() {
-		// Because we are dealing with expressions for the registers, we must prefix them with '$'
-		List<String> list = new LinkedList<String>(Arrays.asList("$eax","$ecx","$edx","$ebx","$esp","$ebp","$esi","$edi","$eip","$eflags",
-																 "$cs","$ss","$ds","$es","$fs","$gs","$st0","$st1","$st2","$st3",
-																 "$st4","$st5","$st6","$st7","$fctrl","$fstat","$ftag","$fiseg","$fioff","$foseg",
-																 "$fooff","$fop","$xmm0","$xmm1","$xmm2","$xmm3","$xmm4","$xmm5","$xmm6","$xmm7",
-																 "$mxcsr","$orig_eax","$mm0","$mm1","$mm2","$mm3","$mm4","$mm5","$mm6","$mm7"));
-		// On Windows, gdb doesn't report "orig_eax" as a register. Apparently it does on Linux
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-    		list.remove("$orig_eax");
-	    }
-		return list;
+	// Static list of register names as obtained directly from GDB.
+	// We make it static so it does not get re-set for every test
+	protected static List<String> fRegisterNames = null;
+	// Variable indicating if we are dealing with registers for a 32 or 64 bit architecture
+	protected static Boolean fRegister64Bit = null;
+	
+	protected boolean is64BitRegisterList() throws Throwable {
+		if (fRegister64Bit == null) {
+			// This is how we fill this variable
+			get_X86_REGS();
+		}
+		return fRegister64Bit;
 	}
 	
-	final static String[] fAllVariables = new String[] { "firstarg", "firstvar", "ptrvar", "secondarg", "secondvar", "var", "var2" };
+	protected List<String> get_X86_REGS() throws Throwable {
+		
+		if (fRegisterNames == null) {
+			// The tests must run on different machines, so the set of registers can change.
+			// To deal with this we ask GDB for the list of registers.
+			// Note that we send an MI Command in this code and do not use the IRegister service;
+			// this is because we want to test the service later, comparing it to what we find
+			// by asking GDB directly.
+			final IContainerDMContext container = SyncUtil.getContainerContext();
+			Query<MIDataListRegisterNamesInfo> query = new Query<MIDataListRegisterNamesInfo>() {
+				@Override
+				protected void execute(DataRequestMonitor<MIDataListRegisterNamesInfo> rm) {
+					IMICommandControl controlService = fServicesTracker.getService(IMICommandControl.class);
+					controlService.queueCommand(
+							controlService.getCommandFactory().createMIDataListRegisterNames(container), rm);
+				}
+			};
+			fSession.getExecutor().execute(query);
+
+			MIDataListRegisterNamesInfo data = query.get();
+			String[] names = data.getRegisterNames();
+
+			// Remove registers with empty names since the service also
+			// remove them.  I don't know why GDB returns such empty names.
+			fRegisterNames = new LinkedList<String>();
+			for (String name : names) {
+				if (!name.isEmpty()) {
+					// Add the '$' prefix
+					fRegisterNames.add("$"+name);
+				}
+			}
+			if (fRegisterNames.contains("$rax")) {
+				fRegister64Bit = true;
+			}
+		}
+		return fRegisterNames;
+	}
+	
+	final static List<String> fAllVariables = Arrays.asList(new String[] { "firstarg", "firstvar", "ptrvar", "secondarg", "secondvar", "var", "var2" });
 
 	protected void checkChildrenCount(final IExpressionDMContext parentDmc, final int expectedCount) throws Throwable {
 		Query<Integer> query = new Query<Integer>() {
@@ -193,7 +234,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 
 	// This method tests IExpressions.getSubExpressions(IExpressionDMC, int, int, DRM);
 	protected IExpressionDMContext[] checkChildren(final IExpressionDMContext parentDmc, final int startIndex, final int length,
-			String[] expectedValues) throws Throwable {
+			List<String> expectedValues) throws Throwable {
 
 		Query<IExpressionDMContext[]> query = new Query<IExpressionDMContext[]>() {
 			@Override
@@ -214,11 +255,11 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 			childDmcsAccessor[i] = new MIExpressionDMCAccessor(childDmcs[i]);
 			childExpressions[i] = childDmcsAccessor[i].getRelativeExpression();
 		}        
-		assertTrue("Expected " + Arrays.toString(expectedValues) + " but got " + Arrays.toString(childExpressions),
-				expectedValues.length == childExpressions.length);
+		assertTrue("Expected " + expectedValues.toString() + " but got " + Arrays.toString(childExpressions),
+				expectedValues.size() == childExpressions.length);
 
 		for (int i = 0; i < childDmcsAccessor.length; i++) {
-			assertEquals(childDmcsAccessor[i].getRelativeExpression(), expectedValues[i]);
+			assertEquals(childDmcsAccessor[i].getRelativeExpression(), expectedValues.get(i));
 		}
 
 		return childDmcs;
@@ -272,7 +313,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchSingleReg() throws Throwable {
 		final String exprString = "=$esp";
-		final String[] children = new String[] { "$esp" };
+		List<String> children = Arrays.asList(new String[] { "$esp" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -281,7 +322,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -290,7 +331,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchSingleLocal() throws Throwable {    	
 		final String exprString = "=secondvar";
-		final String[] children = new String[] { "secondvar" };
+		List<String> children = Arrays.asList(new String[] { "secondvar" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -299,7 +340,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -310,9 +351,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	public void testMatchAllRegs() throws Throwable {
 		final String exprString = "$*";
 		final String exprString2 = "=$*";
-		List<String> regList = get_X86_REGS();
-		Collections.sort(regList);
-		final String[] children = regList.toArray(new String[0]);
+		List<String> children = get_X86_REGS();
+		Collections.sort(children);
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -321,11 +361,11 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 
 		IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 		
 		exprDmc = SyncUtil.createExpression(frameDmc, exprString2);
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -336,7 +376,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	public void testMatchAllLocals() throws Throwable {
 		final String exprString = "*";
 		final String exprString2 = "=*";
-		final String[] children = fAllVariables;
+		List<String> children = fAllVariables;
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -345,11 +385,11 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 
 		IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 
 		exprDmc = SyncUtil.createExpression(frameDmc, exprString2);
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -358,7 +398,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchAllLocalsOtherFrame() throws Throwable {
 		final String exprString = "*";
-		final String[] children = new String[] { "argc", "argv", "boolvar", "chararray", "intvar" };
+		List<String> children = Arrays.asList(new String[] { "argc", "argv", "boolvar", "chararray", "intvar" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -368,7 +408,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -377,7 +417,13 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchRegWithStar() throws Throwable {
 		final String exprString = "=$e*";
-		final String[] children = new String[] { "$eax","$ebp","$ebx","$ecx","$edi","$edx","$eflags","$eip","$es", "$esi","$esp" };
+		// Use ArrayList to support remove operation.
+		ArrayList<String> children = new ArrayList<String>(Arrays.asList(new String[] { "$eax","$ebp","$ebx","$ecx","$edi","$edx","$eflags","$eip","$es", "$esi","$esp" }));
+
+		if (is64BitRegisterList()) {
+			// This register is not present on 64bit
+			children.remove("$eip");
+		}
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -387,7 +433,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -416,7 +462,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchVarWithStarBefore() throws Throwable {
 		final String exprString = "=*ptrvar";
-		final String[] children = new String[] { "ptrvar" };
+		List<String> children = Arrays.asList(new String[] { "ptrvar" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -426,7 +472,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -455,7 +501,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchVarWithStarAfter() throws Throwable {
 		final String exprString = "=var*2";
-		final String[] children = new String[] { "var2" };
+		List<String> children = Arrays.asList(new String[] { "var2" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -465,7 +511,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -493,8 +539,14 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchRegWithQuestionMark() throws Throwable {
 		final String exprString = "=$e??";
-		final String[] children = new String[] { "$eax","$ebp","$ebx","$ecx","$edi","$edx","$eip", "$esi","$esp" };
+		// Use ArrayList to support remove operation.
+		ArrayList<String> children = new ArrayList<String>(Arrays.asList(new String[] { "$eax","$ebp","$ebx","$ecx","$edi","$edx","$eip", "$esi","$esp" }));
 
+		if (is64BitRegisterList()) {
+			// This register is not present on 64bit
+			children.remove("$eip");
+		}
+			
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
 
@@ -503,7 +555,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -529,7 +581,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchVarWithQuestionMark() throws Throwable {
 		final String exprString = "=?ar?";
-		final String[] children = new String[] { "var2" };
+		List<String> children = Arrays.asList(new String[] { "var2" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -539,7 +591,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -567,7 +619,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchRegWithOneDigitRange() throws Throwable {
 		final String exprString = "=$st[4]";
-		final String[] children = new String[] { "$st4" };
+		List<String> children = Arrays.asList(new String[] { "$st4" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -577,7 +629,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -587,7 +639,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchRegWithOneLetterRange() throws Throwable {
 		final String exprString = "=$ea[x]";
-		final String[] children = new String[] { "$eax" };
+		List<String> children = Arrays.asList(new String[] { "$eax" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -597,7 +649,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -607,7 +659,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchRegWithNumberRange() throws Throwable {
 		final String exprString = "=$st[2-5]";
-		final String[] children = new String[] { "$st2","$st3", "$st4","$st5" };
+		List<String> children = Arrays.asList(new String[] { "$st2","$st3", "$st4","$st5" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -617,7 +669,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -627,7 +679,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchRegWithLetterRange() throws Throwable {
 		final String exprString = "=$eb[a-z]";
-		final String[] children = new String[] { "$ebp", "$ebx" };
+		List<String> children = Arrays.asList(new String[] { "$ebp", "$ebx" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -637,7 +689,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -647,7 +699,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchRegWithComplexLetterRange() throws Throwable {
 		final String exprString = "=$e[b-c]*";
-		final String[] children = new String[] { "$ebp", "$ebx", "$ecx" };
+		List<String> children = Arrays.asList(new String[] { "$ebp", "$ebx", "$ecx" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -657,7 +709,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -667,7 +719,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArrayWithNumberRange() throws Throwable {
 		final String exprString = "=array[2-5]";
-		final String[] children = new String[] { "array2", "array3", "array[2]","array[3]", "array[4]","array[5]"  };
+		List<String> children = Arrays.asList(new String[] { "array2", "array3", "array[2]","array[3]", "array[4]","array[5]" });
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -677,7 +729,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -686,7 +738,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArrayWithSingleNumberRange() throws Throwable {
 		final String exprString = "=array[2]";
-		final String[] children = new String[] { "array2", "array[2]" };
+		List<String> children = Arrays.asList(new String[] { "array2", "array[2]" });
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -696,7 +748,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -706,7 +758,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArrayWithSameNumberRange() throws Throwable {
 		final String exprString = "=array[2-2]";
-		final String[] children = new String[] { "array2", "array[2]" };
+		List<String> children = Arrays.asList(new String[] { "array2", "array[2]" });
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -716,7 +768,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -744,11 +796,11 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArrayWithWildCardAndNumberRange() throws Throwable {
 		final String exprString = "=ar*[2-3]";
-		final String[] children = new String[] { 
+		List<String> children = Arrays.asList(new String[] { 
 				"array2", "array3",
 				"arrayBool[2]", "arrayBool[3]",
 				"arrayInt[2]", "arrayInt[3]",
-				"array[2]", "array[3]" };
+				"array[2]", "array[3]" });
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -758,7 +810,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -767,7 +819,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArrayWithQuestionMarkAndNumberRange() throws Throwable {
 		final String exprString = "=ar?a?[2-4]";
-		final String[] children = new String[] { "array2", "array3", "array[2]","array[3]", "array[4]" };
+		List<String> children = Arrays.asList(new String[] { "array2", "array3", "array[2]","array[3]", "array[4]" });
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -777,7 +829,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -787,11 +839,11 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchAllArraysAndNumberRange() throws Throwable {
 		final String exprString = "=*[2-3]";
-		final String[] children = new String[] { 
+		List<String> children = Arrays.asList(new String[] { 
 				"array2", "array3",
                 "arrayBool[2]", "arrayBool[3]", 
                 "arrayInt[2]", "arrayInt[3]",
-				"array[2]", "array[3]" };
+				"array[2]", "array[3]" });
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -801,7 +853,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -810,8 +862,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArraysWithCommaSeparatedIndices() throws Throwable {
 		final String exprString = "=array[2,5,8]";
-		final String[] children = new String[] { 
-				"array2", "array[2]", "array[5]", "array[8]" };
+		List<String> children = Arrays.asList(new String[] { 
+				"array2", "array[2]", "array[5]", "array[8]" });
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -821,7 +873,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -830,11 +882,11 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArraysWithCommaSeparatedNumberRanges() throws Throwable {
 		final String exprString = "=array[2-3, 5, 7-8]";
-		final String[] children = new String[] { 
+		List<String> children = Arrays.asList(new String[] { 
 				"array2", "array3",
 				"array[2]", "array[3]", 
                 "array[5]", 
-                "array[7]", "array[8]" };
+                "array[7]", "array[8]" });
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -844,7 +896,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -854,8 +906,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArraysWithCommaSeparatedOverlappingRanges() throws Throwable {
 		final String exprString = "=array[2-3, 5, 4-6]";
-		final String[] children = new String[] { 
-				"array2", "array3", "array[2]", "array[3]", "array[4]", "array[5]", "array[6]" };
+		List<String> children = Arrays.asList(new String[] { 
+				"array2", "array3", "array[2]", "array[3]", "array[4]", "array[5]", "array[6]" });
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -865,7 +917,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -875,8 +927,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArraysWithCommaSeparatedUnsortedRanges() throws Throwable {
 		final String exprString = "=array[5-6, 3, 0-1]";
-		final String[] children = new String[] { 
-				"array3", "array[0]", "array[1]", "array[3]", "array[5]", "array[6]" };
+		List<String> children = Arrays.asList(new String[] { 
+				"array3", "array[0]", "array[1]", "array[3]", "array[5]", "array[6]" });
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -886,7 +938,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -899,8 +951,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArraysWithCommaSeparatedInvalidRanges() throws Throwable {
 		final String exprString = "=array[2-3, 5, 6-4]";
-		final String[] children = new String[] { 
-				"array[2]", "array[3]", "array[5]", "array[6-4]" };
+		List<String> children = Arrays.asList(new String[] { 
+				"array[2]", "array[3]", "array[5]", "array[6-4]" });
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -910,7 +962,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -938,7 +990,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArrayWithSingleLetterRange() throws Throwable {
 		final String exprString = "=array[B]*";
-		final String[] children = new String[] { "arrayBool" };
+		List<String> children = Arrays.asList(new String[] { "arrayBool" });
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -948,7 +1000,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -959,7 +1011,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArrayWithLetterRange() throws Throwable {
 		final String exprString = "=array[B-I]*";
-		final String[] children = new String[] { "arrayBool", "arrayInt" };
+		List<String> children = Arrays.asList(new String[] { "arrayBool", "arrayInt" });
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -969,7 +1021,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -980,7 +1032,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArrayWithLetterRange2() throws Throwable {
 		final String exprString = "=ar*[B-I]*";
-		final String[] children = new String[] { "arrayBool", "arrayInt" };
+		List<String> children = Arrays.asList(new String[] { "arrayBool", "arrayInt" });
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -990,7 +1042,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -1000,7 +1052,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArrayWithInvalidNumberRange() throws Throwable {
 		final String exprString = "=array[5-2]";
-		final String[] children = new String[] { "array[5-2]" };
+		List<String> children = Arrays.asList(new String[] { "array[5-2]" });
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -1010,7 +1062,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -1021,8 +1073,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final String exprString = "$*; *";
 		List<String> list = get_X86_REGS();
 		Collections.sort(list);
-		list.addAll(Arrays.asList(fAllVariables));
-		final String[] children = list.toArray(new String[list.size()]);
+		list.addAll(fAllVariables);
+		List<String> children = Arrays.asList(list.toArray(new String[list.size()]));
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1032,7 +1084,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -1044,8 +1096,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final String exprString = "*; $*";
 		List<String> list = get_X86_REGS();
 		Collections.sort(list);
-		list.addAll(0, Arrays.asList(fAllVariables));
-		final String[] children = list.toArray(new String[list.size()]);
+		list.addAll(0, fAllVariables);
+		List<String> children = Arrays.asList(list.toArray(new String[list.size()]));
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1055,7 +1107,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -1064,7 +1116,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testGroupSubExprRange() throws Throwable {
 		final String exprString = "$eax; $es; *";
-		final String[] children = new String[] { "$es", "firstarg", "firstvar", "ptrvar" };
+		List<String> children = Arrays.asList(new String[] { "$es", "firstarg", "firstvar", "ptrvar" });
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
 
@@ -1085,7 +1137,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		List<String> list = get_X86_REGS();
 		Collections.sort(list);
 		list.addAll(0, Arrays.asList(new String[] { "firstvar" }));
-		final String[] children = list.toArray(new String[list.size()]);
+		List<String> children = Arrays.asList(list.toArray(new String[list.size()]));
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1095,7 +1147,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -1104,7 +1156,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testGroupOneLocalMatchedLocals() throws Throwable {
 		final String exprString = "*ptrvar; =var*";
-		final String[] children = new String[] { "*ptrvar", "var", "var2" };
+		List<String> children = Arrays.asList(new String[] { "*ptrvar", "var", "var2" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1114,7 +1166,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -1125,7 +1177,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testUniqueWhenOverlapReg() throws Throwable {
 		final String exprString = "=$eax; =$e?x; =$eb?";
-		final String[] children = new String[] { "$eax","$ebx","$ecx","$edx", "$ebp" };
+		List<String> children = Arrays.asList(new String[] { "$eax","$ebx","$ecx","$edx", "$ebp" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1135,7 +1187,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -1146,7 +1198,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testUniqueWhenOverlapLocal() throws Throwable {
 		final String exprString = "firstvar;*;firstvar";
-		final String[] children = new String[] { "firstvar", "firstarg", "ptrvar", "secondarg", "secondvar", "var", "var2" };
+		List<String> children = Arrays.asList(new String[] { "firstvar", "firstarg", "ptrvar", "secondarg", "secondvar", "var", "var2" });
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
 
@@ -1155,7 +1207,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -1166,7 +1218,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final String exprString = "$*";
 		List<String> regList = get_X86_REGS();
 		Collections.sort(regList);
-		final String[] children = regList.toArray(new String[0]);
+		List<String> children = Arrays.asList(regList.toArray(new String[0]));
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1176,7 +1228,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -1185,9 +1237,9 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testSortedAllLocals() throws Throwable {
 		final String exprString = "*";
-		List<String> list = Arrays.asList(fAllVariables);
+		List<String> list = fAllVariables;
 		Collections.sort(list);
-		final String[] children = list.toArray(new String[list.size()]);		
+		List<String> children = Arrays.asList(list.toArray(new String[list.size()]));		
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1197,7 +1249,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -1211,10 +1263,10 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final String exprString = "$*; *";
 		List<String> list = get_X86_REGS();
 		Collections.sort(list);
-		List<String> localsList = Arrays.asList(fAllVariables);
+		List<String> localsList = fAllVariables;
 		Collections.sort(localsList);
 		list.addAll(localsList);
-		final String[] children = list.toArray(new String[list.size()]);
+		List<String> children = Arrays.asList(list.toArray(new String[list.size()]));
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1224,7 +1276,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -1241,10 +1293,10 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testArraySorting() throws Throwable {
 		final String exprString = "=array[1-11];=arrayInt[1-2,11,20-22]";
-		final String[] children = new String[] { 
+		List<String> children = Arrays.asList(new String[] { 
 				"array[1]","array[2]","array[3]","array[4]","array[5]","array[6]",
 				"array[7]","array[8]","array[9]","array[10]","array[11]",
-				"arrayInt[1]","arrayInt[2]","arrayInt[11]","arrayInt[20]","arrayInt[21]","arrayInt[22]"};
+				"arrayInt[1]","arrayInt[2]","arrayInt[11]","arrayInt[20]","arrayInt[21]","arrayInt[22]"});
 
 		SyncUtil.runToLocation("testArrayMatching");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
@@ -1254,7 +1306,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 
 	}
 
@@ -1265,7 +1317,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 //	@Test
 //	public void testCommaSeparation() throws Throwable {
 //		final String exprString = "firstvar,$eax";
-//		final String[] children = new String[] { "firstvar","$eax" };
+//		List<String> children = Arrays.asList(new String[] { "firstvar","$eax" });
 //
 //		SyncUtil.runToLocation("foo");
 //		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1275,7 +1327,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 //		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 //
 //		checkChildren(exprDmc, -1, -1, children);
-//		checkChildrenCount(exprDmc, children.length);
+//		checkChildrenCount(exprDmc, children.size());
 //	}
 
 	/**
@@ -1284,7 +1336,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testSemiColonSeparation() throws Throwable {
 		final String exprString = "firstvar;$eax";
-		final String[] children = new String[] { "firstvar","$eax" };
+		List<String> children = Arrays.asList(new String[] { "firstvar","$eax" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1294,7 +1346,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 
 	}
 	
@@ -1355,7 +1407,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 //	@Test
 //	public void testCommaAndSemiColonSeparation() throws Throwable {
 //		final String exprString = "firstvar,$eax;$es";
-//		final String[] children = new String[] { "firstvar","$eax","$es" };
+//		List<String> children = Arrays.asList(new String[] { "firstvar","$eax","$es" });
 //
 //		SyncUtil.runToLocation("foo");
 //		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1365,7 +1417,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 //		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 //
 //		checkChildren(exprDmc, -1, -1, children);
-//		checkChildrenCount(exprDmc, children.length);
+//		checkChildrenCount(exprDmc, children.size());
 //	}
 	
 	// Cannot use comma separator because of templates (bug 393474)
@@ -1375,7 +1427,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 //	@Test
 //	public void testGroupCommaEmptyTerm() throws Throwable {
 //		final String exprString = ",,firstvar,,$eax,,";
-//		final String[] children = new String[] { "firstvar","$eax" };
+//		List<String> children = Arrays.asList(new String[] { "firstvar","$eax" };
 //
 //		SyncUtil.runToLocation("foo");
 //		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1385,7 +1437,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 //		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 //
 //		checkChildren(exprDmc, -1, -1, children);
-//		checkChildrenCount(exprDmc, children.length);
+//		checkChildrenCount(exprDmc, children.size());
 //	}
 
 	/**
@@ -1394,7 +1446,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testGroupSemiColonEmptyTerm() throws Throwable {
 		final String exprString = ";;firstvar;;$eax;;";
-		final String[] children = new String[] { "firstvar","$eax" };
+		List<String> children = Arrays.asList(new String[] { "firstvar","$eax" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1404,7 +1456,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 	
 	/**
@@ -1413,7 +1465,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testExtraSpaces() throws Throwable {
 		final String exprString = "  firstvar  ;  $eax  ; ;  =var?  ;  =  second*  ";
-		final String[] children = new String[] { "firstvar","$eax","var2","secondarg","secondvar" };
+		List<String> children = Arrays.asList(new String[] { "firstvar","$eax","var2","secondarg","secondvar" });
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1423,7 +1475,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
 		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
+		checkChildrenCount(exprDmc, children.size());
 	}
 
 	/**
@@ -1509,7 +1561,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final String exprString = "$eax;*";
 		List<String> list = new LinkedList<String>();
 		list.add("$eax");
-		list.addAll(Arrays.asList(fAllVariables));
+		list.addAll(fAllVariables);
 		final String[] children = list.toArray(new String[list.size()]);
 
 		SyncUtil.runToLocation("foo");

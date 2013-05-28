@@ -205,8 +205,6 @@ public class ServiceEventWaitor<V> {
 				fEventQueue.add(event);
 				notifyAll();
 			}
-		} else {
-			System.out.println("NOT QUEUEING: SevericeEventWaitor: Class: " + fEventTypeClass.getName() + " is NOT assignable from event class: " + event.getClass());
 		}
 	}
 }

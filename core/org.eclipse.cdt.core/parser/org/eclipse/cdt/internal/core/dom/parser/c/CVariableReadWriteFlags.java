@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.VariableReadWriteFlags;
  * The algorithm works starting from the variable and looking upwards what's being done
  * with the variable.
  */
-public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
+public class CVariableReadWriteFlags extends VariableReadWriteFlags {
 	private static CVariableReadWriteFlags INSTANCE= new CVariableReadWriteFlags();
 
 	public static int getReadWriteFlags(IASTName variable) {

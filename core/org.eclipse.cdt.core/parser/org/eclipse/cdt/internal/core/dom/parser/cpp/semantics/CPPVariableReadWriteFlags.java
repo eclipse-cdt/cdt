@@ -40,7 +40,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
  * The algorithm works starting from the variable and looking upwards what's being done
  * with the variable.
  */
-public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
+public class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 	private static CPPVariableReadWriteFlags INSTANCE= new CPPVariableReadWriteFlags();
 
 	public static int getReadWriteFlags(IASTName variable) {

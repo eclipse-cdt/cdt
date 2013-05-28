@@ -130,6 +130,9 @@ public abstract class VariableReadWriteFlags {
 			return rwInUnaryExpression(node, (IASTUnaryExpression) expr, indirection);			
 		}
 		if (expr instanceof IASTArraySubscriptExpression) {
+			if (node instanceof IASTArraySubscriptExpression) { // multidimensional array
+				++indirection;	
+			}
 			if (indirection > 0 && node.getPropertyInParent() == IASTArraySubscriptExpression.ARRAY) {
 				return rwAnyNode(expr, indirection - 1);
 			}

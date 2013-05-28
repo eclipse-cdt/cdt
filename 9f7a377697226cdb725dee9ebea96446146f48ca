@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPn//6uY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2147,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-05-28T17:09:48Z",
+      "side": 1,
+      "message": "You should use IMIBreakpointPathAdjuster not MIBreakpoints here",
+      "revId": "9f7a377697226cdb725dee9ebea96446146f48ca",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn//6uU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRunControl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1619,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-05-28T17:09:48Z",
+      "side": 1,
+      "message": "IMIBreakpointPathAdjuster instead of MIBreakpoints",
+      "revId": "9f7a377697226cdb725dee9ebea96446146f48ca",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

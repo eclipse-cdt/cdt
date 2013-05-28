@@ -16,8 +16,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 
-import org.eclipse.cdt.internal.core.dom.parser.c.CVariableReadWriteFlags;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
+import org.eclipse.cdt.internal.core.dom.parser.c.CMarkOccurrences;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPMarkOccurrences;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 public class CSearchUtil {
@@ -60,9 +60,9 @@ public class CSearchUtil {
 	public static boolean isWriteOccurrence(IASTName node, IBinding binding) {
 		boolean isWrite;
 		if (binding instanceof ICPPVariable) {
-			isWrite = ((CPPVariableReadWriteFlags.getReadWriteFlags(node) & PDOMName.WRITE_ACCESS) != 0);
+			isWrite = ((CPPMarkOccurrences.getReadWriteFlags(node) & PDOMName.WRITE_ACCESS) != 0);
 		} else { 
-			isWrite = ((CVariableReadWriteFlags.getReadWriteFlags(node) & PDOMName.WRITE_ACCESS) != 0);
+			isWrite = ((CMarkOccurrences.getReadWriteFlags(node) & PDOMName.WRITE_ACCESS) != 0);
 		}
 		return isWrite;
 	}

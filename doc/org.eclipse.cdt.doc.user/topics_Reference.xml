@@ -167,7 +167,6 @@
 		<topic label="C/C++ Folder properies" href="reference/cdt_o_prop_folder.htm">
 			<topic label="Resource page" href="reference/cdt_u_fprop_resource.htm"/>
 			<topic label="C/C++ Build">
-				<topic label="Discovery options page" href="reference/cdt_u_fprop_discovery.htm"/>
 				<topic label="Settings page">
 					<topic label="Tool Settings tab" href="reference/cdt_u_fprop_toolsettings.htm"/>
 				</topic>  
@@ -188,7 +187,6 @@
 		<topic label="C/C++ File Properties" href="reference/cdt_o_prop_file.htm">
 			<topic label="Resource page" href="reference/cdt_u_fprop_resource.htm"/>
 			<topic label="C/C++ Build">
-				<topic label="Discovery options page" href="reference/cdt_u_fileprop_discovery.htm"/>
 				<topic label="Settings page">
 					<topic label="Tool Settings tab" href="reference/cdt_u_fileprop_toolsettings.htm"/>
 					<topic label="Build Steps tab  " href="reference/cdt_u_fileprop_steps.htm"/>

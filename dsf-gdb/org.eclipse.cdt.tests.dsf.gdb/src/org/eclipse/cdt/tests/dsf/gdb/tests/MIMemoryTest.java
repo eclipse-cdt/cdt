@@ -59,17 +59,17 @@ import org.junit.runner.RunWith;
 @RunWith(BackgroundRunner.class)
 public class MIMemoryTest extends BaseTestCase {
 
-	private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
+	protected final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
 	private DsfSession          fSession;
 	private DsfServicesTracker  fServicesTracker;
-	private IMemoryDMContext    fMemoryDmc;
+	protected IMemoryDMContext    fMemoryDmc;
 	private MIRunControl        fRunControl;
 	private IMemory             fMemoryService;
 	private IExpressions        fExpressionService;
 
 	// Keeps track of the MemoryChangedEvents
 	private final int BLOCK_SIZE = 256;
-	private IAddress fBaseAddress;
+	protected IAddress fBaseAddress;
 	private Integer fMemoryChangedEventCount = new Integer(0);
 	private boolean[] fMemoryAddressesChanged = new boolean[BLOCK_SIZE];
 
@@ -182,7 +182,7 @@ public class MIMemoryTest extends BaseTestCase {
 	 }
 
 	 // Returns the total number of events received
-	 private int getEventCount() {
+	 protected int getEventCount() {
 		 int count;
 		 synchronized(fMemoryChangedEventCount) {
 			 count = fMemoryChangedEventCount;
@@ -355,7 +355,7 @@ public class MIMemoryTest extends BaseTestCase {
 	 * @throws InterruptedException
 	 * ------------------------------------------------------------------------
 	 */
-	private void writeMemory(final IMemoryDMContext dmc, final IAddress address,
+	protected void writeMemory(final IMemoryDMContext dmc, final IAddress address,
 			final long offset, final int word_size, final int count, final byte[] buffer)
 	throws InterruptedException
 	{
@@ -504,8 +504,8 @@ public class MIMemoryTest extends BaseTestCase {
 		//	Ensure that we receive a block of invalid memory bytes
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		MemoryByte[] buffer = (MemoryByte[]) fWait.getReturnInfo();
-		assertTrue("Wrong value: expected '-1, 0', received '" + buffer[0].getValue() + ", " + buffer[0].getFlags() + "'",
-				(buffer[0].getValue() == (byte) 0) && (buffer[0].getFlags() == (byte) 0));
+		assertTrue("Wrong value: expected '0, 32', received '" + buffer[0].getValue() + ", " + buffer[0].getFlags() + "'",
+				(buffer[0].getValue() == (byte) 0) && (buffer[0].getFlags() == (byte) 32));
 
 		// Ensure no MemoryChangedEvent event was received
 		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);

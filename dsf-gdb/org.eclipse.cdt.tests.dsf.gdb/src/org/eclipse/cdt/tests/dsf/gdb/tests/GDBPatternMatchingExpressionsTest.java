@@ -55,6 +55,7 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -108,6 +109,14 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	// We make it static so it does not get re-set for every test
 	protected static List<String> fRegisterNames = null;
 	
+	@BeforeClass
+ 	public static void initializeGlobals() {
+		// In case we run multiple GDB versions of this test
+		// in the same suite, we need to re-initialize the registers
+		// as they may change between GDB versions.
+		fRegisterNames = null;
+	}
+
 	protected List<String> get_X86_REGS() throws Throwable {
 		
 		if (fRegisterNames == null) {

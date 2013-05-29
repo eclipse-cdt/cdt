@@ -56,6 +56,7 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,6 +66,14 @@ public class MIRegistersTest extends BaseTestCase {
 	// Static list of register names as obtained directly from GDB.
 	// We make it static it does not get re-set for every test
 	protected static List<String> fRegisterNames = null;
+
+	@BeforeClass
+ 	public static void initializeGlobals() {
+		// In case we run multiple GDB versions of this test
+		// in the same suite, we need to re-initialize the registers
+		// as they may change between GDB versions.
+		fRegisterNames = null;
+	}
 	
 	protected List<String> get_X86_REGS() throws Throwable {
 		if (fRegisterNames == null) {
@@ -338,29 +347,48 @@ public class MIRegistersTest extends BaseTestCase {
     }
 
 
-    private static String REGISTER_VALUE = "";
     @Test
     public void getModelDataForRegisterDataValueInDifferentNumberFormats() throws Throwable {
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	String val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 0);
-    	REGISTER_VALUE = val;
-    	assertTrue("Register Value is not in NATURAL format " , Integer.parseInt(val)== Integer.parseInt(REGISTER_VALUE));
+    	try {
+    		Long.parseLong(val);
+    	} catch (NumberFormatException e) {
+    		assertTrue("Register Value is not in NATURAL_FORMAT: " + val, false);
+    	}
 
     	val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.HEX_FORMAT, 0);
-    	assertTrue("Register Value is not in HEX_FORMAT " ,val.startsWith("0x"));
+    	assertTrue("Register Value is not in HEX_FORMAT: " + val, val.startsWith("0x"));
+    	try {
+    		Long.parseLong(val.substring(2), 16);
+    	} catch (NumberFormatException e) {
+    		assertTrue("Register Value is not in HEX_FORMAT: " + val, false);
+    	}
 
     	val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.BINARY_FORMAT, 0);
-    	Assert.assertEquals("Register Value is not in BINARY_FORMAT ", Integer.toBinaryString(Integer.parseInt(REGISTER_VALUE)), val);
+    	try {
+    		Long.parseLong(val, 2);
+    	} catch (NumberFormatException e) {
+    		assertTrue("Register Value is not in BINARY_FORMAT: " + val, false);
+    	}
 
     	val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.DECIMAL_FORMAT , 0);
-    	Assert.assertEquals("Register Value is not in DECIMAL_FORMAT", Integer.parseInt(REGISTER_VALUE), Integer.parseInt(val));
+    	try {
+    		Long.parseLong(val);
+    	} catch (NumberFormatException e) {
+    		assertTrue("Register Value is not in DECIMAL_FORMAT: " + val, false);
+    	}
 
     	val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.OCTAL_FORMAT, 0);
-    	assertTrue("Register Value is not in OCTAL_FORMAT " ,val.startsWith("0"));
+    	assertTrue("Register Value is not in OCTAL_FORMAT: " + val, val.startsWith("0"));
+    	try {
+    		Long.parseLong(val.substring(1), 8);
+    	} catch (NumberFormatException e) {
+    		assertTrue("Register Value is not in OCTAL_FORMAT: " + val, false);
+    	}
     }
 
-    
     @Test
     public void compareRegisterForMultipleExecutionContexts() throws Throwable {
 

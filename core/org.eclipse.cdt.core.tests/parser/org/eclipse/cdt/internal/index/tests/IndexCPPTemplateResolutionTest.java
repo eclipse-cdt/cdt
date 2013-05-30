@@ -1312,7 +1312,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertTrue(t2 instanceof ICPPSpecialization);
 		final IType type = t2.getType();
 		assertTrue(type instanceof IBasicType);
-		assertEquals(((IBasicType)type).getType(), IBasicType.t_int);
+		assertEquals("int", ASTTypeUtil.getType(type));
 	}
 
 	//	template<typename _Iterator> struct iterator_traits {
@@ -1366,7 +1366,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 
 		final IType type = t2.getType();
 		assertTrue(type instanceof IBasicType);
-		assertEquals(((IBasicType) type).getType(), IBasicType.t_int);
+		assertEquals("int", ASTTypeUtil.getType(type));
 	}
 
 	//	struct A {
@@ -1377,7 +1377,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	struct A::S {};
 
 	//  A::S<int> a;
-	public void testXXX() throws Exception {
+	public void testMemberTemplateClass() throws Exception {
 		checkBindings();
 	}
 
@@ -2236,7 +2236,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testDependentExpression_395875() throws Exception {
 		getBindingFromASTName("f(n.foo(0))", 1, ICPPFunction.class);
 	}
-	
+
 	//	struct true_ {
 	//	    static const bool value = true;
 	//	};
@@ -2274,7 +2274,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testIntNullPointerConstant_407808() throws Exception {
 		checkBindings();
 	}
-	
+
 	//	namespace bar {
 	//	    template<class T>
 	//	    void join(T);
@@ -2283,7 +2283,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	namespace foo {
 	//	    template<typename T>
 	//	    void join(T);
-	//	    
+	//
 	//	    struct cat {};
 	//	}
 
@@ -2296,7 +2296,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testADLForQualifiedName_408296() throws Exception {
 		checkBindings();
 	}
-	
+
 	//	template <typename>
 	//	struct waldo {
 	//	};
@@ -2308,11 +2308,9 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//
 	//	template <typename T>
 	//	struct outer::inner<waldo<T>> {};
-	
+
 	//	int main() {}
 	public void testRegression_408314() throws Exception {
 		checkBindings();
 	}
 }
-
-

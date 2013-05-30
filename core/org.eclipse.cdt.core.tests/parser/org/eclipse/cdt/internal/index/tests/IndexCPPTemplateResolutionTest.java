@@ -2313,4 +2313,13 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testRegression_408314() throws Exception {
 		checkBindings();
 	}
+
+	//	template<typename T> struct A { enum { v = 0 }; };
+	//	template<> struct A<int> { enum { v = 1 }; };
+	//	template<> struct A<int> { enum { v = 1 }; };
+
+	//	int main() {}
+	public void testSpecializationRedefinition_409444() throws Exception {
+		checkBindings();
+	}
 }

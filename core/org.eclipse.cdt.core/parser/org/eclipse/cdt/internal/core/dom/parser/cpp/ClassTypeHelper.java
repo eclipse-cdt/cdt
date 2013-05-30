@@ -15,11 +15,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -64,18 +73,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.CoreException;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Holds common implementation of methods for ICPPClassType implementations that have
@@ -910,7 +910,7 @@ public class ClassTypeHelper {
 					ICPPClassType specialized = ((ICPPClassSpecialization) classType).getSpecializedBinding();
 					if (!specialized.equals(member.getOwner())) {
 						if (!(member instanceof ICPPSpecialization))
-							throw new IllegalArgumentException(member.getName() + " is not a member of " + specialized.getName()); //$NON-NLS-1$
+							throw invalidMember(specialized, member);
 						member = ((ICPPSpecialization) member).getSpecializedBinding();
 					}
 					return specialized.getVisibility(member);
@@ -920,13 +920,46 @@ public class ClassTypeHelper {
 			}
 		}
 
-		int visibility = classType.getKey() == ICPPClassType.k_class ?
-				ICPPClassType.v_private : ICPPClassType.v_public;
+		ICPPASTCompositeTypeSpecifier classDeclSpec = classType.getCompositeTypeSpecifier();
+		int visibility = getVisibility(classDeclSpec, member);
+		if (visibility >= 0)
+			return visibility;
 
-		IASTDeclaration[] hostMembers = classType.getCompositeTypeSpecifier().getMembers();
+		ICPPMethod[] implicitMethods = getImplicitMethods(classType, null);
+		for (ICPPMethod implicitMethod : implicitMethods) {
+			if (member.equals(implicitMethod)) {
+				return ICPPClassType.v_public;
+			}
+		}
+
+		// It's possible that we haven't found the member because the class was illegally redefined
+		// and the member belongs to another definition. Try to search the definition containing
+		// the member.
+		if (member instanceof ICPPInternalBinding) {
+			IASTNode node = ((ICPPInternalBinding) member).getDefinition();
+			if (node != null) {
+				IASTName ownerName = CPPVisitor.findDeclarationOwnerDefinition(node, false);
+				if (ownerName != null && !ownerName.equals(classDeclSpec.getName()) &&
+						ownerName.getPropertyInParent() == ICPPASTCompositeTypeSpecifier.TYPE_NAME) {
+					classDeclSpec = (ICPPASTCompositeTypeSpecifier) ownerName.getParent();
+					visibility = getVisibility(classDeclSpec, member);
+					if (visibility >= 0)
+						return visibility;
+				}
+			}
+		}
+
+		throw invalidMember(classType, member);
+	}
+
+	private static int getVisibility(ICPPASTCompositeTypeSpecifier classDeclSpec, IBinding member) {
+		int visibility = classDeclSpec.getKey() == ICPPASTCompositeTypeSpecifier.k_class ?
+				ICPPClassType.v_private : ICPPClassType.v_public;
+		IASTDeclaration[] hostMembers = classDeclSpec.getMembers();
 		for (IASTDeclaration hostMember : hostMembers) {
 			if (hostMember instanceof ICPPASTVisibilityLabel) {
 				visibility = ((ICPPASTVisibilityLabel) hostMember).getVisibility();
+				continue;
 			}
 			while (hostMember instanceof ICPPASTTemplateDeclaration) {
 				hostMember = ((ICPPASTTemplateDeclaration) hostMember).getDeclaration();
@@ -970,7 +1003,8 @@ public class ClassTypeHelper {
 					}
 				}
 			} else if (hostMember instanceof IASTFunctionDefinition) {
-				IASTFunctionDeclarator declarator = ((IASTFunctionDefinition) hostMember).getDeclarator();
+				IASTDeclarator declarator = ((IASTFunctionDefinition) hostMember).getDeclarator();
+				declarator = ASTQueries.findInnermostDeclarator(declarator);
 				IBinding functionBinding = declarator.getName().resolveBinding();
 				if (member.equals(functionBinding)){
 					return visibility;
@@ -992,13 +1026,14 @@ public class ClassTypeHelper {
 				}
 			}
 		}
-		ICPPMethod[] implicitMethods = getImplicitMethods(classType, null);
-		for (ICPPMethod implicitMethod : implicitMethods) {
-			if (member.equals(implicitMethod)) {
-				return ICPPClassType.v_public;
-			}
-		}
-		throw new IllegalArgumentException(member.getName() + " is not a member of " + classType.getName()); //$NON-NLS-1$
+		return -1;
+	}
+
+	private static IllegalArgumentException invalidMember(IBinding classType, IBinding member) {
+		String name = member.getName();
+		if (name.isEmpty())
+			name = "<anonymous>"; //$NON-NLS-1$
+		return new IllegalArgumentException(name + " is not a member of " + classType.getName()); //$NON-NLS-1$
 	}
 
 	private static Map<String, List<ICPPMethod>> collectPureVirtualMethods(ICPPClassType classType,

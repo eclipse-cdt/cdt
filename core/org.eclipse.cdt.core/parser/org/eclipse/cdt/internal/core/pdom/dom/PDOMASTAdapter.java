@@ -669,6 +669,18 @@ public class PDOMASTAdapter {
 	}
 
 	/**
+	 * Retrieves the original binding from an adapter previously returned by
+	 * {@link #getAdapterForAnonymousASTBinding(IBinding)}. If the parameter binding is not
+	 * an adapter, returns the binding itself. 
+	 */
+	public static IBinding getOriginalForAdaptedBinding(IBinding binding) {
+		if (binding instanceof AnonymousCPPBinding) {
+			return ((AnonymousCPPBinding) binding).fDelegate;
+		}
+		return binding;
+	}
+
+	/**
 	 * If the name is empty and has no file location, either an adapter 
 	 * that has a file location is returned, or <code>null</code> if that 
 	 * is not possible (no parent with a file location).

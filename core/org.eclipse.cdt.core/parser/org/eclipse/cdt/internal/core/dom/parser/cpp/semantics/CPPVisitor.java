@@ -2554,6 +2554,14 @@ public class CPPVisitor extends ASTQueries {
 	 * of the above constructs.
 	 */
 	public static IBinding findDeclarationOwner(IASTNode node, boolean allowFunction) {
+		IASTName name = findDeclarationOwnerDefinition(node, allowFunction);
+		if (name == null)
+			return null;
+
+		return name.resolveBinding();
+	}
+
+	public static IASTName findDeclarationOwnerDefinition(IASTNode node, boolean allowFunction) {
 		// Search for declaration
 		boolean isNonSimpleElabDecl= false;
 		while (!(node instanceof IASTDeclaration) && !(node instanceof ICPPASTLambdaExpression)) {
@@ -2605,10 +2613,7 @@ public class CPPVisitor extends ASTQueries {
 				break;
 			}
 		}
-		if (name == null)
-			return null;
-
-		return name.resolveBinding();
+		return name;
 	}
 
 	public static boolean doesNotSpecifyType(IASTDeclSpecifier declspec) {

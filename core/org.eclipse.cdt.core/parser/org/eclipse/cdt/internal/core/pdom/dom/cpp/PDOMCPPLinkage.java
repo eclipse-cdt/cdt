@@ -529,6 +529,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (bindingOwner instanceof ICPPClassType) {
 			if (bindingOwner instanceof CPPClosureType)
 				return ICPPClassType.v_public;
+			binding = PDOMASTAdapter.getOriginalForAdaptedBinding(binding);
 			visibility = ((ICPPClassType) bindingOwner).getVisibility(binding);
 		}
 		return visibility;

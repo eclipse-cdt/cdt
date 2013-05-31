@@ -22,6 +22,7 @@
  *  David McKnight   (IBM) - [373459] [dstore][multithread] duplicate finish() calls during idle timeout
  *  David McKnight   (IBM) - [378136] [dstore] miner.finish is stuck
  *  David McKnight   (IBM) - [408801] [dstore] change ServerIdleThread so that it can extend SecuredThread
+ *  David McKnight   (IBM) - [409616] [dstore] ServerCommandHandler update for restarted ServerIdleThread
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -222,7 +223,7 @@ public class ServerCommandHandler extends CommandHandler
 		if (_dataStore.getClient() != null) {
 			_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "ServerCommandHandler.finish()"); //$NON-NLS-1$
 		}
-		
+		_dataStore.setConnected(false); // set dstore to be not connected so the server idle thread doesn't get started again
 		if (_serverIdleThread != null){
 			if (_dataStore.getClient() != null) {
 				_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "ServerCommandHandler clearing server idle thread"); //$NON-NLS-1$
@@ -305,6 +306,7 @@ public class ServerCommandHandler extends CommandHandler
 
 			if (commandName.equals(DataStoreSchema.C_VALIDATE_TICKET))
 			{
+				_dataStore.setConnected(true); // make sure set to connected so server idle thread can be started
 				DataElement serverTicket = _dataStore.getTicket();
 				DataElement clientTicket = command.get(0);
 				String st = serverTicket.getName();
@@ -623,7 +625,7 @@ public class ServerCommandHandler extends CommandHandler
 				// new command so restart timeout
 				_serverIdleThread.interrupt();
 			}
-			else
+			else if (_dataStore.isConnected()) // only create idle thread when connected
 			{
 				_serverIdleThread = new ServerIdleThread(serverIdleShutdownTimeout, _dataStore);
 				_serverIdleThread.start();

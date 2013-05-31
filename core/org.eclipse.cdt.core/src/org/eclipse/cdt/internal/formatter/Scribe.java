@@ -1289,6 +1289,7 @@ public class Scribe {
 				return hasWhitespace;
 			}
 		}
+		scanner.resetTo(currentTokenStartPosition, scannerEndPosition);
 		return hasWhitespace;
 	}
 
@@ -2058,7 +2059,8 @@ public class Scribe {
 		}
 		final int currentPosition= scanner.getCurrentPosition();
 		if (offset > currentPosition) {
-			printRaw(currentPosition, currentPosition - offset);
+			fSkipStartOffset = Integer.MAX_VALUE;
+			printRaw(currentPosition, offset - currentPosition);
 		}
 		fSkipStartOffset= offset;
 		fSkipEndOffset= endOffset;

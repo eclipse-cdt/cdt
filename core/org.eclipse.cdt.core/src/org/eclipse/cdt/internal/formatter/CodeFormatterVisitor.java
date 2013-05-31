@@ -529,6 +529,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 							// declarations, with a possible exception for the trailing semicolon
 							// of the last one. In both cases formatting is driven by the text of
 							// parameters of the macro, not by the expanded code.
+							scribe.setTailFormatter(
+									new TrailingTokenFormatter(Token.tSEMI, macroEndOffset,
+											preferences.insert_space_before_semicolon, false));
 							formatFunctionStyleMacroExpansion(macroExpansion);
 						}
 					}
@@ -596,7 +599,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		localScanner.getNextToken(); // Skip the opening parenthesis.
 		int parenLevel = 0;
 		int token;
-		while ((token = localScanner.getNextToken()) != Token.tBADCHAR) {
+		while ((token = localScanner.getNextToken()) != -1) {
 			int tokenOffset = localScanner.getCurrentTokenStartPosition();
 			if (parenLevel == 0 && (token == Token.tCOMMA || token == Token.tRPAREN)) {
 				if (currentArgument != null) {

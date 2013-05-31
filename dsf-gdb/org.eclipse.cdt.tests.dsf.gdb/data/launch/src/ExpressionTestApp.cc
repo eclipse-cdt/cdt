@@ -283,8 +283,8 @@ int testUpdateOfPointer() {
 }
 
 int testCanWrite() {
-	int a;
-	int* b;
+	int a = 1;
+	int* b = &a;
 	struct {
 		int in;
 	} c;

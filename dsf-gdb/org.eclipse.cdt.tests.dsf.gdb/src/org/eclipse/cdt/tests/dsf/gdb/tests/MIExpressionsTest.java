@@ -3924,11 +3924,11 @@ public class MIExpressionsTest extends BaseTestCase {
 	    IExpressionDMContext[] children = getChildren(castExprDmc, new String[] {"*(((*((array_large)+1)@101))+0)@100", "*(((*((array_large)+1)@101))+100)@1" });
 
 	    assertTrue("Should have seen the child as a partition", children[0] instanceof IIndexedPartitionDMContext);
-	    assertEquals("Wrong start index for partition", 1, ((IIndexedPartitionDMContext)children[0]).getIndex());
+	    assertEquals("Wrong start index for partition", 0, ((IIndexedPartitionDMContext)children[0]).getIndex());
 	    assertEquals("Wrong partition length", 100, ((IIndexedPartitionDMContext)children[0]).getLength());
 	    assertTrue("Should have seen the child as a partition", children[1] instanceof IIndexedPartitionDMContext);
-	    assertEquals("Wrong start index for partition", 101, ((IIndexedPartitionDMContext)children[0]).getIndex());
-	    assertEquals("Wrong partition length", 1, ((IIndexedPartitionDMContext)children[0]).getLength());
+	    assertEquals("Wrong start index for partition", 100, ((IIndexedPartitionDMContext)children[1]).getIndex());
+	    assertEquals("Wrong partition length", 1, ((IIndexedPartitionDMContext)children[1]).getLength());
 	    
 	    // Now make sure the children of the partitions have the proper casting and start at the proper index
 	    final String[] expectedChildren = new String[100];
@@ -3998,11 +3998,11 @@ public class MIExpressionsTest extends BaseTestCase {
 	    IExpressionDMContext[] children = getChildren(castExprDmc, new String[] {"*(((*(((char[])(array_large))+4)@101))+0)@100", "*(((*(((char[])(array_large))+4)@101))+100)@1"});
 
 	    assertTrue("Should have seen the child as a partition", children[0] instanceof IIndexedPartitionDMContext);
-	    assertEquals("Wrong start index for partition", 4, ((IIndexedPartitionDMContext)children[0]).getIndex());
+	    assertEquals("Wrong start index for partition", 0, ((IIndexedPartitionDMContext)children[0]).getIndex());
 	    assertEquals("Wrong partition length", 100, ((IIndexedPartitionDMContext)children[0]).getLength());
 	    assertTrue("Should have seen the child as a partition", children[1] instanceof IIndexedPartitionDMContext);
-	    assertEquals("Wrong start index for partition", 104, ((IIndexedPartitionDMContext)children[0]).getIndex());
-	    assertEquals("Wrong partition length", 1, ((IIndexedPartitionDMContext)children[0]).getLength());
+	    assertEquals("Wrong start index for partition", 100, ((IIndexedPartitionDMContext)children[1]).getIndex());
+	    assertEquals("Wrong partition length", 1, ((IIndexedPartitionDMContext)children[1]).getLength());
 
 	    // Now make sure the children of the partitions have the proper casting
 	    final String[] expectedChildren = new String[100];

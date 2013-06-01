@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Intel corporation    - customization for New Project model.
+ *     Marc-Andre Laperle (Ericsson) - Bug 394492 Project options not visible
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
@@ -90,7 +91,9 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 		super.addToMainPage(container);
 
 		Group optionsGroup = new Group(container, SWT.NONE);
-		optionsGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
+		layoutData.heightHint = 200;
+		optionsGroup.setLayoutData(layoutData);
 		optionsGroup.setLayout(new GridLayout(1, true));
 		optionsGroup.setText(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.projectOptions.title")); //$NON-NLS-1$
 		Composite c = new Composite(optionsGroup, SWT.NONE);

@@ -700,7 +700,11 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		// Built-in specs detectors collect entries not per line but for the whole output
 		// so collect them to save later when output finishes
 		if (entries != null) {
-			detectedSettingEntries.addAll(entries);
+			for (ICLanguageSettingEntry entry : entries) {
+				if (!detectedSettingEntries.contains(entry)) {
+					detectedSettingEntries.add(entry);
+				}
+			}
 		}
 	}
 

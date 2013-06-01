@@ -401,6 +401,36 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(1, entries.size());
 	}
 
+
+	/**
+	 * Test parsing of include directives included multiple times.
+	 */
+	public void testGCCBuiltinSpecsDetector_Includes_Duplicates() throws Exception {
+		// Create model project and folders to test
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProject(projectName);
+		IPath tmpPath = ResourceHelper.createTemporaryFolder();
+		ResourceHelper.createFolder(project, "/usr/include");
+		String loc = tmpPath.toString();
+
+		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
+		detector.startup(null, null);
+		detector.startupForLanguage(null);
+
+		detector.processLine("#include <...> search starts here:");
+		detector.processLine(" "+loc+"/usr/include");
+		detector.processLine(" "+loc+"/usr/include");
+		detector.processLine(" "+loc+"/usr/include/");
+		detector.processLine(" "+loc+"/usr/include/../include");
+		detector.processLine("End of search list.");
+		detector.shutdownForLanguage();
+		detector.shutdown();
+
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
+		int index = 0;
+		assertEquals(new CIncludePathEntry(loc+"/usr/include", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
+		assertEquals(index, entries.size());
+	}
 	/**
 	 * Test parsing of include directives for Cygwin for global provider.
 	 */

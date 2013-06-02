@@ -2522,8 +2522,32 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.goto.next.member"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"
+            sequence="M1+M2+ARROW_DOWN"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"
+            sequence="CTRL+ALT+ARROW_DOWN"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.goto.next.member"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
             sequence="M1+M2+ARROW_UP"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.goto.prev.member"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"
+            sequence="M1+M2+ARROW_UP"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"
+            sequence="CTRL+ALT+ARROW_UP"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.goto.prev.member"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>

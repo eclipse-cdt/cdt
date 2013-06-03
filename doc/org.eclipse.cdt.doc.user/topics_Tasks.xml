@@ -79,7 +79,7 @@
 				</topic>
 				
 				<topic label="Controlling debug execution" href="tasks/cdt_t_controldebug.htm"/>
-				<topic label="Stepping into assembler funcitons" href="tasks/cdt_t_disassembly.htm"/>
+				<topic label="Stepping into assembler functions" href="tasks/cdt_t_disassembly.htm"/>
 				<topic label="Working with variables" href="tasks/cdt_t_variables.htm"/>
 				<topic label="Adding expressions" href="tasks/cdt_t_expressions.htm"/>
 				<topic label="Working with registers" href="tasks/cdt_t_registers.htm"/>
@@ -91,4 +91,6 @@
 			<topic label="Selection Searching for C/C++ elements" href="tasks/cdt_t_sel_search.htm"/>
 			<topic label="Setting Source Folders" href="tasks/cdt_t_set_src_fold.htm"/>
 		</topic>
+		
+		<topic label="Include paths and macros for C/C++ indexer" href="tasks/cdt_t_sd.htm"/>
 </toc>

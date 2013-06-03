@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+
+<head>
+<meta name="copyright" content="Copyright (c) Andrew Gvozdev and others 2013,2013. This page is made available under license. For full details, see the LEGAL section in the documentation that contains this page.">
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>C/C++ Project properties: Preprocessor Include Paths, Macros, etc. - Providers tab</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+</head>
+
+<body>
+
+<div><h1>C/C++ Project properties: Preprocessor Include Paths, Macros, etc. - Providers tab</h1>
+
+<p>
+Include paths and preprocessor macros for C/C++ indexer and other <strong>Language Settings</strong> are supplied by <strong>Language Settings Providers</strong> as part of <a href="../concepts/cdt_c_scanner_discovery.htm">Scanner Discovery</a>.
+Language Settings Providers can be set up and configured for the selected configuration in the "Providers" tab.
+</p>
+<p>
+"Providers" tab is only shown in properties of a project, not in properties of a file or a folder.
+</p>
+<p><img src="../images/scanner_discovery/sd_prop_providers.png" alt="Scanner Discovery Properties Providers Panel"></p>
+
+<table cellpadding="5" cellspacing="0" border="1" width="600px" bordercolor="#DDDDDD" >
+	<caption><strong>Providers tab controls</strong></caption>	
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody> 
+		<tr style="text-align:center;">
+			<th id="group"><strong>Group</strong></th>
+			<th id="description"><strong>Description</strong></th>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Configuration</strong></td>
+			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Manage Configurations...</strong></td>
+			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Language Setting Providers list</strong></td>
+			<td headers="description">Lists all of the providers available for the current configuration. Select the providers to assign to the configuration.</td>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Clear Entries</strong></td>
+			<td headers="description">Clears all entries of the selected provider.
+				This operation takes effect after pressing "Apply" or "OK".
+				Normally this will trigger a rerun if the provider supplies built-in compiler settings.
+				Build output parsers will regain language settings after build while parsing new build output.
+				<br>This operation might be unavailable if the provider does not have any language settings.
+				Some providers may not have the capability to clear.
+				<br>On this property page, this operation is applicable only to non-shared providers.
+			</td>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Reset</strong></td>
+			<td headers="description">Resets options of the selected provider to default values.
+				This operation also clears the provider entries.
+				The button can be enabled if some options in "Language Settings Provider Options" panel were changed.
+				<br>In this dialog, this operation is applicable only to non-shared providers.
+			</td>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Move Up</strong></td>
+			<td headers="description">Moves the selected provider higher in the list.</td>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Move Down</strong></td>
+			<td headers="description">Moves the selected provider lower in the list.</td>
+		</tr>
+	</tbody>
+</table>
+<br>
+
+
+
+<p>
+A user can define some options for configuration providers (or "non-shared") on this property page. Note that providers can be either shared or defined per configuration.
+Options of global (or "shared") providers can be configured on <a href="../reference/cdt_u_pref_build_scanner_discovery.htm">C/C++ Preferences: Scanner Discovery</a>.
+</p>
+
+<p>
+There are 2 specific options that are added for non-shared providers defined per configuration. They are described in the table below.
+</p>
+
+<table width="700px" cellpadding="5" cellspacing="0" border="1" >
+	<caption><strong>Discovery tab</strong></caption>
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody>
+		<tr style="text-align:center;">
+			<th id="group"><strong>Group</strong></th>
+			<th id="description"><strong>Description</strong></th>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Use global provider shared between projects</strong></td>
+			<td headers="description">Providers can be global or belong to a configuration. Global providers share their entries between all configurations which refer to them.
+			</td>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Store entries in project settings folder</strong></td>
+			<td headers="description">Providers can persist their entries in workspace or under project folder.
+				Storing entries under project when approprate can make sharing with the other team members easier.
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>
+The rest of the options is described in <a href="../reference/cdt_u_pref_build_scanner_discovery.htm">C/C++ Preferences: Scanner Discovery</a>, under <strong>Language Settings Providers Options</strong>.
+</p>
+
+
+<p><img src="../images/ngconcepts.gif" alt="Related concepts" width="143" height="21"><br>
+<a href="../concepts/cdt_c_scanner_discovery.htm">Scanner Discovery</a><br>
+<a href="../concepts/cdt_c_indexer.htm">C/C++ Indexer</a><br>
+</p>
+
+<p><img src="../images/ngtasks.gif" alt="Related tasks" width="143" height="21"><br>
+<a href="../tasks/cdt_t_sd.htm">Setting up include paths and macros for C/C++ indexer</a><br>
+</p>
+
+<p><img src="../images/ngref.gif" alt="Related reference" width="143" height="21"><br>
+<a href="../reference/cdt_u_pref_build_scanner_discovery.htm">C/C++ Preferences: Scanner Discovery</a><br>
+<a href="../reference/cdt_u_prop_general_sd_entries.htm">C/C++ Project properties: Preprocessor Include Paths, Macros, etc. - Entries tab</a><br>
+</p>
+
+</div></body>
+
+</html>

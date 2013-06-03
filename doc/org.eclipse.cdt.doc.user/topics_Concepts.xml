@@ -23,7 +23,8 @@
 		<topic label="Open Declaration" href="concepts/cdt_c_open_declarations.htm"/>
 	</topic>
 	<topic label="Build" href="concepts/cdt_o_build_conc.htm"> 
-		<topic label="Building C/C++ Projects" href="concepts/cdt_c_build_over.htm"/> 
+		<topic label="Building C/C++ Projects" href="concepts/cdt_c_build_over.htm"/>
+		<topic label="Scanner Discovery of include paths and preprocessor macros" href="concepts/cdt_c_scanner_discovery.htm"/>
 	</topic>
 	<topic label="Debug" href="concepts/cdt_o_dbg_concepts.htm">
 		<topic label="BreakPoints" href="concepts/cdt_c_brkpnts.htm"/> 

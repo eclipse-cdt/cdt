@@ -40,18 +40,14 @@
 	<topic label="C/C++ Menubar" href="reference/cdt_o_menu.htm">
 		<topic label="File Menu" href="reference/cdt_u_m_file.htm"/>
 		<topic label="Edit Menu" href="reference/cdt_u_m_edit.htm"/>
-  <topic href="reference/cdt_u_m_source.htm" label="Source Menu">
-  </topic>
-		<topic href="reference/cdt_u_m_refactor.htm" label="Refactor Menu">
-  </topic>
+		<topic label="Source Menu" href="reference/cdt_u_m_source.htm"/>
+		<topic label="Refactor Menu" href="reference/cdt_u_m_refactor.htm"/>
 		<topic label="Navigate Menu" href="reference/cdt_u_m_navigate.htm"/>
 		<topic label="Search Menu" href="reference/cdt_u_m_search.htm"/>
 		<topic label="Project Menu" href="reference/cdt_u_m_project.htm"/>
 		<topic label="Run Menu" href="reference/cdt_u_m_run.htm"/>
-		<topic href="reference/cdt_u_m_window.htm" label="Window Menu">
-  </topic>
-  <topic href="PLUGINS_ROOT/org.eclipse.platform.doc.user/reference/ref-61.htm" label="Help Menu">
-  </topic>
+		<topic label="Window Menu" href="reference/cdt_u_m_window.htm"/>
+		<topic label="Help Menu" href="PLUGINS_ROOT/org.eclipse.platform.doc.user/reference/ref-61.htm"/>
 	</topic>
 	
 	<topic label="C/C++ Toolbar" href="reference/cdt_u_toolbar.htm"/>
@@ -59,10 +55,9 @@
 	<topic label="C/C++ Find and Replace" href="reference/cdt_u_find_replace.htm"/>
 	
 	<!-- PREFERENCE TOPICS -->
-	<topic label="C/C++ preferences" href="reference/cdt_u_c_pref.htm">
+	<topic label="C/C++ Preferences" href="reference/cdt_u_c_pref.htm">
 		<topic label="Appearance" href="reference/cdt_u_appearance_pref.htm"/>
 		<topic href="reference/cdt_u_pref_build.htm" label="Build preferences">
-			<topic label="Error Parsers Options" href="reference/cdt_u_pref_build_error_parsers.htm"/>
 			<topic label="Build Variables" href="reference/cdt_u_pref_build_vars.htm"/>
 			<topic label="Console" href="reference/cdt_u_console_pref.htm"/>
 			<topic label="Environment" href="reference/cdt_u_environment_pref.htm"/>
@@ -70,6 +65,8 @@
 			<topic label="Makefile Editor" href="reference/cdt_u_makefile_settings_pref.htm">
 				<topic label="Settings" href="reference/cdt_u_make_settings_pref.htm"/>
 			</topic>
+			<topic label="Error Parsers" href="reference/cdt_u_pref_build_error_parsers.htm"/>
+			<topic label="Scanner Discovery" href="reference/cdt_u_pref_build_scanner_discovery.htm"/>
 		</topic>
 		
 		<topic label="Code Style preferences" href="reference/cdt_u_c_code_style_pref.htm">
@@ -102,8 +99,8 @@
 		<topic label="Language Mappings" href="reference/cdt_u_language_mapping_pref.htm"/>
 		
 		<topic label="New CDT Project Wizard">
-            <topic label="Preferred Toolchains tab" href="reference/cdt_u_pref_wizard_toolchains.htm"/> 
-            <topic label="Wizard Defaults tab" href="reference/cdt_u_pref_wizard_defaults.htm"/> 
+			<topic label="Preferred Toolchains tab" href="reference/cdt_u_pref_wizard_toolchains.htm"/> 
+			<topic label="Wizard Defaults tab" href="reference/cdt_u_pref_wizard_defaults.htm"/> 
 			<topic label="Makefile Project pages" >
 				<topic label="Binary parsers" href="reference/cdt_u_newproj_parser_binary.htm"/>
 				<topic label="Error parsers" href="reference/cdt_u_newproj_parser_error.htm"/>
@@ -115,9 +112,8 @@
 		
 		<topic label="Property Pages Settings" href="reference/cdt_u_pref_prop_pages.htm">
 			<topic label="Multiple Configurations Edit" href="reference/cdt_u_pref_multi_cfg.htm"/>
-	    </topic>
-  <topic href="reference/cdt_u_pref_task_tags.htm" label="Task Tags">
-  </topic>
+		</topic>
+		<topic label="Task Tags" href="reference/cdt_u_pref_task_tags.htm"/>
 	</topic>
 	
 	<!-- PROJECT PROPERTIES TOPICS -->
@@ -129,7 +125,7 @@
 				<topic label="Manage Configurations dialog" href="reference/cdt_u_prop_manage_dialog.htm"/>
 				<topic label="Create Configuration dialog" href="reference/cdt_u_prop_manage_newdialog.htm"/>
 				<topic label="Rename Configuration dialog" href="reference/cdt_u_prop_manage_rendialog.htm"/>
-                        </topic>  
+			</topic>  
 			<topic label="C/C++ Build">
 				<topic label="Build Variables page  " href="reference/cdt_u_prop_build_variables.htm"/>
 				<topic label="Discovery options page" href="reference/cdt_u_prop_build_discovery.htm"/>
@@ -142,7 +138,7 @@
 					<topic label="Error Parsers tab " href="reference/cdt_u_prop_build_settings_errparser.htm"/>
 				</topic>  
 				<topic label="Tool chain editor page" href="reference/cdt_u_prop_build_toolchain.htm"/>
-                        </topic>  
+			</topic>  
 			<topic label="C/C++ General" href="reference/cdt_u_prop_general.htm">
 				<topic label="Documentation page  " href="reference/cdt_u_prop_general_doc.htm"/>
 				<topic label="Export Settings page" href="reference/cdt_u_prop_general_exp.htm"/>
@@ -158,11 +154,15 @@
 					<topic label="Output Location tab" href="reference/cdt_u_prop_general_pns_out.htm"/>
 					<topic label="References tab     " href="reference/cdt_u_prop_general_pns_ref.htm"/>
 					<topic label="Data Hierarchy tab " href="reference/cdt_u_prop_general_pns_hier.htm"/>
-                                </topic> 
-                        </topic>  
+				</topic> 
+				<topic label="Preprocessor Include Paths, Macros, etc." href="reference/cdt_u_prop_general_scanner_discovery.htm">
+					<topic label="Entries tab" href="reference/cdt_u_prop_general_sd_entries.htm"/>
+					<topic label="Providers tab" href="reference/cdt_u_prop_general_sd_providers.htm"/>
+				</topic> 
+			</topic>  
 			<topic label="Project References page" href="reference/cdt_u_prop_ref.htm"/>
 			<topic label="Run/Debug Settings page" href="reference/cdt_u_prop_rundebug.htm"/>
-                </topic>
+		</topic>
 
 		<topic label="C/C++ Folder properies" href="reference/cdt_o_prop_folder.htm">
 			<topic label="Resource page" href="reference/cdt_u_fprop_resource.htm"/>
@@ -171,7 +171,7 @@
 					<topic label="Tool Settings tab" href="reference/cdt_u_fprop_toolsettings.htm"/>
 				</topic>  
 				<topic label="Tool chain editor page" href="reference/cdt_u_prop_build_toolchain.htm"/>
-                        </topic>  
+			</topic>  
 			<topic label="C/C++ General" href="reference/cdt_u_prop_general.htm">
 				<topic label="Paths and Symbols page">
 					<topic label="Includes tab      " href="reference/cdt_u_prop_general_pns_inc.htm"/>
@@ -179,10 +179,11 @@
 					<topic label="Libraries tab     " href="reference/cdt_u_prop_general_pns_lib.htm"/>
 					<topic label="Libraries path tab" href="reference/cdt_u_prop_general_pns_libpath.htm"/>
 					<topic label="Data Hierarchy tab" href="reference/cdt_u_prop_general_pns_hier.htm"/>
-                                </topic> 
-                        </topic>  
+				</topic> 
+				<topic label="Preprocessor Include Paths, Macros, etc." href="reference/cdt_u_prop_general_scanner_discovery.htm"/>
+			</topic>  
 			<topic label="Run/Debug Settings page" href="reference/cdt_u_prop_rundebug.htm"/>
-                </topic>
+		</topic>
 
 		<topic label="C/C++ File Properties" href="reference/cdt_o_prop_file.htm">
 			<topic label="Resource page" href="reference/cdt_u_fprop_resource.htm"/>
@@ -192,26 +193,27 @@
 					<topic label="Build Steps tab  " href="reference/cdt_u_fileprop_steps.htm"/>
 				</topic>  
 				<topic label="Tool Chain Editor page" href="reference/cdt_u_prop_build_toolchain.htm"/>
-                        </topic>  
+			</topic>  
 			<topic label="C/C++ General" href="reference/cdt_u_prop_general.htm">
 				<topic label="Language Mapping page" href="reference/cdt_u_fileprop_lng.htm"/>
 				<topic label="Paths and Symbols page">
 					<topic label="Includes tab      " href="reference/cdt_u_fileprop_inc.htm"/>
 					<topic label="Symbols tab       " href="reference/cdt_u_fileprop_sym.htm"/>
 					<topic label="Data Hierarchy tab" href="reference/cdt_u_prop_general_pns_hier.htm"/>
-                                </topic> 
-                        </topic>  
+				</topic> 
+				<topic label="Preprocessor Include Paths, Macros, etc." href="reference/cdt_u_prop_general_scanner_discovery.htm"/>
+			</topic>  
 			<topic label="Run/Debug Settings page" href="reference/cdt_u_prop_rundebug.htm"/>
-                </topic>
+		</topic>
 	</topic>
 	
 
 	<!-- NEW PROJECT WIZARD TOPICS -->
 	<topic label="C/C++ New Project Wizard" href="reference/cdt_u_new_proj_wiz.htm">
-            <topic label="Set Project Name and Location" href="reference/cdt_u_new_proj_wiz_name.htm"/>              
-            <topic label="Select Project type" href="reference/cdt_u_new_proj_wiz_type.htm"/>     
-            <topic label="Select Toolchain" href="reference/cdt_u_new_proj_wiz_toolchain.htm"/>
-            <topic label="Select Configurations" href="reference/cdt_u_new_proj_wiz_config.htm"/>   
+		<topic label="Set Project Name and Location" href="reference/cdt_u_new_proj_wiz_name.htm"/>
+		<topic label="Select Project type" href="reference/cdt_u_new_proj_wiz_type.htm"/>
+		<topic label="Select Toolchain" href="reference/cdt_u_new_proj_wiz_toolchain.htm"/>
+		<topic label="Select Configurations" href="reference/cdt_u_new_proj_wiz_config.htm"/>
 	</topic>
 	
 

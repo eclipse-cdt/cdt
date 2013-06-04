@@ -21,7 +21,7 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.launch.remote.messages"; //$NON-NLS-1$
 
-	public static String Gdbserver_name_textfield_label;
+	public static String Gdbserver_path_textfield_label;
 
 	public static String Gdbserver_Settings_Tab_Name;
 

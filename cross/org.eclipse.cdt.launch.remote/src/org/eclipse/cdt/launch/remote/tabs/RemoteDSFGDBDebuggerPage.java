@@ -112,7 +112,7 @@ public class RemoteDSFGDBDebuggerPage extends GdbDebuggerPage{
 		subComp.setFont( tabFolder.getFont() );
 		
 		Label label = new Label(subComp, SWT.LEFT);		
-		label.setText(Messages.Gdbserver_name_textfield_label);
+		label.setText(Messages.Gdbserver_path_textfield_label);
 		GridData gd = new GridData();
 		label.setLayoutData( gd );
 		

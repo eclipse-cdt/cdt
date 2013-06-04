@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPn//4zk\u003d",
+        "filename": "llvm/org.eclipse.cdt.managedbuilder.llvm.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-06-04T02:46:06Z",
+      "side": 1,
+      "message": "We should probably remove that value since it\u0027s not valid for either clang linker or gnu linker.",
+      "revId": "54b78e85b16a77549a5be9d282bc6f47f723947d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

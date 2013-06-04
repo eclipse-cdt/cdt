@@ -1409,19 +1409,19 @@
                class="org.eclipse.cdt.internal.ui.actions.UpdateUnresolvedIncludesAction"
                definitionId="org.eclipse.cdt.ui.menu.updateUnresolvedIncludes"
                id="org.eclipse.cdt.ui.updateUnresolvedIncludesAction"
-               label="%UpdateUnresolvedIncludes.name"
+               label="%UpdateUnresolvedIncludes.label"
                menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <action
                class="org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction"
                definitionId="org.eclipse.cdt.ui.menu.updateWithModifiedFiles"
                id="org.eclipse.cdt.ui.syncIndexWithDiskAction"
-               label="%SyncIndex.name"
+               label="%SyncIndex.label"
                menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <action
                class="org.eclipse.cdt.internal.ui.actions.FreshenIndexAction"
                definitionId="org.eclipse.cdt.ui.menu.freshenAllFiles"
                id="org.eclipse.cdt.ui.updateIndexAction"
-               label="%FreshenIndex.name"
+               label="%FreshenIndex.label"
                menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <menu
                id="org.eclipse.cdt.ui.indexmenu"
@@ -1443,7 +1443,7 @@
              class="org.eclipse.cdt.internal.ui.actions.CreateParserLogAction"
              definitionId="org.eclipse.cdt.ui.menu.createParserLog"
              id="org.eclipse.cdt.ui.parserLogAction"
-             label="%CreateParserLog.name"
+             label="%CreateParserLog.label"
              menubarPath="org.eclipse.cdt.ui.indexmenu/log"/>
          <menu
                id="org.eclipse.cdt.ui.indexmenu"
@@ -1462,13 +1462,13 @@
              class="org.eclipse.cdt.internal.ui.actions.RebuildIndexAction"
              definitionId="org.eclipse.cdt.ui.menu.rebuildIndex"
              id="org.eclipse.cdt.ui.rebuildIndexAction"
-             label="%RebuildIndex.name"
+             label="%RebuildIndex.label"
              menubarPath="org.eclipse.cdt.ui.indexmenu/rebuild"/>
          <action
              class="org.eclipse.cdt.internal.ui.search.actions.FindUnresolvedIncludesProjectAction"
              definitionId="org.eclipse.cdt.ui.menu.findUnresolvedIncludes"
              id="org.eclipse.cdt.ui.searchUnresolvedIncludes"
-             label="%SearchUnresolvedIncludes.name"
+             label="%SearchUnresolvedIncludes.label"
              menubarPath="org.eclipse.cdt.ui.indexmenu/search"/>
          <menu
                id="org.eclipse.cdt.ui.indexmenu"
@@ -1493,31 +1493,31 @@
              class="org.eclipse.cdt.internal.ui.actions.UpdateUnresolvedIncludesAction"
              definitionId="org.eclipse.cdt.ui.menu.updateUnresolvedIncludes"
              id="org.eclipse.cdt.ui.updateUnresolvedIncludesAction"
-             label="%UpdateUnresolvedIncludes.name"
+             label="%UpdateUnresolvedIncludes.label"
              menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <action
              class="org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction"
              definitionId="org.eclipse.cdt.ui.menu.updateWithModifiedFiles"
              id="org.eclipse.cdt.ui.syncIndexWithDiskAction"
-             label="%SyncIndex.name"
+             label="%SyncIndex.label"
              menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <action
              class="org.eclipse.cdt.internal.ui.actions.FreshenIndexAction"
              definitionId="org.eclipse.cdt.ui.menu.freshenAllFiles"
              id="org.eclipse.cdt.ui.updateIndexAction"
-             label="%FreshenIndex.name"
+             label="%FreshenIndex.label"
              menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <action
              class="org.eclipse.cdt.internal.ui.actions.RebuildIndexAction"
              definitionId="org.eclipse.cdt.ui.menu.rebuildIndex"
              id="org.eclipse.cdt.ui.rebuildIndexAction"
-             label="%RebuildIndex.name"
+             label="%RebuildIndex.label"
              menubarPath="org.eclipse.cdt.ui.indexmenu/rebuild"/>
          <action
              class="org.eclipse.cdt.internal.ui.search.actions.FindUnresolvedIncludesProjectAction"
              definitionId="org.eclipse.cdt.ui.menu.findUnresolvedIncludes"
              id="org.eclipse.cdt.ui.searchUnresolvedIncludes"
-             label="%SearchUnresolvedIncludes.name"
+             label="%SearchUnresolvedIncludes.label"
              menubarPath="org.eclipse.cdt.ui.indexmenu/search"/>
          <menu
                id="org.eclipse.cdt.ui.indexmenu"
@@ -4583,7 +4583,7 @@
             </separator>
             <command
                   commandId="org.eclipse.cdt.ui.menu.rebuildIndex"
-                  label="%RebuildIndex.name">
+                  label="%RebuildIndex.label">
             </command>
             <separator
                   name="update"
@@ -4591,15 +4591,15 @@
             </separator>
             <command
                   commandId="org.eclipse.cdt.ui.menu.freshenAllFiles"
-                  label="%FreshenIndex.name">
+                  label="%FreshenIndex.label">
             </command>
-			<command
+			      <command
                   commandId="org.eclipse.cdt.ui.menu.updateWithModifiedFiles"
-                  label="%SyncIndex.name">
+                  label="%SyncIndex.label">
             </command>
             <command
                   commandId="org.eclipse.cdt.ui.menu.updateUnresolvedIncludes"
-                  label="%UpdateUnresolvedIncludes.name">
+                  label="%UpdateUnresolvedIncludes.label">
             </command>
             <separator
                   name="search"
@@ -4607,7 +4607,7 @@
             </separator>
             <command
                   commandId="org.eclipse.cdt.ui.menu.findUnresolvedIncludes"
-                  label="%SearchUnresolvedIncludes.name">
+                  label="%SearchUnresolvedIncludes.label">
             </command>
             <separator
                   name="log"
@@ -4615,7 +4615,7 @@
             </separator>
             <command
                   commandId="org.eclipse.cdt.ui.menu.createParserLog"
-                  label="%CreateParserLog.name">
+                  label="%CreateParserLog.label">
             </command>
 		</menu>
 	</menuContribution>

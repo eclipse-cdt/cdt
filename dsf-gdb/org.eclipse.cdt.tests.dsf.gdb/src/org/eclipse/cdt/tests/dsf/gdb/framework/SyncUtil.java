@@ -401,7 +401,23 @@ public class SyncUtil {
         fSession.getExecutor().execute(query);
         return query.get(500, TimeUnit.MILLISECONDS);
     }
+
+    public static Integer getStackDepth(final IExecutionDMContext execCtx) throws Throwable {
+    	return getStackDepth(execCtx, 0);
+    }
     
+    public static Integer getStackDepth(final IExecutionDMContext execCtx, final int maxDepth) throws Throwable {
+    	Query<Integer> query = new Query<Integer>() {
+            @Override
+            protected void execute(final DataRequestMonitor<Integer> rm) {
+                fStack.getStackDepth(execCtx, maxDepth, rm);
+            }
+        };
+
+        fSession.getExecutor().execute(query);
+        return query.get(500, TimeUnit.MILLISECONDS);
+    }
+
     public static IFrameDMData getFrameData(final IExecutionDMContext execCtx, final int level) throws Throwable {
       	Query<IFrameDMData> query = new Query<IFrameDMData>() {
     		@Override

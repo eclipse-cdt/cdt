@@ -6,20 +6,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
+ *     Marc Khouzam (Ericsson) - Support for Step into selection (bug 244865)
  *******************************************************************************/
-package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_0;
+package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_6;
 
-import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
+import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_5.StepIntoSelectionTest_7_5;
 import org.junit.runner.RunWith;
 
+
 @RunWith(BackgroundRunner.class)
-public class StepIntoSelectionTest_7_0_NS extends StepIntoSelectionTest_7_0 {
+public class StepIntoSelectionTest_7_6 extends StepIntoSelectionTest_7_5 {
     @Override
-	protected void setLaunchAttributes() {
-		super.setLaunchAttributes();
-		
-    	setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP, true);
+	protected void setGdbVersion() {
+		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_6);		
 	}
 }

@@ -47,8 +47,8 @@ import org.junit.runners.Suite;
 	CommandTimeoutTest_7_0.class,
 	GDBMultiNonStopRunControlTest_7_0.class,
 	Suite_Sessionless_Tests.class,
-	StepIntoSelectionTest_7_0_NS.class,
-	
+	StepIntoSelectionTest_7_0.class,
+	StepIntoSelectionTest_7_0_NS.class,	
 	/* Add your test class here */
 })
 

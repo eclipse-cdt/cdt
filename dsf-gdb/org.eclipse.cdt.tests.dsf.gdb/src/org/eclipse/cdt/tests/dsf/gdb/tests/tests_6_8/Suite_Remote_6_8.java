@@ -42,7 +42,8 @@ import org.junit.runners.Suite;
 	GDBProcessesTest_6_8.class,
 	OperationsWhileTargetIsRunningTest_6_8.class,
 	CommandTimeoutTest_6_8.class,
-	Suite_Sessionless_Tests.class,	
+	Suite_Sessionless_Tests.class,
+	StepIntoSelectionTest_6_8.class,
 	/* Add your test class here */
 })
 

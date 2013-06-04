@@ -10,23 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_8;
 
-import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.eclipse.cdt.tests.dsf.gdb.tests.StepIntoSelectionTest;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_7.StepIntoSelectionTest_6_7;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class StepIntoSelectionTest_6_8 extends StepIntoSelectionTest {
+public class StepIntoSelectionTest_6_8 extends StepIntoSelectionTest_6_7 {
     @Override
 	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_6_8);
-	}
-    
-	@Override
-	protected void setLaunchAttributes() {
-		super.setLaunchAttributes();
-		
-    	setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP, false);
 	}
 }

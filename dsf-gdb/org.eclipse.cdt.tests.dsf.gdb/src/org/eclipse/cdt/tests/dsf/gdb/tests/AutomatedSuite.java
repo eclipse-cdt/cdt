@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Ericsson and others.
+ * Copyright (c) 2012, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
-import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_5.Suite_7_5;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_6.Suite_7_6;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -21,7 +21,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	Suite_7_5.class,
+	Suite_7_6.class,
 	// Can't run the Remote test just yet because they
 	// have the same names on the local tests, which is
 	// not handled by JUnit (https://bugs.eclipse.org/172256)

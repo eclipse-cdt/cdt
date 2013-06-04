@@ -49,6 +49,8 @@ import org.junit.runners.Suite;
 	Suite_Sessionless_Tests.class,
 	GDBConsoleBreakpointsTest_7_6.class,
 	GDBConsoleSynchronizingTest_7_6.class,
+	StepIntoSelectionTest_7_6.class,
+	StepIntoSelectionTest_7_6_NS.class,
 	/* Add your test class here */
 })
 

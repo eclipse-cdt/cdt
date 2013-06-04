@@ -48,6 +48,8 @@ import org.junit.runners.Suite;
 	CommandTimeoutTest_7_5.class,
 	Suite_Sessionless_Tests.class,
 	GDBConsoleBreakpointsTest_7_5.class,
+	StepIntoSelectionTest_7_5.class,
+	StepIntoSelectionTest_7_5_NS.class,
 	/* Add your test class here */
 })
 

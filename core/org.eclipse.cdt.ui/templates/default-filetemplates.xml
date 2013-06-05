@@ -19,7 +19,6 @@
 </template>
 
 <template name="%FileTemplates.textfile" id="org.eclipse.cdt.ui.text.codetemplates.textfile" description="%FileTemplates.textfile.desc" context="org.eclipse.core.runtime.text.contenttype_context" enabled="true">${file_name}
-
  Created on: ${date}
      Author: ${user}
 

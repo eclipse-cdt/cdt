@@ -212,8 +212,22 @@ public class StubUtility {
 		String[] fullLine= { CodeTemplateContextType.FILE_COMMENT };
 		
 		String text = evaluateTemplate(context, template, fullLine);
-		if (text != null && !text.endsWith(lineDelimiter))
-			text += lineDelimiter;
+		if (text != null) {
+			// Remove blank lines at the end.
+			int len = text.length();
+			while (true) {
+				int offset = len - lineDelimiter.length();
+				if (!text.startsWith(lineDelimiter, offset))
+					break;
+				len = offset;
+			}
+			len += lineDelimiter.length();
+			if (len < text.length()) {
+				text = text.substring(0, len);
+			} else if (!text.endsWith(lineDelimiter)) {
+				text += lineDelimiter;  // Add a line delimiter at the end. 
+			}
+		}
 		return text;
 	}
 

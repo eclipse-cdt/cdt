@@ -198,6 +198,27 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 		);
 	}
 	
+	public void testGccErrorMessages_RequiredFromHere() throws IOException {
+		runParserTest(
+				new String[] {
+						"utils/bar.hpp:61:7: required from ‘static void OpenCVUtils::show_contours_d(std::string, cv::Mat&, const std::vector<std::vector<cv::Point_<_Tp> > >&, bool, const Scalar&, int, int, int) [with T = int; std::string = std::basic_string<char>; cv::Scalar = cv::Scalar_<double>]’",
+						"utils/foo.cpp:117:96: required from here",
+					},
+				0, // errors
+				0, // warnings
+				2, // infos
+				new String[] {
+						"bar.hpp",
+						"foo.cpp",
+				},
+				new String[] {
+						"required from ‘static void OpenCVUtils::show_contours_d(std::string, cv::Mat&, const std::vector<std::vector<cv::Point_<_Tp> > >&, bool, const Scalar&, int, int, int) [with T = int; std::string = std::basic_string<char>; cv::Scalar = cv::Scalar_<double>]’",
+						"required from here",
+				},
+				new String[] {GCC_ERROR_PARSER_ID}
+				);
+	}
+	
 	public void testGccErrorMessages_Infos() throws IOException {
 		runParserTest(
 				new String[] {

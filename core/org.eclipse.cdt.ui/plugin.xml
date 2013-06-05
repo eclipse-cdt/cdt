@@ -4479,6 +4479,7 @@
 			name="%AllLanguageSettingEntries.name"
 			weight="010"
 			parent="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage"
+			helpId="cdt_u_prop_general_sd_entries"
 			tooltip="%AllLanguageSettingEntries.tooltip"/>
 		<tab
 			class="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderTab"
@@ -4486,6 +4487,7 @@
 			name="%AllLanguageSettingProviders.name"
 			weight="020"
 			parent="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage"
+			helpId="cdt_u_prop_general_sd_providers"
 			tooltip="%AllLanguageSettingEntries.tooltip"/>
 	</extension>
  <extension

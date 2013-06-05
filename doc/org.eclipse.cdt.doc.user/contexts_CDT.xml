@@ -147,6 +147,21 @@
    <topic href="reference/cdt_u_discovery_preferences.htm"
    	label="Discovery Options"/>
 </context>
+<context id ="cdt_u_pref_build_scanner_discovery">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_pref_build_scanner_discovery.htm"
+   	label="Scanner Discovery Preferences"/>
+</context>
+<context id ="cdt_u_prop_general_sd_entries">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_sd_entries.htm"
+   	label="Scanner Discovery Entries Tab"/>
+</context>
+<context id ="cdt_u_prop_general_sd_providers">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_sd_providers.htm"
+   	label="Scanner Discovery Providers Tab"/>
+</context>
 <context id ="man_prop_indexer">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_prop_general_idx.htm"

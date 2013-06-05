@@ -476,6 +476,7 @@
            name="%LanguageSettingsProvidersTab.name"
            parent="org.eclipse.cdt.make.internal.ui.preferences.BuildSettingsPreferencePage"
            tooltip="%LanguageSettingsProvidersTab.tooltip"
+           helpId="cdt_u_pref_build_scanner_discovery"
            weight="040">
      </tab>
    </extension>

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
+import java.beans.Beans;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -237,10 +238,13 @@ public class CDTSharedImages {
 			return urlMap.get(key);
 
 		IPath projectRelativePath = new Path(key);
-		URL url = FileLocator.find(CUIPlugin.getDefault().getBundle(), projectRelativePath, null);
-		if (url==null) {
-			Exception e = new Exception(NLS.bind(Messages.CDTSharedImages_MissingImage, key, CUIPlugin.PLUGIN_ID));
-			CUIPlugin.log(e.getMessage(), e);
+		URL url = null;
+		if (!Beans.isDesignTime()) {
+			url = FileLocator.find(CUIPlugin.getDefault().getBundle(), projectRelativePath, null);
+			if (url==null) {
+				Exception e = new Exception(NLS.bind(Messages.CDTSharedImages_MissingImage, key, CUIPlugin.PLUGIN_ID));
+				CUIPlugin.log(e.getMessage(), e);
+			}
 		}
 		urlMap.put(key, url);
 		return url;

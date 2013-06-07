@@ -18,6 +18,7 @@ final class Messages extends NLS {
 	public static String ExtractFunctionRefactoring_ExtractFunction;
 	public static String ExtractFunctionRefactoring_NoStmtSelected;
 	public static String ExtractFunctionRefactoring_TooManySelected;
+	public static String ExtractFunctionRefactoring_no_declaration_of_surrounding_method;
 	public static String ExtractFunctionRefactoring_name_in_use;
 	public static String ExtractFunctionRefactoring_parameter_name_in_use;
 	public static String ExtractFunctionRefactoring_duplicate_parameter;

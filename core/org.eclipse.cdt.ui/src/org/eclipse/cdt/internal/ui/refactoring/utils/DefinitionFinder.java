@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -63,7 +64,7 @@ public class DefinitionFinder {
 		if (binding == null) {
 			return null;
 		}
-		return getDefinition(binding, context, pm);
+		return getDefinition(binding, name.getTranslationUnit(), context, pm);
 	}
 
 	/**
@@ -71,14 +72,17 @@ public class DefinitionFinder {
 	 * of dirty editors.
 	 * 
 	 * @param binding the binding to find the definition for
+	 * @param contextTu the translation unit that determines the set of files to search for
+	 *     the definition. Only the files directly or indirectly included by the translation unit
+	 *     are considered. 
 	 * @param context the refactoring context
 	 * @param pm the progress monitor
 	 * @return the definition name, or {@code null} if there is no definition or if it is
 	 *     not unique.
 	 * @throws CoreException thrown in case of errors
 	 */
-	public static IASTName getDefinition(IBinding binding, CRefactoringContext context,
-			IProgressMonitor pm) throws CoreException {
+	public static IASTName getDefinition(IBinding binding, IASTTranslationUnit contextTu,
+			CRefactoringContext context, IProgressMonitor pm) throws CoreException {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
 		IIndex index = context.getIndex();
 		if (index == null) {
@@ -97,12 +101,16 @@ public class DefinitionFinder {
 			if (sm.isCanceled()) {
 				throw new OperationCanceledException();
 			}
-			ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(
-					name.getFile().getLocation(), null);
-			if (searchedFiles.add(tu.getLocation().toOSString())) {
-				findDefinitionsInTranslationUnit(indexBinding, tu, context, definitions, pm);
-				if (definitions.size() > 1)
-					return null;
+			IIndexFile indexFile = name.getFile();
+			if (contextTu.getASTFileSet().contains(indexFile) ||
+					contextTu.getIndexFileSet().contains(indexFile)) {
+				ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(
+						indexFile.getLocation(), null);
+				if (searchedFiles.add(tu.getLocation().toOSString())) {
+					findDefinitionsInTranslationUnit(indexBinding, tu, context, definitions, pm);
+					if (definitions.size() > 1)
+						return null;
+				}
 			}
 			loopProgress.setWorkRemaining(--remainingCount);
 		}
@@ -230,7 +238,7 @@ public class DefinitionFinder {
 		IBinding binding = memberName.resolveBinding();
 		if (!(binding instanceof ICPPMember))
 			return null;
-		return getMemberDeclaration((ICPPMember) binding, context, pm);
+		return getMemberDeclaration((ICPPMember) binding, memberName.getTranslationUnit(), context, pm);
 	}
 
 	/**
@@ -239,15 +247,18 @@ public class DefinitionFinder {
 	 * editors.
 	 * 
 	 * @param member the class member binding to find the declaration for
+	 * @param contextTu the translation unit that determines the set of files to search for
+	 *     the declaration. Only the files directly or indirectly included by the translation unit
+	 *     are considered. 
 	 * @param context the refactoring context
 	 * @param pm the progress monitor
 	 * @return the declaration name, or {@code null} if there is no declaration or if it is
 	 *     not unique.
 	 * @throws CoreException thrown in case of errors
 	 */
-	public static IASTName getMemberDeclaration(ICPPMember member, CRefactoringContext context,
-			IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		IASTName classDefintionName = getDefinition(member.getClassOwner(), context, pm);
+	public static IASTName getMemberDeclaration(ICPPMember member, IASTTranslationUnit contextTu,
+			CRefactoringContext context, IProgressMonitor pm) throws CoreException, OperationCanceledException {
+		IASTName classDefintionName = getDefinition(member.getClassOwner(), contextTu, context, pm);
 		if (classDefintionName == null)
 			return null;
 		IASTCompositeTypeSpecifier compositeTypeSpecifier =

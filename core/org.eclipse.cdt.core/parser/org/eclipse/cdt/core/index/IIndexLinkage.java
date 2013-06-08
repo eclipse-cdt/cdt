@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Andrew Ferguson (Symbian)
+ *     Markus Schorn - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -26,5 +25,5 @@ public interface IIndexLinkage extends ILinkage {
 	 * Empty IIndexLinkage array constant
 	 * @since 4.0.1
 	 */
-	IIndexLinkage[] EMPTY_INDEX_LINKAGE_ARRAY= new IIndexLinkage[0];
+	IIndexLinkage[] EMPTY_INDEX_LINKAGE_ARRAY= {};
 }

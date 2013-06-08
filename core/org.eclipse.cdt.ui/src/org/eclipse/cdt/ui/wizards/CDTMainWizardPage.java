@@ -55,9 +55,6 @@ import org.eclipse.cdt.ui.newui.PageLayout;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
 public class CDTMainWizardPage extends WizardNewProjectCreationPage implements IWizardItemsListListener {
-	private static final Image IMG_CATEGORY = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_SEARCHFOLDER);
-	private static final Image IMG_ITEM = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_VARIABLE);
-
 	public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.NewModelProjectWizardPage"; //$NON-NLS-1$
 
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.CDTWizard"; //$NON-NLS-1$
@@ -462,12 +459,11 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 		h_selected.setSupportedOnly(showSup.getSelection());
 	}
 
-
 	public static EntryDescriptor getDescriptor(Tree tree) {
 		TreeItem[] sel = tree.getSelection();
 		if (sel == null || sel.length == 0)
 			return null;
-		return (EntryDescriptor)sel[0].getData(DESC);
+		return (EntryDescriptor) sel[0].getData(DESC);
 	}
 
 	@Override
@@ -482,9 +478,12 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 	}
 
 	private static Image calcImage(EntryDescriptor ed) {
-		if (ed.getImage() != null) return ed.getImage();
-		if (ed.isCategory()) return IMG_CATEGORY;
-		return IMG_ITEM;
+		Image image = ed.getImage();
+		if (image != null)
+			return image;
+		if (ed.isCategory())
+			return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_SEARCHFOLDER);
+		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_VARIABLE);
 	}
 
 	@Override

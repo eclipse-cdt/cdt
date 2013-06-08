@@ -11,6 +11,8 @@
 <div>
 <h1>Scanner Discovery</h1>
 <p>
+
+<h2>General</h2>
 <strong>Scanner Discovery</strong> (sometimes called <strong>Autodiscovery</strong>) is a method of finding include paths and predefined preprocessor macros which the compiler uses during compilation of the code.
 </p>
 
@@ -70,14 +72,33 @@ Each Language Settings Provider can be expanded to show the entries it discovere
 If information retrieved by auto-discovery is insufficient or the project deviates from a standard one supported by CDT a user can enter additional include paths and macros manually under "User Settings Entries".
 </p>
 
+<h2>Project Explorer View</h2>
+
 <p>
 The <strong>Project Explorer View</strong> provides a means to view some of the settings. The discovered include paths are shown under the project when "Includes" node is expanded.<br>
 Also, a <strong>"Wrench" overlay</strong> icon is shown for those file/folders where distinct entries are discovered which differ from those of parent folder. Wrench is not shown on project level.<br>
 In the example below, <span class="typewriter">Hello.cpp</span> was compiled with added <span class="typewriter">-DHELLO</span> compiler option.
 After BOP discovery "Wrench" overlay is shown for this file.
+</p>
+<p>
 <img src="../images/scanner_discovery/sd_project_explorer.png" alt="Project Explorer view">
 </p>
 
+<h2>Console View</h2>
+<p>
+The output of built-in compiler specs detectors can be inspected to troubleshoot problems running the command.
+To do so, enable checkbox "Allocate console in the Console View".
+</p>
+<p>
+<img src="../images/scanner_discovery/sd_specs_detector_options.png" alt="Spec Detectors Properties"></img>
+</p>
+
+<p>
+When checkbox "Allocate console in the Console View" is enabled, output of each run of the provider will be directed to a special console in the Console View.
+</p>
+<p>
+<img src="../images/scanner_discovery/sd_console_view.png" alt="Console View"></img>
+</p>
 
 <p><img src="../images/ngconcepts.gif" alt="Related concepts" width="143" height="21"><br>
 <a href="../concepts/cdt_c_indexer.htm">C/C++ Indexer</a><br>

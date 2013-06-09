@@ -301,12 +301,11 @@ public class LlvmPreferenceStore {
 
 	public static void addMinGWStdLib() {
 		String path = LlvmEnvironmentVariableSupplier.getMinGWStdLib();
-		String lib = "stdc++"; //$NON-NLS-1$
 		if (path != null) {
 			//add to preference store
 			appendLibraryPath(path);
 //			ProjectIndex.rebuiltIndex(proj);
-			appendLibrary(lib);
+			appendLibrary("stdc++"); //$NON-NLS-1$
 		}
 	}
 	

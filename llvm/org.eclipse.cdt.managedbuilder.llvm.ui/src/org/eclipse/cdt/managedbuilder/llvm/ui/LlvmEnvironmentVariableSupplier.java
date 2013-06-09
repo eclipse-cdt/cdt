@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2013 Nokia Siemens Networks Oyj, Finland.
+ * Copyright (c) 2010, 2013 Nokia Siemens Networks Oyj, Finland.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *      Nokia Siemens Networks - initial implementation
  *      Leo Hippelainen - Initial implementation
  *      Petri Tuononen - Initial implementation
+ *      Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.llvm.ui;
 
@@ -313,16 +314,27 @@ public class LlvmEnvironmentVariableSupplier implements
 	public static String getMinGWStdLib() {
 		//get mingw bin path
 		IPath mingwBinPath = MingwEnvironmentVariableSupplier.getBinDir();
-		StringBuilder sB = new StringBuilder(mingwBinPath.toOSString());
-		//drop bin
-		sB.delete(sB.length()-3, sB.length());
-		//append mingw lib subdir
-		sB.append("lib\\gcc\\mingw32\\"); //$NON-NLS-1$
-		//get all files in the directory
-		File f = new File(sB.toString());
-		//append the first dir
-		sB.append(f.list()[0]);	
-		return sB.toString();
+		if (mingwBinPath != null) {
+			StringBuilder sB = new StringBuilder(mingwBinPath.toOSString());
+			// drop bin
+			if (sB.length() >= 3) {
+				sB.delete(sB.length() - 3, sB.length());
+				// append mingw lib subdir
+				sB.append("lib\\gcc\\mingw32\\"); //$NON-NLS-1$
+				// get all files in the directory
+				File f = new File(sB.toString());
+				if (f.isDirectory()) {
+					String[] list = f.list();
+					if (list.length > 0) {
+						// append the first dir
+						sB.append(list[0]);
+						return sB.toString();
+					}
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 	/**

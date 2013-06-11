@@ -196,9 +196,10 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
     
 	@Override
     public void getModuleData(final IModuleDMContext dmc, final DataRequestMonitor<IModuleDMData> rm) {
-        assert dmc != null; 
-        if (dmc instanceof ModuleDMContext) {
-            fModulesCache.execute(fCommandFactory.createCLIInfoSharedLibrary(dmc),
+        assert dmc != null;
+        ISymbolDMContext symDmc = DMContexts.getAncestorOfType(dmc, ISymbolDMContext.class);
+        if (symDmc != null && dmc instanceof ModuleDMContext) {
+            fModulesCache.execute(fCommandFactory.createCLIInfoSharedLibrary(symDmc),
                     new DataRequestMonitor<CLIInfoSharedLibraryInfo>(getExecutor(), rm) {
                         @Override
                         protected void handleSuccess() {

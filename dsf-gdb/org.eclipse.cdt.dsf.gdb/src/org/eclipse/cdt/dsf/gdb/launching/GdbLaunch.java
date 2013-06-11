@@ -29,6 +29,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
+import org.eclipse.cdt.dsf.concurrent.Sequence.Step;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.cdt.dsf.debug.model.DsfLaunch;
@@ -219,8 +220,8 @@ public class GdbLaunch extends DsfLaunch
     ///////////////////////////////////////////////////////////////////////////
     
     /**
-     * Shuts down the services, the session and the executor associated with 
-     * this launch.  
+     * Terminates the gdb session, shuts down the services, the session and 
+     * the executor associated with this launch.  
      * <p>
      * Note: The argument request monitor to this method should NOT use the
      * executor that belongs to this launch.  By the time the shutdown is 
@@ -238,7 +239,7 @@ public class GdbLaunch extends DsfLaunch
         }
         fShutDown = true;
             
-        Sequence shutdownSeq = new ShutdownSequence(
+        final Sequence shutdownSeq = new ShutdownSequence(
             getDsfExecutor(), fSession.getId(),
             new RequestMonitor(fSession.getExecutor(), rm) { 
                 @Override
@@ -281,7 +282,35 @@ public class GdbLaunch extends DsfLaunch
                     rm.done();
                 }
             });
-        fExecutor.execute(shutdownSeq);
+        
+        final Step[] steps = new Step[] {
+            	new Step() {        		
+                    @Override
+    				public void execute(RequestMonitor rm) {
+                    	IGDBControl control = fTracker.getService(IGDBControl.class);
+                    	if (control == null) {
+                    		rm.done();
+                    		return;
+                    	}
+                    	control.terminate(rm);
+                    }
+    			},
+    			
+            	new Step() {        		
+                    @Override
+    				public void execute(RequestMonitor rm) {
+                    	fExecutor.execute(shutdownSeq);
+                    }
+    			}	
+            };
+
+            fExecutor.execute(new Sequence(fExecutor) {
+
+    			@Override
+    			public Step[] getSteps() {
+    				return steps;
+    			}
+            });
     }
     
     @SuppressWarnings("rawtypes")

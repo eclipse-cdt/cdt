@@ -162,7 +162,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
     	String wordDelimiter = preferences.getString(CUIPlugin.PLUGIN_ID,
     			PreferenceConstants.NAME_STYLE_CONSTANT_WORD_DELIMITER, "_", null); //$NON-NLS-1$
     	String prefix = preferences.getString(CUIPlugin.PLUGIN_ID,
-						PreferenceConstants.NAME_STYLE_CONSTANT_PREFIX, "", null); //$NON-NLS-1$
+				PreferenceConstants.NAME_STYLE_CONSTANT_PREFIX, "", null); //$NON-NLS-1$
     	String suffix = preferences.getString(CUIPlugin.PLUGIN_ID,
     			PreferenceConstants.NAME_STYLE_CONSTANT_SUFFIX, "", null); //$NON-NLS-1$
     	NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,12 +46,8 @@ public class MakefileEditorActionContributor extends TextEditorActionContributor
 		fTogglePresentation = new MakefileEditorTogglePresentationAction();
 		fOpenDeclarationAction = new OpenDeclarationAction();
 		fOpenDeclarationAction.setActionDefinitionId(IMakefileEditorActionDefinitionIds.OPEN_DECLARATION);
-		
 	}
 
-	/**
-	 * @see org.eclipse.ui.IEditorActionBarContributor#setActiveEditor(IEditorPart)
-	 */
 	@Override
 	public void setActiveEditor(IEditorPart targetEditor) {
 		super.setActiveEditor(targetEditor);
@@ -71,14 +67,11 @@ public class MakefileEditorActionContributor extends TextEditorActionContributor
 
 		fTogglePresentation.setEditor(editor);
 		fTogglePresentation.update();
-		
+
 		fOpenDeclarationAction.setEditor(editor);
 		fOpenDeclarationAction.update();
 	}
 
-	/*
-	 * @see IEditorActionBarContributor#dispose()
-	 */
 	@Override
 	public void dispose() {
 		doSetActiveEditor(null);

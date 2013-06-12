@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,11 +44,6 @@ public class AddBuildTargetAction extends Action {
 		fOutliner = outliner;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		IMakeTargetManager manager = MakeCorePlugin.getDefault().getTargetManager();
@@ -112,19 +107,22 @@ public class AddBuildTargetAction extends Action {
 		}
 		return newName;
 	}
-	
+
 	public boolean canActionBeAdded(ISelection selection) {
 		ITargetRule[] rules = getTargetRules(selection);
-		if (rules.length == 0)
+		if (rules.length == 0) {
 			return false;
-		
+		}
+
 		IFile file = getFile();
-		if (file == null)
+		if (file == null) {
 			return false;
-		
-		if (!MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(file.getProject()))
+		}
+
+		if (!MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(file.getProject())) {
 			return false;
-		
+		}
+
 		return true;
 	}
 

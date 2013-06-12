@@ -16,7 +16,7 @@ package org.eclipse.cdt.make.internal.ui.editor;
  * Interface of an object participating in reconciling.
  */
 public interface IReconcilingParticipant {
-	
+
 	/**
 	 * Called after reconciling has been finished.
 	 */

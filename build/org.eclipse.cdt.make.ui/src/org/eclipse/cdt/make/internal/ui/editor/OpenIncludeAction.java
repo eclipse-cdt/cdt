@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 QNX Software Systems and others.
+ * Copyright (c) 2002, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,11 +38,10 @@ import org.eclipse.ui.ide.IDE;
  * OpenIncludeAction
  */
 public class OpenIncludeAction extends Action {
-
 	ISelectionProvider fSelectionProvider;
 
 	/**
-	 * 
+	 * Constructor.
 	 */
 	public OpenIncludeAction(ISelectionProvider provider) {
 		super(MakeUIPlugin.getResourceString("OpenIncludeAction.title")); //$NON-NLS-1$
@@ -51,20 +50,14 @@ public class OpenIncludeAction extends Action {
 		fSelectionProvider= provider;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		IInclude[] includes= getIncludeDirective(fSelectionProvider.getSelection());
 		if (includes != null) {
-			for (int i = 0; i < includes.length; ++i) {
-				IDirective[] directives = includes[i].getDirectives();
-				for (int j = 0; j < directives.length; ++j) {
+			for (IInclude include : includes) {
+				for (IDirective directive : include.getDirectives()) {
 					try {
-						openInEditor(directives[j]);
+						openInEditor(directive);
 					} catch (PartInitException e) {
 					}
 				}
@@ -111,8 +104,7 @@ public class OpenIncludeAction extends Action {
 			List<Object> list= ((IStructuredSelection)sel).toList();
 			if (list.size() > 0) {
 				List<IInclude> includes = new ArrayList<IInclude>(list.size());
-				for (int i = 0; i < list.size(); ++i) {
-					Object element= list.get(i);
+				for (Object element : list) {
 					if (element instanceof IInclude) {
 						includes.add((IInclude) element);
 					}
@@ -124,7 +116,7 @@ public class OpenIncludeAction extends Action {
 	}
 
 	public boolean canActionBeAdded(ISelection selection) {
-        IInclude[] includes =  getIncludeDirective(selection);
-        return includes != null && includes.length != 0;
+		IInclude[] includes =  getIncludeDirective(selection);
+		return includes != null && includes.length != 0;
 	}
 }

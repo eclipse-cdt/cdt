@@ -364,8 +364,8 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	public void reconciled() {
 		// Notify listeners
 		Object[] listeners = fReconcilingListeners.getListeners();
-		for (int i = 0, length= listeners.length; i < length; ++i) {
-			((IReconcilingParticipant)listeners[i]).reconciled();
+		for (Object listener : listeners) {
+			((IReconcilingParticipant)listener).reconciled();
 		}
 	}
 
@@ -378,9 +378,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		return fFoldingGroup;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#performRevert()
-	 */
 	@Override
 	protected void performRevert() {
 		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer();
@@ -390,15 +387,17 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 			boolean projectionMode= projectionViewer.isProjectionMode();
 			if (projectionMode) {
 				projectionViewer.disableProjection();
-				if (fProjectionMakefileUpdater != null)
+				if (fProjectionMakefileUpdater != null) {
 					fProjectionMakefileUpdater.uninstall();
+				}
 			}
 
 			super.performRevert();
 
 			if (projectionMode) {
-				if (fProjectionMakefileUpdater != null)
+				if (fProjectionMakefileUpdater != null) {
 					fProjectionMakefileUpdater.install(this, projectionViewer);
+				}
 				projectionViewer.enableProjection();
 			}
 
@@ -422,8 +421,9 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	@Override
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		ISourceViewer sourceViewer= getSourceViewer();
-		if (sourceViewer == null)
+		if (sourceViewer == null) {
 			return;
+		}
 
 		String property = event.getProperty();
 
@@ -438,8 +438,9 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		if (MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED.equals(property)) {
 			if (sourceViewer instanceof ProjectionViewer) {
 				ProjectionViewer projectionViewer= (ProjectionViewer) sourceViewer;
-				if (fProjectionMakefileUpdater != null)
+				if (fProjectionMakefileUpdater != null) {
 					fProjectionMakefileUpdater.uninstall();
+				}
 				// either freshly enabled or provider changed
 				fProjectionMakefileUpdater= new ProjectionMakefileUpdater();
 				if (fProjectionMakefileUpdater != null) {

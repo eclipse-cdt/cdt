@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 QNX Software Systems and others.
+ * Copyright (c) 2002, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,9 +42,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  * ProjectionMakefileUpdater
  */
 public class ProjectionMakefileUpdater implements IProjectionListener {
-
 	private static class MakefileProjectionAnnotation extends ProjectionAnnotation {
-
 		private IDirective fDirective;
 		private boolean fIsComment;
 
@@ -71,7 +69,6 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 //		}
 	}
 
-
 	public void install(MakefileEditor editor, ProjectionViewer viewer) {
 		fEditor= editor;
 		fViewer= viewer;
@@ -92,10 +89,6 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 	}
 
 	private class ReconcilerParticipant implements IReconcilingParticipant {
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.make.internal.ui.editor.IReconcilingParticipant#reconciled()
-		 */
 		@Override
 		public void reconciled() {
 			processReconcile();
@@ -113,9 +106,6 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 	private boolean fCollapseRule = false;
 	private boolean fCollapseConditional = false;
 
-	/*
-	 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionEnabled()
-	 */
 	@Override
 	public void projectionEnabled() {
 		// http://home.ott.oti.com/teams/wswb/anon/out/vms/index.html
@@ -130,9 +120,6 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 		fEditor.addReconcilingParticipant(fParticipant);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionDisabled()
-	 */
 	@Override
 	public void projectionDisabled() {
 		fCachedDocument= null;
@@ -143,14 +130,13 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 	}
 
 	public void initialize() {
-
-		if (!isInstalled())
+		if (!isInstalled()) {
 			return;
+		}
 
 		initializePreferences();
 
 		try {
-
 			IDocumentProvider provider= fEditor.getDocumentProvider();
 			fCachedDocument= provider.getDocument(fEditor.getEditorInput());
 			fAllowCollapsing= true;
@@ -166,7 +152,6 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 					model.replaceAnnotations(null, additions);
 				}
 			}
-
 		} finally {
 			fCachedDocument= null;
 			fAllowCollapsing= false;
@@ -187,9 +172,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 	}
 
 	private void computeAdditions(IDirective[] elements, Map<MakefileProjectionAnnotation, Position> map) {
-		for (int i= 0; i < elements.length; i++) {
-			IDirective element= elements[i];
-
+		for (IDirective element : elements) {
 			computeAdditions(element, map);
 
 			if (element instanceof IParent) {
@@ -200,9 +183,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 	}
 
 	private void computeAdditions(IDirective element, Map<MakefileProjectionAnnotation, Position> map) {
-
 		boolean createProjection= false;
-
 		boolean collapse= false;
 
 		if (element instanceof IConditional) {
@@ -225,9 +206,9 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 	}
 
 	private Position createProjectionPosition(IDirective element) {
-
-		if (fCachedDocument == null)
+		if (fCachedDocument == null) {
 			return null;
+		}
 
 		try {
 			int startLine= element.getStartLine() - 1;
@@ -237,7 +218,6 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 				int endOffset= fCachedDocument.getLineOffset(endLine + 1);
 				return new Position(offset, endOffset - offset);
 			}
-
 		} catch (BadLocationException x) {
 		}
 
@@ -245,12 +225,14 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 	}
 
 	public void processReconcile() {
-		if (!isInstalled())
+		if (!isInstalled()) {
 			return;
+		}
 
 		ProjectionAnnotationModel model= (ProjectionAnnotationModel) fEditor.getAdapter(ProjectionAnnotationModel.class);
-		if (model == null)
+		if (model == null) {
 			return;
+		}
 
 		try {
 			IDocumentProvider provider= fEditor.getDocumentProvider();
@@ -263,7 +245,6 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 
 			Map<MakefileProjectionAnnotation, Position> updated= computeAdditions((IParent) fInput);
 			Map<IDirective, List<MakefileProjectionAnnotation>> previous= createAnnotationMap(model);
-
 
 			for (MakefileProjectionAnnotation annotation : updated.keySet()) {
 				IDirective element= annotation.getElement();
@@ -288,15 +269,17 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 						}
 					}
 
-					if (annotations.isEmpty())
+					if (annotations.isEmpty()) {
 						previous.remove(element);
+					}
 				}
 			}
 
 			for (List<MakefileProjectionAnnotation> list : previous.values()) {
 				int size= list.size();
-				for (int i= 0; i < size; i++)
+				for (int i= 0; i < size; i++) {
 					deletions.add(list.get(i));
+				}
 			}
 
 			match(model, deletions, additions, updates);
@@ -316,8 +299,9 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 	private void match(ProjectionAnnotationModel model, List<MakefileProjectionAnnotation> deletions,
 			Map<MakefileProjectionAnnotation, Position> additions, List<MakefileProjectionAnnotation> changes) {
 
-		if (deletions.isEmpty() || (additions.isEmpty() && changes.isEmpty()))
+		if (deletions.isEmpty() || (additions.isEmpty() && changes.isEmpty())) {
 			return;
+		}
 
 		List<MakefileProjectionAnnotation> newDeletions= new ArrayList<MakefileProjectionAnnotation>();
 		List<MakefileProjectionAnnotation> newChanges= new ArrayList<MakefileProjectionAnnotation>();
@@ -326,16 +310,18 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 		outer: while (deletionIterator.hasNext()) {
 			MakefileProjectionAnnotation deleted= deletionIterator.next();
 			Position deletedPosition= model.getPosition(deleted);
-			if (deletedPosition == null)
+			if (deletedPosition == null) {
 				continue;
+			}
 
 			Iterator<MakefileProjectionAnnotation> changesIterator= changes.iterator();
 			while (changesIterator.hasNext()) {
 				MakefileProjectionAnnotation changed= changesIterator.next();
 				if (deleted.isComment() == changed.isComment()) {
 					Position changedPosition= model.getPosition(changed);
-					if (changedPosition == null)
+					if (changedPosition == null) {
 						continue;
+					}
 
 					if (deletedPosition.getOffset() == changedPosition.getOffset()) {
 

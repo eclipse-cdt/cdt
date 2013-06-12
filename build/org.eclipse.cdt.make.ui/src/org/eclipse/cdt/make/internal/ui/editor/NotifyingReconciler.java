@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,9 +21,8 @@ import org.eclipse.jface.text.reconciler.MonoReconciler;
  * NotifyingReconciler
  */
 public class NotifyingReconciler extends MonoReconciler {
-
 	private ArrayList<IReconcilingParticipant> fReconcilingParticipants= new ArrayList<IReconcilingParticipant>();
-	
+
 	/**
 	 * Constructor for NotifyingReconciler.
 	 */
@@ -31,9 +30,6 @@ public class NotifyingReconciler extends MonoReconciler {
 		super(strategy, isIncremental);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.AbstractReconciler#process(org.eclipse.jface.text.reconciler.DirtyRegion)
-	 */
 	@Override
 	protected void process(DirtyRegion dirtyRegion) {
 		super.process(dirtyRegion);
@@ -53,9 +49,7 @@ public class NotifyingReconciler extends MonoReconciler {
 			participant.reconciled();
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.reconciler.AbstractReconciler#initialProcess()
-	 */
+
 	@Override
 	protected void initialProcess() {
 		super.initialProcess();

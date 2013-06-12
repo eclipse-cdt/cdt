@@ -271,9 +271,12 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 	//void function_with_impl();
 
 	//A.cpp
+	//#include "A.h"
 	//void function_with_impl() {
 	//}
 	//====================
+	//#include "A.h"
+	//
 	//void function() {
 	//}
 	//

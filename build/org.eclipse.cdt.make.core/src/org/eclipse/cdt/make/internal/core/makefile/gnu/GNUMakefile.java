@@ -16,14 +16,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IDirective;
-import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider;
 import org.eclipse.cdt.make.core.makefile.gnu.IGNUMakefile;
 import org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile;
@@ -793,24 +791,6 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 			tgt = line;
 		}
 		return new InferenceRule(this, new Target(tgt));
-	}
-
-	@Override
-	public IDirective[] getDirectives(boolean expand) {
-		if (!expand) {
-			return getDirectives();
-		}
-		IDirective[] dirs = getDirectives();
-		ArrayList<IDirective> list = new ArrayList<IDirective>(Arrays.asList(dirs));
-		for (IDirective dir : dirs) {
-			if (dir instanceof Include) {
-				IDirective[] includedMakefiles = ((Include)dir).getDirectives();
-				for (IDirective includedMakefile : includedMakefiles) {
-					list.addAll(Arrays.asList(((IMakefile)includedMakefile).getDirectives()));
-				}
-			}
-		}
-		return list.toArray(new IDirective[list.size()]);
 	}
 
 	@Override

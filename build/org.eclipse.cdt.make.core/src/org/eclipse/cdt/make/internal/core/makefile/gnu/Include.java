@@ -79,9 +79,12 @@ public class Include extends Parent implements IInclude {
 						includeFilePath = includeFilePath.setDevice(device);
 					}
 					try {
-						GNUMakefile gnu = new GNUMakefile();
-						gnu.parse(URIUtil.toURI(includeFilePath), makefileReaderProvider);
-						addDirective(gnu);
+						URI includeURI = URIUtil.toURI(includeFilePath);
+						if (!isAlreadyIncluded(includeURI)) {
+							GNUMakefile gnu = new GNUMakefile();
+							gnu.parse(includeURI, makefileReaderProvider);
+							addDirective(gnu);
+						}
 						continue;
 					} catch (IOException e) {
 					}
@@ -95,10 +98,12 @@ public class Include extends Parent implements IInclude {
 							// special case: device prefix is seen as relative path by URI
 							uriPath = '/' + uriPath;
 						}
-						GNUMakefile gnu = new GNUMakefile();
 						URI includeURI = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), uriPath, null, null);
-						gnu.parse(includeURI, makefileReaderProvider);
-						addDirective(gnu);
+						if (!isAlreadyIncluded(includeURI)) {
+							GNUMakefile gnu = new GNUMakefile();
+							gnu.parse(includeURI, makefileReaderProvider);
+							addDirective(gnu);
+						}
 						break;
 					} catch (IOException e) {
 					} catch (URISyntaxException exc) {
@@ -107,5 +112,16 @@ public class Include extends Parent implements IInclude {
 			}
 		}
 		return super.getDirectives();
+	}
+
+	private boolean isAlreadyIncluded(URI includeURI) {
+		for (IDirective parent = getParent(); parent != null; parent = parent.getParent()) {
+			if (parent instanceof IMakefile) {
+				if (includeURI.equals(((IMakefile) parent).getFileURI())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

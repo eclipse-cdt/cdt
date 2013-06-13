@@ -12,6 +12,7 @@ package org.eclipse.cdt.make.internal.core.makefile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.IParent;
@@ -29,6 +30,17 @@ public abstract class Parent extends Directive implements IParent {
 	}
 
 	public IDirective[] getDirectives(boolean expand) {
+		if (expand) {
+			List<IDirective> directives = new ArrayList<IDirective>();
+			getDirectives(); // populates children for class Include
+			for (IDirective directive : children) {
+				directives.add(directive);
+				if (directive instanceof Parent) {
+					directives.addAll(Arrays.asList(((Parent) directive).getDirectives(expand)));
+				}
+			}
+			return directives.toArray(new IDirective[directives.size()]);
+		}
 		return getDirectives();
 	}
 

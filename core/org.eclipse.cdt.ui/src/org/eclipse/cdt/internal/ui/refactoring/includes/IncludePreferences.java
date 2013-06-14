@@ -29,12 +29,24 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.Includ
 public class IncludePreferences {
 	private static final String DEFAULT_PARTNER_FILE_SUFFIXES = "test,unittest"; //$NON-NLS-1$
 
+	/**
+	 * Whether indirect inclusion through a partner header file is allowed.
+	 */
+	public static final String INCLUDES_ALLOW_PARTNER_INDIRECT_INCLUSION = "organizeIncludes.allowPartnerIndirectInclusion"; //$NON-NLS-1$
+	/**
+	 * Header file substitution rules.
+	 * The value of the preference is an XML representation of one or more
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.HeaderSubstitutionMap}s.
+	 */
+	public static final String INCLUDES_HEADER_SUBSTITUTION = "organizeIncludes.headerSubstitution"; //$NON-NLS-1$
+
 	public static enum UnusedStatementDisposition { REMOVE, COMMENT_OUT, KEEP }
 
 	public final Map<IncludeKind, IncludeGroupStyle> includeStyles;
 	public final boolean allowReordering;
 	public final boolean heuristicHeaderSubstitution;
 	public final boolean allowPartnerIndirectInclusion;
+	public final boolean allowIndirectInclusion;
 	public final boolean forwardDeclareCompositeTypes;
 	public final boolean forwardDeclareEnums;
 	public final boolean forwardDeclareFunctions;
@@ -89,8 +101,11 @@ public class IncludePreferences {
 		allowReordering = PreferenceConstants.getPreference(
 				PreferenceConstants.INCLUDES_ALLOW_REORDERING, project, true);
 
-		// TODO(sprigogin): Create a preference for this. 
-		allowPartnerIndirectInclusion = false;
+		// TODO(sprigogin): Create a preference for this.
+		allowIndirectInclusion = false;
+
+		allowPartnerIndirectInclusion = PreferenceConstants.getPreference(
+				INCLUDES_ALLOW_PARTNER_INDIRECT_INCLUSION, project, true);
 
 		// Unused include handling preferences
 		value = PreferenceConstants.getPreference(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION, project, null);
@@ -159,11 +174,16 @@ public class IncludePreferences {
 		store.setDefault(PreferenceConstants.INCLUDES_PARTNER_FILE_SUFFIXES, DEFAULT_PARTNER_FILE_SUFFIXES);
 		store.setDefault(PreferenceConstants.INCLUDES_HEURISTIC_HEADER_SUBSTITUTION, true);
 		store.setDefault(PreferenceConstants.INCLUDES_ALLOW_REORDERING, true);
+		store.setDefault(INCLUDES_ALLOW_PARTNER_INDIRECT_INCLUSION, false);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_COMPOSITE_TYPES, true);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_ENUMS, false);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, false);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_TEMPLATES, false);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS, true);
-		store.setDefault(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION, UnusedStatementDisposition.COMMENT_OUT.toString());
+		store.setDefault(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION,
+				UnusedStatementDisposition.COMMENT_OUT.toString());
+
+		store.setDefault(INCLUDES_HEADER_SUBSTITUTION,
+				HeaderSubstitutionMap.serializeMaps(GCCHeaderSubstitutionMaps.getDefaultMaps()));
 	}
 }

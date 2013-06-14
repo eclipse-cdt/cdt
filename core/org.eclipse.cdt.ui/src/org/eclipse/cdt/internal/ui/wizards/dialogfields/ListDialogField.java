@@ -786,19 +786,19 @@ public class ListDialogField<T> extends DialogField {
 		return reverse;
 	}
 	
-	private void remove() {
+	protected void remove() {
 		removeElements(getSelectedElements());
 	}
 	
-	private void up() {
+	protected void up() {
 		moveUp(getSelectedElements());
 	}
 	
-	private void down() {
+	protected void down() {
 		moveDown(getSelectedElements());
 	}
 	
-	private boolean canMoveUp() {
+	protected boolean canMoveUp() {
 		if (isOkToUse(fTableControl)) {
 			int[] indc= fTable.getTable().getSelectionIndices();
 			for (int i= 0; i < indc.length; i++) {
@@ -810,7 +810,7 @@ public class ListDialogField<T> extends DialogField {
 		return false;
 	}
 	
-	private boolean canMoveDown() {
+	protected boolean canMoveDown() {
 		if (isOkToUse(fTableControl)) {
 			int[] indc= fTable.getTable().getSelectionIndices();
 			int k= fElements.size() - 1;

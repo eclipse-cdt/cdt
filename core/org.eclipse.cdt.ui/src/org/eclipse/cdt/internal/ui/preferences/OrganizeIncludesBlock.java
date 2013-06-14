@@ -21,6 +21,7 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences.UnusedStatementDisposition;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 
@@ -29,6 +30,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
  */
 public class OrganizeIncludesBlock extends OptionsConfigurationBlock {
 	private static final Key KEY_HEURISTIC_HEADER_SUBSTITUTION = getCDTUIKey(PreferenceConstants.INCLUDES_HEURISTIC_HEADER_SUBSTITUTION);
+	private static final Key KEY_PARTNER_INDIRECT_INCLUSION = getCDTUIKey(IncludePreferences.INCLUDES_ALLOW_PARTNER_INDIRECT_INCLUSION);
 	private static final Key KEY_INCLUDES_REORDERING = getCDTUIKey(PreferenceConstants.INCLUDES_ALLOW_REORDERING);
 	private static final Key KEY_UNUSED_STATEMENTS_DISPOSITION = getCDTUIKey(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION);
 	private static final Key KEY_FORWARD_DECLARE_COMPOSITE_TYPES = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_COMPOSITE_TYPES);
@@ -50,6 +52,7 @@ public class OrganizeIncludesBlock extends OptionsConfigurationBlock {
 
 	private static Key[] ALL_KEYS = {
 		KEY_HEURISTIC_HEADER_SUBSTITUTION,
+		KEY_PARTNER_INDIRECT_INCLUSION,
 		KEY_INCLUDES_REORDERING,
 		KEY_UNUSED_STATEMENTS_DISPOSITION,
 		KEY_FORWARD_DECLARE_COMPOSITE_TYPES,
@@ -80,6 +83,9 @@ public class OrganizeIncludesBlock extends OptionsConfigurationBlock {
 		LayoutUtil.setHorizontalSpan(control, 2);
 		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_heuristic_header_substitution,
 				KEY_HEURISTIC_HEADER_SUBSTITUTION, TRUE_FALSE, 0);
+		LayoutUtil.setHorizontalSpan(control, 2);
+		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_partner_indirect_inclusion,
+				KEY_PARTNER_INDIRECT_INCLUSION, TRUE_FALSE, 0);
 		LayoutUtil.setHorizontalSpan(control, 2);
 		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_forward_declare_composite_types,
 				KEY_FORWARD_DECLARE_COMPOSITE_TYPES, TRUE_FALSE, 0);

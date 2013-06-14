@@ -1257,6 +1257,14 @@
           <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
+            name="%headerSubstitutionPreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.OrganizeIncludesPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.HeaderSubstitutionPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.HeaderSubstitutionPreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.headersubstitution"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
+      <page
             name="%markOccurrencesPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.MarkOccurrencesPreferencePage"
@@ -1315,6 +1323,9 @@
       <keyword
             label="%preferenceKeywords.includepragmas"
             id="org.eclipse.cdt.ui.includepragmas"/>
+      <keyword
+            label="%preferenceKeywords.headersubstitution"
+            id="org.eclipse.cdt.ui.headersubstitution"/>
       <keyword
             label="%preferenceKeywords.organizeincludes"
             id="org.eclipse.cdt.ui.organizeincludes"/>

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.includes;
 
-import java.io.StringReader;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,28 +19,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.XMLMemento;
 
 /**
  * A set of header file substitution rules.
  */
 public class IncludeMap {
-	private static final String TAG_CPP_ONLY = "cpp_only"; //$NON-NLS-1$
-	private static final String TAG_FORCED_REPLACEMENT = "forced_replacement"; //$NON-NLS-1$
 	private static final String TAG_MAPPING = "mapping"; //$NON-NLS-1$
 	private static final String TAG_KEY = "key"; //$NON-NLS-1$
 	private static final String TAG_VALUE = "value"; //$NON-NLS-1$
 
-	private final boolean forcedReplacement;
-	private final boolean cppOnly;
+	private final boolean unconditionalSubstitution;  // Not serialized when saving to a memento.
 	private final Map<IncludeInfo, List<IncludeInfo>> map;
 
-	public IncludeMap(boolean forcedReplacement, boolean cppOnly) {
-		this.forcedReplacement = forcedReplacement;
-		this.cppOnly = cppOnly;
+	public IncludeMap(boolean unconditionalSubstitution) {
+		this.unconditionalSubstitution = unconditionalSubstitution;
 		this.map = new HashMap<IncludeInfo, List<IncludeInfo>>();
 	}
 
@@ -50,11 +44,10 @@ public class IncludeMap {
 	 *     Keys and values may be optionally surrounded by double quotes or angle brackets.
 	 *     Angle brackets indicate a system include.  
 	 */
-	public IncludeMap(boolean forcedReplacement, boolean cppOnly, String[] keysAndValues) {
+	public IncludeMap(boolean unconditionalSubstitution, String[] keysAndValues) {
 		if (keysAndValues.length % 2 != 0)
 			throw new IllegalArgumentException("More keys than values"); //$NON-NLS-1$
-		this.forcedReplacement = forcedReplacement;
-		this.cppOnly = cppOnly;
+		this.unconditionalSubstitution = unconditionalSubstitution;
 		this.map = new HashMap<IncludeInfo, List<IncludeInfo>>(keysAndValues.length / 2);
 		for (int i = 0; i < keysAndValues.length;) {
 			String key = keysAndValues[i++];
@@ -63,8 +56,7 @@ public class IncludeMap {
 	}
 
 	public IncludeMap(IncludeMap other) {
-		this.forcedReplacement = other.forcedReplacement;
-		this.cppOnly = other.cppOnly;
+		this.unconditionalSubstitution = other.unconditionalSubstitution;
 		this.map = new HashMap<IncludeInfo, List<IncludeInfo>>(other.map.size());
 		addAllMappings(other);
 	}
@@ -118,6 +110,28 @@ public class IncludeMap {
 	}
 
 	/**
+	 * Removes substitutions for a given header file.
+	 *
+	 * @param from the header file to remove substitutions for
+	 * @return the previous substitutions associated with the header file, or
+     *         {@code null} if there were no substitutions for the header.
+	 */
+	public List<IncludeInfo> removeMapping(String from) {
+		return removeMapping(new IncludeInfo(from));
+	}
+
+	/**
+	 * Removes substitutions for a given header file.
+	 *
+	 * @param from the header file to remove substitutions for
+	 * @return the previous substitutions associated with the header file, or
+     *         {@code null} if there were no substitutions for the header.
+	 */
+	public List<IncludeInfo> removeMapping(IncludeInfo from) {
+		return map.remove(from);
+	}
+
+	/**
 	 * Returns header files that should be used instead of the given one.
 	 * 
 	 * @param from The header file to be replaced. A system header has to match exactly.
@@ -133,18 +147,14 @@ public class IncludeMap {
 		return list == null ? null : list.get(0);
 	}
 
-	public boolean isForcedReplacement() {
-		return forcedReplacement;
+	public boolean isUnconditionalSubstitution() {
+		return unconditionalSubstitution;
 	}
 
-	public boolean isCppOnly() {
-		return cppOnly;
-	}
-
-	// XXX Define a class containing two Includemaps, week and strong
+	/**
+	 * Writes the map to a memento. The {@link #isUnconditionalSubstitution()} flag is not written.
+	 */
 	public void saveToMemento(IMemento memento) {
-		memento.putBoolean(TAG_CPP_ONLY, cppOnly);
-		memento.putBoolean(TAG_FORCED_REPLACEMENT, forcedReplacement);
 		for (Entry<IncludeInfo, List<IncludeInfo>> entry : map.entrySet()) {
 			String key = entry.getKey().toString();
 			for (IncludeInfo value : entry.getValue()) {
@@ -155,29 +165,20 @@ public class IncludeMap {
 		}
 	}
 
-	public static IncludeMap fromMemento(IMemento memento) {
-		Boolean cppOnly = memento.getBoolean(TAG_CPP_ONLY);
-		Boolean forcedReplacement = memento.getBoolean(TAG_FORCED_REPLACEMENT);
-		IncludeMap includeMap = new IncludeMap(cppOnly, forcedReplacement);
+	public static IncludeMap fromMemento(boolean unconditionalSubstitution, IMemento memento) {
+		IncludeMap includeMap = new IncludeMap(unconditionalSubstitution);
+		Set<String> keys = unconditionalSubstitution ? new HashSet<String>() : Collections.<String>emptySet();
 		for (IMemento mapping : memento.getChildren(TAG_MAPPING)) {
-			includeMap.addMapping(mapping.getString(TAG_KEY), mapping.getString(TAG_VALUE));
+			String key = mapping.getString(TAG_KEY);
+			// There can be no more than one unconditional substitution for any header file.
+			if (!unconditionalSubstitution || keys.add(key))
+				includeMap.addMapping(key, mapping.getString(TAG_VALUE));
 		}
 		return includeMap;
 	}
 
-	public static IncludeMap fromSerializedMemento(String str) {
-		StringReader reader = new StringReader(str);
-		XMLMemento memento;
-		try {
-			memento = XMLMemento.createReadRoot(reader);
-		} catch (WorkbenchException e) {
-			return null;
-		}
-		return fromMemento(memento);
-	}
-
 	public void addAllMappings(IncludeMap other) {
-		if (other.forcedReplacement != forcedReplacement)
+		if (other.unconditionalSubstitution != unconditionalSubstitution)
 			throw new IllegalArgumentException();
 		for (Entry<IncludeInfo, List<IncludeInfo>> entry : other.map.entrySet()) {
 			IncludeInfo source = entry.getKey();
@@ -199,7 +200,7 @@ public class IncludeMap {
 			ArrayDeque<IncludeInfo> queue = new ArrayDeque<IncludeInfo>(targets);
 			targets.clear();
 			HashSet<IncludeInfo> processed = new HashSet<IncludeInfo>();
-			if (!forcedReplacement)
+			if (!unconditionalSubstitution)
 				processed.add(source);  // Don't allow mapping to itself.
 			HashSet<IncludeInfo> seenTargets = new HashSet<IncludeInfo>();
 			IncludeInfo target;
@@ -212,10 +213,10 @@ public class IncludeMap {
 					boolean added = false;
 					// Check if we saw the same target earlier to protect against an infinite loop.
 					if (seenTargets.add(target)) {
-						for (int i = newTargets.size(); --i >=0;) {
+						for (int i = newTargets.size(); --i >= 0;) {
 							IncludeInfo newTarget = newTargets.get(i);
 							if (!processed.contains(newTarget)) {
-								if (forcedReplacement && newTarget.equals(source)) {
+								if (unconditionalSubstitution && newTarget.equals(source)) {
 									break queueLoop;  // Leave the mapping empty. 
 								}
 								queue.addFirst(newTarget);
@@ -226,21 +227,21 @@ public class IncludeMap {
 					if (!added) {
 						target = queue.pollFirst();
 						targets.add(target);
-						if (forcedReplacement)
+						if (unconditionalSubstitution)
 							break;
 						processed.add(target);
 						seenTargets.clear();
 					}
 				} else {
 					targets.add(target);
-					if (forcedReplacement)
+					if (unconditionalSubstitution)
 						break;
 					processed.add(target);
 					seenTargets.clear();
 				}
 			}
 		}
-		if (forcedReplacement) {
+		if (unconditionalSubstitution) {
 			// Remove trivial mappings.
 			for (Iterator<Entry<IncludeInfo, List<IncludeInfo>>> iter = map.entrySet().iterator(); iter.hasNext();) {
 				Entry<IncludeInfo, List<IncludeInfo>> entry = iter.next();
@@ -257,8 +258,7 @@ public class IncludeMap {
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
-		buf.append("forcedReplacement = ").append(forcedReplacement); //$NON-NLS-1$
-		buf.append(", cppOnly = ").append(cppOnly); //$NON-NLS-1$
+		buf.append("upconditionalSubstitution = ").append(unconditionalSubstitution); //$NON-NLS-1$
 		ArrayList<IncludeInfo> sources = new ArrayList<IncludeInfo>(map.keySet());
 		Collections.sort(sources);
 		for (IncludeInfo source : sources) {
@@ -273,5 +273,9 @@ public class IncludeMap {
 			} 
 		}
 		return buf.toString();
+	}
+
+	public Map<IncludeInfo, List<IncludeInfo>> getMap() {
+		return Collections.unmodifiableMap(map);
 	}
 }

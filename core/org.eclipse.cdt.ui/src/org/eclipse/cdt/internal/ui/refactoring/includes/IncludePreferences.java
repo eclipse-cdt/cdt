@@ -35,6 +35,7 @@ public class IncludePreferences {
 	public final boolean allowReordering;
 	public final boolean heuristicHeaderSubstitution;
 	public final boolean allowPartnerIndirectInclusion;
+	public final boolean allowIndirectInclusion;
 	public final boolean forwardDeclareCompositeTypes;
 	public final boolean forwardDeclareEnums;
 	public final boolean forwardDeclareFunctions;
@@ -89,8 +90,11 @@ public class IncludePreferences {
 		allowReordering = PreferenceConstants.getPreference(
 				PreferenceConstants.INCLUDES_ALLOW_REORDERING, project, true);
 
-		// TODO(sprigogin): Create a preference for this. 
-		allowPartnerIndirectInclusion = false;
+		// TODO(sprigogin): Create a preference for this.
+		allowIndirectInclusion = false;
+
+		allowPartnerIndirectInclusion = PreferenceConstants.getPreference(
+				PreferenceConstants.INCLUDES_ALLOW_PARTNER_INDIRECT_INCLUSION, project, true);
 
 		// Unused include handling preferences
 		value = PreferenceConstants.getPreference(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION, project, null);
@@ -159,11 +163,16 @@ public class IncludePreferences {
 		store.setDefault(PreferenceConstants.INCLUDES_PARTNER_FILE_SUFFIXES, DEFAULT_PARTNER_FILE_SUFFIXES);
 		store.setDefault(PreferenceConstants.INCLUDES_HEURISTIC_HEADER_SUBSTITUTION, true);
 		store.setDefault(PreferenceConstants.INCLUDES_ALLOW_REORDERING, true);
+		store.setDefault(PreferenceConstants.INCLUDES_ALLOW_PARTNER_INDIRECT_INCLUSION, false);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_COMPOSITE_TYPES, true);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_ENUMS, false);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, false);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_TEMPLATES, false);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS, true);
-		store.setDefault(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION, UnusedStatementDisposition.COMMENT_OUT.toString());
+		store.setDefault(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION,
+				UnusedStatementDisposition.COMMENT_OUT.toString());
+
+		store.setDefault(PreferenceConstants.INCLUDES_HEADER_SUBSTITUTION,
+				HeaderSubstitutionMap.serializeMaps(GCCHeaderSubstitutionMaps.getDefaultMaps()));
 	}
 }

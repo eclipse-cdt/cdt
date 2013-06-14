@@ -174,7 +174,7 @@ public class InclusionContext {
 					queue.add(file);
 					while ((file = queue.pollFirst()) != null) {
 						for (IIndexInclude include : file.getIncludes()) {
-							if (include.isIncludedFileExported()) {
+							if (fPreferences.allowIndirectInclusion || include.isIncludedFileExported()) {
 								file = fIndex.resolveInclude(include);
 								if (file != null) {
 									if (exportedHeaders.add(getPath(file)))

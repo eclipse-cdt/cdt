@@ -213,7 +213,8 @@ public class IncludeOrderBlock extends OptionsConfigurationBlock {
 			return true;
 		}
 
-		private void up() {
+		@Override
+		protected void up() {
 			boolean[] selected = getSelectionMask(false);
 			extendSelectionForMovingUp(selected, fElements);
 			if (selected != null) {
@@ -222,7 +223,8 @@ public class IncludeOrderBlock extends OptionsConfigurationBlock {
 			}
 		}
 
-		private void down() {
+		@Override
+		protected void down() {
 			boolean[] selected = getSelectionMask(true);
 			List<IncludeGroupStyle> reversed = reverse(fElements);
 			extendSelectionForMovingUp(selected, reversed);
@@ -290,7 +292,8 @@ public class IncludeOrderBlock extends OptionsConfigurationBlock {
 			return -1;
 		}
 
-		private boolean canMoveUp() {
+		@Override
+		protected boolean canMoveUp() {
 			boolean[] selected = getSelectionMask(false);
 			if (selected == null || selected[0])
 				return false;
@@ -298,7 +301,8 @@ public class IncludeOrderBlock extends OptionsConfigurationBlock {
 			return canMoveUp(fElements, selected);
 		}
 
-		private boolean canMoveDown() {
+		@Override
+		protected boolean canMoveDown() {
 			boolean[] selected = getSelectionMask(true);
 			if (selected == null || selected[0])
 				return false;

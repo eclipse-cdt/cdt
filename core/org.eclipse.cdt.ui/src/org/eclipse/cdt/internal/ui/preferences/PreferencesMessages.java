@@ -364,6 +364,60 @@ public final class PreferencesMessages extends NLS {
 	public static String CodeTemplateBlock_export_error_hidden;
 	public static String CodeTemplateBlock_export_error_canNotWrite;
 
+	public static String HeaderSubstitutionPreferencePage_title;
+
+	public static String HeaderSubstitutionBlock_header_substitution_maps;
+	public static String HeaderSubstitutionBlock_c_and_cpp; 
+	public static String HeaderSubstitutionBlock_cpp_only;
+	public static String HeaderSubstitutionBlock_add_button;
+	public static String HeaderSubstitutionBlock_edit_button;
+	public static String HeaderSubstitutionBlock_remove_button;
+	public static String HeaderSubstitutionBlock_up_button;
+	public static String HeaderSubstitutionBlock_down_button;
+	public static String HeaderSubstitutionBlock_name_column_title;
+	public static String HeaderSubstitutionBlock_languages_column_title;
+
+	public static String HeaderSubstitutionEditDialog_new_title;
+	public static String HeaderSubstitutionEditDialog_edit_title;
+	public static String HeaderSubstitutionEditDialog_source;
+	public static String HeaderSubstitutionEditDialog_target;
+	public static String HeaderSubstitutionEditDialog_required_substitution;
+	public static String HeaderSubstitutionEditDialog_enter_source;
+	public static String HeaderSubstitutionEditDialog_enter_target;
+	public static String HeaderSubstitutionEditDialog_error_replacement_by_itself;
+	public static String HeaderSubstitutionEditDialog_invalid_source;
+	public static String HeaderSubstitutionEditDialog_invalid_target;
+				
+	public static String HeaderSubstitutionMapEditDialog_new_title;
+	public static String HeaderSubstitutionMapEditDialog_edit_title;
+	public static String HeaderSubstitutionMapEditDialog_name;
+	public static String HeaderSubstitutionMapEditDialog_applies_to;
+	public static String HeaderSubstitutionMapEditDialog_required_substitution;
+	public static String HeaderSubstitutionMapEditDialog_optional_substitution;
+	public static String HeaderSubstitutionMapEditDialog_header;
+	public static String HeaderSubstitutionMapEditDialog_replacement;
+	public static String HeaderSubstitutionMapEditDialog_import_button;
+	public static String HeaderSubstitutionMapEditDialog_export_button;
+	public static String HeaderSubstitutionMapEditDialog_add_button;
+	public static String HeaderSubstitutionMapEditDialog_edit_button;
+	public static String HeaderSubstitutionMapEditDialog_remove_button;
+	public static String HeaderSubstitutionMapEditDialog_add_button2;
+	public static String HeaderSubstitutionMapEditDialog_edit_button2;
+	public static String HeaderSubstitutionMapEditDialog_remove_button2;
+	public static String HeaderSubstitutionMapEditDialog_up_button;
+	public static String HeaderSubstitutionMapEditDialog_down_button;
+	public static String HeaderSubstitutionMapEditDialog_c_and_cpp; 
+	public static String HeaderSubstitutionMapEditDialog_cpp_only;
+	public static String HeaderSubstitutionMapEditDialog_import_title;
+	public static String HeaderSubstitutionMapEditDialog_export_title;
+	public static String HeaderSubstitutionMapEditDialog_error_read_message;
+	public static String HeaderSubstitutionMapEditDialog_error_parse_message;
+	public static String HeaderSubstitutionMapEditDialog_error_write_message;
+	public static String HeaderSubstitutionMapEditDialog_default_map_name;
+	public static String HeaderSubstitutionMapEditDialog_enter_name;
+	public static String HeaderSubstitutionMapEditDialog_duplicate_name;
+	public static String HeaderSubstitutionMapEditDialog_map_is_empty;
+
 	public static String IncludeStylePreferencePage_title;
 	public static String IncludeStyleBlock_categories_tab;
 	public static String IncludeStyleBlock_order_tab;
@@ -452,6 +506,7 @@ public final class PreferencesMessages extends NLS {
 	public static String OrganizeIncludesBlock_forward_declare_templates;
 	public static String OrganizeIncludesBlock_forward_declare_namespace_elements;
 	public static String OrganizeIncludesBlock_heuristic_header_substitution;
+	public static String OrganizeIncludesBlock_partner_indirect_inclusion;
 	public static String OrganizeIncludesBlock_unused_statements;
 	public static String OrganizeIncludesBlock_comment_out;
 	public static String OrganizeIncludesBlock_keep;

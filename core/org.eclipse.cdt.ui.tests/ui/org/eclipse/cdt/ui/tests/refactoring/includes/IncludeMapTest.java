@@ -23,15 +23,15 @@ public class IncludeMapTest extends TestCase {
 		assertEquals(expected.toString(), actual.toString());
 	}
 
-	public void testWeakCyclicMap() {
-		IncludeMap map = new IncludeMap(false, false, new String[] {
+	public void testOptionalCyclicMap() {
+		IncludeMap map = new IncludeMap(false, new String[] {
 				"a", "b",
 				"b", "c",
 				"c", "d",
 				"d", "b",
 		});
 		map.transitivelyClose();
-		IncludeMap expected = new IncludeMap(false, false, new String[] {
+		IncludeMap expected = new IncludeMap(false, new String[] {
 				"a", "b",
 				"a", "d",
 				"a", "c",
@@ -45,15 +45,15 @@ public class IncludeMapTest extends TestCase {
 		assertEqualMaps(expected, map);
 	}
 
-	public void testStrongCyclicMap() {
-		IncludeMap map = new IncludeMap(true, false, new String[] {
+	public void testUnconditionalCyclicMap() {
+		IncludeMap map = new IncludeMap(true, new String[] {
 				"a", "b",
 				"b", "c",
 				"c", "d",
 				"d", "b",
 		});
 		map.transitivelyClose();
-		IncludeMap expected = new IncludeMap(true, false, new String[] {
+		IncludeMap expected = new IncludeMap(true, new String[] {
 				"a", "b",
 				"c", "b",
 				"d", "b",
@@ -61,8 +61,8 @@ public class IncludeMapTest extends TestCase {
 		assertEqualMaps(expected, map);
 	}
 
-	public void testWeakMap() {
-		IncludeMap map = new IncludeMap(false, false, new String[] {
+	public void testOptionalMap() {
+		IncludeMap map = new IncludeMap(false, new String[] {
 				"a", "b",
 				"a", "c",
 				"c", "d",
@@ -70,7 +70,7 @@ public class IncludeMapTest extends TestCase {
 				"d", "f",
 		});
 		map.transitivelyClose();
-		IncludeMap expected = new IncludeMap(false, false, new String[] {
+		IncludeMap expected = new IncludeMap(false, new String[] {
 				"a", "b",
 				"a", "f",
 				"a", "d",
@@ -84,8 +84,8 @@ public class IncludeMapTest extends TestCase {
 		assertEqualMaps(expected, map);
 	}
 
-	public void testStrongMap() {
-		IncludeMap map = new IncludeMap(true, false, new String[] {
+	public void testUpconditionalMap() {
+		IncludeMap map = new IncludeMap(true, new String[] {
 				"a", "b",
 				"a", "c",
 				"c", "d",
@@ -93,7 +93,7 @@ public class IncludeMapTest extends TestCase {
 				"d", "f",
 		});
 		map.transitivelyClose();
-		IncludeMap expected = new IncludeMap(true, false, new String[] {
+		IncludeMap expected = new IncludeMap(true, new String[] {
 				"a", "b",
 				"c", "f",
 				"d", "f",

@@ -13,6 +13,7 @@
 package org.eclipse.cdt.core.suite;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorOldTests;
@@ -47,11 +48,11 @@ public class AutomatedIntegrationSuite extends TestSuite {
 	public AutomatedIntegrationSuite() {
 	}
 
-	public AutomatedIntegrationSuite(Class theClass, String name) {
+	public AutomatedIntegrationSuite(Class<? extends TestCase> theClass, String name) {
 		super(theClass, name);
 	}
 
-	public AutomatedIntegrationSuite(Class theClass) {
+	public AutomatedIntegrationSuite(Class<? extends TestCase> theClass) {
 		super(theClass);
 	}
 
@@ -62,12 +63,10 @@ public class AutomatedIntegrationSuite extends TestSuite {
 	public static Test suite() throws Exception {
 		final AutomatedIntegrationSuite suite = new AutomatedIntegrationSuite();
 
-	// Add all success tests
-		
-	// Has intermittent failures
-	if (System.getProperty("cdt.skip.known.test.failures") == null) {		
-		suite.addTest(CDescriptorTests.suite());
-	}
+		// Has intermittent failures
+		if (System.getProperty("cdt.skip.known.test.failures") == null) {		
+			suite.addTest(CDescriptorTests.suite());
+		}
 		suite.addTest(CDescriptorOldTests.suite());
 		suite.addTest(IEnvironmentVariableManagerTests.suite());
 		suite.addTest(ErrorParserTests.suite());

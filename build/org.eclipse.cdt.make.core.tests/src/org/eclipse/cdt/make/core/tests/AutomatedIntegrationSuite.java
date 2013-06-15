@@ -43,5 +43,4 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(MakefileReaderProviderTests.suite());
 		return suite;
 	}
-
 }

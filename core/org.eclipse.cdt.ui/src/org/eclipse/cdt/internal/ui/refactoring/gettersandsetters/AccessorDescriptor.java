@@ -1,27 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Google, Inc and others.
+ * Copyright (c) 2011, 2013 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	   Sergey Prigogin (Google) - initial API and implementation
+ *     Sergey Prigogin (Google) - initial API and implementation
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
 import com.ibm.icu.text.Collator;
 
-import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 
 public class AccessorDescriptor implements Comparable<AccessorDescriptor> {
 	public enum AccessorKind {
@@ -99,24 +93,7 @@ public class AccessorDescriptor implements Comparable<AccessorDescriptor> {
 		return accessorDeclaration;
 	}
 
-	public IASTFunctionDefinition getAccessorDefinition(boolean qualifedName) {
-		ICPPASTQualifiedName qname;
-		if (qualifedName) {
-			qname = getClassName();
-		} else {
-			qname = null;
-		}
-		
-		return accessorFactory.createDefinition(qname);
-	}
-
-	private ICPPASTQualifiedName getClassName() {
-		IASTNode node = fieldName.getParent();
-		while (!(node instanceof IASTCompositeTypeSpecifier)) {
-			node = node.getParent();
-		}
-		IASTCompositeTypeSpecifier comp = (IASTCompositeTypeSpecifier) node;
-		
-		return new CPPASTQualifiedName((ICPPASTName) comp.getName().copy(CopyStyle.withLocations));
+	public IASTFunctionDefinition getAccessorDefinition(IASTName declaratorName) {
+		return accessorFactory.createDefinition(declaratorName);
 	}
 }

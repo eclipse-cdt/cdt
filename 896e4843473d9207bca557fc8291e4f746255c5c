@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPn//2UU\u003d",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/gettersandsetters/GenerateGettersAndSettersTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1663,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-06-16T04:03:37Z",
+      "side": 1,
+      "message": "It\u0027s preferable to generate:\nnamespace ns {\n\nint Test::Foo::getA() const {\n  return a;\n}\n\n}  // namespace ns\n\nor, if namespace ns already exists in the A.cpp, put the method definition inside it.",
+      "revId": "896e4843473d9207bca557fc8291e4f746255c5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

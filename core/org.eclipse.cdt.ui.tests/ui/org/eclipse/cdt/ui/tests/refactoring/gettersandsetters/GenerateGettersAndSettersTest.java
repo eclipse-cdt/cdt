@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -9,6 +9,7 @@
  * Contributors: 
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.gettersandsetters;
 
@@ -1629,6 +1630,42 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	public void testMultipleDeclarators_371840() throws Exception {
 		selectedGetters = new String[] { "b", "c" };
 		selectedSetters = new String[] { "a", "b" };
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//namespace ns {
+	//class Test {
+	//class Foo {
+	//	public:
+	//		int /*$*/a/*$$*/;
+	//	};
+	//	};
+	//}
+	//====================
+	//namespace ns {
+	//class Test {
+	//class Foo {
+	//	public:
+	//		int a;
+	//
+	//		int getA() const;
+	//	};
+	//	};
+	//}
+	
+	//A.cpp
+	//#include "A.h"
+	//
+	//====================
+	//#include "A.h"
+	//
+	//int ns::Test::Foo::getA() const {
+	//	return a;
+	//}
+	public void testNestedClasses_Bug316083() throws Exception {
+		definitionSeparate = true;
+		selectedGetters = new String[] {"a"};
 		assertRefactoringSuccess();
 	}
 }

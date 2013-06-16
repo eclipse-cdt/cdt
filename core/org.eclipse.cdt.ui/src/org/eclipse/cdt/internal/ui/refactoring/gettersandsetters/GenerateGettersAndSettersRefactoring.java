@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
 
@@ -53,6 +54,7 @@ import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.implementmethod.InsertLocation;
 import org.eclipse.cdt.internal.ui.refactoring.implementmethod.MethodDefinitionInsertLocationFinder;
 import org.eclipse.cdt.internal.ui.refactoring.utils.Checks;
+import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
@@ -224,24 +226,28 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 			throws CoreException, OperationCanceledException {
 		List<IASTNode> getterAndSetters = new ArrayList<IASTNode>();
 		List<IASTFunctionDefinition> definitions = new ArrayList<IASTFunctionDefinition>();
+		ICPPASTCompositeTypeSpecifier classDefinition =
+				CPPVisitor.findAncestorWithType(context.existingFields.get(0), ICPPASTCompositeTypeSpecifier.class);
 		for (AccessorDescriptor accessor : context.selectedAccessors) {
+			IASTName accessorName = new CPPASTName(accessor.toString().toCharArray());
 			if (context.isDefinitionSeparate()) {
 				getterAndSetters.add(accessor.getAccessorDeclaration());
-				IASTFunctionDefinition functionDefinition = accessor.getAccessorDefinition(true);
+				IASTName declaratorName =  NameHelper.createQualifiedNameFor(
+						accessorName, classDefinition.getTranslationUnit().getOriginatingTranslationUnit(), classDefinition.getFileLocation().getNodeOffset(),
+						definitionInsertLocation.getTranslationUnit(), definitionInsertLocation.getInsertPosition(), refactoringContext);
+				IASTFunctionDefinition functionDefinition = accessor.getAccessorDefinition(declaratorName);
 				// Standalone definitions in a header file have to be declared inline. 
 				if (definitionInsertLocation.getTranslationUnit().isHeaderUnit()) {
 					functionDefinition.getDeclSpecifier().setInline(true);
 				}
 				definitions.add(functionDefinition);
 			} else {
-				getterAndSetters.add(accessor.getAccessorDefinition(false));
+				getterAndSetters.add(accessor.getAccessorDefinition(accessorName));
 			}
 		}
 		if (context.isDefinitionSeparate()) {
 			addDefinition(collector, definitions, pm);
 		}
-		ICPPASTCompositeTypeSpecifier classDefinition =
-				CPPVisitor.findAncestorWithType(context.existingFields.get(0), ICPPASTCompositeTypeSpecifier.class);
 
 		ClassMemberInserter.createChange(classDefinition, VisibilityEnum.v_public,
 				getterAndSetters, false, collector);

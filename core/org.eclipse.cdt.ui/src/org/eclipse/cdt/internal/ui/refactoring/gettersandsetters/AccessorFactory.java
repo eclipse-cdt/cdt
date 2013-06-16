@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -9,6 +9,7 @@
  * Contributors: 
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
@@ -27,7 +28,6 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.rewrite.TypeHelper;
 import org.eclipse.cdt.core.parser.Keywords;
 
@@ -88,9 +88,9 @@ public abstract class AccessorFactory {
 	/**
 	 * Creates an accessor definition.
 	 * 
-	 * @param className qualified name of the class containing the accessor
+	 * @param declaratorName name to use for the declarator
 	 */
-	public abstract IASTFunctionDefinition createDefinition(ICPPASTQualifiedName className);
+	public abstract IASTFunctionDefinition createDefinition(IASTName declaratorName);
 
 	protected IASTDeclSpecifier getParamOrReturnDeclSpecifier() {
 		IASTDeclSpecifier declSpec = declSpecifier.copy(CopyStyle.withLocations);
@@ -109,16 +109,16 @@ public abstract class AccessorFactory {
 		public IASTSimpleDeclaration createDeclaration() {
 			IASTSimpleDeclaration getter = new CPPASTSimpleDeclaration();
 			getter.setDeclSpecifier(getParamOrReturnDeclSpecifier());
-			getter.addDeclarator(getGetterDeclarator(null));
+			getter.addDeclarator(getGetterDeclarator(new CPPASTName(accessorName.toCharArray())));
 			return getter;
 		}
 
 		@Override
-		public IASTFunctionDefinition createDefinition(ICPPASTQualifiedName className) {
+		public IASTFunctionDefinition createDefinition(IASTName declaratorName) {
 			IASTFunctionDefinition getter = new CPPASTFunctionDefinition();
 			
 			getter.setDeclSpecifier(getParamOrReturnDeclSpecifier());
-			IASTDeclarator getterDeclarator = getGetterDeclarator(className);
+			IASTDeclarator getterDeclarator = getGetterDeclarator(declaratorName);
 			// IASTFunctionDefinition expects the outermost IASTFunctionDeclarator in declarator hierarchy
 			while (!(getterDeclarator instanceof IASTFunctionDeclarator)) {
 				getterDeclarator = getterDeclarator.getNestedDeclarator();
@@ -140,10 +140,7 @@ public abstract class AccessorFactory {
 			return compound;
 		}
 
-		private IASTDeclarator getGetterDeclarator(ICPPASTQualifiedName qualifiedName) {
-			CPPASTName getterName = new CPPASTName();
-			getterName.setName(accessorName.toCharArray());
-
+		private IASTDeclarator getGetterDeclarator(IASTName declaratorName) {
 			// Copy declarator hierarchy
 			IASTDeclarator topDeclarator = fieldDeclarator.copy(CopyStyle.withLocations);
 			
@@ -167,12 +164,8 @@ public abstract class AccessorFactory {
 			// Create a new innermost function declarator based on the field declarator 
 			CPPASTFunctionDeclarator functionDeclarator = new CPPASTFunctionDeclarator();
 			functionDeclarator.setConst(true);
-			if (qualifiedName != null) {
-				qualifiedName.addName(getterName);
-				functionDeclarator.setName(qualifiedName);
-			} else {
-				functionDeclarator.setName(getterName);
-			}
+			functionDeclarator.setName(declaratorName);
+
 			for (IASTPointerOperator pointer : innermost.getPointerOperators()){
 				functionDeclarator.addPointerOperator(pointer.copy(CopyStyle.withLocations));
 			}
@@ -200,16 +193,16 @@ public abstract class AccessorFactory {
 		@Override
 		public IASTSimpleDeclaration createDeclaration() {
 			IASTSimpleDeclaration setter = new CPPASTSimpleDeclaration();
-			setter.setDeclSpecifier(getVoidDeclSpec());		
-			setter.addDeclarator(getSetterDeclarator(null));
+			setter.setDeclSpecifier(getVoidDeclSpec());
+			setter.addDeclarator(getSetterDeclarator(new CPPASTName(accessorName.toCharArray())));
 			return setter;
 		}
 
 		@Override
-		public IASTFunctionDefinition createDefinition(ICPPASTQualifiedName className) {
+		public IASTFunctionDefinition createDefinition(IASTName declaratorName) {
 			IASTFunctionDefinition setter = new CPPASTFunctionDefinition();
 			setter.setDeclSpecifier(getVoidDeclSpec());		
-			setter.setDeclarator(getSetterDeclarator(className));
+			setter.setDeclarator(getSetterDeclarator(declaratorName));
 			setter.setBody(getSetterBody());
 			return setter;
 		}
@@ -244,16 +237,9 @@ public abstract class AccessorFactory {
 			return compound;
 		}
 
-		private CPPASTFunctionDeclarator getSetterDeclarator(ICPPASTQualifiedName qualifiedName) {
-			CPPASTName setterName = new CPPASTName();
-			setterName.setName(accessorName.toCharArray());
+		private CPPASTFunctionDeclarator getSetterDeclarator(IASTName declaratorName) {
 			CPPASTFunctionDeclarator declarator = new CPPASTFunctionDeclarator();
-			if (qualifiedName != null) {
-				qualifiedName.addName(setterName);
-				declarator.setName(qualifiedName);
-			} else {
-				declarator.setName(setterName);
-			}
+			declarator.setName(declaratorName);
 			CPPASTParameterDeclaration parameterDeclaration = new CPPASTParameterDeclaration();
 			IASTDeclarator parameterDeclarator = fieldDeclarator.copy(CopyStyle.withLocations);
 			parameterDeclarator.setName(getSetterParameterName());

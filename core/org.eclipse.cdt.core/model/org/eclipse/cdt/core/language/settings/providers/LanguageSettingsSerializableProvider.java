@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2013 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,8 +34,11 @@ import org.w3c.dom.NodeList;
 /**
  * This class is the base class for language settings providers able to serialize
  * into XML storage.
- * Although this class has setter methods, its instances are not editable in UI by
- * design. Implement {@link ILanguageSettingsEditableProvider} interface for that.
+ * Although this class has setter methods, by design its instances are not editable in UI
+ * nor instances can be assigned to a configuration (cannot be global or non-shared).
+ * Implement {@link ILanguageSettingsEditableProvider} interface for that. There is a generic
+ * implementation of this interface available to be used, see {@link LanguageSettingsGenericProvider}.
+ * 
  * For more on the suggested way of extending this class see the description of
  * {@link ILanguageSettingsProvider}.
  *

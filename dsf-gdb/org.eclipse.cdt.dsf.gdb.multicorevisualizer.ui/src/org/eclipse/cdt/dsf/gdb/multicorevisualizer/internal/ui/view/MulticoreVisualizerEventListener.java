@@ -10,6 +10,7 @@
  *     Marc Dumais (Ericsson) - Bug 400231
  *     Marc Dumais (Ericsson) - Bug 399419
  *     Marc Dumais (Ericsson) - Bug 405390
+ *     Marc Dumais (Ericsson) - Bug 409512
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -220,8 +221,33 @@ public class MulticoreVisualizerEventListener {
 	@DsfServiceEventHandler
 	public void handleEvent(IExitedDMEvent event) {
 		IDMContext context = event.getDMContext();
+		
 		if (context instanceof IContainerDMContext) {
-    		// We don't deal with processes
+			// process exited - see bug 409512
+			DsfServicesTracker tracker = 
+					new DsfServicesTracker(MulticoreVisualizerUIPlugin.getBundleContext(), 
+                                           context.getSessionId());
+			IProcesses procService = tracker.getService(IProcesses.class);
+			tracker.dispose();
+			
+			// get all threads associated to this process and
+			// mark them as exited in the model.
+			procService.getProcessesBeingDebugged(context, 
+					new ImmediateDataRequestMonitor<IDMContext[]>() {
+						@Override
+						protected void handleSuccess() {
+							assert getData() != null;
+							
+							IDMContext[] contexts = getData();
+							for (IDMContext c : contexts) {
+								if (c instanceof IMIExecutionDMContext) {
+									int tid = ((IMIExecutionDMContext)c).getThreadId();
+									fVisualizer.getModel().markThreadExited(tid);
+								}
+							}
+						}
+			});
+
     	} else if (context instanceof IMIExecutionDMContext) {
     		// Thread exited
     		int tid = ((IMIExecutionDMContext)context).getThreadId();

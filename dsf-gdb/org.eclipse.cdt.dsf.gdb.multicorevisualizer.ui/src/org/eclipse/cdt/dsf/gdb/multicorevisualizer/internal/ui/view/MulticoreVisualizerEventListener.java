@@ -11,6 +11,7 @@
  *     Marc Dumais (Ericsson) - Bug 399419
  *     Marc Dumais (Ericsson) - Bug 405390
  *     Marc Dumais (Ericsson) - Bug 396269
+ *     Marc Dumais (Ericsson) - Bug 409512
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -229,15 +230,49 @@ public class MulticoreVisualizerEventListener {
 	@DsfServiceEventHandler
 	public void handleEvent(IExitedDMEvent event) {
 		IDMContext context = event.getDMContext();
+		final MulticoreVisualizerCanvas canvas = fVisualizer.getMulticoreVisualizerCanvas();
+		
 		if (context instanceof IContainerDMContext) {
-    		// We don't deal with processes
+			// process exited 
+			
+			// Note: this is required because we noticed that in GDB 7.6 and older, 
+			// the "thread exited" signal is not sent for the local detach case.  
+			// see bug 409512
+			DsfServicesTracker tracker = 
+					new DsfServicesTracker(MulticoreVisualizerUIPlugin.getBundleContext(), 
+                                           context.getSessionId());
+			IProcesses procService = tracker.getService(IProcesses.class);
+			tracker.dispose();
+			
+			// get all threads associated to this process and
+			// mark them as exited in the model.
+			procService.getProcessesBeingDebugged(context, 
+					new ImmediateDataRequestMonitor<IDMContext[]>() {
+						@Override
+						protected void handleSuccess() {
+							assert getData() != null;
+							
+							IDMContext[] contexts = getData();
+							for (IDMContext c : contexts) {
+								if (c instanceof IMIExecutionDMContext) {
+									int tid = ((IMIExecutionDMContext)c).getThreadId();
+									fVisualizer.getModel().markThreadExited(tid);
+								}
+							}
+							
+							if (canvas != null) {
+								canvas.requestUpdate();
+							}
+						}
+			});
+			
+
     	} else if (context instanceof IMIExecutionDMContext) {
     		// Thread exited
     		int tid = ((IMIExecutionDMContext)context).getThreadId();
 
 			fVisualizer.getModel().markThreadExited(tid);
 			
-			MulticoreVisualizerCanvas canvas = fVisualizer.getMulticoreVisualizerCanvas();
 			if (canvas != null) {
 				canvas.requestUpdate();
 			}

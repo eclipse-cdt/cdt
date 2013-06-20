@@ -623,7 +623,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	}
 
 	@Override
-	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
+	public void setLanguageSettingProviders(List<? extends ILanguageSettingsProvider> providers) {
 		if(!fInitializing)
 			throw ExceptionFactory.createIsReadOnlyException();
 		fSpecSettings.setLanguageSettingProviders(providers);

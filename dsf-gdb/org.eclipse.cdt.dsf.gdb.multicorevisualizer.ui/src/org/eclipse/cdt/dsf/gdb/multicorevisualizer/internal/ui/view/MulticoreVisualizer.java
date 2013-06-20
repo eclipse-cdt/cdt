@@ -12,6 +12,7 @@
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *     Marc Dumais (Ericsson) - Bug 399419
  *     Marc Dumais (Ericsson) - Bug 405390
+ *     Marc Dumais (Ericsson) - Bug 409006
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -817,45 +818,46 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		
 		List<Object> items = SelectionUtils.getSelectedObjects(workbenchSelection);
 		
-		// Use the current canvas model to match Debug View items
-		// with corresponding threads, if any.
-		VisualizerModel model = m_canvas.getModel();
-		if (model != null) {
-			
-			Set<Object> selected = new HashSet<Object>();
+		if (m_canvas != null) {
+			// Use the current canvas model to match Debug View items
+			// with corresponding threads, if any.
+			VisualizerModel model = m_canvas.getModel();
+			if (model != null) {
 
-			for (Object item : items) {
-				
-				// Currently, we ignore selections other than DSF context objects.
-				// TODO: any other cases where we could map selections to canvas?
-				if (item instanceof IDMVMContext)
-				{
-					IDMContext context = ((IDMVMContext) item).getDMContext();
-					
-					IMIProcessDMContext processContext =
-							DMContexts.getAncestorOfType(context, IMIProcessDMContext.class);
-					int pid = Integer.parseInt(processContext.getProcId());
-					
-					IMIExecutionDMContext execContext =
-						DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
-					int tid = (execContext == null) ? 0 : execContext.getThreadId();
-					
-					if (tid == 0) { // process
-						List<VisualizerThread> threads = model.getThreadsForProcess(pid);
-						if (threads != null) {
-							selected.addAll(threads);
+				Set<Object> selected = new HashSet<Object>();
+
+				for (Object item : items) {
+
+					// Currently, we ignore selections other than DSF context objects.
+					// TODO: any other cases where we could map selections to canvas?
+					if (item instanceof IDMVMContext)
+					{
+						IDMContext context = ((IDMVMContext) item).getDMContext();
+
+						IMIProcessDMContext processContext =
+								DMContexts.getAncestorOfType(context, IMIProcessDMContext.class);
+						int pid = Integer.parseInt(processContext.getProcId());
+
+						IMIExecutionDMContext execContext =
+								DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+						int tid = (execContext == null) ? 0 : execContext.getThreadId();
+
+						if (tid == 0) { // process
+							List<VisualizerThread> threads = model.getThreadsForProcess(pid);
+							if (threads != null) {
+								selected.addAll(threads);
+							}
 						}
-					}
-					else { // thread
-						VisualizerThread thread = model.getThread(tid);
-						if (thread != null) {
-							selected.add(thread);
+						else { // thread
+							VisualizerThread thread = model.getThread(tid);
+							if (thread != null) {
+								selected.add(thread);
+							}
 						}
 					}
 				}
+				visualizerSelection = SelectionUtils.toSelection(selected);
 			}
-	
-			visualizerSelection = SelectionUtils.toSelection(selected);
 		}
 		
 		return visualizerSelection;

@@ -16,6 +16,24 @@
       "revId": "b0652d2d4aed9cb19be5ed0ae2a3015b6ce75ed4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPn//1aw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-06-20T18:04:15Z",
+      "side": 1,
+      "message": "Good point.  At first look, the canvas refresh might not be necessary in either cases; I think the resulting debug model change (removing thread(s)) will cause one or more updates, by itself.\n\nBut maybe it\u0027s better to be safe and update in both cases.  Will submit a new patch.",
+      "parentUuid": "AABOPn//1a4\u003d",
+      "revId": "b0652d2d4aed9cb19be5ed0ae2a3015b6ce75ed4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

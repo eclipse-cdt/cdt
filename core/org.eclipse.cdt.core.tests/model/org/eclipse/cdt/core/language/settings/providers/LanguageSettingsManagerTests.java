@@ -68,7 +68,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 			super(id);
 		}
 		@Override
-		public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
+		public void setLanguageSettingProviders(List<? extends ILanguageSettingsProvider> providers) {
 			this.providers = new ArrayList<ILanguageSettingsProvider>(providers);
 		}
 		@Override

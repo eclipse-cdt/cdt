@@ -203,14 +203,14 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 		if (base.fLanguageSettingsProviders != null) {
 			fLanguageSettingsProviders = LanguageSettingsProvidersSerializer.cloneProviders(base.fLanguageSettingsProviders);
 		} else {
-			fLanguageSettingsProviders = base.fLanguageSettingsProviders;
+			fLanguageSettingsProviders = null;
 		}
 		for (String providerId : base.lspPersistedState.keySet()) {
 			try {
 				LanguageSettingsStorage clone = base.lspPersistedState.get(providerId).clone();
 				lspPersistedState.put(providerId, clone);
 			} catch (CloneNotSupportedException e) {
-				CCorePlugin.log("Not able to clone language settings storage:" + e); //$NON-NLS-1$
+				CCorePlugin.log("Not able to clone language settings storage: " + e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -1019,7 +1019,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 	 * @param providers - list of providers to keep in the specs.
 	 */
 	@Override
-	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
+	public void setLanguageSettingProviders(List<? extends ILanguageSettingsProvider> providers) {
 		fLanguageSettingsProviders = new ArrayList<ILanguageSettingsProvider>(0);
 		Set<String> ids = new HashSet<String>();
 		for (ILanguageSettingsProvider provider : providers) {

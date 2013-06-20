@@ -845,7 +845,7 @@ public class CConfigurationDescription extends CDataProxyContainer
 	}
 
 	@Override
-	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
+	public void setLanguageSettingProviders(List<? extends ILanguageSettingsProvider> providers) {
 		try {
 			getSpecSettings().setLanguageSettingProviders(providers);
 		} catch (CoreException e) {

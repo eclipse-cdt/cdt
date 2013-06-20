@@ -34,7 +34,7 @@ public interface ILanguageSettingsProvidersKeeper {
 	 *    to the registered listeners about the accompanied changes in settings entries, see
 	 *    {@link LanguageSettingsManager#registerLanguageSettingsChangeListener(ILanguageSettingsChangeListener)}.
 	 */
-	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers);
+	public void setLanguageSettingProviders(List<? extends ILanguageSettingsProvider> providers);
 
 	/**
 	 * Returns the list of language settings providers. Language settings providers are

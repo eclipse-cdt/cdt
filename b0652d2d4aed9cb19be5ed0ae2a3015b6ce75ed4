@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPn//1a4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-06-20T17:45:44Z",
+      "side": 1,
+      "message": "Do we need to call canvas.requestUpdate() here, like we do below?",
+      "revId": "b0652d2d4aed9cb19be5ed0ae2a3015b6ce75ed4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

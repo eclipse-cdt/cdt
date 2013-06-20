@@ -138,11 +138,17 @@ public class EnvironmentVariableManagerToolChain extends EnvironmentVariableMana
 		}
 		@Override
 		public ICdtVariable getVariable(String macroName, IVariableContextInfo context) {
+			if (toolchainSupplier == null) {
+				return null;
+			}
 			IEnvironmentVariable var = toolchainSupplier.getVariable(macroName, null, ManagedBuildManager.getEnvironmentVariableProvider());
 			return CdtVariableManager.fEnvironmentMacroSupplier.createBuildMacro(var);
 		}
 		@Override
 		public ICdtVariable[] getVariables(IVariableContextInfo context) {
+			if (toolchainSupplier == null) {
+				return null;
+			}
 			IEnvironmentVariable[] vars = toolchainSupplier.getVariables(null, ManagedBuildManager.getEnvironmentVariableProvider());
 			if (vars != null) {
 				ICdtVariable[] cdtVars = new ICdtVariable[vars.length];

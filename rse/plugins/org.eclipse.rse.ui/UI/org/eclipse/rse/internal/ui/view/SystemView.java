@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -87,6 +87,7 @@
  * David McKnight   (IBM)        - [388364] RDz property view flickers when a user disconnects from zOS system
  * David Mcknight   (IBM)        - [374681] Incorrect number of children on the properties page of a directory
  * David McKnight   (IBM)        - [404396] delete doesn't always properly unmap tree items in SystemView
+ * David McKnight   (IBM)        - [411398] SystemView event handling for icon changes needs to handle multi-source
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1883,7 +1884,7 @@ public class SystemView extends SafeTreeViewer
 			ISubSystem ss = null;
 			Widget item = null;
 			Widget parentItem = null;
-			Object[] multiSource = null;
+			Object[] multiSource = _event.getMultiSource();
 			Object previous = null;
 			boolean wasSelected = false;
 			boolean originatedHere = true;
@@ -2215,7 +2216,9 @@ public class SystemView extends SafeTreeViewer
 			 */
 			case ISystemResourceChangeEvents.EVENT_ICON_CHANGE:
 				if (debug) logDebugMsg("SV event: EVENT_ICON_CHANGE "); //$NON-NLS-1$
-
+				if (multiSource != null && multiSource.length > 1){
+					src = multiSource; // use multi source instead
+				}
 				if (src instanceof Object[]){
 					Object[] srcs = (Object[])src;
 					for (int s = 0; s < srcs.length; s++){
@@ -4874,9 +4877,25 @@ public class SystemView extends SafeTreeViewer
 			String fqn = remoteAdapter.getAbsoluteName(rawData);
 			if (debugRemote) System.out.println("TESTING FINDALL: '" + fqn + "' vs '" + elementName + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if ((fqn != null) && fqn.equals(elementName)) {
-				occurrences.add(parent); // found a match!
-				if (debugRemote) System.out.println("...and remote item name match found"); //$NON-NLS-1$
-				return occurrences; // no point in checking the kids
+				// make sure this is the right kind of match
+				boolean correctSubsystem = false;
+				if (subsystem == null){
+					correctSubsystem = true;
+				}
+				else {
+					Object data = parent.getData();
+					if (data != null){
+						ISystemViewElementAdapter adapter = getViewAdapter(data);
+						if (adapter != null && adapter.getSubSystem(data).equals(subsystem)){
+							correctSubsystem = true;
+						}
+					}
+				}
+				if (correctSubsystem){
+					occurrences.add(parent); // found a match!
+					if (debugRemote) System.out.println("...and remote item name match found"); //$NON-NLS-1$
+					return occurrences; // no point in checking the kids
+				}
 			}
 		}
 		// -------------------------------------------------------------------------

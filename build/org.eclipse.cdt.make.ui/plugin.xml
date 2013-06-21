@@ -541,4 +541,24 @@
          </description>
       </fontDefinition>
    </extension>
+ <extension
+       point="org.eclipse.ui.preferenceTransfer">
+    <transfer
+          icon="icons/etool16/makefile.gif"
+          id="org.eclipse.cdt.make.ui.transfer.editor.appearance"
+          name="%transfer.MakefileEditorAppearance.name">
+       <mapping scope="instance">
+          <entry node="org.eclipse.cdt.make.ui">
+            <key name="org.eclipse.cdt.make.ui." match="prefix"/>
+            <key name="editor_" match="prefix"/>
+          </entry>
+          <entry node="org.eclipse.cdt.make.core">
+            <key name="org.eclipse.cdt.make.core.editor_" match="prefix"/>
+          </entry>
+       </mapping>
+       <description>
+          %transfer.MakefileEditorAppearance.description
+       </description>
+    </transfer>
+   </extension>
 </plugin>

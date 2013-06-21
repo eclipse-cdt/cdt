@@ -101,8 +101,8 @@ public class MakeCorePlugin extends Plugin {
 	public static final String GCC_SPECS_CONSOLE_PARSER_ID = MakeCorePlugin.getUniqueIdentifier() + ".GCCSpecsConsoleParser"; //$NON-NLS-1$
 	public static final String GCC_SCANNER_INFO_CONSOLE_PARSER_ID = MakeCorePlugin.getUniqueIdentifier() + ".GCCScannerInfoConsoleParser"; //$NON-NLS-1$
 
-	public static final String MAKEFILE_STYLE = PLUGIN_ID + "editor_makefile_style"; //$NON-NLS-1$
-	public static final String MAKEFILE_DIRS = PLUGIN_ID + "editor_makefile_dirs"; //$NON-NLS-1$
+	public static final String MAKEFILE_STYLE = PLUGIN_ID + ".editor_makefile_style"; //$NON-NLS-1$
+	public static final String MAKEFILE_DIRS = PLUGIN_ID + ".editor_makefile_dirs"; //$NON-NLS-1$
 
 	public static final String CFG_DATA_PROVIDER_ID =  PLUGIN_ID + ".configurationDataProvider"; //$NON-NLS-1$
 	private MakeTargetManager fTargetManager;

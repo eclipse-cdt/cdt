@@ -180,9 +180,11 @@ public interface ICProjectDescriptionManager {
 	/**
 	 * @see ICProjectDescriptionManager#createProjectDescription(IProject, boolean)
 	 * @param project
-	 * @param flags
-	 * @return {@link ICProjectDescription} or null if the project does not contain the
-	 * CDT data associated with it.
+	 * @param flags some combination of {@link #GET_WRITABLE}, {@link #GET_IF_LOADDED},
+	 *     {@link #GET_EMPTY_PROJECT_DESCRIPTION}, {@link #GET_CREATE_DESCRIPTION},
+	 *     and {@link #PROJECT_CREATING}
+	 * @return {@link ICProjectDescription} or {@code null} if the project does not contain
+	 *     the CDT data associated with it.
 	 */
 	ICProjectDescription getProjectDescription(IProject project, int flags);
 

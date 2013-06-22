@@ -116,6 +116,8 @@ public final class CxxAstUtils {
 	public static boolean isInMacro(IASTNode node) {
 		IASTNodeSelector nodeSelector = node.getTranslationUnit().getNodeSelector(node.getTranslationUnit().getFilePath());
 		IASTFileLocation fileLocation = node.getFileLocation();
+		if (fileLocation == null)
+			return true;
 		IASTPreprocessorMacroExpansion macro = nodeSelector.findEnclosingMacroExpansion(fileLocation.getNodeOffset(),
 				fileLocation.getNodeLength());
 		return macro != null;

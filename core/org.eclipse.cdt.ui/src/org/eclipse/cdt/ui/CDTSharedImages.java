@@ -12,18 +12,9 @@
 package org.eclipse.cdt.ui;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -51,10 +42,6 @@ import org.eclipse.swt.graphics.Image;
  * @since 5.3
  */
 public class CDTSharedImages {
-	private static final char OVERLAY_SEPARATOR = '.';
-	private static ImageRegistry imageRegistry = new ImageRegistry(CUIPlugin.getStandardDisplay());
-	private static Map<String, URL> urlMap = new HashMap<String, URL>();
-
 	public static final String IMG_OBJS_TEMPLATE = "icons/obj16/template_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_VARIABLE = "icons/obj16/variable_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_LOCAL_VARIABLE = "icons/obj16/variable_local_obj.gif"; //$NON-NLS-1$
@@ -198,53 +185,29 @@ public class CDTSharedImages {
 	public static final String IMG_OVR_USER = "icons/ovr16/person_ovr.gif"; //$NON-NLS-1$
 
 	// Pin & Clone
-    public static final String IMG_THREAD_SUSPENDED_R_PINNED = "icons/obj16/threads_obj_r.gif"; //$NON-NLS-1$
-    public static final String IMG_THREAD_SUSPENDED_G_PINNED = "icons/obj16/threads_obj_g.gif"; //$NON-NLS-1$
-    public static final String IMG_THREAD_SUSPENDED_B_PINNED = "icons/obj16/threads_obj_b.gif"; //$NON-NLS-1$
+	public static final String IMG_THREAD_SUSPENDED_R_PINNED = "icons/obj16/threads_obj_r.gif"; //$NON-NLS-1$
+	public static final String IMG_THREAD_SUSPENDED_G_PINNED = "icons/obj16/threads_obj_g.gif"; //$NON-NLS-1$
+	public static final String IMG_THREAD_SUSPENDED_B_PINNED = "icons/obj16/threads_obj_b.gif"; //$NON-NLS-1$
 
-    public static final String IMG_THREAD_RUNNING_R_PINNED = "icons/obj16/thread_obj_r.gif"; //$NON-NLS-1$
-    public static final String IMG_THREAD_RUNNING_G_PINNED = "icons/obj16/thread_obj_g.gif"; //$NON-NLS-1$
-    public static final String IMG_THREAD_RUNNING_B_PINNED = "icons/obj16/thread_obj_b.gif"; //$NON-NLS-1$
+	public static final String IMG_THREAD_RUNNING_R_PINNED = "icons/obj16/thread_obj_r.gif"; //$NON-NLS-1$
+	public static final String IMG_THREAD_RUNNING_G_PINNED = "icons/obj16/thread_obj_g.gif"; //$NON-NLS-1$
+	public static final String IMG_THREAD_RUNNING_B_PINNED = "icons/obj16/thread_obj_b.gif"; //$NON-NLS-1$
 
-    public static final String IMG_CONTAINER_SUSPENDED_R_PINNED = "icons/obj16/debugts_obj_r.gif"; //$NON-NLS-1$
-    public static final String IMG_CONTAINER_SUSPENDED_G_PINNED = "icons/obj16/debugts_obj_g.gif"; //$NON-NLS-1$
-    public static final String IMG_CONTAINER_SUSPENDED_B_PINNED = "icons/obj16/debugts_obj_b.gif"; //$NON-NLS-1$
+	public static final String IMG_CONTAINER_SUSPENDED_R_PINNED = "icons/obj16/debugts_obj_r.gif"; //$NON-NLS-1$
+	public static final String IMG_CONTAINER_SUSPENDED_G_PINNED = "icons/obj16/debugts_obj_g.gif"; //$NON-NLS-1$
+	public static final String IMG_CONTAINER_SUSPENDED_B_PINNED = "icons/obj16/debugts_obj_b.gif"; //$NON-NLS-1$
 
-    public static final String IMG_CONTAINER_RUNNING_R_PINNED = "icons/obj16/debugt_obj_r.gif"; //$NON-NLS-1$
-    public static final String IMG_CONTAINER_RUNNING_G_PINNED = "icons/obj16/debugt_obj_g.gif"; //$NON-NLS-1$
-    public static final String IMG_CONTAINER_RUNNING_B_PINNED = "icons/obj16/debugt_obj_b.gif"; //$NON-NLS-1$
+	public static final String IMG_CONTAINER_RUNNING_R_PINNED = "icons/obj16/debugt_obj_r.gif"; //$NON-NLS-1$
+	public static final String IMG_CONTAINER_RUNNING_G_PINNED = "icons/obj16/debugt_obj_g.gif"; //$NON-NLS-1$
+	public static final String IMG_CONTAINER_RUNNING_B_PINNED = "icons/obj16/debugt_obj_b.gif"; //$NON-NLS-1$
 
-    public static final String IMG_VIEW_PIN_ACTION = "icons/obj16/toolbar_pinned.gif"; //$NON-NLS-1$
-    public static final String IMG_VIEW_PIN_ACTION_R = "icons/obj16/toolbar_pinned_r.gif"; //$NON-NLS-1$
-    public static final String IMG_VIEW_PIN_ACTION_G = "icons/obj16/toolbar_pinned_g.gif"; //$NON-NLS-1$
-    public static final String IMG_VIEW_PIN_ACTION_B = "icons/obj16/toolbar_pinned_b.gif"; //$NON-NLS-1$
-    public static final String IMG_VIEW_PIN_ACTION_MULTI = "icons/obj16/toolbar_pinned_multi.gif"; //$NON-NLS-1$
+	public static final String IMG_VIEW_PIN_ACTION = "icons/obj16/toolbar_pinned.gif"; //$NON-NLS-1$
+	public static final String IMG_VIEW_PIN_ACTION_R = "icons/obj16/toolbar_pinned_r.gif"; //$NON-NLS-1$
+	public static final String IMG_VIEW_PIN_ACTION_G = "icons/obj16/toolbar_pinned_g.gif"; //$NON-NLS-1$
+	public static final String IMG_VIEW_PIN_ACTION_B = "icons/obj16/toolbar_pinned_b.gif"; //$NON-NLS-1$
+	public static final String IMG_VIEW_PIN_ACTION_MULTI = "icons/obj16/toolbar_pinned_multi.gif"; //$NON-NLS-1$
 
-	/**
-	 * The method finds URL of the image corresponding to the key which could be project-relative path
-	 * of the image in org.eclipse.cdt.ui plugin or a (previously registered) string representation of URL
-	 * in a bundle.
-	 * For project-relative paths a check on existence and variables expansion (such as "$NL$")
-	 * is done using {@link FileLocator}.
-	 *
-	 * @param key - the key which could be project-relative path of the image in org.eclipse.cdt.ui plugin
-	 *     or a previously registered string representation of URL in a bundle.
-	 * @return the URL or {@code null} if image was not found.
-	 */
-	private static URL getUrl(String key) {
-		// Note that the map can keep null URL in order not to search again
-		if (urlMap.containsKey(key))
-			return urlMap.get(key);
-
-		IPath projectRelativePath = new Path(key);
-		URL url = FileLocator.find(CUIPlugin.getDefault().getBundle(), projectRelativePath, null);
-		if (url==null) {
-			Exception e = new Exception(NLS.bind(Messages.CDTSharedImages_MissingImage, key, CUIPlugin.PLUGIN_ID));
-			CUIPlugin.log(e.getMessage(), e);
-		}
-		urlMap.put(key, url);
-		return url;
-	}
+	private static SharedImagesFactory imagesFactory = new SharedImagesFactory(CUIPlugin.getDefault());
 
 	/**
 	 * Internal method. It lets register image URL from a bundle directly to the map.
@@ -255,7 +218,7 @@ public class CDTSharedImages {
 	 * @noreference This is internal method which is not intended to be referenced by clients.
 	 */
 	public static void register(URL url) {
-		urlMap.put(url.toString(), url);
+		imagesFactory.register(url);
 	}
 
 	/**
@@ -270,16 +233,7 @@ public class CDTSharedImages {
 	 * @return the image from the repository or the default image for missing image descriptor.
 	 */
 	public static Image getImage(String key) {
-		URL url = getUrl(key);
-		String registryKey = url!=null ? url.toString() : null;
-		Image image = imageRegistry.get(registryKey);
-		if (image==null) {
-			ImageDescriptor descriptor= ImageDescriptor.createFromURL(url);
-			imageRegistry.put(registryKey, descriptor);
-			image = imageRegistry.get(registryKey);
-		}
-
-		return image;
+		return imagesFactory.getImage(key);
 	}
 
 	/**
@@ -290,14 +244,7 @@ public class CDTSharedImages {
 	 * @return the image from the repository or {@link ImageDescriptor#getMissingImageDescriptor()}.
 	 */
 	public static ImageDescriptor getImageDescriptor(String key) {
-		URL url = getUrl(key);
-		String registryKey = url!=null ? url.toString() : null;
-		ImageDescriptor descriptor = imageRegistry.getDescriptor(registryKey);
-		if (descriptor==null) {
-			descriptor = ImageDescriptor.createFromURL(url);
-			imageRegistry.put(registryKey, descriptor);
-		}
-		return descriptor;
+		return imagesFactory.getImageDescriptor(key);
 	}
 
 	/**
@@ -319,39 +266,7 @@ public class CDTSharedImages {
 	 *    an element to the array if no overlay should be added in given quadrant.
 	 */
 	public static Image getImageOverlaid(String baseKey, String[] overlayKeys) {
-		Assert.isTrue(overlayKeys.length==5);
-
-		String suffix=""; //$NON-NLS-1$
-		for (int i=0;i<5;i++) {
-			String overlayKey=""; //$NON-NLS-1$
-			if (i<overlayKeys.length && overlayKeys[i]!=null) {
-				overlayKey=overlayKeys[i];
-			}
-			suffix=suffix+OVERLAY_SEPARATOR+overlayKey;
-		}
-		if (suffix.length()==5) {
-			// No overlays added
-			Image result = getImage(baseKey);
-			return result;
-		}
-		String compositeKey=baseKey+suffix;
-
-		Image result = imageRegistry.get(compositeKey);
-		if (result!=null)
-			return result;
-
-		Image baseImage = getImage(baseKey);
-		ImageDescriptor[] overlayDescriptors = new ImageDescriptor[5];
-		for (int i=0;i<5;i++) {
-			String overlayKey = overlayKeys[i];
-			if (overlayKey!=null) {
-				overlayDescriptors[i] = getImageDescriptor(overlayKey);
-			}
-		}
-		ImageDescriptor compositeDescriptor = new DecorationOverlayIcon(baseImage, overlayDescriptors);
-		imageRegistry.put(compositeKey, compositeDescriptor);
-		result = imageRegistry.get(compositeKey);
-		return result;
+		return imagesFactory.getImageOverlaid(baseKey, overlayKeys);
 	}
 
 	/**
@@ -369,9 +284,7 @@ public class CDTSharedImages {
 	 * @return image overlaid with smaller image in the specified quadrant.
 	 */
 	public static Image getImageOverlaid(String baseKey, String overlayKey, int quadrant) {
-		String[] overlayKeys = new String[5];
-		overlayKeys[quadrant]=overlayKey;
-		return getImageOverlaid(baseKey, overlayKeys);
+		return imagesFactory.getImageOverlaid(baseKey, overlayKey, quadrant);
 	}
 
 	/**
@@ -381,7 +294,7 @@ public class CDTSharedImages {
 	 * @return an image with warning overlay.
 	 */
 	public static Image getImageWithWarning(String baseKey) {
-		return CDTSharedImages.getImageOverlaid(baseKey, CDTSharedImages.IMG_OVR_WARNING, IDecoration.BOTTOM_LEFT);
+		return getImageOverlaid(baseKey, CDTSharedImages.IMG_OVR_WARNING, IDecoration.BOTTOM_LEFT);
 	}
 
 	/**
@@ -391,7 +304,7 @@ public class CDTSharedImages {
 	 * @return an image with error overlay.
 	 */
 	public static Image getImageWithError(String baseKey) {
-		return CDTSharedImages.getImageOverlaid(baseKey, CDTSharedImages.IMG_OVR_ERROR, IDecoration.BOTTOM_LEFT);
+		return getImageOverlaid(baseKey, CDTSharedImages.IMG_OVR_ERROR, IDecoration.BOTTOM_LEFT);
 	}
 }
 

@@ -14,6 +14,7 @@
  *     Marc Dumais (Ericsson) - Bug 405390
  *     Marc Dumais (Ericsson) - Bug 409006
  *     Marc Dumais (Ericsson) - Bug 407321
+ *     Marc-Andre Laperle (Ericsson) - Bug 411634
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -222,6 +223,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		removeDebugViewerListener();
 		disposeActions();
 		disposeLoadMeterTimer();
+		removeEventListener();
 	}
 	
 	
@@ -746,6 +748,12 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		}
 	}
 	
+	private void removeEventListener() {
+		if (m_sessionState != null) {
+			m_sessionState.removeServiceEventListener(fEventListener);
+		}
+	}
+
     /**
      * Invoked by VisualizerViewer when workbench selection changes.
      */

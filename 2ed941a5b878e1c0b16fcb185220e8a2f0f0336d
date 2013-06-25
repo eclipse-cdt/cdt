@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87a3737f_62b1f32c",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/internal/launch/remote/Messages.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-06-25T19:38:43Z",
+      "side": 1,
+      "message": "Although this is internal, I would avoid changing \u0027public\u0027 identifiers without good reasons.  All we need to do is change the actual output string.",
+      "revId": "2ed941a5b878e1c0b16fcb185220e8a2f0f0336d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

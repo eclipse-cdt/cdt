@@ -116,6 +116,17 @@ public class ProcessPrompterDialog extends TwoPaneElementSelector {
     	return list;
     }
 
+    /*
+     * Allow a double-click to work without any selection
+     * in the bottom list.
+     */
+    @Override
+	protected void handleDefaultSelected() {
+        if (validateCurrentSelection()) {
+			buttonPressed(IDialogConstants.OK_ID);
+		}
+    }
+    
     public NewExecutableInfo getExecutableInfo() {
     	return fExecInfo;
     }

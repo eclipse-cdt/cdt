@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ import org.osgi.framework.BundleContext;
  * The main plugin class to be used in the desktop.
  */
 public class MakeUIPlugin extends AbstractUIPlugin {
+	public static final String PLUGIN_ID = "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
 	//The shared instance.
 	private static MakeUIPlugin plugin;
 	//Resource bundle.
@@ -75,7 +76,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the Uniqu idenetifier for this plugin.
+	 * Returns the Unique identifier for this plugin.
 	 */
 	public static String getPluginId() {
 		return getDefault().getBundle().getSymbolicName();
@@ -135,14 +136,14 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-		 * Convenience method which returns the unique identifier of this plugin.
-		 */
+	 * Convenience method which returns the unique identifier of this plugin.
+	 */
 	public static String getUniqueIdentifier() {
 		if (getDefault() == null) {
 			// If the default instance is not yet initialized,
 			// return a static identifier. This identifier must
 			// match the plugin id defined in plugin.xml
-			return "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
+			return PLUGIN_ID; 
 		}
 		return getDefault().getBundle().getSymbolicName();
 	}
@@ -159,7 +160,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static void logErrorMessage(String message) {
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, message, null));
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, null));
 	}
 
 	public static void logException(Throwable e, final String title, String message) {
@@ -174,7 +175,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 				message = e.getMessage();
 			if (message == null)
 				message = e.toString();
-			status = new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, message, e);
+			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, e);
 		}
 		ResourcesPlugin.getPlugin().getLog().log(status);
 		Display display;
@@ -201,7 +202,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 		if (e instanceof CoreException)
 			status = ((CoreException) e).getStatus();
 		else
-			status = new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, e.getMessage(), e);
+			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, e.getMessage(), e);
 		log(status);
 	}
 
@@ -232,7 +233,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 				message = null;
 			}
 		} else {
-			status = new Status(IStatus.ERROR, MakeUIPlugin.getUniqueIdentifier(), -1, "Internal Error: ", t); //$NON-NLS-1$
+			status = new Status(IStatus.ERROR, MakeUIPlugin.PLUGIN_ID, -1, "Internal Error: ", t); //$NON-NLS-1$
 		}
 		ErrorDialog.openError(shell, title, message, status);
 	}
@@ -290,9 +291,6 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 		new MakeStartup().schedule();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (fWorkingCopyManager != null) {

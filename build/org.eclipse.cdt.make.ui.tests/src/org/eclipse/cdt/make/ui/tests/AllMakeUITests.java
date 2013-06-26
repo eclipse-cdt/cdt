@@ -10,21 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.tests;
 
-import static org.junit.Assert.fail;
-
-import org.eclipse.cdt.make.ui.tests.AllMakeUITests.ToDo;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ ToDo.class })
+@SuiteClasses({ MakeUISharedImagesTest.class })
 public class AllMakeUITests {
-	public static class ToDo {
-		@Test
-		public void test() {
-			fail("Not yet implemented");
-		}
-	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Ericsson and others.
+ * Copyright (c) 2008, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,11 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Marc Khouzam (Ericsson) - Add support for multi-attach (Bug 293679)
+ *     Lidia Gutu (WindRiver) - [400033] Auto-compute image on remote attach
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -76,6 +78,11 @@ public class GdbConnectCommand implements IConnect {
     // This map is only needed for remote sessions, since we don't need to specify
     // the binary location for a local attach session.
     private Map<String, String> fProcessNameToBinaryMap = new HashMap<String, String>();
+    // A map of Process names with supposed directories to its binaries
+    private Map<String, String> fSupposedProcessNameToBinaryMap = new HashMap<String, String>();
+    // Provide access to the sharedlib locations from the Launch Configuration
+    // in any Thread
+    private List<String> fSharedLibLocations;
     
     public GdbConnectCommand(DsfSession session) {
         fExecutor = session.getExecutor();
@@ -212,7 +219,26 @@ public class GdbConnectCommand implements IConnect {
     			if (shell != null) {
     				FileDialog fd = new FileDialog(shell, SWT.NONE);
     				fd.setText(fTitle);
-    				binaryPath = fd.open();
+    				/*
+			         * this should be the found path in this format except the file name
+				 */
+				String supposedBinaryPath = fSupposedProcessNameToBinaryMap.get(fProcName);
+				if (supposedBinaryPath == null) {
+				    // Binary was not found --> open in the sysroot
+				    // Prep dialog with the first path from the list of
+				    // sharedlib paths from the launch
+				    if (fSharedLibLocations != null && fSharedLibLocations.size() > 0) {
+					File file = new File(fSharedLibLocations.get(0));
+					if (file.exists() && file.isDirectory()) {
+					   fd.setFilterPath(file.getAbsolutePath());
+					}
+				    }
+				} else {
+				   fd.setFilterPath(supposedBinaryPath);
+				   /* This should be the file name returned by gdb server */
+				   fd.setFileName(fProcName);
+				}
+    			binaryPath = fd.open();
     			}
     		}
     		
@@ -467,6 +493,7 @@ public class GdbConnectCommand implements IConnect {
     									// Bug 344892
     									IPath processPath = new Path(process.getName());
     									String processShortName = processPath.lastSegment();
+									getAndCheckPathOnLocalSystem(processPath);
     									new PromptAndAttachToProcessJob(pidStr, 
     											                        LaunchUIMessages.getString("ProcessPrompterDialog.TitlePrefix") + process.getName(), //$NON-NLS-1$
     											                        processShortName, new AttachToProcessRequestMonitor()).schedule();
@@ -496,6 +523,60 @@ public class GdbConnectCommand implements IConnect {
     	}
 
     }
+    /**
+     * Tries to identify and check the path for the provided processPath
+     * <p>
+     * In case the provided processPath has an absolute path, and
+     * the path to the file is a valid one on the local machine,
+     * It populates the fProcessNameToBinaryMap map with it.
+     * <p>
+     * In case the provided processPath has a relative path,
+     * iterates over sharedLib paths from UI and appends the path to it
+     * while founds a valid one.
+     * Populates the found path to fSupposedProcessNameToBinaryMap.
+     * @param processPath - the known process path used to append
+     */
+     private void getAndCheckPathOnLocalSystem(IPath processPath) {
+		try {
+			fSharedLibLocations = fTracker.getService(IGDBBackend.class)
+					.getSharedLibraryPaths();
+		} catch (CoreException e) {
+			// Failed to obtain any sharedlib paths, so we cannot try mapping the remote process path - return directly.
+			GdbUIPlugin.getDefault().getLog().log(new Status(IStatus.ERROR,GdbUIPlugin.PLUGIN_ID,"Remote attach failed to get tracker",e));
+			return;
+		}
+		if (processPath.isAbsolute()) {
+			// absolute path: append to the first item in the list of sharedlibs
+			// treating the first item in the sharedlib location list as the sysroot
+			if (fSharedLibLocations.size() > 0) {
+				String value = fSharedLibLocations.get(0);
+				File folder = new File(value);
+				if (folder.exists() && folder.isDirectory()) {
+					File file = new File(folder, processPath.toFile()
+								.getPath());
+					if (file.exists()) {
+						// Placing it in here ensures that the Dialog won't come up
+						fProcessNameToBinaryMap.put(file.getName(),
+									file.getAbsolutePath());
+					}
+				}
+			}
+		} else {
+			// is a relative path
+			for (String value : fSharedLibLocations) {
+				File folder = new File(value);
+				if (folder.exists() && folder.isDirectory()) {
+					File file = new File(folder, processPath.lastSegment());
+					if (file.exists()) {
+						// Placing it in here makes the Dialog come up for review
+						fSupposedProcessNameToBinaryMap.put(file.getName(),
+									folder.getAbsolutePath());
+						break;
+					}
+				}
+			}
+		}
+     }
 }
 
 

@@ -15,6 +15,7 @@
  *     Marc Dumais (Ericsson) - Bug 409006
  *     Marc Dumais (Ericsson) - Bug 407321
  *     Marc-Andre Laperle (Ericsson) - Bug 411634
+ *     Marc Dumais (Ericsson) - Bug 409965
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -1180,6 +1181,12 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		// through the listener.   Checking at both places to prevent this.
 		if (model.getThread(tid) == null) {
 			model.addThread(new VisualizerThread(core, pid, osTid, tid, state));
+		}
+		// if the thread is already in the model, update its core and thread state
+		else {
+			VisualizerThread t = model.getThread(tid);
+			t.setState(state);
+			t.setCore(core);
 		}
 		
 		// keep track of threads visited

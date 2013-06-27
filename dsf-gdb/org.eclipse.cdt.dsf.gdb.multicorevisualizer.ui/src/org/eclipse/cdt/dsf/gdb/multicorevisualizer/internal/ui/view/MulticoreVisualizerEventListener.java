@@ -12,9 +12,12 @@
  *     Marc Dumais (Ericsson) - Bug 405390
  *     Marc Dumais (Ericsson) - Bug 396269
  *     Marc Dumais (Ericsson) - Bug 409512
+ *     Marc Dumais (Ericsson) - Bug 409965
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
+
+import java.util.List;
 
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -32,11 +35,14 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.MulticoreVisualizerUIPlugin;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerCore;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerExecutionState;
+import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerModel;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerThread;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.DSFDebugModel;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl.MIRunMode;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MISignalEvent;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -73,6 +79,15 @@ public class MulticoreVisualizerEventListener {
 	@DsfServiceEventHandler
 	public void handleEvent(final ISuspendedDMEvent event) {
 		IDMContext context = event.getDMContext();
+		
+		// all-stop mode? If so, we take the opportunity, now that GDB has suspended
+		// execution, to re-create the model so that we synchronize with the debug session
+		if (context != null && isSessionAllStop(context.getSessionId()) ) {
+			fVisualizer.update();
+			return;
+		}
+		
+		// non-stop mode
 		if (context instanceof IContainerDMContext) {
     		// We don't deal with processes
     	} else if (context instanceof IMIExecutionDMContext) {
@@ -139,6 +154,18 @@ public class MulticoreVisualizerEventListener {
 	@DsfServiceEventHandler
 	public void handleEvent(IResumedDMEvent event) {
 		IDMContext context = event.getDMContext();
+		
+		// in all-stop mode... : update all threads states to "running"
+		if (context != null && isSessionAllStop(context.getSessionId()) ) {
+			List<VisualizerThread> tList = fVisualizer.getModel().getThreads();
+			for(VisualizerThread t : tList) {
+				t.setState(VisualizerExecutionState.RUNNING);
+			}
+			fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();
+			return;
+		}
+		
+		// Non-stop mode
 		if (context instanceof IContainerDMContext) {
     		// We don't deal with processes
     	} else if (context instanceof IMIExecutionDMContext) {
@@ -161,6 +188,42 @@ public class MulticoreVisualizerEventListener {
 	@DsfServiceEventHandler
 	public void handleEvent(IStartedDMEvent event) {
 		IDMContext context = event.getDMContext();
+		if (context == null) return;
+		final String sessionId = context.getSessionId();
+		
+		// all-stop mode? 
+		// If so we can't ask GDB for more info about the new thread at this moment.  
+		// So we still add it to the model, on core zero and with a OS thread id of 
+		// zero.  The next time the execution is stopped, the model will be re-created 
+		// and show the correct thread ids and cores.
+		if (isSessionAllStop(sessionId) && context instanceof IMIExecutionDMContext ) {
+			final IMIExecutionDMContext execDmc = (IMIExecutionDMContext)context;
+			final IMIProcessDMContext processContext =
+					DMContexts.getAncestorOfType(execDmc, IMIProcessDMContext.class);
+			
+			VisualizerModel model = fVisualizer.getModel();
+			if (model == null) return;
+			
+			// put it on core zero
+			VisualizerCore vCore = fVisualizer.getModel().getCore(0);
+			if (vCore == null) return;
+			
+			int pid = Integer.parseInt(processContext.getProcId());
+			int tid = execDmc.getThreadId();
+
+			int osTid = 0;
+
+			// add thread if not already there - there is a potential race condition where a 
+			// thread can be added twice to the model: once at model creation and once more 
+			// through the listener.   Checking at both places to prevent this.
+			if (fVisualizer.getModel().getThread(tid) == null ) {
+				fVisualizer.getModel().addThread(new VisualizerThread(vCore, pid, osTid, tid, VisualizerExecutionState.RUNNING));
+				fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();	
+			}
+			return;
+		}
+		
+		// non-stop mode
 		if (context instanceof IContainerDMContext) {
     		// We don't deal with processes
     	} else if (context instanceof IMIExecutionDMContext) {
@@ -173,7 +236,7 @@ public class MulticoreVisualizerEventListener {
 
 			DsfServicesTracker tracker = 
 					new DsfServicesTracker(MulticoreVisualizerUIPlugin.getBundleContext(), 
-                                           execDmc.getSessionId());
+							sessionId);
 			IProcesses procService = tracker.getService(IProcesses.class);
 			tracker.dispose();
 			
@@ -264,6 +327,11 @@ public class MulticoreVisualizerEventListener {
 								canvas.requestUpdate();
 							}
 						}
+						@Override
+						protected void handleFailure() {
+							// we are overriding handleFailure() to avoid an error message
+							// in the log, in the all-stop mode.
+						}
 			});
 			
 
@@ -286,6 +354,20 @@ public class MulticoreVisualizerEventListener {
 		// re-create the visualizer model now that CPU and core info is available
 		fVisualizer.update();
 	}
+	
+	
+	// helper functions
 
+	/** Returns whether the session is the "all-stop" kind */
+	private boolean isSessionAllStop(String sessionId) {
+		DsfServicesTracker servicesTracker = new DsfServicesTracker(MulticoreVisualizerUIPlugin.getBundleContext(), sessionId);
+		IMIRunControl runCtrlService = servicesTracker.getService(IMIRunControl.class);
+		servicesTracker.dispose();
+		
+		if (runCtrlService != null && runCtrlService.getRunMode() == MIRunMode.ALL_STOP ) {
+			return true;
+		}
+		return false;
+	}
 }
 

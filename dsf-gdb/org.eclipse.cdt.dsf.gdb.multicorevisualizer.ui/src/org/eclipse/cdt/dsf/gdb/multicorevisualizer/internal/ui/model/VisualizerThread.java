@@ -10,6 +10,7 @@
  *     Marc Khouzam (Ericsson)                 - Added knowledge about execution 
  *                                               state and os/gdb thread ids
  *     Marc Dumais (Ericsson) -  Bug 405390
+ *     Marc Dumais (Ericsson) -  Bug 409965
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
@@ -114,11 +115,16 @@ public class VisualizerThread
 	public int getTID()	{
 		return m_tid;
 	}
+	
+	/** Sets thread id (tid). */
+	public void setTID(int tid)	{
+		m_tid = tid;
+	}
 
-	/** Gets thread id (tid). */
+	/** Gets thread id (gdbtid). */
 	@Override
 	public int getID() {
-		return getTID();
+		return getGDBTID();
 	}
 
 	/** Return core the thread is on */
@@ -160,10 +166,10 @@ public class VisualizerThread
 			else if (m_pid > o.m_pid) {
 				result = 1;
 			}
-			else if (m_tid < o.m_tid) {
+			else if (getID() < o.getID()) {
 				result = -1;
 			}
-			else if (m_tid > o.m_tid) {
+			else if (getID() > o.getID()) {
 				result = 1;
 			}
 		}

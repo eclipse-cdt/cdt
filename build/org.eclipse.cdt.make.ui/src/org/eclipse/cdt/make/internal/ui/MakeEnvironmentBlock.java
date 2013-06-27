@@ -643,7 +643,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 			@Override
 			public Image getImage(Object element) {
-				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_ENVIRONMNET);
+				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_ENVIRONMENT);
 			}
 			@Override
 			public String getText(Object element) {

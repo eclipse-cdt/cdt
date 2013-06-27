@@ -55,7 +55,7 @@ public class MakeLabelProvider extends LabelProvider implements ITableLabelProvi
 				return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_SOURCE_ROOT);
 			return fLableProvider.getImage(obj);
 		} else if (obj instanceof IMakeTarget) {
-			return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_BUILD_TARGET);
+			return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_TARGET);
 		}
 		return image;
 	}

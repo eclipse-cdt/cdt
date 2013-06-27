@@ -18,8 +18,8 @@ import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.core.makefile.IRule;
-import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.text.CompletionProposalComparator;
 import org.eclipse.cdt.make.internal.ui.text.WordPartDetector;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
@@ -87,8 +87,8 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 
 	}
 	protected IContextInformationValidator fValidator = new Validator();
-	protected Image imageMacro = MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_MACRO);
-	protected Image imageTarget = MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_TARGET_RULE);
+	protected Image imageMacro = MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MACRO);
+	protected Image imageTarget = MakeUIImages.getImage(MakeUIImages.IMG_OBJS_TARGET_RULE);
 
 	protected CompletionProposalComparator comparator = new CompletionProposalComparator();
 	protected IEditorPart fEditor;

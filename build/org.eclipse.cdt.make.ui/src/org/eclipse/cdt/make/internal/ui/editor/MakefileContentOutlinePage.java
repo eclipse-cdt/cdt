@@ -27,8 +27,8 @@ import org.eclipse.cdt.make.core.makefile.ITargetRule;
 import org.eclipse.cdt.make.core.makefile.gnu.IInclude;
 import org.eclipse.cdt.make.core.makefile.gnu.ITerminal;
 import org.eclipse.cdt.make.internal.core.makefile.NullMakefile;
-import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -47,7 +47,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
@@ -183,19 +185,19 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 		@Override
 		public Image getImage(Object element) {
 			if (element instanceof ITargetRule) {
-				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_TARGET_RULE);
+				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_TARGET_RULE);
 			} else if (element instanceof IInferenceRule) {
-				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_INFERENCE_RULE);
+				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_INFERENCE_RULE);
 			} else if (element instanceof IMacroDefinition) {
-				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_MACRO);
+				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MACRO);
 			} else if (element instanceof ICommand) {
-				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_COMMAND);
+				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_COMMAND);
 			} else if (element instanceof IInclude) {
-				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_INCLUDE);
+				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_INCLUDE);
 			} else if (element instanceof IBadDirective) {
-				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_ERROR);
+				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK);
 			} else if (element instanceof IParent) {
-				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_RELATION);
+				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_RELATION);
 			}
 			return super.getImage(element);
 		}

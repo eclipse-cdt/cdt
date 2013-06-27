@@ -16,6 +16,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A message line. It distinguishs between "normal" messages and errors. 
@@ -54,7 +56,7 @@ public class MessageLine extends CLabel {
 		if (message != null && message.length() > 0) {
 			hasErrorMessage = true;
 			setText(message);
-			setImage(MakeUIImages.getImage(MakeUIImages.IMG_OBJS_ERROR));
+			setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK));
 			setBackground(JFaceColors.getErrorBackground(getDisplay()));
 			return;
 		}

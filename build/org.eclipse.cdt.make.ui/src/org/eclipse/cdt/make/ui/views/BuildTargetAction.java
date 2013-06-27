@@ -14,8 +14,8 @@ package org.eclipse.cdt.make.ui.views;
 import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
-import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.ui.TargetBuild;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
@@ -37,7 +37,8 @@ public class BuildTargetAction extends SelectionListenerAction {
 		this.shell = shell;
 
 		setToolTipText(MakeUIPlugin.getResourceString("BuildTargetAction.tooltip")); //$NON-NLS-1$
-		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_BUILD); //$NON-NLS-1$
+		setDisabledImageDescriptor(MakeUIImages.getImageDescriptor(MakeUIImages.IMG_DTOOL_TARGET_BUILD));
+		setImageDescriptor(MakeUIImages.getImageDescriptor(MakeUIImages.IMG_ETOOL_TARGET_BUILD));
 		setEnabled(false);
 	}
 

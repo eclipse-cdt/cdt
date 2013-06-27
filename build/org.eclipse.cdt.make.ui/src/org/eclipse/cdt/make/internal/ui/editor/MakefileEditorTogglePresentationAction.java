@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
-import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
@@ -24,7 +24,8 @@ public class MakefileEditorTogglePresentationAction extends TextEditorAction {
 	 */
 	public MakefileEditorTogglePresentationAction() {
 		super(MakeUIPlugin.getDefault().getResourceBundle(), "TogglePresentation.", null); //$NON-NLS-1$
-		MakeUIImages.setImageDescriptors(this, MakeUIImages.T_TOOL, MakeUIImages.IMG_TOOLS_MAKEFILE_SEGMENT_EDIT);
+		setDisabledImageDescriptor(MakeUIImages.getImageDescriptor(MakeUIImages.IMG_DTOOL_SEGMENT_EDIT));
+		setImageDescriptor(MakeUIImages.getImageDescriptor(MakeUIImages.IMG_ETOOL_SEGMENT_EDIT));
 		update();
 	}
 

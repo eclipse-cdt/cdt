@@ -12,8 +12,8 @@ package org.eclipse.cdt.make.ui.views;
 
 
 import org.eclipse.cdt.make.core.IMakeTarget;
-import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.dnd.MakeTargetDndUtil;
 import org.eclipse.cdt.make.ui.TargetSourceContainer;
 import org.eclipse.cdt.make.ui.dialogs.MakeTargetDialog;
@@ -36,7 +36,8 @@ public class AddTargetAction extends SelectionListenerAction {
 		this.shell = shell;
 
 		setToolTipText(MakeUIPlugin.getResourceString("AddTargetAction.tooltip")); //$NON-NLS-1$
-		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_ADD); //$NON-NLS-1$
+		setDisabledImageDescriptor(MakeUIImages.getImageDescriptor(MakeUIImages.IMG_DTOOL_TARGET_ADD));
+		setImageDescriptor(MakeUIImages.getImageDescriptor(MakeUIImages.IMG_ETOOL_TARGET_ADD));
 		setEnabled(false);
 	}
 

@@ -14,8 +14,8 @@ package org.eclipse.cdt.make.ui.views;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.ui.MakeContentProvider;
 import org.eclipse.cdt.make.ui.TargetSourceContainer;
 import org.eclipse.core.resources.IContainer;
@@ -55,7 +55,8 @@ public class FilterEmtpyFoldersAction extends Action {
 
 		setToolTipText(MakeUIPlugin.getResourceString("FilterEmptyFolderAction.tooltip")); //$NON-NLS-1$
 		setChecked(getSettings().getBoolean(FILTER_EMPTY_FOLDERS));
-		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_FILTER); //$NON-NLS-1$
+		setDisabledImageDescriptor(MakeUIImages.getImageDescriptor(MakeUIImages.IMG_DTOOL_TARGET_FILTER));
+		setImageDescriptor(MakeUIImages.getImageDescriptor(MakeUIImages.IMG_ETOOL_TARGET_FILTER));
 
 		fViewer.addFilter(new ViewerFilter() {
 			/**

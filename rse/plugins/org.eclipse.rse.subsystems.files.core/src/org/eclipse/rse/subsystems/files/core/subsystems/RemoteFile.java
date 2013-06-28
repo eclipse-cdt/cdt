@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@
  * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
  * David McKnight   (IBM)        - [328098] infinite loop when opening file from an UNC path
  * Rob Stryker (Red Hat)         - [393384] isArchive returning true on remote folders ending in .jar
+ * David McKnight   (IBM)        - [409785] When copying a file from a network location (e.g. \\myserver\xxx\abc.cpp) to a mapped local location in RSE, workbench hangs on this filecopy
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -1165,6 +1166,9 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		if (lastSep == 0) // root is the parent (on unix)
 		{
 			return separator;
+		}
+		else if (path.equals("\\")){ //$NON-NLS-1$
+			return null; // for mapped network folder, there may not be a drive
 		}
 		else if (lastSep > 0)
 		{

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
+ *     Simon Marchi (Ericsson) - GNU formatter fixes
  *******************************************************************************/
 package org.eclipse.cdt.core.formatter;
 
@@ -1813,8 +1814,10 @@ public class DefaultCodeFormatterOptions {
 		this.indent_breaks_compare_to_cases = true;
 		this.indent_empty_lines = false;
 		this.indent_switchstatements_compare_to_cases = true;
-		this.indent_switchstatements_compare_to_switch = false;
-		this.indentation_size = 8;
+		this.indent_switchstatements_compare_to_switch = true;
+		this.indentation_size = 2;
+		this.alignment_for_parameters_in_method_declaration = Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN;
+		this.alignment_for_arguments_in_method_invocation = Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN;
 
 		this.insert_new_line_after_opening_brace_in_initializer_list = false;
 		this.insert_new_line_after_template_declaration = true;
@@ -1830,6 +1833,8 @@ public class DefaultCodeFormatterOptions {
 //		this.insert_new_line_in_empty_type_declaration = false;
 
 		this.insert_space_before_colon_in_base_clause = true;
+		this.insert_space_before_opening_paren_in_method_declaration = true;
+		this.insert_space_before_opening_paren_in_method_invocation = true;
 
 		this.compact_else_if = true;
 		this.keep_guardian_clause_on_one_line = false;
@@ -1838,9 +1843,9 @@ public class DefaultCodeFormatterOptions {
 		this.keep_simple_if_on_one_line = false;
 		this.keep_then_statement_on_same_line = false;
 		this.put_empty_statement_on_new_line = true;
-		this.tab_size = 2;
+		this.tab_size = 8;
 		this.page_width = 80;
-		this.tab_char = SPACE;
+		this.tab_char = MIXED;
 		this.use_tabs_only_for_leading_indentations = false;
 	}
 

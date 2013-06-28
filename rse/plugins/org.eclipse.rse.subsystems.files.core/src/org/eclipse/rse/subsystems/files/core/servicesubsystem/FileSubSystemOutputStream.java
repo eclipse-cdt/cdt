@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *
  * Contributors:
  * David McKnight   (IBM)   - [207100] decorated output stream
+ * David McKnight   (IBM)   - [411820] getResource() wrong for event generated in FileSubSystemOutputStream.close()
  *******************************************************************************/
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
 
@@ -51,7 +52,7 @@ public class FileSubSystemOutputStream extends OutputStream {
 		// notify that the file was uploaded
 		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 
-		sr.fireEvent(new SystemRemoteChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_UPLOADED, _remoteParent, _remoteFile, _fs));
+		sr.fireEvent(new SystemRemoteChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_UPLOADED, _remoteFile, _remoteParent, _fs));
 	}
 
 	public void flush() throws IOException {

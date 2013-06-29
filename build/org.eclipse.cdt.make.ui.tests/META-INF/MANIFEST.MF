@@ -7,7 +7,8 @@ Bundle-Activator: org.eclipse.cdt.make.ui.tests.MakeUITestsPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.cdt.make.ui,
- org.junit;bundle-version="4.10.0"
+ org.junit;bundle-version="4.10.0",
+ org.eclipse.cdt.core.tests
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: Eclipse.org

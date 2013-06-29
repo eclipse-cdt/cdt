@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
@@ -313,6 +314,14 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 				String specFileExt = getSpecFileExtension(languageId);
 				if (specFileExt != null)
 					cmd = cmd.replace(SPEC_EXT_MACRO, specFileExt);
+			}
+			if (cmd.contains("${")) { //$NON-NLS-1$
+				ICdtVariableManager varManager = CCorePlugin.getDefault().getCdtVariableManager();
+				try {
+					cmd = varManager.resolveValue(cmd, "", null, currentCfgDescription); //$NON-NLS-1$
+				} catch (Exception e) {
+					ManagedBuilderCorePlugin.log(e);
+				}
 			}
 		}
 		return cmd;

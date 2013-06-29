@@ -13,6 +13,8 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -102,6 +104,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 			}
 		}
 		{
+			// check ${COMMAND} and ${INPUTS}
 			MockGCCBuiltinSpecsDetectorLocal detector = new MockGCCBuiltinSpecsDetectorLocal();
 			detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
 			detector.setCommand("${COMMAND} -E -P -v -dD ${INPUTS}");
@@ -111,6 +114,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 			assertTrue(resolvedCommand.endsWith("spec.c"));
 		}
 		{
+			// check ${EXT}
 			MockGCCBuiltinSpecsDetectorLocal detector = new MockGCCBuiltinSpecsDetectorLocal();
 			detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
 			detector.setCommand("${COMMAND} -E -P -v -dD file.${EXT}");
@@ -118,6 +122,34 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 			String resolvedCommand = detector.resolveCommand(LANGUAGE_ID_C);
 			assertTrue(resolvedCommand.startsWith("gcc -E -P -v -dD "));
 			assertTrue(resolvedCommand.endsWith("file.c"));
+		}
+		{
+			// check expansion of environment variables
+			MockGCCBuiltinSpecsDetectorLocal detector = new MockGCCBuiltinSpecsDetectorLocal();
+			detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
+			String command = "cmd --env1=${CWD} --env2=${OS}";
+			detector.setCommand(command);
+			String resolvedCommand = detector.resolveCommand(LANGUAGE_ID_C);
+			
+			ICdtVariableManager varManager = CCorePlugin.getDefault().getCdtVariableManager();
+			String expected = varManager.resolveValue(command, "", null, null);
+			// confirm that "expected" expanded
+			assertFalse(command.equals(expected));
+			assertEquals(expected, resolvedCommand);
+		}
+		{
+			// check expansion of eclipse and MBS variables
+			MockGCCBuiltinSpecsDetectorLocal detector = new MockGCCBuiltinSpecsDetectorLocal();
+			detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
+			String command = "cmd --eclipse-var=${workspace_loc} --mbs-var=${WorkspaceDirPath}";
+			detector.setCommand(command);
+			String resolvedCommand = detector.resolveCommand(LANGUAGE_ID_C);
+			
+			ICdtVariableManager varManager = CCorePlugin.getDefault().getCdtVariableManager();
+			String expected = varManager.resolveValue(command, "", null, null);
+			// confirm that "expected" expanded
+			assertFalse(command.equals(expected));
+			assertEquals(expected, resolvedCommand);
 		}
 	}
 

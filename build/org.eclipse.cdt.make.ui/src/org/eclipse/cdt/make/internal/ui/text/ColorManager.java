@@ -12,7 +12,6 @@
 package org.eclipse.cdt.make.internal.ui.text;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.jface.text.source.ISharedTextColors;
@@ -21,7 +20,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 public class ColorManager implements ISharedTextColors {
-
 	public static final String MAKE_COMMENT_COLOR ="org.eclipse.cdt.make.ui.editor.comment"; //$NON-NLS-1$
 	public static final String MAKE_KEYWORD_COLOR = "org.eclipse.cdt.make.ui.editor.keyword"; //$NON-NLS-1$
 	public static final String MAKE_FUNCTION_COLOR = "org.eclipse.cdt.make.ui.editor.function"; //$NON-NLS-1$
@@ -52,19 +50,13 @@ public class ColorManager implements ISharedTextColors {
 
 	protected Map<RGB, Color> fColorTable = new HashMap<RGB, Color>(10);
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.ISharedTextColors#dispose()
-	 */
 	@Override
 	public void dispose() {
-		Iterator<Color> e = fColorTable.values().iterator();
-		while (e.hasNext())
-			(e.next()).dispose();
+		for (Color color : fColorTable.values()) {
+			color.dispose();
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.ISharedTextColors#getColor(org.eclipse.swt.graphics.RGB)
-	 */
 	@Override
 	public Color getColor(RGB rgb) {
 		Color color = fColorTable.get(rgb);

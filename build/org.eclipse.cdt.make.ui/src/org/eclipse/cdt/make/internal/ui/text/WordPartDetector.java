@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,15 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.make.internal.ui.text;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
- 
+
 /**
- * Used to scan and detect for SQL keywords  
+ * Used to scan and detect for SQL keywords
  */
 public class WordPartDetector {
 	String wordPart = ""; //$NON-NLS-1$
@@ -25,7 +24,7 @@ public class WordPartDetector {
 
 	/**
 	 * WordPartDetector.
-	 * @param viewer is a text viewer 
+	 * @param viewer is a text viewer
 	 * @param documentOffset into the SQL document
 	 */
 	public WordPartDetector(ITextViewer viewer, int documentOffset) {
@@ -39,7 +38,7 @@ public class WordPartDetector {
 	 */
 	public WordPartDetector(IDocument doc, int documentOffset) {
 		offset = documentOffset - 1;
-		int endOffset = documentOffset;		
+		int endOffset = documentOffset;
 		try {
 			IRegion region = doc.getLineInformationOfOffset(documentOffset);
 			int top = region.getOffset();
@@ -48,8 +47,8 @@ public class WordPartDetector {
 				offset--;
 			}
 			while (endOffset < bottom && isMakefileLetter(doc.getChar(endOffset))) {
-					endOffset++;
-			} 
+				endOffset++;
+			}
 			//we've been one step too far : increase the offset
 			offset++;
 			wordPart = doc.get(offset, endOffset - offset);
@@ -61,7 +60,7 @@ public class WordPartDetector {
 	public static boolean inMacro(ITextViewer viewer, int offset) {
 		return inMacro(viewer.getDocument(), offset);
 	}
-	
+
 	public static boolean inMacro(IDocument document, int offset) {
 		boolean isMacro = false;
 		// Try to figure out if we are in a Macro.
@@ -81,15 +80,11 @@ public class WordPartDetector {
 		return isMacro;
 	}
 
-
-	/**
-	 * @return String
-	 */
 	@Override
 	public String toString() {
 		return wordPart;
 	}
-	
+
 	public int getOffset() {
 		return offset;
 	}

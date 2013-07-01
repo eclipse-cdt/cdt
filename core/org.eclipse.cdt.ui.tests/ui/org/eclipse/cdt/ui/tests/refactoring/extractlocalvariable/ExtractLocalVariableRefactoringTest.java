@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,6 +9,7 @@
  * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable;
 
@@ -537,4 +538,35 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 	public void testLocalVariableFromForLoop() throws Exception {
 		assertRefactoringSuccess();
 	}
+	
+	//main.c
+	//void f(){
+	//	int x = /*$*/2/*$$*/;
+	//}
+	//====================
+	//void f(){
+	//	int i = 2;
+	//	int x = i;
+	//}
+	public void testSuggestedNameCFile_Bug412032() throws Exception {
+		assertRefactoringSuccess();
+	}
+	
+	//main.c
+	//int getSomething(int x) { return 0; }
+	//
+	//void f(){
+	//	/*$*/getSomething(getSomething(0))/*$$*/;
+	//}
+	//====================
+	//int getSomething(int x) { return 0; }
+	//
+	//void f(){
+	//	int something = getSomething(getSomething(0));
+	//	something;
+	//}
+	public void testSuggestedNameCFile_Bug412032_2() throws Exception {
+		assertRefactoringSuccess();
+	}
+
 }

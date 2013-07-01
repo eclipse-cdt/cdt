@@ -449,6 +449,10 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		PreferenceConverter.setDefault(prefs, ColorManager.MAKE_MACRO_DEF_COLOR, ColorManager.MAKE_MACRO_DEF_RGB);
 		PreferenceConverter.setDefault(prefs, ColorManager.MAKE_MACRO_REF_COLOR, ColorManager.MAKE_MACRO_REF_RGB);
 		PreferenceConverter.setDefault(prefs, ColorManager.MAKE_MATCHING_BRACKETS_COLOR, ColorManager.MAKE_MATCHING_BRACKETS_RGB);
+
+		prefs.setDefault(ColorManager.MAKE_KEYWORD_COLOR + MakefileEditorPreferenceConstants.EDITOR_BOLD_SUFFIX, true);
+		prefs.setDefault(ColorManager.MAKE_FUNCTION_COLOR + MakefileEditorPreferenceConstants.EDITOR_BOLD_SUFFIX, true);
+		prefs.setDefault(ColorManager.MAKE_MACRO_DEF_COLOR + MakefileEditorPreferenceConstants.EDITOR_BOLD_SUFFIX, true);
 	}
 
 }

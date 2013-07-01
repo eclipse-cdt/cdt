@@ -15,8 +15,8 @@
 	<name>CDT Parent</name>
 
 	<properties>
-		<tycho-version>0.17.0</tycho-version>
-		<tycho-extras-version>0.17.0</tycho-extras-version>
+		<tycho-version>0.18.0</tycho-version>
+		<tycho-extras-version>0.18.0</tycho-extras-version>
 		<download-site>http://download.eclipse.org</download-site>
 		<platform-version>3.8</platform-version>
 		<platform-site>${download-site}/eclipse/updates/${platform-version}</platform-site>

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "273ac7f6_f48ec005",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterOptions.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-07-01T20:03:52Z",
+      "side": 1,
+      "message": "The year needs to be updated to 2013.",
+      "revId": "9e462a7170b453cbd293dc5ca0fff61783a09503",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

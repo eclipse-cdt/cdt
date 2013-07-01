@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Google and others. All rights reserved. This program and
+ * Copyright (c) 2008, 2013 Google and others. All rights reserved. This program and
  * the accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -7,6 +7,7 @@
  * Contributors:
  *     Tom Ball (Google) - Initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable;
 
@@ -37,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -51,7 +53,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
 import org.eclipse.cdt.core.model.ICElement;
@@ -62,7 +63,6 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarationStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTEqualsInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -358,8 +358,8 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 				public int visit(IASTExpression expression) {
 					// If the expression starts with a function call with a name, we should only
 					// need to guess this name
-					if (expression == target && expression instanceof ICPPASTFunctionCallExpression) {
-						ICPPASTFunctionCallExpression functionCallExpression = (ICPPASTFunctionCallExpression) expression;
+					if (expression == target && expression instanceof IASTFunctionCallExpression) {
+						IASTFunctionCallExpression functionCallExpression = (IASTFunctionCallExpression) expression;
 						IASTExpression functionNameExpression = functionCallExpression.getFunctionNameExpression();
 						if (functionNameExpression instanceof IASTIdExpression) {
 							IASTIdExpression idExpression = (IASTIdExpression) functionNameExpression;
@@ -372,8 +372,8 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 						}
 					}
 
-					if (expression instanceof CPPASTLiteralExpression) {
-						CPPASTLiteralExpression literal = (CPPASTLiteralExpression) expression;
+					if (expression instanceof IASTLiteralExpression) {
+						IASTLiteralExpression literal = (IASTLiteralExpression) expression;
 						String name = null;
 						switch (literal.getKind()) {
 				          case IASTLiteralExpression.lk_char_constant:

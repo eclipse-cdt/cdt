@@ -14,6 +14,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
@@ -57,7 +58,10 @@ public class SemanticQueries {
 			return false;
 		firstArgumentType = firstArgReferenceType.getType();
 		firstArgumentType = SemanticUtil.getNestedType(firstArgumentType, CVTYPE);
-		return firstArgumentType.isSameType(constructor.getClassOwner());
+		ICPPClassType classType = constructor.getClassOwner();
+		if (classType instanceof ICPPClassTemplate)
+			classType = CPPTemplates.createDeferredInstance((ICPPClassTemplate) classType);
+		return firstArgumentType.isSameType(classType);
 	}
 
 	private static boolean isCallableWithNumberOfArguments(ICPPFunction function, int numArguments) {

@@ -13,6 +13,7 @@ package org.eclipse.cdt.ui.refactoring.actions;
 import org.eclipse.osgi.util.NLS;
 
 class Messages extends NLS {
+	public static String CreateMethodAction_label;
 	public static String CRefactoringActionGroup_menu;
 	public static String CRenameAction_label;
 	public static String ExtractConstantAction_label;

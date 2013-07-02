@@ -19,5 +19,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.eclipse.cdt.codan.internal.checkers.ui;x-internal:=true,
  org.eclipse.cdt.codan.internal.checkers.ui.quickfix;x-internal:=true
-Import-Package: org.eclipse.ltk.core.refactoring
+Import-Package: org.eclipse.cdt.internal.ui.wizards,
+ org.eclipse.cdt.ui.refactoring.actions,
+ org.eclipse.cdt.ui.wizards,
+ org.eclipse.core.filebuffers,
+ org.eclipse.ltk.core.refactoring
 

@@ -42,6 +42,14 @@
 	   <resolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixComment"
              problemId="org.eclipse.cdt.codan.internal.checkers.CaseBreakProblem">
-       </resolution>       
+       </resolution>
+    <resolution
+          class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCreateClass"
+          problemId="org.eclipse.cdt.codan.internal.checkers.TypeResolutionProblem">
+    </resolution>
+    <resolution
+          class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCreateMethod"
+          problemId="org.eclipse.cdt.codan.internal.checkers.MethodResolutionProblem">
+    </resolution>       
     </extension>
 </plugin>

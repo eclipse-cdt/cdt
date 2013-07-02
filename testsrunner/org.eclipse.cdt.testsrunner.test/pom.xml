@@ -32,6 +32,7 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
+					<argLine>${base.ui.test.vmargs}</argLine>
 					<includes>
 						<include>**/TestsRunnerSuite.*</include>
 					</includes>

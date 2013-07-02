@@ -24,7 +24,7 @@
 				<configuration>
 					<!-- Need UI harness for quick fix tests -->
 					<useUIHarness>true</useUIHarness>
-					<argLine>-ea -Xms256m -Xmx512m -XX:MaxPermSize=256M</argLine>
+					<argLine>${base.ui.test.vmargs} -ea -Xms256m -Xmx512m -XX:MaxPermSize=256M</argLine>
 					<includes>
 						<include>**/AutomatedIntegrationSuite.*</include>
 					</includes>

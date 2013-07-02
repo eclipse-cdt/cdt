@@ -23,7 +23,7 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-					<argLine>-Xms256m -Xmx512m -XX:MaxPermSize=256M</argLine>
+					<argLine>${base.ui.test.vmargs} -Xms256m -Xmx512m -XX:MaxPermSize=256M</argLine>
 					<includes>
 						<include>**/AllManagedBuildUITests.*</include>
 					</includes>

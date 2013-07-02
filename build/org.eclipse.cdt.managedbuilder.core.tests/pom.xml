@@ -33,7 +33,7 @@
 				<configuration>
 					<!-- Yes, the  managed build core tests use the UI harness. -->
 					<useUIHarness>true</useUIHarness>
-					<argLine>-Xms256m -Xmx512m -XX:MaxPermSize=256M</argLine>
+					<argLine>${base.ui.test.vmargs} -Xms256m -Xmx512m -XX:MaxPermSize=256M</argLine>
 					<includes>
 						<include>**/AllManagedBuildTests.*</include>
 					</includes>

@@ -590,6 +590,8 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	}
 
 	//	struct S {
+	//		int i;
+	//
 	//	    S(S&) = default;
 	//	    S(const S&) = default;
 	//	    S(volatile S&) = default;
@@ -600,6 +602,18 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//	    S(const volatile S&&) = default;
 	//	};
 	public void testBug395018_defaultedCopyOrMoveConstructor() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	//	template <typename T>
+	//	struct S {
+	//		int i;
+	//
+	//	    S(const S&) = default;
+	//	    S(S&&) = default;
+	//	};
+	public void testBug408303_defaultCopyOrMoveConstructorInTemplate() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}

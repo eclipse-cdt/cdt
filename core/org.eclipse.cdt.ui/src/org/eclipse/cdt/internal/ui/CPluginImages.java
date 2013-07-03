@@ -138,7 +138,8 @@ public class CPluginImages {
 	// build console
 	public static final String IMG_VIEW_BUILD = NAME_PREFIX + "buildconsole.gif"; //$NON-NLS-1$
 	public static final String IMG_SAVE_CONSOLE = NAME_PREFIX + "save_console.gif";   //$NON-NLS-1$
-
+	public static final String IMG_RUN_BUILD = NAME_PREFIX + "run_exc.gif";   //$NON-NLS-1$
+	
 	// unknown type
 	public static final String IMG_OBJS_UNKNOWN = NAME_PREFIX + "unknown_obj.gif"; //$NON-NLS-1$
 	

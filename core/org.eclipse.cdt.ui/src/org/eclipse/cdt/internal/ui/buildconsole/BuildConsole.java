@@ -37,7 +37,12 @@ public class BuildConsole extends AbstractConsole {
 	 * error navigation (value <code>"errorGroup"</code>).
 	 */
 	public static final String ERROR_GROUP = "errorGroup"; //$NON-NLS-1$
-
+	
+	/** Toolbar group identifier for the console view toolbar, for actions 
+	 * pertaining to build (value <code>"buildGroup"</code>).
+	 */
+	public static final String BUILD_GROUP = "buildGroup"; //$NON-NLS-1$
+	
 	/**
 	 * Property constant indicating the color of a stream has changed.
 	 */

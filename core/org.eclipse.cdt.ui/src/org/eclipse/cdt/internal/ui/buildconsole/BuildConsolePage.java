@@ -125,6 +125,10 @@ public class BuildConsolePage extends Page
 	private Map<String, IAction> fGlobalActions = new HashMap<String, IAction>(10);
 	private List<String> fSelectionActions = new ArrayList<String>(3);
 	private CopyBuildLogAction fSaveLogAction;
+	
+	RunBuildAction fRunBuildAction;
+	StopBuildAction fStopBuildAction;
+	BuildArgsContributionItem fBuildArgsCI;
 
 	// menus
 	private Menu fMenu;
@@ -150,6 +154,8 @@ public class BuildConsolePage extends Page
 	protected void setProject(IProject project) {
 		if (fProject != project && project.isAccessible()) {
 			fProject = project;
+			fRunBuildAction.setProject(project);
+			fBuildArgsCI.updateBuildArgs();
 		}
 	}
 
@@ -311,6 +317,9 @@ public class BuildConsolePage extends Page
 		fPreviousErrorAction = new PreviousErrorAction(this);
 		fShowErrorAction = new ShowErrorAction(this);
 		fSaveLogAction = new CopyBuildLogAction(this);
+		fRunBuildAction = new RunBuildAction(this);
+		fStopBuildAction = new StopBuildAction(this);
+		fBuildArgsCI = new BuildArgsContributionItem(this);
 
 		getViewer().setAutoScroll(!fIsLocked);
 		// In order for the clipboard actions to accessible via their shortcuts
@@ -361,10 +370,16 @@ public class BuildConsolePage extends Page
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
-		mgr.insertBefore(IConsoleConstants.OUTPUT_GROUP, new GroupMarker(BuildConsole.ERROR_GROUP));
+		mgr.insertBefore(IConsoleConstants.OUTPUT_GROUP, new Separator(BuildConsole.BUILD_GROUP));
+	    mgr.appendToGroup(BuildConsole.BUILD_GROUP, fBuildArgsCI);
+	    mgr.appendToGroup(BuildConsole.BUILD_GROUP, fRunBuildAction);
+	    mgr.appendToGroup(BuildConsole.BUILD_GROUP, fStopBuildAction);
+	    
+	    mgr.insertBefore(IConsoleConstants.OUTPUT_GROUP, new Separator(BuildConsole.ERROR_GROUP));
 		mgr.appendToGroup(BuildConsole.ERROR_GROUP, fNextErrorAction);
 		mgr.appendToGroup(BuildConsole.ERROR_GROUP, fPreviousErrorAction);
 		mgr.appendToGroup(BuildConsole.ERROR_GROUP, fShowErrorAction);
+		
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fSaveLogAction);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fScrollLockAction);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fWrapAction);

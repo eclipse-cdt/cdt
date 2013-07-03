@@ -57,6 +57,7 @@ public interface ICPPTemplateArgument {
 	 * the evaluation object is returned.
 	 * For type values, <code>null</code> is returned.
 	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 5.5
 	 */
 	ICPPEvaluation getNonTypeEvaluation();
 

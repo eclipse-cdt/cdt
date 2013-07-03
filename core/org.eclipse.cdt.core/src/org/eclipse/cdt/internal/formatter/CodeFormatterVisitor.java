@@ -3771,7 +3771,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			return true;
 		} else if (!fInsideMacroArguments && locations[0] instanceof IASTMacroExpansionLocation) {
 			IASTMacroExpansionLocation location = (IASTMacroExpansionLocation) locations[0];
-			if (locations.length <= 2 && node instanceof IASTStatement) {
+			if (locations.length <= 2
+					&& (node instanceof IASTStatement || node instanceof IASTExpression)) {
 				IASTPreprocessorMacroExpansion macroExpansion = location.getExpansion();
 				IASTFileLocation macroLocation = macroExpansion.getFileLocation();
 				int macroOffset = macroLocation.getNodeOffset();

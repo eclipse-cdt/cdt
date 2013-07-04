@@ -523,7 +523,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 					// ignore the "include" keyword.
 					continue;
 				}
-				filenames[i - 1] = st.nextToken();
+				filenames[i - 1] = expandString(st.nextToken(), true);
 			}
 		} else {
 			filenames = new String[0];

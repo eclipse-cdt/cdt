@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
+import java.net.URI;
+import java.util.Arrays;
+
 import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.core.makefile.gnu.IInclude;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.text.WordPartDetector;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
@@ -50,12 +54,35 @@ public class OpenDeclarationAction extends TextEditorAction {
 			try {
 				ITextSelection textSelection = (ITextSelection) provider.getSelection();
 				int offset = textSelection.getOffset();
-				WordPartDetector wordPart = new WordPartDetector(doc, textSelection.getOffset());
+				WordPartDetector wordPart = new WordPartDetector(doc, offset);
 				String name = wordPart.toString();
 				if (WordPartDetector.inMacro(doc, offset)) {
 					directives = makefile.getMacroDefinitions(name);
 					if (directives.length == 0) {
 						directives = makefile.getBuiltinMacroDefinitions(name);
+					}
+				} else if (wordPart.isIncludeDirective()) {
+					String incFile = wordPart.getIncludedFile();
+					incFile = makefile.expandString(incFile, true);
+					for (IDirective dir : makefile.getDirectives()) {
+						if (dir instanceof IInclude) {
+							IInclude includeDirective = (IInclude) dir;
+							if (Arrays.asList(((IInclude) dir).getFilenames()).contains(incFile)) {
+								IDirective[] includedMakefiles = includeDirective.getDirectives();
+								for (IDirective includedMakefileDir : includedMakefiles) {
+									if (includedMakefileDir instanceof IMakefile) {
+										IMakefile includedMakefile = (IMakefile) includedMakefileDir;
+										URI uri = includedMakefile.getFileURI();
+										// endsWith() is potentially inaccurate but IInclude does not provide better way
+										if (uri != null && uri.toString().endsWith(incFile)) {
+											directives = new IDirective[1];
+											directives[0] = includedMakefileDir;
+											break;
+										}
+									}
+								}
+							}
+						}
 					}
 				} else {
 					directives = makefile.getTargetRules(name);

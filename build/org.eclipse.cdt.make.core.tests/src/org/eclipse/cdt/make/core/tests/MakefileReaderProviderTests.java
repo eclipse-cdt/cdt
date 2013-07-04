@@ -168,8 +168,8 @@ public class MakefileReaderProviderTests extends TestCase {
 
 		IRule[] rules = makefile.getRules();
 		assertEquals(2, rules.length);
-		assertEquals("main", rules[0].getTarget().toString());
-		assertEquals("foo.o", rules[1].getTarget().toString());
+		assertEquals("foo.o", rules[0].getTarget().toString());
+		assertEquals("main", rules[1].getTarget().toString());
 	}
 
 	/**

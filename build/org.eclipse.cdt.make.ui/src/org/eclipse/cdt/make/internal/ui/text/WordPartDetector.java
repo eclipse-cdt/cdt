@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.text;
 
+import org.eclipse.cdt.make.internal.core.makefile.gnu.GNUMakefileConstants;
 import org.eclipse.cdt.make.internal.core.makefile.gnu.GNUMakefileUtil;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
@@ -25,6 +26,7 @@ public class WordPartDetector {
 	private enum WORDPART_TYPE {
 		MACRO,
 		INCLUDE,
+		FUNCTION_CALL,
 		UNDETERMINED,
 	}
 
@@ -68,6 +70,36 @@ public class WordPartDetector {
 			MakeUIPlugin.log(e);
 		}
 
+		// Try to figure out if we are in a user defined function call $(call user-fun)
+		try {
+			for (int index = offset - 1; index > 0; index--) {
+				char c = document.getChar(index);
+				if (!Character.isJavaIdentifierPart(c) && c != '-' && c != ' ') {
+					boolean isFunction = (c == '(' || c == '{') && document.getChar(index-1) == '$';
+					if (isFunction) {
+						String builtinFun = document.get(index + 1,4);
+						if (builtinFun.equals(GNUMakefileConstants.FUNCTION_CALL)) { 
+							type = WORDPART_TYPE.FUNCTION_CALL;
+							int nameOffset = index + 2 + GNUMakefileConstants.FUNCTION_CALL.length();
+							int endIndex = offset;
+							for (endIndex = offset; endIndex < document.getLength(); endIndex++) {
+								// skip through function name
+								char c2 = document.getChar(endIndex);
+								if (!(Character.isJavaIdentifierPart(c2) || c2 == '-')) {
+									break;
+								}
+							}
+							wordPart = document.get(nameOffset,endIndex-nameOffset);
+							return;
+						}
+					}
+					break;
+				}
+			}
+		} catch (BadLocationException e) {
+			MakeUIPlugin.log(e);
+		}
+
 		// Try to figure out if the cursor is on an include directive.
 		try {
 			int lineNumber = document.getLineOfOffset(offset);
@@ -91,7 +123,6 @@ public class WordPartDetector {
 		} catch (BadLocationException e) {
 			MakeUIPlugin.log(e);
 		}
-
 	}
 
 	/**
@@ -101,6 +132,15 @@ public class WordPartDetector {
 	 */
 	public boolean isMacro() {
 		return type == WORDPART_TYPE.MACRO;
+	}
+
+	/**
+	 * Check if the cursor is in function call $(call user-fun).
+	 * 
+	 * @return {@code true} if the cursor is located in function call, {@code false} otherwise.
+	 */
+	public boolean isFunctionCall() {
+		return type == WORDPART_TYPE.FUNCTION_CALL;
 	}
 
 	/**

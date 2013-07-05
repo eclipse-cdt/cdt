@@ -58,9 +58,8 @@ public class OpenDeclarationAction extends TextEditorAction {
 				String name = wordPart.getName();
 				if (wordPart.isMacro()) {
 					directives = makefile.getMacroDefinitions(name);
-					if (directives.length == 0) {
-						directives = makefile.getBuiltinMacroDefinitions(name);
-					}
+				} else if (wordPart.isFunctionCall()) {
+					directives = makefile.getMacroDefinitions(wordPart.getName());
 				} else if (wordPart.isIncludeDirective()) {
 					String incFile = wordPart.getName();
 					incFile = makefile.expandString(incFile, true);

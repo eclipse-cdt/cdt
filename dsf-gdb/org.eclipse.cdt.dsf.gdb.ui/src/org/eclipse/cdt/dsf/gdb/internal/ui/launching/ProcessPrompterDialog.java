@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
 import java.util.Arrays;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -116,4 +117,14 @@ public class ProcessPrompterDialog extends TwoPaneElementSelector {
     	});
     	return list;
     }
+
+	/*
+	 * Allow a double-click to work without any selection in the bottom list.
+	 */
+	@Override
+	protected void handleDefaultSelected() {
+		if (validateCurrentSelection()) {
+			buttonPressed(IDialogConstants.OK_ID);
+		}
+	}
 }

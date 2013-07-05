@@ -56,10 +56,10 @@ public class MakefileTextHover implements ITextHover {
 					IWorkingCopyManager fManager = MakeUIPlugin.getDefault().getWorkingCopyManager();
 					IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
 					if (makefile != null) {
-						WordPartDetector wordPart = new WordPartDetector(textViewer, offset);
-						String name = wordPart.toString();
+						WordPartDetector wordPart = new WordPartDetector(textViewer.getDocument(), offset);
+						String name = wordPart.getName();
 						IMacroDefinition[] statements = null;
-						if (WordPartDetector.inMacro(textViewer, offset)) {
+						if (wordPart.isMacro()) {
 							statements = makefile.getMacroDefinitions(name);
 							if (statements == null || statements.length == 0) {
 								statements = makefile.getBuiltinMacroDefinitions(name);

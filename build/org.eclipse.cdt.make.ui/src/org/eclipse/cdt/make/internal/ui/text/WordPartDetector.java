@@ -10,30 +10,27 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.text;
 
+import org.eclipse.cdt.make.internal.core.makefile.gnu.GNUMakefileUtil;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextViewer;
 
 public class WordPartDetector {
-	IDocument document;
-	int offset;
-	String wordPart = ""; //$NON-NLS-1$
+	private IDocument document;
+	private int offset;
+	private String wordPart = ""; //$NON-NLS-1$
+	private WORDPART_TYPE type = WORDPART_TYPE.UNDETERMINED;
 
-	/**
-	 * WordPartDetector.
-	 * @param viewer is a text viewer
-	 * @param documentOffset
-	 */
-	public WordPartDetector(ITextViewer viewer, int documentOffset) {
-		this(viewer.getDocument(), documentOffset);
+	private enum WORDPART_TYPE {
+		MACRO,
+		INCLUDE,
+		UNDETERMINED,
 	}
 
 	/**
-	 * 
-	 * @param doc
-	 * @param documentOffset
+	 * @param doc - text document.
+	 * @param documentOffset - cursor location in the document.
 	 */
 	public WordPartDetector(IDocument doc, int documentOffset) {
 		document = doc;
@@ -53,72 +50,66 @@ public class WordPartDetector {
 			offset++;
 			wordPart = doc.get(offset, endOffset - offset);
 		} catch (BadLocationException e) {
-			// do nothing
+			MakeUIPlugin.log(e);
 		}
-	}
-
-	public static boolean inMacro(ITextViewer viewer, int offset) {
-		return inMacro(viewer.getDocument(), offset);
-	}
-
-	public static boolean inMacro(IDocument document, int offset) {
-		boolean isMacro = false;
-		// Try to figure out if we are in a Macro.
+		// Try to figure out if the cursor is on a macro.
 		try {
 			for (int index = offset - 1; index >= 0; index--) {
 				char c;
 				c = document.getChar(index);
 				if (c == '$') {
-					isMacro = true;
-					break;
+					type = WORDPART_TYPE.MACRO;
+					return;
 				} else if (Character.isWhitespace(c) || c == ')' || c == '}') {
 					break;
 				}
 			}
 		} catch (BadLocationException e) {
+			MakeUIPlugin.log(e);
 		}
-		return isMacro;
-	}
 
-	/**
-	 * Quick check if the cursor sits on an include directive line.
-	 * 
-	 * @return {@code true} if the cursor is located on include line, {@code false} otherwise.
-	 */
-	public boolean isIncludeDirective() {
-		boolean isIncludeDirective = false;
+		// Try to figure out if the cursor is on an include directive.
 		try {
 			int lineNumber = document.getLineOfOffset(offset);
 			String line = document.get(document.getLineOffset(lineNumber), document.getLineLength(lineNumber));
-			String firstWord = findWord(line.trim(), 1);
-			isIncludeDirective = isIncludeKeyword(firstWord);
-		} catch (BadLocationException e) {
-			MakeUIPlugin.log(e);
-		}
-		return isIncludeDirective;
-	}
+			if (GNUMakefileUtil.isInclude(line)) {
+				type = WORDPART_TYPE.INCLUDE;
+				int lineOffset = document.getLineOffset(lineNumber);
 
-	/**
-	 * Gets include file name under the cursor.
-	 * 
-	 * @return include file name to which the cursor location corresponds.
-	 */
-	public String getIncludedFile() {
-		String inc = null;
-		try {
-			int lineNumber = document.getLineOfOffset(offset);
-			int lineOffset = document.getLineOffset(lineNumber);
-			String line = document.get(lineOffset, document.getLineLength(lineNumber));
-
-			int position = offset -lineOffset;
-			inc = findWord(line, position);
-			if (isIncludeKeyword(inc)) {
-				inc = findWord(line, line.indexOf(inc) + inc.length() + 1);
+				int position = offset - lineOffset;
+				String before = line.substring(0, position);
+				if (!(before + '.').trim().contains(" ")) { //$NON-NLS-1$
+					// the cursor is on the first word which is "include" keyword
+					// so find the second word which is the first include file
+					String sub = line.substring(line.indexOf(' ', position)).trim();
+					wordPart = sub.substring(0, sub.indexOf(' ')).trim();
+				} else {
+					wordPart = findWord(line, position);
+				}
+				return;
 			}
 		} catch (BadLocationException e) {
 			MakeUIPlugin.log(e);
 		}
-		return inc;
+
+	}
+
+	/**
+	 * Check if the cursor is in macro.
+	 * 
+	 * @return {@code true} if the cursor is located in macro, {@code false} otherwise.
+	 */
+	public boolean isMacro() {
+		return type == WORDPART_TYPE.MACRO;
+	}
+
+	/**
+	 * Check if the cursor sits on an include directive line.
+	 * 
+	 * @return {@code true} if the cursor is located on include line, {@code false} otherwise.
+	 */
+	public boolean isIncludeDirective() {
+		return type == WORDPART_TYPE.INCLUDE;
 	}
 
 	/**
@@ -148,25 +139,20 @@ public class WordPartDetector {
 		return word;
 	}
 
-	/**
-	 * Check if the string is include keyword.
-	 */
-	private static boolean isIncludeKeyword(String inc) {
-		@SuppressWarnings("nls")
-		boolean isKeyword = "include".equals(inc) || "-include".equals(inc) || "sinclude".equals(inc);
-		return isKeyword;
-	}
-
 	@Override
 	public String toString() {
 		return wordPart;
 	}
 
-	public int getOffset() {
+	public String getName() {
+		return wordPart;
+	}
+
+	public int getOffset(){
 		return offset;
 	}
 
-	boolean isMakefileLetter(char c) {
+	private boolean isMakefileLetter(char c) {
 		return Character.isLetterOrDigit(c) || c == '_' || c == '.';
 	}
 }

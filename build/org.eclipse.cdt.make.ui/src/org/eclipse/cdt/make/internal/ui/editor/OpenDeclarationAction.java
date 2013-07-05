@@ -55,14 +55,14 @@ public class OpenDeclarationAction extends TextEditorAction {
 				ITextSelection textSelection = (ITextSelection) provider.getSelection();
 				int offset = textSelection.getOffset();
 				WordPartDetector wordPart = new WordPartDetector(doc, offset);
-				String name = wordPart.toString();
-				if (WordPartDetector.inMacro(doc, offset)) {
+				String name = wordPart.getName();
+				if (wordPart.isMacro()) {
 					directives = makefile.getMacroDefinitions(name);
 					if (directives.length == 0) {
 						directives = makefile.getBuiltinMacroDefinitions(name);
 					}
 				} else if (wordPart.isIncludeDirective()) {
-					String incFile = wordPart.getIncludedFile();
+					String incFile = wordPart.getName();
 					incFile = makefile.expandString(incFile, true);
 					for (IDirective dir : makefile.getDirectives()) {
 						if (dir instanceof IInclude) {

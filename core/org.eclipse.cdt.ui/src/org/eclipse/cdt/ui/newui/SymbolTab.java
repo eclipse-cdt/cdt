@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation
+ *     Marc-Andre Laperle (Ericsson) - Adjust the columns width
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -16,6 +17,8 @@ import java.util.Collections;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -30,25 +33,25 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class SymbolTab extends AbstractLangsListTab {
-    @Override
+	private TableColumn symbolColumn;
+	private TableColumn valueColumn;
+	private ControlAdapter listener;
+
+	@Override
 	public void additionalTableSet() {
-    	TableColumn tc = new TableColumn(table, SWT.LEFT);
-    	tc.setText(Messages.SymbolTab_0);
-    	tc.setWidth(80);
-    	tc.setToolTipText(Messages.SymbolTab_0);
-    	tc = new TableColumn(table, SWT.LEFT);
-    	tc.setText(Messages.SymbolTab_1);
-    	tc.setWidth(130);
-    	tc.setToolTipText(Messages.SymbolTab_1);
-    	table.getAccessible().addAccessibleListener(
-				new AccessibleAdapter() {
-                    @Override
-					public void getName(AccessibleEvent e) {
-                            e.result = Messages.SymbolTab_0;
-                    }
-                }
-		  );
-    }
+		symbolColumn = new TableColumn(table, SWT.LEFT);
+		symbolColumn.setText(Messages.SymbolTab_0);
+		symbolColumn.setToolTipText(Messages.SymbolTab_0);
+		valueColumn = new TableColumn(table, SWT.LEFT);
+		valueColumn.setText(Messages.SymbolTab_1);
+		valueColumn.setToolTipText(Messages.SymbolTab_1);
+		table.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				e.result = Messages.SymbolTab_0;
+			}
+		});
+	}
 
 	@Override
 	public ICLanguageSettingEntry doAdd() {
@@ -99,11 +102,40 @@ public class SymbolTab extends AbstractLangsListTab {
 		updateButtons();
 	}
 
+	private void adjustColumnsWidth() {
+		// Do the adjustment only once
+		table.removeControlListener(listener);
+
+		symbolColumn.pack();
+		valueColumn.pack();
+
+		int symbolColumnWidth = symbolColumn.getWidth();
+		int valueColumnWidth = valueColumn.getWidth();
+		int tableWidth = table.getClientArea().width;
+		int excessWidth = tableWidth - symbolColumnWidth - valueColumnWidth;
+		if (excessWidth > 0) {
+			// Distribute excess width evenly
+			symbolColumn.setWidth(symbolColumnWidth + excessWidth / 2);
+			valueColumn.setWidth(valueColumnWidth + excessWidth / 2);
+		} else if (excessWidth < 0) {
+			// Content too large, split in two
+			symbolColumn.setWidth(tableWidth / 2);
+			valueColumn.setWidth(tableWidth / 2);
+		}
+	}
 
 	@Override
 	public void createControls(final Composite parent) {
 		super.createControls(parent);
 		showBIButton.setSelection(true);
 		ImportExportWizardButtons.addWizardLaunchButtons(usercomp, page.getElement());
+
+		listener = new ControlAdapter() {
+			@Override
+			public void controlResized(ControlEvent e) {
+				adjustColumnsWidth();
+			}
+		};
+		table.addControlListener(listener);
 	}
 }

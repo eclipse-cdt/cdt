@@ -111,7 +111,8 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 		}
 		rules.add(keyWordRule);
 
-		rules.add(new FunctionReferenceRule(functionToken));
+		rules.add(new FunctionReferenceRule(functionToken, "$(", ")")); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new FunctionReferenceRule(functionToken, "${", "}")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		rules.add(new AutomaticVariableReferenceRule(macroRefToken));
 		rules.add(new MacroReferenceRule(macroRefToken, "$(", ")")); //$NON-NLS-1$ //$NON-NLS-2$

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.text.makefile;
 
+import org.eclipse.cdt.make.internal.core.makefile.gnu.GNUMakefileConstants;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWordDetector;
@@ -19,6 +20,8 @@ import org.eclipse.jface.text.rules.WordRule;
 public class FunctionReferenceRule extends WordRule {
 	/** Buffer used for pattern detection. */
 	private StringBuffer fBuffer= new StringBuffer();
+	private String startSeq;
+	private String endSeq;
 
 	@SuppressWarnings("nls")
 	private final static String[] functions = {
@@ -33,36 +36,51 @@ public class FunctionReferenceRule extends WordRule {
 		"shell", "error", "warning", "info",
 	};
 
-	static class TagDetector implements IWordDetector {
+	private static class TagDetector implements IWordDetector {
+		private char openBracket;
+		private char closedBracket;
 		private boolean isClosedBracket = false;
 		private int bracketNesting = 0;
+
+		public TagDetector(String endSeq) {
+			if (endSeq.length() > 0 && endSeq.charAt(0) == '}') {
+				openBracket = '{';
+				closedBracket = '}';
+			} else {
+				openBracket = '(';
+				closedBracket = ')';
+			}
+		}
 		@Override
 		public boolean isWordStart(char c) {
-			isClosedBracket = c == ')';
+			isClosedBracket = c == closedBracket;
 			return isClosedBracket || c == '$';
 		}
 		@Override
 		public boolean isWordPart(char c) {
-			return !isClosedBracket && (c == '$' || c == '(' || Character.isJavaIdentifierPart(c) || c == '-');
+			return !isClosedBracket && (c == '$' || c == openBracket || Character.isJavaIdentifierPart(c) || c == '-');
 		}
 	}
 
-	public FunctionReferenceRule(IToken token) {
-		super(new TagDetector());
+	public FunctionReferenceRule(IToken token, String startSeq, String endSeq) {
+		super(new TagDetector(endSeq));
+		this.startSeq = startSeq;
+		this.endSeq = endSeq;
 		for (String f : functions) {
-			addWord("$(" + f, token); //$NON-NLS-1$
-			addWord("$$(" + f, token); //$NON-NLS-1$
+			addWord(startSeq + f, token);
+			addWord('$' + startSeq + f, token);
 		}
-		addWord(")", token); //$NON-NLS-1$
+		addWord(endSeq, token);
 	}
 
 	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
+		TagDetector tagDetector = (TagDetector)fDetector;
 		int c= scanner.read();
-		if (c == ')') {
-			if (((TagDetector)fDetector).bracketNesting > 0) {
-				((TagDetector)fDetector).bracketNesting--;
-				return (IToken)fWords.get(")"); //$NON-NLS-1$
+		if (c == tagDetector.closedBracket) {
+			if (tagDetector.bracketNesting > 0) {
+				tagDetector.bracketNesting--;
+				return (IToken)fWords.get(endSeq);
 			}
 			return fDefaultToken;
 		}
@@ -82,11 +100,11 @@ public class FunctionReferenceRule extends WordRule {
 				IToken token= (IToken)fWords.get(buffer);
 
 				if (token != null) {
-					if (buffer.equals("$(call") || buffer.equals("$$(call")) {
+					if (buffer.equals(startSeq + GNUMakefileConstants.FUNCTION_CALL) || buffer.equals('$' + startSeq + GNUMakefileConstants.FUNCTION_CALL)) {
 						if ((char)scanner.read() == ' ') {
 							do {
-								c= scanner.read();
-							} while (c == '(' || c == ')' || fDetector.isWordPart((char) c));
+								c = scanner.read();
+							} while (c == tagDetector.openBracket || c == tagDetector.closedBracket || fDetector.isWordPart((char) c));
 						}
 						scanner.unread();
 					}

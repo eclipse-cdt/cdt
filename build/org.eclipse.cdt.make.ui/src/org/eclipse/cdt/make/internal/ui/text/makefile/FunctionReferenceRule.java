@@ -60,6 +60,9 @@ public class FunctionReferenceRule extends WordRule {
 		public boolean isWordPart(char c) {
 			return !isClosedBracket && (c == '$' || c == openBracket || Character.isJavaIdentifierPart(c) || c == '-');
 		}
+		public boolean isBracket(char c) {
+			return "(){}".contains(Character.toString(c)); //$NON-NLS-1$
+		}
 	}
 
 	public FunctionReferenceRule(IToken token, String startSeq, String endSeq) {
@@ -76,7 +79,7 @@ public class FunctionReferenceRule extends WordRule {
 	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		TagDetector tagDetector = (TagDetector)fDetector;
-		int c= scanner.read();
+		int c = scanner.read();
 		if (c == tagDetector.closedBracket) {
 			if (tagDetector.bracketNesting > 0) {
 				tagDetector.bracketNesting--;
@@ -91,7 +94,7 @@ public class FunctionReferenceRule extends WordRule {
 				fBuffer.setLength(0);
 				do {
 					fBuffer.append((char) c);
-					c= scanner.read();
+					c = scanner.read();
 				} while (c != ICharacterScanner.EOF && fDetector.isWordPart((char) c));
 				scanner.unread();
 
@@ -104,7 +107,7 @@ public class FunctionReferenceRule extends WordRule {
 						if ((char)scanner.read() == ' ') {
 							do {
 								c = scanner.read();
-							} while (c == tagDetector.openBracket || c == tagDetector.closedBracket || fDetector.isWordPart((char) c));
+							} while (((TagDetector) fDetector).isBracket((char)c) || fDetector.isWordPart((char) c));
 						}
 						scanner.unread();
 					}

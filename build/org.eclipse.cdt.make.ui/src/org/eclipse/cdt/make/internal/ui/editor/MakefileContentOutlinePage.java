@@ -30,6 +30,7 @@ import org.eclipse.cdt.make.internal.core.makefile.NullMakefile;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -160,15 +161,15 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 		@Override
 		public Image getImage(Object element) {
 			if (element instanceof ITargetRule) {
-				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_TARGET_RULE);
+				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_TARGET);
 			} else if (element instanceof IInferenceRule) {
 				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_INFERENCE_RULE);
 			} else if (element instanceof IMacroDefinition) {
-				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MACRO);
+				return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_VARIABLE);
 			} else if (element instanceof ICommand) {
 				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_COMMAND);
 			} else if (element instanceof IInclude) {
-				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_INCLUDE);
+				return MakeUIImages.getImage(MakeUIImages.IMG_ETOOL_MAKEFILE);
 			} else if (element instanceof IBadDirective) {
 				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK);
 			} else if (element instanceof IParent) {

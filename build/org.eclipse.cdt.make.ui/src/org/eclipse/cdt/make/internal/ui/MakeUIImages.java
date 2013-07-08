@@ -35,7 +35,7 @@ import org.eclipse.swt.graphics.Image;
  * and {@link org.eclipse.ui.ide.IDE.SharedImages}.
  * </p>
  * <p>
- * Note that org.eclipse.cdt.ui.tests.misc.MakeUISharedImagesTest will verify
+ * Note that org.eclipse.cdt.ui.tests.misc.MakeUIImagesTest will verify
  * existence of the images defined here.
  * </p>
  *
@@ -45,14 +45,13 @@ import org.eclipse.swt.graphics.Image;
 public class MakeUIImages {
 	// images
 	public static final String IMG_OBJS_TARGET = "icons/obj16/target_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_TARGET_RULE = "icons/obj16/trule_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_MACRO = "icons/obj16/macro_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INFERENCE_RULE = "icons/obj16/irule_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_RELATION = "icons/obj16/relation_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_COMMAND = "icons/obj16/command_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INCLUDE = "icons/obj16/include_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ENVIRONMENT = "icons/obj16/environment_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ENV_VAR = "icons/obj16/envvar_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_AUTO_VARIABLE = "icons/obj16/var_auto.png"; //$NON-NLS-1$
 
 	public static final String IMG_ETOOL_MAKEFILE = "icons/etool16/makefile.gif"; //$NON-NLS-1$
 	public static final String IMG_ETOOL_TARGET_BUILD = "icons/etool16/target_build.png"; //$NON-NLS-1$

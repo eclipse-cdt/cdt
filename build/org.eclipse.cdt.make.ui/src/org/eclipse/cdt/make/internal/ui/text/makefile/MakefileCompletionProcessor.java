@@ -18,11 +18,13 @@ import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.core.makefile.IRule;
+import org.eclipse.cdt.make.internal.core.makefile.gnu.AutomaticVariable;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.text.CompletionProposalComparator;
 import org.eclipse.cdt.make.internal.ui.text.WordPartDetector;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
@@ -87,8 +89,9 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 
 	}
 	protected IContextInformationValidator fValidator = new Validator();
-	protected Image imageMacro = MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MACRO);
-	protected Image imageTarget = MakeUIImages.getImage(MakeUIImages.IMG_OBJS_TARGET_RULE);
+	protected Image imageMacro = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_VARIABLE);
+	protected Image imageAutomaticVariable = MakeUIImages.getImage(MakeUIImages.IMG_OBJS_AUTO_VARIABLE);
+	protected Image imageTarget = MakeUIImages.getImage(MakeUIImages.IMG_OBJS_TARGET);
 
 	protected CompletionProposalComparator comparator = new CompletionProposalComparator();
 	protected IEditorPart fEditor;
@@ -125,6 +128,10 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 			if (statement instanceof IMacroDefinition) {
 				name = ((IMacroDefinition) statement).getName();
 				image = imageMacro;
+				infoString = ((IMacroDefinition)statement).getValue().toString();
+			} else if (statement instanceof AutomaticVariable) {
+				name = ((IMacroDefinition) statement).getName();
+				image = imageAutomaticVariable;
 				infoString = ((IMacroDefinition)statement).getValue().toString();
 			} else if (statement instanceof IRule) {
 				name = ((IRule) statement).getTarget().toString();

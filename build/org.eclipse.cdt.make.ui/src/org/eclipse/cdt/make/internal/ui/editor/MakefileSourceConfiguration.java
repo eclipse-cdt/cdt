@@ -92,10 +92,9 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 			assistant.enableAutoActivation(true);
 			assistant.setAutoActivationDelay(500);
 
-			assistant.setProposalPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
-			assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
-			//Set to Carolina blue
-			assistant.setContextInformationPopupBackground(fColorManager.getColor(new RGB(0, 191, 255)));
+			assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
+			assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
+			assistant.setContextInformationPopupBackground(fColorManager.getColor(new RGB(255, 255, 255)));
 
 			return assistant;
 		}

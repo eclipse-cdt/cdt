@@ -502,7 +502,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	// C::C() {
 	//    initObject();
 	// }
-	public void testBug368419_methodDeclarationInOtherFile() throws Exception {
+	public void testMethodDeclarationInOtherFile_368419() throws Exception {
 		CharSequence[] code = getContents(2);
 		loadcode(code[0].toString());
 		loadcode(code[1].toString());
@@ -516,7 +516,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//    *this = toBeCopied;
 	//  };
 	//};
-	public void testBug368420_assignThis() throws Exception {
+	public void testAssignThis_368420() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -527,7 +527,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//    *(&(*this)) = toBeCopied;
 	//  };
 	//};
-	public void testBug368420_assignThisUnaryExpressions() throws Exception {
+	public void testAssignThisUnaryExpressions_368420() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -538,7 +538,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//    this = toBeCopied;
 	//  };
 	//};
-	public void testBug368420_assignThisNonLValue() throws Exception {
+	public void testAssignThisNonLValue_368420() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(3);
 	}
@@ -551,7 +551,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//    temp = *(&(*this)) = toBeCopied;
 	//  };
 	//};
-	public void testBug368420_assignThisMultiBinaryExpressions() throws Exception {
+	public void testAssignThisMultiBinaryExpressions_368420() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -572,7 +572,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//    const A<valueT>& obj;
 	//    B(const A<valueT>& o) : obj(o) {}
 	//};
-	public void testBug368611_templatePartialSpecialization() throws Exception {
+	public void testTemplatePartialSpecialization_368611() throws Exception {
 		CharSequence[] code = getContents(2);
 		loadcode(code[0].toString());
 		loadcode(code[1].toString());
@@ -584,13 +584,13 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//	    int i;
 	//	    S() = default;
 	//	};
-	public void testBug365498_defaultedConstructor() throws Exception {
+	public void testDefaultConstructor_365498() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
 	}
 
 	//	struct S {
-	//		int i;
+	//	    int i;
 	//
 	//	    S(S&) = default;
 	//	    S(const S&) = default;
@@ -601,19 +601,19 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//	    S(volatile S&&) = default;
 	//	    S(const volatile S&&) = default;
 	//	};
-	public void testBug395018_defaultedCopyOrMoveConstructor() throws Exception {
+	public void testDefaultCopyOrMoveConstructor_395018() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
 
 	//	template <typename T>
 	//	struct S {
-	//		int i;
+	//	    int i;
 	//
 	//	    S(const S&) = default;
 	//	    S(S&&) = default;
 	//	};
-	public void testBug408303_defaultCopyOrMoveConstructorInTemplate() throws Exception {
+	public void testDefaultCopyOrMoveConstructorInTemplate_408303() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -623,7 +623,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//	    A() : A(42) {}
 	//	    int waldo;
 	//	};
-	public void testBug402607_delegatingConstructor() throws Exception {
+	public void testDelegatingConstructor_402607() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -634,7 +634,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//	    A() : B(42) {}
 	//	    int waldo;
 	//	};
-	public void testBug402607_delegatingConstructorTypedef() throws Exception {
+	public void testDelegatingConstructorTypedef_402607() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}

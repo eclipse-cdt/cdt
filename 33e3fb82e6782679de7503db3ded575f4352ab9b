@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "273ac7f6_b9cfc1d4",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3775,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-08T00:25:00Z",
+      "side": 1,
+      "message": "It\u0027s preferable to put \u0026\u0026 at the end of the previous line for consistency with the code below.",
+      "revId": "33e3fb82e6782679de7503db3ded575f4352ab9b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

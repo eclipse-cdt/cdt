@@ -155,21 +155,7 @@ public class ProcStatParserTest {
 		assertEquals(57,l2);
 		int l3 = (int)load.getLoad("3").floatValue();
 		assertEquals(57,l3);
-	}
-	
-	/**
-	 * Reverse the order of the /proc/stat files to cause parsing problem
-	 * @throws Exception
-	 */
-	@Test
-	public void testProcStatParseWrongOrder() throws Exception {
-		ProcStatParser procStatParser = new ProcStatParser();
-		procStatParser.parseStatFile(stat_t2_file);
-		procStatParser.parseStatFile(stat_t0_file);
-		ProcStatCoreLoads load = procStatParser.getCpuLoad();
-		assertEquals(load, null);    	
-	}
-	
+	}	
 	
 	@Test
 	public void testProcStatParseOneSetOfCounters() throws Exception {

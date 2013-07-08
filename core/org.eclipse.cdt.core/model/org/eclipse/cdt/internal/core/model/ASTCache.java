@@ -39,13 +39,8 @@ public class ASTCache {
 	private static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.core/debug/ASTCache"));  //$NON-NLS-1$//$NON-NLS-2$
 	private static final String DEBUG_PREFIX= "[ASTCache] "; //$NON-NLS-1$
 
-	/** Full parse mode (no PDOM) */
-	public static int PARSE_MODE_FULL = ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT
-			| ITranslationUnit.AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS
-			| ITranslationUnit.AST_PARSE_INACTIVE_CODE;
-
 	/** Fast parse mode (use PDOM) */
-	public static int PARSE_MODE_FAST = ITranslationUnit.AST_SKIP_ALL_HEADERS
+	public static int PARSE_MODE = ITranslationUnit.AST_SKIP_ALL_HEADERS
 			| ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT
 			| ITranslationUnit.AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS
 			| ITranslationUnit.AST_PARSE_INACTIVE_CODE;
@@ -86,7 +81,7 @@ public class ASTCache {
 	 * Create a new AST cache.
 	 */
 	public ASTCache() {
-		fParseMode= PARSE_MODE_FAST;
+		fParseMode= PARSE_MODE;
 	}
 
 	/**

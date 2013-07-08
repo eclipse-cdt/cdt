@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "273ac7f6_946a78df",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 190
+      },
+      "writtenOn": "2013-07-08T23:25:00Z",
+      "side": 1,
+      "message": "In case the selected process has an absolute path, it is mapped to the local file system using the first of the shared library paths as a prefix.\nTODO have you checked what happens when selecting a process on the local host, with a completely empty list of sharedlib paths ? I think it should just take the path unmodified; at any rate there should not be any regression for the \"local\" case due to this change.",
+      "revId": "eb8408e26a47afd7dce1fd286532b9ee2635c8c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

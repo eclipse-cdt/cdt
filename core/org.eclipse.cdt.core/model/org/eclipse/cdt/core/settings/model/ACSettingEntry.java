@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ *     Intel Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
@@ -17,7 +17,7 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 	private final int fFlags;
 	private final String fName;
 
-	ACSettingEntry(String name, int flags){
+	ACSettingEntry(String name, int flags) {
 		fName = SafeStringInterner.safeIntern(name);
 		fFlags = flags;
 	}
@@ -32,7 +32,7 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 		return checkFlags(READONLY);
 	}
 
-	protected boolean checkFlags(int flags){
+	protected boolean checkFlags(int flags) {
 		return (fFlags & flags) == flags;
 	}
 
@@ -67,8 +67,9 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 		if (fName == null) {
 			if (other.fName != null)
 				return false;
-		} else if (!fName.equals(other.fName))
+		} else if (!fName.equals(other.fName)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -77,7 +78,7 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + fFlags;
-		result = prime * result + ((fName == null) ? 0 : fName.hashCode());
+		result = prime * result + (fName == null ? 0 : fName.hashCode());
 		return result;
 	}
 
@@ -91,50 +92,49 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 		return equalsByName(entry);
 	}
 
-	protected int getByNameMatchFlags(){
-		return (fFlags & (~ (BUILTIN | READONLY | RESOLVED)));
+	protected int getByNameMatchFlags() {
+		return fFlags & ~(BUILTIN | READONLY | RESOLVED);
 	}
 
 	@Override
 	public final boolean equalsByName(ICSettingEntry entry) {
-		if(entry == this)
+		if (entry == this)
 			return true;
 
-		if(!(entry instanceof ACSettingEntry))
+		if (!(entry instanceof ACSettingEntry))
 			return false;
 
 		ACSettingEntry e = (ACSettingEntry)entry;
 
-		if(getKind() != e.getKind())
+		if (getKind() != e.getKind())
 			return false;
 
-		if(getByNameMatchFlags()
+		if (getByNameMatchFlags()
 				!= e.getByNameMatchFlags())
 			return false;
 
-		if(!fName.equals(e.fName))
+		if (!fName.equals(e.fName))
 			return false;
 
 		return true;
 	}
 
-	public final int codeForNameKey(){
+	public final int codeForNameKey() {
 		return getKind() + getByNameMatchFlags() + fName.hashCode();
 	}
 
-	public int codeForContentsKey(){
+	public int codeForContentsKey() {
 		return codeForNameKey();
 	}
 
 	@Override
-	public final String toString(){
-		StringBuffer buf = new StringBuffer();
+	public final String toString() {
+		StringBuilder buf = new StringBuilder();
 		buf.append('[').append(LanguageSettingEntriesSerializer.kindToString(getKind())).append(']').append(' ');
 		buf.append(contentsToString());
-		buf.append(" ; flags: ").append(LanguageSettingEntriesSerializer.composeFlagsString(getFlags())); //$NON-NLS-1$
+		buf.append("; flags: ").append(LanguageSettingEntriesSerializer.composeFlagsString(getFlags())); //$NON-NLS-1$
 		return buf.toString();
 	}
 
 	protected abstract String contentsToString();
-
 }

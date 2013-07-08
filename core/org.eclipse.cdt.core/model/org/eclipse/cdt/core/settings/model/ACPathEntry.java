@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ *     Intel Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
@@ -62,7 +62,7 @@ public abstract class ACPathEntry extends ACSettingEntry implements ICPathEntry 
 	ACPathEntry(IPath path, int flags) {
 		super(path.toString(), flags /*| RESOLVED*/);
 //		fPath = path;
-//		if(isValueWorkspacePath())
+//		if (isValueWorkspacePath())
 //			fFullPath = path;
 //		else
 //			fLocation = path;
@@ -70,9 +70,9 @@ public abstract class ACPathEntry extends ACSettingEntry implements ICPathEntry 
 
 	@Override
 	public IPath getFullPath() {
-		if(isValueWorkspacePath())
+		if (isValueWorkspacePath())
 			return new Path(getValue());
-		if(isResolved()) {
+		if (isResolved()) {
 			IPath path = new Path(getValue());
 			return fullPathForLocation(path);
 		}
@@ -84,7 +84,7 @@ public abstract class ACPathEntry extends ACSettingEntry implements ICPathEntry 
 				(IResource[])ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location)
 				: (IResource[])ResourcesPlugin.getWorkspace().getRoot().findContainersForLocation(location);
 
-		if(rcs.length > 0)
+		if (rcs.length > 0)
 			return rcs[0].getFullPath();
 		return null;
 	}
@@ -96,12 +96,12 @@ public abstract class ACPathEntry extends ACSettingEntry implements ICPathEntry 
 
 	@Override
 	public IPath getLocation() {
-		if(!isValueWorkspacePath())
+		if (!isValueWorkspacePath())
 			return new Path(getValue());
-		if(isResolved()){
+		if (isResolved()){
 			IPath path = new Path(getValue());
 			IResource rc = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-			if(rc != null)
+			if (rc != null)
 				return rc.getLocation();
 		}
 		return null;

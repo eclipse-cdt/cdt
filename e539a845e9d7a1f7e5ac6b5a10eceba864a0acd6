@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "273ac7f6_ff280938",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1960,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-08T05:14:30Z",
+      "side": 1,
+      "message": "The name is little too generic. How about isProcessorProvidedMacro?",
+      "revId": "e539a845e9d7a1f7e5ac6b5a10eceba864a0acd6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "273ac7f6_df7ee51f",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1304,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-08T05:14:30Z",
+      "side": 1,
+      "message": "Trailing whitespace.",
+      "revId": "e539a845e9d7a1f7e5ac6b5a10eceba864a0acd6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

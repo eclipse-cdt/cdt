@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ *     Intel Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
@@ -56,8 +56,9 @@ public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry {
 		if (fValue == null) {
 			if (other.fValue != null)
 				return false;
-		} else if (!fValue.equals(other.fValue))
+		} else if (!fValue.equals(other.fValue)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -65,13 +66,13 @@ public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((fValue == null) ? 0 : fValue.hashCode());
+		result = prime * result + (fValue == null ? 0 : fValue.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equalsByContents(ICSettingEntry entry) {
-		if(!super.equalsByContents(entry))
+		if (!super.equalsByContents(entry))
 			return false;
 
 		return fValue.equals(((CMacroEntry)entry).fValue);
@@ -81,5 +82,4 @@ public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry {
 	protected String contentsToString() {
 		return new StringBuffer().append(getName()).append('=').append(fValue).toString();
 	}
-
 }

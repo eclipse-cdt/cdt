@@ -356,7 +356,7 @@ final class ScannerContext {
 		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
 			final char[] expansion = macro.getExpansion();
 			if (expansion != null)
-				fSignificantMacros.put(macroName, SignificantMacros.shortenValue(expansion));
+				addSignificantMacro(macroName, SignificantMacros.shortenValue(expansion));
 		}
 	}
 	
@@ -367,16 +367,16 @@ final class ScannerContext {
 	}
 
 	private void addSignificantMacroDefined(char[] macroName) {
-		char[] old= fSignificantMacros.put(macroName, SignificantMacros.DEFINED);
+		char[] old= addSignificantMacro(macroName, SignificantMacros.DEFINED);
 		if (old != null && old != SignificantMacros.DEFINED) {
 			// Put back more detailed condition
-			fSignificantMacros.put(macroName, old);
+			addSignificantMacro(macroName, old);
 		}
 	}
 	
 	public void significantMacroUndefined(char[] macroName) {
 		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
-			fSignificantMacros.put(macroName, SignificantMacros.UNDEFINED);
+			addSignificantMacro(macroName, SignificantMacros.UNDEFINED);
 		}
 	}
 	
@@ -396,7 +396,6 @@ final class ScannerContext {
 				
 				// Propagate significant macros to direct parent, if it is interested.
 				if (collector == fParent.fInternalModifications) {
-					final CharArrayObjectMap<char[]> significant = fParent.fSignificantMacros;
 					for (int i= 0; i < fSignificantMacros.size(); i++) {
 						final char[] name = fSignificantMacros.keyAt(i);
 						if (!collector.containsKey(name)) {
@@ -406,7 +405,7 @@ final class ScannerContext {
 									fParent.addSignificantMacroDefined(name);
 								}
 							} else {
-								significant.put(name, value);
+								fParent.addSignificantMacro(name, value);
 							}
 						}
 					}
@@ -425,7 +424,7 @@ final class ScannerContext {
 			@Override
 			public boolean visitValue(char[] macro, char[] value) {
 				if (!fInternalModifications.containsKey(macro)) {
-					fSignificantMacros.put(macro, value);
+					addSignificantMacro(macro, value);
 				}
 				return true;
 			}
@@ -433,7 +432,7 @@ final class ScannerContext {
 			@Override
 			public boolean visitUndefined(char[] macro) {
 				if (!fInternalModifications.containsKey(macro)) {
-					fSignificantMacros.put(macro, SignificantMacros.UNDEFINED);
+					addSignificantMacro(macro, SignificantMacros.UNDEFINED);
 				}
 				return true;
 			}
@@ -441,13 +440,19 @@ final class ScannerContext {
 			@Override
 			public boolean visitDefined(char[] macro) {
 				if (!fInternalModifications.containsKey(macro)) {
-					fSignificantMacros.put(macro, SignificantMacros.DEFINED);
+					addSignificantMacro(macro, SignificantMacros.DEFINED);
 				}
 				return true;
 			}
 		});
 	}
-
+	
+	private char[] addSignificantMacro(char[] macro, char[] value) {
+		if (CPreprocessor.isSpecialMacro(macro))
+			return null;
+		return fSignificantMacros.put(macro, value);
+	}
+	
 	public int getLoadedVersionCount() {
 		return fLoadedVersionCount;
 	}

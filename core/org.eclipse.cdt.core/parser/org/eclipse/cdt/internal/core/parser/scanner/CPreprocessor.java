@@ -1951,5 +1951,16 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			return fMacroExpander;
 		}
 		return null;
-	}	
+	}
+	
+	/**
+	 * Return whether 'name' is a special macro like __LINE__, __FILE__, __DATE__
+	 * or __TIME__. 
+	 */
+	public static boolean isSpecialMacro(char[] name) {
+		return CharArrayUtils.equals(__LINE__.getNameCharArray(), name)
+			|| CharArrayUtils.equals(__FILE__.getNameCharArray(), name)
+			|| CharArrayUtils.equals(__DATE__.getNameCharArray(), name)
+			|| CharArrayUtils.equals(__TIME__.getNameCharArray(), name);
+	}
 }

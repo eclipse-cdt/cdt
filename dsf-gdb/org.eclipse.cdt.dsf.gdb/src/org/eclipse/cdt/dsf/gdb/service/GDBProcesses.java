@@ -390,15 +390,9 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	
 	@Override
     public void terminate(IThreadDMContext thread, final RequestMonitor rm) {
-		// If we will terminate GDB as soon as the inferior terminates, then let's
-		// just terminate GDB itself.  This is more robust since we actually monitor
-		// the success of terminating GDB.
-		// Also, for a core session, there is no concept of killing the inferior,
+		// For a core session, there is no concept of killing the inferior,
 		// so lets kill GDB
-   		if (fBackend.getSessionType() == SessionType.CORE ||
-   			Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
-				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
-				true, null)) {
+   		if (fBackend.getSessionType() == SessionType.CORE) {
 			fGdb.terminate(rm);
 		} else if (thread instanceof IMIProcessDMContext) {
 			getDebuggingContext(

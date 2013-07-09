@@ -152,8 +152,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         if (LT(1) != IToken.tLBRACE) {
             IASTExpression assignmentExpression= expression(ExprKind.eAssignment);
             if (inAggregate && skipTrivialExpressionsInAggregateInitializers) {
-            	if (!ASTQueries.canContainName(assignmentExpression))
-            		return null;
+                if (!ASTQueries.canContainName(assignmentExpression)) {
+                    translationUnit.setSkippedNodes(true);
+                    return null;
+                }
             }
             return assignmentExpression;
         }

@@ -81,6 +81,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	/** The semaphore controlling exclusive access to the AST. */
 	private final Semaphore fSemaphore= new Semaphore(1);
 	private boolean fBasedOnIncompleteIndex;
+	private boolean fSkippedNodes = false;
 
 	@Override
 	public final IASTTranslationUnit getTranslationUnit() {
@@ -416,6 +417,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		copy.setLocationResolver(fLocationResolver);
 		copy.fForContentAssist = fForContentAssist;
 		copy.fOriginatingTranslationUnit = fOriginatingTranslationUnit;
+		copy.fSkippedNodes = fSkippedNodes;
 		
 		for (IASTDeclaration declaration : getDeclarations()) {
 			copy.addDeclaration(declaration == null ? null : declaration.copy(style));
@@ -532,5 +534,18 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 			return 0;
 		IASTFileLocation nodeLocation = node.getFileLocation();
 		return nodeLocation != null ? nodeLocation.getEndingLineNumber() : 0;
+	}
+
+	@Override
+	public boolean skippedNodes()
+	{
+		return fSkippedNodes;
+	}
+
+	@Override
+	public void setSkippedNodes(boolean incomplete)
+	{
+		assertNotFrozen();
+		fSkippedNodes = incomplete;
 	}
 }

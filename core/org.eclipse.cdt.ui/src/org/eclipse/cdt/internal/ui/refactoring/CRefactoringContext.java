@@ -41,7 +41,6 @@ import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 public class CRefactoringContext extends RefactoringContext {
 	private static final int PARSE_MODE = ITranslationUnit.AST_SKIP_ALL_HEADERS
 			| ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT
-			| ITranslationUnit.AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS
 			| ITranslationUnit.AST_PARSE_INACTIVE_CODE;
 
 	private final Map<ITranslationUnit, IASTTranslationUnit> fASTCache;
@@ -85,8 +84,11 @@ public class CRefactoringContext extends RefactoringContext {
     		} else {
 	        	ast = ASTProvider.getASTProvider().acquireSharedAST(tu, fIndex,
 	        			ASTProvider.WAIT_ACTIVE_ONLY, pm);
-	        	if (ast == null) {
-					if (pm != null && pm.isCanceled())
+	        	if (ast == null || ast.skippedNodes()) {
+					if (ast != null) {
+						ASTProvider.getASTProvider().releaseSharedAST(ast);
+					}
+	        		if (pm != null && pm.isCanceled())
 						throw new OperationCanceledException();
 					ast= tu.getAST(fIndex, PARSE_MODE);
 		        	fASTCache.put(tu, ast);

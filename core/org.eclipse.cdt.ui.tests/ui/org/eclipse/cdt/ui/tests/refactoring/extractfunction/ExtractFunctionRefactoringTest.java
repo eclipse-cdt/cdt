@@ -4481,4 +4481,34 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	public void testHistoryWithDuplicatesWithDifferentNames() throws Exception {
 		assertRefactoringSuccess();
 	}
+	
+	//main.cpp
+	//int main() {
+	//	int array[] = {1};
+	//	int i = array[0];
+	//	return i;
+	//}
+	//====================
+	//int extracted() {
+	//	int array[] = { 1 };
+	//	int i = array[0];
+	//	return i;
+	//}
+	//
+	//int main() {
+	//	int i = extracted();
+	//	return i;
+	//}
+
+	//refactoringScript.xml
+	//<?xml version="1.0" encoding="UTF-8"?>
+	//<session version="1.0">
+	//<refactoring comment="Create method extracted" description="Extract Method Refactoring"
+	// fileName="file:${projectPath}/main.cpp"
+	// flags="4" id="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring"
+	// name="extracted" project="RegressionTestProject" selection="13,39" visibility="private"/>
+	//</session>
+	public void testExtractArrayInitializer_Bug412380() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

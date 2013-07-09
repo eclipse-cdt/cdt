@@ -3507,8 +3507,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		final BinaryExprCtx ctx= strat != null ? BinaryExprCtx.eInTemplateID : BinaryExprCtx.eNotInTemplateID;
 		IASTExpression assignmentExpression = expression(ExprKind.eAssignment, ctx, null, strat);
 		if (allowSkipping && skipTrivialExpressionsInAggregateInitializers) {
-			if (!ASTQueries.canContainName(assignmentExpression))
+			if (!ASTQueries.canContainName(assignmentExpression)) {
+				translationUnit.setSkippedNodes(true);
 				return null;
+			}
 		}
 		return assignmentExpression;
 	}
@@ -4330,7 +4332,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected IASTStatement catchBlockCompoundStatement() throws BacktrackException, EndOfFileException {
         if (mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE || !isActiveCode()) {
             int offset = LA(1).getOffset();
-            IToken last = skipOverCompoundStatement();
+            IToken last = skipOverCompoundStatement(true);
             IASTCompoundStatement cs = nodeFactory.newCompoundStatement();
             setRange(cs, offset, last.getEndOffset());
             return cs;
@@ -4338,7 +4340,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (scanner.isOnTopContext())
                 return compoundStatement();
             int offset = LA(1).getOffset();
-            IToken last = skipOverCompoundStatement();
+            IToken last = skipOverCompoundStatement(true);
             IASTCompoundStatement cs = nodeFactory.newCompoundStatement();
             setRange(cs, offset, last.getEndOffset());
             return cs;

@@ -7148,7 +7148,23 @@ public class AST2Tests extends AST2TestBase {
 	//	static a[2]= {0,0};
 	public void testSkipAggregateInitializer_297550() throws Exception {
         final String code = getAboveComment();
-		parseAndCheckBindings(code, C, false, true);
+		IASTTranslationUnit tu = parseAndCheckBindings(code, C, false, true);
+		assertTrue(tu.skippedNodes());
+	}
+
+	//	static a[2]= {0,0};
+	public void testNoSkipTrivialAggregateInitializer_412380() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu = parseAndCheckBindings(code, C, false, false);
+		assertFalse(tu.skippedNodes());
+	}
+
+	//	static int i = 0;
+	//	static a[1]= {i};
+	public void testNoSkipNonTrivialAggregateInitializer_412380() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu = parseAndCheckBindings(code, C, false, true);
+		assertFalse(tu.skippedNodes());
 	}
 
 	// typeof(b(1)) b(int);

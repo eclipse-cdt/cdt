@@ -9,6 +9,7 @@
  *     Markus Schorn - initial API and implementation
  *     IBM Corporation
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -45,10 +46,12 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IParserSettings;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.IncludeExportPatterns;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
+import org.eclipse.cdt.core.parser.ParserSettings;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
@@ -398,6 +401,10 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 	protected IncludeExportPatterns getIncludeExportPatterns() {
 		return null;
+	}
+
+	protected IParserSettings createParserSettings() {
+		return new ParserSettings();
 	}
 
 	/**
@@ -950,7 +957,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private IScannerInfo getScannerInfo(int linkageID, Object contextTu) {
 		final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, contextTu);
 		if (scannerInfo instanceof ExtendedScannerInfo) {
-			((ExtendedScannerInfo) scannerInfo).setIncludeExportPatterns(getIncludeExportPatterns());
+			ExtendedScannerInfo extendedScannerInfo = (ExtendedScannerInfo) scannerInfo;
+			extendedScannerInfo.setIncludeExportPatterns(getIncludeExportPatterns());
+			extendedScannerInfo.setParserSettings(createParserSettings());
 		}
 		return scannerInfo;
 	}

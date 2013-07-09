@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Mike Kucera (IBM)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IParserSettings;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
@@ -133,6 +135,21 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 
 		final ISourceCodeParser parser= createParser(scanner, log, index, false, options);
 
+		if(scanInfo instanceof ExtendedScannerInfo) {
+			ExtendedScannerInfo extendedScannerInfo = (ExtendedScannerInfo) scanInfo;
+			IParserSettings parserSettings = extendedScannerInfo.getParserSettings();
+			if(parserSettings != null) {
+				int maximumTrivialExpressions = parserSettings.getMaximumTrivialExpressionsInAggregateInitializers();
+				if (maximumTrivialExpressions >= 0 &&
+						(options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
+					if (parser instanceof AbstractGNUSourceCodeParser) {
+						((AbstractGNUSourceCodeParser) parser)
+								.setMaximumTrivialExpressionsInAggregateInitializers(maximumTrivialExpressions);
+					}
+				}
+			}
+		}
+
 		// Make it possible to cancel parser by reconciler - http://bugs.eclipse.org/226682
 		ICanceler canceler= null;
 		if (log instanceof ICanceler) {
@@ -202,13 +219,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 			mode= ParserMode.COMPLETE_PARSE;
 		}
 
-		ISourceCodeParser parser= createParser(scanner, mode, log, index);
-		if ((options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
-			if (parser instanceof AbstractGNUSourceCodeParser) {
-				((AbstractGNUSourceCodeParser) parser).setSkipTrivialExpressionsInAggregateInitializers(true);
-			}
-		}
-		return parser;
+		return createParser(scanner, mode, log, index);
 	}
 	
 	/**

@@ -365,4 +365,16 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void setPragmaOnceSemantics(boolean value);
+
+	/**
+	 * Returns {@code true} if the parser has skipped any nodes while creating the AST.
+	 * @since 5.6
+	 */
+	public boolean hasNodesOmitted();
+
+	/**
+	 * Sets whether the parser has skipped any nodes while creating the AST for the translation unit.
+	 * @since 5.6
+	 */
+	public void setHasNodesOmitted(boolean nodesOmitted);
 }

@@ -72,7 +72,14 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 			return nameList.toArray(new IASTName[nameList.size()]);
 		}
 	}
-	
+
+	/**
+	 * The default value for maximum number of trivial expressions in aggregate initializers to 
+	 * create nodes for.
+	 * @since 5.6
+	 */
+	public final static int LIMIT_OF_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS= 256;
+
 	/**
 	 * @return the scanner extension configuration for this language, may not
 	 *         return <code>null</code>
@@ -194,10 +201,11 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 			mode= ParserMode.COMPLETE_PARSE;
 		}
 
-		ISourceCodeParser parser= createParser(scanner, mode, log, index);
+		ISourceCodeParser parser = createParser(scanner, mode, log, index);
 		if ((options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
 			if (parser instanceof AbstractGNUSourceCodeParser) {
-				((AbstractGNUSourceCodeParser) parser).setSkipTrivialExpressionsInAggregateInitializers(true);
+				((AbstractGNUSourceCodeParser) parser)
+						.setMaximumTrivialExpressionsInAggregateInitializers(LIMIT_OF_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS);
 			}
 		}
 		return parser;

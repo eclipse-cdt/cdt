@@ -3505,12 +3505,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		// assignment expression
 		TemplateIdStrategy strat= fTemplateParameterListStrategy;
 		final BinaryExprCtx ctx= strat != null ? BinaryExprCtx.eInTemplateID : BinaryExprCtx.eNotInTemplateID;
-		IASTExpression assignmentExpression = expression(ExprKind.eAssignment, ctx, null, strat);
-		if (allowSkipping && skipTrivialExpressionsInAggregateInitializers) {
-			if (!ASTQueries.canContainName(assignmentExpression))
-				return null;
-		}
-		return assignmentExpression;
+		return expression(ExprKind.eAssignment, ctx, null, strat);
 	}
 
 	/**
@@ -3551,6 +3546,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		loop: while (true) {
 			// Clause may be null, add to initializer anyways, such that the size can be computed.
 			IASTInitializerClause clause = initClause(allowSkipping);
+			if (allowSkipping && maximumTrivialExpressionsInAggregateInitializers <= result.size()) {
+				if (!ASTQueries.canContainName(clause)) {
+					translationUnit.setHasNodesOmitted(true);
+					clause= null;
+				}
+			}
 			if (LT(1) == IToken.tELLIPSIS) {
 				final int endOffset = consume(IToken.tELLIPSIS).getEndOffset();
 				if (clause instanceof ICPPASTPackExpandable) {
@@ -4330,7 +4331,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected IASTStatement catchBlockCompoundStatement() throws BacktrackException, EndOfFileException {
         if (mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE || !isActiveCode()) {
             int offset = LA(1).getOffset();
-            IToken last = skipOverCompoundStatement();
+            IToken last = skipOverCompoundStatement(true);
             IASTCompoundStatement cs = nodeFactory.newCompoundStatement();
             setRange(cs, offset, last.getEndOffset());
             return cs;
@@ -4338,7 +4339,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (scanner.isOnTopContext())
                 return compoundStatement();
             int offset = LA(1).getOffset();
-            IToken last = skipOverCompoundStatement();
+            IToken last = skipOverCompoundStatement(true);
             IASTCompoundStatement cs = nodeFactory.newCompoundStatement();
             setRange(cs, offset, last.getEndOffset());
             return cs;

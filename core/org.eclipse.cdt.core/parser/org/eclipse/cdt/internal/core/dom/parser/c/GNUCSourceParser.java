@@ -140,23 +140,17 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 	protected IASTInitializer optionalInitializer(IASTDeclarator dtor, DeclarationOptions options) throws EndOfFileException, BacktrackException {
         if (LTcatchEOF(1) == IToken.tASSIGN) {
             final int offset= consume().getOffset();
-            IASTInitializerClause initClause = initClause(false);
+            IASTInitializerClause initClause = initClause();
             IASTEqualsInitializer result= nodeFactory.newEqualsInitializer(initClause);
             return setRange(result, offset, calculateEndOffset(initClause));
         }
         return null;
     }
 
-    private IASTInitializerClause initClause(boolean inAggregate) throws EndOfFileException, BacktrackException {
+    private IASTInitializerClause initClause() throws EndOfFileException, BacktrackException {
         final int offset = LA(1).getOffset();
-        if (LT(1) != IToken.tLBRACE) {
-            IASTExpression assignmentExpression= expression(ExprKind.eAssignment);
-            if (inAggregate && skipTrivialExpressionsInAggregateInitializers) {
-            	if (!ASTQueries.canContainName(assignmentExpression))
-            		return null;
-            }
-            return assignmentExpression;
-        }
+        if (LT(1) != IToken.tLBRACE)
+            return expression(ExprKind.eAssignment);
         
         // it's an aggregate initializer
         consume(IToken.tLBRACE);
@@ -175,7 +169,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	// get designator list
         	List<? extends ICASTDesignator> designator= designatorList();
         	if (designator == null) {
-        		IASTInitializerClause clause= initClause(true);
+        		IASTInitializerClause clause= initClause();
+        		if (maximumTrivialExpressionsInAggregateInitializers <= result.getSize()) {
+                    if (!ASTQueries.canContainName(clause)) {
+                        translationUnit.setHasNodesOmitted(true);
+                        clause= null;
+                    }
+                }
         		// depending on value of skipTrivialItemsInCompoundInitializers initializer may be null
         		// in any way add the initializer such that the actual size can be tracked.
         		result.addClause(clause);
@@ -191,7 +191,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         			if (LT(1) == IToken.tASSIGN)
         				consume(IToken.tASSIGN);
 
-        			IASTInitializerClause clause= initClause(false);
+        			IASTInitializerClause clause= initClause();
         			desigInitializer.setOperand(clause);
         			adjustLength(desigInitializer, clause);
         		}
@@ -630,7 +630,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         		IASTTypeId t= typeId(DeclarationOptions.TYPEID);
         		consume(IToken.tRPAREN);
         		if (LT(1) == IToken.tLBRACE) {
-        			IASTInitializer i = (IASTInitializerList) initClause(false);
+        			IASTInitializer i = (IASTInitializerList) initClause();
         			firstExpression= nodeFactory.newTypeIdInitializerExpression(t, i);
         			setRange(firstExpression, offset, calculateEndOffset(i));
         			break;        

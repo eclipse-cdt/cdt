@@ -188,7 +188,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected final IBuiltinBindingsProvider builtinBindingsProvider;
 
     protected boolean functionCallCanBeLValue= false;
-	protected boolean skipTrivialExpressionsInAggregateInitializers= false;
+	protected int maximumTrivialExpressionsInAggregateInitializers= Integer.MAX_VALUE;
 
     /**
      *  Marks the beginning of the current declaration. It is important to clear the mark whenever we
@@ -232,10 +232,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 	/**
 	 * Instructs the parser not to create ast nodes for expressions within aggregate initializers
-	 * when they do not contain names.
+	 * when they do not contain names beyond the given limit.
 	 */
-	public void setSkipTrivialExpressionsInAggregateInitializers(boolean val) {
-		skipTrivialExpressionsInAggregateInitializers= val;
+	public void setMaximumTrivialExpressionsInAggregateInitializers(int limit) {
+		maximumTrivialExpressionsInAggregateInitializers= limit;
 	}
 
     private AbstractParserLogService wrapLogService(IParserLogService logService) {
@@ -676,8 +676,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected abstract void nullifyTranslationUnit();
 
-	protected IToken skipOverCompoundStatement() throws BacktrackException, EndOfFileException {
+	protected IToken skipOverCompoundStatement(boolean hasSkippedNodes) throws BacktrackException, EndOfFileException {
         // speed up the parser by skipping the body, simply look for matching brace and return
+		if (hasSkippedNodes)
+			getTranslationUnit().setHasNodesOmitted(true);
         final boolean isActive = isActiveCode();
 		final int codeBranchNesting= getCodeBranchNesting();
 
@@ -904,13 +906,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IASTExpression compoundStatementExpression() throws EndOfFileException, BacktrackException {
         int startingOffset = consume().getOffset(); // tLPAREN always
         IASTCompoundStatement compoundStatement = null;
-        if (mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE || !isActiveCode())
-            skipOverCompoundStatement();
-        else if (mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE) {
+        if (mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE || !isActiveCode()) {
+            skipOverCompoundStatement(true);
+        } else if (mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE) {
             if (scanner.isOnTopContext())
                 compoundStatement();
             else
-                skipOverCompoundStatement();
+                skipOverCompoundStatement(true);
         } else if (mode == ParserMode.COMPLETE_PARSE)
             compoundStatement = compoundStatement();
 
@@ -1428,7 +1430,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	declarationMark= null;
         if (mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE || !isActiveCode()) {
             int offset = LA(1).getOffset();
-            IToken last = skipOverCompoundStatement();
+            IToken last = skipOverCompoundStatement(true);
             IASTCompoundStatement cs = nodeFactory.newCompoundStatement();
             setRange(cs, offset, last.getEndOffset());
             return cs;
@@ -1436,7 +1438,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             if (scanner.isOnTopContext())
                 return functionBody();
             int offset = LA(1).getOffset();
-            IToken last = skipOverCompoundStatement();
+            IToken last = skipOverCompoundStatement(true);
             IASTCompoundStatement cs = nodeFactory.newCompoundStatement();
             setRange(cs, offset, last.getEndOffset());
             return cs;
@@ -1770,7 +1772,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     		throwBacktrack(offset, LA(1).getEndOffset() - offset);
 
     	final int compoundOffset= LA(1).getOffset();
-    	final int endOffset= skipOverCompoundStatement().getEndOffset();
+    	final int endOffset= skipOverCompoundStatement(false).getEndOffset();
     	IASTCompoundStatement cs = nodeFactory.newCompoundStatement(); //createCompoundStatement();
     	((ASTNode)cs).setOffsetAndLength(compoundOffset, endOffset - compoundOffset);
 

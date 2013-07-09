@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Doug Schaefer (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -365,4 +366,16 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void setPragmaOnceSemantics(boolean value);
+
+	/**
+	 * Returns {@code true} if the parser has skipped any nodes while creating the AST.
+	 * @since 5.6
+	 */
+	public boolean hasNodesOmitted();
+
+	/**
+	 * Sets whether the parser has skipped any nodes while creating the AST for the translation unit.
+	 * @since 5.6
+	 */
+	public void setHasNodesOmitted(boolean nodesOmitted);
 }

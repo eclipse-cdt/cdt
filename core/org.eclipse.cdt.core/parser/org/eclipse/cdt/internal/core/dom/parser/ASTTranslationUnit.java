@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -82,6 +83,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	/** The semaphore controlling exclusive access to the AST. */
 	private final Semaphore fSemaphore= new Semaphore(1);
 	private boolean fBasedOnIncompleteIndex;
+	private boolean fNodesOmitted;
 
 	@Override
 	public final IASTTranslationUnit getTranslationUnit() {
@@ -428,6 +430,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		copy.setLocationResolver(fLocationResolver);
 		copy.fForContentAssist = fForContentAssist;
 		copy.fOriginatingTranslationUnit = fOriginatingTranslationUnit;
+		copy.fNodesOmitted = fNodesOmitted;
 		
 		for (IASTDeclaration declaration : getDeclarations()) {
 			copy.addDeclaration(declaration == null ? null : declaration.copy(style));
@@ -544,5 +547,16 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 			return 0;
 		IASTFileLocation nodeLocation = node.getFileLocation();
 		return nodeLocation != null ? nodeLocation.getEndingLineNumber() : 0;
+	}
+
+	@Override
+	public boolean hasNodesOmitted() {
+		return fNodesOmitted;
+	}
+
+	@Override
+	public void setHasNodesOmitted(boolean hasNodesOmitted) {
+		assertNotFrozen();
+		fNodesOmitted = hasNodesOmitted;
 	}
 }

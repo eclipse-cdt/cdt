@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Mike Kucera (IBM)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
@@ -30,12 +31,12 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IParserSettings;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.util.ICancelable;
 import org.eclipse.cdt.internal.core.util.ICanceler;
@@ -102,6 +103,15 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 			IParserLogService logService, IIndex index);
 	
 	/**
+	 * @returns the actual parser object, configured with additional settings.
+	 * @since 5.6
+	 */
+	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode,
+			IParserLogService logService, IIndex index, int options, IParserSettings settings) {
+		return createParser(scanner, parserMode, logService, index);
+	}
+	
+	/**
 	 * @return The ParserLanguage value corresponding to the language supported.
 	 */
 	protected abstract ParserLanguage getParserLanguage();
@@ -131,7 +141,12 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 		scanner.setComputeImageLocations((options & OPTION_NO_IMAGE_LOCATIONS) == 0);
 		scanner.setProcessInactiveCode((options & OPTION_PARSE_INACTIVE_CODE) != 0);
 
-		final ISourceCodeParser parser= createParser(scanner, log, index, false, options);
+		IParserSettings parserSettings= null;
+		if (scanInfo instanceof ExtendedScannerInfo) {
+			ExtendedScannerInfo extendedScannerInfo = (ExtendedScannerInfo) scanInfo;
+			parserSettings = extendedScannerInfo.getParserSettings();
+		}
+		final ISourceCodeParser parser= createParser(scanner, log, index, false, options, parserSettings);
 
 		// Make it possible to cancel parser by reconciler - http://bugs.eclipse.org/226682
 		ICanceler canceler= null;
@@ -193,22 +208,36 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	 * @return  an instance of ISourceCodeParser
 	 */
 	protected ISourceCodeParser createParser(IScanner scanner, IParserLogService log, IIndex index, boolean forCompletion, int options) {
-		ParserMode mode;
+		ParserMode mode = createParserMode(forCompletion, options);
+		return createParser(scanner, mode, log, index);
+	}
+	
+	/**
+	 * Create the parser with additional settings.
+	 * 
+	 * @param scanner  the IScanner to get tokens from
+	 * @param log  the parser log service
+	 * @param index  the index to help resolve bindings
+	 * @param forCompletion  whether the parser is used for code completion
+	 * @param options for valid options see
+	 *     {@link AbstractLanguage#getASTTranslationUnit(FileContent, IScannerInfo, IncludeFileContentProvider, IIndex, int, IParserLogService)}
+	 * @param settings for the parser
+	 * @return  an instance of ISourceCodeParser
+	 * @since 5.6
+	 */
+	protected ISourceCodeParser createParser(IScanner scanner, IParserLogService log, IIndex index, boolean forCompletion, int options, IParserSettings settings) {
+		ParserMode mode = createParserMode(forCompletion, options);
+		return createParser(scanner, mode, log, index, options, settings);
+	}
+	
+	private ParserMode createParserMode(boolean forCompletion, int options) {
 		if (forCompletion) {
-			mode= ParserMode.COMPLETION_PARSE;
+			return ParserMode.COMPLETION_PARSE;
 		} else if ((options & OPTION_SKIP_FUNCTION_BODIES) != 0) {
-			mode= ParserMode.STRUCTURAL_PARSE;
+			return ParserMode.STRUCTURAL_PARSE;
 		} else {
-			mode= ParserMode.COMPLETE_PARSE;
+			return ParserMode.COMPLETE_PARSE;
 		}
-
-		ISourceCodeParser parser= createParser(scanner, mode, log, index);
-		if ((options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
-			if (parser instanceof AbstractGNUSourceCodeParser) {
-				((AbstractGNUSourceCodeParser) parser).setSkipTrivialExpressionsInAggregateInitializers(true);
-			}
-		}
-		return parser;
 	}
 	
 	/**

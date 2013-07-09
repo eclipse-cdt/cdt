@@ -915,7 +915,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 						for (IIndexFile indexFile : index.getFiles(linkageID, ifl)) {
 							int score= indexFile.getMacros().length * 2;
 							IIndexFile context= getParsedInContext(indexFile);
-							if (isSourceFile(context))
+							if (isSourceFile(context, this))
 								score++;
 							if (score > bestScore) {
 								bestScore= score;
@@ -936,7 +936,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return null;
 	}
 
-	private IIndexFile getParsedInContext(IIndexFile indexFile) throws CoreException {
+	public static IIndexFile getParsedInContext(IIndexFile indexFile) throws CoreException {
 		HashSet<IIndexFile> visited= new HashSet<IIndexFile>();
 		// Bug 199412, may recurse.
 		while (visited.add(indexFile)) {
@@ -949,12 +949,12 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	/**
-	 * Returns <code>true</code> if the given file was parsed in a context of a source file.
+	 * Returns <code>true</code> if the given file is a source file.
 	 * @throws CoreException
 	 */
-	private boolean isSourceFile(IIndexFile indexFile) throws CoreException {
+	public static boolean isSourceFile(IIndexFile indexFile, ITranslationUnit tu) throws CoreException {
 		String path = indexFile.getLocation().getURI().getPath();
-		IContentType cType = CCorePlugin.getContentType(getCProject().getProject(), path);
+		IContentType cType = CCorePlugin.getContentType(tu.getCProject().getProject(), path);
 		if (cType == null)
 			return false;
 

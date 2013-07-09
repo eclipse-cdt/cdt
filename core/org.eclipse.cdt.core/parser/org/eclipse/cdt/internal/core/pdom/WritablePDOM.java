@@ -23,14 +23,17 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.index.FileContentKey;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -256,6 +259,22 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		return false;
 	}
 
+	private PDOMFile getBestFile(int linkageID, IIndexFileLocation location, ITranslationUnit tu) throws CoreException {
+		IIndexFile[] files = getFiles(linkageID, location);
+		IIndexFile best = null;
+		int bestScore = -1;
+		for (IIndexFile file : files) {
+			int score = file.getMacros().length * 2;
+			if (TranslationUnit.isSourceFile(TranslationUnit.getParsedInContext(file), tu))
+				score++;
+			if (score > bestScore) {
+				bestScore = score;
+				best = file;
+			}
+		}
+		return (PDOMFile) best;
+	}
+	
 	public PDOMFile getFileForASTNode(int linkageID, IASTNode node) throws CoreException {
 		if (fPathResolver != null && node != null) {
 			IASTFileLocation loc= node.getFileLocation();
@@ -265,7 +284,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 					IIndexFileLocation location = fPathResolver.resolveASTPath(loc.getFileName());
 					if (uncommittedKey != null && uncommittedKey.equals(new FileContentKey(linkageID, location, sigMacros)))
 						return fileBeingUpdated != null ? fileBeingUpdated : uncommittedFile;
-					return getFile(linkageID, location, sigMacros);
+					return getBestFile(linkageID, location, node.getTranslationUnit().getOriginatingTranslationUnit());
 				}
 			}
 		}

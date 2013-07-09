@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "073dc3ed_7339288b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1185,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-07-09T19:29:40Z",
+      "side": 1,
+      "message": "I don\u0027t really understand this part. Sorry I\u0027m not that familiar with this code. If I understand correctly, this method gets called when the request for the execution state is done. If the thread already exist, it gets updated instead of added. Doesn\u0027t this apply to non-stop as well?",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_d32d944a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-07-09T19:29:40Z",
+      "side": 1,
+      "message": "Same thing as in the other file and this is also in a non-stop mode block. Maybe this fixes another bug at the same time?",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

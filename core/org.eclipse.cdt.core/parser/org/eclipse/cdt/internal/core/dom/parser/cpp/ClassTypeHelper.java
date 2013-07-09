@@ -309,8 +309,8 @@ public class ClassTypeHelper {
 	 * Checks inheritance relationship between two classes.
 	 * @return <code>true</code> if {@code subclass} is a subclass of {@code superclass}.
 	 */
-	public static boolean isSubclass(ICPPClassType subclass, ICPPClassType superclass) {
-		ICPPBase[] bases= subclass.getBases();
+	public static boolean isSubclass(ICPPClassType subclass, ICPPClassType superclass, IASTNode point) {
+		ICPPBase[] bases= getBases(subclass, point);
 		for (ICPPBase base : bases) {
 			IBinding b= base.getBaseClass();
 			if (b instanceof ICPPClassType) {
@@ -318,7 +318,7 @@ public class ClassTypeHelper {
 				if (baseClass.isSameType(superclass)) {
 					return true;
 				}
-				if (isSubclass(baseClass, superclass)) {
+				if (isSubclass(baseClass, superclass, point)) {
 					return true;
 				}
 			}

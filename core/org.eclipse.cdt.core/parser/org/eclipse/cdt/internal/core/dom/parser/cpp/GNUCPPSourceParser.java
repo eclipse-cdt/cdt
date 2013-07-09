@@ -3546,7 +3546,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	 */
 	private List<IASTInitializerClause> initializerList(boolean allowSkipping) throws EndOfFileException,
 			BacktrackException {
-		List<IASTInitializerClause> result= null;
+		List<IASTInitializerClause> result= new ArrayList<IASTInitializerClause>();
 		// List of initializer clauses
 		loop: while (true) {
 			// Clause may be null, add to initializer anyways, such that the size can be computed.
@@ -3563,9 +3563,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					clause= setRange(packExpansion, clause, endOffset);
 				}
 			}
-			if (result == null) {
-				result= new ArrayList<IASTInitializerClause>();
-			}
 			result.add(clause);
 			if (LT(1) != IToken.tCOMMA)
 				break;
@@ -3577,10 +3574,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			}
 			consume(IToken.tCOMMA);
 		}
-
-		if (result == null)
-			return Collections.emptyList();
-
 		return result;
 	}
 

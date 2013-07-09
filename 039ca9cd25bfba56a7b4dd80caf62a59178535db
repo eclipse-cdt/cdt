@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "073dc3ed_c8c04396",
+        "filename": "core/org.eclipse.cdt.core.tests/suite/org/eclipse/cdt/core/testplugin/util/BaseTestCase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-09T18:24:14Z",
+      "side": 1,
+      "message": "Please revert. You can set indexer.timeout property in your test launch configuration.",
+      "revId": "039ca9cd25bfba56a7b4dd80caf62a59178535db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_68ead723",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTTranslationUnit.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-09T18:24:14Z",
+      "side": 1,
+      "message": "Would containsSkippedNodes be a better name?",
+      "revId": "039ca9cd25bfba56a7b4dd80caf62a59178535db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_a8bdff1f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ASTTranslationUnit.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-09T18:24:14Z",
+      "side": 1,
+      "message": "Opening brace has to be on the previous line.\n\nSame below.",
+      "revId": "039ca9cd25bfba56a7b4dd80caf62a59178535db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_28844f62",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/AbstractGNUSourceCodeParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 679,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-09T18:24:14Z",
+      "side": 1,
+      "message": "A better name for the parameter is hasSkippedNodes or someNodesWereSkipped",
+      "revId": "039ca9cd25bfba56a7b4dd80caf62a59178535db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_88fc7be6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3509,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-09T18:24:14Z",
+      "side": 1,
+      "message": "It would be nice if skipping of trivial expressions in initializers would start only after reaching a reasonably large number of them.",
+      "revId": "039ca9cd25bfba56a7b4dd80caf62a59178535db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_0844eb1c",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/extractfunction/ExtractFunctionRefactoringTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4503,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-09T18:24:14Z",
+      "side": 1,
+      "message": "The refactoring history script seems to be unrelated to the purpose of this test.",
+      "revId": "039ca9cd25bfba56a7b4dd80caf62a59178535db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_c81cc3f9",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/CRefactoringContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-09T18:24:14Z",
+      "side": 1,
+      "message": "More straightforward:\nif (ast !\u003d null \u0026\u0026 ast.skippedNodes()) {\n    // Don\u0027t use an incomplete AST.\n    ASTProvider.getASTProvider().releaseSharedAST(ast);\n    ast \u003d null;\n}",
+      "revId": "039ca9cd25bfba56a7b4dd80caf62a59178535db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

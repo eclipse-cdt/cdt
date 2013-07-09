@@ -355,7 +355,7 @@ public class Value implements IValue {
 			type1 = SemanticUtil.getNestedType(type1, TDEF);
 			type2 = SemanticUtil.getNestedType(type2, TDEF);
 			if (type1 instanceof ICPPClassType && type2 instanceof ICPPClassType) {
-				return ClassTypeHelper.isSubclass((ICPPClassType) type2, (ICPPClassType) type1) ? 1 : 0;
+				return ClassTypeHelper.isSubclass((ICPPClassType) type2, (ICPPClassType) type1, point) ? 1 : 0;
 			} else {
 				return 0;
 			}

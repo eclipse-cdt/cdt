@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
+ *     Tom Hochstein (Freescale) - Bug 412601 - Preprocessor Entries properties tab should list languages alphabetically by name, not id
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.language.settings.providers;
 
@@ -17,6 +18,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -973,7 +975,9 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		List<String> languageIds = LanguageSettingsManager.getLanguages(rcDes);
 		// Not sure what to do with null language ID, ignoring for now
 		languageIds.remove(null);
-		Collections.sort(languageIds);
+		
+		// Use a TreeMap to sort the languages by name
+		Map<String, String> map = new TreeMap<String, String>();
 		for (String langId : languageIds) {
 			ILanguage language = LanguageManager.getInstance().getLanguage(langId);
 			if (language == null)
@@ -982,7 +986,11 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			String langName = language.getName();
 			if (langName == null || langName.length() == 0)
 				continue;
-
+			map.put(langName, langId);
+		}
+		
+		for (String langName : map.keySet()) {
+			String langId = map.get(langName);
 			TreeItem t = new TreeItem(treeLanguages, SWT.NONE);
 			t.setText(0, langName);
 			t.setData(langId);

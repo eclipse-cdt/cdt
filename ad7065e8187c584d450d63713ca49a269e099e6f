@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "073dc3ed_082eab93",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/StepIntoSelectionTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-07-09T19:21:34Z",
+      "side": 1,
+      "message": "shall be:\n\nassertTrue(\"Expected mi event to be MIStoppedEvent, but it was not.\", miEvent instanceof MIStoppedEvent);",
+      "revId": "ad7065e8187c584d450d63713ca49a269e099e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_7312c894",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/StepIntoSelectionTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-07-09T19:21:34Z",
+      "side": 1,
+      "message": "shall it say \"from an earlier line ...\"",
+      "revId": "ad7065e8187c584d450d63713ca49a269e099e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_93b14cfe",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/StepIntoSelectionTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-07-09T19:21:34Z",
+      "side": 1,
+      "message": "We are setting the breakpoint so we don\u0027t trigger a notification popup,   We could enhance this by adding  a TEST variable and not show the popup when the TEST is active, in this way the stop is expected to be triggered from the logic in the code. A later enhancement when we re-structure for testing with dependency injection, I guess.",
+      "revId": "ad7065e8187c584d450d63713ca49a269e099e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_13bb7caa",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/StepIntoSelectionTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-07-09T19:21:34Z",
+      "side": 1,
+      "message": "There seems to be little value or non for this test case as we already have the one above with skip brakpoints set to false.\nI think it can be removed.",
+      "revId": "ad7065e8187c584d450d63713ca49a269e099e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

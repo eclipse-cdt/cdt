@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +9,14 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Mike Kucera (IBM)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -72,7 +74,13 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 			return nameList.toArray(new IASTName[nameList.size()]);
 		}
 	}
-	
+
+	/**
+	 * The default value for maximum number of trivial expressions in aggregate initializers to 
+	 * create nodes for.
+	 */
+	private final static int DEFAULT_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS= 1000;
+
 	/**
 	 * @return the scanner extension configuration for this language, may not
 	 *         return <code>null</code>
@@ -194,10 +202,17 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 			mode= ParserMode.COMPLETE_PARSE;
 		}
 
-		ISourceCodeParser parser= createParser(scanner, mode, log, index);
-		if ((options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
+		ISourceCodeParser parser = createParser(scanner, mode, log, index);
+		boolean allowSkipping = CCorePreferenceConstants.getPreference(
+				CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS, null, true);
+		if (allowSkipping && (options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
 			if (parser instanceof AbstractGNUSourceCodeParser) {
-				((AbstractGNUSourceCodeParser) parser).setSkipTrivialExpressionsInAggregateInitializers(true);
+				int maximumTrivialExpressions = CCorePreferenceConstants.getPreference(
+						CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS, null,
+						DEFAULT_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS);
+				((AbstractGNUSourceCodeParser) parser)
+						.setMaximumTrivialExpressionsInAggregateInitializers(maximumTrivialExpressions);
+
 			}
 		}
 		return parser;

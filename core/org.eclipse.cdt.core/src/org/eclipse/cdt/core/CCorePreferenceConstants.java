@@ -218,6 +218,25 @@ public class CCorePreferenceConstants {
 	 */
 	public static final String INCLUDE_END_EXPORTS_PATTERN = "includes.endExportsPattern"; //$NON-NLS-1$
 
+	/**
+	 * A named preference that controls whether the parser should skip trivial expressions in initializer lists.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 *
+	 * @since 5.6
+	 */
+	public static String SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS = "scalability.skipTrivialExpressions"; //$NON-NLS-1$
+
+	/**
+	 * The maximum number of trivial expressions that are parsed in initializer lists.
+	 * <p>
+	 * Value is of type <code>int</code>.
+	 * </p>
+	 *
+	 * @since 5.6
+	 */
+	public static final String SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS = "scalability.maximumTrivialExpressions"; //$NON-NLS-1$
+
     /**
      * Returns the node in the preference in the given context.
      * @param key The preference key.
@@ -297,6 +316,76 @@ public class CCorePreferenceConstants {
 	 */
 	public static boolean getPreference(String key, ICProject project, boolean defaultValue) {
 		return getPreferenceNode(key, project).getBoolean(key, defaultValue);
+	}
+
+	/**
+	 * Sets the string value for the given key in the given context.
+	 * @param key The preference key
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
+	 * @param value The value to be set.
+	 *
+	 * @since 5.6
+	 */
+	public static void setPreference(String key, ICProject project, String value) {
+		getPreferenceNode(key, project).put(key, value);
+	}
+
+	/**
+	 * Sets the integer value for the given key in the given context.
+	 * @param key The preference key
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
+	 * @param value The value to be set.
+	 * @since 5.6
+	 */
+	public static void setPreference(String key, ICProject project, int value) {
+		getPreferenceNode(key, project).putInt(key, value);
+	}
+
+	/**
+	 * Sets the boolean value for the given key in the given context.
+	 * @param key The preference key
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
+	 * @param value The value to be set.
+	 * @since 5.6
+	 */
+	public static void setPreference(String key, ICProject project, boolean value) {
+		getPreferenceNode(key, project).putBoolean(key, value);
+	}
+
+	/**
+	 * Returns the default string value for the given key.
+	 * @param key The preference key
+	 * @param defaultValue The default value if not specified in the preferences.
+	 * @return Returns the current default value of the preference.
+	 * @since 5.6
+	 */
+	public static String getDefaultPreference(String key, String defaultValue) {
+		return DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).get(key, defaultValue);
+	}
+
+	/**
+	 * Returns the default integer value for the given key.
+	 * @param key The preference key
+	 * @param defaultValue The default value if not specified in the preferences.
+	 * @return Returns the current default value of the preference.
+	 * @since 5.6
+	 */
+	public static int getDefaultPreference(String key, int defaultValue) {
+		return DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).getInt(key, defaultValue);
+	}
+
+	/**
+	 * Returns the default boolean value for the given key.
+	 * @param key The preference key
+	 * @param defaultValue The default value if not specified in the preferences.
+	 * @return Returns the current default value of the preference.
+	 * @since 5.6
+	 */
+	public static boolean getDefaultPreference(String key, boolean defaultValue) {
+		return DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).getBoolean(key, defaultValue);
 	}
 
 	/**

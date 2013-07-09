@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -40,6 +41,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.ibm.icu.text.MessageFormat;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
@@ -62,6 +64,10 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 	private Button fContentAssist;
 	
 	private Button fContentAssistAutoActivation;
+
+	private Button fSkipTrivialExpressions;
+
+	private IntegerFieldEditor fMaximumTrivialExpressions;
 	
 	private final Map<Object, String> fCheckBoxes= new HashMap<Object, String>();
 	
@@ -99,7 +105,8 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 			String key= fCheckBoxes.get(b);
 			b.setSelection(prefs.getBoolean(key));
 		}
-		
+		fSkipTrivialExpressions.setSelection(CCorePreferenceConstants.getPreference(CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS, null, true));
+
         // Update slaves
         iter= fMasterSlaveListeners.iterator();
         while (iter.hasNext()) {
@@ -107,6 +114,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
             listener.widgetSelected(null);
         }
         fLinesToTrigger.setStringValue(Integer.toString(prefs.getInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));
+		fMaximumTrivialExpressions.setStringValue(Integer.toString(CCorePreferenceConstants.getPreference(CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS, null, 1000)));
 	}
 
 	/*
@@ -143,6 +151,10 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 		new Separator().doFillIntoGrid(composite, nColumns);
 		
 		createScalabilityModeSettings(composite);
+
+		new Separator().doFillIntoGrid(composite, nColumns);
+
+		createParserSettings(composite);
 
 		new Separator().doFillIntoGrid(composite, nColumns);
 		
@@ -182,26 +194,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 		createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_detection_label,PreferenceConstants.SCALABILITY_ALERT);
 
 		Composite comp= new Composite(group, SWT.NONE);
-		fLinesToTrigger = new IntegerFieldEditor( PreferenceConstants.SCALABILITY_NUMBER_OF_LINES, PreferencesMessages.ScalabilityPreferencePage_trigger_lines_label, comp);
-		GridData data = (GridData)fLinesToTrigger.getTextControl( comp ).getLayoutData();
-		data.horizontalAlignment = GridData.BEGINNING;
-		data.widthHint = convertWidthInCharsToPixels( 11 );
-		fLinesToTrigger.setPage( this );
-		fLinesToTrigger.setValidateStrategy( StringFieldEditor.VALIDATE_ON_KEY_STROKE );
-		fLinesToTrigger.setValidRange( 1, Integer.MAX_VALUE );
-		String minValue = Integer.toString( 1 );
-		String maxValue = Integer.toString( Integer.MAX_VALUE );
-		fLinesToTrigger.setErrorMessage( MessageFormat.format(PreferencesMessages.ScalabilityPreferencePage_error, new Object[] {minValue, maxValue}) );
-		fLinesToTrigger.load();
-		fLinesToTrigger.setPropertyChangeListener( new IPropertyChangeListener() {
-
-			@Override
-			public void propertyChange( PropertyChangeEvent event ) {
-				if ( event.getProperty().equals( FieldEditor.IS_VALID ) )
-					setValid( fLinesToTrigger.isValid() );
-			}
-		} );
-		
+		fLinesToTrigger = createIntegerField(comp, PreferenceConstants.SCALABILITY_NUMBER_OF_LINES, PreferencesMessages.ScalabilityPreferencePage_trigger_lines_label);
 	}
 	
 	/**
@@ -226,6 +219,61 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 		fContentAssistAutoActivation = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_contentAssist_autoActivation, PreferenceConstants.SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION);
 		createDependency(fContentAssist, PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST, fContentAssistAutoActivation, true);
 		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fContentAssistAutoActivation, false);
+	}
+	
+	private void createParserSettings(Composite parent) {
+		final Composite parserSettingsGroup = createGroupComposite(parent, 1,
+				PreferencesMessages.ScalabilityPreferencePage_parserSettings_group_label);
+
+		fSkipTrivialExpressions = createCheckButton(parserSettingsGroup,
+				PreferencesMessages.ScalabilityPreferencePage_skipTrivialExpressions_label,
+				CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS);
+
+		final Composite comp = new Composite(parserSettingsGroup, SWT.NONE);
+		fMaximumTrivialExpressions = createIntegerField(comp,
+				CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS,
+				PreferencesMessages.ScalabilityPreferencePage_maximumTrivialExpressions_label);
+
+		boolean skipState = CCorePreferenceConstants.getPreference(CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS, null, true);
+		fMaximumTrivialExpressions.setEnabled(skipState, comp);
+
+		SelectionListener listener = new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				fMaximumTrivialExpressions.setEnabled(fSkipTrivialExpressions.getSelection(), comp);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		};
+		fSkipTrivialExpressions.addSelectionListener(listener);
+		fMasterSlaveListeners.add(listener);
+	}
+
+	private IntegerFieldEditor createIntegerField(Composite parent, String name, String labelText) {
+		final IntegerFieldEditor integerField= new IntegerFieldEditor( name, labelText, parent); 
+
+		GridData data = (GridData)integerField.getTextControl( parent ).getLayoutData();
+		data.horizontalAlignment = GridData.BEGINNING;
+		data.widthHint = convertWidthInCharsToPixels( 11 );
+		integerField.setPage( this );
+		integerField.setValidateStrategy( StringFieldEditor.VALIDATE_ON_KEY_STROKE );
+		integerField.setValidRange( 1, Integer.MAX_VALUE );
+		String minValue = Integer.toString( 1 );
+		String maxValue = Integer.toString( Integer.MAX_VALUE );
+		integerField.setErrorMessage(MessageFormat.format(
+				PreferencesMessages.ScalabilityPreferencePage_error, new Object[] { minValue, maxValue }));
+		integerField.load();
+		integerField.setPropertyChangeListener( new IPropertyChangeListener() {
+
+			@Override
+			public void propertyChange( PropertyChangeEvent event ) {
+				if ( event.getProperty().equals( FieldEditor.IS_VALID ) )
+					setValid( integerField.isValid() );
+			}
+		} );
+		return integerField;
 	}
 	
 	private static void indent(Control control, GridData masterLayoutData) {
@@ -280,7 +328,10 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 			String key= fCheckBoxes.get(b);
 			prefs.setValue(key, b.getSelection());
 		}
+		CCorePreferenceConstants.setPreference(CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS, null, fSkipTrivialExpressions.getSelection());
+
 		prefs.setValue(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES, fLinesToTrigger.getIntValue());
+		CCorePreferenceConstants.setPreference(CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS, null, fMaximumTrivialExpressions.getIntValue());
 		return super.performOk();
 	}
 	
@@ -297,7 +348,8 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 			String key= fCheckBoxes.get(b);
 			b.setSelection(prefs.getDefaultBoolean(key));
 		}
-		
+		fSkipTrivialExpressions.setSelection(CCorePreferenceConstants.getDefaultPreference(CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS, false));
+
         // Update slaves
         iter= fMasterSlaveListeners.iterator();
         while (iter.hasNext()) {
@@ -305,5 +357,6 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
             listener.widgetSelected(null);
         }
         fLinesToTrigger.setStringValue(Integer.toString(prefs.getDefaultInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));
+        fMaximumTrivialExpressions.setStringValue(Integer.toString(CCorePreferenceConstants.getDefaultPreference(CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS, 1500)));
 	}
 }

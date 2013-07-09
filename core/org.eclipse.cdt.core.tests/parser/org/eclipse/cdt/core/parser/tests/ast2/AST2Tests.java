@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -5860,7 +5861,7 @@ public class AST2Tests extends AST2TestBase {
 		final String code= buf.toString();
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			long mem= memoryUsed();
-			IASTTranslationUnit tu= parse(code, lang, false, true, true);
+			IASTTranslationUnit tu= parse(code, lang, false, true, 0);
 			long diff= memoryUsed()-mem;
 			// allow a copy of the buffer + less than 2 bytes per initializer
 			final int expected = code.length()*2 + AMOUNT + AMOUNT/2;
@@ -5893,7 +5894,7 @@ public class AST2Tests extends AST2TestBase {
 		final String code= buf.toString();
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			long mem= memoryUsed();
-			IASTTranslationUnit tu= parse(code, lang, false, true, true);
+			IASTTranslationUnit tu= parse(code, lang, false, true, 0);
 			long diff= memoryUsed()-mem;
 			// allow a copy of the buffer + not even 1 byte per initializer
 			final int expected = code.length()*2 + AMOUNT + AMOUNT/2;
@@ -5921,7 +5922,7 @@ public class AST2Tests extends AST2TestBase {
 	public void testNonTrivialInitializer_253690() throws Exception {
 		final String code= getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			IASTTranslationUnit tu= parse(code, lang, false, true, true);
+			IASTTranslationUnit tu= parse(code, lang, false, true, 0);
 			IASTSimpleDeclaration d= getDeclaration(tu, 0);
 			IBinding b= d.getDeclarators()[0].getName().resolveBinding();
 			IASTName[] refs = tu.getReferences(b);
@@ -7148,7 +7149,23 @@ public class AST2Tests extends AST2TestBase {
 	//	static a[2]= {0,0};
 	public void testSkipAggregateInitializer_297550() throws Exception {
         final String code = getAboveComment();
-		parseAndCheckBindings(code, C, false, true);
+		IASTTranslationUnit tu = parseAndCheckBindings(code, C, false, 0);
+		assertTrue(tu.hasNodesOmitted());
+	}
+
+	//	static a[2]= {0,0};
+	public void testNoSkipTrivialAggregateInitializer_412380() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu = parseAndCheckBindings(code, C, false);
+		assertFalse(tu.hasNodesOmitted());
+	}
+
+	//	static int i = 0;
+	//	static a[1]= {i};
+	public void testNoSkipNonTrivialAggregateInitializer_412380() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu = parseAndCheckBindings(code, C, false, 0);
+		assertFalse(tu.hasNodesOmitted());
 	}
 
 	// typeof(b(1)) b(int);

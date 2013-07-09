@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -65,15 +64,15 @@ public class ASTQueries {
 	private static NameSearch NAME_SEARCH= new NameSearch();
 	
 	/**
-	 * Tests whether the given expression can contain ast-names, suitable to be used before ambiguity 
+	 * Tests whether the given node can contain ast-names, suitable to be used before ambiguity 
 	 * resolution.
 	 */
-	public static boolean canContainName(IASTExpression expr) {
-		if (expr == null)
+	public static boolean canContainName(IASTNode node) {
+		if (node == null)
 			return false;
 		
 		NAME_SEARCH.reset();
-		expr.accept(NAME_SEARCH);
+		node.accept(NAME_SEARCH);
 		return NAME_SEARCH.foundName();
 	}
 	

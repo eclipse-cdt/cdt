@@ -25,6 +25,7 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 	private String[] includeFiles;
 	private String[] localIncludePaths;
 	private IncludeExportPatterns includeExportPatterns;
+	private int maximumTrivialExpressionsInAggregateInitializers = -1;
 
 	public ExtendedScannerInfo() {
 	}
@@ -106,4 +107,18 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 	public void setIncludeExportPatterns(IncludeExportPatterns patterns) {
     	includeExportPatterns= patterns;
     }
+
+	/**
+	 * @since 5.6
+	 */
+	public int getMaximumTrivialExpressionsInAggregateInitializers() {
+		return maximumTrivialExpressionsInAggregateInitializers;
+	}
+
+	/**
+	 * @since 5.6
+	 */
+	public void setMaximumTrivialExpressionsInAggregateInitializers(int value) {
+		maximumTrivialExpressionsInAggregateInitializers= value;
+	}
 }

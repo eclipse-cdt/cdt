@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeEvent;
@@ -128,7 +129,15 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 			definedMacros.put(name, value);
 		}
 
-		return new ExtendedScannerInfo(definedMacros, includePaths, macroFiles, includeFiles, includePathsLocal);
+		ExtendedScannerInfo extendedScannerInfo = new ExtendedScannerInfo(definedMacros, includePaths, macroFiles, includeFiles, includePathsLocal);
+
+		int maximumNumberOfTrivialExpressionsInAggregateInitializers = -1;
+		if (CCorePreferenceConstants.getPreference(CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS, null, true)) {
+			maximumNumberOfTrivialExpressionsInAggregateInitializers = CCorePreferenceConstants.getPreference(
+				CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS, null, 1000);
+		}
+		extendedScannerInfo.setMaximumTrivialExpressionsInAggregateInitializers(maximumNumberOfTrivialExpressionsInAggregateInitializers);
+		return extendedScannerInfo;
 	}
 
 	private String expandVariables(String pathStr, ICConfigurationDescription cfgDescription) {

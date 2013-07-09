@@ -67,5 +67,9 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_EXPORT_PATTERN, CCorePreferenceConstants.DEFAULT_INCLUDE_EXPORT_PATTERN);
 		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_BEGIN_EXPORTS_PATTERN, CCorePreferenceConstants.DEFAULT_INCLUDE_BEGIN_EXPORTS_PATTERN);
 		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_END_EXPORTS_PATTERN, CCorePreferenceConstants.DEFAULT_INCLUDE_END_EXPORTS_PATTERN);
+
+		// Scalability defaults.
+		defaultPreferences.putBoolean(CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS, true);
+		defaultPreferences.putInt(CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS, 1000);
 	}
 }

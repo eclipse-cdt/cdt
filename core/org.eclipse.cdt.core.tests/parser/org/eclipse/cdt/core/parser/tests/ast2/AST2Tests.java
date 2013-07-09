@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -40,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
@@ -54,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -5850,17 +5853,10 @@ public class AST2Tests extends AST2TestBase {
 		sValidateCopy= false;
 		final int AMOUNT= 250000;
 		final CharSequence[] input = getContents(3);
-		StringBuilder buf= new StringBuilder();
-		buf.append(input[0].toString());
-		final String line= input[1].toString();
-		for (int i = 0; i < AMOUNT/10; i++) {
-			buf.append(line);
-		}
-		buf.append(input[2].toString());
-		final String code= buf.toString();
+		final String code= concatInput(input, new int[]{1, AMOUNT/10,1});
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			long mem= memoryUsed();
-			IASTTranslationUnit tu= parse(code, lang, false, true, true);
+			IASTTranslationUnit tu= parse(code, lang, false, true, 0);
 			long diff= memoryUsed()-mem;
 			// allow a copy of the buffer + less than 2 bytes per initializer
 			final int expected = code.length()*2 + AMOUNT + AMOUNT/2;
@@ -5883,23 +5879,71 @@ public class AST2Tests extends AST2TestBase {
 		sValidateCopy= false;
 		final int AMOUNT= 250000;
 		final CharSequence[] input = getContents(3);
-		StringBuilder buf= new StringBuilder();
-		buf.append(input[0].toString());
-		final String line= input[1].toString();
-		for (int i = 0; i < AMOUNT/10; i++) {
-			buf.append(line);
-		}
-		buf.append(input[2].toString());
-		final String code= buf.toString();
+		final String code= concatInput(input, new int[]{1, AMOUNT/10,1});
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			long mem= memoryUsed();
-			IASTTranslationUnit tu= parse(code, lang, false, true, true);
+			IASTTranslationUnit tu= parse(code, lang, false, true, 0);
 			long diff= memoryUsed()-mem;
 			// allow a copy of the buffer + not even 1 byte per initializer
 			final int expected = code.length()*2 + AMOUNT + AMOUNT/2;
 			assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
 			assertTrue(tu.isFrozen());
 		}
+	}
+
+	// int a[]= {
+
+	// 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+
+	// };
+	public void testMaximumTrivialExpressionsInInitializers_412380() throws Exception {
+		sValidateCopy= false;
+		final int AMOUNT= 250000;
+		final int maximumTrivialExpressionsInInitializer = 1000;
+		final int additionalBytesPerInitializer = 90;
+		final CharSequence[] input = getContents(3);
+		final String code= concatInput(input, new int[]{1, AMOUNT/10,1});
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			long mem= memoryUsed();
+			IASTTranslationUnit tu= parse(code, lang, false, true, maximumTrivialExpressionsInInitializer);
+			long diff= memoryUsed()-mem;
+			final int initializerSize = maximumTrivialExpressionsInInitializer*additionalBytesPerInitializer;
+			// allow a copy of the buffer + less than 2 bytes per initializer
+			final int expected = code.length()*2 + AMOUNT + AMOUNT/2 + initializerSize;
+			assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
+			assertTrue(tu.isFrozen());
+			tu.accept(new ASTVisitor() {
+				{
+					shouldVisitInitializers = true;
+				}
+				@Override
+				public int visit(IASTInitializer initializer) {
+					if (initializer instanceof IASTEqualsInitializer) {
+						IASTEqualsInitializer equalsInitializer = (IASTEqualsInitializer)initializer;
+						IASTInitializerClause initClause = equalsInitializer.getInitializerClause();
+						if (initClause instanceof IASTInitializerList) {
+							IASTInitializerList initList = (IASTInitializerList)initClause;
+							assertEquals(maximumTrivialExpressionsInInitializer, initList.getClauses().length);
+						}
+					}
+					return ASTVisitor.PROCESS_CONTINUE;
+				}
+			});
+		}
+	}
+
+	private String concatInput(CharSequence[] snippets, int[] snippetOccurences)
+	{
+		final StringBuilder result = new StringBuilder();
+		final int snippetsToConcat = Math.min(snippets.length, snippetOccurences.length);
+		for (int i = 0; i < snippetsToConcat; i++)
+		{
+			final CharSequence string = snippets[i];
+			for (int times = 0; times < snippetOccurences[i]; times++){
+				result.append(string);
+			}
+		}
+		return result.toString();
 	}
 
 	private long memoryUsed() throws InterruptedException {
@@ -5921,7 +5965,7 @@ public class AST2Tests extends AST2TestBase {
 	public void testNonTrivialInitializer_253690() throws Exception {
 		final String code= getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			IASTTranslationUnit tu= parse(code, lang, false, true, true);
+			IASTTranslationUnit tu= parse(code, lang, false, true, 0);
 			IASTSimpleDeclaration d= getDeclaration(tu, 0);
 			IBinding b= d.getDeclarators()[0].getName().resolveBinding();
 			IASTName[] refs = tu.getReferences(b);
@@ -7148,7 +7192,23 @@ public class AST2Tests extends AST2TestBase {
 	//	static a[2]= {0,0};
 	public void testSkipAggregateInitializer_297550() throws Exception {
         final String code = getAboveComment();
-		parseAndCheckBindings(code, C, false, true);
+		IASTTranslationUnit tu = parseAndCheckBindings(code, C, false, 0);
+		assertTrue(tu.hasNodesOmitted());
+	}
+
+	//	static a[2]= {0,0};
+	public void testNoSkipTrivialAggregateInitializer_412380() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu = parseAndCheckBindings(code, C, false);
+		assertFalse(tu.hasNodesOmitted());
+	}
+
+	//	static int i = 0;
+	//	static a[1]= {i};
+	public void testNoSkipNonTrivialAggregateInitializer_412380() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu = parseAndCheckBindings(code, C, false, 0);
+		assertFalse(tu.hasNodesOmitted());
 	}
 
 	// typeof(b(1)) b(int);

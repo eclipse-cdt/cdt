@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Mike Kucera (IBM)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -131,6 +133,18 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 
 		final ISourceCodeParser parser= createParser(scanner, log, index, false, options);
 
+		if(scanInfo instanceof ExtendedScannerInfo) {
+			ExtendedScannerInfo extendedScannerInfo = (ExtendedScannerInfo) scanInfo;
+			int maximumTrivialExpressions = extendedScannerInfo.getMaximumTrivialExpressionsInAggregateInitializers(); 
+			if (maximumTrivialExpressions >= 0 &&
+					(options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
+				if (parser instanceof AbstractGNUSourceCodeParser) {
+					((AbstractGNUSourceCodeParser) parser)
+							.setMaximumTrivialExpressionsInAggregateInitializers(maximumTrivialExpressions);
+				}
+			}
+		}
+
 		// Make it possible to cancel parser by reconciler - http://bugs.eclipse.org/226682
 		ICanceler canceler= null;
 		if (log instanceof ICanceler) {
@@ -200,13 +214,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 			mode= ParserMode.COMPLETE_PARSE;
 		}
 
-		ISourceCodeParser parser= createParser(scanner, mode, log, index);
-		if ((options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
-			if (parser instanceof AbstractGNUSourceCodeParser) {
-				((AbstractGNUSourceCodeParser) parser).setSkipTrivialExpressionsInAggregateInitializers(true);
-			}
-		}
-		return parser;
+		return createParser(scanner, mode, log, index);
 	}
 	
 	/**

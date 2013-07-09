@@ -400,6 +400,10 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		return null;
 	}
 
+	protected int getMaximumTrivialExpressionsInAggregateInitializers() {
+		return -1;
+	}
+
 	/**
 	 * @return array of linkage IDs that shall be parsed
 	 */
@@ -950,7 +954,10 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private IScannerInfo getScannerInfo(int linkageID, Object contextTu) {
 		final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, contextTu);
 		if (scannerInfo instanceof ExtendedScannerInfo) {
-			((ExtendedScannerInfo) scannerInfo).setIncludeExportPatterns(getIncludeExportPatterns());
+			ExtendedScannerInfo extendedScannerInfo = (ExtendedScannerInfo) scannerInfo;
+			extendedScannerInfo.setIncludeExportPatterns(getIncludeExportPatterns());
+			extendedScannerInfo.setMaximumTrivialExpressionsInAggregateInitializers(
+					getMaximumTrivialExpressionsInAggregateInitializers());
 		}
 		return scannerInfo;
 	}

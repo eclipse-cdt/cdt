@@ -46,6 +46,11 @@ import com.ibm.icu.text.NumberFormat;
  */
 public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPDOMIndexerTask {
 	private static final String TRUE = "true"; //$NON-NLS-1$
+	/**
+	 * The default value for maximum number of trivial expressions in aggregate initializers to
+	 * create nodes for.
+	*/
+	private static final int DEFAULT_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS = 1000;
 
 	private AbstractPDOMIndexer fIndexer;
 	private boolean fWriteInfoToLog;
@@ -195,6 +200,12 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		if (exportPattern == null && beginExportsPattern == null && endExportsPattern == null)
 			return null;
 		return new IncludeExportPatterns(exportPattern, beginExportsPattern, endExportsPattern);
+	}
+
+	@Override
+	protected final int getMaximumTrivialExpressionsInAggregateInitializers() {
+		return CCorePreferenceConstants.getPreference(CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS,
+				null, DEFAULT_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS);
 	}
 
 	protected void traceEnd(long start, IWritableIndex index, boolean wasCancelled) {

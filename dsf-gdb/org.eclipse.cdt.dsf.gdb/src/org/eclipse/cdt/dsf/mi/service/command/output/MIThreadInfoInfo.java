@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
+import java.util.Arrays;
+import java.util.Comparator;
 
 
 /**
@@ -143,6 +145,18 @@ public class MIThreadInfoInfo extends MIInfo {
 		for (int i = 0; i < values.length; i++) {
 			threadList[i] = MIThread.parse((MITuple) values[i]);
 		}
+		Arrays.sort(threadList, new Comparator<MIThread>() {
+
+			@Override
+			public int compare(MIThread o1, MIThread o2) {
+				try {
+					return Integer.parseInt(o1.getThreadId()) - Integer.parseInt(o2.getThreadId());
+				}
+				catch(NumberFormatException e) {
+					return 0;
+				}
+			}
+		});
 		return threadList;
 	}
 }

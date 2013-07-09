@@ -218,6 +218,38 @@ public class CCorePreferenceConstants {
 	 */
 	public static final String INCLUDE_END_EXPORTS_PATTERN = "includes.endExportsPattern"; //$NON-NLS-1$
 
+	/**
+	 * A named preference that controls whether the parser should skip trivial expressions in initializer lists.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 *
+	 * @since 5.6
+	 */
+	public static String SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS = "scalability.skipTrivialExpressions"; //$NON-NLS-1$
+
+	/**
+	 * Default value for {@link #SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS}.
+	 * @since 5.6
+	 */
+	public static final boolean DEFAULT_SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS = true;
+
+	/**
+	 * The maximum number of trivial expressions that are parsed in initializer lists. This preference 
+	 * is considered only if <code>SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS</code> is set to true.
+	 * <p>
+	 * Value is of type <code>int</code>.
+	 * </p>
+	 *
+	 * @since 5.6
+	 */
+	public static final String SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS = "scalability.maximumTrivialExpressions"; //$NON-NLS-1$
+
+	/**
+	 * Default value for {@link #SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS}.
+	 * @since 5.6
+	 */
+	public static final int DEFAULT_SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS = 1000;
+
     /**
      * Returns the node in the preference in the given context.
      * @param key The preference key.

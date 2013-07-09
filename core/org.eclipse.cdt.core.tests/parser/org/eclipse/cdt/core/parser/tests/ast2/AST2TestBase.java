@@ -157,11 +157,11 @@ public class AST2TestBase extends BaseTestCase {
 
     protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
     		boolean expectNoProblems) throws ParserException {
-    	return parse(code, lang, useGNUExtensions, expectNoProblems, false);
+    	return parse(code, lang, useGNUExtensions, expectNoProblems, Integer.MAX_VALUE);
     }
 
     protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
-    		boolean expectNoProblems, boolean skipTrivialInitializers) throws ParserException {
+    		boolean expectNoProblems, int limitTrivialInitializers) throws ParserException {
 		IScanner scanner = createScanner(FileContent.create(TEST_CODE, code.toCharArray()), lang, ParserMode.COMPLETE_PARSE,
         		createScannerInfo(useGNUExtensions));
         configureScanner(scanner);
@@ -185,8 +185,7 @@ public class AST2TestBase extends BaseTestCase {
 
             parser = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config, null);
         }
-        if (skipTrivialInitializers)
-        	parser.setSkipTrivialExpressionsInAggregateInitializers(true);
+        parser.setMaximumTrivialExpressionsInAggregateInitializers(limitTrivialInitializers);
 
         IASTTranslationUnit tu = parser.parse();
         assertTrue(tu.isFrozen());
@@ -750,12 +749,12 @@ public class AST2TestBase extends BaseTestCase {
 	}
 
 	final protected IASTTranslationUnit parseAndCheckBindings(String code, ParserLanguage lang, boolean useGnuExtensions) throws Exception {
-		return parseAndCheckBindings(code, lang, useGnuExtensions, false);
+		return parseAndCheckBindings(code, lang, useGnuExtensions, Integer.MAX_VALUE);
 	}
 
 	final protected IASTTranslationUnit parseAndCheckBindings(String code, ParserLanguage lang, boolean useGnuExtensions,
-			boolean skipTrivialInitializers) throws Exception {
-		IASTTranslationUnit tu = parse(code, lang, useGnuExtensions, true, skipTrivialInitializers);
+			int limitTrvialInitializers) throws Exception {
+		IASTTranslationUnit tu = parse(code, lang, useGnuExtensions, true, limitTrvialInitializers);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 		assertNoProblemBindings(col);

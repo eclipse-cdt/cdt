@@ -22,15 +22,19 @@ import java.util.Map.Entry;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeEvent;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeListener;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IParserSettings;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.ParserSettings;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICMacroEntry;
@@ -38,6 +42,7 @@ import org.eclipse.cdt.core.settings.model.ICPathEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.SettingsModelMessages;
 import org.eclipse.cdt.utils.EFSExtensionManager;
@@ -128,7 +133,24 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 			definedMacros.put(name, value);
 		}
 
-		return new ExtendedScannerInfo(definedMacros, includePaths, macroFiles, includeFiles, includePathsLocal);
+		ExtendedScannerInfo extendedScannerInfo = new ExtendedScannerInfo(definedMacros, includePaths, macroFiles, includeFiles, includePathsLocal);
+
+		IParserSettings parserSettings = createParserSettings(project);
+		extendedScannerInfo.setParserSettings(parserSettings);
+		return extendedScannerInfo;
+	}
+
+	private IParserSettings createParserSettings(IProject project) {
+		ParserSettings parserSettings = new ParserSettings();
+		ICProject cProject = CModelManager.getDefault().create(project);
+		if (CCorePreferenceConstants.getPreference(CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS, cProject, 
+				CCorePreferenceConstants.DEFAULT_SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS)) {
+			int maximumNumberOfTrivialExpressionsInAggregateInitializers = CCorePreferenceConstants.getPreference(
+				CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS, cProject, 
+				CCorePreferenceConstants.DEFAULT_SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS);
+			parserSettings.setMaximumTrivialExpressionsInAggregateInitializers(maximumNumberOfTrivialExpressionsInAggregateInitializers);
+		}
+		return parserSettings;
 	}
 
 	private String expandVariables(String pathStr, ICConfigurationDescription cfgDescription) {

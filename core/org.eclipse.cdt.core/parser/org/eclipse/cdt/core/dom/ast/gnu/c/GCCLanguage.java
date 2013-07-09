@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IParserSettings;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -93,6 +94,19 @@ public class GCCLanguage extends AbstractCLikeLanguage {
 	@Override
 	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode, IParserLogService logService, IIndex index) {
 		return new GNUCSourceParser(scanner, parserMode, logService, getParserExtensionConfiguration(), index);
+	}
+
+	@Override
+	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode, IParserLogService logService, IIndex index,
+			int options, IParserSettings settings) {
+		GNUCSourceParser parser = new GNUCSourceParser(scanner, parserMode, logService, getParserExtensionConfiguration(), index);
+		if (settings != null) {
+			int maximumTrivialExpressions = settings.getMaximumTrivialExpressionsInAggregateInitializers();
+			if (maximumTrivialExpressions >= 0 && (options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
+					parser.setMaximumTrivialExpressionsInAggregateInitializers(maximumTrivialExpressions);
+			}
+		}
+		return parser;
 	}
 
 	@Override

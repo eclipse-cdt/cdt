@@ -314,7 +314,7 @@ public class LinkedNamesFinder {
 			if (binding instanceof ICPPClassType) {
 				if (seenClasses.add(binding)) {
 					ICPPClassType candidate = (ICPPClassType) binding;
-					if (ClassTypeHelper.isSubclass(candidate, baseClass)) {
+					if (ClassTypeHelper.isSubclass(candidate, baseClass, name)) {
 						subclasses.add(candidate);
 					}
 				}

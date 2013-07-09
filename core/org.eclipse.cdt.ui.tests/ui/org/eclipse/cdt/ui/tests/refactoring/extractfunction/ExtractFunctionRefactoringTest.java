@@ -4481,4 +4481,25 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	public void testHistoryWithDuplicatesWithDifferentNames() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//main.cpp
+	//int main() {
+	//	/*$*/int array[] = { 1, 2, 3 };
+	//	int i = array[0];/*$$*/
+	//	return i;
+	//}
+	//====================
+	//int extracted() {
+	//	int array[] = { 1, 2, 3 };
+	//	int i = array[0];
+	//	return i;
+	//}
+	//
+	//int main() {
+	//	int i = extracted();
+	//	return i;
+	//}
+	public void testExtractArrayInitializer_Bug412380() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

@@ -25,6 +25,7 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 	private String[] includeFiles;
 	private String[] localIncludePaths;
 	private IncludeExportPatterns includeExportPatterns;
+	private IParserSettings parserSettings;
 
 	public ExtendedScannerInfo() {
 	}
@@ -60,7 +61,9 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 			localIncludePaths = einfo.getLocalIncludePath();
 		}
 		if (info instanceof ExtendedScannerInfo) {
-			includeExportPatterns = ((ExtendedScannerInfo) info).includeExportPatterns;
+			ExtendedScannerInfo extendedScannerInfo = (ExtendedScannerInfo) info;
+			includeExportPatterns = extendedScannerInfo.includeExportPatterns;
+			parserSettings = extendedScannerInfo.parserSettings;
 		}
 	}
 	
@@ -106,4 +109,20 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 	public void setIncludeExportPatterns(IncludeExportPatterns patterns) {
     	includeExportPatterns= patterns;
     }
+
+	/**
+	 * Returns additional settings for the parser.
+	 * @since 5.6
+	 */
+	public IParserSettings getParserSettings() {
+		return parserSettings;
+	}
+
+	/**
+	 * Sets additional settings for configuring the parser.
+	 * @since 5.6
+	 */
+	public void setParserSettings(IParserSettings parserSettings) {
+		this.parserSettings = parserSettings;
+	}
 }

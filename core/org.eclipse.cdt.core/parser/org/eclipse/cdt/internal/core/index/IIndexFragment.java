@@ -97,7 +97,7 @@ public interface IIndexFragment {
 	 * <p>
 	 * When a header file is stored in the index in multiple variants for different sets of macro
 	 * definitions, this method will return an arbitrary one of these variants.
-	 *  
+	 *
 	 * @param linkageID the id of the linkage in which the file has been parsed.
 	 * @param location the IIndexFileLocation representing the location of the file
 	 * @return the file for the location, or <code>null</code> if the file is not present in
@@ -114,7 +114,7 @@ public interface IIndexFragment {
 	 * May return <code>null</code>, if no such file exists.
 	 * This method may only return files that are actually managed by this fragment.
 	 * This method returns files without content, also.
-	 *  
+	 *
 	 * @param linkageID the id of the linkage in which the file has been parsed.
 	 * @param location the IIndexFileLocation representing the location of the file
 	 * @param macroDictionary The names and definitions of the macros used to disambiguate between
@@ -132,10 +132,7 @@ public interface IIndexFragment {
 	 * for different sets of macro definitions.
 	 * This method may only return files that are actually managed by this fragment.
 	 * This method returns files without content, also.
-	 * <p>
-	 * When a header file is stored in the index in multiple variants for different sets of macro
-	 * definitions, this method will return an arbitrary one of these variants.
-	 *  
+	 *
 	 * @param linkageID the id of the linkage in which the file has been parsed.
 	 * @param location the IIndexFileLocation representing the location of the file
 	 * @return the files for the location and the linkage.
@@ -224,7 +221,7 @@ public interface IIndexFragment {
 	 * Searches for all names that resolve to the given binding. You can limit the result to
 	 * references, declarations or definitions, or a combination of those.
 	 * @param binding a binding for which names are searched for
-	 * @param flags a combination of {@link #FIND_DECLARATIONS}, {@link #FIND_DEFINITIONS}, 
+	 * @param flags a combination of {@link #FIND_DECLARATIONS}, {@link #FIND_DEFINITIONS},
 	 *     {@link #FIND_REFERENCES} and {@link #FIND_NON_LOCAL_ONLY}
 	 * @return an array of names
 	 * @throws CoreException

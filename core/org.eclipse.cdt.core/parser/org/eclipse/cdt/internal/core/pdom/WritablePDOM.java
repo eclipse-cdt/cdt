@@ -9,7 +9,7 @@
  *     Markus Schorn - initial API and implementation
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
@@ -23,14 +23,17 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.index.FileContentKey;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -43,7 +46,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacroReferenceName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.runtime.CoreException;
 
-public class WritablePDOM extends PDOM implements IWritableIndexFragment {	
+public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	private boolean fClearedBecauseOfVersionMismatch= false;
 	private boolean fCreatedFromScratch= false;
 	private ASTFilePathResolver fPathResolver;
@@ -55,12 +58,12 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 			Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		this(dbPath, locationConverter, ChunkCache.getSharedInstance(), linkageFactoryMappings);
 	}
-	
+
 	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache,
 			Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		super(dbPath, locationConverter, cache, linkageFactoryMappings);
 	}
-	
+
 	public void setASTFilePathResolver(ASTFilePathResolver resolver) {
 		fPathResolver= resolver;
 	}
@@ -69,7 +72,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location, ISignificantMacros sigMacros) throws CoreException {
 		if (uncommittedKey != null && uncommittedKey.equals(new FileContentKey(linkageID, location, sigMacros)))
 			return uncommittedFile;
-		
+
 		return super.addFile(linkageID, location, sigMacros);
 	}
 
@@ -138,11 +141,11 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	}
 
 	@Override
-	public void addFileContent(IIndexFragmentFile sourceFile, IncludeInformation[] includes, 
+	public void addFileContent(IIndexFragmentFile sourceFile, IncludeInformation[] includes,
 			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver pathResolver,
 			YieldableIndexLock lock) throws CoreException, InterruptedException {
 		assert sourceFile.getIndexFragment() == this;
-		
+
 		PDOMFile pdomFile = (PDOMFile) sourceFile;
 		pdomFile.addMacros(macros);
 		final ASTFilePathResolver origResolver= fPathResolver;
@@ -154,7 +157,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		}
 		// Includes expose the temporary file in the index, we must not yield the lock beyond this point.
 		pdomFile.addIncludesTo(includes);
-		
+
 		final IIndexFileLocation location = pdomFile.getLocation();
 		if (location != null) {
 			fEvent.fClearedFiles.remove(location);
@@ -167,37 +170,37 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		assert file.getIndexFragment() == this;
 		IIndexFileLocation location = file.getLocation();
 		PDOMFile pdomFile = (PDOMFile) file;
-		pdomFile.clear();	
+		pdomFile.clear();
 
 		fEvent.fClearedFiles.add(location);
 	}
-	
+
 	@Override
 	public void clear() throws CoreException {
 		super.clear();
 	}
-	
+
 	@Override
 	public void flush() throws CoreException {
 		super.flush();
 	}
-		
+
 	@Override
 	public void setProperty(String propertyName, String value) throws CoreException {
-		if (IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName) 
+		if (IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName)
 				|| IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(propertyName)) {
 			throw new IllegalArgumentException("Property " + value + " may not be written to"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		new DBProperties(db, PROPERTIES).setProperty(propertyName, value);
 	}
-	
+
 	/**
 	 * Uses the specified location converter to update each internal representation of a file
 	 * location. The file index is rebuilt with the new representations. Individual PDOMFile records
 	 * are unmoved so as to maintain referential integrity with other PDOM records.
-	 * 
+	 *
 	 * <b>A write-lock must be obtained before calling this method</b>
-	 * 
+	 *
 	 * @param newConverter the converter to use to update internal file representations
 	 * @throws CoreException
 	 */
@@ -250,10 +253,45 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	void setCreatedFromScratch(boolean createdFromScratch) {
 		fCreatedFromScratch = createdFromScratch;
 	}
-	
+
 	@Override
 	protected final boolean isPermanentlyReadOnly() {
 		return false;
+	}
+
+	/**
+	 * Returns the best file for the given location, linkage, and translation unit.
+	 * May return <code>null</code>, if no such file exists.
+	 *
+	 * The "best" file (variant) is the one with the most content, as measured
+	 * by the total number of macros defined in the file. The rationale is that
+	 * often one of the variants will contain most of the code and the others
+	 * just small pieces, and we are usually interested in the one with most of
+	 * the code. As a tiebreaker, a variant that was parsed in the context of a
+	 * source file is preferred, since a header parsed outside of the context of
+	 * a code file may not represent code that a compiler actually sees.
+	 *
+	 * @param linkageID the id of the linkage in which the file has been parsed.
+	 * @param location the IIndexFileLocation representing the location of the file
+	 * @param tu the translation unit from which 'location' originates
+	 * @return the best file for the location, or <code>null</code> if the file is not
+	 *     present in the index
+	 * @throws CoreException
+	 */
+	private PDOMFile getBestFile(int linkageID, IIndexFileLocation location, ITranslationUnit tu) throws CoreException {
+		IIndexFile[] files = getFiles(linkageID, location);
+		IIndexFile best = null;
+		int bestScore = -1;
+		for (IIndexFile file : files) {
+			int score = file.getMacros().length * 2;
+			if (TranslationUnit.isSourceFile(TranslationUnit.getParsedInContext(file), tu.getCProject().getProject()))
+				score++;
+			if (score > bestScore) {
+				bestScore = score;
+				best = file;
+			}
+		}
+		return (PDOMFile) best;
 	}
 
 	public PDOMFile getFileForASTNode(int linkageID, IASTNode node) throws CoreException {
@@ -265,7 +303,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 					IIndexFileLocation location = fPathResolver.resolveASTPath(loc.getFileName());
 					if (uncommittedKey != null && uncommittedKey.equals(new FileContentKey(linkageID, location, sigMacros)))
 						return fileBeingUpdated != null ? fileBeingUpdated : uncommittedFile;
-					return getFile(linkageID, location, sigMacros);
+					return getBestFile(linkageID, location, node.getTranslationUnit().getOriginatingTranslationUnit());
 				}
 			}
 		}
@@ -274,13 +312,13 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 
 	private ISignificantMacros getSignificantMacros(IASTNode node, IASTFileLocation loc) throws CoreException {
 		IASTPreprocessorIncludeStatement owner= loc.getContextInclusionStatement();
-		if (owner != null) 
+		if (owner != null)
 			return owner.getSignificantMacros();
 
 		IASTTranslationUnit tu = node.getTranslationUnit();
 		if (tu != null)
 			return tu.getSignificantMacros();
-		
+
 		return null;
 	}
 

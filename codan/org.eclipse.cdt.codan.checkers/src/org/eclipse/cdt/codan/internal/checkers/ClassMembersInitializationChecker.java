@@ -92,7 +92,11 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 				// Add all class fields
 				for (IField field : ClassTypeHelper.getDeclaredFields(constructor.getClassOwner(), declaration)) {
 					if (isSimpleType(field.getType()) && !field.isStatic()) {
-						fieldsInConstructor.add(field);
+						// In C++11, a field may have an initial value specified at its declaration.
+						// Such a field does not need to be initialized in the constructor as well.
+						if (field.getInitialValue() == null) {
+							fieldsInConstructor.add(field);
+						}
 					}
 				}
 			}

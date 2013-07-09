@@ -638,4 +638,13 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
+
+	//	struct A {
+	//	    A() {};
+	//	    int x = 0;
+	//	};
+	public void testNonstaticDataMemberInitializer_400673() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
 }

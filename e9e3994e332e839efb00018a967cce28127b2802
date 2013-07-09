@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "073dc3ed_2889ef03",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/TranslationUnit.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 955,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-09T17:16:09Z",
+      "side": 1,
+      "message": "It would result in slightly longer calling code, but this method would look more natural if the second parameter is changed to IProject.",
+      "revId": "e9e3994e332e839efb00018a967cce28127b2802",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_08e06bb4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/WritablePDOM.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-09T17:16:09Z",
+      "side": 1,
+      "message": "Please add a comment explaining the meaning of \"best\" in this context.",
+      "revId": "e9e3994e332e839efb00018a967cce28127b2802",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "073dc3ed_94bbf20c",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/TranslationUnit.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 955,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-07-10T00:53:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "073dc3ed_2889ef03",
+      "revId": "e9e3994e332e839efb00018a967cce28127b2802",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "073dc3ed_08e06bb4",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/WritablePDOM.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2013-07-09T17:16:09Z",
       "side": 1,
       "message": "Please add a comment explaining the meaning of \"best\" in this context.",
+      "revId": "e9e3994e332e839efb00018a967cce28127b2802",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_54204aa3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/WritablePDOM.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-07-10T00:53:13Z",
+      "side": 1,
+      "message": "If I understand correctly, the rationale for preferring a variant with more macros is that often one of the variants will contain most of the code, and the others just small pieces, and we are usually interested in the former.\n\nWhat is the rationale for preferring a variant parsed in the context of a source file?",
+      "parentUuid": "073dc3ed_08e06bb4",
       "revId": "e9e3994e332e839efb00018a967cce28127b2802",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

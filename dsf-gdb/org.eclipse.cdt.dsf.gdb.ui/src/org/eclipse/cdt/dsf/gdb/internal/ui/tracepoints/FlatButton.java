@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.TypedListener;
 
 public class FlatButton extends Canvas {
 	
+<<<<<<< Upstream, based on eclipse/master
 	private String fText;
 	private int fMargin = 4;
 	private Cursor fHandCursor;
@@ -124,3 +125,106 @@ public class FlatButton extends Canvas {
 		shadowColor.dispose();
 	}
 }
+=======
+	private String text;
+	private int margin = 4;
+	private Cursor handCursor;
+	
+	public FlatButton(Composite parent, int flags)
+	{
+		super(parent, flags);
+		
+		handCursor = getDisplay().getSystemCursor(SWT.CURSOR_HAND);
+		setCursor(handCursor);
+
+		addPaintListener(new PaintListener() {
+			@Override
+			public void paintControl(PaintEvent e) {
+				onPaint(e);
+			}
+		});
+
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				if (isEnabled()) {		
+					notifyListeners(SWT.Selection, null);
+				}
+			}
+		}); 					
+	}
+	
+	public void addSelectionListener (SelectionListener listener) {
+		checkWidget ();
+		if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
+		TypedListener typedListener = new TypedListener (listener);
+		addListener (SWT.Selection,typedListener);
+		addListener (SWT.DefaultSelection,typedListener);
+	}
+	
+	public void setText(String text)
+	{
+		this.text = text;
+	}
+	
+	public String getText()
+	{
+		return this.text;
+	}
+	
+	public void setMargin(int margin)
+	{
+		this.margin = margin;
+	}
+	
+	@Override
+	public Point computeSize(int wHint, int hHint, boolean changed) {
+		return computeSize(wHint, hHint);
+	}
+	
+	@Override
+	public Point computeSize(int wHint, int hHint) {
+		
+		GC gc = new GC(this);
+		if (text == null || text.isEmpty()) {
+			Point e = gc.textExtent("A"); //$NON-NLS-1$
+			return new Point(0, e.y + margin*2);
+		}
+		
+		
+		Point e = gc.textExtent(text);
+		return new Point(e.x + margin*2, e.y + margin*2);
+	}
+	
+	private void onPaint(PaintEvent event) {
+		GC gc = event.gc;
+		Rectangle ca = getClientArea();
+
+		Color mainColor = gc.getDevice().getSystemColor(SWT.COLOR_LIST_SELECTION);
+		gc.setBackground(mainColor);
+		float[] mainHSB = mainColor.getRGB().getHSB();
+		float h = mainHSB[0];
+		float s = mainHSB[1];
+		float b = mainHSB[2];
+		
+				
+		Color borderColor = new Color(gc.getDevice(), new RGB(h, s, (float)(b*0.7)));			
+		Color shadowColor = new Color(gc.getDevice(), new RGB(h, s, (float)(b*0.5)));	
+		
+		gc.setForeground(borderColor);
+		gc.drawRectangle(0, 0, ca.width-1, ca.height-1);
+		
+		gc.setForeground(shadowColor);
+		gc.drawLine(0, ca.height-1, ca.width-1, ca.height-1);
+					
+		gc.fillRectangle(1, 1, ca.width-2, ca.height-2);
+		
+		gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
+		gc.drawText(text, margin, margin, true);
+		
+		borderColor.dispose();
+		shadowColor.dispose();
+	}
+	
+}
+>>>>>>> 9689901 [390827] Trace View enhancement

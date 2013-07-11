@@ -1,70 +1,56 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2010, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Ericsson - initial API and implementation
+ *     Ericsson - Initial API and implementation
+ *     Dmitry Kozlov (Mentor Graphics) - Trace control view enhancements (Bug 390827)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.tracepoints;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.RejectedExecutionException;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
-import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.datamodel.DMContexts;
-import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
-import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
-import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordDMContext;
-import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
-import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceStatusDMData;
-import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
-import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceVariableDMData;
-import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITracingStartedDMEvent;
-import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITracingStoppedDMEvent;
-import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITracingSupportedChangeDMEvent;
-import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
-import org.eclipse.cdt.dsf.service.DsfServicesTracker;
-import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.dsf.service.DsfSession.SessionEndedListener;
-import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceStatusDMData2;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.STOP_REASON_ENUM;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.SWTException;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Slider;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -74,11 +60,13 @@ import org.eclipse.ui.part.ViewPart;
  * 
  * @since 2.1
  */
-public class TraceControlView extends ViewPart implements IViewPart, SessionEndedListener {
+public class TraceControlView extends ViewPart implements IViewPart {
 
+	private static final int ACTION_BUTTON_INDENTATION = 10;
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	protected static final int UI_REFRESH_DELAY = 1000; // milliseconds
 
-	public class FailedTraceVariableCreationException extends Exception {
+	public static class FailedTraceVariableCreationException extends Exception {
 	    private static final long serialVersionUID = -3042693455630687285L;
 
 		FailedTraceVariableCreationException() {}
@@ -87,24 +75,63 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 			super(errorMessage);
 		}
 	}
-	
+
 	/**
 	 * Action to refresh the content of the view.
 	 */
-	private final class ActionRefreshView extends Action {
-		public ActionRefreshView() {
+	private final class RefreshViewAction extends Action {
+		public RefreshViewAction() {
 			setText(TracepointsMessages.TraceControlView_action_Refresh_label);
 			setImageDescriptor(TracepointImageRegistry.getImageDescriptor(TracepointImageRegistry.ICON_Refresh_enabled));
 			setDisabledImageDescriptor(TracepointImageRegistry.getImageDescriptor(TracepointImageRegistry.ICON_Refresh_disabled));
 		}
 		@Override
 		public void run() {
-			updateContent();
+			fTraceControlModel.updateContent();
 		}
 	}
 
-	private final class ActionOpenTraceVarDetails extends Action {
-		public ActionOpenTraceVarDetails() {
+	/**
+	 * Action to automatically refresh the content of the view by polling trace-status.
+	 */
+	protected final class AutoRefreshAction extends Action {
+		public AutoRefreshAction() {
+			super(TracepointsMessages.TraceControlView_auto_refresh_action_label, AS_CHECK_BOX);
+			setImageDescriptor(TracepointImageRegistry.getImageDescriptor(TracepointImageRegistry.ICON_Refresh_Auto));
+		}
+		@Override
+		public void run() {
+			if (isChecked()) {
+				// Call to updateContent which starts refreshUI job only if necessary
+				// (when tracing is running)
+				fAutoRefreshEnabled = true;
+				fTraceControlModel.updateContent();
+			} else {
+				fAutoRefreshEnabled = false;
+				if (refreshUIJob != null) {
+					refreshUIJob.cancel();
+					refreshUIJob = null;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Action to refresh the content of the view.
+	 */
+	protected final class DisconnectedTracingAction extends Action {
+		public DisconnectedTracingAction() {
+			super(TracepointsMessages.TraceControlView_action_Disconnected_tracing_label, AS_CHECK_BOX);
+			setImageDescriptor(TracepointImageRegistry.getImageDescriptor(TracepointImageRegistry.ICON_Disconnected_Tracing));
+		}
+		@Override
+		public void run() {
+			fTraceControlModel.setDisconnectedTracing(isChecked());
+		}
+	}
+
+	protected final class OpenTraceVarDetailsAction extends Action {
+		public OpenTraceVarDetailsAction() {
 			setText(TracepointsMessages.TraceControlView_action_trace_variable_details);
 			setImageDescriptor(TracepointImageRegistry.getImageDescriptor(TracepointImageRegistry.ICON_Trace_Variables));
 		}
@@ -116,47 +143,65 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 		}
 	}
 
-	private final class ActionExitVisualizationModeDetails extends Action {
-		public ActionExitVisualizationModeDetails() {
+	protected final class ExitVisualizationModeDetailsAction extends Action {
+		public ExitVisualizationModeDetailsAction() {
 			setText(TracepointsMessages.TraceControlView_action_exit_visualization_mode);
 			setImageDescriptor(TracepointImageRegistry.getImageDescriptor(TracepointImageRegistry.ICON_Exit_Visualization));
 		}
 		@Override
 		public void run() {
 			asyncExec(new Runnable() {
-                @Override
+				@Override
 				public void run() {
-					exitVisualizationMode();
-					updateActionEnablement();
+                	fTraceControlModel.exitVisualizationMode();
+                	fTraceControlModel.updateContent();
 				}});
 		}
 	}
 	
-	private ISelectionListener fDebugViewListener;
-	private String fDebugSessionId;
-	private DsfServicesTracker fServicesTracker;
-	private volatile ITraceTargetDMContext fTargetContext;
+	protected TraceControlModel fTraceControlModel;
 
-	private StyledText fStatusText;
-	protected Action fActionRefreshView;
-	protected Action fOpenTraceVarDetails;
-	protected Action fActionExitVisualization;
-	private boolean fTracingSupported;
+	protected RefreshViewAction fRefreshViewAction;
+	protected boolean fAutoRefreshEnabled = false;
+	protected DisconnectedTracingAction fDisconnectedTracingAction;
+	protected OpenTraceVarDetailsAction fOpenTraceVarDetails;
+	protected ExitVisualizationModeDetailsAction fExitVisualizationAction;
+	protected AutoRefreshAction fAutoRefreshAction;
+	protected boolean fTraceVisualization;
+	protected Job refreshUIJob;
+	protected Font cachedBold = null;
 
-	private boolean fTraceVisualization;
+	protected Composite fTopComposite;
+	protected Composite fStatusComposite;
+	protected Label fStatusLabel;	
+	protected Label fSecondaryStatusLabel;	
+	protected Composite fSecondaryStatusComposite;
+	protected FlatButton fActionButton;
+
+	protected Composite fBufferComposite;
+	protected Label fBufferNumberLabel;
+	protected Label fBufferCollectedFramesLabel;
+	protected Button fSetCircularBufferButton;
+	protected CircularProgress fBufferProgress;
+
+	protected Composite fFrameComposite;
+	protected Label fFrameLabel;
+	protected Label fFrameNumberLabel;
+	protected Slider fFrameSlider;
 	
+	protected Composite fNotesComposite;
+	protected Label fNotesContentLabel;
+	protected Text fNotesContentText;
+	protected Button fSetNotesButton;
+
+
 	public TraceControlView() {
 	}
-	
+
 	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
-		site.getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, 
-				                            fDebugViewListener = new ISelectionListener() {
-            @Override
-			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-				updateDebugContext();
-			}});
+		fTraceControlModel = new TraceControlModel(this);
 	}
 	
 	@Override
@@ -166,429 +211,765 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 
 	@Override
 	public void createPartControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(1, false);
-		composite.setLayout(layout);
-		
-		// Let's just create a place to put a text status for now.
-		// A fancier display would be nicer though
-		fStatusText = new StyledText(composite, SWT.MULTI);
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		fStatusText.setLayoutData(gd);
-		fStatusText.setEditable(false);
-		fStatusText.setCaret(null);
-		
-		createActions();
 
-		if (fDebugSessionId != null) {
-			debugSessionChanged();
-		} else {
-			updateDebugContext();
-		}
-		DsfSession.addSessionEndedListener(this);
+		createActions();
+		
+		fTopComposite = new Composite(parent, SWT.NONE);
+		GridLayout topLayout = new GridLayout(2, false);
+		topLayout.marginWidth = 0;
+		topLayout.marginHeight = 0;
+		fTopComposite.setLayout(topLayout);
+		fTopComposite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+
+		// Tracing status line
+		createStatusLine(fTopComposite);
+		
+		// Left and right parts with separator between them 
+		Composite left = new Composite(fTopComposite, SWT.NONE);
+		GridLayout leftLayout = new GridLayout(1, true);
+		leftLayout.marginHeight = 0;
+		left.setLayout(leftLayout);
+		GridData lGd = new GridData(SWT.FILL, SWT.TOP, true, true);
+		left.setLayoutData(lGd);
+		
+		Composite right = new Composite(fTopComposite, SWT.NONE);
+		GridLayout rightLayout = new GridLayout(1, true);
+		rightLayout.marginHeight = 0;
+		rightLayout.marginWidth = 0;
+		right.setLayout(rightLayout);
+		GridData rGd = new GridData(SWT.RIGHT, SWT.TOP, false, true);
+		right.setLayoutData(rGd);
+
+		// Secondary status: start time, stop time and reason 
+		setSecondaryStatusLineVisible(false, null);
+
+		// Buffer line
+		createBufferLine(right);
+		setBufferLineVisible(false, null, false);
+		
+		// Trace notes
+		createNotesLine(left);
+		setNotesLineVisible(false, null, false);
+		
+		// Frame line
+		createFrameLine(fTopComposite);
+		setFrameLineVisible(false, null);
+		
+		fTraceControlModel.init();
 	}
 
+	protected void createStatusLine(Composite parent) {
+		fStatusComposite = new Composite(parent, SWT.NONE);
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd.horizontalSpan = 2;
+		gd.minimumHeight = 22;
+		fStatusComposite.setLayoutData(gd);
+		GridLayout l = new GridLayout(2,false);
+		l.marginBottom = 0;
+		fStatusComposite.setLayout(l);
+		fStatusComposite.setBackgroundMode(SWT.INHERIT_FORCE);
+
+		fStatusLabel = new Label(fStatusComposite, SWT.NONE);
+		if (cachedBold == null) {
+			FontData fontData = fStatusLabel.getFont().getFontData()[0];
+			fontData.setStyle(SWT.BOLD);
+			cachedBold = new Font(fStatusLabel.getDisplay(),fontData);
+		}
+		fStatusLabel.setFont(cachedBold);
+		GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+		fStatusLabel.setLayoutData(d);
+		fStatusLabel.setText(TracepointsMessages.TraceControlView_trace_status_no_debug_session);
+		fStatusLabel.setBackground(parent.getBackground());
+		
+		fActionButton = new FlatButton(fStatusComposite, SWT.NONE);
+		fActionButton.setText(EMPTY_STRING);
+		GridData acGd = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+		acGd.horizontalIndent = ACTION_BUTTON_INDENTATION;
+		fActionButton.setLayoutData(acGd);
+		fActionButton.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// Run action
+				String text = ((FlatButton)e.getSource()).getText();
+				if (TracepointsMessages.TraceControlView_action_start.equals(text) || 
+						TracepointsMessages.TraceControlView_action_restart.equals(text)) {
+	    			IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+	    			try {
+						handlerService.executeCommand("org.eclipse.cdt.debug.ui.command.startTracing", null); //$NON-NLS-1$
+					} catch (Exception ex) {
+						DebugPlugin.log(ex);
+					}					
+				} else if (TracepointsMessages.TraceControlView_action_stop.equals(text)) {
+	    			IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+	    			try {
+						handlerService.executeCommand("org.eclipse.cdt.debug.ui.command.stopTracing", null); //$NON-NLS-1$
+					} catch (Exception ex) {
+						DebugPlugin.log(ex);
+					}
+	    			
+				} else if (TracepointsMessages.TraceControlView_action_finish_visualization.equals(text)) {
+					fTraceControlModel.exitVisualizationMode();					
+				}
+				fTraceControlModel.updateContent();
+			}
+
+		});
+		
+		fSecondaryStatusLabel = new Label(fStatusComposite, SWT.NONE | SWT.WRAP);
+		GridData sslGd = new GridData(SWT.FILL, SWT.TOP, true, false);
+		sslGd.horizontalSpan = 2;
+		fSecondaryStatusLabel.setLayoutData(sslGd);
+		fSecondaryStatusLabel.setBackground(parent.getBackground());
+		
+		Label separator = new Label(fStatusComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		GridData sGd = new GridData(SWT.FILL, SWT.BOTTOM, true, false);
+		//sGd.heightHint = 3;
+		sGd.horizontalSpan = 2;
+		separator.setLayoutData(sGd);
+	}
+	
+	protected void setActionLinkVisible(boolean visible, String text) {
+		fActionButton.setVisible(visible);
+		fActionButton.setText(visible ? text: EMPTY_STRING);
+	}
+	
+	private void setSecondaryStatusLineVisible(boolean visible, ITraceStatusDMData2 tData) {
+		fSecondaryStatusLabel.setVisible(visible);
+		((GridData)fSecondaryStatusLabel.getLayoutData()).exclude = !visible;
+
+		if (visible && tData != null) {
+			STOP_REASON_ENUM stopReason = tData.getStopReason();
+			if (stopReason != null) {
+				fSecondaryStatusLabel.setText(getStopMessage(tData));
+			} else if (tData.isTracingActive() && tData.getStartTime() != null) { 	
+				fSecondaryStatusLabel.setText(TracepointsMessages.bind(
+						TracepointsMessages.TraceControlView_trace_status_secondary_running, 
+						formatTime(tData.getStartTime()),
+						tData.getUserName()));
+			} else {
+				// Should not happen if usage is correct
+				fSecondaryStatusLabel.setText(EMPTY_STRING);
+			}
+		} else {
+			fSecondaryStatusLabel.setText(EMPTY_STRING);
+		}
+	}
+	
+	protected void createNotesLine(final Composite parent) {
+		// Trace notes: notes text and edit notes button
+		fNotesComposite = new Composite(parent,  SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		fNotesComposite.setLayout(layout);
+		fNotesComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		fNotesComposite.setBackgroundMode(SWT.INHERIT_FORCE);
+
+		Label fNotesLabel = new Label(fNotesComposite, SWT.NONE);
+		fNotesLabel.setBackground(parent.getBackground());
+		fNotesLabel.setText(TracepointsMessages.TraceControlView_trace_notes_label);
+		if (cachedBold != null) {
+			fNotesLabel.setFont(cachedBold);
+		}
+		
+		fSetNotesButton = new Button(fNotesComposite, SWT.TOGGLE);
+		fSetNotesButton.setImage(TracepointImageRegistry.getImageDescriptor(
+				TracepointImageRegistry.ICON_Edit_enabled).createImage());
+		fSetNotesButton.setSelection(false);
+		fSetNotesButton.setToolTipText(TracepointsMessages.TraceControlView_trace_notes_edit_tooltip);
+		fSetNotesButton.setLayoutData(new GridData(SWT.END, SWT.TOP, false, false));
+		fSetNotesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleEditNotesButtonPressed();
+			}
+		});
+		
+		fNotesContentLabel = new Label(fNotesComposite, SWT.WRAP);
+		fNotesContentLabel.setBackground(parent.getBackground());
+		fNotesContentLabel.setText(TracepointsMessages.TraceControlView_trace_notes_not_set);
+		GridData nclGd = new GridData(SWT.FILL, SWT.TOP, true, false);
+		nclGd.horizontalSpan = 2;
+		fNotesContentLabel.setLayoutData(nclGd);
+		
+		fNotesContentText = new Text(fNotesComposite, SWT.BORDER);
+		fNotesContentText.setVisible(false);
+		GridData gd = new GridData(SWT.FILL, SWT.TOP, true, false);
+		gd.horizontalSpan = 2;
+		gd.exclude = true;
+		fNotesContentText.setLayoutData(gd);
+		fNotesContentText.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				fSetNotesButton.setSelection(false);
+				handleEditNotesButtonPressed();
+			}
+		});		
+		fNotesContentText.addKeyListener(new KeyAdapter() {
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == 0x1b) {
+					// Esc was pressed, cancel editing
+					fSetNotesButton.setSelection(false);
+					handleEditNotesButtonPressed(true);
+				}
+			}
+		});
+		
+	}
+
+	protected void handleEditNotesButtonPressed() {
+		handleEditNotesButtonPressed(false);
+	}
+	
+	protected void handleEditNotesButtonPressed(boolean cancelEditing) {
+		boolean isEditMode = fSetNotesButton.getSelection();
+		fNotesContentLabel.setVisible(!isEditMode);
+		((GridData)fNotesContentLabel.getLayoutData()).exclude = isEditMode; 
+				
+		fNotesContentText.setVisible(isEditMode);
+		((GridData)fNotesContentText.getLayoutData()).exclude = !isEditMode;
+		
+		fNotesContentText.setFocus();
+
+		if (isEditMode) {
+			String txt = fNotesContentLabel.getText();
+			txt = TracepointsMessages.TraceControlView_trace_notes_not_set.equals(txt) ? EMPTY_STRING : txt;
+			fNotesContentText.setText(txt);
+			fSetNotesButton.setToolTipText(TracepointsMessages.TraceControlView_trace_notes_save_tooltip);
+		} else {
+			fSetNotesButton.setToolTipText(TracepointsMessages.TraceControlView_trace_notes_edit_tooltip);
+			if (!cancelEditing) {
+				fNotesContentLabel.setText(fNotesContentText.getText());
+				fNotesContentLabel.getSize();
+				fTraceControlModel.setTraceNotes(fNotesContentText.getText());
+			}
+		}
+		fNotesComposite.layout();
+		fNotesComposite.redraw();
+		fTraceControlModel.updateContent();
+	}
+
+
+	protected void setNotesLineVisible(boolean visible, ITraceStatusDMData2 tData, boolean readonly) {
+		fNotesComposite.setVisible(visible);
+		((GridData)fNotesComposite.getLayoutData()).exclude = !visible;
+
+		if (visible) {
+			if (tData.getNotes() != null && tData.getNotes().length() > 0) {
+				fNotesContentLabel.setText(removeQuotes(tData.getNotes()));
+			} else {
+				fNotesContentLabel.setText(TracepointsMessages.TraceControlView_trace_notes_not_set);
+			}
+			if (tData != null && tData.getStartTime() != null)
+			fSetNotesButton.setEnabled(!readonly);
+		}
+	}
+
+	protected void createFrameLine(Composite parent) {		 
+		fFrameComposite = new Composite(parent, SWT.NONE);
+		GridData fcGd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		fcGd.horizontalSpan = 2;
+		fFrameComposite.setLayoutData(fcGd);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = 0;
+		fFrameComposite.setLayout(layout);
+		
+		Label separator = new Label(fFrameComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		GridData sepGd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		sepGd.horizontalSpan = 2;
+		separator.setLayoutData(sepGd);
+
+		fFrameSlider = new Slider(fFrameComposite, SWT.HORIZONTAL | SWT.BORDER);
+		GridData gd2 = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd2.horizontalSpan = 2;
+		fFrameSlider.setLayoutData(gd2);
+		fFrameSlider.setValues(0, 0, 100, 1, 1, 10);
+		fFrameSlider.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+    			IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+    			if (e.detail == SWT.ARROW_DOWN) {
+        			try {
+    					handlerService.executeCommand("org.eclipse.cdt.dsf.gdb.ui.command.selectNextTraceRecord", null); //$NON-NLS-1$
+    				} catch (Exception ex) {
+    				}
+    			} else if (e.detail == SWT.ARROW_UP) {
+        			try {
+    					handlerService.executeCommand("org.eclipse.cdt.dsf.gdb.ui.command.selectPreviousTraceRecord", null); //$NON-NLS-1$
+    				} catch (Exception ex) {
+    				}
+    			} else if (e.detail == SWT.DRAG) {
+    				// We don't want to query gdb while user drags thumb, just update the label instead 
+    				// but postpone actual gdb query to the time thumb is released (e.detail == SWT.NONE)
+    				fFrameNumberLabel.setText(TracepointsMessages.bind(
+    						TracepointsMessages.TraceControlView_frame_dragging,
+    						fFrameSlider.getSelection()));
+    			} else {
+    				fTraceControlModel.setCurrentTraceRecord(Integer.toString(fFrameSlider.getSelection()));    				
+    			}
+			}
+			
+		});
+		
+		fFrameLabel = new Label(fFrameComposite, SWT.NONE);
+		fFrameLabel.setText(TracepointsMessages.TraceControlView_frame_label);
+		fFrameLabel.setLayoutData(new GridData());
+
+		fFrameNumberLabel = new Label(fFrameComposite, SWT.NONE);
+		fFrameNumberLabel.setText(TracepointsMessages.TraceControlView_frame_not_looking);
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		fFrameNumberLabel.setLayoutData(gd);
+	}
+
+	protected void setFrameLineVisible(boolean visible, ITraceStatusDMData2 traceData) {
+		fFrameComposite.setVisible(visible);
+		((GridData)fFrameComposite.getLayoutData()).exclude = !visible;
+		
+		if (visible) {
+			fFrameSlider.setMinimum(0);
+			fFrameSlider.setMaximum(traceData.getNumberOfCollectedFrame());
+			int inc = traceData.getNumberOfCollectedFrame() / 20;
+			fFrameSlider.setPageIncrement(inc <= 1 ? 2 : inc);
+	
+			String fl = EMPTY_STRING;
+			if (traceData.getCurrentTraceFrameId() != null) {
+				fl += TracepointsMessages.bind(TracepointsMessages.TraceControlView_frame_looking,
+						new Object[] { traceData.getCurrentTraceFrameId(), 
+										new Integer(traceData.getTracepointNumberForCurrentTraceFrame())} );
+				int recId = 0;
+				try {
+					recId = Integer.parseInt(traceData.getCurrentTraceFrameId());
+				} catch (NumberFormatException e) {
+				}
+				fFrameSlider.setSelection(recId);
+			} else {
+				fl += TracepointsMessages.bind(TracepointsMessages.TraceControlView_frame_not_looking, traceData.getNumberOfCollectedFrame());
+				fFrameSlider.setSelection(0);
+			}
+			fFrameNumberLabel.setText(fl);
+		}
+		if (traceData != null && traceData != null) {
+			fFrameSlider.setEnabled(traceData.getNumberOfCollectedFrame() != 0);
+		}
+	}
+	
+	protected void createBufferLine(final Composite parent) {
+		
+		fBufferComposite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(3, false);
+		layout.marginHeight = 0;
+		fBufferComposite.setLayout(layout);
+		GridData gd = new GridData(SWT.FILL, SWT.TOP, true, true);
+		fBufferComposite.setLayoutData(gd);
+		fBufferComposite.setBackgroundMode(SWT.INHERIT_FORCE);
+
+		// Separator on the left of whole buffer composite
+		Label separator = new Label(fBufferComposite, SWT.SEPARATOR | SWT.VERTICAL);
+		GridData slGd = new GridData(SWT.RIGHT, SWT.FILL, false, true);
+		//slGd.widthHint = 3;
+		slGd.verticalSpan = 4;
+		separator.setLayoutData(slGd);
+		separator.setBackground(fBufferComposite.getBackground());
+		
+		Label fBufferLabel = new Label(fBufferComposite, SWT.NONE);
+		fBufferLabel.setText(TracepointsMessages.TraceControlView_buffer_label);
+		if (cachedBold != null) {
+			fBufferLabel.setFont(cachedBold);
+		}
+		GridData gdBL = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		fBufferLabel.setLayoutData(gdBL);
+		fBufferLabel.setBackground(fBufferComposite.getBackground());
+
+		fSetCircularBufferButton = new Button(fBufferComposite, SWT.TOGGLE);
+		fSetCircularBufferButton.setImage(TracepointImageRegistry.getImageDescriptor(
+				TracepointImageRegistry.ICON_Circular_Buffer).createImage());
+		fSetCircularBufferButton.setSelection(false);
+		fSetCircularBufferButton.setEnabled(true);
+		fSetCircularBufferButton.setToolTipText(TracepointsMessages.TraceControlView_circular_buffer_off_tooltip);
+		GridData cbbGd = new GridData(SWT.RIGHT, SWT.TOP, false, false);
+		cbbGd.horizontalIndent = 50;
+		fSetCircularBufferButton.setLayoutData(cbbGd);
+		fSetCircularBufferButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+					fTraceControlModel.setCircularBuffer(fSetCircularBufferButton.getSelection());
+					fTraceControlModel.updateContent();
+				}
+		});
+		
+		fBufferNumberLabel = new Label(fBufferComposite, SWT.NONE);
+		fBufferNumberLabel.setText(TracepointsMessages.TraceControlView_buffer_label);
+		GridData gd2 = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd2.horizontalSpan = 2;
+		fBufferNumberLabel.setLayoutData(gd2);
+		fBufferNumberLabel.setBackground(fBufferComposite.getBackground());
+		
+		fBufferProgress = new CircularProgress(fBufferComposite, SWT.NONE);
+		GridData bpGd = new GridData(SWT.CENTER, SWT.TOP, false, false);
+		bpGd.horizontalSpan = 2;
+		fBufferProgress.setLayoutData(bpGd);
+
+		fBufferCollectedFramesLabel = new Label(fBufferComposite, SWT.NONE);
+		fBufferCollectedFramesLabel.setText(TracepointsMessages.TraceControlView_buffer_label);
+		GridData gd3 = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd3.horizontalSpan = 2;
+		fBufferCollectedFramesLabel.setLayoutData(gd3);
+		fBufferNumberLabel.setBackground(fBufferComposite.getBackground());
+	}
+
+	protected void setBufferLineVisible(boolean visible, ITraceStatusDMData2 tData, boolean readonly) {
+		fBufferComposite.setVisible(visible);
+		((GridData)fBufferComposite.getLayoutData()).exclude = !visible;
+
+		if (visible){
+			fBufferProgress.setProgress((tData.getTotalBufferSize() - tData.getFreeBufferSize()) * 100 / tData.getTotalBufferSize());
+			
+			if (tData.isCircularBuffer()) {
+				fBufferNumberLabel.setText(TracepointsMessages.bind(
+						TracepointsMessages.TraceControlView_buffer_number_label_circular, tData.getTotalBufferSize(), tData.getNumberOfCollectedFrame()));
+			} else {
+				fBufferNumberLabel.setText(TracepointsMessages.bind(
+						TracepointsMessages.TraceControlView_buffer_number_label_linear,
+						tData.getTotalBufferSize() - tData.getFreeBufferSize()
+				));
+			}
+			
+			fSetCircularBufferButton.setSelection(tData.isCircularBuffer());
+			fSetCircularBufferButton.setEnabled(!readonly);
+			fSetCircularBufferButton.setToolTipText(fSetCircularBufferButton.getSelection() ? 
+			                                     		TracepointsMessages.TraceControlView_circular_buffer_on_tooltip : 
+					                                    TracepointsMessages.TraceControlView_circular_buffer_off_tooltip);
+
+			fBufferCollectedFramesLabel.setText(TracepointsMessages.bind(
+					TracepointsMessages.TraceControlView_buffer_frames_collected, tData.getNumberOfCollectedFrame()));
+			fBufferProgress.redraw();
+			fBufferProgress.update();
+		}
+	}
+	
 	protected void createActions() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		window.getActivePage().showActionSet("org.eclipse.cdt.debug.ui.tracepointActionSet"); //$NON-NLS-1$
+		
 		IActionBars bars = getViewSite().getActionBars();
 		IToolBarManager manager = bars.getToolBarManager();
-				
-		// Create the action to refresh the view
-		fActionRefreshView = new ActionRefreshView();
-		bars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fActionRefreshView);
-		manager.add(fActionRefreshView);
 
+		// Create the action to refresh the view
+		fRefreshViewAction = new RefreshViewAction();
+		bars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fRefreshViewAction);
+		manager.add(fRefreshViewAction);
+		fRefreshViewAction.setEnabled(false);
+
+		fAutoRefreshAction = new AutoRefreshAction();
+		manager.add(fAutoRefreshAction);
+		fAutoRefreshAction.setChecked(true);
+		fAutoRefreshAction.setEnabled(false);
+		fAutoRefreshEnabled = true;
+
+		fDisconnectedTracingAction = new DisconnectedTracingAction();
+		manager.add(fDisconnectedTracingAction);
+		fDisconnectedTracingAction.setEnabled(false);
+		
 		// Create the action to open the trace variable details
-		fOpenTraceVarDetails = new ActionOpenTraceVarDetails();
+		fOpenTraceVarDetails = new OpenTraceVarDetailsAction();
 		manager.add(fOpenTraceVarDetails);
 		
 		// Create the action to exit visualization mode
-		fActionExitVisualization = new ActionExitVisualizationModeDetails();
-		manager.add(fActionExitVisualization);
+		fExitVisualizationAction = new ExitVisualizationModeDetailsAction();
+		manager.add(fExitVisualizationAction);
 
 		bars.updateActionBars();
-		updateActionEnablement();
+		updateActionEnablement(null);
 	}
 	
 	@Override
 	public void dispose() {
-		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fDebugViewListener);
-		fStatusText = null;  // Indicate that we have been disposed
-		setDebugContext(null);
-		DsfSession.removeSessionEndedListener(this);
+		fTraceControlModel.dispose();
 
+		fStatusLabel = null;  // Indicate that we have been disposed
+		if (refreshUIJob != null) {
+			refreshUIJob.cancel();
+		}
+		
+		if (cachedBold != null) { 
+			cachedBold.dispose();
+			cachedBold = null;
+		}
+		
 		super.dispose();
 	}
-
-	protected void updateContent() {			
-		if (fDebugSessionId != null && getSession() != null) {
-			final ITraceTargetDMContext ctx = DMContexts.getAncestorOfType(fTargetContext, ITraceTargetDMContext.class);
-			if (ctx != null) {
-				getSession().getExecutor().execute(
-						new DsfRunnable() {	
-			                @Override
-							public void run() {
-								final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
-								if (traceControl != null) {
-									traceControl.getTraceStatus(
-											ctx, new DataRequestMonitor<ITraceStatusDMData>(getSession().getExecutor(), null) {
-												@Override
-												protected void handleCompleted() {
-													String traceStatus = EMPTY_STRING;
-													if (isSuccess() && getData() != null) {
-														fTracingSupported = getData().isTracingSupported();
-														if (fTracingSupported) {
-															traceStatus = getData().toString();
-															if (traceStatus.length() > 0) {
-																Calendar cal = Calendar.getInstance();
-																SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
-
-																traceStatus = TracepointsMessages.TraceControlView_trace_view_content_updated_label +
-																sdf.format(cal.getTime()) + "\n" + traceStatus;  //$NON-NLS-1$
-															}
-														}
-													} else {
-														fTracingSupported = false;
-													}
-													
-													final String finalStatus = traceStatus;
-													asyncExec(new Runnable() {
-										                @Override
-														public void run() {
-															fStatusText.setText(finalStatus);
-															updateActionEnablement();
-														}});
-												}
-											});
-								} else {
-									fTracingSupported = false;
-
-									asyncExec(new Runnable() {
-						                @Override
-										public void run() {
-											fStatusText.setText(EMPTY_STRING);
-											updateActionEnablement();
-										}});
-								}
-
-							}
-						});
-				return;
-			}
-		}
-		
-		if (fStatusText != null) {
-			fStatusText.setText(EMPTY_STRING);
-		}
-		updateActionEnablement();
-	}
-		
-	protected void exitVisualizationMode() {
-		if (fDebugSessionId == null || getSession() == null) {
-			return;
-		}
-		
-		final ITraceTargetDMContext ctx = DMContexts.getAncestorOfType(fTargetContext, ITraceTargetDMContext.class);
-		if (ctx == null) {
-			return;
-		}
-		
-		getSession().getExecutor().execute(
-				new DsfRunnable() {	
-	                @Override
-					public void run() {
-						final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
-						if (traceControl != null) {
-							ITraceRecordDMContext emptyDmc = traceControl.createTraceRecordContext(ctx, "-1"); //$NON-NLS-1$
-							traceControl.selectTraceRecord(emptyDmc, new ImmediateRequestMonitor());
-						}
-					}
-				});
-	}
 	
-	protected void updateDebugContext() {
-		IAdaptable debugContext = DebugUITools.getDebugContext();
-		if (debugContext instanceof IDMVMContext) {
-			setDebugContext((IDMVMContext)debugContext);
+	protected void updateUI(final String statusMessage) {
+		try {
+			setSecondaryStatusLineVisible(false, null);
+			setNotesLineVisible(false, null, false);
+			setFrameLineVisible(false, null);
+			setBufferLineVisible(false, null, false);
+			fStatusLabel.setText(statusMessage);
+			setActionLinkVisible(false, EMPTY_STRING);
+			updateActionEnablement(null);
+			updateLayout();
+			fRefreshViewAction.setEnabled(false);
+			fAutoRefreshAction.setEnabled(false);
+			fDisconnectedTracingAction.setEnabled(false);
+		} catch ( SWTException ex) {
+		}
+	}
+
+	protected void updateUI(final ITraceStatusDMData2 traceData) {
+
+		if (traceData == null ) {
+			// should not happen, but still process it correctly
+			updateUI(TracepointsMessages.TraceControlView_trace_status_inactive);
+		} else if (!traceData.isTracingSupported()) {
+			updateUI(TracepointsMessages.TraceControlView_trace_status_not_supported);
+		} else if (traceData.isTracingFromFile()) {
+			// Off-line tracing from data file
+			fRefreshViewAction.setEnabled(true);
+			fDisconnectedTracingAction.setEnabled(false);
+			String s = TracepointsMessages.TraceControlView_trace_status_offline;
+			fStatusLabel.setText(s);
+			setActionLinkVisible(false, EMPTY_STRING);
+
+			// If start and stop time are not available in trace data file, do not show secondary status line 
+			if (getTimeMilliseconds(traceData.getStartTime()) != 0 && getTimeMilliseconds(traceData.getStopTime()) != 0) {
+				setSecondaryStatusLineVisible(true, traceData);
+			} else {
+				setSecondaryStatusLineVisible(false, traceData);
+			}
+			setNotesLineVisible(true, traceData, true);			
+			setFrameLineVisible(true, traceData);	    			
+	    			
+			updateActionEnablement(traceData);
+			updateLayout();
+			
+		} else if (!traceData.isTracingActive() && traceData.getStopReason() == null){
+			// Tracing is not started yet
+			fRefreshViewAction.setEnabled(true);
+			fAutoRefreshAction.setEnabled(true);
+			fDisconnectedTracingAction.setEnabled(true);
+			fStatusLabel.setText(TracepointsMessages.TraceControlView_trace_status_not_started);
+			setActionLinkVisible(true,TracepointsMessages.TraceControlView_action_start);
+
+			setSecondaryStatusLineVisible(false, null);
+			setNotesLineVisible(true, traceData, false);  			
+			setBufferLineVisible(true, traceData, false);
+			setFrameLineVisible(false, null);
+
+			updateActionEnablement(traceData);
+	    	updateLayout();
+			
 		} else {
-			setDebugContext(null);
+			// Live execution tracing started and running or started and stopped
+			fRefreshViewAction.setEnabled(true);
+			fAutoRefreshAction.setEnabled(true);
+			fDisconnectedTracingAction.setEnabled(true);
+
+			// If stopped, stop reason, time and note.
+			STOP_REASON_ENUM fStopReason = traceData.getStopReason();
+			if (fStopReason != null) {
+				// Tracing has stopped we need notes, secondary status line, and frames slider
+				setSecondaryStatusLineVisible(true, traceData);
+				setNotesLineVisible(true, traceData, false);
+
+				setFrameLineVisible(true, traceData);
+				setBufferLineVisible(true, traceData, false);
+				if (traceData.getCurrentTraceFrameId() != null) {
+					fStatusLabel.setText(TracepointsMessages.TraceControlView_trace_status_visualization);
+					setActionLinkVisible(true, TracepointsMessages.TraceControlView_action_finish_visualization);
+				} else {
+					fStatusLabel.setText(TracepointsMessages.TraceControlView_trace_status_stopped);
+					setActionLinkVisible(true, TracepointsMessages.TraceControlView_action_restart);
+				}
+			} else {
+				// Tracing is running, don't show stop reason line, stop notes and frames line.
+				String s = TracepointsMessages.TraceControlView_trace_status_in_progress;
+				fStatusLabel.setText(s);
+				setActionLinkVisible(true, TracepointsMessages.TraceControlView_action_stop);
+				setSecondaryStatusLineVisible(true, traceData);
+				setNotesLineVisible(true, traceData, false);
+				setFrameLineVisible(false, traceData);
+				setBufferLineVisible(true, traceData, true);
+				if (fAutoRefreshEnabled) {
+					startRefreshUIJob();
+	    		}
+			}
+
+			updateActionEnablement(traceData);
+			updateLayout();
+
 		}
 	}
 
-	protected void setDebugContext(IDMVMContext vmContext) {
-		if (vmContext != null) {
-			IDMContext dmContext = vmContext.getDMContext();
-			String sessionId = dmContext.getSessionId();
-			fTargetContext = DMContexts.getAncestorOfType(dmContext, ITraceTargetDMContext.class);
-			if (!sessionId.equals(fDebugSessionId)) {
-				if (fDebugSessionId != null && getSession() != null) {
-					try {
-						final DsfSession session = getSession();
-						session.getExecutor().execute(new DsfRunnable() {
-			                @Override
-							public void run() {
-								session.removeServiceEventListener(TraceControlView.this);
-							}
-						});
-					} catch (RejectedExecutionException e) {
-						// Session is shut down.
-					}
-				}
-				fDebugSessionId = sessionId;
-				if (fServicesTracker != null) {
-					fServicesTracker.dispose();
-				}
-				fServicesTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), sessionId);
-				debugSessionChanged();
+	protected void startRefreshUIJob() {
+		refreshUIJob = new Job("Refresh Trace Control view UI") { //$NON-NLS-1$
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				fTraceControlModel.updateContent();
+				return Status.OK_STATUS;
 			}
-		} else if (fDebugSessionId != null) {
-			if (getSession() != null) {
-				try {
-					final DsfSession session = getSession();
-					session.getExecutor().execute(new DsfRunnable() {
-		                @Override
-						public void run() {
-							session.removeServiceEventListener(TraceControlView.this);
-						}
-					});
-        		} catch (RejectedExecutionException e) {
-                    // Session is shut down.
-        		}
-			}
-			fDebugSessionId = null;
-			fTargetContext = null;
-			if (fServicesTracker != null) {
-				fServicesTracker.dispose();				
-				fServicesTracker = null;
-			}
-			debugSessionChanged();
-		}
+			
+		};
+		refreshUIJob.schedule(UI_REFRESH_DELAY);
 	}
-
-	private void debugSessionChanged() {
-		// When dealing with a new debug session, assume tracing is not supported.
-		// updateContent() will fix it
-		fTracingSupported = false;
 		
-		if (fDebugSessionId != null && getSession() != null) {
-			try {
-				final DsfSession session = getSession();
-				session.getExecutor().execute(new DsfRunnable() {
-	                @Override
-					public void run() {
-						session.addServiceEventListener(TraceControlView.this, null);
-					}
-				});
-    		} catch (RejectedExecutionException e) {
-                // Session is shut down.
-    		}
-        }
-		
-		updateContent();
-	}
-
-	protected void updateActionEnablement() {
-		fOpenTraceVarDetails.setEnabled(fTracingSupported);
-		fActionRefreshView.setEnabled(fTracingSupported);
-		
-		// This hack is to avoid adding an API late in the release.
-		// For the next release, we should have a proper call to know if 
-		// we can stop visualization or not
-		if (fStatusText != null && fStatusText.getText().toLowerCase().indexOf("off-line") != -1) { //$NON-NLS-1$
-			fActionExitVisualization.setEnabled(false);
+	protected String getStopMessage(ITraceStatusDMData2 tData) {
+		String stopMessage;
+		STOP_REASON_ENUM fStopReason = tData.getStopReason();
+		if (fStopReason == STOP_REASON_ENUM.REQUEST) {
+			stopMessage = TracepointsMessages.TraceControlView_tracing_stopped_user_request;
+		} else if (fStopReason == STOP_REASON_ENUM.PASSCOUNT) {
+			if (tData.getStoppingTracepoint() != null) {
+				stopMessage = TracepointsMessages.bind(TracepointsMessages.TraceControlView_tracing_stopped_tracepoint_number, tData.getStoppingTracepoint());
+			} else {
+				stopMessage = TracepointsMessages.TraceControlView_tracing_stopped_passcount;
+			}
+		} else if (fStopReason == STOP_REASON_ENUM.OVERFLOW) {
+			stopMessage = TracepointsMessages.TraceControlView_tracing_stopped_buffer_full;
+		} else if (fStopReason == STOP_REASON_ENUM.DISCONNECTION) {
+			stopMessage = TracepointsMessages.TraceControlView_tracing_stopped_disconnection;
+		} else if (fStopReason == STOP_REASON_ENUM.ERROR) {
+			stopMessage = TracepointsMessages.TraceControlView_tracing_stopped_error;
 		} else {
-			fActionExitVisualization.setEnabled(fTraceVisualization);
+			stopMessage = TracepointsMessages.TraceControlView_tracing_stopped_unknown;
 		}
+
+		String user = EMPTY_STRING;
+		if (tData.getUserName() != null && tData.getUserName().length() > 0) {
+			user = TracepointsMessages.bind(TracepointsMessages.TraceControlView_trace_status_secondary_user, tData.getUserName());
+		}
+		if (tData.isTracingFromFile()) {
+			stopMessage = TracepointsMessages.bind(
+					TracepointsMessages.TraceControlView_trace_status_secondary_offline, 
+					new Object[] {formatTime(tData.getStartTime()),
+					user,
+					formatTime(tData.getStopTime()),
+					stopMessage
+					});	
+		} else {
+			stopMessage = TracepointsMessages.bind(
+					TracepointsMessages.TraceControlView_trace_status_secondary_stopped, 
+					new Object[] {formatTimeInterval(tData.getStartTime(),tData.getStopTime()),
+					user,
+					formatTime(tData.getStopTime()),
+					stopMessage
+					});	
+		}
+		
+		return stopMessage;
+	}
+
+	protected void updateActionEnablement(ITraceStatusDMData2 traceData) {
+		fOpenTraceVarDetails.setEnabled(traceData != null && traceData.isTracingSupported());
+		fExitVisualizationAction.setEnabled(traceData != null && traceData.getCurrentTraceFrameId() != null && 
+				                            !traceData.isTracingFromFile());
 	}
 	
 	private void asyncExec(Runnable runnable) {
-		if (fStatusText != null) {
-			fStatusText.getDisplay().asyncExec(runnable);
+		if (fStatusLabel != null && !fStatusLabel.isDisposed()) {
+			fStatusLabel.getDisplay().asyncExec(runnable);
 		}
 	}
-
-    @Override
-	public void sessionEnded(DsfSession session) {
-		if (session.getId().equals(fDebugSessionId)) {
-			asyncExec(new Runnable() {
-                @Override
-				public void run() {
-					setDebugContext(null);
-				}});
-		}
-	}
-
-	/*
-	 * When tracing starts, we know the status has changed
-	 */
-	@DsfServiceEventHandler
-	public void handleEvent(ITracingStartedDMEvent event) {
-		updateContent();
-	}
-
-	/*
-	 * When tracing stops, we know the status has changed
-	 */
-	@DsfServiceEventHandler
-	public void handleEvent(ITracingStoppedDMEvent event) {
-		updateContent();
-	}
-
-	@DsfServiceEventHandler
-	public void handleEvent(ITraceRecordSelectedChangedDMEvent event) {
-    	if (event.isVisualizationModeEnabled()) {
-    		fTraceVisualization = true;
-    	} else {
-    		fTraceVisualization = false;
-    	}
-		updateContent();
-	}
-	/*
-	 * Since something suspended, might as well refresh our status
-	 * to show the latest.
-	 */
-	@DsfServiceEventHandler
-	public void handleEvent(ISuspendedDMEvent event) {
-		updateContent();
-	}
-
-	/*
-	 * Tracing support has changed, update view
-	 */
-	@DsfServiceEventHandler
-	public void handleEvent(ITracingSupportedChangeDMEvent event) {
-		updateContent();
-	}
-
 	
 	@Override
 	public void setFocus() {
-		if (fStatusText != null) {
-			fStatusText.setFocus();
+		if (fStatusLabel != null) {
+			fStatusLabel.setFocus();
 		}
 	}
 	
-	private DsfSession getSession() {
-		return DsfSession.getSession(fDebugSessionId);
+	public void updateLayout() {
+		fStatusComposite.layout(true);
+		fTopComposite.layout(true);
 	}
 	
-	private <V> V getService(Class<V> serviceClass) {
-		if (fServicesTracker != null) {
-			return fServicesTracker.getService(serviceClass);
+	protected long getTimeMilliseconds(String time) {
+		long microseconds = 0;
+		try { 
+			if (time.length() != 0) {
+				String[] times = time.split("\\.");  //$NON-NLS-1$
+				microseconds += Long.parseLong(times[0]) * 1000000;
+				microseconds += Long.parseLong(times[1]);
+			}
+		} catch (NumberFormatException ex) {
+			GdbPlugin.log(ex);
 		}
-		return null;
+		return microseconds / 1000;
+	}
+
+	/** 
+	 * Format time from gdb presentation into user-understandable form
+	 * @param time in gd presentation
+	 * @return 
+	 */
+	protected String formatTime(String time) {
+		long milliseconds = getTimeMilliseconds(time);
+		Date date = new Date(milliseconds);
+		long currentTime = System.currentTimeMillis();
+		long days = TimeUnit.MILLISECONDS.toDays(currentTime - milliseconds);
+		if (days == 0) {
+			// today
+			return TracepointsMessages.bind(TracepointsMessages.TraceControlView_today, DateFormat.getTimeInstance(DateFormat.SHORT).format(date));
+		} else if (days == 1) {
+			// yesterday
+			return TracepointsMessages.bind(TracepointsMessages.TraceControlView_yesterday, DateFormat.getTimeInstance(DateFormat.SHORT).format(date));
+		}
+		
+		return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(date);
 	}
 
 	/**
-	 * Get the list of trace variables from the backend.
-	 * 
-	 * @return null when the list cannot be obtained.
+	 * Format time interval returned by trace status command into human-readable 
 	 */
-	public ITraceVariableDMData[] getTraceVarList() {
-		if (fDebugSessionId == null || getSession() == null) {
-			return null;
-		}
-		
-		final ITraceTargetDMContext ctx = DMContexts.getAncestorOfType(fTargetContext, ITraceTargetDMContext.class);
-		if (ctx == null) {
-			return null;
-		}
-		
-		Query<ITraceVariableDMData[]> query = new Query<ITraceVariableDMData[]>() {
-			@Override
-			protected void execute(final DataRequestMonitor<ITraceVariableDMData[]> rm) {
-				final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
-				
-				if (traceControl != null) {
-					traceControl.getTraceVariables(ctx,
-							new DataRequestMonitor<ITraceVariableDMData[]>(getSession().getExecutor(), rm) {
-						@Override
-						protected void handleCompleted() {
-							if (isSuccess()) {
-								rm.setData(getData());
-							} else {
-								rm.setData(null);
-							}
-							rm.done();
-						};
-
-					});
-				} else {
-					rm.setData(null);
-					rm.done();
-				}
+	protected String formatTimeInterval(String startTime, String stopTime) {
+		long startMicroseconds = 0;
+		long stopMicroseconds = 0;
+		try { 
+			if (startTime.length() != 0) {
+				String[] times = startTime.split("\\.");  //$NON-NLS-1$
+				startMicroseconds += Long.parseLong(times[0]) * 1000000;
+				startMicroseconds += Long.parseLong(times[1]);
 			}
-		};
-		try {
-			getSession().getExecutor().execute(query);
-			return query.get(1, TimeUnit.SECONDS);
-		} catch (InterruptedException exc) {
-		} catch (ExecutionException exc) {
-		} catch (TimeoutException e) {
+			if (stopTime.length() != 0) {
+				String[] times = stopTime.split("\\.");  //$NON-NLS-1$
+				stopMicroseconds += Long.parseLong(times[0]) * 1000000;
+				stopMicroseconds += Long.parseLong(times[1]);
+			}
+		} catch (NumberFormatException ex) {
+			GdbPlugin.log(ex);
 		}
 
-		return null;
+		long millis = (stopMicroseconds - startMicroseconds) / 1000;
+		long days = TimeUnit.MILLISECONDS.toDays(millis);
+        millis -= TimeUnit.DAYS.toMillis(days);
+        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        millis -= TimeUnit.HOURS.toMillis(hours);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        millis -= TimeUnit.MINUTES.toMillis(minutes);        
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+        
+        StringBuilder sb = new StringBuilder(64);
+        if (days != 0) sb.append(days + TracepointsMessages.TraceControlView_date_days);
+        if (hours != 0) sb.append(hours + TracepointsMessages.TraceControlView_date_hours);
+        if (minutes != 0) sb.append(minutes + TracepointsMessages.TraceControlView_date_minutes);
+        if (seconds != 0) sb.append(seconds + TracepointsMessages.TraceControlView_date_seconds);
+        if (sb.length() == 0) sb.append(TracepointsMessages.TraceControlView_date_zero);
+        return(sb.toString());
 	}
-
-	/**
-	 * Create a new trace variable in the backend.
-     *
-	 * @throws FailedTraceVariableCreationException when the creation fails.  The exception
-	 *         will contain the error message to display to the user.
+	
+	/** 
+	 * GDB's set trace-user and set trace-notes commands require quotes if argument contains spaces,
+	 * but these quotes are returned by trace status, to workaround this we remove quotes on UI side 
 	 */
-	protected void createVariable(final String name, final String value) throws FailedTraceVariableCreationException {
-		if (fDebugSessionId == null || getSession() == null) {
-			throw new FailedTraceVariableCreationException(TracepointsMessages.TraceControlView_create_variable_error);
-		}
-		
-		final ITraceTargetDMContext ctx = DMContexts.getAncestorOfType(fTargetContext, ITraceTargetDMContext.class);
-		if (ctx == null) {
-			throw new FailedTraceVariableCreationException(TracepointsMessages.TraceControlView_create_variable_error);
-		}
-
-		Query<String> query = new Query<String>() {
-			@Override
-			protected void execute(final DataRequestMonitor<String> rm) {
-				final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
-				
-				if (traceControl != null) {
-					traceControl.createTraceVariable(ctx, name, value, 
-							new RequestMonitor(getSession().getExecutor(), rm) {
-						@Override
-						protected void handleFailure() {
-							String message = TracepointsMessages.TraceControlView_create_variable_error;
-							Throwable t = getStatus().getException();
-							if (t != null) {
-								message = t.getMessage();
-							}
-							FailedTraceVariableCreationException e = 
-								new FailedTraceVariableCreationException(message);
-				            rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Backend error", e)); //$NON-NLS-1$
-							rm.done();
-						};
-					});
-				} else {
-					FailedTraceVariableCreationException e = 
-						new FailedTraceVariableCreationException(TracepointsMessages.TraceControlView_trace_variable_tracing_unavailable);
-		            rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Tracing unavailable", e)); //$NON-NLS-1$
-					rm.done();
-				}
-			}
-		};
-		try {
-			getSession().getExecutor().execute(query);
-			query.get();
-		} catch (InterruptedException e) {
-			// Session terminated
-		} catch (ExecutionException e) {
-			Throwable t = e.getCause();
-			if (t instanceof CoreException) {
-				t = ((CoreException)t).getStatus().getException();
-				if (t instanceof FailedTraceVariableCreationException) {
-					throw (FailedTraceVariableCreationException)t;
-				}
-			}
-			throw new FailedTraceVariableCreationException(TracepointsMessages.TraceControlView_create_variable_error);
+	protected String removeQuotes(String s) {
+		if (s.startsWith("\"") && s.endsWith("\"")) {  //$NON-NLS-1$//$NON-NLS-2$
+			return s.substring(1, s.length()-1);
+		} else {
+			return s;
 		}
 	}
 }
-

@@ -22,6 +22,7 @@
  *     John Dallaway - Support for -data-write-memory-bytes (Bug 387793)
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug (323552)
  *     Philippe Gil (AdaCore) - Add show/set language CLI commands (Bug 421541)
+ *     Dmitry Kozlov (Mentor Graphics) - New trace-related methods (Bug 390827)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -110,7 +111,9 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetArgs;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetBreakpointPending;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetCharset;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetCircularTraceBuffer;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDetachOnFork;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDisconnectedTracing;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetHostCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetLanguage;
@@ -125,6 +128,8 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibSearchPath;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetAsync;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetWideCharset;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTraceNotes;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTraceUser;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowExitCode;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowLanguage;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
@@ -679,6 +684,11 @@ public class CommandFactory {
 		return new MIGDBSetBreakpointPending(ctx, enable);
 	}
 
+	/** @since 4.2 */
+	public ICommand<MIInfo> createMIGDBSetCircularTraceBuffer(ITraceTargetDMContext ctx, boolean useCircularBuffer) {
+		return new MIGDBSetCircularTraceBuffer(ctx, useCircularBuffer);
+	}
+	
 	/** @since 4.1 */
 	public ICommand<MIInfo> createMIGDBSetCharset(ICommandControlDMContext ctx, String charset) {
 		return new MIGDBSetCharset(ctx, charset);
@@ -687,7 +697,12 @@ public class CommandFactory {
 	/** @since 4.0 */
 	public ICommand<MIInfo> createMIGDBSetDetachOnFork(ICommandControlDMContext ctx, boolean detach) {
 		return new MIGDBSetDetachOnFork(ctx, detach);
-	}	
+	}
+
+	/** @since 4.2 */
+	public ICommand<MIInfo> createMIGDBSetDisconnectedTracing(ITraceTargetDMContext ctx, boolean disconnectedTracing) {
+		return new MIGDBSetDisconnectedTracing(ctx, disconnectedTracing);
+	}
 
 	public ICommand<MIInfo> createMIGDBSetEnv(ICommandControlDMContext dmc, String name) {
 		return new MIGDBSetEnv(dmc, name);
@@ -755,6 +770,16 @@ public class CommandFactory {
 
 	public ICommand<MIInfo> createMIGDBSetTargetAsync(ICommandControlDMContext ctx, boolean isSet) {
 		return new MIGDBSetTargetAsync(ctx, isSet);
+	}
+
+	/** @since 4.2 */
+	public ICommand<MIInfo> createMIGDBSetTraceNotes(ITraceTargetDMContext ctx, String notes) {
+		return new MIGDBSetTraceNotes(ctx, notes);
+	}
+
+	/** @since 4.2 */
+	public ICommand<MIInfo> createMIGDBSetTraceUser(ITraceTargetDMContext ctx, String userName) {
+		return new MIGDBSetTraceUser(ctx, userName);
 	}
 
 	public ICommand<MIGDBShowExitCodeInfo> createMIGDBShowExitCode(ICommandControlDMContext ctx) {
@@ -1045,4 +1070,5 @@ public class CommandFactory {
 	public ICommand<MIVarUpdateInfo> createMIVarUpdate(ICommandControlDMContext dmc, String name) {
 		return new MIVarUpdate(dmc, name);
 	}
+
 }

@@ -344,7 +344,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 			}
 			
 			// an empty parameter can be passed with two single quotes
-			if (value.isEmpty()) {
+			if (builder.length() == 0) {
 				builder.append("''"); //$NON-NLS-1$
 			}
 

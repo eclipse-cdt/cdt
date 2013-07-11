@@ -13,6 +13,7 @@
  *     Marc Khouzam (Ericsson) - Include IGDBHardware service for the multicore visualizer (Bug 335027)
  *     Vladimir Prus (Mentor Graphics) - Support for OS resources.
  *     Marc Khouzam (Ericsson) - Support for GDB 7.6 memory service
+ *     Marc Khouzam (Ericsson) - Support for GDB 7.4 trace control service
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -238,6 +239,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	
 	/** @since 3.0 */
 	protected IGDBTraceControl createTraceControlService(DsfSession session, ILaunchConfiguration config) {
+		if (GDB_7_4_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBTraceControl_7_4(session, config);
+		}
 		// This service is available for GDB 7.2 but there is a pre-release of GDB that
 		// supports the same features and has version of 6.8.50.20090414
 		if (GDB_7_2_VERSION.compareTo(fVersion) <= 0 || "6.8.50.20090414".equals(fVersion)) { //$NON-NLS-1$

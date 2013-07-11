@@ -8,7 +8,6 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Ericsson - Adapted for DSF
- *     Dmitry Kozlov (Mentor) - Add tab symbols parsing (Bug 391115)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;

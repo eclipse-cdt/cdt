@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "073dc3ed_baad2ef7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-07-11T19:15:53Z",
+      "side": 1,
+      "message": "Can you change the text to better reflect what this change does?",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_b3b1d92f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1182,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-07-11T19:15:53Z",
+      "side": 1,
+      "message": "Can store the thread result in a variable to avoid potentially searching for it twice?",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "073dc3ed_7339288b",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 2
@@ -19,6 +53,126 @@
     },
     {
       "key": {
+        "uuid": "073dc3ed_fa8e968a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1185,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-07-11T19:15:53Z",
+      "side": 1,
+      "message": "It turned out that we could hit a race condition where the thread is created by the event and therefore be in the model, but by the time we updated it here, it was in a different state and/or core.  So the right thing is to update those fields in this case.\n\nI believe Marc D saw this while testing for the all-stop fix, so he added it at the same time.",
+      "parentUuid": "073dc3ed_7339288b",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_9da3042f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-07-11T19:15:53Z",
+      "side": 1,
+      "message": "Variable context can be used from right above.  Also, check for null, just in case.  Note that the InstanceOf check below is an implicit check for null",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_dd18ec05",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-07-11T19:15:53Z",
+      "side": 1,
+      "message": "Variable context can be used from right above.  Also, check for null, just in case.  Note that the InstanceOf check below is an implicit check for null",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_3d1d98f3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-07-11T19:15:53Z",
+      "side": 1,
+      "message": "Maybe we need either:\n   fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();\nlike we do below,\nor \n  fVisualizer.refresh();\nlike we do in the case of a suspended in non-stop.  I\u0027m not sure the difference between those two calls...",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_f0e51753",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-07-11T19:15:53Z",
+      "side": 1,
+      "message": "Let\u0027s do a null check here.  We were protected before by the instanceof check.",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_33f789c8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-07-11T19:15:53Z",
+      "side": 1,
+      "message": "Shouldn\u0027t we have an else case like was added below?",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_50516359",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-07-11T19:15:53Z",
+      "side": 1,
+      "message": "Can you set the thread to a variable here to avoid searching for it twice, here and in the else?",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "073dc3ed_d32d944a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
         "patchSetId": 2
@@ -30,6 +184,92 @@
       "writtenOn": "2013-07-09T19:29:40Z",
       "side": 1,
       "message": "Same thing as in the other file and this is also in a non-stop mode block. Maybe this fixes another bug at the same time?",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_3073ff0b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-07-11T19:15:53Z",
+      "side": 1,
+      "message": "See reply in other file",
+      "parentUuid": "073dc3ed_d32d944a",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_7054674c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-07-11T19:15:53Z",
+      "side": 1,
+      "message": "Above we do\n  fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();\n\nshould we move that line after the if/else case?",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_1d1a54fa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-07-11T19:15:53Z",
+      "side": 1,
+      "message": "Can you put a comment to say we are overriding to avoid an error message, since this case should simply be ignored.  I\u0027m worried someone will remove the override thinking it is useless.\n\nLittle note; I was concerned that this case would hit when we do a detach while an all-stop process is running.  Since we don\u0027t get a thread-exited event in that case, I was afraid we wouldn\u0027t clean up the thread properly.  After testing, I noticed that to do the \u0027detach\u0027 we need to interrupt the process in all-stop, which means that when we get the \u003dthread-group-exited event GDB can be accessed and we don\u0027t hit this case.  So, it turns out we are ok for that case.",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_bdd88867",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-07-11T19:15:53Z",
+      "side": 1,
+      "message": "It is a good habit to avoid public methods unless you need them to be public.  Here, since the class in internal, it does not matter, but normally it would be safer to put as private to avoid being stuck with an new API.\n\nOk to leave it as is in this case though.",
+      "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_bd9ec8e9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 361,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-07-11T19:15:53Z",
+      "side": 1,
+      "message": "Let\u0027s avoid this allocation by having a global member, fIsAllStop, which we be set once only and then reused in here.\n\nie.\nif (fIsAllStop !\u003d null) return fIsAllStop;\n\nIn fact, what do you think about making the serviceTracker global?  That way we don\u0027t have to create and dispose of a new one at each event we get throughout this class?",
       "revId": "745630d5f994256bd0dee3fa09184b8956eeb730",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

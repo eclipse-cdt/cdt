@@ -282,9 +282,9 @@
       <perspectiveExtension
             targetID="org.eclipse.debug.ui.DebugPerspective">
          <view
-               relative="org.eclipse.ui.views.ContentOutline"
+               relative="org.eclipse.debug.ui.DebugView"
                visible="false"
-               relationship="stack"
+               relationship="right"
                id="org.eclipse.cdt.dsf.gdb.ui.tracecontrol.view">
          </view>
          <viewShortcut
@@ -344,16 +344,13 @@
                label="%toolbar.prevTraceRecord.label"
                style="push">
          </command>
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.saveTraceData"
+               icon="icons/full/obj16/savetrace.gif"
+               label="%toolbar.saveTracing.name"
+               style="push">
+         </command>
       </menuContribution>
-         <menuContribution
-               locationURI="menu:org.eclipse.cdt.dsf.gdb.ui.tracecontrol.view?after=additions">
-            <command
-                  commandId="org.eclipse.cdt.debug.ui.command.saveTraceData"
-                  icon="icons/full/obj16/savetrace.gif"
-                  label="%toolbar.saveTracing.name"
-                  style="push">
-            </command>
-         </menuContribution>
    </extension>
    <extension
          point="org.eclipse.cdt.debug.ui.BreakpointActionPage">

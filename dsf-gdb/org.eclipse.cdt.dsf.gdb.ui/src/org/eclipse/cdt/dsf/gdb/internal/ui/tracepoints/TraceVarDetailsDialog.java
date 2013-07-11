@@ -253,7 +253,7 @@ public final class TraceVarDetailsDialog extends Dialog {
 	}
 
 	protected void handleRefresh() {
-		ITraceVariableDMData[] vars = fView.getTraceVarList();
+		ITraceVariableDMData[] vars = fView.fTraceControlModel.getTraceVarList();
 		if (vars == null) {
 			setWarningVisible(TracepointsMessages.TraceControlView_refresh_variable_error);
 			createButton.setEnabled(false);
@@ -312,7 +312,7 @@ public final class TraceVarDetailsDialog extends Dialog {
 			}
 			
 			try {
-				fView.createVariable(name, value);
+				fView.fTraceControlModel.createVariable(name, value);
 				resetInputFields();
 				nameInput.setFocus();
 				handleRefresh();

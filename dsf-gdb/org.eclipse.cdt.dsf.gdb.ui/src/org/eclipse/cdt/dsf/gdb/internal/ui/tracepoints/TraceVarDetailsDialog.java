@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson.
+ * Copyright (c) 2010, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - Initial API and implementation
+ *     Dmitry Kozlov (Mentor Graphics) - Trace control view enhancements (Bug 390827)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.tracepoints;
 
@@ -253,7 +254,7 @@ public final class TraceVarDetailsDialog extends Dialog {
 	}
 
 	protected void handleRefresh() {
-		ITraceVariableDMData[] vars = fView.getTraceVarList();
+		ITraceVariableDMData[] vars = fView.fTraceControlModel.getTraceVarList();
 		if (vars == null) {
 			setWarningVisible(TracepointsMessages.TraceControlView_refresh_variable_error);
 			createButton.setEnabled(false);
@@ -312,7 +313,7 @@ public final class TraceVarDetailsDialog extends Dialog {
 			}
 			
 			try {
-				fView.createVariable(name, value);
+				fView.fTraceControlModel.createVariable(name, value);
 				resetInputFields();
 				nameInput.setFocus();
 				handleRefresh();

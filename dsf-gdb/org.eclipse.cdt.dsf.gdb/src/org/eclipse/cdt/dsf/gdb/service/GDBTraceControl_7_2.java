@@ -7,6 +7,8 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Dmitry Kozlov (Mentor Graphics) - add setCircularTraceBuffer, setTraceUser,
+ *                               setTraceNotes (Bug 390827)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -54,7 +56,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @since 3.0
  */
-public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTraceControl, ICachingService {
+public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTraceControl, IGDBTraceControl2, ICachingService {
 
 	@Immutable
 	protected static final class MITraceRecordDMContext extends AbstractDMContext implements ITraceRecordDMContext {
@@ -212,80 +214,98 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		}
 	}
 	
-	private class TraceStatusDMData implements ITraceStatusDMData {
-		private int fFreeBufferSize;
-		private int fTotalBufferSize;
-		private int fNumberOfCollectedFrames;
-		private boolean fTracingActive;
+	private class TraceStatusDMData implements ITraceStatusDMData, ITraceStatusDMData2 {
+		protected MITraceStatusInfo info;
 		private boolean fTracingSupported;
-		private STOP_REASON_ENUM fStopReason;
-		private Integer fStoppingTracepoint;
-		
-		/**
-		 * Create a status when tracing is supported
-		 */
-		public TraceStatusDMData(boolean active, int free, int total, int frames, 
-				STOP_REASON_ENUM reason, Integer tracepoint) {
-			fFreeBufferSize = free;
-			fTotalBufferSize = total;
-			fNumberOfCollectedFrames = frames;
-			fTracingActive = active;
-			fTracingSupported = true;
-			fStopReason = reason;
-			fStoppingTracepoint = tracepoint;
-		}
-		
-		/**
-		 * Status without a Stop reason
-		 */
-		public TraceStatusDMData(boolean active, int free, int total, int frames) {
-			this(active, free, total, frames, null, null);
+
+		public TraceStatusDMData(MITraceStatusInfo info) {
+			fTracingSupported = (info != null);
+			this.info = info;
 		}
 		
 		/**
 		 * Create a status when tracing is not supported
 		 */
 		public TraceStatusDMData() {
-			this(false, 0, 0, 0);
 			fTracingSupported = false;
 		}
 		
 		@Override
 		public int getFreeBufferSize() {
-			return fFreeBufferSize;
+			return info.getFreeBufferSize();
 		}
 		
 		@Override
+		public int getNumberOfCreatedFrames() {
+			return info.getNumberOfCreatedFrames();
+		}
+
+		@Override
 		public int getNumberOfCollectedFrame() {
-			return fNumberOfCollectedFrames;
+			return info.getNumberOfCollectedFrame();
 		}
 		
 		@Override
 		public int getTotalBufferSize() {
-			return fTotalBufferSize;
+			return info.getTotalBufferSize();
 		}
 		
 		@Override
 		public boolean isTracingActive() {
-			return fTracingActive;
+			return info.isTracingActive();
 		}
 		
 		@Override
 		public boolean isTracingSupported() {
 			return fTracingSupported;
 		}
+
+		@Override
+		public boolean isCircularBuffer() {
+			return info.isCircularBuffer();
+		}
+		
+		@Override
+		public boolean isOfflineTracing() {
+			return info.isOfflineTracing();
+		}
+
+		@Override
+		public boolean isDisconnectedTracing() {
+			return info.isDisconnectedTracing();
+		}
 		
 		@Override
 		public STOP_REASON_ENUM getStopReason() {
-			return fStopReason;
+			return info.getStopReason();
 		}
 		
 		@Override
 		public Integer getStoppingTracepoint() {
-			if (fStopReason == null) {
+			if (info.getStopReason() == null) {
 				return null;
 			}
-			return fStoppingTracepoint;
+			return info.getStopTracepoint();
+		}
+		
+		@Override
+		public String getUserName() {
+			return info.getUserName() == null ? "" : info.getUserName(); //$NON-NLS-1$
+		}
+
+		@Override
+		public String getNotes() {
+			return info.getStartNotes() == null ? "" : info.getStartNotes(); //$NON-NLS-1$
+		}
+
+		@Override
+		public String getStartTime() {
+			return info.getStartTime() == null ? "" : info.getStartTime(); //$NON-NLS-1$
+		}
+
+		@Override
+		public String getStopTime() {
+			return info.getStopTime() == null ? "" : info.getStopTime(); //$NON-NLS-1$
 		}
 		
 		@SuppressWarnings("nls")
@@ -302,36 +322,28 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 	    	} else {
 	    		str += "Tracing with live execution\n";
 	    	}
-	    	
-			if (fCurrentRecordDmc instanceof MITraceRecordDMContext) {
-				str += "Looking at trace frame " + 
-				             ((MITraceRecordDMContext)fCurrentRecordDmc).getRecordId() +
-				             ", tracepoint " + fTracepointIndexForTraceRecord + "\n\n";
-			} else {
-				str += "Not currently looking at any trace frame\n\n";
-			}
 			
-			str += "Tracing is currently" + (!fTracingActive ? " not":"") + " active\n";
-			str += "Buffer contains " + fNumberOfCollectedFrames + " trace frame" + 
-			       (fNumberOfCollectedFrames>1?"s":"") + "\n";//" (out of ? created in total)\n";
-			str += "Currently using " + (fTotalBufferSize - fFreeBufferSize) + 
-			       " bytes out of " + fTotalBufferSize + "\n";
+			str += "Tracing is currently" + (!isTracingActive() ? " not":"") + " active\n";
+			str += "Buffer contains " + getNumberOfCollectedFrame() + " trace frame" + 
+			       (getNumberOfCollectedFrame() > 1 ? "s" : "") + "\n";//" (out of ? created in total)\n";
+			str += "Currently using " + (getTotalBufferSize() - getFreeBufferSize()) + 
+			       " bytes out of " + getTotalBufferSize() + "\n";
 			
-			if (fStopReason != null) {
-				assert !fTracingActive;
+			if (getStopReason() != null) {
+				assert !isTracingActive();
 				str += "Tracing stopped because of";
-				if (fStopReason == STOP_REASON_ENUM.REQUEST) {
+				if (getStopReason() == STOP_REASON_ENUM.REQUEST) {
 					str += " user request";
-				} else if (fStopReason == STOP_REASON_ENUM.PASSCOUNT) {
+				} else if (getStopReason() == STOP_REASON_ENUM.PASSCOUNT) {
 					str += " passcount";
-					if (fStoppingTracepoint != null) {
-						str += " of tracepoint number " + fStoppingTracepoint;
+					if (getStoppingTracepoint() != null) {
+						str += " of tracepoint number " + getStoppingTracepoint();
 					}
-				} else if (fStopReason == STOP_REASON_ENUM.OVERFLOW) {
+				} else if (info.getStopReason() == STOP_REASON_ENUM.OVERFLOW) {
 					str += " buffer full";
-				} else if (fStopReason == STOP_REASON_ENUM.DISCONNECTION) {
+				} else if (info.getStopReason() == STOP_REASON_ENUM.DISCONNECTION) {
 					str += " disconnection";
-				} else if (fStopReason == STOP_REASON_ENUM.ERROR) {
+				} else if (info.getStopReason() == STOP_REASON_ENUM.ERROR) {
 					str += " error";
 				} else {
 					str += " unknow reason";
@@ -339,8 +351,6 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 				str += "\n";
 			}
 			
-
-
 			return str;
 		}
 	}
@@ -784,20 +794,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
         					
         					fTraceRecordsStored = info.getNumberOfCollectedFrame();
         					
-        					STOP_REASON_ENUM stopReason = info.getStopReason();
-        					if (stopReason == null) {
-        						rm.setData(new TraceStatusDMData(info.isTracingActive(), 
-        								                         info.getFreeBufferSize(), 
-        														 info.getTotalBufferSize(),
-        														 info.getNumberOfCollectedFrame()));
-        					} else {
-        						rm.setData(new TraceStatusDMData(info.isTracingActive(), 
-        								                         info.getFreeBufferSize(), 
-										                         info.getTotalBufferSize(), 
-										                         info.getNumberOfCollectedFrame(),
-										                         stopReason, 
-										                         info.getStopTracepoint()));
-        					}
+        					rm.setData(new TraceStatusDMData(info));
         				} else {
         					fTraceRecordsStored = 0;
         					fIsTracingActive = false;
@@ -1121,5 +1118,102 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 	@Override
 	public void flushCache(IDMContext context) {
         fTraceCache.reset(context);
+	}
+	
+	/** @since 4.2 */
+	@Override
+	public void setCircularTraceBuffer(ITraceTargetDMContext context, boolean useCircularBuffer, final RequestMonitor rm) {
+    	if (context == null) {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+            rm.done();
+            return;
+    	}
+
+    	if (fIsTracingCurrentlySupported == false) {
+    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
+            rm.done();
+            return;
+    	}
+
+		fConnection.queueCommand(
+				fCommandFactory.createMIGDBSetCircularTraceBuffer(context, useCircularBuffer),
+				new DataRequestMonitor<MIInfo>(getExecutor(), rm));	
+	}
+	
+	/** @since 4.2 */
+	@Override
+	public void setTraceUser(ITraceTargetDMContext context, String userName, RequestMonitor rm) {
+    	if (context == null) {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+            rm.done();
+            return;
+    	}
+
+    	if (fIsTracingCurrentlySupported == false) {
+    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
+            rm.done();
+            return;
+    	}
+
+		fConnection.queueCommand(
+				fCommandFactory.createMIGDBSetTraceUser(context, userName),
+				new DataRequestMonitor<MIInfo>(getExecutor(), rm));	
+	}
+
+	/** @since 4.2 */
+	@Override
+	public void setTraceNotes(ITraceTargetDMContext context, String note, RequestMonitor rm) {
+    	if (context == null) {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+            rm.done();
+            return;
+    	}
+
+    	if (fIsTracingCurrentlySupported == false) {
+    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
+            rm.done();
+            return;
+    	}
+
+		fConnection.queueCommand(
+				fCommandFactory.createMIGDBSetTraceNotes(context, note),
+				new DataRequestMonitor<MIInfo>(getExecutor(), rm));	
+	}
+
+	/** @since 4.2 */
+	@Override
+	public String getCurrentTraceFrame() {
+		if (fCurrentRecordDmc instanceof MITraceRecordDMContext) {
+			return ((MITraceRecordDMContext)fCurrentRecordDmc).getRecordId();
+		} else {
+			return null;
+		}
+	}
+
+	/** @since 4.2 */
+	@Override
+	public int getTracepointIndexForCurrentTraceRecord() {
+		return fTracepointIndexForTraceRecord;
+	}
+
+	/** @since 4.2 */
+	@Override
+	public void setDisconnectedTracing(ITraceTargetDMContext ctx, boolean disconnectedTracing, RequestMonitor rm) {
+    	if (ctx == null) {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
+            rm.done();
+            return;
+    	}
+
+    	if (fIsTracingCurrentlySupported == false) {
+    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
+            rm.done();
+            return;
+    	}
+
+		fConnection.queueCommand(
+				fCommandFactory.createMIGDBSetDisconnectedTracing(ctx, disconnectedTracing),
+				new DataRequestMonitor<MIInfo>(getExecutor(), rm));	
+		
 	}
 }

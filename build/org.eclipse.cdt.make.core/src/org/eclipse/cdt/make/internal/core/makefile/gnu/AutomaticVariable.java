@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
+import org.eclipse.cdt.make.core.makefile.IAutomaticVariable;
 import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
 
@@ -20,7 +21,7 @@ import org.eclipse.cdt.make.internal.core.makefile.Directive;
  * @author Sebastian Bauer <mail@sebastianbauer.info>
  * @see "http://www.gnu.org/software/make/manual/make.html#Automatic-Variables"
  */
-public class AutomaticVariable extends VariableDefinition {
+public class AutomaticVariable extends VariableDefinition implements IAutomaticVariable {
 
 	public AutomaticVariable(Directive parent, String name, String description) {
 		super(parent, name, new StringBuffer(description));

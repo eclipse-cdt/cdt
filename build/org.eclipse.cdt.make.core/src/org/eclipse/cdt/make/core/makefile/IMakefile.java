@@ -85,10 +85,22 @@ public interface IMakefile extends IParent {
 	IDirective[] getBuiltins();
 
 	/**
+	 * @return all the built-in FunctionDefintions
+	 * @since 7.3
+	 */
+	IBuiltinFunction[] getBuiltinFunctions();
+	
+	/**
 	 * @return all the built-in MacroDefintions
 	 */
 	IMacroDefinition[] getBuiltinMacroDefinitions();
 
+	/**
+	 * @return all the built-in MacroDefintions
+	 * @since 7.3
+	 */
+	IAutomaticVariable[] getAutomaticVariables();
+	
 	/**
 	 * @return the built-in macro definition for name.
 	 */

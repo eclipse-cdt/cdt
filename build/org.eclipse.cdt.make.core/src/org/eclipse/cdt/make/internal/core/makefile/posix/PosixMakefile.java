@@ -17,6 +17,7 @@ import java.io.Reader;
 import java.net.URI;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.makefile.IAutomaticVariable;
 import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider;
 import org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile;
@@ -64,6 +65,7 @@ import org.eclipse.core.runtime.CoreException;
 
 public class PosixMakefile extends AbstractMakefile {
 	private IDirective[] builtins = new IDirective[0];
+	private IAutomaticVariable[] automaticVariables = new IAutomaticVariable[0];
 	private IMakefileReaderProvider makefileReaderProvider;
 
 	public PosixMakefile() {
@@ -230,6 +232,11 @@ public class PosixMakefile extends AbstractMakefile {
 	public IDirective[] getBuiltins() {
 		return builtins;
 	}
+	@Override
+	public IAutomaticVariable[] getAutomaticVariables() {
+		return automaticVariables;
+	}
+
 
 	protected SpecialRule processSpecialRule(String line) {
 		line = line.trim();

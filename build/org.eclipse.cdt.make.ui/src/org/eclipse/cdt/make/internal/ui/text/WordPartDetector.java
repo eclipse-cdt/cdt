@@ -25,8 +25,8 @@ public class WordPartDetector {
 
 	private enum WORDPART_TYPE {
 		MACRO,
-		INCLUDE,
 		FUNCTION_CALL,
+		INCLUDE,
 		UNDETERMINED,
 	}
 
@@ -61,6 +61,11 @@ public class WordPartDetector {
 				c = document.getChar(index);
 				if (c == '$') {
 					type = WORDPART_TYPE.MACRO;
+					int index2 = index + 1;
+					if (index2 < doc.getLength()) {
+						c = document.getChar(index2);
+						wordPart = doc.get(index2, endOffset - index2);
+					}
 					return;
 				} else if (Character.isWhitespace(c) || c == ')' || c == '}') {
 					break;
@@ -193,6 +198,6 @@ public class WordPartDetector {
 	}
 
 	private boolean isMakefileLetter(char c) {
-		return Character.isLetterOrDigit(c) || c == '_' || c == '.';
+		return Character.isLetterOrDigit(c) || "_-.@%<?^+|*".indexOf(c) >= 0;
 	}
 }

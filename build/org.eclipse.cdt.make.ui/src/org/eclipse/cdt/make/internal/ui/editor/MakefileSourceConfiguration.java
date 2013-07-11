@@ -23,7 +23,10 @@ import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileReconcilingStrateg
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileTextHover;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -38,6 +41,7 @@ import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
 public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
@@ -95,6 +99,12 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 			assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 			assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 			assistant.setContextInformationPopupBackground(fColorManager.getColor(new RGB(255, 255, 255)));
+			assistant.setInformationControlCreator(new IInformationControlCreator() {
+				@Override
+				public IInformationControl createInformationControl(Shell parent) {
+					return new DefaultInformationControl(parent, false);
+				}
+			});
 
 			return assistant;
 		}

@@ -14,6 +14,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.make.core.makefile.IBuiltinFunction;
 import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.IInferenceRule;
 import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
@@ -46,6 +47,11 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 
 	@Override
 	public abstract IDirective[] getBuiltins();
+
+	@Override
+	public IBuiltinFunction[] getBuiltinFunctions() {
+		return new IBuiltinFunction[0];
+	}
 
 	@Override
 	public IRule[] getRules() {

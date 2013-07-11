@@ -52,6 +52,7 @@ public class MakeUIImages {
 	public static final String IMG_OBJS_ENVIRONMENT = "icons/obj16/environment_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ENV_VAR = "icons/obj16/envvar_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_AUTO_VARIABLE = "icons/obj16/var_auto.png"; //$NON-NLS-1$
+	public static final String IMG_OBJS_FUNCTION = "icons/obj16/builtin_func.png"; //$NON-NLS-1$
 
 	public static final String IMG_ETOOL_MAKEFILE = "icons/etool16/makefile.gif"; //$NON-NLS-1$
 	public static final String IMG_ETOOL_TARGET_BUILD = "icons/etool16/target_build.png"; //$NON-NLS-1$

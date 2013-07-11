@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
 
+import org.eclipse.cdt.make.core.makefile.IAutomaticVariable;
 import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider;
 
@@ -34,7 +35,8 @@ import org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider;
  */
 
 public class NullMakefile extends AbstractMakefile {
-	public final static IDirective[] EMPTY_DIRECTIVES = new IDirective[0];
+	private final static IDirective[] EMPTY_DIRECTIVES = new IDirective[0];
+	private final static IAutomaticVariable[] EMPTY_AUTOMATIC_VARIABLES = new IAutomaticVariable[0];
 
 	public NullMakefile() {
 		super(null);
@@ -48,6 +50,11 @@ public class NullMakefile extends AbstractMakefile {
 	@Override
 	public IDirective[] getBuiltins() {
 		return EMPTY_DIRECTIVES;
+	}
+
+	@Override
+	public IAutomaticVariable[] getAutomaticVariables() {
+		return EMPTY_AUTOMATIC_VARIABLES;
 	}
 
 	public void addDirective(IDirective directive) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Ericsson and others.
+ * Copyright (c) 2010, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - Initial API and implementation
+ *     Dmitry Kozlov (Mentor Graphics) - Enhance trace status (Bug 390827)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -19,10 +20,6 @@ import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
- * <strong>EXPERIMENTAL</strong>.  This class or interface has been added as part
- * of a work in progress. There is no guarantee that this API will work or that
- * it will remain the same.
- * 
  * The TraceControl service provides access to the debugger Tracing functionality.
  * It is used to do such things as start and stop tracing.
  * 
@@ -133,7 +130,6 @@ public interface IGDBTraceControl extends IDsfService {
     						  String file,
     						  RequestMonitor rm);
 
-    
     /**
      * Request that the backend use the specified trace record.
      */
@@ -161,11 +157,80 @@ public interface IGDBTraceControl extends IDsfService {
 
 		/**
 		 * Returns the id of the tracepoint that caused the stop.
-		 * Should be null if getStopReason is null
+		 * Should be null if getStopReason() is null
 		 */
 		Integer getStoppingTracepoint();
-    }
-    
+	}
+
+	/** @since 4.4 */
+	public interface ITraceStatusDMData2 extends ITraceStatusDMData {
+		/** 
+		 * Returns the user-name of the user that started or stopped a trace.  Returns an
+		 * empty string if no user-name is available.
+		 */
+		String  getUserName();
+		/** 
+		 * Returns the traces notes related to a started or stopped trace.  Returns an
+		 * empty string if no notes are defined.
+		 */
+		String  getNotes();
+		/** 
+		 * Returns the start-time of an on-going trace.
+		 * Returns an empty string if no start-time is available or if no trace was started.
+		 */
+		String  getStartTime();
+		/** 
+		 * Returns the stop-time of the last trace experiment.
+		 * Returns an empty string if no stop-time is available, if a trace is currently
+		 * running or if no trace was ever started.
+		 */
+		String  getStopTime();
+		/**
+		 * Returns true if trace visualization is done from a trace file
+		 * as compared to one from an ongoing execution.
+		 */
+		boolean isTracingFromFile();
+		/** 
+		 * Returns true if an ongoing tracing experiment will continue after 
+		 * GDB disconnects from the target.
+		 */
+		boolean isDisconnectedTracingEnabled();
+		/** 
+		 * Returns true if the buffer being used or to be used to record
+		 * the trace data is a circular buffer (overwriting/flight-recorder), or not.
+		 */
+		boolean isCircularBuffer();
+		/** 
+		 * Returns the number of created frames of the current trace experiment.
+		 */
+		int getNumberOfCreatedFrames();
+		/**
+		 * Returns the error description if the trace was stopped due to an error (getStopReason() returns ERROR).
+		 * Returns null if the trace is not stopped, or if it is not stopped by an ERROR.
+		 * Can return an empty string in other cases if no description is available.
+		 */
+		String getStopErrorDescription();
+		/** 
+		 * Returns the trace file path when isTracingFromFile() is true.  Can return
+		 * an empty string if the file path is not available.
+		 * Should return null if isTracingFromFile() is false;
+		 */
+		String getTraceFile();
+		
+    	/** 
+    	 * If a trace frame is currently being examined, this method will return 
+    	 * its id. Returns null if no trace frame is in focus.
+    	 */
+    	String getCurrentTraceFrameId();
+
+    	/** 
+    	 * If a trace frame is currently being examined, this method will return 
+    	 * the GDB tracepoint number that triggered the trace record in focus.
+    	 * Returns null if no trace frame is in focus (if getCurrentTraceFrameId() == null).
+    	 */
+    	Integer getTracepointNumberForCurrentTraceFrame();
+	}
+
     public interface ITraceVariableDMData extends IDMData {
     	String getName();
     	String getValue();

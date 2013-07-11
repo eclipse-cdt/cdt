@@ -16,10 +16,12 @@ import java.util.concurrent.RejectedExecutionException;
 import org.eclipse.cdt.debug.core.model.IStartTracingHandler;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl2;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -63,11 +65,20 @@ public class GdbStartTracingCommand extends AbstractDebugCommand implements ISta
 
       	Query<Object> startTracingQuery = new Query<Object>() {
             @Override
-            public void execute(DataRequestMonitor<Object> rm) {
-        		IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
-
-       			if (traceControl != null) {
-       				traceControl.startTracing(dmc, rm);
+            public void execute(final DataRequestMonitor<Object> rm) {
+        		final IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
+        		if (traceControl != null) {
+        			String user = System.getProperty("user.name"); //$NON-NLS-1$
+        			if (user != null && user.length() > 0 && traceControl instanceof IGDBTraceControl2) {
+        				((IGDBTraceControl2)traceControl).setTraceUser(dmc, user, new ImmediateRequestMonitor() {
+        					@Override
+        					protected void handleCompleted() {
+        						traceControl.startTracing(dmc, rm);        							
+        					};
+        				});
+        			} else {
+        				traceControl.startTracing(dmc, rm);
+        			}
        			} else {
        				rm.done();
        			}

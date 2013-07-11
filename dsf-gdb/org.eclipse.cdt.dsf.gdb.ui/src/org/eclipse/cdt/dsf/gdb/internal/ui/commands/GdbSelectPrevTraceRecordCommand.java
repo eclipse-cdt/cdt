@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Ericsson and others.
+ * Copyright (c) 2010, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Disable button when no trace record is selected
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.commands;
 
@@ -25,6 +26,7 @@ import org.eclipse.cdt.dsf.gdb.service.GDBTraceControl_7_2.TraceRecordSelectedCh
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceStatusDMData;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceStatusDMData2;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -119,35 +121,37 @@ public class GdbSelectPrevTraceRecordCommand extends AbstractDebugCommand implem
         Query<Boolean> canSelectRecordQuery = new Query<Boolean>() {
         	@Override
         	public void execute(final DataRequestMonitor<Boolean> rm) {
-        		IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
+        		final IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
 
         		if (traceControl != null) {
         			traceControl.getTraceStatus(dmc, new DataRequestMonitor<ITraceStatusDMData>(fExecutor, rm) {
         				@Override
         				protected void handleSuccess() {
-        					if (getData().getNumberOfCollectedFrame() > 0) {
-        						IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
-        						if (traceControl != null) {
-        							traceControl.isTracing(dmc, new DataRequestMonitor<Boolean>(fExecutor, rm) {
-        								@Override
-        								protected void handleSuccess() {
-        									rm.setData(!getData());
-        									rm.done();
-        								};
-        							});
-        						} else {
-        							rm.setData(false);
-        							rm.done();
-        						}
-        					} else {
-        						rm.setData(false);
-        						rm.done();
+        					if (getData().getNumberOfCollectedFrame() <= 0) {
+        						// No frames to look at.
+        						rm.done(false);
+        						return;
         					}
+        					
+        					if (getData() instanceof ITraceStatusDMData2) {
+        						if (((ITraceStatusDMData2)getData()).getCurrentTraceFrameId() == null) {
+        							// Haven't started looking at frames, so don't enable the "Previous" button
+        							rm.done(false);
+            						return;
+        						}
+        					}
+
+        					traceControl.isTracing(dmc, new DataRequestMonitor<Boolean>(fExecutor, rm) {
+        						@Override
+        						protected void handleSuccess() {
+        							// Can do visualization if we are tracing.
+        							rm.done(!getData());
+        						};
+        					});        					
         				};
         			});
         		} else {
-        			rm.setData(false);
-        			rm.done();
+        			rm.done(false);
         		}
         	}
         };

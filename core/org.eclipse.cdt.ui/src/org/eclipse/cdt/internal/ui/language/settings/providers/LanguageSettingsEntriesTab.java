@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
+ *     Tom Hochstein (Freescale) - Bug 412601 - Preprocessor Entries properties tab should list languages
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.language.settings.providers;
 
@@ -17,6 +18,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -937,31 +939,51 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		if (languageIds.size() > 1) {
 			// remove null language when some real ones are defined
 			languageIds.remove(null);
-			Collections.sort(languageIds);
 		} else if (languageIds.isEmpty()) {
 			// if no languages are defined keep null language as "Unspecified language"
 			languageIds.add(null);
 		}
+		
+		// Use a TreeMap to sort the languages by name.
+		// For each name we keep a list of ids in case of name overlap.
+		Map<String, List<String>> map = new TreeMap<String, List<String>>();
 		for (String langId : languageIds) {
 			ILanguage language = LanguageManager.getInstance().getLanguage(langId);
 
 			String langName = language != null ? language.getName() : Messages.LanguageSettingsEntriesTab_UnspecifiedLanguage;
 			if (langName == null || langName.length() == 0)
 				continue;
-
-			TreeItem t = new TreeItem(treeLanguages, SWT.NONE);
-			t.setText(0, langName);
-			t.setData(langId);
-			if (currentLanguageIdGlobal != null && currentLanguageIdGlobal.equals(langId)) {
-				currentLanguageId = currentLanguageIdGlobal;
-				treeLanguages.setSelection(t);
-			} else if (currentLanguageId == null) {
-				// this selects first language on first round
-				// do not select the tree item and global language selection here, only on actual click
-				currentLanguageId = langId;
+			List<String> langIds = map.get(langName);
+			if (langIds == null) {
+				langIds = new ArrayList<String>();
+				map.put(langName, langIds);
+			}
+			langIds.add(langId);
+		}
+		
+		for (String langName : map.keySet()) {
+			List<String> langIds = map.get(langName);
+			for (String langId : langIds) {
+				TreeItem t = new TreeItem(treeLanguages, SWT.NONE);
+				if (langIds.size() == 1) {
+					t.setText(0, langName);
+				} else {
+					StringBuilder uniqueLangName = new StringBuilder();
+					uniqueLangName.append(langName).append(" [id=") //$NON-NLS-1$
+							.append(langId).append("]"); //$NON-NLS-1$
+					t.setText(0, uniqueLangName.toString());
+				}
+				t.setData(langId);
+				if (currentLanguageIdGlobal != null && currentLanguageIdGlobal.equals(langId)) {
+					currentLanguageId = currentLanguageIdGlobal;
+					treeLanguages.setSelection(t);
+				} else if (currentLanguageId == null) {
+					// this selects first language on first round
+					// do not select the tree item and global language selection here, only on actual click
+					currentLanguageId = langId;
+				}
 			}
 		}
-
 	}
 
 	/**

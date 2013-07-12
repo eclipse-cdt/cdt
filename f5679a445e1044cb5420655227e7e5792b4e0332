@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "073dc3ed_c4649517",
+        "filename": "releng/org.eclipse.cdt.target/cdt-staging-e4.3.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-07-12T02:11:50Z",
+      "side": 1,
+      "message": "Does Jetty need to be updated for the 4.3 target platform? My 4.3 came with Jetty 8.1.10.v20130312",
+      "revId": "f5679a445e1044cb5420655227e7e5792b4e0332",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_64a5c9b5",
+        "filename": "releng/org.eclipse.cdt.target/cdt-staging-e4.3.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-07-12T02:11:50Z",
+      "side": 1,
+      "message": "I don\u0027t think hamcrest is required anymore.",
+      "revId": "f5679a445e1044cb5420655227e7e5792b4e0332",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_44a245ae",
+        "filename": "releng/org.eclipse.cdt.target/cdt-staging-e4.3.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-07-12T02:11:50Z",
+      "side": 1,
+      "message": "1024M seems high. I run my 4.3 SDK including CDT installed with -Xmx480. Is it possible to use a variable so that it uses the values from the Running Platform? If not, I would tend to use the defaults which are -Xmx512M and -XX:MaxPermSize\u003d256m.",
+      "revId": "f5679a445e1044cb5420655227e7e5792b4e0332",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

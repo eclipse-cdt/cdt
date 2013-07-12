@@ -92,7 +92,7 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 	@Override
 	protected String getCompilerCommand(String languageId) {
 		ITool tool = getTool(languageId);
-		String compilerCommand = tool.getToolCommand();
+		String compilerCommand = tool != null ? tool.getToolCommand() : ""; //$NON-NLS-1$
 		if (compilerCommand.isEmpty()) {
 			ManagedBuilderCorePlugin.error("Unable to find compiler command in toolchain=" + getToolchainId()); //$NON-NLS-1$
 		}
@@ -103,7 +103,7 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 	protected String getSpecFileExtension(String languageId) {
 		String ext = null;
 		ITool tool = getTool(languageId);
-		String[] srcFileExtensions = tool.getAllInputExtensions();
+		String[] srcFileExtensions = tool != null ? tool.getAllInputExtensions() : null;
 		if (srcFileExtensions != null && srcFileExtensions.length > 0) {
 			ext = srcFileExtensions[0];
 		}

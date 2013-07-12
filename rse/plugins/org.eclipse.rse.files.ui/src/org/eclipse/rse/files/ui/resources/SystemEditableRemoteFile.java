@@ -51,6 +51,7 @@
  * David McKnight   (IBM)        - [390609] Cached file opened twice in case of eclipse linked resource..
  * Xuan Chen        (IBM)        - [399101] RSE edit actions on local files that map to actually workspace resources should not use temp files
  * Xuan Chen        (IBM)        - [399752] Cannot download remote file due to scoping rule
+ * David McKnight   (IBM)        - [412571] Truncate file when compare file in workspace by Remote System Explorer
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -61,6 +62,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -579,10 +581,18 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	 */
 	public boolean download(IProgressMonitor monitor) throws Exception
 	{
-
 		// DY:  check if the file exists and is read-only (because it was previously opened
 		// in the system editor)
 		IFile file = getLocalResource();
+		IProject rseTempFilesProject = SystemRemoteEditManager.getInstance().getRemoteEditProject();
+		
+		// Don't download files that are not in temp files project.
+		// With bug 399101, local RSE files that map to workspace project files 
+		//   no longer get downloaded to the temp files project.
+		if (file.exists() && !file.getProject().equals(rseTempFilesProject)){
+			return true;
+		}
+		
 		SystemIFileProperties properties = new SystemIFileProperties(file);
 		boolean newFile = !file.exists();
 		if (file.isReadOnly())

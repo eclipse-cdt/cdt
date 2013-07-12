@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "073dc3ed_a5d078c3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/AbstractCLikeLanguage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-07-12T11:28:23Z",
+      "side": 1,
+      "message": "Ok, that sounds reasonable. I\u0027ll make it so.",
+      "parentUuid": "073dc3ed_b139de8d",
+      "revId": "6dcb08a10ca1dbdfcb23fe9d1bd4528871af4348",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "073dc3ed_914c9a1e",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/GNUCSourceParser.java",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "073dc3ed_e5f8c03f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/GNUCSourceParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-07-12T11:28:23Z",
+      "side": 1,
+      "message": "If the maximum is set to 1000 and we already have 1000 elements in the result the next could be skipped if trivial. Therefore, \u003c\u003d would be correct. Or did I miss something?",
+      "parentUuid": "073dc3ed_914c9a1e",
+      "revId": "6dcb08a10ca1dbdfcb23fe9d1bd4528871af4348",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "073dc3ed_31802e98",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
         "patchSetId": 2
@@ -47,6 +83,23 @@
       "writtenOn": "2013-07-10T21:08:13Z",
       "side": 1,
       "message": "Should it be \u003c instead of \u003c\u003d?",
+      "revId": "6dcb08a10ca1dbdfcb23fe9d1bd4528871af4348",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_250e28ef",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3549,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-07-12T11:28:23Z",
+      "side": 1,
+      "message": "Same as in GNUCSourceParser. If it was \u003c, we could end up with a node for a trivial expression at the 1001st element - if the maximum is set to 1000.",
       "revId": "6dcb08a10ca1dbdfcb23fe9d1bd4528871af4348",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

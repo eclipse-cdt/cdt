@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "073dc3ed_ea4cfb1e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/language/settings/providers/LanguageSettingsEntriesTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 975,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-07-12T17:25:31Z",
+      "side": 1,
+      "message": "The only thing - I would prefer here append(\" [id\u003d\") - to be consistent with other UI hints in similar cases.",
+      "revId": "df6f9451176fefd4a77ac99a05d626dc5f7de3ef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

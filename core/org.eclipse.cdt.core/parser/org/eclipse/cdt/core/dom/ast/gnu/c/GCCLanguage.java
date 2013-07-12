@@ -66,6 +66,12 @@ public class GCCLanguage extends AbstractCLikeLanguage {
 		return ILinkage.C_LINKAGE_ID;
 	}
 
+	/**
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @deprecated Since 5.4 not called by the framework. Override
+	 *     {@link #getScannerExtensionConfiguration(IScannerInfo)} instead.
+	 */
+	@Deprecated
 	@Override
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
 		return C_GNU_SCANNER_EXTENSION;

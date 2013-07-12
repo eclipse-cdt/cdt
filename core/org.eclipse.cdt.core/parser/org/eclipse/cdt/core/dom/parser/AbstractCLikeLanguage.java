@@ -54,7 +54,9 @@ import org.eclipse.core.runtime.CoreException;
  * @since 5.0
  */
 public abstract class AbstractCLikeLanguage extends AbstractLanguage implements ICLanguageKeywords {
-	
+	private static final AbstractScannerExtensionConfiguration DUMMY_SCANNER_EXTENSION_CONFIGURATION =
+			new AbstractScannerExtensionConfiguration() {};
+
 	static class NameCollector extends ASTVisitor {
 		{
 			shouldVisitNames= true;
@@ -74,14 +76,17 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	}
 	
 	/**
-	 * @return the scanner extension configuration for this language, may not
-	 *         return <code>null</code>
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @deprecated Do not override this method.
+	 *     Override {@link #getScannerExtensionConfiguration(IScannerInfo)} instead.
 	 */
-	protected abstract IScannerExtensionConfiguration getScannerExtensionConfiguration();
+	@Deprecated
+	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
+		return DUMMY_SCANNER_EXTENSION_CONFIGURATION;
+	}
 
 	/**
-	 * @return the scanner extension configuration for this language, may not
-	 *         return <code>null</code>
+	 * @return the scanner extension configuration for this language. May not return {@code null}.
 	 * @since 5.4
 	 */
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration(IScannerInfo info) {
@@ -181,7 +186,8 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	 * @param log  the parser log service
 	 * @param index  the index to help resolve bindings
 	 * @param forCompletion  whether the parser is used for code completion
-	 * @param options for valid options see {@link AbstractLanguage#getASTTranslationUnit(FileContent, IScannerInfo, IncludeFileContentProvider, IIndex, int, IParserLogService)}
+	 * @param options for valid options see
+	 *     {@link AbstractLanguage#getASTTranslationUnit(FileContent, IScannerInfo, IncludeFileContentProvider, IIndex, int, IParserLogService)}
 	 * @return  an instance of ISourceCodeParser
 	 */
 	protected ISourceCodeParser createParser(IScanner scanner, IParserLogService log, IIndex index, boolean forCompletion, int options) {

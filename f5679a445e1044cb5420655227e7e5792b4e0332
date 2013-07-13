@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "073dc3ed_5adcd0db",
+        "filename": "releng/org.eclipse.cdt.target/cdt-staging-e4.3.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-07-13T04:21:35Z",
+      "side": 1,
+      "message": "It seems the Jetty updates sites have dropped this particular 8.1.10 version, I have raised the question to the jetty_users mailing list and they would re-create 8.1.10 if it is really needed however they suggest to use 8.1.11.\n  I have updated it to 8.1.11 for the next patch set.\n\nPlease let me know if this would be ok with you",
+      "parentUuid": "073dc3ed_c4649517",
+      "revId": "f5679a445e1044cb5420655227e7e5792b4e0332",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "073dc3ed_64a5c9b5",
         "filename": "releng/org.eclipse.cdt.target/cdt-staging-e4.3.target",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "073dc3ed_3a790c3b",
+        "filename": "releng/org.eclipse.cdt.target/cdt-staging-e4.3.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-07-13T04:21:35Z",
+      "side": 1,
+      "message": "I have removed it from all and all seems fine, \nthis will be reflected in the next patch set.",
+      "parentUuid": "073dc3ed_64a5c9b5",
+      "revId": "f5679a445e1044cb5420655227e7e5792b4e0332",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "073dc3ed_44a245ae",
         "filename": "releng/org.eclipse.cdt.target/cdt-staging-e4.3.target",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2013-07-12T02:11:50Z",
       "side": 1,
       "message": "1024M seems high. I run my 4.3 SDK including CDT installed with -Xmx480. Is it possible to use a variable so that it uses the values from the Running Platform? If not, I would tend to use the defaults which are -Xmx512M and -XX:MaxPermSize\u003d256m.",
+      "revId": "f5679a445e1044cb5420655227e7e5792b4e0332",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_fa34c495",
+        "filename": "releng/org.eclipse.cdt.target/cdt-staging-e4.3.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-07-13T04:21:35Z",
+      "side": 1,
+      "message": "True, I have reduced it to 480 for all target files and will be reflected in the next patch set.",
+      "parentUuid": "073dc3ed_44a245ae",
       "revId": "f5679a445e1044cb5420655227e7e5792b4e0332",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

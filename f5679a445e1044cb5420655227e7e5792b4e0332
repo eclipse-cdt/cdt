@@ -104,6 +104,24 @@
       "revId": "f5679a445e1044cb5420655227e7e5792b4e0332",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_f0286038",
+        "filename": "releng/org.eclipse.cdt.target/cdt-staging-e4.3.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-07-13T21:04:14Z",
+      "side": 1,
+      "message": "Both core.test and ui.test use\n-Xmx512m -XX:MaxPermSize\u003d256M\nso it might be better to use the same numbers for consistency.",
+      "parentUuid": "073dc3ed_fa34c495",
+      "revId": "f5679a445e1044cb5420655227e7e5792b4e0332",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

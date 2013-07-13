@@ -721,7 +721,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
-	 * Parse variations of -macros options.
+	 * Parse variations of -imacros options.
 	 */
 	public void testCMacroFileEntry() throws Exception {
 		// Create model project and accompanied descriptions
@@ -739,10 +739,10 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 
 		// parse line
 		parser.startup(cfgDescription, null);
-		parser.processLine("gcc -macros macro.file file.cpp");
+		parser.processLine("gcc -imacros macro.file file.cpp");
 		parser.processLine("gcc "
-				+ " -macros /macro.file"
-				+ " -macros '/macro.file with spaces'"
+				+ " -imacros /macro.file"
+				+ " -imacros '/macro.file with spaces'"
 				+ " file.cpp");
 		parser.shutdown();
 

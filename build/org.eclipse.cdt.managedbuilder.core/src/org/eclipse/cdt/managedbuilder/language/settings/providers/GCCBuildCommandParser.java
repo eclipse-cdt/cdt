@@ -42,8 +42,8 @@ public class GCCBuildCommandParser extends AbstractBuildCommandParser implements
 			new MacroOptionParser("-D\\s*([^\\s=\"']*)=([\"'])(.*?)\\2", "$1", "$3"),
 			new MacroOptionParser("-D\\s*([^\\s=\"']*)(=([^\\s\"']*))?", "$1", "$3"),
 			new MacroOptionParser("-U\\s*([^\\s=\"']*)", "$1", ICSettingEntry.UNDEFINED),
-			new MacroFileOptionParser("-macros\\s*([\"'])(.*)\\1", "$2"),
-			new MacroFileOptionParser("-macros\\s*([^\\s\"']*)", "$1"),
+			new MacroFileOptionParser("-imacros\\s*([\"'])(.*)\\1", "$2"),
+			new MacroFileOptionParser("-imacros\\s*([^\\s\"']*)", "$1"),
 			new LibraryPathOptionParser("-L\\s*([\"'])(.*)\\1", "$2"),
 			new LibraryPathOptionParser("-L\\s*([^\\s\"']*)", "$1"),
 			new LibraryFileOptionParser("-l\\s*([^\\s\"']*)", "lib$1.a"), };

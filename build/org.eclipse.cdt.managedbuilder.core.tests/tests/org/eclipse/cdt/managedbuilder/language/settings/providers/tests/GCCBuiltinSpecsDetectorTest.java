@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
- package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
+package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,8 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
@@ -27,8 +29,13 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.Cygwin;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetectorCygwin;
+import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector;
+import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -39,6 +46,8 @@ import org.eclipse.core.runtime.Path;
  */
 public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	private static final String LANGUAGE_ID_C = GCCLanguage.ID;
+	private static final String SAMPLE_COMMAND = "NEW_COMMAND";
+	private static final String PROJECT_TYPE_EXECUTABLE_GNU = "cdt.managedbuild.target.gnu.exe";
 
 	/**
 	 * Mock GCCBuiltinSpecsDetector to gain access to protected methods.
@@ -65,6 +74,13 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		@Override
 		public void shutdownForLanguage() {
 			super.shutdownForLanguage();
+		}
+	}
+
+	class MockGCCBuiltinSpecsDetectorCommandResolver extends GCCBuiltinSpecsDetector {
+		@Override
+		public String resolveCommand(String languageId) throws CoreException {
+			return super.resolveCommand(languageId);
 		}
 	}
 
@@ -97,15 +113,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	 * Test expansion of variables in build command.
 	 */
 	public void testGCCBuiltinSpecsDetector_ResolvedCommand() throws Exception {
-		class MockGCCBuiltinSpecsDetectorLocal extends GCCBuiltinSpecsDetector {
-			@Override
-			public String resolveCommand(String languageId) throws CoreException {
-				return super.resolveCommand(languageId);
-			}
-		}
 		{
 			// check ${COMMAND} and ${INPUTS}
-			MockGCCBuiltinSpecsDetectorLocal detector = new MockGCCBuiltinSpecsDetectorLocal();
+			MockGCCBuiltinSpecsDetectorCommandResolver detector = new MockGCCBuiltinSpecsDetectorCommandResolver();
 			detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
 			detector.setCommand("${COMMAND} -E -P -v -dD ${INPUTS}");
 
@@ -115,7 +125,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		}
 		{
 			// check ${EXT}
-			MockGCCBuiltinSpecsDetectorLocal detector = new MockGCCBuiltinSpecsDetectorLocal();
+			MockGCCBuiltinSpecsDetectorCommandResolver detector = new MockGCCBuiltinSpecsDetectorCommandResolver();
 			detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
 			detector.setCommand("${COMMAND} -E -P -v -dD file.${EXT}");
 
@@ -125,12 +135,12 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		}
 		{
 			// check expansion of environment variables
-			MockGCCBuiltinSpecsDetectorLocal detector = new MockGCCBuiltinSpecsDetectorLocal();
+			MockGCCBuiltinSpecsDetectorCommandResolver detector = new MockGCCBuiltinSpecsDetectorCommandResolver();
 			detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
 			String command = "cmd --env1=${CWD} --env2=${OS}";
 			detector.setCommand(command);
 			String resolvedCommand = detector.resolveCommand(LANGUAGE_ID_C);
-			
+
 			ICdtVariableManager varManager = CCorePlugin.getDefault().getCdtVariableManager();
 			String expected = varManager.resolveValue(command, "", null, null);
 			// confirm that "expected" expanded
@@ -139,12 +149,12 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		}
 		{
 			// check expansion of eclipse and MBS variables
-			MockGCCBuiltinSpecsDetectorLocal detector = new MockGCCBuiltinSpecsDetectorLocal();
+			MockGCCBuiltinSpecsDetectorCommandResolver detector = new MockGCCBuiltinSpecsDetectorCommandResolver();
 			detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
 			String command = "cmd --eclipse-var=${workspace_loc} --mbs-var=${WorkspaceDirPath}";
 			detector.setCommand(command);
 			String resolvedCommand = detector.resolveCommand(LANGUAGE_ID_C);
-			
+
 			ICdtVariableManager varManager = CCorePlugin.getDefault().getCdtVariableManager();
 			String expected = varManager.resolveValue(command, "", null, null);
 			// confirm that "expected" expanded
@@ -404,8 +414,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	 */
 	public void testGCCBuiltinSpecsDetector_Includes_SymbolicLinkUp() throws Exception {
 		// do not test on systems where symbolic links are not supported
-		if (!ResourceHelper.isSymbolicLinkSupported())
+		if (!ResourceHelper.isSymbolicLinkSupported()) {
 			return;
+		}
 
 		// Create model project and folders to test
 		String projectName = getName();
@@ -525,6 +536,65 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		assertEquals(new CIncludePathEntry(new Path(windowsLocation), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
 		assertEquals(1, entries.size());
+	}
+
+	/**
+	 * Test expansion of variable ${COMMAND} for case when the command was modified in tool-chain.
+	 */
+	public void test_GCCBuiltinSpecsDetector_ResolveModifiedCommand() throws Exception {
+		// create a new project
+		IProject project = ManagedBuildTestHelper.createProject(this.getName(), PROJECT_TYPE_EXECUTABLE_GNU);
+
+		{
+			// create a mock specs detector
+			MockGCCBuiltinSpecsDetectorCommandResolver detector = new MockGCCBuiltinSpecsDetectorCommandResolver();
+			detector.setCommand("${COMMAND}");
+			String command = ((AbstractBuiltinSpecsDetector)detector).getCommand();
+			assertEquals("${COMMAND}", command);
+			assertTrue(!command.equals(SAMPLE_COMMAND));
+			// assign the mock specs detector to the first configuration
+			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
+			assertNotNull(prjDescriptionWritable);
+			ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+			assertTrue(cfgDescriptions.length > 0);
+			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			providers.add(detector);
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+			// change the default command in all the tools of the toolchain
+			IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDescription);
+			assertNotNull(cfg);
+			ITool[] tools = cfg.getTools();
+			assertTrue(tools.length > 0);
+			for (ITool tool : tools) {
+				tool.setToolCommand(SAMPLE_COMMAND);
+				assertEquals(SAMPLE_COMMAND, tool.getToolCommand());
+			}
+			// save project description
+			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
+		}
+
+		{
+			// double-check that the new command made its way to the tools
+			ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, false);
+			assertNotNull(prjDescription);
+			ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
+			assertTrue(cfgDescriptions.length > 0);
+			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+			IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDescription);
+			assertNotNull(cfg);
+			ITool[] tools = cfg.getTools();
+			for (ITool tool : tools) {
+				assertEquals(SAMPLE_COMMAND, tool.getToolCommand());
+			}
+			// verify that the new command is picked by the provider
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			ILanguageSettingsProvider provider = providers.get(0);
+			assertTrue(provider instanceof MockGCCBuiltinSpecsDetectorCommandResolver);
+			String command = ((MockGCCBuiltinSpecsDetectorCommandResolver)provider).resolveCommand(LANGUAGE_ID_C);
+			assertEquals(SAMPLE_COMMAND, command);
+		}
 	}
 
 }

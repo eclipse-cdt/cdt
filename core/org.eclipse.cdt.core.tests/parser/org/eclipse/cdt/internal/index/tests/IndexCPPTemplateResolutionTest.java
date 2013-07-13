@@ -2322,4 +2322,32 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testSpecializationRedefinition_409444() throws Exception {
 		checkBindings();
 	}
+	
+	//	struct N {
+	//	    int node;
+	//	};
+	//
+	//	template <typename T>
+	//	struct List {
+	//	    template <int T::*>
+	//	    struct Base {};
+	//	};
+	
+	//	List<N>::Base<&N::node> base;
+	public void testDependentTemplateParameterInNestedTemplate_407497() throws Exception {
+		checkBindings();
+	}
+	
+	//	template <typename T>
+	//	struct enclosing {
+	//	    template <typename U = T>
+	//	    struct nested {
+	//	        typedef U type;
+	//	    };
+	//	};
+	
+	//	typedef enclosing<int>::nested<>::type waldo;
+	public void testDependentTemplateParameterInNestedTemplate_399454() throws Exception {
+		checkBindings();
+	}
 }

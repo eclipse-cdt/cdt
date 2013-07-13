@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,11 @@
  *    IBM - Initial API and implementation
  *    Bryan Wilkinson (QNX)
  *    Markus Schorn (Wind River Systems)
+ *    Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -19,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -36,8 +38,9 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	private ObjectMap instances = null;
 	private ICPPDeferredClassInstance fDeferredInstance;
 	private ICPPClassTemplatePartialSpecialization[] fPartialSpecs;
+	private ICPPTemplateParameter[] fTemplateParameters;
 
-	public CPPClassTemplateSpecialization(ICPPClassTemplate orig, ICPPClassType owner, ICPPTemplateParameterMap argumentMap) {
+	public CPPClassTemplateSpecialization(ICPPClassTemplate orig, ICPPClassSpecialization owner, ICPPTemplateParameterMap argumentMap) {
 		super(orig, owner, argumentMap);
 	}
 
@@ -45,10 +48,10 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		if (fPartialSpecs == null) {
 			IASTNode point= null; // Instantiation of dependent expressions may not work.
-			ICPPClassTemplate origTemplate= (ICPPClassTemplate) getSpecializedBinding();
+			ICPPClassTemplate origTemplate= getSpecializedBinding();
 			ICPPClassTemplatePartialSpecialization[] orig = origTemplate.getPartialSpecializations();
 			ICPPClassTemplatePartialSpecialization[] spec = new ICPPClassTemplatePartialSpecialization[orig.length];
-			ICPPClassSpecialization owner = (ICPPClassSpecialization) getOwner();
+			ICPPClassSpecialization owner = getOwner();
 			for (int i = 0; i < orig.length; i++) {
 				spec[i]= (ICPPClassTemplatePartialSpecialization) owner.specializeMember(orig[i], point);
 			}
@@ -59,10 +62,16 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 
 	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
-		// mstodo if we specialize the template parameters (because of its default values), it will
-		// be less error prone to use the defaults.
-		ICPPClassTemplate template = (ICPPClassTemplate) getSpecializedBinding();
-		return template.getTemplateParameters();
+		if (fTemplateParameters == null) {
+			try {
+				IASTNode point = null;  // instantiation of dependent expressions may not work
+				fTemplateParameters = CPPTemplates.specializeTemplateParameters(this, (ICPPScope) getScope(),
+						getSpecializedBinding().getTemplateParameters(), getOwner(), point);
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return fTemplateParameters;
 	}
 
 	@Override
@@ -119,5 +128,15 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	@Override
 	public ICPPTemplateArgument getDefaultArgFromIndex(int paramPos) throws DOMException {
 		return null;
+	}
+	
+	@Override
+	public ICPPClassSpecialization getOwner() {
+		return (ICPPClassSpecialization) super.getOwner();
+	}
+	
+	@Override
+	public ICPPClassTemplate getSpecializedBinding() {
+		return (ICPPClassTemplate) super.getSpecializedBinding();
 	}
 }

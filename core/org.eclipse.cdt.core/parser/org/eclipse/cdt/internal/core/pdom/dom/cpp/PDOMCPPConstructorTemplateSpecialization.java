@@ -28,7 +28,7 @@ class PDOMCPPConstructorTemplateSpecialization extends PDOMCPPMethodTemplateSpec
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionSpecialization.RECORD_SIZE + 0;
 	
-	public PDOMCPPConstructorTemplateSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPConstructor constructor, PDOMBinding specialized)
+	public PDOMCPPConstructorTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor constructor, PDOMBinding specialized)
 			throws CoreException {
 		super(linkage, parent, constructor, specialized);
 	}

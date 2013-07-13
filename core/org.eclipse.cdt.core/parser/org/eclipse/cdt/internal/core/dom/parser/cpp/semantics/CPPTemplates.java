@@ -137,10 +137,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeParameterSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTemplateParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTemplateParameterSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameterSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedefSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMemberClass;
@@ -1332,6 +1335,51 @@ public class CPPTemplates {
 		}
 	}
 
+	/**
+	 * Specialize a template parameter of a nested template by subtituting values for the template
+	 * parameters of enclosing templates into the template parameter's default value and, in the
+	 * case of a non-type template parameter, type.
+	 * 
+	 * @param owner the specialization of the nested template. This will be the owner of the
+	 *              specialized template parameter.
+	 * @param scope the scope of the nested template specialization
+	 * @param specialized the template parameter to be specialized
+	 * @param within the specialization of the enclosing class
+	 * @param point the point of template instantiation
+	 * @return the specialized template parameter
+	 */
+	public static ICPPTemplateParameter specializeTemplateParameter(ICPPSpecialization owner, ICPPScope scope,
+			ICPPTemplateParameter specialized, ICPPClassSpecialization within, IASTNode point) {
+		if (specialized == null)
+			return null;
+		ICPPTemplateParameterMap tpMap = owner.getTemplateParameterMap();
+		ICPPTemplateArgument defaultValue = instantiateArgument(specialized.getDefaultValue(), tpMap, 0, within, point);
+		if (specialized instanceof ICPPTemplateNonTypeParameter) {
+			ICPPTemplateNonTypeParameter spec = (ICPPTemplateNonTypeParameter) specialized;
+			IType type = instantiateType(spec.getType(), tpMap, 0, within, point);
+			return new CPPTemplateNonTypeParameterSpecialization(owner, scope, spec, defaultValue, type);
+		} else if (specialized instanceof ICPPTemplateTypeParameter) {
+			return new CPPTemplateTypeParameterSpecialization(owner, scope, (ICPPTemplateTypeParameter) specialized, 
+					defaultValue);
+		} else if (specialized instanceof ICPPTemplateTemplateParameter) {
+			return new CPPTemplateTemplateParameterSpecialization(owner, scope, (ICPPTemplateTemplateParameter) specialized, 
+					defaultValue);
+		}
+		return null;
+	}
+	
+	/**
+	 * Convenience method for specializing all template parameters in an array.
+	 * See specializeTemplateParameter(). 
+	 */
+	public static ICPPTemplateParameter[] specializeTemplateParameters(ICPPSpecialization owner, ICPPScope scope, 
+			ICPPTemplateParameter[] specialized, ICPPClassSpecialization within, IASTNode point) {
+		ICPPTemplateParameter[] result = new ICPPTemplateParameter[specialized.length];
+		for (int i = 0; i < specialized.length; ++i)
+			result[i] = specializeTemplateParameter(owner, scope, specialized[i], within, point);
+		return result;
+	}
+	
 	public static IBinding instantiateBinding(IBinding binding, ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) throws DOMException {
 		if (binding instanceof ICPPClassTemplate) {

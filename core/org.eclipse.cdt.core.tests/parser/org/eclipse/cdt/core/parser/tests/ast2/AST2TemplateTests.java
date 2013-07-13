@@ -6409,6 +6409,34 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testPointerToMemberOfTemplateClass_402861() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct N {
+	//	    int node;
+	//	};
+	//
+	//	template <typename T>
+	//	struct List {
+	//	    template <int T::*>
+	//	    struct Base {};
+	//	};
+	//
+	//	List<N>::Base<&N::node> base;
+	public void testDependentTemplateParameterInNestedTemplate_407497() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <typename T>
+	//	struct enclosing {
+	//	    template <typename U = T>
+	//	    struct nested {
+	//	        typedef U type;
+	//	    };
+	//	};
+	//
+	//	typedef enclosing<int>::nested<>::type waldo;
+	public void testDependentTemplateParameterInNestedTemplate_399454() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	class Memory { };
 	//	Memory memory;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2013 Nokia Siemens Networks Oyj, Finland.
+ * Copyright (c) 2010, 2013 Nokia Siemens Networks Oyj, Finland and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,9 @@ package org.eclipse.cdt.managedbuilder.llvm.ui.preferences;
 
 import org.eclipse.cdt.managedbuilder.llvm.ui.LlvmEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.llvm.util.LlvmToolOptionPathUtil;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Text;
 
 /**
  * New implementation of LlvmListEditor.
@@ -44,8 +42,6 @@ public class IncludePathListEditor extends LlvmListEditor {
 	 */
 	protected String getNewInputObject() {
 		DirectoryDialog dlg = new DirectoryDialog(getShell());
-		final Text text = new Text(getShell(), SWT.BORDER);
-		dlg.setFilterPath(text.getText());
 		dlg.setText(Messages.IncludePathListEditor_0);
 		dlg.setMessage(Messages.IncludePathListEditor_1);
 		String dir = dlg.open();

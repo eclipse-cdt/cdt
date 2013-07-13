@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
@@ -54,20 +55,37 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 	 * This returns the first tool found.
 	 */
 	private ITool getTool(String languageId) {
-		ITool langTool = toolMap.get(languageId);
-		if (langTool != null) {
-			return langTool;
+		ITool tool = toolMap.get(languageId);
+		if (tool != null) {
+			return tool;
 		}
 
-		String toolchainId = getToolchainId();
-		for (IToolChain toolchain = ManagedBuildManager.getExtensionToolChain(toolchainId);toolchain != null;toolchain = toolchain.getSuperClass()) {
-			ITool tool = getTool(languageId, toolchain);
+		String toolchainId = null;
+		IToolChain toolchain = null;
+		if (currentCfgDescription != null) {
+			IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(currentCfgDescription);
+			toolchain = cfg != null ? cfg.getToolChain() : null;
+			toolchainId = toolchain != null ? toolchain.getId() : null;
+		}
+		if (toolchain == null) {
+			toolchainId = getToolchainId();
+			toolchain = ManagedBuildManager.getExtensionToolChain(toolchainId);
+		}
+		for (;toolchain != null;toolchain = toolchain.getSuperClass()) {
+			tool = getTool(languageId, toolchain);
 			if (tool != null) {
-				return tool;
+				break;
 			}
 		}
-		ManagedBuilderCorePlugin.error("Unable to find tool in toolchain=" + toolchainId + " for language=" + languageId); //$NON-NLS-1$ //$NON-NLS-2$
-		return null;
+		if (currentCfgDescription == null && tool != null) {
+			// cache only for global providers which use extension tool-chains that can not change
+			toolMap.put(languageId, tool);
+		}
+
+		if (tool == null) {
+			ManagedBuilderCorePlugin.error("Unable to find tool in toolchain=" + toolchainId + " for language=" + languageId); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return tool;
 	}
 
 	/**
@@ -81,7 +99,6 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 			for (IInputType inType : inputTypes) {
 				String lang = inType.getLanguageId(tool);
 				if (languageId.equals(lang)) {
-					toolMap.put(languageId, tool);
 					return tool;
 				}
 			}

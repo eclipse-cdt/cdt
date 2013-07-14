@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2012, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -315,8 +316,15 @@ public class EvalID extends CPPDependentEvaluation {
 					tpMap, packOffset, within, point);
 		} else if (nameOwner instanceof IType) {
 			IType type = CPPTemplates.instantiateType((IType) nameOwner, tpMap, packOffset, within, point);
-			if (type instanceof IBinding)
-				nameOwner = (IBinding) getNestedType(type, TDEF);
+			if (type instanceof IBinding) {
+				type = getNestedType(type, TDEF);
+			}
+
+			if (type instanceof IBinding) {
+				nameOwner = (IBinding)type;
+			} else {
+				nameOwner = new ProblemBinding(point, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fName);
+			}
 		}
 
 		if (fieldOwner instanceof IProblemBinding || nameOwner instanceof IProblemBinding)

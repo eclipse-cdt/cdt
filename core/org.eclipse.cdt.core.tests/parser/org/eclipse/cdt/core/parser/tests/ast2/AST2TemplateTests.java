@@ -14,6 +14,7 @@
  *     Thomas Corbat (IFS)
  *     Nathan Ridge
  *     Danny Ferreira
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -7954,5 +7955,40 @@ public class AST2TemplateTests extends AST2TestBase {
 
 		ICPPField privateMemberVariable = bh.assertNonProblemOnFirstIdentifier("privateMemberVariable =");
 		assertVisibility(ICPPClassType.v_private, aTemplate.getVisibility(privateMemberVariable));
+	}
+
+	//	template<bool B, class T = void>
+	//	struct enable_if_c {
+	//	  typedef T type;
+	//	};
+	//
+	//	template<class T>
+	//	struct enable_if_c<false, T> {
+	//	};
+	//
+	//	template<class Cond, class T = void>
+	//	struct enable_if: public enable_if_c<Cond::value, T> {
+	//	};
+	//
+	//	template<typename T, typename = void>
+	//	struct some_trait {
+	//	  static const bool value = true;
+	//	};
+	//
+	//	template<typename T>
+	//	struct some_trait<T, typename enable_if_c<T::some_trait_value>::type> {
+	//	  static const bool value = true;
+	//	};
+	//
+	//	template<typename T>
+	//	inline typename enable_if_c<some_trait<T>::value>::type foo() {
+	//	}
+	//
+	//	typedef int myInt;
+	//	int main() {
+	//	  foo<myInt>();
+	//	}
+	public void testInstantiationOfTypedef_412555() throws Exception {
+		parseAndCheckBindings();
 	}
 }

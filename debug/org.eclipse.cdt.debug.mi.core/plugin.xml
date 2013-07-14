@@ -15,6 +15,9 @@
          <buildIdPattern
                pattern="cdt\.managedbuild\.config\.gnu\..*">
          </buildIdPattern>
+         <buildIdPattern
+               pattern="cdt\.managedbuild\.toolchain\.gnu\..*">
+         </buildIdPattern>
       </debugger>
       <debugger
             platform="*"
@@ -32,6 +35,9 @@
             platform="win32">
          <buildIdPattern
                pattern="cdt\.managedbuild\.config\.gnu\.mingw\..*">
+         </buildIdPattern>
+         <buildIdPattern
+               pattern="cdt\.managedbuild\.toolchain\.gnu\.mingw\..*">
          </buildIdPattern>
       </debugger>
    </extension>

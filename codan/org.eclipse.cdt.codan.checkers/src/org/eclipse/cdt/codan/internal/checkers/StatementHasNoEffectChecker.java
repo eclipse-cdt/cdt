@@ -82,6 +82,8 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 				IASTBinaryExpression binExpr = (IASTBinaryExpression) e;
 				if (isPossibleAssignment(binExpr))
 					return false;
+				if (usesOverloadedOperator(binExpr))
+					return false;
 				switch (binExpr.getOperator()) {
 					case IASTBinaryExpression.op_logicalOr:
 					case IASTBinaryExpression.op_logicalAnd:
@@ -91,6 +93,8 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			}
 			if (e instanceof IASTUnaryExpression) {
 				IASTUnaryExpression unaryExpr = (IASTUnaryExpression) e;
+				if (usesOverloadedOperator(unaryExpr))
+					return false;
 				int operator = unaryExpr.getOperator();
 				switch (operator) {
 					case IASTUnaryExpression.op_postFixDecr:
@@ -131,14 +135,14 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 				CheckersMessages.GenericParameter_ParameterExceptionsItem);
 	}
 
-	public boolean isFilteredArg(String arg) {
+	private boolean isFilteredArg(String arg) {
 		return isFilteredArg(arg, getProblemById(ER_ID, getFile()), PARAM_EXCEPT_ARG_LIST);
 	}
 
 	/**
 	 * @return
 	 */
-	public boolean shouldReportInMacro() {
+	private boolean shouldReportInMacro() {
 		return (Boolean) getPreference(getProblemById(ER_ID, getFile()), PARAM_MACRO_ID);
 	}
 
@@ -157,15 +161,31 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			case IASTBinaryExpression.op_shiftRightAssign:
 				return true;
 		}
+		return false;
+	}
+	
+	private boolean usesOverloadedOperator(IASTBinaryExpression expr) {
 		if (expr instanceof IASTImplicitNameOwner) {
-			// Check whether the operator is overloaded
 			IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) expr).getImplicitNames();
 			if (implicitNames.length > 0)
 				return true;
-			IType expressionType = expr.getOperand1().getExpressionType();
-			if (!(expressionType instanceof IBasicType)) {
-				return true; // must be overloaded but parser could not
-				// find it
+			IType operand1Type = expr.getOperand1().getExpressionType();
+			IType operand2Type = expr.getOperand2().getExpressionType();
+			if (!(operand1Type instanceof IBasicType && operand2Type instanceof IBasicType)) {
+				return true; // must be overloaded but parser could not find it
+			}
+		}
+		return false;
+	}
+	
+	private boolean usesOverloadedOperator(IASTUnaryExpression expr) {
+		if (expr instanceof IASTImplicitNameOwner) {
+			IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) expr).getImplicitNames();
+			if (implicitNames.length > 0)
+				return true;
+			IType operandType = expr.getOperand().getExpressionType();
+			if (!(operandType instanceof IBasicType)) {
+				return true; // must be overloaded but parser could not find it
 			}
 		}
 		return false;

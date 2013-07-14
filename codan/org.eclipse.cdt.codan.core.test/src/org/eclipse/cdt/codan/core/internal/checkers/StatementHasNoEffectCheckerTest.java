@@ -187,4 +187,17 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		IMarker m = checkErrorLine(3);
 		assertMessageMatch("'\\+a'", m); //$NON-NLS-1$
 	}
+
+	//	class S {
+	//		int operator*();  // may have side effect
+	//	};
+	//
+	//	int main() {
+	//		S s;
+	//		*s;
+	//	}
+	public void testOverloadedOperator_bug399146() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
 }

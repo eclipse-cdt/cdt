@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2012, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -315,8 +315,15 @@ public class EvalID extends CPPDependentEvaluation {
 					tpMap, packOffset, within, point);
 		} else if (nameOwner instanceof IType) {
 			IType type = CPPTemplates.instantiateType((IType) nameOwner, tpMap, packOffset, within, point);
-			if (type instanceof IBinding)
-				nameOwner = (IBinding) getNestedType(type, TDEF);
+			if (type instanceof IBinding) {
+				type = getNestedType(type, TDEF);
+			}
+
+			if (type instanceof IBinding) {
+				nameOwner = (IBinding)type;
+			} else {
+				return EvalFixed.INCOMPLETE;
+			}
 		}
 
 		if (fieldOwner instanceof IProblemBinding || nameOwner instanceof IProblemBinding)

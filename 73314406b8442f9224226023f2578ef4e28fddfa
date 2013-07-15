@@ -16,6 +16,24 @@
       "revId": "73314406b8442f9224226023f2578ef4e28fddfa",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_316f58f0",
+        "filename": "releng/org.eclipse.cdt.target/.project",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-07-15T19:16:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "073dc3ed_8b66f59e",
+      "revId": "73314406b8442f9224226023f2578ef4e28fddfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -30,7 +30,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 public class QuickFixCreateLocalVariable extends AbstractAstRewriteQuickFix {
 	@Override
 	public String getLabel() {
-		return Messages.QuickFixCreateLocalVariable_0;
+		return QuickFixMessages.QuickFixCreateLocalVariable_create_local_variable;
 	}
 
 	@Override

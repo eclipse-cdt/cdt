@@ -35,7 +35,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 public class QuickFixCreateField extends AbstractAstRewriteQuickFix {
 	@Override
 	public String getLabel() {
-		return Messages.QuickFixCreateField_0;
+		return QuickFixMessages.QuickFixCreateField_create_field;
 	}
 
 	@Override

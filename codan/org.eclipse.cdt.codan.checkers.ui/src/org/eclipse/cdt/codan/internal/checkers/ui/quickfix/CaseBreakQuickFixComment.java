@@ -24,7 +24,7 @@ import org.eclipse.text.edits.MalformedTreeException;
 public class CaseBreakQuickFixComment extends AbstractCodanCMarkerResolution {
 	@Override
 	public String getLabel() {
-		return Messages.CaseBreakQuickFixComment_Label;
+		return QuickFixMessages.CaseBreakQuickFixComment_Label;
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class CaseBreakQuickFixComment extends AbstractCodanCMarkerResolution {
 			int offset = document.getLineOffset(line);
 			String indent = getIndentationStr(document, line);
 			String comment = getNoBreakComment(marker);
-			String editStr = String.format("%s/* %s */\n", indent, comment);//$NON-NLS-1$ 
+			String editStr = String.format("%s/* %s */\n", indent, comment); //$NON-NLS-1$ 
 			InsertEdit edit = new InsertEdit(offset, editStr);
 			edit.apply(document);
 		} catch (MalformedTreeException e) {

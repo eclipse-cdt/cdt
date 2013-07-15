@@ -284,7 +284,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		int bestScore = -1;
 		for (IIndexFile file : files) {
 			int score = file.getMacros().length * 2;
-			if (TranslationUnit.isSourceFile(TranslationUnit.getParsedInContext(file), tu.getCProject().getProject()))
+			if (tu != null && TranslationUnit.isSourceFile(TranslationUnit.getParsedInContext(file), tu.getCProject().getProject()))
 				score++;
 			if (score > bestScore) {
 				bestScore = score;

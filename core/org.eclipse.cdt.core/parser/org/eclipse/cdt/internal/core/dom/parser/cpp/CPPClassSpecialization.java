@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Bryan Wilkinson (QNX)
  *     Markus Schorn (Wind River Systems)
  *     Thomas Corbat (IFS)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -145,7 +146,12 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	private ICPPClassSpecializationScope specScope;
 	private ObjectMap specializationMap= ObjectMap.EMPTY_MAP;
-	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>();
+	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>() {
+		@Override
+		protected Set<IBinding> initialValue() {
+			return new HashSet<IBinding>();
+		}
+	};
 
 	public CPPClassSpecialization(ICPPClassType specialized, IBinding owner,
 			ICPPTemplateParameterMap argumentMap) {
@@ -164,23 +170,24 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	@Override
 	public IBinding specializeMember(IBinding original, IASTNode point) {
-		Set<IBinding> set;
 		synchronized (this) {
 			IBinding result= (IBinding) specializationMap.get(original);
 			if (result != null)
 				return result;
 
-			set= fInProgress.get();
-			if (set == null) {
-				set= new HashSet<IBinding>();
-				fInProgress.set(set);
-			}
-			if (!set.add(original))
-				return RecursionResolvingBinding.createFor(original, point);
 		}
 
-		IBinding result= CPPTemplates.createSpecialization(this, original, point);
-		set.remove(original);
+		IBinding result;
+		Set<IBinding> recursionProtectionSet= fInProgress.get();
+		try {
+			if (!recursionProtectionSet.add(original))
+				return RecursionResolvingBinding.createFor(original, point);
+
+			result= CPPTemplates.createSpecialization(this, original, point);
+		} finally {
+			recursionProtectionSet.remove(original);
+		}
+
 		synchronized (this) {
 			IBinding concurrent= (IBinding) specializationMap.get(original);
 			if (concurrent != null)

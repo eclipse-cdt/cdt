@@ -1,0 +1,548 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "073dc3ed_650487cf",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Use Require-Bundle instead of Import-Package.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_25239f66",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Please align with previous elements.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_85070bd4",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Trailing space.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_a525ef5e",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/Messages.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Please don\u0027t pollute the file with such comments. Same for line 10.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_05665ba0",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/Messages.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Remove initializer.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_25755f3f",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixCreateClass.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Missing copyright comment. Same in several other files.\n\nRemove \\r characters from this and other files.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_8579cb3c",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixCreateClass.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_a557af9e",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixCreateClass.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Too many blank lines.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_c55ab3c8",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixCreateClass.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Exceptions should be logged and possibly reported to the user.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_e56a5763",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixCreateMethod.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Remove \\r characters.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_4570634f",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixCreateMethod.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_05b81b61",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "The message has to include the name of the class. Please follow the JDT example.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_259effe8",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Non localizable messages should not be defined in properties files.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_e5bc1758",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "The message has to include the name of the method. Please follow the JDT example.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_e5b25750",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/CreateMethodRefactoring.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Please indent the contributor name by 4.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_45b86330",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/CreateMethodRefactoring.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Unnecessary blank lines.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_85c1cb99",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/CreateMethodRefactoring.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_25bd5f20",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/CreateMethodRefactoring.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Remove commented out code.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_65be471c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/CreateMethodRefactoring.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Incomplete JavaDoc.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_c5cbd3b5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/CreateMethodRefactoring.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "I have difficulty understanding this phrase.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_a5c84fba",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/CreateMethodRefactoring.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "No need to declare NullPointerException. Virtually any method can though it.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_458a2370",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/CreateMethodRefactoring.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Please use descriptive form, \"Returns\" instead of \"Get\".",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_0595bb95",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/CreateMethodRefactoring.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "exist -\u003e exists",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_a524cf39",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/Helpers.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Please don\u0027t suppress restriction warnings.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_05313b75",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/Helpers.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "The name of the class is too generic.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_e5353762",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/Helpers.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Unnecessary blank lines.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_452b4307",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/Helpers.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Describe parameter.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_2530bf6d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/Helpers.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Ditto.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_65cc87e0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/Helpers.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Please put } else { on the same line.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_c5d9139e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/Helpers.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Please always use curly braces for \u0027if\u0027 statements with \u0027else\u0027 clause.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_a5d68f69",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/Messages.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "The corresponding properties file has to be called Messages.properties with capital \u0027M\u0027.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_c527533d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/createmethod/messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T01:32:43Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "7683c135075b9b7b8efd932a3679d2c300b222c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

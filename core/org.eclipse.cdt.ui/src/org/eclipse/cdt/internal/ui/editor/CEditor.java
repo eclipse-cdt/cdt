@@ -3576,13 +3576,17 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		};
 		SelectionListenerWithASTManager.getDefault().addListener(this, fPostSelectionListenerWithAST);
 		if (forceUpdate && getSelectionProvider() != null) {
-			fForcedMarkOccurrencesSelection= getSelectionProvider().getSelection();
-			ASTProvider.getASTProvider().runOnAST(getInputCElement(), ASTProvider.WAIT_NO, getProgressMonitor(), new ASTRunnable() {
-				@Override
-				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
-					updateOccurrenceAnnotations((ITextSelection) fForcedMarkOccurrencesSelection, ast);
-					return Status.OK_STATUS;
-				}});
+			ICElement inputCElement = getInputCElement();
+			if (inputCElement instanceof ITranslationUnit) {
+				fForcedMarkOccurrencesSelection= getSelectionProvider().getSelection();
+				ASTProvider.getASTProvider().runOnAST(inputCElement, ASTProvider.WAIT_NO, getProgressMonitor(), new ASTRunnable() {
+					@Override
+					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
+						updateOccurrenceAnnotations((ITextSelection) fForcedMarkOccurrencesSelection, ast);
+						return Status.OK_STATUS;
+					}
+				});
+			}
 		}
 
 		if (fOccurrencesFinderJobCanceler == null) {

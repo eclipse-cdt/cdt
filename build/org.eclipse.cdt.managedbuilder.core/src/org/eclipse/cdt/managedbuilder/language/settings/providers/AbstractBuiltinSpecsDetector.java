@@ -872,6 +872,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		clone.envMngr = null;
 		clone.environmentMap = null;
 		clone.envPathHash = HASH_NOT_INITIALIZED;
+		this.properties.remove(ATTR_ENV_HASH);
 		return clone;
 	}
 

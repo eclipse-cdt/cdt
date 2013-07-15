@@ -41,12 +41,12 @@ import org.eclipse.ltk.core.refactoring.CompositeChange;
 public class QuickFixCreateParameter extends AbstractAstRewriteQuickFix {
 	@Override
 	public String getLabel() {
-		return Messages.QuickFixCreateParameter_0;
+		return QuickFixMessages.QuickFixCreateParameter_create_parameter;
 	}
 
 	@Override
 	public void modifyAST(IIndex index, IMarker marker) {
-		CompositeChange c = new CompositeChange(Messages.QuickFixCreateParameter_0);
+		CompositeChange c = new CompositeChange(QuickFixMessages.QuickFixCreateParameter_create_parameter);
 		try {
 			ITranslationUnit baseTU = getTranslationUnitViaEditor(marker);
 			IASTTranslationUnit baseAST = baseTU.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);

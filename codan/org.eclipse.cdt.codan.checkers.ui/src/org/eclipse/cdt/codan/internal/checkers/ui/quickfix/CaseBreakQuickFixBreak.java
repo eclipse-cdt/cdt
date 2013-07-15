@@ -41,7 +41,7 @@ public class CaseBreakQuickFixBreak extends AbstractAstRewriteQuickFix {
 
 	@Override
 	public String getLabel() {
-		return Messages.CaseBreakQuickFixBreak_Label;
+		return QuickFixMessages.CaseBreakQuickFixBreak_Label;
 	}
 
 	protected IASTStatement getStmtBeforeBreak(IMarker marker, IASTTranslationUnit ast) throws BadLocationException {

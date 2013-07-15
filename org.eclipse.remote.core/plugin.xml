@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension-point id="remoteServices" name="Remote Services" schema="schema/remoteServices.exsd"/>
+   <extension-point id="remoteResources" name="Remote Resources" schema="schema/remoteResources.exsd"/>
+   <extension
+         point="org.eclipse.ptp.remote.core.remoteServices">
+      <remoteServices
+            class="org.eclipse.internal.remote.core.services.local.LocalServicesFactory"
+            id="org.eclipse.ptp.remote.LocalServices"
+            name="Local"
+            newConnections="false"
+            scheme="file">
+      </remoteServices>
+   </extension>
+   <extension
+         point="org.eclipse.core.variables.valueVariables">
+      <variable
+            description="payload"
+            initialValue="&quot;&quot;"
+            name="payload"
+            readOnly="false">
+      </variable>
+      <variable
+            description="payload_args"
+            initialValue="&quot;&quot;"
+            name="payload_args"
+            readOnly="false">
+      </variable>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.core.resources.IResource"
+            class="org.eclipse.internal.remote.core.RemoteResourceAdapterFactory">
+         <adapter
+               type="org.eclipse.remote.core.IRemoteResource">
+         </adapter>
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.internal.remote.core.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+
+</plugin>

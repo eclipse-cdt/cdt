@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension-point id="remoteUIServices" name="Remote UI Services" schema="schema/remoteUIServices.exsd"/>
+   <extension
+         point="org.eclipse.remote.ui.remoteUIServices">
+      <remoteUIServices
+            class="org.eclipse.internal.remote.ui.services.local.LocalUIServicesFactory"
+            id="org.eclipse.ptp.remote.LocalServices"
+            name="Local">
+      </remoteUIServices>
+   </extension>
+     <extension
+           point="org.eclipse.ui.preferencePages">
+        <page
+              class="org.eclipse.internal.remote.ui.preferences.RemoteDevelopmentPreferencePage"
+              id="org.eclipse.remote.ui.RemoteDevelopmentPreferencePage"
+              name="%RemoteDevPrefPage.name">
+        </page>
+     </extension> 
+
+</plugin>

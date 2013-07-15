@@ -14,6 +14,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -44,12 +50,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * @author Bryan Wilkinson
  */
@@ -67,7 +67,12 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	private volatile ICPPClassScope fScope;
 	private ObjectMap specializationMap; // Obtained from the synchronized PDOM cache
-	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>();
+	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>() {
+		@Override
+		protected Set<IBinding> initialValue() {
+			return new HashSet<IBinding>();
+		}
+	};
 
 	public PDOMCPPClassSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType,
 			PDOMBinding specialized) throws CoreException {
@@ -132,21 +137,22 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 				specializationMap= (ObjectMap) getPDOM().putCachedResult(key, newMap, false);
 			}
 		}
-		Set<IBinding> set;
 		synchronized (specializationMap) {
 			IBinding result= (IBinding) specializationMap.get(original);
 			if (result != null)
 				return result;
-			set= fInProgress.get();
-			if (set == null) {
-				set= new HashSet<IBinding>();
-				fInProgress.set(set);
-			}
-			if (!set.add(original))
-				return RecursionResolvingBinding.createFor(original, point);
 		}
-		IBinding newSpec= CPPTemplates.createSpecialization(this, original, point);
-		set.remove(original);
+
+		IBinding newSpec;
+		Set<IBinding> recursionProtectionSet= fInProgress.get();
+		try {
+			if (!recursionProtectionSet.add(original))
+				return RecursionResolvingBinding.createFor(original, point);
+
+			newSpec= CPPTemplates.createSpecialization(this, original, point);
+		} finally {
+			recursionProtectionSet.remove(original);
+		}
 
 		synchronized (specializationMap) {
 			IBinding oldSpec= (IBinding) specializationMap.put(original, newSpec);

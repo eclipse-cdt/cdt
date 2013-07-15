@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2013 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,12 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPClassSpecialization extends CompositeCPPClassType implements ICPPClassSpecialization {
 	private ObjectMap specializationMap;
-	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>();
+	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>() {
+		@Override
+		protected Set<IBinding> initialValue() {
+			return new HashSet<IBinding>();
+		}
+	};
 
 	public CompositeCPPClassSpecialization(ICompositesFactory cf, ICPPClassType rbinding) {
 		super(cf, rbinding);
@@ -103,21 +108,22 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 				specializationMap= (ObjectMap) frag.putCachedResult(key, newMap, false);
 			}
 		}
-		Set<IBinding> set;
 		synchronized (specializationMap) {
 			IBinding result= (IBinding) specializationMap.get(original);
 			if (result != null) 
 				return result;
-			set= fInProgress.get();
-			if (set == null) {
-				set= new HashSet<IBinding>();
-				fInProgress.set(set);
-			} 
-			if (!set.add(original)) 
-				return RecursionResolvingBinding.createFor(original, point);
 		}
-		IBinding newSpec= CPPTemplates.createSpecialization(this, original, point);
-		set.remove(original);
+
+		IBinding newSpec;
+		Set<IBinding> recursionProtectionSet= fInProgress.get();
+		try {
+			if (!recursionProtectionSet.add(original))
+				return RecursionResolvingBinding.createFor(original, point);
+
+			newSpec= CPPTemplates.createSpecialization(this, original, point);
+		} finally {
+			recursionProtectionSet.remove(original);
+		}
 
 		synchronized (specializationMap) {
 			IBinding oldSpec= (IBinding) specializationMap.put(original, newSpec);

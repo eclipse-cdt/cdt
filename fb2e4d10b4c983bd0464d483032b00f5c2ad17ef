@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "073dc3ed_e5dd3757",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 7991,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T00:01:50Z",
+      "side": 1,
+      "message": "The convention is to skip the word \"bug\" in test names.",
+      "revId": "fb2e4d10b4c983bd0464d483032b00f5c2ad17ef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_c54ab37a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalID.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-15T00:01:50Z",
+      "side": 1,
+      "message": "If the instantiated name owner is not a binding, the EvalID cannot be instantiated. This is a normal situation under SFINAE.  It\u0027s preferable to return a ProblemBinding to prevent further instantiation attempts. The ProblemBinding can be created by new ProblemBinding(point, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fName).",
+      "revId": "fb2e4d10b4c983bd0464d483032b00f5c2ad17ef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

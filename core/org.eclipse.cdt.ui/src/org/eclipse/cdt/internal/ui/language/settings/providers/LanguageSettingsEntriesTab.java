@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -697,12 +698,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			ICConfigurationDescription cfgDescription = getConfigurationDescription();
 			IResource rc = getResource();
 			if (entries != null && rc != null) {
-				List<ICLanguageSettingEntry> parentEntries = null;
-				if (rc instanceof IProject) {
-					parentEntries = new ArrayList<ICLanguageSettingEntry>();
-				} else {
-					parentEntries = LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, cfgDescription, rc.getParent(), currentLanguageId);
-				}
+				IContainer parent = rc instanceof IProject ? null : rc.getParent();
+				List<ICLanguageSettingEntry> parentEntries = LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, cfgDescription, parent, currentLanguageId);
 				if (entries.equals(parentEntries)) {
 					// to use parent entries instead
 					entries = null;

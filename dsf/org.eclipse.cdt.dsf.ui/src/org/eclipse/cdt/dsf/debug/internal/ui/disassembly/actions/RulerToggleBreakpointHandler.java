@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,16 +38,20 @@ public class RulerToggleBreakpointHandler extends AbstractHandler {
 			final IVerticalRulerInfo rulerInfo= (IVerticalRulerInfo) part.getAdapter(IVerticalRulerInfo.class);
 			if (rulerInfo != null) {
 				final ToggleBreakpointAction toggleBpAction= new ToggleBreakpointAction(part, document, rulerInfo);
-				toggleBpAction.update();
-				if (toggleBpAction.isEnabled()) {
-				    if (event.getTrigger() instanceof Event) {
-				        // Pass through the event that triggered the action.  
-				        // This will give toggle action access to key modifiers 
-				        // (shift, ctrl, etc.)
-				        toggleBpAction.runWithEvent((Event)event.getTrigger());
-				    } else {
-				        toggleBpAction.run();
-				    }
+				try {
+					toggleBpAction.update();
+					if (toggleBpAction.isEnabled()) {
+					    if (event.getTrigger() instanceof Event) {
+					        // Pass through the event that triggered the action.  
+					        // This will give toggle action access to key modifiers 
+					        // (shift, ctrl, etc.)
+					        toggleBpAction.runWithEvent((Event)event.getTrigger());
+					    } else {
+					        toggleBpAction.run();
+					    }
+					}
+				} finally {
+					toggleBpAction.dispose();
 				}
 			}
 		}

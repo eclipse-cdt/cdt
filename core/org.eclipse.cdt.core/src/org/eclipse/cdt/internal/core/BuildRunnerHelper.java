@@ -323,7 +323,8 @@ public class BuildRunnerHelper implements Closeable {
 			monitor = new NullProgressMonitor();
 		}
 		try {
-			monitor.beginTask(CCorePlugin.getResourceString("BuildRunnerHelper.updatingProject"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+			monitor.beginTask(CCorePlugin.getFormattedString("BuildRunnerHelper.refreshingProject", project.getName()), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+			monitor.subTask(""); //$NON-NLS-1$
 
 			// Do not allow the cancel of the refresh, since the builder is external
 			// to Eclipse, files may have been created/modified and we will be out-of-sync.

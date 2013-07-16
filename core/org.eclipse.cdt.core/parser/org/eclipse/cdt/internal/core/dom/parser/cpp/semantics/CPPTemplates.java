@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -137,10 +138,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeParameterSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTemplateParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTemplateParameterSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameterSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedefSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMemberClass;
@@ -801,106 +805,120 @@ public class CPPTemplates {
 	public static IBinding createSpecialization(ICPPClassSpecialization owner, IBinding decl, IASTNode point) {
 		IBinding spec = null;
 		final ICPPTemplateParameterMap tpMap= owner.getTemplateParameterMap();
-		if (decl instanceof ICPPClassTemplatePartialSpecialization) {
-			try {
-				final ICPPClassSpecialization within = getSpecializationContext(owner);
-				ICPPClassTemplatePartialSpecialization pspec= (ICPPClassTemplatePartialSpecialization) decl;
-				ICPPClassTemplate template= pspec.getPrimaryClassTemplate();
-				ICPPTemplateArgument[] args = pspec.getTemplateArguments();
-				template= (ICPPClassTemplate) owner.specializeMember(template, point);
-				args= instantiateArguments(args, tpMap, -1, within, point, false);
-				spec= new CPPClassTemplatePartialSpecializationSpecialization(pspec, tpMap, template, args);
-			} catch (DOMException e) {
-			}
-		} else if (decl instanceof ICPPClassTemplate) {
-			spec = new CPPClassTemplateSpecialization((ICPPClassTemplate) decl, owner, tpMap);
-		} else if (decl instanceof ICPPClassType) {
-			IBinding oldOwner = decl.getOwner();
-			if (oldOwner instanceof IType && owner.getSpecializedBinding().isSameType((IType) oldOwner)) {
-				spec = new CPPClassSpecialization((ICPPClassType) decl, owner, tpMap);
-			} else {
-				spec = new CPPClassSpecialization((ICPPClassType) decl, oldOwner, tpMap);
-			}
-		} else if (decl instanceof ICPPField) {
-			final ICPPClassSpecialization within = getSpecializationContext(owner);
-			ICPPField field= (ICPPField) decl;
-			IType type= instantiateType(field.getType(), tpMap, -1, within, point);
-			IValue value= instantiateValue(field.getInitialValue(), tpMap, -1, within, Value.MAX_RECURSION_DEPTH, point);
-			spec = new CPPFieldSpecialization(decl, owner, tpMap, type, value);
-		} else if (decl instanceof ICPPFunction) {
-			ICPPFunction func= (ICPPFunction) decl;
-			ICPPClassSpecialization within = getSpecializationContext(owner);
-			ICPPFunctionType type= (ICPPFunctionType) instantiateType(func.getType(), tpMap, -1, within, point);
-			IType[] exceptionSpecs= instantiateTypes(func.getExceptionSpecification(), tpMap, -1, within, point);
-
-			if (decl instanceof ICPPFunctionTemplate) {
-				if (decl instanceof ICPPConstructor) {
-					spec = new CPPConstructorTemplateSpecialization((ICPPConstructor) decl, owner, tpMap, type, exceptionSpecs);
-				} else if (decl instanceof ICPPMethod) {
-					spec = new CPPMethodTemplateSpecialization((ICPPMethod) decl, owner, tpMap, type, exceptionSpecs);
-				} else {
-					IBinding oldOwner = decl.getOwner();
-					spec = new CPPFunctionTemplateSpecialization((ICPPFunctionTemplate) decl, oldOwner, tpMap, type, exceptionSpecs);
-				}
-			} else if (decl instanceof ICPPConstructor) {
-				spec = new CPPConstructorSpecialization((ICPPConstructor) decl, owner, tpMap, type, exceptionSpecs);
-			} else if (decl instanceof ICPPMethod) {
-				spec = new CPPMethodSpecialization((ICPPMethod) decl, owner, tpMap, type, exceptionSpecs);
-			} else if (decl instanceof ICPPFunction) {
-				IBinding oldOwner = decl.getOwner();
-				spec = new CPPFunctionSpecialization((ICPPFunction) decl, oldOwner, tpMap, type, exceptionSpecs);
-			}
-		} else if (decl instanceof ITypedef) {
-			IType type= instantiateType(((ITypedef) decl).getType(), tpMap, -1, getSpecializationContext(owner), point);
-		    spec = new CPPTypedefSpecialization(decl, owner, tpMap, type);
-		} else if (decl instanceof ICPPAliasTemplate) {
-			ICPPAliasTemplate aliasTemplate = (ICPPAliasTemplate) decl;
-			IType type= instantiateType(aliasTemplate.getType(), tpMap, -1, getSpecializationContext(owner), point);
-		    spec = new CPPAliasTemplateInstance(decl.getNameCharArray(), aliasTemplate, type);
-		} else if (decl instanceof ICPPEnumeration) {
-			ICPPClassSpecialization within = getSpecializationContext(owner);
-			ICPPEnumeration enumeration = (ICPPEnumeration) decl;
-			IType fixedType = instantiateType(enumeration.getFixedType(), tpMap, -1, within, point);
-			CPPEnumerationSpecialization specializedEnumeration =
-					new CPPEnumerationSpecialization(enumeration, owner, tpMap, fixedType);
-			IEnumerator[] enumerators = enumeration.getEnumerators();
-			IEnumerator[] specializedEnumerators = new IEnumerator[enumerators.length];
-			for (int i = 0; i < enumerators.length; ++i) {
-				IEnumerator enumerator = enumerators[i];
-				IValue specializedValue =
-						instantiateValue(enumerator.getValue(), tpMap, -1, within, Value.MAX_RECURSION_DEPTH, point);
-				specializedEnumerators[i] =
-						new CPPEnumeratorSpecialization(enumerator, specializedEnumeration, tpMap, specializedValue);
-			}
-			specializedEnumeration.setEnumerators(specializedEnumerators);
-			spec = specializedEnumeration;
-		} else if (decl instanceof IEnumerator) {
-			IEnumerator enumerator = (IEnumerator) decl;
-			ICPPEnumeration enumeration = (ICPPEnumeration) enumerator.getOwner();
-			ICPPEnumerationSpecialization enumSpec =
-					(ICPPEnumerationSpecialization) owner.specializeMember(enumeration, point);
-			spec = enumSpec.specializeEnumerator(enumerator);
-		} else if (decl instanceof ICPPUsingDeclaration) {
-			IBinding[] delegates= ((ICPPUsingDeclaration) decl).getDelegates();
-			List<IBinding> result= new ArrayList<IBinding>();
-			ICPPClassSpecialization within = getSpecializationContext(owner);
-			for (IBinding delegate : delegates) {
+		try {
+			if (decl instanceof ICPPClassTemplatePartialSpecialization) {
 				try {
-					if (delegate instanceof ICPPUnknownBinding) {
-						delegate= resolveUnknown((ICPPUnknownBinding) delegate, tpMap, -1, within, point);
-					}
-					if (delegate instanceof CPPFunctionSet) {
-						for (IBinding b : ((CPPFunctionSet) delegate).getBindings()) {
-							result.add(b);
-						}
-					} else if (delegate != null) {
-						result.add(delegate);
-					}
+					final ICPPClassSpecialization within = getSpecializationContext(owner);
+					ICPPClassTemplatePartialSpecialization pspec= (ICPPClassTemplatePartialSpecialization) decl;
+					ICPPClassTemplate template= pspec.getPrimaryClassTemplate();
+					ICPPTemplateArgument[] args = pspec.getTemplateArguments();
+					template= (ICPPClassTemplate) owner.specializeMember(template, point);
+					args= instantiateArguments(args, tpMap, -1, within, point, false);
+					spec= new CPPClassTemplatePartialSpecializationSpecialization(pspec, tpMap, template, args);
 				} catch (DOMException e) {
 				}
+			} else if (decl instanceof ICPPClassTemplate) {
+				ICPPClassTemplate template = (ICPPClassTemplate) decl;
+				CPPClassTemplateSpecialization classTemplateSpec = new CPPClassTemplateSpecialization(template, owner, tpMap);
+				classTemplateSpec.setTemplateParameters(CPPTemplates.specializeTemplateParameters(classTemplateSpec, 
+						(ICPPScope) classTemplateSpec.getScope(), template.getTemplateParameters(), owner, point));
+				spec = classTemplateSpec; 
+			} else if (decl instanceof ICPPClassType) {
+				IBinding oldOwner = decl.getOwner();
+				if (oldOwner instanceof IType && owner.getSpecializedBinding().isSameType((IType) oldOwner)) {
+					spec = new CPPClassSpecialization((ICPPClassType) decl, owner, tpMap);
+				} else {
+					spec = new CPPClassSpecialization((ICPPClassType) decl, oldOwner, tpMap);
+				}
+			} else if (decl instanceof ICPPField) {
+				final ICPPClassSpecialization within = getSpecializationContext(owner);
+				ICPPField field= (ICPPField) decl;
+				IType type= instantiateType(field.getType(), tpMap, -1, within, point);
+				IValue value= instantiateValue(field.getInitialValue(), tpMap, -1, within, Value.MAX_RECURSION_DEPTH, point);
+				spec = new CPPFieldSpecialization(decl, owner, tpMap, type, value);
+			} else if (decl instanceof ICPPFunction) {
+				ICPPFunction func= (ICPPFunction) decl;
+				ICPPClassSpecialization within = getSpecializationContext(owner);
+				ICPPFunctionType type= (ICPPFunctionType) instantiateType(func.getType(), tpMap, -1, within, point);
+				IType[] exceptionSpecs= instantiateTypes(func.getExceptionSpecification(), tpMap, -1, within, point);
+	
+				if (decl instanceof ICPPFunctionTemplate) {
+					if (decl instanceof ICPPMethod) {
+						CPPMethodTemplateSpecialization methodSpec;
+						if (decl instanceof ICPPConstructor) {
+							methodSpec = new CPPConstructorTemplateSpecialization((ICPPConstructor) decl, owner, tpMap, type, exceptionSpecs);
+						} else {
+							methodSpec = new CPPMethodTemplateSpecialization((ICPPMethod) decl, owner, tpMap, type, exceptionSpecs);
+						} 
+						methodSpec.setTemplateParameters(CPPTemplates.specializeTemplateParameters(methodSpec, 
+								(ICPPScope) methodSpec.getScope(), ((ICPPFunctionTemplate) decl).getTemplateParameters(), owner, point));
+						spec = methodSpec;
+					} else {
+						IBinding oldOwner = decl.getOwner();
+						spec = new CPPFunctionTemplateSpecialization((ICPPFunctionTemplate) decl, oldOwner, tpMap, type, exceptionSpecs);
+					}
+				} else if (decl instanceof ICPPConstructor) {
+					spec = new CPPConstructorSpecialization((ICPPConstructor) decl, owner, tpMap, type, exceptionSpecs);
+				} else if (decl instanceof ICPPMethod) {
+					spec = new CPPMethodSpecialization((ICPPMethod) decl, owner, tpMap, type, exceptionSpecs);
+				} else if (decl instanceof ICPPFunction) {
+					IBinding oldOwner = decl.getOwner();
+					spec = new CPPFunctionSpecialization((ICPPFunction) decl, oldOwner, tpMap, type, exceptionSpecs);
+				}
+			} else if (decl instanceof ITypedef) {
+				IType type= instantiateType(((ITypedef) decl).getType(), tpMap, -1, getSpecializationContext(owner), point);
+			    spec = new CPPTypedefSpecialization(decl, owner, tpMap, type);
+			} else if (decl instanceof ICPPAliasTemplate) {
+				ICPPAliasTemplate aliasTemplate = (ICPPAliasTemplate) decl;
+				IType type= instantiateType(aliasTemplate.getType(), tpMap, -1, getSpecializationContext(owner), point);
+			    spec = new CPPAliasTemplateInstance(decl.getNameCharArray(), aliasTemplate, type);
+			} else if (decl instanceof ICPPEnumeration) {
+				ICPPClassSpecialization within = getSpecializationContext(owner);
+				ICPPEnumeration enumeration = (ICPPEnumeration) decl;
+				IType fixedType = instantiateType(enumeration.getFixedType(), tpMap, -1, within, point);
+				CPPEnumerationSpecialization specializedEnumeration =
+						new CPPEnumerationSpecialization(enumeration, owner, tpMap, fixedType);
+				IEnumerator[] enumerators = enumeration.getEnumerators();
+				IEnumerator[] specializedEnumerators = new IEnumerator[enumerators.length];
+				for (int i = 0; i < enumerators.length; ++i) {
+					IEnumerator enumerator = enumerators[i];
+					IValue specializedValue =
+							instantiateValue(enumerator.getValue(), tpMap, -1, within, Value.MAX_RECURSION_DEPTH, point);
+					specializedEnumerators[i] =
+							new CPPEnumeratorSpecialization(enumerator, specializedEnumeration, tpMap, specializedValue);
+				}
+				specializedEnumeration.setEnumerators(specializedEnumerators);
+				spec = specializedEnumeration;
+			} else if (decl instanceof IEnumerator) {
+				IEnumerator enumerator = (IEnumerator) decl;
+				ICPPEnumeration enumeration = (ICPPEnumeration) enumerator.getOwner();
+				ICPPEnumerationSpecialization enumSpec =
+						(ICPPEnumerationSpecialization) owner.specializeMember(enumeration, point);
+				spec = enumSpec.specializeEnumerator(enumerator);
+			} else if (decl instanceof ICPPUsingDeclaration) {
+				IBinding[] delegates= ((ICPPUsingDeclaration) decl).getDelegates();
+				List<IBinding> result= new ArrayList<IBinding>();
+				ICPPClassSpecialization within = getSpecializationContext(owner);
+				for (IBinding delegate : delegates) {
+					try {
+						if (delegate instanceof ICPPUnknownBinding) {
+							delegate= resolveUnknown((ICPPUnknownBinding) delegate, tpMap, -1, within, point);
+						}
+						if (delegate instanceof CPPFunctionSet) {
+							for (IBinding b : ((CPPFunctionSet) delegate).getBindings()) {
+								result.add(b);
+							}
+						} else if (delegate != null) {
+							result.add(delegate);
+						}
+					} catch (DOMException e) {
+					}
+				}
+				delegates= result.toArray(new IBinding[result.size()]);
+				spec= new CPPUsingDeclarationSpecialization((ICPPUsingDeclaration) decl, owner, tpMap, delegates);
 			}
-			delegates= result.toArray(new IBinding[result.size()]);
-			spec= new CPPUsingDeclarationSpecialization((ICPPUsingDeclaration) decl, owner, tpMap, delegates);
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
 		}
 		return spec;
 	}
@@ -1332,6 +1350,51 @@ public class CPPTemplates {
 		}
 	}
 
+	/**
+	 * Specialize a template parameter of a nested template by subtituting values for the template
+	 * parameters of enclosing templates into the template parameter's default value and, in the
+	 * case of a non-type template parameter, type.
+	 * 
+	 * @param owner the specialization of the nested template. This will be the owner of the
+	 *              specialized template parameter.
+	 * @param scope the scope of the nested template specialization
+	 * @param specialized the template parameter to be specialized
+	 * @param within the specialization of the enclosing class
+	 * @param point the point of template instantiation
+	 * @return the specialized template parameter
+	 */
+	public static ICPPTemplateParameter specializeTemplateParameter(ICPPSpecialization owner, ICPPScope scope,
+			ICPPTemplateParameter specialized, ICPPClassSpecialization within, IASTNode point) {
+		if (specialized == null)
+			return null;
+		ICPPTemplateParameterMap tpMap = owner.getTemplateParameterMap();
+		ICPPTemplateArgument defaultValue = instantiateArgument(specialized.getDefaultValue(), tpMap, 0, within, point);
+		if (specialized instanceof ICPPTemplateNonTypeParameter) {
+			ICPPTemplateNonTypeParameter spec = (ICPPTemplateNonTypeParameter) specialized;
+			IType type = instantiateType(spec.getType(), tpMap, 0, within, point);
+			return new CPPTemplateNonTypeParameterSpecialization(owner, scope, spec, defaultValue, type);
+		} else if (specialized instanceof ICPPTemplateTypeParameter) {
+			return new CPPTemplateTypeParameterSpecialization(owner, scope, (ICPPTemplateTypeParameter) specialized, 
+					defaultValue);
+		} else if (specialized instanceof ICPPTemplateTemplateParameter) {
+			return new CPPTemplateTemplateParameterSpecialization(owner, scope, (ICPPTemplateTemplateParameter) specialized, 
+					defaultValue);
+		}
+		return null;
+	}
+	
+	/**
+	 * Convenience method for specializing all template parameters in an array.
+	 * See specializeTemplateParameter(). 
+	 */
+	public static ICPPTemplateParameter[] specializeTemplateParameters(ICPPSpecialization owner, ICPPScope scope, 
+			ICPPTemplateParameter[] specialized, ICPPClassSpecialization within, IASTNode point) {
+		ICPPTemplateParameter[] result = new ICPPTemplateParameter[specialized.length];
+		for (int i = 0; i < specialized.length; ++i)
+			result[i] = specializeTemplateParameter(owner, scope, specialized[i], within, point);
+		return result;
+	}
+	
 	public static IBinding instantiateBinding(IBinding binding, ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) throws DOMException {
 		if (binding instanceof ICPPClassTemplate) {

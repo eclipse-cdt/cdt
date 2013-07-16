@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+	<extension id="thirdPartyTestBuilder" name="Test Builder"
+		point="org.eclipse.core.resources.builders">
+		<builder callOnEmptyDelta="true" isConfigurable="true">
+			<run
+				class="org.eclipse.cdt.thirdParty.tests.scannerInfoProvider.ThirdPartyBuilder">
+			</run>
+		</builder>
+	</extension>
+	<extension id="ThirdPartyScannerInfoProvider" point="org.eclipse.cdt.core.ScannerInfoProvider">
+		<cextension>
+			<run
+				class="org.eclipse.cdt.thirdParty.tests.scannerInfoProvider.ThirdPartyScannerInfoProvider">
+			</run>
+		</cextension>
+	</extension>
+ <extension
+         id="ThirdPartyPathEntryContainerInitializer"
+         point="org.eclipse.cdt.core.PathEntryContainerInitializer">
+      <pathEntryContainerInitializer
+            class="org.eclipse.cdt.thirdParty.tests.pathentry.container.ThirdPartyPathEntryContainerInitializer"
+            id="org.eclipse.cdt.thirdParty.tests.THIRD_PARTY_CONTAINER"/>
+   </extension>
+   <extension
+         id="ThirdPartyUserDefinedPathEntryContainerInitializer"
+         point="org.eclipse.cdt.core.PathEntryContainerInitializer">
+      <pathEntryContainerInitializer
+            class="org.eclipse.cdt.thirdParty.tests.pathentry.container.ThirdPartyUserDefinedPathEntryContainerInitializer"
+            id="org.eclipse.cdt.thirdParty.tests.THIRD_PARTY_USERDEFINED_CONTAINER"/>
+   </extension>
+   <extension
+         id="org.eclipse.cdt.thirdParty.tests.ThirdPartyStandardMakePerFileProfile"
+         name="Third Party Per File Scanner Info Profile"
+         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
+      <scannerInfoCollector
+            class="org.eclipse.cdt.make.internal.core.scannerconfig2.PerFileSICollector"
+            scope="file"/>
+      <buildOutputProvider>
+         <open/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCPerFileBOPConsoleParser" compilerCommands="gcc, g++, dcc, cpp, c++, dplus, cc, cl"/>
+      </buildOutputProvider>
+      <scannerInfoProvider providerId="compilerBuiltinProvider">
+         <run
+               class="org.eclipse.cdt.make.internal.core.scannerconfig2.SCDMakefileGenerator"/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCPerFileSIPConsoleParser" compilerCommands="gcc, g++, dcc, cpp, c++, dplus, cc, cl"/>
+      </scannerInfoProvider>
+   </extension>
+   	<extension point="org.eclipse.cdt.core.language">
+		<language
+			class="org.eclipse.cdt.thirdParty.tests.languages.ThirdPartyCLanguage"
+  			id="thirdPartyC"
+			name="ThirdParty C">
+			<contentType id="org.eclipse.cdt.core.cSource"/>
+			<contentType id="org.eclipse.cdt.core.cHeader"/>
+		</language>
+		<language
+			class="org.eclipse.cdt.thirdParty.tests.languages.ThirdPartyCppLanguage"
+  			id="thirdPartyCpp"
+			name="ThirdParty C++">
+			<contentType id="org.eclipse.cdt.core.cxxSource"/>
+			<contentType id="org.eclipse.cdt.core.cxxHeader"/>
+		</language>
+	</extension>
+	<extension point="org.eclipse.cdt.core.LanguageSettingsProvider">
+		<provider
+        	class="org.eclipse.cdt.thirdParty.tests.languageSettingsProviders.ThirdPartyBuiltinSpecsDetector"
+        	id="org.eclipse.cdt.thirdParty.tests.languageSettingsProviders.ThirdPartyBuiltinSpecsDetector"
+        	name="Third Party Compiler Settings"
+       		prefer-non-shared="true">
+         	<language-scope id="org.eclipse.cdt.thirdParty.tests.thirdPartyC"/>
+         	<language-scope id="org.eclipse.cdt.thirdParty.tests.thirdPartyCpp"/>
+         </provider>
+		 <provider
+         	class="org.eclipse.cdt.thirdParty.tests.languageSettingsProviders.ThirdPartyBuildOutputParser"
+         	id="org.eclipse.cdt.thirdParty.tests.languageSettingsProviders.ThirdPartyBuildOutputParser"
+         	name="Third Party Build Output Parser"
+         	parameter="(dcc)|(das)|(dplus)|(ccarm)|(c++arm)|(ccpentium)|(c++pentium)|(ccppc)|(c++ppc)|(ccsparc)|(c++sparc)|(ccmips)|(c++mips)|(icc)|(gcc)|([gc]\+\+)|(clang)"
+         	prefer-non-shared="true">
+		 </provider>
+	</extension>
+	<extension
+		id="thirdPartyBuildDefinition"
+		name="Third Party Build Definition"
+		point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
+		<managedBuildRevision
+			fileVersion="4.0.0">
+		</managedBuildRevision>
+		<projectType
+			id="org.eclipse.cdt.thirdParty.tests.thirdPartyProjectType"
+			isAbstract="false"
+			isTest="true">
+		</projectType>
+		<toolChain
+			archList="all"
+			id="org.eclipse.cdt.thirdParty.tests.ThirdPartyToolChain"
+			languageSettingsProviders="org.eclipse.cdt.thirdParty.tests.languageSettingsProviders.ThirdPartyBuiltinSpecsDetector;org.eclipse.cdt.thirdParty.tests.languageSettingsProviders.ThirdPartyBuildOutputParser"
+			name="Third Party Tool Chain"
+			supportsManagedBuild="false">
+			<builder
+				id="thirdPartyTestBuilder"
+				superClass="cdt.managedbuild.target.gnu.builder">
+			</builder>
+			<tool
+				id="org.eclipse.cdt.thirdParty.tests.ThirdPartyCTool"
+				name="Third Party C Compiler"
+				supportsManagedBuild="false">
+				<inputType
+					dependencyContentType="org.eclipse.cdt.core.cHeader"
+					id="org.eclipse.cdt.thirdParty.tests.ThirdPartyCInputType"
+					languageId="org.eclipse.cdt.thirdParty.tests.thirdPartyC"
+    				sourceContentType="org.eclipse.cdt.core.cSource">
+				</inputType>
+				<option
+					id="org.eclipse.cdt.thirdParty.tests.c.dummyOption"
+					name="Third Party C Option"
+					valueType="includePath"/>
+			</tool>
+			<tool
+				id="org.eclipse.cdt.thirdParty.tests.ThirdPartyCppTool"
+				name="Third Party C++ Compiler"
+				supportsManagedBuild="false">
+				<inputType
+              		dependencyContentType="org.eclipse.cdt.core.cxxHeader"
+              		id="org.eclipse.cdt.thirdParty.tests.ThirdPartyCppInputType"
+              		languageId="org.eclipse.cdt.thirdParty.tests.thirdPartyCpp"
+              		sourceContentType="org.eclipse.cdt.core.cxxSource">
+				</inputType>
+				<option
+					id="org.eclipse.cdt.thirdParty.tests.cpp.dummyOption"
+					name="Third Party C++ Option"
+					valueType="includePath"/>
+			</tool>
+		</toolChain>
+	</extension> 
+</plugin>

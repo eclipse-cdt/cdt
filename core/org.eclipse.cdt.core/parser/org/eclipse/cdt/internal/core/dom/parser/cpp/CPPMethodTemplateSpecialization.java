@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,25 +9,49 @@
  *     Andrew Niefer (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Thomas Corbat (IFS)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
  * The specialization of a method template in the context of a class specialization.
  */
 public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpecialization 
 		implements ICPPMethod {
+	
+	private ICPPTemplateParameter[] fTemplateParameters;
 
-	public CPPMethodTemplateSpecialization(ICPPMethod specialized, ICPPClassType owner, 
+	public CPPMethodTemplateSpecialization(ICPPMethod specialized, ICPPClassSpecialization owner, 
 			ICPPTemplateParameterMap ctmap, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(specialized, owner, ctmap, type, exceptionSpecs);
+	}
+
+	@Override
+	public ICPPTemplateParameter[] getTemplateParameters() {
+		if (fTemplateParameters == null) {
+			try {
+				IASTNode point = null;  // instantiation of dependent expressions may not work
+				fTemplateParameters = CPPTemplates.specializeTemplateParameters(this, (ICPPScope) getScope(), 
+						super.getTemplateParameters(), getOwner(), point);
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return fTemplateParameters;
 	}
 
 	@Override
@@ -48,7 +72,7 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 	
 	@Override
 	public ICPPClassType getClassOwner() {
-		return (ICPPClassType) getOwner();
+		return getOwner();
 	}
 
 	@Override
@@ -92,5 +116,10 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 	@Override
 	public boolean isFinal() {
 		return false;
+	}
+	
+	@Override
+	public ICPPClassSpecialization getOwner() {
+		return (ICPPClassSpecialization) super.getOwner();
 	}
 }

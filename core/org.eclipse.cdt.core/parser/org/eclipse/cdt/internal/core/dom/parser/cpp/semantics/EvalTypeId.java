@@ -145,6 +145,8 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			for (int i = 0; i < args.length; i++) {
 				args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();
 			}
+		} else {
+			args = new ICPPEvaluation[0];  // arguments must not be null
 		}
 		IBinding templateDefinition= buffer.unmarshalBinding();
 		return new EvalTypeId(type, templateDefinition, args);

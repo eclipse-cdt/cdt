@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "073dc3ed_0ce7911f",
+        "filename": "build/org.eclipse.cdt.thirdParty.tests/src/org/eclipse/cdt/thirdParty/tests/suite/AllThirdPartyTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-16T19:50:38Z",
+      "side": 1,
+      "message": "Copyright seems to be off.\nPlease include the name of the contributor.",
+      "revId": "e77af4223f1da21fdd3e35e48c097505c04e1848",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_ace7851e",
+        "filename": "build/org.eclipse.cdt.thirdParty.tests/src/org/eclipse/cdt/thirdParty/tests/suite/AllThirdPartyTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-16T19:50:38Z",
+      "side": 1,
+      "message": "Missing description.",
+      "revId": "e77af4223f1da21fdd3e35e48c097505c04e1848",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_ece18d09",
+        "filename": "build/org.eclipse.cdt.thirdParty.tests/src/org/eclipse/cdt/thirdParty/tests/suite/AllThirdPartyTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-16T19:50:38Z",
+      "side": 1,
+      "message": "Strange name of the suite.",
+      "revId": "e77af4223f1da21fdd3e35e48c097505c04e1848",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

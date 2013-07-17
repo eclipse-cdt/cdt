@@ -133,7 +133,9 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			function(type, 	"__sync_xor_and_fetch", typePtr, type, "...");
 			function(type, 	"__sync_nand_and_fetch", typePtr, type, "...");
 			function(type, 	"__sync_lock_test_and_set", typePtr, type, "...");
-			function(type, 	"__sync_lock_release", typePtr, "...");
+			function(type, "__sync_val_compare_and_swap", typePtr, type, type, "...");
+			function("bool", "__sync_bool_compare_and_swap", typePtr, type, type, "...");
+			function("void", "__sync_lock_release", typePtr, "...");
 		}
 		function("void", 	"__sync_synchronize");
 

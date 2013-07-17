@@ -10312,4 +10312,14 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPClassType privateNestedClass = bh.assertNonProblem("privateNestedClass");
 		assertVisibility(ICPPClassType.v_private, aClass.getVisibility(privateNestedClass));
 	}
+	
+	//	int main() {
+	//		int i = 0;
+	//		__sync_bool_compare_and_swap(& i, 0, 1);
+	//		__sync_val_compare_and_swap(&i, 1, 2);
+	//		__sync_synchronize();
+	//	}
+	public void testGNUSyncBuiltins_bug389578() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
 }

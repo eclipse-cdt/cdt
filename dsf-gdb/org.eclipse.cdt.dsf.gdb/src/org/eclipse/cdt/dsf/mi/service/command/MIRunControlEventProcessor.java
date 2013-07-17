@@ -49,6 +49,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIInferiorExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIInferiorSignalExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MILocationReachedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIRunningEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MISharedLibEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MISignalEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MISteppingRangeEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
@@ -269,6 +270,8 @@ public class MIRunControlEventProcessor
     		event = MILocationReachedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
     	} else if ("function-finished".equals(reason)) { //$NON-NLS-1$
     		event = MIFunctionFinishedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+		} else if ("solib-event".equals(reason)) { //$NON-NLS-1$
+			event = MISharedLibEvent.parse(execDmc, exec.getToken(), exec.getMIResults(), null);
     	} else if ("exited-normally".equals(reason) || "exited".equals(reason)) { //$NON-NLS-1$ //$NON-NLS-2$
     		event = MIInferiorExitEvent.parse(fCommandControl.getContext(), exec.getToken(), exec.getMIResults());
     		// Until we clean up the handling of all these events, we need to send the containerExited event

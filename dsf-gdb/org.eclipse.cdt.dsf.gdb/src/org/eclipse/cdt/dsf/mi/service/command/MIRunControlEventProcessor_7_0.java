@@ -44,6 +44,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIInferiorExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIInferiorSignalExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MILocationReachedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIRunningEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MISharedLibEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MISignalEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MISteppingRangeEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
@@ -353,6 +354,8 @@ public class MIRunControlEventProcessor_7_0
     			event = MILocationReachedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
     		} else if ("function-finished".equals(reason)) { //$NON-NLS-1$
     			event = MIFunctionFinishedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    		} else if ("solib-event".equals(reason)) { //$NON-NLS-1$
+    			event = MISharedLibEvent.parse(execDmc, exec.getToken(), exec.getMIResults(), null);
     		} else if (STOPPED_REASON.equals(reason)) {
     			event = MIStoppedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
     		} else if (RUNNING_REASON.equals(reason)) {

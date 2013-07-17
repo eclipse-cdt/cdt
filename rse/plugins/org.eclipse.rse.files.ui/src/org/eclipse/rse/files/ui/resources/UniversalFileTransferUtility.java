@@ -66,6 +66,7 @@
  * David McKnight     (IBM)      - [386486] when the original timestamp of a file is 0 don't set it after an upload
  * David McKnight   (IBM)        - [389838] Fast folder transfer does not account for code page
  * Samuel Wu        (IBM)        - [402533] UniversalFileTransferUtility threw NPE
+ * David McKnight     (IBM)      - [413178] UniversalFileTransferUtility isn't setting read-only bit if encoding and timestamp are unchanged
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -721,16 +722,15 @@ public class UniversalFileTransferUtility {
 				String storedEncoding = properties.getEncoding();
 				String currentEncoding = srcFileOrFolder.getEncoding();
 
-				if (storedTime != currentTime || (storedEncoding == null || !storedEncoding.equals(currentEncoding)))
+				if (tempFile.exists())
 				{
-					if (tempFile.exists())
-					{
+					// set the appropriate readonly flag
+					boolean readOnly = !srcFileOrFolder.canWrite();
+					setReadOnly(tempFile, readOnly);
+					if (storedTime != currentTime || (storedEncoding == null || !storedEncoding.equals(currentEncoding)))
+					{				
 						// deal with encoding properties
-						if (storedEncoding == null || !storedEncoding.equals(currentEncoding)){
-							// set the appropriate readonly flag
-							boolean readOnly = !srcFileOrFolder.canWrite();
-							setReadOnly(tempFile, readOnly);
-							
+						if (storedEncoding == null || !storedEncoding.equals(currentEncoding)){							
 							try
 							{
 								if (remoteEncoding != null)

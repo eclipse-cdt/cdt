@@ -179,10 +179,10 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 		IBinding result;
 		Set<IBinding> recursionProtectionSet= fInProgress.get();
-		try {
-			if (!recursionProtectionSet.add(original))
-				return RecursionResolvingBinding.createFor(original, point);
+		if (!recursionProtectionSet.add(original))
+			return RecursionResolvingBinding.createFor(original, point);
 
+		try {
 			result= CPPTemplates.createSpecialization(this, original, point);
 		} finally {
 			recursionProtectionSet.remove(original);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * David McKnight (IBM)  -[413000] intermittent RSEDOMExporter NPE
  *******************************************************************************/
 package org.eclipse.rse.core.model;
 
@@ -29,20 +30,26 @@ public class PropertyList extends PropertySet {
 	}
 	
 	public IProperty addProperty(String key, IProperty property) {
-		_keys.remove(key);
-		_keys.add(key);
+		synchronized (_keys){
+			_keys.remove(key);
+			_keys.add(key);
+		}
 		return super.addProperty(key, property);
 	}
 	
 	public IProperty addProperty(String key, String value) {
-		_keys.remove(key);
-		_keys.add(key);
+		synchronized (_keys){
+			_keys.remove(key);
+			_keys.add(key);
+		}
 		return super.addProperty(key, value);
 	}
 	
 	public IProperty addProperty(String key, String value, IPropertyType type) {
-		_keys.remove(key);
-		_keys.add(key);
+		synchronized (_keys){
+			_keys.remove(key);
+			_keys.add(key);
+		}
 		return super.addProperty(key, value, type);
 	}
 	
@@ -51,13 +58,17 @@ public class PropertyList extends PropertySet {
 	}
 	
 	public boolean removeProperty(String key) {
-		_keys.remove(key);
+		synchronized (_keys){
+			_keys.remove(key);
+		}
 		return super.removeProperty(key);
 	}
 	
 	public void setProperties(Map map) {
-		_keys.clear();
-		_keys.addAll(map.keySet());
+		synchronized (_keys){
+			_keys.clear();
+			_keys.addAll(map.keySet());
+		}
 		super.setProperties(map);
 	}
 

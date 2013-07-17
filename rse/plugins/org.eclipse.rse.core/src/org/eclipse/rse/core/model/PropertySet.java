@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  * David McKnight   (IBM)        - [334837] Ordering of Library list entries incorrect after migration
+ * David McKnight (IBM)  -[413000] intermittent RSEDOMExporter NPE
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -134,7 +135,9 @@ public class PropertySet extends RSEModelObject implements IPropertySet, IRSEMod
 	 * @return The added Property
 	 */
 	public IProperty addProperty(String key, IProperty property) {
-		_properties.put(key, property);
+		synchronized (_properties){
+			_properties.put(key, property);
+		}
 		setDirty(true);
 		return property;
 	}
@@ -157,7 +160,10 @@ public class PropertySet extends RSEModelObject implements IPropertySet, IRSEMod
 	}
 
 	public boolean removeProperty(String key) {
-		Object value = _properties.remove(key);
+		Object value = null;
+		synchronized (_properties){
+			value = _properties.remove(key);
+		}
 		if (value == null) return false;
 		setDirty(true);
 		return true;

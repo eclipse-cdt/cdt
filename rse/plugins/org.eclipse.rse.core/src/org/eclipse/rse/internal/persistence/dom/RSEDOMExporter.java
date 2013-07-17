@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@
  * David Dykstal (IBM) - [189274] provide import and export operations for profiles
  * David Dykstal (IBM) - [232126] persist filter type attribute
  * David McKnight (IBM) - [247011] Process subsystem disappears after restart
+ * David McKnight (IBM) - [413000] intermittent RSEDOMExporter NPE 
  *******************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -192,12 +193,13 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 		String[] keys = set.getPropertyKeys();
 		for (int k = 0; k < keys.length; k++) {
 			String key = keys[k];
-			String value = set.getPropertyValue(key);
-			IPropertyType type = set.getPropertyType(key);
-			RSEDOMNode propertyNode = new RSEDOMNode(propertySetNode, IRSEDOMConstants.TYPE_PROPERTY, key);
-			propertyNode.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, type.toString());
-			propertyNode.addAttribute(IRSEDOMConstants.ATTRIBUTE_VALUE, value);
-			
+			if (key != null){
+				String value = set.getPropertyValue(key);
+				IPropertyType type = set.getPropertyType(key);
+				RSEDOMNode propertyNode = new RSEDOMNode(propertySetNode, IRSEDOMConstants.TYPE_PROPERTY, key);
+				propertyNode.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, type.toString());
+				propertyNode.addAttribute(IRSEDOMConstants.ATTRIBUTE_VALUE, value);
+			}
 		}
 		// persist nested property sets of property set
 		if (set instanceof IRSEModelObject){

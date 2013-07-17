@@ -317,4 +317,14 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
+
+	//	extern int* pxCurrentTCB;
+	//
+	//	int main() {
+	//	    asm ("lds r26, pxCurrentTCB\n\t");
+	//	}
+	public void testUseInAsm_bug393129() throws IOException {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
 }

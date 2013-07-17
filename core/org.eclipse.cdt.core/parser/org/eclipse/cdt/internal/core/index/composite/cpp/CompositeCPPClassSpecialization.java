@@ -116,10 +116,10 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 
 		IBinding newSpec;
 		Set<IBinding> recursionProtectionSet= fInProgress.get();
-		try {
-			if (!recursionProtectionSet.add(original))
-				return RecursionResolvingBinding.createFor(original, point);
+		if (!recursionProtectionSet.add(original))
+			return RecursionResolvingBinding.createFor(original, point);
 
+		try {
 			newSpec= CPPTemplates.createSpecialization(this, original, point);
 		} finally {
 			recursionProtectionSet.remove(original);

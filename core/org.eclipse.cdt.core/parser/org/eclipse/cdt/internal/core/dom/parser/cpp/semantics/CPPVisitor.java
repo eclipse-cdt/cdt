@@ -2009,11 +2009,12 @@ public class CPPVisitor extends ASTQueries {
 
 	private static IType createAutoType(final IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
 		Set<IASTDeclSpecifier> recursionProtectionSet = autoTypeDeclSpecs.get();
+		if (!recursionProtectionSet.add(declSpec)) {
+			// Detected a self referring auto type, e.g.: auto x = x;
+			return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
+		}
+
 		try {
-			if (!recursionProtectionSet.add(declSpec)) {
-				// Detected a self referring auto type, e.g.: auto x = x;
-				return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
-			}
 			if (declarator instanceof ICPPASTFunctionDeclarator) {
 				return createAutoFunctionType(declSpec, (ICPPASTFunctionDeclarator) declarator);
 			}

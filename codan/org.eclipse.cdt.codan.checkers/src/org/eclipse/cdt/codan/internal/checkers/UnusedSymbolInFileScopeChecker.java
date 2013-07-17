@@ -25,6 +25,7 @@ import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.ListProblemPreference;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -226,6 +227,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 			ast.accept(new ASTVisitor() {
 				{
 					shouldVisitNames = true;
+					shouldVisitDeclarations = true;
 				}
 
 				@Override
@@ -266,7 +268,36 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 
 					return PROCESS_CONTINUE;
 				}
+				
+				@Override
+				public int visit(IASTDeclaration declaration) {
+					// Bug 393129: A variable could be used inside assembly code.
+					if (declaration instanceof IASTASMDeclaration) {
+						String assembly = ((IASTASMDeclaration) declaration).getAssembly();
+						filterOutByAssembly(externFunctionDeclarations, assembly);
+						filterOutByAssembly(staticFunctionDeclarations, assembly);
+						filterOutByAssembly(staticFunctionDefinitions, assembly);
+						filterOutByAssembly(externVariableDeclarations, assembly);
+						filterOutByAssembly(staticVariableDeclarations, assembly);
+					}
+					
+					if (!isAnyCandidate())
+						return PROCESS_ABORT;
+					
+					return PROCESS_CONTINUE;
+				}
 
+				private void filterOutByAssembly(Map<IBinding, IASTDeclarator> declarators, String assembly) {
+					Iterator<Entry<IBinding, IASTDeclarator>> iter = declarators.entrySet().iterator();
+					while (iter.hasNext()) {
+						Entry<IBinding, IASTDeclarator> entry = iter.next();
+						IASTDeclarator decl = entry.getValue();
+						IASTName astName = getAstName(decl);
+						if (assembly.contains(astName.toString()))
+							iter.remove();
+					}
+				}
+				
 				private void filterOutByPlainName(Map<IBinding, IASTDeclarator> declarators, String id) {
 					Iterator<Entry<IBinding, IASTDeclarator>> iter = declarators.entrySet().iterator();
 					while (iter.hasNext()) {

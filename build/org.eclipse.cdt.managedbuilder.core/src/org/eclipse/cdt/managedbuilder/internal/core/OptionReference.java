@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,46 +113,46 @@ public class OptionReference implements IOption {
 
 		// value
 		switch (optValType) {
-			case BOOLEAN:
-				value = new Boolean(element.getAttribute(DEFAULT_VALUE));
-				break;
-			case STRING:
-			case TREE:
-			case ENUMERATED:
-				// Pre-2.0 the value was the string for the UI
-				// Post-2.0 it is the ID of the enumerated option
-				value = element.getAttribute(DEFAULT_VALUE);
-				break;
-			case STRING_LIST:
-			case INCLUDE_PATH:
-			case PREPROCESSOR_SYMBOLS:
-			case LIBRARIES:
-			case OBJECTS:
-			case INCLUDE_FILES:
-			case LIBRARY_PATHS:
-			case LIBRARY_FILES:
-			case MACRO_FILES:
-			case UNDEF_INCLUDE_PATH:
-			case UNDEF_PREPROCESSOR_SYMBOLS:
-			case UNDEF_INCLUDE_FILES:
-			case UNDEF_LIBRARY_PATHS:
-			case UNDEF_LIBRARY_FILES:
-			case UNDEF_MACRO_FILES:
-				List<String> valueList = new ArrayList<String>();
-				NodeList nodes = element.getElementsByTagName(LIST_VALUE);
-				for (int i = 0; i < nodes.getLength(); ++i) {
-					Node node = nodes.item(i);
-					if (node.getNodeType() == Node.ELEMENT_NODE) {
-						Boolean isBuiltIn = new Boolean(((Element)node).getAttribute(LIST_ITEM_BUILTIN));
-						if (isBuiltIn.booleanValue()) {
-							getBuiltInList().add(((Element)node).getAttribute(LIST_ITEM_VALUE));
-						} else {
-							valueList.add(((Element)node).getAttribute(LIST_ITEM_VALUE));
-						}
+		case BOOLEAN:
+			value = new Boolean(element.getAttribute(DEFAULT_VALUE));
+			break;
+		case STRING:
+		case TREE:
+		case ENUMERATED:
+			// Pre-2.0 the value was the string for the UI
+			// Post-2.0 it is the ID of the enumerated option
+			value = element.getAttribute(DEFAULT_VALUE);
+			break;
+		case STRING_LIST:
+		case INCLUDE_PATH:
+		case PREPROCESSOR_SYMBOLS:
+		case LIBRARIES:
+		case OBJECTS:
+		case INCLUDE_FILES:
+		case LIBRARY_PATHS:
+		case LIBRARY_FILES:
+		case MACRO_FILES:
+		case UNDEF_INCLUDE_PATH:
+		case UNDEF_PREPROCESSOR_SYMBOLS:
+		case UNDEF_INCLUDE_FILES:
+		case UNDEF_LIBRARY_PATHS:
+		case UNDEF_LIBRARY_FILES:
+		case UNDEF_MACRO_FILES:
+			List<String> valueList = new ArrayList<String>();
+			NodeList nodes = element.getElementsByTagName(LIST_VALUE);
+			for (int i = 0; i < nodes.getLength(); ++i) {
+				Node node = nodes.item(i);
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Boolean isBuiltIn = new Boolean(((Element)node).getAttribute(LIST_ITEM_BUILTIN));
+					if (isBuiltIn.booleanValue()) {
+						getBuiltInList().add(((Element)node).getAttribute(LIST_ITEM_VALUE));
+					} else {
+						valueList.add(((Element)node).getAttribute(LIST_ITEM_VALUE));
 					}
 				}
-				value = valueList;
-				break;
+			}
+			value = valueList;
+			break;
 		}
 
 	}
@@ -184,48 +184,47 @@ public class OptionReference implements IOption {
 
 			// value
 			switch (optValType) {
-				case BOOLEAN:
-					value = new Boolean(element.getAttribute(DEFAULT_VALUE));
-					break;
-				case STRING:
-					value = element.getAttribute(DEFAULT_VALUE);
-					break;
-				case TREE:
-				case ENUMERATED:
-					String temp = element.getAttribute(DEFAULT_VALUE);
-					if (temp != null) {
-						value = temp;
+			case BOOLEAN:
+				value = new Boolean(element.getAttribute(DEFAULT_VALUE));
+				break;
+			case STRING:
+				value = element.getAttribute(DEFAULT_VALUE);
+				break;
+			case TREE:
+			case ENUMERATED:
+				String temp = element.getAttribute(DEFAULT_VALUE);
+				if (temp != null) {
+					value = temp;
+				}
+				break;
+			case STRING_LIST:
+			case INCLUDE_PATH:
+			case PREPROCESSOR_SYMBOLS:
+			case LIBRARIES:
+			case OBJECTS:
+			case INCLUDE_FILES:
+			case LIBRARY_PATHS:
+			case LIBRARY_FILES:
+			case MACRO_FILES:
+			case UNDEF_INCLUDE_PATH:
+			case UNDEF_PREPROCESSOR_SYMBOLS:
+			case UNDEF_INCLUDE_FILES:
+			case UNDEF_LIBRARY_PATHS:
+			case UNDEF_LIBRARY_FILES:
+			case UNDEF_MACRO_FILES:
+				List<String> valueList = new ArrayList<String>();
+				IManagedConfigElement[] valueElements = element.getChildren(LIST_VALUE);
+				for (IManagedConfigElement valueElement : valueElements) {
+					Boolean isBuiltIn = new Boolean(valueElement.getAttribute(LIST_ITEM_BUILTIN));
+					if (isBuiltIn.booleanValue()) {
+						getBuiltInList().add(SafeStringInterner.safeIntern(valueElement.getAttribute(LIST_ITEM_VALUE)));
 					}
-					break;
-				case STRING_LIST:
-				case INCLUDE_PATH:
-				case PREPROCESSOR_SYMBOLS:
-				case LIBRARIES:
-				case OBJECTS:
-				case INCLUDE_FILES:
-				case LIBRARY_PATHS:
-				case LIBRARY_FILES:
-				case MACRO_FILES:
-				case UNDEF_INCLUDE_PATH:
-				case UNDEF_PREPROCESSOR_SYMBOLS:
-				case UNDEF_INCLUDE_FILES:
-				case UNDEF_LIBRARY_PATHS:
-				case UNDEF_LIBRARY_FILES:
-				case UNDEF_MACRO_FILES:
-					List<String> valueList = new ArrayList<String>();
-					IManagedConfigElement[] valueElements = element.getChildren(LIST_VALUE);
-					for (int i = 0; i < valueElements.length; ++i) {
-						IManagedConfigElement valueElement = valueElements[i];
-						Boolean isBuiltIn = new Boolean(valueElement.getAttribute(LIST_ITEM_BUILTIN));
-						if (isBuiltIn.booleanValue()) {
-							getBuiltInList().add(SafeStringInterner.safeIntern(valueElement.getAttribute(LIST_ITEM_VALUE)));
-						}
-						else {
-							valueList.add(SafeStringInterner.safeIntern(valueElement.getAttribute(LIST_ITEM_VALUE)));
-						}
+					else {
+						valueList.add(SafeStringInterner.safeIntern(valueElement.getAttribute(LIST_ITEM_VALUE)));
 					}
-					value = valueList;
-					break;
+				}
+				value = valueList;
+				break;
 			}
 		}
 	}
@@ -246,133 +245,104 @@ public class OptionReference implements IOption {
 
 		// value
 		switch (optValType) {
-			case BOOLEAN:
-				element.setAttribute(DEFAULT_VALUE, ((Boolean)value).toString());
-				break;
-			case STRING:
-			case TREE:
-			case ENUMERATED:
-				element.setAttribute(DEFAULT_VALUE, (String)value);
-				break;
-			case STRING_LIST:
-			case INCLUDE_PATH:
-			case PREPROCESSOR_SYMBOLS:
-			case LIBRARIES:
-			case OBJECTS:
-			case INCLUDE_FILES:
-			case LIBRARY_PATHS:
-			case LIBRARY_FILES:
-			case MACRO_FILES:
-			case UNDEF_INCLUDE_PATH:
-			case UNDEF_PREPROCESSOR_SYMBOLS:
-			case UNDEF_INCLUDE_FILES:
-			case UNDEF_LIBRARY_PATHS:
-			case UNDEF_LIBRARY_FILES:
-			case UNDEF_MACRO_FILES:
-				@SuppressWarnings("unchecked")
-				ArrayList<String> stringList = (ArrayList<String>)value;
-				for (String val : stringList) {
+		case BOOLEAN:
+			element.setAttribute(DEFAULT_VALUE, ((Boolean)value).toString());
+			break;
+		case STRING:
+		case TREE:
+		case ENUMERATED:
+			element.setAttribute(DEFAULT_VALUE, (String)value);
+			break;
+		case STRING_LIST:
+		case INCLUDE_PATH:
+		case PREPROCESSOR_SYMBOLS:
+		case LIBRARIES:
+		case OBJECTS:
+		case INCLUDE_FILES:
+		case LIBRARY_PATHS:
+		case LIBRARY_FILES:
+		case MACRO_FILES:
+		case UNDEF_INCLUDE_PATH:
+		case UNDEF_PREPROCESSOR_SYMBOLS:
+		case UNDEF_INCLUDE_FILES:
+		case UNDEF_LIBRARY_PATHS:
+		case UNDEF_LIBRARY_FILES:
+		case UNDEF_MACRO_FILES:
+			@SuppressWarnings("unchecked")
+			ArrayList<String> stringList = (ArrayList<String>)value;
+			for (String val : stringList) {
+				Element valueElement = doc.createElement(LIST_VALUE);
+				valueElement.setAttribute(LIST_ITEM_VALUE, val);
+				valueElement.setAttribute(LIST_ITEM_BUILTIN, "false"); //$NON-NLS-1$
+				element.appendChild(valueElement);
+			}
+			// Serialize the built-ins that have been overridden
+			if (builtIns != null) {
+				for (String builtIn : builtIns) {
 					Element valueElement = doc.createElement(LIST_VALUE);
-					valueElement.setAttribute(LIST_ITEM_VALUE, val);
-					valueElement.setAttribute(LIST_ITEM_BUILTIN, "false"); //$NON-NLS-1$
+					valueElement.setAttribute(LIST_ITEM_VALUE, builtIn);
+					valueElement.setAttribute(LIST_ITEM_BUILTIN, "true"); //$NON-NLS-1$
 					element.appendChild(valueElement);
 				}
-				// Serialize the built-ins that have been overridden
-				if (builtIns != null) {
-					for (String builtIn : builtIns) {
-						Element valueElement = doc.createElement(LIST_VALUE);
-						valueElement.setAttribute(LIST_ITEM_VALUE, builtIn);
-						valueElement.setAttribute(LIST_ITEM_BUILTIN, "true"); //$NON-NLS-1$
-						element.appendChild(valueElement);
-					}
-				}
-				break;
+			}
+			break;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getOptionContextData(org.eclipse.cdt.managedbuilder.core.IHoldsOptions)
-	 */
 	@Override
 	public IOptionContextData getOptionContextData(IHoldsOptions holder) {
 		return option.getOptionContextData(holder);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getApplicableValues()
-	 */
 	@Override
 	public String[] getApplicableValues() {
 		return option.getApplicableValues();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getCategory()
-	 */
 	@Override
 	public IOptionCategory getCategory() {
 		return option.getCategory();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getCommand()
-	 */
 	@Override
 	public String getCommand() {
 		return option.getCommand();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getCommandGenerator()
-	 */
 	@Override
 	public IOptionCommandGenerator getCommandGenerator() {
 		return option.getCommandGenerator();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getCommandFalse()
-	 */
 	@Override
 	public String getCommandFalse() {
 		return option.getCommandFalse();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getToolTip()
-	 */
 	@Override
 	public String getToolTip() {
 		return option.getToolTip();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getContextID()
-	 */
 	@Override
 	public String getContextId() {
 		return option.getContextId();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getDefinedSymbols()
-	 */
 	@Override
 	public String[] getDefinedSymbols() throws BuildException {
-		if (value == null)
+		if (value == null) {
 			return option.getDefinedSymbols();
-		else if (getValueType() == PREPROCESSOR_SYMBOLS) {
+		} else if (getValueType() == PREPROCESSOR_SYMBOLS) {
 			@SuppressWarnings("unchecked")
 			ArrayList<String> list = (ArrayList<String>)value;
 			return list.toArray(new String[list.size()]);
 		}
-		else
+		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getEnumCommand(java.lang.String)
-	 */
 	@Override
 	public String getEnumCommand(String id) {
 		if (!resolved) {
@@ -387,6 +357,7 @@ public class OptionReference implements IOption {
 		return new String();
 	}
 
+	@Override
 	public String getCommand(String id) throws BuildException {
 		if (!resolved) {
 			resolveReferences();
@@ -400,9 +371,6 @@ public class OptionReference implements IOption {
 		return new String();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getEnumName(java.lang.String)
-	 */
 	@Override
 	public String getEnumName(String id) {
 		if (!resolved) {
@@ -417,6 +385,7 @@ public class OptionReference implements IOption {
 		return new String();
 	}
 
+	@Override
 	public String getName(String id) throws BuildException {
 		if (!resolved) {
 			resolveReferences();
@@ -430,9 +399,6 @@ public class OptionReference implements IOption {
 		return new String();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getEnumeratedId(java.lang.String)
-	 */
 	@Override
 	public String getEnumeratedId(String name) {
 		if (!resolved) {
@@ -447,6 +413,7 @@ public class OptionReference implements IOption {
 		return new String();
 	}
 
+	@Override
 	public String getId(String name) throws BuildException {
 		if (!resolved) {
 			resolveReferences();
@@ -460,100 +427,80 @@ public class OptionReference implements IOption {
 		return new String();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getId()
-	 */
 	@Override
 	public String getId() {
 		// A reference has the same id as the option it references
 		return option.getId();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getBaseId()
-	 */
 	@Override
 	public String getBaseId() {
 		// A reference has the same id as the option it references
 		return option.getBaseId();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getIncludePaths()
-	 */
 	@Override
 	public String[] getIncludePaths() throws BuildException {
-		if (value == null)
+		if (value == null) {
 			return option.getIncludePaths();
-		else if (getValueType() == INCLUDE_PATH) {
+		} else if (getValueType() == INCLUDE_PATH) {
 			@SuppressWarnings("unchecked")
 			ArrayList<String> list = (ArrayList<String>)value;
 			return list.toArray(new String[list.size()]);
 		}
-		else
+		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getLibraries()
-	 */
 	@Override
 	public String[] getLibraries() throws BuildException {
-		if (value == null)
+		if (value == null) {
 			return option.getLibraries();
-		else if (getValueType() == LIBRARIES) {
+		} else if (getValueType() == LIBRARIES) {
 			@SuppressWarnings("unchecked")
 			ArrayList<String> list = (ArrayList<String>)value;
 			return list.toArray(new String[list.size()]);
 		}
-		else
+		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getLibraryFiles()
-	 */
 	@Override
 	public String[] getLibraryFiles() throws BuildException {
-		if (value == null)
+		if (value == null) {
 			return option.getLibraryFiles();
-		else if (getValueType() == LIBRARY_FILES) {
+		} else if (getValueType() == LIBRARY_FILES) {
 			@SuppressWarnings("unchecked")
 			ArrayList<String> list = (ArrayList<String>)value;
 			return list.toArray(new String[list.size()]);
 		}
-		else
+		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getLibraryPaths()
-	 */
 	@Override
 	public String[] getLibraryPaths() throws BuildException {
-		if (value == null)
+		if (value == null) {
 			return option.getLibraryPaths();
-		else if (getValueType() == LIBRARY_PATHS) {
+		} else if (getValueType() == LIBRARY_PATHS) {
 			@SuppressWarnings("unchecked")
 			ArrayList<String> list = (ArrayList<String>)value;
 			return list.toArray(new String[list.size()]);
 		}
-		else
+		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getName()
-	 */
 	@Override
 	public String getName() {
 		// A reference has the same name as the option it references
 		return option.getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getBooleanValue()
-	 */
 	@Override
 	public boolean getBooleanValue() throws BuildException {
 		if (value == null){
@@ -567,25 +514,16 @@ public class OptionReference implements IOption {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getBrowseType()
-	 */
 	@Override
 	public int getBrowseType() {
 		return option.getBrowseType();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getBrowseFilterPath()
-	 */
 	@Override
 	public String getBrowseFilterPath() {
 		return option.getBrowseFilterPath();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getBrowseFilterExtensions()
-	 */
 	@Override
 	public String[] getBrowseFilterExtensions() {
 		return option.getBrowseFilterExtensions();
@@ -598,9 +536,6 @@ public class OptionReference implements IOption {
 		return builtIns;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getBuiltIns()
-	 */
 	@Override
 	public String[] getBuiltIns() {
 		List<String> answer = new ArrayList<String>();
@@ -631,9 +566,6 @@ public class OptionReference implements IOption {
 		return option;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getSelectedEnum()
-	 */
 	@Override
 	public String getSelectedEnum() throws BuildException {
 		// A reference to an enumerated option stores the ID of the selected enum in its value
@@ -648,46 +580,37 @@ public class OptionReference implements IOption {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getStringListValue()
-	 */
 	@Override
 	public String[] getStringListValue() throws BuildException {
-		if (value == null)
+		if (value == null) {
 			return option.getStringListValue();
-		else if (getValueType() == STRING_LIST) {
+		} else if (getValueType() == STRING_LIST) {
 			@SuppressWarnings("unchecked")
 			ArrayList<String> list = (ArrayList<String>)value;
 			return list.toArray(new String[list.size()]);
 		}
-		else
+		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getStringValue()
-	 */
 	@Override
 	public String getStringValue() throws BuildException {
-		if (value == null)
+		if (value == null) {
 			return option.getStringValue();
-		else if (getValueType() == STRING)
+		} else if (getValueType() == STRING) {
 			return (String)value;
-		else
+		}
+		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getParent()
-	 */
 	@Override
 	public IBuildObject getParent() {
 		return owner;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getOptionHolder()
-	 */
 	@Override
 	public IHoldsOptions getOptionHolder() {
 		return owner;
@@ -702,25 +625,20 @@ public class OptionReference implements IOption {
 		return owner;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getUserObjects()
-	 */
 	@Override
 	public String[] getUserObjects() throws BuildException {
-		if (value == null)
+		if (value == null) {
 			return option.getDefinedSymbols();
-		else if (getValueType() == OBJECTS) {
+		} else if (getValueType() == OBJECTS) {
 			@SuppressWarnings("unchecked")
 			ArrayList<String> list = (ArrayList<String>)value;
 			return list.toArray(new String[list.size()]);
 		}
-		else
+		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getValueType()
-	 */
 	@Override
 	public int getValueType() {
 		int optValType;
@@ -731,9 +649,6 @@ public class OptionReference implements IOption {
 		return optValType;
 	}
 
-	/* (non-Javadoc)
-	 * Returns the raw value.
-	 */
 	@Override
 	public Object getValue() {
 		return value;
@@ -763,10 +678,12 @@ public class OptionReference implements IOption {
 	 */
 	@Override
 	public void setValue(boolean value) throws BuildException {
-		if (getValueType() == BOOLEAN)
+		if (getValueType() == BOOLEAN) {
 			this.value = new Boolean(value);
-		else
+		}
+		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
 	}
 
 	@Override
@@ -787,31 +704,29 @@ public class OptionReference implements IOption {
 	@Override
 	public void setValue(String [] value) throws BuildException {
 		if (getValueType() == STRING_LIST
-			|| getValueType() == INCLUDE_PATH
-			|| getValueType() == PREPROCESSOR_SYMBOLS
-			|| getValueType() == LIBRARIES
-			|| getValueType() == OBJECTS
-			|| getValueType() == INCLUDE_FILES
-			|| getValueType() == LIBRARY_PATHS
-			|| getValueType() == LIBRARY_FILES
-			|| getValueType() == MACRO_FILES
-			|| getValueType() == UNDEF_INCLUDE_PATH
-			|| getValueType() == UNDEF_PREPROCESSOR_SYMBOLS
-			|| getValueType() == UNDEF_INCLUDE_FILES
-			|| getValueType() == UNDEF_LIBRARY_PATHS
-			|| getValueType() == UNDEF_LIBRARY_FILES
-			|| getValueType() == UNDEF_MACRO_FILES
-			) {
+				|| getValueType() == INCLUDE_PATH
+				|| getValueType() == PREPROCESSOR_SYMBOLS
+				|| getValueType() == LIBRARIES
+				|| getValueType() == OBJECTS
+				|| getValueType() == INCLUDE_FILES
+				|| getValueType() == LIBRARY_PATHS
+				|| getValueType() == LIBRARY_FILES
+				|| getValueType() == MACRO_FILES
+				|| getValueType() == UNDEF_INCLUDE_PATH
+				|| getValueType() == UNDEF_PREPROCESSOR_SYMBOLS
+				|| getValueType() == UNDEF_INCLUDE_FILES
+				|| getValueType() == UNDEF_LIBRARY_PATHS
+				|| getValueType() == UNDEF_LIBRARY_FILES
+				|| getValueType() == UNDEF_MACRO_FILES
+				) {
 			// Just replace what the option reference is holding onto
 			this.value = new ArrayList<String>(Arrays.asList(value));
 		}
-		else
+		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		String answer = new String();
@@ -831,132 +746,82 @@ public class OptionReference implements IOption {
 	 * They should never be called.
 	 */
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#isExtensionElement()
-	 */
 	@Override
 	public boolean isExtensionElement() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * Sets the raw value.
-	 */
 	@Override
 	public void setValue(Object v) {
 		value = v;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#setValueType()
-	 */
 	@Override
 	public void setValueType(int type) {
 	}
 
-	/* (non-Javadoc)
-	 * Returns the raw default value.
-	 */
 	@Override
 	public Object getDefaultValue() {
 		return value;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#setValue(Object)
-	 */
 	@Override
 	public void setDefaultValue(Object v) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getSuperClass()
-	 */
 	@Override
 	public IOption getSuperClass() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getResourceFilter()
-	 */
 	@Override
 	public int getResourceFilter() {
 		return FILTER_ALL;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getApplicabilityCalculator()
-	 */
 	@Override
 	public IOptionApplicability getApplicabilityCalculator() {
 		return option.getApplicabilityCalculator();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setResourceFilter(int)
-	 */
 	@Override
 	public void setResourceFilter(int filter) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setBrowseType(int)
-	 */
 	@Override
 	public void setBrowseType(int type) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setBrowseFilterPath(java.lang.String)
-	 */
 	@Override
 	public void setBrowseFilterPath(String path) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setBrowseFilterExtensions(java.lang.String[])
-	 */
 	@Override
 	public void setBrowseFilterExtensions(String[] extensions) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#setCategory(org.eclipse.cdt.core.build.managed.IOptionCategory)
-	 */
 	@Override
 	public void setCategory(IOptionCategory category) {
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#setCommand(String)
-	 */
+
 	@Override
 	public void setCommand(String cmd) {
-		if (cmd == null && command == null) return;
+		if (cmd == null && command == null) {
+			return;
+		}
 		if (cmd == null || command == null || !cmd.equals(command)) {
 			command = cmd;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#setCommandFalse(String)
-	 */
 	@Override
 	public void setCommandFalse(String cmd) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#setToolTip(String)
-	 */
 	@Override
 	public void setToolTip(String tooltip) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#setContextId(String)
-	 */
 	@Override
 	public void setContextId(String contextId) {
 	}
@@ -976,68 +841,41 @@ public class OptionReference implements IOption {
 		return option.getManagedBuildRevision();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getValueHandlerElement()
-	 */
 	public IConfigurationElement getValueHandlerElement() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#setValueHandlerElement(IConfigurationElement)
-	 */
 	public void setValueHandlerElement(IConfigurationElement element) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getValueHandler()
-	 */
 	@Override
 	public IManagedOptionValueHandler getValueHandler() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getValueHandlerExtraArgument())
-	 */
 	@Override
 	public String getValueHandlerExtraArgument() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValueHandlerExtraArgument(String))
-	 */
 	@Override
 	public void setValueHandlerExtraArgument(String extraArgument) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getFieldEditorId()
-	 */
 	@Override
 	public String getFieldEditorId() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getFieldEditorExtraArgument()
-	 */
 	@Override
 	public String getFieldEditorExtraArgument() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setFieldEditorExtraArgument(java.lang.String)
-	 */
 	@Override
 	public void setFieldEditorExtraArgument(String extraArgument) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#isValid()
-	 */
 	@Override
 	public boolean isValid() {
 		return option.isValid();
@@ -1083,6 +921,7 @@ public class OptionReference implements IOption {
 		}
 		return ve;
 	}
+	@Override
 	public ITreeRoot getTreeRoot() {
 		if (!resolved) {
 			resolveReferences();

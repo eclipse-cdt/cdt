@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Wind River Systems - initial API and implementation
  *     Freescale Semiconductor - refactoring
  *     Patrick Chuong (Texas Instruments) - Bug 364405
+ *     Patrick Chuong (Texas Instruments) - Bug 337851
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.disassembly.dsf;
 
@@ -198,4 +199,17 @@ public interface IDisassemblyBackend {
 	 * Update the extended PC annotation.  
 	 */
 	void updateExtendedPCAnnotation(IAnnotationModel model);
+	
+	/**
+	 * Returns true if this backend can disassemble instructions.
+	 * @return true if backend can perform disassemble 
+	 */
+	boolean canDisassemble();
+	
+	/**
+	 * Returns the last know address, this API will be call if the selected
+	 * debug context is not a stackframe.
+	 * @return the last know address, -1 if unknown
+	 */
+	BigInteger getLastKnownAddress();
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2011, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Patrick Chuong (Texas Instruments) - Bug 329682
  *     Patrick Chuong (Texas Instruments) - Bug 353351
  *     Patrick Chuong (Texas Instruments) - Bug 364405
+ *     Patrick Chuong (Texas Instruments) - Bug 337851
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.disassembly.dsf;
 
@@ -74,5 +75,15 @@ public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend 
 	 */
 	@Override
 	public void updateExtendedPCAnnotation(IAnnotationModel model) {
+	}
+	
+	@Override
+	public boolean canDisassemble() {
+		return isSuspended();
+	}
+	
+	@Override
+	public BigInteger getLastKnownAddress() {
+		return BigInteger.valueOf(-1);
 	}
 }

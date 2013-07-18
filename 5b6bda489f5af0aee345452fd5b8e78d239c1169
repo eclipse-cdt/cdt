@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "073dc3ed_e77d168e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPMethodTemplateSpecialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-18T17:25:45Z",
+      "side": 1,
+      "message": "It is unfortunate that we have to specialize template parameters in a place in code where we cannot supply a specialization point. Should this specialization happen in some other place?",
+      "revId": "5b6bda489f5af0aee345452fd5b8e78d239c1169",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_c778d29d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPTemplateTemplateParameterSpecialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-18T17:25:45Z",
+      "side": 1,
+      "message": "Please add blank lines between methods.",
+      "revId": "5b6bda489f5af0aee345452fd5b8e78d239c1169",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

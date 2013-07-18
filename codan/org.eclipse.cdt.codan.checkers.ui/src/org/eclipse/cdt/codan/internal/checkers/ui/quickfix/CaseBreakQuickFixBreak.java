@@ -61,10 +61,6 @@ public class CaseBreakQuickFixBreak extends AbstractAstRewriteQuickFix {
 			while (beforeBreakNode != null) {
 				if (beforeBreakNode.getParent() instanceof IASTCompoundStatement
 						&& beforeBreakNode.getParent().getParent() instanceof IASTSwitchStatement) {
-					if (beforeBreakNode instanceof IASTCompoundStatement) {
-						IASTStatement[] statements = ((IASTCompoundStatement) beforeBreakNode).getStatements();
-						return statements[statements.length - 1]; // return last one
-					}
 					return (IASTStatement) beforeBreakNode;
 				}
 				beforeBreakNode = beforeBreakNode.getParent();
@@ -81,8 +77,16 @@ public class CaseBreakQuickFixBreak extends AbstractAstRewriteQuickFix {
 			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker).getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			IASTStatement beforeBreak = getStmtBeforeBreak(marker, ast);
 			if (beforeBreak != null && beforeBreak.getParent() instanceof IASTCompoundStatement) {
-				IASTCompoundStatement enclosingStatement = (IASTCompoundStatement) beforeBreak.getParent();
-				IASTStatement after = getAfterStatement(beforeBreak);
+				IASTCompoundStatement enclosingStatement;
+				IASTStatement after;
+				if (beforeBreak instanceof IASTCompoundStatement) {
+					// Case body is enclosed in braces. Add 'break' as last statement inside braces.
+					enclosingStatement = (IASTCompoundStatement) beforeBreak;
+					after = null;
+				} else {
+					enclosingStatement = (IASTCompoundStatement) beforeBreak.getParent();
+					after = getStatementAfter(beforeBreak);
+				}
 				ASTRewrite r = ASTRewrite.create(enclosingStatement.getTranslationUnit());
 				IASTBreakStatement breakStatement = ast.getASTNodeFactory().newBreakStatement();
 				r.insertBefore(enclosingStatement, after, breakStatement, null);
@@ -96,7 +100,7 @@ public class CaseBreakQuickFixBreak extends AbstractAstRewriteQuickFix {
 		}
 	}
 
-	private IASTStatement getAfterStatement(IASTStatement beforeBreak) {
+	private IASTStatement getStatementAfter(IASTStatement beforeBreak) {
 		IASTCompoundStatement enclosingStatement = (IASTCompoundStatement) beforeBreak.getParent();
 		IASTStatement after = null;
 		IASTStatement[] statements = enclosingStatement.getStatements();

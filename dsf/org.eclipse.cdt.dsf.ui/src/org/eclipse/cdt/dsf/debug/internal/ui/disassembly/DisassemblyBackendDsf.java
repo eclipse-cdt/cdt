@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Patrick Chuong (Texas Instruments) - Bug 329682
  *     Patrick Chuong (Texas Instruments) - Bug 328168
  *     Patrick Chuong (Texas Instruments) - Bug 353351
+ *     Patrick Chuong (Texas Instruments) - Bug 337851
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
@@ -174,15 +175,17 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			fTargetContext= null;
 			fTargetFrameContext = null;
 			result.contextChanged = true;
-
-			if (dmContext instanceof IFrameDMContext) {
-				IFrameDMContext frame= (IFrameDMContext) dmContext;
-				IExecutionDMContext executionContext= DMContexts.getAncestorOfType(frame, IExecutionDMContext.class);
+			
+			if (canDisassemble() || (dmContext instanceof IFrameDMContext)) {
+				if (dmContext instanceof IFrameDMContext) {
+					fTargetFrameContext = (IFrameDMContext) dmContext;
+				}
+				IExecutionDMContext executionContext= DMContexts.getAncestorOfType(dmContext, IExecutionDMContext.class);
 				if (executionContext != null) {
 					fTargetContext= executionContext;
-					fTargetFrameContext= frame;
 				}
 			}
+			
 			if (fTargetContext != null) {
 				
 				// remove ourselves as a listener with the previous session (context)
@@ -242,6 +245,10 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 				fTargetFrameContext = null;
 				result.contextChanged = true;
 			}
+		} else if (dmContext.equals(fTargetContext) && canDisassemble()) {
+			result.contextChanged = false;
+			result.sessionId = fDsfSessionId;
+			
 		} else {			
 			fTargetContext = null;
 			fTargetFrameContext = null;
@@ -305,7 +312,18 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 						if (fTargetFrameContext != null) {
 							retrieveFrameAddressInSessionThread(frame);
 						} else {
-						    fCallback.setUpdatePending(false);
+							fCallback.setUpdatePending(false);
+							if (canDisassemble()) {
+								final BigInteger address = getLastKnownAddress();
+								if (address != null && address != BigInteger.valueOf(-1)) {
+									fCallback.asyncExec(new Runnable() {
+										@Override
+										public void run() {
+											fCallback.updatePC(address);
+										}
+									});
+								}
+							}
 						}
 					}
 				});
@@ -1167,5 +1185,9 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 				rm.done(); 
 			} 
 		}); 
+	}
+	
+	protected IExecutionDMContext getExecutionDMContext() {
+		return fTargetContext;
 	}
 }

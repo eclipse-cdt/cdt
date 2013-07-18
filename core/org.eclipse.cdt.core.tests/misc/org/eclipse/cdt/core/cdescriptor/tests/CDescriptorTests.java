@@ -10,7 +10,6 @@
  *     Anton Leherbauer (Wind River Systems)
  *     James Blackburn (Broadcom Corp.)
  ***********************************************************************/
-
 package org.eclipse.cdt.core.cdescriptor.tests;
 
 import java.io.IOException;
@@ -20,7 +19,6 @@ import java.io.Reader;
 import java.lang.reflect.Method;
 
 import junit.extensions.TestSetup;
-import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -46,9 +44,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.junit.Assert;
 
 public class CDescriptorTests extends BaseTestCase {
-
 	static String projectId = CTestPlugin.PLUGIN_ID + ".TestProject";
 	static IProject fProject;
 	static CDescriptorListener listener = new CDescriptorListener();
@@ -67,12 +65,12 @@ public class CDescriptorTests extends BaseTestCase {
 		TestSuite suite = new TestSuite(CDescriptorTests.class.getName());
 
 		// Add all the tests in this class
-		for (Method m : CDescriptorTests.class.getMethods())
+		for (Method m : CDescriptorTests.class.getMethods()) {
 			if (m.getName().startsWith("test"))
 				suite.addTest(new CDescriptorTests(m.getName()));
+		}
 
 		TestSetup wrapper = new TestSetup(suite) {
-
 			@Override
 			protected void setUp() throws Exception {
 				oneTimeSetUp();
@@ -82,7 +80,6 @@ public class CDescriptorTests extends BaseTestCase {
 			protected void tearDown() throws Exception {
 				oneTimeTearDown();
 			}
-
 		};
 		return wrapper;
 	}
@@ -107,7 +104,6 @@ public class CDescriptorTests extends BaseTestCase {
 	}
 
 	static public class CDescriptorListener implements ICDescriptorListener {
-
 		@Override
 		public void descriptorChanged(CDescriptorEvent event) {
 			fLastEvent = event;
@@ -116,7 +112,6 @@ public class CDescriptorTests extends BaseTestCase {
 
 	static void oneTimeSetUp() throws Exception {
 		CTestPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IWorkspaceRoot root = CTestPlugin.getWorkspace().getRoot();
@@ -144,7 +139,6 @@ public class CDescriptorTests extends BaseTestCase {
 
 	public void testDescriptorCreation() throws Exception {
 		CTestPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				CCorePlugin.getDefault().mapCProjectOwner(fProject, projectId, false);
@@ -210,7 +204,7 @@ public class CDescriptorTests extends BaseTestCase {
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=196118
 	public void testConcurrentDescriptorModification() throws Exception {
 		int lastLength = 0;
-		for (int i=0; i<100; ++i) {
+		for (int i= 0; i < 100; ++i) {
 			final int indexi = i;
 			PDOMManager pdomMgr= (PDOMManager)CCorePlugin.getIndexManager();
 			pdomMgr.shutdown();
@@ -268,11 +262,11 @@ public class CDescriptorTests extends BaseTestCase {
 	}
 
 	/*
-	 * This test should pass as two threads, operating on the
-	 * different storage elements  (outside of an operation) should be safe
+	 * This test should pass as two threads, operating on the different storage elements
+	 * (outside of an operation) should be safe.
 	 */
 	public void testConcurrentDifferentStorageElementModification() throws Exception {
-		for (int i=0; i < 100; ++i) {
+		for (int i= 0; i < 100; ++i) {
 			Thread t= new Thread() {
 				@Override
 				public void run() {
@@ -304,11 +298,10 @@ public class CDescriptorTests extends BaseTestCase {
  	}
 
 	/*
-	 * Test that (non-structural) changes to the storage element tree
-	 * work as expected.
+	 * Tests that (non-structural) changes to the storage element tree work as expected.
 	 */
 	public void testConcurrentSameStorageElementModification() throws Exception {
-		for (int i=0; i < 100; ++i) {
+		for (int i= 0; i < 100; ++i) {
 			Thread t= new Thread() {
 				@Override
 				public void run() {
@@ -342,7 +335,7 @@ public class CDescriptorTests extends BaseTestCase {
 	 * Tests deadlock when accessing c project description concurrently from two threads
 	 */
 	public void testDeadlockDuringProjectCreation() throws Exception {
-		for (int i=0; i < 10; ++i) {
+		for (int i= 0; i < 10; ++i) {
 			oneTimeTearDown();
 			oneTimeSetUp();
 			Thread t= new Thread() {
@@ -373,7 +366,6 @@ public class CDescriptorTests extends BaseTestCase {
  	}
 
 	public void testDescriptorConversion() {
-
 	}
 
 	public void testExtensionCreation() throws Exception {
@@ -424,7 +416,6 @@ public class CDescriptorTests extends BaseTestCase {
 		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
 		Assert.assertEquals(fLastEvent.getFlags(), CDescriptorEvent.EXTENSION_CHANGED);
 		fLastEvent = null;
-
 	}
 
 	public void testProjectDataCreate() throws Exception {

@@ -49,4 +49,22 @@ public class CaseBreakQuickFixTest extends QuickFixTestCase {
 		String result = runQuickFixOneFile();
 		assertContainedIn("hello();\t\tbreak;", result);
 	}
+
+	//	int main() {
+	//		int a;
+	//		switch(a)
+	//		{
+	//			case 0:
+	//			{
+	//			}
+	//			default:
+	//				break;
+	//		}
+	//		return 0;
+	//	}
+	public void testNPE_bug363884() throws Exception {
+		loadcode(getAboveComment());
+		String result = runQuickFixOneFile();
+		assertContainedIn("break;\t}\t\t\tdefault:", result);
+	}
 }

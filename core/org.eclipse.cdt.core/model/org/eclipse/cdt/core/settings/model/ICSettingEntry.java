@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ *     Intel Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
@@ -23,6 +23,12 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
  * entries could be safely pooled by {@link CDataUtil#getPooledEntry(ICSettingEntry)}.
  */
 public interface ICSettingEntry {
+	/**
+	 * A constant known to be zero (0), used to indicate that no flags are set.
+	 * @since 5.6
+	 */
+	int NONE = 0;
+
 	/**
 	 * Flag {@code BUILTIN} indicates settings built in a tool (compiler) itself.
 	 * That kind of settings are not passed as options to a compiler but indexer
@@ -100,5 +106,4 @@ public interface ICSettingEntry {
 	boolean equalsByContents(ICSettingEntry entry);
 
 	int getFlags();
-
 }

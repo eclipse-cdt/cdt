@@ -327,4 +327,20 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
+
+	//	static void foo(int) {}
+	//	static void foo(float) {}
+	//
+	//	template <typename T>
+	//	void bar(T t) {
+	//	    foo(t);
+	//	}
+	//
+	//	int main() {
+	//	    bar(0);
+	//	}
+	public void testStaticFunctionUsedInTemplate_bug358694() throws IOException {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
 }

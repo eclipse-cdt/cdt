@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
@@ -25,7 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
  * Represents a reference to a (member) function (instance), which cannot be resolved because 
  * an argument depends on a template parameter. A compiler would resolve it during instantiation.
  */
-public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPFunction, ICPPComputableFunction {
+public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferredFunction, ICPPComputableFunction {
 	private static final ICPPFunctionType FUNCTION_TYPE=
 			new CPPFunctionType(ProblemType.UNKNOWN_FOR_EXPRESSION, IType.EMPTY_TYPE_ARRAY);
 
@@ -63,6 +64,7 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPFuncti
 		fCandidates = candidates;
 	}
 
+	@Override
 	public ICPPFunction[] getCandidates() {
 		return fCandidates;
 	}

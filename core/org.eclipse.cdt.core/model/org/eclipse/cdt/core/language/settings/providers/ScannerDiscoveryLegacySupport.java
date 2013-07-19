@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.language.settings.providers;
@@ -119,7 +120,11 @@ public class ScannerDiscoveryLegacySupport {
 	 */
 	public static void setLanguageSettingsProvidersFunctionalityEnabled(IProject project, boolean value) {
 		Preferences pref = getPreferences(project);
+		if (value == isLanguageSettingsProvidersFunctionalityEnabled(project))
+			return;
 		pref.putBoolean(DISABLE_LSP_PREFERENCE, !value);
+		// Scanner info provider have changed - clear the cached copy (http://bugs.eclipse.org/413357).
+		CCorePlugin.getDefault().resetCachedScannerInfoProvider(project);
 		try {
 			pref.flush();
 		} catch (BackingStoreException e) {

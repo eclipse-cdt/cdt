@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "073dc3ed_a8747bf2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPMethodTemplateSpecialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-07-19T01:39:59Z",
+      "side": 1,
+      "message": "Sorry, that first chain is misleading. We are not actually adapting the tpar, we are adapting the template that owns the tpar and then getting the tpars of the adapted template.",
+      "parentUuid": "073dc3ed_6890b3a3",
+      "revId": "5b6bda489f5af0aee345452fd5b8e78d239c1169",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "073dc3ed_c778d29d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPTemplateTemplateParameterSpecialization.java",
         "patchSetId": 2

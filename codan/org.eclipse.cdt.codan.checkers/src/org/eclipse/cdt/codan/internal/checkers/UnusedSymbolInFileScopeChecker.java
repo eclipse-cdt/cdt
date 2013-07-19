@@ -48,6 +48,8 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.AttributeUtil;
 
@@ -244,6 +246,19 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 						filterOutByPlainName(staticFunctionDefinitions, plainName);
 						filterOutByPlainName(externVariableDeclarations, plainName);
 						filterOutByPlainName(staticVariableDeclarations, plainName);
+					}
+					
+					if (binding instanceof ICPPDeferredFunction) {
+						// Function call inside a template - we don't know which overload(s)
+						// it might match, so to avoid false positives we consider all
+						// candidates to be potentially used.
+						ICPPFunction[] candidates = ((ICPPDeferredFunction) binding).getCandidates();
+						if (candidates != null) {
+							for (ICPPFunction candidate : candidates) {
+								externFunctionDeclarations.remove(candidate);
+								staticFunctionDefinitions.remove(candidate);
+							}
+						}
 					}
 
 					IASTNode parentNode = name.getParent();

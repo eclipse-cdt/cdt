@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "073dc3ed_fce92479",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPMethodTemplateSpecialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-19T03:04:59Z",
+      "side": 1,
+      "message": "It\u0027s hard to anticipate potential performance impact of the early template parameter specialization. We can compare indexing time with and without the change.",
+      "parentUuid": "073dc3ed_bcd03c40",
+      "revId": "5b6bda489f5af0aee345452fd5b8e78d239c1169",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "073dc3ed_c778d29d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPTemplateTemplateParameterSpecialization.java",
         "patchSetId": 2

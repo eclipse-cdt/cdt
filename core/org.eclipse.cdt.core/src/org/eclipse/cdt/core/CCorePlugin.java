@@ -1060,6 +1060,23 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
+	 * Clears cached scanner info provider for the given project so that the next call to
+	 * {@link #getScannerInfoProvider(IProject)} would return an up to date scanner info provider.
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void clearScannerInfoProviderCache(IProject project) {
+		try {
+			QualifiedName scannerInfoProviderName = new QualifiedName(PLUGIN_ID, SCANNER_INFO_PROVIDER2_NAME);
+			project.setSessionProperty(scannerInfoProviderName, null);
+		} catch (CoreException e) {
+			if (project.isOpen()) {
+				log(e);
+			}
+		}
+	}
+
+	/**
 	 * Find {@link IScannerInfoProvider} registered as extension via extension point
 	 * org.eclipse.cdt.core.ScannerInfoProvider2.
 	 */

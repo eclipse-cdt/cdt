@@ -871,6 +871,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				}
 			}
 			CProjectDescriptionStorageManager.getInstance().setProjectDescription(project, des, flags, monitor);
+			// Scanner info provider may have changed - clear the cached copy (http://bugs.eclipse.org/413357).
+			CCorePlugin.getDefault().clearScannerInfoProviderCache(project);
 		} finally {
 			settingProjectDescription.set(originalState);
 		}

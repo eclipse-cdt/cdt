@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "073dc3ed_6890b3a3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPMethodTemplateSpecialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-07-19T01:34:32Z",
+      "side": 1,
+      "message": "#define tpar template parameter  // :)\n\nFor AST bindings, we could specialize the tpars at the time of creating the class or method specialization, i.e. in CPPTemplates.createSpecialization(). The point of instantiation is available there. This would mean that we couldn\u0027t specialize the tpars lazily. Should I make this change?\n\nFor index bindings, I\u0027m less sure. Right now we are doing this:\n\nAST tpar ---(adapt)----\u003e PDOM tpar ---(specialize)---\u003e PDOM tpar specialization\n\nThe problem is the point of instantiation is not available at the time we do the \"specialize\" step. I guess we could instead do this:\n\nAST tpar ----(specialize)---\u003e AST tpar specialization  ----(adapt)----\u003e PDOM tpar specialization\n\nand then the \"specialize\" step happens in a context where the point of instantiation is known.\n\nHowever, this might conflict with previous design choices. In particular, I see that PDOMCPPLinkage.createBinding() currently returns null for tpars, with a comment saying \"template parameters are created directly by their owners\".\n\nI\u0027m afraid I still don\u0027t have a good understanding of  the process of adapting bindings to PDOM, so I would appreciate some guidance here.",
+      "parentUuid": "073dc3ed_e77d168e",
+      "revId": "5b6bda489f5af0aee345452fd5b8e78d239c1169",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "073dc3ed_c778d29d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPTemplateTemplateParameterSpecialization.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2013-07-18T17:25:45Z",
       "side": 1,
       "message": "Please add blank lines between methods.",
+      "revId": "5b6bda489f5af0aee345452fd5b8e78d239c1169",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "073dc3ed_08e00741",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPTemplateTemplateParameterSpecialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-07-19T01:34:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "073dc3ed_c778d29d",
       "revId": "5b6bda489f5af0aee345452fd5b8e78d239c1169",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

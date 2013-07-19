@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "073dc3ed_bcd03c40",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPMethodTemplateSpecialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-07-19T01:48:39Z",
+      "side": 1,
+      "message": "Upon further reflection, I don\u0027t think there\u0027s any problem. I think the only thing special about PDOM tpars as opposed to other PDOM bindings is that the creation of a PDOM tpar based on the corresponding AST tpar is done using PDOMTemplateParameterArray.createPDOMTemplateParameter(), whereas for other bindings it\u0027s done using PDOMCPPLinkage.adaptBinding(). So, I don\u0027t see any reason why we can\u0027t do:\n\nAST tpar ----(specialize)---\u003e AST tpar specialization ----(adapt)----\u003e PDOM tpar specialization\n\n(where \"adapt\" means using PDOMTemplateParameterArray.createPDOMTemplateParameter())\n\nat the time of construction of a PDOM class/method template from the corresponding AST template.",
+      "parentUuid": "073dc3ed_a8747bf2",
+      "revId": "5b6bda489f5af0aee345452fd5b8e78d239c1169",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "073dc3ed_c778d29d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPTemplateTemplateParameterSpecialization.java",
         "patchSetId": 2

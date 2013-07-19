@@ -12,6 +12,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     oyvind.harboe@zylin.com - http://bugs.eclipse.org/250638
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
@@ -1057,6 +1058,23 @@ public class CCorePlugin extends Plugin {
  		}
 
 		return provider;
+	}
+
+	/**
+	 * Clears cached scanner info provider for the given project so that the next call to
+	 * {@link #getScannerInfoProvider(IProject)} would return an up to date scanner info provider.
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void clearScannerInfoProviderCache(IProject project) {
+		try {
+			QualifiedName scannerInfoProviderName = new QualifiedName(PLUGIN_ID, SCANNER_INFO_PROVIDER2_NAME);
+			project.setSessionProperty(scannerInfoProviderName, null);
+		} catch (CoreException e) {
+			if (project.isOpen()) {
+				log(e);
+			}
+		}
 	}
 
 	/**

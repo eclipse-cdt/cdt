@@ -51,6 +51,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunch;
 
 public class FinalLaunchSequence extends ReflectionSequence {
@@ -294,11 +295,13 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	@Execute
 	public void stepSourceGDBInitFile(final RequestMonitor requestMonitor) {
 		try {
-			final String gdbinitFile = fGDBBackend.getGDBInitFile();
+			String gdbinitFile = fGDBBackend.getGDBInitFile();
 
 			if (gdbinitFile != null && gdbinitFile.length() > 0) {
+				final String expandedGDBInitFile = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(gdbinitFile);
+
 				fCommandControl.queueCommand(
-						fCommandFactory.createCLISource(fCommandControl.getContext(), gdbinitFile), 
+						fCommandFactory.createCLISource(fCommandControl.getContext(), expandedGDBInitFile), 
 						new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
 							@Override
 							protected void handleCompleted() {
@@ -306,7 +309,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 								// should not consider this an error.
 								// If it is not the default, then the user must have specified it and
 								// we want to warn the user if we can't find it.
-								if (!gdbinitFile.equals(IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT )) {
+								if (!expandedGDBInitFile.equals(IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT)) {
 									requestMonitor.setStatus(getStatus());
 								}
 								requestMonitor.done();

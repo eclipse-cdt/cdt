@@ -69,6 +69,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	private IConfigurationElement commandGeneratorElement;
 	private IOptionCommandGenerator commandGenerator;
 	private String commandFalse;
+	private Boolean isForScannerDiscovery;
 	private String tip;
 	private String contextId;
 	private List<String> applicableValuesList;
@@ -206,6 +207,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		if (option.commandFalse != null) {
 			commandFalse = new String(option.commandFalse);
+		}
+		if (option.isForScannerDiscovery != null) {
+			isForScannerDiscovery = new Boolean(option.isForScannerDiscovery.booleanValue());
 		}
 		if (option.tip != null) {
 			tip = new String(option.tip);
@@ -373,6 +377,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// Get the command defined for a Boolean option when the value is False
 		commandFalse = SafeStringInterner.safeIntern(element.getAttribute(COMMAND_FALSE));
 
+		// isForScannerDiscovery
+		String isForSD = element.getAttribute(USE_BY_SCANNER_DISCOVERY);
+		if (isForSD != null){
+			isForScannerDiscovery = new Boolean("true".equals(isForSD)); //$NON-NLS-1$
+		}
+
 		// Get the tooltip for the option
 		tip = SafeStringInterner.safeIntern(element.getAttribute(TOOL_TIP));
 
@@ -506,6 +516,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// Get the command defined for a Boolean option when the value is False
 		if (element.getAttribute(COMMAND_FALSE) != null) {
 			commandFalse = SafeStringInterner.safeIntern(element.getAttribute(COMMAND_FALSE));
+		}
+
+		// isForScannerDiscovery
+		if (element.getAttribute(USE_BY_SCANNER_DISCOVERY) != null) {
+			String isForSD = element.getAttribute(USE_BY_SCANNER_DISCOVERY);
+			if (isForSD != null){
+				isForScannerDiscovery = new Boolean("true".equals(isForSD)); //$NON-NLS-1$
+			}
 		}
 
 		// Get the tooltip for the option
@@ -795,6 +813,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		if (commandFalse != null) {
 			element.setAttribute(COMMAND_FALSE, commandFalse);
+		}
+
+		if (isForScannerDiscovery != null) {
+			element.setAttribute(USE_BY_SCANNER_DISCOVERY, isForScannerDiscovery.toString());
 		}
 
 		if (tip != null) {
@@ -1246,6 +1268,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			}
 		}
 		return commandFalse;
+	}
+
+	@Override
+	public boolean isForScannerDiscovery() {
+		if (isForScannerDiscovery == null) {
+			isForScannerDiscovery = new Boolean(superClass != null && superClass.isForScannerDiscovery());
+		}
+		return isForScannerDiscovery;
 	}
 
 	@Override

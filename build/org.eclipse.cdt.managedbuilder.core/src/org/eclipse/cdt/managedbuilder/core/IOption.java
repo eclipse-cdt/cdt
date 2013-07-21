@@ -100,6 +100,7 @@ public interface IOption extends IBuildObject {
 	public static final String ORDER = "order"; //$NON-NLS-1$
 	public static final String COMMAND = "command"; //$NON-NLS-1$
 	public static final String COMMAND_FALSE = "commandFalse"; //$NON-NLS-1$
+	public static final String USE_BY_SCANNER_DISCOVERY = "useByScannerDiscovery"; //$NON-NLS-1$
 	/** @since 8.0 */
 	public static final String COMMAND_GENERATOR = "commandGenerator"; //$NON-NLS-1$
 	public static final String TOOL_TIP = "tip"; //$NON-NLS-1$
@@ -604,6 +605,13 @@ public interface IOption extends IBuildObject {
 	String[] getBasicStringListValue() throws BuildException;
 
 	public OptionStringValue[] getBasicStringListValueElements() throws BuildException;
+
+	/**
+	 * Flag to indicate whether the option is also used by scanner discovery.
+	 * @return {@code true} if the option is intended to be passed to scanner discovery command
+	 *    or {@code false} otherwise.
+	 */
+	public boolean isForScannerDiscovery();
 
 	/**
 	 * Returns the tree root of this option if it is of type {@link #TREE}

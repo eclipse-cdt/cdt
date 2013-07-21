@@ -9372,5 +9372,36 @@
             </option>
         </tool>
     </extension>
+   <extension
+         point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
+      <toolChain
+            id="cdt.managedbuilder.lsp.tests.toolchain"
+            isAbstract="false">
+         <tool
+               id="cdt.managedbuilder.lsp.tests.tool"
+               isAbstract="false">
+            <inputType
+                  id="cdt.managedbuilder.lsp.tests.input-type"
+                  languageId="org.eclipse.cdt.core.gcc">
+            </inputType>
+            <option
+                  command="-not-for-scanner-discovery"
+                  id="cdt.managedbuilder.lsp.tests.option.not-sd"
+                  isAbstract="false"
+                  resourceFilter="all"
+                  valueType="string">
+            </option>
+            <option
+                  command="-str-option="
+                  id="cdt.managedbuilder.lsp.tests.option.string"
+                  isAbstract="false"
+                  resourceFilter="all"
+                  useByScannerDiscovery="true"
+                  value="str-value"
+                  valueType="string">
+            </option>
+         </tool>
+      </toolChain>
+   </extension>
 
 </plugin>

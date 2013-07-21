@@ -921,6 +921,12 @@ public class OptionReference implements IOption {
 		}
 		return ve;
 	}
+
+	@Override
+	public boolean isForScannerDiscovery() {
+		return option.isForScannerDiscovery();
+	}
+
 	@Override
 	public ITreeRoot getTreeRoot() {
 		if (!resolved) {

@@ -48,6 +48,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		TestSuite suite = new TestSuite(ManagedBuildCoreTests.class.getName());
 		suite.addTest(new ManagedBuildCoreTests("testLoadManifest"));
 		suite.addTest(new ManagedBuildCoreTests("testTreeOptions"));
+		suite.addTest(new ManagedBuildCoreTests("testOptionsAttributeUseByScannerDiscovery"));
 		return suite;
 	}
 
@@ -660,6 +661,20 @@ public class ManagedBuildCoreTests extends TestCase {
 		}
 		assertTrue(exception);
 
+	}
+
+	/**
+	 * Tests attribute useByScannerDiscovery.
+	 * @throws Exception
+	 */
+	public void testOptionsAttributeUseByScannerDiscovery() throws Exception {
+		IOption optionNotSD = ManagedBuildManager.getExtensionOption("cdt.managedbuilder.lsp.tests.option.not-sd");
+		assertNotNull(optionNotSD);
+		assertEquals(false, optionNotSD.isForScannerDiscovery());
+
+		IOption option = ManagedBuildManager.getExtensionOption("cdt.managedbuilder.lsp.tests.option.string");
+		assertNotNull(option);
+		assertEquals(true, option.isForScannerDiscovery());
 	}
 } // end class
 

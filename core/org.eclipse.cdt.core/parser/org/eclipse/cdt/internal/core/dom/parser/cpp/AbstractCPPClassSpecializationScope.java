@@ -275,4 +275,23 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	public EScopeKind getKind() {
 		return EScopeKind.eClassType;
 	}
+
+	// Note: equals() and hashCode() are overridden because multiple instances
+	//       of this class representing the same class specialization scope
+	//       may be created, but scopes are sometimes stored in hash maps
+	//       under the assumption that two objects representing the same
+	//       scope will compare equal().
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof ICPPClassSpecializationScope) {
+			return getClassType().equals(((ICPPClassSpecializationScope) other).getClassType());
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return specialClass.hashCode();
+	}
 }

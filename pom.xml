@@ -38,8 +38,8 @@
     </license>
   </licenses>
   <properties>
-    <tycho-version>0.17.0</tycho-version>
-    <tycho-extras-version>0.17.0</tycho-extras-version>
+    <tycho-version>0.18.0</tycho-version>
+    <tycho-extras-version>0.18.0</tycho-extras-version>
     <maven-resources-version>2.6</maven-resources-version>
     <maven-antrun-version>1.7</maven-antrun-version>
     <gmaven-version>1.4</gmaven-version>
@@ -110,7 +110,7 @@
         <eclipse-site>http://download.eclipse.org/releases/staging</eclipse-site>
         <platform-version>[4.3,)</platform-version>
         <sdk-version>4.3</sdk-version>
-        <cdt-site>http://download.eclipse.org/tools/cdt/releases/juno</cdt-site>
+        <cdt-site>http://download.eclipse.org/tools/cdt/releases/kepler</cdt-site>
         <cdt-test-site>http://download.eclipse.org/tools/cdt/updates/indigo/</cdt-test-site>
       </properties>
       <repositories>

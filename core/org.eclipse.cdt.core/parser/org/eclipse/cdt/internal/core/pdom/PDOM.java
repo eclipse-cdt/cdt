@@ -16,6 +16,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMNode;
@@ -82,20 +96,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * Database for storing semantic information for one project.
@@ -238,14 +238,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  144.0 - Add support for storing function sets with zero functions in EvalFunctionSet, bug 402498.
 	 *  145.0 - Changed marshalling of CPPBasicType to store the associated numerical value, bug 407808. 
 	 *  146.0 - Added visibility support on class type level, bug 402878.
-	 *  #147.0# - Store whether function name is qualified in EvalFunctionSet, bug 408296.
+	 *  #147.0# - Store whether function name is qualified in EvalFunctionSet, bug 408296. <<CDT 8.2>>
 	 *  
 	 *  CDT 8.3 development (versions not supported on the 8.2.x branch)
-	 *  148.0 - Store specialized template parameters of class/function template specializations, bug 407497.
+	 *  160.0 - Store specialized template parameters of class/function template specializations, bug 407497.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(148, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(148, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(148, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(160, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(160, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(160, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

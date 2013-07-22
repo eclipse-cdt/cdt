@@ -42,6 +42,7 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIFunctionFinishedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIArg;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
@@ -92,7 +93,7 @@ public class MIStack extends AbstractDsfService
     protected static class MIVariableDMC extends AbstractDMContext
         implements IVariableDMContext
     {
-        public enum Type { ARGUMENT, LOCAL }
+        public enum Type { ARGUMENT, LOCAL, /** @since 4.3 */ RETURN_VALUES }
         final private Type fType;
         final private int fIndex;
 
@@ -156,6 +157,23 @@ public class MIStack extends AbstractDsfService
     	}
     }
 
+    /**
+     * Same as with frame objects, this is a base class for the IVariableDMData object that uses an MIArg object to 
+     * provide the data.  Sub-classes must supply the MIArg object.
+     */
+	private class VariableData implements IVariableDMData {
+		private MIArg dsfMIArg;
+		VariableData(MIArg arg){
+			dsfMIArg = arg;
+		}
+		@Override
+		public String getName() { return dsfMIArg.getName(); }
+		@Override
+		public String getValue() { return dsfMIArg.getValue(); }
+		@Override
+		public String toString() { return dsfMIArg.toString(); }	
+	}    	
+
 	private CommandCache fMICommandCache;
 	private CommandFactory fCommandFactory;
 
@@ -176,6 +194,8 @@ public class MIStack extends AbstractDsfService
 	 */
 	private boolean fTraceVisualization;
 
+	private Map<IExecutionDMContext, VariableData> fReturnVariables = new HashMap<IExecutionDMContext, VariableData>();
+	
 	public MIStack(DsfSession session) 
 	{
 		super(session);
@@ -614,23 +634,6 @@ public class MIStack extends AbstractDsfService
             return;
         }
 
-        /**
-         * Same as with frame objects, this is a base class for the IVariableDMData object that uses an MIArg object to 
-         * provide the data.  Sub-classes must supply the MIArg object.
-         */
-    	class VariableData implements IVariableDMData {
-    		private MIArg dsfMIArg;
-    		VariableData(MIArg arg){
-    			dsfMIArg = arg;
-    		}
-    		@Override
-    		public String getName() { return dsfMIArg.getName(); }
-    		@Override
-    		public String getValue() { return dsfMIArg.getValue(); }
-    		@Override
-    		public String toString() { return dsfMIArg.toString(); }	
-    	}    	
-
         // Check if the stopped event can be used to extract the variable value. 
         if (execDmc != null && miVariableDmc.fType == MIVariableDMC.Type.ARGUMENT &&
             frameDmc.fLevel == 0 && fCachedStoppedEvent != null && fCachedStoppedEvent.getFrame() != null &&
@@ -694,8 +697,7 @@ public class MIStack extends AbstractDsfService
 	                			});	
 	                }
 	        	});
-        }//if
-        if (miVariableDmc.fType == MIVariableDMC.Type.LOCAL){
+        } else if (miVariableDmc.fType == MIVariableDMC.Type.LOCAL) {
             fMICommandCache.execute(
                 	// Don't ask for value when we are visualizing trace data, since some
                 	// data will not be there, and the command will fail
@@ -735,8 +737,16 @@ public class MIStack extends AbstractDsfService
                             		});
                         }
                     });
-        }//if   
-
+        } else if (miVariableDmc.fType == MIVariableDMC.Type.RETURN_VALUES) {
+        	VariableData var = fReturnVariables.get(execDmc);
+        	if (var == null) {
+                rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid variable type " + miVariableDmc.fType, null));  //$NON-NLS-1$
+                return;
+        	}
+        	rm.done(var);
+        } else {
+            rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid variable type " + miVariableDmc.fType, null));  //$NON-NLS-1$
+        }
     }
 
     private MIVariableDMC[] makeVariableDMCs(IFrameDMContext frame, MIVariableDMC.Type type, MIArg[] miArgs) {
@@ -772,6 +782,12 @@ public class MIStack extends AbstractDsfService
     public void getLocals(final IFrameDMContext frameDmc, final DataRequestMonitor<IVariableDMContext[]> rm) {
 
         final List<IVariableDMContext> localsList = new ArrayList<IVariableDMContext>();
+        
+        IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(frameDmc, IMIExecutionDMContext.class);
+        String var = null;//fReturnVariables.get(threadDmc);
+        if (var != null) {
+        	localsList.add(new MIVariableDMC(this, frameDmc, MIVariableDMC.Type.RETURN_VALUES, 0));
+        }
         
         final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm) {
             @Override
@@ -914,6 +930,7 @@ public class MIStack extends AbstractDsfService
             fMICommandCache.reset();
             fStackDepthCache.clear();
         }
+        fReturnVariables.remove(e.getDMContext());
     }
     
     /**
@@ -937,7 +954,15 @@ public class MIStack extends AbstractDsfService
     @DsfServiceEventHandler 
     public void eventDispatched(IMIDMEvent e) {
     	if (e.getMIEvent() instanceof MIStoppedEvent) {
-    		fCachedStoppedEvent = (MIStoppedEvent)e.getMIEvent();
+    		MIStoppedEvent event = (MIStoppedEvent)e.getMIEvent();
+    		fCachedStoppedEvent = event;
+    		
+    		if (event instanceof MIFunctionFinishedEvent) {
+    	    	IDMContext ctx = event.getDMContext();
+    	    	if (ctx instanceof IMIExecutionDMContext) {
+//    	    		fReturnVariables.put((IExecutionDMContext)ctx, ((MIFunctionFinishedEvent)event).getGDBResultVar());
+    	    	}
+    		}
     	}
     }
 

@@ -394,6 +394,10 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 */
 	private boolean fRunControlOperationsEnabled = true;
 	
+	private boolean fSimulateStepOverPreference = true;
+	private StepIntoSelectionActiveOperation fSimulateStepOverOperationActive;
+	private boolean fSimulateStepOverAtStepReturn;
+	
 	///////////////////////////////////////////////////////////////////////////
 	// Initialization and shutdown
 	///////////////////////////////////////////////////////////////////////////
@@ -758,7 +762,15 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			cmd = fCommandFactory.createMIExecStep(dmc);
 			break;
 		case STEP_OVER:
-			cmd = fCommandFactory.createMIExecNext(dmc);
+			if (!fSimulateStepOverPreference) {
+				cmd = fCommandFactory.createMIExecNext(dmc);
+			} else {
+				// We simulate a step-over using a combination
+				// of step-in and step-finish, so that we can show
+				// the return value of methods
+				simulateStepOver(dmc, rm);
+				return;
+			}
 			break;
 		case STEP_RETURN:
 			// The -exec-finish command operates on the selected stack frame, but here we always
@@ -799,6 +811,44 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
 				super.handleFailure();
 			}   
+		});
+	}
+
+	private void simulateStepOver(final IMIExecutionDMContext dmc, final RequestMonitor rm) {
+		getStackDepth(dmc, new ImmediateDataRequestMonitor<Integer>(rm) {
+			@Override
+			public void handleSuccess() {
+				if (getData() != null) {
+					final int framesSize = getData().intValue();
+					final MIThreadRunState threadState = fThreadRunStates.get(dmc);
+
+					SuspendedEvent suspendedEvent = (SuspendedEvent) threadState.fLatestEvent;
+					final MIFrame currentFrame = suspendedEvent.getMIEvent().getFrame();
+					if (currentFrame == null) {
+						rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Given event: " + suspendedEvent + " invalid frame in suspended event.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+						return;
+					}
+
+					fSimulateStepOverOperationActive = 
+							new StepIntoSelectionActiveOperation(dmc, currentFrame.getLine(), null, framesSize, null);
+					
+					threadState.fResumePending = true;
+					threadState.fStepping = true;
+					fConnection.queueCommand(
+							fCommandFactory.createMIExecStep(dmc),
+							new ImmediateDataRequestMonitor<MIInfo>(rm) {
+						@Override
+						public void handleFailure() {
+							threadState.fResumePending = false;
+							threadState.fStepping = false;
+
+							super.handleFailure();
+						}   
+					});
+				} else {
+					rm.done();
+				}
+			}
 		});
 	}
 
@@ -1537,6 +1587,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
      */
 	@DsfServiceEventHandler
 	public void eventDispatched(final MIStoppedEvent e) {
+		if (processSimulatedStepOver(e)) {
+			// If we are in the middle of a simulated step-over
+			return;
+		}
+		
 		if (processRunToLineStoppedEvent(e)) {
 			// If RunToLine is not completed
 			return;
@@ -1573,6 +1628,70 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		getSession().dispatchEvent(event, getProperties());
 	}
 
+	private boolean processSimulatedStepOver(final MIStoppedEvent e) {
+		if (fSimulateStepOverOperationActive == null) {
+			return false;
+		}
+		
+		// First check if it is the right thread that stopped
+		final IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);
+		if (fSimulateStepOverOperationActive.getThreadContext().equals(threadDmc))	{
+			assert fRunToLineActiveOperation == null;
+			assert fStepInToSelectionActiveOperation == null;
+					
+			if (fSimulateStepOverAtStepReturn) {
+				// Step-return has finished, check if we need a new step-into
+				// by looking if we are at the same line as where we started
+				fSimulateStepOverAtStepReturn = false;
+				assert e instanceof MIFunctionFinishedEvent;
+				if (fSimulateStepOverOperationActive.getLine() == e.getFrame().getLine()) {
+					step(threadDmc, StepType.STEP_INTO, false, new ImmediateRequestMonitor());
+				} else {
+					fSimulateStepOverOperationActive = null;
+					broadcastStop(e);
+				}
+				return true;
+			}
+			
+			getStackDepth(threadDmc, new ImmediateDataRequestMonitor<Integer>() {
+
+				@Override
+				protected void handleSuccess() {
+					int frameDepth = getData().intValue();
+					int originalStackDepth = fSimulateStepOverOperationActive.getOriginalStackDepth();
+					
+					if (frameDepth > originalStackDepth) {
+						// The step-in actually stepped into a method, we must return out of it
+						assert(frameDepth == originalStackDepth + 1);
+						fSimulateStepOverAtStepReturn = true;
+						step(threadDmc, StepType.STEP_RETURN, false, new ImmediateRequestMonitor());
+					} else {
+						// Simulated step-over is finished since we are the same
+						// frame depth or shallower as when we started.
+						fSimulateStepOverOperationActive = null;
+						broadcastStop(e);
+					}
+				}
+
+				@Override
+				protected void handleFailure() {
+					// log error
+					if (getStatus() != null) {
+						GdbPlugin.getDefault().getLog().log(getStatus());
+					}
+
+					fSimulateStepOverOperationActive = null;
+					broadcastStop(e);
+				}
+			});
+			
+			return true;
+		}
+		
+		//The thread related to this event is outside the scope of the simulate step-over context
+		return false;
+	}
+	
 	private boolean processStepIntoSelection(final MIStoppedEvent e) {
 		if (fStepInToSelectionActiveOperation == null) {
 			return false;

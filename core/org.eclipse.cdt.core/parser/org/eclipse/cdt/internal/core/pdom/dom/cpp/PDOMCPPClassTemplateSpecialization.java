@@ -42,18 +42,17 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Specialization of a class template.
  */
-class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization 
+class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 		implements ICPPClassTemplate, ICPPInstanceCache {
-	
 	private static final int TEMPLATE_PARAMS = PDOMCPPClassSpecialization.RECORD_SIZE;
-	
+
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = TEMPLATE_PARAMS + Database.PTR_SIZE;
-	
+
 	private volatile IPDOMCPPTemplateParameter[] fTemplateParameters;
 
-	public PDOMCPPClassTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPClassTemplate template, PDOMBinding specialized)
-			throws CoreException {
+	public PDOMCPPClassTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
+			ICPPClassTemplate template, PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, template, specialized);
 		computeTemplateParameters(template);  // sets fTemplateParameters
 		final Database db = getDB();
@@ -65,7 +64,7 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 	public PDOMCPPClassTemplateSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -75,7 +74,7 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CLASS_TEMPLATE_SPECIALIZATION;
 	}
-		
+
 	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		if (fTemplateParameters == null) {
@@ -96,19 +95,19 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 
 	@Override
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
-		return PDOMInstanceCache.getCache(this).getInstance(arguments);	
+		return PDOMInstanceCache.getCache(this).getInstance(arguments);
 	}
 
 	@Override
 	public void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
-		PDOMInstanceCache.getCache(this).addInstance(arguments, instance);	
+		PDOMInstanceCache.getCache(this).addInstance(arguments, instance);
 	}
 
 	@Override
 	public ICPPTemplateInstance[] getAllInstances() {
-		return PDOMInstanceCache.getCache(this).getAllInstances();	
+		return PDOMInstanceCache.getCache(this).getAllInstances();
 	}
-	
+
 	@Override
 	public boolean isSameType(IType type) {
 		if( type == this )
@@ -125,15 +124,15 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 		}
 
 		// require a class template specialization
-		if (type instanceof ICPPClassSpecialization == false || 
+		if (type instanceof ICPPClassSpecialization == false ||
 				type instanceof ICPPTemplateDefinition == false || type instanceof IProblemBinding)
 			return false;
-		
-		
+
+
 		final ICPPClassSpecialization classSpec2 = (ICPPClassSpecialization) type;
-		if (getKey() != classSpec2.getKey()) 
+		if (getKey() != classSpec2.getKey())
 			return false;
-		
+
 		if (!CharArrayUtils.equals(getNameCharArray(), classSpec2.getNameCharArray()))
 			return false;
 
@@ -180,7 +179,7 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 
 		return ((ICPPClassType) owner1).isSameType((ICPPClassType) owner2);
 	}
-	
+
 	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		IASTNode point= null; // Instantiation of dependent expressions may not work.
@@ -193,7 +192,7 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 		}
 		return spec;
 	}
-	
+
 	@Override
 	public final ICPPDeferredClassInstance asDeferredInstance() {
 		PDOMInstanceCache cache= PDOMInstanceCache.getCache(this);
@@ -206,11 +205,11 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 			return dci;
 		}
 	}
-	
+
 	private void computeTemplateParameters(ICPPClassTemplate originalTemplate) {
 		try {
-			fTemplateParameters = PDOMTemplateParameterArray.createPDOMTemplateParameters(getLinkage(), this, 
-					originalTemplate.getTemplateParameters());
+			fTemplateParameters = PDOMTemplateParameterArray.createPDOMTemplateParameters(getLinkage(),
+					this, originalTemplate.getTemplateParameters());
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
 			fTemplateParameters = IPDOMCPPTemplateParameter.EMPTY_ARRAY;

@@ -22,21 +22,20 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
  * A specialization of a non-type template parameter. This is needed when a nested template
  * has a non-type template parameter whose type or default value is dependent on a template
  * parameter of an enclosing template.
- * 
+ *
  * This class can represent a specialization of either an AST or a PDOM template parameter.
  */
 public class CPPTemplateNonTypeParameterSpecialization extends CPPTemplateParameterSpecialization
 		implements ICPPTemplateNonTypeParameter {
-	
 	private final IType fType;
-	
+
 	public CPPTemplateNonTypeParameterSpecialization(ICPPSpecialization owner, ICPPScope scope,
 			ICPPTemplateNonTypeParameter specialized, ICPPTemplateArgument defaultValue, IType type) {
 		super(owner, scope, specialized, defaultValue);
-		
+
 		this.fType = type;
 	}
-	
+
 	@Override
 	public ICPPTemplateNonTypeParameter getSpecializedBinding() {
 		return (ICPPTemplateNonTypeParameter) super.getSpecializedBinding();
@@ -56,22 +55,22 @@ public class CPPTemplateNonTypeParameterSpecialization extends CPPTemplateParame
 	public boolean isStatic() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isExtern() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isRegister() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isAuto() {
 		return false;
 	}
-	
+
 	@Override
 	public IType getType() {
 		return fType;

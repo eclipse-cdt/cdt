@@ -39,6 +39,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	public EvalTypeId(IType type, IASTNode pointOfDefinition, ICPPEvaluation... arguments) {
 		this(type, findEnclosingTemplate(pointOfDefinition), arguments);
 	}
+
 	public EvalTypeId(IType type, IBinding templateDefinition, ICPPEvaluation... arguments) {
 		super(templateDefinition);
 		fInputType= type;
@@ -83,7 +84,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			return Value.create(this);
 		if (fArguments == null)
 			return Value.UNKNOWN;
-		
+
 		if (isTypeDependent())
 			return Value.create(this);
 		if (fOutputType instanceof ICPPClassType) {
@@ -136,7 +137,8 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer)
+			throws CoreException {
 		IType type= buffer.unmarshalType();
 		ICPPEvaluation[] args= null;
 		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0) {
@@ -146,7 +148,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 				args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();
 			}
 		} else {
-			args = new ICPPEvaluation[0];  // arguments must not be null
+			args = ICPPEvaluation.EMPTY_ARRAY;  // arguments must not be null
 		}
 		IBinding templateDefinition= buffer.unmarshalBinding();
 		return new EvalTypeId(type, templateDefinition, args);

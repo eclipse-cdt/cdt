@@ -24,20 +24,19 @@ import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * A specialization of a template parameter.
- * 
+ *
  * This class provides common implementation for CPPTemplateNonTypeParameterSpecialization,
  * CPPTemplateTypeParameterSpecialization, and CPPTemplateTemplateParameterSpecialization.
  */
 public abstract class CPPTemplateParameterSpecialization extends PlatformObject
 		implements ICPPTemplateParameter, ICPPSpecialization {
-	
 	private final ICPPSpecialization fOwner;
 	private final ICPPScope fScope;
 	private final ICPPTemplateParameter fSpecialized;
 	private final ICPPTemplateParameterMap fTemplateParameterMap;
 	private final ICPPTemplateArgument fDefaultValue;
-	
-	public CPPTemplateParameterSpecialization(ICPPSpecialization owner, ICPPScope scope, ICPPTemplateParameter specialized, 
+
+	public CPPTemplateParameterSpecialization(ICPPSpecialization owner, ICPPScope scope, ICPPTemplateParameter specialized,
 			ICPPTemplateArgument defaultValue) {
 		fOwner = owner;
 		fScope = scope;
@@ -126,5 +125,4 @@ public abstract class CPPTemplateParameterSpecialization extends PlatformObject
 	public boolean isParameterPack() {
 		return fSpecialized.isParameterPack();
 	}
-
 }

@@ -33,7 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
  * A specialization of a template template parameter. This is needed when a nested template
  * has a template template parameter whose default value is dependent on a template
  * parameter of an enclosing template.
- * 
+ *
  * This class can represent a specialization of either an AST or a PDOM template parameter.
  */
 public class CPPTemplateTemplateParameterSpecialization extends CPPTemplateParameterSpecialization
@@ -43,7 +43,7 @@ public class CPPTemplateTemplateParameterSpecialization extends CPPTemplateParam
 			ICPPTemplateTemplateParameter specialized, ICPPTemplateArgument defaultValue) {
 		super(owner, scope, specialized, defaultValue);
 	}
-	
+
 	@Override
 	public ICPPTemplateTemplateParameter getSpecializedBinding() {
 		return (ICPPTemplateTemplateParameter) super.getSpecializedBinding();
@@ -63,47 +63,47 @@ public class CPPTemplateTemplateParameterSpecialization extends CPPTemplateParam
 	public ICPPBase[] getBases() {
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
-	
+
 	@Override
 	public IField[] getFields() {
 		return IField.EMPTY_FIELD_ARRAY;
 	}
-	
+
 	@Override
 	public IField findField(String name) {
 		return null;
 	}
-	
+
 	@Override
 	public ICPPField[] getDeclaredFields() {
 		return ICPPField.EMPTY_CPPFIELD_ARRAY;
 	}
-	
+
 	@Override
 	public ICPPMethod[] getMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
-	
+
 	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
-	
+
 	@Override
 	public ICPPMethod[] getDeclaredMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
-	
+
 	@Override
 	public ICPPConstructor[] getConstructors() {
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
-	
+
 	@Override
 	public IBinding[] getFriends() {
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
-	
+
 	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;

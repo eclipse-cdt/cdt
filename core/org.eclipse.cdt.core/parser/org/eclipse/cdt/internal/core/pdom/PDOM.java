@@ -104,7 +104,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private static final int BLOCKED_WRITE_LOCK_OUTPUT_INTERVAL = 30000;
 	private static final int LONG_WRITE_LOCK_REPORT_THRESHOLD = 1000;
 	private static final int LONG_READ_LOCK_WAIT_REPORT_THRESHOLD = 1000;
-	static boolean sDEBUG_LOCKS= false; // initialized in the PDOMManager, because IBM needs PDOM independent of runtime plugin.
+	static boolean sDEBUG_LOCKS= false; // Initialized in the PDOMManager, because IBM needs PDOM independent of runtime plugin.
 
 	/**
 	 * Identifier for PDOM format
@@ -236,10 +236,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  142.0 - Changed marshalling of evaluations to allow more than 15 evaluation kinds, bug 401479.
 	 *  143.0 - Store implied object type in EvalFunctionSet, bug 402409.
 	 *  144.0 - Add support for storing function sets with zero functions in EvalFunctionSet, bug 402498.
-	 *  145.0 - Changed marshalling of CPPBasicType to store the associated numerical value, bug 407808. 
+	 *  145.0 - Changed marshalling of CPPBasicType to store the associated numerical value, bug 407808.
 	 *  146.0 - Added visibility support on class type level, bug 402878.
 	 *  #147.0# - Store whether function name is qualified in EvalFunctionSet, bug 408296. <<CDT 8.2>>
-	 *  
+	 *
 	 *  CDT 8.3 development (versions not supported on the 8.2.x branch)
 	 *  160.0 - Store specialized template parameters of class/function template specializations, bug 407497.
 	 */

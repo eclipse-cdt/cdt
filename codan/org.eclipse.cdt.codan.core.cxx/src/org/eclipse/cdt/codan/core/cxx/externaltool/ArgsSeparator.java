@@ -12,7 +12,6 @@ package org.eclipse.cdt.codan.core.cxx.externaltool;
 
 import java.util.ArrayList;
 import java.util.List;
-// import java.util.StringTokenizer;
 
 /**
  * Separates the arguments, stored as a single {@code String}, to pass to an external tool. It uses

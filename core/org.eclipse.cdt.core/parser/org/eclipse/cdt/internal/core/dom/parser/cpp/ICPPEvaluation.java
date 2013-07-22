@@ -26,6 +26,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionParamet
  * Assists in evaluating expressions.
  */
 public interface ICPPEvaluation extends ISerializableEvaluation {
+	public static final ICPPEvaluation[] EMPTY_ARRAY = {};
+
 	boolean isInitializerList();
 	boolean isFunctionSet();
 

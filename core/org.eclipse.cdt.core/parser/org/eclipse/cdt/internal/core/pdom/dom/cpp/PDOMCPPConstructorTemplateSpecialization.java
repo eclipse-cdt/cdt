@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *     QNX - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -27,16 +27,16 @@ class PDOMCPPConstructorTemplateSpecialization extends PDOMCPPMethodTemplateSpec
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionSpecialization.RECORD_SIZE + 0;
-	
-	public PDOMCPPConstructorTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor constructor, PDOMBinding specialized)
-			throws CoreException {
+
+	public PDOMCPPConstructorTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
+			ICPPConstructor constructor, PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, constructor, specialized);
 	}
 
 	public PDOMCPPConstructorTemplateSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;

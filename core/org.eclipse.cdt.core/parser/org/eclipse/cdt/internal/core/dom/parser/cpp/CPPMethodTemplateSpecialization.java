@@ -25,16 +25,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 /**
  * The specialization of a method template in the context of a class specialization.
  */
-public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpecialization 
+public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpecialization
 		implements ICPPMethod {
-	
 	private ICPPTemplateParameter[] fTemplateParameters;
 
-	public CPPMethodTemplateSpecialization(ICPPMethod specialized, ICPPClassSpecialization owner, 
+	public CPPMethodTemplateSpecialization(ICPPMethod specialized, ICPPClassSpecialization owner,
 			ICPPTemplateParameterMap ctmap, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(specialized, owner, ctmap, type, exceptionSpecs);
 	}
-	
+
 	public void setTemplateParameters(ICPPTemplateParameter[] templateParameters) {
 		fTemplateParameters = templateParameters;
 	}
@@ -59,7 +58,7 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 			return ((ICPPMethod) m).getVisibility();
 		return 0;
 	}
-	
+
 	@Override
 	public ICPPClassType getClassOwner() {
 		return getOwner();
@@ -70,7 +69,7 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')
 			return true;
-		
+
 		return false;
 	}
 
@@ -81,7 +80,7 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 			return ((ICPPMethod) m).isImplicit();
 		return false;
 	}
-	
+
 	@Override
 	public boolean isExplicit() {
 		IBinding m = getSpecializedBinding();
@@ -107,7 +106,7 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 	public boolean isFinal() {
 		return false;
 	}
-	
+
 	@Override
 	public ICPPClassSpecialization getOwner() {
 		return (ICPPClassSpecialization) super.getOwner();

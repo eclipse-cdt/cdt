@@ -32,17 +32,16 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  */
 public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		implements ICPPClassTemplate, ICPPInternalClassTemplate {
-
-	private ObjectMap instances = null;
+	private ObjectMap instances;
 	private ICPPDeferredClassInstance fDeferredInstance;
 	private ICPPClassTemplatePartialSpecialization[] fPartialSpecs;
 	private ICPPTemplateParameter[] fTemplateParameters;
 
-	public CPPClassTemplateSpecialization(ICPPClassTemplate orig, ICPPClassSpecialization owner, 
+	public CPPClassTemplateSpecialization(ICPPClassTemplate orig, ICPPClassSpecialization owner,
 			ICPPTemplateParameterMap argumentMap) {
 		super(orig, owner, argumentMap);
 	}
-	
+
 	public void setTemplateParameters(ICPPTemplateParameter[] templateParameters) {
 		fTemplateParameters = templateParameters;
 	}
@@ -105,12 +104,12 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	public String toString() {
 		return getName();
 	}
-	
+
 	@Override
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter param) {
 		return param;
 	}
-	
+
 	@Override
 	public final ICPPDeferredClassInstance asDeferredInstance() {
 		if (fDeferredInstance == null) {
@@ -118,17 +117,17 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		}
 		return fDeferredInstance;
 	}
-	
+
 	@Override
 	public ICPPTemplateArgument getDefaultArgFromIndex(int paramPos) throws DOMException {
 		return null;
 	}
-	
+
 	@Override
 	public ICPPClassSpecialization getOwner() {
 		return (ICPPClassSpecialization) super.getOwner();
 	}
-	
+
 	@Override
 	public ICPPClassTemplate getSpecializedBinding() {
 		return (ICPPClassTemplate) super.getSpecializedBinding();

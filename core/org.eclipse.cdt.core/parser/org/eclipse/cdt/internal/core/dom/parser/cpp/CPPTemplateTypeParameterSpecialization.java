@@ -23,12 +23,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
  * A specialization of a type template parameter. This is needed when a nested template
  * has a type template parameter whose default value is dependent on a template
  * parameter of an enclosing template.
- * 
+ *
  * This class can represent a specialization of either an AST or a PDOM template parameter.
  */
 public class CPPTemplateTypeParameterSpecialization extends CPPTemplateParameterSpecialization
 		implements ICPPTemplateTypeParameter {
-	
+
 	public CPPTemplateTypeParameterSpecialization(ICPPSpecialization owner, ICPPScope scope,
 			ICPPTemplateTypeParameter specialized, ICPPTemplateArgument defaultValue) {
 		super(owner, scope, specialized, defaultValue);
@@ -52,7 +52,7 @@ public class CPPTemplateTypeParameterSpecialization extends CPPTemplateParameter
 			return type.isSameType(this);
 		if (!(type instanceof ICPPTemplateTypeParameter))
 			return false;
-		
+
 		return getParameterID() == ((ICPPTemplateParameter) type).getParameterID();
 	}
 

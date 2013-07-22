@@ -29,32 +29,31 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
-class PDOMCPPMethodTemplateSpecialization extends
-		PDOMCPPFunctionTemplateSpecialization implements ICPPMethod {
-	
+class PDOMCPPMethodTemplateSpecialization extends PDOMCPPFunctionTemplateSpecialization
+		implements ICPPMethod {
 	private static final int TEMPLATE_PARAMS = PDOMCPPFunctionTemplateSpecialization.RECORD_SIZE;
-	
+
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = TEMPLATE_PARAMS + Database.PTR_SIZE;
-	
+
 	private volatile IPDOMCPPTemplateParameter[] fTemplateParameters;
-	
-	public PDOMCPPMethodTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method, PDOMBinding specialized)
-			throws CoreException {
+
+	public PDOMCPPMethodTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
+			ICPPMethod method, PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPFunctionTemplate) method, specialized);
-		computeTemplateParameters((ICPPFunctionTemplate) method);  // sets fTemplateParameters
+		computeTemplateParameters((ICPPFunctionTemplate) method);  // Sets fTemplateParameters
 		final Database db = getDB();
 		long rec = PDOMTemplateParameterArray.putArray(db, fTemplateParameters);
 		db.putRecPtr(record + TEMPLATE_PARAMS, rec);
-		linkage.new ConfigureTemplateParameters(((ICPPFunctionTemplate) method).getTemplateParameters(), fTemplateParameters);
+		linkage.new ConfigureTemplateParameters(((ICPPFunctionTemplate) method).getTemplateParameters(),
+				fTemplateParameters);
 	}
 
 	public PDOMCPPMethodTemplateSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -82,7 +81,7 @@ class PDOMCPPMethodTemplateSpecialization extends
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_METHOD_TEMPLATE_SPECIALIZATION;
 	}
-	
+
 	@Override
 	public boolean isDestructor() {
 		IBinding spec = getSpecializedBinding();
@@ -100,7 +99,7 @@ class PDOMCPPMethodTemplateSpecialization extends
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean isExplicit() {
 		IBinding spec = getSpecializedBinding();
@@ -132,7 +131,7 @@ class PDOMCPPMethodTemplateSpecialization extends
 		}
 		return 0;
 	}
-	
+
 	@Override
 	public boolean isExternC() {
 		return false;
@@ -152,11 +151,11 @@ class PDOMCPPMethodTemplateSpecialization extends
 	public boolean isFinal() {
 		return false;
 	}
-	
+
 	private void computeTemplateParameters(ICPPFunctionTemplate originalMethodTemplate) {
 		try {
-			fTemplateParameters = PDOMTemplateParameterArray.createPDOMTemplateParameters(getLinkage(), this, 
-					originalMethodTemplate.getTemplateParameters());
+			fTemplateParameters = PDOMTemplateParameterArray.createPDOMTemplateParameters(getLinkage(),
+					this, originalMethodTemplate.getTemplateParameters());
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
 			fTemplateParameters = IPDOMCPPTemplateParameter.EMPTY_ARRAY;

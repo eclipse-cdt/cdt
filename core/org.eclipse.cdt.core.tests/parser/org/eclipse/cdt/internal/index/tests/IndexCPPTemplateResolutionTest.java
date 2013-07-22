@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -64,9 +67,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Tests for exercising resolution of template bindings against IIndex
@@ -2322,7 +2322,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testSpecializationRedefinition_409444() throws Exception {
 		checkBindings();
 	}
-	
+
 	//	struct N {
 	//	    int node;
 	//	};
@@ -2332,12 +2332,12 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	    template <int T::*>
 	//	    struct Base {};
 	//	};
-	
+
 	//	List<N>::Base<&N::node> base;
 	public void testDependentTemplateParameterInNestedTemplate_407497() throws Exception {
 		checkBindings();
 	}
-	
+
 	//	template <typename T>
 	//	struct enclosing {
 	//	    template <typename U = T>
@@ -2345,12 +2345,12 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	        typedef U type;
 	//	    };
 	//	};
-	
+
 	//	typedef enclosing<int>::nested<>::type waldo;
 	public void testDependentTemplateParameterInNestedTemplate_399454() throws Exception {
 		checkBindings();
 	}
-	
+
 	//	void f(int);
 	//
 	//	template <typename... Args>

@@ -2364,4 +2364,23 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testNPE_407497() throws Exception {
 		checkBindings();
 	}
+	
+	//  template <typename>
+	//  struct basic_A {
+	//      bool eof() const;
+	//  };
+	//
+	//  typedef basic_A<char> A;
+	
+	//  class B : public A {};
+	//
+	//  class C : public A, public B {};
+	//
+	//  void foo() {
+	//      C c;
+	//      c.eof();
+	//  }
+	public void testAmbiguousBaseClassLookup_413406() throws Exception {
+		getProblemFromASTName("eof();", 3);
+	}
 }

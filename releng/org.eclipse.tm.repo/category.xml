@@ -18,7 +18,7 @@
    <feature url="features/org.eclipse.rse.tests_3.4.100.qualifier.jar" id="org.eclipse.rse.tests" version="3.4.100.qualifier">
       <category name="tm_35_optional"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.3.200.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.3.200.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.3.100.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.3.100.qualifier">
       <category name="tm_35_optional"/>
    </feature>
    <feature url="features/org.eclipse.tm.terminal.sdk_3.3.100.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.3.100.qualifier">

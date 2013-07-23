@@ -10,6 +10,6 @@
   </parent>
   <groupId>org.eclipse.tm.features</groupId>
   <artifactId>org.eclipse.tm.terminal.local</artifactId>
-  <version>0.2.400.qualifier</version>
+  <version>0.2.300.qualifier</version>
   <packaging>eclipse-feature</packaging>
 </project>

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_4d9260db",
+        "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/AssignmentInConditionQuickFixTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-23T23:18:21Z",
+      "side": 1,
+      "message": "Please remove \\r characters.",
+      "revId": "eb820a3aa32f00ca74cc7123de8648b39ab57a46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

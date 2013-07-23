@@ -728,7 +728,11 @@ public class CVisitor extends ASTQueries {
         if (parent instanceof IASTParameterDeclaration || parent.getPropertyInParent() == ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER) {
         	IASTDeclarator fdtor = (IASTDeclarator) parent.getParent();
         	if (ASTQueries.findTypeRelevantDeclarator(fdtor) instanceof IASTFunctionDeclarator) {
-        		IASTName n= ASTQueries.findInnermostDeclarator(fdtor).getName();
+        		IASTDeclarator dtor = fdtor;
+        		while (dtor.getNestedDeclarator() != null && !(dtor.getNestedDeclarator() instanceof IASTFunctionDeclarator)) {
+        			dtor = dtor.getNestedDeclarator();
+        		}
+        		IASTName n = dtor.getName();
         		IBinding temp = n.resolveBinding();
         		if (temp != null && temp instanceof CFunction) {
         			binding = ((CFunction) temp).resolveParameter(name);

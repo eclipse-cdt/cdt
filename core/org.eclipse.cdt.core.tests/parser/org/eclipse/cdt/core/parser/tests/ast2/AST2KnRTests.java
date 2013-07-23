@@ -637,25 +637,24 @@ public class AST2KnRTests extends AST2TestBase {
         assertTrue(stmts[3] instanceof IASTNullStatement);
     }
     
-    // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=203050
+	//  typedef long time_t;
+	//
+	//  void (foo)(timep)
+	//  	const time_t * const timep;
+	//  {
+	//  	struct tm tmp;
+	//
+	//  	bar(timep, &tmp);
+	//  }
+	//
+	//  int (bar)(timep, tmp)
+	//  	const time_t * const	timep;
+	//  	struct tm * tmp;
+	//  {
+	//  	return 0;
+	//  }
     public void testBug203050() throws Exception {
-    	StringBuilder buffer = new StringBuilder();
-    	buffer.append("typedef long time_t;\n" +  //$NON-NLS-1$
-    			"\n" +  //$NON-NLS-1$
-    			"void (foo) (timep)\n" +  //$NON-NLS-1$
-    			"	const time_t * const timep;\n" +  //$NON-NLS-1$
-    			"{\n" +  //$NON-NLS-1$
-    			"	struct tm tmp;\n" +  //$NON-NLS-1$
-    			"	bar(timep, &tmp);\n" +  //$NON-NLS-1$
-    			"}\n" +  //$NON-NLS-1$
-    			"int (bar) (timep, tmp)\n" +  //$NON-NLS-1$
-    			"	const time_t * const	timep;\n" +  //$NON-NLS-1$
-    			"	struct tm * tmp;\n" +  //$NON-NLS-1$
-    			"{\n" +  //$NON-NLS-1$
-    			"	return 0;\n" +  //$NON-NLS-1$
-    			"}\n"); //$NON-NLS-1$
-    	
-		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C, true, true);
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.C, true, true);
         assertTrue(tu.getDeclarations()[0] instanceof IASTSimpleDeclaration);
         assertTrue(tu.getDeclarations()[1] instanceof IASTFunctionDefinition);
         assertTrue(tu.getDeclarations()[2] instanceof IASTFunctionDefinition);

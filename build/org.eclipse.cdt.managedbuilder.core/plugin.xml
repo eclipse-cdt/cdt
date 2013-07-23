@@ -609,7 +609,7 @@
             class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector"
             id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
             name="%GCCBuildinCompilerSettings.name"
-            parameter="${COMMAND} -E -P -v -dD &quot;${INPUTS}&quot;">
+            parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;">
          <language-scope id="org.eclipse.cdt.core.gcc"/>
          <language-scope id="org.eclipse.cdt.core.g++"/>
       </provider>
@@ -617,7 +617,7 @@
             class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetectorCygwin"
             id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorCygwin"
             name="CDT GCC Builtin Compiler Settings Cygwin"
-            parameter="${COMMAND} -E -P -v -dD &quot;${INPUTS}&quot;">
+            parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;">
          <language-scope id="org.eclipse.cdt.core.gcc"/>
          <language-scope id="org.eclipse.cdt.core.g++"/>
       </provider>
@@ -625,7 +625,7 @@
             class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetectorMinGW"
             id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorMinGW"
             name="%GCCBuildinCompilerSettingsMinGW.name"
-            parameter="${COMMAND} -E -P -v -dD &quot;${INPUTS}&quot;">
+            parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;">
          <language-scope id="org.eclipse.cdt.core.gcc"/>
          <language-scope id="org.eclipse.cdt.core.g++"/>
       </provider>

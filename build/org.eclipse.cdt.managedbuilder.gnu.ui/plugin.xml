@@ -960,6 +960,46 @@
          	variableList="CPATH,C_INCLUDE_PATH">
          </envVarBuildPath>
 		  <optionCategory
+			  owner="cdt.managedbuild.tool.gnu.c.compiler"
+			  name="%OptionCategory.Dialect"
+			  id="gnu.c.compiler.category.dialect">
+		  </optionCategory>
+		  <option
+			  category="gnu.c.compiler.category.dialect"
+			  defaultValue="false"
+			  id="gnu.c.compiler.option.dialect.std"
+			  name="%Option.Posix.Dialect"
+			  useByScannerDiscovery="true"
+			  valueType="enumerated">
+			  <enumeratedOptionValue
+					  name="%Option.Posix.Dialect.default"
+					  command=""
+					  id="gnu.c.compiler.dialect.default">
+			  </enumeratedOptionValue>
+			  <enumeratedOptionValue
+					  name="%Option.Posix.Dialect.c90"
+					  command="-std=c90"
+					  id="gnu.c.compiler.dialect.c90">
+			  </enumeratedOptionValue>
+			  <enumeratedOptionValue
+					  name="%Option.Posix.Dialect.c99"
+					  command="-std=c99"
+					  id="gnu.c.compiler.dialect.c99">
+			  </enumeratedOptionValue>
+			  <enumeratedOptionValue
+					  name="%Option.Posix.Dialect.c11"
+					  command="-std=c11"
+					  id="gnu.c.compiler.dialect.c11">
+			  </enumeratedOptionValue>
+		  </option>
+		  <option
+			  name="%Option.Posix.Dialect.Flags"
+			  category="gnu.c.compiler.category.dialect"
+			  id="gnu.c.compiler.option.dialect.flags"
+			  useByScannerDiscovery="true"
+			  valueType="string">
+		  </option>
+		  <optionCategory
 		      owner="cdt.managedbuild.tool.gnu.c.compiler"
 			  name="%OptionCategory.Preproc"
 			  id="gnu.c.compiler.category.preprocessor">
@@ -1295,6 +1335,46 @@
          	pathType="buildpathInclude"
          	variableList="CPATH,CPLUS_INCLUDE_PATH">
          </envVarBuildPath>
+		  <optionCategory
+			  owner="cdt.managedbuild.tool.gnu.cpp.compiler"
+			  name="%OptionCategory.Dialect"
+			  id="gnu.cpp.compiler.category.dialect">
+		  </optionCategory>
+		  <option
+			  category="gnu.cpp.compiler.category.dialect"
+			  defaultValue="false"
+			  id="gnu.cpp.compiler.option.dialect.std"
+			  name="%Option.Posix.Dialect"
+			  useByScannerDiscovery="true"
+			  valueType="enumerated">
+			  <enumeratedOptionValue
+					  name="%Option.Posix.Dialect.default"
+					  command=""
+					  id="gnu.cpp.compiler.dialect.default">
+			  </enumeratedOptionValue>
+			  <enumeratedOptionValue
+					  name="%Option.Posix.Dialect.c++98"
+					  command="-std=c++98"
+					  id="gnu.cpp.compiler.dialect.c++98">
+			  </enumeratedOptionValue>
+			  <enumeratedOptionValue
+					  name="%Option.Posix.Dialect.c++11"
+					  command="-std=c++0x"
+					  id="gnu.cpp.compiler.dialect.c++11">
+			  </enumeratedOptionValue>
+			  <enumeratedOptionValue
+					  name="%Option.Posix.Dialect.c++1y"
+					  command="-std=c++1y"
+					  id="gnu.cpp.compiler.dialect.c++1y">
+			  </enumeratedOptionValue>
+		  </option>
+		  <option
+			  name="%Option.Posix.Dialect.Flags"
+			  category="gnu.cpp.compiler.category.dialect"
+			  id="gnu.cpp.compiler.option.dialect.flags"
+			  useByScannerDiscovery="true"
+			  valueType="string">
+		  </option>
 		  <optionCategory
 			  owner="cdt.managedbuild.tool.gnu.cpp.compiler"
 			  name="%OptionCategory.Preproc"

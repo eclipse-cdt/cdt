@@ -181,9 +181,10 @@ Language settings providers can have options that affect the behavior of a provi
 			<td headers="description2">The command to make the compiler print built-in settings.
 				Following variables are recognized:
 				<ul>
-					<li><strong>${COMMAND}</strong> - compiler command from the toolchain, such as "gcc".</li>
+					<li><strong>${COMMAND}</strong> - compiler command from the tool-chain, such as "gcc".</li>
+					<li><strong>${FLAGS}</strong> - applicable compiler flags from the tool-chain, such as language dialect flag "-std=c++0x".</li>
 					<li><strong>${INPUTS}</strong> - indicates normally an empty specs file required by the compiler.
-						In no such file exists the file gets created temporarily in Eclipse workspace plugin area.
+						If no such file exists the file gets created temporarily in Eclipse workspace plugin area.
 					</li>
 					<li><strong>${EXT}</strong> - an extension for the language to discover built-in settings.
 						A provider can be associated with multiple languages and it will run the command for each language.

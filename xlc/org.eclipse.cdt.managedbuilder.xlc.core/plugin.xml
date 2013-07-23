@@ -82,7 +82,7 @@
             class="org.eclipse.cdt.managedbuilder.xlc.core.XlcBuiltinSpecsDetector"
             id="org.eclipse.cdt.managedbuilder.xlc.core.XlcBuiltinSpecsDetector"
             name="%XlcBuiltinSpecsDetectorName"
-            parameter="${COMMAND} -E -V -P -w &quot;${INPUTS}&quot;">
+            parameter="${COMMAND} ${FLAGS} -E -V -P -w &quot;${INPUTS}&quot;">
          <language-scope id="org.eclipse.cdt.core.gcc"/>
          <language-scope id="org.eclipse.cdt.core.g++"/>
       </provider>

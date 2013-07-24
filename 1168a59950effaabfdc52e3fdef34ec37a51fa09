@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_5275d83d",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixAssignmentInCondition.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-24T17:19:25Z",
+      "side": 1,
+      "message": "Remove.",
+      "revId": "1168a59950effaabfdc52e3fdef34ec37a51fa09",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_b279bc3c",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixAssignmentInCondition.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-24T17:19:25Z",
+      "side": 1,
+      "message": "Remove.",
+      "revId": "1168a59950effaabfdc52e3fdef34ec37a51fa09",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_92764048",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixAssignmentInCondition.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-24T17:19:25Z",
+      "side": 1,
+      "message": "The name \"dad\" predated this change, but it would be good to change it to stay away from cryptic abbreviations.",
+      "revId": "1168a59950effaabfdc52e3fdef34ec37a51fa09",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

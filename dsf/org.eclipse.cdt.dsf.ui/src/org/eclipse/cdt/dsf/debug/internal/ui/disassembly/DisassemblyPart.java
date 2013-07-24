@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Wind River Systems and others.
+ * Copyright (c) 2007, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
  *     Patrick Chuong (Texas Instruments) - Bug 364405
  *     Patrick Chuong (Texas Instruments) - Bug 369998
+ *     Patrick Chuong (Texas Instruments) - Bug 337851
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
@@ -1507,7 +1508,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (!fActive || fUpdatePending || fViewer == null || fDebugSessionId == null) {
 			return;
 		}
-		if (fBackend == null || !fBackend.hasDebugContext() || !fBackend.isSuspended() || fFrameAddress == PC_UNKNOWN) {
+		if (fBackend == null || !fBackend.hasDebugContext() || !fBackend.canDisassemble() || fFrameAddress == PC_UNKNOWN) {
 			return;
 		}
 		StyledText styledText = fViewer.getTextWidget();
@@ -2244,7 +2245,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fFrameAddress = address;
 		if (fTargetFrame == -1) {
 			fTargetFrame = getActiveStackFrame();
-			if (fTargetFrame < 0 && fBackend != null && fBackend.isSuspended()) {
+			if (fTargetFrame < 0 && fBackend != null && fBackend.canDisassemble()) {
 				fTargetFrame= 0;
 			}
 			if (fTargetFrame == -1) {
@@ -2259,7 +2260,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (fFrameAddress.compareTo(PC_UNKNOWN) == 0) {
 			if (!fUpdatePending) {
 				fGotoFramePending = false;
-				if (fBackend != null && fBackend.hasDebugContext() && fBackend.isSuspended()) {
+				if (fBackend != null && fBackend.hasDebugContext() && fBackend.canDisassemble()) {
 					if (DEBUG) System.out.println("retrieveFrameAddress "+frame); //$NON-NLS-1$
 					fUpdatePending = true;
 					fBackend.retrieveFrameAddress(fTargetFrame);

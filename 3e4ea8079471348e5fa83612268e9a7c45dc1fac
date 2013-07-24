@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_837f1086",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 5864,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-24T22:29:11Z",
+      "side": 1,
+      "message": "It would be nice to test a more realistic case when the max number of trivial initializers is a small positive number.",
+      "revId": "3e4ea8079471348e5fa83612268e9a7c45dc1fac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_c37918a1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/AbstractCLikeLanguage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-24T22:29:11Z",
+      "side": 1,
+      "message": "Please move to the top of the class.",
+      "revId": "3e4ea8079471348e5fa83612268e9a7c45dc1fac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_6325a4e1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/AbstractCLikeLanguage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-24T22:29:11Z",
+      "side": 1,
+      "message": "Accessing preferences directly from the parser code is not allowed since IBM uses this code in a headless environment that doesn\u0027t support Eclipse preferences. You can propagate additional preferences by adding them to ExtendedScannerInfo class similar to how it was done for include export patterns (see getIncludeExportPatterns and setIncludeExportPatterns methods).",
+      "revId": "3e4ea8079471348e5fa83612268e9a7c45dc1fac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_23fa7c83",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ASTTranslationUnit.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-24T22:29:11Z",
+      "side": 1,
+      "message": "Redundant initialization",
+      "revId": "3e4ea8079471348e5fa83612268e9a7c45dc1fac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_a39b2c7e",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CCorePreferenceConstants.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-24T22:29:11Z",
+      "side": 1,
+      "message": "Please explain that this preference takes effect only if SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS is turned on.",
+      "revId": "3e4ea8079471348e5fa83612268e9a7c45dc1fac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_032660bf",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/ScalabilityPreferencePage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-07-24T22:29:11Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "3e4ea8079471348e5fa83612268e9a7c45dc1fac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

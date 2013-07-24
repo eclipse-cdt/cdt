@@ -84,6 +84,15 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		}
 	}
 
+	class MockLspToolchainBuiltinSpecsDetectorCommandResolver extends MockGCCBuiltinSpecsDetectorCommandResolver {
+		// ID must match the tool-chain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
+		private static final String MOCK_TOOLCHAIN_ID = "cdt.managedbuilder.lsp.tests.toolchain";
+		@Override
+		public String getToolchainId() {
+			return MOCK_TOOLCHAIN_ID;
+		}
+	}
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -161,6 +170,19 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 			assertFalse(command.equals(expected));
 			assertEquals(expected, resolvedCommand);
 		}
+	}
+
+	/**
+	 * Test expansion of relevant tool options in build command.
+	 */
+	public void testGCCBuiltinSpecsDetector_ResolvedCommand_Flags() throws Exception {
+		// check ${FLAGS}
+		MockLspToolchainBuiltinSpecsDetectorCommandResolver detector = new MockLspToolchainBuiltinSpecsDetectorCommandResolver();
+		detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
+		detector.setCommand("gcc ${FLAGS}");
+
+		String resolvedCommand = detector.resolveCommand(LANGUAGE_ID_C);
+		assertEquals("gcc -bool-option -str-option=str-value -enum-option -list-option1 -list-option2 -tree-option", resolvedCommand);
 	}
 
 	/**

@@ -9392,6 +9392,15 @@
                   valueType="string">
             </option>
             <option
+                  command="-bool-option"
+                  defaultValue="true"
+                  id="cdt.managedbuilder.lsp.tests.option.bool"
+                  isAbstract="false"
+                  resourceFilter="all"
+                  useByScannerDiscovery="true"
+                  valueType="boolean">
+            </option>
+            <option
                   command="-str-option="
                   id="cdt.managedbuilder.lsp.tests.option.string"
                   isAbstract="false"
@@ -9399,6 +9408,50 @@
                   useByScannerDiscovery="true"
                   value="str-value"
                   valueType="string">
+            </option>
+            <option
+                  id="cdt.managedbuilder.lsp.tests.option.enum"
+                  isAbstract="false"
+                  resourceFilter="all"
+                  useByScannerDiscovery="true"
+                  valueType="enumerated">
+               <enumeratedOptionValue
+                     command="-enum-option"
+                     id="cdt.managedbuilder.lsp.tests.enum.value"
+                     isDefault="true"
+                     name="cdt.managedbuilder.lsp.tests.enum.value">
+               </enumeratedOptionValue>
+            </option>
+            <option
+                  command="-list-option"
+                  id="cdt.managedbuilder.lsp.tests.option.stringlist"
+                  isAbstract="false"
+                  resourceFilter="all"
+                  useByScannerDiscovery="true"
+                  valueType="stringList">
+               <listOptionValue
+                     value="1">
+               </listOptionValue>
+               <listOptionValue
+                     value="2">
+               </listOptionValue>
+            </option>
+            <option
+                  defaultValue="cdt.managedbuilder.lsp.tests.tree-option"
+                  id="cdt.managedbuilder.lsp.tests.option.tree"
+                  isAbstract="false"
+                  resourceFilter="all"
+                  useByScannerDiscovery="true"
+                  valueType="tree">
+               <treeOptionRoot
+                     id="cdt.managedbuilder.lsp.tests.option.tree.root"
+                     name="cdt.managedbuilder.lsp.tests.option.tree.root">
+                  <treeOption
+                        command="-tree-option"
+                        id="cdt.managedbuilder.lsp.tests.tree-option"
+                        name="cdt.managedbuilder.lsp.tests.tree-option">
+                  </treeOption>
+               </treeOptionRoot>
             </option>
          </tool>
       </toolChain>

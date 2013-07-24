@@ -93,6 +93,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	public static final String JOB_FAMILY_BUILTIN_SPECS_DETECTOR = "org.eclipse.cdt.managedbuilder.AbstractBuiltinSpecsDetector"; //$NON-NLS-1$
 
 	protected static final String COMPILER_MACRO = "${COMMAND}"; //$NON-NLS-1$
+	protected static final String FLAGS_MACRO = "${FLAGS}"; //$NON-NLS-1$
 	protected static final String SPEC_FILE_MACRO = "${INPUTS}"; //$NON-NLS-1$
 	protected static final String SPEC_EXT_MACRO = "${EXT}"; //$NON-NLS-1$
 	protected static final String SPEC_FILE_BASE = "spec"; //$NON-NLS-1$
@@ -304,6 +305,11 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 				String compiler = getCompilerCommand(languageId);
 				if (compiler != null)
 					cmd = cmd.replace(COMPILER_MACRO, compiler);
+			}
+			if (cmd.contains(FLAGS_MACRO)) {
+				String flags = getToolOptions(languageId);
+				if (flags != null)
+					cmd = cmd.replace(FLAGS_MACRO, flags);
 			}
 			if (cmd.contains(SPEC_FILE_MACRO)) {
 				String specFileName = getSpecFile(languageId);
@@ -812,6 +818,17 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "Unable to find file extension for language " + languageId)); //$NON-NLS-1$
 		}
 		return ext;
+	}
+
+	/**
+	 * Determine additional options to pass to scanner discovery command.
+	 * These options are intended to come from the tool-chain.
+	 * 
+	 * @param languageId - language ID.
+	 * @return additional options to pass to scanner discovery command.
+	 */
+	protected String getToolOptions(String languageId) {
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override

@@ -16,8 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
+import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -39,6 +41,7 @@ import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableManager
  * @since 8.1
  */
 public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector {
+	private static final String EMPTY_QUOTED_STRING = "\"\""; //$NON-NLS-1$
 	private Map<String, ITool> toolMap = new HashMap<String, ITool>();
 
 	/**
@@ -55,13 +58,16 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 	 * This returns the first tool found.
 	 */
 	private ITool getTool(String languageId) {
-		ITool tool = toolMap.get(languageId);
-		if (tool != null) {
-			return tool;
+		if (currentCfgDescription == null) {
+			ITool tool = toolMap.get(languageId);
+			if (tool != null) {
+				return tool;
+			}
 		}
 
 		String toolchainId = null;
 		IToolChain toolchain = null;
+		ITool tool = null;
 		if (currentCfgDescription != null) {
 			IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(currentCfgDescription);
 			toolchain = cfg != null ? cfg.getToolChain() : null;
@@ -128,6 +134,58 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 			ManagedBuilderCorePlugin.error("Unable to find file extension for language " + languageId); //$NON-NLS-1$
 		}
 		return ext;
+	}
+
+	@Override
+	protected String getToolOptions(String languageId) {
+		String flags = ""; //$NON-NLS-1$
+		ITool tool = getTool(languageId);
+		if (tool != null) {
+			IOption[] options = tool.getOptions();
+			for (IOption option : options) {
+				if (option.isForScannerDiscovery()) {
+					try {
+						String optionValue = null;
+						switch (option.getBasicValueType()) {
+						case IOption.BOOLEAN:
+							if (option.getBooleanValue()) {
+								optionValue = option.getCommand();
+							} else {
+								optionValue = option.getCommandFalse();
+							}
+							break;
+						case IOption.ENUMERATED:
+							optionValue = option.getEnumCommand(option.getSelectedEnum());
+							break;
+						case IOption.STRING:
+							optionValue = option.getCommand() + option.getStringValue();
+							break;
+						case IOption.STRING_LIST:
+							String[] values = option.getBasicStringListValue();
+							if(values != null) {
+								optionValue = ""; //$NON-NLS-1$
+								String cmd = option.getCommand();
+								for (String value : values) {
+									if(!value.isEmpty() && !value.equals(EMPTY_QUOTED_STRING))
+										optionValue = optionValue + cmd + value + ' ';
+								}
+							}
+							break;
+						case IOption.TREE:
+							optionValue = option.getCommand(option.getStringValue());
+							break;
+						default:
+						}
+						if (optionValue != null) {
+							flags = flags + ' ' + optionValue.trim();
+						}
+					} catch (BuildException e) {
+						ManagedBuilderCorePlugin.log(e);
+					}
+				}
+			}
+		}
+		return flags.trim();
 	}
 
 	@Override

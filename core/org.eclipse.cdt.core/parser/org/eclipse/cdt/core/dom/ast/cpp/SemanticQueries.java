@@ -18,6 +18,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
+ * This class exposes semantic queries about C++ code to clients such
+ * as code analysis.
+ * 
  * @since 5.5
  */
 public class SemanticQueries {

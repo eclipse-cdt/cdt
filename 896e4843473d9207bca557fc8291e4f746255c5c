@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_c2a2a9f5",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/gettersandsetters/GenerateGettersAndSettersTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-07-25T22:02:38Z",
+      "side": 1,
+      "message": "It\u0027s intentional to not make cosmetic changes and include those in separate commits.",
+      "parentUuid": "c73e4bec_22d1cdc6",
+      "revId": "896e4843473d9207bca557fc8291e4f746255c5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPn//2UU\u003d",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/gettersandsetters/GenerateGettersAndSettersTest.java",
         "patchSetId": 1

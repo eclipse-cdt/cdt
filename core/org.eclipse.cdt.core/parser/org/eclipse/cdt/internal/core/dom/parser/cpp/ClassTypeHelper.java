@@ -617,7 +617,7 @@ public class ClassTypeHelper {
 		if (visitedBefore != null)
 			return visitedBefore;
 
-		ICPPMethod[] methods= classType.getDeclaredMethods();
+		ICPPMethod[] methods= ClassTypeHelper.getDeclaredMethods(classType, point);
 		ICPPMethod candidate= null;
 		boolean hasOverridden= false;
 		for (ICPPMethod method : methods) {

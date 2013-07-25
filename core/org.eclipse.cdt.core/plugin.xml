@@ -835,5 +835,16 @@
             name="%ReferencedProjectsLanguageSettingsProvider.name">
       </provider>
    </extension>
+   <extension
+         point="org.eclipse.core.resources.filterMatchers">
+      <filterMatcher
+            argumentType="string"
+            class="org.eclipse.cdt.core.index.export.ExportIndexFileInfoMatcher"
+            description="FIle Info Matcher used by CDT&apos;s index exporter"
+            id="org.eclipse.cdt.core.exportIndexFileInfoMatcher"
+            name="Export Index File Info Matcher"
+            ordering="first">
+      </filterMatcher>
+   </extension>
 
 </plugin>

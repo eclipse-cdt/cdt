@@ -34,10 +34,12 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationData;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
+import org.eclipse.core.resources.FileInfoMatcherDescription;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceFilterDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -61,6 +63,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	private static final String CONTENT = "content"; //$NON-NLS-1$
 	public static final String OPT_SOURCE = "-source"; //$NON-NLS-1$
 	public static final String OPT_INCLUDE = "-include"; //$NON-NLS-1$
+	public static final String OPT_EXCLUDE = "-exclude"; //$NON-NLS-1$
 	public static final String OPT_FRAGMENT_ID = "-id"; //$NON-NLS-1$
 
 	private IFolder content;
@@ -88,10 +91,16 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 			includeFiles.addAll(getParameters(OPT_INCLUDE));				
 		}
 
+		// -exclude
+		List<String> excludeFiles = new ArrayList<String>();
+		if (isPresent(OPT_EXCLUDE)) {
+			excludeFiles.addAll(getParameters(OPT_EXCLUDE));
+		}
+		
 		// -id
 		fragmentId= getSingleString(OPT_FRAGMENT_ID);
 
-		return createCCProject("__" + System.currentTimeMillis(), source, includeFiles); //$NON-NLS-1$
+		return createCCProject("__" + System.currentTimeMillis(), source, includeFiles, excludeFiles); //$NON-NLS-1$
 	}
 
 	/**
@@ -111,27 +120,33 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	 * @throws CoreException
 	 */
 	private ICProject createCCProject(final String projectName, final File location,
-			final List<String> includeFiles) throws CoreException {
+			final List<String> includeFiles, final List<String> excludeFiles) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final ICProject newProject[] = new ICProject[1];
 
 		ws.run(new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IWorkspace workspace= ResourcesPlugin.getWorkspace();
-				IProject project= workspace.getRoot().getProject("__prebuilt_index_temp__" + System.currentTimeMillis()); //$NON-NLS-1$
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IProject project = workspace.getRoot().getProject("__prebuilt_index_temp__" + System.currentTimeMillis()); //$NON-NLS-1$
 				IProjectDescription description = workspace.newProjectDescription(project.getName());
 				CCorePlugin.getDefault().createCProject(description, project, NPM, PREBUILT_PROJECT_OWNER);
 				CCorePlugin.getDefault().convertProjectFromCtoCC(project, NPM);
-				ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(project, true); 
+				ICProjectDescription pd = CCorePlugin.getDefault().getProjectDescription(project, true); 
 				newCfg(pd, project.getName(), "config"); //$NON-NLS-1$
 								
 				CoreModel.getDefault().setProjectDescription(project, pd, true, new NullProgressMonitor());
 				
+				// Add in exclude filters
+				for (String excludeFile : excludeFiles) {
+					FileInfoMatcherDescription matcherDescription = ExportIndexFileInfoMatcher.getDescription(excludeFile);
+					project.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FOLDERS | IResourceFilterDescription.INHERITABLE, matcherDescription, 0, NPM);
+				}
+
 				ICProject cproject= CCorePlugin.getDefault().getCoreModel().create(project);
 				
 				// External content appears under a linked folder
-				content= cproject.getProject().getFolder(CONTENT);
+				content = project.getFolder(CONTENT);
 				content.createLink(new Path(location.getAbsolutePath()), IResource.NONE, null);
 
 				// Setup path entries

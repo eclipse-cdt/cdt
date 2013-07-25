@@ -13,25 +13,28 @@ package org.eclipse.cdt.core.parser;
 
 /**
  * @author jcamelon
- *
  */
 public enum ParserMode  {
-	
-	// do not follow inclusions, do not parse function/method bodies
+	/**
+	 * Do not follow inclusions, do not parse function/method bodies.
+	 */
 	QUICK_PARSE,
-
-	//follow inclusions, do not parse function/method bodies
+	/**
+	 * Follow inclusions, do not parse function/method bodies.
+	 */
 	STRUCTURAL_PARSE,
-	
-	// follow inclusions, parse function/method bodies
+	/**
+	 * Follow inclusions, parse function/method bodies.
+	 */
 	COMPLETE_PARSE,
-	
-	// follow inclusions, parse function/method bodies, stop at particular offset
-	// provide optimized lookup capability for querying symbols
+	/**
+	 * Follow inclusions, parse function/method bodies, stop at a particular offset.
+	 * Provide optimized lookup capability for querying symbols.
+	 */
 	COMPLETION_PARSE,
-
-	// follow inclusions, parse function/method bodies, stop at particular offset
-	// provide specific semantic information about an offset range or selection
+	/**
+	 * Follow inclusions, parse function/method bodies, stop at a particular offset.
+	 * Provide specific semantic information about an offset range or selection.
+	 */
 	SELECTION_PARSE,
-	
 }

@@ -4,7 +4,7 @@
    <extension-point id="remoteServices" name="Remote Services" schema="schema/remoteServices.exsd"/>
    <extension-point id="remoteResources" name="Remote Resources" schema="schema/remoteResources.exsd"/>
    <extension
-         point="org.eclipse.ptp.remote.core.remoteServices">
+         point="org.eclipse.remote.core.remoteServices">
       <remoteServices
             class="org.eclipse.internal.remote.core.services.local.LocalServicesFactory"
             id="org.eclipse.ptp.remote.LocalServices"

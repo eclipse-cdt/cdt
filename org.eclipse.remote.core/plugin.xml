@@ -7,26 +7,11 @@
          point="org.eclipse.remote.core.remoteServices">
       <remoteServices
             class="org.eclipse.internal.remote.core.services.local.LocalServicesFactory"
-            id="org.eclipse.ptp.remote.LocalServices"
+            id="org.eclipse.remote.LocalServices"
             name="Local"
             newConnections="false"
             scheme="file">
       </remoteServices>
-   </extension>
-   <extension
-         point="org.eclipse.core.variables.valueVariables">
-      <variable
-            description="payload"
-            initialValue="&quot;&quot;"
-            name="payload"
-            readOnly="false">
-      </variable>
-      <variable
-            description="payload_args"
-            initialValue="&quot;&quot;"
-            name="payload_args"
-            readOnly="false">
-      </variable>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

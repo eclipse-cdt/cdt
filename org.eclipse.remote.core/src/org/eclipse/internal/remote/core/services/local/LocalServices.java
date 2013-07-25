@@ -23,7 +23,7 @@ import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.IRemoteServicesDescriptor;
 
 public class LocalServices implements IRemoteServices {
-	public static final String LocalServicesId = "org.eclipse.ptp.remote.LocalServices"; //$NON-NLS-1$
+	public static final String LocalServicesId = "org.eclipse.remote.LocalServices"; //$NON-NLS-1$
 
 	private IRemoteFileManager fFileMgr = null;
 	private final IRemoteConnectionManager fConnMgr = new LocalConnectionManager(this);

@@ -93,6 +93,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	public static final String JOB_FAMILY_BUILTIN_SPECS_DETECTOR = "org.eclipse.cdt.managedbuilder.AbstractBuiltinSpecsDetector"; //$NON-NLS-1$
 
 	protected static final String COMPILER_MACRO = "${COMMAND}"; //$NON-NLS-1$
+	/** @since 8.3 */
 	protected static final String FLAGS_MACRO = "${FLAGS}"; //$NON-NLS-1$
 	protected static final String SPEC_FILE_MACRO = "${INPUTS}"; //$NON-NLS-1$
 	protected static final String SPEC_EXT_MACRO = "${EXT}"; //$NON-NLS-1$
@@ -826,6 +827,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * 
 	 * @param languageId - language ID.
 	 * @return additional options to pass to scanner discovery command.
+	 *
+	 * @since 8.3
 	 */
 	protected String getToolOptions(String languageId) {
 		return ""; //$NON-NLS-1$

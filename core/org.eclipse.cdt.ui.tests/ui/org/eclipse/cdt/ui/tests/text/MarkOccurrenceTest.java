@@ -505,7 +505,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 	public void testMarkOperatorOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "operator+", true, true, true, false);
+			fMatch= fFindReplaceDocumentAdapter.find(0, "operator+", true, true, false, false);
 		} catch (BadLocationException e) {
 			fail();
 		}

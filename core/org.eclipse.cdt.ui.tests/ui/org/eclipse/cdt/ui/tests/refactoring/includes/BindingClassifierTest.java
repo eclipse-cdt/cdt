@@ -128,6 +128,22 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	td1 a = *f();
 	public void testTypedef_2() throws Exception {
 		assertDefined("f", "td1");
+		assertDeclared();
+	}
+
+	//	template<typename T> struct allocator {};
+	//	template<typename T, typename U = allocator<T>> class basic_string {};
+	//	typedef basic_string<char> string;
+	//	template<typename T, typename A>
+	//	basic_string<T, A> f(const T* a, const basic_string<T, A>& b);
+
+	//	void test() {
+	//	  string a;
+	//	  f("*", a);
+	//	}
+	public void testTypedef_3() throws Exception {
+		assertDefined("f", "string"); // "basic_string" and "allocator" should not be defined.
+		assertDeclared();
 	}
 
 	//	class A { int x; };
@@ -137,6 +153,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	int a = f()->x;
 	public void testClassMember() throws Exception {
 		assertDefined("f", "A");
+		assertDeclared();
 	}
 
 	//	class A { void m(); };
@@ -146,6 +163,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	}
 	public void testMethodCall() throws Exception {
 		assertDefined("A");
+		assertDeclared();
 	}
 
 	//	struct A {};
@@ -167,17 +185,42 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	}
 	public void testVariableReference() throws Exception {
 		assertDefined("a");  // Forward declaration of variables is not allowed by default.
+		assertDeclared();
 	}
 
 	//	struct A {
 	//	  void operator()(int p);
 	//	};
-	//	const A a;
+	//	const A& a;
 
 	//	void test() {
 	//	  a(1);
 	//	}
 	public void testCallOperator() throws Exception {
-		assertDefined("A", "a");  // Forward declaration of variables is not allowed by default.
+		assertDefined("A", "a");
+		assertDeclared();
+	}
+
+	//	struct A {};
+	//	template<typename T> struct B {};
+	//	template<typename T, typename U = B<T>> struct C {};
+
+	//	struct D : public C<A> {};
+	public void testTemplate_1() throws Exception {
+		assertDefined("C");
+		assertDeclared("A");
+	}
+
+	//	struct A {};
+	//	template<typename T> struct B {};
+	//	template<typename T, typename U = B<T>> struct C {};
+	//	struct D : public C<A> {};
+
+	//	void test() {
+	//	  D d;
+	//	}
+	public void testTemplate_2() throws Exception {
+		assertDefined("D");
+		assertDeclared();
 	}
 }

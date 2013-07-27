@@ -84,12 +84,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
+
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * For a whole translation unit or a part of it determines a set of externally defined bindings that
@@ -395,55 +394,23 @@ public class BindingClassifier {
 		if (!fProcessedDefinedBindings.add(binding))
 			return;
 
-		if (fAst.getDefinitionsInAST(binding).length != 0) {
-			return;  // Defined locally
+		if (binding instanceof ITypedef) {
+			IType type = ((ITypedef) binding).getType();
+			type = SemanticUtil.getNestedType(type, ALLCVQ);
+			if (type instanceof IBinding) {
+				// Record the fact that we also have a definition of the typedef's target type.
+				fProcessedDefinedBindings.add((IBinding) type);
+			}
 		}
 
-		if (binding instanceof ICPPTemplateInstance) {
-			defineTemplateArguments((ICPPTemplateInstance) binding);
+		if (fAst.getDefinitionsInAST(binding).length != 0) {
+			return;  // Defined locally
 		}
 
 		List<IBinding> requiredBindings = getRequiredBindings(binding);
 		for (IBinding requiredBinding : requiredBindings) {
 			fBindingsToDeclare.remove(requiredBinding);
 			fBindingsToDefine.add(requiredBinding);
-		}
-	}
-
-	/**
-	 * Defines non-pointer template arguments.
-	 */
-	protected void defineTemplateArguments(ICPPTemplateInstance instance) {
-		ICPPTemplateDefinition templateDefinition = instance.getTemplateDefinition();
-		ICPPTemplateParameter[] templateParameters = templateDefinition.getTemplateParameters();
-		ICPPTemplateArgument[] templateArguments = instance.getTemplateArguments();
-		for (int i = 0; i < templateArguments.length; i++) {
-			ICPPTemplateArgument argument = templateArguments[i];
-			ICPPTemplateParameter parameter = templateParameters[i];
-			ICPPTemplateArgument parameterDefault = parameter.getDefaultValue();
-			if (parameterDefault != null) {
-				// Skip the template arguments if it is the same as parameter default.
-				if (argument.isSameValue(parameterDefault))
-					continue;
-				if (argument.isTypeValue() && parameterDefault.isTypeValue()) {
-					IType argType = argument.getTypeValue();
-					IType defType = parameterDefault.getTypeValue();
-					if (argType instanceof ICPPTemplateInstance && defType instanceof ICPPTemplateInstance) {
-						IType argTemplate = (IType) ((ICPPTemplateInstance) argType).getTemplateDefinition();
-						IType defTemplate = (IType) ((ICPPTemplateInstance) defType).getTemplateDefinition();
-						if (argTemplate.isSameType(defTemplate)) {
-							defineTemplateArguments((ICPPTemplateInstance) argType);
-							continue;
-						}
-					}
-				}
-			}
-			IType type = argument.getTypeValue();
-			if (!(type instanceof IPointerType) && !(type instanceof ICPPReferenceType)) {
-				IBinding binding = getTypeBinding(type);
-				if (binding != null)
-					defineBinding(binding);
-			}
 		}
 	}
 

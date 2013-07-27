@@ -6,11 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.core.index;
-
 
 /**
  * An index change listener is notified of changes to the index. These changes
@@ -27,7 +25,6 @@ package org.eclipse.cdt.core.index;
  * @since 4.0
  */
 public interface IIndexChangeListener {
-	
 	/**
 	 * Notifies this listener that some part of the index has changed.
 	 * <p>

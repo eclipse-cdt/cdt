@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Sergey Prigogin (Google)
+ *     Andrew Ferguson (Symbian) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 

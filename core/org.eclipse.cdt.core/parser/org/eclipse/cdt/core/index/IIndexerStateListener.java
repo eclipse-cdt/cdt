@@ -6,11 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.core.index;
-
 
 /**
  * An indexer state listener is notified of changes to the state of the indexer.
@@ -25,7 +23,6 @@ package org.eclipse.cdt.core.index;
  * @since 4.0
  */
 public interface IIndexerStateListener {
-	
 	/**
 	 * Notifies this listener that the state of the indexer has changed.
 	 * <p>

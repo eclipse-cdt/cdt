@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - initial API and implementation
+ *     Andrew Ferguson (Symbian) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.index;
-
 
 /**
  * Each IIndexFragment stores file location representations in an implementation specific manner.

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 
@@ -18,7 +18,6 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
  * setup of the indexer when a project is added to the workspace. 
  */
 public abstract class IndexerSetupParticipant {
-	
 	/**
 	 * The method will be called before an indexer is set up for a project. If you
 	 * return <code>true</code> the setup will be postponed. You need to call 

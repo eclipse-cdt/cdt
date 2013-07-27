@@ -6,11 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Andrew Ferguson (Symbian)
- *    Bryan Wilkinson (QNX)
+ *     Markus Schorn - initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -22,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
  * Can be subclassed and used for queries in the index.
  * @since 4.0
  */
-
 abstract public class IndexFilter {
 	public static final IndexFilter ALL = new IndexFilter() {};
 	public static final IndexFilter ALL_DECLARED = getDeclaredBindingFilter(-1, false);

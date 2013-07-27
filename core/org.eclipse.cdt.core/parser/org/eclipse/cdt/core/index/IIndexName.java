@@ -6,14 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Andrew Ferguson (Symbian)
+ *     Markus Schorn - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.core.runtime.CoreException;
-
 
 /**
  * Interface for all the names in the index. These constitute either a

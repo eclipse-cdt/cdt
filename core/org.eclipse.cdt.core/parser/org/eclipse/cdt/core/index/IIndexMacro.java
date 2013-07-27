@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IIndexMacro extends IMacroBinding, IIndexBinding {
-	IIndexMacro[] EMPTY_INDEX_MACRO_ARRAY = new IIndexMacro[0];
+	IIndexMacro[] EMPTY_INDEX_MACRO_ARRAY = {};
 
 	/**
 	 * If available, return the file location for the macro definition of this macro,

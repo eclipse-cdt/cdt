@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 
@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.model.ICProject;
  * @since 4.0
  */
 public interface IIndexChangeEvent {
-	
 	/**
 	 * Returns the project for which the index has changed. 
 	 */

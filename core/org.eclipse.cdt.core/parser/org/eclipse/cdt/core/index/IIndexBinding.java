@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IIndexBinding extends IBinding {
-	IIndexBinding[] EMPTY_INDEX_BINDING_ARRAY = new IIndexBinding[0];
+	IIndexBinding[] EMPTY_INDEX_BINDING_ARRAY = {};
 
 	/**
 	 * Returns the qualified name of this binding as array of strings.

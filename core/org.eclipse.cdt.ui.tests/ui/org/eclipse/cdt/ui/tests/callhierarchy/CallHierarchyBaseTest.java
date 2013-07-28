@@ -64,6 +64,13 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	
 	@Override
 	protected void tearDown() throws Exception {
+		// Set ShowReferencedBy back to its default value
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CHViewPart ch= (CHViewPart)page.findView(CUIPlugin.ID_CALL_HIERARCHY);
+		if (ch != null) {
+			ch.onSetShowReferencedBy(true);
+		}
+
 		closeAllEditors();
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);

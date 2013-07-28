@@ -127,6 +127,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
@@ -9579,7 +9580,7 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testRecursiveClassInheritance_Bug357256() throws Exception {
 		BindingAssertionHelper bh= getAssertionHelper();
 		ICPPClassType c= bh.assertNonProblem("A", 1);
-		assertEquals(0, ClassTypeHelper.getPureVirtualMethods(c, null).length);
+		assertEquals(0, SemanticQueries.getPureVirtualMethods(c, null).length);
 	}
 
 	//	template <typename T> struct CT1 {};

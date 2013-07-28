@@ -40,7 +40,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 
 /**
  * Reports a problem if object of a class cannot be created because
@@ -196,7 +196,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 			ICPPClassType classType = (ICPPClassType) unwindedType;
 			ICPPMethod[] pureVirtualMethods = pureVirtualMethodsCache.get(classType);
 			if (pureVirtualMethods == null) {
-				pureVirtualMethods = ClassTypeHelper.getPureVirtualMethods(classType, problemNode);
+				pureVirtualMethods = SemanticQueries.getPureVirtualMethods(classType, problemNode);
 				pureVirtualMethodsCache.put(classType, pureVirtualMethods);
 			}
 			

@@ -13,7 +13,17 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
@@ -70,5 +80,188 @@ public class SemanticQueries {
 	private static boolean isCallableWithNumberOfArguments(ICPPFunction function, int numArguments) {
 		return function.getParameters().length >= numArguments
 			&& function.getRequiredArgumentCount() <= numArguments;
+	}
+
+	/**
+	 * Returns all pure virtual methods of a class. Inherited pure virtual methods
+	 * that have not been implemented are also returned. 
+	 *
+	 * NOTE: The method produces complete results for template instantiations
+	 * but doesn't take into account base classes and methods dependent on unspecified
+	 * template parameters.
+	 * 
+	 * @param classType the class whose pure virtual methods should be returned
+	 * @param point the point of template instantiation, if applicable
+	 * @return an array containing all pure virtual methods of the class
+	 * @since 5.6
+	 */
+	public static ICPPMethod[] getPureVirtualMethods(ICPPClassType classType, IASTNode point) {
+		return new PureVirtualMethodCollector().collect(classType, point);
+	}
+	
+	/** Helper class for {@link #getPureVirtualMethods(ICPPClassType, IASTNode)} */
+	private static class PureVirtualMethodCollector {
+		/**
+		 * This class represents a mapping of virtual methods in a class hierarchy
+		 * to their final overriders (see [class.virtual] p2). Since a class hierarchy
+		 * can contain multiple subobjects of the same type (if multiple, non-virtual
+		 * inheritance is used), and the pure virtual methods of each subobject must
+		 * be implemented independently, we give each subobject of a given type a
+		 * number, and for each method we keep track of the final overrider for each 
+		 * subobject number.
+		 */
+		private static class FinalOverriderMap {
+			private Map<ICPPMethod, Map<Integer, ICPPMethod>> fMap = new HashMap<ICPPMethod, Map<Integer, ICPPMethod>>();
+			
+			/**
+			 * Record 'overrider' as being the final ovverider of 'method' in subobject
+			 * 'subobjectNumber'.   
+			 */
+			public void add(ICPPMethod method, int subobjectNumber, ICPPMethod overrider) {
+				Map<Integer, ICPPMethod> overriders = fMap.get(method);
+				if (overriders == null) {
+					overriders = new HashMap<Integer, ICPPMethod>();
+					fMap.put(method, overriders);
+				}
+				overriders.put(subobjectNumber, overrider);
+			}
+			
+			/**
+			 * For each subobject for which 'method' has been overridden, update
+			 * its final overrider to 'overrider'. 
+			 */
+			public void replaceForAllSubobjects(ICPPMethod method, ICPPMethod overrider) {
+				Map<Integer, ICPPMethod> overriders = fMap.get(method);
+				if (overriders == null)
+					return;
+				for (Integer i : overriders.keySet())
+					overriders.put(i, overrider);
+			}
+			
+			/**
+			 * Merge the final overriders from another FinalOverriderMap into this one. 
+			 */
+			public void addOverriders(FinalOverriderMap other) {
+				for (ICPPMethod method : other.fMap.keySet()) {
+					Map<Integer, ICPPMethod> overriders = fMap.get(method);
+					if (overriders == null) {
+						overriders = new HashMap<Integer, ICPPMethod>();
+						fMap.put(method, overriders);
+					}
+					Map<Integer, ICPPMethod> otherOverriders = other.fMap.get(method);
+					for (Integer i : otherOverriders.keySet()) {
+						ICPPMethod overrider = otherOverriders.get(i);
+						overriders.put(i, overrider);
+					}
+				}
+			}
+			
+			/**
+			 * Go through the final overrider map and find functions which are
+			 * pure virtual in the hierarchy's root. These are functions which
+			 * are declared pure virtual, and whose final overrider is themself,
+			 * meaning they have not been overridden.
+			 */
+			public ICPPMethod[] collectPureVirtualMethods() {
+				List<ICPPMethod> pureVirtualMethods = new ArrayList<ICPPMethod>();
+				for (ICPPMethod method : fMap.keySet()) {
+					if (method.isPureVirtual()) {
+						Map<Integer, ICPPMethod> finalOverriders = fMap.get(method);
+						for (Integer subobjectNumber : finalOverriders.keySet()) {
+							ICPPMethod finalOverrider = finalOverriders.get(subobjectNumber);
+							if (finalOverrider == method) {
+								pureVirtualMethods.add(method);
+							}
+						}
+					}
+				}
+				return pureVirtualMethods.toArray(new ICPPMethod[pureVirtualMethods.size()]);
+			}
+		}
+		
+		// The last subobject number used for each type in the hierarchy. This is used to
+		// assign subobject numbers to subobjects. Virtual subobjects get a subobject
+		// number of zero, while non-virtual subobjects are number starting from one.
+		private Map<ICPPClassType, Integer> subobjectNumbers = new HashMap<ICPPClassType, Integer>();
+		
+		// Cache of final overrider maps for virtual base subobjects. Since such subobjects
+		// only occur once in the hierarchy, we can cache the final overrider maps we
+		// compute for them.
+		private Map<ICPPClassType, FinalOverriderMap> virtualBaseCache = new HashMap<ICPPClassType, FinalOverriderMap>();
+		
+		public ICPPMethod[] collect(ICPPClassType root, IASTNode point) {
+			FinalOverriderMap finalOverriderMap = collectFinalOverriders(root, false, new HashSet<ICPPClassType>(), point);
+			return finalOverriderMap.collectPureVirtualMethods();
+		}
+
+		/**
+		 * Compute the final overrider map for a subtree in a class hierarchy.
+		 * 
+		 * @param classType the root of the subtree in question 
+		 * @param isVirtualBase whether 'classType' is inherited virtually
+		 * @param inheritanceChain the chain of classes from the entire hierarchy's root to 'classType'.
+		 *                         This is used to guard against circular inheritance.
+		 * @param point the point of template instantiation, if applicable
+		 * @return the computed final overrider map
+		 */
+		private FinalOverriderMap collectFinalOverriders(ICPPClassType classType, boolean isVirtualBase, 
+				Set<ICPPClassType> inheritanceChain, IASTNode point) {
+			FinalOverriderMap result = new FinalOverriderMap();
+			
+			inheritanceChain.add(classType);
+			
+			// Determine the subobject number for the current class.
+			int subobjectNumber = 0;
+			if (!isVirtualBase) {
+				Integer lastNumber = subobjectNumbers.get(classType);
+				subobjectNumber = (lastNumber == null ? 0 : lastNumber) + 1;
+				subobjectNumbers.put(classType, subobjectNumber);
+			}
+			
+			// Go through our base classes.
+			for (ICPPBase base : ClassTypeHelper.getBases(classType, point)) {
+				IBinding baseClass = base.getBaseClass();
+				if (!(baseClass instanceof ICPPClassType))
+					continue;
+				ICPPClassType baseType = (ICPPClassType) baseClass;
+				
+				// Guard against circular inheritance.
+				if (inheritanceChain.contains(baseType))
+					continue;
+				
+				// Collect final overrider information from the base class.
+				// If it's a virtual base class and we've already processed it
+				// in this class hierarchy, don't process it again.
+				FinalOverriderMap baseOverriderMap;
+				if (base.isVirtual()) {
+					baseOverriderMap = virtualBaseCache.get(baseType);
+					if (baseOverriderMap == null) {
+						baseOverriderMap = collectFinalOverriders(baseType, true, inheritanceChain, point);
+					}
+				} else {
+					baseOverriderMap = collectFinalOverriders(baseType, false, inheritanceChain, point);
+				}
+			
+				// Merge final overrider information from base class into this class.
+				result.addOverriders(baseOverriderMap);
+			}
+			
+			// Go through our own methods.
+			for (ICPPMethod method : ClassTypeHelper.getOwnMethods(classType, point)) {
+				// For purposes of this computation, every virtual method is
+				// deemed for override itself.
+				result.add(method, subobjectNumber, method);
+				
+				// Find all methods overridden by this method, and set their final overrider
+				// to be this method.
+				ICPPMethod[] overriddenMethods = ClassTypeHelper.findOverridden(method, point);
+				for (ICPPMethod overriddenMethod : overriddenMethods)
+					result.replaceForAllSubobjects(overriddenMethod, method);
+			}
+			
+			inheritanceChain.remove(classType);
+			
+			return result;
+		}
 	}
 }

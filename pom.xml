@@ -223,29 +223,29 @@
 
 	<profiles>
 		<profile>
-			<id>platform-3.8</id>
-			<activation>
-				<property>
-					<name>!platform-4.3</name>
-				</property>
-			</activation>
-			<properties>
-				<platform-version>3.8</platform-version>
-				<orbit-version>R20110523182458</orbit-version>
-				<tm-version>3.3</tm-version>
-			</properties>
-		</profile>
-		<profile>
 			<id>platform-4.3</id>
 			<activation>
 				<property>
-					<name>platform-4.3</name>
+					<name>!platform-3.8</name>
 				</property>
 			</activation>
 			<properties>
 				<platform-version>4.3</platform-version>
 				<orbit-version>R20130517111416</orbit-version>
 				<tm-version>3.5</tm-version>
+			</properties>
+		</profile>
+		<profile>
+			<id>platform-3.8</id>
+			<activation>
+				<property>
+					<name>platform-3.8</name>
+				</property>
+			</activation>
+			<properties>
+				<platform-version>3.8</platform-version>
+				<orbit-version>R20110523182458</orbit-version>
+				<tm-version>3.3</tm-version>
 			</properties>
 		</profile>
 		<profile>

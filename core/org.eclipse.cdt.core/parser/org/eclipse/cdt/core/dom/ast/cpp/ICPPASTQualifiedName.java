@@ -28,16 +28,16 @@ public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
 			"ICPPASTQualifiedName.SEGMENT_NAME - An IASTName segment"); //$NON-NLS-1$
 
 	/**
-	 * Add a subname.
+	 * Adds a name segment.
 	 *
-	 * @param name <code>IASTName</code>
+	 * @param name {@code IASTName}
 	 */
 	public void addName(IASTName name);
 
 	/**
-	 * Get all subnames.
+	 * Returns all name segments.
 	 *
-	 * @return <code>IASTName []</code>
+	 * @return {@code IASTName[]}
 	 */
 	public IASTName[] getNames();
 
@@ -55,15 +55,14 @@ public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
 	public boolean isFullyQualified();
 
 	/**
-	 * Set this name to be fully qualified or not (true/false).
+	 * Sets this name to be fully qualified or not (true/false).
 	 *
 	 * @param value boolean
 	 */
 	public void setFullyQualified(boolean value);
 
 	/**
-	 * This is used to check if the ICPPASTQualifiedName's last segment is
-	 * an ICPPASTConversionName or an ICPPASTOperatorName.
+	 * Returns {@code true} if last segment is an ICPPASTConversionName or an ICPPASTOperatorName.
 	 */
 	public boolean isConversionOrOperator();
 

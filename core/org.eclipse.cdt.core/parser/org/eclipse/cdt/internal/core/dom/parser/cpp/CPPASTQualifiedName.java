@@ -71,8 +71,9 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	@Override
 	public CPPASTQualifiedName copy(CopyStyle style) {
 		CPPASTQualifiedName copy = new CPPASTQualifiedName();
-		for (IASTName name : getNames())
+		for (IASTName name : getNames()) {
 			copy.addName(name == null ? null : name.copy(style));
+		}
 		copy.setFullyQualified(isFullyQualified);
 		copy.setOffsetAndLength(this);
 		if (style == CopyStyle.withLocations) {
@@ -83,20 +84,20 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 
 	@Override
 	public final IBinding resolvePreBinding() {
-		// The full qualified name resolves to the same thing as the last name
+		// The whole qualified name resolves to the same thing as the last name.
 		return getLastName().resolvePreBinding();
 	}
 
 	@Override
 	public IBinding resolveBinding() {
-		// The full qualified name resolves to the same thing as the last name
+		// The whole qualified name resolves to the same thing as the last name.
 		IASTName lastName= getLastName();
 		return lastName == null ? null : lastName.resolveBinding();
 	}
 
     @Override
 	public final IBinding getPreBinding() {
-		// The full qualified name resolves to the same thing as the last name
+		// The whole qualified name resolves to the same thing as the last name.
 		return getLastName().getPreBinding();
     }
     
@@ -109,7 +110,6 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	public void setBinding(IBinding binding) {
 		getLastName().setBinding(binding);
 	}
-
 
 	@Override
 	public void addName(IASTName name) {
@@ -200,7 +200,8 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		for (int i = 0; i <= namesPos; i++) {
 			final IASTName name = names[i];
 			if (i == namesPos) {
-				// pointer-to-member qualified names have a dummy name as the last part of the name, don't visit it
+				// Pointer-to-member qualified names have a dummy name as the last segment
+				// of the name, don't visit it.
 				if (name.getLookupKey().length > 0 && !name.accept(action))
 					return false;
 			} else if (!name.accept(action))

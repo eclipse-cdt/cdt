@@ -167,7 +167,7 @@ public abstract class ASTNode implements IASTNode {
         if (floc != null && ast != null) {
         	ILocationResolver lr= (ILocationResolver) ast.getAdapter(ILocationResolver.class);
         	if (lr != null) {
-        		return lr.getUnpreprocessedSignature(getFileLocation());
+        		return lr.getUnpreprocessedSignature(floc);
         	}
         }
         return CharArrayUtils.EMPTY;

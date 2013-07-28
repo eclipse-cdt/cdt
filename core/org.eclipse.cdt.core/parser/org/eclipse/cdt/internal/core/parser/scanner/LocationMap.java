@@ -57,12 +57,12 @@ public class LocationMap implements ILocationResolver {
     private ArrayList<ASTMacroDefinition> fBuiltinMacros= new ArrayList<ASTMacroDefinition>();
 	private ArrayList<ASTPreprocessorName> fMacroReferences= new ArrayList<ASTPreprocessorName>();
 	
-    private LocationCtxFile fRootContext= null;
-    private LocationCtx fCurrentContext= null;
+    private LocationCtxFile fRootContext;
+    private LocationCtx fCurrentContext;
 	private int fLastChildInsertionOffset;
 
 	// stuff computed on demand
-	private IdentityHashMap<IBinding, IASTPreprocessorMacroDefinition> fMacroDefinitionMap= null;
+	private IdentityHashMap<IBinding, IASTPreprocessorMacroDefinition> fMacroDefinitionMap;
 	private List<ISkippedIndexedFilesListener> fSkippedFilesListeners= new ArrayList<ISkippedIndexedFilesListener>();
 
 	public LocationMap(LexerOptions lexOptions) {

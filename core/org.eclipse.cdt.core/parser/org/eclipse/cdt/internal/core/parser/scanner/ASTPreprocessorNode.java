@@ -509,7 +509,6 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 		fExpansionOffset= expansionOffset;
 	}
 
-	
 	@Override
 	public String getContainingFilename() {
 		if (fName instanceof ASTBuiltinName) {
@@ -534,7 +533,7 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 
 	@Override
 	public int getRoleForName(IASTName n) {
-		return (fName == n) ? r_definition : r_unclear;
+		return fName == n ? r_definition : r_unclear;
 	}
 
 	@Override
@@ -545,6 +544,7 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 
 	@Override
 	public void setExpansion(String exp) {assert false;}
+
 	@Override
 	public void setName(IASTName name) {assert false;}
 

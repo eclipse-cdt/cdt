@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -49,6 +49,7 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 			fOffset= offset;
 			fLength= length;
 		}
+
 		@Override
 		public int getNodeOffset() { return fOffset; }
 		@Override
@@ -87,7 +88,7 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 		fMacroLocations= getMacroLocations(resolver);
 		fFilePath= tu.getFilePath();
 		fSource= resolver.getUnpreprocessedSignature(loc);
-		fBoundaries= new int[count*2+1];
+		fBoundaries= new int[count * 2 + 1];
 		fDelegates= new SingleMacroExpansionExplorer[count];
 		
 		final int firstOffset= loc.getNodeOffset();
@@ -102,12 +103,12 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 				IASTFileLocation refLoc= expansion.getFileLocation();
 				int from= refLoc.getNodeOffset()-firstOffset;
 				int to= from+refLoc.getNodeLength();
-				IASTNode enclosing= nodeLocator.findEnclosingNode(from+firstOffset-1, 2);
+				IASTNode enclosing= nodeLocator.findEnclosingNode(from + firstOffset - 1, 2);
 				boolean isPPCond= enclosing instanceof IASTPreprocessorIfStatement ||
 					enclosing instanceof IASTPreprocessorElifStatement;
 				fBoundaries[++bidx]= from;
 				fBoundaries[++bidx]= to;
-				fDelegates[++didx]= new SingleMacroExpansionExplorer(new String(fSource, from, to-from), 
+				fDelegates[++didx]= new SingleMacroExpansionExplorer(new String(fSource, from, to - from), 
 						refs.toArray(new IASTName[refs.size()]), fMacroLocations,
 						fFilePath, refLoc.getStartingLineNumber(), isPPCond, 
 						(LexerOptions) tu.getAdapter(LexerOptions.class));
@@ -182,7 +183,7 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 	 */
 	private List<ReplaceEdit> combineReplaceEdits(int count) {
 		ArrayList<ReplaceEdit> edits= new ArrayList<ReplaceEdit>();
-		for (int i=0; i < count; i++) {
+		for (int i= 0; i < count; i++) {
 			IMacroExpansionStep step= fDelegates[i].getFullExpansion();
 			shiftAndAddEdits(fBoundaries[2*i], step.getReplacements(), edits);
 		}
@@ -200,11 +201,10 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 		}
 	}
 
-
 	@Override
 	public int getExpansionStepCount() {
 		int result= 0;
-		for (int i=0; i < fDelegates.length; i++) {
+		for (int i= 0; i < fDelegates.length; i++) {
 			result+= fDelegates[i].getExpansionStepCount();
 		}
 		return result;
@@ -223,7 +223,7 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 		StringBuilder before= new StringBuilder();
 		before.append(fSource, 0, fBoundaries[0]);
 
-		for (i=0; i < fDelegates.length; i++) {
+		for (i= 0; i < fDelegates.length; i++) {
 			final SingleMacroExpansionExplorer delegate = fDelegates[i];
 			int dsteps= delegate.getExpansionStepCount();
 			if (step < dsteps) {
@@ -239,9 +239,9 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 		}
 		
 		final int shift= before.length();
-		final int end= fBoundaries[2*i+1];
+		final int end= fBoundaries[2 * i + 1];
 		before.append(dresult.getCodeBeforeStep());
-		before.append(fSource, end, fSource.length-end);
+		before.append(fSource, end, fSource.length - end);
 		
 		List<ReplaceEdit> replacements= new ArrayList<ReplaceEdit>();
 		shiftAndAddEdits(shift, dresult.getReplacements(), replacements);
@@ -251,9 +251,9 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 	}
 	
 	private void appendGap(StringBuilder result, int i) {
-		int idx= 2*i+1;
+		int idx= 2 * i + 1;
 		int gapFrom= fBoundaries[idx];
 		int gapTo= fBoundaries[++idx];
-		result.append(fSource, gapFrom, gapTo-gapFrom);
+		result.append(fSource, gapFrom, gapTo - gapFrom);
 	}
 }

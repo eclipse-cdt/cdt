@@ -1928,10 +1928,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     			return false;
     		}
         }
-        final boolean contentAssist = fContentAssistLimit>=0 && fCurrentContext == fRootContext;
+        final boolean contentAssist = fContentAssistLimit >= 0 && fCurrentContext == fRootContext;
         final ITokenSequence input= stopAtNewline ? fLineInputToMacroExpansion : fInputToMacroExpansion;
-		final MacroExpander expander = withinExpansion ? new MacroExpander(this, fMacroDictionary,
-				fLocationMap, fLexOptions) : fMacroExpander;
+		final MacroExpander expander = withinExpansion ?
+				new MacroExpander(this, fMacroDictionary, fLocationMap, fLexOptions) : fMacroExpander;
         TokenList replacement= expander.expand(input, options, macro, identifier, contentAssist, fCurrentContext);
     	final IASTName[] expansions= expander.clearImplicitExpansions();
     	final ImageLocationInfo[] ili= expander.clearImageLocationInfos();

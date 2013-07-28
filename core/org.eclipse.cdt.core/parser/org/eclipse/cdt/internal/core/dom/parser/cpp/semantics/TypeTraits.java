@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.MethodKind;
 
@@ -298,7 +299,7 @@ public class TypeTraits {
 	}
 
 	public static boolean isAbstract(ICPPClassType classType, IASTNode point) {
-		return ClassTypeHelper.getPureVirtualMethods(classType, point).length != 0;
+		return SemanticQueries.getPureVirtualMethods(classType, point).length != 0;
 	}
 
 	/**

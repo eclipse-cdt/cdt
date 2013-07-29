@@ -44,14 +44,18 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -187,28 +191,6 @@ public class BindingClassifier {
 	}
 
 	/**
-	 * Returns whether the two given types are identical. This does the same as IType.isSameType()
-	 * with the exception that it considers a pointer and the zero literal identical.
-	 */
-	private boolean isSameType(IType type1, IType type2) {
-		if (type1 == null || type2 == null) {
-			return false;
-		}
-		if (type1.isSameType(type2)) {
-			return true;
-		}
-
-		if (type1 instanceof IPointerType || type2 instanceof IPointerType) {
-			if ((type1 instanceof IBasicType && ((IBasicType) type1).getKind() == Kind.eInt)
-					|| (type2 instanceof IBasicType && ((IBasicType) type2).getKind() == Kind.eInt)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
 	 * Resolves the given binding and returns the binding(s) which we actually have to either
 	 * declare or define. As an example, if the given binding is a variable, this function returns
 	 * the binding for the type of the variable. This is because we actually have to declare or
@@ -275,24 +257,6 @@ public class BindingClassifier {
 		}
 
 		return bindings;
-	}
-
-	/**
-	 * Resolves the given type to a binding which we actually have to either declare or define.
-	 * As an example if the given type is a pointer type, this function returns the binding for
-	 * the raw (i.e. nested) type of the pointer. This is because we actually have to declare or
-	 * define the raw type of a pointer, not the pointer type itself.
-	 *
-	 * @param type The type to resolve.
-	 * @return A binding which is suitable for either declaration or definition, or {@code null}
-	 *     if no such binding is available.
-	 */
-	private IBinding getTypeBinding(IType type) {
-		type = getNestedType(type, ALLCVQ | PTR | ARRAY | REF);
-		if (type instanceof IBinding) {
-			return (IBinding) type;
-		}
-		return null;
 	}
 
 	/**
@@ -380,28 +344,14 @@ public class BindingClassifier {
 		}
 	}
 
-	private boolean isEnumerationWithoutFixedUnderlyingType(IBinding typeBinding) {
-		return typeBinding instanceof IEnumeration
-				&& (!(typeBinding instanceof ICPPEnumeration) || ((ICPPEnumeration) typeBinding).getFixedType() == null);
-	}
-
 	/**
 	 * Adds the given binding to the list of bindings which have to be defined.
 	 *
 	 * @param binding The binding to add.
 	 */
 	private void defineBinding(IBinding binding) {
-		if (!fProcessedDefinedBindings.add(binding))
+		if (!markAsDefined(binding))
 			return;
-
-		if (binding instanceof ITypedef) {
-			IType type = ((ITypedef) binding).getType();
-			type = SemanticUtil.getNestedType(type, ALLCVQ);
-			if (type instanceof IBinding) {
-				// Record the fact that we also have a definition of the typedef's target type.
-				fProcessedDefinedBindings.add((IBinding) type);
-			}
-		}
 
 		if (fAst.getDefinitionsInAST(binding).length != 0) {
 			return;  // Defined locally
@@ -412,6 +362,29 @@ public class BindingClassifier {
 			fBindingsToDeclare.remove(requiredBinding);
 			fBindingsToDefine.add(requiredBinding);
 		}
+	}
+
+	/**
+	 * Marks the given binding as defined.
+	 *
+	 * @param binding the binding to mark
+	 * @return {{@code true} if the binding has not yet been marked as defined,
+	 *     {@code false} otherwise.
+	 */
+	private boolean markAsDefined(IBinding binding) {
+		if (!fProcessedDefinedBindings.add(binding))
+			return false;
+
+		if (binding instanceof ITypedef) {
+			IType type = ((ITypedef) binding).getType();
+			type = SemanticUtil.getNestedType(type, ALLCVQ);
+			if (type instanceof IBinding) {
+				// Record the fact that we also have a definition of the typedef's target type.
+				fProcessedDefinedBindings.add((IBinding) type);
+			}
+		}
+
+		return true;
 	}
 
 	private void declareFunction(IFunction function, IASTFunctionCallExpression functionCallExpression) {
@@ -483,7 +456,13 @@ public class BindingClassifier {
 					}
 
 					if (!canBeDeclared) {
-						defineBinding(((IASTNamedTypeSpecifier) declSpecifier).getName().resolveBinding());
+						IASTName name = ((IASTNamedTypeSpecifier) declSpecifier).getName();
+						IBinding binding = name.resolveBinding();
+						if (isPartOfExternalMacroDefinition(name)) {
+							markAsDefined(binding);
+						} else {
+							defineBinding(binding);
+						}
 					}
 				}
 			} else if (declaration instanceof IASTFunctionDefinition) {
@@ -1016,5 +995,76 @@ public class BindingClassifier {
 			}
 			return PROCESS_CONTINUE;
 		}
+
+		@Override
+		public int visit(IASTTranslationUnit tu) {
+			for (IASTPreprocessorMacroExpansion macroExpansion : tu.getMacroExpansions()) {
+				IBinding binding = macroExpansion.getMacroReference().getBinding();
+				defineBinding(binding);
+			}
+			return PROCESS_CONTINUE;
+		}
+	}
+
+	/**
+	 * Returns whether the two given types are identical. This does the same as IType.isSameType()
+	 * with the exception that it considers a pointer and the zero literal identical.
+	 */
+	private static boolean isSameType(IType type1, IType type2) {
+		if (type1 == null || type2 == null) {
+			return false;
+		}
+		if (type1.isSameType(type2)) {
+			return true;
+		}
+
+		if (type1 instanceof IPointerType || type2 instanceof IPointerType) {
+			if ((type1 instanceof IBasicType && ((IBasicType) type1).getKind() == Kind.eInt)
+					|| (type2 instanceof IBasicType && ((IBasicType) type2).getKind() == Kind.eInt)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Resolves the given type to a binding which we actually have to either declare or define.
+	 * As an example if the given type is a pointer type, this function returns the binding for
+	 * the raw (i.e. nested) type of the pointer. This is because we actually have to declare or
+	 * define the raw type of a pointer, not the pointer type itself.
+	 *
+	 * @param type The type to resolve.
+	 * @return A binding which is suitable for either declaration or definition, or {@code null}
+	 *     if no such binding is available.
+	 */
+	private static IBinding getTypeBinding(IType type) {
+		type = getNestedType(type, ALLCVQ | PTR | ARRAY | REF);
+		if (type instanceof IBinding) {
+			return (IBinding) type;
+		}
+		return null;
+	}
+
+	private static boolean isEnumerationWithoutFixedUnderlyingType(IBinding typeBinding) {
+		return typeBinding instanceof IEnumeration
+				&& (!(typeBinding instanceof ICPPEnumeration) || ((ICPPEnumeration) typeBinding).getFixedType() == null);
+	}
+
+	private static boolean isPartOfExternalMacroDefinition(IASTName name) {
+		IASTNodeLocation[] locations = name.getNodeLocations();
+		if (locations.length != 1 || !(locations[0] instanceof IASTMacroExpansionLocation))
+			return false;
+
+		IASTMacroExpansionLocation macroExpansionLocation = (IASTMacroExpansionLocation) locations[0];
+		IASTPreprocessorMacroExpansion macroExpansion = macroExpansionLocation.getExpansion();
+		if (macroExpansion.getMacroDefinition().isPartOfTranslationUnitFile())
+			return false;
+		IASTImageLocation imageLocation = name.getImageLocation();
+		if (imageLocation != null &&
+				imageLocation.getFileName().equals(name.getTranslationUnit().getFilePath())) {
+			return false;
+		}
+		return true;
 	}
 }

@@ -104,10 +104,11 @@ class LocationCtxFile extends LocationCtxContainer {
 	}
 
 	public boolean isThisFile(int sequenceNumber) {
+		if (sequenceNumber < 0)
+			return false;
 		LocationCtx child= findChildLessOrEqualThan(sequenceNumber, false);
-		if (!(child instanceof LocationCtxFile)) {
+		if (!(child instanceof LocationCtxFile))
 			return true;
-		}
 		return sequenceNumber >= child.fSequenceNumber + child.getSequenceLength();
 	}
 

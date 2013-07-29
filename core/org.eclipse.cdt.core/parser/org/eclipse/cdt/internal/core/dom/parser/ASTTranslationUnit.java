@@ -11,6 +11,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -149,7 +150,18 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	protected final IASTName[] getMacroDefinitionsInAST(IMacroBinding binding) {
 		if (fLocationResolver == null)
 			return IASTName.EMPTY_NAME_ARRAY;
-		return fLocationResolver.getDeclarations(binding);
+		
+		IASTName[] declarations = fLocationResolver.getDeclarations(binding);
+		int j = 0;
+		for (int i = 0; i < declarations.length; i++) {
+			IASTName name = declarations[i];
+			if (name.isPartOfTranslationUnitFile()) {
+				declarations[j++] = name;
+			}
+		}
+		if (j < declarations.length)
+			return j > 0 ? Arrays.copyOf(declarations, j) : IASTName.EMPTY_NAME_ARRAY;
+		return declarations;
 	}
 
 	protected final IASTName[] getMacroReferencesInAST(IMacroBinding binding) {

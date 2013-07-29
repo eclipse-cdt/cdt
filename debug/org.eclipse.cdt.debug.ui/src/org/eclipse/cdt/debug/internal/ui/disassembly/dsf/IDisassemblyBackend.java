@@ -201,14 +201,15 @@ public interface IDisassemblyBackend {
 	void updateExtendedPCAnnotation(IAnnotationModel model);
 	
 	/**
-	 * Returns true if this backend can disassemble instructions.
-	 * @return true if backend can perform disassemble 
+	 * This is a test for the current context.
+	 * 
+	 * @return true if backend can perform disassemble, otherwise false 
 	 */
 	boolean canDisassemble();
 	
 	/**
-	 * Returns the last know address, this API will be call if the selected
-	 * debug context is not a stackframe.
+	 * Returns the last known address, this API will be call if the selected debug context is not a stackframe.
+	 * 
 	 * @return the last know address, -1 if unknown
 	 */
 	BigInteger getLastKnownAddress();

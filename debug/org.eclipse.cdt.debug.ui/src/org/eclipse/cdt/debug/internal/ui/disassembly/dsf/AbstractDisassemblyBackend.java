@@ -85,6 +85,6 @@ public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend 
 	
 	@Override
 	public BigInteger getLastKnownAddress() {
-		return BigInteger.valueOf(-1);
+		return UNKNOWN_ADDRESS;
 	}
 }

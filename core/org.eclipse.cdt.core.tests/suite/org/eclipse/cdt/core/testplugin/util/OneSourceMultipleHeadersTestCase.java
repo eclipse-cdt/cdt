@@ -68,12 +68,16 @@ public class OneSourceMultipleHeadersTestCase extends BaseTestCase {
 		return ast;
 	}
 
-	public String getAstSource() {
+	protected String getAstSource() {
 		return testData[testData.length - 1].toString();
 	}
 
 	@Override
 	protected void setUp() throws Exception {
+		setUp(false);
+	}
+
+	protected void setUp(boolean generateIncludeStatements) throws Exception {
 		cproject = cpp ?
 				CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
 				CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
@@ -85,6 +89,15 @@ public class OneSourceMultipleHeadersTestCase extends BaseTestCase {
 				IFile file = TestSourceReader.createFile(cproject.getProject(), new Path(filename), testData[i].toString());
 				CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 			}
+		}
+
+		if (generateIncludeStatements) {
+			StringBuilder buf = new StringBuilder();
+			for (int i = 0; i < getTestData().length - 1; i++) {
+				String filename = String.format("header%d.h", i + 1);
+				buf.append(String.format("#include \"header%d.h\"\n", i + 1));
+			}
+			testData[testData.length - 1].insert(0, buf);
 		}
 
 		IFile cppfile= TestSourceReader.createFile(cproject.getProject(), new Path("source.c" + (cpp ? "pp" : "")), getAstSource());

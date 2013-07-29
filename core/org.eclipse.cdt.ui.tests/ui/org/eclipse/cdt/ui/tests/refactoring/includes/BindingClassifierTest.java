@@ -51,7 +51,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		super.setUp();
+		super.setUp(true);
 		IASTTranslationUnit ast = getAst();
 		fIndex = CCorePlugin.getIndexManager().getIndex(getCProject(),
 				IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT);
@@ -221,6 +221,18 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	}
 	public void testTemplate_2() throws Exception {
 		assertDefined("D");
+		assertDeclared();
+	}
+
+	//	struct A {};
+	//	struct B {};
+	//	struct C {};
+	//	struct prefixD {};
+	//	#define MACRO(t1, v1, t2, v3, t4, v4) t1 v1; t2 b; C v3; prefix##t4 v4  
+	
+	//	MACRO(A, a, B, c, D, d);
+	public void testMacro() throws Exception {
+		assertDefined("A", "B", "MACRO");
 		assertDeclared();
 	}
 }

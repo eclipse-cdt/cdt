@@ -288,9 +288,17 @@ public class BindingClassifier {
 			}
 
 			if (canForwardDeclare(requiredBinding)) {
-				fBindingsToDeclare.add(requiredBinding);
+				if (requiredBinding == binding) {
+					fBindingsToDeclare.add(requiredBinding);
+				} else {
+					declareBinding(requiredBinding);
+				}
 			} else {
-				fBindingsToDefine.add(requiredBinding);
+				if (requiredBinding == binding) {
+					fBindingsToDefine.add(requiredBinding);
+				} else {
+					defineBinding(requiredBinding);
+				}
 			}
 		}
 	}
@@ -360,7 +368,11 @@ public class BindingClassifier {
 		List<IBinding> requiredBindings = getRequiredBindings(binding);
 		for (IBinding requiredBinding : requiredBindings) {
 			fBindingsToDeclare.remove(requiredBinding);
-			fBindingsToDefine.add(requiredBinding);
+			if (requiredBinding == binding) {
+				fBindingsToDefine.add(requiredBinding);
+			} else {
+				defineBinding(requiredBinding);
+			}
 		}
 	}
 

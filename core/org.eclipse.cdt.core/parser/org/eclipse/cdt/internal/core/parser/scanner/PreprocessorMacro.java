@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -106,7 +106,9 @@ abstract class PreprocessorMacro implements IMacroBinding {
 		buf.append(')');
 		return buf.toString();
 	}
-	public abstract TokenList getTokens(MacroDefinitionParser parser, LexerOptions lexOptions, MacroExpander expander);
+
+	public abstract TokenList getTokens(MacroDefinitionParser parser, LexerOptions lexOptions,
+			MacroExpander expander);
 }
 
 class ObjectStyleMacro extends PreprocessorMacro {
@@ -115,12 +117,12 @@ class ObjectStyleMacro extends PreprocessorMacro {
 	final int fEndOffset;
 	private TokenList fExpansionTokens;
 
-	
 	public ObjectStyleMacro(char[] name, char[] expansion) {
 		this(name, 0, expansion.length, null, new CharArray(expansion));
 	}
 
-	public ObjectStyleMacro(char[] name, int expansionOffset, int endOffset, TokenList expansion, AbstractCharArray source) {
+	public ObjectStyleMacro(char[] name, int expansionOffset, int endOffset, TokenList expansion,
+			AbstractCharArray source) {
 		super(name);
 		fExpansionOffset= expansionOffset;
 		fEndOffset= endOffset;
@@ -168,7 +170,8 @@ class ObjectStyleMacro extends PreprocessorMacro {
 			Lexer lex= new Lexer(fExpansion, fExpansionOffset, fEndOffset, lexOptions, ILexerLog.NULL, this);
 			try {
 				lex.nextToken(); // consume the start token
-				mdp.parseExpansion(lex, ILexerLog.NULL, getNameCharArray(), getParameterPlaceholderList(), fExpansionTokens);
+				mdp.parseExpansion(lex, ILexerLog.NULL, getNameCharArray(),
+						getParameterPlaceholderList(), fExpansionTokens);
 			} catch (OffsetLimitReachedException e) {
 			}
 		}
@@ -200,8 +203,8 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 		this(name, paramList, hasVarArgs, expansionOffset, expansionEndOffset, null, expansion);
 	}
 
-	public FunctionStyleMacro(char[] name, char[][] paramList, int hasVarArgs, int expansionFileOffset, int endFileOffset, 
-			TokenList expansion, AbstractCharArray source) {
+	public FunctionStyleMacro(char[] name, char[][] paramList, int hasVarArgs, int expansionFileOffset,
+			int endFileOffset, TokenList expansion, AbstractCharArray source) {
 		super(name, expansionFileOffset, endFileOffset, expansion, source);
 		fParamList = paramList;
 		fHasVarArgs= hasVarArgs;
@@ -210,22 +213,22 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 	@Override
 	public char[][] getParameterList() {
 		final int length = fParamList.length;
-		if (fHasVarArgs == NO_VAARGS || length==0) {
+		if (fHasVarArgs == NO_VAARGS || length == 0) {
 			return fParamList;
 		}
 		char[][] result= new char[length][];
-		System.arraycopy(fParamList, 0, result, 0, length-1);
+		System.arraycopy(fParamList, 0, result, 0, length - 1);
 		if (fHasVarArgs == VAARGS) {
-			result[length-1]= Keywords.cpELLIPSIS;
+			result[length - 1]= Keywords.cpELLIPSIS;
 		}
 		else {
-			final char[] param= fParamList[length-1];
+			final char[] param= fParamList[length - 1];
 			final int plen= param.length;
 			final int elen = Keywords.cpELLIPSIS.length;
-			final char[] rp= new char[plen+elen];
+			final char[] rp= new char[plen + elen];
 			System.arraycopy(param, 0, rp, 0, plen);
 			System.arraycopy(Keywords.cpELLIPSIS, 0, rp, plen, elen);
-			result[length-1]= rp;
+			result[length - 1]= rp;
 		}
 		return result;
 	}
@@ -244,13 +247,13 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 	    result.append(getName());
 	    result.append('(');
 	    
-	    final int lastIdx= fParamList.length-1;
+	    final int lastIdx= fParamList.length - 1;
 	    if (lastIdx >= 0) {
 	    	for (int i = 0; i < lastIdx; i++) {
 	    		result.append(fParamList[i]);
 	    		result.append(',');
 	    	}
-	    	switch(fHasVarArgs) {
+	    	switch (fHasVarArgs) {
 	    	case VAARGS:
 	    		result.append(Keywords.cpELLIPSIS);
 	    		break;
@@ -316,10 +319,12 @@ abstract class DynamicMacro extends PreprocessorMacro {
 	public DynamicMacro(char[] name) {
 		super(name);
 	}
+
 	@Override
 	public final char[] getExpansion() {
 		return getExpansionImage();
 	}
+
 	public abstract Token execute(MacroExpander expander);
 
 	@Override
@@ -439,7 +444,8 @@ final class TimeMacro extends DynamicMacro {
 final class CounterMacro extends DynamicMacro {
 	private static final char[] ZERO = {'0'};
 	
-	private long fValue= 0;
+	private long fValue;
+
 	CounterMacro(char[] name) {
 		super(name);
 	}

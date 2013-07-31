@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Ericsson and others.
+ * Copyright (c) 2009, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -458,12 +458,12 @@ public class MIRegistersTest extends BaseTestCase {
     	getModelDataForRegisterDataValue(frameDmc1, IFormattedValues.NATURAL_FORMAT, 0);
 
     	// Re-set the execution context to 2 and Fetch from the Cache
-    	String dupliThread2RegVal0 = getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 0);
-    	String dupliThread2RegVal1 = getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 1);
-    	String dupliThread2RegVal2 = getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 2);
-    	String dupliThread2RegVal3 = getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 3);
-    	String dupliThread2RegVal4 = getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 4);
-    	String dupliThread2RegVal5= getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 5);
+    	String dupliThread2RegVal0 = getModelDataForRegisterDataValue(frameDmc1, IFormattedValues.NATURAL_FORMAT, 0);
+    	String dupliThread2RegVal1 = getModelDataForRegisterDataValue(frameDmc1, IFormattedValues.NATURAL_FORMAT, 1);
+    	String dupliThread2RegVal2 = getModelDataForRegisterDataValue(frameDmc1, IFormattedValues.NATURAL_FORMAT, 2);
+    	String dupliThread2RegVal3 = getModelDataForRegisterDataValue(frameDmc1, IFormattedValues.NATURAL_FORMAT, 3);
+    	String dupliThread2RegVal4 = getModelDataForRegisterDataValue(frameDmc1, IFormattedValues.NATURAL_FORMAT, 4);
+    	String dupliThread2RegVal5 = getModelDataForRegisterDataValue(frameDmc1, IFormattedValues.NATURAL_FORMAT, 5);
 
     	// If Values not equal , then context haven't been re-set properly
     	assertTrue("Multiple context not working. Execution Context is not reset to 2", thread2RegVal0.equals(dupliThread2RegVal0));

@@ -59,7 +59,18 @@ import org.osgi.framework.BundleContext;
  */
 
 public class MIRegisters extends AbstractDsfService implements IRegisters, ICachingService {
-	private static final String BLANK_STRING = ""; //$NON-NLS-1$
+	/**
+	 * @since 4.3
+	 */
+	protected static final String BLANK_STRING = ""; //$NON-NLS-1$
+	/**
+	 * @since 4.3
+	 */
+	protected static final String ROOT_GROUP_NAME = "General Registers"; //$NON-NLS-1$
+	/**
+	 * @since 4.3
+	 */
+	protected static final String ROOT_GROUP_DESCRIPTION = "General Purpose and FPU Register Group"; //$NON-NLS-1$
     /*
      * Support class used to construct Register Group DMCs.
      */
@@ -76,7 +87,11 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 
         public int getGroupNo() { return fGroupNo; }
         public String getName() { return fGroupName; }
-
+        /**
+		 * @since 4.3
+		 */
+        public void setName(String groupName) {fGroupName = groupName; }
+        
         @Override
         public boolean equals(Object other) {
             return ((super.baseEquals(other)) && (((MIRegisterGroupDMC) other).fGroupNo == fGroupNo) && 
@@ -140,6 +155,43 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
     	@Override
 		public IRegisterDMContext getDMContext() {
 			return fRegisterDmc;
+		}
+    }
+    
+    /*
+     *  Event class to notify register value is changed
+     */
+    /**
+	 * @since 4.3
+	 */
+    public static class GroupsChangedDMEvent implements IRegisters.IGroupsChangedDMEvent {
+
+    	private final IRegisterGroupDMContext fRegisterGroupDmc;
+    	
+    	public GroupsChangedDMEvent(IRegisterGroupDMContext groupDMC) { 
+    		fRegisterGroupDmc = groupDMC;
+        }
+        
+    	@Override
+		public IRegisterGroupDMContext getDMContext() {
+			return fRegisterGroupDmc;
+		}
+    }
+    
+    /**
+	 * @since 4.3
+	 */
+    public static class GroupChangedDMEvent implements IRegisters.IGroupChangedDMEvent {
+
+    	private final IRegisterGroupDMContext fRegisterGroupDmc;
+    	
+    	public GroupChangedDMEvent(IRegisterGroupDMContext groupDMC) { 
+    		fRegisterGroupDmc = groupDMC;
+        }
+        
+    	@Override
+		public IRegisterGroupDMContext getDMContext() {
+			return fRegisterGroupDmc;
 		}
     }
     
@@ -241,9 +293,9 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
          */
         class RegisterGroupData implements IRegisterGroupDMData {
         	@Override
-            public String getName() { return "General Registers"; } //$NON-NLS-1$
+            public String getName() { return ROOT_GROUP_NAME; }
         	@Override
-            public String getDescription() { return "General Purpose and FPU Register Group"; } //$NON-NLS-1$
+            public String getDescription() { return ROOT_GROUP_DESCRIPTION; } //$NON-NLS-1$
         }
 
         rm.setData( new RegisterGroupData() ) ;
@@ -357,7 +409,10 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
             });
     }
         
-    static class RegisterData implements IRegisterDMData {
+    /**
+	 * @since 4.3
+	 */
+    public static class RegisterData implements IRegisterDMData {
     	
         final private String fRegName;
         final private String fRegDesc;
@@ -487,7 +542,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
         }
         
         if (fGeneralRegistersGroupDMC == null) {
-            fGeneralRegistersGroupDMC = new MIRegisterGroupDMC( this , contDmc, 0 , "General Registers" ) ;  //$NON-NLS-1$
+            fGeneralRegistersGroupDMC = new MIRegisterGroupDMC( this , contDmc, 0 , ROOT_GROUP_NAME ) ;  //$NON-NLS-1$
         }
         MIRegisterGroupDMC[] groupDMCs = new MIRegisterGroupDMC[] { fGeneralRegistersGroupDMC };
         rm.setData(groupDMCs) ;

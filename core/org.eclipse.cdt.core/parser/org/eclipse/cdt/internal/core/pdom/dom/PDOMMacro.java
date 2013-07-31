@@ -360,12 +360,13 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 	public char[][] getParameterPlaceholderList() {
 		char[][] params= getParameterList();
 		if (params != null && params.length > 0) {
-			char[] lastParam= params[params.length-1];
+			char[] lastParam= params[params.length - 1];
 			if (CharArrayUtils.equals(lastParam, 0, Keywords.cpELLIPSIS.length, Keywords.cpELLIPSIS)) {
 				char[][] result= new char[params.length][];
-				System.arraycopy(params, 0, result, 0, params.length-1);
-				result[params.length-1]= lastParam.length == Keywords.cpELLIPSIS.length ? Keywords.cVA_ARGS : 
-					CharArrayUtils.extract(lastParam, Keywords.cpELLIPSIS.length, lastParam.length-Keywords.cpELLIPSIS.length);
+				System.arraycopy(params, 0, result, 0, params.length - 1);
+				result[params.length - 1]= lastParam.length == Keywords.cpELLIPSIS.length ?
+					Keywords.cVA_ARGS : 
+					CharArrayUtils.extract(lastParam, Keywords.cpELLIPSIS.length, lastParam.length - Keywords.cpELLIPSIS.length);
 				return result;
 			}
 		}
@@ -419,7 +420,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 
 	@Override
 	public String[] getQualifiedName() {
-		return new String[]{getName()};
+		return new String[] { getName() };
 	}
 
 	@Override

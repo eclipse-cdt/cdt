@@ -187,6 +187,7 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 	 */
 	@Override
 	public void selectionChanged( IAction action, ISelection selection ) {
+		setSelection( selection );
 		update();
 	}
 

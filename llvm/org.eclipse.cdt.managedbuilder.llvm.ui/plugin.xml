@@ -968,7 +968,6 @@
                dependencyExtensions="h"
                id="cdt.managedbuild.tool.llvm.c.compiler.input"
                languageId="org.eclipse.cdt.core.gcc"
-               scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.llvm.ui.LLVMManagedMakePerProjectProfileClang|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"
                sourceContentType="org.eclipse.cdt.core.cSource"
                sources="c">
          </inputType>
@@ -991,7 +990,6 @@
                dependencyExtensions="h,H,hpp"
                id="cdt.managedbuild.tool.llvm.cpp.compiler.input"
                languageId="org.eclipse.cdt.core.g++"
-               scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.llvm.ui.LLVMManagedMakePerProjectProfileClang++|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"
                sourceContentType="org.eclipse.cdt.core.cxxSource"
                sources="c,C,cc,cxx,cpp">
          </inputType>
@@ -1014,7 +1012,6 @@
                dependencyExtensions="h"
                id="cdt.managedbuild.tool.llvm.gcc.compiler.input"
                languageId="org.eclipse.cdt.core.gcc"
-               scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.llvm.ui.LLVMManagedMakePerProjectProfileLLVMGCC|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"
                sourceContentType="org.eclipse.cdt.core.cSource"
                sources="c">
          </inputType>
@@ -1037,7 +1034,6 @@
                dependencyExtensions="h,H,hpp"
                id="cdt.managedbuild.tool.llvm.g++.compiler.input"
                languageId="org.eclipse.cdt.core.g++"
-               scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.llvm.ui.LLVMManagedMakePerProjectProfileLLVMG++|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"
                sourceContentType="org.eclipse.cdt.core.cxxSource"
                sources="c,C,cc,cxx,cpp">
          </inputType>
@@ -1112,6 +1108,7 @@
             archList="all"
             id="cdt.managedbuild.toolchain.llvm.clang.base"
             isAbstract="true"
+            languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
             name="%ToolChainName.llvm.clang"
             osList="all"
             secondaryOutputs="cdt.managedbuild.tool.llvm.c.linker.output.exe.bc"
@@ -1208,6 +1205,7 @@
             id="cdt.managedbuild.toolchain.llvm.clang.win32.cygwin.base"
             isAbstract="false"
             isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.cygwin.IsGnuCygwinToolChainSupported"
+            languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorCygwin"
             name="%ToolChainName.llvm.clang.win32.cygwin"
             osList="win32"
             superClass="cdt.managedbuild.toolchain.llvm.clang.base">
@@ -1226,6 +1224,7 @@
             id="cdt.managedbuild.toolchain.llvm.clang.win32.mingw.base"
             isAbstract="false"
             isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.mingw.MingwIsToolChainSupported"
+            languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorMinGW"
             name="%ToolChainName.llvm.clang.win32.mingw"
             osList="win32"
             superClass="cdt.managedbuild.toolchain.llvm.clang.base">
@@ -1242,6 +1241,7 @@
             archList="all"
             id="cdt.managedbuild.toolchain.llvm.gnu.base"
             isAbstract="true"
+            languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
             name="%ToolChainName.llvm.gnu"
             osList="all"
             secondaryOutputs="cdt.managedbuild.tool.llvm.c.linker.output.exe.bc"
@@ -1330,6 +1330,7 @@
             id="cdt.managedbuild.toolchain.llvm.gnu.win32.cygwin.base"
             isAbstract="false"
             isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.cygwin.IsGnuCygwinToolChainSupported"
+            languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorCygwin"
             name="%ToolChainName.llvm.gnu.win32.cygwin"
             osList="win32"
             superClass="cdt.managedbuild.toolchain.llvm.gnu.base">
@@ -1348,6 +1349,7 @@
             id="cdt.managedbuild.toolchain.llvm.gnu.win32.mingw.base"
             isAbstract="false"
             isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.mingw.MingwIsToolChainSupported"
+            languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorMinGW"
             name="%ToolChainName.llvm.gnu.win32.mingw"
             osList="win32"
             superClass="cdt.managedbuild.toolchain.llvm.gnu.base">
@@ -1494,7 +1496,8 @@
       </toolChain>
       <configuration
             cleanCommand="rm -rf"
-            id="cdt.managedbuild.config.llvm.clang.linux.base">
+            id="cdt.managedbuild.config.llvm.clang.linux.base"
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
          <enablement
                attribute="artifactExtension"
                extensionAdjustment="false"
@@ -1782,7 +1785,8 @@
       </projectType>
       <configuration
             cleanCommand="rm -rf"
-            id="cdt.managedbuild.config.llvm.clang.macosx.base">
+            id="cdt.managedbuild.config.llvm.clang.macosx.base"
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
          <enablement
                attribute="artifactExtension"
                extensionAdjustment="false"
@@ -2068,7 +2072,8 @@
       </projectType>
       <configuration
             cleanCommand="rm -rf"
-            id="cdt.managedbuild.config.llvm.clang.win32.cygwin.base">
+            id="cdt.managedbuild.config.llvm.clang.win32.cygwin.base"
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
          <enablement
                attribute="artifactExtension"
                extensionAdjustment="false"
@@ -2355,8 +2360,9 @@
          </configuration>
       </projectType>
             <configuration
-            cleanCommand="rm -rf"
-            id="cdt.managedbuild.config.llvm.clang.win32.mingw.base">
+                  cleanCommand="rm -rf"
+                  id="cdt.managedbuild.config.llvm.clang.win32.mingw.base"
+                  languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
          <enablement
                attribute="artifactExtension"
                extensionAdjustment="false"
@@ -2644,7 +2650,8 @@
       </projectType>
       <configuration
             cleanCommand="rm -rf"
-            id="cdt.managedbuild.config.llvm.gnu.linux.base">
+            id="cdt.managedbuild.config.llvm.gnu.linux.base"
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
          <enablement
                attribute="artifactExtension"
                extensionAdjustment="false"
@@ -3223,7 +3230,8 @@
       <configuration
             artifactExtension="exe"
             cleanCommand="rm -rf"
-            id="cdt.managedbuild.config.llvm.gnu.win32.cygwin.base">
+            id="cdt.managedbuild.config.llvm.gnu.win32.cygwin.base"
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
          <enablement
                attribute="artifactExtension"
                extensionAdjustment="false"
@@ -3512,7 +3520,8 @@
       <configuration
             artifactExtension="exe"
             cleanCommand="rm -rf"
-            id="cdt.managedbuild.config.llvm.gnu.win32.mingw.base">
+            id="cdt.managedbuild.config.llvm.gnu.win32.mingw.base"
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
          <enablement
                attribute="artifactExtension"
                extensionAdjustment="false"
@@ -5174,106 +5183,6 @@
                id="org.eclipse.cdt.managedbuilder.llvm.ui.llvmAssemblySource">
          </contentType>
       </language>
-   </extension>
-   <extension
-         id="LLVMManagedMakePerProjectProfileClang++"
-         name="%extension.name"
-         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
-      <scannerInfoCollector
-            class="org.eclipse.cdt.managedbuilder.llvm.scannerconfig.LlvmScannerInfoCollector"
-            scope="project">
-      </scannerInfoCollector>
-      <buildOutputProvider>
-         <scannerInfoConsoleParser
-               class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedGCCScannerInfoConsoleParser">
-         </scannerInfoConsoleParser>
-      </buildOutputProvider>
-      <scannerInfoProvider
-            providerId="specsFile">
-         <run
-               arguments="-E -P -v -dD ${plugin_state_location}/specs.cpp"
-               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"
-               command="clang++">
-         </run>
-         <scannerInfoConsoleParser
-               class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser">
-         </scannerInfoConsoleParser>
-      </scannerInfoProvider>
-   </extension>
-   <extension
-         id="LLVMManagedMakePerProjectProfileClang"
-         name="%extension.name.0"
-         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
-      <scannerInfoCollector
-            class="org.eclipse.cdt.managedbuilder.llvm.scannerconfig.LlvmScannerInfoCollector"
-            scope="project">
-      </scannerInfoCollector>
-      <buildOutputProvider>
-         <scannerInfoConsoleParser
-               class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedGCCScannerInfoConsoleParser">
-         </scannerInfoConsoleParser>
-      </buildOutputProvider>
-      <scannerInfoProvider
-            providerId="specsFile">
-         <run
-               arguments="-E -P -v -dD ${plugin_state_location}/specs.c"
-               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"
-               command="clang">
-         </run>
-         <scannerInfoConsoleParser
-               class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser">
-         </scannerInfoConsoleParser>
-      </scannerInfoProvider>
-   </extension>
-   <extension
-         id="LLVMManagedMakePerProjectProfileLLVMG++"
-         name="%extension.name.1"
-         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
-      <scannerInfoCollector
-            class="org.eclipse.cdt.managedbuilder.llvm.scannerconfig.LlvmScannerInfoCollector"
-            scope="project">
-      </scannerInfoCollector>
-      <buildOutputProvider>
-         <scannerInfoConsoleParser
-               class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedGCCScannerInfoConsoleParser">
-         </scannerInfoConsoleParser>
-      </buildOutputProvider>
-      <scannerInfoProvider
-            providerId="specsFile">
-         <run
-               arguments="-E -P -v -dD ${plugin_state_location}/specs.cpp"
-               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"
-               command="llvm-g++">
-         </run>
-         <scannerInfoConsoleParser
-               class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser">
-         </scannerInfoConsoleParser>
-      </scannerInfoProvider>
-   </extension>
-   <extension
-         id="LLVMManagedMakePerProjectProfileLLVMGCC"
-         name="%extension.name.2"
-         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
-      <scannerInfoCollector
-            class="org.eclipse.cdt.managedbuilder.llvm.scannerconfig.LlvmScannerInfoCollector"
-            scope="project">
-      </scannerInfoCollector>
-      <buildOutputProvider>
-         <scannerInfoConsoleParser
-               class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedGCCScannerInfoConsoleParser">
-         </scannerInfoConsoleParser>
-      </buildOutputProvider>
-      <scannerInfoProvider
-            providerId="specsFile">
-         <run
-               arguments="-E -P -v -dD ${plugin_state_location}/specs.c"
-               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"
-               command="llvm-gcc">
-         </run>
-         <scannerInfoConsoleParser
-               class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser">
-         </scannerInfoConsoleParser>
-      </scannerInfoProvider>
    </extension>
    <extension
          point="org.eclipse.cdt.core.templateAssociations">

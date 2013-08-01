@@ -82,6 +82,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
@@ -93,6 +94,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
@@ -377,6 +379,15 @@ public class BindingClassifier {
 		}
 	}
 
+	private void defineBindingForName(IASTName name) {
+		IBinding binding = name.resolveBinding();
+		if (isPartOfExternalMacroDefinition(name)) {
+			markAsDefined(binding);
+		} else {
+			defineBinding(binding);
+		}
+	}
+
 	/**
 	 * Marks the given binding as defined.
 	 *
@@ -393,7 +404,13 @@ public class BindingClassifier {
 			type = SemanticUtil.getNestedType(type, ALLCVQ);
 			if (type instanceof IBinding) {
 				// Record the fact that we also have a definition of the typedef's target type.
-				fProcessedDefinedBindings.add((IBinding) type);
+				markAsDefined((IBinding) type);
+			}
+		} else if (binding instanceof ICPPClassType) {
+			// The header that defines a class must provide definitions of all its base classes.
+			ICPPClassType[] bases = ClassTypeHelper.getAllBases((ICPPClassType) binding, fAst);
+			for (ICPPClassType base : bases) {
+				fProcessedDefinedBindings.add(base);
 			}
 		}
 
@@ -470,12 +487,7 @@ public class BindingClassifier {
 
 					if (!canBeDeclared) {
 						IASTName name = ((IASTNamedTypeSpecifier) declSpecifier).getName();
-						IBinding binding = name.resolveBinding();
-						if (isPartOfExternalMacroDefinition(name)) {
-							markAsDefined(binding);
-						} else {
-							defineBinding(binding);
-						}
+						defineBindingForName(name);
 					}
 				}
 			} else if (declaration instanceof IASTFunctionDefinition) {
@@ -519,7 +531,7 @@ public class BindingClassifier {
 			 * Example:
 			 * 	class Y : X {};			// definition of X is required here
 			 */
-			defineBinding(baseSpecifier.getName().resolveBinding());
+			defineBindingForName(baseSpecifier.getName());
 			return PROCESS_CONTINUE;
 		}
 
@@ -711,7 +723,7 @@ public class BindingClassifier {
 					IASTDeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
 					if (declSpecifier instanceof IASTNamedTypeSpecifier) {
 						IASTNamedTypeSpecifier namedTypeSpecifier = (IASTNamedTypeSpecifier) declSpecifier;
-						defineBinding(namedTypeSpecifier.getName().resolveBinding());
+						defineBindingForName(namedTypeSpecifier.getName());
 					}
 				}
 			}

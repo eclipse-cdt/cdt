@@ -28,6 +28,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
@@ -48,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
@@ -58,6 +60,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -83,6 +86,7 @@ import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
+import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeGuardDetection;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
@@ -203,7 +207,7 @@ public class IncludeOrganizer {
 		// bindings which have to be defined.
 		IIndexFileSet reachableHeaders = ast.getIndexFileSet();
 
-		List<InclusionRequest> requests = createInclusionRequests(bindingsToDefine, reachableHeaders);
+		List<InclusionRequest> requests = createInclusionRequests(ast, bindingsToDefine, reachableHeaders);
 		processInclusionRequests(requests, headerSubstitutor);
 
 		// Use a map instead of a set to be able to retrieve existing elements using equal elements.
@@ -365,7 +369,7 @@ public class IncludeOrganizer {
 			Set<IBinding> bindingsToDefine) throws CoreException {
 		IIndexFileSet reachableHeaders = ast.getIndexFileSet();
 		Set<IBinding> bindings =
-				removeBindingsDefinedInIncludedHeaders(classifier.getBindingsToDeclare(), reachableHeaders);
+				removeBindingsDefinedInIncludedHeaders(ast, classifier.getBindingsToDeclare(), reachableHeaders);
 		for (IBinding binding : bindings) {
 			// Create the text of the forward declaration of this binding.
 			StringBuilder declarationText = new StringBuilder();
@@ -573,7 +577,7 @@ public class IncludeOrganizer {
 				}
 			}
 		}
-		if (includeOffset <= 0) {
+		if (includeOffset < 0) {
 			if (includeGuardEndOffset >= 0) {
 				includeOffset = skipToNextLine(includeGuardEndOffset);
 			} else {
@@ -829,11 +833,11 @@ public class IncludeOrganizer {
 		return fContext.getPreferences().includeStyles.get(includeKind);
 	}
 
-	private Set<IBinding> removeBindingsDefinedInIncludedHeaders(Set<IBinding> bindings,
-			IIndexFileSet reachableHeaders) throws CoreException {
+	private Set<IBinding> removeBindingsDefinedInIncludedHeaders(IASTTranslationUnit ast,
+			Set<IBinding> bindings, IIndexFileSet reachableHeaders) throws CoreException {
 		Set<IBinding> filteredBindings = new HashSet<IBinding>(bindings);
 
-		List<InclusionRequest> requests = createInclusionRequests(bindings, reachableHeaders);
+		List<InclusionRequest> requests = createInclusionRequests(ast, bindings, reachableHeaders);
 		Set<IPath> allIncludedHeaders = new HashSet<IPath>();
 		allIncludedHeaders.addAll(fContext.getHeadersAlreadyIncluded());
 		allIncludedHeaders.addAll(fContext.getHeadersToInclude());
@@ -1015,14 +1019,25 @@ public class IncludeOrganizer {
 		return false;
 	}
 
-	private List<InclusionRequest> createInclusionRequests(Set<IBinding> bindingsToDefine,
-			IIndexFileSet reachableHeaders) throws CoreException {
+	private List<InclusionRequest> createInclusionRequests(IASTTranslationUnit ast,
+			Set<IBinding> bindingsToDefine, IIndexFileSet reachableHeaders) throws CoreException {
 		List<InclusionRequest> requests = new ArrayList<InclusionRequest>(bindingsToDefine.size());
 		IIndex index = fContext.getIndex();
 
 		binding_loop: for (IBinding binding : bindingsToDefine) {
 			IIndexName[] indexNames;
-			if (binding instanceof IFunction) {
+			if (binding instanceof IMacroBinding) {
+				indexNames = IIndexName.EMPTY_ARRAY;
+	    		ILocationResolver resolver = (ILocationResolver) ast.getAdapter(ILocationResolver.class);
+	    		IASTName[] declarations = resolver.getDeclarations((IMacroBinding) binding);
+	    		for (IASTName name : declarations) {
+	    			if (name instanceof IAdaptable) {
+	    				IIndexName indexName = (IIndexName) ((IAdaptable) name).getAdapter(IIndexName.class);
+	    				indexNames = Arrays.copyOf(indexNames, indexNames.length + 1);
+	    				indexNames[indexNames.length - 1] = indexName;
+	    			}
+	    		}
+			} else if (binding instanceof IFunction) {
 				// For functions we need to include the declaration.
 				indexNames = index.findDeclarations(binding);
 			} else {

@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFileNomination;
@@ -1200,8 +1199,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		} else {
     			PreprocessorMacro result= MacroDefinitionParser.parseMacroDefinition(
     					macro.getNameCharArray(), macro.getParameterList(), expansionImage);
-    			final IASTFileLocation loc= macro.getFileLocation();
-    			fLocationMap.registerMacroFromIndex(result, loc, -1);
+    			fLocationMap.registerMacroFromIndex(result, macro.getDefinition(), -1);
     			fMacroDictionary.put(result.getNameCharArray(), result);
     		}
     	} catch (Exception e) {

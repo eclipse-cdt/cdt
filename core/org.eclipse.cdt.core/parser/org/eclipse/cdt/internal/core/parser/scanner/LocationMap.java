@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
@@ -78,18 +79,18 @@ public class LocationMap implements ILocationResolver {
 		registerPredefinedMacro(macro, null, -1);
 	}
 
-	public void registerMacroFromIndex(IMacroBinding macro, IASTFileLocation nameLocation, int expansionOffset) {
-		registerPredefinedMacro(macro, nameLocation, expansionOffset);
+	public void registerMacroFromIndex(IMacroBinding macro, IName originalDefinition, int expansionOffset) {
+		registerPredefinedMacro(macro, originalDefinition, expansionOffset);
 	}
 	
-	private void registerPredefinedMacro(IMacroBinding macro, IASTFileLocation nameloc, int expansionOffset) {
-		ASTMacroDefinition astmacro;
+	private void registerPredefinedMacro(IMacroBinding macro, IName originalDefinition, int expansionOffset) {
+		ASTMacroDefinition astMacro;
 		if (macro.isFunctionStyle()) {
-			astmacro= new ASTFunctionStyleMacroDefinition(fTranslationUnit, macro, nameloc, expansionOffset);
+			astMacro= new ASTFunctionStyleMacroDefinition(fTranslationUnit, macro, originalDefinition, expansionOffset);
 		} else {
-			astmacro= new ASTMacroDefinition(fTranslationUnit, macro, nameloc, expansionOffset);
+			astMacro= new ASTMacroDefinition(fTranslationUnit, macro, originalDefinition, expansionOffset);
 		}
-		fBuiltinMacros.add(astmacro);
+		fBuiltinMacros.add(astMacro);
 	}
 
 	/**

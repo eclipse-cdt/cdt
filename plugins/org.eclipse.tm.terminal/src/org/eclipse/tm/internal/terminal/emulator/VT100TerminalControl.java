@@ -47,6 +47,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -65,7 +66,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -127,7 +127,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
     private ITerminalConnector		  fConnector;
     private final ITerminalConnector[]      fConnectors;
 	private final boolean fUseCommonPrefs;
-	
+
     PipedInputStream fInputStream;
 	private static final String defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
 	private String fEncoding = defaultEncoding;
@@ -138,6 +138,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	private volatile TerminalState fState;
 
 	private final ITerminalTextData fTerminalModel;
+
+	private final EditActionAccelerators editActionAccelerators = new EditActionAccelerators();
 
 	/**
 	 * Listens to changes in the preferences
@@ -157,7 +159,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			}
 		}
 	};
-	
+
 	/**
 	 * Is protected by synchronize on this
 	 */
@@ -166,13 +168,13 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	public VT100TerminalControl(ITerminalListener target, Composite wndParent, ITerminalConnector[] connectors) {
 		this(target, wndParent, connectors, false);
 	}
-	
+
 	/**
 	 * Instantiate a Terminal widget.
 	 * @param target Callback for notifying the owner of Terminal state changes.
 	 * @param wndParent The Window parent to embed the Terminal in.
 	 * @param connectors Provided connectors.
-	 * @param useCommonPrefs If <code>true</code>, the Terminal widget will pick up settings 
+	 * @param useCommonPrefs If <code>true</code>, the Terminal widget will pick up settings
 	 *    from the <code>org.eclipse.tm.terminal.TerminalPreferencePage</code> Preference page.
 	 *    Otherwise, clients need to maintain settings themselves.
 	 * @since 3.2
@@ -620,7 +622,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	}
 
 	private void onTerminalFontChanged() {
-		// set the font for all 
+		// set the font for all
 		setFont(ITerminalConstants.FONT_DEFINITION);
 	}
 
@@ -790,6 +792,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	}
 	protected class TerminalFocusListener implements FocusListener {
 		private IContextActivation contextActivation = null;
+		private IContextActivation contextActivation1 = null;
 
 		protected TerminalFocusListener() {
 			super();
@@ -815,6 +818,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					.getWorkbench().getAdapter(IContextService.class);
 			contextActivation = contextService
 					.activateContext("org.eclipse.tm.terminal.TerminalContext"); //$NON-NLS-1$
+			contextActivation1 = contextService
+					.activateContext("org.eclipse.tm.terminal.EditContext"); //$NON-NLS-1$
+
 		}
 
 		public void focusLost(FocusEvent event) {
@@ -829,6 +835,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			IContextService contextService = (IContextService) PlatformUI
 					.getWorkbench().getAdapter(IContextService.class);
 			contextService.deactivateContext(contextActivation);
+			contextService.deactivateContext(contextActivation1);
 		}
 	}
 
@@ -836,6 +843,16 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		public void keyPressed(KeyEvent event) {
 			if (getState()==TerminalState.CONNECTING)
 				return;
+
+			int accelerator = SWTKeySupport.convertEventToUnmodifiedAccelerator(event);
+			if (editActionAccelerators.isCopyAction(accelerator)) {
+				copy();
+				return;
+			}
+			if (editActionAccelerators.isPasteAction(accelerator)) {
+				paste();
+				return;
+			}
 
 			// We set the event.doit to false to prevent any further processing of this
 			// key event.  The only reason this is here is because I was seeing the F10

@@ -34,11 +34,13 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl3;
+import org.eclipse.cdt.dsf.debug.service.IRunControl4;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.service.control.StepIntoSelectionActiveOperation;
 import org.eclipse.cdt.dsf.gdb.internal.service.control.StepIntoSelectionUtils;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
+import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
@@ -56,6 +58,8 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackInfoDepthInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -63,8 +67,23 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
-public class GDBRunControl extends MIRunControl {
+public class GDBRunControl extends MIRunControl implements IRunControl4 {
 	
+    private class GDBContainerData implements IContainerDMData {
+
+    	final private String fExecutable;
+
+		private GDBContainerData(String executable) {
+			fExecutable = executable;
+		}
+
+		@Override
+		public String getExecutable() {
+			return fExecutable;
+		}
+
+	}
+
 	private static class RunToLineActiveOperation {
 		private IMIExecutionDMContext fThreadContext;
 		private int fBpId;
@@ -739,5 +758,30 @@ public class GDBRunControl extends MIRunControl {
 			rm.done();
 		}
 	}
-    
+
+	/**
+	 * @since 4.3
+	 */
+	@Override
+	public void getContainerData(final IContainerDMContext dmc, final DataRequestMonitor<IContainerDMData> rm) {
+		if (!(dmc instanceof IMIContainerDMContext)) {
+			rm.done();
+			return;
+		}
+		
+		fConnection.queueCommand(
+				fCommandFactory.createMIListThreadGroups(fConnection.getContext()),
+				new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
+					@Override
+					protected void handleSuccess() {
+						for (IThreadGroupInfo tgi : getData().getGroupList()) {
+							if (tgi.getGroupId().equals(((IMIContainerDMContext)dmc).getGroupId())) {
+								rm.setData(new GDBContainerData(tgi.getExecutable()));
+								break;
+							}
+						}
+						rm.done();
+					}
+				});
+	}
 }

@@ -13,25 +13,43 @@
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.DisassemblyAnnotationModel;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IBreakpointLocationProvider;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControl4;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl4.IContainerDMData;
+import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -84,7 +102,7 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 	}
 
 	private void addBreakpoints(IBreakpoint[] breakpoints) {
-		for (IBreakpoint breakpoint : breakpoints) {
+		for (IBreakpoint breakpoint : filterAddressBreakpoints(breakpoints)) {
 			addBreakpointAnnotation(breakpoint, false);
 		}
 		fireModelChanged();
@@ -95,7 +113,10 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 	 */
 	@Override
 	public void breakpointAdded(IBreakpoint breakpoint) {
-		addBreakpointAnnotation(breakpoint, true);
+		IBreakpoint[] bps = filterAddressBreakpoints(new IBreakpoint[] {breakpoint});
+		if (bps.length > 0) {
+			addBreakpointAnnotation(breakpoint, true);
+		}
 	}
 
 	/*
@@ -276,4 +297,71 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 		}
 	}
 
+	private IBreakpoint[] filterAddressBreakpoints(IBreakpoint[] breakpoints) {
+		String module = getModuleName();
+		List<IBreakpoint> list = new ArrayList<IBreakpoint>(breakpoints.length);
+		for (IBreakpoint b : breakpoints) {
+			if (b instanceof ICAddressBreakpoint) {
+				String bpModule = null;
+				try {
+					bpModule = ((ICAddressBreakpoint)b).getModule();
+				}
+				catch(CoreException e) {
+				}
+				if (bpModule == null || bpModule.isEmpty() || bpModule.equals(module)) {
+					list.add(b);
+				}
+			}
+			else {
+				list.add(b);
+			}
+		}
+		return list.toArray(new IBreakpoint[list.size()]);
+	}
+
+	private String getModuleName() {
+		IContainerDMData data = null;
+		IAdaptable dc = DebugUITools.getDebugContext();
+		if (dc instanceof IDMVMContext) {
+			IDMContext dmc = ((IDMVMContext)dc).getDMContext();
+			final IContainerDMContext contDmc = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
+			if (contDmc == null) {
+				return null;
+			}
+			DsfSession session = DsfSession.getSession(contDmc.getSessionId());
+			if (!session.isActive()) {
+				return null;
+			}
+			Query<IContainerDMData> query = new Query<IContainerDMData>() {
+
+				@Override
+				protected void execute(DataRequestMonitor<IContainerDMData> rm) {
+					DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), contDmc.getSessionId());
+					IRunControl runControl = tracker.getService(IRunControl.class);
+					tracker.dispose();
+					if (runControl == null) {
+						rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, "Service is not available")); //$NON-NLS-1$
+						rm.done();
+						return;
+					}
+					if (!(runControl instanceof IRunControl4)) {
+						rm.done();
+						return;
+					}
+					((IRunControl4)runControl).getContainerData(contDmc, rm);
+				}
+			};
+
+			session.getExecutor().execute(query);
+			try {
+				data = query.get();
+			}
+			catch(InterruptedException e) {
+			}
+			catch( ExecutionException e ) {
+			}
+			
+		}
+		return (data != null) ? data.getExecutable() : null;
+	}
 }

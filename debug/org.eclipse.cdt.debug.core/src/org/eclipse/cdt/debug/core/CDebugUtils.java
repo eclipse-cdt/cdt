@@ -365,6 +365,7 @@ public class CDebugUtils {
 
 	protected static String getAddressBreakpointText(ICAddressBreakpoint breakpoint, boolean qualified) throws CoreException {
 		StringBuffer label = new StringBuffer();
+		appendModule(breakpoint, label, qualified);
 		appendSourceName(breakpoint, label, qualified);
 		appendAddress(breakpoint, label);
 		appendBreakpointType(breakpoint, label);
@@ -381,6 +382,20 @@ public class CDebugUtils {
 		appendIgnoreCount(breakpoint, label);
 		appendCondition(breakpoint, label);
 		return label.toString();
+	}
+
+	/**
+	 * @since 7.4
+	 */
+	protected static StringBuffer appendModule(ICBreakpoint breakpoint, StringBuffer label, boolean qualified) throws CoreException {
+		String module = breakpoint.getModule();
+		if (!isEmpty(module)) {
+			IPath path = new Path(module);
+			if (path.isValidPath(module)) {
+				label.append(qualified ? path.toOSString() : path.lastSegment());
+			}
+		}
+		return label;
 	}
 
 	protected static StringBuffer appendSourceName(ICBreakpoint breakpoint, StringBuffer label, boolean qualified) throws CoreException {

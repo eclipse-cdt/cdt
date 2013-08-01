@@ -16,6 +16,7 @@
 
 package org.eclipse.cdt.dsf.mi.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -57,6 +58,8 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl4;
+import org.eclipse.cdt.dsf.debug.service.IRunControl4.IContainerDMData;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
@@ -424,58 +427,63 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
         // Read current breakpoints from platform and copy their augmented
         // attributes into the local reference map
-        try {
-            IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(fDebugModelId);
-            for (IBreakpoint breakpoint : breakpoints) {
-                if (supportsBreakpoint(breakpoint)) {
-                    Map<String, Object> attributes = breakpoint.getMarker().getAttributes();
-                    attributes.put(ATTR_DEBUGGER_PATH, NULL_STRING);
-                    attributes.put(ATTR_THREAD_FILTER, extractThreads(dmc, (ICBreakpoint) breakpoint));
-                    attributes.put(ATTR_THREAD_ID, NULL_STRING);
-                    platformBPs.put((ICBreakpoint) breakpoint, attributes);
+        IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(fDebugModelId);
+        filterAddressBreakpoints(dmc, breakpoints, new DataRequestMonitor<IBreakpoint[]>(ImmediateExecutor.getInstance(), rm) {
+        	@Override
+        	protected void handleSuccess() {
+                try {
+                    for (IBreakpoint breakpoint : getData()) {
+                        if (supportsBreakpoint(breakpoint)) {
+                            Map<String, Object> attributes = breakpoint.getMarker().getAttributes();
+                            attributes.put(ATTR_DEBUGGER_PATH, NULL_STRING);
+                            attributes.put(ATTR_THREAD_FILTER, extractThreads(dmc, (ICBreakpoint) breakpoint));
+                            attributes.put(ATTR_THREAD_ID, NULL_STRING);
+                            platformBPs.put((ICBreakpoint) breakpoint, attributes);
+                        }
+                    }
+                } catch (CoreException e) {
+                    IStatus status = new Status(
+                        IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNABLE_TO_READ_BREAKPOINT, e);
+                    rm.setStatus(status);
+                    rm.done();
                 }
-            }
-        } catch (CoreException e) {
-            IStatus status = new Status(
-                IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNABLE_TO_READ_BREAKPOINT, e);
-            rm.setStatus(status);
-            rm.done();
-        }
 
-        // Install the individual breakpoints on the dispatcher thread
-        // Requires a counting monitor to know when we are done
-        final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm);
-        countingRm.setDoneCount(platformBPs.size());
+                // Install the individual breakpoints on the dispatcher thread
+                // Requires a counting monitor to know when we are done
+                final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm);
+                countingRm.setDoneCount(platformBPs.size());
 
-        for (final ICBreakpoint breakpoint : platformBPs.keySet()) {
-            final Map<String, Object> attributes = platformBPs.get(breakpoint);
-            // Upon determining the debuggerPath, the breakpoint is installed
-            determineDebuggerPath(dmc, attributes, new RequestMonitor(getExecutor(), countingRm) {
-                @Override
-                protected void handleSuccess() {                	
-                	// Before installing a breakpoint, set the target filter for that target.
-                	// Even if the breakpoint is disabled when we start, the target filter 
-                	// can be accessed by the user through the breakpoint properties UI, so
-                	// we must set it right now.
-                	// This is the reason we don't do this in 'installBreakpoint', which used to not
-                	// be called right away if the breakpoint was disabled (this is no longer the case).
-                	try {
-                		IContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
-                		IDsfBreakpointExtension filterExt = getFilterExtension(breakpoint);
-                		if (filterExt.getThreadFilters(containerDmc) == null) {
-                			// Do this only if there wasn't already an entry, or else we would
-                			// erase the content of that previous entry.
-                			filterExt.setTargetFilter(containerDmc);
-                		}
-					} catch (CoreException e) {
-					}
-                	
-                	// Must install breakpoints right away, even if disabled, so that
-                	// we can find out if they apply to this target (Bug 389070)
-               		installBreakpoint(dmc, breakpoint, attributes, countingRm);
+                for (final ICBreakpoint breakpoint : platformBPs.keySet()) {
+                    final Map<String, Object> attributes = platformBPs.get(breakpoint);
+                    // Upon determining the debuggerPath, the breakpoint is installed
+                    determineDebuggerPath(dmc, attributes, new RequestMonitor(getExecutor(), countingRm) {
+                        @Override
+                        protected void handleSuccess() {                	
+                        	// Before installing a breakpoint, set the target filter for that target.
+                        	// Even if the breakpoint is disabled when we start, the target filter 
+                        	// can be accessed by the user through the breakpoint properties UI, so
+                        	// we must set it right now.
+                        	// This is the reason we don't do this in 'installBreakpoint', which used to not
+                        	// be called right away if the breakpoint was disabled (this is no longer the case).
+                        	try {
+                        		IContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
+                        		IDsfBreakpointExtension filterExt = getFilterExtension(breakpoint);
+                        		if (filterExt.getThreadFilters(containerDmc) == null) {
+                        			// Do this only if there wasn't already an entry, or else we would
+                        			// erase the content of that previous entry.
+                        			filterExt.setTargetFilter(containerDmc);
+                        		}
+        					} catch (CoreException e) {
+        					}
+                        	
+                        	// Must install breakpoints right away, even if disabled, so that
+                        	// we can find out if they apply to this target (Bug 389070)
+                       		installBreakpoint(dmc, breakpoint, attributes, countingRm);
+                        }
+                    });
                 }
-            });
-        }
+        	}
+        });
     }
 
     //-------------------------------------------------------------------------
@@ -556,9 +564,12 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      * @param attributes
      * @param rm
      */
-    private void installBreakpoint(IBreakpointsTargetDMContext dmc, final ICBreakpoint breakpoint,
-        final Map<String, Object> attributes, final RequestMonitor rm)
-    {
+    private void installBreakpoint(
+    	final IBreakpointsTargetDMContext dmc, 
+    	final ICBreakpoint breakpoint,
+        final Map<String, Object> attributes, 
+        final RequestMonitor rm) {
+    	
         // Retrieve the breakpoint maps
         final Map<ICBreakpoint,Map<String,Object>> platformBPs = fPlatformBPs.get(dmc);
         assert platformBPs != null;
@@ -1183,26 +1194,37 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
                         // Install the breakpoint in all the execution contexts
                         for (final IBreakpointsTargetDMContext dmc : fPlatformBPs.keySet()) {
-                            determineDebuggerPath(dmc, attrs,
-                                    new RequestMonitor(getExecutor(), countingRm) {
-                                    @Override
-                                    protected void handleSuccess() {
-                                    	// For a new breakpoint, set the target filter.
-                                    	try {
-                                    		IContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
-                                    		IDsfBreakpointExtension filterExt = getFilterExtension((ICBreakpoint)breakpoint);
-                                    		if (filterExt.getThreadFilters(containerDmc) == null) {
-                                    			// Do this only if there wasn't already an entry, or else we would
-                                    			// erase the content of that previous entry.
-                                    			filterExt.setTargetFilter(containerDmc);
-                                    		}
-                    					} catch (CoreException e) {
-                    					}
-                                    	
-                                        installBreakpoint(dmc, (ICBreakpoint) breakpoint,
-                                            attrs, countingRm);
-                                    }
-                                });
+                        	DataRequestMonitor<IBreakpoint[]> drm = new DataRequestMonitor<IBreakpoint[]>(getExecutor(), countingRm) {
+                    			@Override
+                    			protected void handleSuccess() {
+                    				if (getData().length > 0) {
+                                        determineDebuggerPath(dmc, attrs,
+                                                new RequestMonitor(getExecutor(), countingRm) {
+                                                @Override
+                                                protected void handleSuccess() {
+                                                	// For a new breakpoint, set the target filter.
+                                                	try {
+                                                		IContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
+                                                		IDsfBreakpointExtension filterExt = getFilterExtension((ICBreakpoint)breakpoint);
+                                                		if (filterExt.getThreadFilters(containerDmc) == null) {
+                                                			// Do this only if there wasn't already an entry, or else we would
+                                                			// erase the content of that previous entry.
+                                                			filterExt.setTargetFilter(containerDmc);
+                                                		}
+                                					} catch (CoreException e) {
+                                					}
+                                                	
+                                                    installBreakpoint(dmc, (ICBreakpoint) breakpoint,
+                                                        attrs, countingRm);
+                                                }
+                                            });
+                    				}
+                    				else {
+                    					countingRm.done();
+                    				}
+                    			}
+                    		};
+							filterAddressBreakpoints(dmc, new IBreakpoint[] { breakpoint }, drm);
                         }
                     }
                 });
@@ -1964,5 +1986,52 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 	 */
     public void removeBreakpointsTrackingListener(IMIBreakpointsTrackingListener listener) {
     	fTrackingListeners.remove(listener);
+    }
+
+    private void filterAddressBreakpoints(final IBreakpointsTargetDMContext dmc, final IBreakpoint[] breakpoints, final DataRequestMonitor<IBreakpoint[]> rm) {
+		final IMIContainerDMContext contDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
+		final IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+		if (runControl == null) {
+		    rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Service is not available")); //$NON-NLS-1$
+		    rm.done();
+		    return;
+		}
+		rm.setData(breakpoints);
+		if (runControl instanceof IRunControl4) {
+			((IRunControl4)runControl).getContainerData(
+				contDmc, 
+				new DataRequestMonitor<IContainerDMData>(getExecutor(), rm) {
+
+					@Override
+					protected void handleSuccess() {
+				        List<IBreakpoint> list = new ArrayList<IBreakpoint>(breakpoints.length);
+				        if (getData() != null) {
+							String executable = getData().getExecutable();
+							if (executable != null && !executable.isEmpty()) {
+								for (IBreakpoint b : breakpoints) {
+									if (supportsBreakpoint(b) && b instanceof ICAddressBreakpoint) {
+										try {
+											String module = ((ICBreakpoint)b).getModule();
+											if (module == null || module.isEmpty() || new File(executable).equals(new File(module))) {
+												list.add(b);
+											}
+										}
+										catch(CoreException e) {
+										}
+									}
+									else {
+										list.add(b);
+									}
+								}
+								rm.setData(list.toArray(new IBreakpoint[list.size()]));
+							}
+				        }
+						rm.done();
+					}
+				});
+		}
+		else {
+			rm.done();
+		}
     }
 }

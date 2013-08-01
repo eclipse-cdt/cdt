@@ -12,14 +12,31 @@ package org.eclipse.cdt.dsf.debug.internal.ui;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl4;
+import org.eclipse.cdt.dsf.debug.service.IRunControl4.IContainerDMData;
 import org.eclipse.cdt.dsf.debug.ui.actions.AbstractDisassemblyBreakpointsTarget;
+import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -51,7 +68,8 @@ public class DisassemblyToggleBreakpointsTarget extends AbstractDisassemblyBreak
 	 */
 	@Override
 	protected void createAddressBreakpoint( IResource resource, IAddress address ) throws CoreException {
-		CDIDebugModel.createAddressBreakpoint( null, null, resource, getBreakpointType(), address, true, 0, "", true ); //$NON-NLS-1$
+		String module = getModuleName();
+		CDIDebugModel.createAddressBreakpoint( module, null, resource, getBreakpointType(), address, true, 0, "", true ); //$NON-NLS-1$
 	}
 
     @Override
@@ -59,13 +77,60 @@ public class DisassemblyToggleBreakpointsTarget extends AbstractDisassemblyBreak
         throws CoreException 
     {
         ICLineBreakpoint lineBp = CDIDebugModel.createBlankAddressBreakpoint();
+		String module = getModuleName();
         Map<String, Object> attributes = new HashMap<String, Object>();
         CDIDebugModel.setAddressBreakpointAttributes(
-            attributes, null, null, getBreakpointType(), -1, address, true, 0, "" ); //$NON-NLS-1$
+            attributes, module, null, getBreakpointType(), -1, address, true, 0, "" ); //$NON-NLS-1$
         openBreakpointPropertiesDialog(lineBp, part, resource, attributes);
     }
 
 	protected int getBreakpointType() {
 		return ICBreakpointType.REGULAR;
+	}
+
+	private String getModuleName() {
+		IContainerDMData data = null;
+		IAdaptable dc = DebugUITools.getDebugContext();
+		if (dc instanceof IDMVMContext) {
+			IDMContext dmc = ((IDMVMContext)dc).getDMContext();
+			final IContainerDMContext contDmc = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
+			if (contDmc == null) {
+				return null;
+			}
+			DsfSession session = DsfSession.getSession(contDmc.getSessionId());
+			if (!session.isActive()) {
+				return null;
+			}
+			Query<IContainerDMData> query = new Query<IContainerDMData>() {
+
+				@Override
+				protected void execute(DataRequestMonitor<IContainerDMData> rm) {
+					DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), contDmc.getSessionId());
+					IRunControl runControl = tracker.getService(IRunControl.class);
+					tracker.dispose();
+					if (runControl == null) {
+						rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, "Service is not available")); //$NON-NLS-1$
+						rm.done();
+						return;
+					}
+					if (!(runControl instanceof IRunControl4)) {
+						rm.done();
+						return;
+					}
+					((IRunControl4)runControl).getContainerData(contDmc, rm);
+				}
+			};
+
+			session.getExecutor().execute(query);
+			try {
+				data = query.get();
+			}
+			catch(InterruptedException e) {
+			}
+			catch( ExecutionException e ) {
+			}
+			
+		}
+		return (data != null) ? data.getExecutable() : null;
 	}
 }

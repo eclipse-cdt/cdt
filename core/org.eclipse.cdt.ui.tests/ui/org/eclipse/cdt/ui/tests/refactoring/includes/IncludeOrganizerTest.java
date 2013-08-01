@@ -14,6 +14,7 @@ import java.util.List;
 
 import junit.framework.Test;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.MultiTextEdit;
@@ -24,6 +25,7 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeOrganizer;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences.UnusedStatementDisposition;
 
 /**
  * Tests for {@link IncludeOrganizer}.
@@ -45,13 +47,14 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	@Override
 	protected void resetPreferences() {
 		super.resetPreferences();
-		getPreferenceStore().setToDefault(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION);
-		getPreferenceStore().setToDefault(PreferenceConstants.FORWARD_DECLARE_COMPOSITE_TYPES);
-		getPreferenceStore().setToDefault(PreferenceConstants.FORWARD_DECLARE_ENUMS);
-		getPreferenceStore().setToDefault(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS);
-		getPreferenceStore().setToDefault(PreferenceConstants.FORWARD_DECLARE_TEMPLATES);
-		getPreferenceStore().setToDefault(PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS);
-		getPreferenceStore().setToDefault(PreferenceConstants.INCLUDES_ALLOW_REORDERING);
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setToDefault(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION);
+		preferenceStore.setToDefault(PreferenceConstants.FORWARD_DECLARE_COMPOSITE_TYPES);
+		preferenceStore.setToDefault(PreferenceConstants.FORWARD_DECLARE_ENUMS);
+		preferenceStore.setToDefault(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS);
+		preferenceStore.setToDefault(PreferenceConstants.FORWARD_DECLARE_TEMPLATES);
+		preferenceStore.setToDefault(PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS);
+		preferenceStore.setToDefault(PreferenceConstants.INCLUDES_ALLOW_REORDERING);
 	}
 
 	private void assertExpectedResults() throws Exception {
@@ -328,6 +331,30 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//C c;
 	//D d;
 	public void testHeaderExport() throws Exception {
+		assertExpectedResults();
+	}
+
+	//h1.h
+	//#define M2(t, p) t p
+
+	//h2.h
+	//#include "h1.h"
+	//#define M1(x, y) M2(int, x) = y
+
+	//h3.h
+	//#include "h2.h"
+
+	//source.cpp
+	//#include "h3.h"
+	//M1(a, 1);
+	//====================
+	//#include "h2.h"
+	//
+	//M1(a, 1);
+	public void testMacro() throws Exception {
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setValue(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION,
+				UnusedStatementDisposition.REMOVE.toString());
 		assertExpectedResults();
 	}
 }

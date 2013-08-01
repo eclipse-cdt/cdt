@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -23,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * Models IASTNames as needed for the preprocessor statements and macro expansions.
@@ -150,13 +152,13 @@ class ASTPreprocessorDefinition extends ASTPreprocessorName {
 	}
 }
 
-class ASTBuiltinName extends ASTPreprocessorDefinition {
-	private final IASTFileLocation fFileLocation;
+class ASTBuiltinName extends ASTPreprocessorDefinition implements IAdaptable {
+	private final IName fOriginalDefinition;
 
-	public ASTBuiltinName(IASTNode parent, ASTNodeProperty property, IASTFileLocation floc,
+	public ASTBuiltinName(IASTNode parent, ASTNodeProperty property, IName originalDefinition,
 			char[] name, IBinding binding) {
 		super(parent, property, -1, -1, name, binding);
-		fFileLocation= floc;
+		fOriginalDefinition= originalDefinition;
 	}
 
 	@Override
@@ -166,31 +168,40 @@ class ASTBuiltinName extends ASTPreprocessorDefinition {
 
 	@Override
 	public String getContainingFilename() {
-		if (fFileLocation == null) {
-			return ""; //$NON-NLS-1$
-		}
-		return fFileLocation.getFileName();
+		IASTFileLocation fileLocation = getFileLocation();
+		return fileLocation == null ? "" : fileLocation.getFileName(); //$NON-NLS-1$
 	}
 
 	@Override
 	public IASTFileLocation getFileLocation() {
-		return fFileLocation;
+		return fOriginalDefinition == null ? null : fOriginalDefinition.getFileLocation();
 	}
 
 	@Override
 	public IASTNodeLocation[] getNodeLocations() {
-		if (fFileLocation == null) {
+		IASTFileLocation fileLocation = getFileLocation();
+		if (fileLocation == null) {
 			return IASTNodeLocation.EMPTY_ARRAY;
 		}
-		return new IASTNodeLocation[] { fFileLocation };
+		return new IASTNodeLocation[] { fileLocation };
 	}
 
 	@Override
 	public String getRawSignature() {
-		if (fFileLocation == null) {
-			return ""; //$NON-NLS-1$
+		IASTFileLocation fileLocation = getFileLocation();
+		return fileLocation == null ? "" : toString(); //$NON-NLS-1$
+	}
+
+	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Object getAdapter(Class adapter) {
+		if (adapter.isAssignableFrom(ASTBuiltinName.class)) {
+			return this;
 		}
-		return toString();
+		if (adapter.isAssignableFrom(fOriginalDefinition.getClass())) {
+			return fOriginalDefinition;
+		}
+		return null;
 	}
 }
 

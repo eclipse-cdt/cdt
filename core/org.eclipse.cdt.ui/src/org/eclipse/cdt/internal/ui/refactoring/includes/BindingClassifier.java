@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -1011,8 +1012,9 @@ public class BindingClassifier {
 		@Override
 		public int visit(IASTTranslationUnit tu) {
 			for (IASTPreprocessorMacroExpansion macroExpansion : tu.getMacroExpansions()) {
-				IBinding binding = macroExpansion.getMacroReference().getBinding();
-				defineBinding(binding);
+				IASTPreprocessorMacroDefinition macroDefinition = macroExpansion.getMacroDefinition();
+				IASTName name = macroDefinition.getName();
+				defineBinding(name.getBinding());
 			}
 			return PROCESS_CONTINUE;
 		}

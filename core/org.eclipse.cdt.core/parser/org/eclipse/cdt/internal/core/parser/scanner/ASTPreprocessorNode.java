@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -502,9 +503,9 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 	 * Constructor for built-in macros
 	 * @param expansionOffset 
 	 */
-	public ASTMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, IASTFileLocation floc, int expansionOffset) {
+	public ASTMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, IName originalDefinition, int expansionOffset) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, -1, -1);
-		fName= new ASTBuiltinName(this, IASTPreprocessorMacroDefinition.MACRO_NAME, floc, macro.getNameCharArray(), macro);
+		fName= new ASTBuiltinName(this, IASTPreprocessorMacroDefinition.MACRO_NAME, originalDefinition, macro.getNameCharArray(), macro);
 		fExpansionNumber= -1;
 		fExpansionOffset= expansionOffset;
 	}
@@ -605,8 +606,8 @@ class ASTFunctionStyleMacroDefinition extends ASTMacroDefinition implements IAST
 	 * Constructor for builtins
 	 */
 	public ASTFunctionStyleMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, 
-			IASTFileLocation nameLoc, int expansionOffset) {
-		super(parent, macro, nameLoc, expansionOffset);
+			IName originalDefinition, int expansionOffset) {
+		super(parent, macro, originalDefinition, expansionOffset);
 	}
 
 	@Override

@@ -14,6 +14,7 @@ import java.io.IOException;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -53,10 +54,11 @@ import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
 
 public class LocationMapTests extends BaseTestCase {
-	public class Loc implements IASTFileLocation {
+	public class Loc implements IASTFileLocation, IName {
 		private String fFile;
 		private int fOffset;
 		private int fEndOffset;
+
 		public Loc(String file, int offset, int endOffset) {
 			fFile= file;
 			fOffset= offset;
@@ -72,7 +74,7 @@ public class LocationMapTests extends BaseTestCase {
 		}
 		@Override
 		public int getNodeLength() {
-			return fEndOffset-fOffset;
+			return fEndOffset - fOffset;
 		}
 		@Override
 		public int getNodeOffset() {
@@ -89,6 +91,30 @@ public class LocationMapTests extends BaseTestCase {
 		@Override
 		public IASTPreprocessorIncludeStatement getContextInclusionStatement() {
 			return null;
+		}
+		@Override
+		public char[] getSimpleID() {
+			return new char[0];
+		}
+		@Override
+		public char[] toCharArray() {
+			return getSimpleID();
+		}
+		@Override
+		public boolean isDeclaration() {
+			return false;
+		}
+		@Override
+		public boolean isReference() {
+			return false;
+		}
+		@Override
+		public boolean isDefinition() {
+			return true;
+		}
+		@Override
+		public IASTFileLocation getFileLocation() {
+			return this;
 		}
 	}
 

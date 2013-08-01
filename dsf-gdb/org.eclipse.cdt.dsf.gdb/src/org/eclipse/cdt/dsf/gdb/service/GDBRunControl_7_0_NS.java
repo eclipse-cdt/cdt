@@ -55,6 +55,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl3;
+import org.eclipse.cdt.dsf.debug.service.IRunControl4;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -96,6 +97,8 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointTriggerEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackInfoDepthInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThread;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadInfoInfo;
@@ -119,12 +122,27 @@ import org.osgi.framework.BundleContext;
  * sync with the service state.
  * @since 1.1
  */
-public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunControl, IMultiRunControl, ICachingService, IRunControl3 {
+public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunControl, IMultiRunControl, ICachingService, IRunControl3, IRunControl4 {
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTANTS
 	// /////////////////////////////////////////////////////////////////////////
 
-	@Immutable
+    private class GDBContainerData implements IContainerDMData {
+
+    	final private String fExecutable;
+
+		private GDBContainerData(String executable) {
+			fExecutable = executable;
+		}
+
+		@Override
+		public String getExecutable() {
+			return fExecutable;
+		}
+
+	}
+
+    @Immutable
 	private static class ExecutionData implements IExecutionDMData2 {
 		private final StateChangeReason fReason;
 		private final String fDetails;
@@ -2493,5 +2511,31 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
 			rm.done();
 		}
+	}
+
+	/**
+	 * @since 4.3
+	 */
+	@Override
+	public void getContainerData(final IContainerDMContext dmc, final DataRequestMonitor<IContainerDMData> rm) {
+		if (!(dmc instanceof IMIContainerDMContext)) {
+			rm.done();
+			return;
+		}
+		
+		fConnection.queueCommand(
+				fCommandFactory.createMIListThreadGroups(fConnection.getContext()),
+				new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
+					@Override
+					protected void handleSuccess() {
+						for (IThreadGroupInfo tgi : getData().getGroupList()) {
+							if (tgi.getGroupId().equals(((IMIContainerDMContext)dmc).getGroupId())) {
+								rm.setData(new GDBContainerData(tgi.getExecutable()));
+								break;
+							}
+						}
+						rm.done();
+					}
+				});
 	}
 }

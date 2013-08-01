@@ -271,6 +271,9 @@ public class BindingClassifier {
 		if (fProcessedDefinedBindings.contains(binding))
 			return;
 
+		if (fAst.getDeclarationsInAST(binding).length != 0)
+			return;  // Declared locally
+
 		if (!canForwardDeclare(binding))
 			defineBinding(binding);
 
@@ -318,7 +321,8 @@ public class BindingClassifier {
 		} else if (binding instanceof IFunction && !(binding instanceof ICPPMethod)) {
 			canDeclare = fPreferences.forwardDeclareFunctions;
 		} else if (binding instanceof IVariable) {
-			canDeclare = fPreferences.forwardDeclareExternalVariables;
+			if (((IVariable) binding).isExtern())
+				canDeclare = fPreferences.forwardDeclareExternalVariables;
 		}
 
 		if (canDeclare && !fPreferences.forwardDeclareTemplates
@@ -364,9 +368,8 @@ public class BindingClassifier {
 		if (!markAsDefined(binding))
 			return;
 
-		if (fAst.getDefinitionsInAST(binding).length != 0) {
+		if (fAst.getDefinitionsInAST(binding).length != 0)
 			return;  // Defined locally
-		}
 
 		List<IBinding> requiredBindings = getRequiredBindings(binding);
 		for (IBinding requiredBinding : requiredBindings) {
@@ -381,11 +384,8 @@ public class BindingClassifier {
 
 	private void defineBindingForName(IASTName name) {
 		IBinding binding = name.resolveBinding();
-		if (isPartOfExternalMacroDefinition(name)) {
-			markAsDefined(binding);
-		} else {
+		if (!isPartOfExternalMacroDefinition(name))
 			defineBinding(binding);
-		}
 	}
 
 	/**
@@ -432,7 +432,6 @@ public class BindingClassifier {
 	private class BindingCollector extends ASTVisitor {
 		BindingCollector() {
 			super(true);
-			shouldVisitImplicitNames = true;
 		}
 
 		@Override
@@ -996,6 +995,9 @@ public class BindingClassifier {
 
 		@Override
 		public int visit(IASTName name) {
+			if (isPartOfExternalMacroDefinition(name))
+				return PROCESS_CONTINUE;
+
 			// Add the binding associated with the name to the bindings that can be declared
 			// (we assume that all bindings which have to be defined are already explicitly handled
 			// elsewhere).

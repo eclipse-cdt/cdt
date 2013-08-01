@@ -29,6 +29,7 @@ import org.eclipse.ui.PlatformUI;
 public class TerminalActionPaste extends AbstractTerminalAction {
 	public TerminalActionPaste() {
 		super(TerminalActionPaste.class.getName());
+		setActionDefinitionId("org.eclipse.tm.terminal.paste"); //$NON-NLS-1$
 		ISharedImages si = PlatformUI.getWorkbench().getSharedImages();
 		setupAction(ActionMessages.PASTE, ActionMessages.PASTE, si
 				.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE), si
@@ -38,6 +39,7 @@ public class TerminalActionPaste extends AbstractTerminalAction {
 
 	public TerminalActionPaste(ITerminalViewControl target) {
 		super(target, TerminalActionPaste.class.getName());
+		setActionDefinitionId("org.eclipse.tm.terminal.paste"); //$NON-NLS-1$
 		ISharedImages si = PlatformUI.getWorkbench().getSharedImages();
 		setupAction(ActionMessages.PASTE, ActionMessages.PASTE, si
 				.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE), si

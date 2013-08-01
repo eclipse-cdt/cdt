@@ -243,8 +243,18 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	#define MACRO(t1, v1, t2, v3, t4, v4) t1 v1; t2 b; C v3; prefix##t4 v4  
 	
 	//	MACRO(A, a, B, c, D, d);
-	public void testMacro() throws Exception {
+	public void testMacro_1() throws Exception {
 		assertDefined("A", "B", "MACRO");
+		assertDeclared();
+	}
+
+	//	typedef int INT;
+	//	#define MACRO(x) extern INT x
+
+	//	MACRO(a);
+	//	INT b;
+	public void testMacro_2() throws Exception {
+		assertDefined("MACRO", "INT"); // INT has to be defined because it is used outside of MACRO.
 		assertDeclared();
 	}
 }

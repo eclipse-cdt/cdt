@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -279,7 +278,7 @@ public class ClassTypeHelper {
 	/**
 	 * Returns all direct and indirect base classes.
 	 * @param classType a class
-	 * @return An array of visible base classes in arbitrary order.
+	 * @return An array of base classes in arbitrary order.
 	 */
 	public static ICPPClassType[] getAllBases(ICPPClassType classType, IASTNode point) {
 		HashSet<ICPPClassType> result= new HashSet<ICPPClassType>();

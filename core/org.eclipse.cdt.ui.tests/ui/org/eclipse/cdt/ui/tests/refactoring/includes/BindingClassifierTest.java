@@ -146,13 +146,25 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertDeclared();
 	}
 
-	//	class A { int x; };
+	//	struct A { int x; };
 	//	typedef A* td;
 	//	td f();
 
 	//	int a = f()->x;
 	public void testClassMember() throws Exception {
 		assertDefined("f", "A");
+		assertDeclared();
+	}
+
+	//	struct A { void m(); };
+	//	class B : public A {};
+	//	B b;
+
+	//	void test() {
+	//	  b.m();
+	//	}
+	public void testClassHierarchy() throws Exception {
+		assertDefined("b", "B");
 		assertDeclared();
 	}
 

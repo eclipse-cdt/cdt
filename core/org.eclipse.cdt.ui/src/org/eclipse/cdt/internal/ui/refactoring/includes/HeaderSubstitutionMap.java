@@ -137,6 +137,20 @@ public class HeaderSubstitutionMap {
 		return fromMemento(memento);
 	}
 
+	public static String serializeMaps(List<HeaderSubstitutionMap> maps) {
+		XMLMemento memento = XMLMemento.createWriteRoot(TAG_HEADER_SUBSTITUTION_MAPS);
+		for (HeaderSubstitutionMap element : maps) {
+			element.saveToMemento(memento.createChild(TAG_HEADER_SUBSTITUTION_MAP));
+		}
+		StringWriter writer = new StringWriter();
+		try {
+			memento.save(writer);
+		} catch (IOException e) {
+			CUIPlugin.log(e);
+		}
+		return writer.toString();
+	}
+
 	public static List<HeaderSubstitutionMap> deserializeMaps(String str) {
 		StringReader reader = new StringReader(str);
 		XMLMemento memento;
@@ -151,20 +165,6 @@ public class HeaderSubstitutionMap {
 			maps.add(fromMemento(element));
 		}
 		return maps;
-	}
-
-	public static String serializeMaps(List<HeaderSubstitutionMap> maps) {
-		XMLMemento memento = XMLMemento.createWriteRoot(TAG_HEADER_SUBSTITUTION_MAPS);
-		for (HeaderSubstitutionMap element : maps) {
-			element.saveToMemento(memento.createChild(TAG_HEADER_SUBSTITUTION_MAP));
-		}
-		StringWriter writer = new StringWriter();
-		try {
-			memento.save(writer);
-		} catch (IOException e) {
-			CUIPlugin.log(e);
-		}
-		return writer.toString();
 	}
 
 	public IncludeMap getUnconditionalSubstitutionMap() {

@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.refactoring.includes;
 import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,23 +36,34 @@ import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 public class HeaderSubstitutor {
 	private final InclusionContext fContext;
 	private IncludeMap[] fIncludeMaps;
+	private SymbolExportMap fSymbolExportMap;
 
 	public HeaderSubstitutor(InclusionContext context) {
 		fContext = context;
 		fIncludeMaps = new IncludeMap[] { new IncludeMap(true), new IncludeMap(false) };
-    	IPreferencesService preferences = Platform.getPreferencesService();
-    	IScopeContext[] scopes = PreferenceConstants.getPreferenceScopes(context.getProject());
-    	String str = preferences.getString(CUIPlugin.PLUGIN_ID,
-    			IncludePreferences.INCLUDES_HEADER_SUBSTITUTION, null, scopes);
-    	if (str != null) {
-    		List<HeaderSubstitutionMap> maps = HeaderSubstitutionMap.deserializeMaps(str);
-    		for (HeaderSubstitutionMap map : maps) {
-    			if (!map.isCppOnly() || fContext.isCXXLanguage()) {
-    				fIncludeMaps[0].addAllMappings(map.getUnconditionalSubstitutionMap());
-    				fIncludeMaps[1].addAllMappings(map.getOptionalSubstitutionMap());
-    			}
-    		}
-    	}
+		IPreferencesService preferences = Platform.getPreferencesService();
+		IScopeContext[] scopes = PreferenceConstants.getPreferenceScopes(context.getProject());
+		String str = preferences.getString(CUIPlugin.PLUGIN_ID,
+				IncludePreferences.INCLUDES_HEADER_SUBSTITUTION, null, scopes);
+		if (str != null) {
+			List<HeaderSubstitutionMap> maps = HeaderSubstitutionMap.deserializeMaps(str);
+			for (HeaderSubstitutionMap map : maps) {
+				if (!map.isCppOnly() || fContext.isCXXLanguage()) {
+					fIncludeMaps[0].addAllMappings(map.getUnconditionalSubstitutionMap());
+					fIncludeMaps[1].addAllMappings(map.getOptionalSubstitutionMap());
+				}
+			}
+		}
+
+		fSymbolExportMap = new SymbolExportMap();
+		str = preferences.getString(CUIPlugin.PLUGIN_ID,
+				IncludePreferences.INCLUDES_SYMBOL_EXPORTING_HEADERS, null, scopes);
+		if (str != null) {
+			List<SymbolExportMap> maps = SymbolExportMap.deserializeMaps(str);
+			for (SymbolExportMap map : maps) {
+				fSymbolExportMap.addAllMappings(map);
+			}
+		}
 	}
 
 	/**
@@ -92,7 +104,7 @@ public class HeaderSubstitutor {
 		IncludeInfo includeInfo = fContext.getIncludeForHeaderFile(path);
 		if (includeInfo == null)
 			return path;
-		// TODO(sprigogin): Take symbolIncludeMap into account.
+		// TODO(sprigogin): Take fSymbolExportMap into account.
 		List<IncludeInfo> candidates = new ArrayList<IncludeInfo>();
 		candidates.add(includeInfo);
 		IncludeMap[] maps = fIncludeMaps;
@@ -199,6 +211,16 @@ public class HeaderSubstitutor {
 		}
 
 		return request.getCandidatePaths().iterator().next();
+	}
+
+	/**
+	 * Returns the set of headers exporting the given symbol. 
+	 */
+	public Set<IncludeInfo> getExportingHeaders(String symbol) {
+		Set<IncludeInfo> headers = fSymbolExportMap.getMapping(symbol);
+		if (headers == null)
+			return Collections.emptySet();
+		return headers;
 	}
 
 	/**

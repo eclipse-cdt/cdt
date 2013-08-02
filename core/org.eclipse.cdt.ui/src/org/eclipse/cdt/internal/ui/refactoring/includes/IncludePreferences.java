@@ -39,6 +39,13 @@ public class IncludePreferences {
 	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.HeaderSubstitutionMap}s.
 	 */
 	public static final String INCLUDES_HEADER_SUBSTITUTION = "organizeIncludes.headerSubstitution"; //$NON-NLS-1$
+	/**
+	 * Symbol exporting rules.
+	 * The value of the preference is an XML representation of one or more
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.SymbolExportMap}s.
+	 */
+	public static final String INCLUDES_SYMBOL_EXPORTING_HEADERS = "organizeIncludes.symbolExportingHeaders"; //$NON-NLS-1$
+
 
 	public static enum UnusedStatementDisposition { REMOVE, COMMENT_OUT, KEEP }
 
@@ -185,5 +192,7 @@ public class IncludePreferences {
 
 		store.setDefault(INCLUDES_HEADER_SUBSTITUTION,
 				HeaderSubstitutionMap.serializeMaps(GCCHeaderSubstitutionMaps.getDefaultMaps()));
+		store.setDefault(INCLUDES_SYMBOL_EXPORTING_HEADERS,
+				SymbolExportMap.serializeMaps(Collections.singletonList(GCCHeaderSubstitutionMaps.getSymbolExportMap())));
 	}
 }

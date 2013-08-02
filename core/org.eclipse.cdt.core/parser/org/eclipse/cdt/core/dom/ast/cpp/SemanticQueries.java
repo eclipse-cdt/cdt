@@ -93,7 +93,8 @@ public class SemanticQueries {
 	 * @param classType the class whose pure virtual methods should be returned
 	 * @param point the point of template instantiation, if applicable
 	 * @return an array containing all pure virtual methods of the class
-	 * @since 5.6
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public static ICPPMethod[] getPureVirtualMethods(ICPPClassType classType, IASTNode point) {
 		return new PureVirtualMethodCollector().collect(classType, point);

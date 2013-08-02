@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.includes;
 
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.Test;
@@ -25,7 +26,9 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeOrganizer;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences.UnusedStatementDisposition;
+import org.eclipse.cdt.internal.ui.refactoring.includes.SymbolExportMap;
 
 /**
  * Tests for {@link IncludeOrganizer}.
@@ -55,6 +58,7 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 		preferenceStore.setToDefault(PreferenceConstants.FORWARD_DECLARE_TEMPLATES);
 		preferenceStore.setToDefault(PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS);
 		preferenceStore.setToDefault(PreferenceConstants.INCLUDES_ALLOW_REORDERING);
+		preferenceStore.setToDefault(IncludePreferences.INCLUDES_SYMBOL_EXPORTING_HEADERS);
 	}
 
 	private void assertExpectedResults() throws Exception {
@@ -355,6 +359,36 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 		IPreferenceStore preferenceStore = getPreferenceStore();
 		preferenceStore.setValue(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION,
 				UnusedStatementDisposition.REMOVE.toString());
+		assertExpectedResults();
+	}
+
+	//string.h
+	//#include "stddef.h"
+	//extern char* strchr(char* s, int c);
+
+	//stddef.h
+	//#define NULL 0
+
+	//source.cpp
+	//#include "stddef.h"
+	//char* test() {
+	//  int* p = NULL;
+	//  return strchr("aaa", '*');
+	//}
+	//====================
+	//#include "string.h"
+	//
+	//char* test() {
+	//  int* p = NULL;
+	//  return strchr("aaa", '*');
+	//}
+	public void testExportedSymbol() throws Exception {
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setValue(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION,
+				UnusedStatementDisposition.REMOVE.toString());
+		SymbolExportMap symbolExportMap = new SymbolExportMap(new String[] { "NULL", "string.h" });
+		preferenceStore.setValue(IncludePreferences.INCLUDES_SYMBOL_EXPORTING_HEADERS,
+				SymbolExportMap.serializeMaps(Collections.singletonList(symbolExportMap)));
 		assertExpectedResults();
 	}
 }

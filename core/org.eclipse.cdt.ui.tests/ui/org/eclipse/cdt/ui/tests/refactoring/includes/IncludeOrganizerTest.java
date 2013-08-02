@@ -57,6 +57,7 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 		preferenceStore.setToDefault(PreferenceConstants.FORWARD_DECLARE_TEMPLATES);
 		preferenceStore.setToDefault(PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS);
 		preferenceStore.setToDefault(PreferenceConstants.INCLUDES_ALLOW_REORDERING);
+		preferenceStore.setToDefault(PreferenceConstants.INCLUDES_SYMBOL_EXPORTING_HEADERS);
 	}
 
 	private void assertExpectedResults() throws Exception {

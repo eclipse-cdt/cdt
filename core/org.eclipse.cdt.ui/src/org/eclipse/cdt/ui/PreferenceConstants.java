@@ -2065,6 +2065,15 @@ public class PreferenceConstants {
 	public static final String INCLUDES_HEADER_SUBSTITUTION = "organizeIncludes.headerSubstitution"; //$NON-NLS-1$
 
 	/**
+	 * Symbol exporting rules.
+	 * The value of the preference is an XML representation of one or more
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.SymbolExportMap}s.
+	 *
+	 * @since 5.7
+	 */
+	public static final String INCLUDES_SYMBOL_EXPORTING_HEADERS = "organizeIncludes.symbolExportingHeaders"; //$NON-NLS-1$
+
+	/**
 	 * Include style for headers closely related to the including file.
 	 * The value of the preference is an XML representation of
 	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.

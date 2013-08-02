@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.core.testplugin.util.OneSourceMultipleHeadersTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
@@ -90,23 +91,13 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		List<String> errors = new ArrayList<String>(2);
 		if (!missing.isEmpty()) {
 			errors.add(MessageFormat.format("{0,choice,1#Binding|1<Bindings} \"{1}\" {0,choice,1#is|1<are} not {2}.",
-					missing.size(), join(missing, "\", \""), verb));
+					missing.size(), StringUtil.join(missing, "\", \""), verb));
 		}
 		if (!extra.isEmpty()) {
 			errors.add(MessageFormat.format("{0,choice,1#Binding|1<Bindings} \"{1}\" should not be {2}.",
-					extra.size(), join(extra, "\", \""), verb));
+					extra.size(), StringUtil.join(extra, "\", \""), verb));
 		}
-		fail(join(errors, " "));
-	}
-
-	private String join(Iterable<String> strings, String delimiter) {
-		StringBuilder buf = new StringBuilder();
-		for (String str : strings) {
-			if (buf.length() != 0)
-				buf.append(delimiter);
-			buf.append(str);
-		}
-		return buf.toString();
+		fail(StringUtil.join(errors, " "));
 	}
 
 	//	class A;

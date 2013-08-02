@@ -174,5 +174,7 @@ public class IncludePreferences {
 
 		store.setDefault(PreferenceConstants.INCLUDES_HEADER_SUBSTITUTION,
 				HeaderSubstitutionMap.serializeMaps(GCCHeaderSubstitutionMaps.getDefaultMaps()));
+		store.setDefault(PreferenceConstants.INCLUDES_SYMBOL_EXPORTING_HEADERS,
+				SymbolExportMap.serializeMaps(Collections.singletonList(GCCHeaderSubstitutionMaps.getSymbolExportMap())));
 	}
 }

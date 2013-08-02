@@ -894,7 +894,7 @@ public class IncludeOrganizer {
 
 		// Process headers that are either indirectly included or have unique representatives.
 		for (InclusionRequest request : requests) {
-			if (!request.isResolved()) {
+			if (!request.isResolved() && !isExportedBinding(request, headerSubstitutor)) {
 				List<IPath> candidatePaths = request.getCandidatePaths();
 				Set<IPath> representativeHeaders = new HashSet<IPath>();
 				boolean allRepresented = true;
@@ -929,7 +929,7 @@ public class IncludeOrganizer {
 
 		// Process remaining unambiguous inclusion requests.
 		for (InclusionRequest request : requests) {
-			if (!request.isResolved()) {
+			if (!request.isResolved() && !isExportedBinding(request, headerSubstitutor)) {
 				List<IPath> candidatePaths = request.getCandidatePaths();
 				if (candidatePaths.size() == 1) {
 					IPath path = candidatePaths.iterator().next();
@@ -957,7 +957,53 @@ public class IncludeOrganizer {
 
 		// Resolve ambiguous inclusion requests.
 		for (InclusionRequest request : requests) {
+			if (!request.isResolved() && !isExportedBinding(request, headerSubstitutor)) {
+				List<IPath> candidatePaths = request.getCandidatePaths();
+				for (IPath path : candidatePaths) {
+					if (fContext.isIncluded(path)) {
+						request.resolve(path);
+						if (DEBUG_HEADER_SUBSTITUTION) {
+							System.out.println(request.toString() +
+									(fContext.isToBeIncluded(path) ? " (decided earlier)" : " (was previously included)")); //$NON-NLS-1$ //$NON-NLS-2$
+						}
+						break;
+					}
+				}
+				if (!request.isResolved()) {
+					IPath header = fHeaderChooser.chooseHeader(request.getBinding().getName(), candidatePaths);
+					if (header == null)
+						throw new OperationCanceledException();
+	
+					request.resolve(header);
+					if (DEBUG_HEADER_SUBSTITUTION) {
+						System.out.println(request.toString() + " (user's choice)"); //$NON-NLS-1$
+					}
+					if (!fContext.isAlreadyIncluded(header))
+						fContext.addHeaderToInclude(header);
+				}
+			}
+		}
+
+		// Resolve requests for exported symbols.
+		for (InclusionRequest request : requests) {
 			if (!request.isResolved()) {
+				Set<IncludeInfo> exportingHeaders = getExportingHeaders(request, headerSubstitutor);
+				for (IncludeInfo header : exportingHeaders) {
+					IPath path = fContext.resolveInclude(header);
+					if (path != null) {
+						if (fContext.isIncluded(path)) {
+							request.resolve(path);
+							if (DEBUG_HEADER_SUBSTITUTION) {
+								System.out.println(request.toString() +
+										(fContext.isToBeIncluded(path) ? " (decided earlier)" : " (was previously included)")); //$NON-NLS-1$ //$NON-NLS-2$
+							}
+							break;
+						}
+					}
+				}
+				if (request.isResolved())
+					continue;
+
 				List<IPath> candidatePaths = request.getCandidatePaths();
 				for (IPath path : candidatePaths) {
 					if (fContext.isIncluded(path)) {
@@ -986,6 +1032,17 @@ public class IncludeOrganizer {
 
 		// Remove headers that are exported by other headers.
 		fContext.removeExportedHeaders();
+	}
+
+	private boolean isExportedBinding(InclusionRequest request, HeaderSubstitutor headerSubstitutor) {
+		return !getExportingHeaders(request, headerSubstitutor).isEmpty();
+	}
+
+	private Set<IncludeInfo> getExportingHeaders(InclusionRequest request, HeaderSubstitutor headerSubstitutor) {
+		String symbol = request.getBindingQualifiedName();
+		if (symbol == null)
+			return Collections.emptySet();
+		return headerSubstitutor.getExportingHeaders(symbol);
 	}
 
 	private static IPath getPath(IIndexFileLocation location) {

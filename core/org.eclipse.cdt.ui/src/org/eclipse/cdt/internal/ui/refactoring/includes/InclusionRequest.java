@@ -18,15 +18,22 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.parser.util.StringUtil;
 
 class InclusionRequest {
+	private static final String UNINITIALIZED = "uninitialized"; //$NON-NLS-1$
+
 	private final IBinding fBinding;
 	private final Map<IIndexFile, IPath> fDeclaringFiles;
 	private final boolean fReachable;
 	private List<IPath> fCandidatePaths;
 	private IPath fResolvedPath;
+	private String fQualifiedName = UNINITIALIZED;
 
 	/**
 	 * @param binding the binding that requires inclusion
@@ -45,7 +52,30 @@ class InclusionRequest {
 	public IBinding getBinding() {
 		return fBinding;
 	}
-	
+
+	/**
+	 * Returns the qualified name of the binding, or {@code null} if the binding doesn't have
+	 * a qualified name.
+	 */
+	public String getBindingQualifiedName() {
+		if (fQualifiedName == UNINITIALIZED) {
+			fQualifiedName = null;
+			if (fBinding instanceof ICPPBinding) {
+				ICPPBinding cppBinding = (ICPPBinding) fBinding;
+				try {
+					if (cppBinding.isGloballyQualified()) {
+						fQualifiedName = StringUtil.join(cppBinding.getQualifiedName(), "::"); //$NON-NLS-1$
+					}
+				} catch (DOMException e) {
+					// Leave null;
+				}
+			} else if (fBinding instanceof IMacroBinding || fBinding.getOwner() == null) {
+				fQualifiedName = fBinding.getName();
+			}
+		}
+		return fQualifiedName;
+	}
+
 	public Map<IIndexFile, IPath> getDeclaringFiles() {
 		return fDeclaringFiles;
 	}

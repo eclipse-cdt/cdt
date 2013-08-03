@@ -155,21 +155,25 @@ public class BindingClassifier {
 	private void processParameters(IParameter[] declaredParameters, IASTInitializerClause[] arguments) {
 		for (int i = 0; i < declaredParameters.length; i++) {
 			IType declaredParameterType = declaredParameters[i].getType();
-			IType actualParameterType = null;
+			IType argumentType = null;
 			boolean canBeDeclared = false;
 			if (declaredParameterType instanceof IPointerType || declaredParameterType instanceof ICPPReferenceType) {
 				// The declared parameter type is a pointer or reference type. A declaration is
 				// sufficient if it matches the actual parameter type.
-				declaredParameterType = getNestedType(declaredParameterType, REF);
+				declaredParameterType = getNestedType(declaredParameterType, REF | ALLCVQ);
 				if (i < arguments.length) {
 					// This parameter is present within the function call expression.
 					// It's therefore not a default parameter.
-					IASTInitializerClause actualParameter = arguments[i];
-					if (actualParameter instanceof IASTExpression) {
-						actualParameterType = ((IASTExpression) actualParameter).getExpressionType();
-						actualParameterType = getNestedType(actualParameterType, REF);
+					IASTInitializerClause argument = arguments[i];
+					if (argument instanceof IASTExpression) {
+						argumentType = ((IASTExpression) argument).getExpressionType();
+						argumentType = getNestedType(argumentType, REF | ALLCVQ);
 
-						if (isSameType(declaredParameterType, actualParameterType)) {
+						if (declaredParameterType instanceof IPointerType && argumentType instanceof IPointerType) {
+							declaredParameterType = getNestedType(((IPointerType) declaredParameterType).getType(), ALLCVQ);
+							argumentType = getNestedType(((IPointerType) argumentType).getType(), ALLCVQ);
+						}
+						if (isSameType(declaredParameterType, argumentType)) {
 							canBeDeclared = true;
 						}
 					}
@@ -188,7 +192,7 @@ public class BindingClassifier {
 				// Both the type of the declared parameter as well as the type of the actual
 				// parameter require a full definition.
 				defineTypeExceptTypedefOrNonFixedEnum(declaredParameterType);
-				defineTypeExceptTypedefOrNonFixedEnum(actualParameterType);
+				defineTypeExceptTypedefOrNonFixedEnum(argumentType);
 			}
 		}
 	}

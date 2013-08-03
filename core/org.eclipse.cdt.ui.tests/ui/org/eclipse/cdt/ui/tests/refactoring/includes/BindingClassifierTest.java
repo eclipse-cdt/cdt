@@ -18,6 +18,8 @@ import java.util.TreeSet;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -29,6 +31,8 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.core.testplugin.util.OneSourceMultipleHeadersTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 import org.eclipse.cdt.internal.ui.refactoring.includes.BindingClassifier;
@@ -39,7 +43,6 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.InclusionContext;
  */
 public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	private IIndex fIndex;
-	private InclusionContext fContext;
 	private BindingClassifier fBindingClassifier;
 
 	public BindingClassifierTest() {
@@ -57,23 +60,38 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		fIndex = CCorePlugin.getIndexManager().getIndex(getCProject(),
 				IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT);
 		fIndex.acquireReadLock();
-		ITranslationUnit tu = ast.getOriginatingTranslationUnit();
-		fContext = new InclusionContext(tu, fIndex);
-		fBindingClassifier = new BindingClassifier(fContext);
-		fBindingClassifier.classifyNodeContents(ast);
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setToDefault(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS);
+	}
+
+	private void classifyBindings() {
+		if (fBindingClassifier == null) {
+			IASTTranslationUnit ast = getAst();
+			ITranslationUnit tu = ast.getOriginatingTranslationUnit();
+			InclusionContext context = new InclusionContext(tu, fIndex);
+			fBindingClassifier = new BindingClassifier(context);
+			fBindingClassifier.classifyNodeContents(ast);
+		}
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		fIndex.releaseReadLock();
+		fBindingClassifier = null;
 		super.tearDown();
 	}
 
+	private IPreferenceStore getPreferenceStore() {
+		return CUIPlugin.getDefault().getPreferenceStore();
+	}
+
 	private void assertDefined(String... names) {
+		classifyBindings();
 		assertExpectedBindings(names, fBindingClassifier.getBindingsToDefine(), "defined");
 	}
 
 	private void assertDeclared(String... names) {
+		classifyBindings();
 		assertExpectedBindings(names, fBindingClassifier.getBindingsToDeclare(), "declared");
 	}
 
@@ -167,6 +185,19 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	public void testMethodCall() throws Exception {
 		assertDefined("A");
 		assertDeclared();
+	}
+
+	//	class A {};
+	//	void f(const A* p);
+
+	//	void test(A* a) {
+	//	  f(a);
+	//	}
+	public void testFunctionCall() throws Exception {
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		assertDefined();
+		assertDeclared("f", "A");
 	}
 
 	//	struct A {};

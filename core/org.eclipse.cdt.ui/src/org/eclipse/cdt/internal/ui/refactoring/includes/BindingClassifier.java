@@ -100,6 +100,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
@@ -178,14 +179,18 @@ public class BindingClassifier {
 					// sufficient if it matches the actual parameter type.
 					if (argument instanceof IASTExpression) {
 						IType argumentType = ((IASTExpression) argument).getExpressionType();
-						argumentType = getNestedType(argumentType, REF | ALLCVQ);
-
-						if (parameterType instanceof IPointerType && argumentType instanceof IPointerType) {
-							parameterType = getNestedType(((IPointerType) parameterType).getType(), ALLCVQ);
-							argumentType = getNestedType(((IPointerType) argumentType).getType(), ALLCVQ);
-						}
-						if (isSameType(parameterType, argumentType)) {
+						if (parameterType instanceof IPointerType && Conversions.isNullPointerConstant(argumentType)) {
 							canBeDeclared = true;
+						} else {
+							argumentType = getNestedType(argumentType, REF | ALLCVQ);
+	
+							if (parameterType instanceof IPointerType && argumentType instanceof IPointerType) {
+								parameterType = getNestedType(((IPointerType) parameterType).getType(), ALLCVQ);
+								argumentType = getNestedType(((IPointerType) argumentType).getType(), ALLCVQ);
+							}
+							if (isSameType(parameterType, argumentType)) {
+								canBeDeclared = true;
+							}
 						}
 					}
 				}
@@ -636,7 +641,7 @@ public class BindingClassifier {
 			}
 
 			// Get the arguments of the initializer.
-			IASTInitializerClause[] arguments = new IASTInitializerClause[] { };
+			IASTInitializerClause[] arguments = IASTExpression.EMPTY_EXPRESSION_ARRAY;
 			if (initializer instanceof ICPPASTConstructorInitializer) {
 				ICPPASTConstructorInitializer constructorInitializer = (ICPPASTConstructorInitializer) initializer;
 				arguments = constructorInitializer.getArguments();
@@ -659,13 +664,13 @@ public class BindingClassifier {
 					// We're constructing a pointer type. No constructor is called. We however have
 					// to check whether the argument type matches the declared type.
 					memberType = getNestedType(memberType, REF);
-					for (IASTInitializerClause actualParameter : arguments) {
-						if (actualParameter instanceof IASTExpression) {
-							IType parameterType = ((IASTExpression) actualParameter).getExpressionType();
-							if (!isSameType(memberType, parameterType)) {
+					for (IASTInitializerClause argument : arguments) {
+						if (argument instanceof IASTExpression) {
+							IType argumentType = ((IASTExpression) argument).getExpressionType();
+							if (!Conversions.isNullPointerConstant(argumentType) && !isSameType(memberType, argumentType)) {
 								// Types don't match. Define both types.
 								defineTypeExceptTypedefOrNonFixedEnum(memberType);
-								defineTypeExceptTypedefOrNonFixedEnum(parameterType);
+								defineTypeExceptTypedefOrNonFixedEnum(argumentType);
 							}
 						}
 					}

@@ -192,6 +192,8 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 
 	//	void test(A* a) {
 	//	  f(a);
+	//	  f(0);
+	//	  f(nullptr);
 	//	}
 	public void testFunctionCall() throws Exception {
 		IPreferenceStore preferenceStore = getPreferenceStore();

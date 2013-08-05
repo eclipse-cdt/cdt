@@ -145,7 +145,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 			n2.setAlternate(true);
 			
 			if (fArguments.length == 0) {
-				int idEndOffset = ((ASTNode)functionName).getOffset() + ((ASTNode)functionName).getLength();
+				int idEndOffset = ((ASTNode) functionName).getOffset() + ((ASTNode) functionName).getLength();
 				try {
 					IToken lparen = functionName.getTrailingSyntax();
 					IToken rparen = lparen.getNext();

@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -94,7 +95,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
@@ -152,28 +158,29 @@ public class BindingClassifier {
 	 * Defines the required types of the parameters of a function or constructor call expression by
 	 * comparing the declared parameters with the actual arguments.
 	 */
-	private void processParameters(IParameter[] declaredParameters, IASTInitializerClause[] arguments) {
-		for (int i = 0; i < declaredParameters.length; i++) {
-			IType declaredParameterType = declaredParameters[i].getType();
+	private void processFunctionParameters(IFunction function, IASTInitializerClause[] arguments) {
+		IParameter[] parameters = function.getParameters();
+		for (int i = 0; i < parameters.length; i++) {
+			IType parameterType = parameters[i].getType();
 			IType argumentType = null;
 			boolean canBeDeclared = false;
-			if (declaredParameterType instanceof IPointerType || declaredParameterType instanceof ICPPReferenceType) {
+			if (parameterType instanceof IPointerType || parameterType instanceof ICPPReferenceType) {
 				// The declared parameter type is a pointer or reference type. A declaration is
 				// sufficient if it matches the actual parameter type.
-				declaredParameterType = getNestedType(declaredParameterType, REF | ALLCVQ);
+				parameterType = getNestedType(parameterType, REF | ALLCVQ);
 				if (i < arguments.length) {
-					// This parameter is present within the function call expression.
+					// This argument is present within the function call expression.
 					// It's therefore not a default parameter.
 					IASTInitializerClause argument = arguments[i];
 					if (argument instanceof IASTExpression) {
 						argumentType = ((IASTExpression) argument).getExpressionType();
 						argumentType = getNestedType(argumentType, REF | ALLCVQ);
 
-						if (declaredParameterType instanceof IPointerType && argumentType instanceof IPointerType) {
-							declaredParameterType = getNestedType(((IPointerType) declaredParameterType).getType(), ALLCVQ);
+						if (parameterType instanceof IPointerType && argumentType instanceof IPointerType) {
+							parameterType = getNestedType(((IPointerType) parameterType).getType(), ALLCVQ);
 							argumentType = getNestedType(((IPointerType) argumentType).getType(), ALLCVQ);
 						}
-						if (isSameType(declaredParameterType, argumentType)) {
+						if (isSameType(parameterType, argumentType)) {
 							canBeDeclared = true;
 						}
 					}
@@ -187,14 +194,54 @@ public class BindingClassifier {
 			if (canBeDeclared) {
 				// The declared parameter type must be declared. We must explicitly do this here
 				// because this type doesn't appear within the AST.
-				declareType(declaredParameterType);
+				declareType(parameterType);
 			} else {
-				// Both the type of the declared parameter as well as the type of the actual
-				// parameter require a full definition.
-				defineTypeExceptTypedefOrNonFixedEnum(declaredParameterType);
-				defineTypeExceptTypedefOrNonFixedEnum(argumentType);
+				parameterType = getNestedType(parameterType, REF | ALLCVQ);
+				if (i < arguments.length) {
+					// This argument is present within the function call expression.
+					// It's therefore not a default parameter.
+					IASTInitializerClause argument = arguments[i];
+					if (argument instanceof IASTExpression) {
+						argumentType = ((IASTExpression) argument).getExpressionType();
+						// The type of the argument requires a full definition.
+						defineTypeExceptTypedefOrNonFixedEnum(argumentType);
+					}
+				}
+				// As a matter of policy, a header declaring the function is responsible for
+				// defining parameter types that allow implicit conversion.
+				if (i >= arguments.length ||
+						!(parameterType instanceof ICPPClassType) ||
+						fAst.getDeclarationsInAST(function).length != 0 ||
+						!hasConvertingConstructor((ICPPClassType) parameterType, arguments[i])) {
+					defineTypeExceptTypedefOrNonFixedEnum(parameterType);
+				}
 			}
 		}
+	}
+
+	/**
+	 * Returns {@code true} if {@code targetType} has a constructor that can be used for
+	 * implicit conversion from {@code argument}.
+	 */
+	private boolean hasConvertingConstructor(ICPPClassType classType, IASTInitializerClause argument) {
+		CPPASTName astName = new CPPASTName();
+		astName.setName(classType.getNameCharArray());
+		astName.setOffsetAndLength((ASTNode) argument);
+		CPPASTIdExpression idExp = new CPPASTIdExpression(astName);
+		idExp.setParent(argument.getParent());
+		idExp.setPropertyInParent(IASTFunctionCallExpression.FUNCTION_NAME);
+
+		LookupData lookupData = new LookupData(astName);
+		lookupData.setFunctionArguments(false, new IASTInitializerClause[] { argument });
+		lookupData.qualified = true;
+		try {
+			IBinding constructor = CPPSemantics.resolveFunction(lookupData, ClassTypeHelper.getConstructors(classType, argument), false);
+			if (constructor instanceof ICPPConstructor)
+				return true;
+		} catch (DOMException e) {
+		}
+		
+		return false;
 	}
 
 	/**
@@ -276,7 +323,7 @@ public class BindingClassifier {
 			return;
 
 		if (fAst.getDeclarationsInAST(binding).length != 0)
-			return;  // Declared locally
+			return;  // Declared locally.
 
 		if (!canForwardDeclare(binding))
 			defineBinding(binding);
@@ -430,7 +477,7 @@ public class BindingClassifier {
 		}
 
 		// Handle parameters.
-		processParameters(function.getParameters(), functionCallExpression.getArguments());
+		processFunctionParameters(function, functionCallExpression.getArguments());
 	}
 
 	private class BindingCollector extends ASTVisitor {
@@ -595,13 +642,13 @@ public class BindingClassifier {
 			}
 
 			// Get the arguments of the initializer.
-			IASTInitializerClause[] actualParameters = new IASTInitializerClause[] { };
+			IASTInitializerClause[] arguments = new IASTInitializerClause[] { };
 			if (initializer instanceof ICPPASTConstructorInitializer) {
 				ICPPASTConstructorInitializer constructorInitializer = (ICPPASTConstructorInitializer) initializer;
-				actualParameters = constructorInitializer.getArguments();
+				arguments = constructorInitializer.getArguments();
 			} else if (initializer instanceof IASTEqualsInitializer) {
 				IASTEqualsInitializer equalsInitializer = (IASTEqualsInitializer) initializer;
-				actualParameters = new IASTInitializerClause[] { equalsInitializer.getInitializerClause() };
+				arguments = new IASTInitializerClause[] { equalsInitializer.getInitializerClause() };
 			}
 
 			if (memberBinding instanceof IVariable) {
@@ -618,7 +665,7 @@ public class BindingClassifier {
 					// We're constructing a pointer type. No constructor is called. We however have
 					// to check whether the argument type matches the declared type.
 					memberType = getNestedType(memberType, REF);
-					for (IASTInitializerClause actualParameter : actualParameters) {
+					for (IASTInitializerClause actualParameter : arguments) {
 						if (actualParameter instanceof IASTExpression) {
 							IType parameterType = ((IASTExpression) actualParameter).getExpressionType();
 							if (!isSameType(memberType, parameterType)) {
@@ -637,7 +684,7 @@ public class BindingClassifier {
 				defineBinding(constructor.getOwner());
 
 				// Process the parameters.
-				processParameters(constructor.getParameters(), actualParameters);
+				processFunctionParameters(constructor, arguments);
 			}
 			return PROCESS_CONTINUE;
 		}

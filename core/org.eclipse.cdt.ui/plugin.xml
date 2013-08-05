@@ -4836,15 +4836,16 @@
           name="%transfer.CodeStyle.name">
        <mapping scope="instance">
           <entry node="org.eclipse.cdt.ui">
-            <key name="codetemplates." match="prefix"/>
-            <key name="nameStyle." match="prefix"/>
-            <key name="includeStyle." match="prefix"/>
-            <key name="forwardDeclare." match="prefix"/>
-            <key name="includes.partnerFileSuffixes"/>
-            <key name="formatter_profile"/>
             <key name="class_member_ascending_visibility_order"/>
+            <key name="codetemplates." match="prefix"/>
+            <key name="includes.partnerFileSuffixes"/>
+            <key name="includeStyle." match="prefix"/>
+            <key name="formatter_profile"/>
+            <key name="forwardDeclare." match="prefix"/>
             <key name="function_output_parameters_before_input"/>
             <key name="function_pass_output_parameters_by_pointer"/>
+            <key name="nameStyle." match="prefix"/>
+            <key name="organizeIncludes." match="prefix"/>
           </entry>
        </mapping>
        <description>

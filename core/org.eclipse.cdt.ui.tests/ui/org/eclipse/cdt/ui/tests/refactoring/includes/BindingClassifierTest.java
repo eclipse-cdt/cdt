@@ -208,10 +208,28 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	void test() {
 	//	  f("");
 	//	}
-	public void testFunctionCallWithTypeConversion() throws Exception {
+	public void testFunctionCallWithTypeConversion_1() throws Exception {
 		IPreferenceStore preferenceStore = getPreferenceStore();
 		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		// A header declaring the function is responsible for defining the parameter type that
+		// provides constructor that can be used for implicit conversion.
 		assertDefined();
+		assertDeclared("f");
+	}
+
+	//	struct A {};
+	//	struct B { operator A(); };
+	//	void f(A p);
+
+	//	void test(B b) {
+	//	  f(b);
+	//	}
+	public void testFunctionCallWithTypeConversion_2() throws Exception {
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		// A header declaring the function is not responsible for defining the parameter type since
+		// the implicit conversion from B to A is provided externally to parameter type.
+		assertDefined("A", "B");
 		assertDeclared("f");
 	}
 

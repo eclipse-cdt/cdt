@@ -162,18 +162,22 @@ public class BindingClassifier {
 		IParameter[] parameters = function.getParameters();
 		for (int i = 0; i < parameters.length; i++) {
 			IType parameterType = parameters[i].getType();
-			IType argumentType = null;
+			parameterType = getNestedType(parameterType, REF | ALLCVQ);
+			IASTInitializerClause argument = null;
 			boolean canBeDeclared = false;
-			if (parameterType instanceof IPointerType || parameterType instanceof ICPPReferenceType) {
-				// The declared parameter type is a pointer or reference type. A declaration is
-				// sufficient if it matches the actual parameter type.
-				parameterType = getNestedType(parameterType, REF | ALLCVQ);
-				if (i < arguments.length) {
-					// This argument is present within the function call expression.
-					// It's therefore not a default parameter.
-					IASTInitializerClause argument = arguments[i];
+			if (i >= arguments.length) {
+				// This is a default value parameter. The function call itself doesn't need
+				// a definition of this parameter type.
+				canBeDeclared = true;
+			} else {
+				// This argument is present within the function call expression.
+				// It's therefore not a default parameter.
+				argument = arguments[i];
+				if (parameterType instanceof IPointerType || parameterType instanceof ICPPReferenceType) {
+					// The declared parameter type is a pointer or reference type. A declaration is
+					// sufficient if it matches the actual parameter type.
 					if (argument instanceof IASTExpression) {
-						argumentType = ((IASTExpression) argument).getExpressionType();
+						IType argumentType = ((IASTExpression) argument).getExpressionType();
 						argumentType = getNestedType(argumentType, REF | ALLCVQ);
 
 						if (parameterType instanceof IPointerType && argumentType instanceof IPointerType) {
@@ -184,10 +188,6 @@ public class BindingClassifier {
 							canBeDeclared = true;
 						}
 					}
-				} else {
-					// This is a default value parameter. The function call itself doesn't need
-					// a definition of this parameter type.
-					canBeDeclared = true;
 				}
 			}
 
@@ -196,23 +196,17 @@ public class BindingClassifier {
 				// because this type doesn't appear within the AST.
 				declareType(parameterType);
 			} else {
-				parameterType = getNestedType(parameterType, REF | ALLCVQ);
-				if (i < arguments.length) {
-					// This argument is present within the function call expression.
-					// It's therefore not a default parameter.
-					IASTInitializerClause argument = arguments[i];
-					if (argument instanceof IASTExpression) {
-						argumentType = ((IASTExpression) argument).getExpressionType();
-						// The type of the argument requires a full definition.
-						defineTypeExceptTypedefOrNonFixedEnum(argumentType);
-					}
+				assert argument != null;
+				if (argument instanceof IASTExpression) {
+					IType argumentType = ((IASTExpression) argument).getExpressionType();
+					// The type of the argument requires a full definition.
+					defineTypeExceptTypedefOrNonFixedEnum(argumentType);
 				}
 				// As a matter of policy, a header declaring the function is responsible for
 				// defining parameter types that allow implicit conversion.
-				if (i >= arguments.length ||
-						!(parameterType instanceof ICPPClassType) ||
+				if (!(parameterType instanceof ICPPClassType) ||
 						fAst.getDeclarationsInAST(function).length != 0 ||
-						!hasConvertingConstructor((ICPPClassType) parameterType, arguments[i])) {
+						!hasConvertingConstructor((ICPPClassType) parameterType, argument)) {
 					defineTypeExceptTypedefOrNonFixedEnum(parameterType);
 				}
 			}
@@ -236,7 +230,7 @@ public class BindingClassifier {
 		lookupData.qualified = true;
 		try {
 			IBinding constructor = CPPSemantics.resolveFunction(lookupData, ClassTypeHelper.getConstructors(classType, argument), false);
-			if (constructor instanceof ICPPConstructor)
+			if (constructor instanceof ICPPConstructor && !((ICPPConstructor) constructor).isExplicit())
 				return true;
 		} catch (DOMException e) {
 		}

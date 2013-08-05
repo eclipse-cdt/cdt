@@ -200,6 +200,21 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertDeclared("f", "A");
 	}
 
+	//	struct A {
+	//	  A(const char* s);
+	//	};
+	//	void f(A p);
+
+	//	void test() {
+	//	  f("");
+	//	}
+	public void testFunctionCallWithTypeConversion() throws Exception {
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		assertDefined();
+		assertDeclared("f");
+	}
+
 	//	struct A {};
 	//	struct B {};
 

@@ -1121,7 +1121,7 @@ public class Conversions {
 		return false;
 	}
 
-	private static boolean isNullPointerConstant(IType s) {
+	public static boolean isNullPointerConstant(IType s) {
 		if (s instanceof CPPBasicType) {
 			final CPPBasicType basicType = (CPPBasicType) s;
 			if (basicType.getKind() == Kind.eNullPtr)

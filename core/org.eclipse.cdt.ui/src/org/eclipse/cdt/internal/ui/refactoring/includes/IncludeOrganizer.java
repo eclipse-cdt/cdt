@@ -202,6 +202,16 @@ public class IncludeOrganizer {
 		createForwardDeclarations(ast, bindingClassifier, typeForwardDeclarations, functionForwardDeclarations,
 				bindingsToDefine);
 
+		IASTPreprocessorIncludeStatement[] existingIncludes = ast.getIncludeDirectives();
+		for (IASTPreprocessorIncludeStatement include : existingIncludes) {
+			if (include.isPartOfTranslationUnitFile()) {
+				String path = include.getPath();
+				// An empty path means that the include was not resolved.
+				if (!path.isEmpty())
+					fContext.addHeaderIncludedPreviously(Path.fromOSString(path));
+			}
+		}
+
 		HeaderSubstitutor headerSubstitutor = new HeaderSubstitutor(fContext);
 		// Create the list of header files which have to be included by examining the list of
 		// bindings which have to be defined.
@@ -222,12 +232,12 @@ public class IncludeOrganizer {
 			updateIncludePrototypes(includePrototypes, prototype);
 		}
 		// Put the existing includes into includePrototypes.
-		IASTPreprocessorIncludeStatement[] existingIncludes = ast.getIncludeDirectives();
 		for (IASTPreprocessorIncludeStatement include : existingIncludes) {
 			if (include.isPartOfTranslationUnitFile()) {
 				String name = new String(include.getName().getSimpleID());
 				IncludeInfo includeInfo = new IncludeInfo(name, include.isSystemInclude());
 				String path = include.getPath();
+				// An empty path means that the include was not resolved.
 				IPath header = path.isEmpty() ? null : Path.fromOSString(path);
 				IncludeGroupStyle style =
 						header != null ? getIncludeStyle(header) : getIncludeStyle(includeInfo);
@@ -987,6 +997,7 @@ public class IncludeOrganizer {
 		// Resolve requests for exported symbols.
 		for (InclusionRequest request : requests) {
 			if (!request.isResolved()) {
+				IPath firstIncludedPreviously = null;
 				Set<IncludeInfo> exportingHeaders = getExportingHeaders(request, headerSubstitutor);
 				for (IncludeInfo header : exportingHeaders) {
 					IPath path = fContext.resolveInclude(header);
@@ -999,6 +1010,8 @@ public class IncludeOrganizer {
 							}
 							break;
 						}
+						if (firstIncludedPreviously == null && fContext.wasIncludedPreviously(path))
+							firstIncludedPreviously = path;
 					}
 				}
 				if (request.isResolved())
@@ -1014,7 +1027,22 @@ public class IncludeOrganizer {
 						}
 						break;
 					}
+					if (firstIncludedPreviously == null && fContext.wasIncludedPreviously(path))
+						firstIncludedPreviously = path;
 				}
+
+				if (request.isResolved())
+					continue;
+
+				if (firstIncludedPreviously != null) {
+					request.resolve(firstIncludedPreviously);
+					if (DEBUG_HEADER_SUBSTITUTION) {
+						System.out.println(request.toString() + " (present in old includes)"); //$NON-NLS-1$
+					}
+					if (!fContext.isAlreadyIncluded(firstIncludedPreviously))
+						fContext.addHeaderToInclude(firstIncludedPreviously);
+				}
+
 				if (!request.isResolved()) {
 					IPath header = fHeaderChooser.chooseHeader(request.getBinding().getName(), candidatePaths);
 					if (header == null)
@@ -1022,7 +1050,8 @@ public class IncludeOrganizer {
 	
 					request.resolve(header);
 					if (DEBUG_HEADER_SUBSTITUTION) {
-						System.out.println(request.toString() + " (user's choice)"); //$NON-NLS-1$
+						System.out.println(request.toString() +
+								(candidatePaths.size() == 1 ? " (the only choice)" : " (user's choice)")); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					if (!fContext.isAlreadyIncluded(header))
 						fContext.addHeaderToInclude(header);

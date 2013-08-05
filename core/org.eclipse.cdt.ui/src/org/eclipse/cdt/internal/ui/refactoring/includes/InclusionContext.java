@@ -51,6 +51,7 @@ public class InclusionContext {
 	private final IIndex fIndex;
 	private final Set<IPath> fHeadersToInclude;
 	private final Set<IPath> fHeadersAlreadyIncluded;
+	private final Set<IPath> fHeadersIncludedPreviously;
 
 	public InclusionContext(ITranslationUnit tu, IIndex index) {
 		fTu = tu;
@@ -65,6 +66,7 @@ public class InclusionContext {
 		fInverseIncludeResolutionCache = new HashMap<IPath, IncludeInfo>();
 		fHeadersToInclude = new HashSet<IPath>();
 		fHeadersAlreadyIncluded = new HashSet<IPath>();
+		fHeadersIncludedPreviously = new HashSet<IPath>();
 	}
 
 	public ITranslationUnit getTranslationUnit() {
@@ -223,5 +225,13 @@ public class InclusionContext {
 
 	public final boolean isIncluded(IPath header) {
 		return fHeadersAlreadyIncluded.contains(header) || fHeadersToInclude.contains(header);
+	}
+
+	public final void addHeaderIncludedPreviously(IPath header) {
+		fHeadersIncludedPreviously.add(header);
+	}
+
+	public final boolean wasIncludedPreviously(IPath header) {
+		return fHeadersIncludedPreviously.contains(header);
 	}
 }

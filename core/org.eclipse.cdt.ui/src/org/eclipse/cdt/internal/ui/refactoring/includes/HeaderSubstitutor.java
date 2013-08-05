@@ -104,7 +104,6 @@ public class HeaderSubstitutor {
 		IncludeInfo includeInfo = fContext.getIncludeForHeaderFile(path);
 		if (includeInfo == null)
 			return path;
-		// TODO(sprigogin): Take fSymbolExportMap into account.
 		List<IncludeInfo> candidates = new ArrayList<IncludeInfo>();
 		candidates.add(includeInfo);
 		IncludeMap[] maps = fIncludeMaps;
@@ -125,6 +124,7 @@ public class HeaderSubstitutor {
 			}
 		}
 		IPath firstResolved = null;
+		IPath firstIncludedPreviously = null;
 		for (IncludeInfo candidate : candidates) {
 			IPath header = fContext.resolveInclude(candidate);
 			if (header != null) {
@@ -132,10 +132,13 @@ public class HeaderSubstitutor {
 					return header;
 				if (firstResolved == null)
 					firstResolved = header;
+				if (firstIncludedPreviously == null && fContext.wasIncludedPreviously(header))
+					firstIncludedPreviously = header;
 			}
 		}
 
-		return firstResolved != null ? firstResolved : path;
+		return firstIncludedPreviously != null ?
+				firstIncludedPreviously : firstResolved != null ? firstResolved : path;
 	}
 
 	/**

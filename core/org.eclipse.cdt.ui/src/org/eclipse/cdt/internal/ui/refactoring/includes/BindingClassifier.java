@@ -165,16 +165,18 @@ public class BindingClassifier {
 		IParameter[] parameters = function.getParameters();
 		for (int i = 0; i < parameters.length && i < arguments.length; i++) {
 			IType parameterType = parameters[i].getType();
-			parameterType = getNestedType(parameterType, REF | ALLCVQ);
 			IASTInitializerClause argument = arguments[i];
 			if (parameterType instanceof IPointerType || parameterType instanceof ICPPReferenceType) {
 				// The declared parameter type is a pointer or reference type. A declaration is
-				// sufficient if it matches the actual parameter type.
+				// sufficient if it matches the actual parameter type. We don't need to provide
+				// a parameter declaration since it is a responsibility of the header declaring
+				// the function.
 				if (argument instanceof IASTExpression) {
 					IType argumentType = ((IASTExpression) argument).getExpressionType();
 					if (parameterType instanceof IPointerType && Conversions.isNullPointerConstant(argumentType)) {
 						continue;
 					}
+					parameterType = getNestedType(parameterType, REF | ALLCVQ);
 					argumentType = getNestedType(argumentType, REF | ALLCVQ);
 
 					if (parameterType instanceof IPointerType && argumentType instanceof IPointerType) {
@@ -194,6 +196,7 @@ public class BindingClassifier {
 			}
 			// As a matter of policy, a header declaring the function is responsible for
 			// defining parameter types that allow implicit conversion.
+			parameterType = getNestedType(parameterType, REF | ALLCVQ);
 			if (!(parameterType instanceof ICPPClassType) ||
 					fAst.getDeclarationsInAST(function).length != 0 ||
 					!hasConvertingConstructor((ICPPClassType) parameterType, argument)) {
@@ -430,7 +433,7 @@ public class BindingClassifier {
 			return;
 
 		if (fAst.getDefinitionsInAST(binding).length != 0)
-			return;  // Defined locally
+			return;  // Defined locally.
 
 		List<IBinding> requiredBindings = getRequiredBindings(binding);
 		for (IBinding requiredBinding : requiredBindings) {

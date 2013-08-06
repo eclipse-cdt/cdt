@@ -201,7 +201,7 @@ public class BindingClassifier {
 			if (canBeDeclared) {
 				// The declared parameter type must be declared. We must explicitly do this here
 				// because this type doesn't appear within the AST.
-				declareType(parameterType);
+				declareTypeExceptTypedefOrNonFixedEnum(parameterType);
 			} else {
 				assert argument != null;
 				if (argument instanceof IASTExpression) {
@@ -419,6 +419,22 @@ public class BindingClassifier {
 		if (typeBinding != null && !(typeBinding instanceof ITypedef)
 				&& !isEnumerationWithoutFixedUnderlyingType(typeBinding)) {
 			defineBinding(typeBinding);
+		}
+	}
+
+	/**
+	 * Adds the given type to the list of bindings which have to be declared. Typedefs and
+	 * enumerations without fixed underlying type are skipped since they must be defined in the file
+	 * that references them by name. If the type is explicitly referenced in this translation unit,
+	 * it will be defined independently from this method.
+	 *
+	 * @param type The type to add.
+	 */
+	private void declareTypeExceptTypedefOrNonFixedEnum(IType type) {
+		IBinding typeBinding = getTypeBinding(type);
+		if (typeBinding != null && !(typeBinding instanceof ITypedef)
+				&& !isEnumerationWithoutFixedUnderlyingType(typeBinding)) {
+			declareBinding(typeBinding);
 		}
 	}
 

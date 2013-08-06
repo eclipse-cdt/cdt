@@ -159,20 +159,34 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	}
 
 	public static void initDefaults(IPreferenceStore prefs) {
-		prefs.setDefault(PREF_CLEAR_CONSOLE, true);
-		prefs.setDefault(PREF_AUTO_OPEN_CONSOLE, true);
-		prefs.setDefault(PREF_CONSOLE_ON_TOP, false);
-		prefs.setDefault(PREF_BUILDCONSOLE_WRAP_LINES, false);
-		prefs.setDefault(PREF_BUILDCONSOLE_LINES, 500);
-		prefs.setDefault(PREF_BUILDCONSOLE_TAB_WIDTH, 4);
-		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_OUTPUT_COLOR, new RGB(0, 0, 0));
-		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_INFO_COLOR, new RGB(0, 0, 255));
-		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_ERROR_COLOR, new RGB(255, 0, 0));
-		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_BACKGROUND_COLOR, new RGB(255, 255, 255));
-		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR, new RGB(254, 231, 224));
-		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR, new RGB(254, 243, 218));
-		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR, new RGB(244, 247, 254));
-		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR, new RGB(255, 0, 0));
+		if(!prefs.contains(PREF_CLEAR_CONSOLE))
+			prefs.setDefault(PREF_CLEAR_CONSOLE, true);
+		if(!prefs.contains(PREF_AUTO_OPEN_CONSOLE))
+			prefs.setDefault(PREF_AUTO_OPEN_CONSOLE, true);
+		if(!prefs.contains(PREF_CONSOLE_ON_TOP))
+			prefs.setDefault(PREF_CONSOLE_ON_TOP, false);
+		if(!prefs.contains(PREF_BUILDCONSOLE_WRAP_LINES))
+			prefs.setDefault(PREF_BUILDCONSOLE_WRAP_LINES, false);
+		if(!prefs.contains(PREF_BUILDCONSOLE_LINES))
+			prefs.setDefault(PREF_BUILDCONSOLE_LINES, 500);
+		if(!prefs.contains(PREF_BUILDCONSOLE_TAB_WIDTH))
+			prefs.setDefault(PREF_BUILDCONSOLE_TAB_WIDTH, 4);
+		if(!prefs.contains(PREF_BUILDCONSOLE_OUTPUT_COLOR))
+			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_OUTPUT_COLOR, new RGB(0, 0, 0));
+		if(!prefs.contains(PREF_BUILDCONSOLE_INFO_COLOR))
+			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_INFO_COLOR, new RGB(0, 0, 255));
+		if(!prefs.contains(PREF_BUILDCONSOLE_ERROR_COLOR))
+			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_ERROR_COLOR, new RGB(255, 0, 0));
+		if(!prefs.contains(PREF_BUILDCONSOLE_BACKGROUND_COLOR))
+			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_BACKGROUND_COLOR, new RGB(255, 255, 255));
+		if(!prefs.contains(PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR))
+			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR, new RGB(254, 231, 224));
+		if(!prefs.contains(PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR))
+			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR, new RGB(254, 243, 218));
+		if(!prefs.contains(PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR))
+			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR, new RGB(244, 247, 254));
+		if(!prefs.contains(PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR))
+			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR, new RGB(255, 0, 0));
 	}
 
 }

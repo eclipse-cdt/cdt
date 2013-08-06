@@ -195,11 +195,24 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  f(0);
 	//	  f(nullptr);
 	//	}
-	public void testFunctionCall() throws Exception {
+	public void testFunctionCallWithPointerParameter_1() throws Exception {
 		IPreferenceStore preferenceStore = getPreferenceStore();
 		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		assertDefined();
 		assertDeclared("f", "A");
+	}
+
+	//	typedef int A;
+	//	void f(const A* p);
+
+	//	void test() {
+	//	  f(nullptr);
+	//	}
+	public void testFunctionCallWithPointerParameter_2() throws Exception {
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		assertDefined();
+		assertDeclared("f");
 	}
 
 	//	struct A {

@@ -91,7 +91,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
 
@@ -276,9 +278,20 @@ public class BindingClassifier {
 		}
 
 		if (binding instanceof ICPPSpecialization) {
+			ICPPTemplateParameterMap parameterMap = ((ICPPSpecialization) binding).getTemplateParameterMap();
+			for (Integer position : parameterMap.getAllParameterPositions()) {
+				ICPPTemplateArgument argument = parameterMap.getArgument(position);
+				IType type = argument.getTypeValue();
+				// Normally we don't need to define parameters of a template specialization that
+				// were not specified explicitly. __gnu_cxx::hash is an exception from that rule.
+				if (type instanceof IBinding && "hash".equals(((IBinding) type).getName())) { //$NON-NLS-1$
+					IBinding owner = ((IBinding) type).getOwner();
+					if (owner instanceof ICPPNamespace && "__gnu_cxx".equals(owner.getName())) //$NON-NLS-1$
+						bindings.add((IBinding) type);
+				}
+			}
 			// Get the specialized binding - e.g. get the binding for X if the current binding is
-			// for the template specialization X<Y>. Resolution of the specialization
-			// (i.e. template) arguments is handled separately by the caller of this method.
+			// for the template specialization X<Y>.
 			binding = ((ICPPSpecialization) binding).getSpecializedBinding();
 		}
 

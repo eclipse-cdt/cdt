@@ -189,9 +189,10 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 
 	//	class A {};
 	//	void f(const A* p);
+	//	A* g();
 
-	//	void test(A* a) {
-	//	  f(a);
+	//	void test() {
+	//	  f(g());
 	//	  f(0);
 	//	  f(nullptr);
 	//	}
@@ -199,7 +200,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		IPreferenceStore preferenceStore = getPreferenceStore();
 		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		assertDefined();
-		assertDeclared("f", "A");
+		assertDeclared("f", "g");
 	}
 
 	//	typedef int A;

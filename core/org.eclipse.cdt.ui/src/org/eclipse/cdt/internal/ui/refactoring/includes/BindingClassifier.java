@@ -163,59 +163,41 @@ public class BindingClassifier {
 	 */
 	private void processFunctionParameters(IFunction function, IASTInitializerClause[] arguments) {
 		IParameter[] parameters = function.getParameters();
-		for (int i = 0; i < parameters.length; i++) {
+		for (int i = 0; i < parameters.length && i < arguments.length; i++) {
 			IType parameterType = parameters[i].getType();
 			parameterType = getNestedType(parameterType, REF | ALLCVQ);
-			IASTInitializerClause argument = null;
-			boolean canBeDeclared = false;
-			if (i >= arguments.length) {
-				// This is a default value parameter. The function call itself doesn't need
-				// a definition of this parameter type.
-				canBeDeclared = true;
-			} else {
-				// This argument is present within the function call expression.
-				// It's therefore not a default parameter.
-				argument = arguments[i];
-				if (parameterType instanceof IPointerType || parameterType instanceof ICPPReferenceType) {
-					// The declared parameter type is a pointer or reference type. A declaration is
-					// sufficient if it matches the actual parameter type.
-					if (argument instanceof IASTExpression) {
-						IType argumentType = ((IASTExpression) argument).getExpressionType();
-						if (parameterType instanceof IPointerType && Conversions.isNullPointerConstant(argumentType)) {
-							canBeDeclared = true;
-						} else {
-							argumentType = getNestedType(argumentType, REF | ALLCVQ);
-	
-							if (parameterType instanceof IPointerType && argumentType instanceof IPointerType) {
-								parameterType = getNestedType(((IPointerType) parameterType).getType(), ALLCVQ);
-								argumentType = getNestedType(((IPointerType) argumentType).getType(), ALLCVQ);
-							}
-							if (isSameType(parameterType, argumentType)) {
-								canBeDeclared = true;
-							}
-						}
+			IASTInitializerClause argument = arguments[i];
+			if (parameterType instanceof IPointerType || parameterType instanceof ICPPReferenceType) {
+				// The declared parameter type is a pointer or reference type. A declaration is
+				// sufficient if it matches the actual parameter type.
+				if (argument instanceof IASTExpression) {
+					IType argumentType = ((IASTExpression) argument).getExpressionType();
+					if (parameterType instanceof IPointerType && Conversions.isNullPointerConstant(argumentType)) {
+						continue;
+					}
+					argumentType = getNestedType(argumentType, REF | ALLCVQ);
+
+					if (parameterType instanceof IPointerType && argumentType instanceof IPointerType) {
+						parameterType = getNestedType(((IPointerType) parameterType).getType(), ALLCVQ);
+						argumentType = getNestedType(((IPointerType) argumentType).getType(), ALLCVQ);
+					}
+					if (isSameType(parameterType, argumentType)) {
+						continue;
 					}
 				}
 			}
 
-			if (canBeDeclared) {
-				// The declared parameter type must be declared. We must explicitly do this here
-				// because this type doesn't appear within the AST.
-				declareTypeExceptTypedefOrNonFixedEnum(parameterType);
-			} else {
-				assert argument != null;
-				if (argument instanceof IASTExpression) {
-					IType argumentType = ((IASTExpression) argument).getExpressionType();
-					// The type of the argument requires a full definition.
-					defineTypeExceptTypedefOrNonFixedEnum(argumentType);
-				}
-				// As a matter of policy, a header declaring the function is responsible for
-				// defining parameter types that allow implicit conversion.
-				if (!(parameterType instanceof ICPPClassType) ||
-						fAst.getDeclarationsInAST(function).length != 0 ||
-						!hasConvertingConstructor((ICPPClassType) parameterType, argument)) {
-					defineTypeExceptTypedefOrNonFixedEnum(parameterType);
-				}
+			if (argument instanceof IASTExpression) {
+				IType argumentType = ((IASTExpression) argument).getExpressionType();
+				// The type of the argument requires a full definition.
+				defineTypeExceptTypedefOrNonFixedEnum(argumentType);
+			}
+			// As a matter of policy, a header declaring the function is responsible for
+			// defining parameter types that allow implicit conversion.
+			if (!(parameterType instanceof ICPPClassType) ||
+					fAst.getDeclarationsInAST(function).length != 0 ||
+					!hasConvertingConstructor((ICPPClassType) parameterType, argument)) {
+				defineTypeExceptTypedefOrNonFixedEnum(parameterType);
 			}
 		}
 	}

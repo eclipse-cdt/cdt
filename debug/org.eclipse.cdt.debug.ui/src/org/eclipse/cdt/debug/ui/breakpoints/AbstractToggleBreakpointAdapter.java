@@ -432,6 +432,9 @@ abstract public class AbstractToggleBreakpointAdapter
         String address = getSelectedAddress(rendering.getSelectedAddress(), ""); //$NON-NLS-1$
         String range = getRange(rendering.getSelectedAsBytes(), addressableSize, "1"); //$NON-NLS-1$
         
+        // Memory addresses should always be dereferenced.
+        address = "*" + address; //$NON-NLS-1$
+        
         createWatchpoint(interactive, part, "", ResourcesPlugin.getWorkspace().getRoot(), -1, -1, -1, address,  //$NON-NLS-1$
             memorySpace, range);
     }

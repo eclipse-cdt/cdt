@@ -501,8 +501,9 @@ public class IncludeOrganizer {
 				declarationText.append(variable.getName());
 				declarationText.append(';');
 			} else {
-				CUIPlugin.logError("Unexpected type of binding " + binding.getName() + //$NON-NLS-1$
-						" - " + binding.getClass().getSimpleName()); //$NON-NLS-1$
+				CUIPlugin.log(new IllegalArgumentException(
+						"Unexpected type of binding " + binding.getName() + //$NON-NLS-1$
+						" - " + binding.getClass().getSimpleName())); //$NON-NLS-1$
 			}
 
 			// Append the closing curly brackets from the namespaces (if any).

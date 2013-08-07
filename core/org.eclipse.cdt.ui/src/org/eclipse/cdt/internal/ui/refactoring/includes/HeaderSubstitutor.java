@@ -53,6 +53,8 @@ public class HeaderSubstitutor {
 					fIncludeMaps[1].addAllMappings(map.getOptionalSubstitutionMap());
 				}
 			}
+			fIncludeMaps[0].transitivelyClose();
+			fIncludeMaps[1].transitivelyClose();
 		}
 
 		fSymbolExportMap = new SymbolExportMap();

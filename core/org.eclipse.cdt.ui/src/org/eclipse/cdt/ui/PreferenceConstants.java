@@ -1986,6 +1986,16 @@ public class PreferenceConstants {
 	public static final String FORWARD_DECLARE_FUNCTIONS = "forwardDeclare.functions"; //$NON-NLS-1$
 
 	/**
+	 * Whether external variables should be forward declared if possible.
+	 *
+	 * Example:
+	 *  extern int errno;
+	 *
+	 * @since 5.7
+	 */
+	public static final String FORWARD_DECLARE_EXTERNAL_VARIABLES = "forwardDeclare.externalVariables"; //$NON-NLS-1$
+
+	/**
 	 * Whether C++ templates should be forward declared if possible.
 	 *
 	 * Examples:

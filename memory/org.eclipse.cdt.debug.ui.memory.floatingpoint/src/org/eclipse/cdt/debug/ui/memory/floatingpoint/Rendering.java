@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -167,13 +167,24 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
         if (fParent.getMemoryBlock() != null)
         {
+        	// This is base address from user.
+        	// Honor it if the block has no limits or the base is within the block limits.
+        	// Fix Bug 414519.  
+        	BigInteger base = fParent.getBigBaseAddress();
+
             fViewportAddress = fParent.getMemoryBlockStartAddress();
 
             // The viewport address will be null if memory may be retrieved at any
             // address less than this memory block's base.  If so use the base address.
-
             if (fViewportAddress == null)
-                fViewportAddress = fParent.getBigBaseAddress();
+                fViewportAddress = base;
+            else {
+            	BigInteger blockEndAddr = fParent.getMemoryBlockEndAddress();
+            	if (base.compareTo(fViewportAddress) > 0) {
+            		if (blockEndAddr == null || base.compareTo(blockEndAddr) < 0)
+            			fViewportAddress = base;
+            	}
+            }
 
             fBaseAddress = fViewportAddress;
         }
@@ -755,10 +766,10 @@ public class Rendering extends Composite implements IDebugEventSetListener
         }
 
         @SuppressWarnings("hiding")
-        private HashMap<BigInteger, FPMemoryByte[]> fEditBuffer = new HashMap<BigInteger, FPMemoryByte[]>();
+        private HashMap<BigInteger, FPMemoryByte[]> fEditBuffer = new HashMap<>();
         private boolean fDisposed = false;
         private Object fLastQueued = null;
-        private Vector<Object> fQueue = new Vector<Object>();
+        private Vector<Object> fQueue = new Vector<>();
         protected MemoryUnit fCache = null;
         protected MemoryUnit fHistoryCache[] = new MemoryUnit[0];
         protected int fHistoryDepth = 0;

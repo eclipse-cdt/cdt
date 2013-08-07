@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_e142c7c1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-08-07T12:52:10Z",
+      "side": 1,
+      "message": "Commit message should be something like \nBug xyz - Some explanation.  The title of the bug is usually ok. In this case I suggest:\n\nBug 376105 - \"Add watchpoint (C/C++)\" context menu option from memory view does not add a asterisk before the memory address value",
+      "revId": "f6e4a6725e9663d0e46cdac540f9c786e9e7afff",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_015c1375",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/breakpoints/AbstractToggleBreakpointAdapter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-08-07T12:52:10Z",
+      "side": 1,
+      "message": "This works but I wonder if it is ok to put it in this class.  This code is part of the base CDT, while the requirement of the \u0027*\u0027 may be specific to GDB.\n\nWhen setting an address breakpoint we add the \u0027*\u0027 in MIBreakpoints.formatLocation().  Maybe we can do a similar formatting for a watchpoint expression before using it in MIBreakpoints.addWatchpoint()?",
+      "revId": "f6e4a6725e9663d0e46cdac540f9c786e9e7afff",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

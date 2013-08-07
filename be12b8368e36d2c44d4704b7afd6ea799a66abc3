@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_d2fafb34",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-08-07T18:35:49Z",
+      "side": 1,
+      "message": "Please update as suggested :)",
+      "revId": "be12b8368e36d2c44d4704b7afd6ea799a66abc3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_32f4ff46",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpoints.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 741,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-08-07T18:35:49Z",
+      "side": 1,
+      "message": "This failed for me when I tried it.  It is because Integer is too small for my address space.  For addresses we use BigInteger.  Or you can use the simple trick used by formatLocation() which assumes that anything starting with a digit is an address:\n\nif (expression.length() \u003e 0 \u0026\u0026 Character.isDigit(expression.charAt(0))) {\n\t// numeric address needs \u0027*\u0027 prefix\n\texpression \u003d \u0027*\u0027 + expression;\n}",
+      "revId": "be12b8368e36d2c44d4704b7afd6ea799a66abc3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

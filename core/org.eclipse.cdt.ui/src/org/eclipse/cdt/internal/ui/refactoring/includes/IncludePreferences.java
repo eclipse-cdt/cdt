@@ -45,7 +45,15 @@ public class IncludePreferences {
 	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.SymbolExportMap}s.
 	 */
 	public static final String INCLUDES_SYMBOL_EXPORTING_HEADERS = "organizeIncludes.symbolExportingHeaders"; //$NON-NLS-1$
-
+	/**
+	 * Whether external variables should be forward declared if possible.
+	 *
+	 * Example:
+	 *  extern int errno;
+	 *
+	 * @since 5.7
+	 */
+	public static final String FORWARD_DECLARE_EXTERNAL_VARIABLES = "forwardDeclare.externalVariables"; //$NON-NLS-1$
 
 	public static enum UnusedStatementDisposition { REMOVE, COMMENT_OUT, KEEP }
 
@@ -57,8 +65,7 @@ public class IncludePreferences {
 	public final boolean forwardDeclareCompositeTypes;
 	public final boolean forwardDeclareEnums;
 	public final boolean forwardDeclareFunctions;
-	// TODO(sprigogin): Create a preference for this.
-	public final boolean forwardDeclareExternalVariables = false;
+	public final boolean forwardDeclareExternalVariables;
 	public final boolean forwardDeclareTemplates;
 	public final boolean forwardDeclareNamespaceElements;
 	public final UnusedStatementDisposition unusedStatementsDisposition;
@@ -93,6 +100,8 @@ public class IncludePreferences {
 				PreferenceConstants.FORWARD_DECLARE_ENUMS, project, false);
 		forwardDeclareFunctions = PreferenceConstants.getPreference(
 				PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, project, false);
+		forwardDeclareExternalVariables = PreferenceConstants.getPreference(
+				FORWARD_DECLARE_EXTERNAL_VARIABLES, project, false);
 		forwardDeclareTemplates = PreferenceConstants.getPreference(
 				PreferenceConstants.FORWARD_DECLARE_TEMPLATES, project, false);
 		forwardDeclareNamespaceElements = PreferenceConstants.getPreference(

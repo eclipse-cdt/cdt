@@ -36,6 +36,7 @@ public class OrganizeIncludesBlock extends OptionsConfigurationBlock {
 	private static final Key KEY_FORWARD_DECLARE_COMPOSITE_TYPES = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_COMPOSITE_TYPES);
 	private static final Key KEY_FORWARD_DECLARE_ENUMS = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_ENUMS);
 	private static final Key KEY_FORWARD_DECLARE_FUNCTIONS = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS);
+	private static final Key KEY_FORWARD_DECLARE_EXTERNAL_VARIABLES = getCDTUIKey(IncludePreferences.FORWARD_DECLARE_EXTERNAL_VARIABLES);
 	private static final Key KEY_FORWARD_DECLARE_TEMPLATES = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_TEMPLATES);
 	private static final Key KEY_FORWARD_DECLARE_NAMESPACE_ELEMENTS = getCDTUIKey(PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS);
 
@@ -58,6 +59,7 @@ public class OrganizeIncludesBlock extends OptionsConfigurationBlock {
 		KEY_FORWARD_DECLARE_COMPOSITE_TYPES,
 		KEY_FORWARD_DECLARE_ENUMS,
 		KEY_FORWARD_DECLARE_FUNCTIONS,
+		KEY_FORWARD_DECLARE_EXTERNAL_VARIABLES,
 		KEY_FORWARD_DECLARE_TEMPLATES,
 		KEY_FORWARD_DECLARE_NAMESPACE_ELEMENTS,
 	};
@@ -95,6 +97,9 @@ public class OrganizeIncludesBlock extends OptionsConfigurationBlock {
 		LayoutUtil.setHorizontalSpan(control, 2);
 		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_forward_declare_functions,
 				KEY_FORWARD_DECLARE_FUNCTIONS, TRUE_FALSE, 0);
+		LayoutUtil.setHorizontalSpan(control, 2);
+		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_forward_declare_external_variables,
+				KEY_FORWARD_DECLARE_EXTERNAL_VARIABLES, TRUE_FALSE, 0);
 		LayoutUtil.setHorizontalSpan(control, 2);
 		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_forward_declare_templates,
 				KEY_FORWARD_DECLARE_TEMPLATES, TRUE_FALSE, 0);

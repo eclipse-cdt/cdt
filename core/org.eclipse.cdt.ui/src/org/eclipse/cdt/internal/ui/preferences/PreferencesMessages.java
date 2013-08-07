@@ -502,9 +502,10 @@ public final class PreferencesMessages extends NLS {
 	public static String OrganizeIncludesBlock_allow_reordering;
 	public static String OrganizeIncludesBlock_forward_declare_composite_types;
 	public static String OrganizeIncludesBlock_forward_declare_enums;
+	public static String OrganizeIncludesBlock_forward_declare_external_variables;
 	public static String OrganizeIncludesBlock_forward_declare_functions;
-	public static String OrganizeIncludesBlock_forward_declare_templates;
 	public static String OrganizeIncludesBlock_forward_declare_namespace_elements;
+	public static String OrganizeIncludesBlock_forward_declare_templates;
 	public static String OrganizeIncludesBlock_heuristic_header_substitution;
 	public static String OrganizeIncludesBlock_partner_indirect_inclusion;
 	public static String OrganizeIncludesBlock_unused_statements;

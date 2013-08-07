@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Ericsson - Initial API and implementation 
+ *     Ericsson - Initial API and implementation
+ *     Mike Wrighton (Mentor Graphics) - Formatting address for a watchpoint (Bug 376105) 
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
@@ -734,6 +735,13 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		String expression = (String)  getProperty(attributes, EXPRESSION, NULL_STRING);
 		boolean isRead    = (Boolean) getProperty(attributes, READ,    false);
 		boolean isWrite   = (Boolean) getProperty(attributes, WRITE,   false);
+
+		// If expression is an address, we need to prepend "*".
+		try {
+			Integer.decode(expression);
+			expression = "*" + expression; //$NON-NLS-1$
+		} catch (NumberFormatException nfe) {
+		}
 
 		// The DataRequestMonitor for the add request
 		DataRequestMonitor<MIBreakInsertInfo> addWatchpointDRM =

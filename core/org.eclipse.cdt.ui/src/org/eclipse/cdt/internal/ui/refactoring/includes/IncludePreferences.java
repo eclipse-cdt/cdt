@@ -181,7 +181,7 @@ public class IncludePreferences {
 		store.setDefault(PreferenceConstants.INCLUDES_PARTNER_FILE_SUFFIXES, DEFAULT_PARTNER_FILE_SUFFIXES);
 		store.setDefault(PreferenceConstants.INCLUDES_HEURISTIC_HEADER_SUBSTITUTION, true);
 		store.setDefault(PreferenceConstants.INCLUDES_ALLOW_REORDERING, true);
-		store.setDefault(INCLUDES_ALLOW_PARTNER_INDIRECT_INCLUSION, false);
+		store.setDefault(INCLUDES_ALLOW_PARTNER_INDIRECT_INCLUSION, true);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_COMPOSITE_TYPES, true);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_ENUMS, false);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, false);

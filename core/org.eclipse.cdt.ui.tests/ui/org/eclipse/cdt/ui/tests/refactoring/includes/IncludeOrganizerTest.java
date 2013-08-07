@@ -390,4 +390,27 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 				SymbolExportMap.serializeMaps(Collections.singletonList(symbolExportMap)));
 		assertExpectedResults();
 	}
+
+	//h1.h
+	//class A {};
+	//class B;
+
+	//h2.h
+	//class C {};
+
+	//source.cpp
+	//A a;
+	//B* b;
+	//C* c;
+	//====================
+	//#include "h1.h"
+	//
+	//class C;
+	//
+	//A a;
+	//B* b;
+	//C* c;
+	public void testSymbolToDeclareIsDefinedInIncludedHeader() throws Exception {
+		assertExpectedResults();
+	}
 }

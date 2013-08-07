@@ -64,6 +64,7 @@ import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -194,14 +195,6 @@ public class IncludeOrganizer {
 		bindingClassifier.classifyNodeContents(ast);
 		Set<IBinding> bindingsToDefine = bindingClassifier.getBindingsToDefine();
 
-		// Stores the forward declarations for composite types and enumerations as text.
-		List<String> typeForwardDeclarations = new ArrayList<String>();
-		// Stores the forward declarations for C-style functions as text.
-		List<String> functionForwardDeclarations = new ArrayList<String>();
-
-		createForwardDeclarations(ast, bindingClassifier, typeForwardDeclarations, functionForwardDeclarations,
-				bindingsToDefine);
-
 		IASTPreprocessorIncludeStatement[] existingIncludes = ast.getIncludeDirectives();
 		for (IASTPreprocessorIncludeStatement include : existingIncludes) {
 			if (include.isPartOfTranslationUnitFile()) {
@@ -217,7 +210,7 @@ public class IncludeOrganizer {
 		// bindings which have to be defined.
 		IIndexFileSet reachableHeaders = ast.getIndexFileSet();
 
-		List<InclusionRequest> requests = createInclusionRequests(ast, bindingsToDefine, reachableHeaders);
+		List<InclusionRequest> requests = createInclusionRequests(ast, bindingsToDefine, false, reachableHeaders);
 		processInclusionRequests(requests, headerSubstitutor);
 
 		// Use a map instead of a set to be able to retrieve existing elements using equal elements.
@@ -322,6 +315,13 @@ public class IncludeOrganizer {
 			}
 		}
 
+		// Stores the forward declarations for composite types and enumerations as text.
+		List<String> typeForwardDeclarations = new ArrayList<String>();
+		// Stores the forward declarations for C-style functions as text.
+		List<String> functionForwardDeclarations = new ArrayList<String>();
+
+		createForwardDeclarations(ast, bindingClassifier, typeForwardDeclarations, functionForwardDeclarations);
+
 		// Create the source code to insert into the editor.
 
 		StringBuilder buf = new StringBuilder();
@@ -371,12 +371,9 @@ public class IncludeOrganizer {
 
 	/**
 	 * Creates forward declarations by examining the list of bindings which have to be declared.
-	 * Bindings that cannot be safely declared for whatever reason are added to
-	 * {@code bindingsToDefine} set.
 	 */
 	private void createForwardDeclarations(IASTTranslationUnit ast, BindingClassifier classifier,
-			List<String> forwardDeclarations, List<String> functionForwardDeclarations,
-			Set<IBinding> bindingsToDefine) throws CoreException {
+			List<String> forwardDeclarations, List<String> functionForwardDeclarations) throws CoreException {
 		IIndexFileSet reachableHeaders = ast.getIndexFileSet();
 		Set<IBinding> bindings =
 				removeBindingsDefinedInIncludedHeaders(ast, classifier.getBindingsToDeclare(), reachableHeaders);
@@ -495,11 +492,17 @@ public class IncludeOrganizer {
 
 				// Add this forward declaration to the separate function forward declaration list.
 				forwardDeclarationListToUse = functionForwardDeclarations;
+			} else if (binding instanceof IVariable) {
+				IVariable variable = (IVariable) binding;
+				IType variableType = variable.getType();
+				declarationText.append("extern "); //$NON-NLS-1$
+				declarationText.append(ASTTypeUtil.getType(variableType, false));
+				declarationText.append(' ');
+				declarationText.append(variable.getName());
+				declarationText.append(';');
 			} else {
-				// We can't create a forward declaration for this binding. The binding will have
-				// to be defined.
-				bindingsToDefine.add(binding);
-				continue;
+				CUIPlugin.logError("Unexpected type of binding " + binding.getName() + //$NON-NLS-1$
+						" - " + binding.getClass().getSimpleName()); //$NON-NLS-1$
 			}
 
 			// Append the closing curly brackets from the namespaces (if any).
@@ -847,7 +850,7 @@ public class IncludeOrganizer {
 			Set<IBinding> bindings, IIndexFileSet reachableHeaders) throws CoreException {
 		Set<IBinding> filteredBindings = new HashSet<IBinding>(bindings);
 
-		List<InclusionRequest> requests = createInclusionRequests(ast, bindings, reachableHeaders);
+		List<InclusionRequest> requests = createInclusionRequests(ast, bindings, true, reachableHeaders);
 		Set<IPath> allIncludedHeaders = new HashSet<IPath>();
 		allIncludedHeaders.addAll(fContext.getHeadersAlreadyIncluded());
 		allIncludedHeaders.addAll(fContext.getHeadersToInclude());
@@ -862,12 +865,15 @@ public class IncludeOrganizer {
 	protected boolean isSatisfiedByIncludedHeaders(InclusionRequest request, Set<IPath> includedHeaders)
 			throws CoreException {
 		for (IIndexFile file : request.getDeclaringFiles().keySet()) {
+			IPath path = getPath(file.getLocation());
+			if (includedHeaders.contains(path))
+				return true;
+
 			IIndexInclude[] includedBy = fContext.getIndex().findIncludedBy(file, IIndex.DEPTH_INFINITE);
 			for (IIndexInclude include : includedBy) {
-				IPath path = getPath(include.getIncludedByLocation());
-				if (includedHeaders.contains(path)) {
+				path = getPath(include.getIncludedByLocation());
+				if (includedHeaders.contains(path))
 					return true;
-				}
 			}
 		}
 		return false;
@@ -1106,7 +1112,8 @@ public class IncludeOrganizer {
 	}
 
 	private List<InclusionRequest> createInclusionRequests(IASTTranslationUnit ast,
-			Set<IBinding> bindingsToDefine, IIndexFileSet reachableHeaders) throws CoreException {
+			Set<IBinding> bindingsToDefine, boolean allowDeclarations,
+			IIndexFileSet reachableHeaders) throws CoreException {
 		List<InclusionRequest> requests = new ArrayList<InclusionRequest>(bindingsToDefine.size());
 		IIndex index = fContext.getIndex();
 
@@ -1123,7 +1130,7 @@ public class IncludeOrganizer {
 	    				indexNames[indexNames.length - 1] = indexName;
 	    			}
 	    		}
-			} else if (binding instanceof IFunction) {
+			} else if (allowDeclarations || binding instanceof IFunction) {
 				// For functions we need to include the declaration.
 				indexNames = index.findDeclarations(binding);
 			} else {

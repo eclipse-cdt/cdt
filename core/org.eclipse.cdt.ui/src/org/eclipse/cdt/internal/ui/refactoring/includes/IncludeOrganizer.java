@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.includes;
 
+import static org.eclipse.cdt.core.index.IndexLocationFactory.getAbsolutePath;
 import static org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.getEndingLineNumber;
 import static org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.getNodeEndOffset;
 import static org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.getNodeOffset;
@@ -72,11 +73,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
-import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
@@ -866,13 +865,13 @@ public class IncludeOrganizer {
 	protected boolean isSatisfiedByIncludedHeaders(InclusionRequest request, Set<IPath> includedHeaders)
 			throws CoreException {
 		for (IIndexFile file : request.getDeclaringFiles().keySet()) {
-			IPath path = getPath(file.getLocation());
+			IPath path = getAbsolutePath(file.getLocation());
 			if (includedHeaders.contains(path))
 				return true;
 
 			IIndexInclude[] includedBy = fContext.getIndex().findIncludedBy(file, IIndex.DEPTH_INFINITE);
 			for (IIndexInclude include : includedBy) {
-				path = getPath(include.getIncludedByLocation());
+				path = getAbsolutePath(include.getIncludedByLocation());
 				if (includedHeaders.contains(path))
 					return true;
 			}
@@ -897,7 +896,7 @@ public class IncludeOrganizer {
 							IIndexFile indexFile = request.getDeclaringFiles().keySet().iterator().next();
 							if (!includedByPartner.contains(indexFile)) {
 								for (IIndexInclude include : indexFile.getIncludes()) {
-									fContext.addHeaderAlreadyIncluded(getPath(include.getIncludesLocation()));
+									fContext.addHeaderAlreadyIncluded(getAbsolutePath(include.getIncludesLocation()));
 								}
 								includedByPartner.add(indexFile);
 							}
@@ -1081,10 +1080,6 @@ public class IncludeOrganizer {
 		return headerSubstitutor.getExportingHeaders(symbol);
 	}
 
-	private static IPath getPath(IIndexFileLocation location) {
-		return IndexLocationFactory.getAbsolutePath(location);
-	}
-
 	/**
 	 * Checks if the given path points to a partner header of the current translation unit.
 	 * A header is considered a partner if its name without extension is the same as the name of
@@ -1159,7 +1154,7 @@ public class IncludeOrganizer {
 						// Don't include it.
 						continue;
 					}
-					IPath path = getPath(indexFile.getLocation());
+					IPath path = getAbsolutePath(indexFile.getLocation());
 					declaringHeaders.put(indexFile, path);
 					if (reachableHeaders.contains(indexFile))
 						reachableDeclaringHeaders.put(indexFile, path);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-import java.io.File;
-import java.io.IOException;
+import static org.eclipse.cdt.core.index.IndexLocationFactory.getAbsolutePath;
+
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayDeque;
@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -77,15 +76,12 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.cdt.ui.text.SharedASTJob;
-import org.eclipse.cdt.utils.PathUtil;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -95,6 +91,8 @@ import org.eclipse.cdt.internal.corext.codemanipulation.AddIncludesOperation;
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeInfo;
+import org.eclipse.cdt.internal.ui.refactoring.includes.InclusionContext;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 /**
@@ -106,9 +104,9 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 
 	private ITranslationUnit fTu;
 	private IProject fProject;
-	private String[] fIncludePath;
-	private IRequiredInclude[] fRequiredIncludes;
-	private String[] fUsingDeclarations;
+	private final List<IncludeInfo> fRequiredIncludes = new ArrayList<IncludeInfo>();
+	private final List<String> fUsingDeclarations = new ArrayList<String>();
+	protected InclusionContext fContext;
 
 	public AddIncludeOnSelectionAction(ITextEditor editor) {
 		super(CEditorMessages.getBundleForConstructedKeys(), "AddIncludeOnSelection.", editor); //$NON-NLS-1$
@@ -117,7 +115,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 				ICHelpContextIds.ADD_INCLUDE_ON_SELECTION_ACTION);
 	}
 
-	private void insertInclude(IRequiredInclude[] includes, String[] usings, int beforeOffset) {
+	private void insertInclude(List<IncludeInfo> includes, List<String> usings, int beforeOffset) {
 		AddIncludesOperation op= new AddIncludesOperation(fTu, beforeOffset, includes, usings);
 		try {
 			PlatformUI.getWorkbench().getProgressService().runInUI(
@@ -149,17 +147,6 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			return;
 		}
 		fProject = fTu.getCProject().getProject();
-        IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(fProject);
-        fIncludePath = null;
-        if (provider != null) {
-            IScannerInfo info = provider.getScannerInformation(fTu.getResource());
-            if (info != null) {
-                fIncludePath = info.getIncludePaths();
-            }
-        }
-        if (fIncludePath == null) {
-        	fIncludePath = new String[0];
-        }
 
 		try {
 			final ISelection selection= getTextEditor().getSelectionProvider().getSelection();
@@ -182,19 +169,24 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			job.schedule();
 			job.join();
 
-			if (fRequiredIncludes == null || fRequiredIncludes.length == 0 && lookupName[0].length() > 0) {
-				// Try contribution from plugins.
+			if (fRequiredIncludes.isEmpty() && lookupName[0].length() > 0) {
+				// Try contribution from plug-ins.
 				IFunctionSummary fs = findContribution(lookupName[0]);
 				if (fs != null) {
-					fRequiredIncludes = fs.getIncludes();
+					IRequiredInclude[] functionIncludes = fs.getIncludes();
+					if (functionIncludes != null) {
+						for (IRequiredInclude include : functionIncludes) {
+							fRequiredIncludes.add(new IncludeInfo(include.getIncludeName(), include.isStandard()));
+						}
+					}
 					String ns = fs.getNamespace();
 					if (ns != null && ns.length() > 0) {
-						fUsingDeclarations = new String[] { fs.getNamespace() };
+						fUsingDeclarations.add(fs.getNamespace());
 					}
 				}
 
 			}
-			if (fRequiredIncludes != null && fRequiredIncludes.length >= 0) {
+			if (!fRequiredIncludes.isEmpty()) {
 				insertInclude(fRequiredIncludes, fUsingDeclarations, ((ITextSelection) selection).getOffset());
 			}
 		} catch (InterruptedException e) {
@@ -213,6 +205,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 	 */
 	private void deduceInclude(ITextSelection selection, IIndex index, IASTTranslationUnit ast, String[] lookupName)
 			throws CoreException {
+		fContext = new InclusionContext(fTu, index);
 		IASTNodeSelector selector = ast.getNodeSelector(fTu.getLocation().toOSString());
 		IASTName name = selector.findEnclosingName(selection.getOffset(), selection.getLength());
 		if (name == null) {
@@ -298,18 +291,18 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			});
 		}
 
-		fRequiredIncludes = null;
-		fUsingDeclarations = null;
+		fRequiredIncludes.clear();
+		fUsingDeclarations.clear();
 		if (candidates.size() == 1) {
 			IncludeCandidate candidate = candidates.get(0);
-			fRequiredIncludes = new IRequiredInclude[] { candidate.getInclude() };
+			fRequiredIncludes.add(candidate.getInclude());
 			IIndexBinding indexBinding = candidate.getBinding();
 
 			if (indexBinding instanceof ICPPBinding && !(indexBinding instanceof IIndexMacro)) {
 				// Decide what 'using' declaration, if any, should be added along with the include.
 				String usingDeclaration = deduceUsingDeclaration(binding, indexBinding, ast);
 				if (usingDeclaration != null)
-					fUsingDeclarations = new String[] { usingDeclaration };
+					fUsingDeclarations.add(usingDeclaration);
 			}
 		}
 	}
@@ -328,7 +321,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		// or a source file that was already included by some other file. 
 		if (!isSource(getPath(file)) || index.findIncludedBy(file, 0).length > 0) {
 			IIndexFile representativeFile = getRepresentativeFile(file, index);
-			IRequiredInclude include = getRequiredInclude(representativeFile, index);
+			IncludeInfo include = getRequiredInclude(representativeFile, index);
 			if (include != null) {
 				IncludeCandidate candidate = new IncludeCandidate(binding, include);
 				if (!candidates.containsKey(candidate.toString())) {
@@ -550,9 +543,8 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 	 * @return the required include
 	 * @throws CoreException 
 	 */
-	private IRequiredInclude getRequiredInclude(IIndexFile file, IIndex index) throws CoreException {
-		IIndexInclude[] includes;
-		includes = index.findIncludedBy(file);
+	private IncludeInfo getRequiredInclude(IIndexFile file, IIndex index) throws CoreException {
+		IIndexInclude[] includes = index.findIncludedBy(file);
 		if (includes.length > 0) {
 			// Let the existing includes vote. To be eligible to vote, an include
 			// has to be resolvable in the context of the current translation unit.
@@ -560,7 +552,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			String[] ballotBox = new String[includes.length];
 			int k = 0;
 			for (IIndexInclude include : includes) {
-				if (isResolvable(include)) {
+				if (isResolvableInCurrentContext(include)) {
 					ballotBox[k++] = include.getFullName();
 					if (include.isSystemInclude()) {
 						systemIncludeVotes++;
@@ -584,63 +576,24 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 						winnerVotes = votes;
 					}
 				}
-				return new RequiredInclude(winner, systemIncludeVotes * 2 >= k);
+				return new IncludeInfo(winner, systemIncludeVotes * 2 >= k);
 			}
 		}
 
 		// The file has never been included before.
-		URI targetUri = file.getLocation().getURI();
-        IPath targetLocation = PathUtil.getCanonicalPath(new Path(targetUri.getPath()));
-    	IPath sourceLocation = PathUtil.getCanonicalPath(fTu.getResource().getLocation());
-        boolean isSystemIncludePath = false;
-
-        IPath path = PathUtil.makeRelativePathToIncludes(targetLocation, fIncludePath);
-        if (path != null && ResourceLookup.findFilesForLocationURI(targetUri).length == 0) {
-        	// A header file in the include path but outside the workspace is included with angle brackets.
-            isSystemIncludePath = true;
-        }
-        if (path == null) {
-        	IPath sourceDirectory = sourceLocation.removeLastSegments(1);
-        	if (PathUtil.isPrefix(sourceDirectory, targetLocation)) {
-        		path = targetLocation.removeFirstSegments(sourceDirectory.segmentCount());
-        	} else {
-        		path = targetLocation;
-        	}
-        	if (targetLocation.getDevice() != null &&
-        			targetLocation.getDevice().equalsIgnoreCase(sourceDirectory.getDevice())) {
-        		path = path.setDevice(null);
-        	}
-        	if (path.isAbsolute() && path.getDevice() == null &&
-        			ResourceLookup.findFilesForLocationURI(targetUri).length != 0) {
-        		// The file is inside workspace. Include with a relative path.
-        		path = PathUtil.makeRelativePath(path, sourceDirectory);
-        	}
-        }
-    	return new RequiredInclude(path.toString(), isSystemIncludePath);
+        IPath targetLocation = getAbsolutePath(file.getLocation());
+        return fContext.getIncludeForHeaderFile(targetLocation);
     }
 
 	/**
-	 * Returns <code>true</code> if the given include can be resolved in the context of
+	 * Returns {@code true} if the given include can be resolved in the context of
 	 * the current translation unit.
 	 */
-	private boolean isResolvable(IIndexInclude include) {
+	private boolean isResolvableInCurrentContext(IIndexInclude include) {
 		try {
-			File target = new File(include.getIncludesLocation().getURI().getPath());
-			String includeName = include.getFullName();
-			for (String dir : fIncludePath) {
-				if (target.equals(new File(dir, includeName))) {
-					return true;
-				}
-			}
-			if (include.isSystemInclude()) {
-				return false;
-			}
-			String directory = new File(fTu.getLocationURI().getPath()).getParent();
-			return target.equals(new File(directory, includeName).getCanonicalFile());
+			IncludeInfo includeInfo = new IncludeInfo(include.getFullName(), include.isSystemInclude());
+			return fContext.resolveInclude(includeInfo) != null;
 		} catch (CoreException e) {
-			CUIPlugin.log(e);
-			return false;
-		} catch (IOException e) {
 			CUIPlugin.log(e);
 			return false;
 		}
@@ -671,10 +624,10 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 	 */
 	private static class IncludeCandidate {
 		private final IIndexBinding binding;
-		private final IRequiredInclude include;
+		private final IncludeInfo include;
 		private final String label;
 
-		public IncludeCandidate(IIndexBinding binding, IRequiredInclude include) throws CoreException {
+		public IncludeCandidate(IIndexBinding binding, IncludeInfo include) throws CoreException {
 			this.binding = binding;
 			this.include = include;
 			this.label = getBindingQualifiedName(binding) + " - " + include.toString(); //$NON-NLS-1$
@@ -684,48 +637,13 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			return binding;
 		}
 
-		public IRequiredInclude getInclude() {
+		public IncludeInfo getInclude() {
 			return include;
 		}
 
 		@Override
 		public String toString() {
 			return label;
-		}
-	}
-
-	private static class RequiredInclude implements IRequiredInclude {
-		final String includeName;
-		final boolean isSystem;
-
-		RequiredInclude(String includeName, boolean isSystem) {
-			this.includeName = includeName;
-			this.isSystem = isSystem;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.ui.IRequiredInclude#getIncludeName()
-		 */
-		@Override
-		public String getIncludeName() {
-			return includeName;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.ui.IRequiredInclude#isStandard()
-		 */
-		@Override
-		public boolean isStandard() {
-			return isSystem;
-		}
-
-		@Override
-		public String toString() {
-			StringBuilder buf = new StringBuilder(includeName.length() + 2);
-			buf.append(isSystem ? '<' : '"');
-			buf.append(includeName);
-			buf.append(isSystem ? '>' : '"');
-			return buf.toString();
 		}
 	}
 }

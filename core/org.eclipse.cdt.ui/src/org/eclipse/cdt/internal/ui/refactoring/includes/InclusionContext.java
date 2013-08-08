@@ -147,8 +147,13 @@ public class InclusionContext {
 				isSystem = !pathElement.isForQuoteIncludesOnly();
 			}
 		}
-		if (shortestInclude == null)
-			return null;
+		if (shortestInclude == null) {
+			if (fIncludeSearchPath.isInhibitUseOfCurrentFileDirectory() ||
+					!fCurrentDirectory.isPrefixOf(fullPath)) {
+				return null;
+			}
+			shortestInclude = fullPath.removeFirstSegments(fCurrentDirectory.segmentCount()).toString();
+		}
 		include = new IncludeInfo(shortestInclude, isSystem);
 		// Don't put an include to fullPath to fIncludeResolutionCache since it may be wrong
 		// if the header was included by #include_next.

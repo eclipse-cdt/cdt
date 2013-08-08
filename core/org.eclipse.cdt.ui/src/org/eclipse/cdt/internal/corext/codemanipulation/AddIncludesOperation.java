@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,9 +34,9 @@ import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.IRequiredInclude;
 
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeInfo;
 
 /**
  * Adds includes and 'using' declarations to a translation unit.
@@ -45,8 +45,8 @@ import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 public class AddIncludesOperation implements IWorkspaceRunnable {
 	private final ITranslationUnit fTranslationUnit;
 	private final int fBeforeOffset;
-	private final IRequiredInclude[] fIncludes;
-	private final String[] fUsings;
+	private final List<IncludeInfo> fIncludes;
+	private final List<String> fUsings;
 	private String fNewLine;
 	private IBuffer fBuffer;
 	private List<ICElement> fExistingIncludes;
@@ -61,8 +61,8 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 	 * @param includes '#include' statements to insert.
 	 * @param usings 'using' statements to insert.
 	 */
-	public AddIncludesOperation(ITranslationUnit tu, int beforeOffset, IRequiredInclude[] includes,
-			String[] usings) {
+	public AddIncludesOperation(ITranslationUnit tu, int beforeOffset, List<IncludeInfo> includes,
+			List<String> usings) {
 		fTranslationUnit = tu;
 		fBeforeOffset = beforeOffset;
 		fIncludes= includes;
@@ -89,7 +89,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 			fExistingIncludes = fTranslationUnit.getChildrenOfType(ICElement.C_INCLUDE);
 			fIncludesInsert = getIncludesInsert();
 			monitor.worked(1);
-			if (fUsings != null && fUsings.length > 0) {
+			if (!fUsings.isEmpty()) {
 				fExistingUsings = fTranslationUnit.getChildrenOfType(ICElement.C_USING);
 			}
 			fUsingsInsert = getUsingsInsert();
@@ -112,13 +112,13 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 	}
 
 	private InsertEdit getIncludesInsert() throws CoreException {
-		if (fIncludes == null || fIncludes.length == 0) {
+		if (fIncludes.isEmpty()) {
 			return null;
 		}
 
-		ArrayList<IRequiredInclude> toAdd = new ArrayList<IRequiredInclude>();
-		for (IRequiredInclude include : fIncludes) {
-			String name = include.getIncludeName();
+		ArrayList<IncludeInfo> toAdd = new ArrayList<IncludeInfo>();
+		for (IncludeInfo include : fIncludes) {
+			String name = include.getName();
 			boolean found = false;
 			for (ICElement element : fExistingIncludes) {
 				ISourceRange range = ((ISourceReference) element).getSourceRange();
@@ -140,12 +140,8 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 
 		// So we have our list. Now insert.
 		StringBuilder buf = new StringBuilder();
-		for (IRequiredInclude include : toAdd) {
-			if (include.isStandard()) {
-				buf.append("#include <" + include.getIncludeName() + ">").append(fNewLine); //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				buf.append("#include \"" + include.getIncludeName() + "\"").append(fNewLine); //$NON-NLS-1$ //$NON-NLS-2$
-			}
+		for (IncludeInfo include : toAdd) {
+			buf.append("#include ").append(include.toString()).append(fNewLine); //$NON-NLS-1$
 		}
 
 		int pos= getIncludeInsertionPosition();
@@ -164,11 +160,11 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 	}
 
 	private InsertEdit getUsingsInsert() throws CoreException {
-		if (fUsings == null || fUsings.length == 0) {
+		if (fUsings.isEmpty()) {
 			return null;
 		}
 
-		ArrayList<String> toAdd = new ArrayList<String>(fUsings.length);
+		ArrayList<String> toAdd = new ArrayList<String>(fUsings.size());
 		for (String name : fUsings) {
 			boolean found = false;
 			for (ICElement element : fExistingUsings) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui;
 
 import org.eclipse.cdt.dsf.debug.ui.AbstractDsfDebugTextHover;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions;
 import org.eclipse.core.runtime.Platform;
@@ -36,7 +37,9 @@ public class GdbDebugTextHover extends AbstractDsfDebugTextHover {
 
     @Override
     protected boolean useExpressionExplorer() {
-    	if (Platform.getPreferencesService().getBoolean(GdbUIPlugin.PLUGIN_ID,
+    	// The preference is part of the GdbPlugin preference store
+    	// Bug 414622
+    	if (Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
 				IGdbDebugPreferenceConstants.PREF_USE_INSPECTOR_HOVER,
 				true, null)) {
     		return true;

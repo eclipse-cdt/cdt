@@ -51,6 +51,24 @@
       "revId": "be12b8368e36d2c44d4704b7afd6ea799a66abc3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_cececaa6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpoints.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 741,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-08-08T15:03:53Z",
+      "side": 1,
+      "message": "GDB does not seem to accept hex values without the 0x prefix, so we\u0027re good.",
+      "parentUuid": "c73e4bec_7204c78b",
+      "revId": "be12b8368e36d2c44d4704b7afd6ea799a66abc3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

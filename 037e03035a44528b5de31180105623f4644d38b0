@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_ce008a3b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerThread.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-08-08T15:39:11Z",
+      "side": 1,
+      "message": "Why this change?\nShould we not add this comparison after trying the m_tid one, instead of replacing it?",
+      "revId": "037e03035a44528b5de31180105623f4644d38b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

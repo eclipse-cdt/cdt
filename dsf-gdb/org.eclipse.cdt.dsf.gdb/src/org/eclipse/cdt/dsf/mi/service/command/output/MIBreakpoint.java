@@ -82,6 +82,7 @@ public class MIBreakpoint  {
     int     ignore   = 0;
     String  commands = ""; //$NON-NLS-1$
     String  originalLocation = ""; //$NON-NLS-1$
+    String[]  messages = new String[0];
 
     // For tracepoints
     int     passcount = 0;
@@ -147,6 +148,7 @@ public class MIBreakpoint  {
         catchpointType = other.catchpointType;
         pending = other.pending;
         originalLocation = other.originalLocation;
+        messages = other.messages;
         if (other.groupIds != null) {
         	groupIds = Arrays.copyOf(other.groupIds, other.groupIds.length);
         }
@@ -362,6 +364,20 @@ public class MIBreakpoint  {
 	public void setWriteWatchpoint(boolean b) {
 		isWpt = b;
 		isWWpt = b;
+	}
+
+	/**
+	 * @since 4.3
+	 */
+	public void setMessages(String[] messages) {
+		this.messages = messages;
+	}
+
+	/**
+	 * @since 4.3
+	 */
+	public String[] getMessages() {
+		return messages;
 	}
 
     /**

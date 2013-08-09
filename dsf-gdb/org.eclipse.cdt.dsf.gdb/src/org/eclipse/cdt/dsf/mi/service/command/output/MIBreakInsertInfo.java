@@ -65,6 +65,18 @@ public class MIBreakInsertInfo extends MIInfo {
                         }
                     }
                     if (bpt != null) {
+                    	MIOOBRecord[] oobRecords = record.getMIOOBRecords();
+                    	List<String> messages = new ArrayList<String>(oobRecords.length);
+                		for (MIOOBRecord r : oobRecords) {
+                			if (r instanceof MIStreamRecord) {
+                				String m = ((MIStreamRecord)r).getString().trim();
+//                				if (m.endsWith("\n")) {
+//                					m = m.substring(0, m.length() - 2);
+//                				}
+                				messages.add(m);
+                			}
+                		}
+                		bpt.setMessages(messages.toArray(new String[messages.size()]));
                         aList.add(bpt);
                     }
                 }

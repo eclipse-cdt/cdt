@@ -1965,4 +1965,18 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     public void removeBreakpointsTrackingListener(IMIBreakpointsTrackingListener listener) {
     	fTrackingListeners.remove(listener);
     }
+
+    /**
+	 * @since 4.3
+	 */
+    public IBreakpointDMContext[] getTargetBreakpoints(IBreakpointsTargetDMContext targetDmc, ICBreakpoint breakpoint) {
+    	Map<ICBreakpoint, Vector<IBreakpointDMContext>> map = fBreakpointIDs.get(targetDmc);
+    	if (map != null) {
+    		Vector<IBreakpointDMContext> v = map.get(breakpoint);
+    		if (v != null) {
+    			return v.toArray(new IBreakpointDMContext[v.size()]);
+    		}
+    	}
+    	return new IBreakpointDMContext[0];
+    }
 }

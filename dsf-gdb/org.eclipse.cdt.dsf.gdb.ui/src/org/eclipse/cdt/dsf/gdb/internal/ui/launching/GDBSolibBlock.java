@@ -112,7 +112,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 			fSolibSearchPathBlock.performApply( configuration );
 		try {
 			@SuppressWarnings("unchecked")
-			Map<String, Boolean> attrs = configuration.getAttributes();
+			Map attrs = configuration.getAttributes();
 			
 			if ( fAutoSoLibButton != null )
 				attrs.put( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, Boolean.valueOf( fAutoSoLibButton.getSelection() ) );

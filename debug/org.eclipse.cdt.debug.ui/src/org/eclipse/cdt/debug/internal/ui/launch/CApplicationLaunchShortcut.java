@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 QNX Software Systems and others.
+ * Copyright (c) 2005, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +9,14 @@
  *     QNX Software Systems - Initial API and implementation
  *     Ken Ryall (Nokia) - bug 178731
  *     Ken Ryall (Nokia) - bug 246201
+ *     Marc Khouzam (Ericsson) - Improve for DSF-GDB launch (bug 371650)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.launch;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -47,6 +49,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -102,13 +105,14 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		try {
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(configType);
 			candidateConfigs = new ArrayList<ILaunchConfiguration>(configs.length);
+			IPath binProgramPath = bin.getResource().getProjectRelativePath();
+			String binProjectName = bin.getCProject().getProject().getName();
 			for (int i = 0; i < configs.length; i++) {
 				ILaunchConfiguration config = configs[i];
-				IPath programPath = CDebugUtils.getProgramPath(config);
-				String projectName = CDebugUtils.getProjectName(config);
-				IPath name = bin.getResource().getProjectRelativePath();
-				if (programPath != null && programPath.equals(name)) {
-					if (projectName != null && projectName.equals(bin.getCProject().getProject().getName())) {
+				IPath configProgramPath = CDebugUtils.getProgramPath(config);
+				String configProjectName = CDebugUtils.getProjectName(config);
+				if (configProgramPath != null && configProgramPath.equals(binProgramPath)) {
+					if (configProjectName != null && configProjectName.equals(binProjectName)) {
 						candidateConfigs.add(config);
 					}
 				}
@@ -123,28 +127,64 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		// user to choose one.
 		int candidateCount = candidateConfigs.size();
 		if (candidateCount < 1) {
+			String debugConfigId = findDebuggerConfig(bin, mode);
+			
+			if (debugConfigId != null) {
+				configuration = createConfiguration(bin, debugConfigId, mode);
+			}
+		} else if (candidateCount == 1) {
+			configuration = candidateConfigs.get(0);
+		} else {
+			// Prompt the user to choose a config.  A null result means the user
+			// cancelled the dialog, in which case this method returns null,
+			// since canceling the dialog should also cancel launching anything.
+			configuration = chooseConfiguration(candidateConfigs, mode);
+		}
+		return configuration;
+	}
+	
+	private String findDebuggerConfig(IBinary bin, String mode) {
+		String debugConfigId = null;
+
+		// Debugger configurations are not applicable to a local launch of type DSF,
+		// but only to CDI, so check that first.
+		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
+		HashSet<String> modeSet = new HashSet<String>(1);
+		modeSet.add(mode);
+
+		ILaunchConfigurationType localCfg = launchMgr.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP);
+		try {
+			ILaunchDelegate delegate = localCfg.getPreferredDelegate(modeSet);
+			if (delegate != null && delegate.getId().equals(ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE)) {
+				// Set the debugConfigId to a non-null value as it is not used for DSF
+				debugConfigId = ""; //$NON-NLS-1$
+			}
+		} catch (CoreException e) {
+		}
+		
+		if (debugConfigId == null) {
+			// CDI case
 			// Set the default debugger based on the active toolchain on the project (if possible)
-			ICDebugConfiguration debugConfig = null;
 			IProject project = bin.getResource().getProject();
-           	ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project);
-           	ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
-           	String configId = configDesc.getId();
-       		ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
-       		int matchLength = 0;
-       		for (int i = 0; i < debugConfigs.length; ++i) {
-       			ICDebugConfiguration dc = debugConfigs[i];
-       			String[] patterns = dc.getSupportedBuildConfigPatterns();
-       			if (patterns != null) {
-       				for (int j = 0; j < patterns.length; ++j) {
-       					if (patterns[j].length() > matchLength && configId.matches(patterns[j])) {
-       						debugConfig = dc;
-       						matchLength = patterns[j].length();
-       					}
-       				}
-       			}
+			ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project);
+			ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
+			String configId = configDesc.getId();
+			ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
+			int matchLength = 0;
+			for (int i = 0; i < debugConfigs.length; ++i) {
+				ICDebugConfiguration dc = debugConfigs[i];
+				String[] patterns = dc.getSupportedBuildConfigPatterns();
+				if (patterns != null) {
+					for (int j = 0; j < patterns.length; ++j) {
+						if (patterns[j].length() > matchLength && configId.matches(patterns[j])) {
+							debugConfigId = dc.getID();
+							matchLength = patterns[j].length();
+						}
+					}
+				}
 			}
 
-			if (debugConfig == null) {
+			if (debugConfigId == null) {
 				// Prompt the user if more then 1 debugger.
 				String programCPU = bin.getCPU();
 				String os = Platform.getOS();
@@ -161,24 +201,13 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				}
 				debugConfigs = debugList.toArray(new ICDebugConfiguration[0]);
 				if (debugConfigs.length == 1) {
-					debugConfig = debugConfigs[0];
+					debugConfigId = debugConfigs[0].getID();
 				} else if (debugConfigs.length > 1) {
-					debugConfig = chooseDebugConfig(debugConfigs, mode);
+					debugConfigId = chooseDebugConfig(debugConfigs, mode);
 				}
 			}
-			
-			if (debugConfig != null) {
-				configuration = createConfiguration(bin, debugConfig, mode);
-			}
-		} else if (candidateCount == 1) {
-			configuration = candidateConfigs.get(0);
-		} else {
-			// Prompt the user to choose a config.  A null result means the user
-			// cancelled the dialog, in which case this method returns null,
-			// since canceling the dialog should also cancel launching anything.
-			configuration = chooseConfiguration(candidateConfigs, mode);
 		}
-		return configuration;
+		return debugConfigId;
 	}
 
 	/**
@@ -186,7 +215,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	 * @param bin
 	 * @return ILaunchConfiguration
 	 */
-	private ILaunchConfiguration createConfiguration(IBinary bin, ICDebugConfiguration debugConfig, String mode) {
+	private ILaunchConfiguration createConfiguration(IBinary bin, String debugConfigId, String mode) {
 		ILaunchConfiguration config = null;
 		try {
 			String projectName = bin.getResource().getProjectRelativePath().toString();
@@ -199,7 +228,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
-			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, debugConfig.getID());
+			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, debugConfigId);
 
 			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(bin.getCProject().getProject());
 			if (projDes != null) {
@@ -209,8 +238,11 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 
 			// Load up the debugger page to set the defaults. There should probably be a separate
 			// extension point for this.
-			ICDebuggerPage page = CDebugUIPlugin.getDefault().getDebuggerPage(debugConfig.getID());
-			page.setDefaults(wc);
+			ICDebuggerPage page = CDebugUIPlugin.getDefault().getDebuggerPage(debugConfigId);
+			if (page != null) {
+				// Could be null for DSF-GDB
+				page.setDefaults(wc);
+			}
 			
 			config = wc.doSave();
 		} catch (CoreException ce) {
@@ -246,9 +278,9 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	 * Method chooseDebugConfig.
 	 * @param debugConfigs
 	 * @param mode
-	 * @return ICDebugConfiguration
+	 * @return String
 	 */
-	private ICDebugConfiguration chooseDebugConfig(ICDebugConfiguration[] debugConfigs, String mode) {
+	private String chooseDebugConfig(ICDebugConfiguration[] debugConfigs, String mode) {
 		ILabelProvider provider = new LabelProvider() {
 			/**
 			 * The <code>LabelProvider</code> implementation of this 
@@ -273,7 +305,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		int result = dialog.open();
 		provider.dispose();
 		if (result == Window.OK) {
-			return (ICDebugConfiguration) dialog.getFirstResult();
+			ICDebugConfiguration config = (ICDebugConfiguration) dialog.getFirstResult();
+			return config == null ? null : config.getID();
 		}
 		return null;
 	}

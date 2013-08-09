@@ -74,6 +74,11 @@ public class IGDBLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_SOLIB_PATH = GdbPlugin.PLUGIN_ID + ".SOLIB_PATH"; //$NON-NLS-1$
 
 	/**
+	 * Launch configuration attribute key. The value is a sysroot directory.
+	 */
+	public static final String ATTR_DEBUGGER_SYSROOT_PATH = GdbPlugin.PLUGIN_ID + ".SYSROOT_PATH"; //$NON-NLS-1$
+
+	/**
 	 * Launch configuration attribute key. The value is a List (array of String) of shared libraries to load symbols automatically.
 	 */
 	public static final String ATTR_DEBUGGER_AUTO_SOLIB_LIST = GdbPlugin.PLUGIN_ID + ".AUTO_SOLIB_LIST"; //$NON-NLS-1$
@@ -113,7 +118,7 @@ public class IGDBLaunchConfigurationConstants {
 	 * @since 4.1
 	 */
 	public static final String ATTR_DEBUGGER_TRACEPOINT_MODE = GdbPlugin.PLUGIN_ID + ".TRACEPOINT_MODE"; //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUG_NAME.
 	 */

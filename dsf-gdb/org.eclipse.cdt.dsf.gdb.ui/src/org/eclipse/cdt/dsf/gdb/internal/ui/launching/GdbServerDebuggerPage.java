@@ -22,11 +22,19 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * The dynamic debugger tab for remote launches using gdb server.
@@ -38,6 +46,7 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 	private final static String CONNECTION_SERIAL = LaunchUIMessages.getString("GDBServerDebuggerPage.1"); //$NON-NLS-1$
 
 	private ComboDialogField fConnectionField;
+	private Text fSysrootText;
 
 	private String[] fConnections = new String[]{ CONNECTION_TCP, CONNECTION_SERIAL };
 
@@ -144,6 +153,8 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 		boolean isTcp = true;
 		try {
 			isTcp = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
+			String sysrootDirectory = configuration.getAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SYSROOT_PATH , ""); //$NON-NLS-1$
+			fSysrootText.setText(sysrootDirectory);
 		}
 		catch(CoreException e) {
 		}
@@ -159,6 +170,11 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 		super.performApply(configuration);
 		if (fConnectionField != null)
 			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, fConnectionField.getSelectionIndex() == 0);
+
+		if (fSysrootText != null && fSysrootText.getText() !=null)
+			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SYSROOT_PATH,
+				fSysrootText.getText().trim());
+
 		fTCPBlock.performApply(configuration);
 		fSerialBlock.performApply(configuration);
 	}
@@ -184,5 +200,53 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 	public void createTabs(TabFolder tabFolder) {
 		super.createTabs(tabFolder);
 		createConnectionTab(tabFolder);
+	}
+
+	@Override
+	public void createSysrootTab(TabFolder tabFolder) {
+		super.createSysrootTab(tabFolder);
+		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
+		tabItem.setText( LaunchUIMessages.getString("GDBDebuggerPage.sysroot_tab_name"));   //$NON-NLS-1$
+		Composite comp = ControlFactory.createCompositeEx(tabFolder, 1, GridData.FILL_BOTH);
+		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
+		comp.setFont(tabFolder.getFont());
+		tabItem.setControl(comp);
+		Composite subComp = ControlFactory.createCompositeEx(comp, 3, GridData.FILL_HORIZONTAL);
+		((GridLayout) subComp.getLayout()).makeColumnsEqualWidth = false;
+		subComp.setFont(tabFolder.getFont());
+
+		Label label = ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.sysroot_label_name")); //$NON-NLS-1$  //sysroot_label_name
+		GridData gd = new GridData();
+		label.setLayoutData(gd);
+		fSysrootText = ControlFactory.createTextField(subComp, SWT.SINGLE | SWT.BORDER);
+		fSysrootText.setToolTipText( LaunchUIMessages.getString("GDBDebuggerPage.sysroot_field_tooltip")); //$NON-NLS-1$
+		fSysrootText.addModifyListener(new ModifyListener() {
+            @Override
+			public void modifyText(ModifyEvent evt) {
+				if (!isInitializing()) {
+					updateLaunchConfigurationDialog();
+				}
+			}
+		});
+
+		Button button = createPushButton(subComp, LaunchUIMessages.getString("GDBDebuggerPage.sysroot_browse"), null); //$NON-NLS-1$
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent evt) {
+				handleSysrootButtonSelected();
+				updateLaunchConfigurationDialog();
+			}
+
+			private void handleSysrootButtonSelected() {
+			    DirectoryDialog dirDialog = new DirectoryDialog( getShell() );
+			    dirDialog.setText(LaunchUIMessages.getString("GDBDebuggerPage.sysroot_browse_dlg_title")); //$NON-NLS-1$
+			    String selectedDir = dirDialog.open();
+			    if (selectedDir ==null) {
+					return;
+			    }
+			    if (fSysrootText !=null)
+					fSysrootText.setText(selectedDir);
+			}
+		});
 	}
 }

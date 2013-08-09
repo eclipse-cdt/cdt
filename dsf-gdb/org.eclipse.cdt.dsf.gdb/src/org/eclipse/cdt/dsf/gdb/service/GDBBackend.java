@@ -87,6 +87,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	private IPath fGDBWorkingDirectory;
 	private String fGDBInitFile;
 	private List<String> fSharedLibPaths;
+	private String fSysrootPath;
 	private String fProgramArguments;
 	
 	private Properties fEnvVariables;
@@ -301,6 +302,14 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 		}
 		
 		return fSharedLibPaths;
+	}
+
+	@Override
+	public String getSystemRootPath() throws CoreException {
+		if (fSysrootPath == null) {
+			fSysrootPath = fLaunchConfiguration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SYSROOT_PATH, ""); //$NON-NLS-1$
+		}
+		return fSysrootPath;
 	}
 
 	/** @since 3.0 */

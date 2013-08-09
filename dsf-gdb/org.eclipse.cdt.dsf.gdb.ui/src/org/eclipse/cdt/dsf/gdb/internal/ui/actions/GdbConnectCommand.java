@@ -8,9 +8,11 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Marc Khouzam (Ericsson) - Add support for multi-attach (Bug 293679)
+ *     Lidia Gutu (WindRiver) - [400033] Auto-compute image on remote attach
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -76,6 +78,10 @@ public class GdbConnectCommand implements IConnect {
     // This map is only needed for remote sessions, since we don't need to specify
     // the binary location for a local attach session.
     private Map<String, String> fProcessNameToBinaryMap = new HashMap<String, String>();
+    // A map of Process names with supposed directories to its binaries
+    private Map<String, String> fSupposedProcessNameToBinaryMap = new HashMap<String, String>();
+    // The sysroot directory which should be provided from launch configuration dialog.
+    private String fSysrootLocation;
     
     public GdbConnectCommand(DsfSession session) {
         fExecutor = session.getExecutor();
@@ -212,6 +218,27 @@ public class GdbConnectCommand implements IConnect {
     			if (shell != null) {
     				FileDialog fd = new FileDialog(shell, SWT.NONE);
     				fd.setText(fTitle);
+					/*
+					 * this should be the found path in this format except the
+					 * file name
+					 */
+					String supposedBinaryPath = fSupposedProcessNameToBinaryMap
+							.get(fProcName);
+					if (supposedBinaryPath == null) {
+						// Binary was not found --> open in the sysroot
+						// Prepare dialog with the sysroot provided from the launch configuration dialog
+						if (fSysrootLocation != null
+								&& !fSysrootLocation.isEmpty()) {
+							File file = new File(fSysrootLocation);
+							if (file.exists() && file.isDirectory()) {
+								fd.setFilterPath(file.getAbsolutePath());
+							}
+						}
+					} else {
+						fd.setFilterPath(supposedBinaryPath);
+						/* This should be the file name returned by gdb server */
+						fd.setFileName(fProcName);
+					}
     				binaryPath = fd.open();
     			}
     		}
@@ -467,6 +494,7 @@ public class GdbConnectCommand implements IConnect {
     									// Bug 344892
     									IPath processPath = new Path(process.getName());
     									String processShortName = processPath.lastSegment();
+    									getAndCheckPathOnLocalSystem(processPath);
     									new PromptAndAttachToProcessJob(pidStr, 
     											                        LaunchUIMessages.getString("ProcessPrompterDialog.TitlePrefix") + process.getName(), //$NON-NLS-1$
     											                        processShortName, new AttachToProcessRequestMonitor()).schedule();
@@ -496,6 +524,53 @@ public class GdbConnectCommand implements IConnect {
     	}
 
     }
+    /**
+     * Tries to identify and check the path for the provided processPath
+     * <p>
+     * In case the provided processPath has an absolute path, and
+     * the path to the file is a valid one on the local machine,
+     * It populates the fProcessNameToBinaryMap map with it.
+     * <p>
+     * In case the provided processPath has a relative path,
+     * It appends the relative path to the sysroot provided from the launch configuration dialog
+     * and checks if the file is valid.
+     * Then populates the found path to fSupposedProcessNameToBinaryMap.
+     * @param processPath
+     * 			- the known process path used to append
+     */
+     private void getAndCheckPathOnLocalSystem(IPath processPath) {
+		try {
+			fSysrootLocation = fTracker.getService(IGDBBackend.class).getSystemRootPath();
+
+			if (fSysrootLocation != null && !fSysrootLocation.isEmpty() ) {
+				File folder = new File(fSysrootLocation);
+				if (folder.exists() && folder.isDirectory()) {
+					if ( processPath.isAbsolute() ) {
+						File file = new File(folder, processPath.toFile().getPath());
+						if (file.exists()) {
+							// Placing it in here ensures that the Dialog won't come up
+							fProcessNameToBinaryMap.put(file.getName(),	file.getAbsolutePath());
+						}
+					}
+					else {
+						File file = new File(folder, processPath.lastSegment());
+						if (file.exists()) {
+							// Placing it in here makes the Dialog come up for review
+							fSupposedProcessNameToBinaryMap.put(file.getName(),	folder.getAbsolutePath());
+						}
+						else {
+							//File not found
+							//TODO traverse and in case contains folders look for next path
+						}
+					}
+				}
+			}
+			} catch (CoreException e) {
+			// Failed to obtain any sysroot path, so we cannot try mapping the remote process path - return directly.
+			GdbUIPlugin.getDefault().getLog().log(new Status(IStatus.ERROR,GdbUIPlugin.PLUGIN_ID,"Remote attach failed to get tracker",e));
+			return;
+		}
+     }
 }
 
 

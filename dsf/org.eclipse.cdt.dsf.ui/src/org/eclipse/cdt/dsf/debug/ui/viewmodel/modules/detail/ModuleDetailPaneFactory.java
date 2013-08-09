@@ -46,7 +46,7 @@ public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 	}
 
 	@Override
-	public Set<?> getDetailPaneTypes(IStructuredSelection selection) {
+	public Set getDetailPaneTypes(IStructuredSelection selection) {
 		Set<String> possibleIDs = new HashSet<String>(1);
 		possibleIDs.add(ModuleDetailPane.ID);
 		return possibleIDs;

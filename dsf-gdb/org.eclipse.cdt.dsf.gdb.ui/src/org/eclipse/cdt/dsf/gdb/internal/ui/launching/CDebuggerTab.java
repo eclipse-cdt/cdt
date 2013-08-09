@@ -228,7 +228,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 			ICDebuggerPage dynamicTab = getDynamicTab();
 			if (dynamicTab == null) {
 				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP,
-						(Map<?, ?>) null);
+						(Map)null);
 			} else {
 				dynamicTab.performApply(config);
 			}
@@ -502,7 +502,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 			}
 			if (wc != null) {
 				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP,
-						(Map<?, ?>) null);
+						(Map) null);
 			}
 		} else {
 			if (wc == null) {

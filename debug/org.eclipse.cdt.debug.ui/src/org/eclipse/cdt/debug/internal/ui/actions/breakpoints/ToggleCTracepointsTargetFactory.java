@@ -67,7 +67,7 @@ public class ToggleCTracepointsTargetFactory implements IToggleBreakpointsTarget
     }
     
     @Override
-    public Set<?> getToggleTargets(IWorkbenchPart part, ISelection selection) {
+    public Set getToggleTargets(IWorkbenchPart part, ISelection selection) {
         return TOGGLE_TARGET_IDS;
     }
 }

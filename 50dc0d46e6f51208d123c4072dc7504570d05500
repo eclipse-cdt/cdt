@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_59d9dde9",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-08-09T12:31:32Z",
+      "side": 1,
+      "message": "The changes above a optimization to avoid getting the project relative path and name for every config",
+      "revId": "50dc0d46e6f51208d123c4072dc7504570d05500",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

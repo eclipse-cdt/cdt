@@ -709,6 +709,11 @@
                variableList="CPATH">
          </envVarBuildPath>
          <optionCategory
+               id="cdt.managedbuild.tool.llvm.c_cpp.category.dialect"
+               name="%OptionCategory.Dialect"
+               owner="cdt.managedbuild.tool.llvm.c_cpp.compiler">
+         </optionCategory>
+         <optionCategory
                id="llvm.c_cpp.compiler.category.preprocessor"
                name="%OptionCategory.Preproc"
                owner="cdt.managedbuild.tool.llvm.c_cpp.compiler">
@@ -951,10 +956,9 @@
          </outputType>
       </tool>
       <tool
-            command="clang"
-            id="cdt.managedbuild.tool.llvm.c.compiler"
+            id="cdt.managedbuild.tool.llvm.c.abstract.compiler"
             isAbstract="true"
-            name="%ToolName.compiler.llvm.c"
+            name="%ToolName.compiler.llvm.c.abstract"
             natureFilter="cnature"
             superClass="cdt.managedbuild.tool.llvm.c_cpp.compiler">
          <envVarBuildPath
@@ -962,6 +966,16 @@
                pathType="buildpathInclude"
                variableList="CPATH,C_INCLUDE_PATH">
          </envVarBuildPath>
+         <option
+               category="cdt.managedbuild.tool.llvm.c_cpp.category.dialect"
+               id="cdt.managedbuild.tool.llvm.c.compiler.option.dialect.std"
+               superClass="gnu.c.compiler.option.dialect.std">
+         </option>
+         <option
+               category="cdt.managedbuild.tool.llvm.c_cpp.category.dialect"
+               id="cdt.managedbuild.tool.llvm.c.compiler.option.dialect.flags"
+               superClass="gnu.c.compiler.option.dialect.flags">
+         </option>
          <inputType
                dependencyCalculator="org.eclipse.cdt.managedbuilder.llvm.makegen.LlvmDependencyCalculator2"
                dependencyContentType="org.eclipse.cdt.core.cHeader"
@@ -973,10 +987,9 @@
          </inputType>
       </tool>
       <tool
-            command="clang++"
-            id="cdt.managedbuild.tool.llvm.cpp.compiler"
+            id="cdt.managedbuild.tool.llvm.cpp.abstract.compiler"
             isAbstract="true"
-            name="%ToolName.compiler.llvm.cpp"
+            name="%ToolName.compiler.llvm.cpp.abstract"
             natureFilter="ccnature"
             superClass="cdt.managedbuild.tool.llvm.c_cpp.compiler">
          <envVarBuildPath
@@ -984,6 +997,16 @@
                pathType="buildpathInclude"
                variableList="CPATH,CPLUS_INCLUDE_PATH">
          </envVarBuildPath>
+         <option
+               category="cdt.managedbuild.tool.llvm.c_cpp.category.dialect"
+               id="cdt.managedbuild.tool.llvm.cpp.compiler.option.dialect.std"
+               superClass="gnu.cpp.compiler.option.dialect.std">
+         </option>
+         <option
+               category="cdt.managedbuild.tool.llvm.c_cpp.category.dialect"
+               id="cdt.managedbuild.tool.llvm.cpp.compiler.option.dialect.flags"
+               superClass="gnu.cpp.compiler.option.dialect.flags">
+         </option>
          <inputType
                dependencyCalculator="org.eclipse.cdt.managedbuilder.llvm.makegen.LlvmDependencyCalculator2"
                dependencyContentType="org.eclipse.cdt.core.cxxHeader"
@@ -995,26 +1018,28 @@
          </inputType>
       </tool>
       <tool
+            command="clang"
+            id="cdt.managedbuild.tool.llvm.c.compiler"
+            isAbstract="true"
+            name="%ToolName.compiler.llvm.c"
+            natureFilter="cnature"
+            superClass="cdt.managedbuild.tool.llvm.c.abstract.compiler">
+      </tool>
+      <tool
+            command="clang++"
+            id="cdt.managedbuild.tool.llvm.cpp.compiler"
+            name="%ToolName.compiler.llvm.cpp"
+            isAbstract="true"
+            natureFilter="ccnature"
+            superClass="cdt.managedbuild.tool.llvm.cpp.abstract.compiler">
+      </tool>
+      <tool
             command="llvm-gcc"
             id="cdt.managedbuild.tool.llvm.gcc.compiler"
             isAbstract="true"
             name="%ToolName.compiler.llvm.gcc"
             natureFilter="cnature"
-            superClass="cdt.managedbuild.tool.llvm.c_cpp.compiler">
-         <envVarBuildPath
-               buildPathResolver="org.eclipse.cdt.managedbuilder.gnu.cygwin.CygwinPathResolver"
-               pathType="buildpathInclude"
-               variableList="CPATH,C_INCLUDE_PATH">
-         </envVarBuildPath>
-         <inputType
-               dependencyCalculator="org.eclipse.cdt.managedbuilder.llvm.makegen.LlvmDependencyCalculator2"
-               dependencyContentType="org.eclipse.cdt.core.cHeader"
-               dependencyExtensions="h"
-               id="cdt.managedbuild.tool.llvm.gcc.compiler.input"
-               languageId="org.eclipse.cdt.core.gcc"
-               sourceContentType="org.eclipse.cdt.core.cSource"
-               sources="c">
-         </inputType>
+            superClass="cdt.managedbuild.tool.llvm.c.abstract.compiler">
       </tool>
       <tool
             command="llvm-g++"
@@ -1022,21 +1047,7 @@
             isAbstract="true"
             name="%ToolName.compiler.llvm.g++"
             natureFilter="ccnature"
-            superClass="cdt.managedbuild.tool.llvm.c_cpp.compiler">
-         <envVarBuildPath
-               buildPathResolver="org.eclipse.cdt.managedbuilder.gnu.cygwin.CygwinPathResolver"
-               pathType="buildpathInclude"
-               variableList="CPATH,CPLUS_INCLUDE_PATH">
-         </envVarBuildPath>
-         <inputType
-               dependencyCalculator="org.eclipse.cdt.managedbuilder.llvm.makegen.LlvmDependencyCalculator2"
-               dependencyContentType="org.eclipse.cdt.core.cxxHeader"
-               dependencyExtensions="h,H,hpp"
-               id="cdt.managedbuild.tool.llvm.g++.compiler.input"
-               languageId="org.eclipse.cdt.core.g++"
-               sourceContentType="org.eclipse.cdt.core.cxxSource"
-               sources="c,C,cc,cxx,cpp">
-         </inputType>
+            superClass="cdt.managedbuild.tool.llvm.cpp.abstract.compiler">
       </tool>
       <tool
             command="clang"

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -9,6 +9,7 @@
  * Contributors: 
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.togglefunction;
 
@@ -2859,6 +2860,23 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//	return;
 	//}
 	public void testImplToHeaderTopCommentWithoutDeclaration() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.c
+	//#include "A.h"
+	//
+	//void /*$*/test/*$$*/() {
+	//}
+	//====================
+	//#include "A.h"
+
+	//A.h
+	//void test();
+	//====================
+	//void test() {
+	//}
+	public void testToggleCFunction() throws Exception {
 		assertRefactoringSuccess();
 	}
 }

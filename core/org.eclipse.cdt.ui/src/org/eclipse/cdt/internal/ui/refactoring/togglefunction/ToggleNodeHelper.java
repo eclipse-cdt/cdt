@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2013 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- *     Martin Schwab & Thomas Kallenberg - initial API and implementation 
+ *     Martin Schwab & Thomas Kallenberg - initial API and implementation
+ *     Marc-Andre Laperle (Ericsson)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -180,11 +181,11 @@ public class ToggleNodeHelper extends NodeHelper {
 	static IASTFunctionDefinition createInClassDefinition(IASTFunctionDeclarator dec, 
 			IASTFunctionDefinition def, IASTTranslationUnit insertionAst) {
 		IASTFunctionDeclarator declarator = dec.copy(CopyStyle.withLocations);
-		ICPPASTDeclSpecifier declSpec =
-				(ICPPASTDeclSpecifier) def.getDeclSpecifier().copy(CopyStyle.withLocations);
+		IASTDeclSpecifier declSpec =
+				def.getDeclSpecifier().copy(CopyStyle.withLocations);
 		declSpec.setInline(false);
-		if (ToggleNodeHelper.isVirtual(dec)) {
-			declSpec.setVirtual(true);
+		if (declSpec instanceof ICPPASTDeclSpecifier && ToggleNodeHelper.isVirtual(dec)) {
+			((ICPPASTDeclSpecifier) declSpec).setVirtual(true);
 		}
 		declSpec.setStorageClass(getStorageClass(dec));
 		
@@ -202,7 +203,7 @@ public class ToggleNodeHelper extends NodeHelper {
 	static int getStorageClass(IASTFunctionDeclarator fdec) {
 		if (fdec.getParent() instanceof IASTSimpleDeclaration) {
 			IASTSimpleDeclaration dec = (IASTSimpleDeclaration) fdec.getParent();
-			return ((ICPPASTDeclSpecifier) dec.getDeclSpecifier()).getStorageClass();
+			return dec.getDeclSpecifier().getStorageClass();
 		}
 		return -1;
 	}

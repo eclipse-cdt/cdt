@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson			  - Modified for handling of multiple execution contexts	
+ *     Marc Khouzam (Ericsson) - Show return value of the method when doing a step-return (Bug 341731)	
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -42,6 +43,7 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIFunctionFinishedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIArg;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
@@ -92,7 +94,7 @@ public class MIStack extends AbstractDsfService
     protected static class MIVariableDMC extends AbstractDMContext
         implements IVariableDMContext
     {
-        public enum Type { ARGUMENT, LOCAL }
+        public enum Type { ARGUMENT, LOCAL, /** @since 4.3 */RETURN_VALUES }
         final private Type fType;
         final private int fIndex;
 
@@ -117,6 +119,7 @@ public class MIStack extends AbstractDsfService
             int typeFactor = 0;
             if (fType == Type.LOCAL) typeFactor = 2;
             else if (fType == Type.ARGUMENT) typeFactor = 3;
+            else if (fType == Type.RETURN_VALUES) typeFactor = 4;
             return super.baseHashCode() ^ typeFactor ^ fIndex;
         }
         
@@ -155,6 +158,33 @@ public class MIStack extends AbstractDsfService
             };
     	}
     }
+    
+    /**
+     * Same as with frame objects, this is a base class for the IVariableDMData object that uses an MIArg object to 
+     * provide the data.  Sub-classes must supply the MIArg object.
+     */
+	private class VariableData implements IVariableDMData {
+		private MIArg fMIArg;
+
+		public VariableData(MIArg arg){
+			fMIArg = arg;
+		}
+
+		@Override
+		public String getName() { 
+			return fMIArg.getName(); 
+		}
+		
+		@Override
+		public String getValue() { 
+			return fMIArg.getValue(); 
+		}
+		
+		@Override
+		public String toString() { 
+			return fMIArg.toString();
+		}
+	}
 
 	private CommandCache fMICommandCache;
 	private CommandFactory fCommandFactory;
@@ -175,6 +205,12 @@ public class MIStack extends AbstractDsfService
 	 * In this case, some errors should not be reported.
 	 */
 	private boolean fTraceVisualization;
+
+	/**
+	 * A Map of return values for each thread.  A return value is stored when the user performs a step-return on a thread,
+	 * and it cleared as soon as that thread starts executing again. 
+	 */
+	private Map<IExecutionDMContext, VariableData> fReturnVariables = new HashMap<IExecutionDMContext, VariableData>();
 
 	public MIStack(DsfSession session) 
 	{
@@ -614,23 +650,6 @@ public class MIStack extends AbstractDsfService
             return;
         }
 
-        /**
-         * Same as with frame objects, this is a base class for the IVariableDMData object that uses an MIArg object to 
-         * provide the data.  Sub-classes must supply the MIArg object.
-         */
-    	class VariableData implements IVariableDMData {
-    		private MIArg dsfMIArg;
-    		VariableData(MIArg arg){
-    			dsfMIArg = arg;
-    		}
-    		@Override
-    		public String getName() { return dsfMIArg.getName(); }
-    		@Override
-    		public String getValue() { return dsfMIArg.getValue(); }
-    		@Override
-    		public String toString() { return dsfMIArg.toString(); }	
-    	}    	
-
         // Check if the stopped event can be used to extract the variable value. 
         if (execDmc != null && miVariableDmc.fType == MIVariableDMC.Type.ARGUMENT &&
             frameDmc.fLevel == 0 && fCachedStoppedEvent != null && fCachedStoppedEvent.getFrame() != null &&
@@ -694,8 +713,7 @@ public class MIStack extends AbstractDsfService
 	                			});	
 	                }
 	        	});
-        }//if
-        if (miVariableDmc.fType == MIVariableDMC.Type.LOCAL){
+        } else if (miVariableDmc.fType == MIVariableDMC.Type.LOCAL){
             fMICommandCache.execute(
                 	// Don't ask for value when we are visualizing trace data, since some
                 	// data will not be there, and the command will fail
@@ -735,7 +753,17 @@ public class MIStack extends AbstractDsfService
                             		});
                         }
                     });
-        }//if   
+        } else if (miVariableDmc.fType == MIVariableDMC.Type.RETURN_VALUES) {
+        	VariableData var = fReturnVariables.get(execDmc);
+        	if (var != null) {
+        		rm.setData(var);
+        	} else {
+                rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Return value not found", null));  //$NON-NLS-1$
+        	}
+        	rm.done();
+        } else {
+            rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid variable type " + miVariableDmc.fType, null));  //$NON-NLS-1$
+        }
 
     }
 
@@ -767,7 +795,23 @@ public class MIStack extends AbstractDsfService
         return -1;
     }
     
-    
+    /**
+     * Retrieves variables which are used to store the return values of functions.
+     */
+    private void getReturnValues(IFrameDMContext frameDmc, DataRequestMonitor<IVariableDMContext[]> rm) {
+		IVariableDMContext[] values = new IVariableDMContext[0];
+
+		if (!fTraceVisualization) {
+        	IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(frameDmc, IMIExecutionDMContext.class);
+        	VariableData var = fReturnVariables.get(threadDmc);
+        	if (var != null) {
+        		values = new IVariableDMContext[1];
+        		values[0] = new MIVariableDMC(this, frameDmc, MIVariableDMC.Type.RETURN_VALUES, 0);
+        	}
+        }
+		rm.done(values);
+	}
+	
 	@Override
     public void getLocals(final IFrameDMContext frameDmc, final DataRequestMonitor<IVariableDMContext[]> rm) {
 
@@ -780,8 +824,20 @@ public class MIStack extends AbstractDsfService
                 rm.done();
             }
         };
-        countingRm.setDoneCount(2);
+        countingRm.setDoneCount(3);
         
+        // First show any return values of methods
+        getReturnValues(
+                frameDmc,
+                new DataRequestMonitor<IVariableDMContext[]>(getExecutor(), countingRm) { 
+                    @Override
+                    protected void handleSuccess() {
+                        localsList.addAll( Arrays.asList(getData()) );
+                        countingRm.done();
+                    }
+                });
+        
+        // Then show arguments
         getArguments(
             frameDmc,
             new DataRequestMonitor<IVariableDMContext[]>(getExecutor(), countingRm) { 
@@ -792,6 +848,7 @@ public class MIStack extends AbstractDsfService
                 }
             }); 
         
+        // Finally get the local variables
 	    fMICommandCache.execute(
 	            // We don't actually need to ask for the values in this case, but since
 	        	// we will ask for them right after, it is more efficient to ask for them now
@@ -914,6 +971,9 @@ public class MIStack extends AbstractDsfService
             fMICommandCache.reset();
             fStackDepthCache.clear();
         }
+        // Whenever the execution resumes, we can clear any
+        // return values of previous methods for the resuming thread.
+        fReturnVariables.remove(e.getDMContext());
     }
     
     /**
@@ -926,8 +986,25 @@ public class MIStack extends AbstractDsfService
     	fMICommandCache.setContextAvailable(e.getDMContext(), true);
         fMICommandCache.reset();
         fStackDepthCache.clear();
+
+        // Process MIFunctionFinishedEvent from within the ISuspendedDMEvent
+        // to avoid any race conditions where the actual MIFunctionFinishedEvent
+        // can arrive faster that a preceding IResumedDMEvent
+        if (e instanceof IMIDMEvent) {
+        	Object miEvent = ((IMIDMEvent)e).getMIEvent();
+        	if (miEvent instanceof MIFunctionFinishedEvent) {
+        		// When returning out of a function, we want to show the return value
+        		// so let's store it for the proper thread.
+        		IDMContext ctx = e.getDMContext();
+        		if (ctx instanceof IMIExecutionDMContext) {
+        			String name = ((MIFunctionFinishedEvent)miEvent).getGDBResultVar();
+        			String value = ((MIFunctionFinishedEvent)miEvent).getReturnValue();
+
+        			fReturnVariables.put((IExecutionDMContext)ctx, new VariableData(new MIArg(name, value)));
+        		}
+        	}
+        }
     }
-    
 
     /**
      * @nooverride This method is not intended to be re-implemented or extended by clients.

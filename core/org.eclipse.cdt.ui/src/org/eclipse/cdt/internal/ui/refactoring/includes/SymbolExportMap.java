@@ -28,6 +28,8 @@ import org.eclipse.ui.XMLMemento;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
+
 /**
  * A set of header file substitution rules.
  */

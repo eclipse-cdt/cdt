@@ -30,10 +30,12 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
  * Dialog-based header chooser.
  */
 public class InteractiveHeaderChooser implements IHeaderChooser {
+	private final String title;
 	private final Shell shell;
-	Map<Collection<IPath>, IPath> userChoiceCache;
+	private final Map<Collection<IPath>, IPath> userChoiceCache;
 
-	public InteractiveHeaderChooser(Shell shell) {
+	public InteractiveHeaderChooser(String title, Shell shell) {
+		this.title = title;
 		this.shell = shell;
 		userChoiceCache = new HashMap<Collection<IPath>, IPath>();
 	}
@@ -62,7 +64,7 @@ public class InteractiveHeaderChooser implements IHeaderChooser {
 					ElementListSelectionDialog dialog =
 							new ElementListSelectionDialog(shell, new LabelProvider());
 					dialog.setElements(elemArray);
-					dialog.setTitle(CEditorMessages.OrganizeIncludes_label);
+					dialog.setTitle(title);
 					dialog.setMessage(NLS.bind(CEditorMessages.OrganizeIncludes_choose_header, bindingName));
 					if (dialog.open() == Window.OK) {
 						selectedElement[0] = (IPath) dialog.getFirstResult();

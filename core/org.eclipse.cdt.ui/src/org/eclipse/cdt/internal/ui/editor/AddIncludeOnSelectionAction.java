@@ -87,12 +87,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.corext.codemanipulation.AddIncludesOperation;
+import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
+import org.eclipse.cdt.internal.corext.codemanipulation.InclusionContext;
 
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeInfo;
-import org.eclipse.cdt.internal.ui.refactoring.includes.InclusionContext;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 /**
@@ -205,7 +205,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 	 */
 	private void deduceInclude(ITextSelection selection, IIndex index, IASTTranslationUnit ast, String[] lookupName)
 			throws CoreException {
-		fContext = new InclusionContext(fTu, index);
+		fContext = new InclusionContext(fTu);
 		IASTNodeSelector selector = ast.getNodeSelector(fTu.getLocation().toOSString());
 		IASTName name = selector.findEnclosingName(selection.getOffset(), selection.getLength());
 		if (name == null) {

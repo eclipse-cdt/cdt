@@ -32,13 +32,14 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
 
 public class HeaderSubstitutor {
-	private final InclusionContext fContext;
+	private final IncludeCreationContext fContext;
 	private IncludeMap[] fIncludeMaps;
 	private SymbolExportMap fSymbolExportMap;
 
-	public HeaderSubstitutor(InclusionContext context) {
+	public HeaderSubstitutor(IncludeCreationContext context) {
 		fContext = context;
 		fIncludeMaps = new IncludeMap[] { new IncludeMap(true), new IncludeMap(false) };
 		IPreferencesService preferences = Platform.getPreferencesService();

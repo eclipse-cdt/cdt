@@ -36,7 +36,7 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 import org.eclipse.cdt.internal.ui.refactoring.includes.BindingClassifier;
-import org.eclipse.cdt.internal.ui.refactoring.includes.InclusionContext;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeCreationContext;
 
 /**
  * Tests for {@link BindingClassifier}.
@@ -68,7 +68,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		if (fBindingClassifier == null) {
 			IASTTranslationUnit ast = getAst();
 			ITranslationUnit tu = ast.getOriginatingTranslationUnit();
-			InclusionContext context = new InclusionContext(tu, fIndex);
+			IncludeCreationContext context = new IncludeCreationContext(tu, fIndex);
 			fBindingClassifier = new BindingClassifier(context);
 			fBindingClassifier.classifyNodeContents(ast);
 		}

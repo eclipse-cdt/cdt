@@ -49,7 +49,7 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeOrganizer;
 public class OrganizeIncludesAction extends TextEditorAction {
 	/**
 	 * Constructor
-	 * @param editor The editor on which this organize includes action should operate.
+	 * @param editor The editor on which this Organize Includes action should operate.
 	 */
 	public OrganizeIncludesAction(ITextEditor editor) {
 		super(CEditorMessages.getBundleForConstructedKeys(), "OrganizeIncludes.", editor); //$NON-NLS-1$
@@ -67,7 +67,8 @@ public class OrganizeIncludesAction extends TextEditorAction {
 			return;
 		}
 
-		final IHeaderChooser headerChooser = new InteractiveHeaderChooser(editor.getSite().getShell());
+		final IHeaderChooser headerChooser = new InteractiveHeaderChooser(
+				CEditorMessages.OrganizeIncludes_label, editor.getSite().getShell());
 		final String lineDelimiter = getLineDelimiter(editor);
 		final List<TextEdit> edits = new ArrayList<TextEdit>();
 		SharedASTJob job = new SharedASTJob(CEditorMessages.OrganizeIncludes_action, tu) {

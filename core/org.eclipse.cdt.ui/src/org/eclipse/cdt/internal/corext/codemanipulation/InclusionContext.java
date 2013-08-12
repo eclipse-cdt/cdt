@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Google, Inc and others.
+ * Copyright (c) 2013 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,24 +8,17 @@
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.refactoring.includes;
+package org.eclipse.cdt.internal.corext.codemanipulation;
 
 import java.io.File;
-import java.util.ArrayDeque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexFile;
-import org.eclipse.cdt.core.index.IIndexInclude;
-import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -34,63 +27,49 @@ import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeSearchPath;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeSearchPathElement;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
-/**
- * Context for managing include statements.
- */
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.IncludeKind;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
+
 public class InclusionContext {
 	private static final IPath UNRESOLVED_INCLUDE = Path.EMPTY;
 
 	private final ITranslationUnit fTu;
 	private final IProject fProject;
 	private final IPath fCurrentDirectory;
-	private final IncludePreferences fPreferences;
 	private final IncludeSearchPath fIncludeSearchPath;
 	private final Map<IncludeInfo, IPath> fIncludeResolutionCache;
 	private final Map<IPath, IncludeInfo> fInverseIncludeResolutionCache;
-	private final IIndex fIndex;
-	private final Set<IPath> fHeadersToInclude;
-	private final Set<IPath> fHeadersAlreadyIncluded;
-	private final Set<IPath> fHeadersIncludedPreviously;
+	private final IncludePreferences fPreferences;
 
-	public InclusionContext(ITranslationUnit tu, IIndex index) {
+	public InclusionContext(ITranslationUnit tu) {
 		fTu = tu;
-		fIndex = index;
 		ICProject cProject = fTu.getCProject();
-		fPreferences = new IncludePreferences(cProject);
 		fProject = cProject.getProject();
 		fCurrentDirectory = fTu.getResource().getParent().getLocation();
 		IScannerInfo scannerInfo = fTu.getScannerInfo(true);
 		fIncludeSearchPath = CPreprocessor.configureIncludeSearchPath(fCurrentDirectory.toFile(), scannerInfo);
 		fIncludeResolutionCache = new HashMap<IncludeInfo, IPath>();
 		fInverseIncludeResolutionCache = new HashMap<IPath, IncludeInfo>();
-		fHeadersToInclude = new HashSet<IPath>();
-		fHeadersAlreadyIncluded = new HashSet<IPath>();
-		fHeadersIncludedPreviously = new HashSet<IPath>();
+		fPreferences = new IncludePreferences(cProject);
 	}
 
-	public ITranslationUnit getTranslationUnit() {
+	public final ITranslationUnit getTranslationUnit() {
 		return fTu;
 	}
 
-	public IIndex getIndex() {
-		return fIndex;
+	public final IProject getProject() {
+		return fProject;
 	}
 
-	public IProject getProject() {
-		return fProject;
+	public final IPath getCurrentDirectory() {
+		return fCurrentDirectory;
 	}
 
 	public IncludePreferences getPreferences() {
 		return fPreferences;
-	}
-
-	public boolean isCXXLanguage() {
-		return fTu.isCXXLanguage();
-	}
-
-	public IPath getCurrentDirectory() {
-		return fCurrentDirectory;
 	}
 
 	public IPath resolveInclude(IncludeInfo include) {
@@ -161,82 +140,89 @@ public class InclusionContext {
 		return include;
     }
 
-    /**
-     * Removes headers that are exported by other headers that will be included
-     */
-    public void removeExportedHeaders() throws CoreException {
-    	// Index files keyed by their absolute paths.
-    	Map<IPath, IIndexFile> filesByPath = new HashMap<IPath, IIndexFile>();
-    	for (IIndexFile file : fIndex.getAllFiles()) {
-    		IPath path = getPath(file);
-    		filesByPath.put(path, file);
-    	}
-
-    	Set<IPath> exportedHeaders = new HashSet<IPath>();
-		for (IPath path : fHeadersToInclude) {
-			if (!exportedHeaders.contains(path)) {
-				IIndexFile file = filesByPath.get(path);
-				if (file != null) {  // file can be null if the header was not indexed.
-					ArrayDeque<IIndexFile> queue = new ArrayDeque<IIndexFile>();
-					queue.add(file);
-					while ((file = queue.pollFirst()) != null) {
-						for (IIndexInclude include : file.getIncludes()) {
-							if (fPreferences.allowIndirectInclusion || include.isIncludedFileExported()) {
-								file = fIndex.resolveInclude(include);
-								if (file != null) {
-									if (exportedHeaders.add(getPath(file)))
-										queue.add(file);
-								}
-							}
+	public IncludeGroupStyle getIncludeStyle(IPath headerPath) {
+		IncludeKind includeKind;
+		IncludeInfo includeInfo = getIncludeForHeaderFile(headerPath);
+		if (includeInfo != null && includeInfo.isSystem()) {
+			if (headerPath.getFileExtension() == null) {
+				includeKind = IncludeKind.SYSTEM_WITHOUT_EXTENSION;
+			} else {
+				includeKind = IncludeKind.SYSTEM_WITH_EXTENSION;
+			}
+		} else if (isPartnerFile(headerPath)) {
+			includeKind = IncludeKind.PARTNER;
+		} else {
+			IPath dir = getCurrentDirectory();
+			if (dir.isPrefixOf(headerPath)) {
+				if (headerPath.segmentCount() == dir.segmentCount() + 1) {
+					includeKind = IncludeKind.IN_SAME_FOLDER;
+				} else {
+					includeKind = IncludeKind.IN_SUBFOLDER;
+				}
+			} else {
+				IFile[] files = ResourceLookup.findFilesForLocation(headerPath);
+				if (files.length == 0) {
+					includeKind = IncludeKind.EXTERNAL;
+				} else {
+					IProject project = getProject();
+					includeKind = IncludeKind.IN_OTHER_PROJECT;
+					for (IFile file : files) {
+						if (file.getProject().equals(project)) {
+							includeKind = IncludeKind.IN_SAME_PROJECT;
+							break;
 						}
 					}
 				}
 			}
 		}
-		fHeadersToInclude.removeAll(exportedHeaders);
-    }
-
-	private static IPath getPath(IIndexFile file) throws CoreException {
-		return IndexLocationFactory.getAbsolutePath(file.getLocation());
+		return fPreferences.includeStyles.get(includeKind);
 	}
-    
+
+	public IncludeGroupStyle getIncludeStyle(IncludeInfo includeInfo) {
+		IncludeKind includeKind;
+		IPath path = Path.fromPortableString(includeInfo.getName());
+		if (includeInfo.isSystem()) {
+			if (path.getFileExtension() == null) {
+				includeKind = IncludeKind.SYSTEM_WITHOUT_EXTENSION;
+			} else {
+				includeKind = IncludeKind.SYSTEM_WITH_EXTENSION;
+			}
+		} else if (isPartnerFile(path)) {
+			includeKind = IncludeKind.PARTNER;
+		} else {
+			includeKind = IncludeKind.EXTERNAL;
+		}
+		return fPreferences.includeStyles.get(includeKind);
+	}
+
 	private static boolean fileExists(String absolutePath) {
 		return new File(absolutePath).exists();
 	}
 
-	public Set<IPath> getHeadersToInclude() {
-		return fHeadersToInclude;
-	}
-
-	public final void addHeaderToInclude(IPath header) {
-		fHeadersToInclude.add(header);
-	}
-
-	public final boolean isToBeIncluded(IPath header) {
-		return fHeadersToInclude.contains(header);
-	}
-
-	public Set<IPath> getHeadersAlreadyIncluded() {
-		return fHeadersAlreadyIncluded;
-	}
-
-	public final void addHeaderAlreadyIncluded(IPath header) {
-		fHeadersAlreadyIncluded.add(header);
-	}
-
-	public final boolean isAlreadyIncluded(IPath header) {
-		return fHeadersAlreadyIncluded.contains(header);
-	}
-
-	public final boolean isIncluded(IPath header) {
-		return fHeadersAlreadyIncluded.contains(header) || fHeadersToInclude.contains(header);
-	}
-
-	public final void addHeaderIncludedPreviously(IPath header) {
-		fHeadersIncludedPreviously.add(header);
-	}
-
-	public final boolean wasIncludedPreviously(IPath header) {
-		return fHeadersIncludedPreviously.contains(header);
+	/**
+	 * Checks if the given path points to a partner header of the current translation unit.
+	 * A header is considered a partner if its name without extension is the same as the name of
+	 * the translation unit, or the name of the translation unit differs by one of the suffixes
+	 * used for test files.
+	 */
+	public boolean isPartnerFile(IPath path) {
+		String headerName = path.removeFileExtension().lastSegment();
+		String sourceName = getTranslationUnit().getLocation().removeFileExtension().lastSegment();
+		if (headerName.equals(sourceName))
+			return true;
+		if (sourceName.startsWith(headerName)) {
+			int pos = headerName.length();
+			while (pos < sourceName.length() && !Character.isLetterOrDigit(sourceName.charAt(pos))) {
+				pos++;
+			}
+			if (pos == sourceName.length())
+				return true;
+			String suffix = sourceName.substring(pos);
+			for (String s : fPreferences.partnerFileSuffixes) {
+				if (suffix.equalsIgnoreCase(s))
+					return true;
+			}
+		}
+		return false;
 	}
 }

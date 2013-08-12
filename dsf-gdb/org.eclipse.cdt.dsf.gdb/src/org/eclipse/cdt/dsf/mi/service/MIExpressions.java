@@ -1066,9 +1066,12 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
         
     	if (dmc instanceof MIExpressionDMC) {
     		MIExpressionDMC miDMC = (MIExpressionDMC) dmc;
-    		if (miDMC.getExpressionInfo().hasDynamicAncestor()) {
+    		if (miDMC.getExpressionInfo().hasDynamicAncestor() ||
+    			dmc.getExpression().startsWith("$")) { //$NON-NLS-1$
     			// For children of dynamic varobjs, there is no full expression that gdb
-    			// could evaluate in order to provide address and size. 
+    			// could evaluate in order to provide address and size.
+    			// Also, if an expression starts with a $, it is either a register
+    			// or a GDB convenience variable; both of which don't have an address
 				rm.setData(new InvalidDMAddress());
 				rm.done();
 				return;

@@ -234,6 +234,25 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		public void setChildCountLimit(int newLimit) {
 			this.childCountLimit = newLimit;
 		}
+		
+		/**
+		 * @return if this expression is part of the memory space or not.
+		 *         If it not part of the memory space, it won't have an address.
+		 * @since 4.2
+		 */
+		public boolean inMemory() {
+			// Registers and convenience variables which both start with $
+			// are not part of memory.  We care about the top-most parent
+			// as it is the only one that can be a register or convenience var.
+			if (getParent() == null) {
+				if (getRelExpr().startsWith("$")) { //$NON-NLS-1$			
+					return false;
+				}
+				return true;
+			}
+			
+			return getParent().inMemory();
+		}
 	}
 	
     /**
@@ -1066,9 +1085,12 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
         
     	if (dmc instanceof MIExpressionDMC) {
     		MIExpressionDMC miDMC = (MIExpressionDMC) dmc;
-    		if (miDMC.getExpressionInfo().hasDynamicAncestor()) {
+    		if (miDMC.getExpressionInfo().hasDynamicAncestor() ||
+    			!miDMC.getExpressionInfo().inMemory()) {
     			// For children of dynamic varobjs, there is no full expression that gdb
-    			// could evaluate in order to provide address and size. 
+    			// could evaluate in order to provide address and size.
+    			// Also, if an expression is not in memory, such as a register
+    			// or a GDB convenience variable, there is no address to return
 				rm.setData(new InvalidDMAddress());
 				rm.done();
 				return;

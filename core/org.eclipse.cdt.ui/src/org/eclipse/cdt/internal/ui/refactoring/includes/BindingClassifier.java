@@ -111,7 +111,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  * must be defined and a set of bindings that must be declared.
  */
 public class BindingClassifier {
-	private final InclusionContext fContext;
+	private final IncludeCreationContext fContext;
 	private final IncludePreferences fPreferences;
 	/** The bindings which require a full definition. */
 	private final Set<IBinding> fBindingsToDefine;
@@ -126,7 +126,7 @@ public class BindingClassifier {
 	/**
 	 * @param context the context for binding classification
 	 */
-	public BindingClassifier(InclusionContext context) {
+	public BindingClassifier(IncludeCreationContext context) {
 		fContext = context;
 		fPreferences = context.getPreferences();
 		fBindingsToDefine = new HashSet<IBinding>();

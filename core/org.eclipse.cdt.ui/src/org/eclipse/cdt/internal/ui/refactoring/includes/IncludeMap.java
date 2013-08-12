@@ -23,6 +23,8 @@ import java.util.Set;
 
 import org.eclipse.ui.IMemento;
 
+import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
+
 /**
  * A set of header file substitution rules.
  */

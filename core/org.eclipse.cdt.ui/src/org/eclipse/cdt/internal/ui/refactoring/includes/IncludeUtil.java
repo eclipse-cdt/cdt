@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.includes;
 
+import static org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.getNodeEndOffset;
+import static org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.getNodeOffset;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.jface.text.IRegion;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
@@ -64,5 +69,10 @@ public class IncludeUtil {
 	 */
 	public static String getPath(IIndexFileLocation fileLocation) {
 		return IndexLocationFactory.getAbsolutePath(fileLocation).toOSString();
+	}
+
+	public static boolean isContainedInRegion(IASTNode node, IRegion region) {
+		return getNodeOffset(node) >= region.getOffset()
+				&& getNodeEndOffset(node) <= region.getOffset() + region.getLength();
 	}
 }

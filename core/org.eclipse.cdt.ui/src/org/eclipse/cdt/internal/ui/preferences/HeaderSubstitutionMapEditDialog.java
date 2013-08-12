@@ -56,11 +56,12 @@ import org.eclipse.ui.XMLMemento;
 
 import com.ibm.icu.text.Collator;
 
+import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
+
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.ResizableStatusDialog;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.refactoring.includes.HeaderSubstitutionMap;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeInfo;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeMap;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ComboDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;

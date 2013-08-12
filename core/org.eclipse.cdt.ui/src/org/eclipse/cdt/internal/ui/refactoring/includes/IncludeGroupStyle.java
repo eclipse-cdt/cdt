@@ -15,6 +15,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.ui.IMemento;
@@ -261,5 +262,22 @@ public class IncludeGroupStyle implements Comparable<IncludeGroupStyle> {
 		if (c != 0)
 			return c;
 		return includeKind.ordinal() - other.includeKind.ordinal();
+	}
+
+
+	public IncludeGroupStyle getGroupingStyle(Map<IncludeKind, IncludeGroupStyle> stylesMap) {
+		if (keepTogether)
+			return this;
+		IncludeGroupStyle parent = getParentStyle(stylesMap);
+		if (parent != null && (parent.keepTogether || parent.includeKind == IncludeKind.OTHER))
+			return parent;
+		return stylesMap.get(IncludeKind.OTHER);
+	}
+
+	public IncludeGroupStyle getParentStyle(Map<IncludeKind, IncludeGroupStyle> stylesMap) {
+		IncludeKind kind = includeKind.parent;
+		if (kind == null)
+			return null;
+		return stylesMap.get(kind);
 	}
 }

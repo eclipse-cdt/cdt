@@ -36,7 +36,6 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeInfo;
 
 /**
  * Adds includes and 'using' declarations to a translation unit.

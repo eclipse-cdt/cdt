@@ -16,6 +16,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.getEnd
 import static org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.getNodeEndOffset;
 import static org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.getNodeOffset;
 import static org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.getStartingLineNumber;
+import static org.eclipse.cdt.internal.ui.refactoring.includes.IncludeUtil.isContainedInRegion;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -89,9 +88,8 @@ import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeGuardDetection;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
-import org.eclipse.cdt.internal.core.resources.ResourceLookup;
-
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.IncludeKind;
+import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
+import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
 
 /**
  * Organizes the include directives and forward declarations of a source or header file.
@@ -99,88 +97,44 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.Includ
 public class IncludeOrganizer {
 	private static boolean DEBUG_HEADER_SUBSTITUTION = "true".equalsIgnoreCase(Platform.getDebugOption(CUIPlugin.PLUGIN_ID + "/debug/includeOrganizer/headerSubstitution")); //$NON-NLS-1$ //$NON-NLS-2$
 
-	private static class IncludePrototype implements Comparable<IncludePrototype> {
-		final IPath header;  // null for existing unresolved includes 
-		final IncludeInfo includeInfo; // never null
-		IASTPreprocessorIncludeStatement existingInclude; // null for newly added includes
-		final boolean required; // true if the header has to be included
-		final IncludeGroupStyle style;
+	private static final Collator COLLATOR = Collator.getInstance();
 
-		/** Initializes an include prototype for a new include */
+	/**
+	 * Represents a new or an existing include statement.
+	 */
+	private static class IncludePrototype extends StyledInclude {
+		private final boolean required; // true if the header has to be included
+
+		/** Initializes an include prototype object for a new include */
 		IncludePrototype(IPath header, IncludeInfo includeInfo, IncludeGroupStyle style) {
-			if (includeInfo == null)
-				throw new NullPointerException();
-			this.header = header;
-			this.includeInfo = includeInfo;
-			this.style = style;
+			super(header, includeInfo, style);
 			this.required = true;
 		}
 
 		/**
-		 * Initializes an include prototype for an existing include. {@code header} may be
+		 * Initializes an include prototype object for an existing include. {@code header} may be
 		 * {@code null} if the include was not resolved.
 		 */
-		IncludePrototype(IASTPreprocessorIncludeStatement include, IPath header,
-				IncludeInfo includeInfo, IncludeGroupStyle style) {
-			if (includeInfo == null)
-				throw new NullPointerException();
-			this.existingInclude = include;
-			this.header = header;
-			this.includeInfo = includeInfo;
-			this.style = style;
+		IncludePrototype(IPath header, IncludeInfo includeInfo,	IncludeGroupStyle style,
+				IASTPreprocessorIncludeStatement existingInclude) {
+			super(header, includeInfo, style, existingInclude);
 			this.required = false;
 		}
 
-		public void updateFrom(IncludePrototype other) {
-			this.existingInclude = other.existingInclude;
-		}
-
-		@Override
-		public int hashCode() {
-			if (header != null)
-				return header.hashCode();  // includeInfo is ignored if header is not null
-			return includeInfo.hashCode();
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			IncludePrototype other = (IncludePrototype) obj;
-			if (header != null)
-				return header.equals(other.header);  // includeInfo is ignored if header is not null
-			if (other.header != null)
-				return false;
-			return includeInfo.equals(other.includeInfo);
-		}
-
-		/** For debugging only */
-		@Override
-		public String toString() {
-			return header != null ? header.toPortableString() : includeInfo.toString();
-		}
-
-		@Override
-		public int compareTo(IncludePrototype other) {
-			return includeInfo.compareTo(other.includeInfo);
+		public boolean isRequired() {
+			return required;
 		}
 	}
 
-	private static final Collator COLLATOR = Collator.getInstance();
-
 	private final IHeaderChooser fHeaderChooser;
-	private final InclusionContext fContext;
+	private final IncludeCreationContext fContext;
 	private final String fLineDelimiter;
 
 	public IncludeOrganizer(ITranslationUnit tu, IIndex index, String lineDelimiter,
 			IHeaderChooser headerChooser) {
 		fLineDelimiter = lineDelimiter;
 		fHeaderChooser = headerChooser;
-		fContext = new InclusionContext(tu, index);
+		fContext = new IncludeCreationContext(tu, index);
 	}
 
 	/**
@@ -195,14 +149,7 @@ public class IncludeOrganizer {
 		Set<IBinding> bindingsToDefine = bindingClassifier.getBindingsToDefine();
 
 		IASTPreprocessorIncludeStatement[] existingIncludes = ast.getIncludeDirectives();
-		for (IASTPreprocessorIncludeStatement include : existingIncludes) {
-			if (include.isPartOfTranslationUnitFile()) {
-				String path = include.getPath();
-				// An empty path means that the include was not resolved.
-				if (!path.isEmpty())
-					fContext.addHeaderIncludedPreviously(Path.fromOSString(path));
-			}
-		}
+		fContext.addHeadersIncludedPreviously(existingIncludes);
 
 		HeaderSubstitutor headerSubstitutor = new HeaderSubstitutor(fContext);
 		// Create the list of header files which have to be included by examining the list of
@@ -218,12 +165,12 @@ public class IncludeOrganizer {
 				new HashMap<IncludePrototype, IncludePrototype>();
 		// Put the new includes into includePrototypes.
 		for (IPath header : fContext.getHeadersToInclude()) {
-			IncludeGroupStyle style = getIncludeStyle(header);
+			IncludeGroupStyle style = fContext.getIncludeStyle(header);
 			IncludeInfo includeInfo = createIncludeInfo(header, style);
 			IncludePrototype prototype = new IncludePrototype(header, includeInfo, style);
 			updateIncludePrototypes(includePrototypes, prototype);
 		}
-		// Put the existing includes into includePrototypes.
+		// Add existing includes to includePrototypes.
 		for (IASTPreprocessorIncludeStatement include : existingIncludes) {
 			if (include.isPartOfTranslationUnitFile()) {
 				String name = new String(include.getName().getSimpleID());
@@ -232,14 +179,15 @@ public class IncludeOrganizer {
 				// An empty path means that the include was not resolved.
 				IPath header = path.isEmpty() ? null : Path.fromOSString(path);
 				IncludeGroupStyle style =
-						header != null ? getIncludeStyle(header) : getIncludeStyle(includeInfo);
-				IncludePrototype prototype = new IncludePrototype(include, header, includeInfo, style);
+						header != null ? fContext.getIncludeStyle(header) : fContext.getIncludeStyle(includeInfo);
+				IncludePrototype prototype = new IncludePrototype(header, includeInfo, style, include);
 				updateIncludePrototypes(includePrototypes, prototype);
 			}
 		}
 
 		NodeCommentMap commentedNodeMap = ASTCommenter.getCommentedNodeMap(ast);
-		IRegion includeReplacementRegion = getSafeIncludeReplacementRegion(ast, commentedNodeMap);
+		IRegion includeReplacementRegion =
+				getSafeIncludeReplacementRegion(fContext.getSourceContents(), ast, commentedNodeMap);
 		
 		IncludePreferences preferences = fContext.getPreferences();
 		boolean allowReordering = preferences.allowReordering || existingIncludes.length == 0;
@@ -250,9 +198,9 @@ public class IncludeOrganizer {
 		List<IncludePrototype>[] groupedPrototypes =
 				(List<IncludePrototype>[]) new List<?>[preferences.includeStyles.size()];
 		for (IncludePrototype prototype : includePrototypes.keySet()) {
-			if (prototype.existingInclude == null
-					|| (allowReordering && isContainedInRegion(prototype.existingInclude, includeReplacementRegion))) {
-				IncludeGroupStyle groupingStyle = getGroupingStyle(prototype.style);
+			if (prototype.getExistingInclude() == null
+					|| (allowReordering && isContainedInRegion(prototype.getExistingInclude(), includeReplacementRegion))) {
+				IncludeGroupStyle groupingStyle = prototype.getStyle().getGroupingStyle(preferences.includeStyles);
 				// If reordering is not allowed, group everything together. 
 				int position = allowReordering ? groupingStyle.getOrder() : 0;
 				List<IncludePrototype> prototypes = groupedPrototypes[position];
@@ -262,15 +210,15 @@ public class IncludeOrganizer {
 				}
 				prototypes.add(prototype);
 			}
-			if (!allowReordering && prototype.existingInclude != null
-					&& !prototype.required && prototype.header != null // Unused and resolved. 
-					&& isContainedInRegion(prototype.existingInclude, includeReplacementRegion)) {
+			if (!allowReordering && prototype.getExistingInclude() != null
+					&& !prototype.isRequired() && prototype.getHeader() != null // Unused and resolved. 
+					&& isContainedInRegion(prototype.getExistingInclude(), includeReplacementRegion)) {
 				switch (preferences.unusedStatementsDisposition) {
 				case REMOVE:
-					createDelete(prototype.existingInclude, edits);
+					createDelete(prototype.getExistingInclude(), edits);
 					break;
 				case COMMENT_OUT:
-					createCommentOut(prototype.existingInclude, edits);
+					createCommentOut(prototype.getExistingInclude(), edits);
 					break;
 				case KEEP:
 					break;
@@ -283,9 +231,9 @@ public class IncludeOrganizer {
 		for (List<IncludePrototype> prototypes : groupedPrototypes) {
 			if (prototypes != null && !prototypes.isEmpty()) {
 				Collections.sort(prototypes);
-				IncludeGroupStyle style = prototypes.get(0).style;
-				IncludeGroupStyle groupingStyle = getGroupingStyle(style);
-				IncludeGroupStyle parentStyle = getParentStyle(groupingStyle);
+				IncludeGroupStyle style = prototypes.get(0).getStyle();
+				IncludeGroupStyle groupingStyle = style.getGroupingStyle(preferences.includeStyles);
+				IncludeGroupStyle parentStyle = groupingStyle.getParentStyle(preferences.includeStyles);
 				boolean blankLineBefore = groupingStyle.isBlankLineBefore() ||
 						(parentStyle != null && parentStyle != previousParentStyle &&
 						parentStyle.isKeepTogether() && parentStyle.isBlankLineBefore());
@@ -294,9 +242,9 @@ public class IncludeOrganizer {
 					includeDirectives.add(""); // Blank line separator //$NON-NLS-1$
 				for (IncludePrototype prototype : prototypes) {
 					String trailingComment = ""; //$NON-NLS-1$
-					IASTPreprocessorIncludeStatement include = prototype.existingInclude;
+					IASTPreprocessorIncludeStatement include = prototype.getExistingInclude();
 					if (include == null
-							|| (allowReordering && isContainedInRegion(include, includeReplacementRegion))) {
+							|| (allowReordering && IncludeUtil.isContainedInRegion(include, includeReplacementRegion))) {
 						if (include != null) {
 							List<IASTComment> comments = commentedNodeMap.getTrailingCommentsForNode(include);
 							StringBuilder buf = new StringBuilder();
@@ -522,7 +470,7 @@ public class IncludeOrganizer {
 		IASTFileLocation location = include.getFileLocation();
 		int offset = location.getNodeOffset();
 		if (fContext.getTranslationUnit().isCXXLanguage()) {
-			offset = getLineStart(offset);
+			offset = getLineStart(fContext.getSourceContents(), offset);
 			edits.add(new InsertEdit(offset, "//")); //$NON-NLS-1$
 		} else {
 			edits.add(new InsertEdit(offset, "/*")); //$NON-NLS-1$
@@ -535,8 +483,8 @@ public class IncludeOrganizer {
 		IASTFileLocation location = include.getFileLocation();
 		int offset = location.getNodeOffset();
 		int endOffset = offset + location.getNodeLength();
-		offset = getLineStart(offset);
-		endOffset = skipToNextLine(endOffset);
+		offset = getLineStart(fContext.getSourceContents(), offset);
+		endOffset = skipToNextLine(fContext.getSourceContents(), endOffset);
 		edits.add(new DeleteEdit(offset, endOffset - offset));
 	}
 
@@ -546,16 +494,12 @@ public class IncludeOrganizer {
 		if (existing == null) {
 			includePrototypes.put(prototype, prototype);
 		} else {
-			existing.updateFrom(prototype);
+			existing.setExistingInclude(prototype.getExistingInclude());
 		}
 	}
 
-	private boolean isContainedInRegion(IASTNode node, IRegion region) {
-		return getNodeOffset(node) >= region.getOffset()
-				&& getNodeEndOffset(node) <= region.getOffset() + region.getLength();
-	}
-
-	private IRegion getSafeIncludeReplacementRegion(IASTTranslationUnit ast, NodeCommentMap commentMap) {
+	static IRegion getSafeIncludeReplacementRegion(char[] contents, IASTTranslationUnit ast,
+			NodeCommentMap commentMap) {
 		int maxSafeOffset = ast.getFileLocation().getNodeLength();
 		IASTDeclaration[] declarations = ast.getDeclarations(true);
 		if (declarations.length != 0)
@@ -592,22 +536,22 @@ public class IncludeOrganizer {
 		}
 		if (includeOffset < 0) {
 			if (includeGuardEndOffset >= 0) {
-				includeOffset = skipToNextLine(includeGuardEndOffset);
+				includeOffset = skipToNextLine(contents, includeGuardEndOffset);
 			} else {
 				includeOffset = 0;
 			}
 			if (!topCommentSkipped) {
 				// Skip the first comment block near the top of the file. 
-				includeOffset = skipStandaloneCommentBlock(includeOffset, maxSafeOffset, ast.getComments(), commentMap);
+				includeOffset = skipStandaloneCommentBlock(contents, includeOffset, maxSafeOffset, ast.getComments(), commentMap);
 			}
 			includeEndOffset = includeOffset;
 		} else {
-			includeEndOffset = skipToNextLine(includeEndOffset);
+			includeEndOffset = skipToNextLine(contents, includeEndOffset);
 		}
 		return new Region(includeOffset, includeEndOffset - includeOffset);
 	}
 
-	private int getNumberOfIncludeGuardStatementsToSkip(IASTTranslationUnit ast) {
+	private static int getNumberOfIncludeGuardStatementsToSkip(IASTTranslationUnit ast) {
 		IASTPreprocessorStatement statement = findFirstPreprocessorStatement(ast);
 		if (statement == null)
 			return 0;
@@ -620,7 +564,7 @@ public class IncludeOrganizer {
 		}
 		char[] contents = ast.getRawSignature().toCharArray();
 		if (offset != 0)
-			Arrays.copyOfRange(contents, offset, contents.length);
+			contents = Arrays.copyOfRange(contents, offset, contents.length);
 		CharArrayIntMap ppKeywords= new CharArrayIntMap(40, -1);
 		Keywords.addKeywordsPreprocessor(ppKeywords);
 		if (IncludeGuardDetection.detectIncludeGuard(new CharArray(contents), new LexerOptions(), ppKeywords) != null) {
@@ -629,39 +573,38 @@ public class IncludeOrganizer {
 		return num;
 	}
 
-	private IASTPreprocessorStatement findFirstPreprocessorStatement(IASTTranslationUnit ast) {
+	private static IASTPreprocessorStatement findFirstPreprocessorStatement(IASTTranslationUnit ast) {
 		for (IASTPreprocessorStatement statement : ast.getAllPreprocessorStatements()) {
 			if (statement.isPartOfTranslationUnitFile())
 				return statement;
 		}
 		return null;
 	}
-	private boolean isPragmaOnce(IASTPreprocessorStatement statement) {
+
+	private static boolean isPragmaOnce(IASTPreprocessorStatement statement) {
 		if (!(statement instanceof IASTPreprocessorPragmaStatement))
 			return false;
 		return CharArrayUtils.equals(((IASTPreprocessorPragmaStatement) statement).getMessage(), "once"); //$NON-NLS-1$
 	}
 
-	private int skipToNextLine(int offset) {
-		char[] contents = fContext.getTranslationUnit().getContents();
-		while (offset < contents.length) {
-			if (contents[offset++] == '\n')
+	private static int skipToNextLine(char[] text, int offset) {
+		while (offset < text.length) {
+			if (text[offset++] == '\n')
 				break;
 		}
 		return offset;
 	}
 
-	private int getLineStart(int offset) {
-		char[] contents = fContext.getTranslationUnit().getContents();
+	private static int getLineStart(char[] text, int offset) {
 		while (--offset >= 0) {
-			if (contents[offset] == '\n')
+			if (text[offset] == '\n')
 				break;
 		}
 		return offset + 1;
 	}
 
-	private int skipToNextLineAfterNode(IASTNode node) {
-		return skipToNextLine(getNodeEndOffset(node));
+	private static int skipToNextLineAfterNode(char[] text, IASTNode node) {
+		return skipToNextLine(text, getNodeEndOffset(node));
 	}
 
 	/**
@@ -720,7 +663,8 @@ public class IncludeOrganizer {
 		return ""; //$NON-NLS-1$
 	}
 
-	private int skipStandaloneCommentBlock(int offset, int endOffset, IASTComment[] comments, NodeCommentMap commentMap) {
+	private static int skipStandaloneCommentBlock(char[] contents, int offset, int endOffset,
+			IASTComment[] comments, NodeCommentMap commentMap) {
 		Map<IASTComment, IASTNode> inverseLeadingMap = new HashMap<IASTComment, IASTNode>();
 		for (Map.Entry<IASTNode, List<IASTComment>> entry : commentMap.getLeadingMap().entrySet()) {
 			IASTNode node = entry.getKey();
@@ -753,11 +697,11 @@ public class IncludeOrganizer {
 					for (int j = 1; j < leadingComments.size(); j++) {
 						comment = leadingComments.get(j);
 						if (getStartingLineNumber(comment) > getEndingLineNumber(previous) + 1)
-							return skipToNextLineAfterNode(previous);
+							return skipToNextLineAfterNode(contents, previous);
 						previous = comment;
 					}
 					if (getStartingLineNumber(node) > getEndingLineNumber(previous) + 1)
-						return skipToNextLineAfterNode(previous);
+						return skipToNextLineAfterNode(contents, previous);
 				}
 				node = inverseFreestandingMap.get(comment);
 				if (node != null) {
@@ -766,84 +710,13 @@ public class IncludeOrganizer {
 					for (int j = 1; j < freestandingComments.size(); j++) {
 						comment = freestandingComments.get(j);
 						if (getStartingLineNumber(comment) > getEndingLineNumber(previous) + 1)
-							return skipToNextLineAfterNode(previous);
+							return skipToNextLineAfterNode(contents, previous);
 						previous = comment;
 					}
 				}
 			}
 		}
 		return offset;
-	}
-
-	private IncludeGroupStyle getGroupingStyle(IncludeGroupStyle style) {
-		if (style.isKeepTogether())
-			return style;
-		IncludeGroupStyle parent = getParentStyle(style);
-		if (parent != null && (parent.isKeepTogether() || parent.getIncludeKind() == IncludeKind.OTHER))
-			return parent;
-		return fContext.getPreferences().includeStyles.get(IncludeKind.OTHER);
-	}
-
-	private IncludeGroupStyle getParentStyle(IncludeGroupStyle style) {
-		IncludeKind kind = style.getIncludeKind().parent;
-		if (kind == null)
-			return null;
-		return fContext.getPreferences().includeStyles.get(kind);
-	}
-
-	private IncludeGroupStyle getIncludeStyle(IPath headerPath) {
-		IncludeKind includeKind;
-		IncludeInfo includeInfo = fContext.getIncludeForHeaderFile(headerPath);
-		if (includeInfo != null && includeInfo.isSystem()) {
-			if (headerPath.getFileExtension() == null) {
-				includeKind = IncludeKind.SYSTEM_WITHOUT_EXTENSION;
-			} else {
-				includeKind = IncludeKind.SYSTEM_WITH_EXTENSION;
-			}
-		} else if (isPartnerFile(headerPath)) {
-			includeKind = IncludeKind.PARTNER;
-		} else {
-			IPath dir = fContext.getCurrentDirectory();
-			if (dir.isPrefixOf(headerPath)) {
-				if (headerPath.segmentCount() == dir.segmentCount() + 1) {
-					includeKind = IncludeKind.IN_SAME_FOLDER;
-				} else {
-					includeKind = IncludeKind.IN_SUBFOLDER;
-				}
-			} else {
-				IFile[] files = ResourceLookup.findFilesForLocation(headerPath);
-				if (files.length == 0) {
-					includeKind = IncludeKind.EXTERNAL;
-				} else {
-					IProject project = fContext.getProject();
-					includeKind = IncludeKind.IN_OTHER_PROJECT;
-					for (IFile file : files) {
-						if (file.getProject().equals(project)) {
-							includeKind = IncludeKind.IN_SAME_PROJECT;
-							break;
-						}
-					}
-				}
-			}
-		}
-		return fContext.getPreferences().includeStyles.get(includeKind);
-	}
-
-	private IncludeGroupStyle getIncludeStyle(IncludeInfo includeInfo) {
-		IncludeKind includeKind;
-		IPath path = Path.fromPortableString(includeInfo.getName());
-		if (includeInfo.isSystem()) {
-			if (path.getFileExtension() == null) {
-				includeKind = IncludeKind.SYSTEM_WITHOUT_EXTENSION;
-			} else {
-				includeKind = IncludeKind.SYSTEM_WITH_EXTENSION;
-			}
-		} else if (isPartnerFile(path)) {
-			includeKind = IncludeKind.PARTNER;
-		} else {
-			includeKind = IncludeKind.EXTERNAL;
-		}
-		return fContext.getPreferences().includeStyles.get(includeKind);
 	}
 
 	private Set<IBinding> removeBindingsDefinedInIncludedHeaders(IASTTranslationUnit ast,
@@ -888,7 +761,7 @@ public class IncludeOrganizer {
 			List<IPath> candidatePaths = request.getCandidatePaths();
 			if (candidatePaths.size() == 1) {
 				IPath path = candidatePaths.iterator().next();
-				if (isPartnerFile(path)) {
+				if (fContext.isPartnerFile(path)) {
 					request.resolve(path);
 					fContext.addHeaderToInclude(path);
 					if (includedByPartner != null) {
@@ -1080,33 +953,6 @@ public class IncludeOrganizer {
 		return headerSubstitutor.getExportingHeaders(symbol);
 	}
 
-	/**
-	 * Checks if the given path points to a partner header of the current translation unit.
-	 * A header is considered a partner if its name without extension is the same as the name of
-	 * the translation unit, or the name of the translation unit differs by one of the suffixes
-	 * used for test files.
-	 */
-	private boolean isPartnerFile(IPath path) {
-		String headerName = path.removeFileExtension().lastSegment();
-		String sourceName = fContext.getTranslationUnit().getLocation().removeFileExtension().lastSegment();
-		if (headerName.equals(sourceName))
-			return true;
-		if (sourceName.startsWith(headerName)) {
-			int pos = headerName.length();
-			while (pos < sourceName.length() && !Character.isLetterOrDigit(sourceName.charAt(pos))) {
-				pos++;
-			}
-			if (pos == sourceName.length())
-				return true;
-			String suffix = sourceName.substring(pos);
-			for (String s : fContext.getPreferences().partnerFileSuffixes) {
-				if (suffix.equalsIgnoreCase(s))
-					return true;
-			}
-		}
-		return false;
-	}
-
 	private List<InclusionRequest> createInclusionRequests(IASTTranslationUnit ast,
 			Set<IBinding> bindingsToDefine, boolean allowDeclarations,
 			IIndexFileSet reachableHeaders) throws CoreException {
@@ -1202,7 +1048,7 @@ public class IncludeOrganizer {
 	private String createIncludeDirective(IncludePrototype include, String lineComment) {
 		StringBuilder buf = new StringBuilder();
 		// Unresolved includes are preserved out of caution.
-		if (!include.required && include.header != null) {
+		if (!include.isRequired() && include.getHeader() != null) {
 			switch (fContext.getPreferences().unusedStatementsDisposition) {
 			case REMOVE:
 				return null;
@@ -1214,7 +1060,7 @@ public class IncludeOrganizer {
 			}
 		}
 		buf.append("#include "); //$NON-NLS-1$
-		buf.append(include.includeInfo.toString());
+		buf.append(include.getIncludeInfo().toString());
 		buf.append(lineComment);
 		return buf.toString();
 	}

@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -63,13 +64,18 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.CodeGeneration;
 import org.eclipse.cdt.utils.PathUtil;
 
+import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
+import org.eclipse.cdt.internal.corext.codemanipulation.InclusionContext;
 import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
+import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 import org.eclipse.cdt.internal.corext.util.Strings;
 import org.eclipse.cdt.internal.formatter.scanner.Scanner;
 import org.eclipse.cdt.internal.formatter.scanner.Token;
 
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
 import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
 
 public class NewClassCodeGenerator {
@@ -703,7 +709,6 @@ public class NewClassCodeGenerator {
         ICProject cProject = headerTU.getCProject();
         IProject project = cProject.getProject();
         IPath projectLocation = new Path(project.getLocationURI().getPath());
-        IPath headerLocation = new Path(headerTU.getResource().getLocationURI().getPath());
         
         List<IPath> includePaths = getIncludePaths(headerTU);
         List<IPath> baseClassPaths = getBaseClassPaths(verifyBaseClasses());
@@ -716,52 +721,36 @@ public class NewClassCodeGenerator {
 	        }
         }
 
-        List<IPath> systemIncludes = new ArrayList<IPath>();
-        List<IPath> localIncludes = new ArrayList<IPath>();
-        
-        // Sort the include paths into system and local
+        InclusionContext inclusionContext = new InclusionContext(headerTU);
+        List<StyledInclude> includes = new ArrayList<StyledInclude>();
         for (IPath baseClassLocation : baseClassPaths) {
-            boolean isSystemIncludePath = false;
+        	IncludeInfo includeInfo = inclusionContext.getIncludeForHeaderFile(baseClassLocation);
+        	if (includeInfo != null) {
+        		IncludeGroupStyle style = inclusionContext.getIncludeStyle(includeInfo);
+        		includes.add(new StyledInclude(baseClassLocation, includeInfo, style));
+        	}
+        }
+        Collections.sort(includes);
 
-            IPath includePath = PathUtil.makeRelativePathToProjectIncludes(baseClassLocation, project);
-            if (includePath != null && !projectLocation.isPrefixOf(baseClassLocation)) {
-                isSystemIncludePath = true;
-            } else if (projectLocation.isPrefixOf(baseClassLocation)
-                    && projectLocation.isPrefixOf(headerLocation)) {
-                includePath = PathUtil.makeRelativePath(baseClassLocation, headerLocation.removeLastSegments(1));
-            }
-            if (includePath == null)
-                includePath = baseClassLocation;
-            
-            // Make the new #include path in the source file only point to a relative file
-            // (i.e. now that the path has been included above in the project)
-            includePath = includePath.removeFirstSegments(includePath.segmentCount() - 1).setDevice(null);
-            
-            if (isSystemIncludePath)
-                systemIncludes.add(includePath);
-            else
-                localIncludes.add(includePath);
-        }
-        
     	StringBuilder text = new StringBuilder();
-        // Write the system include paths, e.g. #include <header.h>
-        for (IPath includePath : systemIncludes) {
-            if (!(headerTU.getElementName().equals(includePath.toString()))) {
-			    String include = getIncludeString(includePath.toString(), true);
-			    text.append(include);
-			    text.append(lineDelimiter);
+		IncludePreferences preferences = inclusionContext.getPreferences();
+		IncludeGroupStyle previousParentStyle = null;
+        for (StyledInclude include : includes) {
+			IncludeGroupStyle style = include.getStyle();
+			IncludeGroupStyle groupingStyle = style.getGroupingStyle(preferences.includeStyles);
+			IncludeGroupStyle parentStyle = groupingStyle.getParentStyle(preferences.includeStyles);
+			if (groupingStyle.isBlankLineBefore() ||
+					(parentStyle != null && previousParentStyle != null &&
+					parentStyle != previousParentStyle && parentStyle.isKeepTogether() &&
+					parentStyle.isBlankLineBefore())) {
+				text.append(lineDelimiter);
 			}
-        }
-        
-        // Write the local include paths, e.g. #include "header.h"
-        for (IPath includePath : localIncludes) {
-            if (!(headerTU.getElementName().equals(includePath.toString()))) {
-			    String include = getIncludeString(includePath.toString(), false);
-			    text.append(include);
-			    text.append(lineDelimiter);
-			}
-        }
-        
+			text.append("#include "); //$NON-NLS-1$
+		    text.append(include.getIncludeInfo().toString());
+		    text.append(lineDelimiter);
+		    previousParentStyle = parentStyle;
+		}
+
         monitor.done();
         return text.toString();
     }
@@ -1089,24 +1078,15 @@ public class NewClassCodeGenerator {
     
     private String getHeaderIncludeString(ITranslationUnit sourceTU, ITranslationUnit headerTU,
     		IProgressMonitor monitor) {
-        IProject project = headerTU.getCProject().getProject();
-        IPath projectLocation = new Path(project.getLocationURI().getPath());
         IPath headerLocation = new Path(headerTU.getResource().getLocationURI().getPath());
-        IPath sourceLocation = new Path(sourceTU.getResource().getLocationURI().getPath());
 
-        IPath includePath = PathUtil.makeRelativePathToProjectIncludes(headerLocation, project);
-        boolean isSystemIncludePath = false;
-        if (headerTU.getResource() == null && includePath != null
-        		&& !projectLocation.isPrefixOf(headerLocation)) {
-            isSystemIncludePath = true;
-        } else if (projectLocation.isPrefixOf(headerLocation)
-        		&& projectLocation.isPrefixOf(sourceLocation)) {
-            includePath = PathUtil.makeRelativePath(headerLocation, sourceLocation.removeLastSegments(1));
+        InclusionContext inclusionContext = new InclusionContext(sourceTU);
+        IncludeInfo includeInfo = inclusionContext.getIncludeForHeaderFile(headerLocation);
+        if (includeInfo == null) {
+        	includeInfo = new IncludeInfo(headerLocation.toString(), false);
         }
-        if (includePath == null)
-            includePath = headerLocation;
-
-        return getIncludeString(includePath.toString(), isSystemIncludePath);
+        
+        return "#include " + includeInfo.toString(); //$NON-NLS-1$
     }
 
     private boolean hasInclude(String contents, String include) {
@@ -1208,21 +1188,6 @@ public class NewClassCodeGenerator {
         return text.toString();
     }
 
-    private String getIncludeString(String fileName, boolean isSystemInclude) {
-        StringBuilder buf = new StringBuilder();
-        buf.append("#include "); //$NON-NLS-1$
-        if (isSystemInclude)
-            buf.append('<'); 
-        else
-            buf.append('\"'); 
-        buf.append(fileName);
-        if (isSystemInclude)
-            buf.append('>'); 
-        else
-            buf.append('\"'); 
-        return buf.toString();
-    }
-    
     private int findLastLineChar(String contents, int startPos) {
         int endPos = contents.length() - 1;
         int linePos = startPos;

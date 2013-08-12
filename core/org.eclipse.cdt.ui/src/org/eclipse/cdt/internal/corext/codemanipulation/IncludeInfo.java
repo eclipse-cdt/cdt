@@ -8,7 +8,7 @@
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.refactoring.includes;
+package org.eclipse.cdt.internal.corext.codemanipulation;
 
 import com.ibm.icu.text.Collator;
 

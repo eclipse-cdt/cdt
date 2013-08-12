@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
  *     IBM Corporation - EFS support
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -29,10 +30,16 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -404,6 +411,78 @@ public class Util implements ICLogConstants {
 		}
 		// not found
 		return null;
+	}
+	
+	private static String getLineSeparatorFromPreferences(Preferences node) {
+		try {
+			// be careful looking up for our node so not to create any nodes as side effect
+			if (node.nodeExists(Platform.PI_RUNTIME))
+				return node.node(Platform.PI_RUNTIME).get(Platform.PREF_LINE_SEPARATOR, null);
+		} catch (BackingStoreException e) {
+			// ignore
+		}
+		return null;
+	}
+
+	/**
+	 * Returns line separator appropriate for the given file. The returned value
+	 * will be the first available value from the list below:
+	 * <ol>
+	 *   <li> Line separator currently used in that file.
+	 *   <li> Line separator defined in project preferences.
+	 *   <li> Line separator defined in instance preferences.
+	 *   <li> Line separator defined in default preferences.
+	 *   <li> Operating system default line separator.
+	 * </ol>
+	 * @param file the file for which line separator should be returned
+	 * @return line separator for the given file
+	 * 
+	 * Note: This was copied from org.eclipse.core.internal.utils.FileUtil
+	 */
+	public static String getLineSeparator(IFile file) {
+		if (file.exists()) {
+			InputStream input = null;
+			try {
+				input = file.getContents();
+				int c = input.read();
+				while (c != -1 && c != '\r' && c != '\n')
+					c = input.read();
+				if (c == '\n')
+					return "\n"; //$NON-NLS-1$
+				if (c == '\r') {
+					if (input.read() == '\n')
+						return "\r\n"; //$NON-NLS-1$
+					return "\r"; //$NON-NLS-1$
+				}
+			} catch (CoreException e) {
+				// ignore
+			} catch (IOException e) {
+				// ignore
+			} finally {
+				try {
+					if (input != null)
+						input.close();
+				} catch (IOException e) {
+					//ignore
+				}
+			}
+		}
+		Preferences rootNode = Platform.getPreferencesService().getRootNode();
+		String value = null;
+		// if the file does not exist or has no content yet, try with project preferences
+		value = getLineSeparatorFromPreferences(rootNode.node(ProjectScope.SCOPE).node(file.getProject().getName()));
+		if (value != null)
+			return value;
+		// try with instance preferences
+		value = getLineSeparatorFromPreferences(rootNode.node(InstanceScope.SCOPE));
+		if (value != null)
+			return value;
+		// try with default preferences
+		value = getLineSeparatorFromPreferences(rootNode.node(DefaultScope.SCOPE));
+		if (value != null)
+			return value;
+		// if there is no preference set, fall back to OS default value
+		return LINE_SEPARATOR;
 	}
 
 	/**

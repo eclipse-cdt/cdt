@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Ericsson and others.
+ * Copyright (c) 2007, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,15 +12,21 @@ package org.eclipse.cdt.tests.dsf.gdb.framework;
 
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.Assert;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
+import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -39,6 +45,8 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
+import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMContext;
+import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMData;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
@@ -607,10 +615,10 @@ public class SyncUtil {
                     protected void handleCompleted() {
                     	if (isSuccess()) {
                     		IDMContext[] contexts = getData();
-                    		Assert.assertNotNull("invalid return value from service", contexts);
-                    		Assert.assertEquals("unexpected number of processes", 1, contexts.length);
+                    		assertNotNull("invalid return value from service", contexts);
+                    		assertEquals("unexpected number of processes", 1, contexts.length);
                     		IDMContext context = contexts[0];    
-                    		Assert.assertNotNull("unexpected process context type ", context);
+                    		assertNotNull("unexpected process context type ", context);
                     		rm.done((IContainerDMContext)context);
                     	} else {
                             rm.done(getStatus());
@@ -648,7 +656,7 @@ public class SyncUtil {
                     protected void handleCompleted() {
                     	if (isSuccess()) {
                     		IDMContext[] threads = getData();
-                    		Assert.assertNotNull("invalid return value from service", threads);
+                    		assertNotNull("invalid return value from service", threads);
                     		rm.setData((IMIExecutionDMContext[])threads);
                     	} else {
                             rm.setStatus(getStatus());
@@ -673,8 +681,8 @@ public class SyncUtil {
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
 	public static IMIExecutionDMContext getExecutionContext(int threadIndex) throws InterruptedException {
 		IMIExecutionDMContext[] threads = getExecutionContexts();
-		Assert.assertTrue("unexpected number of threads", threadIndex < threads.length);
-		Assert.assertNotNull("unexpected thread context type ", threads[threadIndex]);
+		assertTrue("unexpected number of threads", threadIndex < threads.length);
+		assertNotNull("unexpected thread context type ", threads[threadIndex]);
 		return threads[threadIndex];
 	}
 
@@ -747,5 +755,46 @@ public class SyncUtil {
  	 		event = eventWaitor.waitForEvent(DefaultTimeouts.get(ETimeout.waitForStop));
  		}
  		return event;
+    }
+	
+    public static IVariableDMData[] getLocals(final IFrameDMContext frameDmc) throws Throwable {
+    	Query<IVariableDMData[]> query = new Query<IVariableDMData[]>() {
+    		@Override
+    		protected void execute(final DataRequestMonitor<IVariableDMData[]> rm) {
+    			fStack.getLocals(frameDmc, new ImmediateDataRequestMonitor<IVariableDMContext[]>() {
+    				@Override
+    				protected void handleCompleted() {
+    					if (isSuccess()) {
+    						IVariableDMContext[] varDmcs = getData();
+    						final List<IVariableDMData> localsDMData = new ArrayList<IVariableDMData>();
+    						final CountingRequestMonitor crm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), rm) {
+    							@Override
+    							protected void handleSuccess() {
+    								rm.done(localsDMData.toArray(new IVariableDMData[localsDMData.size()]));
+    							};
+    						};
+
+    						for (IVariableDMContext varDmc : varDmcs) {
+    							fStack.getVariableData(varDmc, 
+    									new ImmediateDataRequestMonitor<IVariableDMData>(crm) {
+    								@Override
+    								public void handleSuccess() {
+    									localsDMData.add(getData());
+    									crm.done();
+    								}
+    							});
+    						}
+    						crm.setDoneCount(varDmcs.length);    			        		
+    					} else {
+    						rm.done();
+    					}
+    				}
+    			});
+    		}	
+    	};
+
+    	fSession.getExecutor().execute(query);
+    	IVariableDMData[] result = query.get(500, TimeUnit.MILLISECONDS);
+    	return result;
     }
 }

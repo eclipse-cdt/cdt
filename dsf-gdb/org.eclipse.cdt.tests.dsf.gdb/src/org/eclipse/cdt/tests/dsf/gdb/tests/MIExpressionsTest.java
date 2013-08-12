@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Ericsson and others.
+ * Copyright (c) 2007, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContex
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMData;
 import org.eclipse.cdt.dsf.mi.service.ClassAccessor.MIExpressionDMCAccessor;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
@@ -310,11 +311,13 @@ public class MIExpressionsTest extends BaseTestCase {
 
     	// Get the children of some variables
         MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testChildren");
-        doTestChildren(stoppedEvent);
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+        IExpressionDMContext exprDMC = SyncUtil.createExpression(frameDmc, "f");
+        doTestChildren(exprDMC);
         
         // Now do a step and get the children again, to test the internal cache
-        stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
-        doTestChildren(stoppedEvent);
+        SyncUtil.step(1, StepType.STEP_OVER);
+        doTestChildren(exprDMC);
     }
     
     /**
@@ -3188,12 +3191,8 @@ public class MIExpressionsTest extends BaseTestCase {
         }
     }
     
-    private void doTestChildren(MIStoppedEvent stoppedEvent) throws Throwable {
-	
-	    final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-	    
-	    final IExpressionDMContext exprDMC = SyncUtil.createExpression(frameDmc, "f");
-	
+    private void doTestChildren(IExpressionDMContext exprDMC) throws Throwable 
+    {
 	    IExpressionDMContext[] children =
 	    	getChildren(exprDMC, new String[] {"bar", "bar2", "a", "b", "c"});
 	    
@@ -3598,20 +3597,15 @@ public class MIExpressionsTest extends BaseTestCase {
     	Query<String> query = new Query<String>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
-		        fExpService.getExecutor().submit(new Runnable() {
-		        	@Override
-					public void run() {
-		        		fExpService.getFormattedExpressionValue(
-		        				fExpService.getFormattedValueContext(children[0], IFormattedValues.NATURAL_FORMAT), 
-		        				new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
-		        					@Override
-		        					protected void handleCompleted() {
-		        						rm.done(getData().getFormattedValue());
-		        					}	
-		        				});
-		        	}
-		        });				
-			}	
+				fExpService.getFormattedExpressionValue(
+						fExpService.getFormattedValueContext(children[0], IFormattedValues.NATURAL_FORMAT), 
+						new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
+							@Override
+							protected void handleCompleted() {
+								rm.done(getData().getFormattedValue());
+							}	
+						});
+			}
     	};
     	
         fSession.getExecutor().execute(query);
@@ -3622,20 +3616,15 @@ public class MIExpressionsTest extends BaseTestCase {
     	query = new Query<String>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
-		        fExpService.getExecutor().submit(new Runnable() {
-		        	@Override
-					public void run() {
-		        		fExpService.getFormattedExpressionValue(
-		        				fExpService.getFormattedValueContext(castChildren[0], IFormattedValues.NATURAL_FORMAT), 
-		        				new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
-		        					@Override
-		        					protected void handleCompleted() {
-		        						rm.done(getData().getFormattedValue());
-		        					}	
-		        				});
-		        	}
-		        });				
-			}	
+				fExpService.getFormattedExpressionValue(
+						fExpService.getFormattedValueContext(castChildren[0], IFormattedValues.NATURAL_FORMAT), 
+						new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
+							@Override
+							protected void handleCompleted() {
+								rm.done(getData().getFormattedValue());
+							}	
+						});
+			}
     	};        
     	fSession.getExecutor().execute(query);
         value = query.get(500, TimeUnit.MILLISECONDS);
@@ -3675,20 +3664,15 @@ public class MIExpressionsTest extends BaseTestCase {
 	    	Query<String> query = new Query<String>() {
 	    		@Override
 	    		protected void execute(final DataRequestMonitor<String> rm) {
-	    			fExpService.getExecutor().submit(new Runnable() {
-	    				@Override
-	    				public void run() {
-	    					fExpService.getFormattedExpressionValue(
-	    							fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
-	    							new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
-	    								@Override
-	    								protected void handleCompleted() {
-	    									rm.done(getData().getFormattedValue());
-	    								}	
-	    							});
-	    				}
-	    			});				
-	    		}	
+	    			fExpService.getFormattedExpressionValue(
+	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
+	    					new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
+	    						@Override
+	    						protected void handleCompleted() {
+	    							rm.done(getData().getFormattedValue());
+	    						}	
+	    					});
+	    		}
 	    	};
 
 	    	fSession.getExecutor().execute(query);
@@ -3738,20 +3722,15 @@ public class MIExpressionsTest extends BaseTestCase {
 	    	Query<String> query = new Query<String>() {
 	    		@Override
 	    		protected void execute(final DataRequestMonitor<String> rm) {
-	    			fExpService.getExecutor().submit(new Runnable() {
-	    				@Override
-	    				public void run() {
-	    					fExpService.getFormattedExpressionValue(
-	    							fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
-	    							new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
-	    								@Override
-	    								protected void handleCompleted() {
-	    									rm.done(getData().getFormattedValue());
-	    								}	
-	    							});
-	    				}
-	    			});				
-	    		}	
+	    			fExpService.getFormattedExpressionValue(
+	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
+	    					new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
+	    						@Override
+	    						protected void handleCompleted() {
+	    							rm.done(getData().getFormattedValue());
+	    						}	
+	    					});
+	    		}
 	    	};
 
 	    	fSession.getExecutor().execute(query);
@@ -3801,20 +3780,15 @@ public class MIExpressionsTest extends BaseTestCase {
 	    	Query<String> query = new Query<String>() {
 	    		@Override
 	    		protected void execute(final DataRequestMonitor<String> rm) {
-	    			fExpService.getExecutor().submit(new Runnable() {
-	    				@Override
-	    				public void run() {
-	    					fExpService.getFormattedExpressionValue(
-	    							fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
-	    							new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
-	    								@Override
-	    								protected void handleCompleted() {
-	    									rm.done(getData().getFormattedValue());
-	    								}	
-	    							});
-	    				}
-	    			});				
-	    		}	
+	    			fExpService.getFormattedExpressionValue(
+	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
+	    					new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
+	    						@Override
+	    						protected void handleCompleted() {
+	    							rm.done(getData().getFormattedValue());
+	    						}	
+	    					});
+	    		}
 	    	};
 
 	    	fSession.getExecutor().execute(query);
@@ -3871,20 +3845,15 @@ public class MIExpressionsTest extends BaseTestCase {
 	    	Query<String> query = new Query<String>() {
 	    		@Override
 	    		protected void execute(final DataRequestMonitor<String> rm) {
-	    			fExpService.getExecutor().submit(new Runnable() {
-	    				@Override
-	    				public void run() {
-	    					fExpService.getFormattedExpressionValue(
-	    							fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
-	    							new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
-	    								@Override
-	    								protected void handleCompleted() {
-	    									rm.done(getData().getFormattedValue());
-	    								}	
-	    							});
-	    				}
-	    			});				
-	    		}	
+	    			fExpService.getFormattedExpressionValue(
+	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
+	    					new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
+	    						@Override
+	    						protected void handleCompleted() {
+	    							rm.done(getData().getFormattedValue());
+	    						}	
+	    					});
+	    		}
 	    	};
 
 	    	fSession.getExecutor().execute(query);
@@ -3947,20 +3916,15 @@ public class MIExpressionsTest extends BaseTestCase {
 	    	Query<String> query = new Query<String>() {
 	    		@Override
 	    		protected void execute(final DataRequestMonitor<String> rm) {
-	    			fExpService.getExecutor().submit(new Runnable() {
-	    				@Override
-	    				public void run() {
-	    					fExpService.getFormattedExpressionValue(
-	    							fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
-	    							new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
-	    								@Override
-	    								protected void handleCompleted() {
-	    									rm.done(getData().getFormattedValue());
-	    								}	
-	    							});
-	    				}
-	    			});				
-	    		}	
+	    			fExpService.getFormattedExpressionValue(
+	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
+	    					new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
+	    						@Override
+	    						protected void handleCompleted() {
+	    							rm.done(getData().getFormattedValue());
+	    						}	
+	    					});
+	    		}
 	    	};
 
 	    	fSession.getExecutor().execute(query);
@@ -4021,20 +3985,15 @@ public class MIExpressionsTest extends BaseTestCase {
 	    	Query<String> query = new Query<String>() {
 	    		@Override
 	    		protected void execute(final DataRequestMonitor<String> rm) {
-	    			fExpService.getExecutor().submit(new Runnable() {
-	    				@Override
-	    				public void run() {
-	    					fExpService.getFormattedExpressionValue(
-	    							fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
-	    							new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
-	    								@Override
-	    								protected void handleCompleted() {
-	    									rm.done(getData().getFormattedValue());
-	    								}	
-	    							});
-	    				}
-	    			});				
-	    		}	
+	    			fExpService.getFormattedExpressionValue(
+	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
+	    					new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
+	    						@Override
+	    						protected void handleCompleted() {
+	    							rm.done(getData().getFormattedValue());
+	    						}	
+	    					});
+	    		}
 	    	};
 
 	    	fSession.getExecutor().execute(query);
@@ -4046,6 +4005,105 @@ public class MIExpressionsTest extends BaseTestCase {
 		assertEquals(castExprDmc.getParents()[0], exprDmc);		
     }
     
+    /**
+     * This test verifies that we display the simple return value of a method after
+     * a step-return operation, but only for the first stack frame.
+     */
+    @Test
+    public void testDisplaySimpleReturnValueForStepReturn() throws Throwable {
+    	SyncUtil.runToLocation("testSimpleReturn");    	
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_RETURN);
+    	
+    	// Check the return value is shown when looking at the first frame
+        final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+    	IVariableDMData[] result = SyncUtil.getLocals(frameDmc);
+    	
+    	assertEquals(3, result.length);  // Two variables and one return value
+
+    	// Return value
+    	assertEquals("$1", result[0].getName());
+    	assertEquals("6", result[0].getValue());
+    	// first variable
+    	assertEquals("a",  result[1].getName());
+    	assertEquals("10", result[1].getValue());
+    	// Second variable
+    	assertEquals("b", result[2].getName());
+    	assertEquals("false", result[2].getValue());
+    	
+    	// Now check how the return value will be displayed to the user
+    	final IExpressionDMContext returnExprDmc = SyncUtil.createExpression(frameDmc, "$1");
+		Query<IExpressionDMData> query = new Query<IExpressionDMData>() {
+			@Override
+			protected void execute(final DataRequestMonitor<IExpressionDMData> rm) {
+				fExpService.getExpressionData(returnExprDmc, rm);
+			}
+		};
+		fSession.getExecutor().execute(query);
+		IExpressionDMData data = query.get(500, TimeUnit.MILLISECONDS);
+		assertEquals("testSimpleReturn() returned", data.getName());
+
+		// Now check the actual value using the expression service
+		String value = SyncUtil.getExpressionValue(returnExprDmc, IFormattedValues.DECIMAL_FORMAT);
+		assertEquals("6", value);
+		
+    	// Now make sure we don't show the return value for another frame
+		final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 1);
+    	result = SyncUtil.getLocals(frameDmc2);
+
+    	// only one variable
+    	assertEquals(1, result.length);
+    	assertEquals("b",  result[0].getName());
+    }
+    
+    /**
+     * This test verifies that we display the complex return value of a method after
+     * a step-return operation, but only for the first stack frame.
+     */
+    @Test
+    public void testDisplayComplexReturnValueForStepReturn() throws Throwable {
+    	SyncUtil.runToLocation("testComplexReturn");    	
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_RETURN);
+    	
+    	// Check the return value is show when looking at the first frame
+        final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+    	IVariableDMData[] result = SyncUtil.getLocals(frameDmc);
+    	
+    	assertEquals(3, result.length);  // Two variables and one return value
+
+    	// Return value
+    	assertEquals("$1", result[0].getName());
+
+    	// first variable
+    	assertEquals("a",  result[1].getName());
+    	assertEquals("10", result[1].getValue());
+    	// Second variable
+    	assertEquals("b", result[2].getName());
+    	assertEquals("false", result[2].getValue());
+
+    	// Now check how the return value will be displayed to the user
+    	final IExpressionDMContext returnExprDmc = SyncUtil.createExpression(frameDmc, "$1");
+    	Query<IExpressionDMData> query = new Query<IExpressionDMData>() {
+			@Override
+			protected void execute(final DataRequestMonitor<IExpressionDMData> rm) {
+				fExpService.getExpressionData(returnExprDmc, rm);
+			}
+		};
+		fSession.getExecutor().execute(query);
+		IExpressionDMData data = query.get(500, TimeUnit.MILLISECONDS);
+		assertEquals("testComplexReturn() returned", data.getName());
+
+		// Now check the content of the complex return expression
+		doTestChildren(returnExprDmc);
+
+    	// Now make sure we don't show the return value for another frame
+		IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 1);
+    	result = SyncUtil.getLocals(frameDmc2);
+
+    	// only one variable
+    	assertEquals(1, result.length);
+    	assertEquals("b",  result[0].getName());
+    }
+
     protected int getChildrenCount(final IExpressionDMContext parentDmc, final int expectedCount) throws Throwable {
 
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
@@ -4098,20 +4156,15 @@ public class MIExpressionsTest extends BaseTestCase {
     	Query<String> query = new Query<String>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
-		        fExpService.getExecutor().submit(new Runnable() {
-		        	@Override
-					public void run() {
-		        		fExpService.getExpressionData(
-		        				exprDmc, 
-		        				new ImmediateDataRequestMonitor<IExpressionDMData>(rm) {
-		        					@Override
-		        					protected void handleCompleted() {
-		        						rm.done(getData().getTypeName());
-		        					}	
-		        				});
-		        	}
-		        });				
-			}	
+				fExpService.getExpressionData(
+						exprDmc, 
+						new ImmediateDataRequestMonitor<IExpressionDMData>(rm) {
+							@Override
+							protected void handleCompleted() {
+								rm.done(getData().getTypeName());
+							}	
+						});
+			}
     	};
     	
         fSession.getExecutor().execute(query);

@@ -21,14 +21,24 @@ char *gCharPtr2 = (char*)0x4321;
 bool *gBoolPtr2 = (bool*)0x12ABCDEF;
 
 class bar {
-public: 
+public:
+	bar() {
+		d = 8;
+		e[0] = 18;
+		e[1] = 28;
+	}
 	int d;
 private:
 	int e[2];
 };
 
 class bar2 {
-public: 
+public:
+	bar2() { 
+    	f = 318;
+    	g[0] = 228;
+    	g[1] = 138;
+    }
 	int f;
 private:
 	int g[2];
@@ -36,6 +46,11 @@ private:
 
 class foo: public bar, bar2 {
 public:
+    foo() {
+    	c = 8;
+    	a[0] = 1000;
+    	a[1] = 23;	
+    }
 	int a[2];
 	bar b;
 private:
@@ -350,6 +365,28 @@ int testRTTI() {
 }
 // End of bug 376901 RTTI tests
 
+int testSimpleReturn(int a) {
+	int b = 0;
+	b = a;
+	return b;
+}
+
+foo testComplexReturn() {
+	foo f;
+	int a = 8;
+	
+	return f;
+}
+
+void testReturn() {
+	int a = 10;
+	bool b = false;
+	
+	testSimpleReturn(6);
+	testComplexReturn();
+	a = 0;;
+}
+    
 int main() {
     printf("Running ExpressionTest App\n");
 
@@ -377,10 +414,12 @@ int main() {
     testArrays();
     testRTTI();
     testCasting();
+    testReturn();
     
     // For bug 320277
     BaseTest b; b.test();
     
+ 
     return 0;
 }
 

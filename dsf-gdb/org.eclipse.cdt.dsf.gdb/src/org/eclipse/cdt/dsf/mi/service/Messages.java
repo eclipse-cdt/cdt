@@ -21,6 +21,7 @@ class Messages extends NLS {
 	public static String Breakpoint_attribute_problem;
 	public static String Breakpoint_installation_failed;
 	public static String MIExpressions_NotAvailableBecauseChildOfDynamicVarobj;
+	public static String MIExpressions_ReturnValueAlias;
 	
 	static {
 		// initialize resource bundle

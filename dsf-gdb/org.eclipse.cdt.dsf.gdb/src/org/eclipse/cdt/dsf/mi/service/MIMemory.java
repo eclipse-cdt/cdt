@@ -518,18 +518,20 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 					protected void handleSuccess() {
 						// Figure out which memory area was modified
 						IExpressionDMAddress expression = getData();
-						final int count = expression.getSize();
 						IAddress expAddress = expression.getAddress();
-						final Addr64 address;
-						if (expAddress instanceof Addr64)
-							address = (Addr64) expAddress;
-						else
-							address = new Addr64(expAddress.getValue());
+						if (expAddress != IExpressions.IExpressionDMLocation.INVALID_ADDRESS) {
+							final int count = expression.getSize();
+							final Addr64 address;
+							if (expAddress instanceof Addr64)
+								address = (Addr64) expAddress;
+							else
+								address = new Addr64(expAddress.getValue());
 
-						final IMemoryDMContext memoryDMC = DMContexts.getAncestorOfType(context, IMemoryDMContext.class);
-						getMemoryCache(memoryDMC).refreshMemory(memoryDMC, address, 0, 1, count, true,
-								new RequestMonitor(getExecutor(), null));
+							final IMemoryDMContext memoryDMC = DMContexts.getAncestorOfType(context, IMemoryDMContext.class);
+							getMemoryCache(memoryDMC).refreshMemory(memoryDMC, address, 0, 1, count, true,
+									new RequestMonitor(getExecutor(), null));
 						}
+					}
 			});
 		}
 	}

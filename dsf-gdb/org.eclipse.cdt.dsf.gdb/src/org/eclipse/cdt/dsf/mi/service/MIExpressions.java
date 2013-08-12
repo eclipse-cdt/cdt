@@ -10,12 +10,15 @@
  *     Ericsson 		  - Modified for handling of multiple execution contexts	
  *     Axel Mueller       - Bug 306555 - Add support for cast to type / view as array (IExpressions2)	
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Marc Khouzam (Ericsson) - Added support for expression aliases for return values of functions (bug 341731)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
@@ -35,7 +38,9 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
@@ -49,12 +54,16 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetChildCount;
 import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetChildren;
 import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetValue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetVar;
+import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIFunctionFinishedEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetAttributesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetChildCountInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetChildrenInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetValueInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetVarInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataEvaluateExpressionInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -794,6 +803,94 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
         }
     }
 
+    /**
+     * Keeps track of aliases for return values of methods.
+     */
+	private class ReturnValueAliasing {
+		/**
+		 *  Map of expression to alias.  The expression is the name of the convenience variable 
+		 *  storing the return value, e.g., $1 -> "foo() returned"
+		 *  This map allows to quickly find the alias to be used for return value variables. 
+		 */
+		private Map<String, String> fExpressionAliasesMap = new HashMap<String, String>();
+		/**
+		 * Map of thread to alias list.  This map allows to know which aliases are related
+		 * to a thread of execution.  This is important to allow us to delete aliases when a
+		 * thread exits.
+		 */
+		private Map<IMIExecutionDMContext, List<String>> fExecutionToAliasMap = new HashMap<IMIExecutionDMContext, List<String>>();
+		/**
+		 * Map of thread to the name of the method the thread last stopped in.
+		 * This allows us to create the alias based on the method the thread was in
+		 * before it returned out of the method.
+		 */
+		private Map<IMIExecutionDMContext, String> fTopMethodName = new HashMap<IMIExecutionDMContext, String>();
+		
+		/**
+		 * Create an alias for expr with respect to threadDmc.
+		 * The alias is created based on where threadDmc was previously stopped.
+		 */
+	    public void createAlias(IMIExecutionDMContext threadDmc, String expr) {
+    		String alias = expr;
+    		String methodName = fTopMethodName.get(threadDmc);
+    		if (methodName != null) {
+    			alias = methodName + "()"; //$NON-NLS-1$
+    		}
+
+    		fExpressionAliasesMap.put(expr, alias);
+
+    		List<String> aliasList = fExecutionToAliasMap.get(threadDmc);
+    		if (aliasList == null) {
+    			aliasList = new ArrayList<String>();
+    			fExecutionToAliasMap.put(threadDmc, aliasList);
+    		}
+    		aliasList.add(expr);
+	    }
+	    
+	    /**
+	     * Clear all information related to a particular thread of execution.
+	     */
+	    public void clearThread(IMIExecutionDMContext threadDmc) {
+	    	fTopMethodName.remove(threadDmc);
+	    	clearAliases(threadDmc);
+	    }
+
+	    /**
+	     * Clear all aliases related to a particular thread of execution.
+	     * It is good to keep the aliases around as long as the thread is alive;
+	     * even if we won't show the return value automatically, the user
+	     * could add the expression in the expression view, and the alias 
+	     * would then be used. 
+	     */
+	    public void clearAliases(IMIExecutionDMContext threadDmc) {
+	    	List<String> aliasList = fExecutionToAliasMap.remove(threadDmc);
+	    	if (aliasList != null) {
+	    		for (String alias : aliasList) {
+	    			fExpressionAliasesMap.remove(alias);        			
+	    		}
+	    	}
+	    }
+
+	    /**
+	     * Update the method name of the last location where threadDmc was stopped.
+	     */
+	    public void updateStoppedLocation(IMIExecutionDMContext threadDmc, String methodName) {
+	    	fTopMethodName.put(threadDmc, methodName);
+	    }
+	    
+	    /**
+	     * @return The alias for 'expression' if there is one.  null if there
+	     *         is no alias for that expression.
+	     */
+	    public String getAlias(String expression) {
+	    	return fExpressionAliasesMap.get(expression);
+	    }
+	}
+	
+	/** Structure to keep track of aliases for method return values. */
+	private ReturnValueAliasing fReturnValueAliases = new ReturnValueAliasing();
+	
+
 	private CommandCache fExpressionCache;
 	private MIVariableManager varManager;
 	private CommandFactory fCommandFactory;
@@ -1036,8 +1133,13 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
                             }
                         }
                         
+                        String relativeExpr = getData().getExpr();
+                        String alias = fReturnValueAliases.getAlias(relativeExpr);
+                		if (alias != null) {
+                			relativeExpr = alias;
+                		}
                         rm.setData(new ExpressionDMData(
-                            getData().getExpr(),getData().getType(), getData().getNumChildren(), 
+                            relativeExpr, getData().getType(), getData().getNumChildren(), 
                             getData().getEditable(), basicType));
                         rm.done();
                     }
@@ -1467,7 +1569,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	}
 
     @DsfServiceEventHandler 
-    public void eventDispatched(IRunControl.IResumedDMEvent e) {
+    public void eventDispatched(IResumedDMEvent e) {
         fExpressionCache.setContextAvailable(e.getDMContext(), false);
         if (e.getReason() != StateChangeReason.STEP) {
             fExpressionCache.reset();
@@ -1475,9 +1577,36 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
     }
     
     @DsfServiceEventHandler 
-    public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
+    public void eventDispatched(ISuspendedDMEvent e) {
         fExpressionCache.setContextAvailable(e.getDMContext(), true);
         fExpressionCache.reset();
+        
+        // Process MIStoppedEvent from within the ISuspendedDMEvent
+        // to avoid any race conditions where the actual MIStoppedEvent
+        // can arrive faster that a preceding IResumedDMEvent
+        if (e instanceof IMIDMEvent) {
+        	Object miEvent = ((IMIDMEvent)e).getMIEvent();
+        	if (miEvent instanceof MIStoppedEvent) {
+        		IDMContext dmc = e.getDMContext();
+        		if (dmc instanceof IMIExecutionDMContext) {
+        			IMIExecutionDMContext threadDmc = (IMIExecutionDMContext)dmc;
+        			if (miEvent instanceof MIFunctionFinishedEvent) {
+        				// When getting an MIFunctionFinishedEvent we must set
+        				// a proper alias for the convenience variable
+        				String resultVar = ((MIFunctionFinishedEvent)miEvent).getGDBResultVar();
+        				fReturnValueAliases.createAlias(threadDmc, resultVar);
+        			}
+
+        			// Keep track of the latest method the thread is stopped in.
+        			// Must do this after creating any alias, or else we will overwrite
+        			// the previous function name, which we need for the alias
+        			MIFrame frame = ((MIStoppedEvent)miEvent).getFrame();
+        			if (frame != null) {
+        				fReturnValueAliases.updateStoppedLocation(threadDmc, frame.getFunction());
+        			}
+        		}
+        	}
+        }
     }
 
     @DsfServiceEventHandler 
@@ -1493,6 +1622,20 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
     		fTraceVisualization = true;
     	} else {
     		fTraceVisualization = false;
+    	}
+    }
+
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
+    @DsfServiceEventHandler 
+    public void eventDispatched(IExitedDMEvent e) {
+    	IDMContext ctx = e.getDMContext();
+    	if (ctx instanceof IMIExecutionDMContext) {
+    		// When a thread exits, clear the alias structure for that
+    		// thread to avoid leaks
+    		fReturnValueAliases.clearThread((IMIExecutionDMContext)ctx);
     	}
     }
     

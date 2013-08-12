@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson			  - Modified for handling of multiple execution contexts	
+ *     Marc Khouzam (Ericsson) - Show return value of the method when doing a step-return (Bug 341731)	
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -29,6 +30,9 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
@@ -42,6 +46,7 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIFunctionFinishedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIArg;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
@@ -92,7 +97,7 @@ public class MIStack extends AbstractDsfService
     protected static class MIVariableDMC extends AbstractDMContext
         implements IVariableDMContext
     {
-        public enum Type { ARGUMENT, LOCAL }
+        public enum Type { ARGUMENT, LOCAL, /** @since 4.4 */RETURN_VALUES }
         final private Type fType;
         final private int fIndex;
 
@@ -117,6 +122,7 @@ public class MIStack extends AbstractDsfService
             int typeFactor = 0;
             if (fType == Type.LOCAL) typeFactor = 2;
             else if (fType == Type.ARGUMENT) typeFactor = 3;
+            else if (fType == Type.RETURN_VALUES) typeFactor = 4;
             return super.baseHashCode() ^ typeFactor ^ fIndex;
         }
         
@@ -155,6 +161,33 @@ public class MIStack extends AbstractDsfService
             };
     	}
     }
+    
+    /**
+     * Same as with frame objects, this is a base class for the IVariableDMData object that uses an MIArg object to 
+     * provide the data.  Sub-classes must supply the MIArg object.
+     */
+	private class VariableData implements IVariableDMData {
+		private MIArg fMIArg;
+
+		public VariableData(MIArg arg){
+			fMIArg = arg;
+		}
+
+		@Override
+		public String getName() { 
+			return fMIArg.getName(); 
+		}
+		
+		@Override
+		public String getValue() { 
+			return fMIArg.getValue(); 
+		}
+		
+		@Override
+		public String toString() { 
+			return fMIArg.toString();
+		}
+	}
 
 	private CommandCache fMICommandCache;
 	private CommandFactory fCommandFactory;
@@ -175,6 +208,13 @@ public class MIStack extends AbstractDsfService
 	 * In this case, some errors should not be reported.
 	 */
 	private boolean fTraceVisualization;
+
+	/**
+	 * A Map of a return value for each thread.  
+	 * A return value is stored when the user performs a step-return,
+	 * and it cleared as soon as that thread executes again.
+	 */
+	private Map<IMIExecutionDMContext, VariableData> fThreadToReturnVariable = new HashMap<IMIExecutionDMContext, VariableData>();
 
 	public MIStack(DsfSession session) 
 	{
@@ -614,23 +654,6 @@ public class MIStack extends AbstractDsfService
             return;
         }
 
-        /**
-         * Same as with frame objects, this is a base class for the IVariableDMData object that uses an MIArg object to 
-         * provide the data.  Sub-classes must supply the MIArg object.
-         */
-    	class VariableData implements IVariableDMData {
-    		private MIArg dsfMIArg;
-    		VariableData(MIArg arg){
-    			dsfMIArg = arg;
-    		}
-    		@Override
-    		public String getName() { return dsfMIArg.getName(); }
-    		@Override
-    		public String getValue() { return dsfMIArg.getValue(); }
-    		@Override
-    		public String toString() { return dsfMIArg.toString(); }	
-    	}    	
-
         // Check if the stopped event can be used to extract the variable value. 
         if (execDmc != null && miVariableDmc.fType == MIVariableDMC.Type.ARGUMENT &&
             frameDmc.fLevel == 0 && fCachedStoppedEvent != null && fCachedStoppedEvent.getFrame() != null &&
@@ -694,8 +717,7 @@ public class MIStack extends AbstractDsfService
 	                			});	
 	                }
 	        	});
-        }//if
-        if (miVariableDmc.fType == MIVariableDMC.Type.LOCAL){
+        } else if (miVariableDmc.fType == MIVariableDMC.Type.LOCAL){
             fMICommandCache.execute(
                 	// Don't ask for value when we are visualizing trace data, since some
                 	// data will not be there, and the command will fail
@@ -735,7 +757,17 @@ public class MIStack extends AbstractDsfService
                             		});
                         }
                     });
-        }//if   
+        } else if (miVariableDmc.fType == MIVariableDMC.Type.RETURN_VALUES) {
+        	VariableData var = fThreadToReturnVariable.get(execDmc);
+        	if (var != null) {
+        		rm.setData(var);
+        	} else {
+                rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Return value not found", null));  //$NON-NLS-1$
+        	}
+        	rm.done();
+        } else {
+            rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid variable type " + miVariableDmc.fType, null));  //$NON-NLS-1$
+        }
 
     }
 
@@ -767,7 +799,24 @@ public class MIStack extends AbstractDsfService
         return -1;
     }
     
-    
+    /**
+     * Retrieves variables which are used to store the return values of functions.
+     */
+    private void getReturnValues(IFrameDMContext frameDmc, DataRequestMonitor<IVariableDMContext[]> rm) {
+		IVariableDMContext[] values = new IVariableDMContext[0];
+
+		// Return values are only relevant for the top stack-frame
+		if (!fTraceVisualization && frameDmc.getLevel() == 0) {
+        	IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(frameDmc, IMIExecutionDMContext.class);
+        	VariableData var = fThreadToReturnVariable.get(threadDmc);
+        	if (var != null) {
+        		values = new IVariableDMContext[1];
+        		values[0] = new MIVariableDMC(this, frameDmc, MIVariableDMC.Type.RETURN_VALUES, 0);
+        	}
+        }
+		rm.done(values);
+	}
+	
 	@Override
     public void getLocals(final IFrameDMContext frameDmc, final DataRequestMonitor<IVariableDMContext[]> rm) {
 
@@ -780,8 +829,20 @@ public class MIStack extends AbstractDsfService
                 rm.done();
             }
         };
-        countingRm.setDoneCount(2);
+        countingRm.setDoneCount(3);
         
+        // First show any return values of methods
+        getReturnValues(
+                frameDmc,
+                new DataRequestMonitor<IVariableDMContext[]>(getExecutor(), countingRm) { 
+                    @Override
+                    protected void handleSuccess() {
+                        localsList.addAll( Arrays.asList(getData()) );
+                        countingRm.done();
+                    }
+                });
+        
+        // Then show arguments
         getArguments(
             frameDmc,
             new DataRequestMonitor<IVariableDMContext[]>(getExecutor(), countingRm) { 
@@ -792,6 +853,7 @@ public class MIStack extends AbstractDsfService
                 }
             }); 
         
+        // Finally get the local variables
 	    fMICommandCache.execute(
 	            // We don't actually need to ask for the values in this case, but since
 	        	// we will ask for them right after, it is more efficient to ask for them now
@@ -914,6 +976,29 @@ public class MIStack extends AbstractDsfService
             fMICommandCache.reset();
             fStackDepthCache.clear();
         }
+        
+        handleReturnValues(e);
+    }
+    
+    private void handleReturnValues(IResumedDMEvent e) {
+        // Whenever the execution resumes, we can clear any
+        // return values of previous methods for the resuming 
+        // thread context.  For all-stop mode, we get a container event here,
+        // and we can clear the entire list, which should contain at most one
+        // value for all-stop.
+        if (e instanceof IContainerResumedDMEvent) {
+        	// All-stop mode
+        	assert fThreadToReturnVariable.size() <= 1;
+        	fThreadToReturnVariable.clear();
+        } else {
+        	// Non-stop mode
+        	IDMContext ctx = e.getDMContext();
+        	if (ctx instanceof IMIExecutionDMContext) {
+        		fThreadToReturnVariable.remove(ctx);
+        	} else if (ctx instanceof IContainerDMContext) {
+        		fThreadToReturnVariable.clear();
+        	}
+        }
     }
     
     /**
@@ -926,8 +1011,47 @@ public class MIStack extends AbstractDsfService
     	fMICommandCache.setContextAvailable(e.getDMContext(), true);
         fMICommandCache.reset();
         fStackDepthCache.clear();
+
+        handleReturnValues(e);
     }
     
+    private void handleReturnValues(ISuspendedDMEvent e) {
+        // Process MIFunctionFinishedEvent from within the ISuspendedDMEvent
+        // instead of MIStoppedEvent.
+        // This avoids a race conditions where the actual MIFunctionFinishedEvent
+        // can arrive here, faster that a preceding IResumedDMEvent
+        if (e instanceof IMIDMEvent) {
+        	Object miEvent = ((IMIDMEvent)e).getMIEvent();
+        	if (miEvent instanceof MIFunctionFinishedEvent) {
+        		// When returning out of a function, we want to show the return value
+        		// for the thread that finished the call.  To do that, we store
+        		// the variable in which GDB stores that return value, and we do
+        		// that for the proper thread.
+        		
+        		IMIExecutionDMContext finishedEventThread = null;
+        		if (e instanceof IContainerSuspendedDMEvent) {
+        			// All-stop mode
+                	IExecutionDMContext[] triggerContexts = ((IContainerSuspendedDMEvent)e).getTriggeringContexts();
+                    if (triggerContexts.length != 0 && triggerContexts[0] instanceof IMIExecutionDMContext) {
+                    	finishedEventThread = (IMIExecutionDMContext)triggerContexts[0];
+                    }
+                } else {
+                	// Non-stop mode
+                	IDMContext ctx = e.getDMContext();
+                	if (ctx instanceof IMIExecutionDMContext) {
+                		finishedEventThread = (IMIExecutionDMContext)ctx;
+                	}
+                }
+
+        		if (finishedEventThread != null) {
+        			String name = ((MIFunctionFinishedEvent)miEvent).getGDBResultVar();
+        			String value = ((MIFunctionFinishedEvent)miEvent).getReturnValue();
+
+        			fThreadToReturnVariable.put(finishedEventThread, new VariableData(new MIArg(name, value)));
+        		}
+        	}
+        }
+    }
 
     /**
      * @nooverride This method is not intended to be re-implemented or extended by clients.

@@ -190,7 +190,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			String projectName = bin.getResource().getProjectRelativePath().toString();
 			ILaunchConfigurationType configType = getCLaunchConfigType();
 			ILaunchConfigurationWorkingCopy wc =
-					configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(bin.getElementName()));
+					configType.newInstance(null, getLaunchManager().generateLaunchConfigurationName(bin.getElementName()));
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, projectName);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, bin.getCProject().getElementName());
 			wc.setMappedResources(new IResource[] { bin.getResource().getProject() });

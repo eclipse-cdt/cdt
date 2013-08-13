@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_45a9c363",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/settings/model/xml/XmlProjectDescriptionStorage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 544,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-08-13T13:10:50Z",
+      "side": 1,
+      "message": "Did you research if it is possible to pass the separator to transformer directly? I am wary of this in multithread program as there is a possibility of affecting behavior in unrelated threads.",
+      "revId": "49431e20575388f8caeb11285e073da1ab9db87f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

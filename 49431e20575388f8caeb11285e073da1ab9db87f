@@ -16,6 +16,24 @@
       "revId": "49431e20575388f8caeb11285e073da1ab9db87f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_e5528f5e",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/settings/model/xml/XmlProjectDescriptionStorage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 544,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-08-13T14:21:34Z",
+      "side": 1,
+      "message": "You\u0027re right, this seems too dangerous. I haven\u0027t found any way to pass the separator to transformer directly but I\u0027ll try to find an alternate solution. Thanks!",
+      "parentUuid": "c73e4bec_45a9c363",
+      "revId": "49431e20575388f8caeb11285e073da1ab9db87f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

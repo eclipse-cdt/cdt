@@ -22,6 +22,19 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIExecArguments extends MICommand 
 {
 	public MIExecArguments(String miVersion, String[] args) {
-		super(miVersion, "-exec-arguments", args); //$NON-NLS-1$
+		super(miVersion, "-exec-arguments", processArguments(args)); //$NON-NLS-1$
+	}
+
+	private static String[] processArguments(String[] args) {
+		String[] result = new String[args.length];
+		for (int i = 0; i < result.length; ++i) {
+			if (args[i].isEmpty()) {
+				result[i] = "''"; //$NON-NLS-1$
+			}
+			else {
+				result[i] = args[i];
+			}
+		}
+		return result;
 	}
 }

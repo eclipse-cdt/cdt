@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.internal.remote.ui.RemoteUIPlugin;
 import org.eclipse.internal.remote.ui.RemoteUIServicesProxy;
+import org.eclipse.internal.remote.ui.messages.Messages;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.remote.core.IRemoteServices;
@@ -37,6 +38,7 @@ public class RemoteUIServices {
 	private static final String EXTENSION_POINT_ID = "remoteUIServices"; //$NON-NLS-1$
 
 	private static Map<String, RemoteUIServicesProxy> fRemoteUIServices = null;
+	private static Map<String, IRemoteServices> fRemoteServices = new HashMap<String, IRemoteServices>();
 
 	/**
 	 * Look up a remote service provider and ensure it is initialized. The method will use the supplied container's progress
@@ -50,25 +52,32 @@ public class RemoteUIServices {
 	 * @since 5.0
 	 */
 	public static IRemoteServices getRemoteServices(final String id, IRunnableContext context) {
-		final IRemoteServices[] remoteService = new IRemoteServices[1];
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				remoteService[0] = RemoteServices.getRemoteServices(id, monitor);
+		IRemoteServices service = fRemoteServices.get(id);
+		if (service == null) {
+			final IRemoteServices[] remoteService = new IRemoteServices[1];
+			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					monitor.beginTask(Messages.RemoteUIServices_Configuring_remote_services, 10);
+					remoteService[0] = RemoteServices.getRemoteServices(id, monitor);
+				}
+			};
+			try {
+				if (context != null) {
+					context.run(true, false, runnable);
+				} else {
+					PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnable);
+				}
+			} catch (InvocationTargetException e) {
+				// Ignored
+			} catch (InterruptedException e) {
+				// cancelled
 			}
-		};
-		try {
-			if (context != null) {
-				context.run(true, false, runnable);
-			} else {
-				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnable);
+			service = remoteService[0];
+			if (service != null) {
+				fRemoteServices.put(id, service);
 			}
-		} catch (InvocationTargetException e) {
-			// Ignored
-		} catch (InterruptedException e) {
-			// cancelled
 		}
-
-		return remoteService[0];
+		return service;
 	}
 
 	/**

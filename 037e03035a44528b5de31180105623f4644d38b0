@@ -16,6 +16,24 @@
       "revId": "037e03035a44528b5de31180105623f4644d38b0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_6ad12c3e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerThread.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-08-13T10:45:53Z",
+      "side": 1,
+      "message": "This is used by the visualizer filter mechanism to recognize a given thread.  The previous version worked well except in the case of all-stop mode, where it\u0027s not immediately possible to get the OS thread id of a newly created thread (we use zero since we need to display something in the visualizer).  \n\nSo if a few new threads were created while the program was running and one was immediately filtered-on, they would all match according to compareTo(), because they all had the same (bogus) OS thread id.  Using the GDB thread id instead fixed this.  Since we also check for the pid, the complete compareTo() can still distinguish between threads of different processes that happen to have the same GDB thread id.  \n\nAdding the check for the OS thead id would not hurt but would not add anything either, the way I understand it.  Makes sense?",
+      "parentUuid": "c73e4bec_ce008a3b",
+      "revId": "037e03035a44528b5de31180105623f4644d38b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

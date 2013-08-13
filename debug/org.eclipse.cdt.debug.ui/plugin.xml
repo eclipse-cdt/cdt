@@ -119,7 +119,7 @@
       <propertyTester
       		namespace="org.eclipse.cdt.launch"
             properties="isExecutable,isCProject"
-            type="org.eclipse.core.runtime.IAdaptable"
+            type="java.lang.Object"
             class="org.eclipse.cdt.debug.internal.ui.launch.CPropertyTester"
             id="org.eclipse.cdt.launch.CPropertyTester">
       </propertyTester>

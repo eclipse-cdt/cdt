@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - Initial API and implementation
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
+ *     Marc Dumais (Ericsson) - Bug 414959
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
@@ -56,6 +57,6 @@ public class MITargetAttach extends MICommand<MIInfo> {
 	 * @since 4.0
 	 */
 	public MITargetAttach(IMIContainerDMContext ctx, String pid, boolean interrupt) {
-		super(ctx, "-target-attach", new String[] { pid, interrupt ? "" : "&" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		super(ctx, "-target-attach", new String[] { pid + (interrupt ? "" : "&") }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

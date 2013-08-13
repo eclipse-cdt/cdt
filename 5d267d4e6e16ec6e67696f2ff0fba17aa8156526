@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_9d8de3be",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1070,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-08-13T15:38:28Z",
+      "side": 1,
+      "message": "We need to do the same check for the parent expressions. For details see my comment in bugzilla.",
+      "revId": "5d267d4e6e16ec6e67696f2ff0fba17aa8156526",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

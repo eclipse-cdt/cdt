@@ -343,11 +343,15 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 				builder.append('"');
 			}
 			
-			// an empty parameter can be passed with two single quotes
-			if (builder.length() == 0) {
-				builder.append("''"); //$NON-NLS-1$
-			}
-
+// Although this change makes sense, it could have impacts on many
+// different commands we send to GDB.  The risk outways the benefits,
+// so we comment it out.  See bugs 412471 and 414959 for details.
+//			
+//			// an empty parameter can be passed with two single quotes
+//			if (builder.length() == 0) {
+//				builder.append("''"); //$NON-NLS-1$
+//			}
+//
 			return builder.toString();
 		}
 	}

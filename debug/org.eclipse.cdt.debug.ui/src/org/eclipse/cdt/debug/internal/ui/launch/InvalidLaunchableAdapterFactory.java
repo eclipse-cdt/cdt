@@ -24,15 +24,9 @@ import org.eclipse.debug.ui.actions.ILaunchable;
  * the ILaunchable interface and Bugzilla : 396822.
  */
 public class InvalidLaunchableAdapterFactory implements IAdapterFactory {
-
     private static final Class<?>[] TYPES = { ILaunchable.class };
-    
     private static ArrayList<String> currentTraces = new ArrayList<String>();
     
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-     */
     @Override
 	@SuppressWarnings("rawtypes")
     public Object getAdapter(Object adaptableObject, Class adapterType) {
@@ -42,23 +36,21 @@ public class InvalidLaunchableAdapterFactory implements IAdapterFactory {
     	 */
     	String trace = getStackTrace();
     	
-    	if ( ! currentTraces.contains( trace ) ) {
+    	if (!currentTraces.contains(trace)) {
     		/*
     		 * Note we have seen this one for the first time.
     		 */
-    		currentTraces.add( trace );
+    		currentTraces.add(trace);
     		
     		/*
     		 * Generate a message for this in the log file.
     		 */
     		String msg = LaunchMessages.getString("Launch.ILaunchable.Interface.Error");  //$NON-NLS-1$
     		
-    		CDebugUIPlugin.log( new Status( IStatus.INFO, CDebugUIPlugin.PLUGIN_ID, 0, msg, new Throwable( "" ) ) ); //$NON-NLS-1$
+    		CDebugUIPlugin.log(new Status(IStatus.INFO, CDebugUIPlugin.PLUGIN_ID, 0, msg, new Throwable(""))); //$NON-NLS-1$
     	}
     	
-    	/*
-    	 * We do not actually provide an adapter factory for this.
-    	 */
+    	// We do not actually provide an adapter factory for this.
         return null;
     }
 
@@ -76,9 +68,6 @@ public class InvalidLaunchableAdapterFactory implements IAdapterFactory {
     
     /*
      * Indicates that we are adapting ILaunchable.
-     * 
-     * (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
      */
     @Override
 	@SuppressWarnings("rawtypes")

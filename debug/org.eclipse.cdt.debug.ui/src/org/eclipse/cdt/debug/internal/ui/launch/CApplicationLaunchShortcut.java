@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Ken Ryall (Nokia) - bug 178731
- *     Ken Ryall (Nokia) - bug 246201
+ *     Ken Ryall (Nokia) - bugs 178731, 246201
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.launch;
 
@@ -70,7 +69,6 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
-
 	@Override
 	public void launch(IEditorPart editor, String mode) {
 		searchAndLaunch(new Object[] { editor.getEditorInput() }, mode);

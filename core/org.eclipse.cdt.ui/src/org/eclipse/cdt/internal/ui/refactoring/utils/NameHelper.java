@@ -23,6 +23,8 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
@@ -69,22 +71,22 @@ public class NameHelper {
 	public static ICPPASTQualifiedName createQualifiedNameFor(IASTName declaratorName,
 			ITranslationUnit declarationTu, int selectionOffset, ITranslationUnit insertFileTu,
 			int insertLocation, CRefactoringContext astCache) throws CoreException {
-		ICPPASTQualifiedName qname = new CPPASTQualifiedName();
+		ICPPASTQualifiedName qname = new CPPASTQualifiedName(
+				(ICPPASTName) declaratorName.copy(CopyStyle.withLocations));
 		
-		IASTName[] declarationNames = NamespaceHelper.getSurroundingNamespace(declarationTu,
-				selectionOffset, astCache).getNames();
-		IASTName[] implementationNames = NamespaceHelper.getSurroundingNamespace(insertFileTu,
-				insertLocation, astCache).getNames();
+		ICPPASTNameSpecifier[] declarationNames = NamespaceHelper.getSurroundingNamespace(declarationTu,
+				selectionOffset, astCache).getAllSegments();
+		ICPPASTNameSpecifier[] implementationNames = NamespaceHelper.getSurroundingNamespace(insertFileTu,
+				insertLocation, astCache).getAllSegments();
 		
 		for (int i = 0; i < declarationNames.length; i++) {
 			if (i >= implementationNames.length) {
-				qname.addName(declarationNames[i]);
+				qname.addNameSpecifier(declarationNames[i]);
 			} else if (!Arrays.equals(declarationNames[i].toCharArray(), implementationNames[i].toCharArray())) {
-				qname.addName(declarationNames[i]);
+				qname.addNameSpecifier(declarationNames[i]);
 			}
 		}
 
-		qname.addName(declaratorName.copy(CopyStyle.withLocations));
 		return qname;
 	}
 	

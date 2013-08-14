@@ -54,6 +54,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -162,11 +163,11 @@ public class LookupData extends ScopeLookupData {
 			} else {
 				nameParent= parent.getParent();
 			}
-			final IASTName[] names = qn.getNames();
+			final ICPPASTNameSpecifier[] qualifier = qn.getQualifier();
 			if (qn.isFullyQualified()) {
 				qualified= true;
-			} else if (names.length > 0) {
-				if (names[0] != tn) {
+			} else if (qualifier.length > 0) {
+				if (qualifier[0] != tn) {
 					qualified= true;
 				} 
 			}

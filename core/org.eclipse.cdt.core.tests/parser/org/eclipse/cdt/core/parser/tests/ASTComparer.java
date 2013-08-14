@@ -33,8 +33,9 @@ public class ASTComparer extends Assert {
 		"getLastName",
 
 		// Exponential complexity
-		"getOperand2", // duplicates getInitOperand2()
+		"getOperand2",     // duplicates getInitOperand2()
 		"getChildren",
+		"getAllSegments",  // duplicates getQualifier()
 
 		// Can be different in copy
 		"isFrozen",

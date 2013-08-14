@@ -19,6 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -31,7 +33,7 @@ import org.eclipse.core.runtime.Assert;
  * Common base class for all sorts of c++ names: unqualified, qualified, operator and conversion
  * names plus template-ids
  */
-public abstract class CPPASTNameBase extends ASTNode implements IASTName {
+public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
 	protected static final Pattern WHITESPACE_SEQ = Pattern.compile("\\s+"); //$NON-NLS-1$
 
 	/**
@@ -161,8 +163,8 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
 			ICPPASTQualifiedName qn= (ICPPASTQualifiedName) parent;
 			if (qn.isFullyQualified())
 				return true;
-			IASTName[] qns = qn.getNames();
-			if (qns.length > 0 && qns[0] == this)
+			ICPPASTNameSpecifier[] qualifier = qn.getQualifier();
+			if (qualifier.length > 0 && qualifier[0] == this)
 				return false;
 			return true;
 		}

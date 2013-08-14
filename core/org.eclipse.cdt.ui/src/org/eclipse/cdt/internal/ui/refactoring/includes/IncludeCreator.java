@@ -55,6 +55,8 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
@@ -476,11 +478,14 @@ public class IncludeCreator {
 	}
 
 	private boolean match(IASTName name, ArrayList<String> usingChain, boolean excludeLast) {
-		IASTName[] names;
+		ICPPASTNameSpecifier[] names;
 		if (name instanceof ICPPASTQualifiedName) {
-			names = ((ICPPASTQualifiedName) name).getNames();
+			// OK to use getNames() here. 'name' comes from a namespace-scope
+			// using-declaration or using-directive, which cannot contain
+			// decltype-specifiers.
+			names = ((ICPPASTQualifiedName) name).getAllSegments();
 		} else {
-			names = new IASTName[] { name };
+			names = new ICPPASTNameSpecifier[] { (ICPPASTName) name };
 		}
 		if (names.length != usingChain.size() - (excludeLast ? 1 : 0)) {
 			return false;

@@ -36,6 +36,7 @@ import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -441,8 +442,13 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 					return;
 				}
 				int count = results.size();
-				if (count == 0) {					
-					MessageDialog.openError(getShell(), LaunchMessages.getString("CApplicationLaunchShortcut.Application_Launcher"), LaunchMessages.getString("CApplicationLaunchShortcut.Launch_failed_no_binaries")); //$NON-NLS-1$ //$NON-NLS-2$
+				if (count == 0) {
+					if (buildProject(elements)) {
+						// Now that the binary or binaries are built, let's search for them again
+						searchAndLaunch(elements, mode);
+					} else {
+						MessageDialog.openError(getShell(), LaunchMessages.getString("CApplicationLaunchShortcut.Application_Launcher"), LaunchMessages.getString("CApplicationLaunchShortcut.Launch_failed_no_binaries")); //$NON-NLS-1$ //$NON-NLS-2$ 							
+					}
 				} else if (count > 1) {
 					bin = chooseBinary(results, mode);
 				} else {
@@ -457,6 +463,48 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		}
 	}
 
+	private boolean buildProject(final Object elements[]) {
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			@Override
+			public void run(IProgressMonitor pm) throws InterruptedException {
+				int nElements = elements.length;
+				pm.beginTask("Building project", 10*nElements); //$NON-NLS-1$
+				try {
+					IProgressMonitor sub = new SubProgressMonitor(pm, 10);
+					for (int i = 0; i < nElements; i++) {
+						if (elements[i] instanceof IAdaptable) {
+							IResource r = (IResource) ((IAdaptable) elements[i]).getAdapter(IResource.class);
+							if (r != null) {
+								ICProject cproject = CoreModel.getDefault().create(r.getProject());
+								if (cproject != null) {
+									try {
+										cproject.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, sub);
+									} catch (CoreException e) {
+									}
+								}
+							}
+						}
+						if (pm.isCanceled()) {
+							throw new InterruptedException();
+						}
+					}
+				} finally {
+					pm.done();
+				}
+			}
+		};
+		try {
+			dialog.run(true, true, runnable);
+		} catch (InterruptedException e) {
+			return false;
+		} catch (InvocationTargetException e) {
+			MessageDialog.openError(getShell(), LaunchMessages.getString("CApplicationLaunchShortcut.Application_Launcher"), e.getMessage()); //$NON-NLS-1$
+			return false;
+		}
+		return true;
+	}
+	
 	@Override
 	public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection) {
 		// This returns null so the platform will use the ILaunchShortcut behavior

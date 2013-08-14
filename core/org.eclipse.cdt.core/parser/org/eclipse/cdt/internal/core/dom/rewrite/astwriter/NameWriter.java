@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.parser.Keywords;
@@ -85,9 +86,9 @@ public class NameWriter extends NodeWriter {
 	}
 	
 	private boolean isDependentName(ICPPASTQualifiedName qname, ICPPASTTemplateId tempId) {
-		IASTName[] names = qname.getNames();
-		for (int i = 0; i < names.length; ++i){
-			if (names[i] == tempId){
+		ICPPASTNameSpecifier[] segments = qname.getAllSegments();
+		for (int i = 0; i < segments.length; ++i){
+			if (segments[i] == tempId){
 				return isDependentName(qname, tempId, i);
 			}
 		}
@@ -98,10 +99,10 @@ public class NameWriter extends NodeWriter {
 		if (i <= 0){
 			return false;
 		}
-		if (qname.getNames()[i - 1] instanceof ICPPASTTemplateId) {
+		if (qname.getQualifier()[i - 1] instanceof ICPPASTTemplateId) {
 			return true;
 		}
-		IBinding binding = qname.getNames()[i - 1].resolveBinding();
+		IBinding binding = qname.getQualifier()[i - 1].resolveBinding();
 		if (binding instanceof CPPTemplateTypeParameter) {
 			return true;
 		}
@@ -121,12 +122,10 @@ public class NameWriter extends NodeWriter {
 		if (qname.isFullyQualified()) {
 			scribe.print(COLON_COLON);
 		}
-		IASTName[] nodes = qname.getNames();
-		for (int i = 0; i < nodes.length; ++i) {
-			nodes[i].accept(visitor);
-			if (i + 1 < nodes.length) {
-				scribe.print(COLON_COLON);
-			}
+		for (ICPPASTNameSpecifier segment : qname.getQualifier()) {
+			segment.accept(visitor);
+			scribe.print(COLON_COLON);
 		}
+		qname.getLastName().accept(visitor);
 	}
 }

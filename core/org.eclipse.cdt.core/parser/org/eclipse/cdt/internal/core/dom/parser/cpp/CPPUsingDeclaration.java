@@ -31,8 +31,7 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
     
     public CPPUsingDeclaration(IASTName name, IBinding[] bindings) {
     	if (name instanceof ICPPASTQualifiedName) {
-    		IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-    		name = ns[ns.length - 1];
+    		name = name.getLastName();
     	}
         this.name = name;
         this.delegates= bindings;

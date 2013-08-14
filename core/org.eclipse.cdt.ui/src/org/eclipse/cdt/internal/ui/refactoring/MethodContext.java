@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -177,7 +178,7 @@ public class MethodContext {
 	}
 
 	private static ICPPClassType getClassBinding(ICPPASTQualifiedName qname) {
-		IASTName classname = qname.getNames()[qname.getNames().length - 2];
+		ICPPASTNameSpecifier classname = qname.getQualifier()[qname.getQualifier().length - 1];
 		ICPPClassType bind = (ICPPClassType)classname.resolveBinding();
 		return bind;
 	}

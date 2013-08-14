@@ -79,6 +79,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
@@ -96,6 +97,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression.CaptureDefault;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -243,7 +246,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		return ambiguousQualifiedName(ctx);
 
     	ICPPASTQualifiedName qname= null;
-    	IASTName name= null;
+    	ICPPASTNameSpecifier nameSpec= null;
     	final int offset= LA(1).getOffset();
     	int endOffset= offset;
     	if (LT(1) == IToken.tCOLONCOLON) {
@@ -272,20 +275,28 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		case IToken.tCOMPLETION:
     		case IToken.tEOC:
     			IToken nt= consume();
-    			name = buildName(destructorOffset, nt);
+    			nameSpec = (ICPPASTName) buildName(destructorOffset, nt);
     			break;
 
     		case IToken.t_operator:
-    			name= operatorId();
+    			nameSpec= (ICPPASTName) operatorId();
+    			break;
+    			
+    		case IToken.t_decltype:
+    			// A decltype-specifier must be the first component of a qualified name.
+    			if (qname != null)
+    				throwBacktrack(LA(1));
+    			
+    			nameSpec = decltypeSpecifier();
     			break;
 
     		default:
     			if (!haveName || destructorOffset >= 0 || keywordTemplate) {
     				throwBacktrack(LA(1));
     			}
-    			name= nodeFactory.newName(CharArrayUtils.EMPTY);
+    			nameSpec= (ICPPASTName) nodeFactory.newName(CharArrayUtils.EMPTY);
     			if (qname != null) {
-    				qname.addName(name);
+    				addNameSpecifier(qname, nameSpec);
     			}
     			break loop;
     		}
@@ -293,7 +304,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		haveName= true;
 
     		// Check for template-id
-            if (LTcatchEOF(1) == IToken.tLT) {
+            if (nameSpec instanceof IASTName && LTcatchEOF(1) == IToken.tLT) {
+            	IASTName name = (IASTName) nameSpec;
         		final boolean inBinaryExpression = ctx != CastExprCtx.eNotInBExpr;
 				final int haveArgs = haveTemplateArguments(inBinaryExpression);
             	boolean templateID= true;
@@ -308,13 +320,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             		if (haveArgs == -1)
             			throwBacktrack(LA(1));
 
-            		name= addTemplateArguments(name, strat);
+            		nameSpec= (ICPPASTName) addTemplateArguments(name, strat);
             	}
             }
 
-    		endOffset= calculateEndOffset(name);
+    		endOffset= calculateEndOffset(nameSpec);
             if (qname != null) {
-				qname.addName(name);
+				addNameSpecifier(qname, nameSpec);
 			}
 
     		if (LTcatchEOF(1) != IToken.tCOLONCOLON)
@@ -326,14 +338,25 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		endOffset= consume().getEndOffset(); // ::
     		if (qname == null) {
     			qname= nodeFactory.newQualifiedName();
-    			qname.addName(name);
+    			addNameSpecifier(qname, nameSpec);
     		}
     	}
     	if (qname != null) {
     		setRange(qname, offset, endOffset);
-    		name= qname;
+    		nameSpec= qname;
     	}
-		return name;
+    	if (!(nameSpec instanceof IASTName)) {
+    		// decltype-specifier without following ::
+    		throwBacktrack(nameSpec);
+    	}
+		return (IASTName) nameSpec;
+    }
+    
+    private void addNameSpecifier(ICPPASTQualifiedName qname, ICPPASTNameSpecifier nameSpec) {
+    	if (nameSpec instanceof IASTName)
+    		qname.addName((IASTName) nameSpec);
+    	else
+    		qname.addNameSpecifier(nameSpec);
     }
 
 	private IASTName buildName(int destructorOffset, IToken nt) {
@@ -391,6 +414,19 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
         return result;
     }
+
+    /**
+     * Parses a decltype-specifier. 
+     */
+    private ICPPASTDecltypeSpecifier decltypeSpecifier() throws EndOfFileException, BacktrackException {
+		int start = consume(IToken.t_decltype).getOffset();
+		consume(IToken.tLPAREN);
+		ICPPASTExpression decltypeExpression = (ICPPASTExpression) expression();
+		int end = consume(IToken.tRPAREN).getEndOffset();
+		ICPPASTDecltypeSpecifier decltypeSpec = nodeFactory.newDecltypeSpecifier(decltypeExpression);
+		setRange(decltypeSpec, start, end);
+		return decltypeSpec;
+    }    
 
     /**
      * Makes a fast check whether there could be template arguments.
@@ -2968,6 +3004,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			if (encounteredRawType || encounteredTypename)
         				throwBacktrack(LA(1));
 
+        			// A decltype-specifier could be the first element
+        			// in a qualified name, in which case we'll have
+        			// a named-type-specifier.
+        			IToken marked = mark();
+        			try {
+        				identifier = qualifiedName();
+        				endOffset = calculateEndOffset(identifier);
+        				encounteredTypename = true;
+        				break;
+        			} catch (BacktrackException e) {
+        				backup(marked);
+        			}
+
+        			// Otherwise we have a simple-decl-specifier.
         			simpleType= IASTSimpleDeclSpecifier.t_decltype;
         			consume(IToken.t_decltype);
         			consume(IToken.tLPAREN);

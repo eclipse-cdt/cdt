@@ -20,12 +20,12 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
+public interface ICPPASTQualifiedName extends ICPPASTName, IASTNameOwner {
 	/**
-	 * Each IASTName segment has property being <code>SEGMENT_NAME</code>.
+	 * Each ICPPASTNameSpecifier segment has property being <code>SEGMENT_NAME</code>.
 	 */
 	public static final ASTNodeProperty SEGMENT_NAME = new ASTNodeProperty(
-			"ICPPASTQualifiedName.SEGMENT_NAME - An IASTName segment"); //$NON-NLS-1$
+			"ICPPASTQualifiedName.SEGMENT_NAME - An ICPPASTNameSpecifier segment"); //$NON-NLS-1$
 
 	/**
 	 * Adds a name segment.
@@ -33,14 +33,55 @@ public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
 	 * @param name {@code IASTName}
 	 */
 	public void addName(IASTName name);
+	
+	/**
+	 * Adds a segment to the end of the qualifier.
+	 * 
+	 * @since 5.6
+	 */
+	public void addNameSpecifier(ICPPASTNameSpecifier nameSpecifier);
+	
+	/**
+	 * Sets the last name.
+	 * 
+	 * @since 5.6
+	 */
+	public void setLastName(ICPPASTName name);
 
 	/**
 	 * Returns all name segments.
 	 *
-	 * @return {@code IASTName[]}
+	 * @return <code>IASTName []</code>
+	 * 
+	 * @deprecated This cannot represent all qualified names in C++11,
+	 * where the first segment of a qualifier name may be a decltype-specifier.
+	 * Use {@link #getLastName()} and {@link #getQualifier()} instead.
+	 * If called on a name where a segment is a decltype-specifier,
+	 * UnsupportedOperationException is thrown.
 	 */
+	@Deprecated
 	public IASTName[] getNames();
 
+	/**
+	 * Returns all segments of the name but the last.
+	 * 
+	 * @since 5.6
+	 */
+	public ICPPASTNameSpecifier[] getQualifier();
+	
+	/**
+	 * Returns all segments of the name.
+	 * 
+	 * This method is less efficient than calling getQualifier() and 
+	 * getLastName() separately, because it constructs a new array.
+	 * It is provided mainly to ease transition of client code from
+	 * getNames() to getQualifier() and getLastName(). 
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 5.6
+	 */
+	public ICPPASTNameSpecifier[] getAllSegments();
+	
 	/**
 	 * The last name is often semantically significant.
 	 */

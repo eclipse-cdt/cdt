@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
 /**
@@ -20,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTConversionName extends IASTName {
+public interface ICPPASTConversionName extends ICPPASTName {
 	public static final ASTNodeProperty TYPE_ID=new ASTNodeProperty(
 	"IASTArrayDeclarator.TYPE_ID - IASTTypeId for ICPPASTConversionName"); //$NON-NLS-1$
 	

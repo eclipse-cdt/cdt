@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTTemplateId extends IASTName, IASTNameOwner {
+public interface ICPPASTTemplateId extends ICPPASTName, IASTNameOwner {
 	/**
 	 * TEMPLATE_NAME is the IASTName.
 	 */

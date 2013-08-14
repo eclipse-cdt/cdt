@@ -118,6 +118,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -3422,16 +3423,15 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (node.isFullyQualified()) {
 			scribe.printNextToken(Token.tCOLONCOLON);
 		}
-		IASTName[] names= node.getNames();
-		for (int i = 0; i < names.length - 1; i++) {
-			names[i].accept(this);
+		for (ICPPASTNameSpecifier nameSpec : node.getQualifier()) {
+			nameSpec.accept(this);
 			scribe.printNextToken(Token.tCOLONCOLON);
 		}
 		if (peekNextToken() == Token.tCOMPL) {
 			// destructor
 			scribe.printNextToken(Token.tCOMPL, false);
 		}
-		names[names.length - 1].accept(this);
+		node.getLastName().accept(this);
 		return PROCESS_SKIP;
 	}
 

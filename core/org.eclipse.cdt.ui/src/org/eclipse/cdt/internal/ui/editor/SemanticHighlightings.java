@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
@@ -356,9 +357,9 @@ public class SemanticHighlightings {
 						if (node instanceof ICPPASTFunctionDeclarator) {
 							if (name instanceof ICPPASTQualifiedName) {
 								ICPPASTQualifiedName qName= (ICPPASTQualifiedName) name;
-								IASTName[] names= qName.getNames();
-								if (names.length > 1) {
-									if (names[names.length - 2].getBinding() instanceof ICPPClassType) {
+								ICPPASTNameSpecifier[] qualifier= qName.getQualifier();
+								if (qualifier.length > 0) {
+									if (qualifier[qualifier.length - 1].resolveBinding() instanceof ICPPClassType) {
 										return true;
 									}
 								}

@@ -45,6 +45,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
@@ -327,16 +329,18 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 						(ICPPASTQualifiedName) new_definition.getDeclarator().getName();
 				ICPPASTQualifiedName qname_new = new CPPASTQualifiedName();
 				boolean start = false;
-				for(IASTName partname: qname.getNames()) {
+				for(ICPPASTNameSpecifier partname: qname.getQualifier()) {
 					if (partname.toString().equals(ns.getName().toString())) {
 						start = true;
 						continue;
 					}
 					if (start)
-						qname_new.addName(partname);
+						qname_new.addNameSpecifier(partname);
 				}
-				if (start)
+				if (start) {
+					qname_new.setLastName((ICPPASTName) qname.getLastName());
 					new_definition.getDeclarator().setName(qname_new);
+				}
 			}
 		}
 	}

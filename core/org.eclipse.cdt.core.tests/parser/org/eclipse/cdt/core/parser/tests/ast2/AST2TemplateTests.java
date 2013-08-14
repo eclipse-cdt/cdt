@@ -1825,9 +1825,9 @@ public class AST2TemplateTests extends AST2TestBase {
 		tu.accept(col);
 
 		ICPPASTQualifiedName qn = (ICPPASTQualifiedName) col.getName(0);
-		IASTName[] ns = qn.getNames();
-		assertTrue(ns[1] instanceof ICPPASTTemplateId);
-		assertEquals(ns[1].toString(), "B<T>");
+		IASTName lastName = qn.getLastName();
+		assertTrue(lastName instanceof ICPPASTTemplateId);
+		assertEquals(lastName.toString(), "B<T>");
 	}
 
 	// template <class T> struct A{
@@ -5199,6 +5199,9 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertEquals("CT<char, char>", names[0].toString());
 	}
 
+	// NOTE: If, after refactoring some AST code, this test hangs, check 
+	//		 if any methods that were added during the refactoring need 
+	//		 to be added to ASTComparer.methodsToIgnore.
 	public void testBug316704() throws Exception {
 		StringBuilder code= new StringBuilder("typedef if_< bool,");
 		for (int i = 0; i < 50; i++) {

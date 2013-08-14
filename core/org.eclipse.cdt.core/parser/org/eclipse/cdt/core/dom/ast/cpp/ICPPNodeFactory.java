@@ -110,6 +110,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	@Override
 	public ICPPASTDeclarator newDeclarator(IASTName name);
 	
+	/**
+	 * @since 5.6
+	 */
+	public ICPPASTDecltypeSpecifier newDecltypeSpecifier(ICPPASTExpression decltypeExpression);
+	
 	public ICPPASTDeleteExpression newDeleteExpression(IASTExpression operand);
 
 	@Override

@@ -809,7 +809,7 @@ public class CPPSemantics {
     	    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) parent.getParent();
     	    IASTName n = compSpec.getName();
     	    if (n instanceof ICPPASTQualifiedName) {
-    	        n = ((ICPPASTQualifiedName) n).getLastName();
+    	        n = n.getLastName();
     	    }
 	        scope = CPPVisitor.getContainingScope(n);
 	    } else {
@@ -1321,7 +1321,7 @@ public class CPPSemantics {
 			}
 			if (parent instanceof ICPPASTQualifiedName) {
 				ICPPASTQualifiedName qname= (ICPPASTQualifiedName) parent;
-				if (qname.isFullyQualified() || qname.getNames()[0] != node)
+				if (qname.isFullyQualified() || qname.getQualifier()[0] != node)
 					return null;
 			}
 		}
@@ -1702,7 +1702,7 @@ public class CPPSemantics {
 			ICPPASTUsingDeclaration using = (ICPPASTUsingDeclaration) declaration;
 			IASTName name = using.getName();
 			if (name instanceof ICPPASTQualifiedName) {
-				name = ((ICPPASTQualifiedName) name).getLastName();
+				name = name.getLastName();
 			}
 			ASTInternal.addName(scope, name);
 		} else if (declaration instanceof ICPPASTNamespaceDefinition) {

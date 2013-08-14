@@ -11,14 +11,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTName;
-
 /**
  * This interface represents a C++ overloaded operator member function name.
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTOperatorName extends IASTName {
+public interface ICPPASTOperatorName extends ICPPASTName {
 	
 	/**
 	 * @since 5.1

@@ -12,11 +12,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
@@ -70,26 +71,27 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 	@Override
 	public IType getMemberOfClass() {
 		if (classType == null) {
-			IASTName name;
+			ICPPASTNameSpecifier nameSpec;
 			IBinding binding= null;
 			ICPPASTPointerToMember pm = operator;
 			if (pm == null) {
-				name= new CPPASTName();
+				nameSpec = new CPPASTName();
 			} else {
-				name = pm.getName();
-				if (name instanceof ICPPASTQualifiedName) {
-					IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-					if (ns.length > 1)
-						name = ns[ns.length - 2];
+				nameSpec = (ICPPASTName) pm.getName();
+				if (nameSpec instanceof ICPPASTQualifiedName) {
+					ICPPASTQualifiedName qname = ((ICPPASTQualifiedName) nameSpec);
+					ICPPASTNameSpecifier[] qualifier = qname.getQualifier();
+					if (qualifier.length > 0)
+						nameSpec = qualifier[qualifier.length - 1];
 					else 
-						name = ns[ns.length - 1]; 
+						nameSpec = (ICPPASTName) qname.getLastName(); 
 				}
-				binding = name.resolvePreBinding();
+				binding = nameSpec.resolvePreBinding();
 			}
 			if (binding instanceof IType) {
 				classType = (IType) binding;
 			} else {
-				classType = new CPPClassType.CPPClassTypeProblem(name, IProblemBinding.SEMANTIC_INVALID_TYPE, name.toCharArray());
+				classType = new CPPClassType.CPPClassTypeProblem(nameSpec, IProblemBinding.SEMANTIC_INVALID_TYPE, nameSpec.toCharArray());
 			}
 		}
 		return classType;

@@ -313,7 +313,7 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
 				ctorName.setBinding(ctor);
 				IASTName id = name;
 				if (id instanceof ICPPASTQualifiedName) {
-					id = ((ICPPASTQualifiedName) id).getLastName();
+					id = id.getLastName();
 				}
 				ctorName.setOffsetAndLength((ASTNode) id);
 				implicitNames = new IASTImplicitName[] { ctorName };

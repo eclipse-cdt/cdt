@@ -80,6 +80,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICFunctionPrototypeScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
@@ -173,9 +174,8 @@ public class ASTManager implements IDisposable {
 
     public static IASTName getSimpleName(IASTName name) {
         if (name instanceof ICPPASTQualifiedName) {
-            IASTName names[]= ((ICPPASTQualifiedName) name).getNames();
-            if (names.length > 0) {
-                name= names[names.length - 1];
+            if (name.getLastName() != null) {
+                name= name.getLastName();
             }
         }
         return name;
@@ -843,10 +843,7 @@ public class ASTManager implements IDisposable {
 			final int length = fArgument.getLength();
 			IASTName name= nodeSelector.findEnclosingName(offset, length);
         	if (name != null) {
-        		if (name instanceof ICPPASTQualifiedName) {
-        			IASTName[] na= ((ICPPASTQualifiedName) name).getNames();
-        			name= na[na.length - 1];
-        		}
+    			name= name.getLastName();
         	} else {
         		IASTNode node= nodeSelector.findEnclosingNode(offset, length);
         		if (node instanceof IASTPreprocessorMacroDefinition ||
@@ -1192,8 +1189,8 @@ public class ASTManager implements IDisposable {
         	boolean problemInQualifier= false;
         	IASTNode parent= name.getParent();
         	if (parent instanceof ICPPASTQualifiedName) {
-        		IASTName[] names= ((ICPPASTQualifiedName) parent).getNames();
-        		for (IASTName n : names) {
+        		ICPPASTNameSpecifier[] qualifier = ((ICPPASTQualifiedName) parent).getQualifier();
+        		for (ICPPASTNameSpecifier n : qualifier) {
 					if (n == name)
 						break;
 					final IBinding b = n.resolveBinding();

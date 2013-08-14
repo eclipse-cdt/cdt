@@ -666,9 +666,9 @@ public class DOMLocationTests extends AST2TestBase {
 		tu.accept( col );
 		
 		ICPPASTQualifiedName qn = (ICPPASTQualifiedName) col.getName(0);
-		IASTName[] ns = qn.getNames();
-		assertTrue(ns[1] instanceof ICPPASTTemplateId);
-		ICPPASTTemplateId templateId= (ICPPASTTemplateId) ns[1];
+		IASTName lastName = qn.getLastName();
+		assertTrue(lastName instanceof ICPPASTTemplateId);
+		ICPPASTTemplateId templateId= (ICPPASTTemplateId) lastName;
 		IASTName templateIdName= templateId.getTemplateName();
 		
 		assertEquals("test", templateIdName.getRawSignature()); //$NON-NLS-1$

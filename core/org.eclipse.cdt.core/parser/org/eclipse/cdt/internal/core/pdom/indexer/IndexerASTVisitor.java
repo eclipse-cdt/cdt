@@ -90,7 +90,7 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 
 	private IASTName getLastInQualified(IASTName name) {
 		if (name instanceof ICPPASTQualifiedName) {
-			name= ((ICPPASTQualifiedName) name).getLastName();
+			name= name.getLastName();
 		}
 		return name;
 	}

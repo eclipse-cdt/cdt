@@ -81,6 +81,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -1067,9 +1068,9 @@ public class BindingClassifier {
 			// elsewhere).
 			if (name instanceof ICPPASTQualifiedName) {
 				// All qualifying names must be defined.
-				IASTName[] names = ((ICPPASTQualifiedName) name).getNames();
-				for (int i = 0; i < names.length - 1; i++) {
-					defineBinding(names[i].resolveBinding());
+				ICPPASTNameSpecifier[] qualifier = ((ICPPASTQualifiedName) name).getQualifier();
+				for (ICPPASTNameSpecifier nameSpec : qualifier) {
+					defineBinding(nameSpec.resolveBinding());
 				}
 			}
 

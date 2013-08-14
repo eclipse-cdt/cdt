@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -1334,8 +1335,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 				
 				ICPPASTQualifiedName newQualifiedName = nodeFactory.newQualifiedName();
 				newQualifiedName.addName(name);
-				for(IASTName n : qualifiedName.getNames())
-					newQualifiedName.addName(n);
+				for(ICPPASTNameSpecifier n : qualifiedName.getQualifier())
+					newQualifiedName.addNameSpecifier(n);
+				newQualifiedName.addName(qualifiedName.getLastName());
 				
 				ParserUtil.setOffsetAndLength(newQualifiedName, offset(name), endOffset(qualifiedName.getLastName()) - offset(name));
 				

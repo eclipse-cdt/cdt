@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
@@ -116,8 +117,6 @@ public class AccessorDescriptor implements Comparable<AccessorDescriptor> {
 		}
 		IASTCompositeTypeSpecifier comp = (IASTCompositeTypeSpecifier) node;
 		
-		CPPASTQualifiedName qname = new CPPASTQualifiedName();
-		qname.addName(comp.getName().copy(CopyStyle.withLocations));
-		return qname;
+		return new CPPASTQualifiedName((ICPPASTName) comp.getName().copy(CopyStyle.withLocations));
 	}
 }

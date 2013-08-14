@@ -240,8 +240,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	    if (node instanceof ICPPASTCompositeTypeSpecifier) {
 	        node = ((ICPPASTCompositeTypeSpecifier)node).getName();
 	        if (node instanceof ICPPASTQualifiedName) {
-	            IASTName[] ns = ((ICPPASTQualifiedName)node).getNames();
-	            node = ns[ns.length - 1];
+	            node = ((ICPPASTQualifiedName) node).getLastName();
 	        }
 	    }
 		if (!(node instanceof IASTName))
@@ -258,8 +257,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	    if (node instanceof ICPPASTElaboratedTypeSpecifier) {
 	        node = ((ICPPASTElaboratedTypeSpecifier)node).getName();
 	        if (node instanceof ICPPASTQualifiedName) {
-	            IASTName[] ns = ((ICPPASTQualifiedName)node).getNames();
-	            node = ns[ns.length - 1];
+	            node = ((ICPPASTQualifiedName)node).getLastName();
 	        }
 	    }
 		if (!(node instanceof IASTName))

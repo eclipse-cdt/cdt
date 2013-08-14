@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -120,7 +121,7 @@ public class ASTHelper {
 	
 	public static ArrayList<ICPPASTNamespaceDefinition> getNamespaces(ICPPASTQualifiedName qualifiedName) {
 		ArrayList<ICPPASTNamespaceDefinition> namespaces = new ArrayList<ICPPASTNamespaceDefinition>();
-		for (IASTName aktQualifiedPartName : qualifiedName.getNames()) {
+		for (ICPPASTNameSpecifier aktQualifiedPartName : qualifiedName.getAllSegments()) {
 			IBinding binding = aktQualifiedPartName.resolveBinding();
 			for (IASTName aktResolvedName : qualifiedName.getTranslationUnit().getDefinitionsInAST(binding)) {
 				if (aktResolvedName.getParent() instanceof ICPPASTNamespaceDefinition) {

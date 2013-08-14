@@ -412,8 +412,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 
 	private IASTName stripQualifier(IASTName name) {
 		if (name instanceof ICPPASTQualifiedName) {
-	        IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
-	        name = ns[ns.length - 1];
+	        name = ((ICPPASTQualifiedName)name).getLastName();
 	    }
 		return name;
 	}

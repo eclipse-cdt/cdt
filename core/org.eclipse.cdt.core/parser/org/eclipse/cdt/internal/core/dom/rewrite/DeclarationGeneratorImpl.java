@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
@@ -289,13 +290,12 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 				
 				ICPPASTQualifiedName newQualifiedName =
 						((ICPPNodeFactory) factory).newQualifiedName();
-				int nbQualifiedNames = fullQualifiedName.getNames().length;
-				if (nbQualifiedNames > 1) {
-					for (int i = 0; i < nbQualifiedNames - 1; i++) {
-						newQualifiedName.addName(fullQualifiedName.getNames()[i].copy(CopyStyle.withLocations));
-					}
+				ICPPASTNameSpecifier[] qualifier = fullQualifiedName.getQualifier();
+				int nbQualifiedNames = qualifier.length;
+				for (int i = 0; i < nbQualifiedNames; i++) {
+					newQualifiedName.addNameSpecifier(qualifier[i].copy(CopyStyle.withLocations));
 				}
-				newQualifiedName.addName(tempId);
+				newQualifiedName.setLastName(tempId);
 
 				return factory.newTypedefNameSpecifier(newQualifiedName);
 			} else {

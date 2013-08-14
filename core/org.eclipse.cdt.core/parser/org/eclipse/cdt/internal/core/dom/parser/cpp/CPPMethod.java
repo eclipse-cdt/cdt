@@ -131,8 +131,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		dtor= ASTQueries.findInnermostDeclarator(dtor);
 	    IASTName name= dtor.getName();
 	    if (name instanceof ICPPASTQualifiedName) {
-	        IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-	        name = ns[ns.length - 1];
+	        name = name.getLastName();
 	    }
 	    return name;
 	}

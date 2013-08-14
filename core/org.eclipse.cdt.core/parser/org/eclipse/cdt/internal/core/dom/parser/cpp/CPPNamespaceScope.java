@@ -26,13 +26,16 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileSet;
@@ -158,7 +161,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
     
 	public boolean canDenoteNamespaceMember(ICPPASTQualifiedName name) {
 		IScope scope= this;
-		IASTName[] segments= name.getNames();
+		ICPPASTNameSpecifier[] segments= name.getQualifier();
 		try {
 			for (int i= segments.length - 1; --i >= 0;) {
 				if (scope == null)
@@ -167,10 +170,18 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 				if (scopeName == null)
 					return false;
 
-				IASTName segmentName = segments[i];
-				if (segmentName instanceof ICPPASTTemplateId ||
-						!CharArrayUtils.equals(scopeName.getSimpleID(), segmentName.getSimpleID())) {
-					return false;
+				if (segments[i] instanceof IASTName) {
+					IASTName segmentName = (IASTName) segments[i];
+					if (segmentName instanceof ICPPASTTemplateId ||
+							!CharArrayUtils.equals(scopeName.getSimpleID(), segmentName.getSimpleID())) {
+						return false;
+					}
+				} else {
+					IBinding segmentBinding = segments[i].resolveBinding();
+					if (segmentBinding instanceof ICPPTemplateInstance ||
+							!CharArrayUtils.equals(scopeName.getSimpleID(), segmentBinding.getNameCharArray())) {
+						return false;
+					}
 				}
 				scope= scope.getParent();
 			}

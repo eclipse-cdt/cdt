@@ -111,6 +111,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -316,8 +317,8 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	private static boolean declaresMemberInClassOrNamespace(ICPPASTQualifiedName qname) {
-		IASTName[] names= qname.getNames();
-		if (names.length < 2)
+		ICPPASTNameSpecifier[] qualifier= qname.getQualifier();
+		if (qualifier.length == 0)
 			return false;
 
 		IASTNode parent= qname.getParent();
@@ -346,7 +347,7 @@ public class CPPVisitor extends ASTQueries {
 		if (inScope == null)
 			return false;
 
-		IBinding pb= names[names.length - 2].resolvePreBinding();
+		IBinding pb= qualifier[qualifier.length - 1].resolvePreBinding();
 		if (pb instanceof IProblemBinding)
 			return false;
 
@@ -451,8 +452,7 @@ public class CPPVisitor extends ASTQueries {
 	    IASTName name = elabType.getName();
 	    if (name instanceof ICPPASTQualifiedName) {
 	        qualified = true;
-	        IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-	        name = ns[ns.length - 1];
+	        name = name.getLastName();
 	    }
 	    if (parent instanceof IASTSimpleDeclaration) {
 	        IASTDeclarator[] dtors = ((IASTSimpleDeclaration) parent).getDeclarators();
@@ -592,11 +592,7 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	private static IBinding createBinding(ICPPASTCompositeTypeSpecifier compType) {
-		IASTName name = compType.getName();
-		if (name instanceof ICPPASTQualifiedName) {
-			IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-			name = ns[ns.length - 1];
-		}
+		IASTName name = compType.getName().getLastName();
 		if (name instanceof ICPPASTTemplateId)
 			return CPPTemplates.createBinding((ICPPASTTemplateId) name);
 
@@ -701,10 +697,7 @@ public class CPPVisitor extends ASTQueries {
 
 		final IASTDeclarator typeRelevantDtor= findTypeRelevantDeclarator(declarator);
 
-		IASTName name= declarator.getName();
-		if (name instanceof ICPPASTQualifiedName) {
-			name= ((ICPPASTQualifiedName) name).getLastName();
-		}
+		IASTName name= declarator.getName().getLastName();
 
 		// in case the binding was created starting from another name within the declarator.
 		IBinding candidate= name.getBinding();
@@ -938,13 +931,13 @@ public class CPPVisitor extends ASTQueries {
 		if (parent instanceof IASTDeclarator) {
 			if (isConstructorDtor((IASTDeclarator) parent)) {
 				if (name instanceof ICPPASTQualifiedName) {
-					IASTName[] names = ((ICPPASTQualifiedName) name).getNames();
-					if (names.length >= 2) {
-						IBinding b= names[names.length - 2].resolvePreBinding();
+					ICPPASTNameSpecifier[] qualifier = ((ICPPASTQualifiedName) name).getQualifier();
+					if (qualifier.length >= 1) {
+						IBinding b= qualifier[qualifier.length - 1].resolvePreBinding();
 						if (b instanceof IType) {
 							IType classType= getNestedType((IType) b, TDEF);
 							if (classType instanceof ICPPClassType) {
-							    final char[] dtorName = names[names.length - 1].getLookupKey();
+							    final char[] dtorName = name.getLastName().getLookupKey();
 								final char[] className = ((ICPPClassType) classType).getNameCharArray();
 								return CharArrayUtils.equals(dtorName, className);
 							}
@@ -1068,8 +1061,7 @@ public class CPPVisitor extends ASTQueries {
 			    		IASTDeclarator dtor = (IASTDeclarator) parent;
 			    		IASTName name = dtor.getName();
 			    		if (name instanceof ICPPASTQualifiedName) {
-			    			IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-			    			return getContainingScope(ns[ns.length - 1]);
+			    			return getContainingScope(name.getLastName());
 			    		}
 			    	} else if (parent instanceof ICPPASTConstructorChainInitializer) {
 			    		// The initializer for the member initializer is resolved in
@@ -1107,8 +1099,7 @@ public class CPPVisitor extends ASTQueries {
 							dtor = dtor.getNestedDeclarator();
 						IASTName name = dtor.getName();
 						if (name instanceof ICPPASTQualifiedName) {
-							IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-							return getContainingScope(ns[ns.length - 1]);
+							return getContainingScope(name.getLastName());
 						}
 					}
 			    } else if (parent instanceof ICPPASTTemplateId &&
@@ -1129,12 +1120,7 @@ public class CPPVisitor extends ASTQueries {
 		    	}
 		    } else if (node instanceof ICPPASTBaseSpecifier) {
 	    	    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) node.getParent();
-	    	    IASTName n = compSpec.getName();
-	    	    if (n instanceof ICPPASTQualifiedName) {
-	    	        IASTName[] ns = ((ICPPASTQualifiedName) n).getNames();
-	    	        n = ns[ns.length - 1];
-	    	    }
-
+	    	    IASTName n = compSpec.getName().getLastName();
 		        return getContainingScope(n);
 		    } else if (node instanceof IASTEnumerator) {
 		    	node= node.getParent();
@@ -1200,10 +1186,11 @@ public class CPPVisitor extends ASTQueries {
 
 			if (parent instanceof ICPPASTQualifiedName) {
 				final ICPPASTQualifiedName qname= (ICPPASTQualifiedName) parent;
-				final IASTName[] names = qname.getNames();
+				final ICPPASTNameSpecifier[] segments= qname.getAllSegments();
 				int i = 0;
-				for (; i < names.length; i++) {
-					if (names[i] == name) break;
+				for (; i < segments.length; i++) {
+					if (segments[i] == name) 
+						break;
 				}
 				final IASTTranslationUnit tu = parent.getTranslationUnit();
 				if (i == 0) {
@@ -1219,7 +1206,7 @@ public class CPPVisitor extends ASTQueries {
 				} else if (i > 0) {
 					// For template functions we may need to resolve a template parameter
 					// as a parent of an unknown type used as parameter type.
-					IBinding binding = names[i - 1].resolvePreBinding();
+					IBinding binding = segments[i - 1].resolvePreBinding();
 
 					// 7.1.3-7 Unwrap typedefs, delete cv-qualifiers.
 					if (binding instanceof ITypedef) {
@@ -1249,7 +1236,7 @@ public class CPPVisitor extends ASTQueries {
 					}
 					if (done) {
 						if (scope == null) {
-							return new CPPScope.CPPScopeProblem(names[i - 1], IProblemBinding.SEMANTIC_BAD_SCOPE);
+							return new CPPScope.CPPScopeProblem(segments[i - 1], IProblemBinding.SEMANTIC_BAD_SCOPE, null);
 						}
 						return scope;
 					}
@@ -1310,11 +1297,7 @@ public class CPPVisitor extends ASTQueries {
 				return fdef.getScope();
 			
 			IASTFunctionDeclarator fnDeclarator = fdef.getDeclarator();
-		    IASTName name = findInnermostDeclarator(fnDeclarator).getName();
-		    if (name instanceof ICPPASTQualifiedName) {
-		        IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-		        name = ns[ns.length - 1];
-		    }
+		    IASTName name = findInnermostDeclarator(fnDeclarator).getName().getLastName();
 		    return getContainingScope(name);
 		}
 
@@ -1819,11 +1802,7 @@ public class CPPVisitor extends ASTQueries {
 	private static IType createType(IType returnType, ICPPASTFunctionDeclarator fnDtor) {
 	    IType[] pTypes = createParameterTypes(fnDtor);
 
-	    IASTName name = fnDtor.getName();
-		if (name instanceof ICPPASTQualifiedName) {
-			IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-			name = ns[ns.length - 1];
-		}
+	    IASTName name = fnDtor.getName().getLastName();
 	    if (name instanceof ICPPASTConversionName) {
 	    	returnType = createType(((ICPPASTConversionName) name).getTypeId());
 	    } else {
@@ -2281,11 +2260,7 @@ public class CPPVisitor extends ASTQueries {
 				}
 				if (node instanceof IASTFunctionDeclarator) {
 					ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) node;
-					IASTName funcName = findInnermostDeclarator(dtor).getName();
-					if (funcName instanceof ICPPASTQualifiedName) {
-					    IASTName[] ns = ((ICPPASTQualifiedName) funcName).getNames();
-					    funcName = ns[ns.length - 1];
-					}
+					IASTName funcName = findInnermostDeclarator(dtor).getName().getLastName();
 					IScope s = getContainingScope(funcName);
 					while (s instanceof ICPPTemplateScope) {
 						s = s.getParent();
@@ -2521,16 +2496,16 @@ public class CPPVisitor extends ASTQueries {
 		IASTNode node= name.getLastName();
 		while (node instanceof IASTName) {
 			if (node instanceof ICPPASTQualifiedName) {
-				IASTName[] qn= ((ICPPASTQualifiedName) node).getNames();
-				int i= qn.length;
+				ICPPASTNameSpecifier[] segments = ((ICPPASTQualifiedName) node).getAllSegments();
+				int i = segments.length;
 				while (--i >= 0) {
-					if (qn[i] == name) {
+					if (segments[i] == name) {
 						break;
 					}
 				}
 				if (--i < 0)
 					break;
-				IBinding binding = qn[i].resolveBinding();
+				IBinding binding = segments[i].resolveBinding();
 				if (binding instanceof IIndexBinding && binding instanceof ICPPClassType) {
 					binding = ((CPPASTTranslationUnit) name.getTranslationUnit()).mapToAST((ICPPClassType) binding, name);
 				}

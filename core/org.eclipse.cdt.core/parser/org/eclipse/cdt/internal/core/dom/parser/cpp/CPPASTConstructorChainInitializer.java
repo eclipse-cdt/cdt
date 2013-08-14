@@ -247,10 +247,7 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 			} else {
 				CPPASTImplicitName ctorName = new CPPASTImplicitName(ctor.getNameCharArray(), this);
 				ctorName.setBinding(ctor);
-				IASTName id = name;
-				if (id instanceof ICPPASTQualifiedName) {
-					id = ((ICPPASTQualifiedName) id).getLastName();
-				}
+				IASTName id = name.getLastName();
 				ctorName.setOffsetAndLength((ASTNode) id);
 				implicitNames = new IASTImplicitName[] { ctorName };
 			}

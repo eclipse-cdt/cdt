@@ -156,4 +156,13 @@ public interface IGDBBackend extends IMIBackend {
 	 * @since 3.0
 	 */
 	public boolean getUpdateThreadListOnSuspend() throws CoreException;
+
+
+	/**
+	 * @return Returns the System Root value specified in the launch configuration dialog
+	 *
+	 * @throws CoreException
+	 *             - error in getting the option.
+	 */
+	public String getSystemRootPath() throws CoreException;
 }

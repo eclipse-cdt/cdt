@@ -266,6 +266,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 	public void createTabs(TabFolder tabFolder) {
 		createMainTab(tabFolder);
+		createSysrootTab(tabFolder);
 		createSolibTab(tabFolder);
 	}
 
@@ -411,6 +412,12 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		if (fSolibBlock instanceof Observable)
 			((Observable) fSolibBlock).addObserver(this);
 	}
+
+	/*
+	 * The implementation for this method will be in the child class. This
+	 * allows to place new subtab between Main tab and Shared Libraries tab
+	 */
+	public void createSysrootTab(TabFolder tabFolder) {	}
 
 	/** Used to add a checkbox to the tab. Each checkbox has its own line. */
 	private Button addCheckbox(Composite parent, String label) {

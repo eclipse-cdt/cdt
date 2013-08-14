@@ -225,4 +225,11 @@ public class IGDBLaunchConfigurationConstants {
 	 // Bug 210366
 	public static final String DEBUGGER_ATTR_PROCESS_FACTORY_ID_DEFAULT = "org.eclipse.cdt.dsf.gdb.GdbProcessFactory"; //$NON-NLS-1$
 	
+	/**
+	 * Launch configuration attribute key.
+	 * The value is a String name of the Sysroot directory.
+	 * */
+	//Bug 400033
+	public static final String ATTR_DEBUGGER_SYSROOT_PATH = GdbPlugin.PLUGIN_ID + ".SYSROOT_PATH"; //$NON-NLS-1$
+
 }

@@ -48,6 +48,8 @@ import org.junit.runners.Suite;
 	GDBMultiNonStopRunControlTest_7_4.class,
 	Suite_Sessionless_Tests.class,
 	GDBConsoleBreakpointsTest_7_4.class,
+	StepIntoSelectionTest_7_4.class,
+	StepIntoSelectionTest_7_4_NS.class,
 	/* Add your test class here */
 })
 

@@ -43,6 +43,7 @@ import org.junit.runners.Suite;
 	OperationsWhileTargetIsRunningTest_6_6.class,
 	CommandTimeoutTest_6_6.class,
 	Suite_Sessionless_Tests.class,
+	StepIntoSelectionTest_6_6.class,
 	/* Add your test class here */
 })
 

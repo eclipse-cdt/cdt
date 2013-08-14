@@ -50,6 +50,8 @@ import org.junit.runners.Suite;
 	GDBConsoleBreakpointsTest_7_6.class,
 	TraceFileTest_7_6.class,
 	GDBConsoleSynchronizingTest_7_6.class,
+	StepIntoSelectionTest_7_6.class,
+	StepIntoSelectionTest_7_6_NS.class,
 	/* Add your test class here */
 })
 

@@ -59,7 +59,7 @@ public class IncludeCreationContext extends InclusionContext {
 	}
 
     /**
-     * Removes headers that are exported by other headers that will be included
+     * Removes headers that are exported by other headers that will be included.
      */
     public void removeExportedHeaders() throws CoreException {
     	// Index files keyed by their absolute paths.
@@ -69,8 +69,14 @@ public class IncludeCreationContext extends InclusionContext {
     		filesByPath.put(path, file);
     	}
 
-    	Set<IPath> exportedHeaders = new HashSet<IPath>();
-		for (IPath path : fHeadersToInclude) {
+    	removeExportedHeaders(fHeadersAlreadyIncluded, filesByPath);
+    	removeExportedHeaders(fHeadersToInclude, filesByPath);
+    }
+
+	private void removeExportedHeaders(Set<IPath> exportingHeaders,
+			Map<IPath, IIndexFile> filesByPath) throws CoreException {
+		Set<IPath> exportedHeaders = new HashSet<IPath>();
+		for (IPath path : exportingHeaders) {
 			if (!exportedHeaders.contains(path)) {
 				IIndexFile file = filesByPath.get(path);
 				if (file != null) {  // file can be null if the header was not indexed.
@@ -91,7 +97,7 @@ public class IncludeCreationContext extends InclusionContext {
 			}
 		}
 		fHeadersToInclude.removeAll(exportedHeaders);
-    }
+	}
 
 	private static IPath getPath(IIndexFile file) throws CoreException {
 		return IndexLocationFactory.getAbsolutePath(file.getLocation());
@@ -103,6 +109,7 @@ public class IncludeCreationContext extends InclusionContext {
 
 	public final void addHeaderToInclude(IPath header) {
 		fHeadersToInclude.add(header);
+		fHeadersAlreadyIncluded.add(header);
 	}
 
 	public final boolean isToBeIncluded(IPath header) {

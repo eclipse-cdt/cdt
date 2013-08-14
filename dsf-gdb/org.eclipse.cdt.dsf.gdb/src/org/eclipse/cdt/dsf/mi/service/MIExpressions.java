@@ -238,7 +238,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		/**
 		 * @return if this expression is part of the memory space or not.
 		 *         If it not part of the memory space, it won't have an address.
-		 * @since 4.2
+		 * @since 4.3
 		 */
 		public boolean inMemory() {
 			// Registers and convenience variables which both start with $

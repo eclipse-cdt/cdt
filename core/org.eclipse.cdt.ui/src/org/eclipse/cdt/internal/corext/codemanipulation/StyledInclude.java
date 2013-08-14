@@ -19,7 +19,7 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
 /**
  * Represents a new or an existing include statement together with the style associated with it.
  */
-public class StyledInclude implements Comparable<StyledInclude> {
+public class StyledInclude {
 	private final IPath header;  // null for existing unresolved includes 
 	private final IncludeInfo includeInfo; // never null
 	private final IncludeGroupStyle style;
@@ -64,11 +64,6 @@ public class StyledInclude implements Comparable<StyledInclude> {
 
 	public void setExistingInclude(IASTPreprocessorIncludeStatement existingInclude) {
 		this.existingInclude = existingInclude;
-	}
-
-	@Override
-	public int compareTo(StyledInclude other) {
-		return includeInfo.compareTo(other.includeInfo);
 	}
 
 	@Override

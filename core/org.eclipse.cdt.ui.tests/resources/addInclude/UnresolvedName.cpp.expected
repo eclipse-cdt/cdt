@@ -1,5 +1,6 @@
-#include "ResolvedName.h"
 #include "UnresolvedName.h"
+
+#include "ResolvedName.h"
 
 using ns4::A;
 using ns5::B;

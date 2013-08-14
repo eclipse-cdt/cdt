@@ -17,7 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
 
 /**
  * The NodeCommentMap is the map where all the comments are assigned to a node. For better 
@@ -146,5 +148,44 @@ public class NodeCommentMap {
 		comment.addAll(getLeadingCommentsForNode(node));
 		comment.addAll(getTrailingCommentsForNode(node));
 		return comment;
+	}
+
+	public int getOffsetIncludingComments(IASTNode node) {
+		int offset = ASTNodes.offset(node);
+
+		// TODO(sprigogin): Iterate backwards and stop at the first blank line.
+		List<IASTComment> comments = leadingMap.get(node);
+		if (comments != null && !comments.isEmpty()) {
+			for (IASTComment comment : comments) {
+				int commentOffset = ASTNodes.offset(comment);
+				if (commentOffset < offset) {
+					offset = commentOffset;
+				}
+			}
+		}
+		return offset;
+	}
+
+	public int getEndOffsetIncludingComments(IASTNode node) {
+		int endOffset = 0;
+		while (true) {
+			IASTFileLocation fileLocation = node.getFileLocation();
+			if (fileLocation != null)
+				endOffset = Math.max(endOffset, fileLocation.getNodeOffset() + fileLocation.getNodeLength());
+			List<IASTComment> comments = trailingMap.get(node);
+			if (comments != null && !comments.isEmpty()) {
+				for (IASTComment comment : comments) {
+					int commentEndOffset = ASTNodes.endOffset(comment);
+					if (commentEndOffset >= endOffset) {
+						endOffset = commentEndOffset;
+					}
+				}
+			}
+			IASTNode[] children = node.getChildren();
+			if (children.length == 0)
+				break;
+			node = children[children.length - 1];
+		}
+		return endOffset;
 	}
 }

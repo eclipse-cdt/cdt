@@ -317,7 +317,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static void log(String message, Throwable e) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, e));
+		log(createErrorStatus(message, e));
 	}
 
 	public static void log(IStatus status) {
@@ -340,8 +340,16 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
+	 * Creates an error status.
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static Status createErrorStatus(String message, Throwable e) {
+		return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, e);
+	}
+
+	/**
 	* Utility method with conventions
-	* @param logError TODO
 	*/
 	public static void errorDialog(Shell shell, String title, String message, IStatus s, boolean logError) {
 		if (logError)
@@ -357,7 +365,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	/**
 	* Utility method with conventions
-	* @param logError TODO
 	*/
 	public static void errorDialog(Shell shell, String title, String message, Throwable t, boolean logError) {
 		if (logError)

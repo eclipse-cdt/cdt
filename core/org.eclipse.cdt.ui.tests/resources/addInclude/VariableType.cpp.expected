@@ -1,5 +1,6 @@
-#include "VariableTypeHelper.h"
 #include "VariableType.h"
+
+#include "VariableTypeHelper.h"
 
 namespace ns2 {
 

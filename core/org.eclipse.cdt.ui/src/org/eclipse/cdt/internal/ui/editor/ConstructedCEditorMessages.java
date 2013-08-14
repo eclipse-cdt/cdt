@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-
-import com.ibm.icu.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import com.ibm.icu.text.MessageFormat;
 
 public class ConstructedCEditorMessages  {
 	private static final String RESOURCE_BUNDLE = "org.eclipse.cdt.internal.ui.editor.ConstructedCEditorMessages"; //$NON-NLS-1$
-
 
 	private static ResourceBundle fgResourceBundle;
 	static {
@@ -29,10 +27,8 @@ public class ConstructedCEditorMessages  {
 		}
 	}
 
-
 	private ConstructedCEditorMessages() {
 	}
-
 
 	public static ResourceBundle getResourceBundle() {
 		return fgResourceBundle;
@@ -61,7 +57,6 @@ public class ConstructedCEditorMessages  {
 	public static String getFormattedString(String key, Object arg) {
 		return MessageFormat.format(getString(key), new Object[] { arg } );
 	}	
-
 }
 
 

@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -169,9 +170,22 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			// Check whether the qualification matches.
 			IBinding b= getClassType();
 			final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
-			final IASTName[] names= qname.getNames();
-			for (int i = names.length - 1; --i >= 0;) {
-				if (b == null || !CharArrayUtils.equals(names[i].getLookupKey(), b.getNameCharArray()))
+			final ICPPASTNameSpecifier[] qualifier = qname.getQualifier();
+			for (int i = qualifier.length; --i >= 0;) {
+				if (b == null)
+					return;
+				
+				char[] segmentName;
+				if (qualifier[i] instanceof IASTName)
+					segmentName = ((IASTName) qualifier[i]).getLookupKey();
+				else {
+					IBinding segmentBinding = qualifier[i].resolveBinding();
+					if (segmentBinding == null)
+						return;
+					segmentName = segmentBinding.getNameCharArray();
+				}
+				
+				if (!CharArrayUtils.equals(segmentName, b.getNameCharArray()))
 					return;
 				
 				b= b.getOwner();

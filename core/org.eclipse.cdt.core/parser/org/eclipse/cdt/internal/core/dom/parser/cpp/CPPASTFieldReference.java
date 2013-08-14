@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -268,13 +269,14 @@ public class CPPASTFieldReference extends ASTNode
 		ICPPTemplateArgument[] args= null;
 		IASTName n= name;
 		if (n instanceof ICPPASTQualifiedName) {
-			IASTName[] ns= ((ICPPASTQualifiedName) n).getNames();
-			if (ns.length < 2)
+			ICPPASTQualifiedName qn= (ICPPASTQualifiedName) n;
+			ICPPASTNameSpecifier[] ns= qn.getQualifier();
+			if (ns.length < 1)
 				return EvalFixed.INCOMPLETE;
-			qualifier= ns[ns.length - 2].resolveBinding();
+			qualifier= ns[ns.length - 1].resolveBinding();
 			if (qualifier instanceof IProblemBinding)
 				return EvalFixed.INCOMPLETE;
-			n= ns[ns.length - 1];
+			n= qn.getLastName();
 		}
 		if (n instanceof ICPPASTTemplateId) {
 			try {

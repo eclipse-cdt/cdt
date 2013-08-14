@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 
 /**
@@ -41,19 +42,19 @@ abstract public class ASTNameVisitor extends ASTVisitor {
 	final public int visit(IASTName name) {
         if (name instanceof ICPPASTQualifiedName) {
             ICPPASTQualifiedName qn= (ICPPASTQualifiedName) name;
-            IASTName[] names= qn.getNames();
+            ICPPASTNameSpecifier[] segments= qn.getAllSegments();
             boolean visited= false;
-            for (int i = 0; i < names.length; i++) {
-                if (checkLocation(names[i])) {
-                    if (visitName(names[i]) == PROCESS_ABORT) {
+            for (int i = 0; i < segments.length; i++) {
+                if (segments[i] instanceof IASTName && checkLocation(segments[i])) {
+                    if (visitName((IASTName) segments[i]) == PROCESS_ABORT) {
                         return PROCESS_ABORT;
                     }
                     visited= true;
                 }
             }
-            if (!visited && names.length>0) {
+            if (!visited) {
                 if (checkLocation(name)) {
-                    return visitName(names[names.length-1]);
+                    return visitName(name.getLastName());
                 }
             }
         }

@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -594,8 +595,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		ICPPASTQualifiedName qname = new CPPASTQualifiedName();
 		if (context.getType() == ContextType.METHOD) {
 			if (context.getMethodQName() != null) {
-				for (int i = 0; i < context.getMethodQName().getNames().length - 1; i++) {
-					qname.addName(new CPPASTName(context.getMethodQName().getNames()[i].toCharArray()));
+				for (ICPPASTNameSpecifier segment : context.getMethodQName().getQualifier()) {
+					qname.addName(new CPPASTName(segment.toCharArray()));
 				}
 			}
 		}

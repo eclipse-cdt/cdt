@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 
 /**
@@ -83,9 +84,9 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker imp
 						name = cppAstName.getLastName().toString();
 						if (name.startsWith("~")) // destructor //$NON-NLS-1$
 							return null;
-						IASTName[] names = cppAstName.getNames();
-						if (names.length >= 2) {
-							if (names[names.length - 1].toString().equals(names[names.length - 2].toString())) {
+						ICPPASTNameSpecifier[] qualifier = cppAstName.getQualifier();
+						if (qualifier.length > 0) {
+							if (cppAstName.getLastName().toString().equals(qualifier[qualifier.length - 1].toString())) {
 								// constructor
 								return null;
 							}

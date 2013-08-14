@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -872,10 +873,10 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			// try to avoid expensive resolution of scope and binding
 			boolean isMethod= parent instanceof IStructure;
 			if (!isMethod && name instanceof ICPPASTQualifiedName) {
-				final IASTName[] names= ((ICPPASTQualifiedName)name).getNames();
 				if (isTemplate) {
-					for (IASTName name2 : names) {
-						if (name2 instanceof ICPPASTTemplateId) {
+					final ICPPASTNameSpecifier[] segments= ((ICPPASTQualifiedName)name).getAllSegments();
+					for (ICPPASTNameSpecifier segment : segments) {
+						if (segment instanceof ICPPASTTemplateId) {
 							isMethod= true;
 							break;
 						}
@@ -942,8 +943,13 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 						isConstructor= parent.getElementName().equals(simpleName);
 					} else if (name instanceof ICPPASTQualifiedName) {
 						final ICPPASTQualifiedName quName= (ICPPASTQualifiedName)name;
-						final IASTName[] names= quName.getNames();
-						isConstructor= names.length >= 2 && simpleName.equals(ASTStringUtil.getSimpleName(names[names.length-2]));
+						final ICPPASTNameSpecifier[] qualifier= quName.getQualifier();
+						if (qualifier.length == 0)
+							isConstructor = false;
+						else {
+							ICPPASTNameSpecifier nameSpec= qualifier[qualifier.length - 1];
+							isConstructor= nameSpec instanceof IASTName && simpleName.equals(ASTStringUtil.getSimpleName((IASTName) nameSpec));
+						}
 					} else {
 						isConstructor= false;
 					}
@@ -955,9 +961,13 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				// strip namespace qualifier if parent is same namespace
 				if (name instanceof ICPPASTQualifiedName && parent instanceof INamespace) {
 					final ICPPASTQualifiedName quName= (ICPPASTQualifiedName)name;
-					final IASTName[] names= quName.getNames();
-				 	if (names.length >= 2 && parent.getElementName().equals(ASTStringUtil.getSimpleName(names[names.length-2]))) {
-				 		functionName= simpleName;
+					final ICPPASTNameSpecifier[] qualifier= quName.getQualifier();
+				 	if (qualifier.length >= 1) {
+				 		ICPPASTNameSpecifier nameSpec = qualifier[qualifier.length - 1];
+				 		if (nameSpec instanceof IASTName 
+				 				&& parent.getElementName().equals(ASTStringUtil.getSimpleName((IASTName) nameSpec))) {
+				 			functionName= simpleName;
+				 		}
 				 	}
 				}
 				if (isTemplate) {

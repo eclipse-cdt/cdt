@@ -97,6 +97,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
@@ -340,9 +341,16 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 
+	//	class A {
+	//		int m;
+	//	};
+	//	A* a;
+	//	int A::*pm;
+	//	int f(){}
+	//	int f(int);
+	//	int x = f(a->*pm);
 	public void testBug43579() throws Exception {
-		parseAndCheckBindings("class A { int m; }; \n A * a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a->*pm);");
-		parseAndCheckBindings("class A { int m; }; \n A * a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a->*pm);");
+		parseAndCheckBindings();
 	}
 
 	// class A { int m(int); };
@@ -555,10 +563,10 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPMethod f1 = (ICPPMethod) name_f1.resolveBinding();
 		ICPPMethod f2 = (ICPPMethod) name_f2.resolveBinding();
 
-		IASTName[] names = name_f2.getNames();
-		assertEquals(names.length, 2);
-		IASTName qn1 = names[0];
-		IASTName qn2 = names[1];
+		ICPPASTNameSpecifier[] qualifier = name_f2.getQualifier();
+		assertEquals(qualifier.length, 1);
+		IASTName qn1 = (IASTName) qualifier[0];
+		IASTName qn2 = name_f2.getLastName();
 
 		ICPPClassType A2 = (ICPPClassType) qn1.resolveBinding();
 		ICPPMethod f3 = (ICPPMethod) qn2.resolveBinding();
@@ -603,10 +611,10 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPField i1 = (ICPPField) name_i.resolveBinding();
 		ICPPField i2 = (ICPPField) name_i2.resolveBinding();
 
-		IASTName[] names = name_f2.getNames();
-		assertEquals(names.length, 2);
-		IASTName qn1 = names[0];
-		IASTName qn2 = names[1];
+		ICPPASTNameSpecifier[] qualifier = name_f2.getQualifier();
+		assertEquals(qualifier.length, 1);
+		IASTName qn1 = (IASTName) qualifier[0];
+		IASTName qn2 = name_f2.getLastName();
 
 		ICPPClassType A2 = (ICPPClassType) qn1.resolveBinding();
 		ICPPMethod f3 = (ICPPMethod) qn2.resolveBinding();
@@ -645,8 +653,8 @@ public class AST2CPPTests extends AST2TestBase {
 
 		IASTFunctionDefinition def = (IASTFunctionDefinition) tu.getDeclarations()[2];
 		ICPPASTQualifiedName name_f2 = (ICPPASTQualifiedName) def.getDeclarator().getName();
-		IASTName name_B2 = name_f2.getNames()[0];
-		IASTName name_f3 = name_f2.getNames()[1];
+		IASTName name_B2 = (IASTName) name_f2.getQualifier()[0];
+		IASTName name_f3 = name_f2.getLastName();
 
 		IASTCompoundStatement compound = (IASTCompoundStatement) def.getBody();
 		IASTExpressionStatement statement = (IASTExpressionStatement) compound.getStatements()[0];
@@ -1729,10 +1737,10 @@ public class AST2CPPTests extends AST2TestBase {
 		IASTIdExpression id = (IASTIdExpression) e.getInitializerClause();
 		ICPPASTQualifiedName name = (ICPPASTQualifiedName) id.getName();
 		assertTrue(name.isFullyQualified());
-		assertEquals(name.getNames().length, 3);
-		assertEquals(name.getNames()[0].toString(), "ABC");
-		assertEquals(name.getNames()[1].toString(), "DEF");
-		assertEquals(name.getNames()[2].toString(), "ghi");
+		assertEquals(name.getQualifier().length, 2);
+		assertEquals(name.getQualifier()[0].toString(), "ABC");
+		assertEquals(name.getQualifier()[1].toString(), "DEF");
+		assertEquals(name.getLastName().toString(), "ghi");
 	}
 
 	// namespace Y { void f(float); }
@@ -10322,5 +10330,17 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testGNUSyncBuiltins_bug389578() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
+	
+	//	class Waldo {
+	//		typedef int type;
+	//	};
+	//	
+	//	int main() {
+	//		Waldo w;
+	//		decltype(w)::type i;
+	//	}
+	public void testDecltypeInNameQualifier_bug380751() throws Exception {
+		parseAndCheckBindings();
 	}
 }

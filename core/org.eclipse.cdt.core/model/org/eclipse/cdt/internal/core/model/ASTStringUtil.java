@@ -54,9 +54,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
@@ -666,6 +668,22 @@ public class ASTStringUtil {
 	private static StringBuilder appendQualifiedNameString(StringBuilder buffer, IASTName name) {
 		return appendNameString(buffer, name, true);
 	}
+	
+	private static StringBuilder appendDecltypeSpecifier(StringBuilder buffer, ICPPASTDecltypeSpecifier decltypeSpec) {
+		buffer.append(Keywords.DECLTYPE);
+		buffer.append(Keywords.cpLPAREN);
+		appendExpressionString(buffer, decltypeSpec.getDecltypeExpression());
+		buffer.append(Keywords.cpRPAREN);
+		return buffer;
+	}
+	
+	private static StringBuilder appendQualifiedNameString(StringBuilder buffer, ICPPASTNameSpecifier nameSpec) {
+		if (nameSpec instanceof IASTName)
+			appendQualifiedNameString(buffer, (IASTName) nameSpec);
+		else if (nameSpec instanceof ICPPASTDecltypeSpecifier)
+			appendDecltypeSpecifier(buffer, (ICPPASTDecltypeSpecifier) nameSpec);
+		return buffer;
+	}
 
 	private static StringBuilder appendSimpleNameString(StringBuilder buffer, IASTName name) {
 		return appendNameString(buffer, name, false);
@@ -675,12 +693,12 @@ public class ASTStringUtil {
 		if (name instanceof ICPPASTQualifiedName) {
 			final ICPPASTQualifiedName qualifiedName= (ICPPASTQualifiedName)name;
 			if (qualified) {
-				final IASTName[] names= qualifiedName.getNames();
-				for (int i = 0; i < names.length; i++) {
+				final ICPPASTNameSpecifier[] segments= qualifiedName.getAllSegments();
+				for (int i = 0; i < segments.length; i++) {
 					if (i > 0) {
 						buffer.append(Keywords.cpCOLONCOLON);
 					}
-					appendQualifiedNameString(buffer, names[i]);
+					appendQualifiedNameString(buffer, segments[i]);
 				}
 			} else {
 				buffer.append(qualifiedName.getLastName());

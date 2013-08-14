@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
+public interface ICPPASTQualifiedName extends ICPPASTName, IASTNameOwner {
 	/**
 	 * Each IASTName segment has property being <code>SEGMENT_NAME</code>.
 	 */
@@ -33,14 +33,47 @@ public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
 	 * @param name {@code IASTName}
 	 */
 	public void addName(IASTName name);
+	
+	/**
+	 * Add a segment to the qualifier.
+	 * 
+	 * @since 5.6
+	 */
+	public void addNameSpecifier(ICPPASTNameSpecifier nameSpecifier);
+	
+	/**
+	 * Set the last name.
+	 * 
+	 * @since 5.6
+	 */
+	public void setLastName(ICPPASTName name);
 
 	/**
 	 * Returns all name segments.
 	 *
-	 * @return {@code IASTName[]}
+	 * @return <code>IASTName []</code>
+	 * 
+	 * @deprecated This cannot represent all qualified names in C++11,
+	 * where the first segment of a qualifier name may be a decltype-specifier.
+	 * Use {@link #getLastName()} and {@link #getQualifier()} instead.
 	 */
+	@Deprecated
 	public IASTName[] getNames();
 
+	/**
+	 * Return all segments of the name but the last.
+	 * 
+	 * @since 5.6
+	 */
+	public ICPPASTNameSpecifier[] getQualifier();
+	
+	/**
+	 * Return all segments of the name.
+	 * 
+	 * @since 5.6
+	 */
+	public ICPPASTNameSpecifier[] getAllSegments();
+	
 	/**
 	 * The last name is often semantically significant.
 	 */

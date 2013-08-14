@@ -60,6 +60,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -591,8 +592,8 @@ public class CPPTemplates {
 			if (name instanceof ICPPASTQualifiedName) {
 				int idx = templates.length;
 				int i = 0;
-				IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-				for (IASTName element : ns) {
+				ICPPASTNameSpecifier[] qualifier = ((ICPPASTQualifiedName) name).getQualifier();
+				for (ICPPASTNameSpecifier element : qualifier) {
 					if (element instanceof ICPPASTTemplateId) {
 						++i;
 						if (i == idx) {
@@ -602,7 +603,7 @@ public class CPPTemplates {
 					}
 				}
 				if (binding == null)
-					binding = ns[ns.length - 1].resolveBinding();
+					binding = name.getLastName().resolveBinding();
 			} else {
 				binding = name.resolveBinding();
 			}
@@ -1517,9 +1518,9 @@ public class CPPTemplates {
 			// skip one
 			tdecl= getDirectlyEnclosingTemplateDeclaration(tdecl);
 		}
-		final IASTName[] ns= qname.getNames();
-		for (int i = ns.length - 2; tdecl != null && i >= 0; i--) {
-			final IASTName n = ns[i];
+		final ICPPASTNameSpecifier[] qualifier= qname.getQualifier();
+		for (int i = qualifier.length - 1; tdecl != null && i >= 0; i--) {
+			final ICPPASTNameSpecifier n = qualifier[i];
 			if (n == name) {
 				return tdecl;
 			}
@@ -1569,23 +1570,23 @@ public class CPPTemplates {
 			// Count dependent-ids
 			CharArraySet tparnames= collectTemplateParameterNames(outerMostTDecl);
 			int depIDCount= 0;
-			IASTName owner= null;
-			final IASTName[] ns= qname.getNames();
-			for (int i = 0; i < ns.length - 1; i++) {
-				IASTName n= ns[i];
+			IBinding owner= null;
+			final ICPPASTNameSpecifier[] qualifier= qname.getQualifier();
+			for (int i = 0; i < qualifier.length; i++) {
+				ICPPASTNameSpecifier n= qualifier[i];
 				if (n instanceof ICPPASTTemplateId) {
 					if (depIDCount > 0 || usesTemplateParameter((ICPPASTTemplateId) n, tparnames)) {
 						depIDCount++;
 					}
 				}
 				if (depIDCount == 0) {
-					owner= n;
+					owner= n.resolveBinding();
 				}
 			}
 
 			if (qname.getLastName() instanceof ICPPASTTemplateId
 					|| paramTDeclCount > depIDCount // not enough template ids
-					|| ns.length < 2                // ::name
+					|| qualifier.length < 1         // ::name
 					) {
 				lastIsTemplate= true;
 				depIDCount++;
@@ -1596,7 +1597,7 @@ public class CPPTemplates {
 			nestingLevel= 0;
 			if (owner != null) {
 				int consumesTDecl= 0;
-				IBinding b= owner.resolveBinding();
+				IBinding b= owner;
 				if (b instanceof IType) {
 					IType t= SemanticUtil.getNestedType((IType) b, TDEF);
 					if (t instanceof IBinding)
@@ -1711,7 +1712,8 @@ public class CPPTemplates {
 				if (names.containsKey(name.getLookupKey())) {
 					IASTNode parent= name.getParent();
 					if (parent instanceof ICPPASTQualifiedName) {
-						if (((ICPPASTQualifiedName) parent).getNames()[0] != name) {
+						ICPPASTNameSpecifier[] qualifier = ((ICPPASTQualifiedName) parent).getQualifier();
+						if (qualifier.length > 0 && qualifier[0] != name) {
 							return PROCESS_CONTINUE;
 						}
 						result[0]= true;
@@ -1831,18 +1833,21 @@ public class CPPTemplates {
 		}
 		if (name != null) {
 		    if (name instanceof ICPPASTQualifiedName) {
-				IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
+				ICPPASTNameSpecifier[] qualifier = ((ICPPASTQualifiedName) name).getQualifier();
 				IASTDeclaration currDecl = decl;
-				for (int j = 0; j < ns.length; j++) {
-					if (ns[j] instanceof ICPPASTTemplateId || j + 1 == ns.length) {
+				for (ICPPASTNameSpecifier segment : qualifier) {
+					if (segment instanceof ICPPASTTemplateId) {
 						if (currDecl == templateDecl) {
-							return ns[j];
+							return (IASTName) segment;
 						}
 						if (!(currDecl instanceof ICPPASTTemplateDeclaration)) {
 							return null;
 						}
 						currDecl = ((ICPPASTTemplateDeclaration) currDecl).getDeclaration();
 					}
+				}
+				if (currDecl == templateDecl) {
+					return name.getLastName();
 				}
 		    } else {
 		        return name;

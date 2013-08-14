@@ -18,15 +18,14 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 import org.eclipse.cdt.internal.ui.refactoring.Container;
@@ -52,12 +51,9 @@ public class InsertionPointFinder {
 			String decl_name = decl.getName().toString();
 			for(ICPPASTFunctionDefinition def: alldefinitionsoutside) {
 				String def_name = null;
-				if (def.getDeclarator().getName() instanceof ICPPASTQualifiedName) {
-					ICPPASTQualifiedName qname = (ICPPASTQualifiedName) def.getDeclarator().getName();
-					def_name = qname.getNames()[1].toString(); 
-				} else if (def.getDeclarator().getName() instanceof CPPASTName) {
-					def_name = def.getDeclarator().getName().toString();
-				}
+				IASTName name = def.getDeclarator().getName();
+				if (name != null)
+					def_name = name.getLastName().toString();
 
 				if (decl_name.equals(def_name)) {
 					if (def.getParent() != null && def.getParent() instanceof ICPPASTTemplateDeclaration) {

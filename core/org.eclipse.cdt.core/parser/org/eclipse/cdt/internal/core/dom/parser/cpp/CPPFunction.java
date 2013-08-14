@@ -223,12 +223,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	protected IASTName getASTName() {
 		IASTDeclarator dtor = (definition != null) ? definition : declarations[0];
 		dtor= ASTQueries.findInnermostDeclarator(dtor);
-	    IASTName name= dtor.getName();
-	    if (name instanceof ICPPASTQualifiedName) {
-	        IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
-	        name = ns[ns.length - 1];
-	    }
-	    return name;
+	    return dtor.getName().getLastName();
 	}
 
 	@Override

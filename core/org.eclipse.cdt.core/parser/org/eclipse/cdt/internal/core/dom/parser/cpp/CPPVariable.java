@@ -55,8 +55,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	public CPPVariable(IASTName name) {
 	    boolean isDef = name == null ? false : name.isDefinition();
 	    if (name instanceof ICPPASTQualifiedName) {
-	        IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
-	        name = ns[ns.length - 1];
+	    	name = name.getLastName();
 	    }
 	    
 	    if (isDef) {

@@ -238,10 +238,9 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	@Override
 	public void addDefinition(IASTNode node) {
 	    if (node instanceof ICPPASTCompositeTypeSpecifier) {
-	        node = ((ICPPASTCompositeTypeSpecifier)node).getName();
+	        node = ((ICPPASTCompositeTypeSpecifier) node).getName();
 	        if (node instanceof ICPPASTQualifiedName) {
-	            IASTName[] ns = ((ICPPASTQualifiedName)node).getNames();
-	            node = ns[ns.length - 1];
+	            node = ((ICPPASTQualifiedName) node).getLastName();
 	        }
 	    }
 		if (!(node instanceof IASTName))
@@ -256,10 +255,9 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	@Override
 	public void addDeclaration(IASTNode node) {
 	    if (node instanceof ICPPASTElaboratedTypeSpecifier) {
-	        node = ((ICPPASTElaboratedTypeSpecifier)node).getName();
+	        node = ((ICPPASTElaboratedTypeSpecifier) node).getName();
 	        if (node instanceof ICPPASTQualifiedName) {
-	            IASTName[] ns = ((ICPPASTQualifiedName)node).getNames();
-	            node = ns[ns.length - 1];
+	            node = ((ICPPASTQualifiedName) node).getLastName();
 	        }
 	    }
 		if (!(node instanceof IASTName))

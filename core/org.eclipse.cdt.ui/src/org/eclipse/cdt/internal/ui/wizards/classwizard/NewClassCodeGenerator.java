@@ -730,25 +730,18 @@ public class NewClassCodeGenerator {
         		includes.add(new StyledInclude(baseClassLocation, includeInfo, style));
         	}
         }
-        Collections.sort(includes);
+		IncludePreferences preferences = inclusionContext.getPreferences();
+        Collections.sort(includes, preferences);
 
     	StringBuilder text = new StringBuilder();
-		IncludePreferences preferences = inclusionContext.getPreferences();
-		IncludeGroupStyle previousParentStyle = null;
+		IncludeGroupStyle previousStyle = null;
         for (StyledInclude include : includes) {
 			IncludeGroupStyle style = include.getStyle();
-			IncludeGroupStyle groupingStyle = style.getGroupingStyle(preferences.includeStyles);
-			IncludeGroupStyle parentStyle = groupingStyle.getParentStyle(preferences.includeStyles);
-			if (groupingStyle.isBlankLineBefore() ||
-					(parentStyle != null && previousParentStyle != null &&
-					parentStyle != previousParentStyle && parentStyle.isKeepTogether() &&
-					parentStyle.isBlankLineBefore())) {
+			if (style.isBlankLineNeededAfter(previousStyle, preferences.includeStyles))
 				text.append(lineDelimiter);
-			}
-			text.append("#include "); //$NON-NLS-1$
-		    text.append(include.getIncludeInfo().toString());
+		    text.append(include.getIncludeInfo().composeIncludeStatement());
 		    text.append(lineDelimiter);
-		    previousParentStyle = parentStyle;
+		    previousStyle = style;
 		}
 
         monitor.done();
@@ -756,7 +749,7 @@ public class NewClassCodeGenerator {
     }
     
     /**
-     * Checks if the base classes need to be verified (ie they must exist in the project)
+     * Checks if the base classes need to be verified (i.e. they must exist in the project)
      * 
      * @return <code>true</code> if the base classes should be verified
      */

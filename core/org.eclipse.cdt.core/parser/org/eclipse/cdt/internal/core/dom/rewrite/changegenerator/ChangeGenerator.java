@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ToolFactory;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
-import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -547,7 +546,7 @@ public class ChangeGenerator extends ASTVisitor {
 		if (ASTWriter.requireBlankLineInBetween(newNode, anchorNode)) {
 			writer.newLine();
 		}
-		int insertPos = getOffsetIncludingComments(anchorNode);
+		int insertPos = commentMap.getOffsetIncludingComments(anchorNode);
 		int length = 0;
 		if (writer.getScribe().isAtBeginningOfLine()) {
 			String tuCode = anchorNode.getTranslationUnit().getRawSignature();
@@ -573,8 +572,8 @@ public class ChangeGenerator extends ASTVisitor {
 		addToRootEdit(node);
 		if (modifications.size() == 1 && modifications.get(0).getNewNode() == null) {
 			// There is no replacement. We are deleting a piece of existing code.
-			int offset = getOffsetIncludingComments(node);
-			int endOffset = getEndOffsetIncludingComments(node);
+			int offset = commentMap.getOffsetIncludingComments(node);
+			int endOffset = commentMap.getEndOffsetIncludingComments(node);
 			offset = Math.max(skipPrecedingBlankLines(source, offset), processedOffset);
 			endOffset = skipTrailingBlankLines(source, endOffset);
 			IASTNode[] siblingsList = getContainingNodeList(node);
@@ -615,7 +614,7 @@ public class ChangeGenerator extends ASTVisitor {
 			addChildEdit(new ReplaceEdit(offset, endOffset - offset, code));
 			if (node instanceof IASTStatement || node instanceof IASTDeclaration) {
 				// Include trailing comments in the area to be replaced.
-				int commentEnd = getEndOffsetIncludingTrailingComments(node);
+				int commentEnd = commentMap.getEndOffsetIncludingComments(node);
 				if (commentEnd > endOffset)
 					addChildEdit(new DeleteEdit(endOffset, commentEnd - endOffset));
 			}
@@ -669,7 +668,7 @@ public class ChangeGenerator extends ASTVisitor {
 				prevNode = preprocessorStatements[preprocessorStatements.length - 1];
 			}
 		}
-		int offset = prevNode != null ? getEndOffsetIncludingComments(prevNode) : 0;
+		int offset = prevNode != null ? commentMap.getEndOffsetIncludingComments(prevNode) : 0;
 		String source = node.getRawSignature();
 		int endOffset = skipTrailingBlankLines(source, offset);
 
@@ -1013,69 +1012,6 @@ public class ChangeGenerator extends ASTVisitor {
 				}
 			}
 		}
-	}
-
-	private int getOffsetIncludingComments(IASTNode node) {
-		int nodeOffset = offset(node);
-
-		List<IASTComment> comments = commentMap.getAllCommentsForNode(node);
-		if (!comments.isEmpty()) {
-			int startOffset = nodeOffset;
-			for (IASTComment comment : comments) {
-				int commentOffset = offset(comment);
-				if (commentOffset < startOffset) {
-					startOffset = commentOffset;
-				}
-			}
-			nodeOffset = startOffset;
-		}
-		return nodeOffset;
-	}
-
-	private int getEndOffsetIncludingComments(IASTNode node) {
-		int endOffset = 0;
-		while (true) {
-			IASTFileLocation fileLocation = node.getFileLocation();
-			if (fileLocation != null)
-				endOffset = Math.max(endOffset, endOffset(fileLocation));
-			List<IASTComment> comments = commentMap.getAllCommentsForNode(node);
-			if (!comments.isEmpty()) {
-				for (IASTComment comment : comments) {
-					int commentEndOffset = endOffset(comment);
-					if (commentEndOffset >= endOffset) {
-						endOffset = commentEndOffset;
-					}
-				}
-			}
-			IASTNode[] children = node.getChildren();
-			if (children.length == 0)
-				break;
-			node = children[children.length - 1];
-		}
-		return endOffset;
-	}
-
-	private int getEndOffsetIncludingTrailingComments(IASTNode node) {
-		int endOffset = 0;
-		while (true) {
-			IASTFileLocation fileLocation = node.getFileLocation();
-			if (fileLocation != null)
-				endOffset = Math.max(endOffset, endOffset(fileLocation));
-			List<IASTComment> comments = commentMap.getTrailingCommentsForNode(node);
-			if (!comments.isEmpty()) {
-				for (IASTComment comment : comments) {
-					int commentEndOffset = endOffset(comment);
-					if (commentEndOffset >= endOffset) {
-						endOffset = commentEndOffset;
-					}
-				}
-			}
-			IASTNode[] children = node.getChildren();
-			if (children.length == 0)
-				break;
-			node = children[children.length - 1];
-		}
-		return endOffset;
 	}
 
 	private Map<ModificationKind, List<ASTModification>> getModifications(IASTNode node) {

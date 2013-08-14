@@ -94,7 +94,7 @@ public class IncludeStyleBlock extends TabConfigurationBlock {
 			IncludeKind includeKind = style.getIncludeKind();
 			Key key = KEY_MAP.get(includeKind);
 			if (includeKind != IncludeKind.MATCHING_PATTERN) {
-				setValue(key, style.toString());
+				setValue(key, style.toXmlString());
 			} else {
 				// TODO(sprigogin): Support custom include categories.
 			}
@@ -111,7 +111,7 @@ public class IncludeStyleBlock extends TabConfigurationBlock {
 				IncludeGroupStyle style = null;
 				String str = getValue(entry.getValue());
 				if (str != null)
-					style = IncludeGroupStyle.fromString(str, includeKind);
+					style = IncludeGroupStyle.fromXmlString(str, includeKind);
 				if (style == null)
 					style = new IncludeGroupStyle(includeKind);
 				styles.add(style);

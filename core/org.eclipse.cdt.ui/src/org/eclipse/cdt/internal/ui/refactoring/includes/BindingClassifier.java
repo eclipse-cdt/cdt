@@ -392,22 +392,6 @@ public class BindingClassifier {
 	}
 
 	/**
-	 * Adds the given type to the list of bindings which have to be defined. Typedefs and
-	 * enumerations without fixed underlying type are skipped since they must be defined in the file
-	 * that references them by name. If the type is explicitly referenced in this translation unit,
-	 * it will be defined independently from this method.
-	 *
-	 * @param type The type to add.
-	 */
-	private void defineTypeExceptTypedefOrNonFixedEnum(IType type) {
-		IBinding typeBinding = getTypeBinding(type);
-		if (typeBinding != null && !(typeBinding instanceof ITypedef)
-				&& !isEnumerationWithoutFixedUnderlyingType(typeBinding)) {
-			defineBinding(typeBinding);
-		}
-	}
-
-	/**
 	 * Adds the given type to the list of bindings which have to be declared. Typedefs and
 	 * enumerations without fixed underlying type are skipped since they must be defined in the file
 	 * that references them by name. If the type is explicitly referenced in this translation unit,
@@ -420,6 +404,22 @@ public class BindingClassifier {
 		if (typeBinding != null && !(typeBinding instanceof ITypedef)
 				&& !isEnumerationWithoutFixedUnderlyingType(typeBinding)) {
 			declareBinding(typeBinding);
+		}
+	}
+
+	/**
+	 * Adds the given type to the list of bindings which have to be defined. Typedefs and
+	 * enumerations without fixed underlying type are skipped since they must be defined in the file
+	 * that references them by name. If the type is explicitly referenced in this translation unit,
+	 * it will be defined independently from this method.
+	 *
+	 * @param type The type to add.
+	 */
+	private void defineTypeExceptTypedefOrNonFixedEnum(IType type) {
+		IBinding typeBinding = getTypeBinding(type);
+		if (typeBinding != null && !(typeBinding instanceof ITypedef)
+				&& !isEnumerationWithoutFixedUnderlyingType(typeBinding)) {
+			defineBinding(typeBinding);
 		}
 	}
 

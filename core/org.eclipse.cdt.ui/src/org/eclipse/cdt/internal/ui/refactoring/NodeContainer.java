@@ -46,12 +46,12 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.corext.refactoring.code.flow.FlowContext;
 import org.eclipse.cdt.internal.corext.refactoring.code.flow.FlowInfo;
 import org.eclipse.cdt.internal.corext.refactoring.code.flow.InputFlowAnalyzer;
 import org.eclipse.cdt.internal.corext.refactoring.code.flow.Selection;
-import org.eclipse.cdt.internal.corext.util.ASTNodes;
 
 public class NodeContainer {
 	private final List<IASTNode> nodes;

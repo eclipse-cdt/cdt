@@ -89,6 +89,10 @@ public class IncludeInfo implements Comparable<IncludeInfo> {
 		return (isSystem ? '<' : '"') + name + (isSystem ? '>' : '"');
 	}
 
+	public String composeIncludeStatement() {
+		return "#include " + toString(); //$NON-NLS-1$
+	}
+
 	@Override
 	public int compareTo(IncludeInfo other) {
 		if (isSystem != other.isSystem)

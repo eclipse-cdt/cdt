@@ -6,11 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	  Sergey Prigogin (Google) - initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ * 	   Sergey Prigogin (Google) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
+import java.util.Collection;
 import java.util.ListResourceBundle;
 
 import junit.extensions.TestSetup;
@@ -31,8 +32,9 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
 
-import org.eclipse.cdt.internal.ui.editor.AddIncludeOnSelectionAction;
+import org.eclipse.cdt.internal.ui.editor.AddIncludeAction;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IElementSelector;
 
 /**
  * Tests the AddIncludeOnSelectionAction.
@@ -94,8 +96,20 @@ public class AddIncludeTest extends BaseTestCase {
 	}
 
 	private void assertAddIncludeResult() throws Exception {
-		AddIncludeOnSelectionAction.sIsJUnitTest= true;
-		new AddIncludeOnSelectionAction(fEditor).run();
+		AddIncludeAction action = new AddIncludeAction(fEditor);
+		action.setAmbiguityResolver(new IElementSelector() {
+			@Override
+			public <T> T selectElement(Collection<T> elements) {
+				switch (elements.size()) {
+				case 0:
+					return null;
+				case 1:
+					return elements.iterator().next();
+				}
+				throw new RuntimeException("Ambiguous input: " + elements); //$NON-NLS-1$
+			}
+		});
+		action.run();
 
 		String file= createFileName(".expected");
 		String expected= ResourceTestHelper.read(file).toString();

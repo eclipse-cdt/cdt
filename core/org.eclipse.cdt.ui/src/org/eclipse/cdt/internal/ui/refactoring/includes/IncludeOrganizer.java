@@ -84,6 +84,8 @@ import org.eclipse.cdt.utils.PathUtil;
 
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
+import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
+import org.eclipse.cdt.internal.core.dom.rewrite.util.TextUtil;
 import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeGuardDetection;
@@ -95,7 +97,8 @@ import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
  * Organizes the include directives and forward declarations of a source or header file.
  */
 public class IncludeOrganizer {
-	private static boolean DEBUG_HEADER_SUBSTITUTION = "true".equalsIgnoreCase(Platform.getDebugOption(CUIPlugin.PLUGIN_ID + "/debug/includeOrganizer/headerSubstitution")); //$NON-NLS-1$ //$NON-NLS-2$
+	private static boolean DEBUG_HEADER_SUBSTITUTION =
+			"true".equalsIgnoreCase(Platform.getDebugOption(CUIPlugin.PLUGIN_ID + "/debug/includeOrganizer/headerSubstitution")); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static final Collator COLLATOR = Collator.getInstance();
 
@@ -227,19 +230,16 @@ public class IncludeOrganizer {
 		}
 
 		List<String> includeDirectives = new ArrayList<String>();
-		IncludeGroupStyle previousParentStyle = null;
+		IncludeGroupStyle previousStyle = null;
 		for (List<IncludePrototype> prototypes : groupedPrototypes) {
 			if (prototypes != null && !prototypes.isEmpty()) {
-				Collections.sort(prototypes);
+				Collections.sort(prototypes, preferences);
 				IncludeGroupStyle style = prototypes.get(0).getStyle();
-				IncludeGroupStyle groupingStyle = style.getGroupingStyle(preferences.includeStyles);
-				IncludeGroupStyle parentStyle = groupingStyle.getParentStyle(preferences.includeStyles);
-				boolean blankLineBefore = groupingStyle.isBlankLineBefore() ||
-						(parentStyle != null && parentStyle != previousParentStyle &&
-						parentStyle.isKeepTogether() && parentStyle.isBlankLineBefore());
-				previousParentStyle = parentStyle;
-				if (!includeDirectives.isEmpty() && blankLineBefore)
+				if (!includeDirectives.isEmpty() &&
+						style.isBlankLineNeededAfter(previousStyle, preferences.includeStyles)) {
 					includeDirectives.add(""); // Blank line separator //$NON-NLS-1$
+				}
+				previousStyle = style;
 				for (IncludePrototype prototype : prototypes) {
 					String trailingComment = ""; //$NON-NLS-1$
 					IASTPreprocessorIncludeStatement include = prototype.getExistingInclude();
@@ -295,15 +295,15 @@ public class IncludeOrganizer {
 		int length = includeReplacementRegion.getLength();
 		if (allowReordering) {
 			if (buf.length() != 0) {
-				if (offset != 0 && !isPreviousLineBlank(offset))
+				if (offset != 0 && !TextUtil.isPreviousLineBlank(fContext.getSourceContents(), offset))
 					buf.insert(0, fLineDelimiter);  // Blank line before.
 				if (!isBlankLineOrEndOfFile(offset + length))
 					buf.append(fLineDelimiter);  // Blank line after.
 			}
 			
 			String text = buf.toString();
-			// TODO(sprigogin): Add a diff algorithm and produce more narrow replacements.
-			if (!CharArrayUtils.equals(fContext.getTranslationUnit().getContents(), offset, length, text)) {
+			// TODO(sprigogin): Add a diff algorithm and produce narrower replacements.
+			if (!CharArrayUtils.equals(fContext.getSourceContents(), offset, length, text)) {
 				edits.add(new ReplaceEdit(offset, length, text));
 			}
 		} else if (buf.length() != 0) {
@@ -470,7 +470,7 @@ public class IncludeOrganizer {
 		IASTFileLocation location = include.getFileLocation();
 		int offset = location.getNodeOffset();
 		if (fContext.getTranslationUnit().isCXXLanguage()) {
-			offset = getLineStart(fContext.getSourceContents(), offset);
+			offset = TextUtil.getLineStart(fContext.getSourceContents(), offset);
 			edits.add(new InsertEdit(offset, "//")); //$NON-NLS-1$
 		} else {
 			edits.add(new InsertEdit(offset, "/*")); //$NON-NLS-1$
@@ -483,8 +483,8 @@ public class IncludeOrganizer {
 		IASTFileLocation location = include.getFileLocation();
 		int offset = location.getNodeOffset();
 		int endOffset = offset + location.getNodeLength();
-		offset = getLineStart(fContext.getSourceContents(), offset);
-		endOffset = skipToNextLine(fContext.getSourceContents(), endOffset);
+		offset = TextUtil.getLineStart(fContext.getSourceContents(), offset);
+		endOffset = TextUtil.skipToNextLine(fContext.getSourceContents(), endOffset);
 		edits.add(new DeleteEdit(offset, endOffset - offset));
 	}
 
@@ -536,7 +536,7 @@ public class IncludeOrganizer {
 		}
 		if (includeOffset < 0) {
 			if (includeGuardEndOffset >= 0) {
-				includeOffset = skipToNextLine(contents, includeGuardEndOffset);
+				includeOffset = TextUtil.skipToNextLine(contents, includeGuardEndOffset);
 			} else {
 				includeOffset = 0;
 			}
@@ -546,7 +546,7 @@ public class IncludeOrganizer {
 			}
 			includeEndOffset = includeOffset;
 		} else {
-			includeEndOffset = skipToNextLine(contents, includeEndOffset);
+			includeEndOffset = TextUtil.skipToNextLine(contents, includeEndOffset);
 		}
 		return new Region(includeOffset, includeEndOffset - includeOffset);
 	}
@@ -587,32 +587,12 @@ public class IncludeOrganizer {
 		return CharArrayUtils.equals(((IASTPreprocessorPragmaStatement) statement).getMessage(), "once"); //$NON-NLS-1$
 	}
 
-	private static int skipToNextLine(char[] text, int offset) {
-		while (offset < text.length) {
-			if (text[offset++] == '\n')
-				break;
-		}
-		return offset;
-	}
-
-	private static int getLineStart(char[] text, int offset) {
-		while (--offset >= 0) {
-			if (text[offset] == '\n')
-				break;
-		}
-		return offset + 1;
-	}
-
-	private static int skipToNextLineAfterNode(char[] text, IASTNode node) {
-		return skipToNextLine(text, getNodeEndOffset(node));
-	}
-
 	/**
 	 * Returns {@code true} if there are no non-whitespace characters between the given
 	 * {@code offset} and the end of the line.
 	 */
 	private boolean isBlankLineOrEndOfFile(int offset) {
-		char[] contents = fContext.getTranslationUnit().getContents();
+		char[] contents = fContext.getSourceContents();
 		while (offset < contents.length) {
 			char c = contents[offset++];
 			if (c == '\n')
@@ -624,33 +604,13 @@ public class IncludeOrganizer {
 	}
 
 	/**
-	 * Returns {@code true} the line prior to the line corresponding to the given {@code offset} 
-	 * does not contain non-whitespace characters.
-	 */
-	private boolean isPreviousLineBlank(int offset) {
-		char[] contents = fContext.getTranslationUnit().getContents();
-		while (--offset >= 0) {
-			if (contents[offset] == '\n')
-				break;
-		}
-		while (--offset >= 0) {
-			char c = contents[offset];
-			if (c == '\n')
-				return true;
-			if (!Character.isWhitespace(c))
-				return false;
-		}
-		return false;
-	}
-
-	/**
 	 * Returns the whitespace preceding the given node. The newline character in not considered
 	 * whitespace for the purpose of this method.
 	 */
 	private String getPrecedingWhitespace(IASTNode node) {
 		int offset = getNodeOffset(node);
 		if (offset >= 0) {
-			char[] contents = fContext.getTranslationUnit().getContents();
+			char[] contents = fContext.getSourceContents();
 			int i = offset;
 			while (--i >= 0) {
 				char c = contents[i];
@@ -697,11 +657,11 @@ public class IncludeOrganizer {
 					for (int j = 1; j < leadingComments.size(); j++) {
 						comment = leadingComments.get(j);
 						if (getStartingLineNumber(comment) > getEndingLineNumber(previous) + 1)
-							return skipToNextLineAfterNode(contents, previous);
+							return ASTNodes.skipToNextLineAfterNode(contents, previous);
 						previous = comment;
 					}
 					if (getStartingLineNumber(node) > getEndingLineNumber(previous) + 1)
-						return skipToNextLineAfterNode(contents, previous);
+						return ASTNodes.skipToNextLineAfterNode(contents, previous);
 				}
 				node = inverseFreestandingMap.get(comment);
 				if (node != null) {
@@ -710,7 +670,7 @@ public class IncludeOrganizer {
 					for (int j = 1; j < freestandingComments.size(); j++) {
 						comment = freestandingComments.get(j);
 						if (getStartingLineNumber(comment) > getEndingLineNumber(previous) + 1)
-							return skipToNextLineAfterNode(contents, previous);
+							return ASTNodes.skipToNextLineAfterNode(contents, previous);
 						previous = comment;
 					}
 				}
@@ -1059,8 +1019,7 @@ public class IncludeOrganizer {
 				break;
 			}
 		}
-		buf.append("#include "); //$NON-NLS-1$
-		buf.append(include.getIncludeInfo().toString());
+		buf.append(include.getIncludeInfo().composeIncludeStatement());
 		buf.append(lineComment);
 		return buf.toString();
 	}

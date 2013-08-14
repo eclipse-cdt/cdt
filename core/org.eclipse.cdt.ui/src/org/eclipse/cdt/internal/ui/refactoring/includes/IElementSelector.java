@@ -10,19 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.includes;
 
-import org.eclipse.osgi.util.NLS;
+import java.util.Collection;
 
-public final class Messages extends NLS {
-	public static String AddInclude_help_provider_error;
-
-	public static String GCCHeaderSubstitutionMaps_c_map;
-	public static String GCCHeaderSubstitutionMaps_cpp_map;
-	
-	private Messages() {
-		// Do not instantiate
-	}
-
-	static {
-		NLS.initializeMessages(Messages.class.getName(), Messages.class);
-	}
+/**
+ * Interface for selecting one of a set of elements. 
+ */
+public interface IElementSelector {
+	/**
+	 * Selects one element from a set of elements.
+	 * 
+	 * @param elements the objects to select from
+	 * @return the selected element or {@code null} if nothing was selected 
+	 */
+	public <T> T selectElement(Collection<T> elements);
 }

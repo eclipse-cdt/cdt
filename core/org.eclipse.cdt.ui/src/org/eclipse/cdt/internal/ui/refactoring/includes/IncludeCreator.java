@@ -11,17 +11,20 @@
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.editor;
+package org.eclipse.cdt.internal.ui.refactoring.includes;
 
 import static org.eclipse.cdt.core.index.IndexLocationFactory.getAbsolutePath;
+import static org.eclipse.cdt.internal.ui.refactoring.includes.IncludeUtil.isContainedInRegion;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,26 +33,24 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.text.edits.InsertEdit;
+import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.texteditor.TextEditorAction;
+
+import com.ibm.icu.text.Collator;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -71,148 +72,55 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
-import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
-import org.eclipse.cdt.ui.text.SharedASTJob;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
+import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
+import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
+import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
-import org.eclipse.cdt.internal.corext.codemanipulation.AddIncludesOperation;
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
-import org.eclipse.cdt.internal.corext.codemanipulation.InclusionContext;
+import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
 
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 /**
  * Adds an include statement and, optionally, a 'using' declaration for the currently
  * selected name.
  */
-public class AddIncludeOnSelectionAction extends TextEditorAction {
-	public static boolean sIsJUnitTest = false;
+public class IncludeCreator {
+	private static final Collator COLLATOR = Collator.getInstance();
 
-	private ITranslationUnit fTu;
-	private IProject fProject;
-	private final List<IncludeInfo> fRequiredIncludes = new ArrayList<IncludeInfo>();
-	private final List<String> fUsingDeclarations = new ArrayList<String>();
-	protected InclusionContext fContext;
+	private final String fLineDelimiter;
+	private final IElementSelector fAmbiguityResolver;
+	private final IncludeCreationContext fContext;
 
-	public AddIncludeOnSelectionAction(ITextEditor editor) {
-		super(CEditorMessages.getBundleForConstructedKeys(), "AddIncludeOnSelection.", editor); //$NON-NLS-1$
-
-		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this,
-				ICHelpContextIds.ADD_INCLUDE_ON_SELECTION_ACTION);
+	public IncludeCreator(ITranslationUnit tu, IIndex index, String lineDelimiter,
+			IElementSelector ambiguityResolver) {
+		fLineDelimiter = lineDelimiter;
+		fAmbiguityResolver = ambiguityResolver;
+		fContext = new IncludeCreationContext(tu, index);
 	}
 
-	private void insertInclude(List<IncludeInfo> includes, List<String> usings, int beforeOffset) {
-		AddIncludesOperation op= new AddIncludesOperation(fTu, beforeOffset, includes, usings);
-		try {
-			PlatformUI.getWorkbench().getProgressService().runInUI(
-					PlatformUI.getWorkbench().getProgressService(),
-					new WorkbenchRunnableAdapter(op), op.getSchedulingRule());
-		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, getShell(), CEditorMessages.AddIncludeOnSelection_error_title,
-					CEditorMessages.AddIncludeOnSelection_insertion_failed); 
-		} catch (InterruptedException e) {
-			// Do nothing. Operation has been canceled.
-		}
-	}
-
-	private static ITranslationUnit getTranslationUnit(ITextEditor editor) {
-		if (editor == null) {
-			return null;
-		}
-		return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
-	}
-
-	private Shell getShell() {
-		return getTextEditor().getSite().getShell();
-	}
-
-	@Override
-	public void run() {
-		fTu = getTranslationUnit(getTextEditor());
-		if (fTu == null) {
-			return;
-		}
-		fProject = fTu.getCProject().getProject();
-
-		try {
-			final ISelection selection= getTextEditor().getSelectionProvider().getSelection();
-			if (selection.isEmpty() || !(selection instanceof ITextSelection)) {
-				return;
-			}
-			if (!validateEditorInputState()) {
-				return;
-			}
-
-			final String[] lookupName = new String[1];
-			final IIndex index= CCorePlugin.getIndexManager().getIndex(fTu.getCProject(), IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT);
-			SharedASTJob job = new SharedASTJob(CEditorMessages.AddIncludeOnSelection_label, fTu) {
-				@Override
-				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
-					deduceInclude((ITextSelection) selection, index, ast, lookupName);
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
-			job.join();
-
-			if (fRequiredIncludes.isEmpty() && lookupName[0].length() > 0) {
-				// Try contribution from plug-ins.
-				IFunctionSummary fs = findContribution(lookupName[0]);
-				if (fs != null) {
-					IRequiredInclude[] functionIncludes = fs.getIncludes();
-					if (functionIncludes != null) {
-						for (IRequiredInclude include : functionIncludes) {
-							fRequiredIncludes.add(new IncludeInfo(include.getIncludeName(), include.isStandard()));
-						}
-					}
-					String ns = fs.getNamespace();
-					if (ns != null && ns.length() > 0) {
-						fUsingDeclarations.add(fs.getNamespace());
-					}
-				}
-
-			}
-			if (!fRequiredIncludes.isEmpty()) {
-				insertInclude(fRequiredIncludes, fUsingDeclarations, ((ITextSelection) selection).getOffset());
-			}
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		} catch (CoreException e) {
-			CUIPlugin.log("Cannot perform 'Add Include'", e); //$NON-NLS-1$
-		}
-	}
-
-	/**
-	 * Extracts the includes for the given selection.  This can be both used to perform
-	 * the work as well as being invoked when there is a change.
-	 * @param selection a text selection.
-	 * @param ast an AST.
-	 * @param lookupName a one-element array used to return the selected name.
-	 */
-	private void deduceInclude(ITextSelection selection, IIndex index, IASTTranslationUnit ast, String[] lookupName)
+	public List<TextEdit> createInclude(IASTTranslationUnit ast, ITextSelection selection)
 			throws CoreException {
-		fContext = new InclusionContext(fTu);
-		IASTNodeSelector selector = ast.getNodeSelector(fTu.getLocation().toOSString());
+		ITranslationUnit tu = fContext.getTranslationUnit();
+		IASTNodeSelector selector = ast.getNodeSelector(tu.getLocation().toOSString());
 		IASTName name = selector.findEnclosingName(selection.getOffset(), selection.getLength());
 		if (name == null) {
-			return;
+			return Collections.emptyList();
 		}
 		char[] nameChars = name.toCharArray();
-		lookupName[0] = new String(nameChars);
+		String lookupName = new String(nameChars);
 		IBinding binding = name.resolveBinding();
 		if (binding instanceof ICPPVariable) {
 			IType type = ((ICPPVariable) binding).getType();
@@ -224,86 +132,273 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			}
 		}
 		if (nameChars.length == 0) {
-			return;
+			return Collections.emptyList();
 		}
 
 		final Map<String, IncludeCandidate> candidatesMap= new HashMap<String, IncludeCandidate>();
 		final IndexFilter filter = IndexFilter.getDeclaredBindingFilter(ast.getLinkage().getLinkageID(), false);
 		
+		final List<IncludeInfo> requiredIncludes = new ArrayList<IncludeInfo>();
+		final List<UsingDeclaration> usingDeclarations = new ArrayList<UsingDeclaration>();
+
 		List<IIndexBinding> bindings = new ArrayList<IIndexBinding>();
-		IIndexBinding adaptedBinding= index.adaptBinding(binding);
-		if (adaptedBinding == null) {
-			bindings.addAll(Arrays.asList(index.findBindings(nameChars, false, filter, new NullProgressMonitor())));
-		} else {
-			bindings.add(adaptedBinding);
-			while (adaptedBinding instanceof ICPPSpecialization) {
-				adaptedBinding= index.adaptBinding(((ICPPSpecialization) adaptedBinding).getSpecializedBinding());
-				if (adaptedBinding != null) {
-					bindings.add(adaptedBinding);
-				}
-			}
-		}
-
-		for (IIndexBinding indexBinding : bindings) {
-			// Replace ctor with the class itself.
-			if (indexBinding instanceof ICPPConstructor) {
-				indexBinding = indexBinding.getOwner();
-			}
-			IIndexName[] definitions= null;
-			// class, struct, union, enum-type, enum-item
-			if (indexBinding instanceof ICompositeType || indexBinding instanceof IEnumeration || indexBinding instanceof IEnumerator) {
-				definitions= index.findDefinitions(indexBinding);
-			} else if (indexBinding instanceof ITypedef || (indexBinding instanceof IFunction)) {
-				definitions = index.findDeclarations(indexBinding);
-			}
-			if (definitions != null) {
-				for (IIndexName definition : definitions) {
-					considerForInclusion(definition, indexBinding, index, candidatesMap);
-				}
-				if (definitions.length > 0 && adaptedBinding != null) 
-					break;
-			}
-		}
-		IIndexMacro[] macros = index.findMacros(nameChars, filter, new NullProgressMonitor());
-		for (IIndexMacro macro : macros) {
-			IIndexName definition = macro.getDefinition();
-			considerForInclusion(definition, macro, index, candidatesMap);
-		}
-
-		final ArrayList<IncludeCandidate> candidates = new ArrayList<IncludeCandidate>(candidatesMap.values());
-		if (candidates.size() > 1) {
-			if (sIsJUnitTest) {
-				throw new RuntimeException("ambiguous input"); //$NON-NLS-1$
-			}
-			runInUIThread(new Runnable() {
-				@Override
-				public void run() {
-					ElementListSelectionDialog dialog=
-						new ElementListSelectionDialog(getShell(), new LabelProvider());
-					dialog.setElements(candidates.toArray());
-					dialog.setTitle(CEditorMessages.AddIncludeOnSelection_label); 
-					dialog.setMessage(CEditorMessages.AddIncludeOnSelection_description); 
-					if (dialog.open() == Window.OK) {
-						candidates.clear();
-						candidates.add((IncludeCandidate) dialog.getFirstResult());
+		try {
+			IIndex index = fContext.getIndex();
+			IIndexBinding adaptedBinding= index.adaptBinding(binding);
+			if (adaptedBinding == null) {
+				bindings.addAll(Arrays.asList(index.findBindings(nameChars, false, filter, new NullProgressMonitor())));
+			} else {
+				bindings.add(adaptedBinding);
+				while (adaptedBinding instanceof ICPPSpecialization) {
+					adaptedBinding= index.adaptBinding(((ICPPSpecialization) adaptedBinding).getSpecializedBinding());
+					if (adaptedBinding != null) {
+						bindings.add(adaptedBinding);
 					}
 				}
-			});
+			}
+	
+			for (IIndexBinding indexBinding : bindings) {
+				// Replace ctor with the class itself.
+				if (indexBinding instanceof ICPPConstructor) {
+					indexBinding = indexBinding.getOwner();
+				}
+				IIndexName[] definitions= null;
+				// class, struct, union, enum-type, enum-item
+				if (indexBinding instanceof ICompositeType || indexBinding instanceof IEnumeration || indexBinding instanceof IEnumerator) {
+					definitions= index.findDefinitions(indexBinding);
+				} else if (indexBinding instanceof ITypedef || (indexBinding instanceof IFunction)) {
+					definitions = index.findDeclarations(indexBinding);
+				}
+				if (definitions != null) {
+					for (IIndexName definition : definitions) {
+						considerForInclusion(definition, indexBinding, index, candidatesMap);
+					}
+					if (definitions.length > 0 && adaptedBinding != null) 
+						break;
+				}
+			}
+			IIndexMacro[] macros = index.findMacros(nameChars, filter, new NullProgressMonitor());
+			for (IIndexMacro macro : macros) {
+				IIndexName definition = macro.getDefinition();
+				considerForInclusion(definition, macro, index, candidatesMap);
+			}
+	
+			final ArrayList<IncludeCandidate> candidates = new ArrayList<IncludeCandidate>(candidatesMap.values());
+			if (candidates.size() > 1) {
+				IncludeCandidate candidate = fAmbiguityResolver.selectElement(candidates);
+				if (candidate == null)
+					return Collections.emptyList();
+				candidates.clear();
+				candidates.add(candidate);
+			}
+	
+			if (candidates.size() == 1) {
+				IncludeCandidate candidate = candidates.get(0);
+				requiredIncludes.add(candidate.include);
+				IIndexBinding indexBinding = candidate.binding;
+	
+				if (indexBinding instanceof ICPPBinding && !(indexBinding instanceof IIndexMacro)) {
+					// Decide what 'using' declaration, if any, should be added along with the include.
+					UsingDeclaration usingDeclaration = deduceUsingDeclaration(binding, indexBinding, ast);
+					if (usingDeclaration != null)
+						usingDeclarations.add(usingDeclaration);
+				}
+			}
+		} catch (CoreException e) {
+			CUIPlugin.log(e);
+			return Collections.emptyList();
 		}
 
-		fRequiredIncludes.clear();
-		fUsingDeclarations.clear();
-		if (candidates.size() == 1) {
-			IncludeCandidate candidate = candidates.get(0);
-			fRequiredIncludes.add(candidate.getInclude());
-			IIndexBinding indexBinding = candidate.getBinding();
-
-			if (indexBinding instanceof ICPPBinding && !(indexBinding instanceof IIndexMacro)) {
-				// Decide what 'using' declaration, if any, should be added along with the include.
-				String usingDeclaration = deduceUsingDeclaration(binding, indexBinding, ast);
-				if (usingDeclaration != null)
-					fUsingDeclarations.add(usingDeclaration);
+		if (requiredIncludes.isEmpty() && !lookupName.isEmpty()) {
+			// Try contribution from plug-ins.
+			IFunctionSummary fs = findContribution(lookupName);
+			if (fs != null) {
+				IRequiredInclude[] functionIncludes = fs.getIncludes();
+				if (functionIncludes != null) {
+					for (IRequiredInclude include : functionIncludes) {
+						requiredIncludes.add(new IncludeInfo(include.getIncludeName(), include.isStandard()));
+					}
+				}
+				String ns = fs.getNamespace();
+				if (ns != null && !ns.isEmpty()) {
+					usingDeclarations.add(new UsingDeclaration(ns + "::" + fs.getName())); //$NON-NLS-1$
+				}
 			}
+		}
+
+		return createEdits(requiredIncludes, usingDeclarations, ast, selection);
+	}
+
+	private List<TextEdit> createEdits(List<IncludeInfo> includes,
+			List<UsingDeclaration> usingDeclarations, IASTTranslationUnit ast,
+			ITextSelection selection) {
+		NodeCommentMap commentedNodeMap = ASTCommenter.getCommentedNodeMap(ast);
+		char[] contents = fContext.getSourceContents();
+		IRegion includeRegion =
+				IncludeOrganizer.getSafeIncludeReplacementRegion(contents, ast, commentedNodeMap);
+		
+		IncludePreferences preferences = fContext.getPreferences();
+
+		List<TextEdit> edits = new ArrayList<TextEdit>();
+
+		IASTPreprocessorIncludeStatement[] existingIncludes = ast.getIncludeDirectives();
+		fContext.addHeadersIncludedPreviously(existingIncludes);
+
+		List<StyledInclude> styledIncludes = new ArrayList<StyledInclude>();
+		// Put the new includes into styledIncludes.
+		for (IncludeInfo includeInfo : includes) {
+			IPath header = fContext.resolveInclude(includeInfo);
+			if (!fContext.wasIncludedPreviously(header)) {
+				IncludeGroupStyle style = fContext.getIncludeStyle(includeInfo);
+				StyledInclude prototype = new StyledInclude(header, includeInfo, style);
+				styledIncludes.add(prototype);
+			}
+		}
+		Collections.sort(styledIncludes, preferences);
+
+		// Populate list of existing includes in the include insertion region.
+		List<StyledInclude> mergedIncludes = new ArrayList<StyledInclude>();
+		for (IASTPreprocessorIncludeStatement include : existingIncludes) {
+			if (include.isPartOfTranslationUnitFile() && isContainedInRegion(include, includeRegion)) {
+				String name = new String(include.getName().getSimpleID());
+				IncludeInfo includeInfo = new IncludeInfo(name, include.isSystemInclude());
+				String path = include.getPath();
+				// An empty path means that the include was not resolved.
+				IPath header = path.isEmpty() ? null : Path.fromOSString(path);
+				IncludeGroupStyle style =
+						header != null ? fContext.getIncludeStyle(header) : fContext.getIncludeStyle(includeInfo);
+				StyledInclude prototype = new StyledInclude(header, includeInfo, style, include);
+				mergedIncludes.add(prototype);
+			}
+		}
+
+		if (preferences.allowReordering) {
+			// Since the order of existing include statements may not match the include order
+			// preferences, we find positions for the new include statements by pushing them from
+			// them up from the bottom of the include insertion region.  
+			for (StyledInclude include : styledIncludes) {
+				int i = mergedIncludes.size();
+				while (--i >= 0 && preferences.compare(include, mergedIncludes.get(i)) < 0) {}
+				mergedIncludes.add(i + 1, include);
+			}
+		} else {
+			mergedIncludes.addAll(styledIncludes);
+		}
+
+		int offset = includeRegion.getOffset();
+		StringBuilder text = new StringBuilder();
+		StyledInclude previousInclude = null;
+		for (StyledInclude include : mergedIncludes) {
+			if (include.getExistingInclude() == null) {
+				if (previousInclude != null) {
+					IASTNode previousNode = previousInclude.getExistingInclude();
+					if (previousNode != null) {
+						offset = ASTNodes.skipToNextLineAfterNode(contents, previousNode);
+						flushEditBuffer(offset, text, edits);
+						if (contents[offset - 1] != '\n')
+							text.append(fLineDelimiter);
+					}
+					if (include.getStyle().isBlankLineNeededAfter(previousInclude.getStyle(), preferences.includeStyles))
+						text.append(fLineDelimiter);
+				}
+				text.append(include.getIncludeInfo().composeIncludeStatement());
+				text.append(fLineDelimiter);
+			} else {
+				if (previousInclude != null && previousInclude.getExistingInclude() == null &&
+						include.getStyle().isBlankLineNeededAfter(previousInclude.getStyle(), preferences.includeStyles)) {
+					text.append(fLineDelimiter);
+				}
+				flushEditBuffer(offset, text, edits);
+			}
+			previousInclude = include;
+		}
+		flushEditBuffer(offset, text, edits);
+
+		List<UsingDeclaration> mergedUsingDeclarations = getUsingDeclarations(ast);
+		for (UsingDeclaration usingDeclaration : mergedUsingDeclarations) {
+			for (Iterator<UsingDeclaration> iter = usingDeclarations.iterator(); iter.hasNext();) {
+				UsingDeclaration using = iter.next();
+				if (using.equals(usingDeclaration.name))
+					iter.remove();
+			}
+		}
+
+		if (usingDeclarations.isEmpty())
+			return edits;
+
+		List<UsingDeclaration> temp = null;
+		for (Iterator<UsingDeclaration> iter = mergedUsingDeclarations.iterator(); iter.hasNext();) {
+			UsingDeclaration usingDeclaration = iter.next();
+			if (usingDeclaration.existingDeclaration.isPartOfTranslationUnitFile() &&
+					ASTNodes.endOffset(usingDeclaration.existingDeclaration) <= selection.getOffset()) {
+				if (temp == null)
+					temp = new ArrayList<UsingDeclaration>();
+				temp.add(usingDeclaration);
+			}
+		}
+		if (temp == null) {
+			mergedUsingDeclarations.clear();
+		} else {
+			mergedUsingDeclarations = temp;
+		}
+
+		Collections.sort(usingDeclarations);
+
+		if (mergedUsingDeclarations.isEmpty()) {
+			offset = includeRegion.getOffset() + includeRegion.getLength();
+			text.append(fLineDelimiter);  // Blank line between includes and using declarations.
+		} else {
+			offset = commentedNodeMap.getOffsetIncludingComments(mergedUsingDeclarations.get(0).existingDeclaration);
+		}
+
+		// Since the order of existing using declarations may not be alphabetical, we find positions
+		// for the new using declarations by pushing them from them up from the bottom of
+		// the using declaration list.  
+		for (UsingDeclaration using : usingDeclarations) {
+			int i = mergedUsingDeclarations.size();
+			while (--i >= 0 && using.compareTo(mergedUsingDeclarations.get(i)) < 0) {}
+			mergedUsingDeclarations.add(i + 1, using);
+		}
+
+		UsingDeclaration previousUsing = null;
+		for (UsingDeclaration using : mergedUsingDeclarations) {
+			if (using.existingDeclaration == null) {
+				if (previousUsing != null) {
+					IASTNode previousNode = previousUsing.existingDeclaration;
+					if (previousNode != null) {
+						offset = ASTNodes.skipToNextLineAfterNode(contents, previousNode);
+						flushEditBuffer(offset, text, edits);
+						if (contents[offset - 1] != '\n')
+							text.append(fLineDelimiter);
+					}
+				}
+				text.append(using.composeDirective());
+				text.append(fLineDelimiter);
+			} else {
+				flushEditBuffer(offset, text, edits);
+			}
+			previousUsing = using;
+		}
+		flushEditBuffer(offset, text, edits);
+
+		return edits;
+	}
+
+	private List<UsingDeclaration> getUsingDeclarations(IASTTranslationUnit ast) {
+		List<UsingDeclaration> usingDeclarations = new ArrayList<UsingDeclaration>();
+		IASTDeclaration[] declarations = ast.getDeclarations();
+		for (IASTDeclaration declaration : declarations) {
+			if (declaration instanceof ICPPASTUsingDeclaration) {
+				usingDeclarations.add(new UsingDeclaration((ICPPASTUsingDeclaration) declaration));
+			}
+		}
+		return usingDeclarations;
+	}
+
+	private void flushEditBuffer(int offset, StringBuilder text, List<TextEdit> edits) {
+		if (text.length() != 0) {
+			edits.add(new InsertEdit(offset, text.toString()));
+			text.delete(0, text.length());
 		}
 	}
 
@@ -331,7 +426,8 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		}
 	}
 
-	private String deduceUsingDeclaration(IBinding source, IBinding target, IASTTranslationUnit ast) {
+	private UsingDeclaration deduceUsingDeclaration(IBinding source, IBinding target,
+			IASTTranslationUnit ast) {
 		if (source.equals(target)) {
 			return null;  // No using declaration is needed.
 		}
@@ -379,7 +475,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			}
 			buf.append(targetChain.get(i));
 		}
-		return buf.toString();
+		return new UsingDeclaration(buf.toString());
 	}
 
 	private boolean match(IASTName name, ArrayList<String> usingChain, boolean excludeLast) {
@@ -438,7 +534,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			while (!front.isEmpty()) {
 				IIndexFile file = front.remove();
 				// A header without an extension is a good candidate for inclusion into a C++ source file.
-				if (fTu.isCXXLanguage() && !hasExtension(getPath(file))) {
+				if (fContext.isCXXLanguage() && !hasExtension(getPath(file))) {
 					return file;
 				}
 				IIndexInclude[] includes = index.findIncludedBy(file, 0);
@@ -473,7 +569,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		return path.indexOf('.', path.lastIndexOf('/') + 1) >= 0;
 	}
 
-	private IFunctionSummary findContribution(final String name) {
+	private IFunctionSummary findContribution(final String name) throws CoreException {
 		final IFunctionSummary[] fs = new IFunctionSummary[1];
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			@Override
@@ -481,12 +577,12 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 				ICHelpInvocationContext context = new ICHelpInvocationContext() {
 					@Override
 					public IProject getProject() {
-						return fProject;
+						return fContext.getProject();
 					}
 
 					@Override
 					public ITranslationUnit getTranslationUnit() {
-						return fTu;
+						return fContext.getTranslationUnit();
 					}
 				};
 
@@ -496,34 +592,21 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
 		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, getShell(), CEditorMessages.AddIncludeOnSelection_error_title,
-					CEditorMessages.AddIncludeOnSelection_help_provider_error); 
+			throw new CoreException(CUIPlugin.createErrorStatus(Messages.AddInclude_help_provider_error, e));
 		} catch (InterruptedException e) {
 			// Do nothing. Operation has been canceled.
 		}
 		return fs[0];
 	}
 
-	private void runInUIThread(Runnable runnable) {
-		if (Display.getCurrent() != null) {
-			runnable.run();
-		} else {
-			Display.getDefault().syncExec(runnable);
-		}
-	}
-
-	@Override
-	public void update() {
-		ITextEditor editor = getTextEditor();
-		setEnabled(editor != null && getTranslationUnit(editor) != null);
-	}
-
 	/**
-	 * Checks if a file is a source file (.c, .cpp, .cc, etc). Header files are not considered source files.
-	 * @return Returns <code>true</code> if the the file is a source file.
+	 * Checks if a file is a source file (.c, .cpp, .cc, etc). Header files are not considered
+	 * source files.
+	 *
+	 * @return Returns {@code true} if the the file is a source file.
 	 */
 	private boolean isSource(String filename) {
-		IContentType ct= CCorePlugin.getContentType(fProject, filename);
+		IContentType ct= CCorePlugin.getContentType(fContext.getProject(), filename);
 		if (ct != null) {
 			String id = ct.getId();
 			if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id) || CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
@@ -623,27 +706,43 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 	 * definitions for "add include" when there are more than one to choose from.  
 	 */
 	private static class IncludeCandidate {
-		private final IIndexBinding binding;
-		private final IncludeInfo include;
-		private final String label;
+		final IIndexBinding binding;
+		final IncludeInfo include;
+		final String label;
 
-		public IncludeCandidate(IIndexBinding binding, IncludeInfo include) throws CoreException {
+		IncludeCandidate(IIndexBinding binding, IncludeInfo include) throws CoreException {
 			this.binding = binding;
 			this.include = include;
 			this.label = getBindingQualifiedName(binding) + " - " + include.toString(); //$NON-NLS-1$
 		}
 
-		public IIndexBinding getBinding() {
-			return binding;
-		}
-
-		public IncludeInfo getInclude() {
-			return include;
-		}
-
 		@Override
 		public String toString() {
 			return label;
+		}
+	}
+
+	private static class UsingDeclaration implements Comparable<UsingDeclaration> {
+		final String name;
+		final ICPPASTUsingDeclaration existingDeclaration;
+
+		UsingDeclaration(String name) {
+			this.name = name;
+			this.existingDeclaration = null;
+		}
+
+		UsingDeclaration(ICPPASTUsingDeclaration existingDeclaration) {
+			this.name = ASTStringUtil.getQualifiedName(existingDeclaration.getName());
+			this.existingDeclaration = existingDeclaration;
+		}
+
+		@Override
+		public int compareTo(UsingDeclaration other) {
+			return COLLATOR.compare(name, other.name);
+		}
+
+		String composeDirective() {
+			return "using " + name + ';'; //$NON-NLS-1$
 		}
 	}
 }

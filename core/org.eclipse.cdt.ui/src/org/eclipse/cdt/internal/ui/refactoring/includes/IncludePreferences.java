@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.ui.refactoring.includes;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,12 +22,14 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
+import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
+
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.IncludeKind;
 
 /**
  * Preferences for managing of includes.
  */
-public class IncludePreferences {
+public class IncludePreferences implements Comparator<StyledInclude> {
 	private static final String DEFAULT_PARTNER_FILE_SUFFIXES = "test,unittest"; //$NON-NLS-1$
 
 	public static enum UnusedStatementDisposition { REMOVE, COMMENT_OUT, KEEP }
@@ -111,7 +114,7 @@ public class IncludePreferences {
 		String value = PreferenceConstants.getPreference(preferenceKey, project, null);
 		IncludeGroupStyle style = null;
 		if (value != null)
-			style = IncludeGroupStyle.fromString(value, includeKind);
+			style = IncludeGroupStyle.fromXmlString(value, includeKind);
 		if (style == null)
 			style = new IncludeGroupStyle(includeKind);
 		includeStyles.put(includeKind, style);
@@ -124,41 +127,41 @@ public class IncludePreferences {
 	 */
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		IncludeGroupStyle style = new IncludeGroupStyle(IncludeKind.RELATED);
-		store.setDefault(PreferenceConstants.INCLUDE_STYLE_RELATED, style.toString());
+		store.setDefault(PreferenceConstants.INCLUDE_STYLE_RELATED, style.toXmlString());
 		style = new IncludeGroupStyle(IncludeKind.PARTNER);
 		style.setKeepTogether(true);
 		style.setBlankLineBefore(true);
 		style.setOrder(0);
-		store.setDefault(PreferenceConstants.INCLUDE_STYLE_PARTNER, style.toString());
+		store.setDefault(PreferenceConstants.INCLUDE_STYLE_PARTNER, style.toXmlString());
 		style = new IncludeGroupStyle(IncludeKind.IN_SAME_FOLDER);
-		store.setDefault(PreferenceConstants.INCLUDE_STYLE_SAME_FOLDER, style.toString());
+		store.setDefault(PreferenceConstants.INCLUDE_STYLE_SAME_FOLDER, style.toXmlString());
 		style = new IncludeGroupStyle(IncludeKind.IN_SUBFOLDER);
-		store.setDefault(PreferenceConstants.INCLUDE_STYLE_SUBFOLDER, style.toString());
+		store.setDefault(PreferenceConstants.INCLUDE_STYLE_SUBFOLDER, style.toXmlString());
 		style = new IncludeGroupStyle(IncludeKind.SYSTEM);
 		style.setKeepTogether(true);
 		style.setBlankLineBefore(true);
-		store.setDefault(PreferenceConstants.INCLUDE_STYLE_SYSTEM, style.toString());
+		store.setDefault(PreferenceConstants.INCLUDE_STYLE_SYSTEM, style.toXmlString());
 		style = new IncludeGroupStyle(IncludeKind.SYSTEM_WITH_EXTENSION);
 		style.setKeepTogether(true);
 		style.setAngleBrackets(true);
 		style.setOrder(1);
-		store.setDefault(PreferenceConstants.INCLUDE_STYLE_SYSTEM_WITH_EXTENSION, style.toString());
+		store.setDefault(PreferenceConstants.INCLUDE_STYLE_SYSTEM_WITH_EXTENSION, style.toXmlString());
 		style = new IncludeGroupStyle(IncludeKind.SYSTEM_WITHOUT_EXTENSION);
 		style.setKeepTogether(true);
 		style.setAngleBrackets(true);
 		style.setOrder(2);
-		store.setDefault(PreferenceConstants.INCLUDE_STYLE_SYSTEM_WITHOUT_EXTENSION, style.toString());
+		store.setDefault(PreferenceConstants.INCLUDE_STYLE_SYSTEM_WITHOUT_EXTENSION, style.toXmlString());
 		style = new IncludeGroupStyle(IncludeKind.OTHER);
 		style.setKeepTogether(true);
 		style.setBlankLineBefore(true);
 		style.setOrder(3);
-		store.setDefault(PreferenceConstants.INCLUDE_STYLE_OTHER, style.toString());
+		store.setDefault(PreferenceConstants.INCLUDE_STYLE_OTHER, style.toXmlString());
 		style = new IncludeGroupStyle(IncludeKind.IN_SAME_PROJECT);
-		store.setDefault(PreferenceConstants.INCLUDE_STYLE_SAME_PROJECT, style.toString());
+		store.setDefault(PreferenceConstants.INCLUDE_STYLE_SAME_PROJECT, style.toXmlString());
 		style = new IncludeGroupStyle(IncludeKind.IN_OTHER_PROJECT);
-		store.setDefault(PreferenceConstants.INCLUDE_STYLE_OTHER_PROJECT, style.toString());
+		store.setDefault(PreferenceConstants.INCLUDE_STYLE_OTHER_PROJECT, style.toXmlString());
 		style = new IncludeGroupStyle(IncludeKind.EXTERNAL);
-		store.setDefault(PreferenceConstants.INCLUDE_STYLE_EXTERNAL, style.toString());
+		store.setDefault(PreferenceConstants.INCLUDE_STYLE_EXTERNAL, style.toXmlString());
 		store.setDefault(PreferenceConstants.INCLUDE_STYLE_MATCHING_PATTERN, ""); //$NON-NLS-1$
 
 		store.setDefault(PreferenceConstants.INCLUDES_PARTNER_FILE_SUFFIXES, DEFAULT_PARTNER_FILE_SUFFIXES);
@@ -177,5 +180,14 @@ public class IncludePreferences {
 				HeaderSubstitutionMap.serializeMaps(GCCHeaderSubstitutionMaps.getDefaultMaps()));
 		store.setDefault(PreferenceConstants.INCLUDES_SYMBOL_EXPORTING_HEADERS,
 				SymbolExportMap.serializeMaps(Collections.singletonList(GCCHeaderSubstitutionMaps.getSymbolExportMap())));
+	}
+
+	@Override
+	public int compare(StyledInclude include1, StyledInclude include2) {
+		int c = include1.getStyle().getGroupingStyle(includeStyles).getOrder() -
+				include2.getStyle().getGroupingStyle(includeStyles).getOrder();
+		if (c != 0)
+			return c;
+		return include1.getIncludeInfo().compareTo(include2.getIncludeInfo());
 	}
 }

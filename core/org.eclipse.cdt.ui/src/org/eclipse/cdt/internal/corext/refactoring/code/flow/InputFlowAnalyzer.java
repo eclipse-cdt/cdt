@@ -39,7 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.corext.util.ASTNodes;
+import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
 
 public class InputFlowAnalyzer extends FlowAnalyzer {
 

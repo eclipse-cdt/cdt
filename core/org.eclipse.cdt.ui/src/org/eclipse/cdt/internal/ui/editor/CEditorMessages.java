@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Tomasz Wesolowski
  *     Alvaro Sanchez-Leon (Ericsson AB)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -31,12 +32,11 @@ public final class CEditorMessages extends NLS {
 		return fgBundleForConstructedKeys;
 	}
 
-	public static String AddIncludeOnSelection_label;
-	public static String AddIncludeOnSelection_description;
-	public static String AddIncludeOnSelection_error_title;
-	public static String AddIncludeOnSelection_insertion_failed;
-	public static String AddIncludeOnSelection_help_provider_error;
-	public static String AddIncludesOperation_description;
+	public static String AddInclude_label;
+	public static String AddInclude_description;
+	public static String AddInclude_action;
+	public static String AddInclude_error_title;
+	public static String AddInclude_insertion_failed;
 	public static String OrganizeIncludes_label;
 	public static String OrganizeIncludes_description;
 	public static String OrganizeIncludes_action;

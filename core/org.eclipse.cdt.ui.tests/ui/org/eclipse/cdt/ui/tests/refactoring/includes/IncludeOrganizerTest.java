@@ -24,7 +24,9 @@ import org.eclipse.text.edits.TextEdit;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
+import org.eclipse.cdt.internal.ui.refactoring.includes.HeaderSubstitutionMap;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeMap;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeOrganizer;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences.UnusedStatementDisposition;
@@ -58,6 +60,7 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 		preferenceStore.setToDefault(PreferenceConstants.FORWARD_DECLARE_TEMPLATES);
 		preferenceStore.setToDefault(PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS);
 		preferenceStore.setToDefault(PreferenceConstants.INCLUDES_ALLOW_REORDERING);
+		preferenceStore.setToDefault(IncludePreferences.INCLUDES_HEADER_SUBSTITUTION);
 		preferenceStore.setToDefault(IncludePreferences.INCLUDES_SYMBOL_EXPORTING_HEADERS);
 	}
 
@@ -335,6 +338,33 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//C c;
 	//D d;
 	public void testHeaderExport() throws Exception {
+		assertExpectedResults();
+	}
+
+	//h1.h
+	//class A {};
+
+	//h2.h
+	//#include "h1.h"	// IWYU pragma: export
+	//class B {};
+
+	//h3.h
+	//#include "h2.h"
+
+	//source.cpp
+	//A a;
+	//B b;
+	//====================
+	//#include "h3.h"
+	//
+	//A a;
+	//B b;
+	public void testIndirectHeaderExport() throws Exception {
+		HeaderSubstitutionMap headerMap = new HeaderSubstitutionMap("Test", false,
+				new IncludeMap(true, new String[] { "h2.h", "h3.h"}),
+				new IncludeMap(false));
+		getPreferenceStore().setValue(IncludePreferences.INCLUDES_HEADER_SUBSTITUTION,
+				HeaderSubstitutionMap.serializeMaps(Collections.singletonList(headerMap)));
 		assertExpectedResults();
 	}
 

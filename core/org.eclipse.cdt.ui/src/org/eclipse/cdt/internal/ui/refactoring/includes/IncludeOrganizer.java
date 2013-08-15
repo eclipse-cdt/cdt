@@ -746,6 +746,7 @@ public class IncludeOrganizer {
 			if (!request.isResolved() && !isExportedBinding(request, headerSubstitutor)) {
 				List<IPath> candidatePaths = request.getCandidatePaths();
 				Set<IPath> representativeHeaders = new HashSet<IPath>();
+				Set<IPath> representedHeaders = new HashSet<IPath>();
 				boolean allRepresented = true;
 				for (IPath path : candidatePaths) {
 					if (fContext.isIncluded(path)) {
@@ -759,6 +760,7 @@ public class IncludeOrganizer {
 						IPath header = headerSubstitutor.getUniqueRepresentativeHeader(path);
 						if (header != null) {
 							representativeHeaders.add(header);
+							representedHeaders.add(path);
 						} else {
 							allRepresented = false;
 						}
@@ -772,6 +774,10 @@ public class IncludeOrganizer {
 						System.out.println(request.toString() + " (unique representative)"); //$NON-NLS-1$
 					if (!fContext.isAlreadyIncluded(path))
 						fContext.addHeaderToInclude(path);
+					for (IPath header : representedHeaders) {
+						if (!header.equals(path))
+							fContext.addHeaderAlreadyIncluded(header);
+					}
 				}
 			}
 		}
@@ -799,6 +805,8 @@ public class IncludeOrganizer {
 						}
 						if (!fContext.isAlreadyIncluded(header))
 							fContext.addHeaderToInclude(header);
+						if (!header.equals(path))
+							fContext.addHeaderAlreadyIncluded(path);
 					}
 				}
 			}

@@ -11,28 +11,15 @@
  *******************************************************************************/
 package org.eclipse.internal.remote.jsch.core;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Vector;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -41,102 +28,18 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.ChannelSftp.LsEntry;
-import com.jcraft.jsch.SftpATTRS;
-import com.jcraft.jsch.SftpException;
+import org.eclipse.internal.remote.jsch.core.commands.ChildInfosCommand;
+import org.eclipse.internal.remote.jsch.core.commands.DeleteCommand;
+import org.eclipse.internal.remote.jsch.core.commands.FetchInfoCommand;
+import org.eclipse.internal.remote.jsch.core.commands.MkdirCommand;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnectionManager;
+import org.eclipse.remote.core.IRemoteServices;
+import org.eclipse.remote.core.RemoteServices;
 
 public class JschFileStore extends FileStore {
-	private abstract class SftpCallable<T> implements Callable<T> {
-		private ChannelSftp fSftpChannel = null;
-		private IProgressMonitor fProgressMonitor = null;
-
-		private Future<T> asyncCmdInThread(String jobName) throws CoreException {
-			return fPool.submit(this);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.concurrent.Callable#call()
-		 */
-		public abstract T call() throws SftpException, IOException;
-
-		private void finalizeCmdInThread() {
-			setChannel(null);
-		}
-
-		public ChannelSftp getChannel() {
-			return fSftpChannel;
-		}
-
-		public IProgressMonitor getProgressMonitor() {
-			return fProgressMonitor;
-		}
-
-		public void setChannel(ChannelSftp channel) {
-			fSftpChannel = channel;
-		}
-
-		/**
-		 * Function opens sftp channel and then executes the sftp operation. If
-		 * run on the main thread it executes it on a separate thread
-		 */
-		public T syncCmdInThread(String jobName, IProgressMonitor monitor) throws CoreException {
-			Future<T> future = null;
-			fProgressMonitor = SubMonitor.convert(monitor, 10);
-			try {
-				future = asyncCmdInThread(jobName);
-				return waitCmdInThread(future);
-			} finally {
-				finalizeCmdInThread();
-				if (monitor != null) {
-					monitor.done();
-				}
-			}
-		}
-
-		private T waitCmdInThread(Future<T> future) throws CoreException {
-			T ret = null;
-			boolean bInterrupted = Thread.interrupted();
-			while (ret == null) {
-				if (getProgressMonitor().isCanceled()) {
-					future.cancel(true);
-					getChannel().quit();
-					throw new CoreException(new Status(IStatus.CANCEL, Activator.getUniqueIdentifier(),
-							"Operation cancelled by user"));
-				}
-				try {
-					ret = future.get(100, TimeUnit.MILLISECONDS);
-				} catch (InterruptedException e) {
-					bInterrupted = true;
-				} catch (TimeoutException e) {
-					// ignore
-				} catch (ExecutionException e) {
-					/*
-					 * close sftp channel (gets
-					 * automatically reopened) to make
-					 * sure the channel is not in
-					 * undefined state because of
-					 * exception
-					 */
-					getChannel().quit();
-					throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), "Execution exception",
-							e.getCause()));
-				}
-				getProgressMonitor().worked(1);
-			}
-			if (bInterrupted) {
-				Thread.currentThread().interrupt(); // set current thread flag
-			}
-			return ret;
-		}
-	}
-
 	private static Map<String, JschFileStore> instanceMap = new HashMap<String, JschFileStore>();
-
-	private static ExecutorService fPool = Executors.newSingleThreadExecutor();
 
 	/**
 	 * Public factory method for obtaining JschFileStore instances.
@@ -149,22 +52,29 @@ public class JschFileStore extends FileStore {
 		synchronized (instanceMap) {
 			JschFileStore store = instanceMap.get(uri.toString());
 			if (store == null) {
-				String name = JSchFileSystem.getConnectionNameFor(uri);
-				if (name != null) {
-					String path = uri.getPath();
-					store = new JschFileStore(name, path);
-					instanceMap.put(uri.toString(), store);
+				IRemoteServices services = RemoteServices.getRemoteServices(uri);
+				assert (services instanceof JSchServices);
+				if (services != null) {
+					IRemoteConnectionManager manager = services.getConnectionManager();
+					if (manager != null) {
+						IRemoteConnection connection = manager.getConnection(uri);
+						if (connection != null && connection instanceof JSchConnection) {
+							String path = uri.getPath();
+							store = new JschFileStore((JSchConnection) connection, path);
+							instanceMap.put(uri.toString(), store);
+						}
+					}
 				}
 			}
 			return store;
 		}
 	}
 
-	private final String fConnectionName;
+	private final JSchConnection fConnection;
 	private final IPath fRemotePath;
 
-	public JschFileStore(String connName, String path) {
-		fConnectionName = connName;
+	public JschFileStore(JSchConnection conn, String path) {
+		fConnection = conn;
 		fRemotePath = new Path(path);
 	}
 
@@ -176,35 +86,8 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) throws CoreException {
-		final SubMonitor subMon = SubMonitor.convert(monitor, 10);
-		Vector<LsEntry> files = getChildren(fRemotePath.toString(), subMon.newChild(10));
-		List<IFileInfo> result = new ArrayList<IFileInfo>();
-
-		if (files != null && !subMon.isCanceled()) {
-			Enumeration<LsEntry> enumeration = files.elements();
-			while (enumeration.hasMoreElements() && !subMon.isCanceled()) {
-				LsEntry entry = enumeration.nextElement();
-				final String fileName = entry.getFilename();
-				if (fileName.equals(".") || fileName.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
-					// Ignore parent and current dir entry.
-					continue;
-				}
-				result.add(convertToFileInfo(fileName, entry.getAttrs(), subMon.newChild(10)));
-			}
-		}
-
-		return result.toArray(new IFileInfo[0]);
-	}
-
-	private Vector<LsEntry> getChildren(final String path, IProgressMonitor monitor) throws CoreException {
-		SftpCallable<Vector<LsEntry>> c = new SftpCallable<Vector<LsEntry>>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public Vector<LsEntry> call() throws SftpException {
-				return getChannel().ls(path);
-			}
-		};
-		return c.syncCmdInThread("Get file attributes", monitor);
+		ChildInfosCommand command = new ChildInfosCommand(fConnection.getSftpChannel(), fRemotePath);
+		return command.getResult(monitor);
 	}
 
 	/*
@@ -215,38 +98,12 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public String[] childNames(int options, IProgressMonitor monitor) throws CoreException {
-		String[] names = new String[0];
-		return names;
-	}
-
-	private IFileInfo convertToFileInfo(final String name, SftpATTRS attrs, IProgressMonitor monitor) throws CoreException {
-		FileInfo fileInfo = new FileInfo(name);
-		fileInfo.setExists(true);
-		fileInfo.setDirectory(attrs.isDir());
-		fileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_EXECUTE, (attrs.getPermissions() & 0100) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_WRITE, (attrs.getPermissions() & 0200) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_READ, (attrs.getPermissions() & 0400) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_EXECUTE, (attrs.getPermissions() & 0010) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_WRITE, (attrs.getPermissions() & 0020) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_READ, (attrs.getPermissions() & 0040) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_EXECUTE, (attrs.getPermissions() & 0001) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_WRITE, (attrs.getPermissions() & 0002) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_READ, (attrs.getPermissions() & 0004) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_SYMLINK, attrs.isLink());
-		if (attrs.isLink()) {
-			SftpCallable<String> c2 = new SftpCallable<String>() {
-				@Override
-				public String call() throws SftpException {
-					String pathName = fRemotePath.append(name).toString();
-					return getChannel().readlink(pathName);
-				}
-			};
-			String target = c2.syncCmdInThread("Get symlink target", monitor);
-			fileInfo.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, target);
+		IFileInfo[] infos = childInfos(options, monitor);
+		String[] names = new String[infos.length];
+		for (int i = 0; i < infos.length; i++) {
+			names[i] = infos[i].getName();
 		}
-		fileInfo.setLastModified(attrs.getMTime());
-		fileInfo.setLength(attrs.getSize());
-		return fileInfo;
+		return names;
 	}
 
 	/*
@@ -257,6 +114,8 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public void delete(int options, IProgressMonitor monitor) throws CoreException {
+		DeleteCommand command = new DeleteCommand(fConnection.getSftpChannel(), fRemotePath);
+		command.getResult(monitor);
 	}
 
 	/*
@@ -267,7 +126,8 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException {
-		return null;
+		FetchInfoCommand command = new FetchInfoCommand(fConnection.getSftpChannel(), fRemotePath);
+		return command.getResult(monitor);
 	}
 
 	/*
@@ -278,8 +138,7 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public IFileStore getChild(String name) {
-		//		System.out.println("GETCHILD: " + name); //$NON-NLS-1$
-		URI uri = JSchFileSystem.getURIFor(fConnectionName, fRemotePath.append(name).toString());
+		URI uri = JSchFileSystem.getURIFor(fConnection.getName(), fRemotePath.append(name).toString());
 		return JschFileStore.getInstance(uri);
 	}
 
@@ -314,7 +173,6 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public IFileStore getParent() {
-		//		System.out.println("GETPARENT: " + fRemotePath.toString()); //$NON-NLS-1$
 		if (fRemotePath.isRoot()) {
 			return null;
 		}
@@ -322,7 +180,7 @@ public class JschFileStore extends FileStore {
 		if (fRemotePath.segmentCount() > 0) {
 			parentPath = fRemotePath.removeLastSegments(1).toString();
 		}
-		return JschFileStore.getInstance(JSchFileSystem.getURIFor(fConnectionName, parentPath));
+		return JschFileStore.getInstance(JSchFileSystem.getURIFor(fConnection.getName(), parentPath));
 	}
 
 	/*
@@ -333,6 +191,26 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException {
+		SubMonitor progress = SubMonitor.convert(monitor, 10);
+
+		IFileInfo info = fetchInfo(EFS.NONE, progress.newChild(10));
+
+		if (!info.exists()) {
+			if ((options & EFS.SHALLOW) == EFS.SHALLOW) {
+				IFileStore parent = getParent();
+				if (parent != null && !parent.fetchInfo(EFS.NONE, progress.newChild(10)).exists()) {
+					throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRITE, NLS.bind(
+							"The parent of directory {0} does not exist", fRemotePath.toString()), null));
+				}
+			}
+
+			MkdirCommand command = new MkdirCommand(fConnection.getSftpChannel(), fRemotePath);
+			command.getResult(monitor);
+		} else if (!info.isDirectory()) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE, NLS.bind(
+					"A file of name {0} already exists", fRemotePath.toString()), null));
+		}
+
 		return this;
 	}
 
@@ -376,7 +254,7 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public URI toURI() {
-		return JSchFileSystem.getURIFor(fConnectionName, fRemotePath.toString());
+		return JSchFileSystem.getURIFor(fConnection.getName(), fRemotePath.toString());
 	}
 
 }

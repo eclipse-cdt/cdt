@@ -11,10 +11,15 @@
 
 package org.eclipse.remote.core.exception;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.internal.remote.core.RemoteCorePlugin;
+
 /**
  * Exception thrown when a remote connection error occurs.
  */
-public class RemoteConnectionException extends Exception {
+public class RemoteConnectionException extends CoreException {
 	private static final long serialVersionUID = -7794871221470179956L;
 
 	/**
@@ -22,21 +27,20 @@ public class RemoteConnectionException extends Exception {
 	 * @param cause
 	 */
 	public RemoteConnectionException(String message, Throwable cause) {
-		super(message, cause);
+		super(new Status(IStatus.ERROR, RemoteCorePlugin.getUniqueIdentifier(), message, cause));
 	}
 
 	/**
 	 * @param message
 	 */
 	public RemoteConnectionException(String message) {
-		super(message);
+		this(message, null);
 	}
 
 	/**
 	 * @param cause
 	 */
 	public RemoteConnectionException(Throwable cause) {
-		super(cause);
+		this(cause.getMessage(), cause);
 	}
-
 }

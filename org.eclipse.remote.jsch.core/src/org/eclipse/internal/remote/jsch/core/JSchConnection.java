@@ -31,6 +31,7 @@ import org.eclipse.remote.core.exception.AddressInUseException;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.core.exception.UnableToForwardPortException;
 
+import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
@@ -419,6 +420,22 @@ public class JSchConnection implements IRemoteConnection {
 			fIsOpen = true;
 			fireConnectionChangeEvent(this, IRemoteConnectionChangeEvent.CONNECTION_OPENED);
 		}
+	}
+
+	private ChannelSftp fSftpChannel;
+
+	public ChannelSftp getSftpChannel() throws RemoteConnectionException {
+		try {
+			if (fSftpChannel == null) {
+				fSftpChannel = (ChannelSftp) fSession.openChannel("sftp"); //$NON-NLS-1$
+			}
+			if (!fSftpChannel.isConnected()) {
+				fSftpChannel.connect();
+			}
+		} catch (JSchException e) {
+			throw new RemoteConnectionException(e.getMessage());
+		}
+		return fSftpChannel;
 	}
 
 	/*

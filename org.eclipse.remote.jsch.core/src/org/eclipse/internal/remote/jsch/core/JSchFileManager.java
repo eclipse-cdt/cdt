@@ -49,7 +49,7 @@ public class JSchFileManager implements IRemoteFileManager {
 		if (!path.isAbsolute()) {
 			path = new Path(fConnection.getWorkingDirectory()).append(path);
 		}
-		return new JschFileStore(fConnection.getName(), path.toString());
+		return new JschFileStore(fConnection, path.toString());
 	}
 
 	/*

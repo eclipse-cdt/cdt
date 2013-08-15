@@ -616,7 +616,7 @@
       <provider
             class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetectorCygwin"
             id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorCygwin"
-            name="CDT GCC Builtin Compiler Settings Cygwin"
+            name="%GCCBuiltinCompilerSettingsCygwin.name"
             parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;">
          <language-scope id="org.eclipse.cdt.core.gcc"/>
          <language-scope id="org.eclipse.cdt.core.g++"/>
@@ -639,7 +639,7 @@
    </extension>
    <extension
          id="scanner.discovery.problem"
-         name="C/C++ Scanner Discovery Problem"
+         name="%extension.name.8"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.core.resources.problemmarker">
@@ -650,7 +650,7 @@
    </extension>
    <extension
          id="headlessSettings"
-         name="HeadlessBuilder Additional Settings"
+         name="%extension.name.9"
          point="org.eclipse.cdt.core.externalSettingsProvider">
       <provider
             class="org.eclipse.cdt.managedbuilder.internal.core.HeadlessBuilderExternalSettingsProvider">

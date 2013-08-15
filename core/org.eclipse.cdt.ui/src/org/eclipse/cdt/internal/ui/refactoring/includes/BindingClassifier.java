@@ -64,8 +64,6 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -166,31 +164,15 @@ public class BindingClassifier {
 		for (int i = 0; i < parameters.length && i < arguments.length; i++) {
 			IType parameterType = parameters[i].getType();
 			IASTInitializerClause argument = arguments[i];
-			if (parameterType instanceof IPointerType || parameterType instanceof ICPPReferenceType) {
-				// The declared parameter type is a pointer or reference type. A declaration is
-				// sufficient if it matches the actual parameter type. We don't need to provide
-				// a parameter declaration since it is a responsibility of the header declaring
-				// the function.
-				if (argument instanceof IASTExpression) {
-					IType argumentType = ((IASTExpression) argument).getExpressionType();
-					if (parameterType instanceof IPointerType && Conversions.isNullPointerConstant(argumentType)) {
-						continue;
-					}
-					parameterType = getNestedType(parameterType, REF | ALLCVQ);
-					argumentType = getNestedType(argumentType, REF | ALLCVQ);
-
-					if (parameterType instanceof IPointerType && argumentType instanceof IPointerType) {
-						parameterType = getNestedType(((IPointerType) parameterType).getType(), ALLCVQ);
-						argumentType = getNestedType(((IPointerType) argumentType).getType(), ALLCVQ);
-					}
-					if (isSameType(parameterType, argumentType)) {
-						continue;
-					}
-				}
-			}
-
 			if (argument instanceof IASTExpression) {
 				IType argumentType = ((IASTExpression) argument).getExpressionType();
+				if (!isTypeDefinitionRequiredForConversion(argumentType, parameterType)) {
+					// A declaration is sufficient if the argument type matches the parameter type.
+					// We don't need to provide a declaration of the parameter type since it is
+					// a responsibility of the header declaring the function.
+					continue;
+				}
+
 				// The type of the argument requires a full definition.
 				defineTypeExceptTypedefOrNonFixedEnum(argumentType);
 			}
@@ -203,6 +185,29 @@ public class BindingClassifier {
 				defineTypeExceptTypedefOrNonFixedEnum(parameterType);
 			}
 		}
+	}
+
+	/**
+	 * Checks if the two given types have to be defined for the first type to be implicitly
+	 * converted to the second one.
+	 * 
+	 * @param sourceType the type to be converted
+	 * @param targetType the type to be converted to
+	 * @return {@code true} if the types have to be defined
+	 */
+	private boolean isTypeDefinitionRequiredForConversion(IType sourceType, IType targetType) {
+		if (!(targetType instanceof IPointerType) && !(targetType instanceof ICPPReferenceType))
+			return true;
+		if (targetType instanceof IPointerType && Conversions.isNullPointerConstant(sourceType))
+			return false;
+		sourceType = getNestedType(sourceType, REF | ALLCVQ);
+		targetType = getNestedType(targetType, REF | ALLCVQ);
+
+		if (sourceType instanceof IPointerType && targetType instanceof IPointerType) {
+			sourceType = getNestedType(((IPointerType) sourceType).getType(), ALLCVQ);
+			targetType = getNestedType(((IPointerType) targetType).getType(), ALLCVQ);
+		}
+		return !sourceType.isSameType(targetType);
 	}
 
 	/**
@@ -378,33 +383,6 @@ public class BindingClassifier {
 			canDeclare = false;
 		}
 		return canDeclare;
-	}
-
-	/**
-	 * Adds the given type to the list of bindings which have to be declared.
-	 *
-	 * @param type The type to add.
-	 */
-	private void declareType(IType type) {
-		IBinding typeBinding = getTypeBinding(type);
-		if (typeBinding != null)
-			declareBinding(typeBinding);
-	}
-
-	/**
-	 * Adds the given type to the list of bindings which have to be declared. Typedefs and
-	 * enumerations without fixed underlying type are skipped since they must be defined in the file
-	 * that references them by name. If the type is explicitly referenced in this translation unit,
-	 * it will be defined independently from this method.
-	 *
-	 * @param type The type to add.
-	 */
-	private void declareTypeExceptTypedefOrNonFixedEnum(IType type) {
-		IBinding typeBinding = getTypeBinding(type);
-		if (typeBinding != null && !(typeBinding instanceof ITypedef)
-				&& !isEnumerationWithoutFixedUnderlyingType(typeBinding)) {
-			declareBinding(typeBinding);
-		}
 	}
 
 	/**
@@ -677,11 +655,10 @@ public class BindingClassifier {
 				} else {
 					// We're constructing a pointer type. No constructor is called. We however have
 					// to check whether the argument type matches the declared type.
-					memberType = getNestedType(memberType, REF);
 					for (IASTInitializerClause argument : arguments) {
 						if (argument instanceof IASTExpression) {
 							IType argumentType = ((IASTExpression) argument).getExpressionType();
-							if (!Conversions.isNullPointerConstant(argumentType) && !isSameType(memberType, argumentType)) {
+							if (isTypeDefinitionRequiredForConversion(argumentType, memberType)) {
 								// Types don't match. Define both types.
 								defineTypeExceptTypedefOrNonFixedEnum(memberType);
 								defineTypeExceptTypedefOrNonFixedEnum(argumentType);
@@ -751,17 +728,12 @@ public class BindingClassifier {
 								IFunction function = (IFunction) binding;
 
 								// Get the declared return type and the actual expression type.
-								// Don't care about reference types since they can be converted into
-								// non-reference types and vice versa without requiring a definition.
 								IType returnType = function.getType().getReturnType();
-								returnType = getNestedType(returnType, REF);
-								IType expressionType = getNestedType(returnValue.getExpressionType(), REF);
-
-								// Compare the two types.
-								if (!isSameType(returnType, expressionType)) {
-									// Not the same type. Define both types.
+								IType returnValueType = returnValue.getExpressionType();
+								if (isTypeDefinitionRequiredForConversion(returnValueType, returnType)) {
+									// Both types have to be defined for conversion.
 									defineTypeExceptTypedefOrNonFixedEnum(returnType);
-									defineTypeExceptTypedefOrNonFixedEnum(expressionType);
+									defineTypeExceptTypedefOrNonFixedEnum(returnValueType);
 								}
 							}
 						}
@@ -936,7 +908,7 @@ public class BindingClassifier {
 					// If both operands are identical pointer types, then they don't need to be
 					// defined.
 					if (operand1Type instanceof IPointerType && operand2Type instanceof IPointerType) {
-						if (isSameType(operand1Type, operand2Type)) {
+						if (!isTypeDefinitionRequiredForConversion(operand2Type, operand1Type)) {
 							expression1DefinitionRequired = false;
 							expression2DefinitionRequired = false;
 						}
@@ -1044,7 +1016,7 @@ public class BindingClassifier {
 				IType targetType = castExpression.getExpressionType();
 				IType sourceType = castExpression.getOperand().getExpressionType();
 
-				if (!isSameType(targetType, sourceType)) {
+				if (isTypeDefinitionRequiredForConversion(sourceType, targetType)) {
 					// Source and target types of the cast expression are different.
 					// We need to define both types, even if they're pointers.
 					defineTypeExceptTypedefOrNonFixedEnum(targetType);
@@ -1096,28 +1068,6 @@ public class BindingClassifier {
 			}
 			return PROCESS_CONTINUE;
 		}
-	}
-
-	/**
-	 * Returns whether the two given types are identical. This does the same as IType.isSameType()
-	 * with the exception that it considers a pointer and the zero literal identical.
-	 */
-	private static boolean isSameType(IType type1, IType type2) {
-		if (type1 == null || type2 == null) {
-			return false;
-		}
-		if (type1.isSameType(type2)) {
-			return true;
-		}
-
-		if (type1 instanceof IPointerType || type2 instanceof IPointerType) {
-			if ((type1 instanceof IBasicType && ((IBasicType) type1).getKind() == Kind.eInt)
-					|| (type2 instanceof IBasicType && ((IBasicType) type2).getKind() == Kind.eInt)) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	/**

@@ -197,8 +197,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  f(nullptr);
 	//	}
 	public void testFunctionCallWithPointerParameter_1() throws Exception {
-		IPreferenceStore preferenceStore = getPreferenceStore();
-		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		assertDefined();
 		assertDeclared("f", "g");
 	}
@@ -210,8 +209,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  f(nullptr);
 	//	}
 	public void testFunctionCallWithPointerParameter_2() throws Exception {
-		IPreferenceStore preferenceStore = getPreferenceStore();
-		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		assertDefined();
 		assertDeclared("f");
 	}
@@ -224,8 +222,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  f(g());
 	//	}
 	public void testFunctionCallWithReferenceParameter() throws Exception {
-		IPreferenceStore preferenceStore = getPreferenceStore();
-		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		assertDefined();
 		assertDeclared("f", "g");
 	}
@@ -239,8 +236,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  f("");
 	//	}
 	public void testFunctionCallWithTypeConversion_1() throws Exception {
-		IPreferenceStore preferenceStore = getPreferenceStore();
-		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		// A header declaring the function is responsible for defining the parameter type that
 		// provides constructor that can be used for implicit conversion.
 		assertDefined();
@@ -255,12 +251,44 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  f(b);
 	//	}
 	public void testFunctionCallWithTypeConversion_2() throws Exception {
-		IPreferenceStore preferenceStore = getPreferenceStore();
-		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		// A header declaring the function is not responsible for defining the parameter type since
 		// the implicit conversion from B to A is provided externally to parameter type.
 		assertDefined("A", "B");
 		assertDeclared("f");
+	}
+
+	//	struct A {
+	//	  A(const B& b);
+	//	};
+	//	struct B {};
+
+	//	A f(B* b) {
+	//	  return *b;
+	//	}
+	public void testFunctionReturnType_1() throws Exception {
+		assertDefined("A", "B");
+		assertDeclared();
+	}
+
+	//	class A;
+
+	//	A* f() {
+	//	  return nullptr;
+	//	}
+	public void testFunctionReturnType_2() throws Exception {
+		assertDefined();
+		assertDeclared("A");
+	}
+
+	//	class A;
+
+	//	const A* f(A* a) {
+	//	  return a;
+	//	}
+	public void testFunctionReturnType_3() throws Exception {
+		assertDefined();
+		assertDeclared("A");
 	}
 
 	//	struct A {};

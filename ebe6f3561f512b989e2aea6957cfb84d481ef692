@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_7aca874a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-08-15T16:48:50Z",
+      "side": 1,
+      "message": "I will change this to:\n\nBug 341731 - Show values returned from function calls when doing a step-return operation",
+      "revId": "ebe6f3561f512b989e2aea6957cfb84d481ef692",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

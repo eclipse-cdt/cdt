@@ -959,7 +959,7 @@
             id="cdt.managedbuild.tool.llvm.c.abstract.compiler"
             isAbstract="true"
             name="%ToolName.compiler.llvm.c.abstract"
-            natureFilter="cnature"
+            natureFilter="both"
             superClass="cdt.managedbuild.tool.llvm.c_cpp.compiler">
          <envVarBuildPath
                buildPathResolver="org.eclipse.cdt.managedbuilder.gnu.cygwin.CygwinPathResolver"
@@ -1022,7 +1022,7 @@
             id="cdt.managedbuild.tool.llvm.c.compiler"
             isAbstract="true"
             name="%ToolName.compiler.llvm.c"
-            natureFilter="cnature"
+            natureFilter="both"
             superClass="cdt.managedbuild.tool.llvm.c.abstract.compiler">
       </tool>
       <tool
@@ -1038,7 +1038,7 @@
             id="cdt.managedbuild.tool.llvm.gcc.compiler"
             isAbstract="true"
             name="%ToolName.compiler.llvm.gcc"
-            natureFilter="cnature"
+            natureFilter="both"
             superClass="cdt.managedbuild.tool.llvm.c.abstract.compiler">
       </tool>
       <tool

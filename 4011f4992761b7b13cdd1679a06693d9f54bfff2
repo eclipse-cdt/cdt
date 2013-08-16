@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_b78d4543",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-16T02:34:27Z",
+      "side": 1,
+      "message": "Instead of converting null to an empty array here it\u0027s preferable to prevent null from being passed to this constructor. After this is done, the constructor should be protected by throwing an NPE if arguments is null.",
+      "revId": "4011f4992761b7b13cdd1679a06693d9f54bfff2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

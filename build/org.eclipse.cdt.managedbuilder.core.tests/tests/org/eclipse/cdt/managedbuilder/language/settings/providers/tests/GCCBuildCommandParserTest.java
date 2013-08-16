@@ -511,9 +511,9 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
-	 * Parse variations of -I options.
+	 * Parse variations of -isystem options.
 	 */
-	public void testCIncludePathEntry() throws Exception {
+	public void testCISystemPathEntry() throws Exception {
 		// Create model project and accompanied descriptions
 		String projectName = getName();
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
@@ -531,17 +531,17 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.startup(cfgDescription, null);
 		parser.processLine("gcc"
 				// regular
-				+ " -I/path0 "
-				// space after -I
-				+ " -I /path1 "
+				+ " -isystem/path0 "
+				// space after -isystem
+				+ " -isystem /path1 "
 				// unknown option, should be ignored
 				+ " -? "
 				// double-quoted path with spaces
-				+ " -I\"/path with spaces\""
+				+ " -isystem\"/path with spaces\""
 				// single-quoted path with spaces
-				+ " -I'/path with spaces2'"
-				// second single-quoted and space after -I
-				+ " -I '/path with spaces3'"
+				+ " -isystem'/path with spaces2'"
+				// second single-quoted and space after -isystem
+				+ " -isystem '/path with spaces3'"
 				+ " file.cpp");
 		parser.shutdown();
 
@@ -561,6 +561,57 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		assertEquals(new CIncludePathEntry("/path with spaces3", 0), entries.get(4));
 	}
 
+	/**
+	 * Parse variations of -I options.
+	 */
+	public void testCIncludePathEntry() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+		
+		IFile file=ResourceHelper.createFile(project, "file.cpp");
+		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
+		String languageId = ls.getLanguageId();
+		
+		// create GCCBuildCommandParser
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
+		
+		// parse line
+		parser.startup(cfgDescription, null);
+		parser.processLine("gcc"
+				// regular
+				+ " -I/path0 "
+				// space after -I
+				+ " -I /path1 "
+				// unknown option, should be ignored
+				+ " -? "
+				// double-quoted path with spaces
+				+ " -I\"/path with spaces\""
+				// single-quoted path with spaces
+				+ " -I'/path with spaces2'"
+				// second single-quoted and space after -I
+				+ " -I '/path with spaces3'"
+				+ " file.cpp");
+		parser.shutdown();
+		
+		// check populated entries
+		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
+		CIncludePathEntry expected = new CIncludePathEntry("/path0", 0);
+		CIncludePathEntry entry = (CIncludePathEntry)entries.get(0);
+		assertEquals(expected.getName(), entry.getName());
+		assertEquals(expected.getValue(), entry.getValue());
+		assertEquals(expected.getKind(), entry.getKind());
+		assertEquals(expected.getFlags(), entry.getFlags());
+		assertEquals(expected, entry);
+		
+		assertEquals(new CIncludePathEntry("/path1", 0), entries.get(1));
+		assertEquals(new CIncludePathEntry("/path with spaces", 0), entries.get(2));
+		assertEquals(new CIncludePathEntry("/path with spaces2", 0), entries.get(3));
+		assertEquals(new CIncludePathEntry("/path with spaces3", 0), entries.get(4));
+	}
+	
 	/**
 	 * Parse Mac Frameworks.
 	 */

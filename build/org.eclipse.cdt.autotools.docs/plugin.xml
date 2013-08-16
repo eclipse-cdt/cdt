@@ -19,7 +19,7 @@
             category="org.eclipse.cdt-doc.category.tutorials"
             contentFile="cheatsheets/autotools.xml"
             id="org.eclipse.cdt.autotools-docs.cheatsheet3"
-            name="Creating a GNU Autotools Project">
+            name="%AutotoolsCheatSheetName">
       </cheatsheet>
    </extension>
 

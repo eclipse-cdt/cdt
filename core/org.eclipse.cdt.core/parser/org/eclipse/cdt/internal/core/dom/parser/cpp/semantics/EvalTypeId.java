@@ -39,11 +39,10 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	public EvalTypeId(IType type, IASTNode pointOfDefinition, ICPPEvaluation... arguments) {
 		this(type, findEnclosingTemplate(pointOfDefinition), arguments);
 	}
-
 	public EvalTypeId(IType type, IBinding templateDefinition, ICPPEvaluation... arguments) {
 		super(templateDefinition);
 		fInputType= type;
-		fArguments= arguments;
+		fArguments= arguments == null ? new ICPPEvaluation[0] : arguments;
 	}
 
 	public IType getInputType() {
@@ -82,9 +81,6 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	public IValue getValue(IASTNode point) {
 		if (isValueDependent())
 			return Value.create(this);
-		if (fArguments == null)
-			return Value.UNKNOWN;
-
 		if (isTypeDependent())
 			return Value.create(this);
 		if (fOutputType instanceof ICPPClassType) {
@@ -106,8 +102,6 @@ public class EvalTypeId extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isValueDependent() {
-		if (fArguments == null)
-			return false;
 		for (ICPPEvaluation arg : fArguments) {
 			if (arg.isValueDependent())
 				return true;
@@ -157,9 +151,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		ICPPEvaluation[] args = null;
-		if (fArguments != null)
-			args = instantiateCommaSeparatedSubexpressions(fArguments, tpMap, packOffset, within, maxdepth, point);
+		ICPPEvaluation[] args= instantiateCommaSeparatedSubexpressions(fArguments, tpMap, packOffset, within, maxdepth, point);
 		IType type = CPPTemplates.instantiateType(fInputType, tpMap, packOffset, within, point);
 		if (args == fArguments && type == fInputType)
 			return this;
@@ -170,16 +162,14 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
 			int maxdepth, IASTNode point) {
 		ICPPEvaluation[] args = fArguments;
-		if (fArguments != null) {
-			for (int i = 0; i < fArguments.length; i++) {
-				ICPPEvaluation arg = fArguments[i].computeForFunctionCall(parameterMap, maxdepth, point);
-				if (arg != fArguments[i]) {
-					if (args == fArguments) {
-						args = new ICPPEvaluation[fArguments.length];
-						System.arraycopy(fArguments, 0, args, 0, fArguments.length);
-					}
-					args[i] = arg;
+		for (int i = 0; i < fArguments.length; i++) {
+			ICPPEvaluation arg = fArguments[i].computeForFunctionCall(parameterMap, maxdepth, point);
+			if (arg != fArguments[i]) {
+				if (args == fArguments) {
+					args = new ICPPEvaluation[fArguments.length];
+					System.arraycopy(fArguments, 0, args, 0, fArguments.length);
 				}
+				args[i] = arg;
 			}
 		}
 		if (args == fArguments)

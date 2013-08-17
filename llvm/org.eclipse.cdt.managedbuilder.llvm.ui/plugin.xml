@@ -2710,11 +2710,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.c.compiler.exe.debug"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.cpp.compiler.exe.debug"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.c.linker.exe.debug"
@@ -2751,11 +2751,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.c.compiler.exe.release"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.cpp.compiler.exe.release"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.c.linker.exe.release"
@@ -2798,11 +2798,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.c.compiler.so.debug"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.cpp.compiler.so.debug"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.c.linker.so.debug"
@@ -2840,11 +2840,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.c.compiler.so.release"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.cpp.compiler.so.release"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.c.linker.so.release"
@@ -2887,11 +2887,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.c.compiler.lib.debug"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.cpp.compiler.lib.debug"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.c.linker.lib.debug"
@@ -2929,11 +2929,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.c.compiler.lib.release"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.cpp.compiler.lib.release"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.linux.c.linker.lib.release"
@@ -3000,11 +3000,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.c.compiler.exe.debug"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.cpp.compiler.exe.debug"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.c.linker.exe.debug"
@@ -3039,11 +3039,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.c.compiler.exe.release"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.cpp.compiler.exe.release"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.c.linker.exe.release"
@@ -3086,11 +3086,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.c.compiler.so.debug"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.cpp.compiler.so.debug"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.c.linker.so.debug"
@@ -3128,11 +3128,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.c.compiler.so.release"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.cpp.compiler.so.release"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.c.linker.so.release"
@@ -3175,11 +3175,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.c.compiler.lib.debug"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.cpp.compiler.lib.debug"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.c.linker.lib.debug"
@@ -3217,11 +3217,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.c.compiler.lib.release"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.cpp.compiler.lib.release"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.macosx.c.linker.lib.release"
@@ -3290,11 +3290,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.c.compiler.exe.debug"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.cpp.compiler.exe.debug"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.c.linker.exe.debug"
@@ -3331,11 +3331,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.c.compiler.exe.release"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.cpp.compiler.exe.release"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.c.linker.exe.release"
@@ -3378,11 +3378,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.c.compiler.so.debug"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.cpp.compiler.so.debug"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.c.linker.so.debug"
@@ -3419,11 +3419,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.c.compiler.so.release"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.cpp.compiler.so.release"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.c.linker.so.release"
@@ -3466,11 +3466,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.c.compiler.lib.debug"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.cpp.compiler.lib.debug"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.c.linker.lib.debug"
@@ -3507,11 +3507,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.c.compiler.lib.release"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.cpp.compiler.lib.release"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.cygwin.c.linker.lib.release"
@@ -3580,11 +3580,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.c.compiler.exe.debug"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.cpp.compiler.exe.debug"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.c.linker.exe.debug"
@@ -3621,11 +3621,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.c.compiler.exe.release"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.cpp.compiler.exe.release"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.c.linker.exe.release"
@@ -3668,11 +3668,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.c.compiler.so.debug"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.cpp.compiler.so.debug"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.c.linker.so.debug"
@@ -3709,11 +3709,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.c.compiler.so.release"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.cpp.compiler.so.release"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.c.linker.so.release"
@@ -3756,11 +3756,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.c.compiler.lib.debug"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.cpp.compiler.lib.debug"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.c.linker.lib.debug"
@@ -3797,11 +3797,11 @@
                </builder>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.c.compiler.lib.release"
-                     superClass="cdt.managedbuild.tool.llvm.gcc.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.c.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.cpp.compiler.lib.release"
-                     superClass="cdt.managedbuild.tool.llvm.g++.compiler">
+                     superClass="cdt.managedbuild.tool.llvm.gnu.cpp.compiler.base">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.llvm.gnu.win32.mingw.c.linker.lib.release"

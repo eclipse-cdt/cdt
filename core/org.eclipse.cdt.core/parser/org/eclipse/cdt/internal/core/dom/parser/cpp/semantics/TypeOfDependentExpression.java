@@ -12,11 +12,13 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.core.runtime.CoreException;
@@ -24,10 +26,11 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Represents the type of a dependent expression.
  */
-public class TypeOfDependentExpression implements ICPPUnknownType, ISerializableType {
+public class TypeOfDependentExpression extends CPPUnknownBinding implements ICPPUnknownType, ISerializableType {
 	private final ICPPEvaluation fEvaluation;
 
 	public TypeOfDependentExpression(ICPPEvaluation evaluation) {
+		super(evaluation.getSignature());
 		fEvaluation= evaluation;
 	}
 	
@@ -42,12 +45,8 @@ public class TypeOfDependentExpression implements ICPPUnknownType, ISerializable
 	}
 	
 	@Override
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
+	public TypeOfDependentExpression clone() {
+		return (TypeOfDependentExpression) super.clone();
 	}
 
 	public char[] getSignature() {
@@ -72,5 +71,11 @@ public class TypeOfDependentExpression implements ICPPUnknownType, ISerializable
 		if (eval instanceof ICPPEvaluation)
 			return new TypeOfDependentExpression((ICPPEvaluation) eval);
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
+	}
+
+	@Override
+	public IBinding getOwner() {
+		// We won't know until instantiation.
+		return null;
 	}
 }

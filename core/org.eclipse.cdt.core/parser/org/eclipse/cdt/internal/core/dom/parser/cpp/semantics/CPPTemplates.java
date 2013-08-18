@@ -2635,6 +2635,12 @@ public class CPPTemplates {
         	if (type instanceof IBinding)
         		return (IBinding) type;
         }
+        if (unknown instanceof TypeOfDependentExpressionBinding) {
+        	IType type= instantiateType(((TypeOfDependentExpressionBinding) unknown).getType(), tpMap, packOffset, 
+        			within, point);
+        	if (type instanceof IBinding)
+        		return (IBinding) type;
+        }
         return unknown;
 	}
 

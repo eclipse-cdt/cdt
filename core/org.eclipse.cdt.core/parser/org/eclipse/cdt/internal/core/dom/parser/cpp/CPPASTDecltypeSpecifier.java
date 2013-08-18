@@ -17,6 +17,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpressionBinding;
 
 /**
  * Implementation of ICPPASTDecltypeSpecifier.
@@ -75,6 +77,12 @@ public class CPPASTDecltypeSpecifier extends ASTNode implements ICPPASTDecltypeS
 		IType type = fDecltypeExpression.getExpressionType();
 		if (type instanceof IBinding)
 			return (IBinding) type;
+		// A TypeOfDependentExpression may or may not instantiate to
+		// a type that's a binding. Since we need to return an IBinding,
+		// and returning null would be inaccurate, we wrap the
+		// TypeOfDependentExpression to make it look like an IBinding.
+		if (type instanceof TypeOfDependentExpression)
+			return new TypeOfDependentExpressionBinding((TypeOfDependentExpression) type);
 		return null;
 	}
 

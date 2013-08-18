@@ -1266,11 +1266,18 @@ public class CPPTemplates {
 			}
 
 			if (type instanceof ICPPUnknownBinding) {
-				IBinding binding= resolveUnknown((ICPPUnknownBinding) type, tpMap, packOffset, within, point);
-				if (binding instanceof IType)
-					return (IType) binding;
-
-				return type;
+				if (type instanceof TypeOfDependentExpression) {
+					ICPPEvaluation eval = ((TypeOfDependentExpression) type).getEvaluation();
+					ICPPEvaluation instantiated = eval.instantiate(tpMap, packOffset, within, Value.MAX_RECURSION_DEPTH, point);
+					if (instantiated != eval)
+						return instantiated.getTypeOrFunctionSet(point);
+				} else {
+					IBinding binding= resolveUnknown((ICPPUnknownBinding) type, tpMap, packOffset, within, point);
+					if (binding instanceof IType)
+						return (IType) binding;
+	
+					return type;
+				}
 			}
 
 			if (within != null && type instanceof IBinding) {
@@ -1346,13 +1353,6 @@ public class CPPTemplates {
 					return SemanticUtil.replaceNestedType(typeContainer, newNestedType);
 				}
 				return typeContainer;
-			}
-
-			if (type instanceof TypeOfDependentExpression) {
-				ICPPEvaluation eval = ((TypeOfDependentExpression) type).getEvaluation();
-				ICPPEvaluation instantiated = eval.instantiate(tpMap, packOffset, within, Value.MAX_RECURSION_DEPTH, point);
-				if (instantiated != eval)
-					return instantiated.getTypeOrFunctionSet(point);
 			}
 
 			return type;
@@ -2643,6 +2643,11 @@ public class CPPTemplates {
         }
         if (unknown instanceof ICPPTemplateParameter && unknown instanceof IType) {
         	IType type= resolveTemplateTypeParameter((ICPPTemplateParameter) unknown, tpMap, packOffset, point);
+        	if (type instanceof IBinding)
+        		return (IBinding) type;
+        }
+        if (unknown instanceof TypeOfDependentExpression) {
+        	IType type= instantiateType((IType) unknown, tpMap, packOffset, within, point);
         	if (type instanceof IBinding)
         		return (IBinding) type;
         }

@@ -8022,4 +8022,25 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testInstantiationOfTypedef_412555() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T>
+	//	T foo(T);
+	//
+	//	template <typename T>
+	//	struct U {
+	//	    typedef typename decltype(foo(T()))::type type;    
+	//	};
+	//	
+	//	struct S {
+	//		typedef int type;
+	//	};
+	//
+	//	int main() {
+	//		U<S>::type x;
+	//	}
+	public void testDependentDecltypeInNameQualifier_415198() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertNonProblem("decltype(foo(T()))::type");
+		assertSameType((ITypedef) helper.assertNonProblem("U<S>::type"), CommonTypes.int_);
+	}
 }

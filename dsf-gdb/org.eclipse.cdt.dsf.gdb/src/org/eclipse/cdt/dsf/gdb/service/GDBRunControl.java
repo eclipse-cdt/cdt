@@ -467,10 +467,10 @@ public class GDBRunControl extends MIRunControl {
 		if (fStepInToSelectionActiveOperation.getThreadContext().equals(threadDmc)) {
 			final MIFrame frame = e.getFrame();
 
-			assert(fStepInToSelectionActiveOperation.getLine() == frame.getLine());
 			assert(fRunToLineActiveOperation == null);
 			
 			if (fStepInToSelectionActiveOperation.getRunToLineFrame() == null) {
+				assert(fStepInToSelectionActiveOperation.getLine() == frame.getLine());
 				// Shall now be at the runToline location
 				fStepInToSelectionActiveOperation.setRunToLineFrame(frame);
 			}

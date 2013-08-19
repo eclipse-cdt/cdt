@@ -848,7 +848,15 @@ public class CPPVisitor extends ASTQueries {
         if (isFunction) {
 			if (binding instanceof ICPPInternalBinding && binding instanceof ICPPFunction && name.isActive()) {
 				ICPPFunction function = (ICPPFunction) binding;
-			    if (CPPSemantics.isSameFunction(function, typeRelevantDtor)) {
+				boolean sameFunction = CPPSemantics.isSameFunction(function, typeRelevantDtor);
+				if (function.getOwner() instanceof ICPPClassType) {
+					// Don't consider a function brought into scope from a base class scope
+					// to be the same as a function declared in a derived class scope.
+					if (!((ICPPClassType) function.getOwner()).getCompositeScope().equals(scope)) {
+						sameFunction = false;
+					}
+				}
+			    if (sameFunction) {
 			    	binding= CPPSemantics.checkDeclSpecifier(binding, name, parent);
 			    	if (binding instanceof IProblemBinding)
 			    		return binding;

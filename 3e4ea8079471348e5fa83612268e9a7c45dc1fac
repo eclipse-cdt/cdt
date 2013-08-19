@@ -107,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_6ef3c4d9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/AbstractCLikeLanguage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-19T04:13:47Z",
+      "side": 1,
+      "message": "It should be safe to access preferences in TranslationUnit.getAST(IIndex, int, IProgressMonitor)",
+      "parentUuid": "c73e4bec_9ae420cc",
+      "revId": "3e4ea8079471348e5fa83612268e9a7c45dc1fac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_23fa7c83",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ASTTranslationUnit.java",
         "patchSetId": 3
@@ -142,6 +160,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_dbca9cb2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ASTTranslationUnit.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-19T04:13:47Z",
+      "side": 1,
+      "message": "\u0027\u003d false\u0027 can be removed.",
+      "parentUuid": "c73e4bec_6b57c92e",
+      "revId": "3e4ea8079471348e5fa83612268e9a7c45dc1fac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_a39b2c7e",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CCorePreferenceConstants.java",
         "patchSetId": 3
@@ -171,6 +207,23 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "c73e4bec_a39b2c7e",
+      "revId": "3e4ea8079471348e5fa83612268e9a7c45dc1fac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_fb6af80a",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CCorePreferenceConstants.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-19T04:13:47Z",
+      "side": 1,
+      "message": "Please don\u0027t add these methods here. They expand public API for no good reason.",
       "revId": "3e4ea8079471348e5fa83612268e9a7c45dc1fac",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

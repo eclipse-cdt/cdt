@@ -42,21 +42,21 @@ public interface IASTName extends IASTNode, IName {
 	public String toString();
 
 	/**
-	 * Get the semantic object attached to this name.  May be null if this name
+	 * Returns the semantic object attached to this name.  May be null if this name
 	 * has not yet been semantically resolved (@see resolveBinding)
 	 * @return <code>IBinding</code> if it has been resolved, otherwise null 
 	 */
 	public IBinding getBinding();
 		
 	/**
-	 * Resolve the semantic object this name is referring to.
+	 * Resolves the semantic object this name is referring to.
 	 * 
 	 * @return <code>IBinding</code> binding
 	 */
 	public IBinding resolveBinding();
 
 	/**
-	 * Get the role of this name. If the name needs to be resolved to determine that and 
+	 * Returns the role of this name. If the name needs to be resolved to determine that and 
 	 * {@code allowResolution} is set to {@code false}, then {@link IASTNameOwner#r_unclear}
 	 * is returned.  
 	 * 
@@ -68,9 +68,9 @@ public interface IASTName extends IASTNode, IName {
 	public int getRoleOfName(boolean allowResolution);
 	
 	/**
-	 * Return the completion context for this name.
+	 * Returns the completion context for this name.
 	 * 
-	 * @return <code>IASTCompletionContext</code> the context for completion
+	 * @return {@code IASTCompletionContext} the context for completion
 	 */
 	public IASTCompletionContext getCompletionContext();
 	
@@ -80,14 +80,14 @@ public interface IASTName extends IASTNode, IName {
 	public ILinkage getLinkage();
 	
 	/**
-	 * Returns the image location for this name or <code>null</code> if the information is not
+	 * Returns the image location for this name or {@code null} if the information is not
 	 * available.
 	 * <p>
 	 * An image location can be computed when the name is either found directly in the code, is
 	 * (part of) an argument to a macro expansion or is (part of) a macro definition found in
 	 * the source code.
 	 * <p>
-	 * The image location is <code>null</code>, when the name consists of multiple tokens
+	 * The image location is {@code null}, when the name consists of multiple tokens
 	 * (qualified names) and the tokens are not found side by side in the code, or if the name is
 	 * the result of a token-paste operation or the name is found in the definition of a built-in
 	 * macro.
@@ -96,8 +96,8 @@ public interface IASTName extends IASTNode, IName {
 	public IASTImageLocation getImageLocation();
 	
 	/**
-	 * For convenience this method returns the last name of a qualified name or this if this is not
-	 * a qualified name.
+	 * For convenience this method returns the last name of a qualified name or {@code this}
+	 * if this is not a qualified name.
 	 * @since 5.1
 	 */
 	public IASTName getLastName();
@@ -115,19 +115,19 @@ public interface IASTName extends IASTNode, IName {
 	public IASTName copy(CopyStyle style);
 
 	/** 
-	 * Set the semantic object for this name to be the given binding
+	 * Sets the semantic object for this name to be the given binding
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void setBinding(IBinding binding);
 	
 	/** 
-	 * Get the key for looking up this name in a scope.
+	 * Returns the key for looking up this name in a scope.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public char[] getLookupKey();
 
 	/**
-	 * Gets the intermediate representation of the binding, if already available.
+	 * Returns the intermediate representation of the binding, if already available.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public IBinding getPreBinding();

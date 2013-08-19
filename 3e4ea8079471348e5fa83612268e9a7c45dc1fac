@@ -125,6 +125,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_e73ed775",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/AbstractCLikeLanguage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-08-19T12:42:54Z",
+      "side": 1,
+      "message": "I\u0027ve moved it to LanguageSettingsScannerInfoProvider since the ScannerInfo is created there. Is that ok as well?",
+      "parentUuid": "c73e4bec_6ef3c4d9",
+      "revId": "3e4ea8079471348e5fa83612268e9a7c45dc1fac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_23fa7c83",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ASTTranslationUnit.java",
         "patchSetId": 3
@@ -224,6 +242,24 @@
       "writtenOn": "2013-08-19T04:13:47Z",
       "side": 1,
       "message": "Please don\u0027t add these methods here. They expand public API for no good reason.",
+      "revId": "3e4ea8079471348e5fa83612268e9a7c45dc1fac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_4734eb93",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CCorePreferenceConstants.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-08-19T12:42:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_fb6af80a",
       "revId": "3e4ea8079471348e5fa83612268e9a7c45dc1fac",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

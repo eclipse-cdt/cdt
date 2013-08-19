@@ -257,11 +257,11 @@ public class CRegisterManager {
 	private void initializeFromMemento( String memento ) throws CoreException {
 		Node node = DebugPlugin.parseDocument( memento );
 		if ( node.getNodeType() != Node.ELEMENT_NODE ) {
-			abort( InternalDebugCoreMessages.getString( "CRegisterManager.0" ), null ); //$NON-NLS-1$
+			abort(InternalDebugCoreMessages.CRegisterManager_0, null);
 		}
 		Element element = (Element)node;
 		if ( !ELEMENT_REGISTER_GROUP_LIST.equals( element.getNodeName() ) ) {
-			abort( InternalDebugCoreMessages.getString( "CRegisterManager.1" ), null ); //$NON-NLS-1$
+			abort(InternalDebugCoreMessages.CRegisterManager_1, null);
 		}
 		Node childNode = element.getFirstChild();
 		while( childNode != null ) {

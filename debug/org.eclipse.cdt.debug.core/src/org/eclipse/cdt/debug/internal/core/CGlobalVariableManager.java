@@ -239,7 +239,7 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 		catch( IOException e ) {
 			ex = e;
 		}
-		abort( InternalDebugCoreMessages.getString( "CGlobalVariableManager.0" ), ex ); //$NON-NLS-1$
+		abort(InternalDebugCoreMessages.CGlobalVariableManager_0, ex);
 	}
 
 	private void initialize() {

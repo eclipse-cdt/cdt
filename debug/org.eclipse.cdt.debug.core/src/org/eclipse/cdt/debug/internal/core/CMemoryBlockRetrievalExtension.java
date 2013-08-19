@@ -136,7 +136,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 					
 			return;
 		}
-		abort( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.3" ), null ); //$NON-NLS-1$
+		abort(InternalDebugCoreMessages.CMemoryBlockRetrievalExtension_3, null);
 	}
 
 	/**
@@ -157,7 +157,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 		CDebugTarget target = getDebugTarget();
 		if (target == null) {
 			throw new DebugException(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, 
-					InternalDebugCoreMessages.getString("CMemoryBlockRetrievalExtension.CDebugTarget_not_available"), null)); //$NON-NLS-1$
+					InternalDebugCoreMessages.CMemoryBlockRetrievalExtension_CDebugTarget_not_available, null));
 		}
 		IAddressFactory addrFactory = target.getAddressFactory();
 		if (addrFactory instanceof IAddressFactory2) {
@@ -280,11 +280,11 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	
 						}
 						else {
-							msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.1" ), new String[] { expression } ); //$NON-NLS-1$
+							msg = MessageFormat.format(InternalDebugCoreMessages.CMemoryBlockRetrievalExtension_1, expression);
 						}
 					}
 					else {
-						msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.2" ), new String[] { expression } ); //$NON-NLS-1$
+						msg = MessageFormat.format(InternalDebugCoreMessages.CMemoryBlockRetrievalExtension_2, expression);
 					}
 				}
 			}
@@ -293,7 +293,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 			msg = e.getMessage();
 		}
 		catch( NumberFormatException e ) {
-			msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.0" ), new String[] { expression } ); //$NON-NLS-1$
+			msg = MessageFormat.format(InternalDebugCoreMessages.CMemoryBlockRetrievalExtension_0, expression);
 		}
 		finally {
 			if (exp != null) {
@@ -439,7 +439,9 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 		
 		// minimum is "<space>:<expression>"
 		if ((index == -1) || (index == str.length()-1)) {
-			IStatus s = new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.INTERNAL_ERROR, InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.5" ), null ); //$NON-NLS-1$
+			IStatus s = new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(),
+					CDebugCorePlugin.INTERNAL_ERROR,
+					InternalDebugCoreMessages.CMemoryBlockRetrievalExtension_invalid_encoded_address, null);
 			throw new CoreException( s );
 		}
 
@@ -474,7 +476,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 					};
 				}
 				catch (CDIException exc) {
-					IStatus s = new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.INTERNAL_ERROR, InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.invalid_encoded_addresses" ), exc); //$NON-NLS-1$
+					IStatus s = new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.INTERNAL_ERROR, InternalDebugCoreMessages.CMemoryBlockRetrievalExtension_invalid_encoded_address, exc);
 					throw new CoreException(s);
  
 				}

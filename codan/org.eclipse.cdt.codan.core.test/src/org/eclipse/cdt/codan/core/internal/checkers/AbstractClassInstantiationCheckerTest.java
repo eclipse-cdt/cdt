@@ -312,4 +312,23 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(13);
 	}
+
+	//	struct A {
+	//	    virtual void test(int) = 0;
+	//	    virtual ~A();
+	//	};
+	//
+	//	struct B : public A {
+	//	    using A::test;
+	//	    void test(const char*);
+	//	    void test(int);
+	//	};
+	//
+	//	int main() {
+	//	    B c;
+	//	}
+	public void testUsingDeclarationInDerivedClass_bug414279() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
 }

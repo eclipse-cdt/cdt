@@ -191,6 +191,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_7894259a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTDecltypeSpecifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-19T19:14:49Z",
+      "side": 1,
+      "message": "Possibly the signature of the evaluation for the expression.",
+      "parentUuid": "c73e4bec_71ad696f",
+      "revId": "82f30d690b3ba6a839916cf774b1c279b657e507",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_1b13641b",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTNameBase.java",
         "patchSetId": 2
@@ -340,6 +358,24 @@
       "side": 1,
       "message": "What if it\u0027s a name of the form \u0027::A\u0027? Then it has zero segments in the qualifier, but it has a last name.",
       "parentUuid": "c73e4bec_fbbb185c",
+      "revId": "82f30d690b3ba6a839916cf774b1c279b657e507",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_7bd89f66",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1715,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-19T19:14:49Z",
+      "side": 1,
+      "message": "It\u0027s unfortunate that we use getAllSegments method that involves array copying just to check the first element. The same condition can be written as:\nqualifier.length !\u003d 0 \u0026\u0026 qualifier[0] !\u003d name",
+      "parentUuid": "c73e4bec_31d001c2",
       "revId": "82f30d690b3ba6a839916cf774b1c279b657e507",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

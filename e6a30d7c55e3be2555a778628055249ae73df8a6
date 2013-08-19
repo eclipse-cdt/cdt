@@ -16,6 +16,24 @@
       "revId": "e6a30d7c55e3be2555a778628055249ae73df8a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_f1a2192a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTDecltypeSpecifier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-08-19T07:10:57Z",
+      "side": 1,
+      "message": "I\u0027m not sure. Here we expect the TypeOfDependentExpression to instantiate to a binding because it is used in a context where :: is applied to it, which is only valid for bindings. But a TypeOfDependentExpression can also be used to represent types that we don\u0027t necessarily expect to be bindings, so I don\u0027t know if it makes sense to make it an IBinding in general.\n\nIf you think it would simplify the code, I can give it a try.",
+      "parentUuid": "c73e4bec_3b010079",
+      "revId": "e6a30d7c55e3be2555a778628055249ae73df8a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

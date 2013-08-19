@@ -198,7 +198,7 @@ class ASTBuiltinName extends ASTPreprocessorDefinition implements IAdaptable {
 		if (adapter.isAssignableFrom(ASTBuiltinName.class)) {
 			return this;
 		}
-		if (adapter.isAssignableFrom(fOriginalDefinition.getClass())) {
+		if (fOriginalDefinition != null && adapter.isAssignableFrom(fOriginalDefinition.getClass())) {
 			return fOriginalDefinition;
 		}
 		return null;

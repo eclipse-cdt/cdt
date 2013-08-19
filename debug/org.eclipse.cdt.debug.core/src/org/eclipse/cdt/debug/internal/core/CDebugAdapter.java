@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core;
 
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.MessageFormat;
 import java.util.Date;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -39,6 +37,9 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
 
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.MessageFormat;
+
 public class CDebugAdapter implements ICDIDebugger {
 	final ICDebugger fDebugger;
 
@@ -59,12 +60,12 @@ public class CDebugAdapter implements ICDIDebugger {
 	public ICDISession createDebuggerSession(ILaunch launch, IBinaryObject exe, IProgressMonitor monitor) throws CoreException {
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
 		if (exe == null) {
-			abort(InternalDebugCoreMessages.getString("CDebugAdapter.Program_file_not_specified"), null, //$NON-NLS-1$
+			abort(InternalDebugCoreMessages.CDebugAdapter_Program_file_not_specified, null,
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
 		}
 		IFile[] exeFile = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(exe.getPath());
 		if (exeFile.length == 0) {
-			abort(InternalDebugCoreMessages.getString("CDebugAdapter.0"), null, -1); //$NON-NLS-1$
+			abort(InternalDebugCoreMessages.CDebugAdapter_0, null, -1);
 		}
 		int pid = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, -1);
 		String coreFile = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, (String)null);
@@ -92,7 +93,7 @@ public class CDebugAdapter implements ICDIDebugger {
 	protected String renderDebuggerProcessLabel() {
 		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
-		String message = InternalDebugCoreMessages.getString("CDebugAdapter.1"); //$NON-NLS-1$
+		String message = InternalDebugCoreMessages.CDebugAdapter_1;
 		return MessageFormat.format(format, message, timestamp);
 	}
 

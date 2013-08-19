@@ -119,6 +119,22 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/cdt/debug/internal/core/DebugStringVariableSubstitutor.java" type="org.eclipse.cdt.debug.internal.core.DebugStringVariableSubstitutor">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IStringVariableManager"/>
+                <message_argument value="DebugStringVariableSubstitutor"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/debug/internal/core/DebugStringVariableSubstitutor.java" type="org.eclipse.cdt.debug.internal.core.DebugStringVariableSubstitutor$ProjectVariable">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IDynamicVariable"/>
+                <message_argument value="ProjectVariable"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/cdt/debug/internal/core/Trace.java" type="org.eclipse.cdt.debug.internal.core.Trace">
         <filter id="574619656">
             <message_arguments>

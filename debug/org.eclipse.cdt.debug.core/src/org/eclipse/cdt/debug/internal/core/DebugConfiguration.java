@@ -51,7 +51,8 @@ public class DebugConfiguration implements ICDebugConfiguration {
 		if (debugger instanceof ICDebugger) {
 			return (ICDebugger)debugger;
 		}
-		throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), -1, InternalDebugCoreMessages.getString("DebugConfiguration.0"), null)); //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), -1,
+				InternalDebugCoreMessages.DebugConfiguration_0, null));
 	}
 
 	@Override

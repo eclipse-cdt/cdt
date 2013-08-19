@@ -382,6 +382,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_1bc4fb33",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1715,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-08-19T19:40:51Z",
+      "side": 1,
+      "message": "Not quite: it would have to be !((qualifier.length \u003d\u003d 0 \u0026\u0026 parent.getLastName() \u003d\u003d name) || (qualifier.length \u003e 0 \u0026\u0026 qualifier[0] \u003d\u003d name)).\n\nNevertheless, point taken about unnecessarily creating an array. Perhaps we can add ICPPASTQualifiedName.getFirstSegment() (or SomeStaticClass.getFirstSegment(ICPPASTQualifiedName) if we don\u0027t want to pollute the ICPPASTQualifiedName interface) to avoid creating the array and still express the code nicely?",
+      "parentUuid": "c73e4bec_7bd89f66",
+      "revId": "82f30d690b3ba6a839916cf774b1c279b657e507",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_3b9d80ec",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/LookupData.java",
         "patchSetId": 2

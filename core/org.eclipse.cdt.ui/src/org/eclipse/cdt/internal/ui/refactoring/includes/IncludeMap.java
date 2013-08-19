@@ -13,9 +13,9 @@ package org.eclipse.cdt.internal.ui.refactoring.includes;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,11 +34,12 @@ public class IncludeMap {
 	private static final String TAG_VALUE = "value"; //$NON-NLS-1$
 
 	private final boolean unconditionalSubstitution;  // Not serialized when saving to a memento.
-	private final Map<IncludeInfo, List<IncludeInfo>> map;
+	// The order is not crucial but can make a difference when calculating transitive closure.
+	private final LinkedHashMap<IncludeInfo, List<IncludeInfo>> map;
 
 	public IncludeMap(boolean unconditionalSubstitution) {
 		this.unconditionalSubstitution = unconditionalSubstitution;
-		this.map = new HashMap<IncludeInfo, List<IncludeInfo>>();
+		this.map = new LinkedHashMap<IncludeInfo, List<IncludeInfo>>();
 	}
 
 	/**
@@ -50,7 +51,7 @@ public class IncludeMap {
 		if (keysAndValues.length % 2 != 0)
 			throw new IllegalArgumentException("More keys than values"); //$NON-NLS-1$
 		this.unconditionalSubstitution = unconditionalSubstitution;
-		this.map = new HashMap<IncludeInfo, List<IncludeInfo>>(keysAndValues.length / 2);
+		this.map = new LinkedHashMap<IncludeInfo, List<IncludeInfo>>(keysAndValues.length / 2);
 		for (int i = 0; i < keysAndValues.length;) {
 			String key = keysAndValues[i++];
 			addMapping(key, keysAndValues[i++]);
@@ -59,7 +60,7 @@ public class IncludeMap {
 
 	public IncludeMap(IncludeMap other) {
 		this.unconditionalSubstitution = other.unconditionalSubstitution;
-		this.map = new HashMap<IncludeInfo, List<IncludeInfo>>(other.map.size());
+		this.map = new LinkedHashMap<IncludeInfo, List<IncludeInfo>>(other.map.size());
 		addAllMappings(other);
 	}
 
@@ -157,11 +158,12 @@ public class IncludeMap {
 	 * Writes the map to a memento. The {@link #isUnconditionalSubstitution()} flag is not written.
 	 */
 	public void saveToMemento(IMemento memento) {
-		for (Entry<IncludeInfo, List<IncludeInfo>> entry : map.entrySet()) {
-			String key = entry.getKey().toString();
-			for (IncludeInfo value : entry.getValue()) {
+		List<IncludeInfo> keys = new ArrayList<IncludeInfo>(map.keySet());
+		Collections.sort(keys);
+		for (IncludeInfo key : keys) {
+			for (IncludeInfo value : map.get(key)) {
 				IMemento mapping = memento.createChild(TAG_MAPPING);
-				mapping.putString(TAG_KEY, key);
+				mapping.putString(TAG_KEY, key.toString());
 				mapping.putString(TAG_VALUE, value.toString());
 			}
 		}

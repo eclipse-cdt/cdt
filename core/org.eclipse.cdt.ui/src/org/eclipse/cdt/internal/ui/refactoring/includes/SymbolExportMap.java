@@ -26,6 +26,8 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 
+import com.ibm.icu.text.Collator;
+
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
@@ -39,6 +41,7 @@ public class SymbolExportMap {
 	private static final String TAG_MAPPING = "mapping"; //$NON-NLS-1$
 	private static final String TAG_KEY = "key"; //$NON-NLS-1$
 	private static final String TAG_VALUE = "value"; //$NON-NLS-1$
+	private static final Collator COLLATOR = Collator.getInstance();
 
 	private final Map<String, Set<IncludeInfo>> map;
 
@@ -124,9 +127,12 @@ public class SymbolExportMap {
 	 * Writes the map to a memento.
 	 */
 	public void saveToMemento(IMemento memento) {
-		for (Entry<String, Set<IncludeInfo>> entry : map.entrySet()) {
-			String key = entry.getKey().toString();
-			for (IncludeInfo value : entry.getValue()) {
+		List<String> keys = new ArrayList<String>(map.keySet());
+		Collections.sort(keys, COLLATOR);
+		for (String key : keys) {
+			List<IncludeInfo> values = new ArrayList<IncludeInfo>(map.get(key));
+			Collections.sort(values);
+			for (IncludeInfo value : values) {
 				IMemento mapping = memento.createChild(TAG_MAPPING);
 				mapping.putString(TAG_KEY, key);
 				mapping.putString(TAG_VALUE, value.toString());

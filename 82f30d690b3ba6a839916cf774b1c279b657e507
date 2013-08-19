@@ -400,6 +400,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_5b4fa310",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1715,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-19T20:27:37Z",
+      "side": 1,
+      "message": "qualifier.length \u003d\u003d 0 implies parent.getLastName() \u003d\u003d name, doesn\u0027t it? So the complex expression can be reduced.\n\nI like the SomeStaticClass.getFirstSegment(ICPPASTQualifiedName) idea. One option is to add a static method to CPPASTQualifiedName itself. Another option is to encapsulate little more logic and to add\nstatic CPPASTName.isQualified(IASTName)",
+      "parentUuid": "c73e4bec_1bc4fb33",
+      "revId": "82f30d690b3ba6a839916cf774b1c279b657e507",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_3b9d80ec",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/LookupData.java",
         "patchSetId": 2

@@ -121,6 +121,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_511aed75",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTQualifiedName.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-08-19T07:09:27Z",
+      "side": 1,
+      "message": "I used it to rewrite 12 of the ~70 uses of getNames() across CDT code. Without it, I would have to replace a loop over all segments with a loop over the segments in the qualifier + an unrolled iteration for the last name. This would be repetitive, and in some cases where the loop body contains nontrivial control flow, tricky to get right. I see no harm in having this method around for convenience.",
+      "parentUuid": "c73e4bec_fbdcb85b",
+      "revId": "82f30d690b3ba6a839916cf774b1c279b657e507",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_bb7fd01b",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTConstructorChainInitializer.java",
         "patchSetId": 2
@@ -155,6 +173,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_71ad696f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTDecltypeSpecifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-08-19T07:09:27Z",
+      "side": 1,
+      "message": "What would you recommend instead? As far as I can tell, this method will only be called on a decltype-specifier for problem reporting purposes.",
+      "parentUuid": "c73e4bec_dbde1cd5",
+      "revId": "82f30d690b3ba6a839916cf774b1c279b657e507",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_1b13641b",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTNameBase.java",
         "patchSetId": 2
@@ -166,6 +202,24 @@
       "writtenOn": "2013-08-19T03:36:34Z",
       "side": 1,
       "message": "The second condition seems wrong.",
+      "revId": "82f30d690b3ba6a839916cf774b1c279b657e507",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_b169b19b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTNameBase.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-08-19T07:09:27Z",
+      "side": 1,
+      "message": "Say you have a qualified name \u0027A::B\u0027, and you call isQualified() on the segment representing \u0027A\u0027. Even though the parent of \u0027A\u0027 is a qualified name, the \u0027A\u0027 is the first segment, so it (\u0027A\u0027) is not qualified.",
+      "parentUuid": "c73e4bec_1b13641b",
       "revId": "82f30d690b3ba6a839916cf774b1c279b657e507",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -274,6 +328,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_31d001c2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1715,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-08-19T07:09:27Z",
+      "side": 1,
+      "message": "What if it\u0027s a name of the form \u0027::A\u0027? Then it has zero segments in the qualifier, but it has a last name.",
+      "parentUuid": "c73e4bec_fbbb185c",
+      "revId": "82f30d690b3ba6a839916cf774b1c279b657e507",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_3b9d80ec",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/LookupData.java",
         "patchSetId": 2
@@ -285,6 +357,24 @@
       "writtenOn": "2013-08-19T03:36:34Z",
       "side": 1,
       "message": "Redundant condition.",
+      "revId": "82f30d690b3ba6a839916cf774b1c279b657e507",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_f117b903",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/LookupData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-08-19T07:09:27Z",
+      "side": 1,
+      "message": "Why? Consider a case where \u0027tn\u0027 is the \u0027A\u0027 in \u0027A::B\u0027.",
+      "parentUuid": "c73e4bec_3b9d80ec",
       "revId": "82f30d690b3ba6a839916cf774b1c279b657e507",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -6,28 +6,38 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.core.internal.variables.VariablesMessages;
+import org.eclipse.osgi.util.NLS;
 
-public class InternalDebugCoreMessages {
-
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.internal.core.InternalDebugCoreMessages";//$NON-NLS-1$
-
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle( BUNDLE_NAME );
+public class InternalDebugCoreMessages extends NLS {
+	public static String CGlobalVariableManager_0;
+	public static String CMemoryBlockRetrievalExtension_0;
+	public static String CMemoryBlockRetrievalExtension_1;
+	public static String CMemoryBlockRetrievalExtension_2;
+	public static String CMemoryBlockRetrievalExtension_3;
+	public static String CMemoryBlockRetrievalExtension_4;
+	public static String CMemoryBlockRetrievalExtension_invalid_encoded_address;
+	public static String CMemoryBlockRetrievalExtension_CDebugTarget_not_available;
+	public static String DebugConfiguration_0;
+	public static String CDebugAdapter_0;
+	public static String CDebugAdapter_1;
+	public static String CDebugAdapter_Program_file_not_specified;
+	public static String CRegisterManager_0;
+	public static String CRegisterManager_1;
+	public static String StringSubstitutionEngine_undefined_variable;
+	public static String StringSubstitutionEngine_unexpected_argument;
 
 	private InternalDebugCoreMessages() {
 	}
 
-	public static String getString( String key ) {
-		try {
-			return RESOURCE_BUNDLE.getString( key );
-		}
-		catch( MissingResourceException e ) {
-			return '!' + key + '!';
-		}
+	static {
+		// Load message values from a bundle file.
+		NLS.initializeMessages(InternalDebugCoreMessages.class.getName(), VariablesMessages.class);
 	}
+
 }

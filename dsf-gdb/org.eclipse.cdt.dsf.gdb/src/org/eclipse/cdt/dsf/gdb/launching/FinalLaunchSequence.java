@@ -23,6 +23,7 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.model.IConnectHandler;
+import org.eclipse.cdt.debug.internal.core.DebugStringVariableSubstitutor;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
@@ -51,7 +52,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunch;
 
 public class FinalLaunchSequence extends ReflectionSequence {
@@ -298,7 +298,8 @@ public class FinalLaunchSequence extends ReflectionSequence {
 			String gdbinitFile = fGDBBackend.getGDBInitFile();
 
 			if (gdbinitFile != null && gdbinitFile.length() > 0) {
-				final String expandedGDBInitFile = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(gdbinitFile);
+				String projectName = (String) fAttributes.get(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME);
+				final String expandedGDBInitFile = new DebugStringVariableSubstitutor(projectName).performStringSubstitution(gdbinitFile);
 
 				fCommandControl.queueCommand(
 						fCommandFactory.createCLISource(fCommandControl.getContext(), expandedGDBInitFile), 

@@ -436,6 +436,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_4454e04b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1715,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-08-20T03:45:13Z",
+      "side": 1,
+      "message": "Actually, IASTName already has an isQualified() method. We can just use that.",
+      "parentUuid": "c73e4bec_bb2a2701",
+      "revId": "82f30d690b3ba6a839916cf774b1c279b657e507",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_3b9d80ec",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/LookupData.java",
         "patchSetId": 2

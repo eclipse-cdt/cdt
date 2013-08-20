@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_949e15ea",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/DebugStringVariableSubstitutor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-08-20T15:53:22Z",
+      "side": 1,
+      "message": "Both IStringVariableManager and IDynamicVariable are not intended to be implemented by clients. I don\u0027t know what is the preferred policy in this case. Do we need to create usage filters or just leave the warnings? Marc is the best person to comment on this.",
+      "revId": "cc57e39304664252f4311e72c684902d0382bd0a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

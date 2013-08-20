@@ -291,6 +291,21 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertDeclared("A");
 	}
 
+	//	struct A {
+	//	  A(const char* s);
+	//	};
+	//	struct B {
+	//	  explicit B(const char* s);
+	//	};
+
+	//	void f(A a, B b);
+	public void testFunctionDeclarationWithTypeConversion() throws Exception {
+		// A file declaring the function is responsible for defining the parameter type that
+		// provides constructor that can be used for implicit conversion.
+		assertDefined("A");
+		assertDeclared("B");
+	}
+
 	//	struct A {};
 	//	struct B {};
 

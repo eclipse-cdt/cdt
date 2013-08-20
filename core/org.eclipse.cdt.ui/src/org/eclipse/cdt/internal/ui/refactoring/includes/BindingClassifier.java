@@ -55,7 +55,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
-import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
@@ -68,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -87,6 +87,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -98,6 +99,7 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions;
@@ -211,7 +213,7 @@ public class BindingClassifier {
 	}
 
 	/**
-	 * Returns {@code true} if {@code targetType} has a constructor that can be used for
+	 * Returns {@code true} if the {@code classType} has a constructor that can be used for
 	 * implicit conversion from {@code argument}.
 	 */
 	private boolean hasConvertingConstructor(ICPPClassType classType, IASTInitializerClause argument) {
@@ -233,6 +235,30 @@ public class BindingClassifier {
 		}
 		
 		return false;
+	}
+
+	/**
+	 * Returns {@code true} if {@code classType} has a constructor that can be used for
+	 * implicit conversion from some other type.
+	 */
+	private boolean hasConvertingConstructor(ICPPClassType classType, IASTNode point) {
+		ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, point);
+		for (ICPPConstructor constructor : constructors) {
+			if (!constructor.isExplicit()) {
+				ICPPParameter[] parameters = constructor.getParameters();
+				if (parameters.length != 0 && CPPFunction.getRequiredArgumentCount(parameters) <= 1) {
+					IType type = getNestedType(parameters[0].getType(), REF | ALLCVQ);
+					if (!classType.isSameType(type))
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean isTypeWithConvertingConstructor(IType type, IASTNode point) {
+		type = getNestedType(type, REF | ALLCVQ);
+		return type instanceof ICPPClassType && hasConvertingConstructor((ICPPClassType) type, point);
 	}
 
 	/**
@@ -519,7 +545,7 @@ public class BindingClassifier {
 					if (!staticMember) {
 						for (IASTDeclarator declarator : declarators) {
 							if (!(declarator instanceof IASTFunctionDeclarator) &&
-									declarator.getPointerOperators().equals(IASTPointerOperator.EMPTY_ARRAY)) {
+									declarator.getPointerOperators().length == 0) {
 								canBeDeclared = false;
 								break;
 							}
@@ -531,7 +557,13 @@ public class BindingClassifier {
 						defineBindingForName(name);
 					}
 				}
-			} else if (declaration instanceof IASTFunctionDefinition) {
+			}
+			return PROCESS_CONTINUE;
+		}
+
+		@Override
+		public int visit(IASTDeclarator declarator) {
+			if (declarator instanceof IASTFunctionDeclarator) {
 				/*
 				 * The type specifier of a function definition doesn't need to be defined if it is
 				 * a pointer or reference type.
@@ -542,24 +574,59 @@ public class BindingClassifier {
 				 * Example 2:
 				 * 	X& foo() { }		// definition of X is not required here
 				 */
-				IBinding binding = ((IASTFunctionDefinition) declaration).getDeclarator().getName().resolveBinding();
+				IBinding binding = declarator.getName().resolveBinding();
 				if (binding instanceof IFunction) {
 					IFunction function = (IFunction) binding;
 		
-					// Define the return type if necessary
-					IType returnType = function.getType().getReturnType();
-					if (!(returnType instanceof IPointerType) && !(returnType instanceof ICPPReferenceType)) {
-						defineTypeExceptTypedefOrNonFixedEnum(returnType);
-					}
-		
-					// Define parameter types if necessary
-					IType[] parameterTypes = function.getType().getParameterTypes();
-					for (IType type : parameterTypes) {
-						if (!(type instanceof IPointerType) && !(type instanceof ICPPReferenceType)) {
-							defineTypeExceptTypedefOrNonFixedEnum(type);
+					IFunctionType functionType = function.getType();
+					if (declarator.getPropertyInParent() == IASTFunctionDefinition.DECLARATOR) {
+						// Define the return type if necessary.
+						IType returnType = functionType.getReturnType();
+						if (!(returnType instanceof IPointerType) && !(returnType instanceof ICPPReferenceType)) {
+							defineTypeExceptTypedefOrNonFixedEnum(returnType);
+						}
+			
+						// Define parameter types if necessary.
+						IType[] parameterTypes = functionType.getParameterTypes();
+						for (IType type : parameterTypes) {
+							if (!(type instanceof IPointerType)) {
+								if (!(type instanceof ICPPReferenceType) ||
+										isTypeWithConvertingConstructor(type, declarator)) {
+									defineTypeExceptTypedefOrNonFixedEnum(type);
+								}
+							}
+						}
+					} else {
+						// As a matter of policy, a function declaration is responsible for
+						// providing definitions of parameter types that have implicit converting
+						// constructors.
+						IType[] parameterTypes = functionType.getParameterTypes();
+						for (IType type : parameterTypes) {
+							if (!(type instanceof IPointerType)) {
+								if (isTypeWithConvertingConstructor(type, declarator)) {
+									defineTypeExceptTypedefOrNonFixedEnum(type);
+								}
+							}
 						}
 					}
 				}
+
+			}
+			return PROCESS_CONTINUE;
+		}
+
+		@Override
+		public int visit(IASTDeclSpecifier declSpec) {
+			if (declSpec instanceof IASTElaboratedTypeSpecifier) {
+				/*
+				 * The type specifier of an elaborated type neither needs to be defined nor needs to be
+				 * declared. This is because an elaborated type specifier is a self-sufficient
+				 * statement.
+				 *
+				 * Example:
+				 * 	class X;			// neither definition nor declaration of X is required here
+				 */
+				return PROCESS_SKIP;
 			}
 			return PROCESS_CONTINUE;
 		}
@@ -675,22 +742,6 @@ public class BindingClassifier {
 
 				// Process the parameters.
 				processFunctionParameters(constructor, arguments);
-			}
-			return PROCESS_CONTINUE;
-		}
-
-		@Override
-		public int visit(IASTDeclSpecifier declSpec) {
-			if (declSpec instanceof IASTElaboratedTypeSpecifier) {
-				/*
-				 * The type specifier of an elaborated type neither needs to be defined nor needs to be
-				 * declared. This is because an elaborated type specifier is a self-sufficient
-				 * statement.
-				 *
-				 * Example:
-				 * 	class X;			// neither definition nor declaration of X is required here
-				 */
-				return PROCESS_SKIP;
 			}
 			return PROCESS_CONTINUE;
 		}

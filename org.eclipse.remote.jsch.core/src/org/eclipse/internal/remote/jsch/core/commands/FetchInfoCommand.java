@@ -2,13 +2,12 @@ package org.eclipse.internal.remote.jsch.core.commands;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.provider.FileInfo;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.internal.remote.jsch.core.Activator;
+import org.eclipse.internal.remote.jsch.core.JSchConnection;
+import org.eclipse.internal.remote.jsch.core.messages.Messages;
+import org.eclipse.remote.core.exception.RemoteConnectionException;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
@@ -19,13 +18,13 @@ public class FetchInfoCommand extends AbstractRemoteCommand<IFileInfo> {
 
 	private final IPath fRemotePath;
 
-	public FetchInfoCommand(ChannelSftp channel, IPath path) {
-		super(channel);
+	public FetchInfoCommand(JSchConnection connection, IPath path) {
+		super(connection);
 		fRemotePath = path;
 	}
 
 	@Override
-	public IFileInfo getResult(IProgressMonitor monitor) throws CoreException {
+	public IFileInfo getResult(IProgressMonitor monitor) throws RemoteConnectionException {
 		SubMonitor subMon = SubMonitor.convert(monitor, 20);
 		SftpCallable<SftpATTRS> c = new SftpCallable<SftpATTRS>() {
 			@Override
@@ -35,7 +34,8 @@ public class FetchInfoCommand extends AbstractRemoteCommand<IFileInfo> {
 		};
 		SftpATTRS attrs;
 		try {
-			attrs = c.getResult("Fetch info", subMon.newChild(10));
+			subMon.subTask(Messages.FetchInfoCommand_Fetch_info);
+			attrs = c.getResult(subMon.newChild(10));
 			return convertToFileInfo(fRemotePath, attrs, subMon.newChild(10));
 		} catch (SftpException e) {
 			if (e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
@@ -43,7 +43,7 @@ public class FetchInfoCommand extends AbstractRemoteCommand<IFileInfo> {
 				info.setExists(false);
 				return info;
 			}
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), e.getMessage(), e));
+			throw new RemoteConnectionException(e.getMessage());
 		}
 	}
 }

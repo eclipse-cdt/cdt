@@ -11,14 +11,17 @@
 package org.eclipse.internal.remote.jsch.core;
 
 import java.net.PasswordAuthentication;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.internal.remote.jsch.core.commands.ExecCommand;
 import org.eclipse.internal.remote.jsch.core.messages.Messages;
 import org.eclipse.jsch.core.IJSchLocation;
 import org.eclipse.jsch.core.IJSchService;
@@ -31,6 +34,7 @@ import org.eclipse.remote.core.exception.AddressInUseException;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.core.exception.UnableToForwardPortException;
 
+import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -43,19 +47,20 @@ public class JSchConnection implements IRemoteConnection {
 	private static int DEFAULT_PORT = 22;
 
 	private String fWorkingDir;
-	private Map<String, String> fEnv;
-	private Map<String, String> fProperties;
+	private final Map<String, String> fEnv = new HashMap<String, String>();
+	private final Map<String, String> fProperties = new HashMap<String, String>();
 	private String fHost;
 	private String fUsername;
 	private String fPassword;
 	private int fPort = DEFAULT_PORT;
-	private Session fSession;
 	private String fConnName;
 	private boolean fIsOpen;
+	private IUserAuthenticator fAuthenticator;
 	private final IJSchService fJSchService;
 
 	private final IRemoteServices fRemoteServices;
 	private final ListenerList fListeners = new ListenerList();
+	private final List<Session> fSessions = new ArrayList<Session>();
 
 	public JSchConnection(String name, IRemoteServices services) {
 		fConnName = name;
@@ -92,7 +97,12 @@ public class JSchConnection implements IRemoteConnection {
 	 */
 	public synchronized void close() {
 		if (isOpen()) {
-			fSession.disconnect();
+			for (Session session : fSessions) {
+				if (session.isConnected()) {
+					session.disconnect();
+				}
+			}
+			fIsOpen = false;
 			fireConnectionChangeEvent(this, IRemoteConnectionChangeEvent.CONNECTION_CLOSED);
 		}
 	}
@@ -127,7 +137,7 @@ public class JSchConnection implements IRemoteConnection {
 			throw new RemoteConnectionException(Messages.JSchConnection_connectionNotOpen);
 		}
 		try {
-			fSession.setPortForwardingL(localPort, fwdAddress, fwdPort);
+			fSessions.get(0).setPortForwardingL(localPort, fwdAddress, fwdPort);
 		} catch (JSchException e) {
 			throw new RemoteConnectionException(e.getMessage());
 		}
@@ -178,7 +188,7 @@ public class JSchConnection implements IRemoteConnection {
 			throw new RemoteConnectionException(Messages.JSchConnection_connectionNotOpen);
 		}
 		try {
-			fSession.setPortForwardingR(remotePort, fwdAddress, fwdPort);
+			fSessions.get(0).setPortForwardingR(remotePort, fwdAddress, fwdPort);
 		} catch (JSchException e) {
 			throw new RemoteConnectionException(e.getMessage());
 		}
@@ -233,9 +243,6 @@ public class JSchConnection implements IRemoteConnection {
 	 * @see org.eclipse.remote.core.IRemoteConnection#getAttributes()
 	 */
 	public Map<String, String> getAttributes() {
-		if (fProperties == null) {
-			fProperties = new HashMap<String, String>();
-		}
 		return Collections.unmodifiableMap(fProperties);
 	}
 
@@ -245,10 +252,20 @@ public class JSchConnection implements IRemoteConnection {
 	 * @see org.eclipse.remote.core.IRemoteConnection#getEnv()
 	 */
 	public Map<String, String> getEnv() {
-		if (fEnv == null) {
-			fEnv = new HashMap<String, String>();
-		}
 		return Collections.unmodifiableMap(fEnv);
+	}
+
+	private void loadEnv(IProgressMonitor monitor) throws RemoteConnectionException {
+		SubMonitor subMon = SubMonitor.convert(monitor, 10);
+		ExecCommand exec = new ExecCommand(this);
+		String env = exec.setCommand("printenv").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+		String[] vars = env.split("\n"); //$NON-NLS-1$
+		for (String var : vars) {
+			String[] kv = var.split("="); //$NON-NLS-1$
+			if (kv.length == 2) {
+				fEnv.put(kv[0], kv[1]);
+			}
+		}
 	}
 
 	/*
@@ -328,14 +345,49 @@ public class JSchConnection implements IRemoteConnection {
 	 * <dl>
 	 * 
 	 */
-	private Map<String, String> getProperties() {
-		if (fProperties == null) {
-			fProperties = new HashMap<String, String>();
-			fProperties.put(FILE_SEPARATOR_PROPERTY, "/"); //$NON-NLS-1$
-			fProperties.put(PATH_SEPARATOR_PROPERTY, ":"); //$NON-NLS-1$
-			fProperties.put(LINE_SEPARATOR_PROPERTY, "\n"); //$NON-NLS-1$
+	private void loadProperties(IProgressMonitor monitor) throws RemoteConnectionException {
+		SubMonitor subMon = SubMonitor.convert(monitor, 100);
+		fProperties.put(FILE_SEPARATOR_PROPERTY, "/"); //$NON-NLS-1$
+		fProperties.put(PATH_SEPARATOR_PROPERTY, ":"); //$NON-NLS-1$
+		fProperties.put(LINE_SEPARATOR_PROPERTY, "\n"); //$NON-NLS-1$
+		fProperties.put(USER_HOME_PROPERTY, getPwd());
+
+		ExecCommand exec = new ExecCommand(this);
+		String osVersion;
+		String osArch;
+		String osName = exec.setCommand("uname").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+		if (osName.equalsIgnoreCase("Linux")) { //$NON-NLS-1$
+			osArch = exec.setCommand("uname -m").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+			osVersion = exec.setCommand("uname -r").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+		} else if (osName.equalsIgnoreCase("Darwin")) { //$NON-NLS-1$
+			osName = exec.setCommand("sw_vers -productName").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+			osVersion = exec.setCommand("sw_vers -productVersion").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+			osArch = exec.setCommand("uname -m").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+			if (osArch.equalsIgnoreCase("i386")) { //$NON-NLS-1$
+				String opt = exec.setCommand("sysctl -n hw.optional.x86_64").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+				if (opt.equals("1")) { //$NON-NLS-1$
+					osArch = "x86_64"; //$NON-NLS-1$
+				}
+			}
+		} else if (osName.equalsIgnoreCase("AIX")) { //$NON-NLS-1$
+			osArch = exec.setCommand("uname -p").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+			osVersion = exec.setCommand("oslevel").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+			if (osArch.equalsIgnoreCase("powerpc")) { //$NON-NLS-1$
+				/* Make the architecture match what Linux produces: either ppc or ppc64 */
+				osArch = "ppc"; //$NON-NLS-1$
+				/* Get Kernel type either 32-bit or 64-bit */
+				String opt = exec.setCommand("prtconf -k").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+				if (opt.indexOf("64-bit") > 0) { //$NON-NLS-1$
+					osArch += "64"; //$NON-NLS-1$
+				}
+			}
+		} else {
+			osVersion = "unknown"; //$NON-NLS-1$
+			osArch = "unknown"; //$NON-NLS-1$
 		}
-		return fProperties;
+		fProperties.put(OS_NAME_PROPERTY, osName);
+		fProperties.put(OS_VERSION_PROPERTY, osVersion);
+		fProperties.put(OS_ARCH_PROPERTY, osArch);
 	}
 
 	/*
@@ -344,7 +396,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * @see org.eclipse.remote.core.IRemoteConnection#getProperty(java.lang.String )
 	 */
 	public String getProperty(String key) {
-		return getProperties().get(key);
+		return fProperties.get(key);
 	}
 
 	/**
@@ -407,51 +459,17 @@ public class JSchConnection implements IRemoteConnection {
 	 * @see org.eclipse.remote.core.IRemoteConnection#open()
 	 */
 	public void open(IProgressMonitor monitor) throws RemoteConnectionException {
-		if (!isOpen()) {
-			checkIsConfigured();
-			SubMonitor progress = SubMonitor.convert(monitor, 10);
-			try {
-				fSession = fJSchService.createSession(fHost, fPort, fUsername);
-				fSession.setPassword(fPassword);
-				fJSchService.connect(fSession, 0, progress.newChild(10));
-			} catch (JSchException e) {
-				throw new RemoteConnectionException(e.getMessage());
-			}
-			fIsOpen = true;
-			fireConnectionChangeEvent(this, IRemoteConnectionChangeEvent.CONNECTION_OPENED);
-		}
+		open(null, monitor);
 	}
 
-	private ChannelSftp fSftpChannel;
-
-	public ChannelSftp getSftpChannel() throws RemoteConnectionException {
+	private Session newSession(final IUserAuthenticator authenticator, IProgressMonitor monitor) throws RemoteConnectionException {
+		SubMonitor progress = SubMonitor.convert(monitor, 10);
 		try {
-			if (fSftpChannel == null) {
-				fSftpChannel = (ChannelSftp) fSession.openChannel("sftp"); //$NON-NLS-1$
-			}
-			if (!fSftpChannel.isConnected()) {
-				fSftpChannel.connect();
-			}
-		} catch (JSchException e) {
-			throw new RemoteConnectionException(e.getMessage());
-		}
-		return fSftpChannel;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#open(org.eclipse.remote.core.IUserAuthenticator,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void open(final IUserAuthenticator authenticator, IProgressMonitor monitor) throws RemoteConnectionException {
-		if (!isOpen()) {
-			checkIsConfigured();
-			SubMonitor progress = SubMonitor.convert(monitor, 10);
-			try {
-				final IJSchLocation location = fJSchService.getLocation(fUsername, fHost, fPort);
-				location.setPassword(fPassword);
-				fSession = fJSchService.createSession(location, new UserInfo() {
+			final IJSchLocation location = fJSchService.getLocation(fUsername, fHost, fPort);
+			location.setPassword(fPassword);
+			UserInfo userInfo = null;
+			if (authenticator != null) {
+				userInfo = new UserInfo() {
 
 					public String getPassphrase() {
 						return null;
@@ -485,14 +503,136 @@ public class JSchConnection implements IRemoteConnection {
 						authenticator.prompt(IUserAuthenticator.INFORMATION, Messages.AuthInfo_Authentication_message, message,
 								new int[] { IUserAuthenticator.OK }, IUserAuthenticator.OK);
 					}
-				});
-				fJSchService.connect(fSession, 0, progress.newChild(10));
-			} catch (JSchException e) {
+				};
+			}
+			Session session = fJSchService.createSession(location, userInfo);
+			session.setPassword(fPassword);
+			fJSchService.connect(session, 0, progress.newChild(10));
+			if (!progress.isCanceled()) {
+				fSessions.add(session);
+				fAuthenticator = authenticator;
+				return session;
+			}
+			return null;
+		} catch (JSchException e) {
+			throw new RemoteConnectionException(e.getMessage());
+		}
+	}
+
+	private ChannelSftp fSftpChannel;
+	private ChannelExec fExecChannel;
+
+	/**
+	 * Open an sftp channel to the remote host. Always use the second session if available.
+	 * 
+	 * @return sftp channel or null if the progress monitor was cancelled
+	 * @throws RemoteConnectionException
+	 *             if a channel could not be opened
+	 */
+	public ChannelSftp getSftpChannel() throws RemoteConnectionException {
+		Session session = fSessions.get(0);
+		if (fSessions.size() > 1) {
+			session = fSessions.get(1);
+		}
+		ChannelSftp channel = openSftpChannel(session);
+		if (channel == null) {
+			throw new RemoteConnectionException("Unable to open sftp channel: check sftp is enabled on remote host");
+		}
+		return channel;
+	}
+
+	private ChannelSftp openSftpChannel(Session session) throws RemoteConnectionException {
+		try {
+			ChannelSftp channel = (ChannelSftp) session.openChannel("sftp"); //$NON-NLS-1$
+			channel.connect();
+			return channel;
+		} catch (JSchException e) {
+			if (!e.getMessage().contains("channel is not opened")) { //$NON-NLS-1$
 				throw new RemoteConnectionException(e.getMessage());
 			}
-			fIsOpen = true;
-			fireConnectionChangeEvent(this, IRemoteConnectionChangeEvent.CONNECTION_OPENED);
 		}
+		return null;
+	}
+
+	private ChannelExec openExecChannel(Session[] sessions) throws RemoteConnectionException {
+		for (Session session : sessions) {
+			try {
+				ChannelExec channel = (ChannelExec) session.openChannel("exec"); //$NON-NLS-1$
+				if (!channel.isConnected()) {
+					channel.connect();
+					return channel;
+				}
+			} catch (JSchException e) {
+				if (!e.getMessage().contains("channel is not opened")) { //$NON-NLS-1$
+					throw new RemoteConnectionException(e.getMessage());
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Open an exec channel to the remote host.
+	 * 
+	 * @return exec channel or null if the progress monitor was cancelled
+	 * 
+	 * @throws RemoteConnectionException
+	 *             if a channel could not be opened
+	 */
+	public ChannelExec getExecChannel() throws RemoteConnectionException {
+		try {
+			return (ChannelExec) fSessions.get(0).openChannel("exec"); //$NON-NLS-1$
+		} catch (JSchException e) {
+			throw new RemoteConnectionException(e.getMessage());
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnection#open(org.eclipse.remote.core.IUserAuthenticator,
+	 * org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void open(final IUserAuthenticator authenticator, IProgressMonitor monitor) throws RemoteConnectionException {
+		if (!isOpen()) {
+			checkIsConfigured();
+			SubMonitor subMon = SubMonitor.convert(monitor, 30);
+			Session session = newSession(authenticator, subMon.newChild(10));
+			if (!subMon.isCanceled()) {
+				if (!checkConfiguration(session, subMon.newChild(20))) {
+					newSession(authenticator, subMon.newChild(10));
+					loadEnv(subMon.newChild(10));
+				}
+				loadProperties(subMon.newChild(10));
+				fIsOpen = true;
+				fireConnectionChangeEvent(this, IRemoteConnectionChangeEvent.CONNECTION_OPENED);
+			}
+		}
+	}
+
+	private boolean checkConfiguration(Session session, IProgressMonitor monitor) throws RemoteConnectionException {
+		SubMonitor subMon = SubMonitor.convert(monitor, 10);
+		/*
+		 * First, check if sftp is supported at all. This is required for EFS, so throw exception if not supported.
+		 */
+		ChannelSftp sftp = openSftpChannel(session);
+		if (sftp == null) {
+			throw new RemoteConnectionException(
+					"Remote host does not support sftp. Remote functionality requires sftp to be enabled");
+		}
+		/*
+		 * While sftp channel is open, try opening an exec channel. If it doesn't succeed, then MaxSession is < 2 so we need at
+		 * least one additional session.
+		 */
+		try {
+			loadEnv(subMon.newChild(10));
+		} catch (RemoteConnectionException e) {
+			if (e.getMessage().contains("channel is not opened")) {
+				return false;
+			}
+		}
+		sftp.disconnect();
+		return true;
 	}
 
 	/*
@@ -515,7 +655,7 @@ public class JSchConnection implements IRemoteConnection {
 			throw new RemoteConnectionException(Messages.JSchConnection_connectionNotOpen);
 		}
 		try {
-			fSession.delPortForwardingL(port);
+			fSessions.get(0).delPortForwardingL(port);
 		} catch (JSchException e) {
 			throw new RemoteConnectionException(e.getMessage());
 		}
@@ -531,7 +671,7 @@ public class JSchConnection implements IRemoteConnection {
 			throw new RemoteConnectionException(Messages.JSchConnection_connectionNotOpen);
 		}
 		try {
-			fSession.delPortForwardingR(port);
+			fSessions.get(0).delPortForwardingR(port);
 		} catch (JSchException e) {
 			throw new RemoteConnectionException(e.getMessage());
 		}
@@ -624,9 +764,5 @@ public class JSchConnection implements IRemoteConnection {
 			str += ":" + getPort(); //$NON-NLS-1$
 		}
 		return str + "]"; //$NON-NLS-1$
-	}
-
-	public Session getSession() {
-		return fSession;
 	}
 }

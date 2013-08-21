@@ -1,15 +1,13 @@
 package org.eclipse.internal.remote.jsch.core.commands;
 
 import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.internal.remote.jsch.core.Activator;
+import org.eclipse.internal.remote.jsch.core.JSchConnection;
+import org.eclipse.internal.remote.jsch.core.messages.Messages;
+import org.eclipse.remote.core.exception.RemoteConnectionException;
 
-import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 
@@ -17,29 +15,24 @@ public class MkdirCommand extends AbstractRemoteCommand<Void> {
 
 	private final IPath fRemotePath;
 
-	public MkdirCommand(ChannelSftp channel, IPath path) {
-		super(channel);
+	public MkdirCommand(JSchConnection connection, IPath path) {
+		super(connection);
 		fRemotePath = path;
 	}
 
 	@Override
-	public Void getResult(IProgressMonitor monitor) throws CoreException {
+	public Void getResult(IProgressMonitor monitor) throws RemoteConnectionException {
 		createDirectory(fRemotePath, monitor);
 		return null;
 	}
 
-	private void createDirectory(IPath path, IProgressMonitor monitor) throws CoreException {
+	private void createDirectory(IPath path, IProgressMonitor monitor) throws RemoteConnectionException {
 		final SubMonitor subMon = SubMonitor.convert(monitor, 20);
 
 		/*
 		 * Recursively create parent directories
 		 */
-		FetchInfoCommand command;
-		try {
-			command = new FetchInfoCommand(getSftpChannel(), path.removeLastSegments(1));
-		} catch (JSchException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), e.getMessage(), e));
-		}
+		FetchInfoCommand command = new FetchInfoCommand(getConnection(), path.removeLastSegments(1));
 		IFileInfo info = command.getResult(subMon.newChild(10));
 		if (!info.exists()) {
 			createDirectory(path.removeLastSegments(1), subMon.newChild(10));
@@ -56,9 +49,10 @@ public class MkdirCommand extends AbstractRemoteCommand<Void> {
 			}
 		};
 		try {
-			c.getResult("Create directory", subMon.newChild(10));
+			subMon.subTask(Messages.MkdirCommand_Create_directory);
+			c.getResult(subMon.newChild(10));
 		} catch (SftpException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), e.getMessage(), e));
+			throw new RemoteConnectionException(e.getMessage());
 		}
 	}
 }

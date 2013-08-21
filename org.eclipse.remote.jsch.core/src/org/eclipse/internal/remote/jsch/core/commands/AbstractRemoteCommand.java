@@ -23,28 +23,55 @@ import java.util.concurrent.TimeoutException;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.provider.FileInfo;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.internal.remote.jsch.core.Activator;
+import org.eclipse.internal.remote.jsch.core.JSchConnection;
+import org.eclipse.internal.remote.jsch.core.messages.Messages;
+import org.eclipse.remote.core.exception.RemoteConnectionException;
 
+import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
+import com.jcraft.jsch.SftpProgressMonitor;
 
 /**
  * @author greg
  * 
  */
 public abstract class AbstractRemoteCommand<T> {
-	private static ExecutorService fPool = Executors.newSingleThreadExecutor();
+	protected static class CommandProgressMonitor implements SftpProgressMonitor {
+		private final IProgressMonitor fMonitor;
+
+		public CommandProgressMonitor(IProgressMonitor monitor) {
+			fMonitor = monitor;
+		}
+
+		public boolean count(long count) {
+			fMonitor.worked((int) count);
+			return !(fMonitor.isCanceled());
+		}
+
+		public void end() {
+			fMonitor.done();
+		}
+
+		public void init(int op, String src, String dest, long max) {
+			String srcFile = new Path(src).lastSegment();
+			String desc = srcFile;
+			fMonitor.beginTask(desc, (int) max);
+		}
+	}
 
 	protected abstract class SftpCallable<T1> implements Callable<T1> {
-		private Future<T1> asyncCmdInThread(String jobName) throws CoreException {
+		private IProgressMonitor fProgressMonitor;
+		private ChannelSftp fSftpChannel;
+
+		private Future<T1> asyncCmdInThread() throws RemoteConnectionException {
+			setChannel(fConnection.getSftpChannel());
 			return fPool.submit(this);
 		}
 
@@ -56,44 +83,45 @@ public abstract class AbstractRemoteCommand<T> {
 		public abstract T1 call() throws JSchException, SftpException, IOException;
 
 		private void finalizeCmdInThread() {
+			setChannel(null);
 		}
 
-		public ChannelSftp getChannel() throws JSchException {
-			return getSftpChannel();
+		public ChannelSftp getChannel() {
+			return fSftpChannel;
+		}
+
+		public IProgressMonitor getProgressMonitor() {
+			return fProgressMonitor;
 		}
 
 		/**
 		 * Function opens sftp channel and then executes the sftp operation. If
 		 * run on the main thread it executes it on a separate thread
 		 */
-		public T1 getResult(String jobName, IProgressMonitor monitor) throws SftpException, CoreException {
+		public T1 getResult(IProgressMonitor monitor) throws SftpException, RemoteConnectionException {
 			Future<T1> future = null;
-			SubMonitor progress = SubMonitor.convert(monitor, 10);
+			fProgressMonitor = SubMonitor.convert(monitor, 10);
 			try {
-				future = asyncCmdInThread(jobName);
-				return waitCmdInThread(future, progress.newChild(10));
+				future = asyncCmdInThread();
+				return waitCmdInThread(future);
 			} finally {
 				finalizeCmdInThread();
-				if (monitor != null) {
-					monitor.done();
-				}
 			}
 		}
 
-		private T1 waitCmdInThread(Future<T1> future, IProgressMonitor monitor) throws SftpException, CoreException {
+		public void setChannel(ChannelSftp channel) {
+			fSftpChannel = channel;
+		}
+
+		private T1 waitCmdInThread(Future<T1> future) throws SftpException, RemoteConnectionException {
 			T1 ret = null;
 			boolean bInterrupted = Thread.interrupted();
-			while (ret == null) {
+			while (!future.isDone()) {
 				try {
-					if (monitor.isCanceled()) {
+					if (getProgressMonitor().isCanceled()) {
 						future.cancel(true);
-						try {
-							getSftpChannel().quit();
-						} catch (JSchException e) {
-							// Ignore
-						}
-						throw new CoreException(new Status(IStatus.CANCEL, Activator.getUniqueIdentifier(),
-								"Operation cancelled by user"));
+						getChannel().quit();
+						throw new RemoteConnectionException(Messages.AbstractRemoteCommand_Operation_cancelled_by_user);
 					}
 					ret = future.get(100, TimeUnit.MILLISECONDS);
 				} catch (InterruptedException e) {
@@ -108,18 +136,13 @@ public abstract class AbstractRemoteCommand<T> {
 					 * undefined state because of
 					 * exception
 					 */
-					try {
-						getSftpChannel().quit();
-					} catch (JSchException e1) {
-						// Ignore
-					}
+					getChannel().quit();
 					if (e.getCause() instanceof SftpException) {
 						throw (SftpException) e.getCause();
 					}
-					throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), "Execution exception",
-							e.getCause()));
+					throw new RemoteConnectionException(e.getMessage());
 				}
-				monitor.worked(1);
+				getProgressMonitor().worked(1);
 			}
 			if (bInterrupted) {
 				Thread.currentThread().interrupt(); // set current thread flag
@@ -128,60 +151,89 @@ public abstract class AbstractRemoteCommand<T> {
 		}
 	}
 
-	protected ChannelSftp getSftpChannel() throws JSchException {
-		if (!fSftpChannel.isConnected()) {
-			fSftpChannel.connect();
+	protected abstract class ExecCallable<T1> implements Callable<T1> {
+		private IProgressMonitor fProgressMonitor;
+		private ChannelExec fExecChannel;
+
+		private Future<T1> asyncCmdInThread() throws RemoteConnectionException {
+			setChannel(fConnection.getExecChannel());
+			return fPool.submit(this);
 		}
-		return fSftpChannel;
-	}
 
-	protected abstract T getResult(IProgressMonitor monitor) throws CoreException;
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.util.concurrent.Callable#call()
+		 */
+		public abstract T1 call() throws JSchException, IOException;
 
-	private final ChannelSftp fSftpChannel;
+		private void finalizeCmdInThread() {
+			setChannel(null);
+		}
 
-	protected IFileInfo convertToFileInfo(final IPath path, SftpATTRS attrs, IProgressMonitor monitor) throws CoreException {
-		return convertToFileInfo(path.lastSegment(), path.removeLastSegments(1), attrs, monitor);
-	}
+		public ChannelExec getChannel() {
+			return fExecChannel;
+		}
 
-	protected IFileInfo convertToFileInfo(final String name, final IPath parentPath, SftpATTRS attrs, IProgressMonitor monitor)
-			throws CoreException {
-		FileInfo fileInfo = new FileInfo(name);
-		fileInfo.setExists(true);
-		fileInfo.setDirectory(attrs.isDir());
-		fileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_EXECUTE, (attrs.getPermissions() & 0100) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_WRITE, (attrs.getPermissions() & 0200) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_READ, (attrs.getPermissions() & 0400) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_EXECUTE, (attrs.getPermissions() & 0010) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_WRITE, (attrs.getPermissions() & 0020) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_READ, (attrs.getPermissions() & 0040) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_EXECUTE, (attrs.getPermissions() & 0001) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_WRITE, (attrs.getPermissions() & 0002) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_READ, (attrs.getPermissions() & 0004) != 0);
-		fileInfo.setAttribute(EFS.ATTRIBUTE_SYMLINK, attrs.isLink());
-		if (attrs.isLink()) {
-			SftpCallable<String> c2 = new SftpCallable<String>() {
-				@Override
-				public String call() throws JSchException, SftpException {
-					return getChannel().readlink(parentPath.append(name).toString());
-				}
-			};
-			String target;
+		public IProgressMonitor getProgressMonitor() {
+			return fProgressMonitor;
+		}
+
+		/**
+		 * Function opens exec channel and then executes the exec operation. If
+		 * run on the main thread it executes it on a separate thread
+		 */
+		public T1 getResult(IProgressMonitor monitor) throws RemoteConnectionException {
+			Future<T1> future = null;
+			fProgressMonitor = SubMonitor.convert(monitor, 10);
 			try {
-				target = c2.getResult("Get symlink target", monitor);
-				fileInfo.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, target);
-			} catch (SftpException e) {
-				// Ignore
+				future = asyncCmdInThread();
+				return waitCmdInThread(future);
+			} finally {
+				finalizeCmdInThread();
 			}
 		}
-		fileInfo.setLastModified(attrs.getMTime());
-		fileInfo.setLength(attrs.getSize());
-		return fileInfo;
+
+		public void setChannel(ChannelExec channel) {
+			fExecChannel = channel;
+		}
+
+		private T1 waitCmdInThread(Future<T1> future) throws RemoteConnectionException {
+			boolean bInterrupted = Thread.interrupted();
+			while (!getProgressMonitor().isCanceled()) {
+				try {
+					return future.get(100, TimeUnit.MILLISECONDS);
+				} catch (InterruptedException e) {
+					bInterrupted = true;
+				} catch (TimeoutException e) {
+					// ignore
+				} catch (ExecutionException e) {
+					getChannel().disconnect();
+					throw new RemoteConnectionException(e.getMessage());
+				}
+				getProgressMonitor().worked(1);
+			}
+			if (bInterrupted) {
+				Thread.currentThread().interrupt(); // set current thread flag
+			}
+			future.cancel(true);
+			getChannel().disconnect();
+			throw new RemoteConnectionException(Messages.AbstractRemoteCommand_Operation_cancelled_by_user);
+		}
 	}
 
+	private static ExecutorService fPool = Executors.newSingleThreadExecutor();
+
+	private final JSchConnection fConnection;
+
 	public static final int UNKNOWN = 0;
+
 	public static final int SUCCESS_OK = 1;
+
 	public static final int SUCCESS_ERROR = 2;
+
 	public static final int ERROR_NOT_EXECUTABLE = 126;
+
 	public static final int ERROR_NOT_FOUND = 127;
 	public static final int INVALID_EXIT_CODE = 128;
 	public static final int SIGHUP = 129;
@@ -215,8 +267,50 @@ public abstract class AbstractRemoteCommand<T> {
 	public static final int SIGIO = 157;
 	public static final int SIGPWR = 158;
 
-	public AbstractRemoteCommand(ChannelSftp channel) {
-		fSftpChannel = channel;
+	public AbstractRemoteCommand(JSchConnection connection) {
+		fConnection = connection;
+	}
+
+	protected IFileInfo convertToFileInfo(final IPath path, SftpATTRS attrs, IProgressMonitor monitor)
+			throws RemoteConnectionException {
+		return convertToFileInfo(path.lastSegment(), path.removeLastSegments(1), attrs, monitor);
+	}
+
+	protected IFileInfo convertToFileInfo(final String name, final IPath parentPath, SftpATTRS attrs, IProgressMonitor monitor)
+			throws RemoteConnectionException {
+		SubMonitor progress = SubMonitor.convert(monitor, 10);
+		FileInfo fileInfo = new FileInfo(name);
+		fileInfo.setExists(true);
+		fileInfo.setDirectory(attrs.isDir());
+		fileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_EXECUTE, (attrs.getPermissions() & 0100) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_WRITE, (attrs.getPermissions() & 0200) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_READ, (attrs.getPermissions() & 0400) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_EXECUTE, (attrs.getPermissions() & 0010) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_WRITE, (attrs.getPermissions() & 0020) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_READ, (attrs.getPermissions() & 0040) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_EXECUTE, (attrs.getPermissions() & 0001) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_WRITE, (attrs.getPermissions() & 0002) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_READ, (attrs.getPermissions() & 0004) != 0);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_SYMLINK, attrs.isLink());
+		if (attrs.isLink()) {
+			SftpCallable<String> c2 = new SftpCallable<String>() {
+				@Override
+				public String call() throws JSchException, SftpException {
+					return getChannel().readlink(parentPath.append(name).toString());
+				}
+			};
+			String target;
+			try {
+				progress.subTask(Messages.AbstractRemoteCommand_Get_symlink_target);
+				target = c2.getResult(progress.newChild(10));
+				fileInfo.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, target);
+			} catch (SftpException e) {
+				// Ignore
+			}
+		}
+		fileInfo.setLastModified(attrs.getMTime());
+		fileInfo.setLength(attrs.getSize());
+		return fileInfo;
 	}
 
 	public int getFinishStatus() {
@@ -299,4 +393,9 @@ public abstract class AbstractRemoteCommand<T> {
 		}
 	}
 
+	protected abstract T getResult(IProgressMonitor monitor) throws RemoteConnectionException;
+
+	public JSchConnection getConnection() {
+		return fConnection;
+	}
 }

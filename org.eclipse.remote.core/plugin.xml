@@ -3,6 +3,7 @@
 <plugin>
    <extension-point id="remoteServices" name="Remote Services" schema="schema/remoteServices.exsd"/>
    <extension-point id="remoteResources" name="Remote Resources" schema="schema/remoteResources.exsd"/>
+   <extension-point id="processFactory" name="Process Factory" schema="schema/processFactory.exsd"/>
    <extension
          point="org.eclipse.remote.core.remoteServices">
       <remoteServices

@@ -18,10 +18,13 @@ import java.io.PipedOutputStream;
 
 import org.eclipse.remote.core.AbstractRemoteProcess;
 
+import com.jcraft.jsch.ChannelExec;
+
 public class JSchProcess extends AbstractRemoteProcess {
+	private static int WAIT_TIMEOUT = 1000;
 	private static int refCount = 0;
 
-	private final Process fRemoteProcess;
+	private final ChannelExec fChannel;
 	private InputStream fProcStdout;
 	private InputStream fProcStderr;
 	private Thread fStdoutReader;
@@ -76,8 +79,8 @@ public class JSchProcess extends AbstractRemoteProcess {
 		}
 	}
 
-	public JSchProcess(Process proc, boolean merge) throws IOException {
-		fRemoteProcess = proc;
+	public JSchProcess(ChannelExec channel, boolean merge) throws IOException {
+		fChannel = channel;
 
 		if (merge) {
 			PipedOutputStream pipedOutput = new PipedOutputStream();
@@ -85,14 +88,14 @@ public class JSchProcess extends AbstractRemoteProcess {
 			fProcStdout = new PipedInputStream(pipedOutput);
 			fProcStderr = new NullInputStream();
 
-			fStderrReader = new Thread(new ProcReader(proc.getErrorStream(), pipedOutput));
-			fStdoutReader = new Thread(new ProcReader(proc.getInputStream(), pipedOutput));
+			fStderrReader = new Thread(new ProcReader(channel.getErrStream(), pipedOutput));
+			fStdoutReader = new Thread(new ProcReader(channel.getInputStream(), pipedOutput));
 
 			fStderrReader.start();
 			fStdoutReader.start();
 		} else {
-			fProcStdout = proc.getInputStream();
-			fProcStderr = proc.getErrorStream();
+			fProcStdout = channel.getInputStream();
+			fProcStderr = channel.getErrStream();
 		}
 
 	}
@@ -104,7 +107,7 @@ public class JSchProcess extends AbstractRemoteProcess {
 	 */
 	@Override
 	public void destroy() {
-		fRemoteProcess.destroy();
+		fChannel.disconnect();
 	}
 
 	/*
@@ -114,7 +117,7 @@ public class JSchProcess extends AbstractRemoteProcess {
 	 */
 	@Override
 	public int exitValue() {
-		return fRemoteProcess.exitValue();
+		return fChannel.getExitStatus();
 	}
 
 	/*
@@ -144,7 +147,11 @@ public class JSchProcess extends AbstractRemoteProcess {
 	 */
 	@Override
 	public OutputStream getOutputStream() {
-		return fRemoteProcess.getOutputStream();
+		try {
+			return fChannel.getOutputStream();
+		} catch (IOException e) {
+			return null;
+		}
 	}
 
 	/*
@@ -154,7 +161,10 @@ public class JSchProcess extends AbstractRemoteProcess {
 	 */
 	@Override
 	public int waitFor() throws InterruptedException {
-		return fRemoteProcess.waitFor();
+		while (!isCompleted()) {
+			Thread.sleep(WAIT_TIMEOUT);
+		}
+		return exitValue();
 	}
 
 	/*
@@ -164,11 +174,6 @@ public class JSchProcess extends AbstractRemoteProcess {
 	 */
 	@Override
 	public boolean isCompleted() {
-		try {
-			fRemoteProcess.exitValue();
-			return true;
-		} catch (IllegalThreadStateException e) {
-			return false;
-		}
+		return !fChannel.isClosed();
 	}
 }

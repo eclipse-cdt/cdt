@@ -21,7 +21,14 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_ID = "org.eclipse.internal.remote.jsch.core.messages.messages"; //$NON-NLS-1$
 
+	public static String AbstractRemoteCommand_Execution_exception;
+	public static String AbstractRemoteCommand_Get_symlink_target;
+	public static String AbstractRemoteCommand_Operation_cancelled_by_user;
 	public static String AuthInfo_Authentication_message;
+	public static String ChildInfosCommand_Get_file_attributes;
+	public static String DeleteCommand_Remove_file;
+	public static String FetchInfoCommand_Fetch_info;
+	public static String GetInputStreamCommand_Get_input_stream;
 	public static String JSchConnection_connectionNotOpen;
 	public static String JSchConnection_remote_address_must_be_set;
 	public static String JSchConnection_remotePort;
@@ -31,6 +38,13 @@ public class Messages extends NLS {
 	public static String JSchConnectionManager_connection_with_this_name_exists;
 	public static String JSchConnectionManager_cannotRemoveOpenConnection;
 	public static String JSchConnectionManager_invalidConnectionType;
+	public static String JschFileStore_File_doesnt_exist;
+	public static String JschFileStore_Is_a_directory;
+	public static String JschFileStore_The_file_of_name_already_exists;
+	public static String JschFileStore_The_parent_of_directory_does_not_exist;
+	public static String MkdirCommand_Create_directory;
+	public static String PutInfoCommand_Change_permissions;
+	public static String PutInfoCommand_Set_modified_time;
 	public static String RemoteToolsFileStore_0;
 	public static String RemoteToolsFileStore_1;
 	public static String RemoteToolsFileStore_2;

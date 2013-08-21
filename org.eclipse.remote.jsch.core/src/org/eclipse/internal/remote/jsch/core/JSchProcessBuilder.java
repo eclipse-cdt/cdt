@@ -11,7 +11,6 @@
 package org.eclipse.internal.remote.jsch.core;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
@@ -26,8 +25,9 @@ import java.util.Set;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.remote.core.AbstractRemoteProcessBuilder;
 import org.eclipse.remote.core.IRemoteProcess;
+import org.eclipse.remote.core.exception.RemoteConnectionException;
 
-import com.jcraft.jsch.ChannelShell;
+import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 
 public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
@@ -133,10 +133,10 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		 * list.
 		 */
 
-		List<String> env = new ArrayList<String>();
+		final List<String> env = new ArrayList<String>();
+		boolean clearEnv = false;
 
 		if (fNewRemoteEnv != null) {
-			boolean clearEnv = false;
 
 			/*
 			 * See if any of the existing variables have been removed
@@ -168,20 +168,35 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 			}
 		}
 
-		ChannelShell shell;
 		try {
-			shell = (ChannelShell) fConnection.getSession().openChannel("shell");
-			shell.connect();
-			OutputStream shellInput = shell.getOutputStream();
+			ChannelExec command = fConnection.getExecChannel();
+			command.setCommand(buildCommand(remoteCmd, env, clearEnv));
+			command.setPty((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
+			command.setXForwarding((flags & FORWARD_X11) == FORWARD_X11);
+			command.connect();
+			return new JSchProcess(command, redirectErrorStream());
+		} catch (RemoteConnectionException e) {
+			throw new IOException(e.getMessage());
 		} catch (JSchException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IOException(e.getMessage());
 		}
+	}
 
-		// script.setAllocateTerminal((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
-		// script.setForwardX11((flags & FORWARD_X11) == FORWARD_X11);
-
-		return null;
+	private String buildCommand(String cmd, List<String> environment, boolean clearEnv) {
+		StringBuffer sb = new StringBuffer();
+		if (clearEnv) {
+			sb.append("env -i"); //$NON-NLS-1$
+			for (String env : environment) {
+				sb.append(" \"" + env + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			sb.append(" "); //$NON-NLS-1$
+		} else {
+			for (String env : environment) {
+				sb.append("export \"" + env + "\"; "); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		sb.append(cmd);
+		return sb.toString();
 	}
 
 	private String charEscapify(String inputString, Set<Character> charSet) {

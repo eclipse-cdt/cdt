@@ -11,6 +11,7 @@
 package org.eclipse.internal.remote.jsch.core;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +23,8 @@ import org.eclipse.remote.core.exception.RemoteConnectionException;
 
 public class JSchConnectionManager implements IRemoteConnectionManager {
 	private final IRemoteServices fRemoteServices;
-	private final Map<String, IRemoteConnection> fConnections = new HashMap<String, IRemoteConnection>();
+	private final Map<String, IRemoteConnection> fConnections = Collections
+			.synchronizedMap(new HashMap<String, IRemoteConnection>());
 
 	/**
 	 * @since 4.0
@@ -103,6 +105,6 @@ public class JSchConnectionManager implements IRemoteConnectionManager {
 		if (conn.isOpen()) {
 			throw new RemoteConnectionException(Messages.JSchConnectionManager_cannotRemoveOpenConnection);
 		}
-		fConnections.remove(conn);
+		fConnections.remove(conn.getName());
 	}
 }

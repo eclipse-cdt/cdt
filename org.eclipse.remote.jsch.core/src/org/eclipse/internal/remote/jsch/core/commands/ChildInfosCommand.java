@@ -6,15 +6,13 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.internal.remote.jsch.core.Activator;
+import org.eclipse.internal.remote.jsch.core.JSchConnection;
+import org.eclipse.internal.remote.jsch.core.messages.Messages;
+import org.eclipse.remote.core.exception.RemoteConnectionException;
 
-import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -23,13 +21,13 @@ public class ChildInfosCommand extends AbstractRemoteCommand<IFileInfo[]> {
 
 	private final IPath fRemotePath;
 
-	public ChildInfosCommand(ChannelSftp channel, IPath path) {
-		super(channel);
+	public ChildInfosCommand(JSchConnection connection, IPath path) {
+		super(connection);
 		fRemotePath = path;
 	}
 
 	@Override
-	public IFileInfo[] getResult(IProgressMonitor monitor) throws CoreException {
+	public IFileInfo[] getResult(IProgressMonitor monitor) throws RemoteConnectionException {
 		final SubMonitor subMon = SubMonitor.convert(monitor, 20);
 
 		Vector<LsEntry> files = getResult(fRemotePath.toString(), subMon.newChild(10));
@@ -52,7 +50,8 @@ public class ChildInfosCommand extends AbstractRemoteCommand<IFileInfo[]> {
 		return result.toArray(new IFileInfo[result.size()]);
 	}
 
-	private Vector<LsEntry> getResult(String path, IProgressMonitor monitor) throws CoreException {
+	private Vector<LsEntry> getResult(String path, IProgressMonitor monitor) throws RemoteConnectionException {
+		final SubMonitor subMon = SubMonitor.convert(monitor, 10);
 		SftpCallable<Vector<LsEntry>> c = new SftpCallable<Vector<LsEntry>>() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -61,9 +60,10 @@ public class ChildInfosCommand extends AbstractRemoteCommand<IFileInfo[]> {
 			}
 		};
 		try {
-			return c.getResult("Get file attributes", monitor);
+			subMon.subTask(Messages.ChildInfosCommand_Get_file_attributes);
+			return c.getResult(subMon.newChild(10));
 		} catch (SftpException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), e.getMessage(), e));
+			throw new RemoteConnectionException(e.getMessage());
 		}
 	}
 }

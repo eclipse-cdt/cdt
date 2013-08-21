@@ -25,13 +25,20 @@ package org.eclipse.internal.remote.jsch.core;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileSystem;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.remote.core.exception.RemoteConnectionException;
+
+import com.jcraft.jsch.ChannelSftp;
 
 public class JSchFileSystem extends FileSystem {
+	private final Map<String, ChannelSftp> fChannels = new HashMap<String, ChannelSftp>();
+
 	/**
 	 * Return the connection name encoded in the URI.
 	 * 
@@ -124,5 +131,22 @@ public class JSchFileSystem extends FileSystem {
 	@Override
 	public IFileStore getStore(IPath path) {
 		return null;
+	}
+
+	/**
+	 * Get an sftp channel for the connection being used for the file stores. We only want one channel per connection so that all
+	 * file stores using that connection also use the same channel.
+	 * 
+	 * @return sftp channel or null if monitor is cancelled
+	 * @throws RemoteConnectionException
+	 *             if a channel can't be obtained
+	 */
+	public synchronized ChannelSftp getChannel(JSchConnection connection) throws RemoteConnectionException {
+		ChannelSftp channel = fChannels.get(connection.getName());
+		if (channel == null) {
+			channel = connection.getSftpChannel();
+			fChannels.put(connection.getName(), channel);
+		}
+		return channel;
 	}
 }

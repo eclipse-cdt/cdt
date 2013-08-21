@@ -10334,11 +10334,13 @@ public class AST2CPPTests extends AST2TestBase {
 	
 	//	class Waldo {
 	//		typedef int type;
+	//		static int value;
 	//	};
 	//	
 	//	int main() {
 	//		Waldo w;
 	//		decltype(w)::type i;
+	//		int x = decltype(w)::value;
 	//	}
 	public void testDecltypeInNameQualifier_bug380751() throws Exception {
 		parseAndCheckBindings();

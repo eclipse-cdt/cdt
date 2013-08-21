@@ -1541,6 +1541,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_decltype:
         case IToken.t_void:
         case IGCCToken.t_typeof:
+        	if (LT(1) == IToken.t_decltype) {
+        		// Might be an id-expression starting with a decltype-specifier.
+        		IToken marked = mark();
+        		try {
+        			firstExpression = primaryExpression(ctx, strat);
+        			break;
+        		} catch (BacktrackException e) {
+        			backup(marked);
+        		}
+        	}
 			firstExpression = simpleTypeConstructorExpression(simpleTypeSpecifier());
         	break;
 
@@ -1738,7 +1748,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tCOLONCOLON:
         case IToken.t_operator:
         case IToken.tCOMPLETION:
-        case IToken.tBITCOMPLEMENT: {
+        case IToken.tBITCOMPLEMENT:
+        case IToken.t_decltype: {
             IASTName name = qualifiedName(ctx, strat);
             IASTIdExpression idExpression = nodeFactory.newIdExpression(name);
             return setRange(idExpression, name);

@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -28,7 +26,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.undo.DocumentUndoManagerRegistry;
 import org.eclipse.text.undo.IDocumentUndoManager;
 import org.eclipse.ui.IEditorInput;
@@ -102,7 +99,7 @@ public class AddIncludeAction extends TextEditorAction {
 		}
 
 		final String lineDelimiter = getLineDelimiter(editor);
-		final List<TextEdit> edits = new ArrayList<TextEdit>();
+		final MultiTextEdit[] holder = new MultiTextEdit[1];
 		SharedASTJob job = new SharedASTJob(CEditorMessages.AddInclude_action, tu) {
 			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
@@ -111,7 +108,7 @@ public class AddIncludeAction extends TextEditorAction {
 				try {
 					index.acquireReadLock();
 					IncludeCreator creator = new IncludeCreator(tu, index, lineDelimiter, fAmbiguityResolver);
-					edits.addAll(creator.createInclude(ast, (ITextSelection) selection));
+					holder[0] = creator.createInclude(ast, (ITextSelection) selection);
 					return Status.OK_STATUS;
 				} catch (InterruptedException e) {
 					return Status.CANCEL_STATUS;
@@ -122,10 +119,9 @@ public class AddIncludeAction extends TextEditorAction {
 		};
 		IStatus status = BusyCursorJobRunner.execute(job);
 		if (status.isOK()) {
-			if (!edits.isEmpty()) {
+			MultiTextEdit edit = holder[0];
+			if (edit.hasChildren()) {
 				// Apply text edits.
-				MultiTextEdit edit = new MultiTextEdit();
-				edit.addChildren(edits.toArray(new TextEdit[edits.size()]));
 				IEditorInput editorInput = editor.getEditorInput();
 				IDocument document = editor.getDocumentProvider().getDocument(editorInput);
 				IDocumentUndoManager manager= DocumentUndoManagerRegistry.getDocumentUndoManager(document);
@@ -175,6 +171,7 @@ public class AddIncludeAction extends TextEditorAction {
 
 	/**
 	 * Returns the translation unit of the given editor.
+	 *
 	 * @param editor The editor.
 	 * @return The translation unit.
 	 */

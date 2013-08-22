@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsBroadca
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsStorage;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
@@ -1088,6 +1089,17 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 		}
 
 		return languageSettingsDelta;
+	}
+
+	/**
+	 * Check if language settings that provider keeps got changed since last notification event.
+	 * 
+	 * @param provider - serializable language settings provider.
+	 * @return {@code true} if provider's entries changed or {@code false} if not.
+	 */
+	public boolean isLanguageSettingsProviderStoreChanged(LanguageSettingsSerializableProvider provider) {
+		LanguageSettingsStorage store = ((ILanguageSettingsBroadcastingProvider) provider).copyStorage();
+		return ! store.equals(lspPersistedState.get(provider.getId()));
 	}
 
 }

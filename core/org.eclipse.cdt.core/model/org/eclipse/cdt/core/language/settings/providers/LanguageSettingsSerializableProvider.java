@@ -22,6 +22,8 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsSerializableStorage;
+import org.eclipse.cdt.internal.core.settings.model.CConfigurationSpecSettings;
+import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -270,10 +272,31 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 */
 	public void serializeLanguageSettingsInBackground(ICConfigurationDescription cfgDescription) {
 		if (cfgDescription != null) {
-			LanguageSettingsManager.serializeLanguageSettingsInBackground(cfgDescription.getProjectDescription());
+			if (isLanguageSettingsProviderStoreChanged(cfgDescription)) {
+				LanguageSettingsManager.serializeLanguageSettingsInBackground(cfgDescription.getProjectDescription());
+			}
 		} else {
 			LanguageSettingsManager.serializeLanguageSettingsWorkspaceInBackground();
 		}
+	}
+
+	/**
+	 * Compare provider store with cached persistent store used to calculate delta.
+	 */
+	private boolean isLanguageSettingsProviderStoreChanged(ICConfigurationDescription cfgDescription) {
+		if (cfgDescription instanceof IInternalCCfgInfo) {
+			try {
+				CConfigurationSpecSettings ss = ((IInternalCCfgInfo)cfgDescription).getSpecSettings();
+				if (ss != null) {
+					return ss.isLanguageSettingsProviderStoreChanged(this);
+				}
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+
+		// If something went wrong assuming it might have changed
+		return true;
 	}
 
 	/**

@@ -199,7 +199,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	public void testFunctionCallWithPointerParameter_1() throws Exception {
 		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		assertDefined();
-		assertDeclared("f", "g");
+		assertDeclared("f", "A", "g");
 	}
 
 	//	typedef int A;
@@ -210,7 +210,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	}
 	public void testFunctionCallWithPointerParameter_2() throws Exception {
 		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
-		assertDefined();
+		assertDefined("A");
 		assertDeclared("f");
 	}
 
@@ -224,7 +224,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	public void testFunctionCallWithReferenceParameter() throws Exception {
 		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		assertDefined();
-		assertDeclared("f", "g");
+		assertDeclared("f", "A", "g");
 	}
 
 	//	struct A {
@@ -240,7 +240,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		// A header declaring the function is responsible for defining the parameter type that
 		// provides constructor that can be used for implicit conversion.
 		assertDefined();
-		assertDeclared("f");
+		assertDeclared("f", "A");
 	}
 
 	//	struct A {};

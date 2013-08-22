@@ -230,7 +230,7 @@ public class IncludeCreator {
 			List<UsingDeclaration> usingDeclarations, IASTTranslationUnit ast,
 			ITextSelection selection) {
 		NodeCommentMap commentedNodeMap = ASTCommenter.getCommentedNodeMap(ast);
-		char[] contents = fContext.getSourceContents();
+		String contents = fContext.getSourceContents();
 		IRegion includeRegion =
 				IncludeOrganizer.getSafeIncludeReplacementRegion(contents, ast, commentedNodeMap);
 		
@@ -292,7 +292,7 @@ public class IncludeCreator {
 					if (previousNode != null) {
 						offset = ASTNodes.skipToNextLineAfterNode(contents, previousNode);
 						flushEditBuffer(offset, text, rootEdit);
-						if (contents[offset - 1] != '\n')
+						if (contents.charAt(offset - 1) != '\n')
 							text.append(fLineDelimiter);
 					}
 					if (include.getStyle().isBlankLineNeededAfter(previousInclude.getStyle(), preferences.includeStyles))
@@ -365,7 +365,7 @@ public class IncludeCreator {
 					if (previousNode != null) {
 						offset = ASTNodes.skipToNextLineAfterNode(contents, previousNode);
 						flushEditBuffer(offset, text, rootEdit);
-						if (contents[offset - 1] != '\n')
+						if (contents.charAt(offset - 1) != '\n')
 							text.append(fLineDelimiter);
 					}
 				}

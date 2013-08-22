@@ -63,6 +63,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -162,6 +163,7 @@ public class BindingClassifier {
 	 * comparing the declared parameters with the actual arguments.
 	 */
 	private void processFunctionParameters(IFunction function, IASTInitializerClause[] arguments) {
+		boolean functionIsDefined = fProcessedDefinedBindings.contains(function);
 		IParameter[] parameters = function.getParameters();
 		for (int i = 0; i < parameters.length && i < arguments.length; i++) {
 			IType parameterType = parameters[i].getType();
@@ -172,6 +174,9 @@ public class BindingClassifier {
 					// A declaration is sufficient if the argument type matches the parameter type.
 					// We don't need to provide a declaration of the parameter type since it is
 					// a responsibility of the header declaring the function.
+					if (!functionIsDefined) {
+						declareType(parameterType); 
+					}
 					continue;
 				}
 
@@ -185,6 +190,8 @@ public class BindingClassifier {
 					fAst.getDeclarationsInAST(function).length != 0 ||
 					!hasConvertingConstructor((ICPPClassType) parameterType, argument)) {
 				defineTypeExceptTypedefOrNonFixedEnum(parameterType);
+			} else if (!functionIsDefined) {
+				declareType(parameterType); 
 			}
 		}
 	}
@@ -247,7 +254,10 @@ public class BindingClassifier {
 			if (!constructor.isExplicit()) {
 				ICPPParameter[] parameters = constructor.getParameters();
 				if (parameters.length != 0 && CPPFunction.getRequiredArgumentCount(parameters) <= 1) {
-					IType type = getNestedType(parameters[0].getType(), REF | ALLCVQ);
+					IType type = parameters[0].getType();
+					if (type instanceof IBasicType && ((IBasicType) type).getKind() == IBasicType.Kind.eVoid)
+						continue;
+					type = getNestedType(type, REF | ALLCVQ);
 					if (!classType.isSameType(type))
 						return true;
 				}
@@ -339,6 +349,12 @@ public class BindingClassifier {
 		}
 
 		return bindings;
+	}
+
+	private void declareType(IType type) {
+		IBinding binding = getTypeBinding(type);
+		if (binding != null)
+			declareBinding(binding);
 	}
 
 	/**

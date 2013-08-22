@@ -11,7 +11,6 @@
 package org.eclipse.cdt.ui.tests.refactoring.includes;
 
 import java.util.Collections;
-import java.util.List;
 
 import junit.framework.Test;
 
@@ -19,7 +18,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.TextEdit;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -74,14 +72,9 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	private String organizeIncludes(ITranslationUnit tu) throws Exception {
 		IHeaderChooser headerChooser = new FirstHeaderChooser();
 		IncludeOrganizer organizer = new IncludeOrganizer(tu, index, LINE_DELIMITER, headerChooser);
-		List<TextEdit> edits = organizer.organizeIncludes(ast);
+		MultiTextEdit edit = organizer.organizeIncludes(ast);
 		IDocument document = new Document(new String(tu.getContents()));
-		if (!edits.isEmpty()) {
-			// Apply text edits.
-			MultiTextEdit edit = new MultiTextEdit();
-			edit.addChildren(edits.toArray(new TextEdit[edits.size()]));
-			edit.apply(document);
-		}
+		edit.apply(document);
 		return document.get();
 	}
 
@@ -441,6 +434,51 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//B* b;
 	//C* c;
 	public void testSymbolToDeclareIsDefinedInIncludedHeader() throws Exception {
+		assertExpectedResults();
+	}
+
+	//h1.h
+	//namespace ns3 {
+	//class C {};
+	//namespace ns2 {
+	//class A {};
+	//class B {};
+	//namespace ns1 {
+	//C* f(const A& a, B* b) { return nullptr; }
+	//} // ns1
+	//} // ns2
+	//} // ns3
+
+	//source.cpp
+	//#include "h1.h"
+	//void test(ns3::ns2::A& a) {
+	//  ns3::C* c = ns3::ns2::ns1::f(a, nullptr);
+	//}
+	//====================
+	//namespace ns3 {
+	//class C;
+	//namespace ns2 {
+	//class A;
+	//class B;
+	//} /* namespace ns2 */
+	//} /* namespace ns3 */
+	//namespace ns3 {
+	//namespace ns2 {
+	//namespace ns1 {
+	//C * f(const A &a, B *b);
+	//} /* namespace ns1 */
+	//} /* namespace ns2 */
+	//} /* namespace ns3 */
+	//
+	//void test(ns3::ns2::A& a) {
+	//  ns3::C* c = ns3::ns2::ns1::f(a, nullptr);
+	//}
+	public void testForwardDeclarations() throws Exception {
+		// TODO(sprigogin): Move ns1 outside of other namespaces after IncludeOrganizer starts using ASTWriter.
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setValue(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION,
+				UnusedStatementDisposition.REMOVE.toString());
+		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		assertExpectedResults();
 	}
 }

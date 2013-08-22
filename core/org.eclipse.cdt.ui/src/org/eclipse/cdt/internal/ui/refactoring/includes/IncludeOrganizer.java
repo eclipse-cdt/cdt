@@ -37,8 +37,8 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.InsertEdit;
+import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
-import org.eclipse.text.edits.TextEdit;
 
 import com.ibm.icu.text.Collator;
 
@@ -80,6 +80,7 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.CodeGeneration;
 import org.eclipse.cdt.utils.PathUtil;
 
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
@@ -92,6 +93,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.IncludeGuardDetection;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
 import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
+import org.eclipse.cdt.internal.formatter.ChangeFormatter;
 
 /**
  * Organizes the include directives and forward declarations of a source or header file.
@@ -129,6 +131,54 @@ public class IncludeOrganizer {
 		}
 	}
 
+	private static enum DeclarationType { TYPE, FUNCTION, VARIABLE, NAMESPACE }
+
+	private static class ForwardDeclarationNode implements Comparable<ForwardDeclarationNode> {
+		final String name;
+		final String declaration;
+		final DeclarationType type;
+		final List<ForwardDeclarationNode> children;
+
+		/**
+		 * Creates a namespace node.
+		 */
+		ForwardDeclarationNode(String name) {
+			this.name = name;
+			this.declaration = null;
+			this.type = DeclarationType.NAMESPACE;
+			this.children = new ArrayList<ForwardDeclarationNode>();
+		}
+
+		/**
+		 * Creates a declaration node.
+		 */
+		ForwardDeclarationNode(String name, String declaration, DeclarationType type) {
+			this.name = name;
+			this.declaration = declaration;
+			this.type = type;
+			this.children = null;
+		}
+
+		ForwardDeclarationNode findOrAddChild(ForwardDeclarationNode node) {
+			int i = Collections.binarySearch(children, node);
+			if (i >= 0)
+				return children.get(i);
+			children.add(-(i + 1), node);
+			return node;
+		}
+
+		@Override
+		public int compareTo(ForwardDeclarationNode other) {
+			int c = type.ordinal() - other.type.ordinal();
+			if (c != 0)
+				return c;
+			c = COLLATOR.compare(name, other.name);
+			if (declaration == null || c != 0)
+				return c;
+			return COLLATOR.compare(declaration, other.declaration);
+		}
+	}
+
 	private final IHeaderChooser fHeaderChooser;
 	private final IncludeCreationContext fContext;
 	private final String fLineDelimiter;
@@ -145,7 +195,7 @@ public class IncludeOrganizer {
 	 * @param ast The AST translation unit to process.
 	 * @throws CoreException
 	 */
-	public List<TextEdit> organizeIncludes(IASTTranslationUnit ast) throws CoreException {
+	public MultiTextEdit organizeIncludes(IASTTranslationUnit ast) throws CoreException {
 		// Process the given translation unit with the inclusion resolver.
 		BindingClassifier bindingClassifier = new BindingClassifier(fContext);
 		bindingClassifier.classifyNodeContents(ast);
@@ -195,7 +245,7 @@ public class IncludeOrganizer {
 		IncludePreferences preferences = fContext.getPreferences();
 		boolean allowReordering = preferences.allowReordering || existingIncludes.length == 0;
 
-		List<TextEdit> edits = new ArrayList<TextEdit>();
+		MultiTextEdit rootEdit = new MultiTextEdit();
 
 		@SuppressWarnings("unchecked")
 		List<IncludePrototype>[] groupedPrototypes =
@@ -218,10 +268,10 @@ public class IncludeOrganizer {
 					&& isContainedInRegion(prototype.getExistingInclude(), includeReplacementRegion)) {
 				switch (preferences.unusedStatementsDisposition) {
 				case REMOVE:
-					createDelete(prototype.getExistingInclude(), edits);
+					createDelete(prototype.getExistingInclude(), rootEdit);
 					break;
 				case COMMENT_OUT:
-					createCommentOut(prototype.getExistingInclude(), edits);
+					createCommentOut(prototype.getExistingInclude(), rootEdit);
 					break;
 				case KEEP:
 					break;
@@ -262,32 +312,11 @@ public class IncludeOrganizer {
 			}
 		}
 
-		// Stores the forward declarations for composite types and enumerations as text.
-		List<String> typeForwardDeclarations = new ArrayList<String>();
-		// Stores the forward declarations for C-style functions as text.
-		List<String> functionForwardDeclarations = new ArrayList<String>();
-
-		createForwardDeclarations(ast, bindingClassifier, typeForwardDeclarations, functionForwardDeclarations);
-
 		// Create the source code to insert into the editor.
 
 		StringBuilder buf = new StringBuilder();
 		for (String include : includeDirectives) {
 			buf.append(include);
-			buf.append(fLineDelimiter);
-		}
-
-		if (buf.length() != 0 && !typeForwardDeclarations.isEmpty())
-			buf.append(fLineDelimiter);
-		for (String declaration : typeForwardDeclarations) {
-			buf.append(declaration);
-			buf.append(fLineDelimiter);
-		}
-
-		if (buf.length() != 0 && !functionForwardDeclarations.isEmpty())
-			buf.append(fLineDelimiter);
-		for (String declaration : functionForwardDeclarations) {
-			buf.append(declaration);
 			buf.append(fLineDelimiter);
 		}
 
@@ -297,30 +326,35 @@ public class IncludeOrganizer {
 			if (buf.length() != 0) {
 				if (offset != 0 && !TextUtil.isPreviousLineBlank(fContext.getSourceContents(), offset))
 					buf.insert(0, fLineDelimiter);  // Blank line before.
-				if (!isBlankLineOrEndOfFile(offset + length))
-					buf.append(fLineDelimiter);  // Blank line after.
 			}
 			
 			String text = buf.toString();
 			// TODO(sprigogin): Add a diff algorithm and produce narrower replacements.
-			if (!CharArrayUtils.equals(fContext.getSourceContents(), offset, length, text)) {
-				edits.add(new ReplaceEdit(offset, length, text));
+			if (text.length() != length ||
+					!fContext.getSourceContents().regionMatches(offset, text, 0, length)) {
+				rootEdit.addChild(new ReplaceEdit(offset, length, text));
 			}
 		} else if (buf.length() != 0) {
 			offset += length;
-			if (!isBlankLineOrEndOfFile(offset))
-				buf.append(fLineDelimiter);  // Blank line after.
-			edits.add(new InsertEdit(offset, buf.toString()));
+			rootEdit.addChild(new InsertEdit(offset, buf.toString()));
 		}
 
-		return edits;
+		createForwardDeclarations(ast, bindingClassifier,
+				includeReplacementRegion.getOffset() + includeReplacementRegion.getLength(),
+				buf.length() != 0, rootEdit);
+
+		return ChangeFormatter.formatChangedCode(new String(fContext.getSourceContents()), fContext.getTranslationUnit(), rootEdit);
 	}
 
 	/**
 	 * Creates forward declarations by examining the list of bindings which have to be declared.
+	 * @param pendingBlankLine 
 	 */
 	private void createForwardDeclarations(IASTTranslationUnit ast, BindingClassifier classifier,
-			List<String> forwardDeclarations, List<String> functionForwardDeclarations) throws CoreException {
+			int offset, boolean pendingBlankLine, MultiTextEdit rootEdit)	throws CoreException {
+		ForwardDeclarationNode typeDeclarationsRoot = new ForwardDeclarationNode(""); //$NON-NLS-1$
+		ForwardDeclarationNode nonTypeDeclarationsRoot = new ForwardDeclarationNode(""); //$NON-NLS-1$
+
 		IIndexFileSet reachableHeaders = ast.getIndexFileSet();
 		Set<IBinding> bindings =
 				removeBindingsDefinedInIncludedHeaders(ast, classifier.getBindingsToDeclare(), reachableHeaders);
@@ -328,32 +362,10 @@ public class IncludeOrganizer {
 			// Create the text of the forward declaration of this binding.
 			StringBuilder declarationText = new StringBuilder();
 
-			// Consider the namespace(s) of the binding.
-			List<IName> scopeNames = new ArrayList<IName>();
-			try {
-				IScope scope = binding.getScope();
-				while (scope != null && scope.getKind() == EScopeKind.eNamespace) {
-					IName scopeName = scope.getScopeName();
-					if (scopeName != null) {
-						scopeNames.add(scopeName);
-					}
-					scope = scope.getParent();
-				}
-			} catch (DOMException e) {
-			}
-
-			Collections.reverse(scopeNames);
-			for (IName scopeName : scopeNames) {
-				declarationText.append("namespace "); //$NON-NLS-1$
-				declarationText.append(scopeName.toString());
-				declarationText.append(" { "); //$NON-NLS-1$
-			}
-
-			// Initialize the list which should be used to store the declaration.
-			List<String> forwardDeclarationListToUse = forwardDeclarations;
-
+			DeclarationType declarationType;
 			// Check the type of the binding and create a corresponding forward declaration text.
 			if (binding instanceof ICompositeType) {
+				declarationType = DeclarationType.TYPE;
 				// Forward declare a composite type.
 				ICompositeType compositeType = (ICompositeType) binding;
 
@@ -404,16 +416,19 @@ public class IncludeOrganizer {
 				// Append the semicolon.
 				declarationText.append(';');
 			} else if (binding instanceof IEnumeration) {
+				declarationType = DeclarationType.TYPE;
 				// Forward declare an enumeration class (C++11 syntax).
 				declarationText.append("enum class "); //$NON-NLS-1$
 				declarationText.append(binding.getName());
 				declarationText.append(';');
 			} else if (binding instanceof IFunction && !(binding instanceof ICPPMethod)) {
+				declarationType = DeclarationType.FUNCTION;
 				// Forward declare a C-style function.
 				IFunction function = (IFunction) binding;
 
 				// Append return type and function name.
 				IFunctionType functionType = function.getType();
+				// TODO(sprigogin): Switch to ASTWriter since ASTTypeUtil doesn't properly handle namespaces.  
 				declarationText.append(ASTTypeUtil.getType(functionType.getReturnType(), false));
 				declarationText.append(' ');
 				declarationText.append(function.getName());
@@ -436,10 +451,8 @@ public class IncludeOrganizer {
 				}
 
 				declarationText.append(");"); //$NON-NLS-1$
-
-				// Add this forward declaration to the separate function forward declaration list.
-				forwardDeclarationListToUse = functionForwardDeclarations;
 			} else if (binding instanceof IVariable) {
+				declarationType = DeclarationType.VARIABLE;
 				IVariable variable = (IVariable) binding;
 				IType variableType = variable.getType();
 				declarationText.append("extern "); //$NON-NLS-1$
@@ -451,41 +464,95 @@ public class IncludeOrganizer {
 				CUIPlugin.log(new IllegalArgumentException(
 						"Unexpected type of binding " + binding.getName() + //$NON-NLS-1$
 						" - " + binding.getClass().getSimpleName())); //$NON-NLS-1$
+				continue;
 			}
 
-			// Append the closing curly brackets from the namespaces (if any).
-			for (int i = 0; i < scopeNames.size(); i++) {
-				declarationText.append(" }"); //$NON-NLS-1$
+			// Consider the namespace(s) of the binding.
+			List<String> namespaces = new ArrayList<String>();
+			try {
+				IScope scope = binding.getScope();
+				while (scope != null && scope.getKind() == EScopeKind.eNamespace) {
+					IName scopeName = scope.getScopeName();
+					if (scopeName != null) {
+						namespaces.add(new String(scopeName.getSimpleID()));
+					}
+					scope = scope.getParent();
+				}
+			} catch (DOMException e) {
 			}
 
-			// Add the forward declaration to the corresponding list.
-			forwardDeclarationListToUse.add(declarationText.toString());
+			ForwardDeclarationNode parentNode = declarationType == DeclarationType.TYPE ?
+					typeDeclarationsRoot : nonTypeDeclarationsRoot;
+
+			Collections.reverse(namespaces);
+			for (String ns : namespaces) {
+				ForwardDeclarationNode node = new ForwardDeclarationNode(ns);
+				parentNode = parentNode.findOrAddChild(node);
+			}
+			
+			ForwardDeclarationNode node =
+					new ForwardDeclarationNode(binding.getName(), declarationText.toString(), declarationType);
+			parentNode.findOrAddChild(node);
 		}
 
-		Collections.sort(forwardDeclarations, COLLATOR);
-		Collections.sort(functionForwardDeclarations, COLLATOR);
+		StringBuilder buf = new StringBuilder();
+
+		for (ForwardDeclarationNode node : typeDeclarationsRoot.children) {
+			if (pendingBlankLine) {
+				buf.append(fLineDelimiter);
+				pendingBlankLine = false;
+			}
+			printNode(node, buf);
+		}
+
+		for (ForwardDeclarationNode node : nonTypeDeclarationsRoot.children) {
+			if (pendingBlankLine) {
+				buf.append(fLineDelimiter);
+				pendingBlankLine = false;
+			}
+			printNode(node, buf);
+		}
+
+		if ((pendingBlankLine || buf.length() != 0) && !isBlankLineOrEndOfFile(offset))
+			buf.append(fLineDelimiter);
+
+		if (buf.length() != 0)
+			rootEdit.addChild(new InsertEdit(offset, buf.toString()));
 	}
 
-	private void createCommentOut(IASTPreprocessorIncludeStatement include, List<TextEdit> edits) {
+	private void printNode(ForwardDeclarationNode node, StringBuilder buf) throws CoreException {
+		if (node.declaration == null) {
+			buf.append(CodeGeneration.getNamespaceBeginContent(fContext.getTranslationUnit(), node.name, fLineDelimiter));
+			for (ForwardDeclarationNode child : node.children) {
+				printNode(child, buf);
+			}
+			buf.append(CodeGeneration.getNamespaceEndContent(fContext.getTranslationUnit(), node.name, fLineDelimiter));
+		} else {
+			buf.append(node.declaration);
+		}
+		buf.append(fLineDelimiter);
+	}
+
+	private void createCommentOut(IASTPreprocessorIncludeStatement include, MultiTextEdit rootEdit) {
 		IASTFileLocation location = include.getFileLocation();
 		int offset = location.getNodeOffset();
 		if (fContext.getTranslationUnit().isCXXLanguage()) {
 			offset = TextUtil.getLineStart(fContext.getSourceContents(), offset);
-			edits.add(new InsertEdit(offset, "//")); //$NON-NLS-1$
+			rootEdit.addChild(new InsertEdit(offset, "//")); //$NON-NLS-1$
 		} else {
-			edits.add(new InsertEdit(offset, "/*")); //$NON-NLS-1$
+			rootEdit.addChild(new InsertEdit(offset, "/*")); //$NON-NLS-1$
 			int endOffset = offset + location.getNodeLength();
-			edits.add(new InsertEdit(endOffset, "*/")); //$NON-NLS-1$
+			rootEdit.addChild(new InsertEdit(endOffset, "*/")); //$NON-NLS-1$
 		}
 	}
 
-	private void createDelete(IASTPreprocessorIncludeStatement include, List<TextEdit> edits) {
+	private void createDelete(IASTPreprocessorIncludeStatement include, MultiTextEdit rootEdit) {
 		IASTFileLocation location = include.getFileLocation();
 		int offset = location.getNodeOffset();
 		int endOffset = offset + location.getNodeLength();
 		offset = TextUtil.getLineStart(fContext.getSourceContents(), offset);
 		endOffset = TextUtil.skipToNextLine(fContext.getSourceContents(), endOffset);
-		edits.add(new DeleteEdit(offset, endOffset - offset));
+		rootEdit.addChild(new DeleteEdit(offset, endOffset - offset));
 	}
 
 	private void updateIncludePrototypes(Map<IncludePrototype, IncludePrototype> includePrototypes,
@@ -498,7 +565,7 @@ public class IncludeOrganizer {
 		}
 	}
 
-	static IRegion getSafeIncludeReplacementRegion(char[] contents, IASTTranslationUnit ast,
+	static IRegion getSafeIncludeReplacementRegion(String contents, IASTTranslationUnit ast,
 			NodeCommentMap commentMap) {
 		int maxSafeOffset = ast.getFileLocation().getNodeLength();
 		IASTDeclaration[] declarations = ast.getDeclarations(true);
@@ -592,9 +659,9 @@ public class IncludeOrganizer {
 	 * {@code offset} and the end of the line.
 	 */
 	private boolean isBlankLineOrEndOfFile(int offset) {
-		char[] contents = fContext.getSourceContents();
-		while (offset < contents.length) {
-			char c = contents[offset++];
+		String contents = fContext.getSourceContents();
+		while (offset < contents.length()) {
+			char c = contents.charAt(offset++);
 			if (c == '\n')
 				return true;
 			if (!Character.isWhitespace(c))
@@ -610,20 +677,20 @@ public class IncludeOrganizer {
 	private String getPrecedingWhitespace(IASTNode node) {
 		int offset = getNodeOffset(node);
 		if (offset >= 0) {
-			char[] contents = fContext.getSourceContents();
+			String contents = fContext.getSourceContents();
 			int i = offset;
 			while (--i >= 0) {
-				char c = contents[i];
+				char c = contents.charAt(i);
 				if (c == '\n' || !Character.isWhitespace(c))
 					break;
 			}
 			i++;
-			return new String(contents, i, offset - i);
+			return contents.substring(i, offset);
 		}
 		return ""; //$NON-NLS-1$
 	}
 
-	private static int skipStandaloneCommentBlock(char[] contents, int offset, int endOffset,
+	private static int skipStandaloneCommentBlock(String contents, int offset, int endOffset,
 			IASTComment[] comments, NodeCommentMap commentMap) {
 		Map<IASTComment, IASTNode> inverseLeadingMap = new HashMap<IASTComment, IASTNode>();
 		for (Map.Entry<IASTNode, List<IASTComment>> entry : commentMap.getLeadingMap().entrySet()) {

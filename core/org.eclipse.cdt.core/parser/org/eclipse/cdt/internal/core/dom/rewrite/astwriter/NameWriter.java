@@ -98,14 +98,14 @@ public class NameWriter extends NodeWriter {
 		if (i <= 0){
 			return false;
 		}
-		if (qname.getNames()[i-1] instanceof ICPPASTTemplateId) {
+		if (qname.getNames()[i - 1] instanceof ICPPASTTemplateId) {
 			return true;
 		}
-		IBinding binding = qname.getNames()[i-1].resolveBinding();
+		IBinding binding = qname.getNames()[i - 1].resolveBinding();
 		if (binding instanceof CPPTemplateTypeParameter) {
 			return true;
 		}
-		return isDependentName(qname, tempId, i-1);
+		return isDependentName(qname, tempId, i - 1);
 	}
 
 	private boolean isNestedTemplateId(IASTNode node) {

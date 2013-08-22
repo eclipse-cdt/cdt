@@ -18,15 +18,14 @@ import org.eclipse.core.runtime.IStatus;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class QualifiedTypeName implements IQualifiedTypeName {
-
-    private static final String[] NO_SEGMENTS = new String[0];
+    private static final String[] NO_SEGMENTS = {};
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final int INITIAL_SEGMENT_LENGTH = 12;
 	private static final int HASH_INIT = 17;
     private static final int HASH_MULTIPLIER = 37;
 
     private String[] fSegments = NO_SEGMENTS;
-	private int fHashCode = 0;
+	private int fHashCode;
 
 	public static final QualifiedTypeName EMPTY = new QualifiedTypeName();
 
@@ -43,10 +42,11 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	}
 
 	public QualifiedTypeName(String name, String[] enclosingNames) {
-		if (enclosingNames == null)
+		if (enclosingNames == null) {
 		    fSegments = createSegments(name);
-		else
+		} else {
 		    fSegments = createSegments(name, enclosingNames);
+		}
 	}
 
 	private QualifiedTypeName() {

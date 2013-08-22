@@ -169,12 +169,14 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		}
 
 		try {
-			ChannelExec command = fConnection.getExecChannel();
-			command.setCommand(buildCommand(remoteCmd, env, clearEnv));
-			command.setPty((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
-			command.setXForwarding((flags & FORWARD_X11) == FORWARD_X11);
-			command.connect();
-			return new JSchProcess(command, redirectErrorStream());
+			ChannelExec exec = fConnection.getExecChannel();
+			String command = buildCommand(remoteCmd, env, clearEnv);
+			exec.setCommand(command);
+			System.out.println("running command: " + command);
+			exec.setPty((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
+			exec.setXForwarding((flags & FORWARD_X11) == FORWARD_X11);
+			exec.connect();
+			return new JSchProcess(exec, redirectErrorStream());
 		} catch (RemoteConnectionException e) {
 			throw new IOException(e.getMessage());
 		} catch (JSchException e) {
@@ -184,6 +186,9 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 
 	private String buildCommand(String cmd, List<String> environment, boolean clearEnv) {
 		StringBuffer sb = new StringBuffer();
+		if (directory() != null) {
+			sb.append("cd " + charEscapify(directory().toURI().getPath(), charSet) + "; "); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		if (clearEnv) {
 			sb.append("env -i"); //$NON-NLS-1$
 			for (String env : environment) {

@@ -13,8 +13,6 @@ package org.eclipse.cdt.internal.ui.refactoring.includes;
 import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
-	public static String AddInclude_help_provider_error;
-
 	public static String GCCHeaderSubstitutionMaps_c_map;
 	public static String GCCHeaderSubstitutionMaps_cpp_map;
 	

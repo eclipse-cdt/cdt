@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.ui.refactoring.includes;
 import static org.eclipse.cdt.core.index.IndexLocationFactory.getAbsolutePath;
 import static org.eclipse.cdt.internal.ui.refactoring.includes.IncludeUtil.isContainedInRegion;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -32,16 +31,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.text.edits.InsertEdit;
-import org.eclipse.text.edits.TextEdit;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.text.edits.MultiTextEdit;
 
 import com.ibm.icu.text.Collator;
 
@@ -111,13 +107,14 @@ public class IncludeCreator {
 		fContext = new IncludeCreationContext(tu, index);
 	}
 
-	public List<TextEdit> createInclude(IASTTranslationUnit ast, ITextSelection selection)
+	public MultiTextEdit createInclude(IASTTranslationUnit ast, ITextSelection selection)
 			throws CoreException {
+		MultiTextEdit rootEdit = new MultiTextEdit();
 		ITranslationUnit tu = fContext.getTranslationUnit();
 		IASTNodeSelector selector = ast.getNodeSelector(tu.getLocation().toOSString());
 		IASTName name = selector.findEnclosingName(selection.getOffset(), selection.getLength());
 		if (name == null) {
-			return Collections.emptyList();
+			return rootEdit;
 		}
 		char[] nameChars = name.toCharArray();
 		String lookupName = new String(nameChars);
@@ -132,7 +129,7 @@ public class IncludeCreator {
 			}
 		}
 		if (nameChars.length == 0) {
-			return Collections.emptyList();
+			return rootEdit;
 		}
 
 		final Map<String, IncludeCandidate> candidatesMap= new HashMap<String, IncludeCandidate>();
@@ -187,7 +184,7 @@ public class IncludeCreator {
 			if (candidates.size() > 1) {
 				IncludeCandidate candidate = fAmbiguityResolver.selectElement(candidates);
 				if (candidate == null)
-					return Collections.emptyList();
+					return rootEdit;
 				candidates.clear();
 				candidates.add(candidate);
 			}
@@ -206,7 +203,7 @@ public class IncludeCreator {
 			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
-			return Collections.emptyList();
+			return rootEdit;
 		}
 
 		if (requiredIncludes.isEmpty() && !lookupName.isEmpty()) {
@@ -226,10 +223,10 @@ public class IncludeCreator {
 			}
 		}
 
-		return createEdits(requiredIncludes, usingDeclarations, ast, selection);
+		return createEdit(requiredIncludes, usingDeclarations, ast, selection);
 	}
 
-	private List<TextEdit> createEdits(List<IncludeInfo> includes,
+	private MultiTextEdit createEdit(List<IncludeInfo> includes,
 			List<UsingDeclaration> usingDeclarations, IASTTranslationUnit ast,
 			ITextSelection selection) {
 		NodeCommentMap commentedNodeMap = ASTCommenter.getCommentedNodeMap(ast);
@@ -239,7 +236,7 @@ public class IncludeCreator {
 		
 		IncludePreferences preferences = fContext.getPreferences();
 
-		List<TextEdit> edits = new ArrayList<TextEdit>();
+		MultiTextEdit rootEdit = new MultiTextEdit();
 
 		IASTPreprocessorIncludeStatement[] existingIncludes = ast.getIncludeDirectives();
 		fContext.addHeadersIncludedPreviously(existingIncludes);
@@ -294,7 +291,7 @@ public class IncludeCreator {
 					IASTNode previousNode = previousInclude.getExistingInclude();
 					if (previousNode != null) {
 						offset = ASTNodes.skipToNextLineAfterNode(contents, previousNode);
-						flushEditBuffer(offset, text, edits);
+						flushEditBuffer(offset, text, rootEdit);
 						if (contents[offset - 1] != '\n')
 							text.append(fLineDelimiter);
 					}
@@ -308,11 +305,11 @@ public class IncludeCreator {
 						include.getStyle().isBlankLineNeededAfter(previousInclude.getStyle(), preferences.includeStyles)) {
 					text.append(fLineDelimiter);
 				}
-				flushEditBuffer(offset, text, edits);
+				flushEditBuffer(offset, text, rootEdit);
 			}
 			previousInclude = include;
 		}
-		flushEditBuffer(offset, text, edits);
+		flushEditBuffer(offset, text, rootEdit);
 
 		List<UsingDeclaration> mergedUsingDeclarations = getUsingDeclarations(ast);
 		for (UsingDeclaration usingDeclaration : mergedUsingDeclarations) {
@@ -324,7 +321,7 @@ public class IncludeCreator {
 		}
 
 		if (usingDeclarations.isEmpty())
-			return edits;
+			return rootEdit;
 
 		List<UsingDeclaration> temp = null;
 		for (Iterator<UsingDeclaration> iter = mergedUsingDeclarations.iterator(); iter.hasNext();) {
@@ -367,7 +364,7 @@ public class IncludeCreator {
 					IASTNode previousNode = previousUsing.existingDeclaration;
 					if (previousNode != null) {
 						offset = ASTNodes.skipToNextLineAfterNode(contents, previousNode);
-						flushEditBuffer(offset, text, edits);
+						flushEditBuffer(offset, text, rootEdit);
 						if (contents[offset - 1] != '\n')
 							text.append(fLineDelimiter);
 					}
@@ -375,13 +372,13 @@ public class IncludeCreator {
 				text.append(using.composeDirective());
 				text.append(fLineDelimiter);
 			} else {
-				flushEditBuffer(offset, text, edits);
+				flushEditBuffer(offset, text, rootEdit);
 			}
 			previousUsing = using;
 		}
-		flushEditBuffer(offset, text, edits);
+		flushEditBuffer(offset, text, rootEdit);
 
-		return edits;
+		return rootEdit;
 	}
 
 	private List<UsingDeclaration> getUsingDeclarations(IASTTranslationUnit ast) {
@@ -395,9 +392,9 @@ public class IncludeCreator {
 		return usingDeclarations;
 	}
 
-	private void flushEditBuffer(int offset, StringBuilder text, List<TextEdit> edits) {
+	private void flushEditBuffer(int offset, StringBuilder text, MultiTextEdit edit) {
 		if (text.length() != 0) {
-			edits.add(new InsertEdit(offset, text.toString()));
+			edit.addChild(new InsertEdit(offset, text.toString()));
 			text.delete(0, text.length());
 		}
 	}
@@ -570,33 +567,19 @@ public class IncludeCreator {
 	}
 
 	private IFunctionSummary findContribution(final String name) throws CoreException {
-		final IFunctionSummary[] fs = new IFunctionSummary[1];
-		IRunnableWithProgress op = new IRunnableWithProgress() {
+		ICHelpInvocationContext context = new ICHelpInvocationContext() {
 			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				ICHelpInvocationContext context = new ICHelpInvocationContext() {
-					@Override
-					public IProject getProject() {
-						return fContext.getProject();
-					}
+			public IProject getProject() {
+				return fContext.getProject();
+			}
 
-					@Override
-					public ITranslationUnit getTranslationUnit() {
-						return fContext.getTranslationUnit();
-					}
-				};
-
-				fs[0] = CHelpProviderManager.getDefault().getFunctionInfo(context, name);
+			@Override
+			public ITranslationUnit getTranslationUnit() {
+				return fContext.getTranslationUnit();
 			}
 		};
-		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
-		} catch (InvocationTargetException e) {
-			throw new CoreException(CUIPlugin.createErrorStatus(Messages.AddInclude_help_provider_error, e));
-		} catch (InterruptedException e) {
-			// Do nothing. Operation has been canceled.
-		}
-		return fs[0];
+
+		return CHelpProviderManager.getDefault().getFunctionInfo(context, name);
 	}
 
 	/**

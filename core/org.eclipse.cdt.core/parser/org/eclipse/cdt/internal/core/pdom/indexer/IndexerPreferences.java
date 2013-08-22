@@ -454,6 +454,8 @@ public class IndexerPreferences {
 	}
 
 	public static boolean getReindexOnIndexerChange(IProject project) {
+		if (project == null)
+			return getInstancePreferences().getBoolean(KEY_REINDEX_ON_INDEXER_CHANGE, true);
 		return getProjectPreferences(project).getBoolean(KEY_REINDEX_ON_INDEXER_CHANGE, true);
 	}
 }

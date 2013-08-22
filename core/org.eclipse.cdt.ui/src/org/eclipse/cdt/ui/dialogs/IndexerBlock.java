@@ -210,7 +210,10 @@ public class IndexerBlock extends AbstractCOptionPage {
 		if (fIndexerConfigMap.size() > 2) {
 			fIndexersComboBox = ControlFactory.createSelectCombo(group, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			fIndexersComboBox.addSelectionListener(indexerChangeListener);
-			fReindexOnIndexerChange = ControlFactory.createCheckBox(group, CUIPlugin.getResourceString("IndexerBlock.redindexOnIndexerChange")); //$NON-NLS-1$
+			
+			if(getProject() != null) {
+				fReindexOnIndexerChange = ControlFactory.createCheckBox(group, CUIPlugin.getResourceString("IndexerBlock.redindexOnIndexerChange")); //$NON-NLS-1$
+			}
 		}
 
 		// add composite for pages

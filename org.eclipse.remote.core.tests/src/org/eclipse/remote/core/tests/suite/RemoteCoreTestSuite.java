@@ -5,7 +5,6 @@ import junit.framework.TestSuite;
 
 import org.eclipse.remote.core.tests.ConnectionTests;
 import org.eclipse.remote.core.tests.FileStoreTests;
-import org.eclipse.remote.core.tests.ProcessTests;
 
 public class RemoteCoreTestSuite {
 	public static Test suite() {
@@ -13,7 +12,7 @@ public class RemoteCoreTestSuite {
 
 		suite.addTestSuite(ConnectionTests.class);
 		suite.addTestSuite(FileStoreTests.class);
-		suite.addTestSuite(ProcessTests.class);
+		// suite.addTestSuite(ProcessTests.class);
 		return suite;
 	}
 

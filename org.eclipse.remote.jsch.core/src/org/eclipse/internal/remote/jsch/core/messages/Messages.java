@@ -38,6 +38,10 @@ public class Messages extends NLS {
 	public static String JSchConnectionManager_connection_with_this_name_exists;
 	public static String JSchConnectionManager_cannotRemoveOpenConnection;
 	public static String JSchConnectionManager_invalidConnectionType;
+
+	public static String JSchProcessBuilder_Connection_is_not_open;
+	public static String JschFileStore_Connection_is_not_open;
+
 	public static String JschFileStore_File_doesnt_exist;
 	public static String JschFileStore_Is_a_directory;
 	public static String JschFileStore_The_file_of_name_already_exists;

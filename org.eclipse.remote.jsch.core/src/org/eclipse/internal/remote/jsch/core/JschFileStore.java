@@ -43,8 +43,6 @@ import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.RemoteServices;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 
-import com.jcraft.jsch.ChannelSftp;
-
 public class JschFileStore extends FileStore {
 	private static Map<String, JschFileStore> instanceMap = new HashMap<String, JschFileStore>();
 
@@ -85,6 +83,12 @@ public class JschFileStore extends FileStore {
 		fRemotePath = new Path(path);
 	}
 
+	private void checkConnection() throws RemoteConnectionException {
+		if (!fConnection.isOpen()) {
+			throw new RemoteConnectionException(Messages.JschFileStore_Connection_is_not_open);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -93,6 +97,7 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) throws CoreException {
+		checkConnection();
 		SubMonitor subMon = SubMonitor.convert(monitor, 10);
 		ChildInfosCommand command = new ChildInfosCommand(fConnection, fRemotePath);
 		return command.getResult(subMon.newChild(10));
@@ -123,6 +128,7 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public void delete(int options, IProgressMonitor monitor) throws CoreException {
+		checkConnection();
 		SubMonitor subMon = SubMonitor.convert(monitor, 20);
 		IFileInfo info = fetchInfo(EFS.NONE, subMon.newChild(10));
 		if (!subMon.isCanceled() && info.exists()) {
@@ -139,6 +145,7 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException {
+		checkConnection();
 		SubMonitor subMon = SubMonitor.convert(monitor, 10);
 		FetchInfoCommand command = new FetchInfoCommand(fConnection, fRemotePath);
 		return command.getResult(subMon.newChild(10));
@@ -205,6 +212,7 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException {
+		checkConnection();
 		SubMonitor subMon = SubMonitor.convert(monitor, 20);
 
 		IFileInfo info = fetchInfo(EFS.NONE, subMon.newChild(10));
@@ -238,6 +246,7 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException {
+		checkConnection();
 		SubMonitor subMon = SubMonitor.convert(monitor, 30);
 		IFileInfo info = fetchInfo(EFS.NONE, subMon.newChild(10));
 		if (!subMon.isCanceled()) {
@@ -263,6 +272,7 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
+		checkConnection();
 		SubMonitor subMon = SubMonitor.convert(monitor, 30);
 		IFileInfo info = fetchInfo(EFS.NONE, subMon.newChild(10));
 		if (!subMon.isCanceled()) {
@@ -285,6 +295,7 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
+		checkConnection();
 		SubMonitor subMon = SubMonitor.convert(monitor, 10);
 		PutInfoCommand command = new PutInfoCommand(fConnection, info, options, fRemotePath);
 		command.getResult(subMon.newChild(10));
@@ -299,10 +310,4 @@ public class JschFileStore extends FileStore {
 	public URI toURI() {
 		return JSchFileSystem.getURIFor(fConnection.getName(), fRemotePath.toString());
 	}
-
-	private ChannelSftp getChannel(IProgressMonitor monitor) throws RemoteConnectionException {
-		JSchFileSystem fileSystem = (JSchFileSystem) getFileSystem();
-		return fileSystem.getChannel(fConnection);
-	}
-
 }

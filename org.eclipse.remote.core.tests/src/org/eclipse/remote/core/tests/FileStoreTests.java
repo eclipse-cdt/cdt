@@ -13,6 +13,7 @@ import junit.framework.TestCase;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionManager;
 import org.eclipse.remote.core.IRemoteFileManager;
@@ -25,7 +26,7 @@ public class FileStoreTests extends TestCase {
 	private static final String USERNAME = "user";
 	private static final String PASSWORD = "password";
 	private static final String HOST = "localhost";
-	private static final String PATH1 = "/home/user/sftp_test";
+	private static final String PATH1 = "/tmp/sftp_test";
 	private static final String PATH2 = PATH1 + "/.file1";
 	private static final String TEST_STRING = "a string containing fairly *()(*&^$%## random text";
 
@@ -51,14 +52,16 @@ public class FileStoreTests extends TestCase {
 
 		for (int i = 0; i < 5; i++) {
 			assertFalse(store1.fetchInfo().exists());
+
 			try {
 				store1.mkdir(EFS.NONE, null);
 			} catch (CoreException e) {
 				e.getLocalizedMessage();
 			}
-			assertTrue(store1.fetchInfo().exists());
 
+			assertTrue(store1.fetchInfo().exists());
 			assertFalse(store2.fetchInfo().exists());
+
 			try {
 				OutputStream stream = store2.openOutputStream(EFS.NONE, null);
 				assertNotNull(stream);
@@ -68,6 +71,7 @@ public class FileStoreTests extends TestCase {
 			} catch (Exception e) {
 				e.getLocalizedMessage();
 			}
+
 			assertTrue(store2.fetchInfo().exists());
 
 			try {
@@ -86,6 +90,7 @@ public class FileStoreTests extends TestCase {
 			} catch (CoreException e) {
 				e.getLocalizedMessage();
 			}
+
 			assertFalse(store2.fetchInfo().exists());
 
 			try {
@@ -93,6 +98,7 @@ public class FileStoreTests extends TestCase {
 			} catch (CoreException e) {
 				e.getLocalizedMessage();
 			}
+
 			assertFalse(store1.fetchInfo().exists());
 		}
 
@@ -120,6 +126,13 @@ public class FileStoreTests extends TestCase {
 		fRemoteConnection.setAddress(HOST);
 		fRemoteConnection.setUsername(USERNAME);
 		fRemoteConnection.setPassword(PASSWORD);
+
+		try {
+			fRemoteConnection.open(new NullProgressMonitor());
+		} catch (RemoteConnectionException e) {
+			fail(e.getMessage());
+		}
+		assertTrue(fRemoteConnection.isOpen());
 
 		fRemoteFileManager = fRemoteServices.getFileManager(fRemoteConnection);
 		assertNotNull(fRemoteFileManager);

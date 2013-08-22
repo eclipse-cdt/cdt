@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.internal.remote.jsch.core.messages.Messages;
 import org.eclipse.remote.core.AbstractRemoteProcessBuilder;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
@@ -109,6 +110,10 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 	 */
 	@Override
 	public IRemoteProcess start(int flags) throws IOException {
+		if (!fConnection.isOpen()) {
+			throw new IOException(Messages.JSchProcessBuilder_Connection_is_not_open);
+		}
+
 		List<String> cmdArgs = command();
 		if (cmdArgs.size() < 1) {
 			throw new IndexOutOfBoundsException();
@@ -172,7 +177,7 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 			ChannelExec exec = fConnection.getExecChannel();
 			String command = buildCommand(remoteCmd, env, clearEnv);
 			exec.setCommand(command);
-			System.out.println("running command: " + command);
+			System.out.println("running command: " + command); //$NON-NLS-1$
 			exec.setPty((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
 			exec.setXForwarding((flags & FORWARD_X11) == FORWARD_X11);
 			exec.connect();

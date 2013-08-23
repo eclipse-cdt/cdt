@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.msw"
       label="Visual C++ Support"
-      version="1.2.0.qualifier"
+      version="8.3.0.qualifier"
       provider-name="Eclipse CDT">
 
    <description>

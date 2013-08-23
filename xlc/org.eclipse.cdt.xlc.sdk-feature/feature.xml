@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.xlc.sdk"
       label="%featureName"
-      version="6.2.0.qualifier"
+      version="8.3.0.qualifier"
       provider-name="%providerName"
       image="eclipse_update_120.jpg">
 

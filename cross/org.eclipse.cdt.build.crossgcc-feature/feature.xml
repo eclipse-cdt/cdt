@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.build.crossgcc"
       label="%featureName"
-      version="1.2.0.qualifier"
+      version="8.3.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.cdt.build.crossgcc">
 

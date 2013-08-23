@@ -37,6 +37,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
@@ -171,8 +173,39 @@ public class ScannerConfigBuilder extends ACBuilder {
 		ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
 		IEnvironmentVariableManager mngr = CCorePlugin.getDefault().getBuildEnvironmentManager();
 		IEnvironmentVariable[] vars = mngr.getVariables(cfgDes, true);
+
 		for(int i = 0; i < vars.length; i++){
-			envProps.setProperty(vars[i].getName(), vars[i].getValue());
+			String key = vars[i].getName();
+			String value = vars[i].getValue();
+
+			// Bug 415789: Guard against implementations of IEnvironmentVariable that return null
+			//             for the name or value.
+			if (key != null && value != null)
+				envProps.setProperty(key, value);
+			else {
+				// If the key was not null, then use the empty string for the value.
+				if (key != null)
+					envProps.setProperty(key, ""); //$NON-NLS-1$
+
+				// The IEnvironmentVariable implementation is incorrectly providing null for the key
+				// or value.  Guard against another NPE in the #toString() implementation.
+				String varStr = null;
+				try {
+					varStr = " var.toString:" + vars[i].toString(); //$NON-NLS-1$
+				} catch(NullPointerException e) {
+				}
+
+				// Create our own INFO status because ManagedBuilderCorePlugin.info adds an exception.
+				ManagedBuilderCorePlugin.log(
+					new Status(
+							IStatus.INFO, ManagedBuilderCorePlugin.getUniqueIdentifier(), IStatus.OK,
+							"ScannerConfigBuilder.calcEnvironment(" + String.valueOf(cfg) + ')' //$NON-NLS-1$
+								+ (varStr == null ? "" : varStr) //$NON-NLS-1$
+								+ " class:" + vars[i].getClass().getName() //$NON-NLS-1$
+								+ " name:" + String.valueOf(key) //$NON-NLS-1$
+								+ " value:" + String.valueOf(value), //$NON-NLS-1$
+							null));
+			}
 		}
 
 		return envProps;

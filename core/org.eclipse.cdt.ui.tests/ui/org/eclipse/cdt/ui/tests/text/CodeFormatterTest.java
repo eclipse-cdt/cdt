@@ -818,6 +818,17 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//#include "header.h"  // comment
+	//
+	//class C;
+
+	//#include "header.h"  // comment
+	//
+	//class C;
+	public void testPreserveBlankLineAfterInclude() throws Exception {
+		assertFormatterResult();
+	}
+
 	//void f() { throw 42; }
 
 	//void f() {

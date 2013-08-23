@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -22,7 +19,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.undo.DocumentUndoManagerRegistry;
 import org.eclipse.text.undo.IDocumentUndoManager;
 import org.eclipse.ui.IEditorInput;
@@ -70,7 +66,7 @@ public class OrganizeIncludesAction extends TextEditorAction {
 		final IHeaderChooser headerChooser = new InteractiveHeaderChooser(
 				CEditorMessages.OrganizeIncludes_label, editor.getSite().getShell());
 		final String lineDelimiter = getLineDelimiter(editor);
-		final List<TextEdit> edits = new ArrayList<TextEdit>();
+		final MultiTextEdit[] holder = new MultiTextEdit[1];
 		SharedASTJob job = new SharedASTJob(CEditorMessages.OrganizeIncludes_action, tu) {
 			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
@@ -79,7 +75,7 @@ public class OrganizeIncludesAction extends TextEditorAction {
 				try {
 					index.acquireReadLock();
 					IncludeOrganizer organizer = new IncludeOrganizer(tu, index, lineDelimiter, headerChooser);
-					edits.addAll(organizer.organizeIncludes(ast));
+					holder[0] = organizer.organizeIncludes(ast);
 					return Status.OK_STATUS;
 				} catch (InterruptedException e) {
 					return Status.CANCEL_STATUS;
@@ -90,10 +86,9 @@ public class OrganizeIncludesAction extends TextEditorAction {
 		};
 		IStatus status = BusyCursorJobRunner.execute(job);
 		if (status.isOK()) {
-			if (!edits.isEmpty()) {
-				// Apply text edits.
-				MultiTextEdit edit = new MultiTextEdit();
-				edit.addChildren(edits.toArray(new TextEdit[edits.size()]));
+			MultiTextEdit edit = holder[0];
+			if (edit.hasChildren()) {
+				// Apply the text edit.
 				IEditorInput editorInput = editor.getEditorInput();
 				IDocument document = editor.getDocumentProvider().getDocument(editorInput);
 				IDocumentUndoManager manager= DocumentUndoManagerRegistry.getDocumentUndoManager(document);

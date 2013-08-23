@@ -21,9 +21,9 @@ public class TextUtil {
 	 * Returns the offset of the beginning of the next line after the given offset,
 	 * or the end-of-file offset if there is no line delimiter after the given offset.
 	 */
-	public static int skipToNextLine(char[] text, int offset) {
-		while (offset < text.length) {
-			if (text[offset++] == '\n')
+	public static int skipToNextLine(String text, int offset) {
+		while (offset < text.length()) {
+			if (text.charAt(offset++) == '\n')
 				break;
 		}
 		return offset;
@@ -32,21 +32,9 @@ public class TextUtil {
 	/**
 	 * Returns the offset of the beginning of the line containing the given offset.
 	 */
-	public static int getLineStart(char[] text, int offset) {
+	public static int getLineStart(String text, int offset) {
 		while (--offset >= 0) {
-			if (text[offset] == '\n')
-				break;
-		}
-		return offset + 1;
-	}
-
-	/**
-	 * Skips whitespace characters to the left of the given offset without leaving the current line.
-	 */
-	public static int skipWhitespaceToTheLeft(char[] text, int offset) {
-		while (--offset >= 0) {
-			char c = text[offset];
-			if (c == '\n' || !Character.isWhitespace(c))
+			if (text.charAt(offset) == '\n')
 				break;
 		}
 		return offset + 1;
@@ -56,13 +44,13 @@ public class TextUtil {
 	 * Returns {@code true} the line prior to the line corresponding to the given {@code offset} 
 	 * does not contain non-whitespace characters.
 	 */
-	public static boolean isPreviousLineBlank(char[] text, int offset) {
+	public static boolean isPreviousLineBlank(String text, int offset) {
 		while (--offset >= 0) {
-			if (text[offset] == '\n')
+			if (text.charAt(offset) == '\n')
 				break;
 		}
 		while (--offset >= 0) {
-			char c = text[offset];
+			char c = text.charAt(offset);
 			if (c == '\n')
 				return true;
 			if (!Character.isWhitespace(c))

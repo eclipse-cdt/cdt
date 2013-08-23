@@ -42,7 +42,7 @@ public class ASTNodes {
 	 * Returns the offset of the beginning of the next line after the node, or the end-of-file
 	 * offset if there is no line delimiter after the node.
 	 */
-	public static int skipToNextLineAfterNode(char[] text, IASTNode node) {
+	public static int skipToNextLineAfterNode(String text, IASTNode node) {
 		return TextUtil.skipToNextLine(text, getNodeEndOffset(node));
 	}
 }

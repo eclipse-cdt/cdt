@@ -580,7 +580,7 @@ public class SimpleScanner {
 	                c = getChar();
 	                switch (c) {
 	                case '/': {
-	                    matchSinglelineComment();
+	                    matchSinglelineComment(true);
 	                    return newToken(Token.tLINECOMMENT);
 	                }
 	                case '*': {
@@ -749,7 +749,7 @@ public class SimpleScanner {
 	                        ungetChar(c);
 	                        result= newPreprocessorToken();
 	                    } else {
-	                        matchSinglelineComment();
+	                        matchSinglelineComment(false);
 	                        result= newToken(Token.tLINECOMMENT);
 	                    }
 	                    fPreprocessorToken= 0;
@@ -804,7 +804,7 @@ public class SimpleScanner {
 	            int next = getChar();
 	            if (next == '/') {
 	                // single line comment
-	                matchSinglelineComment();
+	                matchSinglelineComment(false);
 	                break;
 	            } else if (next == '*') {
 	                // multiline comment
@@ -828,12 +828,12 @@ public class SimpleScanner {
 	    }
 	}
 
-	private void matchSinglelineComment() {
+	private void matchSinglelineComment(boolean includeNewline) {
 	    int c = getChar();
 	    while (c != '\n' && c != EOFCHAR) {
 	        c = getChar();
 	    }
-	    if (c == EOFCHAR) {
+	    if (c == EOFCHAR || !includeNewline) {
 	    	ungetChar(c);
 	    }
 	}
@@ -852,10 +852,11 @@ public class SimpleScanner {
 	                    state = 1;
 	                break;
 	            case 1 :
-	                if (c == '/')
+	                if (c == '/') {
 	                    state = 2;
-	                else if (c != '*')
+	                } else if (c != '*') {
 	                    state = 0;
+	                }
 	                break;
 	        }
 	        c = getChar();

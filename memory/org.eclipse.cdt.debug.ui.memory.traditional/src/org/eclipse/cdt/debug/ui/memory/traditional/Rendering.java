@@ -527,8 +527,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
         }
         else if(getViewportEndAddress().compareTo(getMemoryBlockEndAddress().add(BigInteger.ONE)) > 0)
         {
-            fViewportAddress = getMemoryBlockEndAddress().subtract(BigInteger.valueOf(getAddressableCellsPerRow() 
+            BigInteger addr = getMemoryBlockEndAddress().subtract(BigInteger.valueOf(getAddressableCellsPerRow() 
             		* getRowCount() - 1));
+            
+            // if the "addr" is negative (possible when the block is very small), don't honor it.
+            if (addr.signum() != -1)
+            	fViewportAddress = addr;
         }
 
         setCurrentScrollSelection();

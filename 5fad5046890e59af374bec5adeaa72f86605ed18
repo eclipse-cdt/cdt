@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_1c1b1f7a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTQualifiedName.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-08-24T01:42:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_bb3f95e1",
+      "revId": "5fad5046890e59af374bec5adeaa72f86605ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_1b37a909",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTQualifiedName.java",
         "patchSetId": 5
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_fc1d936c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTQualifiedName.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-08-24T01:42:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_1b37a909",
+      "revId": "5fad5046890e59af374bec5adeaa72f86605ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_3b96e555",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTQualifiedName.java",
         "patchSetId": 5
@@ -47,6 +83,24 @@
       "writtenOn": "2013-08-23T19:24:36Z",
       "side": 1,
       "message": "Add a period after \"instead\".",
+      "revId": "5fad5046890e59af374bec5adeaa72f86605ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_5c3487e1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTQualifiedName.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-08-24T01:42:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_3b96e555",
       "revId": "5fad5046890e59af374bec5adeaa72f86605ed18",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

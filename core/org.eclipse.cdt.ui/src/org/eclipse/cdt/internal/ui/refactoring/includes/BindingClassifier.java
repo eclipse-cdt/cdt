@@ -82,6 +82,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
@@ -103,6 +105,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -1114,13 +1117,18 @@ public class BindingClassifier {
 
 			IBinding binding = name.resolveBinding();
 			if (binding != null) {
-				IBinding owner = binding.getOwner();
-				if (owner instanceof IType) {
-					defineBinding(owner);		// Member access requires definition of the containing type.
-					if (binding instanceof IProblemBinding)
-						declareBinding(binding);
+				if (isInTemplateArgument(name)) {
+					// The name is part of a template argument - define the corresponding binding.
+					defineBinding(binding);
 				} else {
-					declareBinding(binding);	// Declare the binding of this name.
+					IBinding owner = binding.getOwner();
+					if (owner instanceof IType) {
+						defineBinding(owner);		// Member access requires definition of the containing type.
+						if (binding instanceof IProblemBinding)
+							declareBinding(binding);
+					} else {
+						declareBinding(binding);	// Declare the binding of this name.
+					}
 				}
 			}
 			return PROCESS_CONTINUE;
@@ -1153,6 +1161,14 @@ public class BindingClassifier {
 			return (IBinding) type;
 		}
 		return null;
+	}
+
+	/**
+	 * Checks if the given name is part of a template argument.
+	 */
+	public boolean isInTemplateArgument(IASTName name) {
+		ICPPASTTypeId typeId = CPPVisitor.findAncestorWithType(name, ICPPASTTypeId.class);
+		return typeId != null && typeId.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT;
 	}
 
 	private static boolean isEnumerationWithoutFixedUnderlyingType(IBinding typeBinding) {

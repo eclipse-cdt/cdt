@@ -347,8 +347,8 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 
 	//	struct D : public C<A> {};
 	public void testTemplate_1() throws Exception {
-		assertDefined("C");
-		assertDeclared("A");
+		assertDefined("A", "C");
+		assertDeclared();
 	}
 
 	//	struct A {};

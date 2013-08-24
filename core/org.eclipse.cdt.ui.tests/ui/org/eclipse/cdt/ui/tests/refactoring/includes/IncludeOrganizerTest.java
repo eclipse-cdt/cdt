@@ -167,8 +167,7 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//#pragma once
 	//
 	//#include "B.h"
-	//
-	//class C;
+	//#include "C.h"
 	//
 	//namespace ns {
 	//// Comment line 1

@@ -26,6 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -41,8 +42,10 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	}
 	public EvalTypeId(IType type, IBinding templateDefinition, ICPPEvaluation... arguments) {
 		super(templateDefinition);
+		Assert.isNotNull(arguments);
+
 		fInputType= type;
-		fArguments= arguments == null ? new ICPPEvaluation[0] : arguments;
+		fArguments= arguments;
 	}
 
 	public IType getInputType() {

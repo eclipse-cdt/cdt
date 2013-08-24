@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Andrew Ferguson (Symbian)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTTemplateId extends IASTName, IASTNameOwner {
-
 	/**
 	 * TEMPLATE_NAME is the IASTName.
 	 */
@@ -33,15 +32,14 @@ public interface ICPPASTTemplateId extends IASTName, IASTNameOwner {
 	/**
 	 * Get the name.
 	 * 
-	 * @return <code>IASTName</code>
+	 * @return {@code IASTName}
 	 */
 	public IASTName getTemplateName();
 
 	/**
 	 * Set the name.
 	 * 
-	 * @param name
-	 *            <code>IASTName</code>
+	 * @param name {@code IASTName}
 	 */
 	public void setTemplateName(IASTName name);
 
@@ -54,33 +52,33 @@ public interface ICPPASTTemplateId extends IASTName, IASTNameOwner {
 	/**
 	 * Constant.
 	 */
-	public static final IASTNode[] EMPTY_ARG_ARRAY = new IASTNode[0];
+	public static final IASTNode[] EMPTY_ARG_ARRAY = {};
 
 	/**
-	 * Add template argument.
+	 * Adds template argument.
 	 * 
-	 * @param typeId <code>IASTTypeId</code>
+	 * @param typeId {@code IASTTypeId}
 	 */
 	public void addTemplateArgument(IASTTypeId typeId);
 
 	/**
-	 * Add template argument.
+	 * Adds a template argument.
 	 * 
-	 * @param expression <code>IASTExpression</code>
+	 * @param expression {@code IASTExpression}
 	 */
 	public void addTemplateArgument(IASTExpression expression);
 
 	/**
-	 * Add an ambiguity node for later resolution.
+	 * Adds an ambiguity node for later resolution.
 	 * 
 	 * @param ambiguity
 	 */
 	public void addTemplateArgument(ICPPASTAmbiguousTemplateArgument ambiguity);
 	
 	/**
-	 * Get all template arguments. (as nodes)
+	 * Returns all template arguments as nodes.
 	 * 
-	 * @return <code>IASTNode []</code>
+	 * @return nodes representing the template arguments
 	 */
 	public IASTNode[] getTemplateArguments();
 	
@@ -95,5 +93,4 @@ public interface ICPPASTTemplateId extends IASTName, IASTNameOwner {
 	 */
 	@Override
 	public ICPPASTTemplateId copy(CopyStyle style);
-
 }

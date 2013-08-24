@@ -1,0 +1,276 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_5692a8da",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "The last parameter can be safely omitted since it\u0027s the same as default.",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_7622442e",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 5856,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "Please add a space after the last comma.\n\nSame below.",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_f62db41a",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 5900,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "Inconsistent spaces around \u003d",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_162b0008",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 5909,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "Please add spaces around -",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_96d9d09e",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 5911,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "Please use proper capitalization and punctuation in comments.",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_d6307873",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 5936,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "Move to the previous line.",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_b6332c7c",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 5940,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "Move to the previous line.",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_76d40463",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/language/settings/providers/LanguageSettingsScannerInfoProvider.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "Please don\u0027t pass project instead of null.\n\nPlease define the default value as a constant in CCorePreferenceConstants.",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_d603584a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/ExtendedScannerInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "To make future extensions easier we should segregate parser-related parameters into a separate object, for example: ParserConfiguration parserConfiguration",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_d6551827",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/GNUCSourceParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "Please combine the two nested \u0027if\u0027 statements into one. The first condition would be easier to read if it were written as result.getSize() \u003e\u003d maximumTrivialExpressionsInAggregateInitializers",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_f662d407",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 3550,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "Please combine the two nested \u0027if\u0027 statements into one. The second condition would be easier to read if it were written as result.getSize() \u003e\u003d maximumTrivialExpressionsInAggregateInitializers",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_967390d7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/indexer/PDOMIndexerTask.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "Indexer can safely skip trivial expressions regardless of the preference setting.",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_907c3392",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/CCorePreferenceInitializer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "Please define a constant for the default value.",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_16b8202f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/ScalabilityPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "Remove space after opening and before closing parentheses. Add a space after the cast.",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_10b2e3ff",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/ScalabilityPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "Shouldn\u0027t zero be allowed?",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_b0aa0f8a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/ScalabilityPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-24T03:27:55Z",
+      "side": 1,
+      "message": "Simpler to use NLS.bind",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

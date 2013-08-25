@@ -9801,6 +9801,19 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testFriendTemplateParameter() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct foo {
+	//	    foo();
+	//	    ~foo();
+	//	};
+	//
+	//	class bar {
+	//	    friend foo::foo();
+	//	    friend foo::~foo();
+	//	};
+	public void testFriendConstructorDestructor_400940() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	// struct S {
 	//     virtual void mFuncDecl() final;

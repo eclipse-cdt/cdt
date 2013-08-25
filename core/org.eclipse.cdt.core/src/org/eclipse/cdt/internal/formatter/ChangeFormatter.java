@@ -80,10 +80,11 @@ public class ChangeFormatter {
 				regions[numRegions] = new Region(newOffset, newEnd - newOffset);
 				numRegions++;
 			}
-	
-			if (numRegions < regions.length) {
+
+			if (numRegions == 0)
+				return rootEdit;
+			if (numRegions < regions.length)
 				regions = Arrays.copyOf(regions, numRegions);
-			}
 	
 			// Calculate formatting changes for the regions after the refactoring changes.
 			ICProject project = tu.getCProject();

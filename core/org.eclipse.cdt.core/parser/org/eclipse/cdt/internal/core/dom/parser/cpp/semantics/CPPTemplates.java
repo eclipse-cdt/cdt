@@ -289,8 +289,18 @@ public class CPPTemplates {
 				if (node.getPropertyInParent() == IASTCompositeTypeSpecifier.TYPE_NAME)
 					return null;
 				if (node instanceof IASTFunctionDefinition) {
-					name= ASTQueries.findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator()).getName().getLastName();
-					scope= CPPVisitor.getContainingScope(name);
+					IASTName functionName= ASTQueries.findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator()).getName().getLastName();
+					// 'name' may be inside the qualifier of a method name in a out-of-line method definition.
+					// In such a case, calling getContainingScope() on the method name will attempt to
+					// resolve the qualifier, which will attempt to resolve 'name', which will get into
+					// a recursion as 'name' is currently being resolved. Since an out-of-line method
+					// definition cannot be inside a template scope, we can accurately return null
+					// in this case.
+					if (functionName.getParent() instanceof ICPPASTQualifiedName 
+					 && ASTQueries.isAncestorOf(functionName.getParent(), name)) {
+						return null;
+					}
+					scope= CPPVisitor.getContainingScope(functionName);
 					break;
 				}
 				if (node instanceof ICPPASTCompositeTypeSpecifier) {

@@ -8019,4 +8019,21 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testInstantiationOfTypedef_412555() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <class T>
+	//	struct B {};
+	//
+	//	template <class Abstract, class T>
+	//	struct A;
+	//
+	//	template <class T>
+	//	struct A<B<T>, T> {
+	//	    void method();
+	//	};
+	//
+	//	template <class T>
+	//	void A<B<T>, T>::method() {}
+	public void testOutOfLineMethodOfPartialSpecialization_401152() throws Exception {
+		parseAndCheckBindings();
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Mike Kucera (IBM)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -44,7 +46,7 @@ import org.eclipse.core.runtime.CoreException;
  * for the DOM parser framework.
  * 
  * This class uses the template method pattern, derived classes need only implement
- * {@link AbstractCLikeLanguage#getScannerExtensionConfiguration()},
+ * {@link AbstractCLikeLanguage#getScannerExtensionConfiguration(IScannerInfo info)},
  * {@link AbstractCLikeLanguage#getParserLanguage()} and
  * {@link AbstractCLikeLanguage#createParser(IScanner scanner, ParserMode parserMode,
  *                                           IParserLogService logService, IIndex index)}.
@@ -255,13 +257,15 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	}
 
 	private ICLanguageKeywords cLanguageKeywords;
-	
+
 	private synchronized ICLanguageKeywords getCLanguageKeywords() {
-		if (cLanguageKeywords == null)
-			cLanguageKeywords = new CLanguageKeywords(getParserLanguage(), getScannerExtensionConfiguration());
+		if (cLanguageKeywords == null) {
+			cLanguageKeywords = new CLanguageKeywords(getParserLanguage(),
+					getScannerExtensionConfiguration(new ExtendedScannerInfo()));
+		}
 		return cLanguageKeywords;
 	}
-	
+
 	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {

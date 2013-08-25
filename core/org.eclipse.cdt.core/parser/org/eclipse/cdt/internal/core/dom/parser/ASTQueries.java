@@ -172,4 +172,16 @@ public class ASTQueries {
 		}
 		return null;
 	}
+	
+	/**
+	 * Check whether 'ancestor' is an ancestor of 'descendant' in the AST. 
+	 */
+	public static boolean isAncestorOf(IASTNode ancestor, IASTNode descendant) {
+		do {
+			if (descendant == ancestor)
+				return true;
+			descendant = descendant.getParent();
+		} while (descendant != null);
+		return false;
+	}
 }

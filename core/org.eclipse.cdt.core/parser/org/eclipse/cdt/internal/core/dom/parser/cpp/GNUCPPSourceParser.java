@@ -2632,7 +2632,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	SHORT= 0x20, UNSIGNED= 0x40, SIGNED= 0x80, COMPLEX= 0x100, IMAGINARY= 0x200,
     	VIRTUAL= 0x400, EXPLICIT= 0x800, FRIEND= 0x1000, THREAD_LOCAL= 0x2000;
 	private static final int FORBID_IN_EMPTY_DECLSPEC =
-		CONST | RESTRICT | VOLATILE | SHORT | UNSIGNED | SIGNED | COMPLEX | IMAGINARY | FRIEND | THREAD_LOCAL;
+		CONST | RESTRICT | VOLATILE | SHORT | UNSIGNED | SIGNED | COMPLEX | IMAGINARY | THREAD_LOCAL;
 
     /**
      * This function parses a declaration specifier sequence, as according to
@@ -3282,6 +3282,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 						if (CharArrayUtils.equals(nchars, start, nchars.length-start, currentClassName))
 							return;
 					}
+					
+					// Accept constructors and destructors of other classes as friends
+					if (declspec instanceof ICPPASTDeclSpecifier && ((ICPPASTDeclSpecifier) declspec).isFriend())
+						return;
 				} else if (isQualified) {
 					// Accept qualified constructor or destructor outside of class body
 					return;

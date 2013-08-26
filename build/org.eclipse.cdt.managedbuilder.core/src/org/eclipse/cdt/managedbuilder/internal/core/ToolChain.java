@@ -47,6 +47,7 @@ import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
 import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
@@ -58,7 +59,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Version;
 
 public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProvider<ToolChain>, IRealBuildObjectAssociation {
@@ -1723,7 +1726,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 
 	@Override
 	public boolean isSupported(){
-		if (managedIsToolChainSupported  == null) {
+		if (managedIsToolChainSupported == null) {
 			IConfigurationElement element = getIsToolChainSupportedElement();
 			if (element != null) {
 				try {
@@ -1734,8 +1737,15 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 			}
 		}
 
-		if(managedIsToolChainSupported != null)
-			return managedIsToolChainSupported.isSupported(this,null,null);
+		if (managedIsToolChainSupported != null) {
+			try {
+				return managedIsToolChainSupported.isSupported(this,null,null);
+			} catch (Throwable e) {
+				ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
+						"Exception in toolchain [" + getName() + "], id=" + getId(), e)); //$NON-NLS-1$ //$NON-NLS-2$
+				return false;
+			}
+		}
 		return true;
 	}
 

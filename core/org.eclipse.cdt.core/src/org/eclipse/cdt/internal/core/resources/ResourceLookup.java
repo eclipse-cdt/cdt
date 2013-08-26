@@ -115,22 +115,25 @@ public class ResourceLookup {
 		 * reaching the next for-loop - that loop is expensive as it might cause the loading of unnecessary 
 		 * project-descriptions.
 		 */
-		if(preferredProject != null) {
-			for (int i = 0; i < files.length; i++) {
-				IFile file = files[i];
-				if (file.getProject().equals(preferredProject) && file.isAccessible() &&
-						(best == null || best.getFullPath().toString().compareTo(file.getFullPath().toString()) > 0)) {
+		if (preferredProject != null) {
+			for (IFile file : files) {
+				if (file.getProject().equals(preferredProject) && file.isAccessible()) {
+					if (best != null) {
+						// At least two accessible files in preferred project.
+						best = null;
+						break;
+					}
 					best= file;
 				}
 			}
 		}
+		// One accessible file in preferred project.
 		if(best != null)
 			return best;
 		
 		int bestRelevance= -1;
 
-		for (int i = 0; i < files.length; i++) {
-			IFile file = files[i];
+		for (IFile file : files) {
 			int relevance= FileRelevance.getRelevance(file, preferredProject);
 			if (best == null || relevance > bestRelevance ||
 					(relevance == bestRelevance &&

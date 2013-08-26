@@ -1030,12 +1030,15 @@ public class BindingClassifier {
 					IBinding binding = ((IASTIdExpression) functionNameExpression).getName().resolveBinding();
 					if (binding instanceof IFunction) {
 						declareFunction((IFunction) binding, functionCallExpression);
-					} else if (functionCallExpression instanceof IASTImplicitNameOwner) {
-						IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) functionCallExpression).getImplicitNames();
-						for (IASTName name : implicitNames) {
-							binding = name.resolveBinding();
-							if (binding instanceof IFunction) {
-								declareFunction((IFunction) binding, functionCallExpression);
+					} else if (binding instanceof IType) {
+						defineBinding(binding);
+						if (functionCallExpression instanceof IASTImplicitNameOwner) {
+							IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) functionCallExpression).getImplicitNames();
+							for (IASTName name : implicitNames) {
+								binding = name.resolveBinding();
+								if (binding instanceof IFunction) {
+									declareFunction((IFunction) binding, functionCallExpression);
+								}
 							}
 						}
 					}
@@ -1123,11 +1126,11 @@ public class BindingClassifier {
 				} else {
 					IBinding owner = binding.getOwner();
 					if (owner instanceof IType) {
-						defineBinding(owner);		// Member access requires definition of the containing type.
+						defineBinding(owner);	 // Member access requires definition of the containing type.
 						if (binding instanceof IProblemBinding)
 							declareBinding(binding);
 					} else {
-						declareBinding(binding);	// Declare the binding of this name.
+						declareBinding(binding); // Declare the binding of this name.
 					}
 				}
 			}

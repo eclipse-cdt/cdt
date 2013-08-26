@@ -259,6 +259,37 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	}
 
 	//	struct A {
+	//	  A(void* p);
+	//	};
+
+	//	void test() {
+	//	  A(nullptr);
+	//	}
+	public void testConstructorCall() throws Exception {
+		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		// A header declaring the function is not responsible for defining the parameter type since
+		// the implicit conversion from B to A is provided externally to parameter type.
+		assertDefined("A");
+		assertDeclared();
+	}
+
+	//	struct A {
+	//	  A(void* p);
+	//	};
+	//	typedef A B;
+
+	//	void test() {
+	//	  B(nullptr);
+	//	}
+	public void testConstructorCallWithTypedef() throws Exception {
+		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		// A header declaring the function is not responsible for defining the parameter type since
+		// the implicit conversion from B to A is provided externally to parameter type.
+		assertDefined("B");
+		assertDeclared();
+	}
+
+	//	struct A {
 	//	  A(const B& b);
 	//	};
 	//	struct B {};

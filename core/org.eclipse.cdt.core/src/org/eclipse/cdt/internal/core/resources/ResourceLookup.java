@@ -115,31 +115,29 @@ public class ResourceLookup {
 		 * reaching the next for-loop - that loop is expensive as it might cause the loading of unnecessary 
 		 * project-descriptions.
 		 */
+		int filesInPreferredProject= 0;
 		if (preferredProject != null) {
 			for (IFile file : files) {
 				if (file.getProject().equals(preferredProject) && file.isAccessible()) {
-					if (best != null) {
-						// At least two accessible files in preferred project.
-						best = null;
-						break;
-					}
+					filesInPreferredProject++;
 					best= file;
 				}
 			}
 		}
 		// One accessible file in preferred project.
-		if(best != null)
+		if (filesInPreferredProject == 1)
 			return best;
 		
 		int bestRelevance= -1;
-
 		for (IFile file : files) {
-			int relevance= FileRelevance.getRelevance(file, preferredProject, PathCanonicalizationStrategy.resolvesSymbolicLinks(), originalLocation);
-			if (best == null || relevance > bestRelevance ||
-					(relevance == bestRelevance &&
-							best.getFullPath().toString().compareTo(file.getFullPath().toString()) > 0)) {
-				bestRelevance= relevance;
-				best= file;
+			if (filesInPreferredProject==0 || file.getProject().equals(preferredProject)) {
+				int relevance= FileRelevance.getRelevance(file, preferredProject, PathCanonicalizationStrategy.resolvesSymbolicLinks(), originalLocation);
+				if (best == null || relevance > bestRelevance ||
+						(relevance == bestRelevance &&
+						best.getFullPath().toString().compareTo(file.getFullPath().toString()) > 0)) {
+					bestRelevance= relevance;
+					best= file;
+				}
 			}
 		}
 		return best;

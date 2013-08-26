@@ -7459,6 +7459,6 @@ public class AST2Tests extends AST2TestBase {
 	//	    a->x;
 	//	}
 	public void testFunctionReturningFunctionPointer_413204() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP);
+		parseAndCheckBindings();
 	}
 }

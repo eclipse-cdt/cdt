@@ -7461,4 +7461,9 @@ public class AST2Tests extends AST2TestBase {
 	public void testFunctionReturningFunctionPointer_413204() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP);
 	}
+	
+	//	double d = 00.9;
+	public void testOctalFloatingPointLiteral_394048() throws Exception {
+		parseAndCheckBindings();
+	}
 }

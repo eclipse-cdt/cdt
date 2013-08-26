@@ -976,12 +976,17 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         			++pos;
         			break;
         		case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7':
-        			isOctal = true;
+        			if (!isFloat)
+        				isOctal = true;
         			++pos;
         			break;
         		case '8': case '9':
-        			handleProblem(IProblem.SCANNER_BAD_OCTAL_FORMAT, image, number.getOffset(), number.getEndOffset());
-        			return;
+        			if (!isFloat) {
+        				handleProblem(IProblem.SCANNER_BAD_OCTAL_FORMAT, image, number.getOffset(), number.getEndOffset());
+        				return;
+        			}
+        			++pos;
+        			break;
         		}
         	}
         }

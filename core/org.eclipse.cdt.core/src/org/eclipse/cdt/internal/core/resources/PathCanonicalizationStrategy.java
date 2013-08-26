@@ -29,6 +29,10 @@ public abstract class PathCanonicalizationStrategy {
 	public static String getCanonicalPath(File file) {
 		return instance.getCanonicalPathInternal(file);
 	}
+	
+	public static boolean resolvesSymbolicLinks() {
+		return instance.resolvesSymbolicLinksInternal();
+	}
 
 	/**
 	 * Sets path canonicalization strategy. If <code>canonicalize</code> is <code>true</code>,
@@ -49,6 +53,11 @@ public abstract class PathCanonicalizationStrategy {
 						return file.getAbsolutePath();
 					}
 				}
+
+				@Override
+				protected boolean resolvesSymbolicLinksInternal() {
+					return true;
+				}
 			};
 		} else {
 			instance = new PathCanonicalizationStrategy() {
@@ -56,9 +65,15 @@ public abstract class PathCanonicalizationStrategy {
 				protected String getCanonicalPathInternal(File file) {
 					return file.getAbsolutePath();
 				}
+
+				@Override
+				protected boolean resolvesSymbolicLinksInternal() {
+					return false;
+				}
 			};
 		}
 	}
 
 	protected abstract String getCanonicalPathInternal(File file);
+	protected abstract boolean resolvesSymbolicLinksInternal();
 }

@@ -11,12 +11,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.resources;
 
+import java.net.URI;
+
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourceAttributes;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * This class computes a relevance for files in case we have to select
@@ -43,6 +46,22 @@ public class FileRelevance {
 	 * @return integer representing file relevance. Larger numbers are more relevant
 	 */
 	public static int getRelevance(IFile f, IProject preferredProject) {
+		return getRelevance(f, preferredProject, true, null);
+	}
+
+	/**
+	 * Compute a relevance for the given file. The higher the score the more relevant the
+	 * file. It is determined by the following criteria: <br>
+	 * - file belongs to preferred project <br>
+	 * - file belongs to a cdt-project <br>
+	 * - file belongs to a source folder of a cdt-project <br>
+	 * - file is accessible
+	 * - file is not a link
+	 * - file matches the original location
+	 * @param f the file to compute the relevance for
+	 * @return integer representing file relevance. Larger numbers are more relevant
+	 */
+	public static int getRelevance(IFile f, IProject preferredProject, boolean degradeSymLinks, Object originalLocation) {
 		int result= 0;
 		IProject p= f.getProject();
 		if (p.equals(preferredProject))
@@ -55,14 +74,24 @@ public class FileRelevance {
 				result+= ON_SOURCE_ROOT;
 		}
 
-		if (!f.isAccessible())
+		if (!f.isAccessible()) {
 			result >>= INACCESSIBLE_SHIFT;
-		else {
+		} else if (f.isLinked()) {
+			result -= LINK_PENALTY;
+		} else if (degradeSymLinks) {
 			ResourceAttributes ra = f.getResourceAttributes();
-			if (f.isLinked() || (ra != null && ra.isSymbolicLink()))
+			if (ra != null && ra.isSymbolicLink())
 				result -= LINK_PENALTY;
+		} else {
+			// Symbolic links are not degraded, prefer the original location
+			if (originalLocation instanceof URI) {
+				if (originalLocation.equals(f.getLocationURI()))
+					result += LINK_PENALTY;
+			} else if (originalLocation instanceof IPath) {
+				if (originalLocation.equals(f.getLocation()))
+					result+= LINK_PENALTY;
+			}
 		}
-
 		return result;
 	}
 }

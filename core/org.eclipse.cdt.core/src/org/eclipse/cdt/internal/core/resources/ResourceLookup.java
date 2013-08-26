@@ -76,7 +76,7 @@ public class ResourceLookup {
 	 * 			NB the returned IFile may not exist
 	 */
 	public static IFile selectFileForLocationURI(URI location, IProject preferredProject) {
-		return selectFile(findFilesForLocationURI(location), preferredProject);
+		return selectFile(findFilesForLocationURI(location), preferredProject, location);
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class ResourceLookup {
 	 * 			NB the returned IFile may not exist
 	 */
 	public static IFile selectFileForLocation(IPath location, IProject preferredProject) {
-		return selectFile(findFilesForLocation(location), preferredProject);
+		return selectFile(findFilesForLocation(location), preferredProject, location);
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class ResourceLookup {
 	 * one that's most relevant, then first try to find it directly - before getting to the more expensive 
 	 * loop of computing the "relevance scores" for all the files.
 	 */
-	private static IFile selectFile(IFile[] files, IProject preferredProject) {
+	private static IFile selectFile(IFile[] files, IProject preferredProject, Object originalLocation) {
 		if (files.length == 0)
 			return null;
 
@@ -134,7 +134,7 @@ public class ResourceLookup {
 		int bestRelevance= -1;
 
 		for (IFile file : files) {
-			int relevance= FileRelevance.getRelevance(file, preferredProject);
+			int relevance= FileRelevance.getRelevance(file, preferredProject, PathCanonicalizationStrategy.resolvesSymbolicLinks(), originalLocation);
 			if (best == null || relevance > bestRelevance ||
 					(relevance == bestRelevance &&
 							best.getFullPath().toString().compareTo(file.getFullPath().toString()) > 0)) {

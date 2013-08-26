@@ -10,6 +10,6 @@
   </parent>
   <groupId>org.eclipse.tm</groupId>
   <artifactId>org.eclipse.tm.terminal.serial</artifactId>
-  <version>2.1.200.qualifier</version>
+  <version>2.1.300.qualifier</version>
   <packaging>eclipse-plugin</packaging>
 </project>

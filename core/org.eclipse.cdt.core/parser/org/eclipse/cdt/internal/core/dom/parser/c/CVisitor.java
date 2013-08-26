@@ -727,12 +727,9 @@ public class CVisitor extends ASTQueries {
         boolean isFunction= false;
         if (parent instanceof IASTParameterDeclaration || parent.getPropertyInParent() == ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER) {
         	IASTDeclarator fdtor = (IASTDeclarator) parent.getParent();
-        	if (ASTQueries.findTypeRelevantDeclarator(fdtor) instanceof IASTFunctionDeclarator) {
-        		IASTDeclarator dtor = fdtor;
-        		while (dtor.getNestedDeclarator() != null && !(dtor.getNestedDeclarator() instanceof IASTFunctionDeclarator)) {
-        			dtor = dtor.getNestedDeclarator();
-        		}
-        		IASTName n = dtor.getName();
+			// Create parameter bindings only if the declarator declares a function
+        	if (ASTQueries.findTypeRelevantDeclarator(fdtor) == fdtor) {
+        		IASTName n = ASTQueries.findInnermostDeclarator(fdtor).getName();
         		IBinding temp = n.resolveBinding();
         		if (temp != null && temp instanceof CFunction) {
         			binding = ((CFunction) temp).resolveParameter(name);

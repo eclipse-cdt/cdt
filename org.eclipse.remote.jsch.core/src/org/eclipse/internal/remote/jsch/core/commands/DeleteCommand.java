@@ -1,14 +1,13 @@
 package org.eclipse.internal.remote.jsch.core.commands;
 
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.internal.remote.jsch.core.JSchConnection;
-import org.eclipse.internal.remote.jsch.core.messages.Messages;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
-
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
 
 public class DeleteCommand extends AbstractRemoteCommand<Void> {
 
@@ -22,19 +21,62 @@ public class DeleteCommand extends AbstractRemoteCommand<Void> {
 	@Override
 	public Void getResult(IProgressMonitor monitor) throws RemoteConnectionException {
 		final SubMonitor subMon = SubMonitor.convert(monitor, 10);
-		SftpCallable<Void> c = new SftpCallable<Void>() {
-			@Override
-			public Void call() throws JSchException, SftpException {
-				getChannel().rm(fRemotePath.toString());
-				return null;
-			}
-		};
-		try {
-			subMon.subTask(Messages.DeleteCommand_Remove_file);
-			c.getResult(subMon.newChild(10));
-		} catch (SftpException e) {
-			throw new RemoteConnectionException(e.getMessage());
+
+		ExecCommand command = new ExecCommand(getConnection());
+		command.setCommand("/bin/rm -rf " + quote(fRemotePath.toString(), true)); //$NON-NLS-1$
+		String result = command.getResult(subMon.newChild(10));
+		if (!result.equals("")) { //$NON-NLS-1$
+			throw new RemoteConnectionException(result);
 		}
 		return null;
+	}
+
+	private String quote(String path, boolean full) {
+		StringBuffer buffer = new StringBuffer();
+		StringCharacterIterator iter = new StringCharacterIterator(path);
+		for (char c = iter.first(); c != CharacterIterator.DONE; c = iter.next()) {
+			switch (c) {
+			case '(':
+			case ')':
+			case '[':
+			case ']':
+			case '{':
+			case '}':
+			case '|':
+			case '\\':
+			case '*':
+			case '&':
+			case '^':
+			case '%':
+			case '$':
+			case '#':
+			case '@':
+			case '!':
+			case '~':
+			case '`':
+			case '\'':
+			case '"':
+			case ':':
+			case ';':
+			case '?':
+			case '<':
+			case '>':
+			case ',':
+			case '\n':
+				if (full) {
+					buffer.append('\\');
+				}
+				buffer.append(c);
+				continue;
+			case ' ':
+				buffer.append('\\');
+				buffer.append(c);
+				continue;
+			default:
+				buffer.append(c);
+				continue;
+			}
+		}
+		return buffer.toString();
 	}
 }

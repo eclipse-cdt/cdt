@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.internal.remote.jsch.core.JSchConnection;
+import org.eclipse.internal.remote.jsch.core.messages.Messages;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 
 import com.jcraft.jsch.JSchException;
@@ -47,7 +48,7 @@ public class ExecCommand extends AbstractRemoteCommand<String> {
 				return stream.toString();
 			}
 		};
-		subMon.subTask("Exec command");
+		subMon.subTask(Messages.ExecCommand_Exec_command);
 		return c.getResult(subMon.newChild(10));
 	}
 }

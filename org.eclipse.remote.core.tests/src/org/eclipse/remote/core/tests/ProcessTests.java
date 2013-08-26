@@ -19,8 +19,8 @@ import org.eclipse.remote.core.RemoteServices;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 
 public class ProcessTests extends TestCase {
-	private static final String USERNAME = "user"; //$NON-NLS-1$
-	private static final String PASSWORD = "password"; //$NON-NLS-1$
+	private static final String USERNAME = "test"; //$NON-NLS-1$
+	private static final String PASSWORD = ""; //$NON-NLS-1$
 	private static final String HOST = "localhost"; //$NON-NLS-1$
 	private static int NUM_THREADS = 5;
 
@@ -35,7 +35,8 @@ public class ProcessTests extends TestCase {
 			Thread thread = new Thread("test thread " + t) {
 				@Override
 				public void run() {
-					IRemoteProcessBuilder builder = fRemoteServices.getProcessBuilder(fRemoteConnection, "perl", "-V:version"); //$NON-NLS-1$
+					IRemoteProcessBuilder builder = fRemoteConnection.getProcessBuilder("perl", "-V:version"); //$NON-NLS-1$
+					assertNotNull(builder);
 					builder.redirectErrorStream(true);
 					for (int i = 0; i < 10; i++) {
 						try {
@@ -71,7 +72,8 @@ public class ProcessTests extends TestCase {
 	}
 
 	public void testEnv() {
-		IRemoteProcessBuilder builder = fRemoteServices.getProcessBuilder(fRemoteConnection, "printenv"); //$NON-NLS-1$
+		IRemoteProcessBuilder builder = fRemoteConnection.getProcessBuilder("printenv"); //$NON-NLS-1$
+		assertNotNull(builder);
 		builder.redirectErrorStream(true);
 		String path = builder.environment().get("PATH");
 		builder.environment().clear();

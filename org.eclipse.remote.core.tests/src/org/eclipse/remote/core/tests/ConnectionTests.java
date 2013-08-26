@@ -2,19 +2,11 @@ package org.eclipse.remote.core.tests;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileSystem;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionManager;
 import org.eclipse.remote.core.IRemoteFileManager;
@@ -25,12 +17,13 @@ import org.eclipse.remote.core.RemoteServices;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 
 public class ConnectionTests extends TestCase {
-	private static final String USERNAME = "user"; //$NON-NLS-1$
-	private static final String PASSWORD = "password"; //$NON-NLS-1$
+	private static final String USERNAME = "test"; //$NON-NLS-1$
+	private static final String PASSWORD = ""; //$NON-NLS-1$
 	private static final String HOST = "localhost"; //$NON-NLS-1$
 
 	private IRemoteServices fRemoteServices;
 	private IRemoteConnection fRemoteConnection;
+	private IRemoteConnectionManager fRemoteConnectionManager;
 
 	public void testEnv() {
 		String var = fRemoteConnection.getEnv("SHELL"); //$NON-NLS-1$
@@ -46,7 +39,8 @@ public class ConnectionTests extends TestCase {
 		assertNotNull(fRemoteConnection.getProperty("path.separator")); //$NON-NLS-1$
 		assertNotNull(fRemoteConnection.getProperty("line.separator")); //$NON-NLS-1$
 
-		IRemoteProcessBuilder builder = fRemoteServices.getProcessBuilder(fRemoteConnection, "env"); //$NON-NLS-1$
+		IRemoteProcessBuilder builder = fRemoteConnection.getProcessBuilder("env"); //$NON-NLS-1$
+		assertNotNull(builder);
 		builder.environment().put("FOO", "BAR"); //$NON-NLS-1$ //$NON-NLS-2$
 		builder.environment().put("USER", "FOO"); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
@@ -69,51 +63,6 @@ public class ConnectionTests extends TestCase {
 		}
 	}
 
-	public void testCopy() {
-		final IRemoteFileManager fileManager = fRemoteServices.getFileManager(fRemoteConnection);
-
-		final IFileSystem fileSystem = EFS.getLocalFileSystem();
-		final IFileStore srcFileStore = fileSystem.getStore(new Path("/tmp/log_src.txt"));
-		final IFileStore dstFileStore = fileManager.getResource("/tmp").getChild("log_dst.txt");
-		try {
-			srcFileStore.delete(EFS.NONE, new NullProgressMonitor());
-			dstFileStore.delete(EFS.NONE, new NullProgressMonitor());
-			OutputStream stream = srcFileStore.openOutputStream(EFS.NONE, new NullProgressMonitor());
-			stream.write(new byte[] { 'f', 'o', 'o', '\n' });
-			stream.close();
-			srcFileStore.copy(dstFileStore, EFS.NONE, new NullProgressMonitor());
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
-		IFileInfo srcInfo = srcFileStore.fetchInfo();
-		IFileInfo dstInfo = dstFileStore.fetchInfo();
-		assertTrue(dstInfo.exists());
-		assertTrue(srcInfo.getLength() == dstInfo.getLength());
-		try {
-			InputStream stream = dstFileStore.openInputStream(EFS.NONE, new NullProgressMonitor());
-			byte[] b = new byte[4];
-			stream.read(b);
-			stream.close();
-			assertTrue(b[0] == 'f');
-			assertTrue(b[1] == 'o');
-			assertTrue(b[2] == 'o');
-			assertTrue(b[3] == '\n');
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
-
-		try {
-			srcFileStore.delete(EFS.NONE, new NullProgressMonitor());
-			dstFileStore.delete(EFS.NONE, new NullProgressMonitor());
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		}
-	}
-
 	public void testWd() {
 		/*
 		 * Test connection wd
@@ -127,7 +76,8 @@ public class ConnectionTests extends TestCase {
 		/*
 		 * Test process builder inherits wd from connection
 		 */
-		IRemoteProcessBuilder builder = fRemoteServices.getProcessBuilder(fRemoteConnection, "pwd"); //$NON-NLS-1$
+		IRemoteProcessBuilder builder = fRemoteConnection.getProcessBuilder("pwd"); //$NON-NLS-1$
+		assertNotNull(builder);
 		try {
 			IRemoteProcess proc = builder.start();
 			BufferedReader stdout = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -141,8 +91,10 @@ public class ConnectionTests extends TestCase {
 		/*
 		 * Test process builder wd
 		 */
-		final IRemoteFileManager fileManager = fRemoteServices.getFileManager(fRemoteConnection);
-		builder = fRemoteServices.getProcessBuilder(fRemoteConnection, "pwd"); //$NON-NLS-1$
+		final IRemoteFileManager fileManager = fRemoteConnection.getFileManager();
+		assertNotNull(fileManager);
+		builder = fRemoteConnection.getProcessBuilder("pwd"); //$NON-NLS-1$
+		assertNotNull(builder);
 		builder.directory(fileManager.getResource("/bin"));
 		try {
 			IRemoteProcess proc = builder.start();
@@ -165,11 +117,11 @@ public class ConnectionTests extends TestCase {
 		fRemoteServices = RemoteServices.getRemoteServices("org.eclipse.remote.JSch"); //$NON-NLS-1$
 		assertNotNull(fRemoteServices);
 
-		IRemoteConnectionManager connMgr = fRemoteServices.getConnectionManager();
-		assertNotNull(connMgr);
+		fRemoteConnectionManager = fRemoteServices.getConnectionManager();
+		assertNotNull(fRemoteConnectionManager);
 
 		try {
-			fRemoteConnection = connMgr.newConnection("test_connection"); //$NON-NLS-1$
+			fRemoteConnection = fRemoteConnectionManager.newConnection("test_connection"); //$NON-NLS-1$
 		} catch (RemoteConnectionException e) {
 			fail(e.getMessage());
 		}
@@ -194,9 +146,7 @@ public class ConnectionTests extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		fRemoteConnection.close();
-		IRemoteConnectionManager connMgr = fRemoteServices.getConnectionManager();
-		assertNotNull(connMgr);
-		connMgr.removeConnection(fRemoteConnection);
+		fRemoteConnectionManager.removeConnection(fRemoteConnection);
 	}
 
 }

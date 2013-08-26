@@ -27,6 +27,8 @@ public class Messages extends NLS {
 	public static String AuthInfo_Authentication_message;
 	public static String ChildInfosCommand_Get_file_attributes;
 	public static String DeleteCommand_Remove_file;
+
+	public static String ExecCommand_Exec_command;
 	public static String FetchInfoCommand_Fetch_info;
 	public static String GetInputStreamCommand_Get_input_stream;
 	public static String JSchConnection_connectionNotOpen;
@@ -34,6 +36,10 @@ public class Messages extends NLS {
 	public static String JSchConnection_remotePort;
 	public static String RemoteToolsConnection_open;
 	public static String JSchConnection_forwarding;
+
+	public static String JSchConnection_Remote_host_does_not_support_sftp;
+
+	public static String JSchConnection_Unable_to_open_sftp_channel;
 	public static String JSchConnection_username_must_be_set;
 	public static String JSchConnectionManager_connection_with_this_name_exists;
 	public static String JSchConnectionManager_cannotRemoveOpenConnection;
@@ -43,7 +49,11 @@ public class Messages extends NLS {
 	public static String JschFileStore_Connection_is_not_open;
 
 	public static String JschFileStore_File_doesnt_exist;
+	public static String JschFileStore_Invalid_connection_for_URI;
+
 	public static String JschFileStore_Is_a_directory;
+
+	public static String JschFileStore_No_remote_services_found_for_URI;
 	public static String JschFileStore_The_file_of_name_already_exists;
 	public static String JschFileStore_The_parent_of_directory_does_not_exist;
 	public static String MkdirCommand_Create_directory;

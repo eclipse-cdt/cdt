@@ -90,7 +90,6 @@ public class RemoteResourceBrowser extends Dialog {
 	private String remotePaths[];
 	private String fInitialPath;
 	private IPath fRootPath;
-	private final IRemoteServices fServices;
 	private IRemoteFileManager fFileMgr;
 	private IRemoteConnection fConnection;
 	private final IRemoteUIConnectionManager fUIConnMgr;
@@ -99,7 +98,6 @@ public class RemoteResourceBrowser extends Dialog {
 	public RemoteResourceBrowser(IRemoteServices services, IRemoteConnection conn, Shell parent, int flags) {
 		super(parent);
 		setShellStyle(SWT.RESIZE | getShellStyle());
-		fServices = services;
 		fConnection = conn;
 		this.optionFlags = flags;
 		if (conn == null) {
@@ -127,7 +125,7 @@ public class RemoteResourceBrowser extends Dialog {
 			return false;
 		}
 
-		fFileMgr = fServices.getFileManager(conn);
+		fFileMgr = conn.getFileManager();
 		if (fFileMgr != null) {
 			/*
 			 * Note: the call to findInitialPath must happen before the

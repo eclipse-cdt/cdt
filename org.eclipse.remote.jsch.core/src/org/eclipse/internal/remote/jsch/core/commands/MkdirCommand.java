@@ -22,20 +22,16 @@ public class MkdirCommand extends AbstractRemoteCommand<Void> {
 
 	@Override
 	public Void getResult(IProgressMonitor monitor) throws RemoteConnectionException {
-		createDirectory(fRemotePath, monitor);
-		return null;
-	}
-
-	private void createDirectory(IPath path, IProgressMonitor monitor) throws RemoteConnectionException {
 		final SubMonitor subMon = SubMonitor.convert(monitor, 20);
 
 		/*
 		 * Recursively create parent directories
 		 */
-		FetchInfoCommand command = new FetchInfoCommand(getConnection(), path.removeLastSegments(1));
+		FetchInfoCommand command = new FetchInfoCommand(getConnection(), fRemotePath.removeLastSegments(1));
 		IFileInfo info = command.getResult(subMon.newChild(10));
 		if (!info.exists()) {
-			createDirectory(path.removeLastSegments(1), subMon.newChild(10));
+			MkdirCommand mkdirCommand = new MkdirCommand(getConnection(), fRemotePath.removeLastSegments(1));
+			mkdirCommand.getResult(subMon.newChild(10));
 		}
 
 		/*
@@ -54,5 +50,6 @@ public class MkdirCommand extends AbstractRemoteCommand<Void> {
 		} catch (SftpException e) {
 			throw new RemoteConnectionException(e.getMessage());
 		}
+		return null;
 	}
 }

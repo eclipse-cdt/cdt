@@ -114,32 +114,19 @@ public abstract class AbstractRemoteCommand<T> {
 		}
 
 		private T1 waitCmdInThread(Future<T1> future) throws SftpException, RemoteConnectionException {
-			T1 ret = null;
 			boolean bInterrupted = Thread.interrupted();
-			while (!future.isDone()) {
+			while (!getProgressMonitor().isCanceled()) {
 				try {
-					if (getProgressMonitor().isCanceled()) {
-						future.cancel(true);
-						getChannel().quit();
-						throw new RemoteConnectionException(Messages.AbstractRemoteCommand_Operation_cancelled_by_user);
-					}
-					ret = future.get(100, TimeUnit.MILLISECONDS);
+					return future.get(100, TimeUnit.MILLISECONDS);
 				} catch (InterruptedException e) {
 					bInterrupted = true;
 				} catch (TimeoutException e) {
 					// ignore
 				} catch (ExecutionException e) {
-					/*
-					 * close sftp channel (gets
-					 * automatically reopened) to make
-					 * sure the channel is not in
-					 * undefined state because of
-					 * exception
-					 */
-					getChannel().quit();
 					if (e.getCause() instanceof SftpException) {
 						throw (SftpException) e.getCause();
 					}
+					getChannel().disconnect();
 					throw new RemoteConnectionException(e.getMessage());
 				}
 				getProgressMonitor().worked(1);
@@ -147,7 +134,9 @@ public abstract class AbstractRemoteCommand<T> {
 			if (bInterrupted) {
 				Thread.currentThread().interrupt(); // set current thread flag
 			}
-			return ret;
+			future.cancel(true);
+			getChannel().disconnect();
+			throw new RemoteConnectionException(Messages.AbstractRemoteCommand_Operation_cancelled_by_user);
 		}
 	}
 

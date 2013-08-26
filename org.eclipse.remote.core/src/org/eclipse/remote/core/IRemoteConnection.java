@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.remote.core;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -127,6 +129,27 @@ public interface IRemoteConnection {
 	public Map<String, String> getAttributes();
 
 	/**
+	 * Get a remote process that runs a command shell on the remote system. The shell will be the user's default shell on the remote
+	 * system. The flags may be used to modify behavior of the remote process. These flags may only be supported by specific types
+	 * of remote service providers. Clients can use {@link IRemoteProcessBuilder#getSupportedFlags()} to find out the flags
+	 * supported by the service provider.
+	 * 
+	 * <pre>
+	 * Current flags are:
+	 *   {@link IRemoteProcessBuilder#NONE}			- disable any flags
+	 *   {@link IRemoteProcessBuilder#ALLOCATE_PTY}	- allocate a pseudo-terminal for the process (RFC-4254 Sec. 6.2)
+	 *   {@link IRemoteProcessBuilder#FORWARD_X11}	- enable X11 forwarding (RFC-4254 Sec. 6.3)
+	 * </pre>
+	 * 
+	 * @param flags
+	 *            bitwise-or of flags
+	 * @return remote process object
+	 * @throws IOException
+	 * @since 7.0
+	 */
+	public IRemoteProcess getCommandShell(int flags) throws IOException;
+
+	/**
 	 * Returns an unmodifiable string map view of the remote environment. The connection must be open prior to calling this method.
 	 * 
 	 * @return the remote environment
@@ -144,6 +167,13 @@ public interface IRemoteConnection {
 	public String getEnv(String name);
 
 	/**
+	 * Get a file manager for managing remote files
+	 * 
+	 * @return file manager or null if connection is not open
+	 */
+	public IRemoteFileManager getFileManager();
+
+	/**
 	 * Get unique name for this connection.
 	 * 
 	 * @return connection name
@@ -158,6 +188,20 @@ public interface IRemoteConnection {
 	 * @since 5.0
 	 */
 	public int getPort();
+
+	/**
+	 * Get a process builder for creating remote processes
+	 * 
+	 * @return process builder or null if connection is not open
+	 */
+	public IRemoteProcessBuilder getProcessBuilder(List<String> command);
+
+	/**
+	 * Get a process builder for creating remote processes
+	 * 
+	 * @return process builder or null if connection is not open
+	 */
+	public IRemoteProcessBuilder getProcessBuilder(String... command);
 
 	/**
 	 * Gets the remote system property indicated by the specified key. The connection must be open prior to calling this method.

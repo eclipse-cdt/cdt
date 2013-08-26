@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.internal.remote.core.RemoteCorePlugin;
 import org.eclipse.remote.core.AbstractRemoteProcessBuilder;
 import org.eclipse.remote.core.IProcessFactory;
-import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteProcess;
 
 public class LocalProcessBuilder extends AbstractRemoteProcessBuilder {
@@ -41,14 +40,14 @@ public class LocalProcessBuilder extends AbstractRemoteProcessBuilder {
 	private final IProcessFactory fProcessFactory;
 	private final Map<String, String> fRemoteEnv = new HashMap<String, String>();
 
-	public LocalProcessBuilder(IRemoteConnection conn, List<String> command) {
-		super(conn, command);
+	public LocalProcessBuilder(List<String> command) {
+		super(command);
 		fRemoteEnv.putAll(System.getenv());
 		fProcessFactory = getProcessFactory();
 	}
 
-	public LocalProcessBuilder(IRemoteConnection conn, String... command) {
-		this(conn, Arrays.asList(command));
+	public LocalProcessBuilder(String... command) {
+		this(Arrays.asList(command));
 	}
 
 	/*
@@ -60,8 +59,11 @@ public class LocalProcessBuilder extends AbstractRemoteProcessBuilder {
 	public IFileStore directory() {
 		IFileStore dir = super.directory();
 		if (dir == null) {
-			dir = EFS.getLocalFileSystem().getStore(new Path(connection().getWorkingDirectory()));
-			directory(dir);
+			String userDir = System.getProperty("user.dir"); //$NON-NLS-1$
+			if (userDir != null) {
+				dir = EFS.getLocalFileSystem().getStore(new Path(userDir));
+				directory(dir);
+			}
 		}
 		return dir;
 	}

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.internal.remote.core.services.local;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
@@ -22,6 +24,9 @@ import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionChangeEvent;
 import org.eclipse.remote.core.IRemoteConnectionChangeListener;
 import org.eclipse.remote.core.IRemoteConnectionManager;
+import org.eclipse.remote.core.IRemoteFileManager;
+import org.eclipse.remote.core.IRemoteProcess;
+import org.eclipse.remote.core.IRemoteProcessBuilder;
 import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.IUserAuthenticator;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
@@ -34,6 +39,7 @@ public class LocalConnection implements IRemoteConnection {
 	private boolean fConnected = true;
 	private IPath fWorkingDir = null;
 
+	private final IRemoteFileManager fFileMgr = new LocalFileManager();
 	private final IRemoteConnection fConnection = this;
 	private final IRemoteServices fRemoteServices;
 	private final ListenerList fListeners = new ListenerList();
@@ -64,6 +70,28 @@ public class LocalConnection implements IRemoteConnection {
 		if (fConnected) {
 			fConnected = false;
 			fireConnectionChangeEvent(IRemoteConnectionChangeEvent.CONNECTION_CLOSED);
+		}
+	}
+
+	/**
+	 * Notify all listeners when this connection's status changes.
+	 * 
+	 * @param event
+	 */
+	private void fireConnectionChangeEvent(final int type) {
+		IRemoteConnectionChangeEvent event = new IRemoteConnectionChangeEvent() {
+			@Override
+			public IRemoteConnection getConnection() {
+				return fConnection;
+			}
+
+			@Override
+			public int getType() {
+				return type;
+			}
+		};
+		for (Object listener : fListeners.getListeners()) {
+			((IRemoteConnectionChangeListener) listener).connectionChanged(event);
 		}
 	}
 
@@ -136,6 +164,16 @@ public class LocalConnection implements IRemoteConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.remote.core.IRemoteServices#getCommandShell(int)
+	 */
+	@Override
+	public IRemoteProcess getCommandShell(int flags) throws IOException {
+		throw new IOException("Not currently implemented"); //$NON-NLS-1$
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#getEnv()
 	 */
 	@Override
@@ -157,6 +195,16 @@ public class LocalConnection implements IRemoteConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.remote.core.IRemoteServices#getFileManager(j)
+	 */
+	@Override
+	public IRemoteFileManager getFileManager() {
+		return fFileMgr;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#getName()
 	 */
 	@Override
@@ -172,6 +220,26 @@ public class LocalConnection implements IRemoteConnection {
 	@Override
 	public int getPort() {
 		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteServices#getProcessBuilder(java.util.List)
+	 */
+	@Override
+	public IRemoteProcessBuilder getProcessBuilder(List<String> command) {
+		return new LocalProcessBuilder(command);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteServices#getProcessBuilder(java.lang.String[])
+	 */
+	@Override
+	public IRemoteProcessBuilder getProcessBuilder(String... command) {
+		return new LocalProcessBuilder(command);
 	}
 
 	/*
@@ -390,28 +458,6 @@ public class LocalConnection implements IRemoteConnection {
 	@Override
 	public boolean supportsTCPPortForwarding() {
 		return false;
-	}
-
-	/**
-	 * Notify all listeners when this connection's status changes.
-	 * 
-	 * @param event
-	 */
-	private void fireConnectionChangeEvent(final int type) {
-		IRemoteConnectionChangeEvent event = new IRemoteConnectionChangeEvent() {
-			@Override
-			public IRemoteConnection getConnection() {
-				return fConnection;
-			}
-
-			@Override
-			public int getType() {
-				return type;
-			}
-		};
-		for (Object listener : fListeners.getListeners()) {
-			((IRemoteConnectionChangeListener) listener).connectionChanged(event);
-		}
 	}
 
 }

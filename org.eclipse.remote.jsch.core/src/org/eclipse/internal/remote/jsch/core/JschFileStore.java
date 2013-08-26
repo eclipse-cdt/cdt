@@ -57,36 +57,38 @@ public class JschFileStore extends FileStore {
 		synchronized (instanceMap) {
 			JschFileStore store = instanceMap.get(uri.toString());
 			if (store == null) {
-				IRemoteServices services = RemoteServices.getRemoteServices(uri);
-				assert (services instanceof JSchServices);
-				if (services != null) {
-					IRemoteConnectionManager manager = services.getConnectionManager();
-					if (manager != null) {
-						IRemoteConnection connection = manager.getConnection(uri);
-						if (connection != null && connection instanceof JSchConnection) {
-							String path = uri.getPath();
-							store = new JschFileStore((JSchConnection) connection, path);
-							instanceMap.put(uri.toString(), store);
-						}
-					}
-				}
+				store = new JschFileStore(uri);
+				instanceMap.put(uri.toString(), store);
 			}
 			return store;
 		}
 	}
 
-	private final JSchConnection fConnection;
+	// private final JSchConnection fConnection;
 	private final IPath fRemotePath;
+	private final URI fURI;
 
-	public JschFileStore(JSchConnection conn, String path) {
-		fConnection = conn;
-		fRemotePath = new Path(path);
+	public JschFileStore(URI uri) {
+		fURI = uri;
+		fRemotePath = new Path(uri.getPath());
 	}
 
-	private void checkConnection() throws RemoteConnectionException {
-		if (!fConnection.isOpen()) {
+	private JSchConnection checkConnection() throws RemoteConnectionException {
+		IRemoteServices services = RemoteServices.getRemoteServices(fURI);
+		assert (services instanceof JSchServices);
+		if (services == null) {
+			throw new RemoteConnectionException(NLS.bind(Messages.JschFileStore_No_remote_services_found_for_URI, fURI));
+		}
+		IRemoteConnectionManager manager = services.getConnectionManager();
+		assert (manager != null);
+		IRemoteConnection connection = manager.getConnection(fURI);
+		if (connection == null || !(connection instanceof JSchConnection)) {
+			throw new RemoteConnectionException(NLS.bind(Messages.JschFileStore_Invalid_connection_for_URI, fURI));
+		}
+		if (!connection.isOpen()) {
 			throw new RemoteConnectionException(Messages.JschFileStore_Connection_is_not_open);
 		}
+		return (JSchConnection) connection;
 	}
 
 	/*
@@ -97,9 +99,9 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) throws CoreException {
-		checkConnection();
+		JSchConnection connection = checkConnection();
 		SubMonitor subMon = SubMonitor.convert(monitor, 10);
-		ChildInfosCommand command = new ChildInfosCommand(fConnection, fRemotePath);
+		ChildInfosCommand command = new ChildInfosCommand(connection, fRemotePath);
 		return command.getResult(subMon.newChild(10));
 	}
 
@@ -128,11 +130,11 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public void delete(int options, IProgressMonitor monitor) throws CoreException {
-		checkConnection();
+		JSchConnection connection = checkConnection();
 		SubMonitor subMon = SubMonitor.convert(monitor, 20);
 		IFileInfo info = fetchInfo(EFS.NONE, subMon.newChild(10));
 		if (!subMon.isCanceled() && info.exists()) {
-			DeleteCommand command = new DeleteCommand(fConnection, fRemotePath);
+			DeleteCommand command = new DeleteCommand(connection, fRemotePath);
 			command.getResult(subMon.newChild(10));
 		}
 	}
@@ -145,9 +147,9 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException {
-		checkConnection();
+		JSchConnection connection = checkConnection();
 		SubMonitor subMon = SubMonitor.convert(monitor, 10);
-		FetchInfoCommand command = new FetchInfoCommand(fConnection, fRemotePath);
+		FetchInfoCommand command = new FetchInfoCommand(connection, fRemotePath);
 		return command.getResult(subMon.newChild(10));
 	}
 
@@ -159,7 +161,7 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public IFileStore getChild(String name) {
-		URI uri = JSchFileSystem.getURIFor(fConnection.getName(), fRemotePath.append(name).toString());
+		URI uri = JSchFileSystem.getURIFor(JSchFileSystem.getConnectionNameFor(fURI), fRemotePath.append(name).toString());
 		return JschFileStore.getInstance(uri);
 	}
 
@@ -201,7 +203,7 @@ public class JschFileStore extends FileStore {
 		if (fRemotePath.segmentCount() > 0) {
 			parentPath = fRemotePath.removeLastSegments(1).toString();
 		}
-		return JschFileStore.getInstance(JSchFileSystem.getURIFor(fConnection.getName(), parentPath));
+		return JschFileStore.getInstance(JSchFileSystem.getURIFor(JSchFileSystem.getConnectionNameFor(fURI), parentPath));
 	}
 
 	/*
@@ -212,7 +214,7 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException {
-		checkConnection();
+		JSchConnection connection = checkConnection();
 		SubMonitor subMon = SubMonitor.convert(monitor, 20);
 
 		IFileInfo info = fetchInfo(EFS.NONE, subMon.newChild(10));
@@ -227,7 +229,7 @@ public class JschFileStore extends FileStore {
 					}
 				}
 
-				MkdirCommand command = new MkdirCommand(fConnection, fRemotePath);
+				MkdirCommand command = new MkdirCommand(connection, fRemotePath);
 				command.getResult(subMon.newChild(10));
 			} else if (!info.isDirectory()) {
 				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE, NLS.bind(
@@ -246,7 +248,7 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException {
-		checkConnection();
+		JSchConnection connection = checkConnection();
 		SubMonitor subMon = SubMonitor.convert(monitor, 30);
 		IFileInfo info = fetchInfo(EFS.NONE, subMon.newChild(10));
 		if (!subMon.isCanceled()) {
@@ -258,7 +260,7 @@ public class JschFileStore extends FileStore {
 				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE, NLS.bind(
 						Messages.JschFileStore_Is_a_directory, fRemotePath.toString()), null));
 			}
-			GetInputStreamCommand command = new GetInputStreamCommand(fConnection, fRemotePath);
+			GetInputStreamCommand command = new GetInputStreamCommand(connection, fRemotePath);
 			return command.getResult(subMon.newChild(10));
 		}
 		return null;
@@ -272,7 +274,7 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
-		checkConnection();
+		JSchConnection connection = checkConnection();
 		SubMonitor subMon = SubMonitor.convert(monitor, 30);
 		IFileInfo info = fetchInfo(EFS.NONE, subMon.newChild(10));
 		if (!subMon.isCanceled()) {
@@ -280,7 +282,7 @@ public class JschFileStore extends FileStore {
 				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE, NLS.bind(
 						Messages.JschFileStore_Is_a_directory, fRemotePath.toString()), null));
 			}
-			GetOutputStreamCommand command = new GetOutputStreamCommand(fConnection, options, fRemotePath);
+			GetOutputStreamCommand command = new GetOutputStreamCommand(connection, options, fRemotePath);
 			return command.getResult(subMon.newChild(10));
 		}
 		return null;
@@ -295,9 +297,9 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
-		checkConnection();
+		JSchConnection connection = checkConnection();
 		SubMonitor subMon = SubMonitor.convert(monitor, 10);
-		PutInfoCommand command = new PutInfoCommand(fConnection, info, options, fRemotePath);
+		PutInfoCommand command = new PutInfoCommand(connection, info, options, fRemotePath);
 		command.getResult(subMon.newChild(10));
 	}
 
@@ -308,6 +310,6 @@ public class JschFileStore extends FileStore {
 	 */
 	@Override
 	public URI toURI() {
-		return JSchFileSystem.getURIFor(fConnection.getName(), fRemotePath.toString());
+		return fURI;
 	}
 }

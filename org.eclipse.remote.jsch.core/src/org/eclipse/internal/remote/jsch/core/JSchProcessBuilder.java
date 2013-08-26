@@ -25,6 +25,7 @@ import java.util.Set;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.internal.remote.jsch.core.messages.Messages;
 import org.eclipse.remote.core.AbstractRemoteProcessBuilder;
+import org.eclipse.remote.core.IRemoteFileManager;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 
@@ -33,19 +34,18 @@ import com.jcraft.jsch.JSchException;
 
 public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 	private final JSchConnection fConnection;
-	private final JSchFileManager fFileMgr;
-	private final Map<String, String> fRemoteEnv;
-	private Map<String, String> fNewRemoteEnv = null;
+	private final Map<String, String> fRemoteEnv = new HashMap<String, String>();
 	private final Set<Character> charSet = new HashSet<Character>();
+
+	private Map<String, String> fNewRemoteEnv = null;
 
 	/**
 	 * @since 4.0
 	 */
-	public JSchProcessBuilder(JSchConnection conn, JSchFileManager fileMgr, List<String> command) {
-		super(conn, command);
-		fConnection = conn;
-		fFileMgr = fileMgr;
-		fRemoteEnv = new HashMap<String, String>(conn.getEnv());
+	public JSchProcessBuilder(JSchConnection connection, List<String> command) {
+		super(command);
+		fConnection = connection;
+		fRemoteEnv.putAll(fConnection.getEnv());
 
 		// Create set of characters not to escape
 		String trustedChars = null;
@@ -60,8 +60,8 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 	/**
 	 * @since 4.0
 	 */
-	public JSchProcessBuilder(JSchConnection conn, JSchFileManager fileMgr, String... command) {
-		this(conn, fileMgr, Arrays.asList(command));
+	public JSchProcessBuilder(JSchConnection connection, String... command) {
+		this(connection, Arrays.asList(command));
 	}
 
 	/*
@@ -72,8 +72,9 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 	@Override
 	public IFileStore directory() {
 		IFileStore dir = super.directory();
-		if (dir == null) {
-			dir = fFileMgr.getResource(connection().getWorkingDirectory());
+		IRemoteFileManager fileMgr = fConnection.getFileManager();
+		if (dir == null && fileMgr != null) {
+			dir = fileMgr.getResource(fConnection.getWorkingDirectory());
 			directory(dir);
 		}
 		return dir;
@@ -177,7 +178,6 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 			ChannelExec exec = fConnection.getExecChannel();
 			String command = buildCommand(remoteCmd, env, clearEnv);
 			exec.setCommand(command);
-			System.out.println("running command: " + command); //$NON-NLS-1$
 			exec.setPty((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
 			exec.setXForwarding((flags & FORWARD_X11) == FORWARD_X11);
 			exec.connect();

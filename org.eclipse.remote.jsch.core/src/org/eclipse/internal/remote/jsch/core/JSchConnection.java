@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.internal.remote.jsch.core;
 
+import java.io.IOException;
 import java.net.PasswordAuthentication;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +29,9 @@ import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionChangeEvent;
 import org.eclipse.remote.core.IRemoteConnectionChangeListener;
+import org.eclipse.remote.core.IRemoteFileManager;
+import org.eclipse.remote.core.IRemoteProcess;
+import org.eclipse.remote.core.IRemoteProcessBuilder;
 import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.IUserAuthenticator;
 import org.eclipse.remote.core.exception.AddressInUseException;
@@ -55,12 +59,13 @@ public class JSchConnection implements IRemoteConnection {
 	private int fPort = DEFAULT_PORT;
 	private String fConnName;
 	private boolean fIsOpen;
-	private IUserAuthenticator fAuthenticator;
 	private final IJSchService fJSchService;
 
 	private final IRemoteServices fRemoteServices;
 	private final ListenerList fListeners = new ListenerList();
 	private final List<Session> fSessions = new ArrayList<Session>();
+
+	private ChannelSftp fSftpChannel;
 
 	public JSchConnection(String name, IRemoteServices services) {
 		fConnName = name;
@@ -76,6 +81,35 @@ public class JSchConnection implements IRemoteConnection {
 	 */
 	public void addConnectionChangeListener(IRemoteConnectionChangeListener listener) {
 		fListeners.add(listener);
+	}
+
+	private boolean checkConfiguration(Session session, IProgressMonitor monitor) throws RemoteConnectionException {
+		SubMonitor subMon = SubMonitor.convert(monitor, 10);
+		ChannelSftp sftp;
+		try {
+			/*
+			 * First, check if sftp is supported at all. This is required for EFS, so throw exception if not supported.
+			 */
+			sftp = openSftpChannel(session);
+		} catch (RemoteConnectionException e) {
+			throw new RemoteConnectionException(Messages.JSchConnection_Remote_host_does_not_support_sftp);
+		}
+		/*
+		 * While sftp channel is open, try opening an exec channel. If it doesn't succeed, then MaxSession is < 2 so we need at
+		 * least one additional session.
+		 */
+		try {
+			loadEnv(subMon.newChild(10));
+		} catch (RemoteConnectionException e) {
+			if (e.getMessage().contains("channel is not opened")) { //$NON-NLS-1$
+				return false;
+			}
+		} finally {
+			if (sftp != null) {
+				sftp.disconnect();
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -97,6 +131,9 @@ public class JSchConnection implements IRemoteConnection {
 	 */
 	public synchronized void close() {
 		if (isOpen()) {
+			if (fSftpChannel != null && fSftpChannel.isConnected()) {
+				fSftpChannel.disconnect();
+			}
 			for (Session session : fSessions) {
 				if (session.isConnected()) {
 					session.disconnect();
@@ -249,23 +286,19 @@ public class JSchConnection implements IRemoteConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.remote.core.IRemoteServices#getCommandShell(int)
+	 */
+	public IRemoteProcess getCommandShell(int flags) throws IOException {
+		throw new IOException("Not currently implemented"); //$NON-NLS-1$
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#getEnv()
 	 */
 	public Map<String, String> getEnv() {
 		return Collections.unmodifiableMap(fEnv);
-	}
-
-	private void loadEnv(IProgressMonitor monitor) throws RemoteConnectionException {
-		SubMonitor subMon = SubMonitor.convert(monitor, 10);
-		ExecCommand exec = new ExecCommand(this);
-		String env = exec.setCommand("printenv").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
-		String[] vars = env.split("\n"); //$NON-NLS-1$
-		for (String var : vars) {
-			String[] kv = var.split("="); //$NON-NLS-1$
-			if (kv.length == 2) {
-				fEnv.put(kv[0], kv[1]);
-			}
-		}
 	}
 
 	/*
@@ -275,6 +308,31 @@ public class JSchConnection implements IRemoteConnection {
 	 */
 	public String getEnv(String name) {
 		return getEnv().get(name);
+	}
+
+	/**
+	 * Open an exec channel to the remote host.
+	 * 
+	 * @return exec channel or null if the progress monitor was cancelled
+	 * 
+	 * @throws RemoteConnectionException
+	 *             if a channel could not be opened
+	 */
+	public ChannelExec getExecChannel() throws RemoteConnectionException {
+		try {
+			return (ChannelExec) fSessions.get(0).openChannel("exec"); //$NON-NLS-1$
+		} catch (JSchException e) {
+			throw new RemoteConnectionException(e.getMessage());
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteServices#getFileManager()
+	 */
+	public IRemoteFileManager getFileManager() {
+		return new JSchFileManager(this);
 	}
 
 	/*
@@ -293,6 +351,121 @@ public class JSchConnection implements IRemoteConnection {
 	 */
 	public int getPort() {
 		return fPort;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteServices#getProcessBuilder(java.util.List)
+	 */
+	public IRemoteProcessBuilder getProcessBuilder(List<String> command) {
+		return new JSchProcessBuilder(this, command);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteServices#getProcessBuilder(java.lang.String[])
+	 */
+	public IRemoteProcessBuilder getProcessBuilder(String... command) {
+		return new JSchProcessBuilder(this, command);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnection#getProperty(java.lang.String )
+	 */
+	public String getProperty(String key) {
+		return fProperties.get(key);
+	}
+
+	/**
+	 * Get the result of executing a pwd command.
+	 * 
+	 * @return current working directory
+	 */
+	private String getPwd() {
+		return null; // TODO: implement
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnection#getRemoteServices()
+	 */
+	public IRemoteServices getRemoteServices() {
+		return fRemoteServices;
+	}
+
+	/**
+	 * Open an sftp channel to the remote host. Always use the second session if available.
+	 * 
+	 * @return sftp channel or null if the progress monitor was cancelled
+	 * @throws RemoteConnectionException
+	 *             if a channel could not be opened
+	 */
+	public ChannelSftp getSftpChannel() throws RemoteConnectionException {
+		if (fSftpChannel == null || fSftpChannel.isClosed()) {
+			Session session = fSessions.get(0);
+			if (fSessions.size() > 1) {
+				session = fSessions.get(1);
+			}
+			fSftpChannel = openSftpChannel(session);
+			if (fSftpChannel == null) {
+				throw new RemoteConnectionException(Messages.JSchConnection_Unable_to_open_sftp_channel);
+			}
+		}
+		return fSftpChannel;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnection#getUsername()
+	 */
+	public String getUsername() {
+		return fUsername;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnection#getWorkingDirectory()
+	 */
+	public String getWorkingDirectory() {
+		if (!isOpen()) {
+			return "/"; //$NON-NLS-1$
+		}
+		if (fWorkingDir == null) {
+			fWorkingDir = getPwd();
+			if (fWorkingDir == null) {
+				return "/"; //$NON-NLS-1$
+			}
+		}
+		return fWorkingDir;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnection#isOpen()
+	 */
+	public boolean isOpen() {
+		return fIsOpen;
+	}
+
+	private void loadEnv(IProgressMonitor monitor) throws RemoteConnectionException {
+		SubMonitor subMon = SubMonitor.convert(monitor, 10);
+		ExecCommand exec = new ExecCommand(this);
+		String env = exec.setCommand("printenv").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+		String[] vars = env.split("\n"); //$NON-NLS-1$
+		for (String var : vars) {
+			String[] kv = var.split("="); //$NON-NLS-1$
+			if (kv.length == 2) {
+				fEnv.put(kv[0], kv[1]);
+			}
+		}
 	}
 
 	/**
@@ -390,78 +563,6 @@ public class JSchConnection implements IRemoteConnection {
 		fProperties.put(OS_ARCH_PROPERTY, osArch);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getProperty(java.lang.String )
-	 */
-	public String getProperty(String key) {
-		return fProperties.get(key);
-	}
-
-	/**
-	 * Get the result of executing a pwd command.
-	 * 
-	 * @return current working directory
-	 */
-	private String getPwd() {
-		return null; // TODO: implement
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getRemoteServices()
-	 */
-	public IRemoteServices getRemoteServices() {
-		return fRemoteServices;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getUsername()
-	 */
-	public String getUsername() {
-		return fUsername;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getWorkingDirectory()
-	 */
-	public String getWorkingDirectory() {
-		if (!isOpen()) {
-			return "/"; //$NON-NLS-1$
-		}
-		if (fWorkingDir == null) {
-			fWorkingDir = getPwd();
-			if (fWorkingDir == null) {
-				return "/"; //$NON-NLS-1$
-			}
-		}
-		return fWorkingDir;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#isOpen()
-	 */
-	public boolean isOpen() {
-		return fIsOpen;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#open()
-	 */
-	public void open(IProgressMonitor monitor) throws RemoteConnectionException {
-		open(null, monitor);
-	}
-
 	private Session newSession(final IUserAuthenticator authenticator, IProgressMonitor monitor) throws RemoteConnectionException {
 		SubMonitor progress = SubMonitor.convert(monitor, 10);
 		try {
@@ -510,7 +611,6 @@ public class JSchConnection implements IRemoteConnection {
 			fJSchService.connect(session, 0, progress.newChild(10));
 			if (!progress.isCanceled()) {
 				fSessions.add(session);
-				fAuthenticator = authenticator;
 				return session;
 			}
 			return null;
@@ -519,72 +619,13 @@ public class JSchConnection implements IRemoteConnection {
 		}
 	}
 
-	private ChannelSftp fSftpChannel;
-	private ChannelExec fExecChannel;
-
-	/**
-	 * Open an sftp channel to the remote host. Always use the second session if available.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return sftp channel or null if the progress monitor was cancelled
-	 * @throws RemoteConnectionException
-	 *             if a channel could not be opened
+	 * @see org.eclipse.remote.core.IRemoteConnection#open()
 	 */
-	public ChannelSftp getSftpChannel() throws RemoteConnectionException {
-		Session session = fSessions.get(0);
-		if (fSessions.size() > 1) {
-			session = fSessions.get(1);
-		}
-		ChannelSftp channel = openSftpChannel(session);
-		if (channel == null) {
-			throw new RemoteConnectionException("Unable to open sftp channel: check sftp is enabled on remote host");
-		}
-		return channel;
-	}
-
-	private ChannelSftp openSftpChannel(Session session) throws RemoteConnectionException {
-		try {
-			ChannelSftp channel = (ChannelSftp) session.openChannel("sftp"); //$NON-NLS-1$
-			channel.connect();
-			return channel;
-		} catch (JSchException e) {
-			if (!e.getMessage().contains("channel is not opened")) { //$NON-NLS-1$
-				throw new RemoteConnectionException(e.getMessage());
-			}
-		}
-		return null;
-	}
-
-	private ChannelExec openExecChannel(Session[] sessions) throws RemoteConnectionException {
-		for (Session session : sessions) {
-			try {
-				ChannelExec channel = (ChannelExec) session.openChannel("exec"); //$NON-NLS-1$
-				if (!channel.isConnected()) {
-					channel.connect();
-					return channel;
-				}
-			} catch (JSchException e) {
-				if (!e.getMessage().contains("channel is not opened")) { //$NON-NLS-1$
-					throw new RemoteConnectionException(e.getMessage());
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Open an exec channel to the remote host.
-	 * 
-	 * @return exec channel or null if the progress monitor was cancelled
-	 * 
-	 * @throws RemoteConnectionException
-	 *             if a channel could not be opened
-	 */
-	public ChannelExec getExecChannel() throws RemoteConnectionException {
-		try {
-			return (ChannelExec) fSessions.get(0).openChannel("exec"); //$NON-NLS-1$
-		} catch (JSchException e) {
-			throw new RemoteConnectionException(e.getMessage());
-		}
+	public void open(IProgressMonitor monitor) throws RemoteConnectionException {
+		open(null, monitor);
 	}
 
 	/*
@@ -610,29 +651,14 @@ public class JSchConnection implements IRemoteConnection {
 		}
 	}
 
-	private boolean checkConfiguration(Session session, IProgressMonitor monitor) throws RemoteConnectionException {
-		SubMonitor subMon = SubMonitor.convert(monitor, 10);
-		/*
-		 * First, check if sftp is supported at all. This is required for EFS, so throw exception if not supported.
-		 */
-		ChannelSftp sftp = openSftpChannel(session);
-		if (sftp == null) {
-			throw new RemoteConnectionException(
-					"Remote host does not support sftp. Remote functionality requires sftp to be enabled");
-		}
-		/*
-		 * While sftp channel is open, try opening an exec channel. If it doesn't succeed, then MaxSession is < 2 so we need at
-		 * least one additional session.
-		 */
+	private ChannelSftp openSftpChannel(Session session) throws RemoteConnectionException {
 		try {
-			loadEnv(subMon.newChild(10));
-		} catch (RemoteConnectionException e) {
-			if (e.getMessage().contains("channel is not opened")) {
-				return false;
-			}
+			ChannelSftp channel = (ChannelSftp) session.openChannel("sftp"); //$NON-NLS-1$
+			channel.connect();
+			return channel;
+		} catch (JSchException e) {
+			throw new RemoteConnectionException(e.getMessage());
 		}
-		sftp.disconnect();
-		return true;
 	}
 
 	/*

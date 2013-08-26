@@ -74,7 +74,7 @@ public class RemoteServicesUtils {
 			if (remoteConnectionManager != null) {
 				IRemoteConnection remoteConnection = remoteConnectionManager.getConnection(connectionName);
 				if (remoteConnection != null) {
-					IRemoteFileManager remoteFileManager = remoteServices.getFileManager(remoteConnection);
+					IRemoteFileManager remoteFileManager = remoteConnection.getFileManager();
 					if (remoteFileManager != null) {
 						return remoteFileManager.getResource(path);
 					}

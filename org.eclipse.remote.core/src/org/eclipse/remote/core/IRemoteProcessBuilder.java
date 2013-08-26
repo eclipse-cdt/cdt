@@ -65,20 +65,6 @@ public interface IRemoteProcessBuilder {
 	public IRemoteProcessBuilder command(String... command);
 
 	/**
-	 * Returns this process builder's connection.
-	 * 
-	 * @return the connection used by this process builder
-	 */
-	public IRemoteConnection connection();
-
-	/**
-	 * Sets this process builder's connection.
-	 * 
-	 * @return This process builder
-	 */
-	public IRemoteProcessBuilder connection(IRemoteConnection conn);
-
-	/**
 	 * Returns this process builder's working directory.
 	 * 
 	 * @return an IFileStore reference to the working directory

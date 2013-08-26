@@ -20,8 +20,8 @@ import org.eclipse.remote.core.IRemoteFileManager;
 public class JSchFileManager implements IRemoteFileManager {
 	private final JSchConnection fConnection;
 
-	public JSchFileManager(JSchConnection conn) {
-		fConnection = conn;
+	public JSchFileManager(JSchConnection connection) {
+		fConnection = connection;
 	}
 
 	/*
@@ -49,7 +49,7 @@ public class JSchFileManager implements IRemoteFileManager {
 		if (!path.isAbsolute()) {
 			path = new Path(fConnection.getWorkingDirectory()).append(path);
 		}
-		return new JschFileStore(fConnection, path.toString());
+		return new JschFileStore(JSchFileSystem.getURIFor(fConnection.getName(), path.toString()));
 	}
 
 	/*

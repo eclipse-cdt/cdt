@@ -2413,7 +2413,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		while ((t = LA(1)).getType() != endType) {
 			consume();
 			IASTToken token;
-			switch (LT(1)) {
+			switch (t.getType()) {
 			case IToken.tLPAREN:
 				token = balancedTokenSeq(t.getOffset(), IToken.tRPAREN);
 				break;

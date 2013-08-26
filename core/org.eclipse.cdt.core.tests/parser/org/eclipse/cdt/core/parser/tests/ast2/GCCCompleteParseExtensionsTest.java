@@ -432,4 +432,12 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 		parseGCC(code);
 		parseGPP(code);
 	}
+	
+	//	struct waldo {
+	//	} __attribute__((__aligned__((1))));
+	public void test__attribute__aligned_bug400204() throws Exception {
+		String code= getAboveComment();
+		parseGCC(code);
+		parseGPP(code);
+	}
 }

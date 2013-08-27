@@ -41,6 +41,10 @@ public interface ISemanticProblem {
 	int TYPE_CANNOT_DEDUCE_AUTO_TYPE 				= 10003;
 	int TYPE_UNKNOWN_FOR_EXPRESSION 				= 10004;
 	int TYPE_NOT_PERSISTED 							= 10005;
+	/**
+	 * @since 5.6
+	 */
+	int TYPE_ENUMERATION_EXPECTED                   = 10006;
 
 	/**
      * Returns the ID of the problem.

@@ -62,6 +62,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.GCCParserExtensionConfiguration;
@@ -114,8 +115,8 @@ public class AST2TestBase extends BaseTestCase {
 
 	private static Map<String, String> getGnuMap() {
 		Map<String, String> map= new HashMap<String, String>();
-		map.put("__GNUC__", "4");
-		map.put("__GNUC_MINOR__", "7");
+		map.put("__GNUC__", Integer.toString(GPPLanguage.GNU_LATEST_VERSION_MAJOR));
+		map.put("__GNUC_MINOR__", Integer.toString(GPPLanguage.GNU_LATEST_VERSION_MINOR));
 		map.put("__SIZEOF_SHORT__", "2");
 		map.put("__SIZEOF_INT__", "4");
 		map.put("__SIZEOF_LONG__", "8");

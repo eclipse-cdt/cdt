@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
@@ -65,6 +66,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -222,6 +224,12 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			if (e != e2)
 				return new TypeOfDependentExpression(e2);
 			return tde;
+		}
+		if (rtype instanceof ICPPUnaryTypeTransformation) {
+			ICPPUnaryTypeTransformation ttt= (ICPPUnaryTypeTransformation) rtype;
+			IType operand = ttt.getOperand();
+			IType operand2 = getCompositeType(operand);
+			return new CPPUnaryTypeTransformation(ttt.getOperator(), operand2);
 		}
 		if (rtype instanceof IBasicType || rtype == null || rtype instanceof ISemanticProblem) {
 			return rtype;

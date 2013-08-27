@@ -10323,4 +10323,42 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testGNUSyncBuiltins_bug389578() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
+	
+	//	template <typename T>
+	//	struct underlying_type {
+	//	    typedef __underlying_type(T) type;
+	//	};
+	//
+	//	enum class e_fixed_short1 : short;
+	//	enum class e_fixed_short2 : short { a = 1, b = 2 };
+	//
+	//	enum class e_scoped { a = 1, b = 2 };
+	//
+	//	enum e_unsigned { a1 = 1, b1 = 2 };
+	//	enum e_int { a2 = -1, b2 = 1 };
+	//	enum e_ulong { a3 = 5000000000, b3 };
+	//	enum e_long { a4 = -5000000000, b4 = 5000000000 };
+	//
+	//	typedef underlying_type<e_fixed_short1>::type short1_type;
+	//	typedef underlying_type<e_fixed_short2>::type short2_type;
+	//
+	//	typedef underlying_type<e_scoped>::type scoped_type;
+	//
+	//	typedef underlying_type<e_unsigned>::type unsigned_type;
+	//	typedef underlying_type<e_int>::type int_type;
+	//	typedef underlying_type<e_ulong>::type ulong_type;
+	//	typedef underlying_type<e_long>::type loong_type;
+	public void testUnderlyingTypeBuiltin_bug411196() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		
+		assertSameType((ITypedef) helper.assertNonProblem("short1_type"), CPPVisitor.SHORT_TYPE);
+		assertSameType((ITypedef) helper.assertNonProblem("short2_type"), CPPVisitor.SHORT_TYPE);
+
+		assertSameType((ITypedef) helper.assertNonProblem("scoped_type"), CPPVisitor.INT_TYPE);
+		
+		assertSameType((ITypedef) helper.assertNonProblem("unsigned_type"), CPPVisitor.UNSIGNED_INT);
+		assertSameType((ITypedef) helper.assertNonProblem("int_type"), CPPVisitor.INT_TYPE);
+		assertSameType((ITypedef) helper.assertNonProblem("ulong_type"), CPPVisitor.UNSIGNED_LONG);
+		assertSameType((ITypedef) helper.assertNonProblem("loong_type"), CPPVisitor.LONG_TYPE);
+	}
 }

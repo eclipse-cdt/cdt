@@ -21,16 +21,19 @@ public class TestScannerInfo extends ExtendedScannerInfo {
 	private String[] fIncludes;
 	private String[] fIncludeFiles;
 	private String[] fMacroFiles;
+	private Map<String, String> fDefinedSymbols;
 
-	public TestScannerInfo(String[] includes, String[] macroFiles, String[] includeFiles) {
+	public TestScannerInfo(String[] includes, String[] macroFiles, String[] includeFiles,
+			Map<String, String> definedSymbols) {
 		fIncludes= includes;
 		fIncludeFiles= includeFiles;
 		fMacroFiles= macroFiles;
+		fDefinedSymbols= definedSymbols;
 	}
 
 	@Override
 	public Map getDefinedSymbols() {
-		return Collections.emptyMap();
+		return fDefinedSymbols == null ? Collections.emptyMap() : fDefinedSymbols;
 	}
 
 	@Override

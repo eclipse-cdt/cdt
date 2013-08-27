@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
@@ -21,15 +24,17 @@ public class TestScannerProvider extends AbstractCExtension implements IScannerI
 	public static String[] sIncludes;
 	public static String[] sIncludeFiles;
 	public static String[] sMacroFiles;
+	public static Map<String, String> sDefinedSymbols = new HashMap<String, String>();
 	public final static String SCANNER_ID = CTestPlugin.PLUGIN_ID + ".TestScanner";
 	
 	public static void clear() {
 		sIncludes= sIncludeFiles= sMacroFiles= null;
+		sDefinedSymbols.clear();
 	}
 	
 	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
-		return new TestScannerInfo(sIncludes, sMacroFiles, sIncludeFiles);
+		return new TestScannerInfo(sIncludes, sMacroFiles, sIncludeFiles, sDefinedSymbols);
 	}
 
 	@Override

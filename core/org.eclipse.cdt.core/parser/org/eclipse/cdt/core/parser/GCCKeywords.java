@@ -79,4 +79,8 @@ public class GCCKeywords {
 		cp__is_literal_type= 			"__is_literal_type".toCharArray(),
 		cp__is_standard_layout= 		"__is_standard_layout".toCharArray(),
 		cp__is_trivial= 			    "__is_trivial".toCharArray();
+	
+	/** @since 5.6 */
+	public static final char[]
+		cp__underlying_type=			"__underlying_type".toCharArray();
 }

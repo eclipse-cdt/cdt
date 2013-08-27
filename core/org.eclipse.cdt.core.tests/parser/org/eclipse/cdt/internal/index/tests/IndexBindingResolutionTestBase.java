@@ -767,4 +767,10 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			fail("Artificially failing - see IndexBindingResolutionTestBase.fakeFailForReferenced()");
 		}
 	}
+	
+	protected static void assertSameType(IType first, IType second){
+		assertNotNull(first);
+		assertNotNull(second);
+		assertTrue("Expected types to be the same, but first was: '" + first.toString() + "' and second was: '" + second + "'", first.isSameType(second));
+	}
 }

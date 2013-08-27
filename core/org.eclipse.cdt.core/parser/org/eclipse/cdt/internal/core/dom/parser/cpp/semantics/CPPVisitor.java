@@ -137,6 +137,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeTransformationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
@@ -206,6 +207,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
@@ -219,9 +221,17 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
  * Collection of methods to extract information from a C++ translation unit.
  */
 public class CPPVisitor extends ASTQueries {
-	private static final CPPBasicType INT_TYPE = new CPPBasicType(Kind.eInt, 0);
-	private static final CPPBasicType LONG_TYPE = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG);
-	private static final CPPBasicType UNSIGNED_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
+	public static final CPPBasicType SHORT_TYPE = new CPPBasicType(Kind.eInt, IBasicType.IS_SHORT);
+	public static final CPPBasicType INT_TYPE = new CPPBasicType(Kind.eInt, 0);
+	public static final CPPBasicType LONG_TYPE = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG);
+	public static final CPPBasicType LONG_LONG_TYPE = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG_LONG);
+	public static final CPPBasicType INT128_TYPE = new CPPBasicType(Kind.eInt128, 0);
+	
+	public static final CPPBasicType UNSIGNED_SHORT = new CPPBasicType(Kind.eInt, IBasicType.IS_SHORT | IBasicType.IS_UNSIGNED);
+	public static final CPPBasicType UNSIGNED_INT = new CPPBasicType(Kind.eInt, IBasicType.IS_UNSIGNED);
+	public static final CPPBasicType UNSIGNED_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
+	public static final CPPBasicType UNSIGNED_LONG_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG_LONG | IBasicType.IS_UNSIGNED);
+	public static final CPPBasicType UNSIGNED_INT128 = new CPPBasicType(Kind.eInt128, IBasicType.IS_UNSIGNED);
 
 	public static final String BEGIN_STR = "begin"; //$NON-NLS-1$
 	public static final char[] BEGIN = BEGIN_STR.toCharArray();
@@ -2146,6 +2156,9 @@ public class CPPVisitor extends ASTQueries {
 			name = ((ICPPASTElaboratedTypeSpecifier) declSpec).getName();
 		} else if (declSpec instanceof IASTEnumerationSpecifier) {
 			name = ((IASTEnumerationSpecifier) declSpec).getName();
+		} else if (declSpec instanceof ICPPASTTypeTransformationSpecifier) {
+			ICPPASTTypeTransformationSpecifier spec = (ICPPASTTypeTransformationSpecifier) declSpec;
+			return new CPPUnaryTypeTransformation(spec.getOperator(), createType(spec.getOperand()));
 		} else if (declSpec instanceof ICPPASTSimpleDeclSpecifier) {
 			ICPPASTSimpleDeclSpecifier spec = (ICPPASTSimpleDeclSpecifier) declSpec;
 			// Check for decltype(expr)

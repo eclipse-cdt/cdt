@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeTraitType.TypeTraitOperator;
 import org.eclipse.cdt.core.parser.IScanner;
 
 /**
@@ -340,6 +341,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	@Deprecated
 	public ICPPASTTypenameExpression newTypenameExpression(IASTName qualifiedName, IASTExpression expr, boolean isTemplate);
 
+	/**
+	 * @since 5.6
+	 */
+	public ICPPASTTypeTraitSpecifier newTypeTraitSpecifier(TypeTraitOperator kind, ICPPASTTypeId typeId);
+	
 	@Override
 	public ICPPASTUnaryExpression newUnaryExpression(int operator, IASTExpression operand);
 

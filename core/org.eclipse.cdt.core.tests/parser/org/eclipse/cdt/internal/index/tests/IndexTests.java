@@ -34,6 +34,7 @@ public class IndexTests extends TestSuite {
 		
 		IndexCPPBindingResolutionBugs.addTests(suite);
 		IndexCPPBindingResolutionTest.addTests(suite);
+		IndexGPPBindingResolutionTest.addTests(suite);
 		IndexCPPTemplateResolutionTest.addTests(suite);
 		IndexCBindingResolutionBugs.addTests(suite);
 		IndexCBindingResolutionTest.addTests(suite);

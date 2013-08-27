@@ -89,6 +89,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypeTraitType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
@@ -1197,6 +1198,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPDeferredClassInstance.unmarshal(getPDOM(), firstBytes, buffer);
 		case ITypeMarshalBuffer.ALIAS_TEMPLATE:
 			return CPPAliasTemplateInstance.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.TYPE_TRAIT_TYPE:
+			return CPPTypeTraitType.unmarshal(firstBytes, buffer);
 		}
 
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first bytes=" + firstBytes)); //$NON-NLS-1$

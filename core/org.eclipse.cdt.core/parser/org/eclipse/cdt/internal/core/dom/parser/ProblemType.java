@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 public class ProblemType implements IProblemType, ISerializableType {
 	public static final IType UNRESOLVED_NAME = new ProblemType(TYPE_UNRESOLVED_NAME);
 	public static final IType UNKNOWN_FOR_EXPRESSION = new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+	public static final IType ENUMERATION_EXPECTED = new ProblemType(ISemanticProblem.TYPE_ENUMERATION_EXPECTED);
 	
 	private final int fID;
 

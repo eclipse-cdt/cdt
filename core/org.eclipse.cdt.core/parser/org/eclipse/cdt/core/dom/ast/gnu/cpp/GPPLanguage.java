@@ -40,6 +40,12 @@ public class GPPLanguage extends AbstractCLikeLanguage {
 	protected static final GPPParserExtensionConfiguration CPP_GNU_PARSER_EXTENSION= GPPParserExtensionConfiguration.getInstance();
 	public static final String ID = CCorePlugin.PLUGIN_ID + ".g++"; //$NON-NLS-1$
 
+	/**
+	 * @since 5.6
+	 */
+	public static final int GNU_LATEST_VERSION_MAJOR = 4,
+						    GNU_LATEST_VERSION_MINOR = 7;
+
 	private static final GPPLanguage DEFAULT_INSTANCE = new GPPLanguage();
 	
 	public static GPPLanguage getDefault() {

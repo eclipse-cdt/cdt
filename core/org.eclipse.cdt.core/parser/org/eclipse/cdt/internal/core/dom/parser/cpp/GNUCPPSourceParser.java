@@ -120,11 +120,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeTraitSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeTraitType.TypeTraitOperator;
 import org.eclipse.cdt.core.dom.parser.IExtensionToken;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
@@ -2976,6 +2978,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         			encounteredTypename= true;
         			break;
+        			
+        		case IGCCToken.tTT_underlying_type:
+        			if (encounteredRawType || encounteredTypename)
+        				throwBacktrack(LA(1));
+        			
+        			result= typeTraitSpecifier(DeclarationOptions.TYPEID);
+        			endOffset= calculateEndOffset(result);
+        			encounteredTypename= true;
+        			break;
 
         		default:
         			if (lt1 >= IExtensionToken.t__otherDeclSpecModifierFirst && lt1 <= IExtensionToken.t__otherDeclSpecModifierLast) {
@@ -3167,6 +3178,18 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         IASTName name = qualifiedName();
         return setRange(nodeFactory.newElaboratedTypeSpecifier(eck, name), offset, calculateEndOffset(name));
+    }
+    
+    /**
+     * Parse a type trait specifier. 
+     */
+    protected ICPPASTTypeTraitSpecifier typeTraitSpecifier(DeclarationOptions options) 
+    		throws BacktrackException, EndOfFileException {
+    	final int offset = consume(IGCCToken.tTT_underlying_type).getOffset();
+    	consume(IToken.tLPAREN);
+    	ICPPASTTypeId operand = typeId(options);
+    	final int endOffset = consumeOrEOC(IToken.tRPAREN).getEndOffset();
+    	return setRange(nodeFactory.newTypeTraitSpecifier(TypeTraitOperator.underlying_type, operand), offset, endOffset);
     }
 
 	@Override

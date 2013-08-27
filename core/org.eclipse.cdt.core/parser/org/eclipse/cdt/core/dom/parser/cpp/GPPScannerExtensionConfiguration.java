@@ -34,7 +34,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	private static GPPScannerExtensionConfiguration CONFIG_4_3= new GPPScannerExtensionConfiguration(VERSION_4_3);
 	private static GPPScannerExtensionConfiguration CONFIG_4_6= new GPPScannerExtensionConfiguration(VERSION_4_6);
 	private static GPPScannerExtensionConfiguration CONFIG_4_7= new GPPScannerExtensionConfiguration(VERSION_4_7);
-
+	
 	public static GPPScannerExtensionConfiguration getInstance() {
 		return CONFIG;
 	}
@@ -106,6 +106,8 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 		if (version >= VERSION_4_7) {
 			addKeyword(GCCKeywords.cp__float128, IGCCToken.t__float128);
 			addKeyword(GCCKeywords.cp__int128, IGCCToken.t__int128);
+			
+			addKeyword(GCCKeywords.cp__underlying_type, IGCCToken.tTT_underlying_type);
 		}
 	}
 	

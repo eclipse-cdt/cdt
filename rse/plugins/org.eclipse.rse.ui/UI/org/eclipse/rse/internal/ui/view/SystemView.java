@@ -2219,21 +2219,32 @@ public class SystemView extends SafeTreeViewer
 				if (multiSource != null && multiSource.length > 1){
 					src = multiSource; // use multi source instead
 				}
-				if (src instanceof Object[]){
+				if (src instanceof Object[] && ((Object[])src).length < 1000){ // too expensive when there are tons of children
 					Object[] srcs = (Object[])src;
-					for (int s = 0; s < srcs.length; s++){
-						if (initViewerFilters != null && initViewerFilters.length > 0) {
-							Widget w = findItem(srcs[s]);
-							if (w == null) {
-								refresh(parent);
-							} else {
-								properties[0] = IBasicPropertyConstants.P_IMAGE;
-								update(srcs[s], properties); // for refreshing non-structural properties in viewer when model changes
-
+					// only do this if there's an associated item
+					Object src1 = srcs[0];
+					Widget w = findItem(src1);
+					if (w == null){ // can't find item in tree - so fall back to refresh
+						refresh(parent);						
+					}
+					else {
+						for (int s = 0; s < srcs.length; s++){
+							Object srcObj = srcs[s];
+							if (srcObj != null){
+								if (initViewerFilters != null && initViewerFilters.length > 0) {
+									w = findItem(srcs[s]);
+									if (w == null) {
+										refresh(parent);
+									} else {
+										properties[0] = IBasicPropertyConstants.P_IMAGE;
+										update(srcObj, properties); // for refreshing non-structural properties in viewer when model changes
+		
+									}
+								} else {
+									properties[0] = IBasicPropertyConstants.P_IMAGE;
+									update(srcObj, properties); // for refreshing non-structural properties in viewer when model changes
+								}
 							}
-						} else {
-							properties[0] = IBasicPropertyConstants.P_IMAGE;
-							update(srcs[s], properties); // for refreshing non-structural properties in viewer when model changes
 						}
 					}
 				}

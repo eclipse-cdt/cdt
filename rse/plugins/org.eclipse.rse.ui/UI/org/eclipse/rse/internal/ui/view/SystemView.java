@@ -89,7 +89,7 @@
  * David McKnight   (IBM)        - [404396] delete doesn't always properly unmap tree items in SystemView
  * David McKnight   (IBM)        - [411398] SystemView event handling for icon changes needs to handle multi-source
  ********************************************************************************/
-
+ 
 package org.eclipse.rse.internal.ui.view;
 
 import java.util.ArrayList;

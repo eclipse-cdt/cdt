@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2013 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Noriaki Takatsu (IBM) - [220126] [dstore][api][breaking] Single process server for multiple clients
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * Noriaki Takatsu (IBM) - [239068] [multithread] "client.username" property must be set via dataStore Client
+ * David McKnight   (IBM) - [414016] [dstore] new server audit log requirements
  ********************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -98,4 +99,15 @@ public class UniversalServerUtilities {
 		dataStore.getClient().getLogger().logDebugMessage(minerName, message);
 	}
 
+	
+	/**
+	 * logAudit
+	 * 
+	 * @param data information to be logged
+	 * @param dataStore
+	 */
+	public static void logAudit(String[] data, DataStore dataStore)
+	{
+		dataStore.getClient().getLogger().logAudit(data);
+	}
 }

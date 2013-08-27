@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@
  * Noriaki Takatsu  (IBM) - [380562] [multithread][dstore] File Search is not canceled by the client UI on disconnect
  * David McKnight   (IBM)        - [390037] [dstore] Duplicated items in the System view
  * David McKnight   (IBM)        - [392012] [dstore] make server safer for delete operations
+ * David McKnight   (IBM) - [414016] [dstore] new server audit log requirements
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -749,10 +750,16 @@ public class UniversalFileSystemMiner extends Miner {
 				}
 				else if (readOnly)
 				{
+			        String[] auditData = new String[] {"SET-READONLY", filename.getAbsolutePath(), null, null}; //$NON-NLS-1$
+			     	UniversalServerUtilities.logAudit(auditData, _dataStore);
+
 					done = filename.setReadOnly();
 				}
 				else
 				{
+			        String[] auditData = new String[] {"SET-READWRITE", filename.getAbsolutePath(), null, null}; //$NON-NLS-1$
+			     	UniversalServerUtilities.logAudit(auditData, _dataStore);
+			     	
 					// doesn't handle non-unix
 					if (!_isWindows)
 					{
@@ -816,6 +823,11 @@ public class UniversalFileSystemMiner extends Miner {
 			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST);
 		else {
 			try {
+
+		        String[] auditData = new String[] {"SET-LAST-MODIFIED", filename.getAbsolutePath(), null, null}; //$NON-NLS-1$
+		     	UniversalServerUtilities.logAudit(auditData, _dataStore);
+				
+
 				String str = subject.getAttribute(DE.A_SOURCE);
 
 				long date = Long.parseLong(str);
@@ -2093,6 +2105,10 @@ public class UniversalFileSystemMiner extends Miner {
 	private DataElement handleSetFilePermissions(DataElement subject, DataElement newPermissions, DataElement status)
 	{
 		File file = getFileFor(subject);
+		
+        String[] auditData = new String[] {"SET-PERMISSIONS", file.getAbsolutePath(), null, null}; //$NON-NLS-1$
+     	UniversalServerUtilities.logAudit(auditData, _dataStore);
+     	
 
 		String permissionsStr = newPermissions.getName();
 		String[] permAttributes = permissionsStr.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$

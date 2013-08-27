@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2013 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -26,6 +26,7 @@
  * David McKnight  (IBM)  - [351993] [dstore] not able to connect to server if .eclipse folder not available
  * David McKnight  (IBM)  - [366220] Log_To_File no longer default value for log_location in rsecomm.properties
  * David McKnight  (IBM)  - [391774] [dstore] NPE if user-log directory cannot be created
+ * David McKnight   (IBM) - [414016] [dstore] new server audit log requirements
  ********************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -326,4 +327,13 @@ public class ServerLogger implements IServerLogger
 		}
 	}
 
+	/**
+	 * logAudit
+	 * 
+	 * @param data information to log.
+	 */
+	public void logAudit(String[] data){	
+		// initial implementation is a no-op but extenders (i.e. zosServerLogger) can provide 
+		// required function
+	}
 }

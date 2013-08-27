@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
+ * David McKnight   (IBM) - [414016] [dstore] new server audit log requirements
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -124,6 +125,9 @@ public class CreateFolderThread extends SecuredThread implements ICancellableHan
 				_status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_EXIST);
 			else
 			{
+		        String[] auditData = new String[] {"CREATE-FOLDER", filename.getAbsolutePath(), null, null}; //$NON-NLS-1$
+		     	UniversalServerUtilities.logAudit(auditData, _dataStore);
+
 				try {
 					boolean done = filename.mkdirs();
 					if (done)
@@ -167,6 +171,10 @@ public class CreateFolderThread extends SecuredThread implements ICancellableHan
 		}
 //		VirtualChild child = handler.getVirtualFile(vpath.getVirtualPart());
 		handler.getVirtualFile(vpath.getVirtualPart(), systemOperationMonitor);
+		
+        String[] auditData = new String[] {"MODIFY-ARCHIVE", handler.getArchive().getAbsolutePath(), null, null}; //$NON-NLS-1$
+     	UniversalServerUtilities.logAudit(auditData, _dataStore);		
+
 		handler.createFolder(vpath.getVirtualPart(), systemOperationMonitor);
 
 		status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);

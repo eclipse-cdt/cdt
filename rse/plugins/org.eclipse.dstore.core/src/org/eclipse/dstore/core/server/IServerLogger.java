@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  * Contributors:
  *  Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *  David McKnight  (IBM)  - [305272] [dstore][multithread] log close in ServerLogger
+ *  David McKnight   (IBM) - [414016] [dstore] new server audit log requirements
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -62,4 +63,11 @@ public interface IServerLogger
 	 * @since 3.2
 	 */
 	public void closeLogFileStream();
+	
+	/**
+	 * logAudit
+	 * 
+	 * @param data information to log.
+	 */
+	public void logAudit(String[] data);	
 }

@@ -18,6 +18,7 @@
  *  David McKnight     (IBM)   [380023] [dstore] remote file permissions lost after upload
  *  David McKnight     (IBM)   [385630] [dstore] backup files created during upload should be removed when upload successful
  *  David McKnight     (IBM)   [400251] [dstore] backup files cause problem when parent folder is read-only
+ *  David McKnight   (IBM) - [414016] [dstore] new server audit log requirements
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -190,7 +191,11 @@ public class ByteStreamHandler implements IByteStreamHandler
 	
 		if (fileName != null)
 		{
-			_dataStore.trace("Receiving Bytes for " + fileName); //$NON-NLS-1$
+			if (!_dataStore.isVirtual()){
+				_dataStore.trace("Receiving Bytes for " + fileName); //$NON-NLS-1$
+				String[] auditData = new String[] {"WRITE", remotePath, null, null}; //$NON-NLS-1$
+				_dataStore.getClient().getLogger().logAudit(auditData);			
+			}
 			try
 			{
 				// need to create directories as well
@@ -233,6 +238,11 @@ public class ByteStreamHandler implements IByteStreamHandler
 				fileStream.close();
 				
 				deleteBackupFile(newFile, backupFile);
+				
+				if (!_dataStore.isVirtual()){
+					String[] auditData = new String[] {"WRITE", remotePath, "0", null}; //$NON-NLS-1$ //$NON-NLS-2$
+					_dataStore.getClient().getLogger().logAudit(auditData);
+				}
 				if (status == null)
 					return;
 				status.setAttribute(DE.A_SOURCE, "success"); //$NON-NLS-1$
@@ -276,7 +286,11 @@ public class ByteStreamHandler implements IByteStreamHandler
 
 		if (fileName != null)
 		{
-			_dataStore.trace("Receiving Appended Bytes for " + fileName); //$NON-NLS-1$
+			if (!_dataStore.isVirtual()){
+				_dataStore.trace("Receiving Appended Bytes for " + fileName); //$NON-NLS-1$
+				String[] auditData = new String[] {"WRITE", remotePath, null, null}; //$NON-NLS-1$
+				_dataStore.getClient().getLogger().logAudit(auditData);
+			}
 			try
 			{
 				// need to create directories as well
@@ -323,7 +337,10 @@ public class ByteStreamHandler implements IByteStreamHandler
 					outStream.close();
 
 				}
-	
+				if (!_dataStore.isVirtual()){
+					String[] auditData = new String[] {"WRITE", remotePath, "0", null}; //$NON-NLS-1$ //$NON-NLS-2$
+					_dataStore.getClient().getLogger().logAudit(auditData);
+				}
 				if (status == null)
 					return;
 				status.setAttribute(DE.A_SOURCE, "success"); //$NON-NLS-1$

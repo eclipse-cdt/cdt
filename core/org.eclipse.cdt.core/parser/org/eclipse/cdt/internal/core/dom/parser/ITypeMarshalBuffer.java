@@ -38,6 +38,7 @@ public interface ITypeMarshalBuffer {
 	final static byte UNKNOWN_MEMBER_CLASS_INSTANCE = 0x0D;
 	final static byte DEFERRED_CLASS_INSTANCE       = 0x0E;
 	final static byte ALIAS_TEMPLATE                = 0x0F;
+	final static byte TYPE_TRANSFORMATION           = 0x10;
 	// Can add more types up to 0x1C, after that it will collide with TypeMarshalBuffer.UNSTORABLE_TYPE. 
 
 	final static byte

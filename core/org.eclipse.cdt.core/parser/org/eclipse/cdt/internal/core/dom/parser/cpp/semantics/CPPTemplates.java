@@ -97,6 +97,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -164,6 +165,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstan
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
+
 
 /**
  * Collection of static methods to perform template instantiation, member specialization and
@@ -1353,6 +1355,15 @@ public class CPPTemplates {
 					return SemanticUtil.replaceNestedType(typeContainer, newNestedType);
 				}
 				return typeContainer;
+			}
+
+			if (type instanceof ICPPUnaryTypeTransformation) {
+				ICPPUnaryTypeTransformation typeTransformation = (ICPPUnaryTypeTransformation) type; 
+				IType operand = instantiateType(typeTransformation.getOperand(), tpMap, packOffset, within, point);
+				switch (typeTransformation.getOperator()) {
+					case underlying_type: return TypeTraits.underlyingType(operand);
+					default:              return null;  // shouldn't happen
+				}
 			}
 
 			return type;

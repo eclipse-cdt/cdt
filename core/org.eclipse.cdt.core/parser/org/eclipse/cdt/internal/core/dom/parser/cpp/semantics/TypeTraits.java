@@ -15,15 +15,22 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
+import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.MethodKind;
 
@@ -325,5 +332,61 @@ public class TypeTraits {
 			}
 		}
 		return false;
+	}
+	
+	public static IType underlyingType(IType type) {
+		if (CPPTemplates.isDependentType(type)) {
+			return new CPPUnaryTypeTransformation(Operator.underlying_type, type);
+		} else if (!(type instanceof ICPPEnumeration)) {
+			return ProblemType.ENUMERATION_EXPECTED;
+		} else {
+			ICPPEnumeration enumeration = (ICPPEnumeration) type;
+
+			// [dcl.enum] p5
+			// "The underlying type can be explicitly specified using enum-base;
+			// if not explicitly specified, the underlying type of a scoped
+			// enumeration type is int."
+			IType fixedType = enumeration.getFixedType();
+			if (fixedType != null)
+				return fixedType;
+			if (enumeration.isScoped())
+				return CPPVisitor.INT_TYPE;
+			
+			// [dcl.enum] p6
+			// "For an enumeration whose underlying type is not fixed, the
+			// underlying type is an integral type that can represent all
+			// the numerator values defined in the enumeration. ... It is
+			// implementation-defined which integral type is used as the
+			// underlying type except that the underlying type shall not be
+			// larger than int unless the value of an enumerator cannot fit
+			// in an int or unsigned int. If the enumerator-list is empty,
+			// the underlying type is as if the enumeration had a single
+			// enumerator with value 0."
+			if (enumeration.getEnumerators().length == 0)
+				return CPPVisitor.INT_TYPE;
+			if (enumeration.getMinValue() < 0 || enumeration.getMaxValue() < 0) {
+				return smallestFittingType(enumeration,
+						CPPVisitor.INT_TYPE, 
+						CPPVisitor.LONG_TYPE, 
+						CPPVisitor.LONG_LONG_TYPE,
+						CPPVisitor.INT128_TYPE);
+			} else {
+				return smallestFittingType(enumeration,
+						CPPVisitor.UNSIGNED_INT, 
+						CPPVisitor.UNSIGNED_LONG, 
+						CPPVisitor.UNSIGNED_LONG_LONG,
+						CPPVisitor.UNSIGNED_INT128);
+			}
+		}
+	}
+	
+	private static IBasicType smallestFittingType(ICPPEnumeration enumeration, ICPPBasicType... types) {
+		for (int i = 0; i < types.length - 1; ++i) {
+			if (ArithmeticConversion.fitsIntoType(types[i], enumeration.getMinValue())
+			 && ArithmeticConversion.fitsIntoType(types[i], enumeration.getMaxValue())) {
+				return types[i];
+			}
+		}
+		return types[types.length - 1];  // assume it fits into the largest type provided
 	}
 }

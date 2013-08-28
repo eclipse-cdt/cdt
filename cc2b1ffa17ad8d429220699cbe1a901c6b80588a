@@ -53,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_65d6cc6d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/build/core/scannerconfig/ScannerConfigBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-08-28T15:30:25Z",
+      "side": 1,
+      "message": "The problem is that we don\u0027t know what it is inside the value that is causing the NPE.\n\nBased on your next comment I\u0027m going to delete this logging, and this won\u0027t matter anyhow.",
+      "parentUuid": "c73e4bec_e5277c38",
+      "revId": "cc2b1ffa17ad8d429220699cbe1a901c6b80588a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_251e84ef",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/build/core/scannerconfig/ScannerConfigBuilder.java",
         "patchSetId": 1

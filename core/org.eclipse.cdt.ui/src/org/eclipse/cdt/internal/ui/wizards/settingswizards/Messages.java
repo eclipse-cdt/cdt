@@ -56,6 +56,8 @@ class Messages extends NLS {
 	// messages for settings processors
 	public static String
 		ProjectSettingsWizardPage_Processor_Includes,
+		ProjectSettingsWizardPage_Processor_Libs,
+		ProjectSettingsWizardPage_Processor_LibPaths,
 		ProjectSettingsWizardPage_Processor_Macros;
 	
 	// error messages during export

@@ -89,6 +89,8 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 		// This could be replaced with an extension point
 		this.processors = Arrays.<ISettingsProcessor>asList(
 			new IncludePathsSettingsProcessor(),
+			new LibPathsSettingsProcessor(),
+			new LibrariesSettingsProcessor(),
 			new MacroSettingsProcessor()
 		);
 		

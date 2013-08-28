@@ -36,6 +36,7 @@ public class LibraryTab extends AbstractLangsListTab implements IPathEntryStoreL
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
+		ImportExportWizardButtons.addWizardLaunchButtons(usercomp, page.getElement());
 	sashForm.setWeights(PRIVATE_SASH_WEIGHTS);
 		langTree.setVisible(false);
 	}

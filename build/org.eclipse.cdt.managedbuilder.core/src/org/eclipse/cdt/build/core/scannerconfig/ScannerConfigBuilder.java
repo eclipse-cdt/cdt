@@ -171,8 +171,12 @@ public class ScannerConfigBuilder extends ACBuilder {
 		ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
 		IEnvironmentVariableManager mngr = CCorePlugin.getDefault().getBuildEnvironmentManager();
 		IEnvironmentVariable[] vars = mngr.getVariables(cfgDes, true);
+
 		for(int i = 0; i < vars.length; i++){
-			envProps.setProperty(vars[i].getName(), vars[i].getValue());
+			String key = vars[i].getName();
+			String value = vars[i].getValue();
+			if (key != null)
+				envProps.setProperty(key, value == null ? "" : value);
 		}
 
 		return envProps;

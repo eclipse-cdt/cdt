@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_1342bb66",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-28T01:13:41Z",
+      "side": 1,
+      "message": "Please add spaces around \u003d\u003d.",
+      "revId": "703b3c1dc5cacfbc1a8ae52dbc498734ac865727",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

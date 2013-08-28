@@ -47,8 +47,7 @@
     <platform-version-name>kepler</platform-version-name>
     <tm-stream>kepler</tm-stream>
     <eclipse-site>http://download.eclipse.org/releases/${platform-version-name}</eclipse-site>
-    <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20130517111416/repository</orbit-site>
-    <!-- <orbit-site>http://build.eclipse.org/orbit/committers/orbit-I/20130514212025/I20130514212025/repository</orbit-site> -->
+    <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20130827064939/repository</orbit-site>
     <rxtx-version>1.0.0.7837QcJa5vE7MnhE77YA7AU3SWUlbntVZAnlDoIGojcQd</rxtx-version>
     <!-- <rxtx-site>http://rxtx.qbang.org/eclipse</rxtx-site>-->
     <rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>

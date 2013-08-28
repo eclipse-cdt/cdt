@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_93c24b79",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1368
+      },
+      "writtenOn": "2013-08-28T01:00:13Z",
+      "side": 1,
+      "message": "This was to be consistent with other classes in the ...parser.cpp namespace, such as CPPTemplateTypeArgument, CPPASTNewExpression and others...oh well.",
+      "parentUuid": "c73e4bec_5090b9a1",
+      "revId": "d9a634249012548f5110fa9301dbbade6250c0c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_b0a81dd9",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2013-08-28T00:49:29Z",
       "side": 1,
       "message": "Please remove fArguments !\u003d null checks throughout the class.",
+      "revId": "d9a634249012548f5110fa9301dbbade6250c0c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_b3c5c785",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1368
+      },
+      "writtenOn": "2013-08-28T01:00:13Z",
+      "side": 1,
+      "message": "The patch removes the 4 that I see..",
+      "parentUuid": "c73e4bec_b0a81dd9",
       "revId": "d9a634249012548f5110fa9301dbbade6250c0c4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

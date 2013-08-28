@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David McKnight   (IBM) - [390037] [dstore] Duplicated items in the System view
  * David McKnight   (IBM) - [396440] [dstore] fix issues with the spiriting mechanism and other memory improvements (phase 1)
+ * David McKnight   (IBM) - [416048] [dstore] Using a remote shell does not work on Windows 7/Windows Server 2008r2
  *******************************************************************************/
 
 package org.eclipse.dstore.core.util;
@@ -124,8 +125,8 @@ public class CommandGenerator
     {
     	for (int i = 0; i < element.getNestedSize(); i++)
     	{
-    		DataElement child = element.get(i).dereference();
-    		if (child.isDeleted())
+    		DataElement child = element.get(i);
+    		if (child != null && child.isDeleted())
     		{
     			element.removeNestedData(child);
     		}
@@ -144,14 +145,31 @@ public class CommandGenerator
     public DataElement generateCommand(DataElement commandDescriptor, ArrayList arguments, DataElement dataObject, boolean refArg)
     {
     	//refArg = false;
+       	boolean subjectIsCommand = false;
         DataElement commandObject = createCommand(commandDescriptor);
         if (commandObject != null)
         {
+        	if (commandObject.getSource().equals("*")){ //$NON-NLS-1$
+        		// qualify it if we can
+        		DataElement subjectDescriptor = dataObject.getDescriptor();
+        		if (subjectDescriptor != null){
+        			if (subjectDescriptor.getType().equals(DE.T_COMMAND_DESCRIPTOR)){
+        				commandObject.setAttribute(DE.A_SOURCE, dataObject.getSource());
+        				subjectIsCommand = true;
+        			}
+        		}
+        	}
+        	
+        	if (dataObject.isDescriptor()){
+        		//System.out.println("using descriptor as command subject! - " + dataObject); //$NON-NLS-1$
+        		//System.out.println("Command is "+commandObject.getName()); //$NON-NLS-1$
+        		refArg = true;
+        	}
         	clearDeleted(dataObject);
 
             commandObject.setAttribute(DE.A_VALUE, commandDescriptor.getName());
 
-            if (refArg && !dataObject.isSpirit())
+            if ((refArg || subjectIsCommand) && !dataObject.isSpirit())
             {
                 _dataStore.createReference(commandObject, dataObject,DataStoreResources.model_contents);
             }
@@ -172,7 +190,7 @@ public class CommandGenerator
             {
                 for (int i = 0; i < arguments.size(); i++)
                 {
-                    DataElement arg = (DataElement) arguments.get(i);
+                    DataElement arg = (DataElement)arguments.get(i);
                     if (arg != null)
                     {
                         if (!arg.isUpdated() || arg.isSpirit() || !refArg)
@@ -208,13 +226,31 @@ public class CommandGenerator
     public DataElement generateCommand(DataElement commandDescriptor, DataElement arg, DataElement dataObject, boolean refArg)
     {
         //refArg = false;
-
+    	boolean subjectIsCommand = false;
         DataElement commandObject = createCommand(commandDescriptor);
         if (commandObject != null)
         {
+        	if (commandObject.getSource().equals("*")){ //$NON-NLS-1$
+        		// qualify it if we can
+        		DataElement subjectDescriptor = dataObject.getDescriptor();
+        		if (subjectDescriptor != null){
+        			if (subjectDescriptor.getType().equals(DE.T_COMMAND_DESCRIPTOR)){
+        				commandObject.setAttribute(DE.A_SOURCE, dataObject.getSource());
+        				subjectIsCommand = true;
+        			}
+        		}
+        	}
+
             commandObject.setAttribute(DE.A_VALUE, commandDescriptor.getName());
+            
+         	
+        	if (dataObject.isDescriptor()){
+        		//System.out.println("using descriptor as command subject! - " + dataObject); //$NON-NLS-1$
+        		//System.out.println("Command is "+commandObject.getName()); //$NON-NLS-1$
+        		refArg = true;
+        	}
 			clearDeleted(dataObject);
-            if (refArg && !dataObject.isSpirit())
+            if ((refArg || subjectIsCommand) && !dataObject.isSpirit())
             {
                 _dataStore.createReference(commandObject, dataObject,DataStoreResources.model_contents);
             }
@@ -259,13 +295,31 @@ public class CommandGenerator
     public DataElement generateCommand(DataElement commandDescriptor, DataElement dataObject, boolean refArg)
     {
     	//refArg = false;
+    	boolean subjectIsCommand = false;
         DataElement commandObject = createCommand(commandDescriptor);
         if (commandObject != null)
         {
+        	if (commandObject.getSource().equals("*")){ //$NON-NLS-1$
+        		// qualify it if we can
+        		DataElement subjectDescriptor = dataObject.getDescriptor();
+        		if (subjectDescriptor != null){
+        			if (subjectDescriptor.getType().equals(DE.T_COMMAND_DESCRIPTOR)){
+        				commandObject.setAttribute(DE.A_SOURCE, dataObject.getSource());
+        				subjectIsCommand = true;
+        			}
+        		}
+        	}
+        	
             commandObject.setAttribute(DE.A_VALUE, commandDescriptor.getName());
 
+         	
+        	if (dataObject.isDescriptor()){
+        		//System.out.println("using descriptor as command subject! - " + dataObject); //$NON-NLS-1$
+        		//System.out.println("Command is "+commandObject.getName()); //$NON-NLS-1$
+        		refArg = true;
+        	}
 			clearDeleted(dataObject);
-            if (refArg && !dataObject.isSpirit())
+            if ((refArg || subjectIsCommand) && !dataObject.isSpirit())
             {
                 _dataStore.createReference(commandObject, dataObject,DataStoreResources.model_arguments);
             }
@@ -333,5 +387,10 @@ public class CommandGenerator
     {
         DataElement commandObject = _dataStore.createObject(null, "RESPONSE", responseType); //$NON-NLS-1$
         return commandObject;
+    }
+    
+    public DataElement generateOOMMessage(String msg){
+    	DataElement oomMessage = _dataStore.createObject(null, "OOM", msg); //$NON-NLS-1$
+    	return oomMessage;
     }
 }

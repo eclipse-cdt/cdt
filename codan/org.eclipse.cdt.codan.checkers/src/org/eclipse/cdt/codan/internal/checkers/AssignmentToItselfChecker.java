@@ -41,16 +41,20 @@ public class AssignmentToItselfChecker extends AbstractIndexAstChecker {
 				return PROCESS_CONTINUE;
 			}
 
-			private boolean isAssignmentToItself(IASTExpression e) {
-				if (e instanceof IASTBinaryExpression) {
-					IASTBinaryExpression binExpr = (IASTBinaryExpression) e;
+			private boolean isAssignmentToItself(IASTExpression expr) {
+				if (expr instanceof IASTBinaryExpression) {
+					IASTBinaryExpression binExpr = (IASTBinaryExpression) expr;
 					if (binExpr.getOperator() == IASTBinaryExpression.op_assign) {
-						String op1 = binExpr.getOperand1().getRawSignature();
-						String op2 = binExpr.getOperand2().getRawSignature();
-						String expr = binExpr.getRawSignature();
-						return op1.equals(op2)
-								// When macro is used, RawSignature returns macro name, see bug 321933
-								&& !op1.equals(expr);
+						IASTExpression operand1 = binExpr.getOperand1();
+						IASTExpression operand2 = binExpr.getOperand2();
+						if (operand1 != null && operand2 != null) {
+							String op1 = operand1.getRawSignature();
+							String op2 = operand2.getRawSignature();
+							String exprImage = binExpr.getRawSignature();
+							return op1.equals(op2)
+									// When macro is used, RawSignature returns macro name, see bug 321933
+									&& !op1.equals(exprImage);
+						}
 					}
 				}
 				return false;

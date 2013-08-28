@@ -3931,6 +3931,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		String str1 = path.substring(2, index);
 		String result = null;
 		if(str1.startsWith(varName)){
+			result = ""; //$NON-NLS-1$
 			str1 = str1.substring(varName.length());
 			if(str1.length() != 0){
 				if(str1.startsWith(":")){ //$NON-NLS-1$
@@ -3941,8 +3942,13 @@ public class ManagedBuildManager extends AbstractCExtension {
 			}
 			// If the user has a path like ${workspace_loc:/thing}/other/thing
 			// ensure we return /thing/other/thing
-			if (index < path.length() - 1)
-				result += path.substring(index + 1);
+			if (index < path.length() - 1) {
+				// Ignore '/' if exists, to not to consider the path as an absolute path
+				if (path.charAt(index + 1) == '/')
+					result += path.substring(index + 2);
+				else
+					result += path.substring(index + 1);
+			}
 		}
 
 		return result;

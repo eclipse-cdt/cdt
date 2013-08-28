@@ -52,6 +52,24 @@
       "revId": "bfab512c9ab159a17a6f28965c7181bfc4f4311b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_d37b2a6b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/build/core/scannerconfig/ScannerConfigBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-08-28T18:26:59Z",
+      "side": 1,
+      "message": "I don\u0027t understand this area very well -- how does IConfigurationEnvironmentVariableSupplier relate to IEnvironmentVariableManager?\n\nAlso, I find the javadoc for IConfigurationEnvironmentVariableSupplier.getVariables confusing.  Do you know if \"If the array contains any {@code null} it will be ignored.\"   means that the array is ignored or just the invalid entry?\n\nIf IConfigurationEnvironmentVariableSupplier.getVariables  is somehow related to IEnvironmentVariableManager.getVariables, then should this loop be changed to search for null entries first so that it can ignore the array if nulls are found?",
+      "parentUuid": "c73e4bec_28fdb92e",
+      "revId": "bfab512c9ab159a17a6f28965c7181bfc4f4311b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

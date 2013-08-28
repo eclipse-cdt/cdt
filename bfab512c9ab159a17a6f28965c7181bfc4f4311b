@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_0899dd84",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/build/core/scannerconfig/ScannerConfigBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-08-28T16:09:57Z",
+      "side": 1,
+      "message": "You still are going to get NPE here when vars[i] is null. You need a check \"if (vars[i] !\u003d null)\" here.",
+      "revId": "bfab512c9ab159a17a6f28965c7181bfc4f4311b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

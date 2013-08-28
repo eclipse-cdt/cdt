@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_c5cd202f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3951,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-08-28T14:57:26Z",
+      "side": 1,
+      "message": "The current code is definitely buggy but your patch does not do the right thing in presence of other variables either.\nConsider: \"${workspace_loc}/AnotherProject/${ConfigName}/src\". That gets converted to the same relative path as \"${workspace_loc}/${ProjName}/src\".",
+      "revId": "3efe0f48b79bdf1f18c28a43c9a1c224125ba20d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

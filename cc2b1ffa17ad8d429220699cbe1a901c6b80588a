@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73e4bec_251e84ef",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/build/core/scannerconfig/ScannerConfigBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-08-28T15:25:41Z",
+      "side": 1,
+      "message": "This logging is either unnecessary or in the wrong place. If any, the logging should be in the place where the variable is added to the list, not done by an arbitrary client that uses variables.",
+      "revId": "cc2b1ffa17ad8d429220699cbe1a901c6b80588a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

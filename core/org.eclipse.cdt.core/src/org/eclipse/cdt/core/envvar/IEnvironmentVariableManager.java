@@ -29,7 +29,7 @@ public interface IEnvironmentVariableManager{
 	 * 
 	 * 
 	 * @return the reference to the IBuildEnvironmentVariable interface representing 
-	 * the variable of a given name
+	 * the variable of a given name or null
 	 * @param name environment variable name
 	 * if environment variable names are case insensitive in the current OS, 
 	 * the environment variable provider will query the getVariable method of suppliers always
@@ -52,7 +52,8 @@ public interface IEnvironmentVariableManager{
 	 * the environment variable provider will remove the duplicates of the variables if their names
 	 * differ only by case
 	 *
-	 * @return the array of IBuildEnvironmentVariable that represents the environment variables 
+	 * @return the array of IBuildEnvironmentVariable that represents the environment variables (the
+	 *   array may contain null values)
 	 */
 	public IEnvironmentVariable[] getVariables(ICConfigurationDescription cfg, boolean resolveMacros);
 

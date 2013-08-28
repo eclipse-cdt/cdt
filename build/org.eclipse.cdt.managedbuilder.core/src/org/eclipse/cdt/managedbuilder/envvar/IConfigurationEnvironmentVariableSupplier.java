@@ -50,7 +50,7 @@ public interface IConfigurationEnvironmentVariableSupplier {
 	 *    and the provider in turn calls that supplier again. Also the supplier should not know anything
 	 *    about the environment variables defined for the higher levels.
 	 * @return The array of IBuildEnvironmentVariable that represents the environment variables.
-	 *    If the array contains any {@code null} it will be ignored.
+	 *    The array may contain {@code null} values.
 	 */
 	IBuildEnvironmentVariable[] getVariables(IConfiguration configuration, IEnvironmentVariableProvider provider);
 }

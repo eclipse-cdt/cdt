@@ -34,6 +34,24 @@
       "revId": "bfab512c9ab159a17a6f28965c7181bfc4f4311b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_28fdb92e",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/build/core/scannerconfig/ScannerConfigBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-08-28T16:44:20Z",
+      "side": 1,
+      "message": "If you look at JavaDoc for IConfigurationEnvironmentVariableSupplier.getVariables() null values are allowed to return in array of variables. I am unsure whether concrete CDT implementation for IEnvironmentVariableManager filters that out or not but I think it would be safer to check here.",
+      "parentUuid": "c73e4bec_280e5941",
+      "revId": "bfab512c9ab159a17a6f28965c7181bfc4f4311b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

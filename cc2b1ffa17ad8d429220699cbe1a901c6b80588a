@@ -2,6 +2,57 @@
   "comments": [
     {
       "key": {
+        "uuid": "c73e4bec_a531f476",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/build/core/scannerconfig/ScannerConfigBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-08-28T15:28:06Z",
+      "side": 1,
+      "message": "This comment is really not necessary",
+      "revId": "cc2b1ffa17ad8d429220699cbe1a901c6b80588a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_8536786b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/build/core/scannerconfig/ScannerConfigBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-08-28T15:28:06Z",
+      "side": 1,
+      "message": "This comment is not necessary, the code speaks for itself",
+      "revId": "cc2b1ffa17ad8d429220699cbe1a901c6b80588a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_e5277c38",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/build/core/scannerconfig/ScannerConfigBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-08-28T15:28:06Z",
+      "side": 1,
+      "message": "This try/catch exception rewinding is better replaced by a simple null check",
+      "revId": "cc2b1ffa17ad8d429220699cbe1a901c6b80588a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_251e84ef",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/build/core/scannerconfig/ScannerConfigBuilder.java",
         "patchSetId": 1

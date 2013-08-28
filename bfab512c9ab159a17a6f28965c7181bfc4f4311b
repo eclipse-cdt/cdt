@@ -70,6 +70,24 @@
       "revId": "bfab512c9ab159a17a6f28965c7181bfc4f4311b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_1361127b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/build/core/scannerconfig/ScannerConfigBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-08-28T18:59:03Z",
+      "side": 1,
+      "message": "IEnvironmentVariableManager, at least CDT implementation, collects environment variables provided by different sources including IConfigurationEnvironmentVariableSupplier-s. I think it is sensible thing to do to get rid of null values supplied by those. It could be that CDT manager already does that. But IEnvironmentVariableManager is a public interface. It also could be that some ISV implements this interface and does not do that.\n\n\"If the array contains any {@code null} it will be ignored.\" - \"it\" refers to \"null\" here. If you think JavaDoc is ambiguous feel free to change the wording.\n\nThe array should not be ignored, null entries should be.",
+      "parentUuid": "c73e4bec_d37b2a6b",
+      "revId": "bfab512c9ab159a17a6f28965c7181bfc4f4311b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

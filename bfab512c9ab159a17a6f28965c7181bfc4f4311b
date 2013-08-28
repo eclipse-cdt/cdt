@@ -88,6 +88,24 @@
       "revId": "bfab512c9ab159a17a6f28965c7181bfc4f4311b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_8e14d502",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/build/core/scannerconfig/ScannerConfigBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-08-28T20:41:05Z",
+      "side": 1,
+      "message": "I tried to figure out a new wording, and it made me realize the part that confuses me.  The javadoc is for a return parameter, but is asserting how clients treat the result \"will be ignored\".\n\nI was thinking about changing the line to something like \"Callers should expect null entries\" and then let the caller decide what they do with it.  However, that lead to the conditions under which the entries would be null, which I don\u0027t know.\n\nI\u0027m also not sure why this function doesn\u0027t require implementors to remove the nulls.  I guess the javadoc was added after we already had clients that sometimes returned null?\n\nThe rest sort of makes sense to me now.  You\u0027re suggesting that we should have javadoc in the IEnvironmentVariableManager to describe the existing behaviour.  That behaviour includes cases where the IConfigurationEnvironmentVariableSupplier is able to return null entries.",
+      "parentUuid": "c73e4bec_1361127b",
+      "revId": "bfab512c9ab159a17a6f28965c7181bfc4f4311b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

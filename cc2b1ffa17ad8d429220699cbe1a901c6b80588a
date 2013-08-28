@@ -89,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_0571c8ff",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/build/core/scannerconfig/ScannerConfigBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-08-28T15:41:08Z",
+      "side": 1,
+      "message": "Code within the implementation of toString()",
+      "parentUuid": "c73e4bec_a5957497",
+      "revId": "cc2b1ffa17ad8d429220699cbe1a901c6b80588a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_251e84ef",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/build/core/scannerconfig/ScannerConfigBuilder.java",
         "patchSetId": 1

@@ -264,7 +264,8 @@ public class IncludeOrganizer {
 				prototypes.add(prototype);
 			}
 			if (!allowReordering && prototype.getExistingInclude() != null
-					&& !prototype.isRequired() && prototype.getHeader() != null // Unused and resolved. 
+					&& !prototype.isRequired() && prototype.getHeader() != null // Unused and resolved.
+					&& !fContext.isPartnerFile(prototype.getHeader())
 					&& isContainedInRegion(prototype.getExistingInclude(), includeReplacementRegion)) {
 				switch (preferences.unusedStatementsDisposition) {
 				case REMOVE:
@@ -1082,8 +1083,9 @@ public class IncludeOrganizer {
 
 	private String createIncludeDirective(IncludePrototype include, String lineComment) {
 		StringBuilder buf = new StringBuilder();
-		// Unresolved includes are preserved out of caution.
-		if (!include.isRequired() && include.getHeader() != null) {
+		// Unresolved includes are preserved out of caution. Partner include is always preserved.
+		if (!include.isRequired() && include.getHeader() != null
+				&& !fContext.isPartnerFile(include.getHeader())) {
 			switch (fContext.getPreferences().unusedStatementsDisposition) {
 			case REMOVE:
 				return null;

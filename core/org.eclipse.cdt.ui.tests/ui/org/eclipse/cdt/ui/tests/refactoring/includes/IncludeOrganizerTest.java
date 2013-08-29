@@ -299,6 +299,26 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 		assertExpectedResults();
 	}
 
+	//f.h
+	//void f(int p);
+
+	//f.cpp
+	//#include "f.h"
+	//void f(int p) {
+	//}
+	//====================
+	//#include "f.h"
+	//
+	//void f(int p) {
+	//}
+	public void testExistingPartnerIncludeIsNotRemoved() throws Exception {
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setValue(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION,
+				UnusedStatementDisposition.REMOVE.toString());
+		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		assertExpectedResults();
+	}
+
 	//h1.h
 	//class A {};
 

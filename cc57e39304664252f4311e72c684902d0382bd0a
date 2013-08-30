@@ -34,6 +34,24 @@
       "revId": "cc57e39304664252f4311e72c684902d0382bd0a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_a77c4128",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/DebugStringVariableSubstitutor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-08-30T15:41:51Z",
+      "side": 1,
+      "message": "I\u0027m not sure @SuppressWarnings will work with this type of error.  I guess an API filter is necessary.",
+      "parentUuid": "c73e4bec_a420bf24",
+      "revId": "cc57e39304664252f4311e72c684902d0382bd0a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

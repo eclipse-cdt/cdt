@@ -52,6 +52,24 @@
       "revId": "718cce998f3afa230d74e44283ad590de9c21d69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_9475faa4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPTypeTraitType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-08-30T03:24:24Z",
+      "side": 1,
+      "message": "Interesting; I didn\u0027t know that there was such a thing as typeof(T) and that we modelled it. I agree that it is very similar to __underlying_type(T). I think it\u0027s fairly strange to model it as an IASTExpression, though. I would expect an expression to have a value, and to be usable in expression contexts, for example \"\u003ce\u003e\" in \"Type var \u003d \u003ce\u003e;\". typeof(T) doesn\u0027t have a value and it\u0027s not usable in such contexts, and I believe it\u0027s the only IASTExpression which is like that.\n\nValue.applyUnaryTypeIdOperator() currently has a comment saying \"TODO(sprigogin): Implement\" for the \u0027op_typeof\u0027 case. What implement did you have in mind for it? What implementation would you suggest for the __underlying_type case if we model it the same way? To me these questions don\u0027t even make sense, because typeof(T) and __underlying_type(T), unlike sizeof(T) or any of __is_XXX(T) or __has_XXX(T) traits, don\u0027t have values.",
+      "parentUuid": "c73e4bec_9937f362",
+      "revId": "718cce998f3afa230d74e44283ad590de9c21d69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

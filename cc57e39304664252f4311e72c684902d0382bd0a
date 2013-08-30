@@ -16,6 +16,24 @@
       "revId": "cc57e39304664252f4311e72c684902d0382bd0a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_a420bf24",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/DebugStringVariableSubstitutor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-08-30T14:13:47Z",
+      "side": 1,
+      "message": "I find it strange that the platform put those interfaces as @noimplement.  This proposed fix shows there is clearly a reason to implement them.\n\nAs for the warnings, since it would be nice to not have warnings in CDT, we should try to avoid adding new ones.  I would add a @SuppressWarnings in this case.",
+      "parentUuid": "c73e4bec_949e15ea",
+      "revId": "cc57e39304664252f4311e72c684902d0382bd0a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

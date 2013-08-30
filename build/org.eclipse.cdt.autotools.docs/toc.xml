@@ -1,15 +1,13 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 <toc topic="CDT/Autotools/User_Guide/User-Guide.html" label="Autotools Plug-in User Guide">
-	<topic href="CDT/Autotools/User_Guide/User-Guide.html" label="Autotools Plug-in User Guide">
-		<topic href="CDT/Autotools/User_Guide/User-Guide.html" label="Introduction"></topic>
-		<topic href="CDT/Autotools/User_Guide/Supported-Environments.html" label="Supported Environments"></topic>
-		<topic href="CDT/Autotools/User_Guide/Creating-an-Autotools-Project.html" label="Creating an Autotools Project"></topic>
-		<topic href="CDT/Autotools/User_Guide/Configuration.html" label="Configuration"></topic>
-		<topic href="CDT/Autotools/User_Guide/Invoking-Autotools.html" label="Invoking Autotools"></topic>
-		<topic href="CDT/Autotools/User_Guide/Special-Editors.html" label="Special Editors"></topic>
-		<topic href="CDT/Autotools/User_Guide/Building.html" label="Building"></topic>
-		<topic href="CDT/Autotools/User_Guide/Make-Targets.html" label="Make Targets"></topic>
-		<topic href="CDT/Autotools/User_Guide/Updating-This-Document.html" label="Updating This Document"></topic>
-	</topic>
+	<topic href="CDT/Autotools/User_Guide/User-Guide.html" label="Introduction"></topic>
+	<topic href="CDT/Autotools/User_Guide/Supported-Environments.html" label="Supported Environments"></topic>
+	<topic href="CDT/Autotools/User_Guide/Creating-an-Autotools-Project.html" label="Creating an Autotools Project"></topic>
+	<topic href="CDT/Autotools/User_Guide/Configuration.html" label="Configuration"></topic>
+	<topic href="CDT/Autotools/User_Guide/Invoking-Autotools.html" label="Invoking Autotools"></topic>
+	<topic href="CDT/Autotools/User_Guide/Special-Editors.html" label="Special Editors"></topic>
+	<topic href="CDT/Autotools/User_Guide/Building.html" label="Building"></topic>
+	<topic href="CDT/Autotools/User_Guide/Make-Targets.html" label="Make Targets"></topic>
+	<topic href="CDT/Autotools/User_Guide/Updating-This-Document.html" label="Updating This Document"></topic>
 </toc>

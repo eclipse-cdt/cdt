@@ -101,26 +101,10 @@ public class DoxygenMap {
 
 					IASTDoxygenComment [] relatedDoxygenComments = findRelatedDoxygenComments(sfd, doxygenComments);
 
-					for (int i=0; i < relatedDoxygenComments.length; i++) {
-						List<?extends IASTDoxygenTag> tags = relatedDoxygenComments[0].tags();
-						for (IASTDoxygenTag tag : tags) {
-							String name = tag.getName();
-							String value = tag.getValue();
-
-							System.out.println(name + ":");
-
-							if (name.equals(""))
-								doxygenMap.put(sfd,value);
-							else if (name.equals("param")) {
-								for (int j=0; j < params.length; j++) {
-									String paramName = params[j].getDeclarator().getName().getRawSignature();
-									paramName += " ";
-									if (value.startsWith(paramName)) {
-										doxygenMap.put(params[j], value.substring(paramName.length()));
-									}
-								}
-							}
-						}
+					putDocumentationToMap(doxygenMap, sfd, "", "", relatedDoxygenComments); //$NON-NLS-1$ //$NON-NLS-2$
+					for (int j=0; j < params.length; j++) {
+						String paramName = params[j].getDeclarator().getName().getRawSignature();
+						putDocumentationToMap(doxygenMap, params[j], "param", paramName, relatedDoxygenComments); //$NON-NLS-1$
 					}
 				} else if (decls.length == 0) {
 					if (!(sd.getDeclSpecifier() instanceof IASTCompositeTypeSpecifier)) {
@@ -131,19 +115,7 @@ public class DoxygenMap {
 
 					IASTDoxygenComment [] relatedDoxygenComments = findRelatedDoxygenComments(cts, doxygenComments);
 
-					/* TODO: Better model */
-					for (int i=0; i < relatedDoxygenComments.length; i++) {
-						List<?extends IASTDoxygenTag> tags = relatedDoxygenComments[0].tags();
-						for (IASTDoxygenTag tag : tags) {
-							String name = tag.getName();
-							String value = tag.getValue();
-
-							System.out.println(name + ":");
-
-							if (name.equals(""))
-								doxygenMap.put(cts,value);
-						}
-					}
+					putDocumentationToMap(doxygenMap, cts, "", "", relatedDoxygenComments); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					System.err.println("Unsupported decl length " + decls.length);
 					continue;
@@ -151,5 +123,54 @@ public class DoxygenMap {
 			}
 		}
 		return doxygenMap;
+	}
+
+	/**
+	 * A into the given doxygenMap for the given tag and prefix the documentation from the given doxygen comments for the node.
+	 *
+	 * @param doxygenMap
+	 * @param tagName
+	 * @param prefix
+	 * @param node
+	 * @param relatedDoxygenComments
+	 */
+	private static void putDocumentationToMap(DoxygenMap doxygenMap, IASTNode node, String tagName, String prefix, IASTDoxygenComment[] relatedDoxygenComments) {
+		String functionDesc = buildDocumentationFromDoxygenComments(tagName, prefix, relatedDoxygenComments);
+		if (functionDesc != null) {
+			doxygenMap.put(node, functionDesc);
+		}
+	}
+
+	/**
+	 * Build for the given tag name and prefix a documentation String from the given doxygen comments.
+	 *
+	 * @param tagName
+	 * @param prefix
+	 * @param relatedDoxygenComments
+	 * @return
+	 */
+	private static String buildDocumentationFromDoxygenComments(String tagName, String prefix, IASTDoxygenComment[] relatedDoxygenComments) {
+		StringBuilder str = new StringBuilder();
+
+		for (int i=0; i < relatedDoxygenComments.length; i++) {
+			List<?extends IASTDoxygenTag> tags = relatedDoxygenComments[0].tags();
+			for (IASTDoxygenTag tag : tags) {
+				String name = tag.getName();
+				String value = tag.getValue();
+
+				if (tagName.equals(name) && value.startsWith(prefix)) {
+					if (prefix.length() == 0) {
+						str.append(value);
+						continue;
+					}
+					if (value.length() > prefix.length()) {
+						if (Character.isWhitespace(value.charAt(prefix.length()))) {
+							str.append(value.substring(prefix.length()).trim());
+						}
+					}
+				}
+			}
+		}
+		return str.toString();
 	}
 }

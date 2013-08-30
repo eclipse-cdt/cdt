@@ -183,5 +183,4 @@ public class IndexMultiVariantHeaderTest extends IndexBindingResolutionTestBase 
 		assertEquals("{}", inc.getSignificantMacros().toString());
 		assertNotNull(inc.getImportedIndexFile());
 	}
-
 }

@@ -16,6 +16,24 @@
       "revId": "718cce998f3afa230d74e44283ad590de9c21d69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_d9185b37",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPTypeTraitType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-08-30T02:01:00Z",
+      "side": 1,
+      "message": "I don\u0027t think so. An evaluation comes from an expression (gramatically) and has a value (semantically). This kind of type trait, on the other hand, comes from a type-id (more precisely a decl-spec) grammatically, and doesn\u0027t have a value, only a type.",
+      "parentUuid": "c73e4bec_39eb3fa0",
+      "revId": "718cce998f3afa230d74e44283ad590de9c21d69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

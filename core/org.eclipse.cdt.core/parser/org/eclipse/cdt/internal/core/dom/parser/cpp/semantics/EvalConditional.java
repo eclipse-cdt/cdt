@@ -60,6 +60,7 @@ public class EvalConditional extends CPPDependentEvaluation {
 			boolean positiveThrows, boolean negativeThrows, IASTNode pointOfDefinition) {
 		this(condition, positive, negative, positiveThrows, negativeThrows, findEnclosingTemplate(pointOfDefinition));
 	}
+
 	public EvalConditional(ICPPEvaluation condition, ICPPEvaluation positive, ICPPEvaluation negative,
 			boolean positiveThrows, boolean negativeThrows, IBinding templateDefinition) {
 		super(templateDefinition);

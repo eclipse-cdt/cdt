@@ -51,6 +51,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 	public EvalFunctionCall(ICPPEvaluation[] args, IASTNode pointOfDefinition) {
 		this(args, findEnclosingTemplate(pointOfDefinition));
 	}
+
 	public EvalFunctionCall(ICPPEvaluation[] args, IBinding templateDefinition) {
 		super(templateDefinition);
 		fArguments= args;

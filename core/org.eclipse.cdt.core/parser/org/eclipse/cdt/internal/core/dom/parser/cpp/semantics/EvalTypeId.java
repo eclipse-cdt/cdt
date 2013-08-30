@@ -39,6 +39,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	public EvalTypeId(IType type, IASTNode pointOfDefinition, ICPPEvaluation... arguments) {
 		this(type, findEnclosingTemplate(pointOfDefinition), arguments);
 	}
+
 	public EvalTypeId(IType type, IBinding templateDefinition, ICPPEvaluation... arguments) {
 		super(templateDefinition);
 		if (arguments == null)

@@ -35,6 +35,7 @@ public class EvalCompound extends CPPDependentEvaluation {
 	public EvalCompound(ICPPEvaluation delegate, IASTNode pointOfDefinition) {
 		this(delegate, findEnclosingTemplate(pointOfDefinition));
 	}
+
 	public EvalCompound(ICPPEvaluation delegate, IBinding templateDefinition) {
 		super(templateDefinition);
 		fDelegate= delegate;

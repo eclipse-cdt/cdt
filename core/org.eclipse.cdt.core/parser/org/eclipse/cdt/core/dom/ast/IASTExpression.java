@@ -54,12 +54,15 @@ public interface IASTExpression extends IASTInitializerClause {
 	 * Empty expression array.
 	 */
 	public static final IASTExpression[] EMPTY_EXPRESSION_ARRAY = {};
-	
+
+	/**
+	 * Returns the type of the value the expression evaluates to.
+	 */
 	public IType getExpressionType();
 	
 	/**
-	 * Returns whether this expression is an lvalue. LValues are for instance required on the
-	 * left hand side of an assignment expression.
+	 * Returns whether this expression is an lvalue. LValues are for instance required on
+	 * the left hand side of an assignment expression.
 	 * @since 5.2
 	 */
 	public boolean isLValue();

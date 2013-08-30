@@ -70,6 +70,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 			boolean isPointerDeref, IASTNode pointOfDefinition) {
 		this(ownerType, ownerValueCat, member, isPointerDeref, findEnclosingTemplate(pointOfDefinition));
 	}
+
 	public EvalMemberAccess(IType ownerType, ValueCategory ownerValueCat, IBinding member,
 			boolean isPointerDeref, IBinding templateDefinition) {
 		super(templateDefinition);

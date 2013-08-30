@@ -42,6 +42,7 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 	public EvalBinaryTypeId(Operator kind, IType type1, IType type2, IASTNode pointOfDefinition) {
 		this(kind, type1, type2, findEnclosingTemplate(pointOfDefinition));		
 	}
+
 	public EvalBinaryTypeId(Operator kind, IType type1, IType type2, IBinding templateDefinition) {
 		super(templateDefinition);
 		fOperator= kind;

@@ -84,6 +84,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 	public EvalBinary(int operator, ICPPEvaluation arg1, ICPPEvaluation arg2, IASTNode pointOfDefinition) {
 		this(operator, arg1, arg2, findEnclosingTemplate(pointOfDefinition));
 	}
+
 	public EvalBinary(int operator, ICPPEvaluation arg1, ICPPEvaluation arg2, IBinding templateDefinition) {
 		super(templateDefinition);
 		fOperator= operator;

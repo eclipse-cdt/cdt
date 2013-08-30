@@ -40,6 +40,7 @@ public class EvalComma extends CPPDependentEvaluation {
 	public EvalComma(ICPPEvaluation[] evals, IASTNode pointOfDefinition) {
 		this(evals, findEnclosingTemplate(pointOfDefinition));		
 	}
+
 	public EvalComma(ICPPEvaluation[] evals, IBinding templateDefinition) {
 		super(templateDefinition);
 		fArguments= evals;

@@ -14,9 +14,9 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -68,6 +68,7 @@ public class EvalID extends CPPDependentEvaluation {
 			boolean qualified, ICPPTemplateArgument[] templateArgs, IASTNode pointOfDefinition) {
 		this(fieldOwner, nameOwner, simpleID, addressOf, qualified, templateArgs, findEnclosingTemplate(pointOfDefinition));
 	}
+
 	public EvalID(ICPPEvaluation fieldOwner, IBinding nameOwner, char[] simpleID, boolean addressOf,
 			boolean qualified, ICPPTemplateArgument[] templateArgs, IBinding templateDefinition) {
 		super(templateDefinition);

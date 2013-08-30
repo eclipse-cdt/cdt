@@ -77,6 +77,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 	public EvalBinding(IBinding binding, IType type, IASTNode pointOfDefinition) {
 		this(binding, type, findEnclosingTemplate(pointOfDefinition));
 	}
+
 	public EvalBinding(IBinding binding, IType type, IBinding templateDefinition) {
 		super(templateDefinition);
 		fParameterPosition = -1;

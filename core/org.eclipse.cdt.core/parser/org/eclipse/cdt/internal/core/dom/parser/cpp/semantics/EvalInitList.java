@@ -35,6 +35,7 @@ public class EvalInitList extends CPPDependentEvaluation {
 	public EvalInitList(ICPPEvaluation[] clauses, IASTNode pointOfDefinition) {
 		this(clauses, findEnclosingTemplate(pointOfDefinition));
 	}
+
 	public EvalInitList(ICPPEvaluation[] clauses, IBinding templateDefinition) {
 		super(templateDefinition);
 		fClauses= clauses;

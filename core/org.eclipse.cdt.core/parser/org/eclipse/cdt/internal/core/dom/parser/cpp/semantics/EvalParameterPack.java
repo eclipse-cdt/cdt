@@ -36,6 +36,7 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 	public EvalParameterPack(ICPPEvaluation expansionPattern, IASTNode pointOfDefinition) {
 		this(expansionPattern, findEnclosingTemplate(pointOfDefinition));
 	}
+
 	public EvalParameterPack(ICPPEvaluation expansionPattern, IBinding templateDefinition) {
 		super(templateDefinition);
 		fExpansionPattern = expansionPattern;

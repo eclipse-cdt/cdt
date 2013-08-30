@@ -59,6 +59,7 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	public EvalUnaryTypeID(int operator, IType type, IASTNode pointOfDefinition) {
 		this(operator, type, findEnclosingTemplate(pointOfDefinition));
 	}
+
 	public EvalUnaryTypeID(int operator, IType type, IBinding templateDefinition) {
 		super(templateDefinition);
 		fOperator= operator;

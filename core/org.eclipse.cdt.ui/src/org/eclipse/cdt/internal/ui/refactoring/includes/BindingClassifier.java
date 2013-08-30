@@ -310,13 +310,15 @@ public class BindingClassifier {
 			ICPPTemplateParameterMap parameterMap = ((ICPPSpecialization) binding).getTemplateParameterMap();
 			for (Integer position : parameterMap.getAllParameterPositions()) {
 				ICPPTemplateArgument argument = parameterMap.getArgument(position);
-				IType type = argument.getTypeValue();
-				// Normally we don't need to define parameters of a template specialization that
-				// were not specified explicitly. __gnu_cxx::hash is an exception from that rule.
-				if (type instanceof IBinding && "hash".equals(((IBinding) type).getName())) { //$NON-NLS-1$
-					IBinding owner = ((IBinding) type).getOwner();
-					if (owner instanceof ICPPNamespace && "__gnu_cxx".equals(owner.getName())) //$NON-NLS-1$
-						bindings.add((IBinding) type);
+				if (argument != null) {
+					IType type = argument.getTypeValue();
+					// Normally we don't need to define parameters of a template specialization that
+					// were not specified explicitly. __gnu_cxx::hash is an exception from that rule.
+					if (type instanceof IBinding && "hash".equals(((IBinding) type).getName())) { //$NON-NLS-1$
+						IBinding owner = ((IBinding) type).getOwner();
+						if (owner instanceof ICPPNamespace && "__gnu_cxx".equals(owner.getName())) //$NON-NLS-1$
+							bindings.add((IBinding) type);
+					}
 				}
 			}
 			// Get the specialized binding - e.g. get the binding for X if the current binding is

@@ -32,6 +32,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_union;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_sizeof;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeid;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeof;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -75,8 +76,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 import org.eclipse.cdt.internal.core.pdom.db.TypeMarshalBuffer;
 import org.eclipse.core.runtime.CoreException;
-
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 /**
  * Represents values of variables, enumerators or expressions. The primary purpose of
@@ -301,7 +300,7 @@ public class Value implements IValue {
 			case op_alignof:
 				return getAlignment(type, point);
 			case op_typeid:
-				break;  // TODO(sprigogin): Implement
+				break;
 			case op_has_nothrow_copy:
 				break;  // TODO(sprigogin): Implement
 			case op_has_nothrow_constructor:
@@ -343,7 +342,7 @@ public class Value implements IValue {
 				return type instanceof ICompositeType &&
 						((ICompositeType) type).getKey() == ICompositeType.k_union ? 1 : 0;
 			case op_typeof:
-				break;  // TODO(sprigogin): Implement
+				break;
 		}
 		return VALUE_CANNOT_BE_DETERMINED;
 	}

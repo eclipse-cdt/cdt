@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
+ *     Sebastian Bauer
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -17,6 +18,7 @@ import static org.eclipse.cdt.core.parser.ParserLanguage.C;
 import static org.eclipse.cdt.core.parser.ParserLanguage.CPP;
 
 import java.io.IOException;
+import java.util.List;
 
 import junit.framework.TestSuite;
 
@@ -37,6 +39,8 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDoxygenComment;
+import org.eclipse.cdt.core.dom.ast.IASTDoxygenTag;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
@@ -7465,5 +7469,36 @@ public class AST2Tests extends AST2TestBase {
 	//	double d = 00.9;
 	public void testOctalFloatingPointLiteral_394048() throws Exception {
 		parseAndCheckBindings();
+	}
+
+
+	//	/**
+	//	 * A doxygen comment.
+	//	 * Second line.
+	//	 *
+	//	 * @param arg1
+	//	 * @param arg2
+	//	 *  description
+	//	 * @return return value
+	//	 */
+	public void testDoxygenComments() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment());
+
+		IASTComment[] comments = tu.getComments();
+		assertEquals(1, comments.length);
+		assertTrue(comments[0] instanceof IASTDoxygenComment);
+
+		IASTDoxygenComment doxygenComment = (IASTDoxygenComment)comments[0];
+		List<?extends IASTDoxygenTag> tags = doxygenComment.tags();
+		assertEquals(4, tags.size());
+
+		assertEquals("", tags.get(0).getName());
+		assertEquals("A doxygen comment. Second line.", tags.get(0).getValue());
+		assertEquals("param", tags.get(1).getName());
+		assertEquals("arg1", tags.get(1).getValue());
+		assertEquals("param", tags.get(2).getName());
+		assertEquals("arg2 description", tags.get(2).getValue());
+		assertEquals("return", tags.get(3).getName());
+		assertEquals("return value", tags.get(3).getValue());
 	}
 }

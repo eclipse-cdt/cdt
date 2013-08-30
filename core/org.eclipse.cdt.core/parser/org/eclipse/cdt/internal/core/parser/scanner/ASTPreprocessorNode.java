@@ -8,14 +8,18 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Sebastian Bauer
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
+import org.eclipse.cdt.core.dom.ast.IASTDoxygenComment;
+import org.eclipse.cdt.core.dom.ast.IASTDoxygenTag;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
@@ -150,6 +154,53 @@ class ASTComment extends ASTPreprocessorNode implements IASTComment {
 	}
 }
 
+class ASTDoxygenTag extends ASTNode implements IASTDoxygenTag {
+	String name;
+	String value;
+
+	public ASTDoxygenTag(String name, String value) {
+		this.name = name;
+		this.value = value;
+	}
+
+	@Override
+	public IASTNode copy() {
+		return null;
+	}
+
+	@Override
+	public IASTNode copy(CopyStyle style) {
+		return null;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String getValue() {
+		return value;
+	}
+}
+
+class ASTDoxygenComment extends ASTComment implements IASTDoxygenComment {
+	private List<IASTDoxygenTag> tagsList = new ArrayList<IASTDoxygenTag>();
+
+	public ASTDoxygenComment(IASTTranslationUnit parent, String filePath, int offset,
+			int endOffset, boolean isBlockComment) {
+		super(parent, filePath, offset, endOffset, isBlockComment);
+	}
+
+	@Override
+	public List<?extends IASTDoxygenTag> tags() {
+		return tagsList;
+	}
+
+	void addTag(IASTDoxygenTag tag) {
+		tagsList.add(tag);
+	}
+}
 
 abstract class ASTDirectiveWithCondition extends ASTPreprocessorNode {
 	protected final int fConditionOffset;

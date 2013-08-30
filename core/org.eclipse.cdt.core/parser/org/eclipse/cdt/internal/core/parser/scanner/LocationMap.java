@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - Initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Sebastian Bauer
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -268,8 +269,178 @@ public class LocationMap implements ILocationResolver {
 		return exported;
 	}
 
+	static class DoxygenParserContext {
+		int offset;
+		int endOffset;
+		AbstractCharArray input;
+
+		char getCurrentChar() {
+			return input.get(offset);
+		}
+
+		boolean finished() {
+			if (offset >= endOffset) return true;
+			return false;
+		}
+		boolean next() {
+			if (finished()) return false;
+			offset++;
+			return true;
+		}
+	}
+
+	/**
+	 * Parses and return the tagname that starts under the current offset.
+	 *
+	 * @param pc
+	 * @return
+	 */
+	private String parseDoxygenTagName(DoxygenParserContext pc) {
+		if (pc.getCurrentChar() == '@')
+		{
+			pc.next();
+			if (pc.finished())
+				return ""; //$NON-NLS-1$
+		}
+
+		int start = pc.offset;
+		do
+		{
+			if (Character.isWhitespace(pc.getCurrentChar()))
+				break;
+		} while (pc.next());
+		char [] tagName = new char[pc.offset - start];
+		pc.input.arraycopy(start, tagName, 0, pc.offset - start);
+		return new String(tagName);
+	}
+
+	/**
+	 * Parses and skips the starting part of a comment line.
+	 *
+	 * @param pc
+	 * @return
+	 */
+	private boolean parseDoxygenStartingComment(DoxygenParserContext pc) {
+		do {
+			char currentChar = pc.getCurrentChar();
+			if (currentChar != '*' && currentChar != '/' && !Character.isWhitespace(currentChar)) {
+				return true;
+			}
+		} while (pc.next());
+		return true;
+	}
+
+	/**
+	 * Parses and skips the ending part of a comment line.
+	 *
+	 * @param pc
+	 * @return
+	 */
+	private boolean parseDoxygenEndingComment(DoxygenParserContext pc) {
+		int enterOffset = pc.offset;
+		boolean rc = true;
+
+		do {
+			char currentChar = pc.getCurrentChar();
+
+			if (currentChar == '\n')
+				break;
+
+			if (currentChar != '*' && currentChar != ' ' && currentChar != '/') {
+				pc.offset = enterOffset;
+				rc = false;
+				break;
+			}
+		} while (pc.next());
+		return rc;
+	}
+
+	/**
+	 * Parse the doxygen tag value that starts under the current offset.
+	 *
+	 * @param pc
+	 * @return
+	 */
+	private String parseDoygenTagValue(DoxygenParserContext pc) {
+		StringBuilder str = new StringBuilder(100);
+
+		outerloop:
+		while (!pc.finished())
+		{
+			innerloop:
+			while (!pc.finished())
+			{
+				parseDoxygenStartingComment(pc);
+
+				do {
+					if (parseDoxygenEndingComment(pc))
+					{
+						str.append(' ');
+						break innerloop;
+					}
+
+					char currentChar = pc.getCurrentChar();
+					if (currentChar == '@')
+						break outerloop;
+
+					str.append(currentChar);
+				} while (pc.next());
+			}
+		}
+		return new String(str.toString()).trim();
+	}
+
+	/**
+	 * Parse the given offset as a doxygen comment. This includes also the beginning of the comment marks.
+	 *
+	 * @param offset
+	 * @param endOffset
+	 * @param input
+	 */
+	private ASTDoxygenComment parseDoxygenComment(int offset, int endOffset, boolean isBlockComment, AbstractCharArray input) {
+		DoxygenParserContext pc = new DoxygenParserContext();
+		pc.offset = offset;
+		pc.endOffset = endOffset;
+		pc.input = input;
+
+		ASTDoxygenComment comment = new ASTDoxygenComment(fTranslationUnit, getCurrentFilePath(), offset, endOffset, isBlockComment);
+
+		String currentDoxygenTagName = ""; //$NON-NLS-1$
+		String currentDoxygenTagValue = ""; //$NON-NLS-1$
+
+		do
+		{
+			currentDoxygenTagValue = parseDoygenTagValue(pc);
+
+			ASTDoxygenTag doxygenTag = new ASTDoxygenTag(currentDoxygenTagName, currentDoxygenTagValue);
+			comment.addTag(doxygenTag);
+
+			currentDoxygenTagName = parseDoxygenTagName(pc);
+			currentDoxygenTagValue = ""; //$NON-NLS-1$
+		} while (pc.next());
+
+		if (currentDoxygenTagValue.length() > 0) {
+			ASTDoxygenTag doxygenTag = new ASTDoxygenTag(currentDoxygenTagName, currentDoxygenTagValue);
+			comment.addTag(doxygenTag);
+		}
+		return comment;
+	}
+
 	public void encounteredComment(int offset, int endOffset, boolean isBlockComment, AbstractCharArray input) {
-		ASTComment comment = new ASTComment(fTranslationUnit, getCurrentFilePath(), offset, endOffset, isBlockComment);
+		boolean isDoxygenComment = false;
+		if (endOffset - offset > 3) {
+			if (input.get(offset) == '/' && input.get(offset+1) == '*' && input.get(offset+2) == '*') {
+				isDoxygenComment = true;
+			}
+		}
+
+		ASTComment comment;
+		if (isDoxygenComment) {
+			comment = parseDoxygenComment(offset, endOffset, isBlockComment, input);
+		} else {
+			comment = new ASTComment(fTranslationUnit, getCurrentFilePath(), offset, endOffset, isBlockComment);
+		}
+
 		if (fLexerOptions.fIncludeExportPatterns != null && fCurrentContext instanceof LocationCtxFile) {
 			CharSequence text = getTrimmedCommentText(input.subSequence(offset, endOffset), isBlockComment);
 			IncludeExportPatterns patterns = fLexerOptions.fIncludeExportPatterns;

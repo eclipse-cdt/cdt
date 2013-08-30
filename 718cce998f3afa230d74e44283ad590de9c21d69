@@ -70,6 +70,24 @@
       "revId": "718cce998f3afa230d74e44283ad590de9c21d69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_e258f7d1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPTypeTraitType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-30T17:42:04Z",
+      "side": 1,
+      "message": "I always thought of evaluations as representing value/type pairs. Some evaluations never produce meaningful values and always have to be wrapped in TypeOfDependentExpression. Having said that, I agree that for type expressions this approach is rather clumsy. If we are to change how we model type expressions, we should use an approach that can be applied to all type expressions, not just to __underlying_type(T). It seems that the name of this interface is too specialized to look natural in a wider context. What would you think of calling it ICPPUnaryTypeExpression?",
+      "parentUuid": "c73e4bec_9475faa4",
+      "revId": "718cce998f3afa230d74e44283ad590de9c21d69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

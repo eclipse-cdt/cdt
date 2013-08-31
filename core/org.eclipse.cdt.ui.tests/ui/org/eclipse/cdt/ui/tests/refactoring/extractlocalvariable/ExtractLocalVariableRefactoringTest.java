@@ -554,15 +554,17 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 
 	//main.c
 	//int getSomething(int x) { return 0; }
+	//int getSomething2(int x) { return 0; }
 	//
 	//void f(){
-	//	/*$*/getSomething(getSomething(0))/*$$*/;
+	//	/*$*/getSomething(getSomething2(0))/*$$*/;
 	//}
 	//====================
 	//int getSomething(int x) { return 0; }
+	//int getSomething2(int x) { return 0; }
 	//
 	//void f(){
-	//	int something = getSomething(getSomething(0));
+	//	int something = getSomething(getSomething2(0));
 	//	something;
 	//}
 	public void testSuggestedNameCFile_Bug412032_2() throws Exception {

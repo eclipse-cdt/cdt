@@ -88,6 +88,24 @@
       "revId": "718cce998f3afa230d74e44283ad590de9c21d69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_dfa11faa",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPTypeTraitType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-08-31T06:20:13Z",
+      "side": 1,
+      "message": "\u003e I always thought of evaluations as representing value/type pairs.\n\nI think of them as representing expressions with values, and values in turn have types. Of course, in an IDE (and a compiler), we are typically interested in the type (which is always known at compile time), and only interested in the value when it is known at compile time.\n\n\u003e Some evaluations never produce meaningful values and always have to be wrapped in TypeOfDependentExpression.\n\nI think those are cases where the value is not known at compile time, so our analysis, which effectively happens at compile-time, has to use Value.UNKNOWN or something like that - but there still is an actual value at runtime. That\u0027s different from typeof(int), where there is no value at runtime, either.\n\n\u003e Having said that, I agree that for type expressions this approach is rather clumsy. If we are to change how we model type expressions, we should use an approach that can be applied to all type expressions, not just to __underlying_type(T). It seems that the name of this interface is too specialized to look natural in a wider context. What would you think of calling it ICPPUnaryTypeExpression?\n\nI agree that we should model typeof(T), __underlying_type(T), and other things of that form, the same way. I\u0027m not sure how I feel about an interface derived from IType having a name that ends with \u0027Expression\u0027 - other interfaces ending in Expression derive from IASTExpression, and most interfaces that derive from IType have names that end in \u0027Type\u0027.\n\nHow about ICPPUnaryTransformedType, i.e. a type that is the result of a unary transform (on a type). We can then think of __underlying_type as a particular kind of transform, and typeof as the identity transform.",
+      "parentUuid": "c73e4bec_e258f7d1",
+      "revId": "718cce998f3afa230d74e44283ad590de9c21d69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

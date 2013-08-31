@@ -106,6 +106,24 @@
       "revId": "718cce998f3afa230d74e44283ad590de9c21d69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_ff821ba1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPTypeTraitType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-08-31T07:05:17Z",
+      "side": 1,
+      "message": "ICPPUnaryTransformedType sounds good, but ICPPBinaryTransformedType not so much. What do you think of ICPPUnaryTypeTransform or ICPPUnaryTypeTransformation?",
+      "parentUuid": "a74dd7b0_dfa11faa",
+      "revId": "718cce998f3afa230d74e44283ad590de9c21d69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

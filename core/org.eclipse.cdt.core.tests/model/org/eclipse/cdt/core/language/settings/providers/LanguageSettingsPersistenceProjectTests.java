@@ -1143,6 +1143,8 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			assertTrue("File "+xmlFile+ " does not exist", xmlFile.exists());
 			assertFalse("File "+xmlFileOut+ " still exist", xmlFileOut.exists());
 
+			// Wait out in case indexer thread hijacks refreshLocal(), see bug 415970
+			waitForIndexer(CCorePlugin.getDefault().getCoreModel().create(project));
 			// Refresh storage in workspace
 			xmlStorageFilePrj.refreshLocal(IResource.DEPTH_ZERO, null);
 			assertTrue("File "+xmlStorageFilePrj+ " does not exist", xmlStorageFilePrj.exists());
@@ -1372,6 +1374,8 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			assertTrue("File "+xmlFile+ " does not exist", xmlFile.exists());
 			assertFalse("File "+xmlFileOut+ " still exist", xmlFileOut.exists());
 
+			// Wait out in case indexer thread hijacks refreshLocal(), see bug 415970
+			waitForIndexer(CCorePlugin.getDefault().getCoreModel().create(project));
 			// Refresh storage in workspace
 			xmlStorageFilePrj.refreshLocal(IResource.DEPTH_ZERO, null);
 			assertTrue("File "+xmlStorageFilePrj+ " does not exist", xmlStorageFilePrj.exists());

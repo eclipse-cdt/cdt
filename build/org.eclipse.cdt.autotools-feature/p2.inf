@@ -4,5 +4,5 @@ provides.99.namespace=org.eclipse.equinox.p2.iu
 provides.99.name=org.eclipse.linuxtools.cdt.autotools.feature.group
 provides.99.version=$version$
 instructions.configure=\
-org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(location:http${#58}//download.eclipse.org/tools/cdt/releases/juno,type:0,name:CDT,enabled:false); \
-org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(location:http${#58}//download.eclipse.org/tools/cdt/releases/juno,type:1,name:CDT,enabled:false); 
+org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(location:http${#58}//download.eclipse.org/tools/cdt/releases/kepler,type:0,name:CDT,enabled:false); \
+org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(location:http${#58}//download.eclipse.org/tools/cdt/releases/kepler,type:1,name:CDT,enabled:false); 

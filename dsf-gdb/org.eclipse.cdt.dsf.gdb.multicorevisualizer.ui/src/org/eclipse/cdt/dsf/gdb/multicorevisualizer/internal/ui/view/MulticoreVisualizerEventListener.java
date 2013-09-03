@@ -259,8 +259,8 @@ public class MulticoreVisualizerEventListener {
 								// core the thread runs-on, the getCore() call above will return null.  This
 								// will later cause a problem when we try to draw this thread, if we allow
 								// this to pass.  See Bug 396269/
-                                if (vCore == null)
-                                    return;
+//                                if (vCore == null)
+//                                    return;
 								
 								int pid = Integer.parseInt(processContext.getProcId());
 								int tid = execDmc.getThreadId();

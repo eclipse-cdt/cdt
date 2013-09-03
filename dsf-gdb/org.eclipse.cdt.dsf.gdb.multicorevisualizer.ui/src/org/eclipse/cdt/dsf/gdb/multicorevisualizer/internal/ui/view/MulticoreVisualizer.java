@@ -1067,6 +1067,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 							 ICoreDMContext[] coreContexts,
 							 Object arg)
 	{
+		coreContexts = null;
 		// save core contexts
 		m_coreContextsCache = coreContexts;
 		VisualizerModel model = (VisualizerModel) arg;

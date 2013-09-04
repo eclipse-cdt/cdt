@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2013 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -9,6 +9,7 @@
  * Contributors: 
  * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -29,6 +30,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -52,13 +54,15 @@ public class ToggleRefactoringContext {
 	private IASTName selectionName;
 	private boolean defaultAnswer;
 	private boolean settedDefaultAnswer;
+	private ICProject project;
 
 	public ToggleRefactoringContext(CRefactoringContext refactoringContext, IIndex index,
-			ITranslationUnit translationUnit, ITextSelection selection)
+			ITranslationUnit translationUnit, ITextSelection selection, ICProject project)
 					throws OperationCanceledException, CoreException {
 		this.refactoringContext = refactoringContext;
 		this.index = index;
 		this.selectionTU = translationUnit;
+		this.project = project;
 		findSelectionAST();
 		findSelectedFunctionDeclarator(selection);
 		findBinding();
@@ -214,5 +218,9 @@ public class ToggleRefactoringContext {
 			return null;
 		tu = CModelUtil.toWorkingCopy(tu);
 		return refactoringContext.getAST(tu, pm);
+	}
+
+	public ICProject getCProject() {
+		return project;
 	}
 }

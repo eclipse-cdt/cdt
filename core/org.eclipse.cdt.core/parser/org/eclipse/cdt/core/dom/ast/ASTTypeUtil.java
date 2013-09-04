@@ -193,8 +193,8 @@ public class ASTTypeUtil {
 	}
 
 	/**
-	 * Returns an array of normalized string representations for the parameter types of the
-	 * given function type.
+	 * Returns an array of normalized string representations for the parameter types of the given
+	 * function type.
 	 * @see #getType(IType, boolean)
 	 */
 	public static String[] getParameterTypeStringArray(IFunctionType type) {
@@ -367,7 +367,7 @@ public class ASTTypeUtil {
 			boolean qualify = normalize || (type instanceof ITypedef && type instanceof ICPPSpecialization);
 			appendCppName((ICPPBinding) type, normalize, qualify, result);
 		} else if (type instanceof ICompositeType) {
-//			101114 fix, do not display class, and for consistency don't display struct/union as well
+			// Don't display class, and for consistency don't display struct/union as well (bug 101114).
 			appendNameCheckAnonymous((ICompositeType) type, result);
 		} else if (type instanceof ITypedef) {
 			result.append(((ITypedef) type).getNameCharArray());
@@ -511,26 +511,26 @@ public class ASTTypeUtil {
 				}
 			} else {
 				if (type instanceof ICPPReferenceType) {
-					// reference types ignore cv-qualifiers
+					// Reference types ignore cv-qualifiers
 					cvq= null;
-					// lvalue references win over rvalue references
+					// Lvalue references win over rvalue references
 					if (ref == null || ref.isRValueReference()) {
-						// delay reference to see if there are more
+						// Delay reference to see if there are more
 						ref= (ICPPReferenceType) type;
 					}
 				} else {
 					if (cvq != null) {
-						// merge cv qualifiers
+						// Merge cv qualifiers
 						if (type instanceof IQualifierType || type instanceof IPointerType) {
 							type= SemanticUtil.addQualifiers(type, cvq.isConst(), cvq.isVolatile(), false);
 							cvq= null;
 						} 
 					} 
 					if (type instanceof IQualifierType) {
-						// delay cv qualifier to merge it with others
+						// Delay cv qualifier to merge it with others
 						cvq= (IQualifierType) type;
 					} else {
-						// no reference, no cv qualifier: output reference and cv-qualifier
+						// No reference, no cv qualifier: output reference and cv-qualifier
 						if (ref != null) {
 							types = ArrayUtil.append(IType.class, types, ref);
 							ref= null;
@@ -552,12 +552,12 @@ public class ASTTypeUtil {
 			}
 		}	 
 		
-		// pop all of the types off of the stack, and build the string representation while doing so
+		// Pop all of the types off of the stack, and build the string representation while doing so.
 		List<IType> postfix= null;
 		BitSet parenthesis= null;
 		boolean needParenthesis= false;
 		boolean needSpace= false;
-		for (int j = types.length - 1; j >= 0; j--) {
+		for (int j = types.length; --j >= 0;) {
 			IType tj = types[j];
 			if (tj != null) {
 				if (j > 0 && types[j - 1] instanceof IQualifierType) {
@@ -569,7 +569,7 @@ public class ASTTypeUtil {
 					needSpace= true;
 					--j;
 				} else {
-					// handle post-fix 
+					// Handle post-fix 
 					if (tj instanceof IFunctionType || tj instanceof IArrayType) {
 						if (j == 0) {
 							if (needSpace)

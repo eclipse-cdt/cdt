@@ -61,35 +61,32 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	public IField findField(String name);
 
 	/**
-	 * Returns a list of ICPPField objects representing fields declared in this
-	 * class. It does not include fields inherited from base classes.
+	 * Returns a list of ICPPField objects representing fields declared in this class. It does not
+	 * include fields inherited from base classes.
 	 * 
 	 * @return List of ICPPField
 	 */
 	public ICPPField[] getDeclaredFields();
 
 	/**
-	 * Returns a list of ICPPMethod objects representing all methods defined for
-	 * this class including those declared, inherited, or generated (e.g.
-	 * default constructors and the like).
+	 * Returns a list of ICPPMethod objects representing all methods defined for this class
+	 * including those declared, inherited, or generated (e.g. default constructors and the like).
 	 * 
 	 * @return List of ICPPMethod
 	 */
 	public ICPPMethod[] getMethods();
 
 	/**
-	 * Returns a list of ICPPMethod objects representing all method explicitly
-	 * declared by this class and inherited from base classes. It does not
-	 * include automatically generated methods.
+	 * Returns a list of ICPPMethod objects representing all method explicitly declared by this
+	 * class and inherited from base classes. It does not include automatically generated methods.
 	 * 
 	 * @return List of ICPPMethod
 	 */
 	public ICPPMethod[] getAllDeclaredMethods();
 
 	/**
-	 * Returns a list of ICPPMethod objects representing all methods explicitly
-	 * declared by this class. It does not include inherited methods or
-	 * automatically generated methods.
+	 * Returns a list of ICPPMethod objects representing all methods explicitly declared by this
+	 * class. It does not include inherited methods or automatically generated methods.
 	 * 
 	 * @return List of ICPPMethod
 	 */
@@ -97,14 +94,12 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 
 	/**
 	 * Returns an array of ICPPConstructor objects representing the constructors
-	 * for this class. This list includes both declared and implicit
-	 * constructors.
+	 * for this class. This list includes both declared and implicit constructors.
 	 */
 	public ICPPConstructor[] getConstructors();
 
 	/**
-	 * Returns an array of bindings for those classes/functions declared as
-	 * friends of this class.
+	 * Returns an array of bindings for those classes/functions declared as friends of this class.
 	 */
 	public IBinding[] getFriends();
 	
@@ -121,14 +116,13 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	public boolean isFinal();
 
 	/**
-	 * Gets the access specifier of the <code>member</code>.
+	 * Gets the access specifier of the {@code member}.
 	 *
 	 * @param member The binding of the member to get the visibility for.
-	 * <code>member</code> must be a member of this type.
+	 * {@code member} must be a member of this class.
 	 *
 	 * @return the visibility of the specified member.
-	 *
-	 * @throws IllegalArgumentException if <code>member</code> is not a member of this type.
+	 * @throws IllegalArgumentException if {@code member} is not a member of this class.
 	 *
 	 * @since 5.5
 	 */

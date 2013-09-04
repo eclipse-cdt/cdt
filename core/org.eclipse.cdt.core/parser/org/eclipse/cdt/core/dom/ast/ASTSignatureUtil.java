@@ -39,8 +39,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 
 /**
- * This is a utility class to help convert AST elements to Strings corresponding to the AST element's
- * signature.
+ * This is a utility class to help convert AST elements to Strings corresponding to the AST
+ * element's signature.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -52,13 +52,11 @@ public class ASTSignatureUtil {
 	private static final String COMMA_SPACE = ", "; //$NON-NLS-1$
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final String SPACE = " "; //$NON-NLS-1$
-	private static final String[] EMPTY_STRING_ARRAY = new String[0];
+	private static final String[] EMPTY_STRING_ARRAY = {};
 
 	/**
-	 * Return's the String representation of a node's type (if available). This is currently only being used
-	 * for testing.
-	 * 
-	 * TODO Remove this function when done testing if it is no longer needed
+	 * Return's the String representation of a node's type (if available). This is currently only
+	 * being used for testing.
 	 * 
 	 * @param node
 	 */
@@ -71,7 +69,7 @@ public class ASTSignatureUtil {
 			return getSignature((IASTTypeId) node);
 		if (node instanceof IASTSimpleDeclaration) {
 			IASTSimpleDeclaration decl = (IASTSimpleDeclaration) node;
-			StringBuffer buffer = new StringBuffer(getSignature(decl.getDeclSpecifier()));
+			StringBuilder buffer = new StringBuilder(getSignature(decl.getDeclSpecifier()));
 
 			IASTDeclarator[] declarators = decl.getDeclarators();
 			for (int i = 0; i < declarators.length; ++i) {
@@ -108,7 +106,7 @@ public class ASTSignatureUtil {
 		if (!(decltor instanceof IASTStandardFunctionDeclarator || decltor instanceof ICASTKnRFunctionDeclarator))
 			return EMPTY_STRING;
 
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 
 		String[] parms = getParameterSignatureArray(decltor);
 
@@ -175,7 +173,7 @@ public class ASTSignatureUtil {
 	}
 
 	private static String getDeclaratorSpecificSignature(IASTDeclarator declarator) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		IASTPointerOperator[] ops = declarator.getPointerOperators();
 		boolean needSpace = false;
 
@@ -278,7 +276,7 @@ public class ASTSignatureUtil {
 		if (declarator == null)
 			return EMPTY_STRING;
 
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 
 		result.append(getDeclaratorSpecificSignature(declarator));
 
@@ -298,14 +296,11 @@ public class ASTSignatureUtil {
 	/**
 	 * This function is used to return the signature of an IASTInitializer.
 	 * 
-	 * TODO this function is used for testing and probably should not public once this Utility class has been
-	 * finalized as it will likely never be used publicly except for testing
-	 * 
-	 * @param init
+	 * @param init an initializer
 	 * @return the signature of an IASTInitializer
 	 */
 	public static String getInitializerString(IASTInitializer init) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 
 		if (init instanceof IASTEqualsInitializer) {
 			result.append(Keywords.cpASSIGN);
@@ -332,7 +327,7 @@ public class ASTSignatureUtil {
 		return result.toString();
 	}
 
-	private static void appendExpressionList(StringBuffer result, IASTInitializerClause[] inits) {
+	private static void appendExpressionList(StringBuilder result, IASTInitializerClause[] inits) {
 		for (int i = 0; i < inits.length; i++) {
 			result.append(getInitializerClauseString(inits[i]));
 			if (i < inits.length - 1)
@@ -351,7 +346,7 @@ public class ASTSignatureUtil {
 	}
 
 	private static String getDesignatorSignature(ICASTDesignator designator) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 
 		if (designator instanceof ICASTArrayDesignator) {
 			result.append(Keywords.cpLBRACKET);
@@ -374,15 +369,15 @@ public class ASTSignatureUtil {
 	}
 
 	/**
-	 * Returns the String signature corresponding to an IASTDeclarator. This includes the signature of the
-	 * parameters which is built via ASTSignatureUtil#getParameterSignature(IASTDeclarator) if the declarator
-	 * is for a function.
+	 * Returns the String signature corresponding to an IASTDeclarator. This includes the signature
+	 * of the parameters which is built via ASTSignatureUtil#getParameterSignature(IASTDeclarator)
+	 * if the declarator is for a function.
 	 * 
 	 * @param declarator
 	 * @return the String signature corresponding to an IASTDeclarator
 	 */
 	public static String getSignature(IASTDeclarator declarator) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 
 		// get the declSpec
 		IASTDeclSpecifier declSpec = null;
@@ -429,7 +424,7 @@ public class ASTSignatureUtil {
 			return EMPTY_STRING;
 		boolean needSpace = false;
 
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 
 		if (declSpec.getStorageClass() == IASTDeclSpecifier.sc_mutable) {
 			result.append(Keywords.MUTABLE);
@@ -863,7 +858,7 @@ public class ASTSignatureUtil {
 	}
 
 	private static String getArraySubscriptExpression(IASTArraySubscriptExpression expression) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append(getExpressionString(expression.getArrayExpression()));
 		result.append(Keywords.cpLBRACKET);
 		result.append(getInitializerClauseString(expression.getArgument()));
@@ -872,7 +867,7 @@ public class ASTSignatureUtil {
 	}
 
 	private static String getCastExpression(IASTCastExpression expression) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		boolean normalCast = false;
 
 		if (expression.getOperator() == IASTCastExpression.op_cast)
@@ -897,7 +892,7 @@ public class ASTSignatureUtil {
 	}
 
 	private static String getFieldReference(IASTFieldReference expression) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append(getExpressionString(expression.getFieldOwner()));
 		if (expression.isPointerDereference())
 			result.append(Keywords.cpARROW);
@@ -909,7 +904,7 @@ public class ASTSignatureUtil {
 	}
 
 	private static String getFunctionCallExpression(IASTFunctionCallExpression expression) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append(getExpressionString(expression.getFunctionNameExpression()));
 		result.append(Keywords.cpLPAREN);
 		IASTInitializerClause[] clauses = expression.getArguments();
@@ -924,7 +919,7 @@ public class ASTSignatureUtil {
 	}
 
 	private static String getTypeIdInitializerExpression(ICASTTypeIdInitializerExpression expression) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append(Keywords.cpLPAREN);
 		result.append(getSignature(expression.getTypeId()));
 		result.append(Keywords.cpRPAREN);
@@ -933,7 +928,7 @@ public class ASTSignatureUtil {
 	}
 
 	private static String getDeleteExpression(ICPPASTDeleteExpression expression) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append(Keywords.DELETE);
 		result.append(SPACE);
 		if (expression.getOperand() != null)
@@ -942,7 +937,7 @@ public class ASTSignatureUtil {
 	}
 
 	private static String getSimpleTypeConstructorExpression(ICPPASTSimpleTypeConstructorExpression expression) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append(getSignature(expression.getDeclSpecifier()));
 		result.append(getInitializerString(expression.getInitializer()));
 		return result.toString();
@@ -954,7 +949,7 @@ public class ASTSignatureUtil {
 	}
 
 	private static String getTypeIdExpression(IASTTypeIdExpression expression) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		String operator = getTypeIdExpressionOperator(expression);
 		if (operator != null && !operator.equals(EMPTY_STRING))
 			result.append(operator);
@@ -970,7 +965,7 @@ public class ASTSignatureUtil {
 	}
 
 	private static String getExpressionList(IASTExpressionList expression) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		IASTExpression[] exps = expression.getExpressions();
 		if (exps != null && exps.length > 0) {
 			for (int i = 0; i < exps.length; i++) {
@@ -996,7 +991,7 @@ public class ASTSignatureUtil {
 	}
 
 	private static String getConditionalExpression(IASTConditionalExpression expression) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append(getExpressionString(expression.getLogicalConditionExpression()));
 		result.append(SPACE);
 		result.append(Keywords.cpQUESTION);
@@ -1013,7 +1008,7 @@ public class ASTSignatureUtil {
 	}
 
 	private static String getNewExpression(ICPPASTNewExpression expression) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append(Keywords.NEW);
 		result.append(SPACE);
 		final IASTInitializerClause[] args = expression.getPlacementArguments();
@@ -1030,7 +1025,7 @@ public class ASTSignatureUtil {
 	}
 
 	private static String getBinaryExpression(IASTBinaryExpression expression) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(getExpressionString(expression.getOperand1()));
 		buffer.append(SPACE);
 		buffer.append(getBinaryOperatorString(expression));
@@ -1040,7 +1035,7 @@ public class ASTSignatureUtil {
 	}
 
 	private static String getUnaryExpression(IASTUnaryExpression expression) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		boolean postOperator = false;
 		boolean primaryBracketed = false;
 

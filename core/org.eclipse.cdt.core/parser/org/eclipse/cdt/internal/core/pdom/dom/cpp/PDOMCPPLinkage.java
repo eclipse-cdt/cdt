@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -129,10 +133,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Container for c++-entities.
@@ -341,7 +341,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 		PDOMBinding pdomBinding= attemptFastAdaptBinding(inputBinding);
 		if (pdomBinding == null) {
-			// assign names to anonymous types.
+			// Assign names to anonymous types.
 			IBinding binding= PDOMASTAdapter.getAdapterForAnonymousASTBinding(inputBinding);
 			if (binding == null)
 				return null;

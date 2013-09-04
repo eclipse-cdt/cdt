@@ -22,6 +22,13 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -207,13 +214,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Collection of methods to extract information from a C++ translation unit.
@@ -2381,21 +2381,21 @@ public class CPPVisitor extends ASTQueries {
 			if (owner instanceof ICPPEnumeration && !((ICPPEnumeration) owner).isScoped()) {
 				continue;
 			}
-			String n= owner.getName();
-			if (n == null)
+			String name= owner.getName();
+			if (name == null)
 				break;
 		    if (owner instanceof ICPPFunction)
 		        break;
-		    if (owner instanceof ICPPNamespace && n.length() == 0) {
+		    if (owner instanceof ICPPNamespace && name.length() == 0) {
 		    	// TODO(sprigogin): Do not ignore anonymous namespaces.
 		    	continue;
 		    }
 
-		    ns = ArrayUtil.append(String.class, ns, n);
+		    ns = ArrayUtil.append(String.class, ns, name);
 		}
         ns = ArrayUtil.trim(String.class, ns);
         String[] result = new String[ns.length + 1];
-        for (int i = ns.length - 1; i >= 0; i--) {
+        for (int i = ns.length; --i >= 0;) {
             result[ns.length - i - 1] = ns[i];
         }
         result[ns.length]= binding.getName();
@@ -2406,15 +2406,15 @@ public class CPPVisitor extends ASTQueries {
 		char[][] ns = EMPTY_CHAR_ARRAY_ARRAY;
 		ns = ArrayUtil.append(ns, binding.getNameCharArray());
 		for (IBinding owner= binding.getOwner(); owner != null; owner= owner.getOwner()) {
-			char[] n= owner.getNameCharArray();
-			if (n == null)
+			char[] name= owner.getNameCharArray();
+			if (name == null)
 				break;
 		    if (owner instanceof ICPPFunction)
 		        break;
-		    if (owner instanceof ICPPNamespace && n.length == 0)
+		    if (owner instanceof ICPPNamespace && name.length == 0)
 		    	continue;
 
-		    ns = ArrayUtil.append(ns, n);
+		    ns = ArrayUtil.append(ns, name);
 		}
         ns = ArrayUtil.trim(ns);
         ArrayUtil.reverse(ns);

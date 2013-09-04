@@ -313,10 +313,10 @@ public class IndexUpdateTests extends IndexTestBase {
 			throws DOMException {
 		assertEquals(msg(), types[0], ASTTypeUtil.getType(func.getType().getReturnType()));
 		IParameter[] params= func.getParameters();
-		assertEquals(msg(), types.length-1, params.length);
+		assertEquals(msg(), types.length - 1, params.length);
 		for (int i = 0; i < params.length; i++) {
 			IParameter parameter = params[i];
-			assertEquals(msg(), types[i+1], ASTTypeUtil.getType(parameter.getType()));
+			assertEquals(msg(), types[i + 1], ASTTypeUtil.getType(parameter.getType()));
 		}
 		checkModifier(modifiers, INLINE, func.isInline());
 		checkModifier(modifiers, STATIC, func.isStatic());

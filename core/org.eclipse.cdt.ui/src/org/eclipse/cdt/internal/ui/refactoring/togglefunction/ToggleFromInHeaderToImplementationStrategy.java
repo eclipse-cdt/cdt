@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2013 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,17 +7,20 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation
- * 	   Sergey Prigogin (Google) 
+ *     Martin Schwab & Thomas Kallenberg - initial API and implementation
+ *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.text.edits.TextEditGroup;
 
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -245,7 +248,10 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 	private boolean newFileCheck() throws CoreException {
 		implAst = context.getASTForPartnerFile();
 		if (implAst == null) {
-			ToggleFileCreator fileCreator = new ToggleFileCreator(context, ".cpp"); //$NON-NLS-1$
+			
+			IProject project = context.getCProject().getProject();
+			boolean isCC = project.hasNature(CCProjectNature.CC_NATURE_ID);
+			ToggleFileCreator fileCreator = new ToggleFileCreator(context, isCC ? ".cpp" : ".c"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (fileCreator.askUserForFileCreation(context)) {
 				IFile file = fileCreator.createNewFile();
 				implAst = context.getAST(file, null);

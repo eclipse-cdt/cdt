@@ -13,6 +13,7 @@
  *     Marc Dumais (Ericsson) - Bug 396269
  *     Marc Dumais (Ericsson) - Bug 409512
  *     Marc Dumais (Ericsson) - Bug 409965
+ *     Marc Dumais (Ericsson) - Bug 416524
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -78,6 +79,12 @@ public class MulticoreVisualizerEventListener {
 	 */
 	@DsfServiceEventHandler
 	public void handleEvent(final ISuspendedDMEvent event) {
+		// make sure model exists
+		final VisualizerModel model = fVisualizer.getModel();
+		if (model == null) {
+			return;
+		}
+
 		IDMContext context = event.getDMContext();
 		
 		// all-stop mode? If so, we take the opportunity, now that GDB has suspended
@@ -115,11 +122,11 @@ public class MulticoreVisualizerEventListener {
 							if (cores != null) {
 								assert cores.length == 1; // A thread belongs to a single core
 								int coreId = Integer.parseInt(cores[0]);
-								VisualizerCore vCore = fVisualizer.getModel().getCore(coreId);
+								VisualizerCore vCore = model.getCore(coreId);
 								
 								int tid = execDmc.getThreadId();
 																
-					    		VisualizerThread thread = fVisualizer.getModel().getThread(tid);
+					    		VisualizerThread thread = model.getThread(tid);
 					    		
 					    		if (thread != null) {
 					    			assert thread.getState() == VisualizerExecutionState.RUNNING;
@@ -153,11 +160,17 @@ public class MulticoreVisualizerEventListener {
 	/** Invoked when a thread or process is resumed. */
 	@DsfServiceEventHandler
 	public void handleEvent(IResumedDMEvent event) {
+		// make sure model exists
+		VisualizerModel model = fVisualizer.getModel();
+		if (model == null) {
+			return;
+		}
+		
 		IDMContext context = event.getDMContext();
 		
 		// in all-stop mode... : update all threads states to "running"
 		if (context != null && isSessionAllStop(context.getSessionId()) ) {
-			List<VisualizerThread> tList = fVisualizer.getModel().getThreads();
+			List<VisualizerThread> tList = model.getThreads();
 			for(VisualizerThread t : tList) {
 				t.setState(VisualizerExecutionState.RUNNING);
 			}
@@ -172,7 +185,7 @@ public class MulticoreVisualizerEventListener {
     		// Thread resumed
     		int tid = ((IMIExecutionDMContext)context).getThreadId();
 
-    		VisualizerThread thread = fVisualizer.getModel().getThread(tid);
+    		VisualizerThread thread = model.getThread(tid);
     		
     		if (thread != null) {
     			assert thread.getState() == VisualizerExecutionState.SUSPENDED ||
@@ -187,6 +200,12 @@ public class MulticoreVisualizerEventListener {
 	/** Invoked when a thread or process starts. */
 	@DsfServiceEventHandler
 	public void handleEvent(IStartedDMEvent event) {
+		// make sure model exists
+		final VisualizerModel model = fVisualizer.getModel();
+		if (model == null) {
+			return;
+		}
+		
 		IDMContext context = event.getDMContext();
 		if (context == null) return;
 		final String sessionId = context.getSessionId();
@@ -201,11 +220,8 @@ public class MulticoreVisualizerEventListener {
 			final IMIProcessDMContext processContext =
 					DMContexts.getAncestorOfType(execDmc, IMIProcessDMContext.class);
 			
-			VisualizerModel model = fVisualizer.getModel();
-			if (model == null) return;
-			
 			// put it on core zero
-			VisualizerCore vCore = fVisualizer.getModel().getCore(0);
+			VisualizerCore vCore = model.getCore(0);
 			if (vCore == null) return;
 			
 			int pid = Integer.parseInt(processContext.getProcId());
@@ -216,8 +232,8 @@ public class MulticoreVisualizerEventListener {
 			// add thread if not already there - there is a potential race condition where a 
 			// thread can be added twice to the model: once at model creation and once more 
 			// through the listener.   Checking at both places to prevent this.
-			if (fVisualizer.getModel().getThread(tid) == null ) {
-				fVisualizer.getModel().addThread(new VisualizerThread(vCore, pid, osTid, tid, VisualizerExecutionState.RUNNING));
+			if (model.getThread(tid) == null ) {
+				model.addThread(new VisualizerThread(vCore, pid, osTid, tid, VisualizerExecutionState.RUNNING));
 				fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();	
 			}
 			return;
@@ -252,7 +268,7 @@ public class MulticoreVisualizerEventListener {
 							if (cores != null) {
 								assert cores.length == 1; // A thread belongs to a single core
 								int coreId = Integer.parseInt(cores[0]);
-								VisualizerCore vCore = fVisualizer.getModel().getCore(coreId);
+								VisualizerCore vCore = model.getCore(coreId);
 								// There is a race condition that sometimes happens here.  We can reach
                                 // here because we were notified that a thread is started, but the model
 								// is not yet completely constructed.  If the model doesn't yet contain the
@@ -277,8 +293,8 @@ public class MulticoreVisualizerEventListener {
 								// add thread if not already there - there is a potential race condition where a 
 								// thread can be added twice to the model: once at model creation and once more 
 								// through the listener.   Checking at both places to prevent this.
-								if (fVisualizer.getModel().getThread(tid) == null ) {
-									fVisualizer.getModel().addThread(new VisualizerThread(vCore, pid, osTid, tid, VisualizerExecutionState.RUNNING));
+								if (model.getThread(tid) == null ) {
+									model.addThread(new VisualizerThread(vCore, pid, osTid, tid, VisualizerExecutionState.RUNNING));
 									fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();	
 								}
 							}
@@ -292,6 +308,12 @@ public class MulticoreVisualizerEventListener {
 	/** Invoked when a thread or process exits. */
 	@DsfServiceEventHandler
 	public void handleEvent(IExitedDMEvent event) {
+		// make sure model exists
+		final VisualizerModel model = fVisualizer.getModel();
+		if (model == null) {
+			return;
+		}
+
 		IDMContext context = event.getDMContext();
 		final MulticoreVisualizerCanvas canvas = fVisualizer.getMulticoreVisualizerCanvas();
 		
@@ -319,7 +341,7 @@ public class MulticoreVisualizerEventListener {
 							for (IDMContext c : contexts) {
 								if (c instanceof IMIExecutionDMContext) {
 									int tid = ((IMIExecutionDMContext)c).getThreadId();
-									fVisualizer.getModel().markThreadExited(tid);
+									model.markThreadExited(tid);
 								}
 							}
 							
@@ -339,7 +361,7 @@ public class MulticoreVisualizerEventListener {
     		// Thread exited
     		int tid = ((IMIExecutionDMContext)context).getThreadId();
 
-			fVisualizer.getModel().markThreadExited(tid);
+			model.markThreadExited(tid);
 			
 			if (canvas != null) {
 				canvas.requestUpdate();

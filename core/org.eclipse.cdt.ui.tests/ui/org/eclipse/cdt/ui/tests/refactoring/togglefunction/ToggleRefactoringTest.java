@@ -22,7 +22,7 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.togglefunction.ToggleRefactoring;
 
 /**
- * Tests for Generate Getters and Setters refactoring.
+ * Tests for ToggleRefactoring for C++ projects.
  */
 public class ToggleRefactoringTest extends RefactoringTestBase {
 	private ToggleRefactoring refactoring;
@@ -37,6 +37,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 
 	public static Test suite() {
 		TestSuite suite = suite(ToggleRefactoringTest.class);
+		suite.addTestSuite(ToggleRefactoringCTest.class);
 		suite.addTestSuite(ToggleNodeHelperTest.class);
 		return suite;
 	}
@@ -2860,23 +2861,6 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//	return;
 	//}
 	public void testImplToHeaderTopCommentWithoutDeclaration() throws Exception {
-		assertRefactoringSuccess();
-	}
-
-	//A.c
-	//#include "A.h"
-	//
-	//void /*$*/test/*$$*/() {
-	//}
-	//====================
-	//#include "A.h"
-
-	//A.h
-	//void test();
-	//====================
-	//void test() {
-	//}
-	public void testToggleCFunction() throws Exception {
 		assertRefactoringSuccess();
 	}
 }

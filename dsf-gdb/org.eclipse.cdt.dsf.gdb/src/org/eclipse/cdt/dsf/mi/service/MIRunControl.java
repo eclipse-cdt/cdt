@@ -400,8 +400,9 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	private IExecutionDMContext fStateChangeTriggeringContext;
 	/** 
 	 * Indicates that the next MIRunning event should be silenced.
+	 * @since 4.3
 	 */
-	private boolean fDisableNextRunningEvent;
+	protected boolean fDisableNextRunningEvent;
 	/** 
 	 * Indicates that the next MISignal (MIStopped) event should be silenced.
 	 */

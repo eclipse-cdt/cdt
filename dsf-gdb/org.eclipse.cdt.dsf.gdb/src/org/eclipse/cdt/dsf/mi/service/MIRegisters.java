@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Wind River Systems - initial API and implementation
  *     Ericsson			  - Modified for additional features in DSF Reference Implementation
  *     Roland Grunberg (RedHat) - Refresh all registers once one is changed (Bug 400840)
+ *     John Dallaway - Create register DMC with name if target state prevents data retrieval (Bug 412760)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -17,6 +18,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
@@ -304,6 +306,17 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
     
                         // Return the new register attributes.
                         rm.setData(new RegisterData(miRegDmc.getName(), BLANK_STRING, isFloat));
+                        rm.done();
+                    }
+                    
+                    @Override
+                    protected void handleError() {
+                    	// Create register DMC with name if target state prevents retrieval.
+                        if (getStatus().getCode() == IDsfStatusConstants.INVALID_STATE) {
+                            rm.setData(new RegisterData(miRegDmc.getName(), BLANK_STRING, false));
+                        } else {
+                            rm.setStatus(getStatus());
+                        }
                         rm.done();
                     }
                 });

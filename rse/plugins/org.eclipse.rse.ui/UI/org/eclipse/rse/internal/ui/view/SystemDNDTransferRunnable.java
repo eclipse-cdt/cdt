@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@
  * David McKnight   (IBM)        - [328148] Dropping resource onto Eclipse IFile causes RSEG1003U unexpected exception
  * David McKnight   (IBM)        - [231971] [dnd] Drag and Drop Filter Displays Error
  * Martin Oberhuber (Wind River) - [357667] [dnd] Allow copy-onto-myself semantics
+ * David McKnight   (IBM)        - [416544] drag and drop of filter into filter doesn't merge filter strings
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -289,7 +290,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 			else
 			{
 			    // special case for filters
-			    if (target instanceof ISystemFilterReference && targetSubSystem != null)
+			    if (target instanceof ISystemFilterReference && targetSubSystem != null && !(srcAdapter instanceof SystemViewFilterReferenceAdapter))
 			    {
 			        ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
 			        if (factory.supportsDropInFilters())

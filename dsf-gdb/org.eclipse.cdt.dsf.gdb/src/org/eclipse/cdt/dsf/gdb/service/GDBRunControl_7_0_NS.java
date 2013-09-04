@@ -11,6 +11,7 @@
  *     Indel AG           - [369622] fixed moveToLine using MinGW
  *     Marc Khouzam (Ericsson) - Support for operations on multiple execution contexts (bug 330974)
  *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
+ *     Alvaro Sanchez-Leon (Ericsson AB) - Bug 415362
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.service;
@@ -1528,7 +1529,18 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			return;
 		}
 
-        getSession().dispatchEvent(new ResumedEvent(e.getDMContext(), e), getProperties());
+		if (fRunToLineActiveOperation == null && fStepInToSelectionActiveOperation == null) {
+			// No special case here, i.e. send notification
+			getSession().dispatchEvent(new ResumedEvent(e.getDMContext(), e), getProperties());
+		} else {
+			// Either RunToLine or StepIntoSelection operations are active
+			MIThreadRunState threadState = fThreadRunStates.get(e.getDMContext());
+			if (threadState.fLatestEvent instanceof ISuspendedDMEvent) {
+				// Need to send out Running event notification, only once per operation, then a stop event is expected
+				// at the end of the operation
+				getSession().dispatchEvent(new ResumedEvent(e.getDMContext(), e), getProperties());
+			}
+		}
 	}
 
     /**

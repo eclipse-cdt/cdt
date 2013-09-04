@@ -292,6 +292,9 @@ public class TemplateArgumentDeduction {
 						}
 					}
 				}
+				while (pcheck instanceof ITypedef)
+					pcheck = ((ITypedef) pcheck).getType();
+
 				if (pcheck instanceof ICPPTemplateInstance && argcheck instanceof ICPPClassType) {
 					ICPPTemplateInstance pInst = (ICPPTemplateInstance) pcheck;
 					ICPPClassTemplate pTemplate= getPrimaryTemplate(pInst);
@@ -830,6 +833,8 @@ public class TemplateArgumentDeduction {
 			IType argumentTypeBeforeTypedefResolution = a;
 			while (a instanceof ITypedef)
 				a = ((ITypedef) a).getType();
+			while (p instanceof ITypedef)
+				p = ((ITypedef) p).getType();
 			if (p instanceof IBasicType) {
 				return p.isSameType(a);
 			} else if (p instanceof ICPPPointerToMemberType) {

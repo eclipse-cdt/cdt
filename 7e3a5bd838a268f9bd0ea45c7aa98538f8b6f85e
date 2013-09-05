@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_ef3db7eb",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_5692a8da",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_7622442e",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2013-08-24T03:27:55Z",
       "side": 1,
       "message": "Please add a space after the last comma.\n\nSame below.",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_cf427b66",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 5856,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_7622442e",
       "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_cf755b72",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 5900,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done\nReformatted the whole method. In such cases, where the test code is partially copied from another test, how shall I generally proceed:\n1) Reformat the new test completely?\n2) Stick with the format of the copied part?\n3) Reformat the original code to match the CDT standard?",
+      "parentUuid": "c73e4bec_f62db41a",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_162b0008",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2013-08-24T03:27:55Z",
       "side": 1,
       "message": "Please add spaces around -",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_cfc71b0e",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 5909,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_162b0008",
       "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_2fc95f22",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 5911,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_96d9d09e",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_d6307873",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
         "patchSetId": 4
@@ -98,6 +188,24 @@
       "writtenOn": "2013-08-24T03:27:55Z",
       "side": 1,
       "message": "Move to the previous line.",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_0fce232a",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 5936,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_d6307873",
       "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_6fd6c7bf",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 5940,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_b6332c7c",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_76d40463",
         "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/language/settings/providers/LanguageSettingsScannerInfoProvider.java",
         "patchSetId": 4
@@ -132,6 +258,24 @@
       "writtenOn": "2013-08-24T03:27:55Z",
       "side": 1,
       "message": "Please don\u0027t pass project instead of null.\n\nPlease define the default value as a constant in CCorePreferenceConstants.",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_cf527bb4",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/language/settings/providers/LanguageSettingsScannerInfoProvider.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_76d40463",
       "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "a74dd7b0_8d73b809",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/ExtendedScannerInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done - There is already a type called ParserConfiguration. Therefore, I chose a different name and called it ParserSettings.",
+      "parentUuid": "c73e4bec_d603584a",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_d6551827",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/GNUCSourceParser.java",
         "patchSetId": 4
@@ -166,6 +328,24 @@
       "writtenOn": "2013-08-24T03:27:55Z",
       "side": 1,
       "message": "Please combine the two nested \u0027if\u0027 statements into one. The first condition would be easier to read if it were written as result.getSize() \u003e\u003d maximumTrivialExpressionsInAggregateInitializers",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_4fa94b12",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/GNUCSourceParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_d6551827",
       "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_afb28f79",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 3550,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_f662d407",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_967390d7",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/indexer/PDOMIndexerTask.java",
         "patchSetId": 4
@@ -200,6 +398,24 @@
       "writtenOn": "2013-08-24T03:27:55Z",
       "side": 1,
       "message": "Indexer can safely skip trivial expressions regardless of the preference setting.",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_4f1b0bfe",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/indexer/PDOMIndexerTask.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_967390d7",
       "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_cfe1db47",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/CCorePreferenceInitializer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_907c3392",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_16b8202f",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/ScalabilityPreferencePage.java",
         "patchSetId": 4
@@ -234,6 +468,24 @@
       "writtenOn": "2013-08-24T03:27:55Z",
       "side": 1,
       "message": "Remove space after opening and before closing parentheses. Add a space after the cast.",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_2fe31f4f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/ScalabilityPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done\n\nReformated the extracted code.",
+      "parentUuid": "c73e4bec_16b8202f",
       "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +509,24 @@
     },
     {
       "key": {
+        "uuid": "c73e4bec_8fea3314",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/ScalabilityPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done\n\nYes, zero is a reasonable value. At least for this context. It isn\u0027t for the scalability trigger. I\u0027ve extracted the range to the method parameters.",
+      "parentUuid": "c73e4bec_10b2e3ff",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c73e4bec_b0aa0f8a",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/ScalabilityPreferencePage.java",
         "patchSetId": 4
@@ -268,6 +538,24 @@
       "writtenOn": "2013-08-24T03:27:55Z",
       "side": 1,
       "message": "Simpler to use NLS.bind",
+      "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c73e4bec_8f9cf3bc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/ScalabilityPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-05T08:34:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c73e4bec_b0aa0f8a",
       "revId": "7e3a5bd838a268f9bd0ea45c7aa98538f8b6f85e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

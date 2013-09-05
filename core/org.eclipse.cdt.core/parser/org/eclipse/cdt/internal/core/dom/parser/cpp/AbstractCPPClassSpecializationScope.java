@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -203,11 +202,8 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 
 	@Override
 	public ICPPMethod[] getImplicitMethods(IASTNode point) {
-		ICPPClassScope origClassScope= (ICPPClassScope) specialClass.getSpecializedBinding().getCompositeScope();
-		if (origClassScope == null) {
-			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-		}
-		ICPPMethod[] methods= origClassScope.getImplicitMethods();
+		ICPPClassType origClass = specialClass.getSpecializedBinding();
+		ICPPMethod[] methods= ClassTypeHelper.getImplicitMethods(origClass, point);
 		return specializeMembers(methods, point);
 	}
 

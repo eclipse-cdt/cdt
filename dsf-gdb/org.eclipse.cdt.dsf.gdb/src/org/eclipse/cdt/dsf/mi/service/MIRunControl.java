@@ -404,13 +404,15 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	private boolean fDisableNextRunningEvent;
 	/** 
 	 * Indicates that the next MISignal (MIStopped) event should be silenced.
+	 * @since 4.3
 	 */
-	private boolean fDisableNextSignalEvent;
+	protected boolean fDisableNextSignalEvent;
 	/** 
 	 * Stores the silenced MIStopped event in case we need to use it
 	 * for a failure.
+	 * @since 4.3
 	 */
-	private MIStoppedEvent fSilencedSignalEvent;
+	protected MIStoppedEvent fSilencedSignalEvent;
 	
 	private static final int FAKE_THREAD_ID = 0;
 

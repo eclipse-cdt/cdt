@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a74dd7b0_47ad1271",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-05T19:39:50Z",
+      "side": 1,
+      "message": "Please change to ISuspendedDMEvent, which is the generic interface.\n\nBTW, great idea to check the fLatestEvent for this.",
+      "revId": "06abfe52401d95349ee6f863da1b7480fa8b59d1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_07f82a70",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1537,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-05T19:39:50Z",
+      "side": 1,
+      "message": "Please change to ISuspendedDMEvent, which is the generic interface.",
+      "revId": "06abfe52401d95349ee6f863da1b7480fa8b59d1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

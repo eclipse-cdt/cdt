@@ -35,7 +35,9 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
@@ -257,8 +259,9 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	
     /**
      * This class represents an expression.
+     * @since 4.3
      */
-    protected static class MIExpressionDMC extends AbstractDMContext implements IExpressionDMContext {
+    public static class MIExpressionDMC extends AbstractDMContext implements IExpressionDMContext {
         /**
          * This field holds an expression to be evaluated.
          */
@@ -315,7 +318,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
             this(sessionId, expression, relExpr, (IDMContext)memoryCtx);
         }
 
-        private MIExpressionDMC(String sessionId, String expr, String relExpr, IDMContext parent) {
+        protected MIExpressionDMC(String sessionId, String expr, String relExpr, IDMContext parent) {
         	this(sessionId, new ExpressionInfo(expr, relExpr), parent);
         }
 
@@ -653,8 +656,9 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 * This class represents the static data referenced by an instance of ExpressionDMC,
 	 * such as its type and number of children; it does not contain the value or format
 	 * of the expression.
+	 * @since 4.3
 	 */
-	protected static class ExpressionDMData implements IExpressionDMDataExtension {
+	public static class ExpressionDMData implements IExpressionDMDataExtension {
 		// This is the relative expression, such as the name of a field within a structure,
 		// in contrast to the fully-qualified expression contained in the ExpressionDMC,
 		// which refers to the full name, including parent structure.
@@ -939,32 +943,44 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 */
 	private IExpressionDMContext createExpression(IDMContext ctx, ExpressionInfo info) {
 		String expression = info.getFullExpr();
-	    IFrameDMContext frameDmc = DMContexts.getAncestorOfType(ctx, IFrameDMContext.class);
-	    if (frameDmc != null) {
-	        return new MIExpressionDMC(getSession().getId(), info, frameDmc);
-	    } 
-	    
-	    IMIExecutionDMContext execCtx = DMContexts.getAncestorOfType(ctx, IMIExecutionDMContext.class);
-	    if (execCtx != null) {
-	    	// If we have a thread context but not a frame context, we give the user
-	    	// the expression as per the top-most frame of the specified thread.
-	    	// To do this, we create our own frame context.
-	    	MIStack stackService = getServicesTracker().getService(MIStack.class);
-	    	if (stackService != null) {
-	    		frameDmc = stackService.createFrameDMContext(execCtx, 0);
-	            return new MIExpressionDMC(getSession().getId(), info, frameDmc);
-	    	}
+		IRegisterGroupDMContext regGroupDmc = DMContexts.getAncestorOfType(ctx, IRegisterGroupDMContext.class);
+		if (regGroupDmc != null) {
+			return new MIExpressionDMC(getSession().getId(), info, ctx);
+		} 
 
-            return new InvalidContextExpressionDMC(getSession().getId(), expression, execCtx);
-        } 
-	    
-        IMemoryDMContext memoryCtx = DMContexts.getAncestorOfType(ctx, IMemoryDMContext.class);
-        if (memoryCtx != null) {
-            return new MIExpressionDMC(getSession().getId(), info, memoryCtx);
-        } 
-        
-        // Don't care about the relative expression at this point
-        return new InvalidContextExpressionDMC(getSession().getId(), expression, ctx);
+		// The order is important: we first try to obtain a frame context, 
+		// if it fails we try to get a container context and then an execution context.
+		IFrameDMContext frameDmc = DMContexts.getAncestorOfType(ctx, IFrameDMContext.class);
+		if (frameDmc != null) {
+			return new MIExpressionDMC(getSession().getId(), info, frameDmc);
+		} 
+
+		IContainerDMContext containerDmc = DMContexts.getAncestorOfType(ctx, IContainerDMContext.class);
+		if (containerDmc != null) {
+			return new MIExpressionDMC(getSession().getId(), info, containerDmc);
+		} 
+
+		IMIExecutionDMContext execCtx = DMContexts.getAncestorOfType(ctx, IMIExecutionDMContext.class);
+		if (execCtx != null) {
+			// If we have a thread context but not a frame context, we give the user
+			// the expression as per the top-most frame of the specified thread.
+			// To do this, we create our own frame context.
+			MIStack stackService = getServicesTracker().getService(MIStack.class);
+			if (stackService != null) {
+				frameDmc = stackService.createFrameDMContext(execCtx, 0);
+				return new MIExpressionDMC(getSession().getId(), info, frameDmc);
+			}
+
+			return new InvalidContextExpressionDMC(getSession().getId(), expression, execCtx);
+		} 
+
+		IMemoryDMContext memoryCtx = DMContexts.getAncestorOfType(ctx, IMemoryDMContext.class);
+		if (memoryCtx != null) {
+			return new MIExpressionDMC(getSession().getId(), info, memoryCtx);
+		} 
+
+		// Don't care about the relative expression at this point
+		return new InvalidContextExpressionDMC(getSession().getId(), expression, ctx);
 	}
 
 	/**

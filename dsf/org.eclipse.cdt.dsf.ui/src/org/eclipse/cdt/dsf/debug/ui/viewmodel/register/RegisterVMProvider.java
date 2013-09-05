@@ -76,38 +76,7 @@ public class RegisterVMProvider extends AbstractDMVMProvider
         store.addPropertyChangeListener(fPreferencesListener);
         setDelayEventHandleForViewUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
         
-        /*
-         *  Create the register data access routines.
-         */
-        SyncRegisterDataAccess regAccess = new SyncRegisterDataAccess(session) ;
-        
-        /*
-         *  Create the top level node to deal with the root selection.
-         */
-        IRootVMNode rootNode = new RegisterRootDMVMNode(this);
-        
-        /*
-         *  Create the Group nodes next. They represent the first level shown in the view.
-         */
-        IVMNode registerGroupNode = new RegisterGroupVMNode(this, getSession(), regAccess);
-        addChildNodes(rootNode, new IVMNode[] { registerGroupNode });
-        
-        /*
-         * Create the next level which is the registers themselves.
-         */
-        IVMNode registerNode = new RegisterVMNode(this, getSession(), regAccess);
-        addChildNodes(registerGroupNode, new IVMNode[] { registerNode });
-        
-        /*
-         * Create the next level which is the bitfield level.
-         */
-        IVMNode bitFieldNode = new RegisterBitFieldVMNode(this, getSession(), regAccess);
-        addChildNodes(registerNode, new IVMNode[] { bitFieldNode });
-        
-        /*
-         *  Now set this schema set as the layout set.
-         */
-        setRootNode(rootNode);
+        configureLayout();
     }
 
     /*
@@ -269,5 +238,43 @@ public class RegisterVMProvider extends AbstractDMVMProvider
         } catch (RejectedExecutionException e) {
             // Session disposed, ignore.
         }
+    }
+
+    /**
+     * @since 2.2
+     */
+    protected void configureLayout() {
+        /*
+         *  Create the register data access routines.
+         */
+        SyncRegisterDataAccess regAccess = new SyncRegisterDataAccess(getSession()) ;
+        
+        /*
+         *  Create the top level node to deal with the root selection.
+         */
+        IRootVMNode rootNode = new RegisterRootDMVMNode(this);
+        
+        /*
+         *  Create the Group nodes next. They represent the first level shown in the view.
+         */
+        IVMNode registerGroupNode = new RegisterGroupVMNode(this, getSession(), regAccess);
+        addChildNodes(rootNode, new IVMNode[] { registerGroupNode });
+        
+        /*
+         * Create the next level which is the registers themselves.
+         */
+        IVMNode registerNode = new RegisterVMNode(this, getSession(), regAccess);
+        addChildNodes(registerGroupNode, new IVMNode[] { registerNode });
+        
+        /*
+         * Create the next level which is the bitfield level.
+         */
+        IVMNode bitFieldNode = new RegisterBitFieldVMNode(this, getSession(), regAccess);
+        addChildNodes(registerNode, new IVMNode[] { bitFieldNode });
+        
+        /*
+         *  Now set this schema set as the layout set.
+         */
+        setRootNode(rootNode);
     }
 }

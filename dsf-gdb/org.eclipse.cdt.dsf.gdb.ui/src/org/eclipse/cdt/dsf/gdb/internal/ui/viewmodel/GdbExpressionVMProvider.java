@@ -22,9 +22,7 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.ExpressionManagerVMNode
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.ExpressionVMProvider;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.SingleExpressionVMNode;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterBitFieldVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterGroupVMNode;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.SyncRegisterDataAccess;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.SyncVariableDataAccess;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMNode;
@@ -124,14 +122,8 @@ public class GdbExpressionVMProvider extends ExpressionVMProvider {
          */
         IExpressionVMNode registerGroupNode = new RegisterGroupVMNode(this, getSession(), syncRegDataAccess);
         
-        IExpressionVMNode registerNode = new RegisterVMNode(this, getSession(), syncRegDataAccess);
+        IExpressionVMNode registerNode = new GdbRegisterVMNode(this, getSession(), syncvarDataAccess);
         addChildNodes(registerGroupNode, new IExpressionVMNode[] {registerNode});
-        
-        /*
-         * Create the next level which is the bit-field level.
-         */
-        IVMNode bitFieldNode = new RegisterBitFieldVMNode(this, getSession(), syncRegDataAccess);
-        addChildNodes(registerNode, new IVMNode[] { bitFieldNode });
         
         /*
          *  Create the support for the SubExpressions. Anything which is brought into the expressions
@@ -139,6 +131,7 @@ public class GdbExpressionVMProvider extends ExpressionVMProvider {
          *  node.
          */
         IExpressionVMNode variableNode =  new GdbVariableVMNode(this, getSession(), syncvarDataAccess);
+        addChildNodes(registerNode, new IExpressionVMNode[] {variableNode});
         addChildNodes(variableNode, new IExpressionVMNode[] {variableNode});
         
         /* Wire up the casting support. IExpressions2 service is always available
@@ -157,7 +150,7 @@ public class GdbExpressionVMProvider extends ExpressionVMProvider {
          *  assume what it was passed was for it and the real node which wants to handle it would be
          *  left out in the cold.
          */
-        setExpressionNodes(new IExpressionVMNode[] {disabledExpressionNode, registerGroupNode, variableNode});
+        setExpressionNodes(new IExpressionVMNode[] {disabledExpressionNode, registerGroupNode, registerNode, variableNode});
         
         /*
          *  Let the work know which is the top level node.

@@ -248,6 +248,75 @@ public class GdbVariableVMNode extends VariableVMNode {
     protected IDMVMContext createVMContext(IDMContext dmc) {
         return new GdbVariableExpressionVMC(dmc);
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMNode#canParseExpression(org.eclipse.debug.core.model.IExpression)
+     */
+    @Override
+    public boolean canParseExpression( IExpression expression ) {
+    	return ( parseExpressionForRegisterName( expression.getExpressionText() ) == null );
+    }
+
+    private String parseExpressionForRegisterName( String expression ) {
+    	if ( expression.startsWith( "GRP(" ) ) { //$NON-NLS-1$
+    		/*
+    		 * Get the group portion.
+    		 */
+    		int startIdx = "GRP(".length(); //$NON-NLS-1$
+    		int endIdx = expression.indexOf( ')', startIdx );
+    		if ( startIdx == -1 || endIdx == -1 ) {
+    			return null;
+    		}
+    		String remaining = expression.substring( endIdx + 1 );
+    		if ( !remaining.startsWith( ".REG(" ) ) { //$NON-NLS-1$
+    			return null;
+    		}
+
+    		/*
+    		 * Get the register portion.
+    		 */
+    		startIdx = ".REG(".length(); //$NON-NLS-1$
+    		endIdx = remaining.indexOf( ')', startIdx );
+    		if ( startIdx == -1 || endIdx == -1 ) {
+    			return null;
+    		}
+    		String regName = remaining.substring( startIdx, endIdx );
+    		return regName.trim();
+    	}
+    	else if ( expression.startsWith( "REG(" ) ) { //$NON-NLS-1$
+    		int startIdx = "REG(".length(); //$NON-NLS-1$
+    		int endIdx = expression.indexOf( ')', startIdx );
+    		if ( startIdx == -1 || endIdx == -1 ) {
+    			return null;
+    		}
+    		String regName = expression.substring( startIdx, endIdx );
+    		return regName.trim();
+    	}
+    	else if ( expression.startsWith( "$" ) ) { //$NON-NLS-1$
+    		/*
+    		 * At this point I am leaving this code here to represent the
+    		 * register case. To do this correctly would be to use the
+    		 * findRegister function and upgrade the register service to deal
+    		 * with registers that do not have a specified group parent context.
+    		 * I do not have the time for this right now. So by saying we do not
+    		 * handle this the Expression VM node will take it and pass it to
+    		 * the debug engine as a generic expression. Most debug engines (
+    		 * GDB included ) have an inherent knowledge of the core registers
+    		 * as part of their expression evaluation and will respond with a
+    		 * flat value for the reg. This is not totally complete in that you
+    		 * should be able to express a register which has bit fields for
+    		 * example and the bit fields should be expandable in the expression
+    		 * view. With this method it will just appear to have a single value
+    		 * and no sub-fields. I will file a defect/enhancement for this to
+    		 * mark it. This comment will act as the place-holder for the future
+    		 * work.
+    		 */
+    		return null;
+    	}
+
+    	return null;
+    }
+
     
 	@Override
 	protected void updateHasElementsInSessionThread(final IHasChildrenUpdate update) {

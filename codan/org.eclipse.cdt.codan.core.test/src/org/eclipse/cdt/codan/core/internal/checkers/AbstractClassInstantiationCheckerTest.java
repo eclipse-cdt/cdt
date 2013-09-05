@@ -331,4 +331,20 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
+
+	//	struct N {
+	//	    int node;
+	//	};
+	//
+	//	template <typename T>
+	//	struct List {
+	//	    template <int T::*>
+	//	    struct Base {};
+	//	};
+	//
+	//	List<N>::Base<&N::node> base;
+	public void testUnsafeMethodCallException_bug416284() throws Exception {
+		// Just check that codan runs without any exceptions being thrown.
+		loadCodeAndRun(getAboveComment());
+	}
 }

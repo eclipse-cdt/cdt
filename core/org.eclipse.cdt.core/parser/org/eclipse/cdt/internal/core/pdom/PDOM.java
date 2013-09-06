@@ -753,8 +753,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 				} catch (CoreException e) {
 					if (e.getStatus() != Status.OK_STATUS)
 						throw e;
-					else
-						return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+					return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 				}
 			}
 		}
@@ -847,8 +846,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 				} catch (CoreException e) {
 					if (e.getStatus() != Status.OK_STATUS)
 						throw e;
-					else
-						return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+					return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 				}
 			}
 		}
@@ -1326,8 +1324,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 					result.addAll(visitor.getMacroList());
 				}
 			}
-		}
-		catch (OperationCanceledException e) {
+		} catch (OperationCanceledException e) {
 		}
 		return result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
@@ -1601,6 +1598,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			fTraces.add(Thread.currentThread().getStackTrace());
 			return fTraces.size();
 		}
+
 		@SuppressWarnings("nls")
 		public void write(String threadName) {
 			System.out.println("Thread: '" + threadName + "': " + fReadLocks + " readlocks, " + fWriteLocks + " writelocks");
@@ -1611,6 +1609,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 				}
 			}
 		}
+
 		public void inc(DebugLockInfo val) {
 			fReadLocks+= val.fReadLocks;
 			fWriteLocks+= val.fWriteLocks;

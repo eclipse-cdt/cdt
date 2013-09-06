@@ -422,7 +422,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		PDOMBinding pdomBinding= null;
 		PDOMNode parent2= null;
 
-		// template parameters are created directly by their owners.
+		// Template parameters are created directly by their owners.
 		if (binding instanceof ICPPTemplateParameter)
 			return null;
 		if (binding instanceof ICPPUnknownBinding)
@@ -865,7 +865,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				return null;
 			}
 		} else {
-			// Skip unnamed namespaces.
+			// Skip anonymous namespaces.
 			while (owner instanceof ICPPNamespace) {
 				char[] name= owner.getNameCharArray();
 				if (name.length > 0) {

@@ -79,6 +79,15 @@ public interface ICSettingEntry {
 	 */
 	int FRAMEWORKS_MAC = 1 << 6;
 
+	/**
+	 * Flag {@code UNDEFINED} indicates that the entry is "Exported" to referencing projects.
+	 * It will be passed to the projects configurations referencing the configuration the entry
+	 * belongs to.
+	 * 
+	 * @since 5.6
+	 */
+	int EXPORTED = 1 << 7;
+
 	int INCLUDE_PATH = 1;
 	int INCLUDE_FILE = 1 << 1;
 	int MACRO = 1 << 2;

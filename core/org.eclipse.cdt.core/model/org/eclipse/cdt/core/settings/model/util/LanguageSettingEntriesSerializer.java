@@ -54,6 +54,7 @@ public class LanguageSettingEntriesSerializer {
 	public static final String RESOLVED = "RESOLVED"; //$NON-NLS-1$
 	private static final String UNDEFINED = "UNDEFINED"; //$NON-NLS-1$
 	private static final String FRAMEWORK = "FRAMEWORK"; //$NON-NLS-1$
+	private static final String EXPORTED = "EXPORTED"; //$NON-NLS-1$
 
 	public static final String FLAGS_SEPARATOR = "|"; //$NON-NLS-1$
 
@@ -270,6 +271,12 @@ public class LanguageSettingEntriesSerializer {
 
 			buf.append(FRAMEWORK);
 		}
+		if ((flags & ICLanguageSettingEntry.EXPORTED) != 0) {
+			if (buf.length() != 0)
+				buf.append(FLAGS_SEPARATOR);
+			
+			buf.append(EXPORTED);
+		}
 		return buf.toString();
 	}
 
@@ -299,6 +306,8 @@ public class LanguageSettingEntriesSerializer {
 				flags |= ICSettingEntry.UNDEFINED;
 			if (FRAMEWORK.equals(f))
 				flags |= ICSettingEntry.FRAMEWORKS_MAC;
+			if (EXPORTED.equals(f))
+				flags |= ICSettingEntry.EXPORTED;
 		}
 
 		return flags;

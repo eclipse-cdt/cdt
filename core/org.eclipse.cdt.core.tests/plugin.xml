@@ -390,6 +390,13 @@
          </entry>
          <entry
                kind="includePath"
+               name="/test/include/exported">
+            <flag
+                  value="EXPORTED">
+            </flag>
+         </entry>
+         <entry
+               kind="includePath"
                name="/test/workspace/include/path">
             <flag
                   value="VALUE_WORKSPACE_PATH">

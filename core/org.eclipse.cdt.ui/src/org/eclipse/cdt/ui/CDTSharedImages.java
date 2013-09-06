@@ -183,6 +183,8 @@ public class CDTSharedImages {
 	public static final String IMG_OVR_EDITED = "icons/ovr16/edited_ovr.gif"; //$NON-NLS-1$
 	/** @since 5.4 */
 	public static final String IMG_OVR_USER = "icons/ovr16/person_ovr.gif"; //$NON-NLS-1$
+	/** @since 5.7 */
+	public static final String IMG_OVR_EXPORTED = "icons/ovr16/exported_ovr.gif"; //$NON-NLS-1$
 
 	// Pin & Clone
 	public static final String IMG_THREAD_SUSPENDED_R_PINNED = "icons/obj16/threads_obj_r.gif"; //$NON-NLS-1$

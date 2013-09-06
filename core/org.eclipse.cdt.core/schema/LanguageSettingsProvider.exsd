@@ -202,6 +202,7 @@ The value &quot;true&quot; of this attribute is meaningful only for providers ca
   &lt;br&gt;- &lt;samp&gt;RESOLVED&lt;/samp&gt; : Indicates that the entries do not need to be resolved such as expansion of environment variables, normalizing the path against build working directory etc.
   &lt;br&gt;- &lt;samp&gt;VALUE_WORKSPACE_PATH&lt;/samp&gt; : is used to indicate that the entry is a resource managed by eclipse in the workspace. The path is rooted in the workspace root.
   &lt;br&gt;- &lt;samp&gt;UNDEFINED&lt;/samp&gt; : indicates that the entry should not be defined, corresponds to &lt;samp&gt;-U&lt;/samp&gt; option of gcc compiler. If this flag is defined it will negate entries with the same name (and kind) for all providers down the list.
+  &lt;br&gt;- &lt;samp&gt;EXPORTED&lt;/samp&gt; : indicates that the entry is exported to referencing projects. It will be passed to the projects configurations referencing the configuration the entry belongs to.
                </documentation>
             </annotation>
             <simpleType>
@@ -215,6 +216,8 @@ The value &quot;true&quot; of this attribute is meaningful only for providers ca
                   <enumeration value="VALUE_WORKSPACE_PATH">
                   </enumeration>
                   <enumeration value="UNDEFINED">
+                  </enumeration>
+                  <enumeration value="EXPORTED">
                   </enumeration>
                </restriction>
             </simpleType>

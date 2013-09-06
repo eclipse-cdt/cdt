@@ -106,30 +106,38 @@ public class LanguageSettingsImages {
 		boolean isProjectRelative = isProjectRelative(entry);
 
 		String imageKey = getImageKey(kind, flags, isProjectRelative);
+		Image image = null;
 		if (imageKey != null) {
-			if ((flags & ICSettingEntry.UNDEFINED) != 0) {
-				return CDTSharedImages.getImageOverlaid(imageKey, CDTSharedImages.IMG_OVR_INACTIVE, IDecoration.BOTTOM_LEFT);
-			}
+			String[] overlayKeys = new String[5];
 
-			String overlayKey=null;
-			IStatus status = getStatus(entry, cfgDescription);
-			switch (status.getSeverity()) {
-			case IStatus.ERROR:
-				overlayKey = CDTSharedImages.IMG_OVR_ERROR;
-				break;
-			case IStatus.WARNING:
-				overlayKey = CDTSharedImages.IMG_OVR_WARNING;
-				break;
-			case IStatus.INFO:
-				overlayKey = CDTSharedImages.IMG_OVR_WARNING;
-				break;
+			if ((flags & ICSettingEntry.UNDEFINED) != 0) {
+				image = CDTSharedImages.getImageOverlaid(imageKey, CDTSharedImages.IMG_OVR_INACTIVE, IDecoration.BOTTOM_LEFT);
+			} else {
+				String overlayKeyStatus=null;
+				IStatus status = getStatus(entry, cfgDescription);
+				switch (status.getSeverity()) {
+				case IStatus.ERROR:
+					overlayKeyStatus = CDTSharedImages.IMG_OVR_ERROR;
+					break;
+				case IStatus.WARNING:
+					overlayKeyStatus = CDTSharedImages.IMG_OVR_WARNING;
+					break;
+				case IStatus.INFO:
+					overlayKeyStatus = CDTSharedImages.IMG_OVR_WARNING;
+					break;
+				}
+				if (overlayKeyStatus != null) {
+					overlayKeys[IDecoration.BOTTOM_LEFT]=overlayKeyStatus;
+				}
+
+				if ((flags & ICSettingEntry.EXPORTED) != 0) {
+					overlayKeys[IDecoration.BOTTOM_RIGHT]=CDTSharedImages.IMG_OVR_EXPORTED;
+				}
+
+				image = CDTSharedImages.getImageOverlaid(imageKey, overlayKeys);
 			}
-			if (overlayKey != null) {
-				return CDTSharedImages.getImageOverlaid(imageKey, overlayKey, IDecoration.BOTTOM_LEFT);
-			}
-			return CDTSharedImages.getImage(imageKey);
 		}
-		return null;
+		return image;
 	}
 
 	/**

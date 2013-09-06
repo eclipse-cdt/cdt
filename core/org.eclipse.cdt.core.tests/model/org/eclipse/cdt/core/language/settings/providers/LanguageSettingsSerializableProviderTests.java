@@ -1026,6 +1026,49 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	}
 
 	/**
+	 * Serialization of include path.
+	 */
+	public void testEntryFlagsDOM() throws Exception {
+		Element elementProvider;
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(new CIncludePathEntry("path0",
+				ICSettingEntry.BUILTIN
+				| ICSettingEntry.READONLY
+				| ICSettingEntry.LOCAL
+				| ICSettingEntry.VALUE_WORKSPACE_PATH
+				| ICSettingEntry.RESOLVED
+				| ICSettingEntry.UNDEFINED
+				| ICSettingEntry.FRAMEWORKS_MAC
+				| ICSettingEntry.EXPORTED
+				));
+		{
+			// create a provider and serialize its settings
+			LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
+			provider.setSettingEntries(null, null, null, entries);
+
+			Document doc = XmlUtil.newDocument();
+			Element rootElement = XmlUtil.appendElement(doc, ELEM_TEST);
+			elementProvider = provider.serialize(rootElement);
+		}
+		{
+			// re-load and check language settings of the newly loaded provider
+			LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(elementProvider);
+			assertEquals(PROVIDER_1, provider.getId());
+
+			List<ICLanguageSettingEntry> actual = provider.getSettingEntries(null, null, null);
+			ICLanguageSettingEntry entry = actual.get(0);
+			assertTrue(entry instanceof CIncludePathEntry);
+
+			CIncludePathEntry includePathEntry = (CIncludePathEntry)entry;
+			assertEquals(entries.get(0).getName(), includePathEntry.getName());
+			assertEquals(entries.get(0).getValue(), includePathEntry.getValue());
+			assertEquals(entries.get(0).getKind(), includePathEntry.getKind());
+			assertEquals(entries.get(0).getFlags(), includePathEntry.getFlags());
+			assertEquals(entries.get(0), includePathEntry);
+		}
+	}
+
+	/**
 	 * Serialization of entries for default and specific languages together.
 	 */
 	public void testLanguageAndNullDOM() throws Exception {

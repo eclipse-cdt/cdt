@@ -394,7 +394,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 */
 	public PDOMBinding[] getBindingsViaCache(char[] name, IProgressMonitor monitor) throws CoreException {
 		CharArrayMap<PDOMBinding[]> map = getBindingMap();
-		synchronized(map) {
+		synchronized (map) {
 			PDOMBinding[] result= map.get(name);
 			if (result != null)
 				return result;
@@ -404,7 +404,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		visitor.setMonitor(monitor);
 		getIndex().accept(visitor);
 		PDOMBinding[] result= visitor.getBindings();
-		synchronized(map) {
+		synchronized (map) {
 			map.put(name, result);
 		}
 		return result;

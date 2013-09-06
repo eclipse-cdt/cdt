@@ -233,9 +233,7 @@ public class CPPSemantics {
 	 * The maximum depth to search ancestors before assuming infinite looping.
 	 */
 	public static final int MAX_INHERITANCE_DEPTH= 16;
-//
-//    public static final ASTNodeProperty STRING_LOOKUP_PROPERTY =
-//    		new ASTNodeProperty("CPPSemantics.STRING_LOOKUP_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
+
 	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
 	public static final char[] OPERATOR_ = new char[] {'o','p','e','r','a','t','o','r',' '};
 	public static final IType VOID_TYPE = new CPPBasicType(Kind.eVoid, 0);

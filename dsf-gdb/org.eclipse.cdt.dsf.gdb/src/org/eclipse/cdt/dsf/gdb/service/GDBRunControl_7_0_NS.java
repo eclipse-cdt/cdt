@@ -1549,6 +1549,16 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
      */
 	@DsfServiceEventHandler
 	public void eventDispatched(final MIStoppedEvent e) {
+    	// A disabled signal event is due to interrupting the target
+    	// to set a breakpoint.  This can happen during a run-to-line
+    	// or step-into operation, so we need to check it first.
+		IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);
+		if (e instanceof MISignalEvent && fDisableNextSignalEventDmcSet.remove(threadDmc)) {
+			fSilencedSignalEventMap.put(threadDmc, e);
+			// Don't broadcast the stopped event
+			return;
+		}
+
 		if (processRunToLineStoppedEvent(e)) {
 			// If RunToLine is not completed
 			return;
@@ -1561,13 +1571,6 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	}
 
 	private void broadcastStop(final MIStoppedEvent e) {
-		IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);
-		if (e instanceof MISignalEvent && fDisableNextSignalEventDmcSet.remove(threadDmc)) {
-			fSilencedSignalEventMap.put(threadDmc, e);
-			// Don't broadcast the stopped event
-			return;
-		}
-
 		IDMEvent<?> event = null;
 		MIBreakpointDMContext bp = null;
 		if (e instanceof MIBreakpointHitEvent) {

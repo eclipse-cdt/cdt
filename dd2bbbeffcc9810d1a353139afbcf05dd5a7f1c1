@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a74dd7b0_71f6f786",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1537,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-09-06T13:31:31Z",
+      "side": 1,
+      "message": "threadState can be null, may not have been initialized yet for all threads. Needs protection here",
+      "revId": "dd2bbbeffcc9810d1a353139afbcf05dd5a7f1c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.index.tests;
 
@@ -37,7 +37,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.runtime.CoreException;
 
 public class IndexSearchTest extends IndexTestBase {
-
 	private static final IndexFilter INDEX_FILTER = IndexFilter.ALL_DECLARED;
 
 	public static TestSuite suite() {
@@ -46,8 +45,8 @@ public class IndexSearchTest extends IndexTestBase {
 		return suite;
 	}
 
-	private ICProject fProject= null;
-	private IIndex fIndex= null;
+	private ICProject fProject;
+	private IIndex fIndex;
 	
 	public IndexSearchTest(String name) {
 		super(name);
@@ -188,7 +187,7 @@ public class IndexSearchTest extends IndexTestBase {
 		
 		IIndexBinding[] bindings;
 
-		// the binding in the unnamed namespace is not visible in global scope.
+		// The binding in the unnamed namespace is not visible in global scope.
 		bindings= fIndex.findBindings(pcl, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		assertTrue(bindings[0].isFileLocal());
@@ -196,7 +195,7 @@ public class IndexSearchTest extends IndexTestBase {
 		bindings= fIndex.findBindings(pcl.pattern().toCharArray(), INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		assertTrue(bindings[0].isFileLocal());
-}
+	}
 
 	public void testFindEnumerator() throws CoreException {
 		Pattern pEnumeration= Pattern.compile("E20061017");
@@ -206,7 +205,7 @@ public class IndexSearchTest extends IndexTestBase {
 
 		IIndexBinding[] bindings;
 		
-		// enumerators are found in global scope
+		// Enumerators are found in global scope.
 		bindings= fIndex.findBindings(pEnumerator, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsEnumerator(bindings[0]);

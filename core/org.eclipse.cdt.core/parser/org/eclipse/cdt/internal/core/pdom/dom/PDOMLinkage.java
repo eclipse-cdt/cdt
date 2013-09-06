@@ -72,7 +72,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	protected static final long[] FILE_LOCAL_REC_DUMMY = new long[]{0};
 
 	// Node types
-	protected static final int LINKAGE= 0; // special one for myself
+	protected static final int LINKAGE= 0; // Special one for myself
 
 	private BTree fMacroIndex= null;  // No need for volatile, all fields of BTree are final.
 	private final PDOM fPDOM;

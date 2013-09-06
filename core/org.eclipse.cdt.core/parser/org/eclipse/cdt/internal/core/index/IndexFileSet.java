@@ -118,8 +118,7 @@ public class IndexFileSet implements IIndexFileSet {
 				IIndexFragmentBinding fb;
 				if (binding instanceof IIndexFragmentBinding) {
 					fb= (IIndexFragmentBinding) binding;
-				}
-				else {
+				} else {
 					fb= (IIndexFragmentBinding) binding.getAdapter(IIndexFragmentBinding.class);
 				}
 				try {
@@ -128,8 +127,7 @@ public class IndexFileSet implements IIndexFileSet {
 						if (subSet != null && subSet.containsFileOfLocalBinding(fb)) {
 							ok.set(i);
 						}
-					}
-					else {
+					} else {
 						ok.set(i);
 					}
 				} catch (CoreException e) {
@@ -164,9 +162,9 @@ public class IndexFileSet implements IIndexFileSet {
 		if (!(file instanceof IIndexFragmentFile))
 			return invert;
 		
-		IIndexFragmentFile ifile= (IIndexFragmentFile) file;
-		IIndexFragmentFileSet subSet= fSubSets.get(ifile.getIndexFragment());
-		if (subSet != null && subSet.contains(ifile)) {
+		IIndexFragmentFile fragmentFile= (IIndexFragmentFile) file;
+		IIndexFragmentFileSet subSet= fSubSets.get(fragmentFile.getIndexFragment());
+		if (subSet != null && subSet.contains(fragmentFile)) {
 			return !invert;
 		}
 		return invert;

@@ -383,9 +383,9 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 				default:
 					if ('a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch =='_') {
 						fLast = IDENT;
-						fTokenOffset++;
+						fTokenLength++;
 					} else if ('0' <= ch && ch <= '9' && fLast == IDENT) {
-						fTokenOffset++;
+						fTokenLength++;
 					} else {
 						consume();
 					}

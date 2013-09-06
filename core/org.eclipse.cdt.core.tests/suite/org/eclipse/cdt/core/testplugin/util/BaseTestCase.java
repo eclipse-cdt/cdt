@@ -53,6 +53,8 @@ public class BaseTestCase extends TestCase {
 	private static final String INDEXER_TIMEOUT_PROPERTY = "indexer.timeout";
 	protected static final int INDEXER_TIMEOUT_SEC =
 			Integer.parseInt(System.getProperty(INDEXER_TIMEOUT_PROPERTY, DEFAULT_INDEXER_TIMEOUT_SEC));
+	protected static final int INDEXER_TIMEOUT_MILLISEC= INDEXER_TIMEOUT_SEC * 1000;
+	
 	private boolean fExpectFailure;
 	private int fBugNumber;
 	private int fExpectedLoggedNonOK;

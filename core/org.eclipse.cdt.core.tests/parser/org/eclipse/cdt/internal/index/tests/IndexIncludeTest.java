@@ -313,7 +313,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		
 		// change header2:
 		h2= TestSourceReader.createFile(fProject.getProject(), "header2.h", sources[2].toString());
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, h2, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, h2, INDEXER_TIMEOUT_MILLISEC);
 		fIndex.acquireReadLock();
 		try {
 			IIndexBinding[] binding= fIndex.findBindings("ok_2_220358".toCharArray(), IndexFilter.ALL_DECLARED, npm());
@@ -336,7 +336,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		waitForIndexer();
 
 		IFile s2= TestSourceReader.createFile(fProject.getProject(), "s2.cpp", source);
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, s2, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s2, INDEXER_TIMEOUT_MILLISEC);
 
 		fIndex.acquireReadLock();
 		try {
@@ -355,7 +355,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		}
 		
 		s1= TestSourceReader.createFile(fProject.getProject(), "s1.cpp", source + "\nint a20070426;");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		fIndex.acquireReadLock();
 		try {
 			assertEquals(1, fIndex.findBindings("a20070426".toCharArray(), IndexFilter.ALL_DECLARED, npm()).length);
@@ -372,7 +372,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		}
 
 		s2= TestSourceReader.createFile(fProject.getProject(), "s2.cpp", source + "\nint b20070426;");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		fIndex.acquireReadLock();
 		try {
 			assertEquals(1, fIndex.findBindings("b20070426".toCharArray(), IndexFilter.ALL_DECLARED, npm()).length);
@@ -414,42 +414,42 @@ public class IndexIncludeTest extends IndexTestBase {
 		IFile header= TestSourceReader.createFile(fProject.getProject(), "resolved20070427.h", "");
 		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
 				source[0].toString() + "\nint a20070427;");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		standardCheckUpdateIncludes(header, s1, "a20070427");
 		
 		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
 				source[0].toString() + "\nint b20070427;");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		standardCheckUpdateIncludes(header, s1, "b20070427");
 
 		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
 				source[1].toString() + "\nint c20070427;");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		checkUpdateIncludes1(header, s1, "c20070427");
 
 		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
 				source[0].toString() + "\nint d20070427;");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		standardCheckUpdateIncludes(header, s1, "d20070427");
 
 		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
 				source[2].toString() + "\nint e20070427;");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		checkUpdateIncludes2(header, s1, "e20070427");
 
 		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
 				source[0].toString() + "\nint f20070427;");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		standardCheckUpdateIncludes(header, s1, "f20070427");
 
 		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
 				source[3].toString() + "\nint g20070427;");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		checkUpdateIncludes3(header, s1, "g20070427");
 
 		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
 				source[0].toString() + "\nint h20070427;");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		standardCheckUpdateIncludes(header, s1, "h20070427");
 	}
 
@@ -483,8 +483,8 @@ public class IndexIncludeTest extends IndexTestBase {
 		IFile h2= TestSourceReader.createFile(fProject.getProject(), "h2.h", contents[1].toString());
 		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s1.cpp", contents[2].toString());
 		IFile s2= TestSourceReader.createFile(fProject.getProject(), "s2.cpp", contents[3].toString());
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, s2, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s2, INDEXER_TIMEOUT_MILLISEC);
 
 		fIndex.acquireReadLock();
 		try {

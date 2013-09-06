@@ -135,7 +135,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		}
 		ICProject cproject= cpp ? fCppProject : fCProject;
 		fFile= TestSourceReader.createFile(cproject.getProject(), "file" + (cpp ? ".cpp" : ".c"), fContents[++fContentUsed].toString());
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_TIMEOUT_MILLISEC);
 		waitForIndexer(cproject);
 	}
 	
@@ -930,7 +930,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		}
 
 		fFile= TestSourceReader.createFile(fFile.getParent(), fFile.getName(), fContents[1].toString().replaceAll("globalVar", "newVar"));
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_TIMEOUT_MILLISEC);
 		
 		fIndex.acquireReadLock();
 		try {

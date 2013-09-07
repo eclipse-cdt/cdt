@@ -855,7 +855,8 @@ public class CPPVisitor extends ASTQueries {
 				if (function.getOwner() instanceof ICPPClassType) {
 					// Don't consider a function brought into scope from a base class scope
 					// to be the same as a function declared in a derived class scope.
-					if (!((ICPPClassType) function.getOwner()).getCompositeScope().equals(scope)) {
+					IScope bindingScope = ((ICPPClassType) function.getOwner()).getCompositeScope();
+					if (bindingScope == null || !bindingScope.equals(scope)) {
 						sameFunction = false;
 					}
 				}

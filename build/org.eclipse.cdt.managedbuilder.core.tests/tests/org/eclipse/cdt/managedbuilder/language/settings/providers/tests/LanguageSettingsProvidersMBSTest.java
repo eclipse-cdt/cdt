@@ -20,8 +20,10 @@ import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsPersiste
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.internal.core.language.settings.providers.ReferencedProjectsLanguageSettingsProvider;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -31,6 +33,7 @@ import org.eclipse.core.resources.IProject;
  */
 public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 	private static final String MBS_LANGUAGE_SETTINGS_PROVIDER_ID = ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER_ID;
+	private static final String REFERENCED_PROJECTS_PROVIDER_ID = ReferencedProjectsLanguageSettingsProvider.ID;
 	private static final String USER_LANGUAGE_SETTINGS_PROVIDER_ID = ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID;
 	private static final String GCC_SPECS_DETECTOR_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector";
 	private static final String PROJECT_TYPE_EXECUTABLE_GNU = "cdt.managedbuild.target.gnu.exe";
@@ -46,6 +49,16 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 	protected void tearDown() throws Exception {
 		ManagedBuildTestHelper.removeProject(this.getName());
 		super.tearDown();
+	}
+
+	/**
+	 * Test that null arguments don't crash the provider.
+	 */
+	public void testNulls() throws Exception {
+		ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(MBS_LANGUAGE_SETTINGS_PROVIDER_ID);
+		assertNotNull(provider);
+		List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, null, null);
+		assertEquals(null, entries);
 	}
 
 	/**
@@ -74,18 +87,25 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 			{
 				ILanguageSettingsProvider provider = providers.get(1);
 				String id = provider.getId();
-				assertEquals(MBS_LANGUAGE_SETTINGS_PROVIDER_ID, id);
+				assertEquals(REFERENCED_PROJECTS_PROVIDER_ID, id);
 				assertEquals(true, LanguageSettingsManager.isPreferShared(id));
 				assertEquals(true, LanguageSettingsManager.isWorkspaceProvider(provider));
 			}
 			{
 				ILanguageSettingsProvider provider = providers.get(2);
 				String id = provider.getId();
+				assertEquals(MBS_LANGUAGE_SETTINGS_PROVIDER_ID, id);
+				assertEquals(true, LanguageSettingsManager.isPreferShared(id));
+				assertEquals(true, LanguageSettingsManager.isWorkspaceProvider(provider));
+			}
+			{
+				ILanguageSettingsProvider provider = providers.get(3);
+				String id = provider.getId();
 				assertEquals(GCC_SPECS_DETECTOR_ID, id);
 				assertEquals(true, LanguageSettingsManager.isPreferShared(id));
 				assertEquals(true, LanguageSettingsManager.isWorkspaceProvider(provider));
 			}
-			assertEquals(3, providers.size());
+			assertEquals(4, providers.size());
 		}
 	}
 

@@ -308,13 +308,13 @@
       </managedBuildRevision>
       <configuration
             id="org.eclipse.cdt.build.core.emptycfg" 
-            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;${Toolchain};org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;${Toolchain};org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"
             name="%cfg1_empty">
       </configuration>
 
 	 <configuration
         id="org.eclipse.cdt.build.core.prefbase.cfg"
-        languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;${Toolchain};org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"
+        languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;${Toolchain};org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"
         name="%cfg1_base">
 	  <toolChain
 	  	id="org.eclipse.cdt.build.core.prefbase.toolchain"

@@ -12,13 +12,14 @@
 package org.eclipse.cdt.internal.core.language.settings.providers;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.cdt.core.AbstractExecutableExtensionBase;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -81,20 +82,20 @@ public class LanguageSettingsExtensionManager {
 	 * Load language settings providers contributed via the extension point.
 	 */
 	synchronized private static void loadProviderExtensions() {
-		// sort by name - the providers defined via extensions are kept in separate list sorted by name
-		Set<ILanguageSettingsProvider> sortedProviders = new TreeSet<ILanguageSettingsProvider>(
-				new Comparator<ILanguageSettingsProvider>() {
-					@Override
-					public int compare(ILanguageSettingsProvider pr1, ILanguageSettingsProvider pr2) {
-						return pr1.getName().compareTo(pr2.getName());
-					}
-				}
-		);
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		loadProviderExtensions(Platform.getExtensionRegistry(), providers);
 
-		loadProviderExtensions(Platform.getExtensionRegistry(), sortedProviders);
+		// sort by name - the providers defined via extensions are kept in separate list sorted by name
+		Collections.sort(providers, new Comparator<ILanguageSettingsProvider>() {
+			@Override
+			public int compare(ILanguageSettingsProvider pr1, ILanguageSettingsProvider pr2) {
+				return pr1.getName().compareTo(pr2.getName());
+			}
+		}
+);
 
 		fExtensionProviders.clear();
-		for (ILanguageSettingsProvider provider : sortedProviders) {
+		for (ILanguageSettingsProvider provider : providers) {
 			fExtensionProviders.put(provider.getId(), provider);
 		}
 	}
@@ -105,7 +106,7 @@ public class LanguageSettingsExtensionManager {
 	 * @param registry - extension registry
 	 * @param providers - resulting set of providers
 	 */
-	private static void loadProviderExtensions(IExtensionRegistry registry, Set<ILanguageSettingsProvider> providers) {
+	private static void loadProviderExtensions(IExtensionRegistry registry, Collection<ILanguageSettingsProvider> providers) {
 		providers.clear();
 		IExtensionPoint extension = registry.getExtensionPoint(CCorePlugin.PLUGIN_ID, PROVIDER_EXTENSION_SIMPLE_ID);
 		if (extension != null) {

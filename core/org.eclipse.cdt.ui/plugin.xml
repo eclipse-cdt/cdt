@@ -4482,6 +4482,12 @@
 			ui-clear-entries="true"
 			ui-edit-entries="true">
 		</id-association>
+		<id-association
+			id="org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider"
+			icon="icons/obj16/search_ref_obj.gif"
+			ui-clear-entries="false"
+			ui-edit-entries="false">
+		</id-association>
 	</extension>
 	<extension point="org.eclipse.cdt.ui.cPropertyTab">
 		<tab

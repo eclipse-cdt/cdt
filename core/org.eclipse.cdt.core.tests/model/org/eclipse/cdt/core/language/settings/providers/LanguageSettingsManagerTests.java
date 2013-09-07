@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.testplugin.CModelMock;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
+import org.eclipse.cdt.internal.core.language.settings.providers.ReferencedProjectsLanguageSettingsProvider;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescription;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFile;
@@ -703,8 +704,9 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 			// ensure no test provider is set yet but default providers
 			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			assertEquals(ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID, providers.get(0).getId());
-			assertEquals(ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER_ID, providers.get(1).getId());
-			assertEquals(2, providers.size());
+			assertEquals(ReferencedProjectsLanguageSettingsProvider.ID, providers.get(1).getId());
+			assertEquals(ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER_ID, providers.get(2).getId());
+			assertEquals(3, providers.size());
 		}
 		{
 			// set test provider

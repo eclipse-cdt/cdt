@@ -819,6 +819,11 @@
             id="org.eclipse.cdt.core.PathEntryScannerInfoLanguageSettingsProvider"
             name="%PathEntryScannerInfoLanguageSettingsProvider.name">
       </provider>
+      <provider
+            class="org.eclipse.cdt.internal.core.language.settings.providers.ReferencedProjectsLanguageSettingsProvider"
+            id="org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider"
+            name="%ReferencedProjectsLanguageSettingsProvider.name">
+      </provider>
    </extension>
 
 </plugin>

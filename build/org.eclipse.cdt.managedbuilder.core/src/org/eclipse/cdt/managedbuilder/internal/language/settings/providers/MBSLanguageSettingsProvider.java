@@ -44,6 +44,9 @@ import org.eclipse.core.variables.VariablesPlugin;
 public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase implements ILanguageSettingsBroadcastingProvider {
 	@Override
 	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+		if (cfgDescription == null || rc == null) {
+			return null;
+		}
 
 		IPath projectPath = rc.getProjectRelativePath();
 		ICLanguageSetting[] languageSettings = null;

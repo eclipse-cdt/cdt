@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.LocalProjectScope;
+import org.eclipse.cdt.internal.core.language.settings.providers.ReferencedProjectsLanguageSettingsProvider;
 import org.eclipse.cdt.internal.core.language.settings.providers.ScannerInfoExtensionLanguageSettingsProvider;
 import org.eclipse.cdt.internal.core.model.PathEntryManager;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
@@ -212,7 +213,7 @@ public class ScannerDiscoveryLegacySupport {
 			legacyProviderId = PATH_ENTRY_MANAGER_LANGUAGE_SETTINGS_PROVIDER_ID;
 		}
 
-		return new String[] {USER_LANGUAGE_SETTINGS_PROVIDER_ID, legacyProviderId};
+		return new String[] {USER_LANGUAGE_SETTINGS_PROVIDER_ID, ReferencedProjectsLanguageSettingsProvider.ID, legacyProviderId};
 	}
 	
 	/**

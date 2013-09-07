@@ -526,7 +526,7 @@
                cleanCommand="rm -rf"
                errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
                id="cdt.managedbuild.config.xlc.exe.debug"
-               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
                name="%ConfigName.Dbg">
             <toolChain
                archList="all"
@@ -593,7 +593,7 @@
                artifactExtension="exe"
                cleanCommand="rm -rf"
                errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
                id="cdt.managedbuild.config.xlc.exe.release">
             <toolChain
                archList="all"
@@ -667,7 +667,7 @@
                cleanCommand="rm -rf"
                artifactExtension="so"
                errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
                id="cdt.managedbuild.config.xlc.so.debug">
             <toolChain
                   id="cdt.managedbuild.toolchain.xlc.so.debug"
@@ -731,7 +731,7 @@
                cleanCommand="rm -rf"
                artifactExtension="so"
                errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
                id="cdt.managedbuild.config.xlc.so.release">
             <toolChain
                   id="cdt.managedbuild.toolchain.xlc.so.release"
@@ -803,7 +803,7 @@
                cleanCommand="rm -rf"
                artifactExtension="lib"
                errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
                id="cdt.managedbuild.config.xlc.lib.debug">
             <toolChain
                   id="cdt.managedbuild.toolchain.xlc.lib.debug"
@@ -863,7 +863,7 @@
                cleanCommand="rm -rf"
                artifactExtension="lib"
                errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
                id="cdt.managedbuild.config.xlc.lib.release">
             <toolChain
                   id="cdt.managedbuild.toolchain.xlc.lib.release"

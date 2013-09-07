@@ -2168,7 +2168,7 @@
          <configuration
                cleanCommand="rm -rf"
                id="cdt.managedbuild.config.gnu.base"
-               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
 		    <enablement type="CONTAINER_ATTRIBUTE" 
               	attribute="artifactExtension"
               	value="so"
@@ -2566,7 +2566,7 @@
             artifactExtension="exe"
             cleanCommand="rm -rf"
             id="cdt.managedbuild.config.gnu.cygwin.base"
-            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
          <enablement type="CONTAINER_ATTRIBUTE" 
                attribute="artifactExtension" 
                value="dll"
@@ -2964,7 +2964,7 @@
             artifactExtension="exe"
             cleanCommand="rm -rf"
             id="cdt.managedbuild.config.gnu.mingw.base"
-            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
 		    <enablement type="CONTAINER_ATTRIBUTE" 
               	attribute="artifactExtension" 
               	value="dll"
@@ -3340,7 +3340,7 @@
             <configuration
                   cleanCommand="rm -rf"
                   id="cdt.managedbuild.config.gnu.macosx.base"
-                  languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
+                  languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
 		    <enablement type="CONTAINER_ATTRIBUTE" 
               	attribute="artifactExtension" 
               	value="dylib"
@@ -3753,7 +3753,7 @@
       <configuration
             cleanCommand="rm -rf"
             id="cdt.managedbuild.config.gnu.solaris.base"
-            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
 		    <enablement type="CONTAINER_ATTRIBUTE" 
               	attribute="artifactExtension" 
               	value="so"

@@ -30,6 +30,7 @@ public class AllLanguageSettingsProvidersCoreTests {
 		suite.addTest(LanguageSettingsPersistenceProjectTests.suite());
 		suite.addTest(LanguageSettingsListenersTests.suite());
 		suite.addTest(LanguageSettingsScannerInfoProviderTests.suite());
+		suite.addTest(LanguageSettingsProviderReferencedProjectsTests.suite());
 		return suite;
 	}
 }

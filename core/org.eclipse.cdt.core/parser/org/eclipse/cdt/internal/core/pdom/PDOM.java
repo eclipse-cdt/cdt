@@ -242,10 +242,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *
 	 *  CDT 8.3 development (versions not supported on the 8.2.x branch)
 	 *  160.0 - Store specialized template parameters of class/function template specializations, bug 407497.
+	 *  161.0 - Preliminary doxygen support for the description of C functions.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(160, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(160, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(160, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(161, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(161, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(161, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

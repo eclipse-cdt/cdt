@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IDescription;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -37,6 +38,7 @@ import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.doxygen.IDoxygenMap;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -52,6 +54,9 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 
 	protected IFunctionType type;
 
+	/** The description of this function */
+	private String description;
+
 	public CFunction(IASTDeclarator declarator) {
 		storeDeclarator(declarator);
 	}
@@ -66,7 +71,29 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 			} else {
 				declarators = ArrayUtil.append(IASTDeclarator.class, declarators, declarator);
 			}
+
+			IDoxygenMap doxygenMap = (IDoxygenMap)declarator.getTranslationUnit().getAdapter(IDoxygenMap.class);
+			if (doxygenMap != null) {
+				/* TODO: Accumulate somehow if multiple description exists */
+				if (description == null) {
+					description = doxygenMap.get(declarator);
+				}
+			}
 		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter.isAssignableFrom(IDescription.class)) {
+			return new IDescription() {
+				@Override
+				public String getDescription() {
+					return description;
+				}
+			};
+		}
+		return super.getAdapter(adapter);
 	}
 
 	@Override

@@ -43,6 +43,8 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.doxygen.DoxygenMap;
+import org.eclipse.cdt.internal.core.doxygen.IDoxygenMap;
 import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener;
@@ -67,6 +69,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
     private IASTDeclaration[] fAllDeclarations;
     private IASTDeclaration[] fActiveDeclarations;
 	private int fLastDeclaration= -1;
+	private DoxygenMap fDoxygenMap;
 
 	protected ILocationResolver fLocationResolver;
 	private IIndex fIndex;
@@ -333,6 +336,9 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		if (adapter.isAssignableFrom(LexerOptions.class)) {
 			return fLocationResolver.getLexerOptions();
 		}
+		if (adapter.isAssignableFrom(IDoxygenMap.class)) {
+			return fDoxygenMap;
+		}
 		return null;
 	}
 
@@ -445,6 +451,11 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 				return PROCESS_CONTINUE;
 			}
 		});
+
+		/* FIXME: Not sure if this is the right place to do that */
+		if (fDoxygenMap == null) {
+			fDoxygenMap = DoxygenMap.resolveDoxygen(this);
+		}
 	}
 
 	@Override

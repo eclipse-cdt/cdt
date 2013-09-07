@@ -31,7 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
  *
  * @author Sebastian Bauer
  */
-public class DoxygenMap {
+public class DoxygenMap implements IDoxygenMap {
 	/**
 	 * Find all doxygen comments related with the given function.
 	 *
@@ -65,6 +65,7 @@ public class DoxygenMap {
 		map.put(n, doc);
 	}
 
+	@Override
 	public String get(IASTNode n) {
 		return map.get(n);
 	}

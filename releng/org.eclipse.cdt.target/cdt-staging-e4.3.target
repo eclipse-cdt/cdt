@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?>
+
+<target name="cdt_e4.3" sequenceNumber="12">
+<locations>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.jetty.bundles.f.feature.group" version="8.1.11.201307080411"/>
+<repository location="http://download.eclipse.org/jetty/updates/jetty-bundles-8.x"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.apache.log4j" version="1.2.15.v201012070815"/>
+<unit id="org.apache.log4j.source" version="1.2.15.v201012070815"/>
+<unit id="net.sourceforge.lpg.lpgjavaruntime" version="1.1.0.v201004271650"/>
+<unit id="org.junit" version="4.8.2.v4_8_2_v20130308-0413"/>
+<unit id="org.junit.source" version="4.8.2.v4_8_2_v20130308-0413"/>
+<unit id="org.hamcrest" version="0.0.0"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20130517111416/repository/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.swtbot.eclipse.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.swtbot.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.swtbot.eclipse.test.junit.feature.group" version="0.0.0"/>
+<repository location="http://download.eclipse.org/technology/swtbot/releases/latest/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.sdk.ide" version="0.0.0"/>
+<unit id="org.eclipse.rse.feature.group" version="0.0.0"/>
+<repository location="http://download.eclipse.org/releases/kepler"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.test.feature.group" version="0.0.0"/>
+<repository location="http://download.eclipse.org/eclipse/updates/4.3/"/>
+</location>
+</locations>
+<targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+<launcherArgs>
+<vmArgs>-Xms40m
+-Xmx512M
+-XX:MaxPermSize=256m</vmArgs>
+<programArgs>-consolelog</programArgs>
+</launcherArgs>
+</target>

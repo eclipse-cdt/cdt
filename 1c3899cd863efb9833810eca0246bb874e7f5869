@@ -16,6 +16,24 @@
       "revId": "1c3899cd863efb9833810eca0246bb874e7f5869",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_212fef90",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/togglefunction/ToggleRefactoringContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-09-08T00:11:37Z",
+      "side": 1,
+      "message": "Eh, I was looking for translationUnit.getProject with completion but it was getCProject, thanks!",
+      "parentUuid": "a74dd7b0_2869ab99",
+      "revId": "1c3899cd863efb9833810eca0246bb874e7f5869",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

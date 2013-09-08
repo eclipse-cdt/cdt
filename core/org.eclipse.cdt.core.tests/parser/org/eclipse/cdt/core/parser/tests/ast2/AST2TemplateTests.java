@@ -8036,4 +8036,24 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testOutOfLineMethodOfPartialSpecialization_401152() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	namespace N {
+	//	    template <typename>
+	//	    struct C;
+	//
+	//	    template <typename T>
+	//	    struct C<T*> {
+	//	        C();
+	//	        void waldo();
+	//	    };
+	//
+	//	    template <typename T>
+	//	    C<T*>::C() {}
+	//
+	//	    template <typename T>
+	//	    void C<T*>::waldo() {}
+	//	}
+	public void testMemberOfPartialSpecialization_416788() throws Exception {
+		parseAndCheckBindings();
+	}
 }

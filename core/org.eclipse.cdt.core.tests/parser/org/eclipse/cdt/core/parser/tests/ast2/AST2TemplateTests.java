@@ -8076,4 +8076,24 @@ public class AST2TemplateTests extends AST2TestBase {
 		helper.assertNonProblem("decltype(foo(T()))::type");
 		assertSameType((ITypedef) helper.assertNonProblem("U<S>::type"), CommonTypes.int_);
 	}
+	
+	//	namespace N {
+	//	    template <typename>
+	//	    struct C;
+	//
+	//	    template <typename T>
+	//	    struct C<T*> {
+	//	        C();
+	//	        void waldo();
+	//	    };
+	//
+	//	    template <typename T>
+	//	    C<T*>::C() {}
+	//
+	//	    template <typename T>
+	//	    void C<T*>::waldo() {}
+	//	}
+	public void testMemberOfPartialSpecialization_416788() throws Exception {
+		parseAndCheckBindings();
+	}
 }

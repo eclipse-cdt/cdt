@@ -1715,6 +1715,16 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		getBindingFromASTName("g(b)", 1, ICPPFunction.class);
 	}
 
+
+	//	namespace {
+	//	  class A {};
+	//	}
+
+	//	A a;
+	public void testAnonymousNamespace() throws Exception {
+		getBindingFromFirstIdentifier("A", ICPPClassType.class);
+	}
+
 	//	namespace ns {
 	//	namespace {
 	//	const char str[] = "";
@@ -1735,6 +1745,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//
 	//	}
 	public void testAnonymousNamespaces_392577() throws Exception {
-		getBindingFromASTName("f(str)", 1, ICPPFunction.class);
+		getBindingFromFirstIdentifier("f(str)", ICPPFunction.class);
 	}
 }

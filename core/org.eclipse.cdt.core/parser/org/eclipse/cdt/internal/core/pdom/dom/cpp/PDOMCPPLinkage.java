@@ -864,15 +864,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			if (ib.isFileLocal()) {
 				return null;
 			}
-		} else {
-			// Skip anonymous namespaces.
-			while (owner instanceof ICPPNamespace) {
-				char[] name= owner.getNameCharArray();
-				if (name.length > 0) {
-					break;
-				}
-				owner= owner.getOwner();
-			}
 		}
 
 		if (owner == null)

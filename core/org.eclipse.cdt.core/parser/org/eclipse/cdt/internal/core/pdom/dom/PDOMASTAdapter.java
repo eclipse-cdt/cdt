@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Thomas Corbat (IFS)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -39,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -657,6 +659,8 @@ public class PDOMASTAdapter {
 					if (name != null) {
 						return new AnonymousCompositeType(name, (ICompositeType) binding);
 					}
+				} else if (binding instanceof ICPPNamespace) {
+					return binding;
 				} else if (binding instanceof ICPPTemplateParameter) {
 					return binding;
 				} else if (binding instanceof ICPPConstructor) {

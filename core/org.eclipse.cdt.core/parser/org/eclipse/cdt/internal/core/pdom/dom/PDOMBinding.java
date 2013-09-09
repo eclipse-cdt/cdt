@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -36,9 +39,6 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.tag.PDOMTaggable;
 import org.eclipse.core.runtime.CoreException;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 
 /**
  * Base class for bindings in the PDOM.
@@ -261,7 +261,13 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	@Override
 	public final String toString() {
 		String name = toStringBase();
-		return name + " " + getConstantNameForValue(getLinkage(), getNodeType());  //$NON-NLS-1$
+		try {
+			PDOMFile localToFile = getLocalToFile();
+			if (localToFile != null)
+				return name + " (local to " + localToFile.getLocation().getURI().getPath() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (CoreException e) {
+		}
+		return name;
 	}
 
 	protected String toStringBase() {

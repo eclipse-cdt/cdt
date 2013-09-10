@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDoxygenComment;
 import org.eclipse.cdt.core.dom.ast.IASTDoxygenTag;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -102,16 +103,7 @@ public class DoxygenMap implements IDoxygenMap {
 						continue;
 					}
 
-					IASTStandardFunctionDeclarator sfd = (IASTStandardFunctionDeclarator)decls[0];
-					IASTParameterDeclaration [] params = sfd.getParameters();
-
-					IASTDoxygenComment [] relatedDoxygenComments = findRelatedDoxygenComments(sfd, doxygenComments);
-
-					putDocumentationToMap(doxygenMap, sfd, "", "", relatedDoxygenComments); //$NON-NLS-1$ //$NON-NLS-2$
-					for (int j=0; j < params.length; j++) {
-						String paramName = params[j].getDeclarator().getName().getRawSignature();
-						putDocumentationToMap(doxygenMap, params[j], "param", paramName, relatedDoxygenComments); //$NON-NLS-1$
-					}
+					extactDoxygen((IASTStandardFunctionDeclarator)decls[0], doxygenMap, doxygenComments);
 				} else if (decls.length == 0) {
 					if (!(sd.getDeclSpecifier() instanceof IASTCompositeTypeSpecifier)) {
 						System.err.println("Unexpected decl specifier class: " + sd.getDeclSpecifier());
@@ -126,9 +118,33 @@ public class DoxygenMap implements IDoxygenMap {
 					System.err.println("Unsupported decl length " + decls.length);
 					continue;
 				}
+			} else if (d instanceof IASTFunctionDefinition) {
+				IASTFunctionDefinition fd = (IASTFunctionDefinition)d;
+				if (fd.getDeclarator() instanceof IASTStandardFunctionDeclarator) {
+					extactDoxygen((IASTStandardFunctionDeclarator)fd.getDeclarator(), doxygenMap, doxygenComments);
+				}
 			}
 		}
 		return doxygenMap;
+	}
+
+	/**
+	 * Extract the doxygen comments for the given standard function declarator.
+	 *
+	 * @param sfd
+	 * @param doxygenMap
+	 * @param doxygenComments
+	 */
+	private static void extactDoxygen(IASTStandardFunctionDeclarator sfd, DoxygenMap doxygenMap, DoxygenComments doxygenComments) {
+		IASTParameterDeclaration [] params = sfd.getParameters();
+
+		IASTDoxygenComment [] relatedDoxygenComments = findRelatedDoxygenComments(sfd, doxygenComments);
+
+		putDocumentationToMap(doxygenMap, sfd, "", "", relatedDoxygenComments); //$NON-NLS-1$ //$NON-NLS-2$
+		for (int j=0; j < params.length; j++) {
+			String paramName = params[j].getDeclarator().getName().getRawSignature();
+			putDocumentationToMap(doxygenMap, params[j], "param", paramName, relatedDoxygenComments); //$NON-NLS-1$
+		}
 	}
 
 	/**

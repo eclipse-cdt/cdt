@@ -1,5 +1,7 @@
 package org.eclipse.cdt.core.parser.tests.doxygen;
 
+import static org.eclipse.cdt.core.parser.ParserLanguage.C;
+
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -7,11 +9,11 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDoxygenComment;
 import org.eclipse.cdt.core.dom.ast.IASTDoxygenTag;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import static org.eclipse.cdt.core.parser.ParserLanguage.*;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase;
 import org.eclipse.cdt.internal.core.doxygen.DoxygenMap;
 
@@ -86,4 +88,30 @@ public class DoxygenMapTest extends AST2TestBase {
 		assertEquals("first argument", doxygenMap.get(params[0]));
 	}
 
+	//	/**
+	//	 * A test function.
+	//	 *
+	//	 * @param arg1 first argument
+	//	 * @return return value
+	//	 */
+	//	int test(int arg1)
+	//	{
+	//	    return 0;
+	//	}
+	public void testDoxygenCommentBeforeFunctionDefinition() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), C);
+		assertEquals(1, tu.getDeclarations().length);
+
+		IASTComment[] comments = tu.getComments();
+		assertEquals(1, comments.length);
+
+		IASTFunctionDefinition fd = getDeclaration(tu, 0);
+		DoxygenMap doxygenMap = DoxygenMap.resolveDoxygen(tu);
+
+		IASTStandardFunctionDeclarator sfd = (IASTStandardFunctionDeclarator)fd.getDeclarator();
+		IASTParameterDeclaration [] params = sfd.getParameters();
+
+		assertEquals("A test function.", doxygenMap.get(sfd));
+		assertEquals("first argument", doxygenMap.get(params[0]));
+	}
 }

@@ -40,12 +40,17 @@ public class DoxygenMap implements IDoxygenMap {
 	 */
 	private static IASTDoxygenComment [] findRelatedDoxygenComments(IASTNode sfd, DoxygenComments doxygenComments) {
 		int offset = sfd.getNodeLocations()[0].getNodeOffset();
+
 		List<IASTDoxygenComment> relatedDoxygenComments = new LinkedList<IASTDoxygenComment>();
 
 		IASTDoxygenComment nearestDoxygenComment = null;
 
 		/* Find best comment nearby */
 		for (IASTDoxygenComment doxygenComment : doxygenComments) {
+			if (!sfd.getContainingFilename().equals(doxygenComment.getContainingFilename())) {
+				continue;
+			}
+
 			if (doxygenComment.getNodeLocations()[0].getNodeOffset() < offset) {
 				nearestDoxygenComment = doxygenComment;
 			}

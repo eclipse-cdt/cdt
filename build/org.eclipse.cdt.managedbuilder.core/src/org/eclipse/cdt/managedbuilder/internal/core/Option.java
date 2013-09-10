@@ -44,6 +44,8 @@ import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Version;
 
 public class Option extends BuildObject implements IOption, IBuildPropertiesRestriction {
@@ -776,7 +778,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		} else if (valueTypeStr.equals(TYPE_TREE)) {
 			return TREE;
 		} else {
-			// TODO:  This was the CDT 2.0 default - should we keep it?
+			ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
+					"Invalid option type=\"" + valueTypeStr + "\" specified for option " + getId() )); //$NON-NLS-1$ //$NON-NLS-2$
+			// This was the CDT 2.0 default
 			return PREPROCESSOR_SYMBOLS;
 		}
 	}

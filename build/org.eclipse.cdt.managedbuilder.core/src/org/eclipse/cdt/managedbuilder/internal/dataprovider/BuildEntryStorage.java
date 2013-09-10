@@ -233,29 +233,33 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 			List<UserEntryInfo> entryList = new ArrayList<UserEntryInfo>();
 			for (IOption opt : options) {
 				Option option = (Option)opt;
-				@SuppressWarnings("unchecked")
-				List<OptionStringValue> list = usr ? (List<OptionStringValue>)option.getExactValue() : (List<OptionStringValue>)option.getExactBuiltinsList();
-				if (list != null) {
-					SupplierBasedCdtVariableSubstitutor subst = createSubstitutor(option, false);
-					SupplierBasedCdtVariableSubstitutor bSVarsSubst = createSubstitutor(option, true);
-					for (int j = 0; j < list.size(); j++) {
-						OptionStringValue ve = list.get(j);
-						OptionStringValue[] rVes = resolve(ve, option, bSVarsSubst);
-						if (rVes.length == 0) {
-							// If not resolved, add EmptyEntryInfo based off the value entry
-							if (emptyValuesInfos != null) {
-								emptyValuesInfos.add(new EmptyEntryInfo(ve, j));
-							}
-						} else {
-							// If resolved, add each resolved entry as a separate UserEntryInfo
-							boolean isMultiple = rVes.length > 1;
-							List<UserEntryInfo> sequense = isMultiple ? new ArrayList<UserEntryInfo>(rVes.length) : null;
-							for (OptionStringValue rVe : rVes) {
-								ICLanguageSettingEntry entry = createUserEntry(option, rVe, flags, subst);
-								entryList.add(new UserEntryInfo(entry, ve, rVe, sequense));
+				try {
+					@SuppressWarnings("unchecked")
+					List<OptionStringValue> list = usr ? (List<OptionStringValue>)option.getExactValue() : (List<OptionStringValue>)option.getExactBuiltinsList();
+					if (list != null) {
+						SupplierBasedCdtVariableSubstitutor subst = createSubstitutor(option, false);
+						SupplierBasedCdtVariableSubstitutor bSVarsSubst = createSubstitutor(option, true);
+						for (int j = 0; j < list.size(); j++) {
+							OptionStringValue ve = list.get(j);
+							OptionStringValue[] rVes = resolve(ve, option, bSVarsSubst);
+							if (rVes.length == 0) {
+								// If not resolved, add EmptyEntryInfo based off the value entry
+								if (emptyValuesInfos != null) {
+									emptyValuesInfos.add(new EmptyEntryInfo(ve, j));
+								}
+							} else {
+								// If resolved, add each resolved entry as a separate UserEntryInfo
+								boolean isMultiple = rVes.length > 1;
+								List<UserEntryInfo> sequense = isMultiple ? new ArrayList<UserEntryInfo>(rVes.length) : null;
+								for (OptionStringValue rVe : rVes) {
+									ICLanguageSettingEntry entry = createUserEntry(option, rVe, flags, subst);
+									entryList.add(new UserEntryInfo(entry, ve, rVe, sequense));
+								}
 							}
 						}
 					}
+				} catch (Exception e) {
+					ManagedBuilderCorePlugin.log(e);
 				}
 			}
 

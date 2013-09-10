@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
@@ -32,6 +33,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPQualifierType;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -47,6 +50,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstan
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * This is a utility class to help convert AST elements to Strings corresponding to
@@ -735,6 +739,18 @@ public class ASTTypeUtil {
 				if (owner instanceof ICPPNamespace || owner instanceof IType) {
 					int pos= result.length();
 					appendCppName(owner, normalize, qualify, result);
+					if (binding instanceof IIndexBinding && owner instanceof ICPPNamespace && owner.getNameCharArray().length == 0) {
+						try {
+							IIndexFile file = ((IIndexBinding) binding).getLocalToFile();
+							if (file != null) {
+								result.append('{');
+								result.append(file.getLocation().getURI().toString());
+								result.append('}');
+							}
+						} catch (CoreException e) {
+							CCorePlugin.log(e);
+						}
+					}
 					if (result.length() > pos)
 						result.append("::"); //$NON-NLS-1$
 				}
@@ -804,8 +820,10 @@ public class ASTTypeUtil {
 				int fnamestart= findFileNameStart(fname);
 				buf.append('{');
 				buf.append(fname, fnamestart, fname.length - fnamestart);
-				buf.append(':');
-				buf.append(loc.getNodeOffset());
+				if (!(binding instanceof ICPPNamespace)) {
+					buf.append(':');
+					buf.append(loc.getNodeOffset());
+				}
 				buf.append('}');
 			}
 		}

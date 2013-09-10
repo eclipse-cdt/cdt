@@ -85,8 +85,9 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	}
 
 	protected IASTName findName(String section, int len, boolean preferImplicitName) {
-		if (len == 0)
-			len= section.length();
+		if (len <= 0)
+			len += section.length();
+
 		for (int i = 0; i < strategy.getAstCount(); i++) {
 			IASTTranslationUnit ast = strategy.getAst(i);
 			final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
@@ -128,10 +129,10 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 * @param clazz an expected class type or interface that the binding should extend/implement
 	 * @return the associated name's binding
 	 */
-	protected <T> T getBindingFromASTName(String section, int len, Class<T> clazz, Class ... cs) {
-		if (len < 1) {
-			len= section.length()+len;
-		}
+	protected <T> T getBindingFromASTName(String section, int len, Class<T> clazz, Class... cs) {
+		if (len <= 0)
+			len += section.length();
+
 		IASTName name= findName(section, len);
 		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
@@ -156,10 +157,10 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 * @param clazz an expected class type or interface that the binding should extend/implement
 	 * @return the associated implicit name's binding
 	 */
-	protected <T> T getBindingFromImplicitASTName(String section, int len, Class<T> clazz, Class ... cs) {
-		if (len < 1) {
-			len= section.length()+len;
-		}
+	protected <T> T getBindingFromImplicitASTName(String section, int len, Class<T> clazz, Class... cs) {
+		if (len <= 0)
+			len += section.length();
+
 		IASTName name= findImplicitName(section, len);
 		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
@@ -172,7 +173,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	}
 
 	/*
-	 * @see IndexBindingResolutionTestBase#getBindingFromASTName(String, int, Class<T>, Class ...)
+	 * @see IndexBindingResolutionTestBase#getBindingFromASTName(String, int, Class<T>, Class...)
 	 */
 	protected <T extends IBinding> T getBindingFromASTName(String section, int len) {
 		if (len <= 0)
@@ -187,7 +188,15 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"", IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
 		return (T) binding;
 	}
-	
+
+	protected <T extends IBinding> T getBindingFromFirstIdentifier(String section) {
+		return getBindingFromASTName(section, getIdentifierLength(section));
+	}
+
+	protected <T extends IBinding> T getBindingFromFirstIdentifier(String section, Class<T> clazz, Class... cs) {
+		return getBindingFromASTName(section, getIdentifierLength(section), clazz, cs);
+	}
+
 	/*
 	 * @see IndexBindingResolutionTestBase#getBindingFromImplicitASTName(String, int, Class<T>, Class ...)
 	 */
@@ -201,7 +210,8 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 		IBinding binding = name.resolveBinding();
 		assertNotNull("No binding for " + name.getRawSignature(), binding);
-		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"", IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"",
+				IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
 		return (T) binding;
 	}
 
@@ -218,8 +228,13 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 		IBinding binding = name.resolveBinding();
 		assertNotNull("No binding for " + name.getRawSignature(), binding);
-		assertTrue("Binding is not a ProblemBinding for name \"" + name.getRawSignature() + "\"", IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertTrue("Binding is not a ProblemBinding for name \"" + name.getRawSignature() + "\"",
+				IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
 		return name.resolveBinding();
+	}
+
+	protected IBinding getProblemFromFirstIdentifier(String section) {
+		return getProblemFromASTName(section, getIdentifierLength(section));
 	}
 
 	protected static void assertQNEquals(String expectedQN, IBinding b) {
@@ -306,6 +321,13 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 				assertFalse("ProblemBinding for " + n.getRawSignature(), n.resolveBinding() instanceof IProblemBinding);
 			}
 		}
+	}
+
+	protected int getIdentifierLength(String str) {
+		int i;
+		for (i = 0; i < str.length() && Character.isJavaIdentifierPart(str.charAt(i)); ++i) {
+		}
+		return i;
 	}
 
 	static protected class NameCollector extends ASTVisitor {
@@ -766,5 +788,12 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		if (getName().startsWith("_") && strategy instanceof ReferencedProject) {
 			fail("Artificially failing - see IndexBindingResolutionTestBase.fakeFailForReferenced()");
 		}
+	}
+	
+	protected static void assertSameType(IType first, IType second){
+		assertNotNull(first);
+		assertNotNull(second);
+		assertTrue("Expected types to be the same, but first was: '" + first.toString() +
+				"' and second was: '" + second + "'", first.isSameType(second));
 	}
 }

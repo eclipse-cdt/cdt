@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 QNX Software Systems and others.
+ * Copyright (c) 2006, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Andrew Ferguson (Symbian)
  *     Bryan Wilkinson (QNX)
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -134,6 +136,16 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		getIndex().insert(childRec);
 		if (child instanceof PDOMCPPNamespace) {
 			((PDOMCPPNamespace) child).addToList(record + FIRST_NAMESPACE_CHILD_OFFSET);
+		}
+		if (hasName(CharArrayUtils.EMPTY_CHAR_ARRAY)) {
+			// The parent of the anonymous namespace adopts its children so that they could be
+			// found up there.
+			PDOMNode parent = getParentNode();
+			if (parent instanceof PDOMCPPNamespace) {
+				parent.addChild(child);
+			} else {
+				getLinkage().addChild(child);
+			}
 		}
 	}
 

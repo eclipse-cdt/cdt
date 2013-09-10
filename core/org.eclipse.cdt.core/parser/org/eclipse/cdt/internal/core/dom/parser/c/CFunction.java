@@ -75,7 +75,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 			IDoxygenMap doxygenMap = (IDoxygenMap)declarator.getTranslationUnit().getAdapter(IDoxygenMap.class);
 			if (doxygenMap != null) {
 				/* TODO: Accumulate somehow if multiple description exists */
-				if (description == null) {
+				if (description == null || description.length() == 0) {
 					description = doxygenMap.get(declarator);
 				}
 			}

@@ -160,7 +160,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 		IScope scope= this;
 		IASTName[] segments= name.getNames();
 		try {
-			for (int i= segments.length; --i >= 0;) {
+			for (int i= segments.length - 1; --i >= 0;) {
 				if (scope == null)
 					return false;
 				IName scopeName = scope.getScopeName();

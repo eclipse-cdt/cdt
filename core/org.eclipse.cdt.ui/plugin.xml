@@ -251,6 +251,10 @@
             class="org.eclipse.cdt.internal.ui.text.c.hover.AnnotationHover"
             id="org.eclipse.cdt.ui.AnnotationHover">
       </hover>
+      <hover
+            class="org.eclipse.cdt.internal.ui.text.c.hover.DescriptionHover"
+            id="org.eclipse.cdt.ui.DescriptionHover">
+      </hover>
    </extension>
    
    <extension

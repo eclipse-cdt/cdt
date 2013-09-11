@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.templateengine.TemplateEngineMessages;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Abstract ProcessRunner class provides the methods to implement for processes.
@@ -33,7 +34,12 @@ public abstract class ProcessRunner {
 	public ProcessParameter[] getProcessParameters() {
 		return params;
 	}
-	
+
+	protected ProcessFailureException missingArgException(String processId, String varname) {
+		String msg = MessageFormat.format(TemplateEngineMessages.ProcessRunner_missingArg, varname);
+		return new ProcessFailureException(getProcessMessage(processId, IStatus.ERROR, msg));
+	}
+
 	/**
 	 * Checks the whether the arguments are matching the required parameters.
 	 */

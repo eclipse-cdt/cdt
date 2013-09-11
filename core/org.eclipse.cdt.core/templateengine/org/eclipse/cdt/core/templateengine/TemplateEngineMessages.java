@@ -19,6 +19,8 @@ public class TemplateEngineMessages {
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);
 
+	public static String ProcessRunner_missingArg;
+
 	private TemplateEngineMessages() {
 	}
 

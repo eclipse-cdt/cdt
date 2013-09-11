@@ -183,4 +183,16 @@
          />
    </extension>
 
+    <extension point="org.eclipse.cdt.core.templateProcessTypes">
+        <processType
+            name="AddMakeTarget"
+            processRunner="org.eclipse.cdt.make.internal.core.templateengine.AddMakeTarget">
+        <simple name="projectName"/>
+        <simple name="targetName"/>
+        <simple name="makeTarget" external="true" nullable="true"/>
+        <simple name="buildCommand" external="true" nullable="true"/>
+        <simple name="buildArguments" external="true" nullable="true"/>
+      </processType>
+    </extension>
+
 </plugin>

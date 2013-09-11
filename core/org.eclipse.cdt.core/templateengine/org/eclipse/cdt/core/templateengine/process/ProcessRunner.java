@@ -15,25 +15,34 @@ import org.eclipse.cdt.core.templateengine.TemplateEngineMessages;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Abstract ProcessRunner class provides the methods to implement for processes.
  */
 public abstract class ProcessRunner {
-	
+
 	private ProcessParameter[] params = new ProcessParameter[0];
-	
+
 	void setProcessParameters(ProcessParameter[] params) {
 		this.params = params == null ? new ProcessParameter[0] : params;
 	}
-	
+
 	/**
 	 * Returns the Process Parameters.
 	 */
 	public ProcessParameter[] getProcessParameters() {
 		return params;
 	}
-	
+
+	/**
+	 * @since 5.6
+	 */
+	protected ProcessFailureException missingArgException(String processId, String varname) {
+		String msg = MessageFormat.format(TemplateEngineMessages.ProcessRunner_missingArg, varname);
+		return new ProcessFailureException(getProcessMessage(processId, IStatus.ERROR, msg));
+	}
+
 	/**
 	 * Checks the whether the arguments are matching the required parameters.
 	 */
@@ -54,7 +63,7 @@ public abstract class ProcessRunner {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Return the String containing the mismatching message
 	 * if the arguments are not matching the required parameters.
@@ -95,7 +104,7 @@ public abstract class ProcessRunner {
 				return processId + TemplateEngineMessages.getString("ProcessRunner.info") + msg; //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * @param template
 	 * @param args

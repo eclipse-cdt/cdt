@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.remote.ui.remoteUIServices">
+      <remoteUIServices
+            class="org.eclipse.internal.remote.jsch.ui.JSchUIServicesFactory"
+            id="org.eclipse.remote.JSch"
+            name="JSch">
+      </remoteUIServices>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.filesystemSupport">
+      <filesystemContributor
+            class="org.eclipse.internal.remote.jsch.ui.JSchFileSystemContributor"
+            label="JSch"
+            scheme="ssh">
+      </filesystemContributor>
+   </extension>
+   <extension
+            point="org.eclipse.ui.preferenceTransfer">
+         <transfer
+               icon="icons/full/obj16/connection.gif"
+               id="org.eclipse.remote.jsch.transfer.connections"
+               name="%JSchTransferConnections.name">
+            <mapping
+                  scope="instance">
+               <entry
+                     node="org.eclipse.remote.jsch.core/connections">
+               </entry>
+            </mapping>
+            <description>
+               %JSchTransferConnections.description
+            </description>
+         </transfer>
+   </extension>
+   
+</plugin>

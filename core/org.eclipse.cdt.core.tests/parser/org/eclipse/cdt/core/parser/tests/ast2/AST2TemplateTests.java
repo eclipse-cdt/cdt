@@ -7097,7 +7097,23 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	void test(A<int>* c) {
 	//	  f(c);
 	//	}
-	public void testAliasTemplate_416280() throws Exception {
+	public void testAliasTemplate_416280_1() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template<typename T>
+	//	struct C {};
+	//
+	//	template<typename U>
+	//	struct A {
+	//	  template<typename V>
+	//	  using B = C<V>;
+	//	};
+	//
+	//	struct D : public A<char> {
+	//	  B<int> b;
+	//	};
+	public void testAliasTemplate_416280_2() throws Exception {
 		parseAndCheckBindings();
 	}
 

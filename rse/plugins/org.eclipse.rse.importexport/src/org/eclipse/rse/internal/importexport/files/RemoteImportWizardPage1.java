@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [276535] File Conflict when Importing Remote Folder with Case-Differentiated-Only Filenames into Project
  * David McKnight   (IBM)        - [191558] [importexport][efs] Import to Project doesn't work with remote EFS projects
  * David McKnight   (IBM)        - [368465] Import Files -RSE - Cyclic Symbolic Reference problem
+ * David McKnight   (IBM)        - [417033] [import/export] RSE import wizard won't let user to select new source
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -105,6 +106,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.eclipse.ui.internal.ide.dialogs.IElementFilter;
+import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
@@ -165,6 +167,12 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			query(_fileSystemObject, _element, monitor);
 			_isActive = false;
 			
+			// make sure to update enablement after query
+			Display.getDefault().syncExec(new Runnable(){
+				public void run(){
+					updateWidgetEnablements();
+				}
+			});
 			return Status.OK_STATUS;
 		}
 
@@ -768,6 +776,22 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		if (_fileSystemTree == null){
 			_fileSystemTree = selectFiles(sourceDirectory, FileSystemStructureProvider.INSTANCE);
 		}
+		else {
+			// update _fileSystemTree
+			Object root = _fileSystemTree.getFileSystemObject();
+			if (root == null){
+				AdaptableList flds = _fileSystemTree.getFolders();
+				if (flds != null){
+					Object child = flds.getChildren()[0];
+					if (child instanceof MinimizedFileSystemElement){
+						Object fsObj = ((MinimizedFileSystemElement)child).getFileSystemObject();
+						if (fsObj != sourceDirectory){							
+							_fileSystemTree = selectFiles(sourceDirectory, FileSystemStructureProvider.INSTANCE);
+						}
+					}
+				}
+			}
+		}
 		return _fileSystemTree;
 	}
 
@@ -996,6 +1020,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	 *	Repopulate the view based on the currently entered directory.
 	 */
 	protected void resetSelection() {
+		_queryAllJob = null; // a new one will be created
 		MinimizedFileSystemElement currentRoot = getFileSystemTree();
 		this.selectionGroup.setRoot(currentRoot);
 	}

@@ -14,7 +14,7 @@ import java.net.URI;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.internal.remote.core.RemoteServicesImpl;
-import org.eclipse.internal.remote.core.RemoteServicesProxy;
+import org.eclipse.internal.remote.core.RemoteServicesDescriptor;
 import org.eclipse.internal.remote.core.services.local.LocalServices;
 
 /**
@@ -61,7 +61,7 @@ public class RemoteServices {
 	 * @since 5.0
 	 */
 	public static IRemoteServices getRemoteServices(String id, IProgressMonitor monitor) {
-		RemoteServicesProxy proxy = RemoteServicesImpl.getRemoteServiceProxyById(id);
+		RemoteServicesDescriptor proxy = RemoteServicesImpl.getRemoteServiceDescriptorById(id);
 		if (proxy != null) {
 			IRemoteServices service = proxy.getServices();
 			if (service.initialize(monitor)) {
@@ -94,7 +94,7 @@ public class RemoteServices {
 	 * @since 5.0
 	 */
 	public static IRemoteServices getRemoteServices(URI uri, IProgressMonitor monitor) {
-		RemoteServicesProxy proxy = RemoteServicesImpl.getRemoteServiceProxyByURI(uri);
+		RemoteServicesDescriptor proxy = RemoteServicesImpl.getRemoteServiceDescriptorByURI(uri);
 		if (proxy != null) {
 			IRemoteServices service = proxy.getServices();
 			if (service.initialize(monitor)) {

@@ -24,6 +24,7 @@ import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionChangeEvent;
 import org.eclipse.remote.core.IRemoteConnectionChangeListener;
 import org.eclipse.remote.core.IRemoteConnectionManager;
+import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IRemoteFileManager;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.IRemoteProcessBuilder;
@@ -33,9 +34,9 @@ import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.core.exception.UnableToForwardPortException;
 
 public class LocalConnection implements IRemoteConnection {
-	private String fName = IRemoteConnectionManager.LOCAL_CONNECTION_NAME;
-	private String fAddress = Messages.LocalConnection_1;
-	private String fUsername = System.getProperty("user.name"); //$NON-NLS-1$
+	private final String fName = IRemoteConnectionManager.LOCAL_CONNECTION_NAME;
+	private final String fAddress = Messages.LocalConnection_1;
+	private final String fUsername = System.getProperty("user.name"); //$NON-NLS-1$
 	private boolean fConnected = true;
 	private IPath fWorkingDir = null;
 
@@ -73,12 +74,23 @@ public class LocalConnection implements IRemoteConnection {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(IRemoteConnection connection) {
+		return getName().compareTo(connection.getName());
+	}
+
 	/**
 	 * Notify all listeners when this connection's status changes.
 	 * 
 	 * @param event
 	 */
-	private void fireConnectionChangeEvent(final int type) {
+	@Override
+	public void fireConnectionChangeEvent(final int type) {
 		IRemoteConnectionChangeEvent event = new IRemoteConnectionChangeEvent() {
 			@Override
 			public IRemoteConnection getConnection() {
@@ -277,6 +289,16 @@ public class LocalConnection implements IRemoteConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnection#getWorkingCopy()
+	 */
+	@Override
+	public IRemoteConnectionWorkingCopy getWorkingCopy() {
+		return new LocalConnectionWorkingCopy(this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * org.eclipse.remote.core.IRemoteFileManager#getWorkingDirectory(org
 	 * .eclipse.core.runtime.IProgressMonitor)
@@ -362,76 +384,6 @@ public class LocalConnection implements IRemoteConnection {
 	@Override
 	public void removeRemotePortForwarding(int port) throws RemoteConnectionException {
 		// Do nothing
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteConnection#setAddress(java.lang.String
-	 * )
-	 */
-	@Override
-	public void setAddress(String address) {
-		fAddress = address;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteConnection#setAttribute(java.lang.
-	 * String, java.lang.String)
-	 */
-	@Override
-	public void setAttribute(String key, String value) {
-		// Not supported
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteConnection#setName(java.lang.String)
-	 */
-	@Override
-	public void setName(String name) {
-		fName = name;
-		fireConnectionChangeEvent(IRemoteConnectionChangeEvent.CONNECTION_RENAMED);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteConnection#setPassword(java.lang.String
-	 * )
-	 */
-	@Override
-	public void setPassword(String password) {
-		// Not supported
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#setPort(int)
-	 */
-	@Override
-	public void setPort(int port) {
-		// Not supported
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteConnection#setUsername(java.lang.String
-	 * )
-	 */
-	@Override
-	public void setUsername(String username) {
-		fUsername = username;
 	}
 
 	/*

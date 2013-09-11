@@ -23,6 +23,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.ui.IRemoteUIConnectionManager;
 import org.eclipse.swt.widgets.Shell;
@@ -34,7 +35,7 @@ public class LocalUIConnectionManager implements IRemoteUIConnectionManager {
 	 * @see
 	 * org.eclipse.remote.core.IRemoteUIConnectionManager#newConnection()
 	 */
-	public IRemoteConnection newConnection(Shell shell) {
+	public IRemoteConnectionWorkingCopy newConnection(Shell shell) {
 		MessageDialog.openInformation(shell, Messages.LocalUIConnectionManager_2, Messages.LocalUIConnectionManager_3);
 		return null;
 	}
@@ -46,7 +47,7 @@ public class LocalUIConnectionManager implements IRemoteUIConnectionManager {
 	 * org.eclipse.remote.ui.IRemoteUIConnectionManager#newConnection(org
 	 * .eclipse.swt.widgets.Shell, java.lang.String[], java.lang.String[])
 	 */
-	public IRemoteConnection newConnection(Shell shell, String[] attrHints, String[] attrHintValues) {
+	public IRemoteConnectionWorkingCopy newConnection(Shell shell, String[] attrHints, String[] attrHintValues) {
 		return newConnection(shell);
 	}
 
@@ -89,13 +90,10 @@ public class LocalUIConnectionManager implements IRemoteUIConnectionManager {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.remote.ui.IRemoteUIConnectionManager#updateConnection
-	 * (org.eclipse.swt.widgets.Shell,
-	 * org.eclipse.remote.core.IRemoteConnection)
+	 * @see org.eclipse.remote.ui.IRemoteUIConnectionManager#updateConnection(org.eclipse.swt.widgets.Shell,
+	 * org.eclipse.remote.core.IRemoteConnectionWorkingCopy)
 	 */
-	public void updateConnection(Shell shell, IRemoteConnection connection) {
-		// TODO Auto-generated method stub
-
+	public boolean updateConnection(Shell shell, IRemoteConnectionWorkingCopy connection) {
+		return false;
 	}
 }

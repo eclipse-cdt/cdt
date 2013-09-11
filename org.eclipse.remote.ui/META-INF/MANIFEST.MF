@@ -7,6 +7,7 @@ Bundle-Activator: org.eclipse.internal.remote.ui.RemoteUIPlugin
 Bundle-Vendor: %pluginProvider
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
+ org.eclipse.ui.forms,
  org.eclipse.core.runtime,
  org.eclipse.remote.core,
  org.eclipse.core.filesystem,

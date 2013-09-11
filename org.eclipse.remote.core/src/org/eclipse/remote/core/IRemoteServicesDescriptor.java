@@ -14,15 +14,7 @@ package org.eclipse.remote.core;
  * Interface representing a remote services provider extension. Clients can use this to find out information about the extension
  * without loading it.
  */
-public interface IRemoteServicesDescriptor {
-	/**
-	 * Test if this provider can create connections.
-	 * 
-	 * @return true if new connections can be created
-	 * @since 5.0
-	 */
-	public boolean canCreateConnections();
-
+public interface IRemoteServicesDescriptor extends Comparable<IRemoteServicesDescriptor> {
 	/**
 	 * Get unique ID of this service. Can be used as a lookup key.
 	 * 

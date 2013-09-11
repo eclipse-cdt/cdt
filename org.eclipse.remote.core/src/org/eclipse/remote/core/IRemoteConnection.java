@@ -22,7 +22,7 @@ import org.eclipse.remote.core.exception.RemoteConnectionException;
  * then call the {{@link #open(IProgressMonitor)} method. Once the connection is completed, call the {@link #close()} method to
  * terminate the connection.
  */
-public interface IRemoteConnection {
+public interface IRemoteConnection extends Comparable<IRemoteConnection> {
 	public final static String OS_NAME_PROPERTY = "os.name"; //$NON-NLS-1$
 	public final static String OS_VERSION_PROPERTY = "os.version"; //$NON-NLS-1$
 	public final static String OS_ARCH_PROPERTY = "os.arch"; //$NON-NLS-1$
@@ -54,6 +54,15 @@ public interface IRemoteConnection {
 	 * Close the connection. Must be called to terminate the connection.
 	 */
 	public void close();
+
+	/**
+	 * Notify all listeners when this connection's status changes. See {{@link IRemoteConnectionChangeEvent} for a list of event
+	 * types.
+	 * 
+	 * @param event
+	 *            event type indicating the nature of the event
+	 */
+	public void fireConnectionChangeEvent(int type);
 
 	/**
 	 * Forward local port localPort to remote port fwdPort on remote machine fwdAddress. If this IRemoteConnection is not to
@@ -239,6 +248,8 @@ public interface IRemoteConnection {
 	 */
 	public String getUsername();
 
+	public IRemoteConnectionWorkingCopy getWorkingCopy();
+
 	/**
 	 * Get the working directory. Relative paths will be resolved using this path.
 	 * 
@@ -310,58 +321,10 @@ public interface IRemoteConnection {
 	public void removeRemotePortForwarding(int port) throws RemoteConnectionException;
 
 	/**
-	 * Set the address for this connection
+	 * Set the working directory while the connection is open. The working directory will revert to the default when the connection
+	 * is closed then subsequently reopened.
 	 * 
-	 * @param address
-	 */
-	public void setAddress(String address);
-
-	/**
-	 * Set an implementation dependent attribute for the connection. Attributes keys supported by the connection can be obtained
-	 * using {@link #getAttributes()}
-	 * 
-	 * @param key
-	 *            attribute key
-	 * @param value
-	 *            attribute value
-	 * @since 5.0
-	 */
-	public void setAttribute(String key, String value);
-
-	/**
-	 * Set the name for this connection
-	 * 
-	 * @param name
-	 */
-	public void setName(String name);
-
-	/**
-	 * Set the password for this connection
-	 * 
-	 * @param password
-	 * @since 5.0
-	 */
-	public void setPassword(String password);
-
-	/**
-	 * Set the port used for this connection. Only valid if supported by the underlying service provider.
-	 * 
-	 * @param port
-	 *            port number for the connection
-	 * @since 5.0
-	 */
-	public void setPort(int port);
-
-	/**
-	 * Set the username for this connection
-	 * 
-	 * @param username
-	 */
-	public void setUsername(String username);
-
-	/**
-	 * Set the working directory. Relative paths will be resolved using this path. The path must be valid and absolute for any
-	 * changes to be made.
+	 * Relative paths will be resolved using this path. The path must be valid and absolute for any changes to be made.
 	 * 
 	 * @param path
 	 *            String representing the current working directory

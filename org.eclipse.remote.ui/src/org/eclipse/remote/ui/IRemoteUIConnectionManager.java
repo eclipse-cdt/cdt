@@ -12,6 +12,7 @@ package org.eclipse.remote.ui;
 
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -37,20 +38,23 @@ public interface IRemoteUIConnectionManager {
 	public static String LOGIN_USERNAME_HINT = "LOGIN_USERNAME_HINT"; //$NON-NLS-1$
 
 	/**
-	 * Create a new connection. The implementation can choose to do this in any
-	 * way, but typically will use a dialog or wizard.
+	 * Create a new connection. The implementation can choose to do this in any way, but typically will use a dialog or wizard.
+	 * 
+	 * Returns a working copy of the remote connection. Callers must call {@link IRemoteConnectionWorkingCopy#save()} before the
+	 * connection can be used.
 	 * 
 	 * @param shell
 	 *            shell used to display dialogs
-	 * @return newly created remote connection or null if none created
+	 * @return newly created remote connection working copy or null if none created
 	 */
-	public IRemoteConnection newConnection(Shell shell);
+	public IRemoteConnectionWorkingCopy newConnection(Shell shell);
 
 	/**
-	 * Create a new connection using the remote service provider new connection
-	 * dialog. If attrHints and attrHintValues are provided then the dialog will
-	 * attempt to use these values as the default values for the appropriate
-	 * dialog fields.
+	 * Create a new connection using the remote service provider new connection dialog. If attrHints and attrHintValues are provided
+	 * then the dialog will attempt to use these values as the default values for the appropriate dialog fields.
+	 * 
+	 * Returns a working copy of the remote connection. Callers must call {@link IRemoteConnectionWorkingCopy#save()} before the
+	 * connection can be used.
 	 * 
 	 * @param shell
 	 *            shell used to display dialog
@@ -59,10 +63,10 @@ public interface IRemoteUIConnectionManager {
 	 * @param attrHintValues
 	 *            array containing default values for each attribute specified
 	 *            in attrHints
-	 * @return the newly created connection or null if none created
+	 * @return the newly created connection working copy or null if none created
 	 * @since 5.0
 	 */
-	public IRemoteConnection newConnection(Shell shell, String[] attrHints, String[] attrHintValues);
+	public IRemoteConnectionWorkingCopy newConnection(Shell shell, String[] attrHints, String[] attrHintValues);
 
 	/**
 	 * Attempt to open a connection using a progress monitor. Can be called on either open or closed connections, and will
@@ -80,13 +84,14 @@ public interface IRemoteUIConnectionManager {
 	public void openConnectionWithProgress(Shell shell, IRunnableContext context, IRemoteConnection connection);
 
 	/**
-	 * Change a connection configuration. The implementation can chose to do
-	 * this in any way, but typically will use a dialog or wizard.
+	 * Change a connection configuration. The implementation can chose to do this in any way, but typically will use a dialog or
+	 * wizard. Callers must call {@link IRemoteConnectionWorkingCopy#save()} on the working copy for the changes to be saved.
 	 * 
 	 * @param shell
 	 *            shell used to display dialogs
 	 * @param connection
-	 *            connection to modify
+	 *            working copy of the connection to modify
+	 * @return true if the connection information was changed
 	 */
-	public void updateConnection(Shell shell, IRemoteConnection connection);
+	public boolean updateConnection(Shell shell, IRemoteConnectionWorkingCopy connection);
 }

@@ -20,6 +20,20 @@ public class Messages extends NLS {
 
 	public static String AbstractRemoteUIConnectionManager_Could_not_open_connection;
 
+	public static String ConnectionsPreferencePage_Add;
+
+	public static String ConnectionsPreferencePage_Connection_Name;
+
+	public static String ConnectionsPreferencePage_Edit;
+
+	public static String ConnectionsPreferencePage_Host;
+
+	public static String ConnectionsPreferencePage_Remote_Services;
+
+	public static String ConnectionsPreferencePage_Remove;
+
+	public static String ConnectionsPreferencePage_User;
+
 	public static String LocalUIConnectionManager_0;
 	public static String LocalUIConnectionManager_1;
 	public static String LocalUIConnectionManager_2;
@@ -44,6 +58,14 @@ public class Messages extends NLS {
 	public static String RemoteDirectoryWidget_2;
 	public static String RemoteDirectoryWidget_3;
 	
+	public static String RemoteFileWidget_Browse;
+
+	public static String RemoteFileWidget_File;
+
+	public static String RemoteFileWidget_Restore_Default;
+
+	public static String RemoteFileWidget_Select_File;
+
 	public static String RemoteResourceBrowser_resourceTitle;
 	public static String RemoteResourceBrowser_fileTitle;
 	public static String RemoteResourceBrowser_directoryTitle;

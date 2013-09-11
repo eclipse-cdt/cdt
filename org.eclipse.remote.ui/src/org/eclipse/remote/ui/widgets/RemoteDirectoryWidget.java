@@ -43,10 +43,8 @@ import org.eclipse.swt.widgets.Text;
  * 
  */
 public class RemoteDirectoryWidget extends Composite {
-	// /private final Label label;
 	private final Text text;
 	private final Button browseButton;
-	// private final Button validateButton;
 	private final Button defaultButton;
 
 	private final String fDefaultPath = null;

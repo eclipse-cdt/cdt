@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.remote.ui.widgets;
 
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.internal.remote.core.RemoteCorePlugin;
+import org.eclipse.internal.remote.core.RemoteServicesDescriptor;
 import org.eclipse.internal.remote.core.RemoteServicesImpl;
-import org.eclipse.internal.remote.core.RemoteServicesProxy;
 import org.eclipse.internal.remote.core.preferences.Preferences;
 import org.eclipse.internal.remote.ui.messages.Messages;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -135,7 +135,7 @@ public class RemoteConnectionWidget extends Composite {
 	private final Combo fConnectionCombo;
 	private final Button fNewConnectionButton;
 
-	private final RemoteServicesProxy[] fRemoteServices;
+	private final List<RemoteServicesDescriptor> fRemoteServices;
 	private IRemoteConnection fSelectedConnection;
 	private IRemoteServices fDefaultServices;
 	private boolean fSelectionListernersEnabled = true;
@@ -195,8 +195,7 @@ public class RemoteConnectionWidget extends Composite {
 		 * Check if we need a remote services combo, or we should just use the default provider
 		 */
 		if ((flags & FLAG_FORCE_PROVIDER_SELECTION) == 0) {
-			String id = Preferences.getString(RemoteCorePlugin.getUniqueIdentifier(),
-					IRemotePreferenceConstants.PREF_REMOTE_SERVICES_ID);
+			String id = Preferences.getString(IRemotePreferenceConstants.PREF_REMOTE_SERVICES_ID);
 			if (id != null) {
 				fDefaultServices = getRemoteServices(id);
 			}
@@ -258,7 +257,7 @@ public class RemoteConnectionWidget extends Composite {
 		fNewConnectionButton.setLayoutData(gd);
 		fNewConnectionButton.addSelectionListener(fWidgetListener);
 
-		fRemoteServices = RemoteServicesImpl.getRemoteServiceProxies();
+		fRemoteServices = RemoteServicesImpl.getRemoteServiceDescriptors();
 
 		if (fServicesCombo != null) {
 			initializeRemoteServicesCombo(null);
@@ -339,8 +338,8 @@ public class RemoteConnectionWidget extends Composite {
 			return fDefaultServices;
 		}
 		int selectionIndex = fServicesCombo.getSelectionIndex();
-		if (fRemoteServices.length > 0 && selectionIndex > 0) {
-			return RemoteServices.getRemoteServices(fRemoteServices[selectionIndex - 1].getId());
+		if (fRemoteServices.size() > 0 && selectionIndex > 0) {
+			return RemoteServices.getRemoteServices(fRemoteServices.get(selectionIndex - 1).getId());
 		}
 		return null;
 	}
@@ -428,8 +427,8 @@ public class RemoteConnectionWidget extends Composite {
 			 * service.
 			 */
 			if (fDefaultServices == null && conn != null) {
-				for (int index = 0; index < fRemoteServices.length; index++) {
-					if (fRemoteServices[index].getId().equals(selectedServices.getId())) {
+				for (int index = 0; index < fRemoteServices.size(); index++) {
+					if (fRemoteServices.get(index).getId().equals(selectedServices.getId())) {
 						fServicesCombo.select(index + 1);
 						break;
 					}
@@ -451,20 +450,17 @@ public class RemoteConnectionWidget extends Composite {
 				/*
 				 * Populate the connection combo and select the connection
 				 */
-				IRemoteConnection[] connections = connectionManager.getConnections();
-				Arrays.sort(connections, new Comparator<IRemoteConnection>() {
-					public int compare(IRemoteConnection c1, IRemoteConnection c2) {
-						return c1.getName().compareToIgnoreCase(c2.getName());
-					}
-				});
 				int selected = 0;
 				int offset = 1;
 
-				for (int i = 0; i < connections.length; i++) {
-					fConnectionCombo.add(connections[i].getName());
-					if (conn != null && connections[i].getName().equals(conn.getName())) {
-						selected = i + offset;
+				Set<IRemoteConnection> sorted = new TreeSet<IRemoteConnection>(connectionManager.getConnections());
+
+				for (IRemoteConnection s : sorted) {
+					fConnectionCombo.add(s.getName());
+					if (conn != null && s.getName().equals(conn.getName())) {
+						selected = offset;
 					}
+					offset++;
 				}
 
 				fConnectionCombo.select(selected);
@@ -473,7 +469,8 @@ public class RemoteConnectionWidget extends Composite {
 				/*
 				 * Enable 'new' button if new connections are supported
 				 */
-				fNewConnectionButton.setEnabled(selectedServices.canCreateConnections());
+				fNewConnectionButton
+						.setEnabled((selectedServices.getCapabilities() & IRemoteServices.CAPABILITY_ADD_CONNECTIONS) != 0);
 			}
 		} finally {
 			fWidgetListener.setEnabled(enabled);
@@ -493,22 +490,17 @@ public class RemoteConnectionWidget extends Composite {
 		if (id != null) {
 			defService = getRemoteServices(id);
 		}
-		Arrays.sort(fRemoteServices, new Comparator<RemoteServicesProxy>() {
-			public int compare(RemoteServicesProxy c1, RemoteServicesProxy c2) {
-				return c1.getName().compareToIgnoreCase(c2.getName());
-			}
-		});
 		fServicesCombo.removeAll();
 		int offset = 1;
 		int defIndex = 0;
 		fServicesCombo.add(Messages.RemoteConnectionWidget_selectRemoteProvider);
-		for (int i = 0; i < fRemoteServices.length; i++) {
-			fServicesCombo.add(fRemoteServices[i].getName());
-			if (defService != null && fRemoteServices[i].equals(defService)) {
+		for (int i = 0; i < fRemoteServices.size(); i++) {
+			fServicesCombo.add(fRemoteServices.get(i).getName());
+			if (defService != null && fRemoteServices.get(i).equals(defService)) {
 				defIndex = i + offset;
 			}
 		}
-		if (fRemoteServices.length > 0) {
+		if (fRemoteServices.size() > 0) {
 			fServicesCombo.select(defIndex);
 		}
 		fWidgetListener.setEnabled(enabled);
@@ -611,11 +603,13 @@ public class RemoteConnectionWidget extends Composite {
 				isRemote = !fLocalButton.getSelection();
 			}
 			fConnectionCombo.setEnabled(fEnabled && isRemote);
-			fNewConnectionButton.setEnabled(fEnabled && isRemote && fDefaultServices.canCreateConnections());
+			fNewConnectionButton.setEnabled(fEnabled && isRemote
+					&& (fDefaultServices.getCapabilities() & IRemoteServices.CAPABILITY_ADD_CONNECTIONS) != 0);
 		} else {
 			IRemoteServices services = getSelectedServices();
 			fConnectionCombo.setEnabled(fEnabled && services != null);
-			fNewConnectionButton.setEnabled(fEnabled && services != null && services.canCreateConnections());
+			fNewConnectionButton.setEnabled(fEnabled && services != null
+					&& (services.getCapabilities() & IRemoteServices.CAPABILITY_ADD_CONNECTIONS) != 0);
 			fServicesCombo.setEnabled(fEnabled);
 		}
 	}

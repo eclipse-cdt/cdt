@@ -12,7 +12,6 @@
 package org.eclipse.internal.remote.core.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.internal.remote.core.RemoteCorePlugin;
 import org.eclipse.remote.core.IRemotePreferenceConstants;
 
 /**
@@ -24,7 +23,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	@Override
 	public void initializeDefaultPreferences() {
-		Preferences.setDefaultString(RemoteCorePlugin.getUniqueIdentifier(), IRemotePreferenceConstants.PREF_REMOTE_SERVICES_ID,
-				IRemotePreferenceConstants.REMOTE_TOOLS_REMOTE_SERVICES_ID);
+		Preferences.setDefaultString(IRemotePreferenceConstants.PREF_REMOTE_SERVICES_ID, "org.eclipse.remote.JSch"); //$NON-NLS-1$
 	}
 }

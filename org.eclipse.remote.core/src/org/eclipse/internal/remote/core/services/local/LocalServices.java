@@ -11,30 +11,27 @@
 package org.eclipse.internal.remote.core.services.local;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.remote.core.AbstractRemoteServices;
 import org.eclipse.remote.core.IRemoteConnectionManager;
-import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.IRemoteServicesDescriptor;
 
-public class LocalServices implements IRemoteServices {
+public class LocalServices extends AbstractRemoteServices {
 	public static final String LocalServicesId = "org.eclipse.remote.LocalServices"; //$NON-NLS-1$
 
 	private final IRemoteConnectionManager fConnMgr = new LocalConnectionManager(this);
-	private final IRemoteServicesDescriptor fDescriptor;
 
 	public LocalServices(IRemoteServicesDescriptor descriptor) {
-		fDescriptor = descriptor;
+		super(descriptor);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteServicesDescriptor#canCreateConnections
-	 * ()
+	 * @see org.eclipse.remote.core.IRemoteServices#getCapabilities()
 	 */
 	@Override
-	public boolean canCreateConnections() {
-		return fDescriptor.canCreateConnections();
+	public int getCapabilities() {
+		return 0;
 	}
 
 	/*
@@ -47,36 +44,6 @@ public class LocalServices implements IRemoteServices {
 	@Override
 	public IRemoteConnectionManager getConnectionManager() {
 		return fConnMgr;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteServicesDescriptor#getId()
-	 */
-	@Override
-	public String getId() {
-		return fDescriptor.getId();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteServicesDescriptor#getName()
-	 */
-	@Override
-	public String getName() {
-		return fDescriptor.getName();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteServicesDescriptor#getScheme()
-	 */
-	@Override
-	public String getScheme() {
-		return fDescriptor.getScheme();
 	}
 
 	/*

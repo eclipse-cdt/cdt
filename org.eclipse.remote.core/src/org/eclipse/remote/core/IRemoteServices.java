@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * {@link RemoteServices}. The methods on this interface can then be used to access the full range of remote services provided.
  */
 public interface IRemoteServices extends IRemoteServicesDescriptor {
+	public static final int CAPABILITY_ADD_CONNECTIONS = 0x01;
+	public static final int CAPABILITY_EDIT_CONNECTIONS = 0x02;
+	public static final int CAPABILITY_REMOVE_CONNECTIONS = 0x04;
+	public static final int CAPABILITY_SUPPORTS_TCP_PORT_FORWARDING = 0x08;
+	public static final int CAPABILITY_SUPPORTS_X11_FORWARDING = 0x10;
+
 	/**
 	 * Get a connection manager for managing remote connections.
 	 * 
@@ -31,4 +37,11 @@ public interface IRemoteServices extends IRemoteServicesDescriptor {
 	 * @since 7.0
 	 */
 	public boolean initialize(IProgressMonitor monitor);
+
+	/**
+	 * Gets the capabilities of the remote service.
+	 * 
+	 * @return bit-wise or of capability flag constants
+	 */
+	public int getCapabilities();
 }

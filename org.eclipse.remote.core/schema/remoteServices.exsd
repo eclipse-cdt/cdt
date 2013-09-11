@@ -88,15 +88,9 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="newConnections" type="boolean" use="required">
-            <annotation>
-               <documentation>
-                  Indicates if this service supports the creation of new connections.
-               </documentation>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
+
 
    <annotation>
       <appInfo>
@@ -106,7 +100,6 @@
          The value of the class attribute must implement &lt;samp&gt;org.eclipse.remote.core.IRemoteServicesFactory&lt;/samp&gt;.
       </documentation>
    </annotation>
-
 
    <annotation>
       <appInfo>
@@ -120,7 +113,6 @@
             class=&quot;org.eclipse.internal.remote.core.services.local.LocalServicesFactory&quot;
             id=&quot;org.eclipse.ptp.remote.LocalServices&quot;
             name=&quot;Local&quot;
-            newConnections=&quot;false&quot;
             scheme=&quot;file&quot;&gt;
       &lt;/remoteServices&gt;
    &lt;/extension&gt;

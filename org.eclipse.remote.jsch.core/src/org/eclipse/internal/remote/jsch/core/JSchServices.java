@@ -43,4 +43,9 @@ public class JSchServices extends AbstractRemoteServices {
 	public boolean initialize(IProgressMonitor monitor) {
 		return true;
 	}
+
+	public int getCapabilities() {
+		return CAPABILITY_ADD_CONNECTIONS | CAPABILITY_EDIT_CONNECTIONS | CAPABILITY_REMOVE_CONNECTIONS
+				| CAPABILITY_SUPPORTS_TCP_PORT_FORWARDING | CAPABILITY_SUPPORTS_X11_FORWARDING;
+	}
 }

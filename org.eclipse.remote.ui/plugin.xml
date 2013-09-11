@@ -6,17 +6,26 @@
          point="org.eclipse.remote.ui.remoteUIServices">
       <remoteUIServices
             class="org.eclipse.internal.remote.ui.services.local.LocalUIServicesFactory"
-            id="org.eclipse.ptp.remote.LocalServices"
+            id="org.eclipse.remote.LocalServices"
             name="Local">
       </remoteUIServices>
    </extension>
-     <extension
+   <extension
            point="org.eclipse.ui.preferencePages">
         <page
               class="org.eclipse.internal.remote.ui.preferences.RemoteDevelopmentPreferencePage"
               id="org.eclipse.remote.ui.RemoteDevelopmentPreferencePage"
               name="%RemoteDevPrefPage.name">
         </page>
-     </extension> 
+   </extension> 
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.remote.ui.RemoteDevelopmentPreferencePage"
+            class="org.eclipse.internal.remote.ui.preferences.ConnectionsPreferencePage"
+            id="org.eclipse.remote.connections"
+            name="%ConnectionsPreferencePage.name">
+      </page>
+   </extension>
 
 </plugin>

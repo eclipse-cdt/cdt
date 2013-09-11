@@ -48,8 +48,6 @@ public class PreferencesAdapter implements IPreferenceStore {
 	/** Listener on the adapted Preferences */
 	private final PreferenceChangeListener fListener = new PreferenceChangeListener();
 
-	private final String fPrefsQualifier;
-
 	/** True iff no events should be forwarded */
 	private boolean fSilent;
 
@@ -63,9 +61,8 @@ public class PreferencesAdapter implements IPreferenceStore {
 	 *            The preferences to wrap.
 	 * @since 4.0
 	 */
-	public PreferencesAdapter(String qualifier) {
-		fPrefsQualifier = qualifier;
-		Preferences.addPreferenceChangeListener(fPrefsQualifier, fListener);
+	public PreferencesAdapter() {
+		Preferences.addPreferenceChangeListener(fListener);
 	}
 
 	/**
@@ -86,7 +83,7 @@ public class PreferencesAdapter implements IPreferenceStore {
 	 * {@inheritDoc}
 	 */
 	public boolean contains(String name) {
-		return Preferences.contains(fPrefsQualifier, name);
+		return Preferences.contains(name);
 	}
 
 	/**
@@ -107,91 +104,91 @@ public class PreferencesAdapter implements IPreferenceStore {
 	 * {@inheritDoc}
 	 */
 	public boolean getBoolean(String name) {
-		return Preferences.getBoolean(fPrefsQualifier, name);
+		return Preferences.getBoolean(name);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean getDefaultBoolean(String name) {
-		return Preferences.getDefaultBoolean(fPrefsQualifier, name, false);
+		return Preferences.getDefaultBoolean(name, false);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public double getDefaultDouble(String name) {
-		return Preferences.getDefaultDouble(fPrefsQualifier, name, 0.0);
+		return Preferences.getDefaultDouble(name, 0.0);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public float getDefaultFloat(String name) {
-		return Preferences.getDefaultFloat(fPrefsQualifier, name, 0.0f);
+		return Preferences.getDefaultFloat(name, 0.0f);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public int getDefaultInt(String name) {
-		return Preferences.getDefaultInt(fPrefsQualifier, name, 0);
+		return Preferences.getDefaultInt(name, 0);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public long getDefaultLong(String name) {
-		return Preferences.getDefaultLong(fPrefsQualifier, name, 0L);
+		return Preferences.getDefaultLong(name, 0L);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getDefaultString(String name) {
-		return Preferences.getDefaultString(fPrefsQualifier, name, ""); //$NON-NLS-1$
+		return Preferences.getDefaultString(name, ""); //$NON-NLS-1$
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public double getDouble(String name) {
-		return Preferences.getDouble(fPrefsQualifier, name);
+		return Preferences.getDouble(name);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public float getFloat(String name) {
-		return Preferences.getFloat(fPrefsQualifier, name);
+		return Preferences.getFloat(name);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public int getInt(String name) {
-		return Preferences.getInt(fPrefsQualifier, name);
+		return Preferences.getInt(name);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public long getLong(String name) {
-		return Preferences.getLong(fPrefsQualifier, name);
+		return Preferences.getLong(name);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getString(String name) {
-		return Preferences.getString(fPrefsQualifier, name);
+		return Preferences.getString(name);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean isDefault(String name) {
-		return Preferences.isDefault(fPrefsQualifier, name);
+		return Preferences.isDefault(name);
 	}
 
 	/**
@@ -207,7 +204,7 @@ public class PreferencesAdapter implements IPreferenceStore {
 	public void putValue(String name, String value) {
 		try {
 			fSilent = true;
-			Preferences.setString(fPrefsQualifier, name, value);
+			Preferences.setString(name, value);
 		} finally {
 			fSilent = false;
 		}
@@ -217,90 +214,90 @@ public class PreferencesAdapter implements IPreferenceStore {
 	 * {@inheritDoc}
 	 */
 	public void setDefault(String name, double value) {
-		Preferences.setDefaultDouble(fPrefsQualifier, name, value);
+		Preferences.setDefaultDouble(name, value);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setDefault(String name, float value) {
-		Preferences.setDefaultFloat(fPrefsQualifier, name, value);
+		Preferences.setDefaultFloat(name, value);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setDefault(String name, int value) {
-		Preferences.setDefaultInt(fPrefsQualifier, name, value);
+		Preferences.setDefaultInt(name, value);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setDefault(String name, long value) {
-		Preferences.setDefaultLong(fPrefsQualifier, name, value);
+		Preferences.setDefaultLong(name, value);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setDefault(String name, String defaultObject) {
-		Preferences.setDefaultString(fPrefsQualifier, name, defaultObject);
+		Preferences.setDefaultString(name, defaultObject);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setDefault(String name, boolean value) {
-		Preferences.setDefaultBoolean(fPrefsQualifier, name, value);
+		Preferences.setDefaultBoolean(name, value);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setToDefault(String name) {
-		Preferences.setToDefault(fPrefsQualifier, name);
+		Preferences.setToDefault(name);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setValue(String name, double value) {
-		Preferences.setDouble(fPrefsQualifier, name, value);
+		Preferences.setDouble(name, value);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setValue(String name, float value) {
-		Preferences.setFloat(fPrefsQualifier, name, value);
+		Preferences.setFloat(name, value);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setValue(String name, int value) {
-		Preferences.setInt(fPrefsQualifier, name, value);
+		Preferences.setInt(name, value);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setValue(String name, long value) {
-		Preferences.setLong(fPrefsQualifier, name, value);
+		Preferences.setLong(name, value);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setValue(String name, String value) {
-		Preferences.setString(fPrefsQualifier, name, value);
+		Preferences.setString(name, value);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setValue(String name, boolean value) {
-		Preferences.setBoolean(fPrefsQualifier, name, value);
+		Preferences.setBoolean(name, value);
 	}
 }

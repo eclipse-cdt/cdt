@@ -21,18 +21,4 @@ public interface IRemotePreferenceConstants {
 	 * has been set, and if so, what the provider ID is.
 	 */
 	public static final String PREF_REMOTE_SERVICES_ID = "remoteServicesId"; //$NON-NLS-1$
-
-	/**
-	 * ID of the Remote Tools provider
-	 * 
-	 * @since 6.0
-	 */
-	public static final String REMOTE_TOOLS_REMOTE_SERVICES_ID = "org.eclipse.ptp.remote.RemoteTools"; //$NON-NLS-1$
-
-	/**
-	 * ID of the RSE provider
-	 * 
-	 * @since 6.0
-	 */
-	public static final String RSE_REMOTE_SERVICES_ID = "org.eclipse.ptp.remote.RSERemoteServices"; //$NON-NLS-1$
 }

@@ -13,7 +13,6 @@ package org.eclipse.internal.remote.core;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,28 +32,21 @@ public class RemoteServicesImpl {
 	public static final String REMOTE_SERVICES_EXTENSION_POINT_ID = "remoteServices"; //$NON-NLS-1$
 
 	// Active remote services plugins (not necessarily loaded)
-	private static final Map<String, RemoteServicesProxy> fRemoteServicesById = Collections
-			.synchronizedMap(new HashMap<String, RemoteServicesProxy>());
-	private static final Map<String, RemoteServicesProxy> fRemoteServicesByScheme = Collections
-			.synchronizedMap(new HashMap<String, RemoteServicesProxy>());
+	private static final Map<String, RemoteServicesDescriptor> fRemoteServicesById = Collections
+			.synchronizedMap(new HashMap<String, RemoteServicesDescriptor>());
+	private static final Map<String, RemoteServicesDescriptor> fRemoteServicesByScheme = Collections
+			.synchronizedMap(new HashMap<String, RemoteServicesDescriptor>());
 
 	private RemoteServicesImpl() {
 		// Hide constructor
 	}
 
-	private static class RemoteServicesSorter implements Comparator<RemoteServicesProxy> {
-		@Override
-		public int compare(RemoteServicesProxy o1, RemoteServicesProxy o2) {
-			return o1.getName().compareToIgnoreCase(o2.getName());
-		}
-	}
-
-	public static RemoteServicesProxy getRemoteServiceProxyById(String id) {
+	public static RemoteServicesDescriptor getRemoteServiceDescriptorById(String id) {
 		retrieveRemoteServices();
 		return fRemoteServicesById.get(id);
 	}
 
-	public static RemoteServicesProxy getRemoteServiceProxyByURI(URI uri) {
+	public static RemoteServicesDescriptor getRemoteServiceDescriptorByURI(URI uri) {
 		String scheme = uri.getScheme();
 		if (scheme != null) {
 			retrieveRemoteServices();
@@ -64,18 +56,18 @@ public class RemoteServicesImpl {
 	}
 
 	/**
-	 * Retrieve a sorted list of remote service proxies.
+	 * Retrieve a sorted list of remote service descriptors.
 	 * 
-	 * @return remote service proxies
+	 * @return remote service descriptors
 	 */
-	public static RemoteServicesProxy[] getRemoteServiceProxies() {
+	public static List<RemoteServicesDescriptor> getRemoteServiceDescriptors() {
 		retrieveRemoteServices();
-		List<RemoteServicesProxy> services = new ArrayList<RemoteServicesProxy>();
-		for (RemoteServicesProxy proxy : fRemoteServicesById.values()) {
-			services.add(proxy);
+		List<RemoteServicesDescriptor> descriptors = new ArrayList<RemoteServicesDescriptor>();
+		for (RemoteServicesDescriptor descriptor : fRemoteServicesById.values()) {
+			descriptors.add(descriptor);
 		}
-		Collections.sort(services, new RemoteServicesSorter());
-		return services.toArray(new RemoteServicesProxy[0]);
+		Collections.sort(descriptors);
+		return descriptors;
 	}
 
 	/**
@@ -92,7 +84,7 @@ public class RemoteServicesImpl {
 				final IConfigurationElement[] elements = ext.getConfigurationElements();
 
 				for (IConfigurationElement ce : elements) {
-					RemoteServicesProxy proxy = new RemoteServicesProxy(ce);
+					RemoteServicesDescriptor proxy = new RemoteServicesDescriptor(ce);
 					fRemoteServicesById.put(proxy.getId(), proxy);
 					fRemoteServicesByScheme.put(proxy.getScheme(), proxy);
 				}

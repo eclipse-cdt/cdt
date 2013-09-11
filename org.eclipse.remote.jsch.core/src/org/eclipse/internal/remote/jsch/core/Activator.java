@@ -13,10 +13,7 @@ import org.osgi.framework.ServiceReference;
 public class Activator extends Plugin {
 
 	// The plug-in ID
-	private static final String PLUGIN_ID = "org.eclipse.ptp.remote.core.remotetools"; //$NON-NLS-1$
-
-	// The remote services ID
-	public static final String SERVICES_ID = "org.eclipse.ptp.remote.RemoteTools"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.remote.jsch.core"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;

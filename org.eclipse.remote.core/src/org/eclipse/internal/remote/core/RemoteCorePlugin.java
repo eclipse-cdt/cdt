@@ -96,7 +96,7 @@ public class RemoteCorePlugin extends Plugin {
 		ResourcesPlugin.getWorkspace().addSaveParticipant(getUniqueIdentifier(), new ISaveParticipant() {
 			@Override
 			public void saving(ISaveContext saveContext) throws CoreException {
-				Preferences.savePreferences(getUniqueIdentifier());
+				Preferences.savePreferences();
 			}
 
 			@Override
@@ -123,7 +123,7 @@ public class RemoteCorePlugin extends Plugin {
 	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		Preferences.savePreferences(getUniqueIdentifier());
+		Preferences.savePreferences();
 		plugin = null;
 		super.stop(context);
 	}

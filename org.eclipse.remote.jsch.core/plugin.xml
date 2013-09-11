@@ -7,7 +7,6 @@
             class="org.eclipse.internal.remote.jsch.core.JSchServicesFactory"
             id="org.eclipse.remote.JSch"
             name="JSch"
-            newConnections="true"
             scheme="ssh">
       </remoteServices>
    </extension>

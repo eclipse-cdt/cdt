@@ -11,6 +11,8 @@
 package org.eclipse.internal.remote.core.services.local;
 
 import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.remote.core.IRemoteConnection;
@@ -62,8 +64,10 @@ public class LocalConnectionManager implements IRemoteConnectionManager {
 	 * org.eclipse.remote.core.IRemoteConnectionManager#getConnections()
 	 */
 	@Override
-	public IRemoteConnection[] getConnections() {
-		return new IRemoteConnection[] { fLocalConnection };
+	public Set<IRemoteConnection> getConnections() {
+		Set<IRemoteConnection> set = new HashSet<IRemoteConnection>();
+		set.add(fLocalConnection);
+		return set;
 	}
 
 	/*

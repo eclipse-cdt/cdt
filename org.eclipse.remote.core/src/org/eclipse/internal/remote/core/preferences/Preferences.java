@@ -20,8 +20,8 @@ import org.eclipse.internal.remote.core.RemoteCorePlugin;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * Convenience class to facilitate using the new {@link IEclipsePreferences}
- * story. Adapted from org.eclipse.debug.internal.core.Preferences.
+ * Convenience class to facilitate using the new {@link IEclipsePreferences} story. Adapted from
+ * org.eclipse.debug.internal.core.Preferences.
  * 
  * @since 5.0
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -33,28 +33,27 @@ public final class Preferences {
 	private static final int DEFAULT_CONTEXT = 0;
 	private static final int INSTANCE_CONTEXT = 1;
 
+	private static final String fQualifier = RemoteCorePlugin.getUniqueIdentifier();
+
 	/**
-	 * Adds the given preference listener to the {@link DefaultScope} and the
-	 * {@link InstanceScope}
+	 * Adds the given preference listener to the {@link DefaultScope} and the {@link InstanceScope}
 	 * 
-	 * @param qualifier
 	 * @param listener
 	 */
-	public static void addPreferenceChangeListener(String qualifier, IPreferenceChangeListener listener) {
-		contexts[DEFAULT_CONTEXT].getNode(qualifier).addPreferenceChangeListener(listener);
-		contexts[INSTANCE_CONTEXT].getNode(qualifier).addPreferenceChangeListener(listener);
+	public static void addPreferenceChangeListener(IPreferenceChangeListener listener) {
+		contexts[DEFAULT_CONTEXT].getNode(fQualifier).addPreferenceChangeListener(listener);
+		contexts[INSTANCE_CONTEXT].getNode(fQualifier).addPreferenceChangeListener(listener);
 	}
 
 	/**
 	 * Returns whether the named preference is know in the preference store.
 	 * 
-	 * @param qualifier
 	 * @param name
 	 * @return
 	 */
-	public static boolean contains(String qualifier, String name) {
-		return (contexts[INSTANCE_CONTEXT].getNode(qualifier).get(name, null) != null || contexts[DEFAULT_CONTEXT].getNode(
-				qualifier).get(name, null) != null);
+	public static boolean contains(String name) {
+		return (contexts[INSTANCE_CONTEXT].getNode(fQualifier).get(name, null) != null || contexts[DEFAULT_CONTEXT].getNode(
+				fQualifier).get(name, null) != null);
 	}
 
 	/**
@@ -62,14 +61,13 @@ public final class Preferences {
 	 * is not defined then return the default value. Use the canonical scope
 	 * lookup order for finding the preference value.
 	 * 
-	 * @param qualifier
 	 * @param key
 	 * @param defaultvalue
 	 * 
 	 * @return the value of the preference or the given default value
 	 */
-	public static boolean getBoolean(String qualifier, String key) {
-		return Platform.getPreferencesService().getBoolean(qualifier, key, false, null);
+	public static boolean getBoolean(String key) {
+		return Platform.getPreferencesService().getBoolean(fQualifier, key, false, null);
 	}
 
 	/**
@@ -77,14 +75,13 @@ public final class Preferences {
 	 * is not defined then return the default value. Use the canonical scope
 	 * lookup order for finding the preference value.
 	 * 
-	 * @param qualifier
 	 * @param key
 	 * @param defaultvalue
 	 * 
 	 * @return the value of the preference or the given default value
 	 */
-	public static byte[] getByteArray(String qualifier, String key) {
-		return Platform.getPreferencesService().getByteArray(qualifier, key, null, null);
+	public static byte[] getByteArray(String key) {
+		return Platform.getPreferencesService().getByteArray(fQualifier, key, null, null);
 	}
 
 	/**
@@ -92,31 +89,29 @@ public final class Preferences {
 	 * the given key or the specified default value if the key does not appear
 	 * in the {@link DefaultScope}
 	 * 
-	 * @param qualifier
 	 * @param key
 	 * @param defaultvalue
 	 * 
 	 * @return the boolean value set in the {@link DefaultScope} for the given
 	 *         key, or the specified default value.
 	 */
-	public static synchronized boolean getDefaultBoolean(String qualifier, String key, boolean defaultvalue) {
-		return contexts[DEFAULT_CONTEXT].getNode(qualifier).getBoolean(key, defaultvalue);
+	public static synchronized boolean getDefaultBoolean(String key, boolean defaultvalue) {
+		return contexts[DEFAULT_CONTEXT].getNode(fQualifier).getBoolean(key, defaultvalue);
 	}
 
 	/**
-	 * Returns the default byte array value stored in the {@link DefaultScope}
-	 * for the given key or the specified default value if the key does not
+	 * Returns the default byte array value stored in the {@link DefaultScope} for the given key or the specified default value if
+	 * the key does not
 	 * appear in the {@link DefaultScope}
 	 * 
-	 * @param qualifier
 	 * @param key
 	 * @param defaultvalue
 	 * 
 	 * @return the byte array value set in the {@link DefaultScope} for the
 	 *         given key, or the specified default value.
 	 */
-	public static synchronized byte[] getDefaultByteArray(String qualifier, String key, byte[] defaultvalue) {
-		return contexts[DEFAULT_CONTEXT].getNode(qualifier).getByteArray(key, defaultvalue);
+	public static synchronized byte[] getDefaultByteArray(String key, byte[] defaultvalue) {
+		return contexts[DEFAULT_CONTEXT].getNode(fQualifier).getByteArray(key, defaultvalue);
 	}
 
 	/**
@@ -124,15 +119,14 @@ public final class Preferences {
 	 * the given key or the specified default value if the key does not appear
 	 * in the {@link DefaultScope}
 	 * 
-	 * @param qualifier
 	 * @param key
 	 * @param defaultvalue
 	 * 
 	 * @return the double value set in the {@link DefaultScope} for the given
 	 *         key, or the specified default value.
 	 */
-	public static synchronized double getDefaultDouble(String qualifier, String key, double defaultvalue) {
-		return contexts[DEFAULT_CONTEXT].getNode(qualifier).getDouble(key, defaultvalue);
+	public static synchronized double getDefaultDouble(String key, double defaultvalue) {
+		return contexts[DEFAULT_CONTEXT].getNode(fQualifier).getDouble(key, defaultvalue);
 	}
 
 	/**
@@ -140,15 +134,14 @@ public final class Preferences {
 	 * the given key or the specified default value if the key does not appear
 	 * in the {@link DefaultScope}
 	 * 
-	 * @param qualifier
 	 * @param key
 	 * @param defaultvalue
 	 * 
 	 * @return the float value set in the {@link DefaultScope} for the given
 	 *         key, or the specified default value.
 	 */
-	public static synchronized float getDefaultFloat(String qualifier, String key, float defaultvalue) {
-		return contexts[DEFAULT_CONTEXT].getNode(qualifier).getFloat(key, defaultvalue);
+	public static synchronized float getDefaultFloat(String key, float defaultvalue) {
+		return contexts[DEFAULT_CONTEXT].getNode(fQualifier).getFloat(key, defaultvalue);
 	}
 
 	/**
@@ -156,15 +149,14 @@ public final class Preferences {
 	 * the given key or the specified default value if the key does not appear
 	 * in the {@link DefaultScope}
 	 * 
-	 * @param qualifier
 	 * @param key
 	 * @param defaultvalue
 	 * 
 	 * @return the integer value set in the {@link DefaultScope} for the given
 	 *         key, or the specified default value.
 	 */
-	public static synchronized int getDefaultInt(String qualifier, String key, int defaultvalue) {
-		return contexts[DEFAULT_CONTEXT].getNode(qualifier).getInt(key, defaultvalue);
+	public static synchronized int getDefaultInt(String key, int defaultvalue) {
+		return contexts[DEFAULT_CONTEXT].getNode(fQualifier).getInt(key, defaultvalue);
 	}
 
 	/**
@@ -172,15 +164,14 @@ public final class Preferences {
 	 * given key or the specified default value if the key does not appear in
 	 * the {@link DefaultScope}
 	 * 
-	 * @param qualifier
 	 * @param key
 	 * @param defaultvalue
 	 * 
 	 * @return the long value set in the {@link DefaultScope} for the given key,
 	 *         or the specified default value.
 	 */
-	public static synchronized long getDefaultLong(String qualifier, String key, long defaultvalue) {
-		return contexts[DEFAULT_CONTEXT].getNode(qualifier).getLong(key, defaultvalue);
+	public static synchronized long getDefaultLong(String key, long defaultvalue) {
+		return contexts[DEFAULT_CONTEXT].getNode(fQualifier).getLong(key, defaultvalue);
 	}
 
 	/**
@@ -188,15 +179,14 @@ public final class Preferences {
 	 * the given key or the specified default value if the key does not appear
 	 * in the {@link DefaultScope}
 	 * 
-	 * @param qualifier
 	 * @param key
 	 * @param defaultvalue
 	 * 
 	 * @return the string value set in the {@link DefaultScope} for the given
 	 *         key, or the specified default value.
 	 */
-	public static synchronized String getDefaultString(String qualifier, String key, String defaultvalue) {
-		return contexts[DEFAULT_CONTEXT].getNode(qualifier).get(key, defaultvalue);
+	public static synchronized String getDefaultString(String key, String defaultvalue) {
+		return contexts[DEFAULT_CONTEXT].getNode(fQualifier).get(key, defaultvalue);
 	}
 
 	/**
@@ -204,14 +194,13 @@ public final class Preferences {
 	 * is not defined then return the default value. Use the canonical scope
 	 * lookup order for finding the preference value.
 	 * 
-	 * @param qualifier
 	 * @param key
 	 * @param defaultvalue
 	 * 
 	 * @return the value of the preference or the given default value
 	 */
-	public static double getDouble(String qualifier, String key) {
-		return Platform.getPreferencesService().getDouble(qualifier, key, 0.0, null);
+	public static double getDouble(String key) {
+		return Platform.getPreferencesService().getDouble(fQualifier, key, 0.0, null);
 	}
 
 	/**
@@ -219,14 +208,14 @@ public final class Preferences {
 	 * is not defined then return the default value. Use the canonical scope
 	 * lookup order for finding the preference value.
 	 * 
-	 * @param qualifier
+	 * @param fQualifier
 	 * @param key
 	 * @param defaultvalue
 	 * 
 	 * @return the value of the preference or the given default value
 	 */
-	public static float getFloat(String qualifier, String key) {
-		return Platform.getPreferencesService().getFloat(qualifier, key, 0.0f, null);
+	public static float getFloat(String key) {
+		return Platform.getPreferencesService().getFloat(fQualifier, key, 0.0f, null);
 	}
 
 	/**
@@ -234,14 +223,14 @@ public final class Preferences {
 	 * is not defined then return the default value. Use the canonical scope
 	 * lookup order for finding the preference value.
 	 * 
-	 * @param qualifier
+	 * @param fQualifier
 	 * @param key
 	 * @param defaultvalue
 	 * 
 	 * @return the value of the preference or the given default value
 	 */
-	public static int getInt(String qualifier, String key) {
-		return Platform.getPreferencesService().getInt(qualifier, key, 0, null);
+	public static int getInt(String key) {
+		return Platform.getPreferencesService().getInt(fQualifier, key, 0, null);
 	}
 
 	/**
@@ -249,14 +238,13 @@ public final class Preferences {
 	 * is not defined then return the default value. Use the canonical scope
 	 * lookup order for finding the preference value.
 	 * 
-	 * @param qualifier
 	 * @param key
 	 * @param defaultvalue
 	 * 
 	 * @return the value of the preference or the given default value
 	 */
-	public static long getLong(String qualifier, String key) {
-		return Platform.getPreferencesService().getLong(qualifier, key, 0L, null);
+	public static long getLong(String key) {
+		return Platform.getPreferencesService().getLong(fQualifier, key, 0L, null);
 	}
 
 	/**
@@ -264,27 +252,25 @@ public final class Preferences {
 	 * is not defined then return the default value. Use the canonical scope
 	 * lookup order for finding the preference value.
 	 * 
-	 * @param qualifier
 	 * @param key
 	 * @param defaultvalue
 	 * 
 	 * @return the value of the preference or the given default value
 	 */
-	public static String getString(String qualifier, String key) {
-		return Platform.getPreferencesService().getString(qualifier, key, null, null);
+	public static String getString(String key) {
+		return Platform.getPreferencesService().getString(fQualifier, key, null, null);
 	}
 
 	/**
 	 * Returns true if the named preference has the default value.
 	 * 
-	 * @param qualifier
 	 * @param name
 	 * @return
 	 */
-	public static boolean isDefault(String qualifier, String name) {
-		String defVal = contexts[DEFAULT_CONTEXT].getNode(qualifier).get(name, null);
+	public static boolean isDefault(String name) {
+		String defVal = contexts[DEFAULT_CONTEXT].getNode(fQualifier).get(name, null);
 		if (defVal != null) {
-			String val = contexts[INSTANCE_CONTEXT].getNode(qualifier).get(name, null);
+			String val = contexts[INSTANCE_CONTEXT].getNode(fQualifier).get(name, null);
 			return (val != null && val.equals(defVal));
 		}
 		return false;
@@ -294,24 +280,21 @@ public final class Preferences {
 	 * Removes the given preference listener from the {@link DefaultScope} and
 	 * the {@link InstanceScope}
 	 * 
-	 * @param qualifier
 	 * @param listener
 	 */
-	public static void removePreferenceChangeListener(String qualifier, IPreferenceChangeListener listener) {
-		contexts[DEFAULT_CONTEXT].getNode(qualifier).removePreferenceChangeListener(listener);
-		contexts[INSTANCE_CONTEXT].getNode(qualifier).removePreferenceChangeListener(listener);
+	public static void removePreferenceChangeListener(IPreferenceChangeListener listener) {
+		contexts[DEFAULT_CONTEXT].getNode(fQualifier).removePreferenceChangeListener(listener);
+		contexts[INSTANCE_CONTEXT].getNode(fQualifier).removePreferenceChangeListener(listener);
 	}
 
 	/**
 	 * Save the preferences for the given plugin identifier. It should be noted
 	 * that all pending preference changes will be flushed with this method.
-	 * 
-	 * @param qualifier
 	 */
-	public static synchronized void savePreferences(String qualifier) {
+	public static synchronized void savePreferences() {
 		try {
-			contexts[DEFAULT_CONTEXT].getNode(qualifier).flush();
-			contexts[INSTANCE_CONTEXT].getNode(qualifier).flush();
+			contexts[DEFAULT_CONTEXT].getNode(fQualifier).flush();
+			contexts[INSTANCE_CONTEXT].getNode(fQualifier).flush();
 		} catch (BackingStoreException bse) {
 			RemoteCorePlugin.log(bse);
 		}
@@ -320,183 +303,169 @@ public final class Preferences {
 	/**
 	 * Sets a boolean preference in the {@link InstanceScope}.
 	 * 
-	 * @param qualifier
 	 * @param key
 	 *            the key
 	 * @param value
 	 *            the value
 	 */
-	public static synchronized void setBoolean(String qualifier, String key, boolean value) {
-		contexts[INSTANCE_CONTEXT].getNode(qualifier).putBoolean(key, value);
+	public static synchronized void setBoolean(String key, boolean value) {
+		contexts[INSTANCE_CONTEXT].getNode(fQualifier).putBoolean(key, value);
 	}
 
 	/**
 	 * Sets a byte array preference in the {@link InstanceScope}.
 	 * 
-	 * @param qualifier
 	 * @param key
 	 *            the key
 	 * @param value
 	 *            the value
 	 */
-	public static synchronized void setByteArray(String qualifier, String key, byte[] value) {
-		contexts[INSTANCE_CONTEXT].getNode(qualifier).putByteArray(key, value);
+	public static synchronized void setByteArray(String key, byte[] value) {
+		contexts[INSTANCE_CONTEXT].getNode(fQualifier).putByteArray(key, value);
 	}
 
 	/**
 	 * Sets a boolean in the {@link DefaultScope}
 	 * 
-	 * @param qualifier
 	 * @param key
 	 *            the key
 	 * @param value
 	 *            the new value
 	 */
-	public static synchronized void setDefaultBoolean(String qualifier, String key, boolean value) {
-		contexts[DEFAULT_CONTEXT].getNode(qualifier).putBoolean(key, value);
+	public static synchronized void setDefaultBoolean(String key, boolean value) {
+		contexts[DEFAULT_CONTEXT].getNode(fQualifier).putBoolean(key, value);
 	}
 
 	/**
 	 * Sets a byte array in the {@link DefaultScope}
 	 * 
-	 * @param qualifier
 	 * @param key
 	 *            the key
 	 * @param value
 	 *            the new value
 	 */
-	public static synchronized void setDefaultByteArray(String qualifier, String key, byte[] value) {
-		contexts[DEFAULT_CONTEXT].getNode(qualifier).putByteArray(key, value);
+	public static synchronized void setDefaultByteArray(String key, byte[] value) {
+		contexts[DEFAULT_CONTEXT].getNode(fQualifier).putByteArray(key, value);
 	}
 
 	/**
 	 * Sets a double in the {@link DefaultScope}
 	 * 
-	 * @param qualifier
 	 * @param key
 	 *            the key
 	 * @param value
 	 *            the new value
 	 */
-	public static synchronized void setDefaultDouble(String qualifier, String key, double value) {
-		contexts[DEFAULT_CONTEXT].getNode(qualifier).putDouble(key, value);
+	public static synchronized void setDefaultDouble(String key, double value) {
+		contexts[DEFAULT_CONTEXT].getNode(fQualifier).putDouble(key, value);
 	}
 
 	/**
 	 * Sets a float in the {@link DefaultScope}
 	 * 
-	 * @param qualifier
 	 * @param key
 	 *            the key
 	 * @param value
 	 *            the new value
 	 */
-	public static synchronized void setDefaultFloat(String qualifier, String key, float value) {
-		contexts[DEFAULT_CONTEXT].getNode(qualifier).putFloat(key, value);
+	public static synchronized void setDefaultFloat(String key, float value) {
+		contexts[DEFAULT_CONTEXT].getNode(fQualifier).putFloat(key, value);
 	}
 
 	/**
 	 * Sets a integer in the {@link DefaultScope}
 	 * 
-	 * @param qualifier
 	 * @param key
 	 *            the key
 	 * @param value
 	 *            the new value
 	 */
-	public static synchronized void setDefaultInt(String qualifier, String key, int value) {
-		contexts[DEFAULT_CONTEXT].getNode(qualifier).putInt(key, value);
+	public static synchronized void setDefaultInt(String key, int value) {
+		contexts[DEFAULT_CONTEXT].getNode(fQualifier).putInt(key, value);
 	}
 
 	/**
 	 * Sets a long in the {@link DefaultScope}
 	 * 
-	 * @param qualifier
 	 * @param key
 	 *            the key
 	 * @param value
 	 *            the new value
 	 */
-	public static synchronized void setDefaultLong(String qualifier, String key, long value) {
-		contexts[DEFAULT_CONTEXT].getNode(qualifier).putLong(key, value);
+	public static synchronized void setDefaultLong(String key, long value) {
+		contexts[DEFAULT_CONTEXT].getNode(fQualifier).putLong(key, value);
 	}
 
 	/**
 	 * Sets a string in the {@link DefaultScope}
 	 * 
-	 * @param qualifier
 	 * @param key
 	 *            the key
 	 * @param value
 	 *            the new value
 	 */
-	public static synchronized void setDefaultString(String qualifier, String key, String value) {
-		contexts[DEFAULT_CONTEXT].getNode(qualifier).put(key, value);
+	public static synchronized void setDefaultString(String key, String value) {
+		contexts[DEFAULT_CONTEXT].getNode(fQualifier).put(key, value);
 	}
 
 	/**
 	 * Sets a double preference in the {@link InstanceScope}.
 	 * 
-	 * @param qualifier
 	 * @param key
 	 *            the key
 	 * @param value
 	 *            the value
 	 */
-	public static synchronized void setDouble(String qualifier, String key, double value) {
-		contexts[INSTANCE_CONTEXT].getNode(qualifier).putDouble(key, value);
+	public static synchronized void setDouble(String key, double value) {
+		contexts[INSTANCE_CONTEXT].getNode(fQualifier).putDouble(key, value);
 	}
 
 	/**
 	 * Sets a float preference in the {@link InstanceScope}.
 	 * 
-	 * @param qualifier
 	 * @param key
 	 *            the key
 	 * @param value
 	 *            the value
 	 */
-	public static synchronized void setFloat(String qualifier, String key, float value) {
-		contexts[INSTANCE_CONTEXT].getNode(qualifier).putFloat(key, value);
+	public static synchronized void setFloat(String key, float value) {
+		contexts[INSTANCE_CONTEXT].getNode(fQualifier).putFloat(key, value);
 	}
 
 	/**
 	 * Sets a integer preference in the {@link InstanceScope}.
 	 * 
-	 * @param qualifier
 	 * @param key
 	 *            the key
 	 * @param value
 	 *            the value
 	 */
-	public static synchronized void setInt(String qualifier, String key, int value) {
-		contexts[INSTANCE_CONTEXT].getNode(qualifier).putInt(key, value);
+	public static synchronized void setInt(String key, int value) {
+		contexts[INSTANCE_CONTEXT].getNode(fQualifier).putInt(key, value);
 	}
 
 	/**
 	 * Sets a long preference in the {@link InstanceScope}.
 	 * 
-	 * @param qualifier
 	 * @param key
 	 *            the key
 	 * @param value
 	 *            the value
 	 */
-	public static synchronized void setLong(String qualifier, String key, long value) {
-		contexts[INSTANCE_CONTEXT].getNode(qualifier).putLong(key, value);
+	public static synchronized void setLong(String key, long value) {
+		contexts[INSTANCE_CONTEXT].getNode(fQualifier).putLong(key, value);
 	}
 
 	/**
 	 * Sets a string preference in the {@link InstanceScope}.
 	 * 
-	 * @param qualifier
 	 * @param key
 	 *            the key
 	 * @param value
 	 *            the value
 	 */
-	public static synchronized void setString(String qualifier, String key, String value) {
-		contexts[INSTANCE_CONTEXT].getNode(qualifier).put(key, value);
+	public static synchronized void setString(String key, String value) {
+		contexts[INSTANCE_CONTEXT].getNode(fQualifier).put(key, value);
 	}
 
 	/**
@@ -504,13 +473,12 @@ public final class Preferences {
 	 * any set value from the {@link InstanceScope}. Has no effect if the given
 	 * key is <code>null</code>.
 	 * 
-	 * @param qualifier
 	 * @param key
 	 *            the key for the preference
 	 */
-	public static synchronized void setToDefault(String qualifier, String key) {
+	public static synchronized void setToDefault(String key) {
 		if (key != null) {
-			contexts[INSTANCE_CONTEXT].getNode(qualifier).remove(key);
+			contexts[INSTANCE_CONTEXT].getNode(fQualifier).remove(key);
 		}
 	}
 

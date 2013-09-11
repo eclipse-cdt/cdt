@@ -17,9 +17,8 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.internal.remote.core.RemoteCorePlugin;
+import org.eclipse.internal.remote.core.RemoteServicesDescriptor;
 import org.eclipse.internal.remote.core.RemoteServicesImpl;
-import org.eclipse.internal.remote.core.RemoteServicesProxy;
 import org.eclipse.internal.remote.core.preferences.Preferences;
 
 /**
@@ -108,8 +107,7 @@ public class RemoteServicesUtils {
 				services = RemoteServices.getRemoteServices(parts[0]);
 				connName = parts[1];
 			} else if (parts.length == 1) {
-				String id = Preferences.getString(RemoteCorePlugin.getUniqueIdentifier(),
-						IRemotePreferenceConstants.PREF_REMOTE_SERVICES_ID);
+				String id = Preferences.getString(IRemotePreferenceConstants.PREF_REMOTE_SERVICES_ID);
 				if (id != null) {
 					services = RemoteServices.getRemoteServices(id);
 				}
@@ -124,7 +122,7 @@ public class RemoteServicesUtils {
 			if (services != null) {
 				conn = services.getConnectionManager().getConnection(connName);
 			} else if (connName != null) {
-				for (RemoteServicesProxy proxy : RemoteServicesImpl.getRemoteServiceProxies()) {
+				for (RemoteServicesDescriptor proxy : RemoteServicesImpl.getRemoteServiceDescriptors()) {
 					conn = proxy.getServices().getConnectionManager().getConnection(connName);
 					if (conn != null) {
 						break;

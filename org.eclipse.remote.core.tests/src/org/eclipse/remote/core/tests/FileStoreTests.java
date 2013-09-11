@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionManager;
+import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IRemoteFileManager;
 import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.RemoteServices;
@@ -133,9 +134,11 @@ public class FileStoreTests extends TestCase {
 			fail(e.getMessage());
 		}
 		assertNotNull(fRemoteConnection);
-		fRemoteConnection.setAddress(HOST);
-		fRemoteConnection.setUsername(USERNAME);
-		fRemoteConnection.setPassword(PASSWORD);
+		IRemoteConnectionWorkingCopy wc = fRemoteConnection.getWorkingCopy();
+		wc.setAddress(HOST);
+		wc.setUsername(USERNAME);
+		wc.setPassword(PASSWORD);
+		wc.save();
 
 		try {
 			fRemoteConnection.open(new NullProgressMonitor());

@@ -10,7 +10,6 @@
             class="org.eclipse.internal.remote.core.services.local.LocalServicesFactory"
             id="org.eclipse.remote.LocalServices"
             name="Local"
-            newConnections="false"
             scheme="file">
       </remoteServices>
    </extension>

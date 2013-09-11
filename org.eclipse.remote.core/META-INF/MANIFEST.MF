@@ -18,3 +18,4 @@ Export-Package: org.eclipse.internal.remote.core;x-friends:="org.eclipse.remote.
  org.eclipse.remote.core.exception
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.eclipse.equinox.security.storage

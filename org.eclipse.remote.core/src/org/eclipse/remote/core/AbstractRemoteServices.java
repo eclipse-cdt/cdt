@@ -27,13 +27,11 @@ public abstract class AbstractRemoteServices implements IRemoteServices {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteServicesDescriptor#canCreateConnections
-	 * ()
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public boolean canCreateConnections() {
-		return fDescriptor.canCreateConnections();
+	public int compareTo(IRemoteServicesDescriptor o) {
+		return fDescriptor.compareTo(o);
 	}
 
 	/*

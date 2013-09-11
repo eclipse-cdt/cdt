@@ -17,20 +17,11 @@ import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.IRemoteServicesDescriptor;
 import org.eclipse.remote.core.IRemoteServicesFactory;
 
-public class RemoteServicesProxy implements IRemoteServicesDescriptor {
+public class RemoteServicesDescriptor implements IRemoteServicesDescriptor {
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
 	private static final String ATTR_SCHEME = "scheme"; //$NON-NLS-1$
 	private static final String ATTR_CLASS = "class"; //$NON-NLS-1$
-	private static final String ATTR_NEWCONNECTIONS = "newConnections"; //$NON-NLS-1$
-
-	private static boolean getAttribute(IConfigurationElement configElement, String name, boolean defaultValue) {
-		String attr = configElement.getAttribute(name);
-		if (attr != null) {
-			return Boolean.parseBoolean(attr);
-		}
-		return defaultValue;
-	}
 
 	private static String getAttribute(IConfigurationElement configElement, String name, String defaultValue) {
 		String value = configElement.getAttribute(name);
@@ -48,16 +39,14 @@ public class RemoteServicesProxy implements IRemoteServicesDescriptor {
 	private final String fId;
 	private final String fName;
 	private final String fScheme;
-	private final boolean fNewConnections;
 	private IRemoteServicesFactory fFactory;
 	private IRemoteServices fDelegate = null;
 
-	public RemoteServicesProxy(IConfigurationElement configElement) {
+	public RemoteServicesDescriptor(IConfigurationElement configElement) {
 		fConfigElement = configElement;
 		fId = getAttribute(configElement, ATTR_ID, null);
 		fName = getAttribute(configElement, ATTR_NAME, fId);
 		fScheme = getAttribute(configElement, ATTR_SCHEME, null);
-		fNewConnections = getAttribute(configElement, ATTR_NEWCONNECTIONS, false);
 		getAttribute(configElement, ATTR_CLASS, null);
 		fFactory = null;
 	}
@@ -65,13 +54,11 @@ public class RemoteServicesProxy implements IRemoteServicesDescriptor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteServicesDescriptor#canCreateConnections
-	 * ()
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public boolean canCreateConnections() {
-		return fNewConnections;
+	public int compareTo(IRemoteServicesDescriptor arg0) {
+		return getName().compareTo(arg0.getName());
 	}
 
 	/**
@@ -86,9 +73,8 @@ public class RemoteServicesProxy implements IRemoteServicesDescriptor {
 		try {
 			fFactory = (IRemoteServicesFactory) fConfigElement.createExecutableExtension(ATTR_CLASS);
 		} catch (Exception e) {
-			RemoteCorePlugin
-					.log(NLS.bind(Messages.RemoteServicesProxy_1, new Object[] { fConfigElement.getAttribute(ATTR_CLASS), fId,
-							fConfigElement.getDeclaringExtension().getNamespaceIdentifier() }));
+			RemoteCorePlugin.log(NLS.bind(Messages.RemoteServicesProxy_1, new Object[] { fConfigElement.getAttribute(ATTR_CLASS),
+					fId, fConfigElement.getDeclaringExtension().getNamespaceIdentifier() }));
 		}
 		return fFactory;
 	}

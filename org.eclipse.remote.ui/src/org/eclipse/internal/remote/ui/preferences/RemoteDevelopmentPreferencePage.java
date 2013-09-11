@@ -14,9 +14,8 @@ package org.eclipse.internal.remote.ui.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.internal.remote.core.RemoteCorePlugin;
+import org.eclipse.internal.remote.core.RemoteServicesDescriptor;
 import org.eclipse.internal.remote.core.RemoteServicesImpl;
-import org.eclipse.internal.remote.core.RemoteServicesProxy;
 import org.eclipse.internal.remote.ui.messages.Messages;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -32,7 +31,7 @@ public class RemoteDevelopmentPreferencePage extends FieldEditorPreferencePage i
 
 	public RemoteDevelopmentPreferencePage() {
 		super(GRID);
-		setPreferenceStore(new PreferencesAdapter(RemoteCorePlugin.getUniqueIdentifier()));
+		setPreferenceStore(new PreferencesAdapter());
 	}
 
 	public void init(IWorkbench workbench) {
@@ -42,9 +41,13 @@ public class RemoteDevelopmentPreferencePage extends FieldEditorPreferencePage i
 	@Override
 	protected void createFieldEditors() {
 		List<String[]> namesAndValues = new ArrayList<String[]>();
+		String[] nameAndValue = new String[2];
+		nameAndValue[0] = "None"; //$NON-NLS-1$
+		nameAndValue[1] = ""; //$NON-NLS-1$
+		namesAndValues.add(nameAndValue);
 
-		for (RemoteServicesProxy service : RemoteServicesImpl.getRemoteServiceProxies()) {
-			String[] nameAndValue = new String[2];
+		for (RemoteServicesDescriptor service : RemoteServicesImpl.getRemoteServiceDescriptors()) {
+			nameAndValue = new String[2];
 			nameAndValue[0] = service.getName();
 			nameAndValue[1] = service.getId();
 			namesAndValues.add(nameAndValue);

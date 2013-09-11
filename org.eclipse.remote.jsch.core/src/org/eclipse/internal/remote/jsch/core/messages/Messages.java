@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 IBM Corporation.
+ * Copyright (c) 2013 IBM Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,6 @@ package org.eclipse.internal.remote.jsch.core.messages;
 
 import org.eclipse.osgi.util.NLS;
 
-/**
- * @author Daniel Felix Ferber
- * 
- * @since 3.0
- */
 public class Messages extends NLS {
 	private static final String BUNDLE_ID = "org.eclipse.internal.remote.jsch.core.messages.messages"; //$NON-NLS-1$
 

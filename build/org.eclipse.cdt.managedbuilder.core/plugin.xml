@@ -584,6 +584,12 @@
             processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.GenerateMakefileWithBuildDescription">
          <simple name="projectName"/>
       </processType>
+        <processType
+            name="AddLanguageSettingsProvider"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.AddLanguageSettingsProvider">
+            <simple name="projectName"/>
+            <simpleArray name="languageSettingsProviderIds"/>
+        </processType>
    </extension>
    <extension
          id="headlessbuild"

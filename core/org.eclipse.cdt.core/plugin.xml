@@ -782,6 +782,17 @@
                name="natureId">
          </simple>
       </processType>
+        <processType
+            name="SetEnvironmentVariable"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.SetEnvironmentVariable">
+            <simple name="projectName"/>
+            <complexArray name="variables">
+                <baseType>
+                    <simple name="name"/>
+                    <simple name="value"/>
+                </baseType>
+            </complexArray>
+        </processType>
    </extension>
    <extension
          point="org.eclipse.cdt.core.CProjectDescriptionStorage">

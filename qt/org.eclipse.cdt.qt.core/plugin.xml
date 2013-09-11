@@ -5,23 +5,33 @@
          point="org.eclipse.cdt.core.templates">
       <template
             filterPattern=".*g\+\+"
-            id="org.eclipse.cdt.qt.core.template.helloWorld.qtQuick2"
-            location="templates/project/helloWorld/qtQuick2/template.xml"
-            projectType="org.eclipse.cdt.build.makefile.projectType">
-      </template>
+            id="org.eclipse.cdt.qt.core.template.helloWorld.Qt4"
+            location="templates/project/Qt4/template.xml"
+            projectType="org.eclipse.cdt.build.makefile.projectType"/>
+      <template
+            filterPattern=".*g\+\+"
+            id="org.eclipse.cdt.qt.core.template.helloWorld.Qt5"
+            location="templates/project/Qt5/template.xml"
+            projectType="org.eclipse.cdt.build.makefile.projectType"/>
    </extension>
 
    <extension
          point="org.eclipse.cdt.core.templateAssociations">
-      <template id="org.eclipse.cdt.qt.core.template.helloWorld.qtQuick2">
+      <template id="org.eclipse.cdt.qt.core.template.helloWorld.Qt4">
          <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
          <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
          <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
          <toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base"/>
          <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
-         <toolChain
-               id="cdt.managedbuild.toolchain.llvm.clang.macosx.base">
-         </toolChain>
+         <toolChain id="cdt.managedbuild.toolchain.llvm.clang.macosx.base"/>
+      </template>
+      <template id="org.eclipse.cdt.qt.core.template.helloWorld.Qt5">
+         <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
+         <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
+         <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
+         <toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base"/>
+         <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
+         <toolChain id="cdt.managedbuild.toolchain.llvm.clang.macosx.base"/>
       </template>
    </extension>
    <extension
@@ -65,5 +75,13 @@
                 </with>
             </enablement>
         </bindingTagger>            
+    </extension>
+    <extension point="org.eclipse.cdt.core.LanguageSettingsProvider">
+        <provider
+            class="org.eclipse.cdt.qt.internal.core.QtIncludePathsProvider"
+            id="org.eclipse.cdt.qt.core.QtPathsProvider"
+            name="%QtInstallHeaders.pathProvider.name">
+            <language-scope id="org.eclipse.cdt.core.g++"/>
+        </provider>
     </extension>
 </plugin>

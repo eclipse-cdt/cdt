@@ -10,6 +10,6 @@
   </parent>
   <groupId>org.eclipse.tm</groupId>
   <artifactId>org.eclipse.dstore.core</artifactId>
-  <version>3.3.200-SNAPSHOT</version>
+  <version>3.3.201-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

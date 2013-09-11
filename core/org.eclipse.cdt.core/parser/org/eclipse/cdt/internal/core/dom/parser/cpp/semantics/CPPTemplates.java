@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -686,19 +687,27 @@ public class CPPTemplates {
 			IASTName templateName = id.getTemplateName();
 			IBinding template = templateName.resolvePreBinding();
 
-			// Alias Template.
+			// Alias template.
 			if (template instanceof ICPPAliasTemplate) {
 				ICPPAliasTemplate aliasTemplate = (ICPPAliasTemplate) template;
-				IType aliasedType = aliasTemplate.getType();
 				ICPPTemplateArgument[] args = createTemplateArgumentArray(id);
 				args = addDefaultArguments(aliasTemplate, args, id);
 				ICPPTemplateParameterMap parameterMap = createParameterMap(aliasTemplate, args);
+				IType aliasedType = aliasTemplate.getType();
 				IBinding owner = template.getOwner();
-				ICPPClassSpecialization within = getSpecializationContext(owner);
-				IType instantiatedType = instantiateType(aliasedType, parameterMap, -1,	within, id);
-				StringBuilder buf= new StringBuilder();
-				buf.append(id.getSimpleID()).append(ASTTypeUtil.getArgumentListString(args, false));
-				return new CPPAliasTemplateInstance(buf.toString().toCharArray(), aliasTemplate, instantiatedType);
+				return createAliasTemplaceInstance(aliasTemplate, args, parameterMap, aliasedType, owner, id);
+			}
+
+			// Alias template instance.
+			if (template instanceof ICPPAliasTemplateInstance) {
+				ICPPAliasTemplateInstance aliasTemplateInstance = (ICPPAliasTemplateInstance) template;
+				ICPPTemplateArgument[] args = createTemplateArgumentArray(id);
+				ICPPAliasTemplate aliasTemplate = aliasTemplateInstance.getTemplateDefinition();
+				args = addDefaultArguments(aliasTemplate, args, id);
+				ICPPTemplateParameterMap parameterMap = createParameterMap(aliasTemplate, args);
+				IType aliasedType = aliasTemplateInstance.getType();
+				IBinding owner = aliasTemplateInstance.getOwner();
+				return createAliasTemplaceInstance(aliasTemplate, args, parameterMap, aliasedType, owner, id);
 			}
 
 			// Class template.
@@ -757,6 +766,16 @@ public class CPPTemplates {
 		} catch (DOMException e) {
 			return e.getProblem();
 		}
+	}
+
+	private static IBinding createAliasTemplaceInstance(ICPPAliasTemplate aliasTemplate,
+			ICPPTemplateArgument[] args, ICPPTemplateParameterMap parameterMap, IType aliasedType,
+			IBinding owner, ICPPASTTemplateId id) {
+		ICPPClassSpecialization within = getSpecializationContext(owner);
+		IType instantiatedType = instantiateType(aliasedType, parameterMap, -1,	within, id);
+		StringBuilder buf= new StringBuilder();
+		buf.append(id.getSimpleID()).append(ASTTypeUtil.getArgumentListString(args, false));
+		return new CPPAliasTemplateInstance(buf.toString().toCharArray(), aliasTemplate, instantiatedType);
 	}
 
 	static boolean isClassTemplate(ICPPASTTemplateId id) {

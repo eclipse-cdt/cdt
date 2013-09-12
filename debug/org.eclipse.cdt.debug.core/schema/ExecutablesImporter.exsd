@@ -9,7 +9,6 @@
          This extension points allows you to extened the executables manager in CDT by providing your own executables importer.
       </documentation>
    </annotation>
-
    <element name="extension">
       <annotation>
          <appinfo>
@@ -46,7 +45,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="importer">
       <complexType>
          <attribute name="class" type="string" use="required">
@@ -61,7 +59,6 @@
          </attribute>
       </complexType>
    </element>
-
    <annotation>
       <appinfo>
          <meta.section type="since"/>
@@ -70,7 +67,6 @@
          CDT 7.0
       </documentation>
    </annotation>
-
    <annotation>
       <appinfo>
          <meta.section type="examples"/>
@@ -82,5 +78,4 @@
    &lt;/extension&gt;
       </documentation>
    </annotation>
-
 </schema>

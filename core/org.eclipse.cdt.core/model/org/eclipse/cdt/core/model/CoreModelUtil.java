@@ -650,7 +650,7 @@ public class CoreModelUtil {
 	/**
 	 * Returns the translation unit for the file given or <code>null</code>.
 	 */
-    public static ITranslationUnit findTranslationUnit(IFile file) {
+	public static ITranslationUnit findTranslationUnit(IFile file) {
 		if (CoreModel.isTranslationUnit(file) && file.exists()) {
 			ICProject cp= CoreModel.getDefault().getCModel().getCProject(file.getProject().getName());
 			if (cp != null) {
@@ -668,10 +668,10 @@ public class CoreModelUtil {
 				}
 			}
 		}
-        return null;
-    }
+		return null;
+	}
 
-    /**
+	/**
 	 * Returns the configuration descriptions referenced directly by the specified
 	 * configuration description. The result will not contain duplicates. Returns 
 	 * an empty array if there are no referenced configuration descriptions.
@@ -682,85 +682,93 @@ public class CoreModelUtil {
 	 * @return a list of configuration descriptions
 	 * @see CoreModelUtil#getReferencingConfigurationDescriptions(ICConfigurationDescription, boolean)
 	 */
-    
-    public static ICConfigurationDescription[] getReferencedConfigurationDescriptions(ICConfigurationDescription cfgDes, boolean writable) {
-    	List<ICConfigurationDescription> result = new ArrayList<ICConfigurationDescription>();
 
-    	if (cfgDes != null) {
-    		Map<String, String> map = cfgDes.getReferenceInfo();
-    		if (map.size() != 0) {
-    			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-    			CoreModel model = CoreModel.getDefault();
-    			for (Map.Entry<String,String> entry : map.entrySet()) {
-    				String projName = entry.getKey();
-    				String cfgId = entry.getValue();
-    				IProject project = root.getProject(projName);
-    				if (!project.exists())
-    					continue;
+	public static ICConfigurationDescription[] getReferencedConfigurationDescriptions(ICConfigurationDescription cfgDes, boolean writable) {
+		List<ICConfigurationDescription> result = new ArrayList<ICConfigurationDescription>();
 
-    				ICProjectDescription des = model.getProjectDescription(project, writable);
-    				if (des == null)
-    					continue;
+		if (cfgDes != null) {
+			Map<String, String> map = cfgDes.getReferenceInfo();
+			if (map.size() != 0) {
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				CoreModel model = CoreModel.getDefault();
+				for (Map.Entry<String,String> entry : map.entrySet()) {
+					String projName = entry.getKey();
+					String cfgId = entry.getValue();
+					IProject project = root.getProject(projName);
+					if (!project.isAccessible())
+						continue;
 
-    				ICConfigurationDescription refCfgDes;
-    				if (cfgId != null && cfgId.length() > 0) {
-    					refCfgDes= des.getConfigurationById(cfgId);
-    				} else {
-    					refCfgDes= des.getActiveConfiguration();
-    				}
-    				if (refCfgDes != null)
-    					result.add(refCfgDes);
-    			}
-    		}
-    	}
-    	
-    	return result.toArray(new ICConfigurationDescription[result.size()]);
-    }
-    
-    /**
+					ICProjectDescription des = null;
+					try {
+						des = model.getProjectDescription(project, writable);
+					} catch (Exception e) {
+						// log the error except if the project got closed in another thread which is OK
+						if (project.isAccessible()) {
+							CCorePlugin.log(e);
+						}
+					}
+					if (des == null)
+						continue;
+
+					ICConfigurationDescription refCfgDes;
+					if (cfgId != null && cfgId.length() > 0) {
+						refCfgDes= des.getConfigurationById(cfgId);
+					} else {
+						refCfgDes= des.getActiveConfiguration();
+					}
+					if (refCfgDes != null)
+						result.add(refCfgDes);
+				}
+			}
+		}
+
+		return result.toArray(new ICConfigurationDescription[result.size()]);
+	}
+
+	/**
 	 * Returns the list of all configuration descriptions which directly reference
 	 * the specified configuration description. Returns an empty array if there are
 	 * no referencing configuration descriptions.
 	 * 
 	 * @since 4.0
-     * @param cfgDes
-     * @param writable - specifies whether the returned descriptions should be writable or read-only
-     * @return a list of configuration descriptions referencing this configuration description
-     * @see CoreModelUtil#getReferencedConfigurationDescriptions(ICConfigurationDescription, boolean)
-     */
-    public static ICConfigurationDescription[] getReferencingConfigurationDescriptions(ICConfigurationDescription cfgDes, boolean writable) {
-    	List<ICConfigurationDescription> result = new ArrayList<ICConfigurationDescription>();
-    	
-    	if (cfgDes != null) {
-    		CoreModel core= CoreModel.getDefault();
-    		IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
+	 * @param cfgDes
+	 * @param writable - specifies whether the returned descriptions should be writable or read-only
+	 * @return a list of configuration descriptions referencing this configuration description
+	 * @see CoreModelUtil#getReferencedConfigurationDescriptions(ICConfigurationDescription, boolean)
+	 */
+	public static ICConfigurationDescription[] getReferencingConfigurationDescriptions(ICConfigurationDescription cfgDes, boolean writable) {
+		List<ICConfigurationDescription> result = new ArrayList<ICConfigurationDescription>();
 
-    		for (IProject cproject : projects) {
-    			ICProjectDescription prjDes= core.getProjectDescription(cproject, writable);
-    			// In case this is not a CDT project the description will be null, so check for null
-    			if (prjDes != null) {
-	    			ICConfigurationDescription[] cfgDscs= prjDes.getConfigurations();
-	    			for (ICConfigurationDescription cfgDsc : cfgDscs) {
-	    				ICConfigurationDescription[] references = getReferencedConfigurationDescriptions(cfgDsc, false);
-	    				for (ICConfigurationDescription reference : references) {
-	    					if (reference != null && reference.getId().equals(cfgDes.getId())) {
-	    						result.add(cfgDsc);
-	    						break;
-	    					}				
-	    				}
-	    			}
-    			}
-    		}
-    	}
-    	
+		if (cfgDes != null) {
+			CoreModel core= CoreModel.getDefault();
+			IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
+
+			for (IProject cproject : projects) {
+				ICProjectDescription prjDes= core.getProjectDescription(cproject, writable);
+				// In case this is not a CDT project the description will be null, so check for null
+				if (prjDes != null) {
+					ICConfigurationDescription[] cfgDscs= prjDes.getConfigurations();
+					for (ICConfigurationDescription cfgDsc : cfgDscs) {
+						ICConfigurationDescription[] references = getReferencedConfigurationDescriptions(cfgDsc, false);
+						for (ICConfigurationDescription reference : references) {
+							if (reference != null && reference.getId().equals(cfgDes.getId())) {
+								result.add(cfgDsc);
+								break;
+							}				
+						}
+					}
+				}
+			}
+		}
+
 		return result.toArray(new ICConfigurationDescription[result.size()]);
 	}
-    
-    /**
-     * Returns binary parser IDs for configurations
-     * @param cfgs - array of configurations where we need search
-     * @return - array of binary parser ids (Strings)
-     */
+
+	/**
+	 * Returns binary parser IDs for configurations
+	 * @param cfgs - array of configurations where we need search
+	 * @return - array of binary parser ids (Strings)
+	 */
 	public static String[] getBinaryParserIds(ICConfigurationDescription[] cfgs) {
 		if (cfgs == null || cfgs.length == 0) 
 			return null;

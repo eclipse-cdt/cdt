@@ -9,7 +9,6 @@
          This extension point groups extensions to the index functionality in CDT
       </documentation>
    </annotation>
-
    <element name="extension">
       <annotation>
          <appInfo>
@@ -48,7 +47,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="ExportProjectProvider">
       <annotation>
          <documentation>
@@ -57,9 +55,7 @@
 This subelement of CIndex allows contribution of alternate IExportProjectProvider implementations. These can then be referenced by fully qualified class name in the command line tool (see option -pprovider).
 &lt;p&gt;
 &lt;b&gt;Invoking the application as a headless application&lt;/b&gt;
-
 This example ant file shows how to invoke the tool headlessly, the same approach would work from a shell or batch file.
-
 &lt;pre&gt;
 &lt;project name=&quot;Generate PDOM&quot; default=&quot;generate&quot;&gt;
  &lt;target name=&quot;generate&quot;&gt;
@@ -102,16 +98,15 @@ In the Argument tabs provide (for example)
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully qualified name of the IExportProjectProvider implementation to register
+                  The fully qualified name of the IExportProjectProvider implementation to register.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.index.export.IExportProjectProvider"/>
                </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
-
    <element name="ReadOnlyPDOMProvider">
       <annotation>
          <documentation>
@@ -125,23 +120,18 @@ This subelement of CIndex allows ISVs to contribute read-only prebuilt PDOM file
    &lt;ReadOnlyPDOMProvider class=&quot;com.acme.ide.index.AcmeSDKProvider&quot;/&gt;
 &lt;/CIndex&gt;
 &lt;/pre&gt;
-
 and the corresponding implementation
-
 &lt;pre&gt;
 package com.acme.ide.index.sdk;
-
 import org.eclipse.core.index.provider.IReadOnlyPDOMProvider;
 import org.eclipse.core.index.provider.IPDOMDescriptor;
 import org.eclipse.core.index.IIndexLocationConverter;
 import org.eclipse.core.index.URIRelativeLocationConverter;
-
 public class AcmeSDKProvider implements IReadOnlyPDOMProvider {
     public boolean providesFor(ICProject project) {
         // e.g. decide by looking for acme project nature
         return AcmeNature.isAcmeProject(project);
     }
-
     public IPDOMDescriptor[] getDescriptors(ICConfigurationDescription config) {
         final IPath sdkBase = AcmeSDKAPI.getSDKBase(config);
         return new IPDOMDescriptor[] { new IPDOMDescriptor() {
@@ -165,7 +155,7 @@ public class AcmeSDKProvider implements IReadOnlyPDOMProvider {
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified name of the IReadOnlyPDOMProvider implementation to register
+                  The fully qualified name of the IReadOnlyPDOMProvider implementation to register.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.index.provider.IReadOnlyPDOMProvider"/>
@@ -174,7 +164,6 @@ public class AcmeSDKProvider implements IReadOnlyPDOMProvider {
          </attribute>
       </complexType>
    </element>
-
    <element name="ReadOnlyIndexFragmentProvider">
       <annotation>
          <documentation>
@@ -192,7 +181,7 @@ The only information needed for this extension point is the fully qualified name
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified name of a class implementing IIndexFragmentProvider interface.
+                  The fully qualified name of a class implementing IIndexFragmentProvider.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.cdt.internal.core.index.provider.IIndexFragmentProvider"/>
@@ -201,7 +190,6 @@ The only information needed for this extension point is the fully qualified name
          </attribute>
       </complexType>
    </element>
-
    <element name="FragmentProviderUsage">
       <annotation>
          <documentation>
@@ -258,7 +246,7 @@ The only information needed for this extension point is the fully qualified name
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="editor" type="boolean" use="optional">
+         <attribute name="editor" type="boolean">
             <annotation>
                <documentation>
                   Whether the fragment provider shall be used for C/C++ editor.
@@ -267,18 +255,6 @@ The only information needed for this extension point is the fully qualified name
          </attribute>
       </complexType>
    </element>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         Index content provided by ISVs under this extension point will be accessible via the logical index org.eclipse.core.index.IIndex API
-
-For export functionality, see package org.eclipse.cdt.core.index.export
-      </documentation>
-   </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -287,7 +263,6 @@ For export functionality, see package org.eclipse.cdt.core.index.export
          4.0
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -296,7 +271,6 @@ For export functionality, see package org.eclipse.cdt.core.index.export
          See subelement documentation
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="implementation"/>
@@ -305,7 +279,6 @@ For export functionality, see package org.eclipse.cdt.core.index.export
          See subelement documentation
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -318,5 +291,13 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html
       </documentation>
    </annotation>
-
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Index content provided by ISVs under this extension point will be accessible via the logical index org.eclipse.core.index.IIndex API
+For export functionality, see package org.eclipse.cdt.core.index.export
+      </documentation>
+   </annotation>
 </schema>

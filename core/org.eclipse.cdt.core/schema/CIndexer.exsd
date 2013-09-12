@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.core">
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.core" id="CDTIndexer" name="CDT Indexer"/>
@@ -9,8 +9,12 @@
          This extension point is used to contribute a new Indexer to the CDT. This indexer can choose to receive event notification from the index manager.
       </documentation>
    </annotation>
-
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="run"/>
@@ -38,7 +42,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="run">
       <complexType>
          <attribute name="class" type="string" use="required">
@@ -53,25 +56,6 @@
          </attribute>
       </complexType>
    </element>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         CDT 3.0
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="examples"/>
-      </appInfo>
-      <documentation>
-         [Enter extension point usage example here.]
-      </documentation>
-   </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="apiInfo"/>
@@ -80,23 +64,12 @@
          Plug-ins that want to extend this extension point must implement &lt;samp&gt;org.eclipse.cdt.core.index.IIndexer&lt;/samp&gt; interface.
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
-         <meta.section type="implementation"/>
+         <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         CDT 3.0
       </documentation>
    </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="copyright"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
 </schema>

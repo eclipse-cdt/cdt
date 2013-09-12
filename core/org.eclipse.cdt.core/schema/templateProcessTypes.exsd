@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.core">
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.core" id="templateProcessTypes" name="Processes Extension point"/>
@@ -9,9 +9,11 @@
          This extension point is to be extended to define new processes to be used in template descriptors by template writers.
       </documentation>
    </annotation>
-
    <element name="extension">
       <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
          <documentation>
             One or more elements of processType should be added as children to this element.
          </documentation>
@@ -36,7 +38,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="processType">
       <annotation>
          <documentation>
@@ -71,7 +72,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="simple">
       <annotation>
          <documentation>
@@ -90,9 +90,7 @@
             <annotation>
                <documentation>
                   This is an optional attribute. If specified with a true value, it implies that the template xml need not mention this argument for this param. The attribute does not have any meaning in the context of a child of a complex param or of a child of a complexArray param.
-
 Another thing to note is that arguments corresponding to external=true type params, if not mentioned in the template xml, should be supplied directly through the ValueStore with the key as the param&apos;s name.
-
 If not mentioned, this attribute&apos;s is treated as false.
                </documentation>
             </annotation>
@@ -101,14 +99,12 @@ If not mentioned, this attribute&apos;s is treated as false.
             <annotation>
                <documentation>
                   This is an optional attribute. If specified with a true value, it implies that the template xml need not mention the value attribute of the argument for this param. The attribute does not have any meaning in the context of a child of a complex param or of a child of a complexArray param.
-
 If not mentioned, this attribute&apos;s is treated as false.
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
-
    <element name="simpleArray">
       <annotation>
          <documentation>
@@ -125,7 +121,6 @@ If not mentioned, this attribute&apos;s is treated as false.
          </attribute>
       </complexType>
    </element>
-
    <element name="complex">
       <annotation>
          <documentation>
@@ -150,7 +145,6 @@ If not mentioned, this attribute&apos;s is treated as false.
          </attribute>
       </complexType>
    </element>
-
    <element name="complexArray">
       <annotation>
          <documentation>
@@ -170,7 +164,6 @@ If not mentioned, this attribute&apos;s is treated as false.
          </attribute>
       </complexType>
    </element>
-
    <element name="baseType">
       <annotation>
          <documentation>
@@ -188,16 +181,14 @@ If not mentioned, this attribute&apos;s is treated as false.
          </sequence>
       </complexType>
    </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         This extension point was added in CDT 4.0
+         CDT 4.0
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -210,7 +201,6 @@ If not mentioned, this attribute&apos;s is treated as false.
          id=&quot;processExample&quot;
          name=&quot;Process Example&quot;
          point=&quot;org.eclipse.cdt.core.templateengine.processTypes&quot;&gt;
-
         &lt;processType
             name=&quot;NewManagedProject&quot;
             processRunner=&quot;org.eclipse.cdt.core.templateengine.process.processes.NewManagedProject&quot;&gt;
@@ -224,7 +214,6 @@ If not mentioned, this attribute&apos;s is treated as false.
                nullable=&quot;true&quot;/&gt;
          &lt;simple name=&quot;targetType&quot;/&gt;
         &lt;/processType&gt;
-
         &lt;processType
             name=&quot;SetMBSBooleanOptionValue&quot;
             processRunner=&quot;org.eclipse.cdt.core.templateengine.process.processes.SetMBSBooleanOptionValue&quot;&gt;
@@ -237,7 +226,6 @@ If not mentioned, this attribute&apos;s is treated as false.
             &lt;/baseType&gt;
          &lt;/complexArray&gt;
         &lt;/processType&gt;
-
         &lt;processType
             name=&quot;AddFile&quot;
             processRunner=&quot;org.eclipse.cdt.core.templateengine.process.processes.AddFile&quot;&gt;
@@ -248,7 +236,6 @@ If not mentioned, this attribute&apos;s is treated as false.
             &lt;simple name=&quot;replaceable&quot;/&gt;
          &lt;/complex&gt;
         &lt;/processType&gt;
-
         &lt;processType
             name=&quot;AppendToMBSStringListOptionValues&quot;
             processRunner=&quot;org.eclipse.cdt.core.templateengine.process.processes.AppendToMBSStringListOptionValues&quot;&gt;
@@ -261,24 +248,12 @@ If not mentioned, this attribute&apos;s is treated as false.
             &lt;/baseType&gt;
          &lt;/complexArray&gt;
         &lt;/processType&gt;
-
     &lt;/extension&gt;
 &lt;/pre&gt;
-
 For more details on how to define your own templates, please check examples provided under
 &lt;samp&gt;org.eclipse.cdt.gnu.templates&lt;/samp&gt;
       </documentation>
    </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="implementation"/>
@@ -287,7 +262,6 @@ For more details on how to define your own templates, please check examples prov
          An implementation of this extension point is supplied in &lt;samp&gt;org.eclipse.cdt.core.templateengine&lt;/samp&gt;
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -298,10 +272,8 @@ All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html
-
 Contributors:
 Bala Torati (Symbian) - Initial API and implementation
       </documentation>
    </annotation>
-
 </schema>

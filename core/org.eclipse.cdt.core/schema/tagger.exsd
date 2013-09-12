@@ -9,9 +9,7 @@
          This extension point allows extensions to contribute to the parsed nodes.  When PDOM nodes are tagged, the content of the tag is stored in to the Database.  The information for other nodes, e.g., the AST, is stored in memory.
       </documentation>
    </annotation>
-
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
-
    <element name="extension">
       <annotation>
          <appInfo>
@@ -48,7 +46,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="bindingTagger">
       <complexType>
          <sequence>
@@ -67,14 +64,12 @@
             <annotation>
                <documentation>
                   A unique identifier for this tagger&apos;s contributions.
-
 The local id will be appended to the contributing plugin&apos;s id (separated with a dot &apos;.&apos;) to form the globally unique identifier for this tagger.  This id is used to uniquely associate the tag with this plugin.
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -83,7 +78,6 @@ The local id will be appended to the contributing plugin&apos;s id (separated wi
          8.2
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -112,7 +106,6 @@ The local id will be appended to the contributing plugin&apos;s id (separated wi
 &lt;/p&gt;
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="apiInfo"/>
@@ -121,8 +114,6 @@ The local id will be appended to the contributing plugin&apos;s id (separated wi
          The contributed class must implement &lt;code&gt;org.eclipse.cdt.core.dom.ast.tag.IBindingTagger&lt;/code&gt;
       </documentation>
    </annotation>
-
-
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -135,5 +126,4 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html
       </documentation>
    </annotation>
-
 </schema>

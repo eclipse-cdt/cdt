@@ -9,7 +9,6 @@
          This extension point is used to declare a language or language variant. Languages define how the C model of a file is created (e.g. to populate the outline view). It also provides hooks to override the low level parsing of translation units into an abstract syntax tree. Practically this is limited to C/C++ language variants only. Completely different languages cannot be modelled reasonably using this extension point.
       </documentation>
    </annotation>
-
    <element name="extension">
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
@@ -44,7 +43,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="language">
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
@@ -79,7 +77,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="contentType">
       <complexType>
          <attribute name="id" type="string">
@@ -91,7 +88,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="pdomLinkageFactory">
       <complexType>
          <attribute name="id" type="string" use="required">
@@ -113,7 +109,6 @@
          </attribute>
       </complexType>
    </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -122,7 +117,6 @@
          CDT 3.1
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -139,7 +133,6 @@
 &lt;/pre&gt;
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="apiInfo"/>
@@ -148,7 +141,6 @@
          Clients need to extend the abstract class &lt;code&gt;org.eclipse.core.model.AbstractLanguage&lt;/code&gt;.
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="implementation"/>
@@ -163,7 +155,6 @@
 &lt;/p&gt;
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -176,5 +167,4 @@ accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html
       </documentation>
    </annotation>
-
 </schema>

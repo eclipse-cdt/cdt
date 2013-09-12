@@ -1,16 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.core">
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.core" id="CProject" name="C/C++ Project Description"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point]
+         
       </documentation>
    </annotation>
-
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="cproject"/>
@@ -38,7 +42,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="cproject">
       <complexType>
          <attribute name="class" type="string" use="required">
@@ -47,14 +50,14 @@
                   Class which implements org.eclipse.cdt.core.ICOwner
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.ICOwner"/>
                </appInfo>
             </annotation>
          </attribute>
          <attribute name="natureID" type="string">
             <annotation>
                <documentation>
-                  This is a nature ID which the owner has. This is used to restore a ICDescriptor which has been deleted.  If this is not provided the descriptor will be restore with no owner. A project with multiple natures will use the first matching nature searched in the reverse order in the Project Description.
+                  This is a nature ID which the owner has. This is used to restore a ICDescriptor which has been deleted.  If this is not provided the descriptor will be restored without an owner. A project with multiple natures will use the first matching nature searched in the reverse order in the Project Description.
                </documentation>
             </annotation>
          </attribute>
@@ -67,41 +70,4 @@
          </attribute>
       </complexType>
    </element>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="examples"/>
-      </appInfo>
-      <documentation>
-         [Enter extension point usage example here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="copyright"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
 </schema>

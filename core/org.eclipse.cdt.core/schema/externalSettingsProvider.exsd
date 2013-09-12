@@ -1,18 +1,22 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.core">
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.core" id="externalSettingsProvider" name="External Settings provider"/>
       </appInfo>
       <documentation>
-         The external settings provider would be used to specify provider of include/macro/libraryan settings to be used/applied for the build configuration associated with this provider.
+         The external settings provider is used to specify a provider of include/macro/library settings to be used for the associated build configuration.
 Any number of setting providers can be associated with the build configurations.
-This functionality might be used, e.g. by the External SDKs to allow automatic andjustment of the project settings for the projects using thes SDKs, e.g. adding include paths, symbols, etc.
+This functionality might be used, e.g. by the External SDKs to allow automatic andjustment of the project settings for the projects using these SDKs, e.g. adding include paths, symbols, etc.
       </documentation>
    </annotation>
-
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="provider"/>
@@ -43,7 +47,6 @@ This functionality might be used, e.g. by the External SDKs to allow automatic a
          </attribute>
       </complexType>
    </element>
-
    <element name="provider">
       <complexType>
          <attribute name="class" type="string" use="required">
@@ -58,7 +61,6 @@ This functionality might be used, e.g. by the External SDKs to allow automatic a
          </attribute>
       </complexType>
    </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -67,41 +69,4 @@ This functionality might be used, e.g. by the External SDKs to allow automatic a
          4.0
       </documentation>
    </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="examples"/>
-      </appInfo>
-      <documentation>
-         [Enter extension point usage example here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="copyright"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
 </schema>

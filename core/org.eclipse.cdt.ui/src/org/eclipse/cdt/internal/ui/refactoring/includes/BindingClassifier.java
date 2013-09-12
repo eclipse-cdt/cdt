@@ -314,8 +314,6 @@ public class BindingClassifier {
 			} else {
 				bindings.add(binding);
 			}
-			// Resolve the type of the variable.
-			binding = getTypeBinding(((IVariable) binding).getType());
 		} else if (binding instanceof IType) {
 			// Resolve the type.
 			binding = getTypeBinding((IType) binding);
@@ -392,11 +390,13 @@ public class BindingClassifier {
 		if (fAst.getDeclarationsInAST(binding).length != 0)
 			return;  // Declared locally.
 
-		if (!canForwardDeclare(binding))
-			defineBinding(binding);
-
 		if (!fProcessedDeclaredBindings.add(binding))
 			return;
+
+		if (!canForwardDeclare(binding)) {
+			defineBinding(binding);
+			return;
+		}
 
 		List<IBinding> requiredBindings = getRequiredBindings(binding);
 
@@ -1050,8 +1050,10 @@ public class BindingClassifier {
 					IBinding binding = ((IASTIdExpression) functionNameExpression).getName().resolveBinding();
 					if (binding instanceof IFunction) {
 						declareFunction((IFunction) binding, functionCallExpression);
-					} else if (binding instanceof IType) {
-						defineBinding(binding);
+					} else  {
+						if (binding instanceof IType)
+							defineBinding(binding);
+
 						if (functionCallExpression instanceof IASTImplicitNameOwner) {
 							IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) functionCallExpression).getImplicitNames();
 							for (IASTName name : implicitNames) {

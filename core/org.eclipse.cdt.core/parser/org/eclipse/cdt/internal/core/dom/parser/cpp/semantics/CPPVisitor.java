@@ -22,6 +22,13 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -207,13 +214,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * Collection of methods to extract information from a C++ translation unit.
  */
@@ -225,7 +225,7 @@ public class CPPVisitor extends ASTQueries {
 	public static final String BEGIN_STR = "begin"; //$NON-NLS-1$
 	public static final char[] BEGIN = BEGIN_STR.toCharArray();
 	public static final char[] END = "end".toCharArray();  //$NON-NLS-1$
-	static final String STD = "std"; //$NON-NLS-1$
+	public static final String STD = "std"; //$NON-NLS-1$
 	private static final char[] SIZE_T = "size_t".toCharArray(); //$NON-NLS-1$
 	private static final char[] PTRDIFF_T = "ptrdiff_t".toCharArray(); //$NON-NLS-1$
 	private static final char[] TYPE_INFO = "type_info".toCharArray(); //$NON-NLS-1$

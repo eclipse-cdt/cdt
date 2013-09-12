@@ -395,6 +395,38 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertDeclared();
 	}
 
+	//	namespace std {
+	//  template<typename T> class shared_ptr {};
+	//  template<typename T> class unique_ptr {};
+	//	}
+	//	class A {};
+	//	class B {};
+	//	class C {};
+
+	//	using std::unique_ptr;
+	//	using std::shared_ptr;
+	//
+	//	struct P {
+	//	  ~P();
+	//	  shared_ptr<A> x;
+	//	  unique_ptr<A> y;
+	//	};
+	//
+	//	struct Q {
+	//	  ~Q() {}
+	//	  shared_ptr<B> x;
+	//	  unique_ptr<B> y;
+	//	};
+	//
+	//	void test() {
+	//	  shared_ptr<C> x;
+	//	  unique_ptr<C> y;
+	//	}
+	public void testTemplatesAllowingIncompleteParameterType() throws Exception {
+		assertDefined("B", "C", "shared_ptr", "unique_ptr");
+		assertDeclared("A");
+	}
+
 	//	struct A {};
 	//	struct B {};
 	//	struct C {};

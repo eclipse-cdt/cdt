@@ -830,7 +830,7 @@ public class ClassTypeHelper {
 		return null;
 	}
 
-	private static ICPPMethod getMethodInClass(ICPPClassType ct, MethodKind kind, IASTNode point) {
+	public static ICPPMethod getMethodInClass(ICPPClassType ct, MethodKind kind, IASTNode point) {
 		switch (kind) {
 		case DEFAULT_CTOR:
 		case COPY_CTOR:

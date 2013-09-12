@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,11 +90,13 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
@@ -146,31 +148,46 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		private MinimizedFileSystemElement _element;
 		private List _resultsQueried;
 		private volatile boolean _isActive = false;
+		private Control _control;
 
-		public QueryAllJob(Object fileSystemObject, IImportStructureProvider provider, MinimizedFileSystemElement element){
+		public QueryAllJob(Object fileSystemObject, IImportStructureProvider provider, MinimizedFileSystemElement element, Control control){
 			super("Querying All"); //$NON-NLS-1$
 			_fileSystemObject = fileSystemObject;
 			_provider = provider;
 			_element = element;
+			_control = control;
 			_resultsQueried = new ArrayList();
 		}
 
 
 		public IStatus run(IProgressMonitor monitor){
 			_isActive = true;
-			Display.getDefault().asyncExec(new Runnable(){
+			
+			final Display d = _control.getDisplay();
+			d.syncExec(new Runnable(){
 				public void run(){
-					updateWidgetEnablements();
-					selectionGroup.setAllSelections(true);
+					if (!_control.isDisposed()){
+						Cursor bC = new Cursor(d, SWT.CURSOR_WAIT);
+						_control.setCursor(bC);
+						
+						updateWidgetEnablements();
+						selectionGroup.setAllSelections(true);
+					}
 				}
 			});
+			
+
 			query(_fileSystemObject, _element, monitor);
 			_isActive = false;
 			
 			// make sure to update enablement after query
-			Display.getDefault().syncExec(new Runnable(){
+			d.syncExec(new Runnable(){
 				public void run(){
-					updateWidgetEnablements();
+					if (!_control.isDisposed()){
+						Cursor nC = new Cursor(d, SWT.CURSOR_ARROW);
+						_control.setCursor(nC);
+						updateWidgetEnablements();
+					}
 				}
 			});
 			return Status.OK_STATUS;
@@ -268,6 +285,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 
 	private QueryAllJob _queryAllJob;
 	private MinimizedFileSystemElement _fileSystemTree;
+
 
 	// input object
 	protected Object inputObject = null;
@@ -558,7 +576,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		result.setFileSystemObject(fileSystemObject);
 
 		if (_queryAllJob == null){
-			_queryAllJob = new QueryAllJob(fileSystemObject, provider, result);
+			_queryAllJob = new QueryAllJob(fileSystemObject, provider, result, getControl());
 			_queryAllJob.schedule();
 		}
 
@@ -931,6 +949,16 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	 */
 	protected void handleSourceBrowseButtonPressed() {
 		SystemSelectRemoteFolderAction action = new SystemSelectRemoteFolderAction(this.getShell());
+		
+		IHost currentHost = null;
+		File f = getSourceDirectory();
+		if (f instanceof UniFilePlus){
+			currentHost = ((UniFilePlus)f).remoteFile.getParentRemoteFileSubSystem().getHost();
+		}
+		if (currentHost != null){
+			action.setDefaultConnection(currentHost);
+		}
+		
 		action.setShowNewConnectionPrompt(true);
 		action.setShowPropertySheet(true, false);
 		action.setFoldersOnly(true);

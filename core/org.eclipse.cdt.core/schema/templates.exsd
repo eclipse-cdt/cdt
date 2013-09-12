@@ -185,13 +185,12 @@ It&apos;s no longer manditory since templates are no longer organized by project
       </complexType>
    </element>
 
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         This extension point was added in CDT 4.0
+         CDT 4.0
       </documentation>
    </annotation>
 
@@ -216,6 +215,7 @@ It&apos;s no longer manditory since templates are no longer organized by project
 For more details on how to define your own templates, please check examples provided under &lt;samp&gt;org.eclipse.cdt.ui.templateengine&lt;/samp&gt;
       </documentation>
    </annotation>
+
 
    <annotation>
       <appInfo>

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.core">
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.core" id="templateProcessTypes" name="Processes Extension point"/>
@@ -12,6 +12,9 @@
 
    <element name="extension">
       <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
          <documentation>
             One or more elements of processType should be added as children to this element.
          </documentation>
@@ -189,12 +192,13 @@ If not mentioned, this attribute&apos;s is treated as false.
       </complexType>
    </element>
 
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         This extension point was added in CDT 4.0
+         CDT 4.0
       </documentation>
    </annotation>
 
@@ -267,15 +271,6 @@ If not mentioned, this attribute&apos;s is treated as false.
 
 For more details on how to define your own templates, please check examples provided under
 &lt;samp&gt;org.eclipse.cdt.gnu.templates&lt;/samp&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
       </documentation>
    </annotation>
 

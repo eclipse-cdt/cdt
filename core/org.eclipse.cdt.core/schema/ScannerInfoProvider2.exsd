@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.cdt.core" id="ScannerInfoProvider2" name="Scanner Info Provider"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         
       </documentation>
    </annotation>
 
@@ -64,46 +64,17 @@
                <documentation>
                   The id of the build command this scanner info provider provides for.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         [Enter the first release in which this extension point appears.]
-      </documentation>
-   </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="examples"/>
-      </appInfo>
-      <documentation>
-         [Enter extension point usage example here.]
-      </documentation>
-   </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiinfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
-      </documentation>
-   </annotation>
 
 
 </schema>

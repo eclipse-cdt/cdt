@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.core">
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.core" id="templateAssociations" name="Template Associations"/>
@@ -12,6 +12,9 @@
 
    <element name="extension">
       <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
          <documentation>
             Each extension consists of a sequence of template elements, each of which define child elements for the new toolchains that should be enabled for selection during new project creation.
          </documentation>
@@ -59,6 +62,9 @@
                <documentation>
                   The unique identifier of a toolchain contributed to the org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -79,6 +85,9 @@
                <documentation>
                   The unique identifier of the template-contribution (the id in plugin.xml rather than the template.xml) that should have the specified additional toolchains enabled for selection during new project creation.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -89,7 +98,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         This extension point was added in CDT 4.0
+         CDT 4.0
       </documentation>
    </annotation>
 
@@ -111,23 +120,7 @@
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>

@@ -6,10 +6,9 @@
          <meta.schema plugin="org.eclipse.cdt.debug.core" id="SourceRemappingProvider" name="Source Remapping Provider"/>
       </appInfo>
       <documentation>
-         This extension points allows you to extened the executables manager in CDT by providing your own source remapping provider.
+         This extension point allows you to extend the executables manager in CDT by providing your own source remapping provider.
       </documentation>
    </annotation>
-
    <element name="extension">
       <annotation>
          <appInfo>
@@ -46,7 +45,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="provider">
       <complexType>
          <attribute name="class" type="string" use="required">
@@ -61,7 +59,6 @@
          </attribute>
       </complexType>
    </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -70,7 +67,6 @@
          CDT 7.0
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -82,8 +78,4 @@
    &lt;/extension&gt;
       </documentation>
    </annotation>
-
-
-
-
 </schema>

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.includes;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor.STD;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ARRAY;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.PTR;
@@ -18,6 +19,8 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -76,15 +79,18 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
@@ -99,12 +105,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.MethodKind;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions;
@@ -127,6 +135,15 @@ public class BindingClassifier {
 	private final BindingCollector fBindingCollector;
 	private final Set<IBinding> fProcessedDefinedBindings;
 	private final Set<IBinding> fProcessedDeclaredBindings;
+	private static final Set<String> templatesAllowingIncompleteArgumentType =
+			Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(new String[] {
+					"enable_shared_from_this", // 20.7.2.4 //$NON-NLS-1$
+					"declval", // 20.2.4 //$NON-NLS-1$
+					"default_delete", // 20.7.1.1 //$NON-NLS-1$
+					"shared_ptr", // 20.7.2.2 //$NON-NLS-1$
+					"unique_ptr", // 20.7.1 //$NON-NLS-1$
+					"weak_ptr" // 20.7.2.3 //$NON-NLS-1$
+			})));
 
 	/**
 	 * @param context the context for binding classification
@@ -1123,7 +1140,7 @@ public class BindingClassifier {
 
 			IBinding binding = name.resolveBinding();
 			if (binding != null) {
-				if (isInTemplateArgument(name)) {
+				if (isTemplateArgumentRequiringCompleteType(name)) {
 					// The name is part of a template argument - define the corresponding binding.
 					defineBinding(binding);
 				} else {
@@ -1172,9 +1189,41 @@ public class BindingClassifier {
 	/**
 	 * Checks if the given name is part of a template argument.
 	 */
-	public boolean isInTemplateArgument(IASTName name) {
+	public boolean isTemplateArgumentRequiringCompleteType(IASTName name) {
 		ICPPASTTypeId typeId = CPPVisitor.findAncestorWithType(name, ICPPASTTypeId.class);
-		return typeId != null && typeId.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT;
+		if (typeId == null || typeId.getPropertyInParent() != ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT)
+			return false;
+		ICPPASTTemplateId templateId = (ICPPASTTemplateId) typeId.getParent();
+		IBinding template = templateId.resolveBinding();
+		if (template instanceof IProblemBinding)
+			return true;
+		IBinding owner = template.getOwner();
+		if (!(owner instanceof ICPPNamespace) ||
+				!CharArrayUtils.equals(owner.getNameCharArray(), STD) || owner.getOwner() != null) {
+			return true;
+		}
+		String templateName = template.getName();
+		if (!templatesAllowingIncompleteArgumentType.contains(templateName))
+			return true;
+
+		// For most templates allowing incomplete argument type a full definition of the argument
+		// type is required if the destructor is called. Since the AST doen't contain all destructor
+		// calling points, we have to use an indirect approach by examining the containing scope.
+		IASTNode parent = templateId.getParent();
+		if (!(parent instanceof ICPPASTNamedTypeSpecifier))
+			return false;
+		parent = parent.getParent();
+		if (!(parent instanceof IASTSimpleDeclaration))
+			return true;
+		parent = parent.getParent();
+		if (!(parent instanceof ICPPASTCompositeTypeSpecifier))
+			return true;
+		ICPPClassScope classScope = ((ICPPASTCompositeTypeSpecifier) parent).getScope();
+		ICPPClassType classType = classScope.getClassType();
+		ICPPMethod destructor = ClassTypeHelper.getMethodInClass(classType, MethodKind.DTOR, parent);
+		if (fAst.getDefinitionsInAST(destructor).length != 0)
+			return true;
+		return false;
 	}
 
 	private static boolean isEnumerationWithoutFixedUnderlyingType(IBinding typeBinding) {

@@ -207,8 +207,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -236,7 +236,7 @@ public class CPPVisitor extends ASTQueries {
 	public static final String BEGIN_STR = "begin"; //$NON-NLS-1$
 	public static final char[] BEGIN = BEGIN_STR.toCharArray();
 	public static final char[] END = "end".toCharArray();  //$NON-NLS-1$
-	static final String STD = "std"; //$NON-NLS-1$
+	public static final String STD = "std"; //$NON-NLS-1$
 	private static final char[] SIZE_T = "size_t".toCharArray(); //$NON-NLS-1$
 	private static final char[] PTRDIFF_T = "ptrdiff_t".toCharArray(); //$NON-NLS-1$
 	private static final char[] TYPE_INFO = "type_info".toCharArray(); //$NON-NLS-1$

@@ -2,19 +2,19 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.cdt.debug.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.cdt.debug.core" id="SourceFilesProvider" name="Source Files Provider"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         This extension points allows you to extened the executables manager in CDT by providing your own source files provider for certain types of executables.
+         This extension point allows you to extend the executables manager in CDT by providing your own source files provider for certain types of executables.
       </documentation>
    </annotation>
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence>
@@ -39,9 +39,9 @@
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -54,27 +54,27 @@
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.debug.core.executables.ISourceFilesProvider"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          CDT 7.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          &lt;extension
          point=&quot;org.eclipse.cdt.debug.core.SourceFilesProvider&quot;&gt;
@@ -82,5 +82,8 @@
    &lt;/extension&gt;
       </documentation>
    </annotation>
+
+
+
 
 </schema>

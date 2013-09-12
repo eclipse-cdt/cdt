@@ -9,7 +9,6 @@
          This templates extension point facilitates the users to contribute their Template XMLs to the Template Engine plug-in.
       </documentation>
    </annotation>
-
    <element name="extension">
       <annotation>
          <appInfo>
@@ -50,7 +49,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="template">
       <annotation>
          <documentation>
@@ -120,7 +118,6 @@ It&apos;s no longer manditory since templates are no longer organized by project
          </attribute>
       </complexType>
    </element>
-
    <element name="toolChain">
       <annotation>
          <documentation>
@@ -137,7 +134,6 @@ It&apos;s no longer manditory since templates are no longer organized by project
          </attribute>
       </complexType>
    </element>
-
    <element name="category">
       <annotation>
          <documentation>
@@ -167,7 +163,6 @@ It&apos;s no longer manditory since templates are no longer organized by project
          </attribute>
       </complexType>
    </element>
-
    <element name="parentCategory">
       <annotation>
          <documentation>
@@ -184,17 +179,14 @@ It&apos;s no longer manditory since templates are no longer organized by project
          </attribute>
       </complexType>
    </element>
-
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         This extension point was added in CDT 4.0
+         CDT 4.0
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -212,11 +204,9 @@ It&apos;s no longer manditory since templates are no longer organized by project
       &lt;/template&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;            
-
 For more details on how to define your own templates, please check examples provided under &lt;samp&gt;org.eclipse.cdt.ui.templateengine&lt;/samp&gt;
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="implementation"/>
@@ -225,7 +215,6 @@ For more details on how to define your own templates, please check examples prov
          An implementation of this extension point is supplied in &lt;samp&gt;org.eclipse.cdt.templateengine&lt;/samp&gt;
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -236,10 +225,8 @@ All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html
-
 Contributors:
 Symbian - Initial API and implementation
       </documentation>
    </annotation>
-
 </schema>

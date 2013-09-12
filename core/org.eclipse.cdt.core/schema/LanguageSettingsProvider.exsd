@@ -9,7 +9,6 @@
          This extension point is used to contribute a new Language Settings Provider. A Language Settings Provider is used to get additions to compiler options such as include paths (-I) or preprocessor defines (-D) and others into the project model.
       </documentation>
    </annotation>
-
    <element name="extension">
       <annotation>
          <appInfo>
@@ -49,7 +48,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="provider">
       <annotation>
          <documentation>
@@ -79,6 +77,9 @@ Default constructor (constructor without arguments) of this class must be public
                <documentation>
                   Unique ID of the provider.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -86,6 +87,9 @@ Default constructor (constructor without arguments) of this class must be public
                <documentation>
                   Name of the provider. This name will be presented to a user in UI.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="parameter" type="string">
@@ -105,7 +109,6 @@ The value &quot;true&quot; of this attribute is meaningful only for providers ca
          </attribute>
       </complexType>
    </element>
-
    <element name="language-scope">
       <annotation>
          <documentation>
@@ -124,7 +127,6 @@ The value &quot;true&quot; of this attribute is meaningful only for providers ca
          </attribute>
       </complexType>
    </element>
-
    <element name="entry">
       <annotation>
          <documentation>
@@ -139,7 +141,6 @@ The value &quot;true&quot; of this attribute is meaningful only for providers ca
             <annotation>
                <documentation>
                   Kind of language settings entry which maps to compiler options. For example, following mapping is used for gcc options:
-
 &lt;br&gt;&quot;&lt;samp&gt;-I&lt;/samp&gt;&quot; : includePath
 &lt;br&gt;&quot;&lt;samp&gt;-D&lt;/samp&gt;&quot; : macro
 &lt;br&gt;&quot;&lt;samp&gt;-include&lt;/samp&gt;&quot; : includeFile
@@ -185,7 +186,6 @@ The value &quot;true&quot; of this attribute is meaningful only for providers ca
          </attribute>
       </complexType>
    </element>
-
    <element name="flag">
       <annotation>
          <documentation>
@@ -224,7 +224,6 @@ The value &quot;true&quot; of this attribute is meaningful only for providers ca
          </attribute>
       </complexType>
    </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -233,16 +232,6 @@ The value &quot;true&quot; of this attribute is meaningful only for providers ca
          CDT 8.1
       </documentation>
    </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="examples"/>
-      </appInfo>
-      <documentation>
-         [Enter extension point usage example here.]
-      </documentation>
-   </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="apiinfo"/>
@@ -254,16 +243,6 @@ For those cases where contributed settings entries (representing the compiler op
 &lt;br/&gt;
       </documentation>
    </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
-      </documentation>
-   </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -276,5 +255,4 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html
       </documentation>
    </annotation>
-
 </schema>

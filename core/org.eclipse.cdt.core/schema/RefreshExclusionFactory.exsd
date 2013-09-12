@@ -9,7 +9,6 @@
          This extension point allows ISVs to contribute factory classes that know how to instantiate a given type of RefreshExclusion.  Usage of this extension point is mandatory when contributing new types of RefreshExclusions as otherwise CDT cannot instantiate the proper exclusions when loading persisted settings relating to the refresh policy for a given project.
       </documentation>
    </annotation>
-
    <element name="extension">
       <annotation>
          <appInfo>
@@ -46,7 +45,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="exclusionFactory">
       <complexType>
          <attribute name="factoryClass" type="string" use="required">
@@ -81,7 +79,6 @@
          </attribute>
       </complexType>
    </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -90,34 +87,6 @@
          5.3.0
       </documentation>
    </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="examples"/>
-      </appInfo>
-      <documentation>
-         [Enter extension point usage example here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiinfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
-      </documentation>
-   </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -130,5 +99,4 @@ this distribution, and is available at &lt;a
 href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
-
 </schema>

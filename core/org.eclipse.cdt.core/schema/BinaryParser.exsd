@@ -6,10 +6,9 @@
          <meta.schema plugin="org.eclipse.cdt.core" id="BinaryParser" name="BinaryParser"/>
       </appInfo>
       <documentation>
-         This extension point is used to contribute a new Binary Parser to CDT. Binary parser analyses object/executable files to display their symbols and other information to a user.
+         This extension point is used to contribute a new Binary Parser to CDT. Binary Parsers analyse object or executable files in order to display their symbols and other information to users.
       </documentation>
    </annotation>
-
    <element name="extension">
       <annotation>
          <appInfo>
@@ -43,7 +42,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="cextension">
       <complexType>
          <sequence>
@@ -52,7 +50,6 @@
          </sequence>
       </complexType>
    </element>
-
    <element name="run">
       <complexType>
          <attribute name="class" type="string" use="required">
@@ -67,7 +64,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="filter">
       <annotation>
          <appInfo>
@@ -106,7 +102,6 @@
          </attribute>
       </complexType>
    </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -115,8 +110,6 @@
          CDT 2.0
       </documentation>
    </annotation>
-
-
    <annotation>
       <appInfo>
          <meta.section type="apiinfo"/>
@@ -125,8 +118,6 @@
          Plug-ins that want to extend this extension point must implement &lt;samp&gt;org.eclipse.cdt.core.IBinaryParser&lt;/samp&gt; interface.
       </documentation>
    </annotation>
-
-
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -139,5 +130,4 @@ which accompanies this distribution, and is available at&lt;br/&gt;
 http://www.eclipse.org/legal/epl-v10.html&lt;br/&gt;
       </documentation>
    </annotation>
-
 </schema>

@@ -1,16 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.core">
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.core" id="CConfigurationDataProvider" name="CConfigurationData provider"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         Each time the Build Active configuration gets changed, the Project natures set gets adjusted by removing natures associated with the previously active configuration and adding natures associated with the new active configuration.
+This allows adjusting the builders used with the project, etc.
       </documentation>
    </annotation>
-
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="provider"/>
@@ -41,84 +46,32 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="provider">
       <complexType>
          <attribute name="natures" type="string">
             <annotation>
                <documentation>
-                  project nature ids associated with this provider. IDs are separated by the semicolon.
-Each time the Build Active configuration gets changed, the project natures set gets adjusted by removing natures associated with the previously active configuration and adding natures associated with the new actove configuration.
-This allows to adjust, e.g. the builders to be used with the project, etc.
+                  Project nature IDs associated with this provider. IDs are separated by semicolons.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  class implementing the org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider
+                  A class which extends org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider:"/>
                </appInfo>
             </annotation>
          </attribute>
          <attribute name="conflictingNatures" type="string">
             <annotation>
                <documentation>
-                  project nature ids to be unset for this provider. IDs are separated by the semicolon.
-Each time the Build Active configuration gets changed, the project natures set gets adjusted by removing natures associated with the previously active configuration and natures conflicting for the new active configuration and adding natures associated with the new active configuration.
-
-This allows to adjust, e.g. the builders to be used with the project, etc.
+                  Project nature IDs to be unset for this provider. IDs are separated by semicolons.
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         [Enter the first release in which this extension point appears.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="examples"/>
-      </appInfo>
-      <documentation>
-         [Enter extension point usage example here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="copyright"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
 </schema>

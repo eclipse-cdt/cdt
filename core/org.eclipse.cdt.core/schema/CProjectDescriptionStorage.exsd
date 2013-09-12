@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.cdt.core" id="CProjectDescriptionStorage" name="%CProjectDescription.name"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          This extension point allows contributors to provide their own implementation of the CProjectDescriptionStorage backing store.
       </documentation>
@@ -12,9 +12,9 @@
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element internal="true" />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
@@ -39,9 +39,9 @@
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -59,9 +59,9 @@
                <documentation>
                   A factory class that implements  ICProjectDescriptionStorageType to create AbstractCProjectDescriptionStorages for given IProjects
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.cdt.internal.core.settings.model.ICProjectDescriptionStorageType"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string" use="required">
@@ -69,6 +69,9 @@
                <documentation>
                   Id of this particular project description storage type
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="version" type="string" use="required">
@@ -100,37 +103,29 @@ This String value must be compatible with org.eclipse.osgi.framework.version
                <documentation>
                   Human readable name of this project description type
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          6.0
       </documentation>
    </annotation>
 
 
-   <annotation>
-      <appinfo>
-         <meta.section type="apiinfo"/>
-      </appinfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          See the example XmlProjectDescriptionStorage &amp; XmlProjectDescriptionStorage2 in this plugin
       </documentation>

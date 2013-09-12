@@ -64,6 +64,9 @@
                <documentation>
                   The id of the build command this scanner info provider provides for.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

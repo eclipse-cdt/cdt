@@ -105,7 +105,7 @@ In the Argument tabs provide (for example)
                   the fully qualified name of the IExportProjectProvider implementation to register
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.index.export.IExportProjectProvider"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -258,7 +258,7 @@ The only information needed for this extension point is the fully qualified name
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="editor" type="boolean" use="optional">
+         <attribute name="editor" type="boolean">
             <annotation>
                <documentation>
                   Whether the fragment provider shall be used for C/C++ editor.

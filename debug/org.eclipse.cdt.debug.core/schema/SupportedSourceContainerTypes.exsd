@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.cdt.debug.core" id="supportedSourceContainerTypes" name="C/C++ Supported Source Container Types Extension"/>
       </appInfo>
       <documentation>
-         The extension point provides a mechanism for contributing source container types to the preference page &quot;C/C++, Debug,Common Source Lookup Path&quot;.
+         The extension point provides a mechanism for contributing source container types to the preference page &quot;C/C++ / Debug / Common Source Lookup Path&quot;.
       </documentation>
    </annotation>
 

@@ -10,33 +10,6 @@
       </documentation>
    </annotation>
 
-   <element name="EFSExtensionProvider">
-      <annotation>
-         <documentation>
-            An instance of an EFS Extension Provider.  EFS Extension Providers are mapped to a URI scheme corresponding to an EFS filesystem for which they provide support.  These extensions are consulted by CDT in order to extract path information from the filesystem and manipulate filesystem resources.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="scheme" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The URI scheme of an EFS filesystem this utility provides support for.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Java class which extends from org.eclipse.cdt.core.EFSFileSystemSupplementarySupportProvider to provide support for the filesystem.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.core.EFSExtensionProvider:"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
    <element name="extension">
       <annotation>
          <appInfo>
@@ -73,6 +46,34 @@
          </attribute>
       </complexType>
    </element>
+
+   <element name="EFSExtensionProvider">
+      <annotation>
+         <documentation>
+            An instance of an EFS Extension Provider.  EFS Extension Providers are mapped to a URI scheme corresponding to an EFS filesystem for which they provide support.  These extensions are consulted by CDT in order to extract path information from the filesystem and manipulate filesystem resources.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="scheme" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The URI scheme of an EFS filesystem this utility provides support for.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Java class which extends from org.eclipse.cdt.core.EFSFileSystemSupplementarySupportProvider to provide support for the filesystem.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.core.EFSExtensionProvider:"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
 
    <annotation>
       <appInfo>

@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.cdt.core" id="BinaryParser" name="BinaryParser"/>
       </appInfo>
       <documentation>
-         This extension point is used to contribute a new Binary Parser to CDT. Binary parser analyses object/executable files to display their symbols and other information to a user.
+         This extension point is used to contribute a new Binary Parser to CDT. Binary Parsers analyse object or executable files in order to display their symbols and other information to users.
       </documentation>
    </annotation>
 

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a74dd7b0_e4b2eecc",
+        "filename": "core/org.eclipse.cdt.core/schema/BinaryParser.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-12T21:39:43Z",
+      "side": 1,
+      "message": "Please get rid of \\r characters here and in other files.",
+      "revId": "52af751a45ea9a0aa134b9530335b92aa37f1168",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

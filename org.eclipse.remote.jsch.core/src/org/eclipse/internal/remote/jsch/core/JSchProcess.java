@@ -174,6 +174,6 @@ public class JSchProcess extends AbstractRemoteProcess {
 	 */
 	@Override
 	public boolean isCompleted() {
-		return !fChannel.isClosed();
+		return fChannel.isClosed();
 	}
 }

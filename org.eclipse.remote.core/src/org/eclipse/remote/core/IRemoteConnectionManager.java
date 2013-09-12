@@ -11,7 +11,7 @@
 package org.eclipse.remote.core;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 
@@ -51,7 +51,7 @@ public interface IRemoteConnectionManager {
 	 * 
 	 * @return connections that we know about
 	 */
-	public Set<IRemoteConnection> getConnections();
+	public List<IRemoteConnection> getConnections();
 
 	/**
 	 * Creates a new remote connection named with supplied name. The connection

@@ -117,6 +117,7 @@ public class JSchConnectionPage extends WizardPage {
 		portLabel.setText(Messages.JSchNewConnectionPage_Port);
 		portLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		fPortText = new Text(advancedComp, SWT.BORDER | SWT.SINGLE);
+		fPortText.setText(Integer.toString(JSchConnection.DEFAULT_PORT));
 		fPortText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 		fPortText.setTextLimit(5);
 
@@ -124,6 +125,7 @@ public class JSchConnectionPage extends WizardPage {
 		timeoutLabel.setText(Messages.JSchNewConnectionPage_Timeout);
 		timeoutLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		fTimeoutText = new Text(advancedComp, SWT.BORDER | SWT.SINGLE);
+		fTimeoutText.setText(Integer.toString(JSchConnection.DEFAULT_TIMEOUT));
 		fTimeoutText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 		fTimeoutText.setTextLimit(5);
 

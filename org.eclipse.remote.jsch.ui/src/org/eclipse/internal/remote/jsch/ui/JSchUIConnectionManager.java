@@ -20,10 +20,10 @@ import org.eclipse.remote.ui.AbstractRemoteUIConnectionManager;
 import org.eclipse.swt.widgets.Shell;
 
 public class JSchUIConnectionManager extends AbstractRemoteUIConnectionManager {
-	private final JSchConnectionManager connMgr;
+	private final JSchConnectionManager fConnMgr;
 
 	public JSchUIConnectionManager(IRemoteServices services) {
-		connMgr = (JSchConnectionManager) services.getConnectionManager();
+		fConnMgr = (JSchConnectionManager) services.getConnectionManager();
 	}
 
 	/*
@@ -46,15 +46,7 @@ public class JSchUIConnectionManager extends AbstractRemoteUIConnectionManager {
 	 * .IRemoteConnectionAttributeHint[], java.lang.String[])
 	 */
 	public IRemoteConnectionWorkingCopy newConnection(Shell shell, String[] attrHints, String[] attrHintValues) {
-		JSchConnectionWorkingCopy conn = createConnection(shell, attrHints, attrHintValues);
-		if (conn != null) {
-			return conn;
-		}
-		return null;
-	}
-
-	public JSchConnectionWorkingCopy createConnection(Shell shell, String[] attrHints, String[] attrHintValues) {
-		JSchConnectionWizard wizard = new JSchConnectionWizard(connMgr);
+		JSchConnectionWizard wizard = new JSchConnectionWizard(fConnMgr);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.setBlockOnOpen(true);
 		if (dialog.open() == WizardDialog.OK) {
@@ -72,7 +64,7 @@ public class JSchUIConnectionManager extends AbstractRemoteUIConnectionManager {
 	public boolean updateConnection(Shell shell, IRemoteConnectionWorkingCopy connection) {
 		if (connection instanceof JSchConnectionWorkingCopy) {
 			JSchConnectionWorkingCopy jSchConn = (JSchConnectionWorkingCopy) connection;
-			JSchConnectionWizard wizard = new JSchConnectionWizard(connMgr, jSchConn);
+			JSchConnectionWizard wizard = new JSchConnectionWizard(fConnMgr, jSchConn);
 			WizardDialog dialog = new WizardDialog(shell, wizard);
 			dialog.setBlockOnOpen(true);
 			if (dialog.open() == WizardDialog.OK) {

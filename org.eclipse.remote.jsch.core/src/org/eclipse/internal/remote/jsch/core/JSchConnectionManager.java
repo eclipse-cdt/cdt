@@ -11,11 +11,11 @@
 package org.eclipse.internal.remote.jsch.core;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -78,28 +78,12 @@ public class JSchConnectionManager implements IRemoteConnectionManager {
 	 * @see
 	 * org.eclipse.remote.core.IRemoteConnectionManager#getConnections()
 	 */
-	public Set<IRemoteConnection> getConnections() {
+	public List<IRemoteConnection> getConnections() {
 		loadConnections();
-		Set<IRemoteConnection> set = new HashSet<IRemoteConnection>();
-		set.addAll(fConnections.values());
-		return set;
+		List<IRemoteConnection> conns = new ArrayList<IRemoteConnection>();
+		conns.addAll(fConnections.values());
+		return conns;
 	}
-
-	// private void loadAuth(ISecurePreferences node) throws StorageException {
-	// JSchConnection connection = fConnections.get(node.name());
-	// if (connection != null) {
-	// boolean isPasswordAuth = node.getBoolean(IS_PASSWORD_AUTH_KEY, true);
-	// connection.setIsPasswordAuth(isPasswordAuth);
-	// if (isPasswordAuth) {
-	// connection.setPassword(node.get(PASSWORD_KEY, null));
-	// } else {
-	// connection.setPassphrase(node.get(PASSPHRASE_KEY, null));
-	// connection.setKeyFile(node.get(KEYFILE_KEY, null));
-	// }
-	// } else {
-	// node.removeNode();
-	// }
-	// }
 
 	private synchronized void loadConnections() {
 		if (fConnections == null) {
@@ -163,59 +147,4 @@ public class JSchConnectionManager implements IRemoteConnectionManager {
 		((JSchConnection) conn).getInfo().remove();
 		fConnections.remove(conn.getName());
 	}
-
-	// private void saveAuth(JSchConnection conn, ISecurePreferences node) throws StorageException {
-	// boolean isPasswordAuth = conn.isPasswordAuth();
-	// node.putBoolean(IS_PASSWORD_AUTH_KEY, isPasswordAuth, false);
-	// if (isPasswordAuth) {
-	// node.put(PASSWORD_KEY, conn.getPassword(), true);
-	// } else {
-	// node.put(PASSPHRASE_KEY, conn.getPassphrase(), true);
-	// node.put(KEYFILE_KEY, conn.getKeyFile(), false);
-	// }
-	// }
-	//
-	// private void saveConnection(JSchConnection conn, Preferences node) {
-	// node.put(HOST_KEY, conn.getAddress());
-	// node.put(USER_KEY, conn.getUsername());
-	// node.putInt(PORT_KEY, conn.getPort());
-	// node.putInt(TIMEOUT_KEY, conn.getTimeout());
-	// }
-	//
-	// public synchronized void saveConnections() {
-	// if (fConnections != null) {
-	// IEclipsePreferences root = InstanceScope.INSTANCE.getNode(Activator.getUniqueIdentifier());
-	// Preferences connections = root.node(CONNECTIONS_KEY);
-	// try {
-	// connections.clear();
-	// } catch (BackingStoreException e) {
-	// Activator.log(e.getMessage());
-	// }
-	// for (JSchConnection conn : fConnections.values()) {
-	// Preferences node = connections.node(conn.getName());
-	// saveConnection(conn, node);
-	// }
-	// ISecurePreferences secRoot = SecurePreferencesFactory.getDefault();
-	// ISecurePreferences secConnections = secRoot.node("org.eclipse.remote.jsch.connections");
-	// secConnections.clear();
-	// try {
-	// for (JSchConnection conn : fConnections.values()) {
-	// ISecurePreferences secNode = secConnections.node(conn.getName());
-	// saveAuth(conn, secNode);
-	// }
-	// } catch (StorageException e) {
-	// Activator.log(e.getMessage());
-	// }
-	// try {
-	// root.flush();
-	// } catch (BackingStoreException e) {
-	// Activator.log(e.getMessage());
-	// }
-	// try {
-	// secRoot.flush();
-	// } catch (IOException e) {
-	// Activator.log(e.getMessage());
-	// }
-	// }
-	// }
 }

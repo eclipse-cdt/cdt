@@ -22,6 +22,7 @@ import org.eclipse.internal.remote.ui.messages.Messages;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionManager;
+import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IRemotePreferenceConstants;
 import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.RemoteServices;
@@ -393,8 +394,9 @@ public class RemoteConnectionWidget extends Composite {
 	 */
 	protected void handleNewRemoteConnectionSelected() {
 		if (getUIConnectionManager() != null) {
-			IRemoteConnection conn = getUIConnectionManager().newConnection(getShell(), fAttrHints, fAttrHintValues);
+			IRemoteConnectionWorkingCopy conn = getUIConnectionManager().newConnection(getShell(), fAttrHints, fAttrHintValues);
 			if (conn != null) {
+				conn.save();
 				handleRemoteServiceSelected(conn);
 				handleConnectionSelected();
 			}

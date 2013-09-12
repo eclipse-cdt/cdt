@@ -49,10 +49,11 @@ import com.jcraft.jsch.UserInfo;
  * @since 5.0
  */
 public class JSchConnection implements IRemoteConnection {
-	protected static final int DEFAULT_PORT = 22;
-	protected static final int DEFAULT_TIMEOUT = 5;
-	protected static final boolean DEFAULT_IS_PASSWORD = true;
-	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	public static final int DEFAULT_PORT = 22;
+	public static final int DEFAULT_TIMEOUT = 5;
+	public static final boolean DEFAULT_IS_PASSWORD = true;
+	public static final boolean DEFAULT_USE_LOGIN_SHELL = true;
+	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private String fWorkingDir;
 	private boolean fIsOpen;
@@ -133,18 +134,20 @@ public class JSchConnection implements IRemoteConnection {
 	 * @see org.eclipse.remote.core.IRemoteConnection#close()
 	 */
 	public synchronized void close() {
-		if (isOpen()) {
-			if (fSftpChannel != null && fSftpChannel.isConnected()) {
+		if (fSftpChannel != null) {
+			if (fSftpChannel.isConnected()) {
 				fSftpChannel.disconnect();
 			}
-			for (Session session : fSessions) {
-				if (session.isConnected()) {
-					session.disconnect();
-				}
-			}
-			fIsOpen = false;
-			fireConnectionChangeEvent(IRemoteConnectionChangeEvent.CONNECTION_CLOSED);
+			fSftpChannel = null;
 		}
+		for (Session session : fSessions) {
+			if (session.isConnected()) {
+				session.disconnect();
+			}
+		}
+		fSessions.clear();
+		fIsOpen = false;
+		fireConnectionChangeEvent(IRemoteConnectionChangeEvent.CONNECTION_CLOSED);
 	}
 
 	/*
@@ -502,7 +505,16 @@ public class JSchConnection implements IRemoteConnection {
 	 * @see org.eclipse.remote.core.IRemoteConnection#isOpen()
 	 */
 	public boolean isOpen() {
-		return fIsOpen;
+		boolean isOpen = fIsOpen & fSessions.size() > 0;
+		if (isOpen) {
+			for (Session session : fSessions) {
+				isOpen &= session.isConnected();
+			}
+			if (!isOpen) {
+				close(); // Cleanup if session is closed
+			}
+		}
+		return isOpen;
 	}
 
 	public boolean isPasswordAuth() {
@@ -790,5 +802,9 @@ public class JSchConnection implements IRemoteConnection {
 			str += ":" + getPort(); //$NON-NLS-1$
 		}
 		return str + "]"; //$NON-NLS-1$
+	}
+
+	public boolean useLoginShell() {
+		return fAttributes.getBoolean(JSchConnectionAttributes.USE_LOGIN_SHELL_ATTR, DEFAULT_USE_LOGIN_SHELL);
 	}
 }

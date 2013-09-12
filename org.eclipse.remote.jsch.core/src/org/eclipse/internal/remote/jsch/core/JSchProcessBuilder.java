@@ -206,6 +206,10 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 			}
 		}
 		sb.append(cmd);
+		if (fConnection.useLoginShell()) {
+			sb.insert(0, "/bin/bash -l -c '"); //$NON-NLS-1$
+			sb.append("'"); //$NON-NLS-1$
+		}
 		return sb.toString();
 	}
 

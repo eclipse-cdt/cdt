@@ -172,8 +172,8 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 		fWorkingAttributes.setAttribute(key, value);
 	}
 
-	public void setIsPasswordAuth(boolean isPasswordAuth) {
-		fWorkingAttributes.setAttribute(JSchConnectionAttributes.IS_PASSWORD_ATTR, Boolean.toString(isPasswordAuth));
+	public void setIsPasswordAuth(boolean flag) {
+		fWorkingAttributes.setAttribute(JSchConnectionAttributes.IS_PASSWORD_ATTR, Boolean.toString(flag));
 	}
 
 	public void setKeyFile(String keyFile) {
@@ -218,6 +218,10 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	public void setTimeout(int timeout) {
 		fWorkingAttributes.setAttribute(JSchConnectionAttributes.TIMEOUT_ATTR, Integer.toString(timeout));
+	}
+
+	public void setUseLoginShell(boolean flag) {
+		fWorkingAttributes.setAttribute(JSchConnectionAttributes.USE_LOGIN_SHELL_ATTR, Boolean.toString(flag));
 	}
 
 	/*

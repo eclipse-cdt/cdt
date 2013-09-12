@@ -102,10 +102,10 @@ In the Argument tabs provide (for example)
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully qualified name of the IExportProjectProvider implementation to register
+                  The fully qualified name of the IExportProjectProvider implementation to register.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.index.export.IExportProjectProvider"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -165,7 +165,7 @@ public class AcmeSDKProvider implements IReadOnlyPDOMProvider {
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified name of the IReadOnlyPDOMProvider implementation to register
+                  The fully qualified name of the IReadOnlyPDOMProvider implementation to register.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.index.provider.IReadOnlyPDOMProvider"/>
@@ -192,7 +192,7 @@ The only information needed for this extension point is the fully qualified name
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified name of a class implementing IIndexFragmentProvider interface.
+                  The fully qualified name of a class implementing IIndexFragmentProvider.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.cdt.internal.core.index.provider.IIndexFragmentProvider"/>
@@ -258,7 +258,7 @@ The only information needed for this extension point is the fully qualified name
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="editor" type="boolean" use="optional">
+         <attribute name="editor" type="boolean">
             <annotation>
                <documentation>
                   Whether the fragment provider shall be used for C/C++ editor.
@@ -267,17 +267,6 @@ The only information needed for this extension point is the fully qualified name
          </attribute>
       </complexType>
    </element>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         Index content provided by ISVs under this extension point will be accessible via the logical index org.eclipse.core.index.IIndex API
-
-For export functionality, see package org.eclipse.cdt.core.index.export
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
@@ -316,6 +305,17 @@ All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Index content provided by ISVs under this extension point will be accessible via the logical index org.eclipse.core.index.IIndex API
+
+For export functionality, see package org.eclipse.cdt.core.index.export
       </documentation>
    </annotation>
 

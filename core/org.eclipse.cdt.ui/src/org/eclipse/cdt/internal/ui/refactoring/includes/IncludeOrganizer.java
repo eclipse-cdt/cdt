@@ -1008,12 +1008,17 @@ public class IncludeOrganizer {
 	    				indexNames[indexNames.length - 1] = indexName;
 	    			}
 	    		}
-			} else if (allowDeclarations || binding instanceof IFunction) {
-				// For functions we need to include the declaration.
+			} else if (allowDeclarations || binding instanceof IFunction || binding instanceof IVariable) {
+				// For functions and variables we need to include a declaration.
 				indexNames = index.findDeclarations(binding);
 			} else {
 				// For all other bindings we need to include the definition.
 				indexNames = index.findDefinitions(binding);
+				if (indexNames.length == 0) {
+					// If we could not find any definitions, there is still a chance that
+					// a declaration would be sufficient.
+					indexNames = index.findDeclarations(binding);
+				}
 			}
 
 			if (indexNames.length != 0) {

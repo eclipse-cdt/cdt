@@ -349,7 +349,8 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertDeclared("B");
 	}
 
-	//	int a;
+	//	typedef unsigned int size_t;
+	//	size_t a;
 
 	//	void test() {
 	//	  void* x = &a;
@@ -362,7 +363,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	struct A {
 	//	  void operator()(int p);
 	//	};
-	//	const A& a;
+	//	A a;
 
 	//	void test() {
 	//	  a(1);

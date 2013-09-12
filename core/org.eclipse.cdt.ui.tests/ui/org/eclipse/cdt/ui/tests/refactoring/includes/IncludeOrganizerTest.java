@@ -458,6 +458,23 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	}
 
 	//h1.h
+	//typedef int int32;
+
+	//h2.h
+	//#include "h1.h"
+	//extern int32 var;
+
+	//source.cpp
+	//int a = var;
+	//====================
+	//#include "h2.h"
+	//
+	//int a = var;
+	public void testVariableReference() throws Exception {
+		assertExpectedResults();
+	}
+
+	//h1.h
 	//namespace ns3 {
 	//class C {};
 	//namespace ns2 {

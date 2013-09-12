@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a74dd7b0_df9cdb78",
+        "filename": "core/org.eclipse.cdt.core/schema/CBuildConsole.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-09-12T23:16:20Z",
+      "side": 1,
+      "message": "These are added automatically by PDE -- are you sure you need me to remove them?",
+      "parentUuid": "a74dd7b0_c44252c2",
+      "revId": "eb911a3c2238b54826a6b5fd7fb00d61caa33189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74dd7b0_64a09e23",
         "filename": "core/org.eclipse.cdt.core/schema/CBuildConsole.exsd",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2013-09-12T22:17:13Z",
       "side": 1,
       "message": "Please clean up.",
+      "revId": "eb911a3c2238b54826a6b5fd7fb00d61caa33189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_3f005f0d",
+        "filename": "core/org.eclipse.cdt.core/schema/CBuildConsole.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-09-12T23:16:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_64a09e23",
       "revId": "eb911a3c2238b54826a6b5fd7fb00d61caa33189",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "a74dd7b0_9f01b313",
+        "filename": "core/org.eclipse.cdt.core/schema/CBuildConsole.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-09-12T23:16:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_44a5a231",
+      "revId": "eb911a3c2238b54826a6b5fd7fb00d61caa33189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74dd7b0_a49626ce",
         "filename": "core/org.eclipse.cdt.core/schema/CConfigurationDataProvider.exsd",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2013-09-12T22:17:13Z",
       "side": 1,
       "message": "Please clean up.",
+      "revId": "eb911a3c2238b54826a6b5fd7fb00d61caa33189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_7f06672a",
+        "filename": "core/org.eclipse.cdt.core/schema/CConfigurationDataProvider.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-09-12T23:16:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_a49626ce",
       "revId": "eb911a3c2238b54826a6b5fd7fb00d61caa33189",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "a74dd7b0_df0e9b40",
+        "filename": "core/org.eclipse.cdt.core/schema/CConfigurationDataProvider.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-09-12T23:16:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_849b2af7",
+      "revId": "eb911a3c2238b54826a6b5fd7fb00d61caa33189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74dd7b0_e4930edc",
         "filename": "core/org.eclipse.cdt.core/schema/CIndex.exsd",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2013-09-12T22:17:13Z",
       "side": 1,
       "message": "Please use proper capitalization.",
+      "revId": "eb911a3c2238b54826a6b5fd7fb00d61caa33189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_bf0bcf2e",
+        "filename": "core/org.eclipse.cdt.core/schema/CIndex.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-09-12T23:16:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_e4930edc",
       "revId": "eb911a3c2238b54826a6b5fd7fb00d61caa33189",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "a74dd7b0_9f7c1366",
+        "filename": "core/org.eclipse.cdt.core/schema/CProjectDescriptionStorage.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-09-12T23:16:20Z",
+      "side": 1,
+      "message": "These seem to be added automatically by PDE -- are you sure you need me to remove them?",
+      "parentUuid": "a74dd7b0_44376269",
+      "revId": "eb911a3c2238b54826a6b5fd7fb00d61caa33189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74dd7b0_a428e60a",
         "filename": "core/org.eclipse.cdt.core/schema/CodeFormatter.exsd",
         "patchSetId": 2
@@ -138,6 +264,24 @@
     },
     {
       "key": {
+        "uuid": "a74dd7b0_7f8147d7",
+        "filename": "core/org.eclipse.cdt.core/schema/CodeFormatter.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-09-12T23:16:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_a428e60a",
+      "revId": "eb911a3c2238b54826a6b5fd7fb00d61caa33189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74dd7b0_e445cecc",
         "filename": "core/org.eclipse.cdt.core/schema/ErrorParser.exsd",
         "patchSetId": 2
@@ -149,6 +293,24 @@
       "writtenOn": "2013-09-12T22:17:13Z",
       "side": 1,
       "message": "This -\u003e This attribute",
+      "revId": "eb911a3c2238b54826a6b5fd7fb00d61caa33189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_df997b4f",
+        "filename": "core/org.eclipse.cdt.core/schema/ErrorParser.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-09-12T23:16:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_e445cecc",
       "revId": "eb911a3c2238b54826a6b5fd7fb00d61caa33189",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -1,23 +1,24 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.ui">
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.ui" id="DocCommentOwner" name="DocCommentOwner"/>
       </appInfo>
       <documentation>
          This extension point allows contribution of document comment detection, presentation and editing behaviours to the CDT editor.&lt;p&gt;
-
 Where C and C++ define single and multiline comments, there is no corresponding language level definition of distinguished comments recognized by documentation tools. A list of these is available here: &lt;a href=&quot;http://en.wikipedia.org/wiki/Comparison_of_documentation_generators&quot;&gt;Wikipedia Comparison of Documentation Generators&lt;/a&gt;&lt;p&gt;
-
 The customization for single and multi-line comments is handled by two contributed implementations of the same interface &lt;ul&gt;&lt;li&gt;&lt;code&gt;org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration&lt;/code&gt;&lt;/ul&gt;
 The javadoc for this interface describes the individual editor features that can be contributed.&lt;p&gt;
-
 A level of understanding of the eclipse and CDT editor infrastructure is needed in order to contribute to this extension point. A good starting point is to look at the GenericDocTag classes in the package - see the API Information section below.
       </documentation>
    </annotation>
-
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <choice>
             <element ref="owner"/>
@@ -48,7 +49,6 @@ A level of understanding of the eclipse and CDT editor infrastructure is needed 
          </attribute>
       </complexType>
    </element>
-
    <element name="owner">
       <complexType>
          <attribute name="id" type="string" use="required">
@@ -56,6 +56,9 @@ A level of understanding of the eclipse and CDT editor infrastructure is needed 
                <documentation>
                   a globally unique ID representing this owner.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -71,7 +74,7 @@ A level of understanding of the eclipse and CDT editor infrastructure is needed 
          <attribute name="multiline" type="string" use="required">
             <annotation>
                <documentation>
-                  The comment viewer configuration that should be used for detection, presentation and editing of C/C++ multiline comments
+                  The comment viewer configuration that should be used for detection, presentation and editing of C/C++ multiline comments.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration"/>
@@ -81,7 +84,7 @@ A level of understanding of the eclipse and CDT editor infrastructure is needed 
          <attribute name="singleline" type="string" use="required">
             <annotation>
                <documentation>
-                  The comment viewer configuration that should be used for detection, presentation and editing of C/C++ singleline comments
+                  The comment viewer configuration that should be used for detection, presentation and editing of C/C++ singleline comments.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration"/>
@@ -90,7 +93,24 @@ A level of understanding of the eclipse and CDT editor infrastructure is needed 
          </attribute>
       </complexType>
    </element>
-
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The javadoc is considered the primary source of information for plug-in implementors. Only a light outline is given here&lt;p&gt;
+Key interfaces are:
+&lt;ul&gt;
+&lt;li&gt;org.eclipse.cdt.ui.text.doctools.IDocCommentOwner
+&lt;li&gt;org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration
+&lt;li&gt;org.eclipse.cdt.ui.text.doctools.IDocCommentOwnershipListener
+&lt;/ul&gt;
+Key implementations are:
+&lt;ul&gt;
+&lt;li&gt;the implementations in package org.eclipse.cdt.ui.text.doctools.generic
+&lt;/ul&gt;
+      </documentation>
+   </annotation>
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -99,7 +119,6 @@ A level of understanding of the eclipse and CDT editor infrastructure is needed 
          5.0
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -118,29 +137,6 @@ A level of understanding of the eclipse and CDT editor infrastructure is needed 
 &lt;/pre&gt;
       </documentation>
    </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         &lt;br&gt;
-The javadoc is considered the primary source of information for plug-in implementors. Only a light outline is given here&lt;p&gt;
-Key interfaces are:
-&lt;ul&gt;
-&lt;li&gt;org.eclipse.cdt.ui.text.doctools.IDocCommentOwner
-&lt;li&gt;org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration
-&lt;li&gt;org.eclipse.cdt.ui.text.doctools.IDocCommentOwnershipListener
-&lt;/ul&gt;
-
-Key implementations are:
-&lt;ul&gt;
-&lt;li&gt;the implementations in package org.eclipse.cdt.ui.text.doctools.generic
-&lt;/ul&gt;
-
-      </documentation>
-   </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="implementation"/>
@@ -149,7 +145,6 @@ Key implementations are:
          An abstract implementation of some key interfaces is given in the package &lt;code&gt;org.eclipse.cdt.ui.text.doctools.generic&lt;/code&gt;
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -162,5 +157,4 @@ which accompanies this distribution, and is available at
 &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
-
 </schema>

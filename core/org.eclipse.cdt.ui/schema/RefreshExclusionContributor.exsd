@@ -9,7 +9,6 @@
          This extension point allows for contribution of new types of refresh exclusions to CDT&apos;s refresh exclusion system.  A refresh exclusion is essentially some arbitrary rule that can be tested against a given resource and evaluates to true or false.  The exclusion returns true if it should be applied (i.e. the tested resource should be excluded).  Rules can be nested, so it is possible to have exclusions to exclusions.
       </documentation>
    </annotation>
-
    <element name="extension">
       <annotation>
          <appInfo>
@@ -46,7 +45,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="exclusionContributor">
       <annotation>
          <documentation>
@@ -69,6 +67,9 @@
                <documentation>
                   A unique string that identifies this contribution.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -87,7 +88,6 @@
          </attribute>
       </complexType>
    </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -96,25 +96,6 @@
          5.3
       </documentation>
    </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="examples"/>
-      </appInfo>
-      <documentation>
-         [Enter extension point usage example here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiinfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="implementation"/>
@@ -123,7 +104,6 @@
          There is a supplied implementation for Resource Exclusions.
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -136,5 +116,4 @@ this distribution, and is available at &lt;a
 href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
-
 </schema>

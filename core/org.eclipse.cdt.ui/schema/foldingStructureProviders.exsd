@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.ui">
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.ui" id="foldingStructureProviders" name="C/C++ Folding Structure Provider"/>
@@ -12,8 +12,12 @@ Extensions may optionally contribute a preference block which will appear on the
 &lt;/p&gt;
       </documentation>
    </annotation>
-
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="provider"/>
@@ -44,7 +48,6 @@ Extensions may optionally contribute a preference block which will appear on the
          </attribute>
       </complexType>
    </element>
-
    <element name="provider">
       <annotation>
          <appInfo>
@@ -57,6 +60,9 @@ Extensions may optionally contribute a preference block which will appear on the
                <documentation>
                   The unique identifier of this provider.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
@@ -91,7 +97,6 @@ Extensions may optionally contribute a preference block which will appear on the
          </attribute>
       </complexType>
    </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -100,7 +105,6 @@ Extensions may optionally contribute a preference block which will appear on the
          3.0
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -109,16 +113,6 @@ Extensions may optionally contribute a preference block which will appear on the
          See &lt;code&gt;org.eclipse.cdt.ui.text.folding.DefaultCFoldingStructureProvider&lt;/code&gt; for an example.
       </documentation>
    </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="implementation"/>
@@ -128,7 +122,6 @@ Extensions may optionally contribute a preference block which will appear on the
          &lt;code&gt;org.eclipse.cdt.internal.ui.text.folding.DefaultCFoldingPreferenceBlock&lt;/code&gt; provides the preference block for the default structure provider.
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -138,5 +131,4 @@ Extensions may optionally contribute a preference block which will appear on the
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
-
 </schema>

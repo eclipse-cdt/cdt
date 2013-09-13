@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.ui">
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.ui" id="completionProposalComputer" name="Completion Proposal Computer"/>
@@ -13,7 +13,7 @@
    <element name="extension">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="name"/>
+            <meta.element labelAttribute="name" />
          </appInfo>
       </annotation>
       <complexType>
@@ -67,7 +67,7 @@ class must be public and implement
 and must have a public 0-argument constructor.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -83,6 +83,9 @@ and must have a public 0-argument constructor.
                <documentation>
                   The id of a &lt;tt&gt;proposalCategory&lt;/tt&gt;
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -147,6 +150,15 @@ and must have a public 0-argument constructor.
 
    <annotation>
       <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The contributed class must extend &lt;code&gt;org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer&lt;/code&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
@@ -179,15 +191,6 @@ and must have a public 0-argument constructor.
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         The contributed class must extend &lt;code&gt;org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer&lt;/code&gt;
       </documentation>
    </annotation>
 

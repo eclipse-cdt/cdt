@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.cdt.ui" id="ProposalFilter" name="Completion Proposal Filter"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          When the user requests code completion for an identifier prefix then proposals are gathered from a variety of sources. It is quite common that several proposals for the same completion are gathered. After gathering it is therefore necessary to filter proposals and present them in an optimal ordering to the user.
 
@@ -15,6 +15,11 @@ The decision about which filter will actually be used remains with the user who 
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="ProposalFilter"/>
@@ -38,9 +43,9 @@ The decision about which filter will actually be used remains with the user who 
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -53,6 +58,9 @@ The decision about which filter will actually be used remains with the user who 
                <documentation>
                   The required unique id of the ProposalFilter
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -60,9 +68,9 @@ The decision about which filter will actually be used remains with the user who 
                <documentation>
                   The required name of the ProposalFilter. This name will appear in the preferences combo and should therefore be informative for the user.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -70,55 +78,54 @@ The decision about which filter will actually be used remains with the user who 
                <documentation>
                   The required fully qualified name of the implementing class which must implement org.eclipse.cdt.ui.text.contentassist.IProposalFilter
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.ui.text.contentassist.IProposalFilter"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          CDT 3.1
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          See the default implementation in org.eclipse.cdt.internal.ui.text.contentassist.DefaultProposalFilter as an example.
       </documentation>
    </annotation>
 
-
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiinfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          ProposalFilters must implement interface &lt;code&gt;org.eclipse.cdt.ui.text.contentassist.IProposalFilter&lt;code&gt;.
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The default implementation in org.eclipse.cdt.internal.ui.text.contentassist.DefaultProposalFilter is the default filtering method which is used as long as the user preference is not changed.
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2006 Norbert Ploett and others.
 

@@ -1,14 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.ui">
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.ui" id="quickFixProcessors" name="Quick Fix Processor"/>
       </appInfo>
       <documentation>
-         This extension point allows to add a Quick Fix processor to offer new Quick Fixes on C/C++ problems.
+         This extension point allows users to add a Quick Fix processor to offer new Quick Fixes on C/C++ problems.
 &lt;p&gt;
-Extension can specify which problem marker types it can handle. It will only get problems of these types to process.
+The extension can specify which problem marker types it can handle. It will only get problems of these types to process.
 &lt;/p&gt;
 &lt;p&gt;
 This extension point supports the &lt;code&gt;enablement&lt;/code&gt; tag. Properties to test on are:
@@ -24,6 +24,11 @@ This extension point supports the &lt;code&gt;enablement&lt;/code&gt; tag. Prope
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="quickFixProcessor" minOccurs="1" maxOccurs="unbounded"/>
@@ -64,14 +69,17 @@ This extension point supports the &lt;code&gt;enablement&lt;/code&gt; tag. Prope
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique identifier for the Quick Fix processor
+                  A unique identifier for the Quick Fix processor.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  a localized name of the Quick Fix processor
+                  A localized name of the Quick Fix processor.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -81,7 +89,7 @@ This extension point supports the &lt;code&gt;enablement&lt;/code&gt; tag. Prope
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of the class that implements this Quick Fix processor. The
+                  The name of the class that implements this Quick Fix processor. The
 class must be public and implement
 &lt;samp&gt;org.eclipse.cdt.ui.text.IQuickFixProcessor&lt;/samp&gt;
 with a public 0-argument constructor.
@@ -113,12 +121,24 @@ If no handled marker type are specified, the processor will get problems of type
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the marker type id of the marker that can be handled by this processor
+                  The marker type id of the marker that can be handled by this processor.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The contributed class must implement &lt;code&gt;org.eclipse.cdt.ui.text.IQuickFixProcessor&lt;/code&gt;
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
@@ -160,14 +180,6 @@ If no handled marker type are specified, the processor will get problems of type
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         The contributed class must implement &lt;code&gt;org.eclipse.cdt.ui.text.IQuickFixProcessor&lt;/code&gt;
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>

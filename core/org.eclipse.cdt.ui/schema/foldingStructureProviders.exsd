@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.ui">
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.ui" id="foldingStructureProviders" name="C/C++ Folding Structure Provider"/>
@@ -14,6 +14,11 @@ Extensions may optionally contribute a preference block which will appear on the
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="provider"/>
@@ -57,6 +62,9 @@ Extensions may optionally contribute a preference block which will appear on the
                <documentation>
                   The unique identifier of this provider.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
@@ -92,6 +100,7 @@ Extensions may optionally contribute a preference block which will appear on the
       </complexType>
    </element>
 
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -107,15 +116,6 @@ Extensions may optionally contribute a preference block which will appear on the
       </appInfo>
       <documentation>
          See &lt;code&gt;org.eclipse.cdt.ui.text.folding.DefaultCFoldingStructureProvider&lt;/code&gt; for an example.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
       </documentation>
    </annotation>
 

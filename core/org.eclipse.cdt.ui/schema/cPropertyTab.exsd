@@ -93,6 +93,9 @@ Ignored for single-tab pages
                   Name of tab in tabfolder. 
 Ignored for single-tab pages.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="parent" type="string" use="required">
@@ -103,6 +106,9 @@ Usually pages are to be derived from
 org.eclipse.cdt.ui.newui.AbstractPage,
 but it is not obligatory.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="tooltip" type="string">
@@ -110,6 +116,9 @@ but it is not obligatory.
                <documentation>
                   Text of tooltip shown over the tab.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="weight" type="string">
@@ -125,10 +134,23 @@ Ignored for single-tab page.
                <documentation>
                   Help context Id for given tab.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Tabs must implement interface:
+org.eclipse.cdt.managedbuilder.ui.newproperties.ICPropertyTab
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
@@ -153,16 +175,6 @@ Ignored for single-tab page.
            weight=&quot;100&quot; 
            parent=&quot;org.eclipse.cdt.ui.newui.Page_PathAndSymb&quot;/&gt;
   &lt;/extension&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         Tabs must implement interface:
-org.eclipse.cdt.managedbuilder.ui.newproperties.ICPropertyTab
       </documentation>
    </annotation>
 
@@ -208,16 +220,12 @@ ToolSettingsTab
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Intel Corporation - initial API and implementation
- *******************************************************************************/
+         Copyright (c) 2007 Intel Corporation and others.
+
+All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+ Intel Corporation - initial API and implementation
       </documentation>
    </annotation>
 

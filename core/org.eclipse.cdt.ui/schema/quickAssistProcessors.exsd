@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.ui">
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.ui" id="quickAssistProcessors" name="Quick Assist Processor"/>
@@ -19,6 +19,11 @@ This extension point supports the &lt;code&gt;enablement&lt;/code&gt; tag. Prope
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="quickAssistProcessor" minOccurs="1" maxOccurs="unbounded"/>
@@ -58,14 +63,14 @@ This extension point supports the &lt;code&gt;enablement&lt;/code&gt; tag. Prope
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique identifier for the Quick Assist processor
+                  A unique identifier for the Quick Assist processor.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  a localized name of the Quick Assist processor
+                  A localized name of the Quick Assist processor.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -75,7 +80,7 @@ This extension point supports the &lt;code&gt;enablement&lt;/code&gt; tag. Prope
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  the name of the class that implements this Quick Assist processor. The
+                  The name of the class that implements this Quick Assist processor. The
 class must be public and implement
 &lt;samp&gt;org.eclipse.cdt.ui.text.IQuickAssistProcessor&lt;/samp&gt;
 with a public 0-argument constructor.
@@ -88,12 +93,31 @@ with a public 0-argument constructor.
          <attribute name="requiredSourceLevel" type="string">
             <annotation>
                <documentation>
-                  an optional attribute to specify the minimal source compliance this processor requires
+                  An optional attribute to specify the minimal source compliance this processor requires.
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
+
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The contributed class must implement &lt;code&gt;org.eclipse.cdt.ui.text.IQuickAssistProcessor&lt;/code&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         5.1
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
@@ -121,33 +145,6 @@ with a public 0-argument constructor.
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         5.1
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         The contributed class must implement &lt;code&gt;org.eclipse.cdt.ui.text.IQuickAssistProcessor&lt;/code&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
       </documentation>
    </annotation>
 

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.ui">
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.ui" id="textHovers" name="C/C++ Editor Text Hovers"/>
@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="hover" minOccurs="0" maxOccurs="unbounded"/>
@@ -47,14 +52,17 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the id, typically the same as the fully qualified class name.
+                  The id, typically the same as the fully qualified class name.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully qualified class name implementing the interface &lt;code&gt;org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover&lt;/code&gt;.
+                  The fully qualified class name implementing the interface &lt;code&gt;org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover"/>
@@ -64,7 +72,7 @@
          <attribute name="label" type="string">
             <annotation>
                <documentation>
-                  the translatable label for this hover.
+                  The translatable label for this hover.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -74,7 +82,7 @@
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  the translatable description for this hover.
+                  The translatable description for this hover.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -84,12 +92,25 @@
          <attribute name="activate" type="boolean" use="default" value="false">
             <annotation>
                <documentation>
-                  if the attribute is set to &quot;true&quot; it will force this plug-in to be loaded on hover activation.
+                  If the attribute is set to &quot;true&quot; it will force this plug-in to be loaded on hover activation.
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
+
+
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2001, 2006 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
+
 
    <annotation>
       <appInfo>
@@ -110,34 +131,6 @@
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="copyright"/>
-      </appInfo>
-      <documentation>
-         Copyright (c) 2001, 2006 IBM Corporation and others.&lt;br&gt;
-All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

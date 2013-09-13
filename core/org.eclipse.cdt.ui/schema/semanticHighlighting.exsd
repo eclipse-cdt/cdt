@@ -70,14 +70,17 @@ Contributed highlightings will be visible in the Code tree of the &apos;C/C++ - 
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique identifier for the Quick Fix processor
+                  A unique identifier for the Quick Fix processor.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  a localized name of the Quick Fix processor
+                  A localized name of the Quick Fix processor.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -102,7 +105,7 @@ with a public 0-argument constructor.
                <documentation>
                   The priority determines the order in which highlightings are given the opportunity to highlight a token.  Lower values are more important.
 
-The priorities of the built-in highlightings are available in org.eclipse.cdt.internal.ui.editor.SemanticHighlightings.loadBuiltInSemanticHighlightings.
+The priorities of the built-in highlightings are available in &lt;code&gt;org.eclipse.cdt.internal.ui.editor.SemanticHighlightings.loadBuiltInSemanticHighlightings&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -133,40 +136,49 @@ The priorities of the built-in highlightings are available in org.eclipse.cdt.in
          <attribute name="defaultBold" type="boolean">
             <annotation>
                <documentation>
-                  false by default
+                  Defaults to &lt;code&gt;false&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="defaultItalic" type="boolean">
             <annotation>
                <documentation>
-                  false by default
+                  Defaults to &lt;code&gt;false&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="defaultStrikethrough" type="boolean">
             <annotation>
                <documentation>
-                  false by default
+                  Defaults to &lt;code&gt;false&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="defaultUnderline" type="boolean">
             <annotation>
                <documentation>
-                  false by default
+                  Defaults to &lt;code&gt;false&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="defaultEnabled" type="boolean">
             <annotation>
                <documentation>
-                  false by default
+                  Defaults to &lt;code&gt;false&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The contributed class must implement &lt;code&gt;org.eclipse.cdt.ui.text.ISemanticHighlighter&lt;/code&gt;
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
@@ -206,25 +218,16 @@ The priorities of the built-in highlightings are available in org.eclipse.cdt.in
                 &lt;/iterate&gt;
             &lt;/with&gt;
             &lt;with variable=&quot;languageId&quot;&gt;
-            	&lt;or&gt;
-            		&lt;equals value=&quot;org.eclipse.cdt.core.g++&quot;/&gt;
-            		&lt;equals value=&quot;org.eclipse.cdt.core.gcc&quot;/&gt;
-            	&lt;/or&gt;
+             &lt;or&gt;
+              &lt;equals value=&quot;org.eclipse.cdt.core.g++&quot;/&gt;
+              &lt;equals value=&quot;org.eclipse.cdt.core.gcc&quot;/&gt;
+             &lt;/or&gt;
             &lt;/with&gt;
         &lt;/enablement&gt;
     &lt;/semanticHighlighting&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         The contributed class must implement &lt;code&gt;org.eclipse.cdt.ui.text.ISemanticHighlighter&lt;/code&gt;
       </documentation>
    </annotation>
 

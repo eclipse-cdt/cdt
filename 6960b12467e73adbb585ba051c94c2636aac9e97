@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a74dd7b0_ca5edbbd",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/BreakpointAction.exsd",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T01:17:41Z",
+      "side": 1,
+      "message": "You can leave the blank documentation lines, but remove the long sequences of blank lines.",
+      "revId": "6960b12467e73adbb585ba051c94c2636aac9e97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -95,11 +95,11 @@ public class DebugStringVariableSubstitutor implements IStringVariableManager {
 	 * variables in the context of the given project.
 	 *
 	 * @param projectName the name of the project used to resolve project_name, project_loc and
-	 *     project_path variables. If {@code null}, the project is determined based on the current
+	 *     project_path variables. If {@code null} or empty, the project is determined based on the current
 	 *     selection.
 	 */
 	public DebugStringVariableSubstitutor(String projectName) {
-		this(projectName == null ? null : ResourcesPlugin.getWorkspace().getRoot().getProject(projectName));
+		this(projectName == null || projectName.isEmpty() ? null : ResourcesPlugin.getWorkspace().getRoot().getProject(projectName));
 	}
 
 	public IStringVariable[] getVariables() {

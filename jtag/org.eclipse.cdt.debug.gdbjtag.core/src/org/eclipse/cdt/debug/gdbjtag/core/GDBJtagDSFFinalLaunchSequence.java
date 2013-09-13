@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 - 2011 QNX Software Systems and others.
+ * Copyright (c) 2007 - 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *                connections via serial ports and pipes).
  *     John Dallaway - Wrong groupId during initialization (Bug 349736)    
  *     Marc Khouzam (Ericsson) - Updated to extend FinalLaunchSequence instead of copying it (bug 324101)
+ *     William Riley (Renesas) - Memory viewing broken (Bug 413483)
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
@@ -45,9 +46,11 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.gdb.launching.FinalLaunchSequence;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
+import org.eclipse.cdt.dsf.gdb.service.IGDBMemory;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -172,6 +175,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 					
 					"stepUpdateContainer",   //$NON-NLS-1$
 					
+					"stepInitializeMemory",   //$NON-NLS-1$
 					"stepSetArguments",   //$NON-NLS-1$
 					"stepSetEnvironmentVariables",   //$NON-NLS-1$
 					"stepStartTrackingBreakpoints",   //$NON-NLS-1$
@@ -647,5 +651,20 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		fTracker.dispose();
 		fTracker = null;
 		requestMonitor.done();
+	}
+
+	/**
+	 * Initialize the memory service with the data for given process.
+	 * @since 4.2
+	 */
+	@Execute
+	public void stepInitializeMemory(final RequestMonitor rm) {
+		IGDBMemory memory = fTracker.getService(IGDBMemory.class);
+		IMemoryDMContext memContext = DMContexts.getAncestorOfType(getContainerContext(), IMemoryDMContext.class);
+		if (memory == null || memContext == null) {
+			rm.done();
+			return;
+		}
+		memory.initializeMemoryData(memContext, rm);
 	}
 }

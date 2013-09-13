@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a74dd7b0_0a4f23bb",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/ExecutablesImporter.exsd",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T01:44:24Z",
+      "side": 1,
+      "message": "points -\u003e point",
+      "revId": "b14230d2f4998b6d8bdf81194f672fdaacfcd131",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_2a52df5f",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/ExecutablesProvider.exsd",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T01:44:24Z",
+      "side": 1,
+      "message": "points -\u003e point",
+      "revId": "b14230d2f4998b6d8bdf81194f672fdaacfcd131",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_65b37836",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/SupportedSourceContainerTypes.exsd",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T01:44:24Z",
+      "side": 1,
+      "message": "The -\u003e this",
+      "revId": "b14230d2f4998b6d8bdf81194f672fdaacfcd131",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

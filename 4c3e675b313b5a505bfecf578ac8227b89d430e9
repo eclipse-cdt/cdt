@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a74dd7b0_0a8d6309",
+        "filename": "core/org.eclipse.cdt.core/schema/CBuildConsole.exsd",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T00:57:12Z",
+      "side": 1,
+      "message": "Please remove blank documentation lines here and elsewhere.",
+      "revId": "4c3e675b313b5a505bfecf578ac8227b89d430e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_6a718784",
+        "filename": "core/org.eclipse.cdt.core/schema/CBuildConsole.exsd",
+        "patchSetId": 5
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T00:57:12Z",
+      "side": 1,
+      "message": "Too many blank lines.",
+      "revId": "4c3e675b313b5a505bfecf578ac8227b89d430e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

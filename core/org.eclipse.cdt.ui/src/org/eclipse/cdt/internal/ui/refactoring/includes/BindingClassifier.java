@@ -78,6 +78,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -89,10 +90,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -523,7 +526,12 @@ public class BindingClassifier {
 		return true;
 	}
 
-	private void declareFunction(IFunction function, IASTFunctionCallExpression functionCallExpression) {
+	private void defineFunction(IFunction function, IASTInitializerClause[] arguments) {
+		defineBinding(function);
+		declareFunction(function, arguments);
+	}
+
+	private void declareFunction(IFunction function, IASTInitializerClause[] arguments) {
 		// Handle return or expression type of the function or constructor call.
 		IType returnType = function.getType().getReturnType();
 		if (!(returnType instanceof IPointerType) && !(returnType instanceof ICPPReferenceType)) {
@@ -532,7 +540,7 @@ public class BindingClassifier {
 		}
 
 		// Handle parameters.
-		processFunctionParameters(function, functionCallExpression.getArguments());
+		processFunctionParameters(function, arguments);
 	}
 
 	private class BindingCollector extends ASTVisitor {
@@ -920,6 +928,13 @@ public class BindingClassifier {
 				 * 	}
 				 */
 				IASTUnaryExpression unaryExpression = (IASTUnaryExpression) expression;
+				if (unaryExpression instanceof ICPPASTUnaryExpression) {
+					ICPPFunction overload = ((ICPPASTUnaryExpression) unaryExpression).getOverload();
+					if (overload != null) {
+						defineFunction(overload, new IASTInitializerClause[] { unaryExpression.getOperand() });
+						return PROCESS_CONTINUE;
+					}
+				}
 
 				boolean expressionDefinitionRequired = true;
 				switch (unaryExpression.getOperator()) {
@@ -969,6 +984,14 @@ public class BindingClassifier {
 				 * 	}
 				 */
 				IASTBinaryExpression binaryExpression = (IASTBinaryExpression) expression;
+				if (binaryExpression instanceof ICPPASTBinaryExpression) {
+					ICPPFunction overload = ((ICPPASTBinaryExpression) binaryExpression).getOverload();
+					if (overload != null) {
+						defineFunction(overload,
+								new IASTInitializerClause[] { binaryExpression.getOperand1(), binaryExpression.getOperand2() });
+						return PROCESS_CONTINUE;
+					}
+				}
 
 				IType operand1Type = binaryExpression.getOperand1().getExpressionType();
 				IType operand2Type = binaryExpression.getOperand2().getExpressionType();
@@ -1048,7 +1071,7 @@ public class BindingClassifier {
 				if (functionNameExpression instanceof IASTIdExpression) {
 					IBinding binding = ((IASTIdExpression) functionNameExpression).getName().resolveBinding();
 					if (binding instanceof IFunction) {
-						declareFunction((IFunction) binding, functionCallExpression);
+						declareFunction((IFunction) binding, functionCallExpression.getArguments());
 					} else  {
 						if (binding instanceof IType)
 							defineBinding(binding);
@@ -1058,7 +1081,7 @@ public class BindingClassifier {
 							for (IASTName name : implicitNames) {
 								binding = name.resolveBinding();
 								if (binding instanceof IFunction) {
-									declareFunction((IFunction) binding, functionCallExpression);
+									defineFunction((IFunction) binding, functionCallExpression.getArguments());
 								}
 							}
 						}

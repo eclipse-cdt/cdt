@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -61,8 +60,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class MakeContentProvider implements ITreeContentProvider, IMakeTargetListener,
 		IResourceChangeListener, ICProjectDescriptionListener, IPreferenceChangeListener {
-
-	/** presentation of the content, i.e. for MakeView tree of for BuildTargetDialog table */
+	/** Presentation of the content, i.e. for MakeView tree or for BuildTargetDialog table */
 	protected boolean bFlatten;
 
 	protected StructuredViewer viewer;
@@ -78,7 +76,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	 * Constructor.
 	 *
 	 * @param flat - {@code true} for "flat" representation for a table
-	 *    or {@code false} to represent as a tree.
+	 *     {@code false} to represent as a tree.
 	 */
 	public MakeContentProvider(boolean flat) {
 		bFlatten = flat;

@@ -167,6 +167,8 @@ contribution is shown only when a debugger with corresponding model ID is curren
                   </enumeration>
                   <enumeration value="float">
                   </enumeration>
+                  <enumeration value="boolean">
+                  </enumeration>
                </restriction>
             </simpleType>
          </attribute>

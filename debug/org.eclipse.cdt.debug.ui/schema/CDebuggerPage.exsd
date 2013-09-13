@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.debug.ui">
+<schema targetNamespace="org.eclipse.cdt.debug.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.debug.ui" id="CDebuggerPage" name="C/C++ Debugger Page"/>
@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="debuggerPage" minOccurs="0" maxOccurs="unbounded"/>
@@ -18,21 +23,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified identifier of the target extension point
+                  
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  an optional identifier of the extension instance
+                  
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional name of the extension instance
+                  
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -47,21 +52,27 @@
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  specifies a unique identifier for this debugger page.
+                  Specifies a unique identifier for this debugger page.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="debuggerID" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the identifier of the debugger this page is associated with.
+                  Specifies the identifier of the debugger this page is associated with.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a fully qualified name of a Java class that implements &amp;lt;code&amp;gt;ICDebuggerPage&amp;lt;/code&amp;gt;
+                  Specifies a fully qualified name of a Java class that implements &lt;code&gt;ICDebuggerPage&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.debug.ui.ICDebuggerPage"/>
@@ -70,6 +81,15 @@
          </attribute>
       </complexType>
    </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the attribute class must be a fully qualified name of a Java class that implements the interface org.eclipse.cdt.debug.ui.ICDebuggerPage.
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
@@ -96,23 +116,6 @@ In the above example, the contributed UI component (org.eclipse.cdt.debug.mi.int
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         Value of the attribute class must be a fully qualified name of a Java class that implements the interface org.eclipse.cdt.debug.ui.ICDebuggerPage.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>

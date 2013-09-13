@@ -67,14 +67,17 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the unique id of this column
+                  The unique id of this column
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional name of the column, may be used in the user interface (e.g. in preference pages)
+                  An optional name of the column, may be used in the user interface (e.g. in preference pages)
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -84,7 +87,7 @@
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  an optional icon for the column. May be used in the user interface, for example on preference pages.
+                  An optional icon for the column. May be used in the user interface, for example on preference pages.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -94,7 +97,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the class implementing the column; must implement &lt;code&gt;org.eclipse.cdt.debug.ui.disassembly.rulers.IContributedRulerColumn&lt;/code&gt;
+                  The class implementing the column; must implement &lt;code&gt;org.eclipse.cdt.debug.ui.disassembly.rulers.IContributedRulerColumn&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.cdt.debug.ui.disassembly.rulers.IContributedRulerColumn"/>
@@ -104,21 +107,21 @@
          <attribute name="enabled" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
-                  the default enablement state of this column
+                  The default enablement state of this column.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="global" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
-                  controls whether toggling the visibility of this column operates on all targeted disassembly parts, or only the active disassembly part. If true, the ruler is added to all applicable parts when the user enables the column; if false, the ruler is only added to the active disassembly part.
+                  Controls whether toggling the visibility of this column operates on all targeted disassembly parts, or only the active disassembly part. If &lt;i&gt;true&lt;/i&gt;, the ruler is added to all applicable parts when the user enables the column. Otherwise, the ruler is only added to the active disassembly part.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="includeInMenu" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
-                  whether to include a &quot;Show/Hide&quot; menu entry for this column in the ruler context menu
+                  Whether to include a &quot;Show/Hide&quot; menu entry for this column in the ruler context menu.
                </documentation>
             </annotation>
          </attribute>
@@ -135,7 +138,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the part id of the target disassembly part
+                  The part id of the target disassembly part
                </documentation>
                <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors/editor/@id"/>
@@ -155,7 +158,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully qualified name of a class implementing IWorkbenchPart. The class does not need to be instantiatable.
+                  The fully qualified name of a class implementing IWorkbenchPart. The class does not need to be instantiatable.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.ui.IWorkbenchPart"/>
@@ -181,7 +184,7 @@
          <attribute name="gravity" type="string" use="default" value="1.0">
             <annotation>
                <documentation>
-                  a float number between 0.0 and 1.0 that tells how close the column wants to be to the editor, where 0.0 means as far away as possible and 1.0 means as close as possible. After all &lt;i&gt;before&lt;/i&gt; and &lt;i&gt;after&lt;/i&gt; constraints are evaluated, columns that would end up at the same position are ordered by their &lt;i&gt;gravity&lt;/i&gt; value.
+                  A floating point number between 0.0 and 1.0 that tells how close the column wants to be to the editor, where 0.0 means as far away as possible and 1.0 means as close as possible. After all &lt;i&gt;before&lt;/i&gt; and &lt;i&gt;after&lt;/i&gt; constraints are evaluated, columns that would end up at the same position are ordered by their &lt;i&gt;gravity&lt;/i&gt; value.
                </documentation>
             </annotation>
          </attribute>
@@ -198,7 +201,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the id of another &lt;tt&gt;rulerColumns&lt;/tt&gt; contribution
+                  The id of another &lt;tt&gt;rulerColumns&lt;/tt&gt; contribution.
                </documentation>
                <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.debug.ui.disassemblyRulerColumns/column/@id"/>
@@ -218,7 +221,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the id of another &lt;tt&gt;rulerColumns&lt;/tt&gt; contribution
+                  The id of another &lt;tt&gt;rulerColumns&lt;/tt&gt; contribution.
                </documentation>
                <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.debug.ui.disassemblyRulerColumns/column/@id"/>
@@ -227,24 +230,6 @@
          </attribute>
       </complexType>
    </element>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         7.2
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         The extension point is supported by the &lt;tt&gt;org.eclipse.cdt.debug.ui.disassembly.rulers&lt;/tt&gt; package. &lt;code&gt;RulerColumnRegistry&lt;/code&gt; gives access to all contributions, which in turn are described by &lt;code&gt;RulerColumnDescriptor&lt;/code&gt; instances.
-      </documentation>
-   </annotation>
 
 
    <annotation>
@@ -263,6 +248,24 @@
       <documentation>
          Copyright (c) 2006, 20011 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The extension point is supported by the &lt;tt&gt;org.eclipse.cdt.debug.ui.disassembly.rulers&lt;/tt&gt; package. &lt;code&gt;RulerColumnRegistry&lt;/code&gt; gives access to all contributions, which in turn are described by &lt;code&gt;RulerColumnDescriptor&lt;/code&gt; instances.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         7.2
       </documentation>
    </annotation>
 

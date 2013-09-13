@@ -11,7 +11,6 @@ The UI controls are added to the &quot;Common&quot; page of the breakpoint prope
 contribution is shown only when a debugger with corresponding model ID is currently active.
       </documentation>
    </annotation>
-
    <element name="extension">
       <annotation>
          <appInfo>
@@ -49,7 +48,6 @@ contribution is shown only when a debugger with corresponding model ID is curren
          </attribute>
       </complexType>
    </element>
-
    <element name="breakpointLabels">
       <annotation>
          <documentation>
@@ -82,7 +80,6 @@ contribution is shown only when a debugger with corresponding model ID is curren
          </attribute>
       </complexType>
    </element>
-
    <element name="breakpointEditors">
       <annotation>
          <documentation>
@@ -115,7 +112,6 @@ contribution is shown only when a debugger with corresponding model ID is curren
          </attribute>
       </complexType>
    </element>
-
    <element name="attribute">
       <annotation>
          <documentation>
@@ -167,6 +163,8 @@ contribution is shown only when a debugger with corresponding model ID is curren
                   </enumeration>
                   <enumeration value="float">
                   </enumeration>
+                  <enumeration value="boolean">
+                  </enumeration>
                </restriction>
             </simpleType>
          </attribute>
@@ -182,7 +180,6 @@ contribution is shown only when a debugger with corresponding model ID is curren
          </attribute>
       </complexType>
    </element>
-
    <element name="value">
       <annotation>
          <documentation>
@@ -212,7 +209,6 @@ contribution is shown only when a debugger with corresponding model ID is curren
          </attribute>
       </complexType>
    </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -221,7 +217,6 @@ contribution is shown only when a debugger with corresponding model ID is curren
          CDT 5.0
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -257,8 +252,4 @@ contribution is shown only when a debugger with corresponding model ID is curren
  &lt;/pre&gt;
       </documentation>
    </annotation>
-
-
-
-
 </schema>

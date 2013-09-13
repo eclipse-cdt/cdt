@@ -373,6 +373,21 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertDeclared();
 	}
 
+	//	struct A {
+	//	  int x;
+	//	};
+	//	inline bool operator==(const A& a1, const A& a2) {
+	//	  return a1.x == a2.x;
+	//	}
+
+	//	bool test(const A& a, const A& b) {
+	//		return a == b;
+	//	}
+	public void testOverloadedOperator() throws Exception {
+		assertDefined("operator ==");
+		assertDeclared("A");
+	}
+
 	//	struct A {};
 	//	template<typename T> struct B {};
 	//	template<typename T, typename U = B<T>> struct C {};

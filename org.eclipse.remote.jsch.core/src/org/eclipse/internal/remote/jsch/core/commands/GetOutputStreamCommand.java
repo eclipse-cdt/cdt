@@ -66,6 +66,5 @@ public class GetOutputStreamCommand extends AbstractRemoteCommand<OutputStream> 
 				}
 			}
 		};
-
 	}
 }

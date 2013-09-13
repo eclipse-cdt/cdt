@@ -32,7 +32,7 @@ public class PutInfoCommand extends AbstractRemoteCommand<Void> {
 		FetchInfoCommand command = new FetchInfoCommand(getConnection(), fRemotePath);
 		IFileInfo info = command.getResult(subMon.newChild(10));
 		if ((fOptions & EFS.SET_ATTRIBUTES) != 0) {
-			fFileInfo.setAttribute(EFS.ATTRIBUTE_READ_ONLY, !info.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
+			fFileInfo.setAttribute(EFS.ATTRIBUTE_READ_ONLY, info.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
 			fFileInfo.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, info.getAttribute(EFS.ATTRIBUTE_EXECUTABLE));
 			chmod(getPermissions(fFileInfo), fRemotePath.toString(), subMon.newChild(10));
 		}

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.debug.ui">
+<schema targetNamespace="org.eclipse.cdt.debug.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.debug.ui" id="BreakpointActionPage" name="Breakpoint Action UI Page"/>
@@ -9,8 +9,12 @@
          This extension point provides a mechanism for contributing UI to define and edit a breakpoint action.
       </documentation>
    </annotation>
-
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="actionPage"/>
@@ -24,7 +28,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="actionPage">
       <complexType>
          <attribute name="id" type="string">
@@ -32,6 +35,9 @@
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string">
@@ -39,6 +45,9 @@
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.debug.ui.breakpointactions.IBreakpointActionPage"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="actionType" type="string">
@@ -50,25 +59,6 @@
          </attribute>
       </complexType>
    </element>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         1.1
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="examples"/>
-      </appInfo>
-      <documentation>
-         [Enter extension point usage example here.]
-      </documentation>
-   </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="apiInfo"/>
@@ -77,16 +67,14 @@
          Value of the attribute class must be a fully qualified name of a Java class that implements the interface org.eclipse.cdt.debug.ui.ICDebuggerPage.
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
-         <meta.section type="implementation"/>
+         <meta.section type="since"/>
       </appInfo>
       <documentation>
-         
+         1.1
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -99,5 +87,4 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html
       </documentation>
    </annotation>
-
 </schema>

@@ -99,7 +99,7 @@ public class DebugStringVariableSubstitutor implements IStringVariableManager {
 	 *     selection.
 	 */
 	public DebugStringVariableSubstitutor(String projectName) {
-		this(projectName == null ? null : ResourcesPlugin.getWorkspace().getRoot().getProject(projectName));
+		this(projectName == null ? null : projectName.isEmpty() ? null : ResourcesPlugin.getWorkspace().getRoot().getProject(projectName));
 	}
 
 	public IStringVariable[] getVariables() {

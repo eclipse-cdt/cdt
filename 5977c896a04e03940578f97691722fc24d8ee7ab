@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a74dd7b0_2a42df11",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/BreakpointAction.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-09-13T01:06:14Z",
+      "side": 1,
+      "message": "AFAICS, these are added automatically by PDE. I may look into filing (and/or fixing) a bug report to get it to stop, but I don\u0027t think it is worth fixing them manually in each case. I will, though, if you insist.",
+      "parentUuid": "a74dd7b0_8aefb3a9",
+      "revId": "5977c896a04e03940578f97691722fc24d8ee7ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74dd7b0_aaea6f98",
         "filename": "debug/org.eclipse.cdt.debug.core/schema/BreakpointAction.exsd",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2013-09-13T00:55:43Z",
       "side": 1,
       "message": "Tooo many blank lines.",
+      "revId": "5977c896a04e03940578f97691722fc24d8ee7ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_0a3f238d",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/BreakpointAction.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-09-13T01:06:14Z",
+      "side": 1,
+      "message": "As I said, I think these are added automatically by PDE.",
+      "parentUuid": "a74dd7b0_aaea6f98",
       "revId": "5977c896a04e03940578f97691722fc24d8ee7ab",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -104,6 +140,24 @@
     },
     {
       "key": {
+        "uuid": "a74dd7b0_eafd972f",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/SourceFilesProvider.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-09-13T01:06:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_8a8173da",
+      "revId": "5977c896a04e03940578f97691722fc24d8ee7ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74dd7b0_aa7c2f65",
         "filename": "debug/org.eclipse.cdt.debug.core/schema/SourceFilesProvider.exsd",
         "patchSetId": 2
@@ -132,6 +186,24 @@
       "writtenOn": "2013-09-13T00:55:43Z",
       "side": 1,
       "message": "points -\u003e point",
+      "revId": "5977c896a04e03940578f97691722fc24d8ee7ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_cafa5b35",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/SourceRemappingProvider.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-09-13T01:06:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_ea99174f",
       "revId": "5977c896a04e03940578f97691722fc24d8ee7ab",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

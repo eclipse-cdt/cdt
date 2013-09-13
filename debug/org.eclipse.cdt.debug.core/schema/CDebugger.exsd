@@ -1,20 +1,16 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.debug.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.cdt.debug.core">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.debug.core" id="CDebugger" name="CDebugger"/>
       </appInfo>
       <documentation>
-         
+         [Enter description of this extension point]
       </documentation>
    </annotation>
+
    <element name="extension">
-      <annotation>
-         <appInfo>
-            <meta.element />
-         </appInfo>
-      </annotation>
       <complexType>
          <sequence>
             <element ref="debugger" minOccurs="1" maxOccurs="unbounded"/>
@@ -22,26 +18,27 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  A fully qualified identifier of the target extension point
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  An optional identifier of the extension instance
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  An optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
+
    <element name="debugger">
       <complexType>
          <sequence>
@@ -50,39 +47,21 @@
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  Specifies the debugger&apos;s name
+                  specifies the debugger&apos;s name
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="modes">
+         <attribute name="modes" type="string">
             <annotation>
                <documentation>
-                  Specifies the comma separated list of debugging modes (attach,core,run).
+                  specifies the comma separated list of debugging modes (run,core,attach).
                </documentation>
             </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="attach">
-                  </enumeration>
-                  <enumeration value="core">
-                  </enumeration>
-                  <enumeration value="run">
-                  </enumeration>
-                  <enumeration value="attach,core">
-                  </enumeration>
-                  <enumeration value="attach,run">
-                  </enumeration>
-                  <enumeration value="core,run">
-                  </enumeration>
-                  <enumeration value="attach,core,run">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Specifies a fully qualified name of a Java class that implements &lt;code&gt;ICDIDebugger2&lt;/code&gt;
+                  specifies a fully qualified name of a Java class that implements &amp;lt;code&amp;gt;ICDIDebugger2&amp;lt;/code&amp;gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.debug.core.ICDIDebugger2"/>
@@ -94,9 +73,6 @@
                <documentation>
                   specifies a unique identifier for this debugger.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="platform" type="string">
@@ -122,6 +98,7 @@
          </attribute>
       </complexType>
    </element>
+
    <element name="buildIdPattern">
       <complexType>
          <attribute name="pattern" type="string">
@@ -133,6 +110,34 @@
          </attribute>
       </complexType>
    </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -145,4 +150,5 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html
       </documentation>
    </annotation>
+
 </schema>

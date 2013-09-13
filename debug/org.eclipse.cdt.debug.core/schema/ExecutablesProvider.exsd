@@ -2,18 +2,19 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.cdt.debug.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.cdt.debug.core" id="ExecutablesProvider" name="Executables Provider"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         This extension point allows you to extend the executables manager in CDT by providing your own executables provider for certain types of projects.
+         This extension points allows you to extened the executables manager in CDT by providing your own executables provider for certain types of projects.
       </documentation>
    </annotation>
+
    <element name="extension">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element />
-         </appInfo>
+         </appinfo>
       </annotation>
       <complexType>
          <sequence>
@@ -38,13 +39,14 @@
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
+
    <element name="provider">
       <complexType>
          <attribute name="class" type="string" use="required">
@@ -52,25 +54,27 @@
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.debug.core.executables.IProjectExecutablesProvider"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          CDT 7.0
       </documentation>
    </annotation>
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;extension
          point=&quot;org.eclipse.cdt.debug.core.ExecutablesProvider&quot;&gt;
@@ -78,4 +82,5 @@
    &lt;/extension&gt;
       </documentation>
    </annotation>
+
 </schema>

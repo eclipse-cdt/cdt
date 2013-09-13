@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a74dd7b0_8aefb3a9",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/BreakpointAction.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T00:55:43Z",
+      "side": 1,
+      "message": "Please remove blank documentation lines.",
+      "revId": "5977c896a04e03940578f97691722fc24d8ee7ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_aaea6f98",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/BreakpointAction.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T00:55:43Z",
+      "side": 1,
+      "message": "Tooo many blank lines.",
+      "revId": "5977c896a04e03940578f97691722fc24d8ee7ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_6a86a7f5",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/BreakpointExtension.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T00:55:43Z",
+      "side": 1,
+      "message": "Too many blank lines.",
+      "revId": "5977c896a04e03940578f97691722fc24d8ee7ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_ca96db1c",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/CDebugger.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T00:55:43Z",
+      "side": 1,
+      "message": "Please remove blank documentation lines.",
+      "revId": "5977c896a04e03940578f97691722fc24d8ee7ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_4a8bebfb",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/ExecutablesProvider.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T00:55:43Z",
+      "side": 1,
+      "message": "Too many blank lines.",
+      "revId": "5977c896a04e03940578f97691722fc24d8ee7ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_8a8173da",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/SourceFilesProvider.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T00:55:43Z",
+      "side": 1,
+      "message": "points -\u003e point",
+      "revId": "5977c896a04e03940578f97691722fc24d8ee7ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_aa7c2f65",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/SourceFilesProvider.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T00:55:43Z",
+      "side": 1,
+      "message": "Too many blank lines.",
+      "revId": "5977c896a04e03940578f97691722fc24d8ee7ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_ea99174f",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/SourceRemappingProvider.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T00:55:43Z",
+      "side": 1,
+      "message": "points -\u003e point",
+      "revId": "5977c896a04e03940578f97691722fc24d8ee7ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

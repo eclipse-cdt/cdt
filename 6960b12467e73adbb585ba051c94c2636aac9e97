@@ -34,6 +34,24 @@
       "revId": "6960b12467e73adbb585ba051c94c2636aac9e97",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_4ab48b3c",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/BreakpointAction.exsd",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T01:35:59Z",
+      "side": 1,
+      "message": "Extension Point Schema Editor is a good tool for initial creation of exsd files but not for subsequent editing of them. As I said, we wand the code to be clean. Long sequences of blank lines don\u0027t fit my definition of \"clean\".",
+      "parentUuid": "a74dd7b0_8a9b33f7",
+      "revId": "6960b12467e73adbb585ba051c94c2636aac9e97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

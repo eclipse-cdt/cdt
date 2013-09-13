@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a74dd7b0_e2777476",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/DebugStringVariableSubstitutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T16:06:46Z",
+      "side": 1,
+      "message": "{@code null} -\u003e {@code null} or empty",
+      "revId": "1ead11cc99780e64fa4442c364d90c324f7270f1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_c27cf85d",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/DebugStringVariableSubstitutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-13T16:06:46Z",
+      "side": 1,
+      "message": "Probably slightly better: projectName \u003d\u003d null || projectName.isEmpty() ? null ...\n\nWhy is projectName empty instead of null for projectless debugging? Should this itself be changed?",
+      "revId": "1ead11cc99780e64fa4442c364d90c324f7270f1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

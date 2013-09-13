@@ -1154,8 +1154,8 @@ public class Conversions {
 	}
 
 	/**
-	 * Composite pointer type computed as described in 5.9-2 except that if the conversion to the
-	 * pointer is not possible, we return null.
+	 * Composite pointer type computed as described in 5.9-2 except that if the conversion to
+	 * the pointer is not possible, the method returns {@code null}.
 	 */
 	public static IType compositePointerType(IType t1, IType t2) {
 		final boolean isPtr1 = t1 instanceof IPointerType;

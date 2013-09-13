@@ -52,6 +52,24 @@
       "revId": "6960b12467e73adbb585ba051c94c2636aac9e97",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_8aba1326",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/BreakpointAction.exsd",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-09-13T01:37:23Z",
+      "side": 1,
+      "message": "OK, thank you for confirming it. I shall (manually) remove the blank lines.",
+      "parentUuid": "a74dd7b0_4ab48b3c",
+      "revId": "6960b12467e73adbb585ba051c94c2636aac9e97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

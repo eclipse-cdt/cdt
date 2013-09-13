@@ -520,6 +520,8 @@ public class BindingClassifier {
 			ICPPClassType[] bases = ClassTypeHelper.getAllBases((ICPPClassType) binding, fAst);
 			for (ICPPClassType base : bases) {
 				fProcessedDefinedBindings.add(base);
+				fBindingsToDefine.remove(base);
+				fBindingsToDeclare.remove(base);
 			}
 		}
 

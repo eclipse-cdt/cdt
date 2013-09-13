@@ -235,6 +235,8 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
+				if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
+					return;
 				viewer.refresh();
 			}
 		});

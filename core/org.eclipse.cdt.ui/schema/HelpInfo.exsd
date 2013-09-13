@@ -1,17 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.ui">
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.ui" id="HelpInfo" name="Allows contributing the map files to the map-file-based CDT CHelpProvider."/>
       </appInfo>
       <documentation>
-         Allows contributing the map files to 
-the map-file-based CDT CHelpProvider.
+         Allows contributing the map files to the map-file-based CDT CHelpProvider.
       </documentation>
    </annotation>
-
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="helpInfo" minOccurs="1" maxOccurs="unbounded"/>
@@ -42,7 +45,6 @@ the map-file-based CDT CHelpProvider.
          </attribute>
       </complexType>
    </element>
-
    <element name="helpInfo">
       <annotation>
          <documentation>
@@ -65,13 +67,11 @@ the map-file-based CDT CHelpProvider.
                <documentation>
                   May contain ID of map file format.
 For now, there&apos;s only one (default) help map format.
-
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -80,7 +80,6 @@ For now, there&apos;s only one (default) help map format.
          CDT 4.0.2
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -96,32 +95,4 @@ For now, there&apos;s only one (default) help map format.
 &lt;/extension&gt;
       </documentation>
    </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="copyright"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
 </schema>

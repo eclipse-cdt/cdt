@@ -13,7 +13,6 @@ Extension point for registration of project configuration factories for handling
 &lt;/p&gt;
       </documentation>
    </annotation>
-
    <element name="extension">
       <annotation>
          <appInfo>
@@ -50,7 +49,6 @@ Extension point for registration of project configuration factories for handling
          </attribute>
       </complexType>
    </element>
-
    <element name="projectConfigurationFactory">
       <annotation>
          <documentation>
@@ -80,7 +78,6 @@ Extension point for registration of project configuration factories for handling
          </attribute>
       </complexType>
    </element>
-
    <element name="projectNature">
       <annotation>
          <documentation>
@@ -100,7 +97,6 @@ Extension point for registration of project configuration factories for handling
          </attribute>
       </complexType>
    </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -109,7 +105,6 @@ Extension point for registration of project configuration factories for handling
          6.0
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -126,7 +121,6 @@ Extension point for registration of project configuration factories for handling
 &lt;/pre&gt;
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="apiinfo"/>
@@ -135,8 +129,6 @@ Extension point for registration of project configuration factories for handling
          Registered project configuration factories are required to implement the &lt;tt&gt;org.eclipse.cdt.internal.ui.workingsets.IWorkingSetProjectConfigurationFactory&lt;/tt&gt; interface.
       </documentation>
    </annotation>
-
-
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -145,5 +137,4 @@ Extension point for registration of project configuration factories for handling
          Copyright (c) 2009 QNX Software Systems and others.  All rights reserved.
       </documentation>
    </annotation>
-
 </schema>

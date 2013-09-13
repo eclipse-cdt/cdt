@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.ui">
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.ui" id="completionProposalComputer" name="Completion Proposal Computer"/>
@@ -9,11 +9,10 @@
          This extension point allows to contribute completion proposal computers to participate in the content assist process of the C/C++ editor.
       </documentation>
    </annotation>
-
    <element name="extension">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="name"/>
+            <meta.element labelAttribute="name" />
          </appInfo>
       </annotation>
       <complexType>
@@ -47,7 +46,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="completionProposalComputer">
       <annotation>
          <documentation>
@@ -67,7 +65,7 @@ class must be public and implement
 and must have a public 0-argument constructor.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -83,11 +81,13 @@ and must have a public 0-argument constructor.
                <documentation>
                   The id of a &lt;tt&gt;proposalCategory&lt;/tt&gt;
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
-
    <element name="partition">
       <annotation>
          <appInfo>
@@ -124,7 +124,6 @@ and must have a public 0-argument constructor.
          </attribute>
       </complexType>
    </element>
-
    <element name="proposalCategory">
       <annotation>
          <documentation>
@@ -144,7 +143,14 @@ and must have a public 0-argument constructor.
          </attribute>
       </complexType>
    </element>
-
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The contributed class must extend &lt;code&gt;org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer&lt;/code&gt;
+      </documentation>
+   </annotation>
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -153,14 +159,12 @@ and must have a public 0-argument constructor.
          4.0
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
          The following is an example of a completion proposal computer contribution:
-
 &lt;p&gt;
 &lt;pre&gt;
  &lt;extension point=&quot;org.eclipse.cdt.ui.completionProposalComputer&quot;
@@ -181,16 +185,6 @@ and must have a public 0-argument constructor.
 &lt;/p&gt;
       </documentation>
    </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         The contributed class must extend &lt;code&gt;org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer&lt;/code&gt;
-      </documentation>
-   </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="implementation"/>
@@ -199,7 +193,6 @@ and must have a public 0-argument constructor.
          see &lt;code&gt;org.eclipse.cdt.internal.ui.text.contentassist.HippieProposalComputer&lt;/code&gt; for an example.
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -209,5 +202,4 @@ and must have a public 0-argument constructor.
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
-
 </schema>

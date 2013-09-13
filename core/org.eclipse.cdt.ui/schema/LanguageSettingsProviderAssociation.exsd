@@ -9,7 +9,6 @@
          This extension point defines appearance and behavior of UI controls for Language Settings Providers defined with extension point &lt;samp&gt;org.eclipse.cdt.core.LanguageSettingsProvider&lt;/samp&gt;.
       </documentation>
    </annotation>
-
    <element name="extension">
       <annotation>
          <appInfo>
@@ -50,7 +49,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="id-association">
       <annotation>
          <documentation>
@@ -101,7 +99,6 @@
          </attribute>
       </complexType>
    </element>
-
    <element name="class-association">
       <annotation>
          <documentation>
@@ -122,7 +119,7 @@
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  The path to the provider icon in the defining plugin, for example icons/obj16/picture.gif.
+                  The path to the provider icon in the defining plugin, for example &lt;code&gt;icons/obj16/picture.gif&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -155,7 +152,6 @@
          </attribute>
       </complexType>
    </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -164,7 +160,6 @@
          CDT 8.1
       </documentation>
    </annotation>
-
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -173,17 +168,6 @@
          For an example see definition for org.eclipse.cdt.ui.UserLanguageSettingsProvider.
       </documentation>
    </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiinfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
-
-
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -196,5 +180,4 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html
       </documentation>
    </annotation>
-
 </schema>

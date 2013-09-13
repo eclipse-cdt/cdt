@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "a74dd7b0_2a265f6a",
+        "filename": "debug/org.eclipse.cdt.debug.core/schema/BreakpointAction.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-09-13T01:13:00Z",
+      "side": 1,
+      "message": "If you consider the other cleanups in this patch to not be worth applying unless I also remove the crud that will be re-added every time PDE saves the file, I will go ahead and manually remove the crud. But I don\u0027t think doing so (rather than leaving it for now, and fixing PDE) is a Good Idea.",
+      "parentUuid": "a74dd7b0_8a37b396",
+      "revId": "5977c896a04e03940578f97691722fc24d8ee7ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74dd7b0_aaea6f98",
         "filename": "debug/org.eclipse.cdt.debug.core/schema/BreakpointAction.exsd",
         "patchSetId": 2

@@ -3880,7 +3880,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		for (int i=0; i<filenames.size(); i++) {
 			String filename = filenames.get(i);
 			if (filename.length() > 0) {
-				buffer.append(filename + WHITESPACE + LINEBREAK);
+				// Spaces in project names for projects that have secondary targets
+				// need to be escaped, otherwise the secondary targets crash
+				// the build (Bug 417288, ilg@livius.net)
+				buffer.append(escapeWhitespaces(filename) + WHITESPACE + LINEBREAK);
 			}
 		}
 		// re-insert string in the map

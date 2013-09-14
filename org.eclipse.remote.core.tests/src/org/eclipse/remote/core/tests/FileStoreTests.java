@@ -129,16 +129,15 @@ public class FileStoreTests extends TestCase {
 		assertNotNull(fRemoteConnectionManager);
 
 		try {
-			fRemoteConnection = fRemoteConnectionManager.newConnection(CONNECTION_NAME);
+			IRemoteConnectionWorkingCopy wc = fRemoteConnectionManager.newConnection(CONNECTION_NAME);
+			wc.setAddress(HOST);
+			wc.setUsername(USERNAME);
+			wc.setPassword(PASSWORD);
+			fRemoteConnection = wc.save();
+			assertNotNull(fRemoteConnection);
 		} catch (RemoteConnectionException e) {
 			fail(e.getMessage());
 		}
-		assertNotNull(fRemoteConnection);
-		IRemoteConnectionWorkingCopy wc = fRemoteConnection.getWorkingCopy();
-		wc.setAddress(HOST);
-		wc.setUsername(USERNAME);
-		wc.setPassword(PASSWORD);
-		wc.save();
 
 		try {
 			fRemoteConnection.open(new NullProgressMonitor());

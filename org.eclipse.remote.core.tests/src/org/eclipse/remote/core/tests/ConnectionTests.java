@@ -122,16 +122,14 @@ public class ConnectionTests extends TestCase {
 		assertNotNull(fRemoteConnectionManager);
 
 		try {
-			fRemoteConnection = fRemoteConnectionManager.newConnection("test_connection"); //$NON-NLS-1$
+			IRemoteConnectionWorkingCopy wc = fRemoteConnectionManager.newConnection("test_connection"); //$NON-NLS-1$
+			wc.setAddress(HOST);
+			wc.setUsername(USERNAME);
+			wc.setPassword(PASSWORD);
+			fRemoteConnection = wc.save();
 		} catch (RemoteConnectionException e) {
 			fail(e.getMessage());
 		}
-		assertNotNull(fRemoteConnection);
-		IRemoteConnectionWorkingCopy wc = fRemoteConnection.getWorkingCopy();
-		wc.setAddress(HOST);
-		wc.setUsername(USERNAME);
-		wc.setPassword(PASSWORD);
-		wc.save();
 
 		try {
 			fRemoteConnection.open(new NullProgressMonitor());

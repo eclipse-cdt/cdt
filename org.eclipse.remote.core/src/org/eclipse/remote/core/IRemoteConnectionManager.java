@@ -54,17 +54,20 @@ public interface IRemoteConnectionManager {
 	public List<IRemoteConnection> getConnections();
 
 	/**
-	 * Creates a new remote connection named with supplied name. The connection
-	 * attributes will be the default for the implementation.
+	 * Creates a new remote connection named with supplied name. The connection attributes will be the default for the
+	 * implementation.
+	 * 
+	 * Returns a working copy of the remote connection. Callers must call {@link IRemoteConnectionWorkingCopy#save()} before the
+	 * connection can be used.
 	 * 
 	 * @param name
 	 *            name of the connection
-	 * @return a new connection with the supplied name
+	 * @return a new connection working copy with the supplied name
 	 * @throws RemoteConnectionException
 	 *             if connection creation failed
 	 * @since 5.0
 	 */
-	public IRemoteConnection newConnection(String name) throws RemoteConnectionException;
+	public IRemoteConnectionWorkingCopy newConnection(String name) throws RemoteConnectionException;
 
 	/**
 	 * Remove a connection and all resources associated with it.

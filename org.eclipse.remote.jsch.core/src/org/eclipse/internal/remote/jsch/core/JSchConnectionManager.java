@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.internal.remote.jsch.core.messages.Messages;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionManager;
+import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.osgi.service.prefs.BackingStoreException;
@@ -111,11 +112,11 @@ public class JSchConnectionManager implements IRemoteConnectionManager {
 	/**
 	 * @since 5.0
 	 */
-	public IRemoteConnection newConnection(String name) throws RemoteConnectionException {
+	public IRemoteConnectionWorkingCopy newConnection(String name) throws RemoteConnectionException {
 		if (getConnection(name) != null) {
 			throw new RemoteConnectionException(Messages.JSchConnectionManager_connection_with_this_name_exists);
 		}
-		return createConnection(name);
+		return createConnection(name).getWorkingCopy();
 	}
 
 	public void add(JSchConnection conn) {

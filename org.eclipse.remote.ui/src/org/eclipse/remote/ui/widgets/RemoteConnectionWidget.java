@@ -396,8 +396,7 @@ public class RemoteConnectionWidget extends Composite {
 		if (getUIConnectionManager() != null) {
 			IRemoteConnectionWorkingCopy conn = getUIConnectionManager().newConnection(getShell(), fAttrHints, fAttrHintValues);
 			if (conn != null) {
-				conn.save();
-				handleRemoteServiceSelected(conn);
+				handleRemoteServiceSelected(conn.save());
 				handleConnectionSelected();
 			}
 		}

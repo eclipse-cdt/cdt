@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.internal.remote.core.messages.Messages;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionManager;
+import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 
@@ -78,8 +80,8 @@ public class LocalConnectionManager implements IRemoteConnectionManager {
 	 * .lang.String)
 	 */
 	@Override
-	public IRemoteConnection newConnection(String name) throws RemoteConnectionException {
-		return fLocalConnection;
+	public IRemoteConnectionWorkingCopy newConnection(String name) throws RemoteConnectionException {
+		throw new RemoteConnectionException(Messages.Unable_to_create_new_local_connections);
 	}
 
 	/*

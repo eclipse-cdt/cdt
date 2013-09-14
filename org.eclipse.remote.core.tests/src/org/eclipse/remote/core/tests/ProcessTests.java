@@ -180,16 +180,15 @@ public class ProcessTests extends TestCase {
 		assertNotNull(connMgr);
 
 		try {
-			fRemoteConnection = connMgr.newConnection("test_connection"); //$NON-NLS-1$
+			IRemoteConnectionWorkingCopy wc = connMgr.newConnection("test_connection"); //$NON-NLS-1$
+			wc.setAddress(HOST);
+			wc.setUsername(USERNAME);
+			wc.setPassword(PASSWORD);
+			fRemoteConnection = wc.save();
+			assertNotNull(fRemoteConnection);
 		} catch (RemoteConnectionException e) {
 			fail(e.getLocalizedMessage());
 		}
-		assertNotNull(fRemoteConnection);
-		IRemoteConnectionWorkingCopy wc = fRemoteConnection.getWorkingCopy();
-		wc.setAddress(HOST);
-		wc.setUsername(USERNAME);
-		wc.setPassword(PASSWORD);
-		wc.save();
 
 		try {
 			fRemoteConnection.open(new NullProgressMonitor());

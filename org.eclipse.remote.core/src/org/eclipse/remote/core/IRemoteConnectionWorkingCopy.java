@@ -12,6 +12,14 @@ package org.eclipse.remote.core;
 
 public interface IRemoteConnectionWorkingCopy extends IRemoteConnection {
 	/**
+	 * Saves this working copy to its original connection and returns a handle to the resulting connection. Has no effect if this
+	 * connection does not need saving.
+	 * 
+	 * @return saved connection
+	 */
+	public IRemoteConnection save();
+
+	/**
 	 * Set the address for this connection
 	 * 
 	 * @param address
@@ -60,6 +68,4 @@ public interface IRemoteConnectionWorkingCopy extends IRemoteConnection {
 	 * @param username
 	 */
 	public void setUsername(String username);
-
-	public void save();
 }

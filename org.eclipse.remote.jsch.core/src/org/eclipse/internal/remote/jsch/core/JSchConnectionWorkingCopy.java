@@ -13,6 +13,7 @@ package org.eclipse.internal.remote.jsch.core;
 import java.util.Collections;
 import java.util.Map;
 
+import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionChangeEvent;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 
@@ -139,7 +140,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#save()
 	 */
-	public void save() {
+	public IRemoteConnection save() {
 		JSchConnectionAttributes info = fOriginal.getInfo();
 		info.getAttributes().clear();
 		info.getAttributes().putAll(fWorkingAttributes.getAttributes());
@@ -152,6 +153,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 		}
 		info.save();
 		getManager().add(fOriginal);
+		return fOriginal;
 	}
 
 	/*

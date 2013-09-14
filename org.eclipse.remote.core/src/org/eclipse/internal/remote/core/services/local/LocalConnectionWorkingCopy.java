@@ -10,12 +10,21 @@
  *******************************************************************************/
 package org.eclipse.internal.remote.core.services.local;
 
+import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 
 public class LocalConnectionWorkingCopy extends LocalConnection implements IRemoteConnectionWorkingCopy {
 
+	private final LocalConnection fOriginal;
+
 	public LocalConnectionWorkingCopy(LocalConnection connection) {
 		super(connection.getRemoteServices());
+		fOriginal = connection;
+	}
+
+	@Override
+	public IRemoteConnection save() {
+		return fOriginal;
 	}
 
 	@Override
@@ -45,11 +54,6 @@ public class LocalConnectionWorkingCopy extends LocalConnection implements IRemo
 
 	@Override
 	public void setUsername(String username) {
-		// Do nothing
-	}
-
-	@Override
-	public void save() {
 		// Do nothing
 	}
 }

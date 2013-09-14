@@ -8,6 +8,7 @@ public class Messages extends NLS {
 	public static String LocalConnection_2;
 	public static String RemoteServicesProxy_0;
 	public static String RemoteServicesProxy_1;
+	public static String Unable_to_create_new_local_connections;
 
 	static {
 		// initialize resource bundle

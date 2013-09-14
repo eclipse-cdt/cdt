@@ -534,6 +534,9 @@ public class BindingClassifier {
 	}
 
 	private void declareFunction(IFunction function, IASTInitializerClause[] arguments) {
+		if (!canForwardDeclare(function))
+			defineBinding(function);
+
 		// Handle return or expression type of the function or constructor call.
 		IType returnType = function.getType().getReturnType();
 		if (!(returnType instanceof IPointerType) && !(returnType instanceof ICPPReferenceType)) {

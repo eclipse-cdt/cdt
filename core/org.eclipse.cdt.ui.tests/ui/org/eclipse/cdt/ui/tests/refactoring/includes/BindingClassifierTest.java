@@ -258,6 +258,18 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertDeclared("f");
 	}
 
+	//	typedef int int32;
+	//	void f(int32* p);
+
+	//	void test(int i) {
+	//	  f(&i);
+	//	}
+	public void testFunctionCallWithTypedef() throws Exception {
+		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, false);
+		assertDefined("f");
+		assertDeclared();
+	}
+
 	//	struct A {
 	//	  A(void* p);
 	//	};

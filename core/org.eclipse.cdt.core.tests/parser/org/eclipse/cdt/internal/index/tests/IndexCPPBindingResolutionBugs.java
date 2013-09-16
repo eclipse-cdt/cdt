@@ -1334,4 +1334,13 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		assertTrue(name instanceof IASTImplicitName);
 		assertEquals("base", name.resolveBinding().getOwner().getName());
 	}
+
+	//	class A {
+	//	  class B;
+	//	};
+	//	class D : public A {};
+	//	class D::B {};
+	public void _testInvalidOwner_412766() throws Exception {
+		checkBindings();
+	}
 }

@@ -44,6 +44,7 @@ import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
+import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
@@ -175,7 +176,6 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 					
 					"stepUpdateContainer",   //$NON-NLS-1$
 					
-					"stepInitializeMemory",   //$NON-NLS-1$
 					"stepSetArguments",   //$NON-NLS-1$
 					"stepSetEnvironmentVariables",   //$NON-NLS-1$
 					"stepStartTrackingBreakpoints",   //$NON-NLS-1$
@@ -470,9 +470,39 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	 */
 	@Execute
 	public void stepUpdateContainer(RequestMonitor rm) {
-		String groupId = getContainerContext().getGroupId();
-        setContainerContext(fProcService.createContainerContextFromGroupId(fCommandControl.getContext(), groupId));
-		rm.done();
+		// Temporary fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=413483
+		// to avoid introducing a new API in 8.2.1 the memory initialization is added to 
+		// this step.
+		// The proper fix is implemented in 8.2.
+		getExecutor().execute(new Sequence(getExecutor(), rm) {
+
+			@Override
+			public Step[] getSteps() {
+				return new Step[] {
+					new Step() {
+						@Override
+						public void execute(RequestMonitor rm) {
+							String groupId = getContainerContext().getGroupId();
+					        setContainerContext(fProcService.createContainerContextFromGroupId(fCommandControl.getContext(), groupId));
+							rm.done();
+						}
+					},
+					new Step() {
+						@Override
+						public void execute(RequestMonitor rm) {
+							IGDBMemory memory = fTracker.getService(IGDBMemory.class);
+							IMemoryDMContext memContext = DMContexts.getAncestorOfType(getContainerContext(), IMemoryDMContext.class);
+							if (memory == null || memContext == null) {
+								rm.done();
+								return;
+							}
+							memory.initializeMemoryData(memContext, rm);
+						};
+					}
+				};
+			}
+			
+		});
 	}
 	
 	/**
@@ -651,20 +681,5 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		fTracker.dispose();
 		fTracker = null;
 		requestMonitor.done();
-	}
-
-	/**
-	 * Initialize the memory service with the data for given process.
-	 * @since 4.2
-	 */
-	@Execute
-	public void stepInitializeMemory(final RequestMonitor rm) {
-		IGDBMemory memory = fTracker.getService(IGDBMemory.class);
-		IMemoryDMContext memContext = DMContexts.getAncestorOfType(getContainerContext(), IMemoryDMContext.class);
-		if (memory == null || memContext == null) {
-			rm.done();
-			return;
-		}
-		memory.initializeMemoryData(memContext, rm);
 	}
 }

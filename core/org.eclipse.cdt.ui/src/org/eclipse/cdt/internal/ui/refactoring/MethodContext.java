@@ -179,7 +179,7 @@ public class MethodContext {
 
 	private static ICPPClassType getClassBinding(ICPPASTQualifiedName qname) {
 		ICPPASTNameSpecifier classname = qname.getQualifier()[qname.getQualifier().length - 1];
-		ICPPClassType bind = (ICPPClassType)classname.resolveBinding();
+		ICPPClassType bind = (ICPPClassType) classname.resolveBinding();
 		return bind;
 	}
 

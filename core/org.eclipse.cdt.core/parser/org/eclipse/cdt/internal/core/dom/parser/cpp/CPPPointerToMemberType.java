@@ -81,10 +81,11 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 				if (nameSpec instanceof ICPPASTQualifiedName) {
 					ICPPASTQualifiedName qname = ((ICPPASTQualifiedName) nameSpec);
 					ICPPASTNameSpecifier[] qualifier = qname.getQualifier();
-					if (qualifier.length > 0)
+					if (qualifier.length > 0) {
 						nameSpec = qualifier[qualifier.length - 1];
-					else 
-						nameSpec = (ICPPASTName) qname.getLastName(); 
+					} else { 
+						nameSpec = (ICPPASTName) qname.getLastName();
+					}
 				}
 				binding = nameSpec.resolvePreBinding();
 			}

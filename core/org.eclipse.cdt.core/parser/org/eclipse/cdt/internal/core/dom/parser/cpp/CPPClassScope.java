@@ -70,7 +70,7 @@ import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
  * Base implementation for c++ scopes.
  */
 public class CPPClassScope extends CPPScope implements ICPPClassScope {
-    private ICPPMethod[] implicits = null;
+    private ICPPMethod[] implicits;
 
 	public CPPClassScope(ICPPASTCompositeTypeSpecifier physicalNode) {
 		super(physicalNode);

@@ -258,10 +258,12 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 				break;
 			}
 		}
-		for (ICPPASTNameSpecifier nameSpecifier : getQualifier())
+		for (ICPPASTNameSpecifier nameSpecifier : getQualifier()) {
 			if (!nameSpecifier.accept(action))
 				return false;
-		// pointer-to-member qualified names have a dummy name as the last part of the name, don't visit it
+		}
+		// Pointer-to-member qualified names have a dummy name as the last part of the name,
+		// don't visit it.
 		if (fLastName != null && fLastName.getLookupKey().length > 0 && !fLastName.accept(action))
 			return false;
 		

@@ -9,6 +9,7 @@
  *     Bogdan Gheorghe (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Sebastian Bauer
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
@@ -53,6 +54,7 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	private Button fSkipReferences;
 	private Button fSkipImplicitReferences;
 	private Button fSkipMacroAndTypeReferences;
+	private Button fSkipDescriptions;
 
     private IPropertyChangeListener validityChangeListener = new IPropertyChangeListener() {
         @Override
@@ -115,6 +117,7 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		fSkipReferences= createSkipReferencesButton(group);
 		fSkipImplicitReferences= createSkipImplicitReferencesButton(group);
 		fSkipMacroAndTypeReferences= createSkipMacroAndTypeReferencesButton(group);
+		fSkipDescriptions= createSkipDescriptionButton(group);
 		
 		final SelectionAdapter selectionListener = new SelectionAdapter() {
 			@Override
@@ -181,6 +184,10 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			boolean skipMacroReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES));
 			fSkipMacroAndTypeReferences.setSelection(skipTypeReferences && skipMacroReferences);
 		}		
+		if (fSkipDescriptions != null) {
+			boolean skipDescriptions= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_DESCRIPTIONS));
+			fSkipDescriptions.setSelection(skipDescriptions);
+		}
 		updateEnablement();
 	}
 
@@ -218,6 +225,9 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			final String value = String.valueOf(fSkipMacroAndTypeReferences.getSelection());
 			props.put(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES, value);
 			props.put(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES, value);
+		}
+		if (fSkipDescriptions != null) {
+			props.put(IndexerPreferences.KEY_SKIP_DESCRIPTIONS, String.valueOf(fSkipDescriptions.getSelection()));
 		}
 		return props;
 	}
@@ -322,7 +332,11 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	private Button createSkipMacroAndTypeReferencesButton(Composite page) {
 		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_skipTypeAndMacroReferences);
 	}
-	
+
+	private Button createSkipDescriptionButton(Composite page) {
+		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_skipDescriptions);
+	}
+
 	/**
 	 * @deprecated parsing files up-front is no longer necessary.
 	 */

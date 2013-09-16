@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Mike Kucera (IBM)
  *     Sergey Prigogin (Google)
+ *     Sebastian Bauer
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
@@ -130,6 +131,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 		final IScanner scanner= createScanner(reader, scanInfo, fileCreator, log);
 		scanner.setComputeImageLocations((options & OPTION_NO_IMAGE_LOCATIONS) == 0);
 		scanner.setProcessInactiveCode((options & OPTION_PARSE_INACTIVE_CODE) != 0);
+		scanner.setParseDoxygen((options & OPTION_SKIP_DOXYGEN_COMMENTS) == 0);
 
 		final ISourceCodeParser parser= createParser(scanner, log, index, false, options);
 

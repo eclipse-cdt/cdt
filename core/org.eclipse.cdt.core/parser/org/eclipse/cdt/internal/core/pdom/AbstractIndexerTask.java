@@ -494,6 +494,10 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				fASTOptions |= ILanguage.OPTION_SKIP_FUNCTION_BODIES;
 			}
 
+			if (getSkipDescriptions()) {
+				fASTOptions |= ILanguage.OPTION_SKIP_DOXYGEN_COMMENTS;
+			}
+
 			fIndex.resetCacheCounters();
 			fIndex.acquireReadLock();
 

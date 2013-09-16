@@ -66,6 +66,9 @@ public class DialogsMessages extends NLS {
 	public static String DocCommentOwnerBlock_SelectDocToolDescription;
 	public static String DocCommentOwnerCombo_None;
 	public static String DocCommentOwnerComposite_DocumentationToolGroupTitle;
+	/** @since 5.7 */
+	public static String AbstractIndexerPage_skipDescriptions;
+
 	/** @since 5.2 */
 	public static String RegexErrorParserOptionPage_ConsumeNo;
 	/** @since 5.2 */

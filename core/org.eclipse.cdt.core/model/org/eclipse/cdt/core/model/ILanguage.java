@@ -9,6 +9,7 @@
  *    Doug Schaefer (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    IBM Corporation
+ *    Sebastian Bauer
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
@@ -81,6 +82,14 @@ public interface ILanguage extends IAdaptable {
 	 * @since 5.1
 	 */
 	public final static int OPTION_PARSE_INACTIVE_CODE= 0x20;
+
+	/**
+	 * Option for {@link #getASTTranslationUnit(FileContent, IScannerInfo, IncludeFileContentProvider, IIndex, int, IParserLogService)}
+	 * Instructs the parser to skip parsing Doxygen comments in a special way.
+	 *
+	 * @since 5.6
+	 */
+	public final static int OPTION_SKIP_DOXYGEN_COMMENTS = 0x40;
 
 	/**
 	 * Return the language id for this language.

@@ -158,6 +158,7 @@ abstract public class PDOMWriter {
 	protected final IndexerStatistics fStatistics;
 	protected final IndexerInputAdapter fResolver;
 
+	private boolean fSkipDescriptions;
 	private int fSkipReferences= SKIP_NO_REFERENCES;
 
 	public PDOMWriter(IndexerInputAdapter resolver) {
@@ -200,6 +201,14 @@ abstract public class PDOMWriter {
 
 	public int getSkipReferences() {
 		return fSkipReferences;
+	}
+
+	public void setSkipDescriptions(boolean skip) {
+		fSkipDescriptions = skip;
+	}
+
+	public boolean getSkipDescriptions() {
+		return fSkipDescriptions;
 	}
 
 	/**

@@ -327,9 +327,9 @@ public class LocationMapTests extends BaseTestCase {
 
 	public void testComment() {
 		init(DIGITS);
-		fLocationMap.encounteredComment(0, 0, false, fContent);
-		fLocationMap.encounteredComment(1, 3, true, fContent);
-		fLocationMap.encounteredComment(5, 16, true, fContent);
+		fLocationMap.encounteredComment(0, 0, false, false, fContent);
+		fLocationMap.encounteredComment(1, 3, true, false, fContent);
+		fLocationMap.encounteredComment(5, 16, true, false, fContent);
 		IASTComment[] comments= fLocationMap.getComments();
 		assertEquals(3, comments.length);
 		checkComment(comments[0], "", false, FN, 0, 0, 1, 1);
@@ -504,9 +504,9 @@ public class LocationMapTests extends BaseTestCase {
 		IASTName name2= fLocationMap.encounterImplicitMacroExpansion(macro2, null);
 		ILocationCtx me = fLocationMap.pushMacroExpansion(110, 115, 125, 30, macro3, new IASTName[]{name1, name2}, new ImageLocationInfo[0]);
 		// Comment in expansion
-		fLocationMap.encounteredComment(116, 120, false, fContent);
+		fLocationMap.encounteredComment(116, 120, false, false, fContent);
 		// Comment right after expansion, reported before expansion completes.
-		fLocationMap.encounteredComment(125, 140, false, fContent);
+		fLocationMap.encounteredComment(125, 140, false, false, fContent);
 		fLocationMap.popContext(me);
 		checkComment(fLocationMap.getComments()[0], new String(LONGDIGITS, 116, 4), false, FN, 116, 4, 2, 2);
 		checkComment(fLocationMap.getComments()[1], new String(LONGDIGITS, 125, 15), false, FN, 125, 15, 2, 2);
@@ -538,14 +538,14 @@ public class LocationMapTests extends BaseTestCase {
 		// number: [6,15)[25,26)
 		ILocationCtx i1= fLocationMap.pushInclusion(0, 2, 4, 6, new CharArray("b1b2b3b4b5"), "pre1", "pre1".toCharArray(), false, false, false);
 		assertEquals("pre1", fLocationMap.getCurrentFilePath());
-		fLocationMap.encounteredComment(2, 4, true, fContent);
+		fLocationMap.encounteredComment(2, 4, true, false, fContent);
 		// number: [15,25)
 		ILocationCtx i2= fLocationMap.pushInclusion(6, 7, 8, 9, new CharArray("c1c2c3c4c5"), "pre11", "pre11".toCharArray(), false, false, false);
 		assertEquals("pre11", fLocationMap.getCurrentFilePath());
-		fLocationMap.encounteredComment(2, 6, true, fContent);
+		fLocationMap.encounteredComment(2, 6, true, false, fContent);
 		fLocationMap.popContext(i2);
 		// add a comment before the include
-		fLocationMap.encounteredComment(4, 6, false, fContent);
+		fLocationMap.encounteredComment(4, 6, false, false, fContent);
 
 		assertEquals("pre1", fLocationMap.getCurrentFilePath());
 		fLocationMap.popContext(i1);
@@ -555,7 +555,7 @@ public class LocationMapTests extends BaseTestCase {
 		// number [36, 46)
 		ILocationCtx i3= fLocationMap.pushInclusion(0, 2, 4, 6, new CharArray("d1d2d3d4d5"), "pre2", "pre2".toCharArray(), false, false, false);
 		assertEquals("pre2", fLocationMap.getCurrentFilePath());
-		fLocationMap.encounteredComment(0, 2, true, fContent);
+		fLocationMap.encounteredComment(0, 2, true, false, fContent);
 		fLocationMap.popContext(i3);
 		fLocationMap.popContext(pre1);
 		assertEquals(FN, fLocationMap.getCurrentFilePath());

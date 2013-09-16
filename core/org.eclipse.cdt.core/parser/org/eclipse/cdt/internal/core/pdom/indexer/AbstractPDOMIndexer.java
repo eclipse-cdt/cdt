@@ -35,6 +35,7 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 		fProperties.put(IndexerPreferences.KEY_SKIP_IMPLICIT_REFERENCES, String.valueOf(false)); 
 		fProperties.put(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES, String.valueOf(false)); 
 		fProperties.put(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES, String.valueOf(false)); 
+		fProperties.put(IndexerPreferences.KEY_SKIP_DESCRIPTIONS, String.valueOf(false));
 	}
 
 	@Override

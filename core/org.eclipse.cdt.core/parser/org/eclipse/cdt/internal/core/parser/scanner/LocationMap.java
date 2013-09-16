@@ -426,7 +426,7 @@ public class LocationMap implements ILocationResolver {
 		return comment;
 	}
 
-	public void encounteredComment(int offset, int endOffset, boolean isBlockComment, AbstractCharArray input) {
+	public void encounteredComment(int offset, int endOffset, boolean isBlockComment, boolean fParseDoxygen, AbstractCharArray input) {
 		boolean isDoxygenComment = false;
 		if (endOffset - offset > 3) {
 			if (input.get(offset) == '/' && input.get(offset+1) == '*' && input.get(offset+2) == '*') {
@@ -435,7 +435,7 @@ public class LocationMap implements ILocationResolver {
 		}
 
 		ASTComment comment;
-		if (isDoxygenComment) {
+		if (isDoxygenComment && fParseDoxygen) {
 			comment = parseDoxygenComment(offset, endOffset, isBlockComment, input);
 		} else {
 			comment = new ASTComment(fTranslationUnit, getCurrentFilePath(), offset, endOffset, isBlockComment);

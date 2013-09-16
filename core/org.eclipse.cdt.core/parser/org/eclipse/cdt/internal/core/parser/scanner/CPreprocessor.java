@@ -242,6 +242,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     private int fContentAssistLimit= -1;
 	private boolean fHandledCompletion= false;
 	private boolean fSplitShiftRightOperator= false;
+	private boolean fParseDoxygen= false;
 
     // State information
     private final CharArrayMap<PreprocessorMacro> fMacroDictionary = new CharArrayMap<PreprocessorMacro>(512);
@@ -374,6 +375,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 	@Override
 	public void setScanComments(boolean val) {
+	}
+
+	@Override
+	public void setParseDoxygen(boolean val) {
+		fParseDoxygen= val;
 	}
 
 	@Override
@@ -1218,7 +1224,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 	@Override
 	public void handleComment(boolean isBlockComment, int offset, int endOffset, AbstractCharArray input) {
-		fLocationMap.encounteredComment(offset, endOffset, isBlockComment, input);
+		fLocationMap.encounteredComment(offset, endOffset, isBlockComment, fParseDoxygen, input);
 	}
 
     @Override

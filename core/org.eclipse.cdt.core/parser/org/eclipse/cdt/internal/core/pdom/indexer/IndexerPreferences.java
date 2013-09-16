@@ -56,6 +56,7 @@ public class IndexerPreferences {
 	public static final String KEY_SKIP_IMPLICIT_REFERENCES= "skipImplicitReferences"; //$NON-NLS-1$
 	public static final String KEY_SKIP_TYPE_REFERENCES= "skipTypeReferences"; //$NON-NLS-1$
 	public static final String KEY_SKIP_MACRO_REFERENCES= "skipMacroReferences"; //$NON-NLS-1$
+	public static final String KEY_SKIP_DESCRIPTIONS= "skipDescriptions"; //$NON-NLS-1$
 	public static final String KEY_UPDATE_POLICY= "updatePolicy"; //$NON-NLS-1$
 	public static final String KEY_SKIP_FILES_LARGER_THAN_MB = "skipFilesLargerThanMB"; //$NON-NLS-1$
 
@@ -328,6 +329,7 @@ public class IndexerPreferences {
 		prefs.putBoolean(KEY_SKIP_IMPLICIT_REFERENCES, false);
 		prefs.putBoolean(KEY_SKIP_TYPE_REFERENCES, false);
 		prefs.putBoolean(KEY_SKIP_MACRO_REFERENCES, false);
+		prefs.putBoolean(KEY_SKIP_DESCRIPTIONS, false);
 		prefs.put(KEY_INDEX_IMPORT_LOCATION, DEFAULT_INDEX_IMPORT_LOCATION);
 	}
 

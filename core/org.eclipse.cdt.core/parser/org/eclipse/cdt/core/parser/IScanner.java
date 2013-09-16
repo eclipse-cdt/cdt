@@ -118,4 +118,13 @@ public interface IScanner {
 	 */
 	@Deprecated
 	public void setScanComments(boolean val);
+
+	/**
+	 * Set whether comments should be parsed as doxygen comments.
+	 *
+	 * @param val
+	 *
+	 * @since 5.6
+	 */
+	public void setParseDoxygen(boolean val);
 }

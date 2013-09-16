@@ -94,6 +94,9 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 			setIndexFilesWithoutBuildConfiguration(false);
 			setIndexHeadersWithoutContext(UnusedHeaderStrategy.skip);
 		}
+		if (checkProperty(IndexerPreferences.KEY_SKIP_DESCRIPTIONS)) {
+			setSkipDescriptions(true);
+		}
 		setUpdateFlags(IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONTENTS_HASH);
 		setForceFirstFiles(forceFiles.length);
 	}

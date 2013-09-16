@@ -2401,7 +2401,6 @@ public class CPPVisitor extends ASTQueries {
 		    if (owner instanceof ICPPFunction)
 		        break;
 		    if (owner instanceof ICPPNamespace && name.length() == 0) {
-		    	// TODO(sprigogin): Do not ignore anonymous namespaces.
 		    	continue;
 		    }
 

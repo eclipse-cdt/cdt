@@ -655,7 +655,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 
 	/**
 	 * Initialize the memory service with the data for given process.
-	 * @since 4.2
+	 * @since 8.3
 	 */
 	@Execute
 	public void stepInitializeMemory(final RequestMonitor rm) {

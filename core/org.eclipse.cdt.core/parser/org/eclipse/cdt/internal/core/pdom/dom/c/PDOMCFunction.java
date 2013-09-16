@@ -82,8 +82,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		annotations = PDOMCAnnotation.encodeAnnotation(function);
 		setType(getLinkage(), type);
 		setParameters(parameters);
-		IDescription desc = (IDescription)function.getAdapter(IDescription.class);
-		if (desc != null) setDescription(desc.getDescription());
+		updateDescription(function);
 		getDB().putByte(record + ANNOTATIONS, annotations);
 	}
 
@@ -108,6 +107,18 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		return super.getAdapter(adapter);
 	}
 
+	/**
+	 * Update the description of this function based on the description
+	 * of the given new binding.
+	 *
+	 * @param newBinding
+	 * @throws CoreException
+	 */
+	private void updateDescription(IBinding newBinding) throws CoreException {
+		IDescription desc = (IDescription)newBinding.getAdapter(IDescription.class);
+		if (desc != null) setDescription(desc.getDescription());
+	}
+
 	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (!(newBinding instanceof IFunction))
@@ -127,6 +138,9 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		if (oldParams != null) {
 			oldParams.delete(linkage);
 		}
+
+		updateDescription(newBinding);
+
 		getDB().putByte(record + ANNOTATIONS, newAnnotation);
 	}
 

@@ -540,9 +540,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (parent instanceof IPDOMCPPClassType) {
 			if (originalBinding instanceof IEnumerator)
 				originalBinding = originalBinding.getOwner();
-			int visibility = getVisibility(originalBinding);
-			if (visibility >= 0) {
-				((IPDOMCPPClassType) parent).addMember(binding, visibility);
+			try {
+				int visibility = getVisibility(originalBinding);
+				if (visibility >= 0) {
+					((IPDOMCPPClassType) parent).addMember(binding, visibility);
+					return;
+				}
+			} catch (IllegalArgumentException e) {
+				CCorePlugin.log(e);
 				return;
 			}
 		}

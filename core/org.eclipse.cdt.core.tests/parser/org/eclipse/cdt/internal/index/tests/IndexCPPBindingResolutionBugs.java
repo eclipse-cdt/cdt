@@ -1338,9 +1338,10 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	class A {
 	//	  class B;
 	//	};
+
 	//	class D : public A {};
 	//	class D::B {};
-	public void _testInvalidOwner_412766() throws Exception {
-		checkBindings();
+	public void testInvalidOwner_412766() throws Exception {
+		getProblemFromFirstIdentifier("B {}");
 	}
 }

@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a74dd7b0_103282f4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/GdbDebuggerPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-17T20:26:36Z",
+      "side": 1,
+      "message": "Please add your name in copyright header in the same format as other entries (with company name).",
+      "revId": "f705769ca8e19d6fa5631b24e1eed21d52adb9ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_90a4d237",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/GdbDebuggerPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-17T20:26:36Z",
+      "side": 1,
+      "message": "I think this could be \u0027protected\u0027",
+      "revId": "f705769ca8e19d6fa5631b24e1eed21d52adb9ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_702dc695",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/GdbServerDebuggerPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-17T20:26:36Z",
+      "side": 1,
+      "message": "Please add your name in copyright header in the same format as other entries (with company name).",
+      "revId": "f705769ca8e19d6fa5631b24e1eed21d52adb9ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_d1bad207",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/GdbServerDebuggerPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-17T20:26:36Z",
+      "side": 1,
+      "message": "I think it would be safer to check sysrootDirectory is not null before using it.",
+      "revId": "f705769ca8e19d6fa5631b24e1eed21d52adb9ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_31e05603",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/GdbServerDebuggerPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-17T20:26:36Z",
+      "side": 1,
+      "message": "Although not strictly necessary, I would set the ATTR_DEBUGGER_SYSROOT_PATH to \"\" here, to clearly indicate our intention.",
+      "revId": "f705769ca8e19d6fa5631b24e1eed21d52adb9ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_f09716ca",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/GdbServerDebuggerPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-17T20:26:36Z",
+      "side": 1,
+      "message": "protected",
+      "revId": "f705769ca8e19d6fa5631b24e1eed21d52adb9ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_50288a84",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/LaunchUIMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-17T20:26:36Z",
+      "side": 1,
+      "message": "Please add your name in copyright header in the same format as other entries (with company name).",
+      "revId": "f705769ca8e19d6fa5631b24e1eed21d52adb9ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_910ccacd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/LaunchUIMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-17T20:26:36Z",
+      "side": 1,
+      "message": "Rename to \"Binaries\" or \"Executables\" or something of the sort",
+      "revId": "f705769ca8e19d6fa5631b24e1eed21d52adb9ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_b0ce2e5b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGDBLaunchConfigurationConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-17T20:26:36Z",
+      "side": 1,
+      "message": "Please add your name in copyright header in the same format as other entries (with company name).",
+      "revId": "f705769ca8e19d6fa5631b24e1eed21d52adb9ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_d01c9a71",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGDBLaunchConfigurationConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-17T20:26:36Z",
+      "side": 1,
+      "message": "Please move this up to be the last ATTR_* value (below ATTR_DEBUGGER_REMOTE_BINARY)",
+      "revId": "f705769ca8e19d6fa5631b24e1eed21d52adb9ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_5c009938",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-17T20:26:36Z",
+      "side": 1,
+      "message": "You could create a IGDBBackend2 interface to be able to access this method.\n\nOr, we could simply not go through the Backend service for now, and read the attribute directly from GdbConnectCommand using;\n  Map\u003cString, Object\u003e attributes \u003d fLaunch.getLaunchConfiguration().getAttributes();\n\nI prefer the second for now, to avoid adding APIs that we are not %100 confident about.\n\nSo, you probably don\u0027t need to change the current file at all.",
+      "revId": "f705769ca8e19d6fa5631b24e1eed21d52adb9ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

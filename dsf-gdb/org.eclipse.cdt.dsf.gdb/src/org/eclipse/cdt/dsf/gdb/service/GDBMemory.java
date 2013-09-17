@@ -194,6 +194,11 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 
 	@Override
 	public boolean isBigEndian(IMemoryDMContext context) {
+		assert fIsBigEndian != null;
+		if (fIsBigEndian == null) {
+    		GdbPlugin.log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Endianness was never initialized!")); //$NON-NLS-1$
+			return false;
+		}
 		return fIsBigEndian;
 	}
 

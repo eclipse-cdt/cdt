@@ -68,7 +68,7 @@ public interface IServerLogger
 	 * logAudit
 	 * 
 	 * @param data information to log.
-	 * @since 3.6
+	 * @since 3.4
 	 */
 	public void logAudit(String[] data);	
 }

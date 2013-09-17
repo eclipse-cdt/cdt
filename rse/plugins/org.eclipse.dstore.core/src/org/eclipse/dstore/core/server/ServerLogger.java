@@ -331,7 +331,7 @@ public class ServerLogger implements IServerLogger
 	 * logAudit
 	 * 
 	 * @param data information to log.
-	 * @since 3.6
+	 * @since 3.4
 	 */
 	public void logAudit(String[] data){	
 		// initial implementation is a no-op but extenders (i.e. zosServerLogger) can provide 

@@ -105,6 +105,7 @@ public class UniversalServerUtilities {
 	 * 
 	 * @param data information to be logged
 	 * @param dataStore
+	 * @since 3.3
 	 */
 	public static void logAudit(String[] data, DataStore dataStore)
 	{

@@ -390,7 +390,7 @@ public class CommandGenerator
     }
     
     /**
-	 * @since 3.6
+	 * @since 3.4
 	 */
     public DataElement generateOOMMessage(String msg){
     	DataElement oomMessage = _dataStore.createObject(null, "OOM", msg); //$NON-NLS-1$

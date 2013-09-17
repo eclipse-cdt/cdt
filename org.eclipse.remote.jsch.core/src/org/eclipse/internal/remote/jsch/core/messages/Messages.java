@@ -36,7 +36,7 @@ public class Messages extends NLS {
 
 	public static String JSchConnection_Unable_to_open_sftp_channel;
 	public static String JSchConnection_username_must_be_set;
-	public static String JSchConnectionManager_connection_with_this_name_exists;
+	public static String JSchConnectionManager_connection_with_name_exists;
 	public static String JSchConnectionManager_cannotRemoveOpenConnection;
 	public static String JSchConnectionManager_invalidConnectionType;
 

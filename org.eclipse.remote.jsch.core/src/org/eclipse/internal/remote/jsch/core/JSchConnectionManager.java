@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.internal.remote.jsch.core.messages.Messages;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionManager;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
@@ -114,7 +115,7 @@ public class JSchConnectionManager implements IRemoteConnectionManager {
 	 */
 	public IRemoteConnectionWorkingCopy newConnection(String name) throws RemoteConnectionException {
 		if (getConnection(name) != null) {
-			throw new RemoteConnectionException(Messages.JSchConnectionManager_connection_with_this_name_exists);
+			throw new RemoteConnectionException(NLS.bind(Messages.JSchConnectionManager_connection_with_name_exists, name));
 		}
 		return createConnection(name).getWorkingCopy();
 	}

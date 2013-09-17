@@ -27,6 +27,7 @@ import org.eclipse.remote.core.IRemotePreferenceConstants;
 import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.RemoteServices;
 import org.eclipse.remote.ui.IRemoteUIConnectionManager;
+import org.eclipse.remote.ui.IRemoteUIConnectionWizard;
 import org.eclipse.remote.ui.RemoteUIServices;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -114,6 +115,8 @@ public class RemoteConnectionWidget extends Composite {
 
 	}
 
+	public static final String DEFAULT_CONNECTION_NAME = "Remote Host"; //$NON-NLS-1$
+
 	/**
 	 * Force the use of a remote provider dialog, regardless of the PRE_REMOTE_SERVICES_ID preference setting.
 	 * 
@@ -143,9 +146,6 @@ public class RemoteConnectionWidget extends Composite {
 	private boolean fEnabled = true;
 
 	private final IRunnableContext fContext;
-
-	private String[] fAttrHints;
-	private String[] fAttrHintValues;
 
 	private final ListenerList fSelectionListeners = new ListenerList();
 	private final WidgetListener fWidgetListener = new WidgetListener();
@@ -394,10 +394,14 @@ public class RemoteConnectionWidget extends Composite {
 	 */
 	protected void handleNewRemoteConnectionSelected() {
 		if (getUIConnectionManager() != null) {
-			IRemoteConnectionWorkingCopy conn = getUIConnectionManager().newConnection(getShell(), fAttrHints, fAttrHintValues);
-			if (conn != null) {
-				handleRemoteServiceSelected(conn.save());
-				handleConnectionSelected();
+			IRemoteUIConnectionWizard wizard = getUIConnectionManager().getConnectionWizard(getShell());
+			if (wizard != null) {
+				wizard.setConnectionName(initialConnectionName());
+				IRemoteConnectionWorkingCopy conn = wizard.open();
+				if (conn != null) {
+					handleRemoteServiceSelected(conn.save());
+					handleConnectionSelected();
+				}
 			}
 		}
 	}
@@ -476,6 +480,15 @@ public class RemoteConnectionWidget extends Composite {
 		} finally {
 			fWidgetListener.setEnabled(enabled);
 		}
+	}
+
+	private String initialConnectionName() {
+		String name = DEFAULT_CONNECTION_NAME;
+		int count = 1;
+		while (getSelectedServices().getConnectionManager().getConnection(name) != null) {
+			name = DEFAULT_CONNECTION_NAME + " " + count++; //$NON-NLS-1$
+		}
+		return name;
 	}
 
 	/**
@@ -582,17 +595,6 @@ public class RemoteConnectionWidget extends Composite {
 	public void setEnabled(boolean enabled) {
 		fEnabled = enabled;
 		updateEnablement();
-	}
-
-	/**
-	 * Set hints to use when creating a new connection.
-	 * 
-	 * @param attrHints
-	 * @param attrHintValues
-	 */
-	public void setHints(String[] attrHints, String[] attrHintValues) {
-		fAttrHints = attrHints;
-		fAttrHintValues = attrHintValues;
 	}
 
 	private void updateEnablement() {

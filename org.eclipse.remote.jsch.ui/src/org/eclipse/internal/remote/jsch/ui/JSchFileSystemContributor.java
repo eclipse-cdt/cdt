@@ -75,6 +75,7 @@ public class JSchFileSystemContributor extends FileSystemContributor {
 		try {
 			return new URI(string);
 		} catch (URISyntaxException e) {
+			// Ignore
 		}
 		return null;
 	}

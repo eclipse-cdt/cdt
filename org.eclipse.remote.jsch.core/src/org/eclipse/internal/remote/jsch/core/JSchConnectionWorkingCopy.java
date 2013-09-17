@@ -122,7 +122,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 	 */
 	@Override
 	public IRemoteConnectionWorkingCopy getWorkingCopy() {
-		return null;
+		return this;
 	}
 
 	/*

@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.internal.remote.ui.RemoteUIPlugin;
-import org.eclipse.internal.remote.ui.RemoteUIServicesProxy;
+import org.eclipse.internal.remote.ui.RemoteUIServicesDescriptor;
 import org.eclipse.internal.remote.ui.messages.Messages;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -37,7 +37,7 @@ import org.eclipse.ui.PlatformUI;
 public class RemoteUIServices {
 	private static final String EXTENSION_POINT_ID = "remoteUIServices"; //$NON-NLS-1$
 
-	private static Map<String, RemoteUIServicesProxy> fRemoteUIServices = null;
+	private static Map<String, RemoteUIServicesDescriptor> fRemoteUIServices = null;
 	private static Map<String, IRemoteServices> fRemoteServices = new HashMap<String, IRemoteServices>();
 
 	/**
@@ -94,9 +94,9 @@ public class RemoteUIServices {
 		/*
 		 * Find the UI services corresponding to services.
 		 */
-		RemoteUIServicesProxy proxy = fRemoteUIServices.get(services.getId());
-		if (proxy != null) {
-			return proxy.getUIServices(services);
+		RemoteUIServicesDescriptor descriptor = fRemoteUIServices.get(services.getId());
+		if (descriptor != null) {
+			return descriptor.getUIServices(services);
 		}
 		return null;
 	}
@@ -104,19 +104,19 @@ public class RemoteUIServices {
 	/**
 	 * Find and load all remoteUIServices plugins.
 	 */
-	private static Map<String, RemoteUIServicesProxy> retrieveRemoteUIServices() {
+	private static Map<String, RemoteUIServicesDescriptor> retrieveRemoteUIServices() {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = registry.getExtensionPoint(RemoteUIPlugin.getUniqueIdentifier(), EXTENSION_POINT_ID);
 		final IExtension[] extensions = extensionPoint.getExtensions();
 
-		Map<String, RemoteUIServicesProxy> services = new HashMap<String, RemoteUIServicesProxy>(5);
+		Map<String, RemoteUIServicesDescriptor> services = new HashMap<String, RemoteUIServicesDescriptor>(5);
 
 		for (IExtension ext : extensions) {
 			final IConfigurationElement[] elements = ext.getConfigurationElements();
 
 			for (IConfigurationElement ce : elements) {
-				RemoteUIServicesProxy proxy = new RemoteUIServicesProxy(ce);
-				services.put(proxy.getId(), proxy);
+				RemoteUIServicesDescriptor descriptor = new RemoteUIServicesDescriptor(ce);
+				services.put(descriptor.getId(), descriptor);
 			}
 		}
 

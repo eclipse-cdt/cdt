@@ -12,9 +12,13 @@
 package org.eclipse.internal.remote.jsch.ui.wizards;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.internal.remote.jsch.core.Activator;
 import org.eclipse.internal.remote.jsch.core.JSchConnection;
+import org.eclipse.internal.remote.jsch.core.JSchConnectionAttributes;
 import org.eclipse.internal.remote.jsch.core.JSchConnectionWorkingCopy;
 import org.eclipse.internal.remote.jsch.ui.messages.Messages;
 import org.eclipse.jface.wizard.WizardPage;
@@ -60,24 +64,18 @@ public class JSchConnectionPage extends WizardPage {
 	private Combo fCipherCombo;
 	private RemoteFileWidget fFileWidget;
 
-	private String fName;
+	private String fInitialName = "Remote Host"; //$NON-NLS-1$
+	private Set<String> fInvalidConnectionNames;
+	private final Map<String, String> fInitialAttributes = new HashMap<String, String>();
+	private JSchConnectionWorkingCopy fConnection;
 
 	private final IRemoteConnectionManager fConnectionManager;
-	private JSchConnectionWorkingCopy fConnection;
 
 	private final DataModifyListener fDataModifyListener = new DataModifyListener();
 
 	public JSchConnectionPage(IRemoteConnectionManager connMgr) {
 		super(Messages.JSchNewConnectionPage_New_Connection);
 		fConnectionManager = connMgr;
-		fConnection = null;
-		setPageComplete(false);
-	}
-
-	public JSchConnectionPage(IRemoteConnectionManager connMgr, JSchConnectionWorkingCopy conn) {
-		super(Messages.JSchConnectionPage_Edit_Connection);
-		fConnectionManager = connMgr;
-		fConnection = conn;
 		setPageComplete(false);
 	}
 
@@ -205,13 +203,14 @@ public class JSchConnectionPage extends WizardPage {
 
 	public void createControl(Composite parent) {
 		if (fConnection == null) {
-			this.setDescription(Messages.JSchNewConnectionPage_New_connection_properties);
-			this.setTitle(Messages.JSchNewConnectionPage_New_Connection);
+			setDescription(Messages.JSchNewConnectionPage_New_connection_properties);
+			setTitle(Messages.JSchNewConnectionPage_New_Connection);
 		} else {
-			this.setDescription(Messages.JSchConnectionPage_Edit_properties_of_an_existing_connection);
-			this.setTitle(Messages.JSchConnectionPage_Edit_Connection);
+			setDescription(Messages.JSchConnectionPage_Edit_properties_of_an_existing_connection);
+			setTitle(Messages.JSchConnectionPage_Edit_Connection);
 		}
-		this.setErrorMessage(null);
+		setMessage(Messages.JSchConnectionPage_Please_enter_name_for_connection);
+		setErrorMessage(null);
 
 		GridLayout topLayout = new GridLayout(2, false);
 		final Composite topControl = new Composite(parent, SWT.NONE);
@@ -234,22 +233,22 @@ public class JSchConnectionPage extends WizardPage {
 		createAuthControls(authGroup);
 		createAdvancedControls(authGroup);
 
-		registerListeners();
 		loadValues();
+		/*
+		 * Register listeners after loading values so we don't trigger listeners
+		 */
+		registerListeners();
 	}
 
 	public JSchConnectionWorkingCopy getConnection() {
 		return fConnection;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.WizardPage#getName()
-	 */
-	@Override
-	public String getName() {
-		return fName;
+	private boolean isInvalidName(String name) {
+		if (fInvalidConnectionNames == null) {
+			return fConnectionManager.getConnection(name) != null;
+		}
+		return fInvalidConnectionNames.contains(name);
 	}
 
 	private void loadValues() {
@@ -266,6 +265,40 @@ public class JSchConnectionPage extends WizardPage {
 				fPassphraseText.setText(fConnection.getPassphrase());
 				fFileWidget.setLocationPath(fConnection.getKeyFile());
 			}
+		} else {
+			fConnectionName.setText(fInitialName);
+			String host = fInitialAttributes.get(JSchConnectionAttributes.ADDRESS_ATTR);
+			if (host != null) {
+				fHostText.setText(host);
+			}
+			String username = fInitialAttributes.get(JSchConnectionAttributes.USERNAME_ATTR);
+			if (username != null) {
+				fUserText.setText(username);
+			}
+			String port = fInitialAttributes.get(JSchConnectionAttributes.PORT_ATTR);
+			if (port != null) {
+				fPortText.setText(port);
+			}
+			String timeout = fInitialAttributes.get(JSchConnectionAttributes.TIMEOUT_ATTR);
+			if (timeout != null) {
+				fTimeoutText.setText(timeout);
+			}
+			String isPwd = fInitialAttributes.get(JSchConnectionAttributes.IS_PASSWORD_ATTR);
+			if (isPwd != null) {
+				fPasswordButton.setSelection(Boolean.parseBoolean(isPwd));
+			}
+			String password = fInitialAttributes.get(JSchConnectionAttributes.PASSWORD_ATTR);
+			if (password != null) {
+				fPasswordText.setText(password);
+			}
+			String passphrase = fInitialAttributes.get(JSchConnectionAttributes.PASSPHRASE_ATTR);
+			if (passphrase != null) {
+				fPassphraseText.setText(passphrase);
+			}
+			String file = fInitialAttributes.get(JSchConnectionAttributes.KEYFILE_ATTR);
+			if (file != null) {
+				fFileWidget.setLocationPath(file);
+			}
 		}
 	}
 
@@ -277,12 +310,40 @@ public class JSchConnectionPage extends WizardPage {
 		fTimeoutText.addModifyListener(fDataModifyListener);
 	}
 
+	public void setAddress(String address) {
+		fInitialAttributes.put(JSchConnectionAttributes.ADDRESS_ATTR, address);
+	}
+
+	public void setAttributes(Map<String, String> attributes) {
+		fInitialAttributes.putAll(attributes);
+	}
+
+	public void setConnection(JSchConnectionWorkingCopy connection) {
+		fConnection = connection;
+	}
+
+	public void setConnectionName(String name) {
+		fInitialName = name;
+	}
+
+	public void setInvalidConnectionNames(Set<String> names) {
+		fInvalidConnectionNames = names;
+	}
+
 	@Override
 	public void setPageComplete(boolean complete) {
 		super.setPageComplete(complete);
 		if (complete) {
 			storeValues();
 		}
+	}
+
+	public void setPort(int port) {
+		fInitialAttributes.put(JSchConnectionAttributes.PORT_ATTR, Integer.toString(port));
+	}
+
+	public void setUsername(String username) {
+		fInitialAttributes.put(JSchConnectionAttributes.USERNAME_ATTR, username);
 	}
 
 	private void storeValues() {
@@ -334,7 +395,7 @@ public class JSchConnectionPage extends WizardPage {
 		String message = null;
 		if (fConnectionName.getText().trim().length() == 0) {
 			message = Messages.JSchNewConnectionPage_Please_enter_a_connection_name;
-		} else if (fConnection == null && fConnectionManager.getConnection(fConnectionName.getText().trim()) != null) {
+		} else if (isInvalidName(fConnectionName.getText().trim())) {
 			message = Messages.JSchConnectionPage_A_connection_with_that_name_already_exists;
 		} else if (fHostText.getText().trim().length() == 0) {
 			message = Messages.JSchNewConnectionPage_Host_name_cannot_be_empty;
@@ -369,4 +430,5 @@ public class JSchConnectionPage extends WizardPage {
 		}
 		return null;
 	}
+
 }

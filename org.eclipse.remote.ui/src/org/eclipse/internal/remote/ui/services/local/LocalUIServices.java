@@ -18,7 +18,6 @@ import org.eclipse.remote.ui.IRemoteUIServices;
 public class LocalUIServices implements IRemoteUIServices {
 	private static LocalUIServices fInstance = null;
 	private final static LocalUIFileManager fFileMgr = new LocalUIFileManager();
-	private final static LocalUIConnectionManager fConnMgr = new LocalUIConnectionManager();
 
 	/**
 	 * Get shared instance of this class
@@ -63,7 +62,7 @@ public class LocalUIServices implements IRemoteUIServices {
 	 * org.eclipse.remote.ui.IRemoteUIServicesDescriptor#getUIConnectionManager(org.eclipse.remote.core.IRemoteConnectionManager)
 	 */
 	public IRemoteUIConnectionManager getUIConnectionManager() {
-		return fConnMgr;
+		return null;
 	}
 
 	/*

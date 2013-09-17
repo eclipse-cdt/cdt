@@ -13,6 +13,7 @@ package org.eclipse.internal.remote.ui.preferences;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.internal.remote.core.RemoteServicesDescriptor;
 import org.eclipse.internal.remote.core.RemoteServicesImpl;
@@ -36,7 +37,9 @@ import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.RemoteServices;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.ui.IRemoteUIConnectionManager;
+import org.eclipse.remote.ui.IRemoteUIConnectionWizard;
 import org.eclipse.remote.ui.RemoteUIServices;
+import org.eclipse.remote.ui.widgets.RemoteConnectionWidget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -60,6 +63,59 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * 
  */
 public class ConnectionsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+
+	private class ConnectionContentProvider implements IStructuredContentProvider {
+
+		public void dispose() {
+			// Nothing to do
+		}
+
+		public Object[] getElements(Object inputElement) {
+			return fWorkingCopies.values().toArray(new IRemoteConnection[fWorkingCopies.size()]);
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			// Nothing to do
+		}
+
+	}
+
+	private class ConnectionLabelProvider implements ITableLabelProvider {
+
+		public void addListener(ILabelProviderListener listener) {
+			// Nothing to do
+		}
+
+		public void dispose() {
+			// Nothing to do
+		}
+
+		public Image getColumnImage(Object element, int columnIndex) {
+			return null;
+		}
+
+		public String getColumnText(Object element, int columnIndex) {
+			IRemoteConnection connection = (IRemoteConnection) element;
+			switch (columnIndex) {
+			case 0:
+				return connection.getName();
+			case 1:
+				return connection.getAddress();
+			case 2:
+				return connection.getUsername();
+			}
+			return null;
+		}
+
+		public boolean isLabelProperty(Object element, String property) {
+			return false;
+		}
+
+		public void removeListener(ILabelProviderListener listener) {
+			// Nothing to do
+		}
+
+	}
 
 	/**
 	 * Handle widget selection events for this page
@@ -93,60 +149,8 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 
 	}
 
-	private class ConnectionContentProvider implements IStructuredContentProvider {
-
-		public Object[] getElements(Object inputElement) {
-			return fWorkingCopies.values().toArray(new IRemoteConnection[fWorkingCopies.size()]);
-		}
-
-		public void dispose() {
-			// Nothing to do
-		}
-
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// Nothing to do
-		}
-
-	}
-
-	private class ConnectionLabelProvider implements ITableLabelProvider {
-
-		public Image getColumnImage(Object element, int columnIndex) {
-			return null;
-		}
-
-		public String getColumnText(Object element, int columnIndex) {
-			IRemoteConnection connection = (IRemoteConnection) element;
-			switch (columnIndex) {
-			case 0:
-				return connection.getName();
-			case 1:
-				return connection.getAddress();
-			case 2:
-				return connection.getUsername();
-			}
-			return null;
-		}
-
-		public void addListener(ILabelProviderListener listener) {
-			// Nothing to do
-		}
-
-		public void dispose() {
-			// Nothing to do
-		}
-
-		public boolean isLabelProperty(Object element, String property) {
-			return false;
-		}
-
-		public void removeListener(ILabelProviderListener listener) {
-			// Nothing to do
-		}
-
-	}
-
-	private final String[] fTableColumnHeaders = { Messages.ConnectionsPreferencePage_Connection_Name, Messages.ConnectionsPreferencePage_Host, Messages.ConnectionsPreferencePage_User };
+	private final String[] fTableColumnHeaders = { Messages.ConnectionsPreferencePage_Connection_Name,
+			Messages.ConnectionsPreferencePage_Host, Messages.ConnectionsPreferencePage_User };
 
 	private final ColumnLayoutData[] fTableColumnLayouts = { new ColumnWeightData(30), new ColumnWeightData(50),
 			new ColumnWeightData(20) };
@@ -167,6 +171,8 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 
 	private final Map<String, IRemoteConnection> fWorkingCopies = new HashMap<String, IRemoteConnection>();
 
+	private static final String DEFAULT_CONNECTION_NAME = "Remote Host"; //$NON-NLS-1$
+
 	public ConnectionsPreferencePage() {
 		super();
 	}
@@ -179,41 +185,32 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		super(title, image);
 	}
 
-	public void init(IWorkbench workbench) {
-		// Do nothing
-	}
-
-	private void initWorkingConnections() {
-		fWorkingCopies.clear();
-		for (IRemoteConnection conn : fConnectionManager.getConnections()) {
-			fWorkingCopies.put(conn.getName(), conn);
-		}
-	}
-
-	/**
-	 * Delete service configurations when Ok button is pressed
-	 * 
-	 * @return Status from superclass indicating if Ok processing is to continue
-	 */
-	@Override
-	public boolean performOk() {
-		if (fIsDirty) {
-			updateConnections();
-			fIsDirty = false;
-		}
-		return super.performOk();
-	}
-
 	/**
 	 * Add a service configuration to the set of service configurations
 	 */
 	private void addConnection() {
-		IRemoteConnectionWorkingCopy conn = fUIConnectionManager.newConnection(getShell(), null, null);
-		if (conn != null) {
-			fWorkingCopies.put(conn.getName(), conn);
-			fConnectionViewer.refresh();
-			fIsDirty = true;
+		IRemoteUIConnectionWizard wizard = fUIConnectionManager.getConnectionWizard(getShell());
+		if (wizard != null) {
+			wizard.setConnectionName(initialConnectionName());
+			wizard.setInvalidConnectionNames(invalidConnectionNames());
+			IRemoteConnectionWorkingCopy conn = wizard.open();
+			if (conn != null) {
+				fWorkingCopies.put(conn.getName(), conn);
+				fConnectionViewer.refresh();
+				fIsDirty = true;
+			}
 		}
+	}
+
+	/**
+	 * Create the contents for this page
+	 * 
+	 * @param parent
+	 *            - The parent widget for the client area
+	 */
+	@Override
+	protected Control createContents(Composite parent) {
+		return createWidgets(parent);
 	}
 
 	/**
@@ -313,12 +310,63 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 	private void editConnection() {
 		if (fSelectedConnection != null) {
 			IRemoteConnectionWorkingCopy copy = fSelectedConnection.getWorkingCopy();
-			if (fUIConnectionManager.updateConnection(getShell(), copy)) {
-				fWorkingCopies.put(copy.getName(), copy);
-				fConnectionViewer.refresh();
-				fIsDirty = true;
+			IRemoteUIConnectionWizard wizard = fUIConnectionManager.getConnectionWizard(getShell());
+			if (wizard != null) {
+				wizard.setConnection(copy);
+				wizard.setInvalidConnectionNames(invalidConnectionNames());
+				IRemoteConnectionWorkingCopy conn = wizard.open();
+				if (conn != null) {
+					fWorkingCopies.put(copy.getName(), copy);
+					fConnectionViewer.refresh();
+					fIsDirty = true;
+				}
 			}
 		}
+	}
+
+	public void init(IWorkbench workbench) {
+		// Do nothing
+	}
+
+	private String initialConnectionName() {
+		String name = RemoteConnectionWidget.DEFAULT_CONNECTION_NAME;
+		int count = 2;
+		while (fWorkingCopies.containsKey(name)) {
+			name = DEFAULT_CONNECTION_NAME + " " + count++; //$NON-NLS-1$
+		}
+		return name;
+	}
+
+	private Set<String> invalidConnectionNames() {
+		return fWorkingCopies.keySet();
+	}
+
+	private void initWorkingConnections() {
+		fWorkingCopies.clear();
+		for (IRemoteConnection conn : fConnectionManager.getConnections()) {
+			fWorkingCopies.put(conn.getName(), conn);
+		}
+	}
+
+	@Override
+	protected void performDefaults() {
+		initWorkingConnections();
+		fIsDirty = false;
+		super.performDefaults();
+	}
+
+	/**
+	 * Delete service configurations when Ok button is pressed
+	 * 
+	 * @return Status from superclass indicating if Ok processing is to continue
+	 */
+	@Override
+	public boolean performOk() {
+		if (fIsDirty) {
+			updateConnections();
+			fIsDirty = false;
+		}
+		return super.performOk();
 	}
 
 	/**
@@ -388,23 +436,5 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			}
 		}
 		initWorkingConnections();
-	}
-
-	/**
-	 * Create the contents for this page
-	 * 
-	 * @param parent
-	 *            - The parent widget for the client area
-	 */
-	@Override
-	protected Control createContents(Composite parent) {
-		return createWidgets(parent);
-	}
-
-	@Override
-	protected void performDefaults() {
-		initWorkingConnections();
-		fIsDirty = false;
-		super.performDefaults();
 	}
 }

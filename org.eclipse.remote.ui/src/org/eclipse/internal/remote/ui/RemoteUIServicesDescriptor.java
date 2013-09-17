@@ -18,7 +18,7 @@ import org.eclipse.remote.ui.IRemoteUIServices;
 import org.eclipse.remote.ui.IRemoteUIServicesDescriptor;
 import org.eclipse.remote.ui.IRemoteUIServicesFactory;
 
-public class RemoteUIServicesProxy implements IRemoteUIServicesDescriptor {
+public class RemoteUIServicesDescriptor implements IRemoteUIServicesDescriptor {
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
 	private static final String ATTR_CLASS = "class"; //$NON-NLS-1$
@@ -40,7 +40,7 @@ public class RemoteUIServicesProxy implements IRemoteUIServicesDescriptor {
 	private IRemoteUIServicesFactory fFactory = null;
 	private IRemoteUIServices fDelegate = null;
 
-	public RemoteUIServicesProxy(IConfigurationElement configElement) {
+	public RemoteUIServicesDescriptor(IConfigurationElement configElement) {
 		this.configElement = configElement;
 		this.id = getAttribute(configElement, ATTR_ID, null);
 		this.name = getAttribute(configElement, ATTR_NAME, this.id);

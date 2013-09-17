@@ -22,6 +22,7 @@
  * Anna Dushistova  (MontaVista) - [258720] SshHostShell fails to run command if initialWorkingDirectory supplied
  * Rob Stryker (JBoss) - [335059] TerminalServiceShellOutputReader logs error when hostShell.exit() is called
  * Martin Oberhuber (Wind River) - [356132] wait for initial output
+ * Ioana Grigoropol (Intel)      - [411343] Provide access to readers in host shell
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.shells;
@@ -47,7 +48,7 @@ public class TerminalServiceHostShell extends AbstractHostShell {
 	public static final String SHELL_INVOCATION = ">"; //$NON-NLS-1$
 
 	ITerminalShell fTerminalShell;
-	
+	BufferedReader fBufReader;
 	private TerminalServiceShellOutputReader fStdoutHandler;
 	
 	private TerminalServiceShellOutputReader fStderrHandler;
@@ -60,21 +61,21 @@ public class TerminalServiceHostShell extends AbstractHostShell {
 		try {
 			fTerminalShell = terminalShell;
 			String encoding = fTerminalShell.getDefaultEncoding();
-			BufferedReader bufReader;
+
 			if (encoding != null) {
-				bufReader = new BufferedReader(new InputStreamReader(fTerminalShell
+				fBufReader = new BufferedReader(new InputStreamReader(fTerminalShell
 						.getInputStream(), encoding)); 
 			} else {
-				bufReader = new BufferedReader(new InputStreamReader(fTerminalShell
+				fBufReader = new BufferedReader(new InputStreamReader(fTerminalShell
 								.getInputStream()));
 			}
 			//bug 356132: wait for initial output before sending any command
 			//FIXME this should likely move into the TerminalServiceShellWriterThread, so wait can be canceled
-			bufReader.mark(1);
-			bufReader.read();
-			bufReader.reset();
+			fBufReader.mark(1);
+			fBufReader.read();
+			fBufReader.reset();
 			
-			fStdoutHandler = new TerminalServiceShellOutputReader(this, bufReader, false);
+			fStdoutHandler = new TerminalServiceShellOutputReader(this, fBufReader, false);
 			fStderrHandler = new TerminalServiceShellOutputReader(this, null, true);
 			OutputStream outputStream = fTerminalShell.getOutputStream();
 			if (encoding != null) {
@@ -170,4 +171,7 @@ public class TerminalServiceHostShell extends AbstractHostShell {
 		return "echo $PWD'>'"; //$NON-NLS-1$
 	}
 
+	public BufferedReader getReader(boolean isErrorReader) {
+		return fBufReader;
+	}
 }

@@ -11,10 +11,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ *   Ioana Grigoropol (Intel)      - [411343] Provide access to readers in host shell
  ********************************************************************************/
 
 package org.eclipse.rse.services.shells;
+
+import java.io.BufferedReader;
 
 
 public abstract class AbstractHostShell implements IHostShell
@@ -32,6 +34,13 @@ public abstract class AbstractHostShell implements IHostShell
 		{
 			errReader.addOutputListener(listener);
 		}
+	}
+	
+	/**
+	 * @since 3.3
+	 */
+	public BufferedReader getReader(boolean isErrorReader) {
+		return null;
 	}
 
 }

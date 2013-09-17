@@ -389,6 +389,9 @@ public class CommandGenerator
         return commandObject;
     }
     
+    /**
+	 * @since 3.6
+	 */
     public DataElement generateOOMMessage(String msg){
     	DataElement oomMessage = _dataStore.createObject(null, "OOM", msg); //$NON-NLS-1$
     	return oomMessage;

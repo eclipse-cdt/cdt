@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a74dd7b0_3982f4a1",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3885,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-09-18T16:14:58Z",
+      "side": 1,
+      "message": "The code itself is quite straightforward here, no comment is necessary.",
+      "revId": "96c82854a9c206668f8525b0750287125b268eb8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_794f5c11",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3886,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-09-18T16:14:58Z",
+      "side": 1,
+      "message": "It seems to me that a suggestion in bug 373438 is a notch better. Could you use that and resubmit the patch?",
+      "revId": "96c82854a9c206668f8525b0750287125b268eb8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a74dd7b0_c28042d6",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 5900,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-18T01:30:54Z",
+      "side": 1,
+      "message": "Fits into previous line.",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_a2c4160c",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/language/settings/providers/LanguageSettingsScannerInfoProvider.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-18T01:30:54Z",
+      "side": 1,
+      "message": "\"..getName()\" is redundant.",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_82c75a0e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/AbstractCLikeLanguage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-18T01:30:54Z",
+      "side": 1,
+      "message": "A space is missing before (",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_e2ca9e15",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/AbstractCLikeLanguage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-18T01:30:54Z",
+      "side": 1,
+      "message": "GNU-related code doesn\u0027t belong to this class.",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_c2cde22e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/ExtendedScannerInfo.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-18T01:30:54Z",
+      "side": 1,
+      "message": "Gets -\u003e Returns",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_22d806e9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IParserSettings.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-18T01:30:54Z",
+      "side": 1,
+      "message": "Copyringt is missing.",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_42f0b251",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IParserSettings.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-18T01:30:54Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_a216d607",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IParserSettings.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-18T01:30:54Z",
+      "side": 1,
+      "message": "Explain semantics of -1.",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

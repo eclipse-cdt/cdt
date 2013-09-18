@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.internal.remote.core.services.local.LocalServices;
+import org.eclipse.remote.core.RemoteServices;
 
 /**
  * Main entry point for remote services
@@ -56,7 +58,8 @@ public class RemoteServicesImpl {
 	}
 
 	/**
-	 * Retrieve a sorted list of remote service descriptors.
+	 * Retrieve a sorted list of remote service descriptors. Does not return the local service provider. This must be obtained
+	 * using the {@link RemoteServices#getLocalServices()} method.
 	 * 
 	 * @return remote service descriptors
 	 */
@@ -64,7 +67,9 @@ public class RemoteServicesImpl {
 		retrieveRemoteServices();
 		List<RemoteServicesDescriptor> descriptors = new ArrayList<RemoteServicesDescriptor>();
 		for (RemoteServicesDescriptor descriptor : fRemoteServicesById.values()) {
-			descriptors.add(descriptor);
+			if (!descriptor.getId().equals(LocalServices.LocalServicesId)) {
+				descriptors.add(descriptor);
+			}
 		}
 		Collections.sort(descriptors);
 		return descriptors;

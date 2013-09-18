@@ -6,7 +6,7 @@
       <remoteServices
             class="org.eclipse.internal.remote.jsch.core.JSchServicesFactory"
             id="org.eclipse.remote.JSch"
-            name="JSch"
+            name="Built-in SSH"
             scheme="ssh">
       </remoteServices>
    </extension>

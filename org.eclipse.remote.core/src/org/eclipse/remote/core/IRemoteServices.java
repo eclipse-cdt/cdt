@@ -22,6 +22,7 @@ public interface IRemoteServices extends IRemoteServicesDescriptor {
 	public static final int CAPABILITY_REMOVE_CONNECTIONS = 0x04;
 	public static final int CAPABILITY_SUPPORTS_TCP_PORT_FORWARDING = 0x08;
 	public static final int CAPABILITY_SUPPORTS_X11_FORWARDING = 0x10;
+	public static final int CAPABILITY_SUPPORTS_COMMAND_SHELL = 0x20;
 
 	/**
 	 * Get a connection manager for managing remote connections.

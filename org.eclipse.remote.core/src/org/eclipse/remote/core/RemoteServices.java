@@ -13,8 +13,8 @@ package org.eclipse.remote.core;
 import java.net.URI;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.internal.remote.core.RemoteServicesImpl;
 import org.eclipse.internal.remote.core.RemoteServicesDescriptor;
+import org.eclipse.internal.remote.core.RemoteServicesImpl;
 import org.eclipse.internal.remote.core.services.local.LocalServices;
 
 /**
@@ -23,19 +23,13 @@ import org.eclipse.internal.remote.core.services.local.LocalServices;
  * @since 7.0
  */
 public class RemoteServices {
-	// Local services
-	private static IRemoteServices fLocalServices;
-
 	/**
 	 * Retrieve the local services provider. Guaranteed to exist and be initialized.
 	 * 
 	 * @return local services provider
 	 */
 	public static IRemoteServices getLocalServices() {
-		if (fLocalServices == null) {
-			fLocalServices = getRemoteServices(LocalServices.LocalServicesId);
-		}
-		return fLocalServices;
+		return getRemoteServices(LocalServices.LocalServicesId);
 	}
 
 	/**

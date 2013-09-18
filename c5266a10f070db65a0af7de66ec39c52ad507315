@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a74dd7b0_327211d4",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 5900,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-18T12:52:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_c28042d6",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74dd7b0_a2c4160c",
         "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/language/settings/providers/LanguageSettingsScannerInfoProvider.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2013-09-18T01:30:54Z",
       "side": 1,
       "message": "\"..getName()\" is redundant.",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_922cc51e",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/language/settings/providers/LanguageSettingsScannerInfoProvider.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-18T12:52:23Z",
+      "side": 1,
+      "message": "Done - Replaced by CModelManager",
+      "parentUuid": "a74dd7b0_a2c4160c",
       "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "a74dd7b0_6506955d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/AbstractCLikeLanguage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-18T12:52:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_82c75a0e",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74dd7b0_e2ca9e15",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/AbstractCLikeLanguage.java",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2013-09-18T01:30:54Z",
       "side": 1,
       "message": "GNU-related code doesn\u0027t belong to this class.",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_e59465c7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/AbstractCLikeLanguage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-18T12:52:23Z",
+      "side": 1,
+      "message": "Done - Actually, the reference to AbstactGNUSourceCodeParser has just been moved. It was already there (see lines 205-211). If we place it in the createParser method the information has to be passed down. This would require an additional overload of the createParser method, to be overwritten in GPPLanguage and GCCLanguage. If I understood that correctly, if the new overload was abstract as well, this required a major version increase of the core. We could make it not abstract though, with a redirecting default implementation. Beside the new IParserSettings parameter we, additionally, need to pass the options, as the basic switch enabling/disabling this feature is located there. - I don\u0027t prefer this solutions as it duplicates the logic for setting the skip-option and adds additional overloads for createParser.",
+      "parentUuid": "a74dd7b0_e2ca9e15",
       "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "a74dd7b0_c8d220c8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/ExtendedScannerInfo.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-18T12:52:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_c2cde22e",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74dd7b0_22d806e9",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IParserSettings.java",
         "patchSetId": 5
@@ -98,6 +188,24 @@
       "writtenOn": "2013-09-18T01:30:54Z",
       "side": 1,
       "message": "Copyringt is missing.",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_28de24d5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IParserSettings.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-18T12:52:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_22d806e9",
       "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "a74dd7b0_08d9a8ea",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IParserSettings.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-18T12:52:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_42f0b251",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74dd7b0_a216d607",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IParserSettings.java",
         "patchSetId": 5
@@ -132,6 +258,24 @@
       "writtenOn": "2013-09-18T01:30:54Z",
       "side": 1,
       "message": "Explain semantics of -1.",
+      "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_68eb0c71",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IParserSettings.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2013-09-18T12:52:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_a216d607",
       "revId": "c5266a10f070db65a0af7de66ec39c52ad507315",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

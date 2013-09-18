@@ -3880,6 +3880,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		for (int i=0; i<filenames.size(); i++) {
 			String filename = filenames.get(i);
 			if (filename.length() > 0) {
+				
+				// Bug 417288, ilg@livius.net & freidin.alex@gmail.com
+				filename = ensurePathIsGNUMakeTargetRuleCompatibleSyntax(filename);
+				
 				buffer.append(filename + WHITESPACE + LINEBREAK);
 			}
 		}

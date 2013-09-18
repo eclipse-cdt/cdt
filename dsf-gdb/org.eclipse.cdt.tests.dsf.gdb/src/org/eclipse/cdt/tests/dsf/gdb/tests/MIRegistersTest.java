@@ -7,15 +7,19 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug 323552)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
@@ -46,6 +50,7 @@ import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
+import org.eclipse.cdt.dsf.mi.service.MIRegisters.MIRegisterDMC;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -279,7 +284,17 @@ public class MIRegistersTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
     	List<String> regNames = get_X86_REGS(); 
-    	
+
+        IRegisterDMData[] datas = getRegistersData(regDMCs);
+        
+    	for(IRegisterDMData data: datas){
+    		String regName = data.getName();
+   			Assert.assertFalse("GDB does not support register name: " + regName, !regNames.contains(regName));
+    	}
+    }
+    
+    private IRegisterDMData[] getRegistersData(final IRegisterDMContext[] regDMCs) throws InterruptedException, ExecutionException {
+   
         Query<IRegisterDMData[]> query = new Query<IRegisterDMData[]>() {
             @Override
             protected void execute(DataRequestMonitor<IRegisterDMData[]> rm) {
@@ -305,15 +320,10 @@ public class MIRegistersTest extends BaseTestCase {
 
         fSession.getExecutor().execute(query);
         
-        IRegisterDMData[] datas = query.get();
-    	
-    	for(IRegisterDMData data: datas){
-    		String regName = data.getName();
-   			Assert.assertFalse("GDB does not support register name: " + regName, !regNames.contains(regName));
-    	}
-    }
-    
-    private String getModelDataForRegisterDataValue(IFrameDMContext frameDmc, String format, int regNo) throws Throwable {
+        return query.get();
+	}
+
+	private String getModelDataForRegisterDataValue(IFrameDMContext frameDmc, String format, int regNo) throws Throwable {
     	final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
     	
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
@@ -548,4 +558,75 @@ public class MIRegistersTest extends BaseTestCase {
     	assertTrue("Failed writing register. New value should have been " + regValue + "instead of " + val, regValue.equals(val));
     }
     
+    /**
+     * This test validates retrieval of different values for the same register used on different frames
+     */
+    @Test
+	public void frameSpecificValues() throws Throwable {
+		// Step to a multi-level stack level to be able to test different stack frames
+		SyncUtil.runToLocation("PrintHello");
+		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_OVER);
+		int depth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
+
+		// validate expected stack depth
+		assertEquals(4, depth);
+
+		// Resolve the register name of the stack pointer
+		String sp_name = resolveStackPointerName();
+		assertNotNull(sp_name);
+
+		// Get the stack pointer value for frame0
+		IFrameDMContext frame0 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IRegisterDMContext[] registers_f0 = getRegisters(frame0);
+		MIRegisterDMC sp_reg_f0 = (MIRegisterDMC) findStackPointerRegister(sp_name, registers_f0);
+		assertNotNull(sp_reg_f0);
+		String sp_f0_str = getModelDataForRegisterDataValue(frame0, IFormattedValues.HEX_FORMAT, sp_reg_f0.getRegNo());
+	
+		// Get the stack pointer value for frame1
+		IFrameDMContext frame1 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 1);
+		IRegisterDMContext[] registers_f1 = getRegisters(frame1);
+		MIRegisterDMC sp_reg_f1 = (MIRegisterDMC) findStackPointerRegister(sp_name, registers_f1);
+		assertNotNull(sp_reg_f1);
+		String sp_f1_str = getModelDataForRegisterDataValue(frame1, IFormattedValues.HEX_FORMAT, sp_reg_f1.getRegNo());
+		
+		//The stack pointer's are not expected to be the same among frames
+		assertNotEquals("Stack pointers shall be different among frames", sp_f0_str, sp_f1_str);
+	}
+
+	private IRegisterDMContext findStackPointerRegister(String sp_name, IRegisterDMContext[] registerDMCs) throws InterruptedException, ExecutionException {
+		IRegisterDMData[] registersData = getRegistersData(registerDMCs);
+		for (int i = 0; i < registersData.length; i++) {
+			IRegisterDMData registerData = registersData[i];
+			
+			if (registerData.getName().equals(sp_name)) {
+				return registerDMCs[i];
+			}
+		}
+		
+		return null;
+	}
+
+	private String resolveStackPointerName() throws Throwable {
+		List<String> regNames = get_X86_REGS();
+		
+		// for 64 bits
+		String sp_name = "rsp";
+		if (regNames.contains(sp_name)) {
+			return sp_name;
+		}
+		
+		// for 32 bits
+		sp_name = "esp";
+		if (regNames.contains(sp_name)) {
+			return sp_name;
+		}
+		
+		// for 16 bits
+		sp_name = "sp";
+		if (regNames.contains(sp_name)) {
+			return sp_name;
+		}
+		
+		return null;
+	}
 }

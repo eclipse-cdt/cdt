@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug 323552)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.register;
 
@@ -19,6 +20,7 @@ import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.ui.DsfDebugUITools;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.update.BreakpointHitUpdatePolicy;
@@ -168,24 +170,26 @@ public class RegisterVMProvider extends AbstractDMVMProvider
      */
     @Override
 	public void update(IViewerInputUpdate update) {
-    	/*
-    	 * Use the execution context in the current selection as the input provider.
-    	 * This insures that the REGISTER VIEW will not collapse and expand on stepping or on
-    	 * re-selection in the DEBUG VIEW.  Currently the register content is not stack frame
-    	 * specific. If it were to become so then we would need to modify this policy.
-    	 */
+		/*
+		 * Using the frame context as first alternative to display register values per stack frame
+		 * if not available e.g. user selected a thread, the execution context is used instead
+		 */
     	Object element = update.getElement();
     	if (element instanceof IDMVMContext) {
         	IDMContext ctx = ((IDMVMContext) element).getDMContext();
-    
-        	IExecutionDMContext execDmc = DMContexts.getAncestorOfType(ctx, IExecutionDMContext.class);
-    		if ( execDmc != null ) {
+
+			IDMContext selDmc = DMContexts.getAncestorOfType(ctx, IFrameDMContext.class);
+			if (selDmc == null) {
+				selDmc = DMContexts.getAncestorOfType(ctx, IExecutionDMContext.class);
+			}
+        	
+    		if ( selDmc != null ) {
     			/*
     			 * This tells the Flexible Hierarchy that element driving this view has not changed
     			 * and there is no need to redraw the view. Since this is a somewhat fake VMContext
     			 * we provide our Root Layout node as the representative VM node.
     			 */
-    			update.setInputElement(new ViewInputElement(RegisterVMProvider.this.getRootVMNode(), execDmc));
+    			update.setInputElement(new ViewInputElement(RegisterVMProvider.this.getRootVMNode(), selDmc));
     			update.done();
     			return;
     		}

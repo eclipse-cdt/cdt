@@ -8,10 +8,13 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
+ *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug 323552)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -35,12 +38,34 @@ public class MIDataListRegisterValues extends MICommand<MIDataListRegisterValues
     int[] regnums;
     int fFmt;
     
-    public MIDataListRegisterValues(IMIExecutionDMContext ctx, int fmt) {
+    /**
+	 * @since 4.3
+	 */
+    public MIDataListRegisterValues(IFrameDMContext ctx, int fmt) {
         this(ctx, fmt, null);
     }
 
+    /**
+     * @since 4.3
+     */
+    public MIDataListRegisterValues(IFrameDMContext ctx, int fmt, int [] regnos) {
+    	super(ctx, "-data-list-register-values"); //$NON-NLS-1$
+    	init(fmt, regnos);
+    }
+
+    @Deprecated
+    public MIDataListRegisterValues(IMIExecutionDMContext ctx, int fmt) {
+        this(ctx, fmt, null);
+    }
+    
+    @Deprecated
     public MIDataListRegisterValues(IMIExecutionDMContext ctx, int fmt, int [] regnos) {
         super(ctx, "-data-list-register-values"); //$NON-NLS-1$
+        init(fmt, regnos);
+    }
+    
+    
+    private void init(int fmt, int [] regnos) {
         regnums = regnos;
 
         String format = "x"; //$NON-NLS-1$
@@ -86,7 +111,16 @@ public class MIDataListRegisterValues extends MICommand<MIDataListRegisterValues
         /*
          * Can coalesce only with other DsfMIDataListRegisterValues commands.
          */
-        if (! (command instanceof  MIDataListRegisterValues) ) return null;    
+        if (! (command instanceof  MIDataListRegisterValues) ) return null;
+        
+        IDMContext context = getContext();
+        
+        /*
+         * Make sure we are coalescing over the same context
+         */
+        if (!command.getContext().equals(context)) {
+        	return null;
+        }
         
         MIDataListRegisterValues  cmd = (MIDataListRegisterValues) command;
         
@@ -145,6 +179,14 @@ public class MIDataListRegisterValues extends MICommand<MIDataListRegisterValues
         /*
          *  Now construct a new one. The format we will use is this command.
          */
-        return( new MIDataListRegisterValues((IMIExecutionDMContext)getContext(), fFmt, finalregnums));
+        MIDataListRegisterValues dataValues;
+        if (context instanceof IFrameDMContext) {
+        	dataValues = new MIDataListRegisterValues((IFrameDMContext)context, fFmt, finalregnums);
+        } else {
+        	//Keeping for compatibility with potential users
+        	dataValues = new MIDataListRegisterValues((IMIExecutionDMContext)context, fFmt, finalregnums);        	
+        }
+        
+        return(dataValues);
     }
 }

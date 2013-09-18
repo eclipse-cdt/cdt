@@ -112,13 +112,12 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTestCase {
         }
     }
 
-    public class ParserConfiguration implements IParserConfiguration {
-
+    private class TestParserConfiguration implements IParserConfiguration {
         private final IScannerInfo info;
 
         private final String dialect;
 
-        public ParserConfiguration(IScannerInfo s, IFile code) {
+        public TestParserConfiguration(IScannerInfo s, IFile code) {
             this.info = s;
             String filename = code.getLocation().toOSString();
             IProject prj = code.getProject();
@@ -170,7 +169,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTestCase {
         return CDOM.getInstance().getTranslationUnit(
                 code,
                 CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES),
-                new ParserConfiguration(s, code));
+                new TestParserConfiguration(s, code));
     }
 
     protected void assertSoleFileLocation(IASTNode n, String pathEndsWith, int offset, int length) {

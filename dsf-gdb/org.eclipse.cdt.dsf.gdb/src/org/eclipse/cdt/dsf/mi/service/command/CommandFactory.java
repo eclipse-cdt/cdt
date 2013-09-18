@@ -20,6 +20,7 @@
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *     Vladimir Prus (Mentor Graphics) - Support for -info-os (Bug 360314)
  *     John Dallaway - Support for -data-write-memory-bytes (Bug 387793)
+ *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug (323552)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -429,11 +430,27 @@ public class CommandFactory {
 		return new MIDataListRegisterNames(ctx, regnos);
 	}
 
+	@Deprecated
 	public ICommand<MIDataListRegisterValuesInfo> createMIDataListRegisterValues(IMIExecutionDMContext ctx, int fmt) {
 		return new MIDataListRegisterValues(ctx, fmt);
 	}
 
+	@Deprecated
 	public ICommand<MIDataListRegisterValuesInfo> createMIDataListRegisterValues(IMIExecutionDMContext ctx, int fmt, int [] regnos) {
+		return new MIDataListRegisterValues(ctx, fmt, regnos);
+	}
+	
+	/**
+	 * @since 4.3
+	 */
+	public ICommand<MIDataListRegisterValuesInfo> createMIDataListRegisterValues(IFrameDMContext ctx, int fmt) {
+		return new MIDataListRegisterValues(ctx, fmt);
+	}
+
+	/**
+	 * @since 4.3
+	 */
+	public ICommand<MIDataListRegisterValuesInfo> createMIDataListRegisterValues(IFrameDMContext ctx, int fmt, int [] regnos) {
 		return new MIDataListRegisterValues(ctx, fmt, regnos);
 	}
 

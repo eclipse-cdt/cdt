@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug 323552)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.register;
 
@@ -29,6 +30,7 @@ import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegistersChangedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.ErrorLabelForeground;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.ErrorLabelText;
@@ -672,6 +674,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     @Override
     public int getDeltaFlags(Object e) {
         if ( e instanceof ISuspendedDMEvent || 
+             e instanceof IResumedDMEvent || 
              e instanceof IMemoryChangedEvent ||
              e instanceof IRegistersChangedDMEvent ||
              (e instanceof PropertyChangeEvent &&
@@ -697,6 +700,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         // The following events can affect any register's values, 
         // refresh the contents of the parent element (i.e. all the registers). 
         if ( e instanceof ISuspendedDMEvent || 
+             e instanceof IResumedDMEvent || 
              e instanceof IMemoryChangedEvent ||
              e instanceof IRegistersChangedDMEvent ||
              (e instanceof PropertyChangeEvent &&

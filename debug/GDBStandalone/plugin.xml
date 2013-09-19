@@ -11,5 +11,12 @@
          </run>
       </application>
    </extension>
-
+   <extension
+         point="org.eclipse.cdt.core.LanguageSettingsProvider">
+      <provider
+            class="org.eclipse.cdt.debug.application.GCCCompileOptionsParser"
+            id="org.eclipse.cdt.debug.application.DwarfLanguageSettingsProvider"
+            name="%DwarfSettingEntries.name">
+      </provider>
+   </extension>
 </plugin>

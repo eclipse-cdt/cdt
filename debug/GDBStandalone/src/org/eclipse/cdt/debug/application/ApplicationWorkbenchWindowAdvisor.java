@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.application;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.ICompileOptionsFinder;
+import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -24,6 +30,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.executables.ExecutablesManager;
+import org.eclipse.cdt.utils.elf.parser.GNUElfParser;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -66,8 +73,16 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setShowStatusLine(true);
 		configurer.setShowMenuBar(true);
 		configurer.setTitle(Messages.Debugger_Title);
-    }
+	}
 
+	private class CWDTracker implements IWorkingDirectoryTracker {
+
+		@Override
+		public URI getWorkingDirectoryURI() {
+			return null;
+		}
+
+	}
 	@Override
 	public void postWindowOpen() {
 		super.postWindowOpen();
@@ -86,7 +101,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					arguments = args[i];
 			}
 		}
-		final String[] fileNames = { executable, arguments };
+		final String[] fileNames = { executable };
 		Job importJob = new Job(Messages.ExecutablesView_ImportExecutables) {
 
 			@Override
@@ -105,16 +120,16 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 				ICProject cProject = CoreModel.getDefault().getCModel()
 						.getCProject(defaultProjectName);
 				if (cProject.exists()) {
-					IProject project = cProject.getProject();
+					final IProject project = cProject.getProject();
 
-					ICProjectDescriptionManager manager = CCorePlugin
+					final ICProjectDescriptionManager projDescManager = CCorePlugin
 							.getDefault().getProjectDescriptionManager();
 
-					ICProjectDescription projectDescription = manager
+					ICProjectDescription projectDescription = projDescManager
 							.getProjectDescription(project,
 									ICProjectDescriptionManager.GET_WRITABLE);
 
-					ICConfigurationDescription ccd = projectDescription
+					final ICConfigurationDescription ccd = projectDescription
 							.getActiveConfiguration();
 					String[] langProviderIds = ((ILanguageSettingsProvidersKeeper) ccd)
 							.getDefaultLanguageSettingsProvidersIds();
@@ -131,17 +146,54 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						langProviderIds[langProviderIds.length - 1] = GCC_BUILTIN_PROVIDER_ID;
 						List<ILanguageSettingsProvider> providers = LanguageSettingsManager
 								.createLanguageSettingsProviders(langProviderIds);
+						final GCCCompileOptionsParser parser = new GCCCompileOptionsParser();
+						Job parseJob = new Job(Messages.GetCompilerOptions) {
+
+							@Override
+							protected IStatus run(IProgressMonitor monitor) {
+								IWorkingDirectoryTracker cwdTracker = new CWDTracker();
+								try {
+									ICProjectDescription projDesc = projDescManager
+											.getProjectDescription(project,
+													false);
+									ICConfigurationDescription ccdesc = projDesc
+											.getActiveConfiguration();
+									parser.startup(ccdesc, cwdTracker);
+									GNUElfParser binParser = new GNUElfParser();
+									IBinaryFile bf = binParser
+											.getBinary(new Path(fileNames[0]));
+									ISymbolReader reader = (ISymbolReader)bf.getAdapter(ISymbolReader.class);
+									String[] sourceFiles = reader
+											.getSourceFiles();
+									if (reader instanceof ICompileOptionsFinder) {
+										ICompileOptionsFinder f = (ICompileOptionsFinder) reader;
+										for (String fileName : sourceFiles) {
+											parser.setCurrentResourceName(fileName);
+											parser.processLine(f
+													.getCompileOptions(fileName));
+										}
+										parser.shutdown();
+									}
+								} catch (CoreException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (IOException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+								return Status.OK_STATUS;
+							}
+
+						};
+						parseJob.schedule();
+						providers.add(parser);
 						((ILanguageSettingsProvidersKeeper) ccd)
 								.setLanguageSettingProviders(providers);
-						manager.setProjectDescription(project,
+						projDescManager.setProjectDescription(project,
 								projectDescription);
 					}
 				}
-				CoreModel.newSourceEntry(new Path(
-						"/Executables/home/cygnus/jjohnstn/sources2/sample"));
-				config = createConfiguration(fileNames[0],
-						fileNames[1],
-						true);
+				config = createConfiguration(executable, arguments, true);
 				DebugUITools.launch(config, ILaunchManager.DEBUG_MODE);
 			}
 		} catch (InterruptedException e) {

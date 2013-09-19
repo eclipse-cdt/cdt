@@ -19,6 +19,7 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.application.messages"; //$NON-NLS-1$
 	public static String ExecutablesView_ImportExecutables;
 	public static String Debugger_Title;
+	public static String GetCompilerOptions;
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);

@@ -16,9 +16,14 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICompileOptionsFinder;
 import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
 import org.eclipse.cdt.utils.coff.PE;
@@ -33,7 +38,7 @@ import org.eclipse.core.runtime.Path;
  * Light-weight parser of Dwarf2 data which is intended for getting only 
  * source files that contribute to the given executable.
  */
-public class DwarfReader extends Dwarf implements ISymbolReader {
+public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptionsFinder {
 
 	// These are sections that need be parsed to get the source file list.
 	final static String[] DWARF_SectionsToParse =
@@ -44,7 +49,10 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 			DWARF_DEBUG_STR		// this is optional. Some compilers don't generate it.
 		};
 
+	private final String[] patterns = { "GNU\\sC\\s+\\d+\\.\\d+\\.\\d+\\s+\\d+\\s+(\\(.*\\))?\\s+(-.*)", //$NON-NLS-1$
+	};
 	private final Collection<String>	m_fileCollection = new ArrayList<String>();
+	private final Map<String, String> m_producerStrings = new HashMap<String, String>();
 	private String[] 	m_fileNames = null;
 	private boolean		m_parsed = false;
 	private final ArrayList<Integer>	m_parsedLineTableOffsets = new ArrayList<Integer>();
@@ -386,13 +394,13 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 		parse(null);
 	}
 
-	private void addSourceFile(String dir, String name)
+	private String addSourceFile(String dir, String name)
 	{
 		if (name == null || name.length() == 0)
-			return;
+			return null;
 		
 		if (name.charAt(0) == '<')	//  don't count the entry "<internal>" from GCCE compiler
-			return;
+			return null;
 		
 		String fullName = name;
 		
@@ -408,7 +416,9 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 		fullName = pa.toOSString();
 		
 		if (!m_fileCollection.contains(fullName))
-			m_fileCollection.add(fullName);					
+			m_fileCollection.add(fullName);
+
+		return fullName;
 	}
 	
 	/**
@@ -451,9 +461,10 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 	@Override
 	void processCompileUnit(IDebugEntryRequestor requestor, List<AttributeValue> list) {
 		
-		String cuName, cuCompDir;
+		String cuName, cuCompDir, producerString;
 		int		stmtList = -1;
 		
+		producerString = null;
 		cuName = cuCompDir = ""; //$NON-NLS-1$
 		
 		for (int i = 0; i < list.size(); i++) {
@@ -461,25 +472,30 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 			try {
 				int name = (int)av.attribute.name;
 				switch(name) {
-					case DwarfConstants.DW_AT_name:
-						cuName = (String)av.value;
-						break;
-					case DwarfConstants.DW_AT_comp_dir:
-						cuCompDir = (String)av.value;
-						break;
-					case DwarfConstants.DW_AT_stmt_list:
-						stmtList = ((Number)av.value).intValue();
-						break;
-					default:
-						break;
+				case DwarfConstants.DW_AT_name:
+					cuName = (String) av.value;
+					break;
+				case DwarfConstants.DW_AT_comp_dir:
+					cuCompDir = (String) av.value;
+					break;
+				case DwarfConstants.DW_AT_stmt_list:
+					stmtList = ((Number) av.value).intValue();
+					break;
+				case DwarfConstants.DW_AT_producer:
+					producerString = (String) av.value;
+					break;
+				default:
+					break;
 				}
 			} catch (ClassCastException e) {
 			}
 		}
 
-		addSourceFile(cuCompDir, cuName);
+		String fullName = addSourceFile(cuCompDir, cuName);
 		if (stmtList > -1)	// this CU has "stmt_list" attribute
 			parseSourceInCULineInfo(cuCompDir, stmtList);
+		if (fullName != null && producerString != null)
+			m_producerStrings.put(fullName, producerString);
 	}
 	
 	/**
@@ -488,6 +504,21 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 	@Override
 	public String[] getSourceFiles(IProgressMonitor monitor) {
 		return getSourceFiles();
+	}
+
+	@Override
+	public String getCompileOptions(String fileName) {
+		String producerString = m_producerStrings.get(fileName);
+		if (producerString != null) {
+			for (String pattern : patterns) {
+				Pattern p = Pattern.compile(pattern);
+				Matcher m = p.matcher(producerString);
+				if (m.matches()) {
+					return m.group(2);
+				}
+			}
+		}
+		return null;
 	}
 
 }

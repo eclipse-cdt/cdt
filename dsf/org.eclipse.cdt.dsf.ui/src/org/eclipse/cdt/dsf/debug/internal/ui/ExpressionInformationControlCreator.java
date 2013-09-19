@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - adapted for DSF
+ *     Marc-Andre Laperle (Ericsson) - Remember hover size when expanded (Bug 417559)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui;
 
@@ -198,8 +199,34 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			create();
 		}
 
+		/**
+		 * Override the size constraints so that it can be as big as
+		 * when the hover was last displayed (IDialogSettings).
+		 */
+		@Override
+		public Point computeSizeConstraints(int widthInChars, int heightInChars) {
+			// Bug 417559: The TextViewerHoverManager constrains the size of a newly created
+			// ExpressionInformationControl by 100 chars by 12 chars (602x182). The control
+			// size can be expanded beyond that, however when re-created it will still be constrained.
+			// By removing the constraint in the presence of a non-null IDialogSettings, 
+			// the size gets restored properly even when previously expanded.
+			Point dialogSettingsSize = getDialogSettingsSize();
+			if (dialogSettingsSize != null) {
+				return dialogSettingsSize;
+			}
+			return super.computeSizeConstraints(widthInChars, heightInChars);
+		}
+
 		@Override
 		public Point computeSizeHint() {
+			Point dialogSettingsSize = getDialogSettingsSize();
+			if (dialogSettingsSize != null) {
+				return dialogSettingsSize;
+			}
+			return super.computeSizeHint();
+		}
+
+		private Point getDialogSettingsSize() {
 			IDialogSettings settings = getDialogSettings(false);
 			if (settings != null) {
 				int x = getIntSetting(settings, WIDTH);
@@ -210,7 +237,8 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 					}
 				}
 			}
-			return super.computeSizeHint();
+
+			return null;
 		}
 
 		@Override

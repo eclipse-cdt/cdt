@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.eclipse.ptp</groupId>
     <artifactId>ptp-parent</artifactId>
-    <version>7.0.1-SNAPSHOT</version>
+    <version>7.0.3-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 

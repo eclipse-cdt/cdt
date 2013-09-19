@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a74dd7b0_63596609",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-19T20:31:34Z",
+      "side": 1,
+      "message": "Capital \u0027B\u0027.  There is a CDT tool that parses commits and adds them to bugzilla.  It does not currently work from Gerrit, but might as well get used to the format it expects, which is:\nBug 12345: \u003ctext\u003e\nor\nBug 12345 - \u003ctext\u003e",
+      "revId": "223911f5d4ae4da13d44ee519d5eaf906ca3e2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_435c2af9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-19T20:31:34Z",
+      "side": 1,
+      "message": "I\u0027ve been meaning to ask why you put the bug url?  I don\u0027t mind, just curious.",
+      "revId": "223911f5d4ae4da13d44ee519d5eaf906ca3e2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a74dd7b0_c35ddac2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIDataListRegisterValues.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-19T20:31:34Z",
+      "side": 1,
+      "message": "I think that to coalesce two such commands, we will need to make sure that we are dealing with the same context, no?  In fact, it seems like a bug that we didn\u0027t check before.\n\nThis command is the only one that uses coalescing and I wasn\u0027t even aware of it.",
+      "revId": "223911f5d4ae4da13d44ee519d5eaf906ca3e2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

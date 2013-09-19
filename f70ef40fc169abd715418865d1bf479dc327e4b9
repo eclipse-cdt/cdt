@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a74dd7b0_844595ef",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/ExpressionInformationControlCreator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-19T13:16:14Z",
+      "side": 1,
+      "message": "Can you put some javadoc, since the method inherits the one describing the implementation you are changing.",
+      "revId": "f70ef40fc169abd715418865d1bf479dc327e4b9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

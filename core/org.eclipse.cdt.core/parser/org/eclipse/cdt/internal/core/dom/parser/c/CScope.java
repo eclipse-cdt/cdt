@@ -109,8 +109,8 @@ public class CScope implements ICScope, IASTInternalScope {
 		IndexFilter.C_DECLARED_OR_IMPLICIT
 	};
 	
-    private IASTNode physicalNode = null;
-    private boolean isCached = false;
+    private IASTNode physicalNode;
+    private boolean isCached;
     
     private final CharArrayObjectMap<?> mapsToNameOrBinding[] = { CharArrayObjectMap.EMPTY_MAP, CharArrayObjectMap.EMPTY_MAP };
 	private final EScopeKind kind;
@@ -125,9 +125,6 @@ public class CScope implements ICScope, IASTInternalScope {
 		return kind;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()
-     */
     @Override
 	public IScope getParent() {
         return CVisitor.getContainingScope(physicalNode);
@@ -135,12 +132,13 @@ public class CScope implements ICScope, IASTInternalScope {
 
     protected static class CollectNamesAction extends ASTVisitor {
         private final char[] name;
-        private IASTName[] result = null;
+        private IASTName[] result;
         
         CollectNamesAction(char[] n) {
             name = n;
             shouldVisitNames = true;
         }
+
         @Override
 		public int visit(IASTName n) {
             ASTNodeProperty prop = n.getPropertyInParent();
@@ -166,9 +164,6 @@ public class CScope implements ICScope, IASTInternalScope {
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-     */
 	@Override
 	public IBinding[] find(String name) {
 		return CVisitor.findBindings(this, name);
@@ -188,9 +183,6 @@ public class CScope implements ICScope, IASTInternalScope {
     	return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#getPhysicalNode()
-     */
     @Override
 	public IASTNode getPhysicalNode() {
         return physicalNode;
@@ -240,6 +232,7 @@ public class CScope implements ICScope, IASTInternalScope {
         
         return NAMESPACE_TYPE_OTHER;
     }
+
     @Override
 	public final IBinding getBinding(IASTName name, boolean resolve) {
     	return getBinding(name, resolve, IIndexFileSet.EMPTY);
@@ -280,7 +273,7 @@ public class CScope implements ICScope, IASTInternalScope {
 	    
     	IBinding result= null;
     	if (resolve && physicalNode instanceof IASTTranslationUnit) {
-    		final IASTTranslationUnit tu = (IASTTranslationUnit)physicalNode;
+    		final IASTTranslationUnit tu = (IASTTranslationUnit) physicalNode;
 			IIndex index= tu.getIndex();
     		if (index != null) {
     			try {
@@ -289,8 +282,8 @@ public class CScope implements ICScope, IASTInternalScope {
     					bindings= fileSet.filterFileLocalBindings(bindings);
     				}
     				result= processIndexResults(name, bindings);
-    			} catch(CoreException ce) {
-    				CCorePlugin.log(ce);
+    			} catch (CoreException e) {
+    				CCorePlugin.log(e);
     			}
     		}
     	}
@@ -329,9 +322,6 @@ public class CScope implements ICScope, IASTInternalScope {
     	return true;
     }
     
-    /* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
-	 */
 	/**
 	 * @deprecated Use {@link #getBindings(ScopeLookupData)} instead
 	 */
@@ -341,9 +331,6 @@ public class CScope implements ICScope, IASTInternalScope {
 		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
-     */
 	@Override
 	public final IBinding[] getBindings(ScopeLookupData lookup) {
         char[] c = lookup.getLookupKey();
@@ -503,7 +490,7 @@ public class CScope implements ICScope, IASTInternalScope {
 			nodes = dtor.getParameterDeclarations();
 		} else if (scopeNode instanceof IASTForStatement) {
 			final IASTForStatement forStmt = (IASTForStatement) scopeNode;
-			nodes= new IASTNode[] {forStmt.getInitializerStatement()};
+			nodes= new IASTNode[] { forStmt.getInitializerStatement() };
 		}
 
 		if (nodes != null) {
@@ -517,8 +504,7 @@ public class CScope implements ICScope, IASTInternalScope {
 					node = null;
 					if (nodes[0].getPropertyInParent() == ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER
 							|| nodes[0].getPropertyInParent() == IASTStandardFunctionDeclarator.FUNCTION_PARAMETER) {
-						// function body, we were looking at parameters, now
-						// check the body itself
+						// Function body, we were looking at parameters, now check the body itself.
 						IASTCompoundStatement compound = null;
 						if (scopeNode instanceof IASTCompoundStatement) {
 							compound = (IASTCompoundStatement) scopeNode;
@@ -604,7 +590,7 @@ public class CScope implements ICScope, IASTInternalScope {
 			tempName = ((ICASTCompositeTypeSpecifier)declSpec).getName();
 			ASTInternal.addName(this,  tempName);
 
-			//also have to check for any nested structs
+			// Also have to check for any nested structs.
 			IASTDeclaration[] nested = ((ICASTCompositeTypeSpecifier)declSpec).getMembers();
 			for (IASTDeclaration element : nested) {
 				if (element instanceof IASTSimpleDeclaration) {
@@ -619,7 +605,7 @@ public class CScope implements ICScope, IASTInternalScope {
 		    tempName = enumeration.getName();
 		    ASTInternal.addName(this,  tempName);
 
-		    //check enumerators
+		    // Check enumerators.
 		    IASTEnumerator[] list = ((ICASTEnumerationSpecifier) declSpec).getEnumerators();
 		    for (IASTEnumerator enumerator : list) {
 		        if (enumerator == null) break;
@@ -629,9 +615,6 @@ public class CScope implements ICScope, IASTInternalScope {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#getScopeName()
-	 */
 	@Override
 	public IName getScopeName() {
 		if (physicalNode instanceof IASTCompositeTypeSpecifier) {

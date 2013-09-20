@@ -1329,7 +1329,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 				} catch (OffsetLimitReachedException e) {
 					return;
 				}
-				codeBranchNesting= Math.min(getCodeBranchNesting()+1, codeBranchNesting);
+				codeBranchNesting= Math.min(getCodeBranchNesting() + 1, codeBranchNesting);
 
 				// we could be at the start of inactive code so restart the loop
 				continue;

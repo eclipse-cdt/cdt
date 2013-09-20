@@ -50,7 +50,7 @@ public class CASTProblemDeclaration extends CASTProblemOwner implements IASTProb
 	        }
 		}
 
-        super.accept(action);	// visits the problem
+        super.accept(action);	// Visit the problem.
 
         if (action.shouldVisitDeclarations) {
 		    switch (action.leave(this)) {

@@ -36,6 +36,57 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_07fe99a0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-20T11:28:52Z",
+      "side": 1,
+      "message": "Please use IStack instead of MIStack.  Someday, we may use a different instance of the IStack service, and this would break.",
+      "revId": "223911f5d4ae4da13d44ee519d5eaf906ca3e2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_672afdb6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-20T11:28:52Z",
+      "side": 1,
+      "message": "Since we are already in the executor, you can use an ImmediateDataRequestMonitor(rm) which speeds up the call",
+      "revId": "223911f5d4ae4da13d44ee519d5eaf906ca3e2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_e768cdea",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-20T11:28:52Z",
+      "side": 1,
+      "message": "Here too you can use an ImmediateDM",
+      "revId": "223911f5d4ae4da13d44ee519d5eaf906ca3e2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74dd7b0_c35ddac2",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIDataListRegisterValues.java",
         "patchSetId": 1

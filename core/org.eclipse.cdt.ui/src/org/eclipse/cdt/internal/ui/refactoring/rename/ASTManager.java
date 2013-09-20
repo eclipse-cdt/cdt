@@ -246,7 +246,8 @@ public class ASTManager implements IDisposable {
                     return FALSE;
                 }
                 isStatic= c1.isStatic() || c2.isStatic();
-                if (!(b1 instanceof ICPPFunction) && !(b2 instanceof ICPPFunction)) {
+                if ((!(b1 instanceof ICPPFunction) || ((ICPPFunction) b1).isExternC()) &&
+                		(!(b2 instanceof ICPPFunction) || ((ICPPFunction) b2).isExternC())) {
                     checkSig= false;
                 }
             }

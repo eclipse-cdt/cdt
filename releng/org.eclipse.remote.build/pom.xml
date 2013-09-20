@@ -15,11 +15,12 @@
 	<name>Remote Parent</name>
 
 	<properties>
+		<eclipse-release>luna</eclipse-release>
 		<tycho-version>0.17.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<platform-version>4.4milestones</platform-version>
 		<platform-site>http://download.eclipse.org/eclipse/updates/${platform-version}</platform-site>
-		<remote-install-dir>/home/data/httpd/download.eclipse.org/tools/ptp/builds/hudson/ptp-nightly-remote</remote-install-dir>
+		<remote-install-dir>/home/data/httpd/download.eclipse.org/tools/ptp/builds/remote/${eclipse-release}/nightly</remote-install-dir>
 	</properties>
 
 	<licenses>

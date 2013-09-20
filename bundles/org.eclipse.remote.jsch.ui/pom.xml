@@ -7,7 +7,7 @@
     <groupId>org.eclipse.ptp</groupId>
     <artifactId>ptp-parent</artifactId>
     <version>7.0.3-SNAPSHOT</version>
-    <relativePath>../../pom.xml</relativePath>
+    <relativePath>../../releng/org.eclipse.remote.build/pom.xml</relativePath>
   </parent>
 
   <artifactId>org.eclipse.remote.jsch.core</artifactId>

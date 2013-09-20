@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.eclipse.remote</groupId>
+		<artifactId>remote-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../../releng/org.eclipse.remote.build/pom.xml</relativePath>
+	</parent>
+
+	<version>1.0.0-SNAPSHOT</version>
+	<artifactId>org.eclipse.remote.repo</artifactId>
+	<packaging>eclipse-repository</packaging>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-publisher-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<publishArtifacts>true</publishArtifacts>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<profiles>
+		<profile>
+			<id>production</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<mkdir dir="${remote-install-dir}" />
+										<delete includeemptydirs="true">
+											<fileset dir="${remote-install-dir}">
+												<include name="**" />
+											</fileset>
+										</delete>
+										<unzip
+											src="${project.build.directory}/${project.build.finalName}.zip"
+											dest="${remote-install-dir}" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

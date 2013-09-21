@@ -243,7 +243,10 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 							context = new SettingsContext(project);
 							des = getConvertedDescription(context);
 						} catch (CoreException e) {
-							CCorePlugin.log(e);
+							// log the error except if the project got closed in another thread which is OK
+							if (project.isOpen()) {
+								CCorePlugin.log(e);
+							}
 						}
 					}
 

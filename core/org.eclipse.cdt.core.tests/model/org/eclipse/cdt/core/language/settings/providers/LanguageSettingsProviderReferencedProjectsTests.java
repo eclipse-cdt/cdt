@@ -141,12 +141,12 @@ public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCas
 		IProject referencedProject = ResourceHelper.createCDTProjectWithConfig(projectName+"-referenced");
 		setReference(project, referencedProject);
 
-		// get cfgDescription and language to work with
+		// get cfgDescription
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 
 		{
-			// doublecheck that provider for referenced projects is set in the configuration
+			// double-check that provider for referenced projects is set in the configuration
 			ILanguageSettingsProvider refProjectsProvider = LanguageSettingsManager.getWorkspaceProvider(ReferencedProjectsLanguageSettingsProvider.ID);
 			assertNotNull(refProjectsProvider);
 			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
@@ -205,6 +205,98 @@ public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCas
 			assertEquals(CDataUtil.createCIncludePathEntry(refEntry.getName(), 0), entries.get(0));
 			assertEquals(1, entries.size());
 		}
+	}
+
+	/**
+	 * Test case when projects reference each other recursively.
+	 */
+	public void testRecursiveReferences() throws Exception {
+		// Create model projects that reference each other
+		String projectName = getName();
+		IProject projectA = ResourceHelper.createCDTProjectWithConfig(projectName + "-A");
+		IProject projectB = ResourceHelper.createCDTProjectWithConfig(projectName + "-B");
+		setReference(projectA, projectB);
+		setReference(projectB, projectA);
+
+		{
+			// get cfgDescriptions to work with
+			ICConfigurationDescription[] cfgDescriptionsA = getConfigurationDescriptions(projectA);
+			ICConfigurationDescription cfgDescriptionA = cfgDescriptionsA[0];
+			ICConfigurationDescription[] cfgDescriptionsB = getConfigurationDescriptions(projectB);
+			ICConfigurationDescription cfgDescriptionB = cfgDescriptionsB[0];
+			// double-check that provider for referenced projects is set in the configurations
+			ILanguageSettingsProvider refProjectsProvider = LanguageSettingsManager.getWorkspaceProvider(ReferencedProjectsLanguageSettingsProvider.ID);
+			assertNotNull(refProjectsProvider);
+			List<ILanguageSettingsProvider> providersA = ((ILanguageSettingsProvidersKeeper) cfgDescriptionA).getLanguageSettingProviders();
+			assertTrue(providersA.contains(refProjectsProvider));
+			List<ILanguageSettingsProvider> providersB = ((ILanguageSettingsProvidersKeeper) cfgDescriptionB).getLanguageSettingProviders();
+			assertTrue(providersB.contains(refProjectsProvider));
+
+			// Check that no setting entries are set initially
+			List<ICLanguageSettingEntry> entriesA = LanguageSettingsManager.getSettingEntriesByKind(cfgDescriptionA, projectA, null, ICSettingEntry.ALL);
+			assertEquals(0, entriesA.size());
+			List<ICLanguageSettingEntry> entriesB = LanguageSettingsManager.getSettingEntriesByKind(cfgDescriptionA, projectB, null, ICSettingEntry.ALL);
+			assertEquals(0, entriesB.size());
+		}
+
+		CIncludePathEntry entryExportedA = CDataUtil.createCIncludePathEntry("referenced-exported-A", ICSettingEntry.EXPORTED);
+		CIncludePathEntry entryNotExportedA = CDataUtil.createCIncludePathEntry("referenced-not-exported-A", 0);
+		// Add entries into a project A
+		{
+			ICConfigurationDescription[] refCfgDescriptions = getConfigurationDescriptions(projectA);
+			ICConfigurationDescription refCfgDescription = refCfgDescriptions[0];
+			List<ILanguageSettingsProvider> providersRef = ((ILanguageSettingsProvidersKeeper) refCfgDescription).getLanguageSettingProviders();
+			// get user provider which is the first one
+			ILanguageSettingsProvider userProviderRef = providersRef.get(0);
+			assertEquals(ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID, userProviderRef.getId());
+			assertTrue(userProviderRef instanceof LanguageSettingsGenericProvider);
+			// add sample entries
+			ArrayList<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			entries.add(entryExportedA);
+			entries.add(entryNotExportedA);
+			((LanguageSettingsGenericProvider) userProviderRef).setSettingEntries(null, null, null, entries);
+		}
+
+		CIncludePathEntry entryExportedB = CDataUtil.createCIncludePathEntry("referenced-exported-B", ICSettingEntry.EXPORTED);
+		CIncludePathEntry entryNotExportedB = CDataUtil.createCIncludePathEntry("referenced-not-exported-B", 0);
+		// Add entries into a project B
+		{
+			ICConfigurationDescription[] refCfgDescriptions = getConfigurationDescriptions(projectB);
+			ICConfigurationDescription refCfgDescription = refCfgDescriptions[0];
+			List<ILanguageSettingsProvider> providersRef = ((ILanguageSettingsProvidersKeeper) refCfgDescription).getLanguageSettingProviders();
+			// get user provider which is the first one
+			ILanguageSettingsProvider userProviderRef = providersRef.get(0);
+			assertEquals(ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID, userProviderRef.getId());
+			assertTrue(userProviderRef instanceof LanguageSettingsGenericProvider);
+			// add sample entries
+			ArrayList<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			entries.add(entryExportedB);
+			entries.add(entryNotExportedB);
+			((LanguageSettingsGenericProvider) userProviderRef).setSettingEntries(null, null, null, entries);
+		}
+
+		// Check that the new entries from projectB made it to projectA
+		{
+			ICConfigurationDescription[] cfgDescriptionsA = getConfigurationDescriptions(projectA);
+			ICConfigurationDescription cfgDescriptionA = cfgDescriptionsA[0];
+			List<ICLanguageSettingEntry> entries = LanguageSettingsManager.getSettingEntriesByKind(cfgDescriptionA, projectA, null, ICSettingEntry.ALL);
+			assertEquals(entryExportedA, entries.get(0));
+			assertEquals(entryNotExportedA, entries.get(1));
+			assertEquals(CDataUtil.createCIncludePathEntry(entryExportedB.getName(), 0), entries.get(2));
+			assertEquals(3, entries.size());
+		}
+		// Check that the new entries from projectA made it to projectB
+		{
+			ICConfigurationDescription[] cfgDescriptionsB = getConfigurationDescriptions(projectB);
+			ICConfigurationDescription cfgDescriptionB = cfgDescriptionsB[0];
+			List<ICLanguageSettingEntry> entries = LanguageSettingsManager.getSettingEntriesByKind(cfgDescriptionB, projectB, null, ICSettingEntry.ALL);
+			assertEquals(entryExportedB, entries.get(0));
+			assertEquals(entryNotExportedB, entries.get(1));
+			assertEquals(CDataUtil.createCIncludePathEntry(entryExportedA.getName(), 0), entries.get(2));
+			assertEquals(3, entries.size());
+		}
+
+		// Hopefully it gets here without stack overflow
 	}
 
 }

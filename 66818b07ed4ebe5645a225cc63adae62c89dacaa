@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_d17a86db",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/misc/LanguageVerifierTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-23T18:19:26Z",
+      "side": 1,
+      "message": "Please remove \\r characters from the ends of the lines.",
+      "revId": "66818b07ed4ebe5645a225cc63adae62c89dacaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

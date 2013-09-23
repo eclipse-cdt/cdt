@@ -146,14 +146,14 @@ public class RemoteFileWidget extends Composite {
 		IRemoteUIConnectionManager connMgr = getUIConnectionManager();
 		if (connMgr != null) {
 			connMgr.openConnectionWithProgress(getShell(), null, fRemoteConnection);
-			if (fRemoteConnection.isOpen()) {
-				IRemoteUIFileManager fileMgr = getUIFileManager();
-				if (fileMgr != null) {
-					fileMgr.setConnection(fRemoteConnection);
-					String path = fileMgr.browseFile(getShell(), fBrowseMessage, "", 0); //$NON-NLS-1$
-					if (path != null) {
-						setLocationPath(path);
-					}
+		}
+		if (fRemoteConnection.isOpen()) {
+			IRemoteUIFileManager fileMgr = getUIFileManager();
+			if (fileMgr != null) {
+				fileMgr.setConnection(fRemoteConnection);
+				String path = fileMgr.browseFile(getShell(), fBrowseMessage, "", 0); //$NON-NLS-1$
+				if (path != null) {
+					setLocationPath(path);
 				}
 			}
 		}

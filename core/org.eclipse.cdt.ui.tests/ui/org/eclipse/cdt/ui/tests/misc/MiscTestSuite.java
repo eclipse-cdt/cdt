@@ -25,5 +25,6 @@ public class MiscTestSuite extends TestSuite {
 	public MiscTestSuite() {
 		super(MiscTestSuite.class.getName());
 		addTestSuite(CDTSharedImagesTests.class);
+		addTestSuite(LanguageVerifierTests.class);
 	}
 }

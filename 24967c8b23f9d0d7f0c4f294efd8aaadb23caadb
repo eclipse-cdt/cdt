@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_51131697",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/IndexedFilesLabelProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-09-23T16:47:39Z",
+      "side": 1,
+      "message": "isCDTProject variable is redundant since ifl !\u003d null condition can be used instead.",
+      "revId": "24967c8b23f9d0d7f0c4f294efd8aaadb23caadb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

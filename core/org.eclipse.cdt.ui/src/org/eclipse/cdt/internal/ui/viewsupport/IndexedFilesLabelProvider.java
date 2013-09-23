@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,21 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -64,15 +68,24 @@ public class IndexedFilesLabelProvider implements ILightweightLabelDecorator {
     	IProject project= null;
         if (element instanceof IFile) {
         	final IFile file = (IFile) element;
-			ifl= IndexLocationFactory.getWorkspaceIFL(file);
-			project= file.getProject();
+        	project= file.getProject();
+        	
+			try {
+				if (project.hasNature(CProjectNature.C_NATURE_ID)
+						|| project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+					ifl = IndexLocationFactory.getWorkspaceIFL(file);
+				}
+			} catch (CoreException e) {
+				CUIPlugin.log(e);
+			}
+			
         }
         else if (element instanceof ITranslationUnit) {
         	final ITranslationUnit tu = (ITranslationUnit) element;
 			ifl= IndexLocationFactory.getIFL(tu);
         	project= tu.getCProject().getProject();
         }
-        if (isIndexed(project, ifl)) {
+        if (ifl != null && isIndexed(project, ifl)) {
         	decoration.addOverlay(INDEXED, IDecoration.TOP_LEFT);
         }
     }

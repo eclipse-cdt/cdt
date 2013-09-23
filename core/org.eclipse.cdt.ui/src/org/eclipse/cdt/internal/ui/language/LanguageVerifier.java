@@ -7,10 +7,13 @@
  *
  * Contributors:
  * IBM Corporation - Initial API and implementation
+ * Freescale Semiconductor - Bug 417852
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.language;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -97,16 +100,19 @@ public class LanguageVerifier {
 		
 		// Check content type mappings
 		Iterator<Entry<String, String>> contentTypeMappings = config.getWorkspaceMappings().entrySet().iterator();
+		List<String> removals = new ArrayList<String>();
 		while (contentTypeMappings.hasNext()) {
 			Entry<String, String> entry = contentTypeMappings.next();
-			String contentTypeId = entry.getKey();
 			String languageId = entry.getValue();
 			if (!availableLanguages.containsKey(languageId)) {
 				missingLanguages.add(languageId);
-				config.removeWorkspaceMapping(contentTypeId);
+				removals.add(entry.getKey());			
 			}
 		}
 		
+		for (String removal : removals) {
+			config.removeWorkspaceMapping(removal);
+		}
 		return missingLanguages;
 	}
 }

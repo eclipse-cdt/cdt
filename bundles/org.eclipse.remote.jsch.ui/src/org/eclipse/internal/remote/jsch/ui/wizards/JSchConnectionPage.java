@@ -168,7 +168,7 @@ public class JSchConnectionPage extends WizardPage {
 		Label passwordLabel = new Label(controls, SWT.NONE);
 		passwordLabel.setText(Messages.JSchNewConnectionPage_Password);
 		passwordLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		fPasswordText = new Text(controls, SWT.BORDER | SWT.SINGLE);
+		fPasswordText = new Text(controls, SWT.BORDER | SWT.SINGLE | SWT.PASSWORD);
 		fPasswordText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		// Key option box
@@ -193,7 +193,7 @@ public class JSchConnectionPage extends WizardPage {
 		Label passphraseLabel = new Label(controls, SWT.NONE);
 		passphraseLabel.setText(Messages.JSchNewConnectionPage_Passphrase);
 		passphraseLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		fPassphraseText = new Text(controls, SWT.BORDER | SWT.SINGLE);
+		fPassphraseText = new Text(controls, SWT.BORDER | SWT.SINGLE | SWT.PASSWORD);
 		fPassphraseText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		fPasswordButton.setSelection(true);

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_c94ad27a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1610,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-09-24T14:58:07Z",
+      "side": 1,
+      "message": "As Marc-Andre mentioned in Bugzilla, this code works only for non-stop mode. In all-stop mode the context is GDBContainerDMC which is not IMIExecutionDMContext.",
+      "revId": "c276231c71af57f0374a22c5c25f68797a38cbb7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

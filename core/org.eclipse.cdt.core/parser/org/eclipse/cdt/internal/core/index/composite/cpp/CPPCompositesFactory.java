@@ -107,9 +107,6 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 		super(index);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeScope(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IScope)
-	 */
 	@Override
 	public IIndexScope getCompositeScope(IIndexScope rscope) {
 		try {
@@ -140,9 +137,6 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 		} 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeType(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IType)
-	 */
 	@Override
 	public IType getCompositeType(IType rtype) {
 		if (rtype instanceof IIndexFragmentBinding) {
@@ -491,9 +485,6 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 		return findOneBinding(binding, false);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeBinding(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IBinding)
-	 */
 	@Override
 	public IIndexBinding getCompositeBinding(IIndexFragmentBinding binding) {
 		IIndexBinding result;
@@ -682,6 +673,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 	public static Object createInstanceCacheKey(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		return new Key(Thread.currentThread().getId(), cf.hashCode(), rbinding.getBindingID());
 	}
+
 	public static Object createSpecializationKey(ICompositesFactory cf,IIndexFragmentBinding rbinding) {
 		return new Key(Thread.currentThread().getId(), cf.hashCode(), rbinding.getBindingID()+1);
 	}

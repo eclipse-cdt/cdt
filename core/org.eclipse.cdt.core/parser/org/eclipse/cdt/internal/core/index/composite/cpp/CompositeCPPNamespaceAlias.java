@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -21,11 +21,11 @@ class CompositeCPPNamespaceAlias extends CompositeCPPBinding implements ICPPName
 	public CompositeCPPNamespaceAlias(ICompositesFactory cf, ICPPNamespaceAlias alias) {
 		super(cf, alias);
 	}
-	
+
 	@Override
 	public IBinding[] getMemberBindings() {
-		IBinding[] result= ((ICPPNamespaceAlias)rbinding).getMemberBindings();
-		for(int i=0; i<result.length; i++) {
+		IBinding[] result= ((ICPPNamespaceAlias) rbinding).getMemberBindings();
+		for (int i= 0; i < result.length; i++) {
 			result[i]= cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
 		}
 		return result;
@@ -33,12 +33,12 @@ class CompositeCPPNamespaceAlias extends CompositeCPPBinding implements ICPPName
 
 	@Override
 	public ICPPNamespaceScope getNamespaceScope() {
-		return (ICPPNamespaceScope) cf.getCompositeScope((IIndexScope) ((ICPPNamespaceAlias)rbinding).getNamespaceScope());
+		return (ICPPNamespaceScope) cf.getCompositeScope((IIndexScope) ((ICPPNamespaceAlias) rbinding).getNamespaceScope());
 	}
 
 	@Override
 	public IBinding getBinding() {
-		IIndexFragmentBinding ns = (IIndexFragmentBinding) ((ICPPNamespaceAlias)rbinding).getBinding();
+		IIndexFragmentBinding ns = (IIndexFragmentBinding) ((ICPPNamespaceAlias) rbinding).getBinding();
 		return cf.getCompositeBinding(ns);
 	}
 

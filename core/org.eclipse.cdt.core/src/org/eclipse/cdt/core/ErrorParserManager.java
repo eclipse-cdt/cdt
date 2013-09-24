@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2011 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Andrew Gvozdev (Quoin Inc)
  *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *     Alex Ruiz (Google)
+ *     Serge Beauchamp (Freescale Semiconductor) - Bug 417926 - Markers shouldn't be created on the workspace root
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
@@ -574,6 +575,8 @@ outer:
 	 * @param externalPath - external path pointing to a file outside the workspace.
 	 */
 	public void generateExternalMarker(IResource file, int lineNumber, String desc, int severity, String varName, IPath externalPath) {
+		if (file == null)
+			file = fProject;
 		ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, desc, severity, varName, externalPath);
 		this.addProblemMarker(problemMarkerInfo);
 	}

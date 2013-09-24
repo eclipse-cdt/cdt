@@ -28,6 +28,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -528,8 +529,25 @@ public class BasicCEditorTest extends BaseUITestCase {
 	public void testScalabilityDialogNotDismissedInadvertently() throws Exception {
 		
 		// 1. Create a project with a very large source file.
-		String file= "/ceditor/src/large_main.cpp";
 		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false, false);
+		
+		// 1a. Dynamically create the large source file.
+		String originalFile = "/ceditor/src/main.cpp";
+		String file= "/ceditor/src/large_main.cpp";
+		ResourceTestHelper.copy(originalFile, file);
+		
+		setUpEditor(file);
+		
+		StringBuilder buffer = new StringBuilder(fDocument.get());
+		
+		buffer.append("unsigned long c[250000] = {\n");
+		for (int i = 0; i < 12499; i++)
+			buffer.append("	0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,\n");
+		buffer.append("	0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1\n};\n");
+		
+		fDocument.set(buffer.toString());
+		fEditor.doSave(new NullProgressMonitor());
+		EditorTestHelper.closeEditor(fEditor);
 		
 		// 2. Create and open a progress dialog window.
 		IWorkbenchWindow window = EditorTestHelper.getActiveWorkbenchWindow();
@@ -543,13 +561,17 @@ public class BasicCEditorTest extends BaseUITestCase {
 		dialog.close();
 		
 		// 5. Verify that the scalability dialog has not been closed unexpectedly.
-		boolean scalabilityDialogFound = false;
+		Shell scalabilityDialog = null;
 		Shell[] shells = Display.getCurrent().getShells();
 		for (Shell shell : shells) {
-			scalabilityDialogFound |= shell.getText().equals(CEditorMessages.Scalability_info);
+			if (shell.getText().equals(CEditorMessages.Scalability_info)) {
+				scalabilityDialog = shell;
+				break;
+			}
 		}
 		
-		assertTrue(scalabilityDialogFound);
+		assertNotNull(scalabilityDialog);
+		scalabilityDialog.close();
 		EditorTestHelper.closeEditor(fEditor);
 	}
 

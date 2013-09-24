@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     IBM Corporation
  *     James Blackburn (Broadcom Corp.)
+ *     Serge Beauchamp (Freescale Semiconductor) - Bug 417926 - Markers shouldn't be created on the workspace root
  *******************************************************************************/
 package org.eclipse.cdt.core.resources;
 
@@ -63,7 +64,8 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
 		try {
 			IResource markerResource = problemMarkerInfo.file ;
-			if (markerResource==null)  {
+			// if the resource is null, or it is the workspace root, set it to the project.
+			if (markerResource==null || (markerResource.getParent() == null))  {
 				markerResource = getProject();
 			}
 			IMarker[] cur = markerResource.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_ONE);

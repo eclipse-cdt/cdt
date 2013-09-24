@@ -22,15 +22,25 @@ public class Messages extends NLS {
 
 	public static String ConnectionsPreferencePage_Add;
 
+	public static String ConnectionsPreferencePage_closed;
+
+	public static String ConnectionsPreferencePage_Close;
+
 	public static String ConnectionsPreferencePage_Connection_Name;
 
 	public static String ConnectionsPreferencePage_Edit;
 
 	public static String ConnectionsPreferencePage_Host;
 
+	public static String ConnectionsPreferencePage_open;
+
+	public static String ConnectionsPreferencePage_Open;
+
 	public static String ConnectionsPreferencePage_Remote_Services;
 
 	public static String ConnectionsPreferencePage_Remove;
+
+	public static String ConnectionsPreferencePage_Status;
 
 	public static String ConnectionsPreferencePage_User;
 

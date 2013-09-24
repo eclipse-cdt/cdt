@@ -98,10 +98,12 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			IRemoteConnection connection = (IRemoteConnection) element;
 			switch (columnIndex) {
 			case 0:
-				return connection.getName();
+				return connection.isOpen() ? Messages.ConnectionsPreferencePage_open : Messages.ConnectionsPreferencePage_closed;
 			case 1:
-				return connection.getAddress();
+				return connection.getName();
 			case 2:
+				return connection.getAddress();
+			case 3:
 				return connection.getUsername();
 			}
 			return null;
@@ -139,6 +141,10 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 				editConnection();
 			} else if (source == fRemoveButton) {
 				removeConnections();
+			} else if (source == fOpenButton) {
+				toggleConnection();
+			} else if (source == fCloseButton) {
+				toggleConnection();
 			} else if (source == fConnectionTable) {
 				selectConnection();
 			} else if (source == fServicesCombo) {
@@ -149,16 +155,18 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 
 	}
 
-	private final String[] fTableColumnHeaders = { Messages.ConnectionsPreferencePage_Connection_Name,
+	private final String[] fTableColumnHeaders = { Messages.ConnectionsPreferencePage_Status, Messages.ConnectionsPreferencePage_Connection_Name,
 			Messages.ConnectionsPreferencePage_Host, Messages.ConnectionsPreferencePage_User };
 
-	private final ColumnLayoutData[] fTableColumnLayouts = { new ColumnWeightData(30), new ColumnWeightData(50),
-			new ColumnWeightData(20) };
+	private final ColumnLayoutData[] fTableColumnLayouts = { new ColumnWeightData(15), new ColumnWeightData(35),
+			new ColumnWeightData(30), new ColumnWeightData(20) };
 
 	private Combo fServicesCombo;
 	private Button fAddButton;
 	private Button fEditButton;
 	private Button fRemoveButton;
+	private Button fOpenButton;
+	private Button fCloseButton;
 	private Table fConnectionTable;
 	private TableViewer fConnectionViewer;
 	private EventHandler fEventHandler;
@@ -289,6 +297,16 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		fRemoveButton.setText(Messages.ConnectionsPreferencePage_Remove);
 		fRemoveButton.addSelectionListener(fEventHandler);
 		fRemoveButton.setEnabled(false);
+		fOpenButton = new Button(buttonPane, SWT.PUSH);
+		setButtonLayoutData(fOpenButton);
+		fOpenButton.setText(Messages.ConnectionsPreferencePage_Open);
+		fOpenButton.addSelectionListener(fEventHandler);
+		fOpenButton.setEnabled(false);
+		fCloseButton = new Button(buttonPane, SWT.PUSH);
+		setButtonLayoutData(fCloseButton);
+		fCloseButton.setText(Messages.ConnectionsPreferencePage_Close);
+		fCloseButton.addSelectionListener(fEventHandler);
+		fCloseButton.setEnabled(false);
 
 		String id = Preferences.getString(IRemotePreferenceConstants.PREF_REMOTE_SERVICES_ID);
 		if ("".equals(id)) { //$NON-NLS-1$
@@ -337,15 +355,15 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		return name;
 	}
 
-	private Set<String> invalidConnectionNames() {
-		return fWorkingCopies.keySet();
-	}
-
 	private void initWorkingConnections() {
 		fWorkingCopies.clear();
 		for (IRemoteConnection conn : fConnectionManager.getConnections()) {
 			fWorkingCopies.put(conn.getName(), conn);
 		}
+	}
+
+	private Set<String> invalidConnectionNames() {
+		return fWorkingCopies.keySet();
 	}
 
 	@Override
@@ -389,14 +407,12 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 	 */
 	private void selectConnection() {
 		TableItem[] selection = fConnectionTable.getSelection();
-		fEditButton.setEnabled(false);
-		fRemoveButton.setEnabled(false);
 		if (selection.length > 0) {
 			fSelectedConnection = (IRemoteConnection) selection[0].getData();
-			IRemoteServices services = fSelectedConnection.getRemoteServices();
-			fEditButton.setEnabled((services.getCapabilities() & IRemoteServices.CAPABILITY_EDIT_CONNECTIONS) != 0);
-			fRemoveButton.setEnabled((services.getCapabilities() & IRemoteServices.CAPABILITY_REMOVE_CONNECTIONS) != 0);
+		} else {
+			fSelectedConnection = null;
 		}
+		updateEnablement();
 	}
 
 	private void selectServices(String id) {
@@ -409,6 +425,27 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			fAddButton.setEnabled((services.getCapabilities() & IRemoteServices.CAPABILITY_ADD_CONNECTIONS) != 0);
 		}
 		fIsDirty = false;
+	}
+
+	/**
+	 * Toggle the connection
+	 */
+	private void toggleConnection() {
+		TableItem[] items = fConnectionTable.getSelection();
+		if (items.length > 0) {
+			IRemoteConnection conn = (IRemoteConnection) items[0].getData();
+			if (conn.isOpen()) {
+				conn.close();
+			} else {
+				IRemoteUIConnectionManager mgr = RemoteUIServices.getRemoteUIServices(conn.getRemoteServices())
+						.getUIConnectionManager();
+				if (mgr != null) {
+					mgr.openConnectionWithProgress(getShell(), null, conn);
+				}
+			}
+			fConnectionViewer.refresh();
+			updateEnablement();
+		}
 	}
 
 	/**
@@ -436,5 +473,20 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			}
 		}
 		initWorkingConnections();
+	}
+
+	private void updateEnablement() {
+		fEditButton.setEnabled(false);
+		fRemoveButton.setEnabled(false);
+		fOpenButton.setEnabled(false);
+		fCloseButton.setEnabled(false);
+		if (fSelectedConnection != null) {
+			fEditButton
+					.setEnabled((fSelectedConnection.getRemoteServices().getCapabilities() & IRemoteServices.CAPABILITY_EDIT_CONNECTIONS) != 0);
+			fRemoveButton
+					.setEnabled((fSelectedConnection.getRemoteServices().getCapabilities() & IRemoteServices.CAPABILITY_REMOVE_CONNECTIONS) != 0);
+			fOpenButton.setEnabled(!fSelectedConnection.isOpen());
+			fCloseButton.setEnabled(fSelectedConnection.isOpen());
+		}
 	}
 }

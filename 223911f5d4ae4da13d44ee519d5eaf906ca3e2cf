@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_18dc34db",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-09-24T19:44:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74dd7b0_63596609",
+      "revId": "223911f5d4ae4da13d44ee519d5eaf906ca3e2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74dd7b0_435c2af9",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2013-09-19T20:31:34Z",
       "side": 1,
       "message": "I\u0027ve been meaning to ask why you put the bug url?  I don\u0027t mind, just curious.",
+      "revId": "223911f5d4ae4da13d44ee519d5eaf906ca3e2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_b81d4027",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-09-24T19:44:11Z",
+      "side": 1,
+      "message": "Ahh!!, \nThe commit message is automatically generated when using Mylyn tasks. \n  If a mylyn tasks is active at the moment of the commit. Mylyn / Egit will populate the commit message with the description of the active task which includes the URL, \n  I like this as the hyperlink works directly from Gerrit so you get easy access to the review and the corresponding bug.",
+      "parentUuid": "a74dd7b0_435c2af9",
       "revId": "223911f5d4ae4da13d44ee519d5eaf906ca3e2cf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_f89188d6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-09-24T19:44:11Z",
+      "side": 1,
+      "message": "Done, \nTrue, I missed this one,",
+      "parentUuid": "8748d3a1_07fe99a0",
+      "revId": "223911f5d4ae4da13d44ee519d5eaf906ca3e2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_672afdb6",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2013-09-20T11:28:52Z",
       "side": 1,
       "message": "Since we are already in the executor, you can use an ImmediateDataRequestMonitor(rm) which speeds up the call",
+      "revId": "223911f5d4ae4da13d44ee519d5eaf906ca3e2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_18243438",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-09-24T19:44:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_672afdb6",
       "revId": "223911f5d4ae4da13d44ee519d5eaf906ca3e2cf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_f8cea8d8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-09-24T19:44:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_e768cdea",
+      "revId": "223911f5d4ae4da13d44ee519d5eaf906ca3e2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74dd7b0_c35ddac2",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIDataListRegisterValues.java",
         "patchSetId": 1
@@ -98,6 +188,24 @@
       "writtenOn": "2013-09-19T20:31:34Z",
       "side": 1,
       "message": "I think that to coalesce two such commands, we will need to make sure that we are dealing with the same context, no?  In fact, it seems like a bug that we didn\u0027t check before.\n\nThis command is the only one that uses coalescing and I wasn\u0027t even aware of it.",
+      "revId": "223911f5d4ae4da13d44ee519d5eaf906ca3e2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_d35c6fc8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIDataListRegisterValues.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-09-24T19:44:11Z",
+      "side": 1,
+      "message": "It make sense, \nI have added a check for it a the top of this method, \nI am using \"equals\" rather than \"\u003d\u003d\" to cover multiple context instances pointing to the same frame.",
+      "parentUuid": "a74dd7b0_c35ddac2",
       "revId": "223911f5d4ae4da13d44ee519d5eaf906ca3e2cf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

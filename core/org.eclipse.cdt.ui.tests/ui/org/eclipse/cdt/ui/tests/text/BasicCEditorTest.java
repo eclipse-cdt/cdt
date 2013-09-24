@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
@@ -37,10 +38,13 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -65,6 +69,7 @@ import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
@@ -517,4 +522,34 @@ public class BasicCEditorTest extends BaseUITestCase {
 		int newOffset= ((ITextSelection)fEditor.getSelectionProvider().getSelection()).getOffset();
 		assertEquals(offset, newOffset);
 	}
+	
+	// See Bug 
+	public void testScalabilityDialogNotDismissedInadvertently() throws Exception {
+		
+		// 1. Create a project with a very large source file.
+		String file= "/ceditor/src/large_main.cpp";
+		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false, false);
+		
+		// 2. Create and open a progress dialog window.
+		IWorkbenchWindow window = EditorTestHelper.getActiveWorkbenchWindow();
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(window.getShell());
+		dialog.open();
+		
+		// 3. Open the large source file in the editor, which should cause the scalability dialog to be displayed.
+		setUpEditor(file);
+		
+		// 4. Close the progress dialog window
+		dialog.close();
+		
+		// 5. Verify that the scalability dialog has not been closed unexpectedly.
+		boolean scalabilityDialogFound = false;
+		Shell[] shells = Display.getCurrent().getShells();
+		for (Shell shell : shells) {
+			scalabilityDialogFound |= shell.getText().equals(CEditorMessages.Scalability_info);
+		}
+		
+		assertTrue(scalabilityDialogFound);
+		EditorTestHelper.closeEditor(fEditor);
+	}
+
 }

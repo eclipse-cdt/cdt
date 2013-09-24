@@ -160,6 +160,7 @@ public class JSchConnectionPage extends WizardPage {
 		fPasswordButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				validateFields();
 				updateEnablement();
 			}
 		});
@@ -178,6 +179,7 @@ public class JSchConnectionPage extends WizardPage {
 		fPublicKeyButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				validateFields();
 				updateEnablement();
 			}
 		});
@@ -198,18 +200,17 @@ public class JSchConnectionPage extends WizardPage {
 
 		fPasswordButton.setSelection(true);
 		fPublicKeyButton.setSelection(false);
-		updateEnablement();
 	}
 
 	public void createControl(Composite parent) {
 		if (fConnection == null) {
 			setDescription(Messages.JSchNewConnectionPage_New_connection_properties);
 			setTitle(Messages.JSchNewConnectionPage_New_Connection);
+			setMessage(Messages.JSchConnectionPage_Please_enter_name_for_connection);
 		} else {
 			setDescription(Messages.JSchConnectionPage_Edit_properties_of_an_existing_connection);
 			setTitle(Messages.JSchConnectionPage_Edit_Connection);
 		}
-		setMessage(Messages.JSchConnectionPage_Please_enter_name_for_connection);
 		setErrorMessage(null);
 
 		GridLayout topLayout = new GridLayout(2, false);
@@ -238,17 +239,33 @@ public class JSchConnectionPage extends WizardPage {
 		 * Register listeners after loading values so we don't trigger listeners
 		 */
 		registerListeners();
+
+		if (fConnection != null) {
+			validateFields();
+		}
+
+		updateEnablement();
 	}
 
 	public JSchConnectionWorkingCopy getConnection() {
 		return fConnection;
 	}
 
+	/**
+	 * Check if the connection name is invalid. This only applies to new connections (when fConnection is null).
+	 * 
+	 * @param name
+	 *            connection name
+	 * @return true if the name is invalid, false otherwise
+	 */
 	private boolean isInvalidName(String name) {
-		if (fInvalidConnectionNames == null) {
-			return fConnectionManager.getConnection(name) != null;
+		if (fConnection == null) {
+			if (fInvalidConnectionNames == null) {
+				return fConnectionManager.getConnection(name) != null;
+			}
+			return fInvalidConnectionNames.contains(name);
 		}
-		return fInvalidConnectionNames.contains(name);
+		return false;
 	}
 
 	private void loadValues() {
@@ -258,8 +275,10 @@ public class JSchConnectionPage extends WizardPage {
 			fUserText.setText(fConnection.getUsername());
 			fPortText.setText(Integer.toString(fConnection.getPort()));
 			fTimeoutText.setText(Integer.toString(fConnection.getTimeout()));
-			fPasswordButton.setSelection(fConnection.isPasswordAuth());
-			if (fConnection.isPasswordAuth()) {
+			boolean isPwd = fConnection.isPasswordAuth();
+			fPasswordButton.setSelection(isPwd);
+			fPublicKeyButton.setSelection(!isPwd);
+			if (isPwd) {
 				fPasswordText.setText(fConnection.getPassword());
 			} else {
 				fPassphraseText.setText(fConnection.getPassphrase());
@@ -306,6 +325,7 @@ public class JSchConnectionPage extends WizardPage {
 		fConnectionName.addModifyListener(fDataModifyListener);
 		fHostText.addModifyListener(fDataModifyListener);
 		fUserText.addModifyListener(fDataModifyListener);
+		fFileWidget.addModifyListener(fDataModifyListener);
 		fPortText.addModifyListener(fDataModifyListener);
 		fTimeoutText.addModifyListener(fDataModifyListener);
 	}

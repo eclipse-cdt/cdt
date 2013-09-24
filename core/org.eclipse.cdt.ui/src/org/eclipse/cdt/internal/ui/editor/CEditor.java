@@ -13,6 +13,7 @@
  *     Sergey Prigogin (Google)
  *     Axel Mueller - [289339] Surround with
  *     Tomasz Wesolowski - [320561] Override indicators
+ *     Serge Beauchamp (Freescale Semiconductor)  - Bug 417909
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -1551,7 +1552,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			// Alert users that scalability mode should be turned on
 			if (getPreferenceStore().getBoolean(PreferenceConstants.SCALABILITY_ALERT)) {
 				MessageDialogWithToggle dialog = new MessageDialogWithToggle(
-						Display.getCurrent().getActiveShell(),
+						getSite().getShell(),
 						CEditorMessages.Scalability_info,  
 						null,
 						CEditorMessages.Scalability_message,  
@@ -1567,7 +1568,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 						PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.SCALABILITY_ALERT, !getToggleState());
 						super.buttonPressed(buttonId);
 						if (buttonId == IDialogConstants.YES_ID) {
-							PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(Display.getCurrent().getActiveShell(),
+							PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(getSite().getShell(),
 									"org.eclipse.cdt.ui.preferences.CScalabilityPreferences", null, null); //$NON-NLS-1$
 							dialog.open();
 						}

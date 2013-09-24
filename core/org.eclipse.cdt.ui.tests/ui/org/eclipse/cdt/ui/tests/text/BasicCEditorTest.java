@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Andrew Eidsness - fix and test for bug 278632
+ *     Serge Beauchamp (Freescale Semiconductor)  - Bug 417909
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
@@ -27,6 +28,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
@@ -37,10 +40,13 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -65,6 +71,7 @@ import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
@@ -517,4 +524,60 @@ public class BasicCEditorTest extends BaseUITestCase {
 		int newOffset= ((ITextSelection)fEditor.getSelectionProvider().getSelection()).getOffset();
 		assertEquals(offset, newOffset);
 	}
+	
+	// See Bug 417909 - Opening a large file from a progress dialog causes the scalability dialog to disappear 
+	public void testScalabilityDialogNotDismissedInadvertently()
+			throws Exception {
+
+		// 1. Create a project with a very large source file.
+		fCProject = EditorTestHelper.createCProject("ceditor",
+				"resources/ceditor", false, false);
+
+		// 1a. Dynamically create the large source file.
+		String originalFile = "/ceditor/src/main.cpp";
+		String file = "/ceditor/src/large_main.cpp";
+		ResourceTestHelper.copy(originalFile, file);
+
+		setUpEditor(file);
+
+		StringBuilder buffer = new StringBuilder(fDocument.get());
+
+		buffer.append("unsigned long c[250000] = {\n");
+		for (int i = 0; i < 12499; i++)
+			buffer.append("	0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,\n");
+		buffer.append("	0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1,0x0,0x1\n};\n");
+
+		fDocument.set(buffer.toString());
+		fEditor.doSave(new NullProgressMonitor());
+		EditorTestHelper.closeEditor(fEditor);
+
+		// 2. Create and open a progress dialog window.
+		IWorkbenchWindow window = EditorTestHelper.getActiveWorkbenchWindow();
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(
+				window.getShell());
+		dialog.open();
+
+		// 3. Open the large source file in the editor, which should cause the
+		// scalability dialog to be displayed.
+		setUpEditor(file);
+
+		// 4. Close the progress dialog window
+		dialog.close();
+
+		// 5. Verify that the scalability dialog has not been closed
+		// unexpectedly.
+		Shell scalabilityDialog = null;
+		Shell[] shells = Display.getCurrent().getShells();
+		for (Shell shell : shells) {
+			if (shell.getText().equals(CEditorMessages.Scalability_info)) {
+				scalabilityDialog = shell;
+				break;
+			}
+		}
+
+		assertNotNull(scalabilityDialog);
+		scalabilityDialog.close();
+		EditorTestHelper.closeEditor(fEditor);
+	}
+
 }

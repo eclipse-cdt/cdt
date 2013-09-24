@@ -155,8 +155,9 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 
 	}
 
-	private final String[] fTableColumnHeaders = { Messages.ConnectionsPreferencePage_Status, Messages.ConnectionsPreferencePage_Connection_Name,
-			Messages.ConnectionsPreferencePage_Host, Messages.ConnectionsPreferencePage_User };
+	private final String[] fTableColumnHeaders = { Messages.ConnectionsPreferencePage_Status,
+			Messages.ConnectionsPreferencePage_Connection_Name, Messages.ConnectionsPreferencePage_Host,
+			Messages.ConnectionsPreferencePage_User };
 
 	private final ColumnLayoutData[] fTableColumnLayouts = { new ColumnWeightData(15), new ColumnWeightData(35),
 			new ColumnWeightData(30), new ColumnWeightData(20) };
@@ -481,12 +482,15 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		fOpenButton.setEnabled(false);
 		fCloseButton.setEnabled(false);
 		if (fSelectedConnection != null) {
-			fEditButton
-					.setEnabled((fSelectedConnection.getRemoteServices().getCapabilities() & IRemoteServices.CAPABILITY_EDIT_CONNECTIONS) != 0);
-			fRemoveButton
-					.setEnabled((fSelectedConnection.getRemoteServices().getCapabilities() & IRemoteServices.CAPABILITY_REMOVE_CONNECTIONS) != 0);
-			fOpenButton.setEnabled(!fSelectedConnection.isOpen());
-			fCloseButton.setEnabled(fSelectedConnection.isOpen());
+			if (!fSelectedConnection.isOpen()) {
+				fEditButton
+						.setEnabled((fSelectedConnection.getRemoteServices().getCapabilities() & IRemoteServices.CAPABILITY_EDIT_CONNECTIONS) != 0);
+				fRemoveButton
+						.setEnabled((fSelectedConnection.getRemoteServices().getCapabilities() & IRemoteServices.CAPABILITY_REMOVE_CONNECTIONS) != 0);
+				fOpenButton.setEnabled(true);
+			} else {
+				fCloseButton.setEnabled(true);
+			}
 		}
 	}
 }

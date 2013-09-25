@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_06d137c4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-25T20:23:12Z",
+      "side": 1,
+      "message": "I believe you can modify the default Mylyn output for the commit.\n\nAlso, the text \"Bug 323552\" is automatically made into a hyperlink in Gerrit.  At least on the webpage, which is why I didn\u0027t understand the value of the long hyperlink.",
+      "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_f061612e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-25T20:23:12Z",
+      "side": 1,
+      "message": "Let\u0027s put comments on the fact that a register must now be associated to a frame.  If the user selects a thread, we should use the top frame of that thread.  If there is no frame, we should use the constructor MIRegisterDMC(MIRegisters, MIRegisterGroupDMC, int, String)",
+      "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_d064253f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-25T20:23:12Z",
+      "side": 1,
+      "message": "raplace frameDmc with null to show you really want to pass in null and that it is not just a mistake",
+      "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_305bc980",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-25T20:23:12Z",
+      "side": 1,
+      "message": "Please explain why you are doing this.",
+      "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_26f8b3b5",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-25T20:23:12Z",
+      "side": 1,
+      "message": "How about making this an int?\nThen below you can replace the assertTrue with:\nassertEquals(4, depth);",
+      "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_26b273ce",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 575,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-25T20:23:12Z",
+      "side": 1,
+      "message": "Maybe assertNotNull(sp_name);",
+      "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_a69e8341",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 609,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-09-25T20:23:12Z",
+      "side": 1,
+      "message": "Store this result in a local and then don\u0027t use the global fRegisterNames.  That is the pattern that was meant to be used with get_X86_REGS()",
+      "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - Bug 406545
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.ui.properties;
@@ -529,6 +530,14 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		}
 	}
 
+
+	/**
+	 * @since 8.2
+	 */
+	@Override
+	public boolean canSupportMultiCfg() {
+		return false;
+	}
 
 	@Override
 	protected void updateButtons() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Serge Beauchamp (Freescale Semiconductor) - Bug 406545
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -195,6 +196,11 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		ri = cfg.getResourceInfo(rcfg.getPath(), false);
 		mod = getModification();
 		updateData();
+	}
+
+	@Override
+	public boolean canSupportMultiCfg() {
+		return false;
 	}
 
 	private void updateData() {

@@ -8,7 +8,7 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Andrew Eidsness - fix and test for bug 278632
- *     Serge Beauchamp (Freescale Semiconductor)  - Bug 417909
+ *     Serge Beauchamp (Freescale Semiconductor) - Bug 417909
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
@@ -28,7 +28,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -95,27 +94,18 @@ public class BasicCEditorTest extends BaseUITestCase {
 	}
 
 	public static class Bug278632FileSystem extends FileSystem {
-		public Bug278632FileSystem() {
-			getClass();
-		}
-
 		@Override
 		public IFileStore getStore(URI uri) {
 			try {
-				// For the test case, this just return the FS implementation
-				// used for the null filesystem.
-				// In a real application this would be a real implementation,
-				// however for the purposes
-				// of exposing the bug, any non-file:// scheme will do.
-				return EFS.getStore(new URI(
-						EFS.getNullFileSystem().getScheme(), uri
-								.getSchemeSpecificPart(), null));
+				// For the test case, this just returns the FS implementation used for the null
+				// filesystem. In a real application this would be a real implementation,
+				// however for the purposes of exposing the bug, any non-"file://" scheme will do.
+				return EFS.getStore(
+						new URI(EFS.getNullFileSystem().getScheme(), uri.getSchemeSpecificPart(), null));
 			} catch (URISyntaxException e) {
-				e.printStackTrace();
-				return null;
+				throw new RuntimeException(e);
 			} catch (CoreException e) {
-				e.printStackTrace();
-				return null;
+				throw new RuntimeException(e);
 			}
 		}
 	}
@@ -166,7 +156,8 @@ public class BasicCEditorTest extends BaseUITestCase {
 	}
 
 	private void setUpEditor(File file) throws PartInitException, CModelException {
-		IEditorPart editor= EditorUtility.openInEditor(new ExternalTranslationUnit(fCProject, file.toURI(), CCorePlugin.CONTENT_TYPE_CXXSOURCE));
+		IEditorPart editor= EditorUtility.openInEditor(
+				new ExternalTranslationUnit(fCProject, file.toURI(), CCorePlugin.CONTENT_TYPE_CXXSOURCE));
 		assertNotNull(editor);
 		assertTrue(editor instanceof CEditor);
 		fEditor= (CEditor) editor;
@@ -226,6 +217,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		children= tUnit.getChildren();
 		assertEquals(3, children.length);
 	}
+
 	//{Point.cpp}
 	//#include <math.h>
 	//class Point {
@@ -263,16 +255,17 @@ public class BasicCEditorTest extends BaseUITestCase {
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
 		String content= fDocument.get();
 		setCaret(0);
-		String newText= "/* "+getName()+" */\n";
+		String newText= "/* " + getName() + " */\n";
 		newText += readTaggedComment("Point.cpp");
 		String[] lines= newText.split("\\r\\n|\\r|\\n");
 		for (int i = 0; i < lines.length; i++) {
 			String line= lines[i].trim();
 			if (line.startsWith("}")) {
-				setCaret(fDocument.get().indexOf(line, getCaret())+line.length());
+				setCaret(fDocument.get().indexOf(line, getCaret()) + line.length());
 				Thread.sleep(100);
 			} else {
-				if (i > 0) type('\n');
+				if (i > 0)
+					type('\n');
 				type(line);
 				Thread.sleep(50);
 			}
@@ -312,7 +305,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
 		String content= fDocument.get();
 		setCaret(0);
-		String newtext= "/* "+getName()+" */";
+		String newtext= "/* " + getName() + " */";
 		type(newtext);
 		type('\n');
 		String newContent= fDocument.get();
@@ -340,7 +333,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
 		String content= fDocument.get();
 		setCaret(0);
-		String newtext= "/* "+getName()+" */";
+		String newtext= "/* " + getName() + " */";
 		type(newtext);
 		type('\n');
 		String newContent= fDocument.get();
@@ -381,7 +374,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
 		String content= fDocument.get();
 		setCaret(0);
-		String newtext= "/* "+getName()+" */";
+		String newtext= "/* " + getName() + " */";
 		type(newtext);
 		type('\n');
 		String newContent= fDocument.get();
@@ -427,12 +420,10 @@ public class BasicCEditorTest extends BaseUITestCase {
 	}
 
 	public void testNonFileEFSResource_Bug278632() {
-		IWorkbenchPage page = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage();
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		assertNotNull(page);
 
-		IEditorRegistry reg = page.getWorkbenchWindow().getWorkbench()
-				.getEditorRegistry();
+		IEditorRegistry reg = page.getWorkbenchWindow().getWorkbench().getEditorRegistry();
 		String editorID = reg.getDefaultEditor(".c").getId();
 
 		URI uri = null;
@@ -525,13 +516,11 @@ public class BasicCEditorTest extends BaseUITestCase {
 		assertEquals(offset, newOffset);
 	}
 	
-	// See Bug 417909 - Opening a large file from a progress dialog causes the scalability dialog to disappear 
-	public void testScalabilityDialogNotDismissedInadvertently()
-			throws Exception {
-
+	// See Bug 417909 - Opening a large file from a progress dialog causes the scalability dialog to
+	// disappear.
+	public void testScalabilityDialogNotDismissedInadvertently_417909() throws Exception {
 		// 1. Create a project with a very large source file.
-		fCProject = EditorTestHelper.createCProject("ceditor",
-				"resources/ceditor", false, false);
+		fCProject = EditorTestHelper.createCProject("ceditor", "resources/ceditor", false, false);
 
 		// 1a. Dynamically create the large source file.
 		String originalFile = "/ceditor/src/main.cpp";
@@ -553,8 +542,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 
 		// 2. Create and open a progress dialog window.
 		IWorkbenchWindow window = EditorTestHelper.getActiveWorkbenchWindow();
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(
-				window.getShell());
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(window.getShell());
 		dialog.open();
 
 		// 3. Open the large source file in the editor, which should cause the
@@ -579,5 +567,4 @@ public class BasicCEditorTest extends BaseUITestCase {
 		scalabilityDialog.close();
 		EditorTestHelper.closeEditor(fEditor);
 	}
-
 }

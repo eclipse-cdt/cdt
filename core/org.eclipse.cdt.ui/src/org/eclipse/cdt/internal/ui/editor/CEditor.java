@@ -13,7 +13,7 @@
  *     Sergey Prigogin (Google)
  *     Axel Mueller - [289339] Surround with
  *     Tomasz Wesolowski - [320561] Override indicators
- *     Serge Beauchamp (Freescale Semiconductor)  - Bug 417909
+ *     Serge Beauchamp (Freescale Semiconductor) - Bug 417909
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -126,7 +126,6 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
@@ -252,9 +251,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * @since 5.0
 	 */
 	private final class GotoMarkerAdapter implements IGotoMarker {
-		/*
-		 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#gotoMarker(org.eclipse.core.resources.IMarker)
-		 */
 		@Override
 		public void gotoMarker(IMarker marker) {
 			if (fIsUpdatingMarkerViews)
@@ -268,21 +264,21 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			
 			boolean selectLine= start < 0 || end < 0;
 
-			// look up the current range of the marker when the document has been edited
+			// Look up the current range of the marker when the document has been edited.
 			IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
 			if (model instanceof AbstractMarkerAnnotationModel) {
 				AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
 				Position pos= markerModel.getMarkerPosition(marker);
 				if (pos != null && !pos.isDeleted()) {
-					// use position instead of marker values
+					// Use position instead of marker values
 					start= pos.getOffset();
 					end= pos.getOffset() + pos.getLength();
-					// use position as is
+					// Use position as is
 					selectLine= false;
 				}
 
 				if (pos != null && pos.isDeleted()) {
-					// do nothing if position has been deleted
+					// Do nothing if position has been deleted
 					return;
 				}
 			}
@@ -329,9 +325,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			return fContentAssistant;
 		}
 
-		/*
-		 * @see ITextOperationTarget#doOperation(int)
-		 */
 		@Override
 		public void doOperation(int operation) {
 			if (getTextWidget() == null)
@@ -344,8 +337,8 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 					return;
 				case QUICK_ASSIST:
 					/*
-					 * XXX: We can get rid of this once the SourceViewer has a way to update the status line
-					 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=133787
+					 * XXX: We can get rid of this once the SourceViewer has a way to update
+					 * the status line https://bugs.eclipse.org/bugs/show_bug.cgi?id=133787
 					 */
 					msg= fQuickAssistAssistant.showPossibleQuickAssists();
 					setStatusLineErrorMessage(msg);
@@ -355,9 +348,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			super.doOperation(operation);
 		}
 
-		/*
-		 * @see IWidgetTokenOwner#requestWidgetToken(IWidgetTokenKeeper)
-		 */
 		@Override
 		public boolean requestWidgetToken(IWidgetTokenKeeper requester) {
 			if (PlatformUI.getWorkbench().getHelpSystem().isContextHelpDisplayed())
@@ -365,10 +355,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			return super.requestWidgetToken(requester);
 		}
 
-		/*
-		 * @see IWidgetTokenOwnerExtension#requestWidgetToken(IWidgetTokenKeeper, int)
-		 * @since 3.0
-		 */
 		@Override
 		public boolean requestWidgetToken(IWidgetTokenKeeper requester, int priority) {
 			if (PlatformUI.getWorkbench().getHelpSystem().isContextHelpDisplayed())
@@ -376,10 +362,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			return super.requestWidgetToken(requester, priority);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.source.SourceViewer#createFormattingContext()
-		 * @since 3.0
-		 */
 		@Override
 		public IFormattingContext createFormattingContext() {
 			IFormattingContext context= new FormattingContext();
@@ -398,7 +380,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 				try {
 					language= tu.getLanguage();
 				} catch (CoreException exc) {
-					// use fallback CPP
+					// Use fallback CPP
 					language= GPPLanguage.getDefault();
 				}
 				preferences.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
@@ -432,9 +414,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			fSize = fStack.size();
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.link.LinkedModeUI$IExitPolicy#doExit(org.eclipse.jface.text.link.LinkedModeModel, org.eclipse.swt.events.VerifyEvent, int, int)
-		 */
 		@Override
 		public ExitFlags doExit(LinkedModeModel model, VerifyEvent event, int offset, int length) {
 			if (fSize == fStack.size() && !isMasked(offset)) {
@@ -446,8 +425,8 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 						// don't enter the character if if its the closing peer
 						return new ExitFlags(ILinkedModeListener.UPDATE_CARET, false);
 				}
-				// when entering an anonymous class between the parenthesis', we don't want
-				// to jump after the closing parenthesis when return is pressed
+				// When entering an anonymous class between the parenthesis', we don't want
+				// to jump after the closing parenthesis when return is pressed.
 				if (event.character == SWT.CR && offset > 0) {
 					IDocument document = getSourceViewer().getDocument();
 					try {
@@ -471,8 +450,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 
 	private static class BracketLevel {
-//		int fOffset;
-//		int fLength;
 		LinkedModeUI fUI;
 		Position fFirstPosition;
 		Position fSecondPosition;
@@ -484,7 +461,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * @since 4.0
 	 */
 	private static class ExclusivePositionUpdater implements IPositionUpdater {
-
 		/** The position category. */
 		private final String fCategory;
 
@@ -497,9 +473,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			fCategory = category;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.IPositionUpdater#update(org.eclipse.jface.text.DocumentEvent)
-		 */
 		@Override
 		public void update(DocumentEvent event) {
 			int eventOffset = event.getOffset();
@@ -563,7 +536,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 
 	private class BracketInserter implements VerifyKeyListener, ILinkedModeListener {
-
 		private boolean fCloseBrackets = true;
 		private boolean fCloseStrings = true;
 		private boolean fCloseAngularBrackets = true;
@@ -590,13 +562,9 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 					|| identifier.endsWith("_cast")); //$NON-NLS-1$
 		}
 
-		/*
-		 * @see org.eclipse.swt.custom.VerifyKeyListener#verifyKey(org.eclipse.swt.events.VerifyEvent)
-		 */
 		@Override
 		public void verifyKey(VerifyEvent event) {
-
-			// early pruning to slow down normal typing as little as possible
+			// Early pruning to slow down normal typing as little as possible.
 			if (!event.doit || getInsertMode() != SMART_INSERT)
 				return;
 			switch (event.character) {
@@ -681,12 +649,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 				final StringBuilder buffer = new StringBuilder(3);
 				buffer.append(character);
 				buffer.append(closingCharacter);
-				// No longer necessary since consecutive closing angular brackets are allowed in C++11.
-//				if (closingCharacter == '>' && nextToken != Symbols.TokenEOF
-//						&& document.getChar(offset + length) == '>') {
-//					// Insert a space to avoid two consecutive closing angular brackets.
-//					buffer.append(' ');
-//				}
 
 				document.replace(offset, length, buffer.toString());
 
@@ -701,7 +663,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 				model.addGroup(group);
 				model.forceInstall();
 
-				// Set up position tracking for our magic peers
+				// Set up position tracking for our magic peers.
 				if (fBracketLevelStack.size() == 1) {
 					document.addPositionCategory(CATEGORY);
 					document.addPositionUpdater(fUpdater);
@@ -731,7 +693,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 		private boolean isInsideStringInPreprocessorDirective(ITypedRegion partition, IDocument document, int offset) throws BadLocationException {
 			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType()) && offset < document.getLength()) {
-				// use temporary document to test whether offset is inside non-default partition
+				// Use temporary document to test whether offset is inside non-default partition.
 				String directive = document.get(partition.getOffset(), offset - partition.getOffset() + 1);
 				int hashIdx = directive.indexOf('#');
 				if (hashIdx >= 0) {
@@ -746,9 +708,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			return false;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.link.ILinkedModeListener#left(org.eclipse.jface.text.link.LinkedModeModel, int)
-		 */
 		@Override
 		public void left(LinkedModeModel environment, int flags) {
 
@@ -763,7 +722,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			if (document instanceof IDocumentExtension) {
 				IDocumentExtension extension = (IDocumentExtension) document;
 				extension.registerPostNotificationReplace(null, new IDocumentExtension.IReplace() {
-
 					@Override
 					public void perform(IDocument d, IDocumentListener owner) {
 						if ((level.fFirstPosition.isDeleted || level.fFirstPosition.length == 0)
@@ -791,16 +749,10 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			}
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.link.ILinkedModeListener#suspend(org.eclipse.jface.text.link.LinkedModeModel)
-		 */
 		@Override
 		public void suspend(LinkedModeModel environment) {
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.link.ILinkedModeListener#resume(org.eclipse.jface.text.link.LinkedModeModel, int)
-		 */
 		@Override
 		public void resume(LinkedModeModel environment, int flags) {
 		}
@@ -812,10 +764,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * @since 3.0
 	 */
 	private class EditorSelectionChangedListener extends AbstractSelectionChangedListener {
-
-		/**
-		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-		 */
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			// XXX: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=56161
@@ -829,7 +777,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * @since 4.0
 	 */
 	protected abstract class NextSubWordAction extends TextNavigationAction {
-
 		protected CWordIterator fIterator = new CWordIterator();
 
 		/**
@@ -841,9 +788,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			super(getSourceViewer().getTextWidget(), code);
 		}
 
-		/*
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
 		@Override
 		public void run() {
 			// Check whether sub word navigation is enabled.
@@ -905,7 +849,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * @since 4.0
 	 */
 	protected class NavigateNextSubWordAction extends NextSubWordAction {
-
 		/**
 		 * Creates a new navigate next sub-word action.
 		 */
@@ -913,9 +856,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			super(ST.WORD_NEXT);
 		}
 
-		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.NextSubWordAction#setCaretPosition(int)
-		 */
 		@Override
 		protected void setCaretPosition(final int position) {
 			getTextWidget().setCaretOffset(modelOffset2WidgetOffset(getSourceViewer(), position));
@@ -928,7 +868,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * @since 4.0
 	 */
 	protected class DeleteNextSubWordAction extends NextSubWordAction implements IUpdate {
-
 		/**
 		 * Creates a new delete next sub-word action.
 		 */
@@ -936,9 +875,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			super(ST.DELETE_WORD_NEXT);
 		}
 
-		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.NextSubWordAction#setCaretPosition(int)
-		 */
 		@Override
 		protected void setCaretPosition(final int position) {
 			if (!validateEditorInputState())
@@ -975,17 +911,11 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			}
 		}
 
-		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.NextSubWordAction#findNextPosition(int)
-		 */
 		@Override
 		protected int findNextPosition(int position) {
 			return fIterator.following(position);
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.IUpdate#update()
-		 */
 		@Override
 		public void update() {
 			setEnabled(isEditorInputModifiable());
@@ -998,7 +928,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * @since 4.0
 	 */
 	protected class SelectNextSubWordAction extends NextSubWordAction {
-
 		/**
 		 * Creates a new select next sub-word action.
 		 */
@@ -1006,9 +935,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			super(ST.SELECT_WORD_NEXT);
 		}
 
-		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.NextSubWordAction#setCaretPosition(int)
-		 */
 		@Override
 		protected void setCaretPosition(final int position) {
 			final ISourceViewer viewer = getSourceViewer();
@@ -1034,7 +960,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * @since 4.0
 	 */
 	protected abstract class PreviousSubWordAction extends TextNavigationAction {
-
 		protected CWordIterator fIterator = new CWordIterator();
 
 		/**
@@ -1046,9 +971,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			super(getSourceViewer().getTextWidget(), code);
 		}
 
-		/*
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
 		@Override
 		public void run() {
 			// Check whether sub word navigation is enabled.
@@ -1118,9 +1040,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			super(ST.WORD_PREVIOUS);
 		}
 
-		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.PreviousSubWordAction#setCaretPosition(int)
-		 */
 		@Override
 		protected void setCaretPosition(final int position) {
 			getTextWidget().setCaretOffset(modelOffset2WidgetOffset(getSourceViewer(), position));
@@ -1133,7 +1052,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * @since 4.0
 	 */
 	protected class DeletePreviousSubWordAction extends PreviousSubWordAction implements IUpdate {
-
 		/**
 		 * Creates a new delete previous sub-word action.
 		 */
@@ -1141,9 +1059,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			super(ST.DELETE_WORD_PREVIOUS);
 		}
 
-		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.PreviousSubWordAction#setCaretPosition(int)
-		 */
 		@Override
 		protected void setCaretPosition(int position) {
 			if (!validateEditorInputState())
@@ -1179,17 +1094,11 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			}
 		}
 
-		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.PreviousSubWordAction#findPreviousPosition(int)
-		 */
 		@Override
 		protected int findPreviousPosition(int position) {
 			return fIterator.preceding(position);
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.IUpdate#update()
-		 */
 		@Override
 		public void update() {
 			setEnabled(isEditorInputModifiable());
@@ -1202,7 +1111,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * @since 4.0
 	 */
 	protected class SelectPreviousSubWordAction extends PreviousSubWordAction {
-
 		/**
 		 * Creates a new select previous sub-word action.
 		 */
@@ -1210,24 +1118,21 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			super(ST.SELECT_WORD_PREVIOUS);
 		}
 
-		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.PreviousSubWordAction#setCaretPosition(int)
-		 */
 		@Override
 		protected void setCaretPosition(final int position) {
 			final ISourceViewer viewer = getSourceViewer();
 
 			final StyledText text = viewer.getTextWidget();
 			if (text != null && !text.isDisposed()) {
-
 				final Point selection = text.getSelection();
 				final int caret = text.getCaretOffset();
 				final int offset = modelOffset2WidgetOffset(viewer, position);
 
-				if (caret == selection.x)
+				if (caret == selection.x) {
 					text.setSelectionRange(selection.y, offset - selection.y);
-				else
+				} else {
 					text.setSelectionRange(selection.x, offset - selection.x);
+				}
 			}
 		}
 	}
@@ -1452,16 +1357,10 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		fPostSaveListeners = new ListenerList();
 	}
 
-	/**
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
-	 */
 	@Override
 	protected void initializeEditor() {
 	}
 
-	/**
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSetInput(org.eclipse.ui.IEditorInput)
-	 */
 	@Override
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		ISourceViewer sourceViewer= getSourceViewer();
@@ -1580,10 +1479,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#setPreferenceStore(org.eclipse.jface.preference.IPreferenceStore)
-	 * @since 5.0
-	 */
 	@Override
 	protected void setPreferenceStore(IPreferenceStore store) {
 		super.setPreferenceStore(store);
@@ -1717,7 +1612,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			final AdaptedSourceViewer asv = (AdaptedSourceViewer) getSourceViewer();
 
 			if (asv != null) {
-
 				boolean newBooleanValue= false;
 				Object newValue= event.getNewValue();
 				if (newValue != null)
@@ -1853,16 +1747,13 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#initializeViewerColors(org.eclipse.jface.text.source.ISourceViewer)
-	 */
 	@Override
 	protected void initializeViewerColors(ISourceViewer viewer) {
 		// is handled by CSourceViewer
 	}
 
-	/*
-	 * Update the hovering behavior depending on the preferences.
+	/**
+	 * Updates the hovering behavior depending on the preferences.
 	 */
 	private void updateHoverBehavior() {
 		SourceViewerConfiguration configuration= getSourceViewerConfiguration();
@@ -1893,7 +1784,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 
 	/**
-	 * React to changed selection in the editor.
+	 * Reacts to changed selection in the editor.
 	 *
 	 * @since 3.0
 	 */
@@ -2151,10 +2042,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		return (this == service.getActivePart());
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#installTabsToSpacesConverter()
-	 * @since 4.0
-	 */
 	@Override
 	protected void installTabsToSpacesConverter() {
 		ISourceViewer sourceViewer= getSourceViewer();
@@ -2188,10 +2075,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		super.updateIndentPrefixes();
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#isTabsToSpacesConversionEnabled()
-	 * @since 4.0
-	 */
 	@Override
 	protected boolean isTabsToSpacesConversionEnabled() {
 		ICElement element= getInputCElement();
@@ -2230,7 +2113,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			fProjectionSupport = null;
 		}
 
-		// cancel possible running computation
+		// Cancel possible running computation
 		fMarkOccurrenceAnnotations= false;
 		uninstallOccurrencesFinder();
 		uninstallOverrideIndicator();
@@ -2295,9 +2178,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		super.dispose();
 	}
 
-	/**
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#canHandleMove(org.eclipse.ui.IEditorInput, org.eclipse.ui.IEditorInput)
-	 */
 	@Override
 	protected boolean canHandleMove(IEditorInput originalElement, IEditorInput movedElement) {
 		String oldLanguage = ""; //$NON-NLS-1$
@@ -2330,9 +2210,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		return oldLanguage.equals(newLanguage);
 	}
 
-	/**
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
-	 */
 	@Override
 	protected void createActions() {
 		super.createActions();
@@ -2483,9 +2360,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		return new OpenViewActionGroup(this);
 	}
 
-	/**
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	public void editorContextMenuAboutToShow(IMenuManager menu) {
 		// marker for contributions to the top
@@ -2535,9 +2409,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#rulerContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
 		super.rulerContextMenuAboutToShow(menu);
@@ -2584,19 +2455,12 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}
 
-	/*
-	 * @see org.eclipse.ui.part.WorkbenchPart#getOrientation()
-	 * @since 4.0
-	 */
 	@Override
 	public int getOrientation() {
 		// C/C++ editors are always left to right by default
 		return SWT.LEFT_TO_RIGHT;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
@@ -2641,12 +2505,8 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		
 		if(isShowingOverrideIndicators())
 			installOverrideIndicator(false);
-		
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#getSourceViewerDecorationSupport(org.eclipse.jface.text.source.ISourceViewer)
-	 */
 	@Override
 	protected SourceViewerDecorationSupport getSourceViewerDecorationSupport(ISourceViewer viewer) {
 		if (fSourceViewerDecorationSupport == null) {
@@ -2656,9 +2516,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		return fSourceViewerDecorationSupport;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#configureSourceViewerDecorationSupport(org.eclipse.ui.texteditor.SourceViewerDecorationSupport)
-	 */
 	@Override
 	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
 		super.configureSourceViewerDecorationSupport(support);
@@ -2688,7 +2545,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * Jumps to the matching bracket.
 	 */
 	public void gotoMatchingBracket() {
-
 		ISourceViewer sourceViewer = getSourceViewer();
 		IDocument document = sourceViewer.getDocument();
 		if (document == null)
@@ -2811,8 +2667,8 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		return annotation;
 	}
 
-	/*
-	 * Get the dektop's StatusLineManager
+	/**
+	 * Returns the dektop's StatusLineManager
 	 */
 	@Override
 	protected IStatusLineManager getStatusLineManager() {
@@ -2837,9 +2693,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createNavigationActions()
-	 */
 	@Override
 	protected void createNavigationActions() {
 		super.createNavigationActions();
@@ -2883,9 +2736,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		return getSourceViewer();
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
-	 */
 	@Override
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		IPreferenceStore store= getPreferenceStore();
@@ -2991,17 +2841,11 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		fOutlinerContextMenuId = menuId;
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.text.TextEditor#initializeKeyBindingScopes()
-	 */
 	@Override
 	protected void initializeKeyBindingScopes() {
 		setKeyBindingScopes(new String [] { "org.eclipse.cdt.ui.cEditorScope" }); //$NON-NLS-1$
 	}
 
-	/*
-	 * @see AbstractTextEditor#affectsTextPresentation(PropertyChangeEvent)
-	 */
 	@Override
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
 		SourceViewerConfiguration configuration = getSourceViewerConfiguration();
@@ -3020,9 +2864,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		return fFoldingGroup;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#performRevert()
-	 */
 	@Override
 	protected void performRevert() {
 		ProjectionViewer projectionViewer = (ProjectionViewer) getSourceViewer();
@@ -3161,9 +3002,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#collectContextMenuPreferencePages()
-	 */
 	@Override
 	protected String[] collectContextMenuPreferencePages() {
 		// Add C/C++ Editor relevant pages
@@ -3187,10 +3025,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		return prefPageIds;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#aboutToBeReconciled()
-	 * @since 4.0
-	 */
 	@Override
 	public void aboutToBeReconciled() {
 		fIsReconciling= true;
@@ -3205,10 +3039,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		}
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(IASTTranslationUnit, boolean, IProgressMonitor)
-	 * @since 4.0
-	 */
 	@Override
 	public void reconciled(IASTTranslationUnit ast, boolean force, IProgressMonitor progressMonitor) {
 		fIsReconciling= false;
@@ -3271,7 +3101,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 
 	/**
-	 * Uninstall Semantic Highlighting.
+	 * Uninstalls semantic highlighting.
 	 *
 	 * @since 4.0
 	 */
@@ -3294,9 +3124,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		fSurroundWithActionGroup.fillActionBars(actionBars);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#updateStateDependentActions()
-	 */
 	@Override
 	protected void updateStateDependentActions() {
 		super.updateStateDependentActions();
@@ -3347,9 +3174,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 				|| LinkedModeModel.hasInstalledModel(fDocument);
 		}
 
-		/*
-		 * @see Job#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		public IStatus run(IProgressMonitor progressMonitor) {
 			if (isCanceled(progressMonitor))
@@ -3444,25 +3268,16 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			}
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
 		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
 			if (fOccurrencesAnnotationUpdaterJob != null)
 				fOccurrencesAnnotationUpdaterJob.doCancel();
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
 		@Override
 		public void documentChanged(DocumentEvent event) {
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-		 */
 		@Override
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 			if (oldInput == null)
@@ -3471,9 +3286,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			oldInput.removeDocumentListener(this);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-		 */
 		@Override
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 			if (newInput == null)
@@ -3696,10 +3508,11 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 	@Override
 	protected boolean isPrefQuickDiffAlwaysOn() {
-		// enable only if not in scalability mode
-		// workaround for http://bugs.eclipse.org/75555
+		// Enable only if not in scalability mode.
+		// Workaround for http://bugs.eclipse.org/75555
 		return super.isPrefQuickDiffAlwaysOn() && !isEnableScalablilityMode();
 	}
+
 	public boolean shouldProcessLocalParsingCompletions() {
 		return true;
 	}

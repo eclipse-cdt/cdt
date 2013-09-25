@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Intel Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     James Blackburn (Broadcom Corp.)
+ *     Serge Beauchamp (Freescale Semiconductor) - Bug 406545
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -561,16 +562,29 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			}
 			break;
 		case ICPropertyTab.UPDATE:
-			if (canBeVisible()) configChanged((ICResourceDescription)data);
+			if (canSupportMultiCfg() || !page.isMultiCfg()) {
+				if (canBeVisible()) {
+					setButtonVisible(true);
+					configChanged((ICResourceDescription)data);
+				}
+			}
+			else
+				setAllVisible(false, null);
 			break;
 		case ICPropertyTab.DISPOSE:
 			dispose();
 			break;
 		case ICPropertyTab.VISIBLE:
-			if (canBeVisible())
+			if (canSupportMultiCfg() || !page.isMultiCfg()) {
+				if (canBeVisible()) {
 				setVisible(data != null);
+					setButtonVisible(data != null);
+				}
 			else
 				setVisible(false);
+			}
+			else
+				setAllVisible(false, null);
 			break;
 		case ICPropertyTab.SET_ICON:
 			icon = (Image)data;
@@ -587,6 +601,19 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		return true;
 	}
 
+	// By default, returns true
+	// Return false if this page cannot edit a multi-configuration selection.
+	public boolean canSupportMultiCfg() {
+		return true;
+	}
+
+
+	// Return true if this tab is selected.
+	public boolean isTabSelected() {
+		if (page instanceof ICPropertyProvider2)
+			return ((ICPropertyProvider2) page).getSelectedTab() == this;
+		return false;
+	}
 	/**
 	 * Added to avoid usage PixelConverter class.
 	 * @param control
@@ -678,7 +705,15 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		} else {
 			pageBook.showPage(userdata);
 		}
-		if (page != null) {
+		setButtonVisible(visible);
+	}
+
+	/**
+	 * Utility method to show/hide the 'Apply' and 'Restore Defaults' buttons
+	 * @param visible - true or false
+	 */
+	protected void setButtonVisible(boolean visible) {
+		if (page != null && isTabSelected()) {
 			Button b = page.getAButton();
 			if (b != null)
 				b.setVisible(visible);

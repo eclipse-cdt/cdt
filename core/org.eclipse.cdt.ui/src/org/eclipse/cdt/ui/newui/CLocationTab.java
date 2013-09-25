@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Serge Beauchamp (Freescale Semiconductor) - Bug 406545
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -300,6 +301,11 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		}
 
 		updateButtons();
+	}
+
+	@Override
+	public boolean canSupportMultiCfg() {
+		return false;
 	}
 
 	protected abstract ICExclusionPatternPathEntry[] getEntries(ICResourceDescription cfgd);

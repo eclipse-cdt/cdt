@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *     Tom Hochstein (Freescale) - Bug 412601 - Preprocessor Entries properties tab should list languages
+ *     Serge Beauchamp (Freescale Semiconductor) - Bug 406545
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.language.settings.providers;
 
@@ -1147,6 +1148,11 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			}
 		}
 		updateButtons();
+	}
+
+	@Override
+	public boolean canSupportMultiCfg() {
+		return false;
 	}
 
 	@Override

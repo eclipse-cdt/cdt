@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,17 +32,17 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.util.NLS;
 
 public abstract class ACBuilder extends IncrementalProjectBuilder implements IMarkerGenerator {
-
-	private static final Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
-
 	private static final String CONTENTS_CONFIGURATION_IDS = "org.eclipse.cdt.make.core.configurationIds"; //$NON-NLS-1$
+	private static final IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
 	/** @since 5.2 */ // set to true to print build events on the console in debug mode
 	protected static final boolean DEBUG_EVENTS = false;
+
 	/**
 	 * Constructor for ACBuilder
 	 */
@@ -93,8 +93,9 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			}
 
 			String type = problemMarkerInfo.getType();
-			if (type == null)
+			if (type == null) {
 				type = ICModelMarker.C_MODEL_PROBLEM_MARKER;
+			}
 
 			IMarker marker = markerResource.createMarker(type);
 			marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
@@ -118,7 +119,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			}
 			// Set source attribute only if the marker is being set to a file from different project
 			if (project != null && !project.equals(markerResource.getProject())) {
-				marker.setAttribute(IMarker.SOURCE_ID, project.getName()); 
+				marker.setAttribute(IMarker.SOURCE_ID, project.getName());
 			}
 
 			// Add all other client defined attributes.
@@ -137,23 +138,23 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 
 	int mapMarkerSeverity(int severity) {
 		switch (severity) {
-			case SEVERITY_ERROR_BUILD :
-			case SEVERITY_ERROR_RESOURCE :
-				return IMarker.SEVERITY_ERROR;
-			case SEVERITY_INFO :
-				return IMarker.SEVERITY_INFO;
-			case SEVERITY_WARNING :
-				return IMarker.SEVERITY_WARNING;
+		case SEVERITY_ERROR_BUILD :
+		case SEVERITY_ERROR_RESOURCE :
+			return IMarker.SEVERITY_ERROR;
+		case SEVERITY_INFO :
+			return IMarker.SEVERITY_INFO;
+		case SEVERITY_WARNING :
+			return IMarker.SEVERITY_WARNING;
 		}
 		return IMarker.SEVERITY_ERROR;
 	}
 
 	public static boolean needAllConfigBuild() {
-		return prefs.getBoolean(CCorePreferenceConstants.PREF_BUILD_ALL_CONFIGS);
+		return prefs.getBoolean(CCorePreferenceConstants.PREF_BUILD_ALL_CONFIGS, false);
 	}
 
 	public static void setAllConfigBuild(boolean enable) {
-		prefs.setValue(CCorePreferenceConstants.PREF_BUILD_ALL_CONFIGS, enable);
+		prefs.putBoolean(CCorePreferenceConstants.PREF_BUILD_ALL_CONFIGS, enable);
 	}
 
 	/**
@@ -165,7 +166,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	 */
 	public static boolean buildConfigResourceChanges() {
 		//bug 219337
-		return prefs.getBoolean(CCorePreferenceConstants.PREF_BUILD_CONFIGS_RESOURCE_CHANGES);
+		return prefs.getBoolean(CCorePreferenceConstants.PREF_BUILD_CONFIGS_RESOURCE_CHANGES, false);
 	}
 
 	/**
@@ -175,7 +176,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	 * @since 5.1
 	 */
 	public static void setBuildConfigResourceChanges(boolean enable) {
-		prefs.setValue(CCorePreferenceConstants.PREF_BUILD_CONFIGS_RESOURCE_CHANGES, enable);
+		prefs.putBoolean(CCorePreferenceConstants.PREF_BUILD_CONFIGS_RESOURCE_CHANGES, enable);
 	}
 
 	@SuppressWarnings("nls")
@@ -191,28 +192,33 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	private String cfgIdToNames(String strIds) {
 		IProject project = getProject();
 		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project, false);
-		if (prjDesc==null)
+		if (prjDesc == null) {
 			return strIds;
+		}
 
-		if (strIds==null)
+		if (strIds == null) {
 			return "Active=" + prjDesc.getActiveConfiguration().getName();
+		}
 
 		String[] ids = strIds.split("\\|");
 		String names="";
 		for (String id : ids) {
 			ICConfigurationDescription cfgDesc = prjDesc.getConfigurationById(id);
 			String name;
-			if (cfgDesc!=null)
+			if (cfgDesc != null) {
 				name = cfgDesc.getName();
-			else
+			} else {
 				name = id;
+			}
 
-			if (names.length()>0)
+			if (names.length() >0 ) {
 				names=names+",";
+			}
 			names = names + name;
 		}
-		if (names.equals(""))
+		if (names.equals("")) {
 			return strIds;
+		}
 		return names;
 	}
 
@@ -238,17 +244,18 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	// This method is overridden with no purpose but to track events in debug mode
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		super.clean(monitor);
-		if (DEBUG_EVENTS)
+		if (DEBUG_EVENTS) {
 			printEvent(IncrementalProjectBuilder.CLEAN_BUILD, null);
+		}
 	}
 
-   /**
-	* Default ACBuilder shouldn't require locking the workspace during a CDT Project build.
-	*
-	* Note this may have a detrimental effect on #getDelta().  Derived builders which rely
-	* on #getDelta(...) being accurate should return a WorkspaceRoot scheduling rule.
-	* @since 5.2
-	*/
+	/**
+	 * Default ACBuilder shouldn't require locking the workspace during a CDT Project build.
+	 *
+	 * Note this may have a detrimental effect on #getDelta().  Derived builders which rely
+	 * on #getDelta(...) being accurate should return a WorkspaceRoot scheduling rule.
+	 * @since 5.2
+	 */
 	@Override
 	@SuppressWarnings("rawtypes")
 	public ISchedulingRule getRule(int trigger, Map args) {

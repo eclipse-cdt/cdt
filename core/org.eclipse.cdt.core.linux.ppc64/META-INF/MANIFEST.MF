@@ -6,3 +6,4 @@ Bundle-Name: %fragmentName.linux.ppc64
 Bundle-Version: 5.1.0.qualifier
 Fragment-Host: org.eclipse.cdt.core;bundle-version="[5.0.0,6.0.0)"
 Bundle-Vendor: %providerName
+Eclipse-PlatformFilter: (&(osgi.os=linux)(osgi.arch=ppc64))

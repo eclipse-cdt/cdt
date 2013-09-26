@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_087e61d1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-09-26T03:00:20Z",
+      "side": 1,
+      "message": "Ok, I had gotten used to it, did not noticed you mind having it.\nThe url is now removed.",
+      "parentUuid": "8748d3a1_06d137c4",
+      "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_f061612e",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2013-09-25T20:23:12Z",
       "side": 1,
       "message": "Let\u0027s put comments on the fact that a register must now be associated to a frame.  If the user selects a thread, we should use the top frame of that thread.  If there is no frame, we should use the constructor MIRegisterDMC(MIRegisters, MIRegisterGroupDMC, int, String)",
+      "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_eb77afa9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-09-26T03:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_f061612e",
       "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_cb3473e4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-09-26T03:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_d064253f",
+      "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_305bc980",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2013-09-25T20:23:12Z",
       "side": 1,
       "message": "Please explain why you are doing this.",
+      "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_abac8774",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-09-26T03:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_305bc980",
       "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_abf7674c",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-09-26T03:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_26f8b3b5",
+      "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_26b273ce",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
         "patchSetId": 2
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_8b7a6b5f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 575,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-09-26T03:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_26b273ce",
+      "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_a69e8341",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
         "patchSetId": 2
@@ -115,6 +223,24 @@
       "writtenOn": "2013-09-25T20:23:12Z",
       "side": 1,
       "message": "Store this result in a local and then don\u0027t use the global fRegisterNames.  That is the pattern that was meant to be used with get_X86_REGS()",
+      "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_eb3faf8a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 609,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-09-26T03:00:20Z",
+      "side": 1,
+      "message": "Upps, I overlooked the return value. \nIt\u0027s Done now.",
+      "parentUuid": "8748d3a1_a69e8341",
       "revId": "2dba09f4c5cffb80b701f1b34390824e0a363caf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -675,6 +675,9 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		}
 
 		URI fileUri = file.getLocationURI();
+		if (fileUri == null)
+			return null;
+		
 		// Avoid name special devices, empty files and the like
 		if (!Util.isNonZeroLengthFile(fileUri)) {
 			// PR:xxx the EFS does not seem to work for newly created file

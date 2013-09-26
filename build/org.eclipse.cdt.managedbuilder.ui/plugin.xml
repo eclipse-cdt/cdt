@@ -64,7 +64,14 @@
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_PropertyPage"
             id="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_PropertyPage"
-            name="%propSettingsPrefName"/>
+            name="%propSettingsPrefName">
+         <keywordReference
+               id="org.eclipse.cdt.managedbuilder.ui.keyword.toolchain1">
+         </keywordReference>
+         <keywordReference
+               id="org.eclipse.cdt.managedbuilder.ui.keyword.toolchain2">
+         </keywordReference>
+      </page>
       <page
             category="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_PropertyPage"
             class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_MultiConfig"
@@ -715,5 +722,16 @@
             class="org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers.ScannerDiscoveryGlobalConsole">
       </CBuildConsole>
    </extension>
+     <extension
+           point="org.eclipse.ui.keywords">
+        <keyword
+              id="org.eclipse.cdt.managedbuilder.ui.keyword.toolchain1"
+              label="%CDTToolchainProperty.keyword.toolchain1">
+        </keyword>
+        <keyword
+              id="org.eclipse.cdt.managedbuilder.ui.keyword.toolchain2"
+              label="%CDTToolchainProperty.keyword.toolchain2">
+        </keyword>
+     </extension>
 
 </plugin>

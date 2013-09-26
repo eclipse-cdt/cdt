@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *    Intel Corporation - Initial API and implementation
  *    James Blackburn (Broadcom Corp.)
+ *    Serge Beauchamp (Freescale Semiconductor) - Bug 418114
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -83,8 +84,15 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		t2.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				if (canModify)
+				if (canModify) {
+					String artifactName = t2.getText();
+					// The artifact Name cannot be empty
+					if (! page.isMultiCfg() && (artifactName.trim().length() == 0)) {
+						artifactName = fCfg.getManagedProject().getDefaultArtifactName();
+						t2.setText(artifactName);
+					}
 					fCfg.setArtifactName(t2.getText());
+				}
 			}} );
 
 		Label l3 = new Label(usercomp, SWT.NONE);
@@ -167,7 +175,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 
 		String s = fCfg.getArtifactName();
 		if (! page.isMultiCfg() && (s == null || s.trim().length() == 0)) {
-			s = getResDesc().getConfiguration().getProjectDescription().getName();
+			s = fCfg.getManagedProject().getDefaultArtifactName();
 			getCfg().setArtifactName(s);
 		}
 
@@ -206,7 +214,12 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		IConfiguration cfg1 = getCfg(src.getConfiguration());
 		IConfiguration cfg2 = getCfg(dst.getConfiguration());
-		cfg2.setArtifactName(cfg1.getArtifactName());
+		
+		String artifactName = cfg1.getArtifactName();
+		if (! page.isMultiCfg() && (artifactName == null || artifactName.trim().length() == 0))
+			artifactName = cfg1.getManagedProject().getDefaultArtifactName();
+		
+		cfg2.setArtifactName(artifactName);
 		cfg2.setArtifactExtension(cfg1.getArtifactExtension());
 
 		ITool t1 = cfg1.calculateTargetTool();

@@ -49,7 +49,14 @@
             name="%NewCDTWizardPref.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"
-            id="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"/>
+            id="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard">
+         <keywordReference
+               id="org.eclipse.cdt.managedbuilder.ui.keyword.toolchain1">
+         </keywordReference>
+         <keywordReference
+               id="org.eclipse.cdt.managedbuilder.ui.keyword.toolchain2">
+         </keywordReference>
+      </page>
       <page
             category="org.eclipse.cdt.ui.preferences.BuildSettings"
             class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_Env"
@@ -563,6 +570,12 @@
 	                  value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
            </adapt>
          </enabledWhen>
+         <keywordReference
+               id="org.eclipse.cdt.managedbuilder.ui.keyword.toolchain1">
+         </keywordReference>
+         <keywordReference
+               id="org.eclipse.cdt.managedbuilder.ui.keyword.toolchain2">
+         </keywordReference>
       </page>
       <page
             class="org.eclipse.cdt.managedbuilder.ui.properties.Page_ToolChain"
@@ -579,6 +592,12 @@
                 <test property="org.eclipse.cdt.ui.checkPreference" value="org.eclipse.cdt.ui:properties.toolchain.modification.disable=false"/>
 		    </and>          
          </enabledWhen>
+         <keywordReference
+               id="org.eclipse.cdt.managedbuilder.ui.keyword.toolchain1">
+         </keywordReference>
+         <keywordReference
+               id="org.eclipse.cdt.managedbuilder.ui.keyword.toolchain2">
+         </keywordReference>
       </page>
 
       <page

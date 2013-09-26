@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.utils.EFSExtensionManager;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -193,10 +194,34 @@ public class BuildRunnerHelper implements Closeable {
 		}
 		try {
 			monitor.beginTask("", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
-			if (rc != null) {
-				monitor.subTask(CCorePlugin.getFormattedString("BuildRunnerHelper.removingMarkers", rc.getFullPath().toString())); //$NON-NLS-1$
-				rc.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false,  IResource.DEPTH_INFINITE);
+			try {
+				if (rc != null) {
+					monitor.subTask(CCorePlugin.getFormattedString("BuildRunnerHelper.removingMarkers", rc.getFullPath().toString())); //$NON-NLS-1$
+					rc.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false,  IResource.DEPTH_INFINITE);
+				}
+			} catch (CoreException e) {
+				// ignore
 			}
+			if (project != null) {
+				// Remove markers which source is this project from other projects
+				try {
+					IWorkspace workspace = project.getWorkspace();
+					IMarker[] markers = workspace.getRoot().findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+					String projectName = project.getName();
+					List<IMarker> markersList = new ArrayList<IMarker>();
+					for (IMarker marker : markers) {
+						if (projectName.equals(marker.getAttribute(IMarker.SOURCE_ID))) {
+							markersList.add(marker);
+						}
+					}
+					if (markersList.size() > 0) {
+						workspace.deleteMarkers(markersList.toArray(new IMarker[markersList.size()]));
+					}
+				} catch (CoreException e) {
+					// ignore
+				}
+			}
+
 		} finally {
 			monitor.done();
 		}

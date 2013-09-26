@@ -56,32 +56,36 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 		addMarker(problemMarkerInfo);
 	}
 
-		/*
-		 * callback from Output Parser
-		 */
+	/*
+	 * callback from Output Parser
+	 */
 	@Override
 	public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
 		try {
-			IResource markerResource = problemMarkerInfo.file ;
-			if (markerResource==null)  {
-				markerResource = getProject();
+			IProject project = getProject();
+			IResource markerResource = problemMarkerInfo.file;
+			if (markerResource == null)  {
+				markerResource = project;
 			}
-			IMarker[] cur = markerResource.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_ONE);
-			/*
-			 * Try to find matching markers and don't put in duplicates
-			 */
 			String externalLocation = null;
 			if (problemMarkerInfo.externalPath != null && ! problemMarkerInfo.externalPath.isEmpty()) {
 				externalLocation = problemMarkerInfo.externalPath.toOSString();
 			}
-			if ((cur != null) && (cur.length > 0)) {
-				for (IMarker element : cur) {
-					int line = ((Integer) element.getAttribute(IMarker.LINE_NUMBER)).intValue();
-					int sev = ((Integer) element.getAttribute(IMarker.SEVERITY)).intValue();
-					String mesg = (String) element.getAttribute(IMarker.MESSAGE);
-					String extloc = (String) element.getAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
-					if (line == problemMarkerInfo.lineNumber && sev == mapMarkerSeverity(problemMarkerInfo.severity) && mesg.equals(problemMarkerInfo.description)) {
-						if (extloc==externalLocation || (extloc!=null && extloc.equals(externalLocation))) {
+
+			// Try to find matching markers and don't put in duplicates
+			IMarker[] markers = markerResource.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_ONE);
+			for (IMarker m : markers) {
+				int line = ((Integer) m.getAttribute(IMarker.LINE_NUMBER)).intValue();
+				int sev = ((Integer) m.getAttribute(IMarker.SEVERITY)).intValue();
+				String msg = (String) m.getAttribute(IMarker.MESSAGE);
+				if (line == problemMarkerInfo.lineNumber && sev == mapMarkerSeverity(problemMarkerInfo.severity) && msg.equals(problemMarkerInfo.description)) {
+					String extloc = (String) m.getAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
+					if (extloc == externalLocation || (extloc != null && extloc.equals(externalLocation))) {
+						if (project == null || project.equals(markerResource.getProject())) {
+							return;
+						}
+						String source = (String) m.getAttribute(IMarker.SOURCE_ID);
+						if (project.getName().equals(source)) {
 							return;
 						}
 					}
@@ -111,6 +115,10 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 				}
 			} else if (problemMarkerInfo.lineNumber==0){
 				marker.setAttribute(IMarker.LOCATION, " "); //$NON-NLS-1$
+			}
+			// Set source attribute only if the marker is being set to a file from different project
+			if (project != null && !project.equals(markerResource.getProject())) {
+				marker.setAttribute(IMarker.SOURCE_ID, project.getName()); 
 			}
 
 			// Add all other client defined attributes.

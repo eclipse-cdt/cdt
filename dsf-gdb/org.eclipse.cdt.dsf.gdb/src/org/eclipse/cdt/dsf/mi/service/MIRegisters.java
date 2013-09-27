@@ -10,12 +10,15 @@
  *     Ericsson			  - Modified for additional features in DSF Reference Implementation
  *     Roland Grunberg (RedHat) - Refresh all registers once one is changed (Bug 400840)
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug 323552)
+ *     Alvaro Sanchez-Leon (Ericsson) - Register view does not refresh register names per process (Bug 418176)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
@@ -175,7 +178,8 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
     
 	private CommandFactory fCommandFactory;
 
-    private MIRegisterGroupDMC fGeneralRegistersGroupDMC; 
+	//One Group per container process
+    private final Map<IContainerDMContext, MIRegisterGroupDMC> fContainerToGroupMap = new HashMap<IContainerDMContext, MIRegisterGroupDMC>();
     private CommandCache fRegisterNameCache;	 // Cache for holding the Register Names in the single Group
     private CommandCache fRegisterValueCache;  // Cache for holding the Register Values
 
@@ -519,10 +523,16 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
             return;
         }
         
-        if (fGeneralRegistersGroupDMC == null) {
-            fGeneralRegistersGroupDMC = new MIRegisterGroupDMC( this , contDmc, 0 , "General Registers" ) ;  //$NON-NLS-1$
+        //Bug 418176
+        //Only one group per Process (container) is supported for the time being
+        MIRegisterGroupDMC registerGroup = fContainerToGroupMap.get(contDmc);
+        
+        if (registerGroup == null) {
+        	registerGroup = new MIRegisterGroupDMC( this , contDmc, 0 , "General Registers" ) ;  //$NON-NLS-1$
+        	fContainerToGroupMap.put(contDmc, registerGroup);
         }
-        MIRegisterGroupDMC[] groupDMCs = new MIRegisterGroupDMC[] { fGeneralRegistersGroupDMC };
+        
+        MIRegisterGroupDMC[] groupDMCs = new MIRegisterGroupDMC[] { registerGroup };
         rm.setData(groupDMCs) ;
         rm.done() ;
     }

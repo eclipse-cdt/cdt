@@ -63,6 +63,17 @@
 			<td headers="option"><strong>Disable content assist auto-activation</strong></td>
 			<td headers="description">If enabled, content assist will not be activated automatically on trigger sequences, like '.', '::' or '->'.</td>
 		</tr>
+		<tr>
+			<td headers="option"><strong>Skip trivial expressions in initializer lists</strong></td>
+			<td headers="description">If enabled, trivial initializers in initializer lists are skipped while parsing. 
+			This improves parsing and indexing performance when very large initializer lists are present.</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Maximum number of trivial expressions in initializer lists to parse</strong></td>
+			<td headers="description">Specifies the maximum number of trivial initializers in initializer lists to parse. 
+			Any trivial initializer-clauses beyond that number are skipped. 
+			This option is only available if <i>Skip trivial expressions in initializer lists</i> is enabled.</td>
+		</tr>
 	</tbody>
 </table>
 

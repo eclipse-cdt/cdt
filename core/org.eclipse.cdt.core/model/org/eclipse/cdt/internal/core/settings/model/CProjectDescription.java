@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Intel Corporation and others.
+ * Copyright (c) 2007, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,11 @@
  *     Intel Corporation - Initial API and implementation
  *     James Blackburn (Broadcom Corp.)
  *     Baltasar Belyavsky (Texas Instruments) - bug 340219: Project metadata files are saved unnecessarily
+ *     Serge Beauchamp (Freescale Semiconductor) - Bug 418184 - ConcurrentException in CProjectDescription
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -50,7 +52,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	private final HashMap<String, ICConfigurationDescription> fCfgMap = new LinkedHashMap<String, ICConfigurationDescription>();
 	private boolean fIsReadOnly;
 	private boolean fIsModified;
-	private HashMap<QualifiedName, Object> fPropertiesMap;
+	private Map<QualifiedName, Object> fPropertiesMap;
 	private boolean fIsLoading;
 	private boolean fIsApplying;
 	private boolean fIsCreating;
@@ -177,7 +179,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 				(CProjectDescriptionPreferences) mngr.getProjectDescriptionWorkspacePreferences(false),
 				false);
 
-		fPropertiesMap = new HashMap<QualifiedName, Object>();
+		fPropertiesMap = Collections.synchronizedMap(new HashMap<QualifiedName, Object>());
 	}
 
 	public void updateProject(IProject project) {
@@ -318,8 +320,11 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			}
 		}
 
-		@SuppressWarnings("unchecked")
-		HashMap<QualifiedName, Object> cloneMap = (HashMap<QualifiedName, Object>) base.fPropertiesMap.clone();
+		// Shallow cloning the base map
+		Map<QualifiedName, Object> cloneMap = Collections.synchronizedMap(new HashMap<QualifiedName, Object>());
+		synchronized(base.fPropertiesMap) {
+			cloneMap.putAll(base.fPropertiesMap);
+		}
 		fPropertiesMap = cloneMap;
 	}
 

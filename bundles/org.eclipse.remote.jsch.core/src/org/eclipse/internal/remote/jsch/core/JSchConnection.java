@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.internal.remote.jsch.core.commands.ExecCommand;
 import org.eclipse.internal.remote.jsch.core.messages.Messages;
-import org.eclipse.jsch.core.IJSchLocation;
 import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionChangeEvent;
@@ -43,12 +42,113 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 
 /**
  * @since 5.0
  */
 public class JSchConnection implements IRemoteConnection {
+	private final boolean logging = false;
+
+	/**
+	 * Class to supply credentials from connection attributes without user interaction.
+	 */
+	private class JSchUserInfo implements UserInfo, UIKeyboardInteractive {
+		private boolean firstTry;
+		private final IUserAuthenticator fAuthenticator;
+
+		public JSchUserInfo(IUserAuthenticator authenticator) {
+			fAuthenticator = authenticator;
+		}
+
+		public String[] promptKeyboardInteractive(String destination, String name, String instruction, String[] prompt,
+				boolean[] echo) {
+			if (logging) {
+				System.out.println("promptKeyboardInteractive:" + destination + ":" + name + ":" + instruction); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+				for (String p : prompt) {
+					System.out.println(" " + p); //$NON-NLS-1$
+				}
+			}
+			String password;
+			if (!isPasswordAuth()) {
+				password = getPassphrase();
+			} else {
+				password = getPassword();
+			}
+			return new String[] { password };
+		}
+
+		public String getPassphrase() {
+			if (logging) {
+				System.out.println("getPassphrase"); //$NON-NLS-1$
+			}
+			return JSchConnection.this.getPassphrase();
+		}
+
+		public String getPassword() {
+			if (logging) {
+				System.out.println("getPassword"); //$NON-NLS-1$
+			}
+			return JSchConnection.this.getPassword();
+		}
+
+		public boolean promptPassword(String message) {
+			if (logging) {
+				System.out.println("promptPassword:" + message); //$NON-NLS-1$
+			}
+			if (fAuthenticator != null) {
+				PasswordAuthentication auth = fAuthenticator.prompt(null, message);
+				if (auth == null) {
+					return false;
+				}
+				fAttributes.setAttribute(JSchConnectionAttributes.USERNAME_ATTR, auth.getUserName());
+				fAttributes.setSecureAttribute(JSchConnectionAttributes.PASSWORD_ATTR, new String(auth.getPassword()));
+			}
+			return true;
+		}
+
+		public boolean promptPassphrase(String message) {
+			if (logging) {
+				System.out.println("promptPassphrase:" + message); //$NON-NLS-1$
+			}
+			if (firstTry && !getPassphrase().equals("")) { //$NON-NLS-1$
+				firstTry = false;
+				return true;
+			}
+			if (fAuthenticator != null) {
+				String[] results = fAuthenticator.prompt("", "", message, new String[] { message }, new boolean[] { true }); //$NON-NLS-1$//$NON-NLS-2$
+				if (results == null) {
+					return false;
+				}
+				fAttributes.setSecureAttribute(JSchConnectionAttributes.PASSPHRASE_ATTR, results[0]);
+			}
+			return true;
+		}
+
+		public boolean promptYesNo(String message) {
+			if (logging) {
+				System.out.println("promptYesNo:" + message); //$NON-NLS-1$
+			}
+			if (fAuthenticator != null) {
+				int prompt = fAuthenticator.prompt(IUserAuthenticator.QUESTION, Messages.AuthInfo_Authentication_message, message,
+						new int[] { IUserAuthenticator.YES, IUserAuthenticator.NO }, IUserAuthenticator.YES);
+				return prompt == IUserAuthenticator.YES;
+			}
+			return true;
+		}
+
+		public void showMessage(String message) {
+			if (logging) {
+				System.out.println("showMessage:" + message); //$NON-NLS-1$
+			}
+			if (fAuthenticator != null) {
+				fAuthenticator.prompt(IUserAuthenticator.INFORMATION, Messages.AuthInfo_Authentication_message, message,
+						new int[] { IUserAuthenticator.OK }, IUserAuthenticator.OK);
+			}
+		}
+	}
+
 	public static final int DEFAULT_PORT = 22;
 	public static final int DEFAULT_TIMEOUT = 5;
 	public static final boolean DEFAULT_IS_PASSWORD = true;
@@ -632,48 +732,14 @@ public class JSchConnection implements IRemoteConnection {
 	private Session newSession(final IUserAuthenticator authenticator, IProgressMonitor monitor) throws RemoteConnectionException {
 		SubMonitor progress = SubMonitor.convert(monitor, 10);
 		try {
-			final IJSchLocation location = fJSchService.getLocation(getUsername(), getAddress(), getPort());
-			location.setPassword(getPassword());
-			UserInfo userInfo = null;
-			if (authenticator != null) {
-				userInfo = new UserInfo() {
-
-					public String getPassphrase() {
-						return null;
-					}
-
-					public String getPassword() {
-						return location.getPassword();
-					}
-
-					public boolean promptPassphrase(String message) {
-						return false;
-					}
-
-					public boolean promptPassword(String message) {
-						PasswordAuthentication auth = authenticator.prompt(null, message);
-						if (auth == null) {
-							return false;
-						}
-						location.setUsername(auth.getUserName());
-						location.setPassword(new String(auth.getPassword()));
-						return true;
-					}
-
-					public boolean promptYesNo(String message) {
-						int prompt = authenticator.prompt(IUserAuthenticator.QUESTION, Messages.AuthInfo_Authentication_message,
-								message, new int[] { IUserAuthenticator.YES, IUserAuthenticator.NO }, IUserAuthenticator.YES);
-						return prompt == IUserAuthenticator.YES;
-					}
-
-					public void showMessage(String message) {
-						authenticator.prompt(IUserAuthenticator.INFORMATION, Messages.AuthInfo_Authentication_message, message,
-								new int[] { IUserAuthenticator.OK }, IUserAuthenticator.OK);
-					}
-				};
+			if (!isPasswordAuth()) {
+				fJSchService.getJSch().addIdentity(getKeyFile());
 			}
-			Session session = fJSchService.createSession(location, userInfo);
-			session.setPassword(getPassword());
+			Session session = fJSchService.createSession(getAddress(), getPort(), getUsername());
+			session.setUserInfo(new JSchUserInfo(authenticator));
+			if (isPasswordAuth()) {
+				session.setPassword(getPassword());
+			}
 			fJSchService.connect(session, 0, progress.newChild(10));
 			if (!progress.isCanceled()) {
 				fSessions.add(session);

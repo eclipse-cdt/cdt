@@ -326,6 +326,8 @@ public class JSchConnectionPage extends WizardPage {
 		fHostText.addModifyListener(fDataModifyListener);
 		fUserText.addModifyListener(fDataModifyListener);
 		fFileWidget.addModifyListener(fDataModifyListener);
+		fPasswordText.addModifyListener(fDataModifyListener);
+		fPassphraseText.addModifyListener(fDataModifyListener);
 		fPortText.addModifyListener(fDataModifyListener);
 		fTimeoutText.addModifyListener(fDataModifyListener);
 	}

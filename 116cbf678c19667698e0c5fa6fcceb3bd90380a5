@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_1929560e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractCPropertyTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 580,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-09-30T21:32:23Z",
+      "side": 1,
+      "message": "indentation got wrong here",
+      "revId": "116cbf678c19667698e0c5fa6fcceb3bd90380a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_19fb16ee",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractCPropertyTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 603,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-09-30T21:32:23Z",
+      "side": 1,
+      "message": "The new methods below miss @since tags. Please, set API baseline to CDT 8.2 release.",
+      "revId": "116cbf678c19667698e0c5fa6fcceb3bd90380a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_79d4da62",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractCPropertyTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-09-30T21:32:23Z",
+      "side": 1,
+      "message": "Could you you provide well formed JavaDoc for this new public method?",
+      "revId": "116cbf678c19667698e0c5fa6fcceb3bd90380a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_99d72668",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractCPropertyTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 607,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-09-30T21:32:23Z",
+      "side": 1,
+      "message": "I think \"false\" could be better default here in the long run. When developers start developing a new tab they are more likely to develop/test a single configuration version first. Most will stop right there and not even realize that it needs to be tested in multi-cfg mode. Exceptions ensue. Would you agree? What is your reasoning making \"true\" the default?",
+      "revId": "116cbf678c19667698e0c5fa6fcceb3bd90380a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_d9040e8e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractCPropertyTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 612,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-09-30T21:32:23Z",
+      "side": 1,
+      "message": "Could you you provide well formed JavaDoc for this new public method?",
+      "revId": "116cbf678c19667698e0c5fa6fcceb3bd90380a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_39c09291",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/ICPropertyProvider2.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-09-30T21:32:23Z",
+      "side": 1,
+      "message": "ICPropertyProvider2 (and for that matter ICPropertyProvider) really should not have @noextend @noimplement. These interfaces are clearly intended to be implemented, see JavaDoc of AbstractPage. I don\u0027t see a good reason to deny that in downstream plugins.",
+      "revId": "116cbf678c19667698e0c5fa6fcceb3bd90380a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

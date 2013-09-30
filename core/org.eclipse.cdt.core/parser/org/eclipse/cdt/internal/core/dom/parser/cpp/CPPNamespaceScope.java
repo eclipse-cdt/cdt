@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,6 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScopeMapper.InlineNamespaceDirective;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
 
@@ -108,10 +107,15 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
     }
 
     public IScope findNamespaceScope(IIndexScope scope) {
-    	final String[] qname= CPPVisitor.getQualifiedName(scope.getScopeBinding());
+    	final ArrayList<IBinding> parentChain = new ArrayList<IBinding>();
+	    for (IBinding binding= scope.getScopeBinding(); binding != null; binding= binding.getOwner()) {
+	    	parentChain.add(binding);
+	    }
+
     	final IScope[] result= { null };
     	final ASTVisitor visitor= new ASTVisitor() {
-    		private int depth= 0;
+    		private int position = parentChain.size();
+
     		{
     			shouldVisitNamespaces= shouldVisitDeclarations= true;
     		}
@@ -125,25 +129,22 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 
     		@Override
     		public int visit(ICPPASTNamespaceDefinition namespace) {
-    			final String name = namespace.getName().toString();
-    			if (name.length() == 0) {
-    				return PROCESS_CONTINUE;
+    			final char[] name = namespace.getName().toCharArray();
+    			IBinding binding = parentChain.get(--position);
+    			if (!CharArrayUtils.equals(name, binding.getNameCharArray())) {
+    				++position;
+        			return PROCESS_SKIP;
     			}
-    			if (qname[depth].equals(name)) {
-    				if (++depth == qname.length) {
-    					result[0]= namespace.getScope();
-    					return PROCESS_ABORT;
-    				}
-    				return PROCESS_CONTINUE;
-    			}
-    			return PROCESS_SKIP;
+				if (position == 0) {
+					result[0]= namespace.getScope();
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
     		}
 
     		@Override
     		public int leave(ICPPASTNamespaceDefinition namespace) {
-    			if (namespace.getName().getLookupKey().length > 0) {
-    				--depth;
-    			}
+   				++position;
     			return PROCESS_CONTINUE;
     		}
     	};

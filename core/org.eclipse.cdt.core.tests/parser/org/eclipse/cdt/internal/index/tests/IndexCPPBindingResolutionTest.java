@@ -1747,4 +1747,17 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	public void testAnonymousNamespaces_392577() throws Exception {
 		getBindingFromFirstIdentifier("f(str)", ICPPFunction.class);
 	}
+
+	//	namespace ns {
+	//		typedef int INT;
+	//	}
+
+	//	namespace {
+	//	namespace ns {
+	//	    using ::ns::INT;
+	//	}
+	//	}
+	public void testAnonymousNamespaces_418130() throws Exception {
+		checkBindings();
+	}
 }

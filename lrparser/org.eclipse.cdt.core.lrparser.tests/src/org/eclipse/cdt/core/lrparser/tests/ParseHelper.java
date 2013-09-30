@@ -92,7 +92,7 @@ public class ParseHelper {
 		
 		int expectedProblemBindings;
 		String[] problems;
-		boolean skipTrivialInitializers;
+		int limitTrivialInitializers = -1;
 		
 		public Options setCheckSyntaxProblems(boolean checkSyntaxProblems) {
 			this.checkSyntaxProblems = checkSyntaxProblems;
@@ -116,8 +116,8 @@ public class ParseHelper {
 			setCheckBindings(true);
 			return this;
 		}
-		public Options setSkipTrivialInitializers(boolean skipTrivialInitializers) {
-			this.skipTrivialInitializers = skipTrivialInitializers;
+		public Options setLimitTrivialInitializers(int limitTrivialInitializers) {
+			this.limitTrivialInitializers = limitTrivialInitializers;
 			return this;
 		}
 		
@@ -152,7 +152,7 @@ public class ParseHelper {
 		IASTTranslationUnit tu;
 		try {
 			int languageOptions = 0;
-			if(options.skipTrivialInitializers)
+			if(options.limitTrivialInitializers >= 0 && options.limitTrivialInitializers != Integer.MAX_VALUE)
 				languageOptions |= ILanguage.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS;
 			
 			tu = language.getASTTranslationUnit(codeReader, scanInfo, fileCreator, null, languageOptions, ParserUtil.getParserLogService());
@@ -206,7 +206,7 @@ public class ParseHelper {
 		IASTTranslationUnit tu;
 		try {
 			int languageOptions = 0;
-			if(options.skipTrivialInitializers)
+			if(options.limitTrivialInitializers >= 0 && options.limitTrivialInitializers != Integer.MAX_VALUE)
 				languageOptions |= ILanguage.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS;
 			
 			tu = language.getASTTranslationUnit(fileContent, scanInfo, fileContentProvider, null, languageOptions, ParserUtil.getParserLogService());

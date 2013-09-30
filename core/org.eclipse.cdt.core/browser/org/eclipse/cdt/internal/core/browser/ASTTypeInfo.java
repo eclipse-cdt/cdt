@@ -6,11 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - Initial API and implementation
+ *     Markus Schorn - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.browser;
-
-import java.util.Arrays;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.IFunctionInfo;
@@ -39,28 +37,19 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
+import java.util.Arrays;
+
 /**
  * Type info object needed to support search for local variables.
  * @since 5.0
  */
 public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
-	private static int hashCode(String[] array) {
-		int prime = 31;
-		if (array == null)
-			return 0;
-		int result = 1;
-		for (String element : array) {
-			result = prime * result + (element == null ? 0 : element.hashCode());
-		}
-		return result;
-	}
-
 	private final String[] fqn;
 	private final int elementType;
 	private final String[] params;
 	private final String returnType;
-	private ASTTypeReference reference; 
-	
+	private ASTTypeReference reference;
+
 	/**
 	 * Creates a type info suitable for the binding.
 	 * @param name the name to create the type info object for.
@@ -74,13 +63,11 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 			elementType = IndexModelUtil.getElementType(binding);
 			if (binding instanceof ICPPBinding) {
 				fqn= ((ICPPBinding)binding).getQualifiedName();
-			} 
-			else if (binding instanceof IField) {
+			} else if (binding instanceof IField) {
 				IField field= (IField) binding;
 				ICompositeType owner= field.getCompositeTypeOwner();
-				fqn= new String[] {owner.getName(), field.getName()};	
-			}
-			else {
+				fqn= new String[] {owner.getName(), field.getName()};
+			} else {
 				fqn= new String[] {binding.getName()};
 			}
 			if (binding instanceof IFunction) {
@@ -106,7 +93,18 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 		this.returnType= returnType;
 		this.reference= reference;
 	}
-	
+
+	private static int hashCode(String[] array) {
+		int prime = 31;
+		if (array == null)
+			return 0;
+		int result = 1;
+		for (String element : array) {
+			result = prime * result + (element == null ? 0 : element.hashCode());
+		}
+		return result;
+	}
+
 	@Override
 	public int getCElementType() {
 		return elementType;
@@ -114,7 +112,7 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 
 	@Override
 	public String getName() {
-		return fqn[fqn.length-1];
+		return fqn[fqn.length - 1];
 	}
 
 	@Override
@@ -134,9 +132,9 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 
 	@Override
 	public ICProject getEnclosingProject() {
-		if(getResolvedReference()!=null) {
+		if (getResolvedReference()!=null) {
 			IProject project = reference.getProject();
-			if(project!=null) {
+			if (project != null) {
 				return CCorePlugin.getDefault().getCoreModel().getCModel().getCProject(project.getName());
 			}
 		}
@@ -148,9 +146,6 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 		return params;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.core.browser.IFunctionInfo#getReturnType()
-	 */
 	@Override
 	public String getReturnType() {
 		return returnType;
@@ -200,7 +195,7 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 			if (fullPath != null) {
 				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
 				if (file != null) {
-					return new ASTTypeReference(ifl, name.resolveBinding(), file, 
+					return new ASTTypeReference(ifl, name.resolveBinding(), file,
 							floc.getNodeOffset(), floc.getNodeLength());
 				}
 			} else {
@@ -213,7 +208,7 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 		}
 		return null;
 	}
-	
+
 	@Override
 	@Deprecated
 	public void addDerivedReference(ITypeReference location) {

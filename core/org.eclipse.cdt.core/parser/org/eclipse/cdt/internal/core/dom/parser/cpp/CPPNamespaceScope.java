@@ -117,7 +117,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
     		}
 
     		@Override
-    		public int visit( IASTDeclaration declaration ){
+    		public int visit(IASTDeclaration declaration) {
     			if (declaration instanceof ICPPASTLinkageSpecification)
     				return PROCESS_CONTINUE;
     			return PROCESS_SKIP;

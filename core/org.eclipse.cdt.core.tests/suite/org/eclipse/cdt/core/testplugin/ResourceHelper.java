@@ -9,7 +9,6 @@
  *     Andrew Gvozdev - Initial API and implementation
  *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
-
 package org.eclipse.cdt.core.testplugin;
 
 import java.io.BufferedReader;
@@ -26,8 +25,6 @@ import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import junit.framework.Assert;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -54,6 +51,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
+import org.junit.Assert;
 
 /**
  * This class contains utility methods for creating resources
@@ -66,7 +64,6 @@ import org.eclipse.core.runtime.jobs.Job;
  *
  * @since 6.0
  */
-
 public class ResourceHelper {
 	private final static IProgressMonitor NULL_MONITOR = new NullProgressMonitor();
 	private static final int MAX_RETRY= 5;
@@ -112,7 +109,7 @@ public class ResourceHelper {
 			prjDescription.setLocation(absoluteLocation);
 		}
 
-		if (configurationIds!=null && configurationIds.length>0) {
+		if (configurationIds != null && configurationIds.length > 0) {
 			ICProjectDescriptionManager prjDescManager = cdtCorePlugin.getProjectDescriptionManager();
 
 			project.create(NULL_MONITOR);
@@ -122,7 +119,7 @@ public class ResourceHelper {
 			ICConfigurationDescription baseConfiguration = cdtCorePlugin.getPreferenceConfiguration(TestCfgDataProvider.PROVIDER_ID);
 
 			for (String cfgId : configurationIds) {
-				icPrjDescription.createConfiguration(cfgId, cfgId+" Name", baseConfiguration);
+				icPrjDescription.createConfiguration(cfgId, cfgId + " Name", baseConfiguration);
 			}
 			prjDescManager.setProjectDescription(project, icPrjDescription);
 		}
@@ -193,7 +190,7 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * Create a plain Eclipse project.
+	 * Creates a plain Eclipse project.
 	 *
 	 * @param projectName
 	 * @return  the project handle
@@ -202,10 +199,11 @@ public class ResourceHelper {
 	public static IProject createProject(String projectName) throws CoreException {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IProject project= root.getProject(projectName);
-		if (!project.exists())
+		if (!project.exists()) {
 			project.create(NULL_MONITOR);
-		else
+		} else {
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		}
 
 		if (!project.isOpen())
 			project.open(NULL_MONITOR);
@@ -215,7 +213,7 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * Delete project by name.
+	 * Deletes project by name.
 	 *
 	 * @param projectName
 	 * @throws CoreException
@@ -228,7 +226,7 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * Delete given project with content.
+	 * Deletes given project with content.
 	 *
 	 * @param project
 	 * @throws CoreException
@@ -238,7 +236,7 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * Delete project.
+	 * Deletes project.
 	 *
 	 * @param project
 	 * @param deleteContent  whether to delete project content
@@ -377,7 +375,7 @@ public class ResourceHelper {
 	 * @throws IOException if something goes wrong.
 	 */
 	public static IPath createTemporaryFolder() throws CoreException, IOException {
-		return ResourceHelper.createWorkspaceFolder("tmp/"+System.currentTimeMillis()+'.'+UUID.randomUUID());
+		return ResourceHelper.createWorkspaceFolder("tmp/" + System.currentTimeMillis() + '.' + UUID.randomUUID());
 	}
 
 	/**
@@ -541,13 +539,12 @@ public class ResourceHelper {
 	 * @throws CoreException...
 	 */
 	public static IResource createSymbolicLink(IProject project, String linkName, IPath realPath)
-		throws IOException, CoreException, UnsupportedOperationException {
-
+			throws IOException, CoreException, UnsupportedOperationException {
 		if (!isSymbolicLinkSupported()) {
 			throw new UnsupportedOperationException("Windows links .lnk are not supported.");
 		}
 
-		Assert.assertTrue("Path for symbolic link does not exist: [" + realPath.toOSString() +"]",
+		Assert.assertTrue("Path for symbolic link does not exist: [" + realPath.toOSString() + "]",
 				new File(realPath.toOSString()).exists());
 
 		IPath linkedPath = project.getLocation().append(linkName);
@@ -589,16 +586,16 @@ public class ResourceHelper {
 		for (int i = 0; i < 5; i++) {
 			try {
 				Assert.assertTrue("ln process exited with non-zero status", process.waitFor() == 0);
-				// If exitValue succeeded, then the process has exitted successfully.
+				// If exitValue succeeded, then the process has exited successfully.
 				break;
 			} catch (InterruptedException e) {
 				// Clear interrupted state, see Java bug http://bugs.sun.com/view_bug.do?bug_id=6420270
 				Thread.interrupted();
 			}
-			// wait for a 500ms before checking again
+			// Wait for a 500ms before checking again.
 			try { Thread.sleep(500); } catch (InterruptedException e) {/*don't care*/}
 		}
-		Assert.assertTrue("Symbolic link not created, command=[" + command +"]", linkPath.toFile().exists());
+		Assert.assertTrue("Symbolic link not created, command=[" + command + "]", linkPath.toFile().exists());
 	}
 
 	/**
@@ -616,8 +613,7 @@ public class ResourceHelper {
 	 * @throws CoreException...
 	 */
 	public static IResource createSymbolicLink(IProject project, String linkName, String realPath)
-		throws IOException, CoreException, UnsupportedOperationException {
-
+			throws IOException, CoreException, UnsupportedOperationException {
 		return createSymbolicLink(project, linkName, new Path(realPath));
 	}
 
@@ -701,12 +697,13 @@ public class ResourceHelper {
 
 		// Remove IResources created by this helper
 		for (IResource r : resourcesCreated) {
-			if (r.exists())
+			if (r.exists()) {
 				try {
 					r.delete(true, NULL_MONITOR);
 				} catch (CoreException e) {
 					// Ignore
 				}
+			}
 		}
 		resourcesCreated.clear();
 	}
@@ -732,13 +729,16 @@ public class ResourceHelper {
 	private static final void deleteRecursive(File f) throws IllegalArgumentException {
 		// Ensure that the file being deleted is a child of the workspace
 		// root to prevent anything nasty happening
-		if (! f.getAbsolutePath().startsWith(
-				ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile().getAbsolutePath()))
+		if (!f.getAbsolutePath().startsWith(
+				ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile().getAbsolutePath())) {
 			throw new IllegalArgumentException("File must exist within the workspace!");
+		}
 
-		if (f.isDirectory())
-			for (File f1 : f.listFiles())
+		if (f.isDirectory()) {
+			for (File f1 : f.listFiles()) {
 				deleteRecursive(f1);
+			}
+		}
 		f.delete();
 	}
 }

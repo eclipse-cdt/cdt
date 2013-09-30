@@ -1197,10 +1197,10 @@ public class CPPVisitor extends ASTQueries {
 
 			if (parent instanceof ICPPASTQualifiedName) {
 				final ICPPASTQualifiedName qname= (ICPPASTQualifiedName) parent;
-				final ICPPASTNameSpecifier[] segments= qname.getAllSegments();
+				final ICPPASTNameSpecifier[] qualifiers= qname.getQualifier();
 				int i = 0;
-				for (; i < segments.length; i++) {
-					if (segments[i] == name) 
+				for (; i < qualifiers.length; i++) {
+					if (qualifiers[i] == name)
 						break;
 				}
 				final IASTTranslationUnit tu = parent.getTranslationUnit();
@@ -1214,10 +1214,10 @@ public class CPPVisitor extends ASTQueries {
 						name= qname;
 						parent= name.getParent();
 					}
-				} else if (i > 0) {
+				} else {  // i > 0
 					// For template functions we may need to resolve a template parameter
 					// as a parent of an unknown type used as parameter type.
-					IBinding binding = segments[i - 1].resolvePreBinding();
+					IBinding binding = qualifiers[i - 1].resolvePreBinding();
 
 					// 7.1.3-7 Unwrap typedefs, delete cv-qualifiers.
 					if (binding instanceof ITypedef) {
@@ -1247,7 +1247,7 @@ public class CPPVisitor extends ASTQueries {
 					}
 					if (done) {
 						if (scope == null) {
-							return new CPPScope.CPPScopeProblem(segments[i - 1], IProblemBinding.SEMANTIC_BAD_SCOPE, null);
+							return new CPPScope.CPPScopeProblem(qualifiers[i - 1], IProblemBinding.SEMANTIC_BAD_SCOPE, null);
 						}
 						return scope;
 					}

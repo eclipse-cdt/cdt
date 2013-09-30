@@ -76,20 +76,26 @@ public class LRTests extends AST2Tests {
 	@Override
 	public void testEmptyTrailingMacro_303152() throws Exception {}
 	@Override // not applicable to lr parser memory usage.
-	public void testLargeTrivialAggregateInitializer_253690() throws Exception{}
+	public void testLargeTrivialAggregateInitializer_253690() throws Exception {}
+	@Override
+	public void testMaximumTrivialExpressionsInInitializers_412380() throws Exception {}
+	@Override
+	public void testNoSkipTrivialAggregateInitializer_412380() throws Exception {}
+	@Override
+	public void testNoSkipNonTrivialAggregateInitializer_412380() throws Exception {}
 	 
     @Override
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
-    	return parse(code, lang, useGNUExtensions, expectNoProblems, false);
+    	return parse(code, lang, useGNUExtensions, expectNoProblems, -1);
     }
     
     @Override
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, boolean skipTrivialInitializers) throws ParserException {
+	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, int limitTrivialInitializers) throws ParserException {
     	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
     	ParseHelper.Options options = new ParseHelper.Options();
     	options.setCheckSyntaxProblems(expectNoProblems);
     	options.setCheckPreprocessorProblems(expectNoProblems);
-    	options.setSkipTrivialInitializers(skipTrivialInitializers);
+    	options.setLimitTrivialInitializers(limitTrivialInitializers);
     	return ParseHelper.parse(code, language, options);
 	}
     

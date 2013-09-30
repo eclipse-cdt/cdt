@@ -42,13 +42,13 @@ public class LRCommentTests extends CommentTests {
     @SuppressWarnings("unused")
 	protected IASTTranslationUnit parse(String code, ParserLanguage lang,
 			boolean useGNUExtensions, boolean expectNoProblems,
-			boolean skipTrivialInitializers) throws ParserException {
+			int limitTrivialInitializers) throws ParserException {
 		
     	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
     	ParseHelper.Options options = new ParseHelper.Options();
     	options.setCheckSyntaxProblems(expectNoProblems);
     	options.setCheckPreprocessorProblems(expectNoProblems);
-    	options.setSkipTrivialInitializers(skipTrivialInitializers);
+    	options.setLimitTrivialInitializers(limitTrivialInitializers);
     	return ParseHelper.commentParse(code, language);
     }
 
@@ -68,7 +68,7 @@ public class LRCommentTests extends CommentTests {
 			"int x = MACRO;  \n" +
 			"//comment\n";
 		
-		IASTTranslationUnit tu = parse(code, ParserLanguage.C, false, false, true);
+		IASTTranslationUnit tu = parse(code, ParserLanguage.C, false, false, 0);
 		
 		IASTComment[] comments = tu.getComments();
 		assertEquals(1, comments.length);

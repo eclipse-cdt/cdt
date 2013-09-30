@@ -85,12 +85,12 @@ public class LRCPPSpecTest extends AST2CPPSpecTest {
     }
 	
 	@Override
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, @SuppressWarnings("unused") boolean useGNUExtensions, boolean expectNoProblems, boolean skipTrivialInitializers) throws ParserException {
+	protected IASTTranslationUnit parse( String code, ParserLanguage lang, @SuppressWarnings("unused") boolean useGNUExtensions, boolean expectNoProblems, int limitTrivialInitializers) throws ParserException {
     	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
     	ParseHelper.Options options = new ParseHelper.Options();
     	options.setCheckSyntaxProblems(expectNoProblems);
     	options.setCheckPreprocessorProblems(expectNoProblems);
-    	options.setSkipTrivialInitializers(skipTrivialInitializers);
+    	options.setLimitTrivialInitializers(limitTrivialInitializers);
     	return ParseHelper.parse(code, language, options);
     }
 	

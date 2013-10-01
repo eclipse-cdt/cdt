@@ -342,7 +342,16 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Creates an error status.
 	 *
-	 * @since 5.7
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static Status createErrorStatus(String message) {
+		return createErrorStatus(message, null);
+	}
+
+	/**
+	 * Creates an error status.
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public static Status createErrorStatus(String message, Throwable e) {
 		return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, e);

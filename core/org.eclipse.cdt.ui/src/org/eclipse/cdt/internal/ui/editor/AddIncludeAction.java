@@ -22,6 +22,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -48,7 +49,7 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IElementSelector;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeCreator;
 
 /**
- * Organizes the include directives and forward declarations of a source or header file.
+ * Adds an '#include' statement and, optionally, a 'using' declaration necessary to resolve a name.
  */
 public class AddIncludeAction extends TextEditorAction {
 	private IElementSelector fAmbiguityResolver;
@@ -103,6 +104,11 @@ public class AddIncludeAction extends TextEditorAction {
 		SharedASTJob job = new SharedASTJob(CEditorMessages.AddInclude_action, tu) {
 			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
+				if (ast == null) {
+					return CUIPlugin.createErrorStatus(
+							NLS.bind(CEditorMessages.AddInclude_ast_not_available, tu.getPath().toOSString()));
+				}
+
 				IIndex index= CCorePlugin.getIndexManager().getIndex(tu.getCProject(),
 						IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT);
 				try {

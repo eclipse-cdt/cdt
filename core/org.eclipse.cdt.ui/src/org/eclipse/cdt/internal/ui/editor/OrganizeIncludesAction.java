@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.undo.DocumentUndoManagerRegistry;
@@ -70,6 +71,11 @@ public class OrganizeIncludesAction extends TextEditorAction {
 		SharedASTJob job = new SharedASTJob(CEditorMessages.OrganizeIncludes_action, tu) {
 			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
+				if (ast == null) {
+					return CUIPlugin.createErrorStatus(
+							NLS.bind(CEditorMessages.OrganizeIncludes_ast_not_available, tu.getPath().toOSString()));
+				}
+
 				IIndex index= CCorePlugin.getIndexManager().getIndex(tu.getCProject(),
 						IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT);
 				try {

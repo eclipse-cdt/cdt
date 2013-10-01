@@ -35,11 +35,13 @@ public final class CEditorMessages extends NLS {
 	public static String AddInclude_label;
 	public static String AddInclude_description;
 	public static String AddInclude_action;
+	public static String AddInclude_ast_not_available;
 	public static String AddInclude_error_title;
 	public static String AddInclude_insertion_failed;
 	public static String OrganizeIncludes_label;
 	public static String OrganizeIncludes_description;
 	public static String OrganizeIncludes_action;
+	public static String OrganizeIncludes_ast_not_available;
 	public static String OrganizeIncludes_error_title;
 	public static String OrganizeIncludes_insertion_failed;
 	public static String OrganizeIncludes_help_provider_error;

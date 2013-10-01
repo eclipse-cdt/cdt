@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_10babb5a",
+        "filename": "build/org.eclipse.cdt.make.core/src/org/eclipse/cdt/make/internal/core/templateengine/AddMakeTarget.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-10-01T23:49:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_f5958145",
+      "revId": "3d1a9c7d572fd18f96b180cc24269d28a4a9067d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_5587151e",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/templateengine/processes/ExtraLanguageSettingsProvider.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2013-10-01T21:11:43Z",
       "side": 1,
       "message": "Please add copyright header",
+      "revId": "3d1a9c7d572fd18f96b180cc24269d28a4a9067d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_50c0c3c4",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/templateengine/processes/ExtraLanguageSettingsProvider.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-10-01T23:49:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_5587151e",
       "revId": "3d1a9c7d572fd18f96b180cc24269d28a4a9067d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_f0be2f4d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/templateengine/processes/ExtraLanguageSettingsProvider.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-10-01T23:49:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_9584fd18",
+      "revId": "3d1a9c7d572fd18f96b180cc24269d28a4a9067d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_b512d95c",
         "filename": "core/org.eclipse.cdt.core/templateengine/org/eclipse/cdt/core/templateengine/process/processes/SetEnvironmentVariable.java",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2013-10-01T21:11:43Z",
       "side": 1,
       "message": "Please add copyright header",
+      "revId": "3d1a9c7d572fd18f96b180cc24269d28a4a9067d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_30c537d5",
+        "filename": "core/org.eclipse.cdt.core/templateengine/org/eclipse/cdt/core/templateengine/process/processes/SetEnvironmentVariable.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-10-01T23:49:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_b512d95c",
       "revId": "3d1a9c7d572fd18f96b180cc24269d28a4a9067d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

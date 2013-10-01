@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_f5958145",
+        "filename": "build/org.eclipse.cdt.make.core/src/org/eclipse/cdt/make/internal/core/templateengine/AddMakeTarget.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-10-01T21:11:43Z",
+      "side": 1,
+      "message": "Please add here:\n *\n * Contributors:\n * Your Name (Your Company) - Initial API and implementation",
+      "revId": "3d1a9c7d572fd18f96b180cc24269d28a4a9067d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_5587151e",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/templateengine/processes/ExtraLanguageSettingsProvider.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-10-01T21:11:43Z",
+      "side": 1,
+      "message": "Please add copyright header",
+      "revId": "3d1a9c7d572fd18f96b180cc24269d28a4a9067d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_9584fd18",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/templateengine/processes/ExtraLanguageSettingsProvider.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-10-01T21:11:43Z",
+      "side": 1,
+      "message": "Could you change the name to \"AddLanguageSettingsProvider\" to follow naming convention the other process runners are using?",
+      "revId": "3d1a9c7d572fd18f96b180cc24269d28a4a9067d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_b512d95c",
+        "filename": "core/org.eclipse.cdt.core/templateengine/org/eclipse/cdt/core/templateengine/process/processes/SetEnvironmentVariable.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-10-01T21:11:43Z",
+      "side": 1,
+      "message": "Please add copyright header",
+      "revId": "3d1a9c7d572fd18f96b180cc24269d28a4a9067d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

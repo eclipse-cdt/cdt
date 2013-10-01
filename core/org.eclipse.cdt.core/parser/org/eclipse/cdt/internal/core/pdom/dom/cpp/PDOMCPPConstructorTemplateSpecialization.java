@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 QNX Software Systems and others.
+ * Copyright (c) 2007, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,11 +22,9 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPConstructorTemplateSpecialization extends PDOMCPPMethodTemplateSpecialization
 		implements ICPPConstructor {
-	/**
-	 * The size in bytes of a PDOMCPPConstructorTemplateSpecialization record in the database.
-	 */
+	/** The size in bytes of a PDOMCPPConstructorTemplateSpecialization record in the database. */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPFunctionSpecialization.RECORD_SIZE + 0;
+	protected static final int RECORD_SIZE = PDOMCPPMethodTemplateSpecialization.RECORD_SIZE + 0;
 
 	public PDOMCPPConstructorTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
 			ICPPConstructor constructor, PDOMBinding specialized) throws CoreException {

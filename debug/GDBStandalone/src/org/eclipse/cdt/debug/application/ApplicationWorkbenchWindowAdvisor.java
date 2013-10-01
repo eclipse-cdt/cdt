@@ -14,10 +14,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
-import org.eclipse.cdt.core.ICompileOptionsFinder;
 import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
@@ -31,10 +31,16 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.executables.ExecutablesManager;
 import org.eclipse.cdt.utils.elf.parser.GNUElfParser;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -46,6 +52,8 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -73,6 +81,22 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setShowStatusLine(true);
 		configurer.setShowMenuBar(true);
 		configurer.setTitle(Messages.Debugger_Title);
+		System.out.println("test");
+		IWorkbenchActivitySupport support = getWindowConfigurer().getWindow()
+				.getWorkbench().getActivitySupport();
+		IActivityManager manager = support.getActivityManager();
+		@SuppressWarnings("rawtypes")
+		Set ids = manager.getEnabledActivityIds();
+		@SuppressWarnings("rawtypes")
+		Set defined = manager.getDefinedActivityIds();
+		for (Object obj : ids) {
+			String id = (String) obj;
+			System.out.println("enabled id is " + id);
+		}
+		for (Object obj : defined) {
+			String id = (String) obj;
+			System.out.println("defined id is " + id);
+		}
 	}
 
 	private class CWDTracker implements IWorkingDirectoryTracker {
@@ -165,15 +189,31 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 									ISymbolReader reader = (ISymbolReader)bf.getAdapter(ISymbolReader.class);
 									String[] sourceFiles = reader
 											.getSourceFiles();
-									if (reader instanceof ICompileOptionsFinder) {
-										ICompileOptionsFinder f = (ICompileOptionsFinder) reader;
-										for (String fileName : sourceFiles) {
-											parser.setCurrentResourceName(fileName);
-											parser.processLine(f
-													.getCompileOptions(fileName));
-										}
-										parser.shutdown();
+									for (String sourceFile : sourceFiles) {
+										IPath sourceFilePath = new Path(
+												sourceFile);
+										String sourceName = sourceFilePath
+												.lastSegment();
+										IContainer c = createFromRoot(project,
+												new Path(sourceFile));
+										Path sourceNamePath = new Path(
+												sourceName);
+										IFile source = c
+												.getFile(sourceNamePath);
+										source.createLink(sourceFilePath, 0,
+												null);
 									}
+									// if (reader instanceof
+									// ICompileOptionsFinder) {
+									// ICompileOptionsFinder f =
+									// (ICompileOptionsFinder) reader;
+									// for (String fileName : sourceFiles) {
+									// parser.setCurrentResourceName(fileName);
+									// parser.processLine(f
+									// .getCompileOptions(fileName));
+									// }
+									// parser.shutdown();
+									// }
 								} catch (CoreException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
@@ -205,6 +245,22 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			e.printStackTrace();
 		}
 
+	}
+
+	private IContainer createFromRoot(IProject exeProject, IPath path)
+			throws CoreException {
+		int segmentCount = path.segmentCount() - 1;
+		IContainer currentFolder = exeProject;
+
+		for (int i = 0; i < segmentCount; i++) {
+			currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
+			if (!currentFolder.exists()) {
+				((IFolder) currentFolder).create(IResource.VIRTUAL
+						| IResource.DERIVED, true, new NullProgressMonitor());
+			}
+		}
+
+		return currentFolder;
 	}
 
 	@Override

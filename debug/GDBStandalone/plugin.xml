@@ -19,4 +19,26 @@
             name="%DwarfSettingEntries.name">
       </provider>
    </extension>
+   <extension
+         point="org.eclipse.ui.activities">
+      <activity
+            id="GDBStandalone.activity.filterMenus"
+            name="%FilterMenus.name">
+      </activity>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            isEqualityPattern="true"
+            pattern="org.eclipse.cdt.ui/org.eclipse.jdt.ui.refactoring.menu">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            isEqualityPattern="true"
+            pattern="org.eclipse.cdt.ui/org.eclipse.jdt.ui.source.menu">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            isEqualityPattern="true"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.CodingActionSet">
+      </activityPatternBinding>
+   </extension>
 </plugin>

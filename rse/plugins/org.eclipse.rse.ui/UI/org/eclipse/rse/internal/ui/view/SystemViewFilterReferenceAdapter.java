@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@
  * David McKnight   (IBM)        - [249245] not showing inappropriate popup actions for: Refresh, Show In Table, Go Into, etc. 
  * David McKnight   (IBM)        - [254614] Promptable filter's shouldn't require supportsCommands on the subsystem to be false
  * Noriaki Takatsu  (IBM)        - [288894] CANCEL has to be pressed 3 times in Userid/Password prompt window in Remote System Details view
+ * David McKnight   (IBM)        - [416550] filter rename does case-insensitive check against original filter name
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1049,4 +1050,12 @@ public class SystemViewFilterReferenceAdapter
 	public boolean isRemote(Object element) {
 		return false;
 	}
+	
+	/**
+	 * Overriding since filters are case-sensitive and baseclass does it case-insensitive
+	 */
+   public boolean namesAreEqual(Object element, String newName)
+    {
+    	return getName(element).equals(newName);
+    }
 }

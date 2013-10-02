@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Norbert Ploett - Initial implementation
- * Bryan Wilkinson (QNX)
- * Andrew Ferguson (Symbian)
+ *     Norbert Ploett - Initial implementation
+ *     Bryan Wilkinson (QNX)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -21,7 +21,7 @@ import junit.framework.TestSuite;
 public class ContentAssist2TestSuite extends TestSuite {
 
 	public static Test suite()  {
-		return new ContentAssist2TestSuite() ;
+		return new ContentAssist2TestSuite();
 	}
 	
 	public ContentAssist2TestSuite()  {

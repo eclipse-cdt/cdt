@@ -679,7 +679,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 
 	//// to_be_replaced_
 	//void gfunc(){aNew/*cursor*/
-	public void testGlobalVariableBeforeSave_Bug180883() throws Exception {
+	public void testGlobalVariableBeforeSave_180883() throws Exception {
 		String replace=   "// to_be_replaced_";
 		String globalVar= "int aNewGlobalVar;";
 		IDocument doc= getDocument();
@@ -696,7 +696,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 
 	//void Printer::InitPrinter(unsigned char port) {
 	//	Printer::/*cursor*/
-	public void testPrivateStaticMember_Bug109480() throws Exception {
+	public void testPrivateStaticMember_109480() throws Exception {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109480
 		final String[] expected= { "InitPrinter()", "port" };
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
@@ -707,7 +707,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//   void blah(const vector3& v) { x += v./*cursor*/; }
 	//   float x;
 	// };
-	public void testForwardMembersInInlineMethods_Bug103857a() throws Exception {
+	public void testForwardMembersInInlineMethods_103857a() throws Exception {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=103857
 		final String[] expected= { "x" };
 		assertMinimumCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
@@ -723,14 +723,14 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//		}
 	//		typedef S T;
 	//	};
-	public void testForwardMembersInInlineMethods_Bug103857b() throws Exception {
+	public void testForwardMembersInInlineMethods_103857b() throws Exception {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=185652
 		final String[] expected= { "mem" };
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
 
 	// void Pri/*cursor*/
-	public void testMethodDefinitionClassName_Bug190296() throws Exception {
+	public void testMethodDefinitionClassName_190296() throws Exception {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=190296
 		final String[] expected= { "Printer::" };
 		assertMinimumCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
@@ -838,7 +838,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	}
 
 	// void func() {float a; a= 1./*cursor*/}
-	public void testCompletionInFloatingPointLiteral_Bug193464() throws Exception {
+	public void testCompletionInFloatingPointLiteral_193464() throws Exception {
 		final String[] expected= new String[0];
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
@@ -1005,7 +1005,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//
 	//	   INIT_PTR(pTh/*cursor*/);
 	//	}
-	public void testCompletionInMacroArguments1_Bug200208() throws Exception {
+	public void testCompletionInMacroArguments1_200208() throws Exception {
 		final String[] expected= { "pThis" };
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
@@ -1024,7 +1024,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	   INIT_PTR(pThis);
 	//     COPY_PTR(pThis->pIShell, pThis->pI/*cursor*/)
 	//	}
-	public void testCompletionInMacroArguments2_Bug200208() throws Exception {
+	public void testCompletionInMacroArguments2_200208() throws Exception {
 		final String[] expected= { "pIShell" };
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
@@ -1032,7 +1032,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	void test() {
 	//		int alocal, blocal;
 	//		if (alocal < b/*cursor*/
-	public void testCompletionAfterLessThan_Bug229062() throws Exception {
+	public void testCompletionAfterLessThan_229062() throws Exception {
 		final String[] expected= { "blocal" };
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
@@ -1043,7 +1043,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	   int byte2;
 	//	} MYSTRUCT_TYPE;
 	//	static const MYSTRUCT_TYPE myArrayOfStructs[] = {{enum/*cursor*/
-	public void testCompletionInInitializerList_Bug230389() throws Exception {
+	public void testCompletionInInitializerList_230389() throws Exception {
 		final String[] expected= { "enum0", "enum1", "enum2" };
 		assertCompletionResults(expected);
 	}
@@ -1051,19 +1051,19 @@ public class CompletionTests extends AbstractContentAssistTest {
 	// void test() {
 	//    C2 c2;
 	//    c2(1)->iam/*cursor*/
-	public void testUserdefinedCallOperator_Bug231277() throws Exception {
+	public void testUserdefinedCallOperator_231277() throws Exception {
 		final String[] expected= { "iam1()" };
 		assertCompletionResults(expected);
 	}
 
 	//  void test() {struct s206450 x; x./*cursor*/
-	public void testNestedAnonymousStructs_Bug206450() throws Exception {
+	public void testNestedAnonymousStructs_206450() throws Exception {
 		final String[] expected= { "a1", "a2", "u1", "u2", "a4", "b", "s206450" };
 		assertCompletionResults(expected);
 	}
 
 	//  void test() {_f204758/*cursor*/
-	public void testTypedefToAnonymous_Bug204758() throws Exception {
+	public void testTypedefToAnonymous_204758() throws Exception {
 		final String[] expected= { "_f204758(_e204758 x) : void" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_DISP_STRINGS);
 	}
@@ -1076,7 +1076,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//		} catch (int var2) {
 	//		}
 	//	}
-	public void testContentAssistWithBraceInMacro_Bug257915() throws Exception {
+	public void testContentAssistWithBraceInMacro_257915() throws Exception {
 		final String[] expected= { "var : float" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_DISP_STRINGS);
 	}
@@ -1087,7 +1087,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	void main() {
 	//		X::T/*cursor*/  // content assist does not propose TInt
 	//	}
-	public void testNestedTypesInQualifiedNames_Bug255898() throws Exception {
+	public void testNestedTypesInQualifiedNames_255898() throws Exception {
 		final String[] expected= { "TInt" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_DISP_STRINGS);
 	}
@@ -1103,7 +1103,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//		return myQueue->a/*cursor*/
 	//	}
 	//};
-	public void testContentAssistInDeferredClassInstance_Bug194592() throws Exception {
+	public void testContentAssistInDeferredClassInstance_194592() throws Exception {
 		final String[] expected= { "add()" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_REP_STRINGS);
 	}
@@ -1127,7 +1127,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//public:
 	//  InitializerListTest() : /*cursor*/
 	//};
-	public void testConstructorInitializerList_EmptyInput_Bug266586() throws Exception {
+	public void testConstructorInitializerList_EmptyInput_266586() throws Exception {
 		final String[] expected= { "mOne", "Base",
 				"Base(int)", "Base(const Base<Helper> &)", "Helper",
 				"Helper(void)", "Helper(const Helper &)", "_A_331056", "_B_331056",
@@ -1157,7 +1157,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//public:
 	//  InitializerListTest() : ::ns/*cursor*/
 	//};
-	public void testCunstructorInitializerList_NameContextInput_Bug266586() throws Exception {
+	public void testCunstructorInitializerList_NameContextInput_266586() throws Exception {
 		final String[] expected= { "ns" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
 	}
@@ -1181,7 +1181,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//public:
 	//  InitializerListTest() : m/*cursor*/
 	//};
-	public void testCunstructorInitializerList_MemberInput_Bug266586() throws Exception {
+	public void testCunstructorInitializerList_MemberInput_266586() throws Exception {
 		final String[] expected= { "mOne" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
 	}
@@ -1205,7 +1205,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//public:
 	//  InitializerListTest() : h/*cursor*/
 	//};
-	public void testConstructorInitializerList_BaseClassInput_Bug266586() throws Exception {
+	public void testConstructorInitializerList_BaseClassInput_266586() throws Exception {
 		final String[] expected= { "Helper", "Helper(void)", "Helper(const Helper &)" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
 	}
@@ -1219,14 +1219,14 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	    vector<MyType> v;
 	//	    v.push_back(/*cursor*/);
 	//	}
-	public void testTypedefSpecialization_Bug307818() throws Exception {
+	public void testTypedefSpecialization_307818() throws Exception {
 		final String[] expected= { "push_back(const vector<MyType>::value_type & value) : void" };
 		assertParameterHint(expected);
 	}
 
 	//	using namespace ::_B_331056;
 	//	Ref/*cursor*/
-	public void testUsingDeclaration_Bug331056() throws Exception {
+	public void testUsingDeclaration_331056() throws Exception {
 		final String[] expected= { "Reference" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
 	}
@@ -1239,7 +1239,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	        this->BaseM/*cursor*/
 	//	    }
 	//	};
-	public void testDeferredBaseClass_Bug330762() throws Exception {
+	public void testDeferredBaseClass_330762() throws Exception {
 		final String[] expected= { "BaseMethod(void)" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
 	}
@@ -1262,73 +1262,72 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	  void foo(int);
 	//	}
 	//	using N::f/*cursor*/
-	public void testUsingDeclaration_Bug379631() throws Exception {
+	public void testUsingDeclaration_379631() throws Exception {
 		final String[] expected= { "foo;" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_REP_STRINGS);
 	}
 
 	//	template <typen/*cursor*/
-	public void testTemplateDeclaration_Bug397288() throws Exception {
+	public void testTemplateDeclaration_397288() throws Exception {
 		final String[] expected= { "typename" };
 		assertContentAssistResults(fCursorOffset, 0, expected, true, false, false, COMPARE_REP_STRINGS);
 	}
 
 	//	class Base {
-	//	    int c;
+	//	  int c;
 	//	};
 	//
 	//	struct Cat {
-	//	    void meow();
+	//	  void meow();
 	//	};
 	//
 	//	struct Derived : Base {
-	//	    void foo() {
-	//	        c./*cursor*/
-	//	    }
+	//	  void foo() {
+	//	    c./*cursor*/
+	//	  }
 	//
-	//	    Cat c;
+	//	  Cat c;
 	//	};
-	public void testShadowingBaseClassMember_Bug407807() throws Exception {
+	public void testShadowingBaseClassMember_407807() throws Exception {
 		final String[] expected = { "Cat", "meow(void)" };
 		assertContentAssistResults(fCursorOffset, expected, true, COMPARE_ID_STRINGS);
 	}
 
 	//	struct Cat {
-	//	    void meow();
+	//	  void meow();
 	//	};
 	//
 	//	struct Waldo {
-	//	    void bar() {
-	//	        c./*cursor*/
-	//	    }
+	//	  void bar() {
+	//	    c./*cursor*/
+	//	  }
 	//
-	//	    Cat c;
+	//	  Cat c;
 	//	};
 	//
 	//	void foo() {
-	//	    __LINE__;
+	//	  __LINE__;
 	//	}
-	public void testPreprocessorProvidedMacro_Bug412463() throws Exception {
-		final String[] expected = { "Cat", "meow(void)" };
-		assertContentAssistResults(fCursorOffset, expected, true, COMPARE_ID_STRINGS);
-	}
-	
-	//	struct Cat {
-	//	    void meow();
-	//	};
-	//
-	//	struct Waldo {
-	//	    void bar() {
-	//	        c./*cursor*/
-	//	    }
-	//
-	//	    Cat c;
-	//	};
-	//
-	//	int x = __CDT_PARSER__;
-	public void testPredefinedMacro_Bug412463() throws Exception {
+	public void testPreprocessorProvidedMacro_412463() throws Exception {
 		final String[] expected = { "Cat", "meow(void)" };
 		assertContentAssistResults(fCursorOffset, expected, true, COMPARE_ID_STRINGS);
 	}
 
+	//	struct Cat {
+	//	  void meow();
+	//	};
+	//
+	//	struct Waldo {
+	//	  void bar() {
+	//	    c./*cursor*/
+	//	  }
+	//
+	//	  Cat c;
+	//	};
+	//
+	//	int x = __CDT_PARSER__;
+	public void testPredefinedMacro_412463() throws Exception {
+		final String[] expected = { "Cat", "meow(void)" };
+		assertContentAssistResults(fCursorOffset, expected, true, COMPARE_ID_STRINGS);
+	}
 }

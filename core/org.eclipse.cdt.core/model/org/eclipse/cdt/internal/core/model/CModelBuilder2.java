@@ -88,7 +88,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
- * Build TranslationUnit structure from an <code>IASTTranslationUnit</code>.
+ * Build TranslationUnit structure from an {@code IASTTranslationUnit}.
  *
  * @since 4.0
  */
@@ -129,7 +129,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			if (index != null) {
 				try {
 					index.acquireReadLock();
-				} catch (InterruptedException ie) {
+				} catch (InterruptedException e) {
 					index= null;
 				}
 			}
@@ -213,14 +213,14 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				createInclusion(fTranslationUnit, includeDirective);
 			}
 		}
-		// macros
+		// Macros
 		final IASTPreprocessorMacroDefinition[] macroDefinitions= ast.getMacroDefinitions();
 		for (IASTPreprocessorMacroDefinition macroDefinition : macroDefinitions) {
 			if (isLocalToFile(macroDefinition)) {
 				createMacro(fTranslationUnit, macroDefinition);
 			}
 		}
-		// declarations
+		// Declarations
 		final IASTDeclaration[] declarations= ast.getDeclarations(true);
 		for (IASTDeclaration declaration : declarations) {
 			if (isLocalToFile(declaration)) {
@@ -229,7 +229,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		}
 		fEqualElements.clear();
 
-		// sort by offset
+		// Sort by offset
 		final List<ICElement> children= getElementInfo(fTranslationUnit).internalGetChildren();
 		Collections.sort(children, new Comparator<ICElement>() {
 			@Override
@@ -247,7 +247,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			return;
 		}
 
-		// report problems
+		// Report problems
 		IProblemRequestor problemRequestor= fTranslationUnit.getProblemRequestor();
 		if (problemRequestor != null && problemRequestor.isActive()) {
 			problemRequestor.beginReporting();
@@ -273,7 +273,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	}
 
 	private Include createInclusion(Parent parent, IASTPreprocessorIncludeStatement inclusion) throws CModelException{
-		// create element
+		// Create element
 		final IASTName name= inclusion.getName();
 		Include element= new Include(parent, ASTStringUtil.getSimpleName(name), inclusion.isSystemInclude());
 		element.setFullPathName(inclusion.getPath());
@@ -281,9 +281,9 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 		element.setActive(inclusion.isActive());
 		element.setResolved(inclusion.isResolved());
-		// add to parent
+		// Add to parent
 		parent.addChild(element);
-		// set positions
+		// Set positions
 		setIdentifierPosition(element, name);
 		setBodyPosition(element, inclusion);
 		return element;
@@ -300,14 +300,14 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	}
 
 	private Macro createMacro(Parent parent, IASTPreprocessorMacroDefinition macro) throws CModelException{
-		// create element
+		// Create element
 		final IASTName name= macro.getName();
 		Macro element= new  Macro(parent, ASTStringUtil.getSimpleName(name));
 		setIndex(element);
 		element.setActive(macro.isActive());
-		// add to parent
+		// Add to parent
 		parent.addChild(element);
-		// set positions
+		// Set positions
 		setIdentifierPosition(element, name);
 		setBodyPosition(element, macro);
 		if (macro instanceof IASTPreprocessorFunctionStyleMacroDefinition) {
@@ -318,27 +318,27 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 	private void createDeclaration(Parent parent, IASTDeclaration declaration) throws CModelException, DOMException {
 		if (declaration instanceof IASTFunctionDefinition) {
-			createFunctionDefinition(parent, (IASTFunctionDefinition)declaration, false);
+			createFunctionDefinition(parent, (IASTFunctionDefinition) declaration, false);
 		} else if (declaration instanceof IASTSimpleDeclaration) {
-			createSimpleDeclarations(parent, (IASTSimpleDeclaration)declaration, false);
+			createSimpleDeclarations(parent, (IASTSimpleDeclaration) declaration, false);
 		} else if (declaration instanceof ICPPASTVisibilityLabel) {
-			handleVisibilityLabel((ICPPASTVisibilityLabel)declaration);
+			handleVisibilityLabel((ICPPASTVisibilityLabel) declaration);
 		} else if (declaration instanceof ICPPASTNamespaceDefinition) {
 			createNamespace(parent, (ICPPASTNamespaceDefinition) declaration);
 		} else if (declaration instanceof ICPPASTNamespaceAlias) {
 			// TODO [cmodel] namespace alias?
 		} else if (declaration instanceof ICPPASTTemplateDeclaration) {
-			createTemplateDeclaration(parent, (ICPPASTTemplateDeclaration)declaration);
+			createTemplateDeclaration(parent, (ICPPASTTemplateDeclaration) declaration);
 		} else if (declaration instanceof ICPPASTTemplateSpecialization) {
 			// TODO [cmodel] template specialization?
 		} else if (declaration instanceof ICPPASTExplicitTemplateInstantiation) {
 			// TODO [cmodel] explicit template instantiation?
 		} else if (declaration instanceof ICPPASTUsingDeclaration) {
-			createUsingDeclaration(parent, (ICPPASTUsingDeclaration)declaration);
+			createUsingDeclaration(parent, (ICPPASTUsingDeclaration) declaration);
 		} else if (declaration instanceof ICPPASTUsingDirective) {
-			createUsingDirective(parent, (ICPPASTUsingDirective)declaration);
+			createUsingDirective(parent, (ICPPASTUsingDirective) declaration);
 		} else if (declaration instanceof ICPPASTLinkageSpecification) {
-			createLinkageSpecification(parent, (ICPPASTLinkageSpecification)declaration);
+			createLinkageSpecification(parent, (ICPPASTLinkageSpecification) declaration);
 		} else if (declaration instanceof IASTASMDeclaration) {
 			// TODO [cmodel] asm declaration?
 		} else if (declaration instanceof IASTProblemDeclaration) {
@@ -353,7 +353,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	private void createTemplateDeclaration(Parent parent, ICPPASTTemplateDeclaration templateDeclaration) throws CModelException, DOMException {
 		IASTDeclaration declaration= templateDeclaration.getDeclaration();
 		if (declaration instanceof IASTFunctionDefinition) {
-			CElement element= createFunctionDefinition(parent, (IASTFunctionDefinition)declaration, true);
+			CElement element= createFunctionDefinition(parent, (IASTFunctionDefinition) declaration, true);
 			String[] parameterTypes= ASTStringUtil.getTemplateParameterArray(templateDeclaration.getTemplateParameters());
 			// set the template parameters
 			if (element instanceof FunctionTemplate) {
@@ -368,7 +368,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				setBodyPosition((SourceManipulation)element, templateDeclaration);
 			}
 		} else if (declaration instanceof IASTSimpleDeclaration) {
-			CElement[] elements= createSimpleDeclarations(parent, (IASTSimpleDeclaration)declaration, true);
+			CElement[] elements= createSimpleDeclarations(parent, (IASTSimpleDeclaration) declaration, true);
 			String[] parameterTypes= ASTStringUtil.getTemplateParameterArray(templateDeclaration.getTemplateParameters());
 			for (CElement element : elements) {
 				// set the template parameters
@@ -401,7 +401,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			}
 		} else if (declaration instanceof ICPPASTTemplateDeclaration) {
 			// strange: template decl inside template decl
-			createTemplateDeclaration(parent, (ICPPASTTemplateDeclaration)declaration);
+			createTemplateDeclaration(parent, (ICPPASTTemplateDeclaration) declaration);
 		} else if (declaration instanceof IASTProblemDeclaration) {
 			// ignore problem declarations (or create special elements for debugging?)
 		} else {

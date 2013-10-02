@@ -940,7 +940,7 @@ public class ClassTypeHelper {
 				for (IASTDeclarator memberDeclarator : memberDeclaration.getDeclarators()) {
 					IBinding memberBinding =
 							ASTQueries.findInnermostDeclarator(memberDeclarator).getName().resolveBinding();
-					if (member.equals(memberBinding)){
+					if (member.equals(memberBinding)) {
 						return visibility;
 					}
 				}
@@ -977,7 +977,7 @@ public class ClassTypeHelper {
 				IASTDeclarator declarator = ((IASTFunctionDefinition) hostMember).getDeclarator();
 				declarator = ASTQueries.findInnermostDeclarator(declarator);
 				IBinding functionBinding = declarator.getName().resolveBinding();
-				if (member.equals(functionBinding)){
+				if (member.equals(functionBinding)) {
 					return visibility;
 				}
 			} else if (hostMember instanceof ICPPASTAliasDeclaration) {

@@ -112,7 +112,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * @param monitor the progress monitor
 	 */
 	public CModelBuilder2(ITranslationUnit tu, Map<ICElement, CElementInfo> newElements, IProgressMonitor monitor) {
-		fTranslationUnit= (TranslationUnit)tu;
+		fTranslationUnit= (TranslationUnit) tu;
 		fNewElements= newElements;
 		fProgressMonitor= monitor;
 	}
@@ -368,7 +368,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			}
 			// set the body position
 			if (element instanceof SourceManipulation) {
-				setBodyPosition((SourceManipulation)element, templateDeclaration);
+				setBodyPosition((SourceManipulation) element, templateDeclaration);
 			}
 		} else if (declaration instanceof IASTSimpleDeclaration) {
 			CElement[] elements= createSimpleDeclarations(parent, (IASTSimpleDeclaration) declaration, true);
@@ -399,7 +399,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				}
 				// set the body position
 				if (element instanceof SourceManipulation) {
-					setBodyPosition((SourceManipulation)element, templateDeclaration);
+					setBodyPosition((SourceManipulation) element, templateDeclaration);
 				}
 			}
 		} else if (declaration instanceof ICPPASTAliasDeclaration) {
@@ -449,7 +449,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				final IASTDeclarator declarator= declarators[i];
 				final CElement element= createSimpleDeclaration(parent, declSpecifier, declarator, isTemplate);
 				if (!isTemplate && element instanceof SourceManipulation && declarators.length > 1) {
-					setBodyPosition((SourceManipulation)element, declarator);
+					setBodyPosition((SourceManipulation) element, declarator);
 				}
 				elements[i]= element;
 			}
@@ -462,17 +462,17 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			if (declarator != null) {
 				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
 			}
-			return createCompositeType(parent, (IASTCompositeTypeSpecifier)declSpecifier, isTemplate);
+			return createCompositeType(parent, (IASTCompositeTypeSpecifier) declSpecifier, isTemplate);
 		} else if (declSpecifier instanceof IASTElaboratedTypeSpecifier) {
 			if (declarator != null) {
 				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
 			}
-			return createElaboratedTypeDeclaration(parent, (IASTElaboratedTypeSpecifier)declSpecifier, isTemplate);
+			return createElaboratedTypeDeclaration(parent, (IASTElaboratedTypeSpecifier) declSpecifier, isTemplate);
 		} else if (declSpecifier instanceof IASTEnumerationSpecifier) {
 			if (declarator != null) {
 				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
 			}
-			return createEnumeration(parent, (IASTEnumerationSpecifier)declSpecifier);
+			return createEnumeration(parent, (IASTEnumerationSpecifier) declSpecifier);
 		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {
 			if (declarator != null) {
 				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
@@ -495,7 +495,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		}
 		IASTDeclarator typeRelevant= ASTQueries.findTypeRelevantDeclarator(declarator);
 		if (typeRelevant instanceof IASTFunctionDeclarator) {
-			return createFunctionDeclaration(parent, declSpecifier, (IASTFunctionDeclarator)typeRelevant, isTemplate);
+			return createFunctionDeclaration(parent, declSpecifier, (IASTFunctionDeclarator) typeRelevant, isTemplate);
 		}
 		return createVariable(parent, declSpecifier, declarator, isTemplate);
 	}
@@ -681,7 +681,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 		if (compositeTypeSpecifier instanceof ICPPASTCompositeTypeSpecifier) {
 			// store super classes names
-			final ICPPASTCompositeTypeSpecifier cppCompositeTypeSpecifier= (ICPPASTCompositeTypeSpecifier)compositeTypeSpecifier;
+			final ICPPASTCompositeTypeSpecifier cppCompositeTypeSpecifier= (ICPPASTCompositeTypeSpecifier) compositeTypeSpecifier;
 			ICPPASTBaseSpecifier[] baseSpecifiers= cppCompositeTypeSpecifier.getBaseSpecifiers();
 			for (final ICPPASTBaseSpecifier baseSpecifier : baseSpecifiers) {
 				final IASTName baseName= baseSpecifier.getName();
@@ -791,9 +791,9 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			// field
 			Field newElement= new Field(parent, variableName);
 			setIndex(newElement);
-			final FieldInfo fieldInfo= (FieldInfo)getElementInfo(newElement);
+			final FieldInfo fieldInfo= (FieldInfo) getElementInfo(newElement);
 			if (specifier instanceof ICPPASTDeclSpecifier) {
-				final ICPPASTDeclSpecifier cppSpecifier= (ICPPASTDeclSpecifier)specifier;
+				final ICPPASTDeclSpecifier cppSpecifier= (ICPPASTDeclSpecifier) specifier;
 				fieldInfo.setMutable(cppSpecifier.getStorageClass() == IASTDeclSpecifier.sc_mutable);
 			}
 			fieldInfo.setTypeName(ASTStringUtil.getSignatureString(specifier, declarator));
@@ -866,10 +866,10 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 		if (declarator instanceof ICPPASTFunctionDeclarator) {
 
-			final ICPPASTFunctionDeclarator cppFunctionDeclarator= (ICPPASTFunctionDeclarator)declarator;
+			final ICPPASTFunctionDeclarator cppFunctionDeclarator= (ICPPASTFunctionDeclarator) declarator;
 			final IASTName simpleAstName;
 			if (name instanceof ICPPASTQualifiedName) {
-				final ICPPASTQualifiedName quName= (ICPPASTQualifiedName)name;
+				final ICPPASTQualifiedName quName= (ICPPASTQualifiedName) name;
 				simpleAstName= quName.getLastName();
 			} else {
 				simpleAstName= name;
@@ -879,7 +879,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			boolean isMethod= parent instanceof IStructure;
 			if (!isMethod && name instanceof ICPPASTQualifiedName) {
 				if (isTemplate) {
-					final ICPPASTNameSpecifier[] segments= ((ICPPASTQualifiedName)name).getAllSegments();
+					final ICPPASTNameSpecifier[] segments= ((ICPPASTQualifiedName) name).getAllSegments();
 					for (ICPPASTNameSpecifier segment : segments) {
 						if (segment instanceof ICPPASTTemplateId) {
 							isMethod= true;
@@ -919,13 +919,13 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				if (scope != null) {
 					final IBinding binding= simpleAstName.resolveBinding();
 					if (binding instanceof ICPPMethod) {
-						methodBinding= (ICPPMethod)binding;
+						methodBinding= (ICPPMethod) binding;
 					}
 				}
 				if (methodBinding != null) {
 					methodInfo.setVirtual(methodBinding.isVirtual());
 					methodInfo.setInline(methodBinding.isInline());
-					methodInfo.setFriend(((ICPPASTDeclSpecifier)declSpecifier).isFriend());
+					methodInfo.setFriend(((ICPPASTDeclSpecifier) declSpecifier).isFriend());
 					methodInfo.setVolatile(cppFunctionDeclarator.isVolatile());
 					methodInfo.setVisibility(adaptVisibilityConstant(methodBinding.getVisibility()));
 					methodInfo.setPureVirtual(false);
@@ -933,7 +933,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					methodElement.setDestructor(methodBinding.isDestructor());
 				} else {
 					if (declSpecifier instanceof ICPPASTDeclSpecifier) {
-						final ICPPASTDeclSpecifier cppDeclSpecifier= (ICPPASTDeclSpecifier)declSpecifier;
+						final ICPPASTDeclSpecifier cppDeclSpecifier= (ICPPASTDeclSpecifier) declSpecifier;
 						methodInfo.setVirtual(cppDeclSpecifier.isVirtual());
 						methodInfo.setInline(cppDeclSpecifier.isInline());
 						methodInfo.setFriend(cppDeclSpecifier.isFriend());
@@ -947,7 +947,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					} else if (parent instanceof IStructure) {
 						isConstructor= parent.getElementName().equals(simpleName);
 					} else if (name instanceof ICPPASTQualifiedName) {
-						final ICPPASTQualifiedName quName= (ICPPASTQualifiedName)name;
+						final ICPPASTQualifiedName quName= (ICPPASTQualifiedName) name;
 						final ICPPASTNameSpecifier[] qualifier= quName.getQualifier();
 						if (qualifier.length == 0)
 							isConstructor = false;
@@ -965,7 +965,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				String functionName= ASTStringUtil.getQualifiedName(name);
 				// strip namespace qualifier if parent is same namespace
 				if (name instanceof ICPPASTQualifiedName && parent instanceof INamespace) {
-					final ICPPASTQualifiedName quName= (ICPPASTQualifiedName)name;
+					final ICPPASTQualifiedName quName= (ICPPASTQualifiedName) name;
 					final ICPPASTNameSpecifier[] qualifier= quName.getQualifier();
 				 	if (qualifier.length >= 1) {
 				 		ICPPASTNameSpecifier nameSpec = qualifier[qualifier.length - 1];
@@ -1034,7 +1034,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		final FunctionInfo info;
 
 		if (declarator instanceof ICPPASTFunctionDeclarator) {
-			final ICPPASTFunctionDeclarator cppFunctionDeclarator= (ICPPASTFunctionDeclarator)declarator;
+			final ICPPASTFunctionDeclarator cppFunctionDeclarator= (ICPPASTFunctionDeclarator) declarator;
 			if (parent instanceof IStructure) {
 				// method
 				final MethodDeclaration methodElement;
@@ -1052,7 +1052,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				final MethodInfo methodInfo= (MethodInfo) getElementInfo(methodElement);
 				info= methodInfo;
 				if (declSpecifier instanceof ICPPASTDeclSpecifier) {
-					final ICPPASTDeclSpecifier cppDeclSpecifier= (ICPPASTDeclSpecifier)declSpecifier;
+					final ICPPASTDeclSpecifier cppDeclSpecifier= (ICPPASTDeclSpecifier) declSpecifier;
 					methodInfo.setVirtual(cppDeclSpecifier.isVirtual());
 					methodInfo.setInline(cppDeclSpecifier.isInline());
 					methodInfo.setFriend(cppDeclSpecifier.isFriend());
@@ -1072,7 +1072,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				element.setReturnType(returnType);
 				setIndex(element);
 
-				info= (FunctionInfo)getElementInfo(element);
+				info= (FunctionInfo) getElementInfo(element);
 				info.setConst(cppFunctionDeclarator.isConst());
 			}
 		} else if (declarator instanceof IASTStandardFunctionDeclarator) {
@@ -1085,7 +1085,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			element.setReturnType(returnType);
 			setIndex(element);
 
-			info= (FunctionInfo)getElementInfo(element);
+			info= (FunctionInfo) getElementInfo(element);
 		} else {
 			assert false;
 			return null;

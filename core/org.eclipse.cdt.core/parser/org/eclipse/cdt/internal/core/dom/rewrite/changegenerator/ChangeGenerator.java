@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -175,7 +176,25 @@ public class ChangeGenerator extends ASTVisitor {
 		}
 		return super.visit(declarator);
 	}
+	
+	@Override
+	public int visit(ICPPASTBaseSpecifier baseSpecifier) {
+		handleInserts(baseSpecifier);
+		if (requiresRewrite(baseSpecifier)) {
+			handleReplace(baseSpecifier);
+			return ASTVisitor.PROCESS_SKIP;
+		}
+		return super.visit(baseSpecifier);
+	}
 
+	@Override
+	public int leave(ICPPASTBaseSpecifier baseSpecifier) {
+		if (!requiresRewrite(baseSpecifier)) {
+			handleAppends(baseSpecifier);
+		}
+		return super.leave(baseSpecifier);
+	}
+	
 	@Override
 	public int visit(IASTArrayModifier arrayModifier) {
 		handleInserts(arrayModifier);

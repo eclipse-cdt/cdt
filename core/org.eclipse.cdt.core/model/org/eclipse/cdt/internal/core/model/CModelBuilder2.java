@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -333,6 +334,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			// TODO [cmodel] template specialization?
 		} else if (declaration instanceof ICPPASTExplicitTemplateInstantiation) {
 			// TODO [cmodel] explicit template instantiation?
+		} else if (declaration instanceof ICPPASTAliasDeclaration) {
+			// TODO [cmodel] alias declaration?
 		} else if (declaration instanceof ICPPASTUsingDeclaration) {
 			createUsingDeclaration(parent, (ICPPASTUsingDeclaration) declaration);
 		} else if (declaration instanceof ICPPASTUsingDirective) {
@@ -399,6 +402,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					setBodyPosition((SourceManipulation)element, templateDeclaration);
 				}
 			}
+		} else if (declaration instanceof ICPPASTAliasDeclaration) {
+			createDeclaration(parent, declaration);
 		} else if (declaration instanceof ICPPASTTemplateDeclaration) {
 			// strange: template decl inside template decl
 			createTemplateDeclaration(parent, (ICPPASTTemplateDeclaration) declaration);

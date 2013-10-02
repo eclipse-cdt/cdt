@@ -17,13 +17,17 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
@@ -88,6 +92,16 @@ public class AccessContext {
 		if (binding instanceof ICPPMember) {
 			bindingVisibility = ((ICPPMember) binding).getVisibility();
 		} else {
+	        while (binding instanceof ICPPSpecialization) {
+	            binding = ((ICPPSpecialization) binding).getSpecializedBinding();
+	        }
+	        if (binding instanceof ICPPClassTemplatePartialSpecialization) {
+	        	// A class template partial specialization inherits the visibility of its primary class template. 
+	        	binding = ((ICPPClassTemplatePartialSpecialization) binding).getPrimaryClassTemplate();
+	        }
+	        if (binding instanceof ICPPAliasTemplateInstance) {
+	        	binding = ((ICPPAliasTemplateInstance) binding).getTemplateDefinition();
+	        }
 			IBinding owner = binding.getOwner();
 			if (owner instanceof ICPPClassType) {
 				bindingVisibility = ((ICPPClassType) owner).getVisibility(binding);
@@ -152,7 +166,9 @@ public class AccessContext {
 			return false;
 
 		accessLevel = getMemberAccessLevel(derivedClass, accessLevel);
-		if (owner.isSameType(derivedClass)) {
+		if (owner.isSameType(derivedClass) ||
+				(derivedClass instanceof ICPPClassSpecialization &&
+						owner.equals(((ICPPClassSpecialization) derivedClass).getSpecializedBinding()))) {
 			return isAccessible(bindingVisibility, accessLevel);
 		}
 

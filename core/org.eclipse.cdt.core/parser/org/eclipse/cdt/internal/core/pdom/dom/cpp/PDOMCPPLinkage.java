@@ -520,6 +520,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
         	// A class template partial specialization inherits the visibility of its primary class template. 
         	binding = ((ICPPClassTemplatePartialSpecialization) binding).getPrimaryClassTemplate();
         }
+        if (binding instanceof ICPPAliasTemplateInstance) {
+        	binding = ((ICPPAliasTemplateInstance) binding).getTemplateDefinition();
+        }
 		if (binding instanceof CPPImplicitMethod)
 			return ICPPClassType.v_public;
 

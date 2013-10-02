@@ -659,6 +659,27 @@ public class CompletionTests extends AbstractContentAssistTest {
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
+	//	struct A {};
+	//
+	//	template<typename T>
+	//	struct B {};
+	//
+	//	template<typename U>
+	//	struct C {
+	//	  using D = U;
+	//
+	//	  template<typename T>
+	//	  using E = B<T>;
+	//	};
+	//
+	//	void test() {
+	//	  C<A>::/*cursor*/
+	//	}
+	public void testAliasTemplate_418479() throws Exception {
+		final String[] expected = { "D", "E" };
+		assertContentAssistResults(fCursorOffset, expected, true, COMPARE_ID_STRINGS);
+	}
+
 	//using namespace ns;void gfunc(){NSC/*cursor*/
 	public void testUsingDirective() throws Exception {
 		final String[] expected= { "NSCONST" };

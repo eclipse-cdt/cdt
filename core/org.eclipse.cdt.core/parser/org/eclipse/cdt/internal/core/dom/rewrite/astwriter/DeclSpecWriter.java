@@ -282,7 +282,7 @@ public class DeclSpecWriter extends NodeWriter {
 		return compDeclSpec.getMembers();
 	}
 
-	private void writeBaseSpecifiers(ICPPASTBaseSpecifier specifier) {
+	public void writeBaseSpecifiers(ICPPASTBaseSpecifier specifier) {
 		switch (specifier.getVisibility()) {
 		case ICPPASTBaseSpecifier.v_public:
 			scribe.printStringSpace(Keywords.PUBLIC);
@@ -293,6 +293,10 @@ public class DeclSpecWriter extends NodeWriter {
 		case ICPPASTBaseSpecifier.v_private:
 			scribe.printStringSpace(Keywords.PRIVATE);
 			break;
+		}
+		
+		if (specifier.isVirtual()) {
+			scribe.printStringSpace(Keywords.VIRTUAL);
 		}
 		specifier.getName().accept(visitor);
 	}

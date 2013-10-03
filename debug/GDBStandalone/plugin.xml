@@ -21,10 +21,18 @@
    </extension>
    <extension
          point="org.eclipse.ui.activities">
+      <category
+            id="GDBStandalone.category"
+            name="%FilterMenus.name">
+      </category>
       <activity
             id="GDBStandalone.activity.filterMenus"
             name="%FilterMenus.name">
       </activity>
+      <categoryActivityBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            categoryId="GDBStandalone.category">
+      </categoryActivityBinding>
       <activityPatternBinding
             activityId="GDBStandalone.activity.filterMenus"
             isEqualityPattern="true"
@@ -39,6 +47,43 @@
             activityId="GDBStandalone.activity.filterMenus"
             isEqualityPattern="true"
             pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.CodingActionSet">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.ExtractConstant">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            isEqualityPattern="true"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.ExtractLocalVariable">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.Rename">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.HideMethod">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.ExtractMethod">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.createRefactoringScript">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.applyRefactoringScript">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.RefactoringHistory">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.ToggleFunction">
       </activityPatternBinding>
    </extension>
 </plugin>

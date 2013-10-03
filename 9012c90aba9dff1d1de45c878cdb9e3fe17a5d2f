@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_8af96577",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractCPropertyTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 614,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-10-03T14:58:09Z",
+      "side": 1,
+      "message": "In case you missed the comment in last review let me copy it here. I would really like to hear your reasoning on that:\n\nI think \"false\" could be better default here in the long run. When developers start developing a new tab they are more likely to develop/test a single configuration version first. Most will stop right there and not even realize that it needs to be tested in multi-cfg mode. Exceptions ensue. Would you agree? What is your reasoning making \"true\" the default?",
+      "revId": "9012c90aba9dff1d1de45c878cdb9e3fe17a5d2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_0a3395f9",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractPage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1369,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-10-03T14:58:09Z",
+      "side": 1,
+      "message": "I am getting missing @since tag here",
+      "revId": "9012c90aba9dff1d1de45c878cdb9e3fe17a5d2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

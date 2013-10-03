@@ -85,5 +85,66 @@
             activityId="GDBStandalone.activity.filterMenus"
             pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.ToggleFunction">
       </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.internal.ui.actions.SurroundWithTemplateMenuAction">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            isEqualityPattern="true"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.GettersAndSetters">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.ImplementMethod">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.SortLines">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.OrganizeIncludes">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.AddInclude">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.Format">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.Indent">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.ShiftLeft">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.ShiftRight">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.Uncomment">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.Comment">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.RemoveBlockComment">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.AddBlockComment">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.ToggleComment">
+      </activityPatternBinding>
    </extension>
 </plugin>

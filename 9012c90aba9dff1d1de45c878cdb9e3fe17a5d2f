@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_8a5de5f7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractCPropertyTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 614,
+      "author": {
+        "id": 1493
+      },
+      "writtenOn": "2013-10-03T15:03:15Z",
+      "side": 1,
+      "message": "I got your comment, I think my reply got list.\n\nMy point is that having this return \u0027false\u0027 by default would cause unchanged code who inherit that class to have multiple configuration unexpectedly disabled.\n\nBasically, you might be right that retuning \u0027false\u0027 would be a more natural choice, but it would break computability with existing code, so this is why I think that it should return \u0027true\u0027, since it is the behavior that was implied by the previous API.\n\nDoes that make sense?",
+      "parentUuid": "8748d3a1_8af96577",
+      "revId": "9012c90aba9dff1d1de45c878cdb9e3fe17a5d2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_0a3395f9",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractPage.java",
         "patchSetId": 4

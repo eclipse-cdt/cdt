@@ -669,7 +669,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		createSashForm();
 
 		fStatusLine = new StatusMessageLine(usercomp, SWT.LEFT, 2);
-		if (!page.isForPrefs()) {
+		if (!page.isForPrefs() && !page.isMultiCfg()) {
 			enableTabControls(masterPropertyPage.isLanguageSettingsProvidersEnabled());
 		}
 

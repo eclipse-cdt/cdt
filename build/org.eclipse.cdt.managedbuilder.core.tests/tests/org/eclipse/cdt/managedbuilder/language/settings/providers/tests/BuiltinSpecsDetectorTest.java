@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -112,13 +113,37 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		@Override
 		protected void execute() {
 			super.execute();
-			try {
-				Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
-			} catch (Exception e) {
-			}
+			waitForProviderToFinish();
 		}
 		protected boolean isExecuted() {
 			return isExecuted;
+		}
+	}
+
+	/**
+	 * Mock built-in specs detector which track how many times it was run.
+	 */
+	private class MockBuiltinSpecsDetectorWithRunCount extends DummyBuiltinSpecsDetector {
+		private int executedCount = 0;
+
+		@Override
+		public void startup(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker) throws CoreException {
+			executedCount++;
+			super.startup(cfgDescription, cwdTracker);
+		}
+		@Override
+		public MockBuiltinSpecsDetectorEnvironmentChangeListener cloneShallow() throws CloneNotSupportedException {
+			MockBuiltinSpecsDetectorEnvironmentChangeListener clone = (MockBuiltinSpecsDetectorEnvironmentChangeListener) super.cloneShallow();
+			return clone;
+		}
+		@Override
+		public MockBuiltinSpecsDetectorEnvironmentChangeListener clone() throws CloneNotSupportedException {
+			MockBuiltinSpecsDetectorEnvironmentChangeListener clone = (MockBuiltinSpecsDetectorEnvironmentChangeListener) super.clone();
+			return clone;
+		}
+
+		public int getExecutedCount() {
+			return executedCount;
 		}
 	}
 
@@ -198,12 +223,19 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
+		waitForProviderToFinish();
+		super.tearDown();
+	}
+
+	/**
+	 * Waits until all AbstractBuiltinSpecsDetector jobs are finished.
+	 */
+	private void waitForProviderToFinish() {
 		try {
 			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
 		} catch (Exception e) {
 			// ignore
 		}
-		super.tearDown();
 	}
 
 	/**
@@ -564,10 +596,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		MockBuiltinSpecsDetectorEnvironmentChangeListener provider = new MockBuiltinSpecsDetectorEnvironmentChangeListener();
 		// register environment listener on configuration - note that provider is not included in the configuration
 		provider.registerListener(cfgDescription);
-		try {
-			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
-		} catch (Exception e) {
-		}
+		waitForProviderToFinish();
 		assertEquals(true, provider.isExecuted());
 		assertEquals(null, provider.getSampleEnvVar());
 		// unset "isExecuted" flag
@@ -591,10 +620,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
 		}
 
-		try {
-			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
-		} catch (Exception e) {
-		}
+		waitForProviderToFinish();
 		// check if provider got executed with new value
 		assertEquals(true, provider.isExecuted());
 		assertEquals(ENV_SAMPLE_VALUE_1, provider.getSampleEnvVar());
@@ -622,10 +648,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
 		}
 
-		try {
-			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
-		} catch (Exception e) {
-		}
+		waitForProviderToFinish();
 		// check if provider got executed with new value
 		assertEquals(true, provider.isExecuted());
 		assertEquals(ENV_SAMPLE_VALUE_2, provider.getSampleEnvVar());
@@ -653,10 +676,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			// Write to project description
 			CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescriptionWritable);
 
-			try {
-				Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
-			} catch (Exception e) {
-			}
+			waitForProviderToFinish();
 			// Check that provider got executed
 			assertEquals(true, provider.isExecuted());
 			assertEquals(null, provider.getSampleEnvVar());
@@ -681,13 +701,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			assertEquals(false, provider.isExecuted());
 			assertEquals(null, provider.getSampleEnvVar());
 
-			// Save project description including saving environment to the configuration 
+			// Save project description including saving environment to the configuration
 			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
 		}
-		try {
-			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
-		} catch (Exception e) {
-		}
+		waitForProviderToFinish();
 
 		// Check if the provider got executed
 		{
@@ -726,13 +743,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			assertEquals(false, provider.isExecuted());
 			assertEquals(ENV_SAMPLE_VALUE_1, provider.getSampleEnvVar());
 
-			// Save project description including saving environment to the configuration 
+			// Save project description including saving environment to the configuration
 			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
 		}
-		try {
-			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
-		} catch (Exception e) {
-		}
+		waitForProviderToFinish();
 
 		// Check if the provider got executed
 		{
@@ -760,10 +774,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		MockBuiltinSpecsDetectorEnvironmentChangeListener provider = new MockBuiltinSpecsDetectorEnvironmentChangeListener();
 		// register environment listener on workspace
 		provider.registerListener(null);
-		try {
-			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
-		} catch (Exception e) {
-		}
+		waitForProviderToFinish();
 		assertEquals(true, provider.isExecuted());
 		assertEquals(null, provider.getSampleEnvVar());
 		// unset "isExecuted" flag
@@ -777,10 +788,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		vars.createVariable(ENV_SAMPLE, ENV_SAMPLE_VALUE_1);
 		fUserSupplier.setWorkspaceEnvironment(vars);
 
-		try {
-			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
-		} catch (Exception e) {
-		}
+		waitForProviderToFinish();
 
 		// check if provider got executed with new value
 		assertEquals(true, provider.isExecuted());
@@ -792,13 +800,89 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		vars.createVariable(ENV_SAMPLE, ENV_SAMPLE_VALUE_2);
 		fUserSupplier.setWorkspaceEnvironment(vars);
 
-		try {
-			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
-		} catch (Exception e) {
-		}
+		waitForProviderToFinish();
 		// check if provider got executed with new value
 		assertEquals(true, provider.isExecuted());
 		assertEquals(ENV_SAMPLE_VALUE_2, provider.getSampleEnvVar());
+
+		// unregister listeners
+		provider.unregisterListener();
+	}
+
+	/**
+	 * Test running a provider on compiler upgrades.
+	 */
+	public void testAbstractBuiltinSpecsDetector_CompilerUpgrade() throws Exception {
+		// Create test "compiler"
+		java.io.File compiler = new java.io.File("compiler");
+		compiler.createNewFile();
+		assertTrue(compiler.exists());
+		String compilerPath = compiler.getAbsolutePath();
+
+		// Create provider
+		MockBuiltinSpecsDetectorWithRunCount provider = new MockBuiltinSpecsDetectorWithRunCount();
+		provider.setCommand(compilerPath + " arg1");
+		// register environment listener on workspace
+		provider.registerListener(null);
+		waitForProviderToFinish();
+		assertEquals(1, provider.getExecutedCount());
+
+		// Check that an event doesn't trigger unnecessary rerun
+		provider.handleEvent(null);
+		waitForProviderToFinish();
+		assertEquals(1, provider.getExecutedCount());
+
+		// "Upgrade" the "compiler"
+		compiler.setLastModified(compiler.lastModified() + 1);
+
+		// Check that an event triggers rerun after upgrade
+		provider.handleEvent(null);
+		waitForProviderToFinish();
+		assertEquals(2, provider.getExecutedCount());
+
+		// unregister listeners
+		provider.unregisterListener();
+	}
+
+	/**
+	 * Test running a provider on compiler upgrades when the compiler is a symbolic link.
+	 */
+	public void testAbstractBuiltinSpecsDetector_CompilerUpgrade_SymbolicLink() throws Exception {
+		// do not test on systems where symbolic links are not supported
+		if (!ResourceHelper.isSymbolicLinkSupported()) {
+			return;
+		}
+
+		// Create test "compiler"
+		java.io.File compiler = new java.io.File("compiler");
+		compiler.createNewFile();
+		assertTrue(compiler.exists());
+		// Create symbolic link to the test compiler
+		ResourceHelper.createSymbolicLink(new Path("compilerLink"), new Path(compiler.getAbsolutePath()));
+		java.io.File compilerLink = new java.io.File("compilerLink");
+		assertTrue(compilerLink.exists());
+		String compilerLinkPath = compilerLink.getAbsolutePath();
+
+		// Create provider
+		MockBuiltinSpecsDetectorWithRunCount provider = new MockBuiltinSpecsDetectorWithRunCount();
+		provider.setCommand(compilerLinkPath + " arg1");
+		// register environment listener on workspace
+		provider.registerListener(null);
+		waitForProviderToFinish();
+		assertEquals(1, provider.getExecutedCount());
+
+		// Check that an event doesn't trigger unnecessary rerun
+		provider.handleEvent(null);
+		waitForProviderToFinish();
+		assertEquals(1, provider.getExecutedCount());
+
+		// "Upgrade" the "compiler"
+		compiler.setLastModified(compiler.lastModified() + 1);
+
+		// Check that an event triggers rerun after upgrade
+		provider.handleEvent(null);
+		waitForProviderToFinish();
+		assertEquals(2, provider.getExecutedCount());
 
 		// unregister listeners
 		provider.unregisterListener();

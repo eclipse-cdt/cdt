@@ -58,6 +58,10 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 	 * This returns the first tool found.
 	 */
 	private ITool getTool(String languageId) {
+		if (languageId == null) {
+			return null;
+		}
+
 		if (currentCfgDescription == null) {
 			ITool tool = toolMap.get(languageId);
 			if (tool != null) {
@@ -166,8 +170,9 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 								optionValue = ""; //$NON-NLS-1$
 								String cmd = option.getCommand();
 								for (String value : values) {
-									if(!value.isEmpty() && !value.equals(EMPTY_QUOTED_STRING))
+									if(!value.isEmpty() && !value.equals(EMPTY_QUOTED_STRING)) {
 										optionValue = optionValue + cmd + value + ' ';
+									}
 								}
 							}
 							break;

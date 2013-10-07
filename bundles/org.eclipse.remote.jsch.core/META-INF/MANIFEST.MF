@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.remote.jsch.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.internal.remote.jsch.core.Activator
+Bundle-Activator: org.eclipse.remote.internal.jsch.core.Activator
 Bundle-Vendor: %pluginProvider
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.filesystem,
@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.core.runtime,
  com.jcraft.jsch,
  org.eclipse.equinox.security
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.internal.remote.jsch.core;x-friends:="org.eclipse.remote.jsch.ui",
- org.eclipse.internal.remote.jsch.core.messages;x-internal:=true
+Export-Package: org.eclipse.remote.internal.jsch.core;x-friends:="org.eclipse.remote.jsch.ui",
+ org.eclipse.remote.internal.jsch.core.messages;x-internal:=true
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

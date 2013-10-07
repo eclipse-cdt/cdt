@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.remote.ui.remoteUIServices">
       <remoteUIServices
-            class="org.eclipse.internal.remote.ui.services.local.LocalUIServicesFactory"
+            class="org.eclipse.remote.internal.ui.services.local.LocalUIServicesFactory"
             id="org.eclipse.remote.LocalServices"
             name="Local">
       </remoteUIServices>
@@ -13,7 +13,7 @@
    <extension
            point="org.eclipse.ui.preferencePages">
         <page
-              class="org.eclipse.internal.remote.ui.preferences.RemoteDevelopmentPreferencePage"
+              class="org.eclipse.remote.internal.ui.preferences.RemoteDevelopmentPreferencePage"
               id="org.eclipse.remote.ui.RemoteDevelopmentPreferencePage"
               name="%RemoteDevPrefPage.name">
         </page>
@@ -22,7 +22,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="org.eclipse.remote.ui.RemoteDevelopmentPreferencePage"
-            class="org.eclipse.internal.remote.ui.preferences.ConnectionsPreferencePage"
+            class="org.eclipse.remote.internal.ui.preferences.ConnectionsPreferencePage"
             id="org.eclipse.remote.connections"
             name="%ConnectionsPreferencePage.name">
       </page>

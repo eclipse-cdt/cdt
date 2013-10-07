@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.internal.remote.ui.messages.Messages;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.internal.ui.messages.Messages;
 import org.eclipse.remote.ui.IRemoteUIConnectionManager;
 import org.eclipse.remote.ui.IRemoteUIFileManager;
 import org.eclipse.remote.ui.RemoteUIServices;

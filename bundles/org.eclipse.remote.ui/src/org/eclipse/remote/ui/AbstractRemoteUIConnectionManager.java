@@ -15,14 +15,14 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.internal.remote.ui.RemoteUIPlugin;
-import org.eclipse.internal.remote.ui.messages.Messages;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
+import org.eclipse.remote.internal.ui.RemoteUIPlugin;
+import org.eclipse.remote.internal.ui.messages.Messages;
 import org.eclipse.swt.widgets.Shell;
 
 /**

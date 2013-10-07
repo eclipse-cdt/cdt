@@ -14,7 +14,7 @@ package org.eclipse.remote.core.exception;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.internal.remote.core.RemoteCorePlugin;
+import org.eclipse.remote.internal.core.RemoteCorePlugin;
 
 /**
  * Exception thrown when a remote connection error occurs.

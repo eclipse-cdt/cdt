@@ -17,9 +17,9 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.internal.remote.core.RemoteServicesDescriptor;
-import org.eclipse.internal.remote.core.RemoteServicesImpl;
-import org.eclipse.internal.remote.core.preferences.Preferences;
+import org.eclipse.remote.internal.core.RemoteServicesDescriptor;
+import org.eclipse.remote.internal.core.RemoteServicesImpl;
+import org.eclipse.remote.internal.core.preferences.Preferences;
 
 /**
  * Remote services utility methods.

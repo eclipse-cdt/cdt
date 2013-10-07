@@ -3,19 +3,19 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.remote.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.internal.remote.core.RemoteCorePlugin
+Bundle-Activator: org.eclipse.remote.internal.core.RemoteCorePlugin
 Bundle-Vendor: %pluginProvider
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.filesystem,
  org.eclipse.core.resources,
  org.eclipse.core.variables
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.internal.remote.core;x-friends:="org.eclipse.remote.ui",
- org.eclipse.internal.remote.core.messages;x-internal:=true,
- org.eclipse.internal.remote.core.preferences;x-friends:="org.eclipse.remote.ui",
- org.eclipse.internal.remote.core.services.local;x-internal:=true,
- org.eclipse.remote.core,
- org.eclipse.remote.core.exception
+Export-Package: org.eclipse.remote.core,
+ org.eclipse.remote.core.exception,
+ org.eclipse.remote.internal.core;x-friends:="org.eclipse.remote.ui",
+ org.eclipse.remote.internal.core.messages;x-internal:=true,
+ org.eclipse.remote.internal.core.preferences;x-friends:="org.eclipse.remote.ui",
+ org.eclipse.remote.internal.core.services.local;x-internal:=true
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.equinox.security.storage

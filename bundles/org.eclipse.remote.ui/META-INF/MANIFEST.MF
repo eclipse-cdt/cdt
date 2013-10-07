@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.remote.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.internal.remote.ui.RemoteUIPlugin
+Bundle-Activator: org.eclipse.remote.internal.ui.RemoteUIPlugin
 Bundle-Vendor: %pluginProvider
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
@@ -14,10 +14,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.internal.remote.ui;x-internal:=true,
- org.eclipse.internal.remote.ui.messages;x-internal:=true,
- org.eclipse.internal.remote.ui.preferences;x-internal:=true,
- org.eclipse.internal.remote.ui.services.local;x-internal:=true,
+Export-Package: org.eclipse.remote.internal.ui;x-internal:=true,
+ org.eclipse.remote.internal.ui.messages;x-internal:=true,
+ org.eclipse.remote.internal.ui.preferences;x-internal:=true,
+ org.eclipse.remote.internal.ui.services.local;x-internal:=true,
  org.eclipse.remote.ui,
  org.eclipse.remote.ui.dialogs,
  org.eclipse.remote.ui.widgets

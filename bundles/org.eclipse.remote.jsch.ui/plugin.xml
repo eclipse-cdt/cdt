@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.remote.ui.remoteUIServices">
       <remoteUIServices
-            class="org.eclipse.internal.remote.jsch.ui.JSchUIServicesFactory"
+            class="org.eclipse.remote.internal.jsch.ui.JSchUIServicesFactory"
             id="org.eclipse.remote.JSch"
             name="JSch">
       </remoteUIServices>
@@ -12,7 +12,7 @@
    <extension
          point="org.eclipse.ui.ide.filesystemSupport">
       <filesystemContributor
-            class="org.eclipse.internal.remote.jsch.ui.JSchFileSystemContributor"
+            class="org.eclipse.remote.internal.jsch.ui.JSchFileSystemContributor"
             label="JSch"
             scheme="ssh">
       </filesystemContributor>

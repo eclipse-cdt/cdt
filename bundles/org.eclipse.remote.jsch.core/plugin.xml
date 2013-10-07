@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.remote.core.remoteServices">
       <remoteServices
-            class="org.eclipse.internal.remote.jsch.core.JSchServicesFactory"
+            class="org.eclipse.remote.internal.jsch.core.JSchServicesFactory"
             id="org.eclipse.remote.JSch"
             name="Built-in SSH"
             scheme="ssh">
@@ -16,7 +16,7 @@
       <filesystem
             scheme="ssh">
          <run
-               class="org.eclipse.internal.remote.jsch.core.JSchFileSystem">
+               class="org.eclipse.remote.internal.jsch.core.JSchFileSystem">
          </run>
       </filesystem>
    </extension>

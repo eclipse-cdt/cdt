@@ -20,13 +20,13 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.internal.remote.ui.RemoteUIPlugin;
-import org.eclipse.internal.remote.ui.RemoteUIServicesDescriptor;
-import org.eclipse.internal.remote.ui.messages.Messages;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.RemoteServices;
+import org.eclipse.remote.internal.ui.RemoteUIPlugin;
+import org.eclipse.remote.internal.ui.RemoteUIServicesDescriptor;
+import org.eclipse.remote.internal.ui.messages.Messages;
 import org.eclipse.ui.PlatformUI;
 
 /**

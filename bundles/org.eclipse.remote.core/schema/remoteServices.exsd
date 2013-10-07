@@ -110,7 +110,7 @@
    &lt;extension
          point=&quot;org.eclipse.remote.core.remoteServices&quot;&gt;
       &lt;remoteServices
-            class=&quot;org.eclipse.internal.remote.core.services.local.LocalServicesFactory&quot;
+            class=&quot;org.eclipse.remote.internal.core.services.local.LocalServicesFactory&quot;
             id=&quot;org.eclipse.ptp.remote.LocalServices&quot;
             name=&quot;Local&quot;
             scheme=&quot;file&quot;&gt;

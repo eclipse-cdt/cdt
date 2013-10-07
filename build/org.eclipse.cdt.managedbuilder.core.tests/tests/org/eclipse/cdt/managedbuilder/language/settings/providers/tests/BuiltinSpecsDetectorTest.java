@@ -889,6 +889,41 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test running a provider after changing the compiler command.
+	 */
+	public void testAbstractBuiltinSpecsDetector_RerunOnCommandArgsChange() throws Exception {
+		// Create test "compiler"
+		java.io.File compiler = new java.io.File("compiler");
+		compiler.createNewFile();
+		assertTrue(compiler.exists());
+		String compilerPath = compiler.getAbsolutePath();
+
+		// Create provider
+		MockBuiltinSpecsDetectorWithRunCount provider = new MockBuiltinSpecsDetectorWithRunCount();
+		provider.setCommand(compilerPath + " arg1");
+		// register environment listener on workspace
+		provider.registerListener(null);
+		waitForProviderToFinish();
+		assertEquals(1, provider.getExecutedCount());
+
+		// Check that an event doesn't trigger unnecessary rerun
+		provider.handleEvent(null);
+		waitForProviderToFinish();
+		assertEquals(1, provider.getExecutedCount());
+
+		// Change the compiler command
+		provider.setCommand(compilerPath + " arg2");
+
+		// Check that an event triggers rerun after changing the compiler command
+		provider.handleEvent(null);
+		waitForProviderToFinish();
+		assertEquals(2, provider.getExecutedCount());
+
+		// unregister listeners
+		provider.unregisterListener();
+	}
+
+	/**
 	 * Check that entries get grouped by kinds by stock built-in specs detector.
 	 */
 	public void testAbstractBuiltinSpecsDetector_GroupSettings() throws Exception {

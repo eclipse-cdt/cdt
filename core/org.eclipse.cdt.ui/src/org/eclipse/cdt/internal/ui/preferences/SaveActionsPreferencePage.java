@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Google, Inc and others.
+ * Copyright (c) 2013 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
+ * 	   Serge Beauchamp (Freescale Semiconductor) - Bug 418810
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -103,12 +104,13 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 
 		createConfigurationBlock(parent);
 		
-		initialize();
+		initializeFields();
 		return parent;
 	}
 
-	private void initialize() {
-		initializeFields();
+	@Override
+	protected void initializeFields() {
+		super.initializeFields();
 		fRadioAllLines.setSelection(!fRadioEditedLines.getSelection());
 	}
 }

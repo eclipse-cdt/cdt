@@ -419,6 +419,11 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		for (String languageId : languageIds) {
 			try {
 				String command = resolveCommand(languageId);
+				
+				// Bug 413678: trigger discovery after command line change
+				// (ilg@livius.net)
+				envHashNew = 31*envHashNew + command.hashCode();
+				
 				String[] cmdArray = CommandLineUtil.argumentsToArray(command);
 				if (cmdArray != null && cmdArray.length > 0) {
 					IPath location = new Path(cmdArray[0]);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     IBM Corporation
  *     Anton Leherbauer (Wind River Systems)
+ *     Serge Beauchamp (Freescale Semiconductor) - Bug 418817
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
@@ -16,7 +17,9 @@ package org.eclipse.cdt.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.layout.PixelConverter;
@@ -36,6 +39,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -55,12 +59,10 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	protected OverlayPreferenceStore fOverlayStore;
 
 	/**
-	 * List of master/slave listeners when there's a dependency.
-	 * 
+	 * Unique list of masters for control dependencies.
 	 * @see #createDependency(Button, String, Control)
-	 * @since 3.0
 	 */
-	private ArrayList<SelectionListener> fMasterSlaveListeners= new ArrayList<SelectionListener>();
+	private Set<Object> fMasters = new LinkedHashSet<Object>();
 
 	protected Map<Object, String> fTextFields = new HashMap<Object, String>();
 	private ModifyListener fTextFieldListener = new ModifyListener() {
@@ -225,7 +227,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		};
 		master.addSelectionListener(listener);
-		fMasterSlaveListeners.add(listener);
+		fMasters.add(master);
 	}
 
 	protected void numberFieldChanged(Text textControl) {
@@ -343,6 +345,13 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 			String state = fOverlayStore.getString(key);
 			// Interpret the state string as a Combo state description
 			ProposalFilterPreferencesUtil.restoreComboFromString(c, state);
+		}
+		
+		// Notify listeners for control dependencies.
+		e = fMasters.iterator();
+		while (e.hasNext()) {
+			Button b = (Button) e.next();
+			b.notifyListeners(SWT.Selection, new Event());
 		}
 	}
 

@@ -53,4 +53,6 @@ public class Messages extends NLS {
 	public static String JSchNewConnectionPage_Timeout_is_not_valid;
 	public static String JSchNewConnectionPage_User;
 	public static String JSchNewConnectionPage_User_name_cannot_be_empty;
+	public static String JSchUIConnectionManager_Connection_Error;
+	public static String JSchUIConnectionManager_Could_not_open_connection;
 }

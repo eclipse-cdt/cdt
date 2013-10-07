@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_4154329a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/AbstractPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-10-07T17:46:15Z",
+      "side": 1,
+      "message": "It looks like fMasters can be declared as Set\u003cButton\u003e",
+      "revId": "fd10e7e2951bab2c2b5e329f64835a8439076f4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

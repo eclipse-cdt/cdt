@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.JSchConnection;
 import org.eclipse.remote.internal.jsch.core.messages.Messages;
@@ -48,7 +49,7 @@ public class ExecCommand extends AbstractRemoteCommand<String> {
 				return stream.toString();
 			}
 		};
-		subMon.subTask(Messages.ExecCommand_Exec_command);
+		subMon.subTask(NLS.bind(Messages.ExecCommand_Exec_command, fCommand));
 		return c.getResult(subMon.newChild(10));
 	}
 }

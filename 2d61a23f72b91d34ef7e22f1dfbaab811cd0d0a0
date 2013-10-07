@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_566cf6a9",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuiltinSpecsDetector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 424,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-10-07T15:45:06Z",
+      "side": 1,
+      "message": "Would you rather move this comment to \"Contributors\" section in the copyright header?",
+      "revId": "2d61a23f72b91d34ef7e22f1dfbaab811cd0d0a0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

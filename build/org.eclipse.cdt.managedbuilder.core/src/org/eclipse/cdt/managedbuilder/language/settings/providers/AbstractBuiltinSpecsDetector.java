@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
+ *     Liviu Ionescu - [413678]
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
@@ -419,6 +420,10 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		for (String languageId : languageIds) {
 			try {
 				String command = resolveCommand(languageId);
+				
+				// Bug 413678: trigger discovery after command line change
+				envHashNew = 31*envHashNew + command.hashCode();
+				
 				String[] cmdArray = CommandLineUtil.argumentsToArray(command);
 				if (cmdArray != null && cmdArray.length > 0) {
 					IPath location = new Path(cmdArray[0]);

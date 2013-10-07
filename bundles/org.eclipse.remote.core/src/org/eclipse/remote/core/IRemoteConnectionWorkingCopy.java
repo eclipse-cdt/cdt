@@ -12,6 +12,20 @@ package org.eclipse.remote.core;
 
 public interface IRemoteConnectionWorkingCopy extends IRemoteConnection {
 	/**
+	 * Returns the original connection this working copy was created from.
+	 * 
+	 * @return original connection
+	 */
+	public IRemoteConnection getOriginal();
+
+	/**
+	 * Returns whether this connection has been modified since it was last saved or created.
+	 * 
+	 * @return true if the connection has been modified
+	 */
+	public boolean isDirty();
+
+	/**
 	 * Saves this working copy to its original connection and returns a handle to the resulting connection. Has no effect if this
 	 * connection does not need saving.
 	 * 

@@ -97,6 +97,10 @@ public class JSchConnection implements IRemoteConnection {
 			if (logging) {
 				System.out.println("promptPassword:" + message); //$NON-NLS-1$
 			}
+			if (firstTry && !getPassword().equals("")) { //$NON-NLS-1$
+				firstTry = false;
+				return true;
+			}
 			if (fAuthenticator != null) {
 				PasswordAuthentication auth = fAuthenticator.prompt(null, message);
 				if (auth == null) {
@@ -117,11 +121,11 @@ public class JSchConnection implements IRemoteConnection {
 				return true;
 			}
 			if (fAuthenticator != null) {
-				String[] results = fAuthenticator.prompt("", "", message, new String[] { message }, new boolean[] { true }); //$NON-NLS-1$//$NON-NLS-2$
-				if (results == null) {
+				PasswordAuthentication auth = fAuthenticator.prompt(null, message);
+				if (auth == null) {
 					return false;
 				}
-				fAttributes.setSecureAttribute(JSchConnectionAttributes.PASSPHRASE_ATTR, results[0]);
+				fAttributes.setSecureAttribute(JSchConnectionAttributes.PASSPHRASE_ATTR, new String(auth.getPassword()));
 			}
 			return true;
 		}

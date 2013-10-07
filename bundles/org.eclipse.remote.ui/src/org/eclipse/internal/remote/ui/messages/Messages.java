@@ -26,6 +26,8 @@ public class Messages extends NLS {
 
 	public static String ConnectionsPreferencePage_Close;
 
+	public static String ConnectionsPreferencePage_Confirm_Actions;
+
 	public static String ConnectionsPreferencePage_Connection_Name;
 
 	public static String ConnectionsPreferencePage_Edit;
@@ -41,6 +43,8 @@ public class Messages extends NLS {
 	public static String ConnectionsPreferencePage_Remove;
 
 	public static String ConnectionsPreferencePage_Status;
+
+	public static String ConnectionsPreferencePage_This_connection_contains_unsaved_changes;
 
 	public static String ConnectionsPreferencePage_User;
 

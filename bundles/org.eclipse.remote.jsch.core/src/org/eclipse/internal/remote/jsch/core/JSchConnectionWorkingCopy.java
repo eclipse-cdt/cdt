@@ -23,11 +23,13 @@ import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 public class JSchConnectionWorkingCopy extends JSchConnection implements IRemoteConnectionWorkingCopy {
 	private final JSchConnectionAttributes fWorkingAttributes;
 	private final JSchConnection fOriginal;
+	private boolean fIsDirty;
 
 	public JSchConnectionWorkingCopy(JSchConnection connection) {
 		super(connection.getName(), connection.getRemoteServices());
 		fWorkingAttributes = connection.getInfo().copy();
 		fOriginal = connection;
+		fIsDirty = false;
 	}
 
 	/*
@@ -63,6 +65,15 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 	@Override
 	public String getName() {
 		return fWorkingAttributes.getName();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#getOriginal()
+	 */
+	public IRemoteConnection getOriginal() {
+		return fOriginal;
 	}
 
 	/*
@@ -128,6 +139,15 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#isDirty()
+	 */
+	public boolean isDirty() {
+		return fIsDirty;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.internal.remote.jsch.core.JSchConnection#isPasswordAuth()
 	 */
 	@Override
@@ -153,6 +173,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 		}
 		info.save();
 		getManager().add(fOriginal);
+		fIsDirty = false;
 		return fOriginal;
 	}
 
@@ -162,6 +183,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setAddress(java.lang.String)
 	 */
 	public void setAddress(String address) {
+		fIsDirty = true;
 		fWorkingAttributes.setAttribute(JSchConnectionAttributes.ADDRESS_ATTR, address);
 	}
 
@@ -171,14 +193,17 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setAttribute(java.lang.String, java.lang.String)
 	 */
 	public void setAttribute(String key, String value) {
+		fIsDirty = true;
 		fWorkingAttributes.setAttribute(key, value);
 	}
 
 	public void setIsPasswordAuth(boolean flag) {
+		fIsDirty = true;
 		fWorkingAttributes.setAttribute(JSchConnectionAttributes.IS_PASSWORD_ATTR, Boolean.toString(flag));
 	}
 
 	public void setKeyFile(String keyFile) {
+		fIsDirty = true;
 		fWorkingAttributes.setAttribute(JSchConnectionAttributes.KEYFILE_ATTR, keyFile);
 	}
 
@@ -193,10 +218,12 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setName(java.lang.String)
 	 */
 	public void setName(String name) {
+		fIsDirty = true;
 		fWorkingAttributes.setName(name);
 	}
 
 	public void setPassphrase(String passphrase) {
+		fIsDirty = true;
 		fWorkingAttributes.setSecureAttribute(JSchConnectionAttributes.PASSPHRASE_ATTR, passphrase);
 	}
 
@@ -206,6 +233,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setPassword(java.lang.String)
 	 */
 	public void setPassword(String password) {
+		fIsDirty = true;
 		fWorkingAttributes.setSecureAttribute(JSchConnectionAttributes.PASSWORD_ATTR, password);
 	}
 
@@ -215,14 +243,17 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setPort(int)
 	 */
 	public void setPort(int port) {
+		fIsDirty = true;
 		fWorkingAttributes.setAttribute(JSchConnectionAttributes.PORT_ATTR, Integer.toString(port));
 	}
 
 	public void setTimeout(int timeout) {
+		fIsDirty = true;
 		fWorkingAttributes.setAttribute(JSchConnectionAttributes.TIMEOUT_ATTR, Integer.toString(timeout));
 	}
 
 	public void setUseLoginShell(boolean flag) {
+		fIsDirty = true;
 		fWorkingAttributes.setAttribute(JSchConnectionAttributes.USE_LOGIN_SHELL_ATTR, Boolean.toString(flag));
 	}
 
@@ -232,6 +263,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setUsername(java.lang.String)
 	 */
 	public void setUsername(String userName) {
+		fIsDirty = true;
 		fWorkingAttributes.setAttribute(JSchConnectionAttributes.USERNAME_ATTR, userName);
 	}
 }

@@ -19,6 +19,8 @@ import org.eclipse.internal.remote.core.RemoteServicesDescriptor;
 import org.eclipse.internal.remote.core.RemoteServicesImpl;
 import org.eclipse.internal.remote.core.preferences.Preferences;
 import org.eclipse.internal.remote.ui.messages.Messages;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnLayoutData;
@@ -41,6 +43,8 @@ import org.eclipse.remote.ui.IRemoteUIConnectionWizard;
 import org.eclipse.remote.ui.RemoteUIServices;
 import org.eclipse.remote.ui.widgets.RemoteConnectionWidget;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -262,6 +266,21 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		fConnectionTable.setLayoutData(data);
 		fConnectionTable.setFont(parent.getFont());
 		fConnectionTable.addSelectionListener(fEventHandler);
+		fConnectionTable.addMouseListener(new MouseListener() {
+			public void mouseDoubleClick(MouseEvent e) {
+				if (fSelectedConnection != null && !fSelectedConnection.isOpen()) {
+					editConnection();
+				}
+			}
+
+			public void mouseDown(MouseEvent e) {
+				// Nothing
+			}
+
+			public void mouseUp(MouseEvent e) {
+				// Nothing
+			}
+		});
 
 		TableLayout tableLayout = new TableLayout();
 		fConnectionTable.setLayout(tableLayout);
@@ -438,6 +457,25 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			if (conn.isOpen()) {
 				conn.close();
 			} else {
+				if (conn instanceof IRemoteConnectionWorkingCopy) {
+					IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) conn;
+					if (wc.isDirty()) {
+						MessageDialog dialog = new MessageDialog(getShell(), Messages.ConnectionsPreferencePage_Confirm_Actions, null,
+								Messages.ConnectionsPreferencePage_This_connection_contains_unsaved_changes,
+								MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,
+										IDialogConstants.CANCEL_LABEL }, 0);
+						switch (dialog.open()) {
+						case 0:
+							wc.save();
+							break;
+						case 1:
+							conn = wc.getOriginal();
+							break;
+						case 2:
+							return;
+						}
+					}
+				}
 				IRemoteUIConnectionManager mgr = RemoteUIServices.getRemoteUIServices(conn.getRemoteServices())
 						.getUIConnectionManager();
 				if (mgr != null) {

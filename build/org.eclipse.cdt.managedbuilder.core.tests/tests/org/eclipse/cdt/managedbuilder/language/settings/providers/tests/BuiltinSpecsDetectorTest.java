@@ -49,6 +49,7 @@ import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuilti
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -813,15 +814,18 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	 * Test running a provider on compiler upgrades.
 	 */
 	public void testAbstractBuiltinSpecsDetector_CompilerUpgrade() throws Exception {
+		// Create a folder for this test
+		IPath folder = ResourceHelper.createWorkspaceFolder(getName());
+
 		// Create test "compiler"
-		java.io.File compiler = new java.io.File("compiler");
+		java.io.File compiler = new java.io.File(folder.append("compiler").toOSString());
 		compiler.createNewFile();
 		assertTrue(compiler.exists());
 		String compilerPath = compiler.getAbsolutePath();
 
 		// Create provider
 		MockBuiltinSpecsDetectorWithRunCount provider = new MockBuiltinSpecsDetectorWithRunCount();
-		provider.setCommand(compilerPath + " arg1");
+		provider.setCommand('"' + compilerPath + '"' + " arg1");
 		// register environment listener on workspace
 		provider.registerListener(null);
 		waitForProviderToFinish();
@@ -833,7 +837,12 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(1, provider.getExecutedCount());
 
 		// "Upgrade" the "compiler"
-		compiler.setLastModified(compiler.lastModified() + 1);
+		long lastModified = compiler.lastModified();
+		// less than 1 sec might be truncated
+		compiler.setLastModified(lastModified + 1000);
+		long lastModifiedUpdated = compiler.lastModified();
+		assertTrue(lastModifiedUpdated != lastModified);
+
 
 		// Check that an event triggers rerun after upgrade
 		provider.handleEvent(null);
@@ -853,19 +862,24 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			return;
 		}
 
+		// Create a folder for this test
+		IPath folder = ResourceHelper.createWorkspaceFolder(getName());
+
 		// Create test "compiler"
-		java.io.File compiler = new java.io.File("compiler");
+		IPath compilerLocation = folder.append("compiler");
+		java.io.File compiler = new java.io.File(compilerLocation.toOSString());
 		compiler.createNewFile();
 		assertTrue(compiler.exists());
 		// Create symbolic link to the test compiler
-		ResourceHelper.createSymbolicLink(new Path("compilerLink"), new Path(compiler.getAbsolutePath()));
-		java.io.File compilerLink = new java.io.File("compilerLink");
+		IPath compilerLinkLocation = folder.append("compilerLink");
+		ResourceHelper.createSymbolicLink(compilerLinkLocation, compilerLocation);
+		java.io.File compilerLink = new java.io.File(compilerLinkLocation.toOSString());
 		assertTrue(compilerLink.exists());
 		String compilerLinkPath = compilerLink.getAbsolutePath();
 
 		// Create provider
 		MockBuiltinSpecsDetectorWithRunCount provider = new MockBuiltinSpecsDetectorWithRunCount();
-		provider.setCommand(compilerLinkPath + " arg1");
+		provider.setCommand('"' + compilerLinkPath + '"' + " arg1");
 		// register environment listener on workspace
 		provider.registerListener(null);
 		waitForProviderToFinish();
@@ -876,8 +890,12 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		waitForProviderToFinish();
 		assertEquals(1, provider.getExecutedCount());
 
-		// "Upgrade" the "compiler"
-		compiler.setLastModified(compiler.lastModified() + 1);
+		// "Upgrade" the "compiler". Note that less than 1 sec might be truncated.
+		long lastModified = compiler.lastModified();
+		// less than 1 sec might be truncated
+		compiler.setLastModified(lastModified + 1000);
+		long lastModifiedUpdated = compiler.lastModified();
+		assertTrue(lastModifiedUpdated != lastModified);
 
 		// Check that an event triggers rerun after upgrade
 		provider.handleEvent(null);
@@ -892,15 +910,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	 * Test running a provider after changing the compiler command.
 	 */
 	public void testAbstractBuiltinSpecsDetector_RerunOnCommandArgsChange() throws Exception {
-		// Create test "compiler"
-		java.io.File compiler = new java.io.File("compiler");
-		compiler.createNewFile();
-		assertTrue(compiler.exists());
-		String compilerPath = compiler.getAbsolutePath();
-
 		// Create provider
 		MockBuiltinSpecsDetectorWithRunCount provider = new MockBuiltinSpecsDetectorWithRunCount();
-		provider.setCommand(compilerPath + " arg1");
+		provider.setCommand("compiler arg1");
 		// register environment listener on workspace
 		provider.registerListener(null);
 		waitForProviderToFinish();
@@ -911,8 +923,8 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		waitForProviderToFinish();
 		assertEquals(1, provider.getExecutedCount());
 
-		// Change the compiler command
-		provider.setCommand(compilerPath + " arg2");
+		// Change the compiler command argument
+		provider.setCommand("compiler arg2");
 
 		// Check that an event triggers rerun after changing the compiler command
 		provider.handleEvent(null);

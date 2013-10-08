@@ -806,6 +806,36 @@
                      value="activated"/>
             </enablement>
          </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.RemoveRegisterGroupActionDelegate"
+               enablesFor="+"
+               helpContextId="remove_register_group_action_context"
+               id="org.eclipse.cdt.debug.ui.removeRegisterGroupAction"
+               label="%RemoveRegisterGroupAction.label"
+               menubarPath="additions"
+               style="push"
+               tooltip="%RemoveRegisterGroupAction.tooltip">
+             <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated"/>
+            </enablement>
+         </action>        
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.EditRegisterGroupActionDelegate"
+               enablesFor="1"
+               helpContextId="edit_register_group_action_context"
+               id="org.eclipse.cdt.debug.ui.editRegisterGroupAction"
+               label="%EditRegisterGroupAction.label"
+               menubarPath="additions"
+               style="push"
+               tooltip="%EditRegisterGroupAction.tooltip">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated"/>
+            </enablement>
+         </action>
       </viewerContribution>
       <objectContribution
             objectClass="org.eclipse.cdt.debug.core.model.ICModule"
@@ -848,27 +878,6 @@
             </enablement>
          </action>
       </viewerContribution>
-      <objectContribution
-            adaptable="false"
-            id="org.eclipse.cdt.debug.ui.RegisterGroupActions"
-            objectClass="org.eclipse.cdt.debug.core.model.IPersistableRegisterGroup">
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.RemoveRegisterGroupActionDelegate"
-               enablesFor="+"
-               helpContextId="remove_register_group_action_context"
-               id="org.eclipse.cdt.debug.ui.removeRegisterGroupAction"
-               label="%RemoveRegisterGroupAction.label"
-               menubarPath="additions"
-               tooltip="%RemoveRegisterGroupAction.tooltip"/>
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.EditRegisterGroupActionDelegate"
-               enablesFor="1"
-               helpContextId="edit_register_group_action_context"
-               id="org.eclipse.cdt.debug.ui.editRegisterGroupAction"
-               label="%EditRegisterGroupAction.label"
-               menubarPath="additions"
-               tooltip="%EditRegisterGroupAction.tooltip"/>
-      </objectContribution>
       <viewerContribution
             id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.popupMenu.1"
             targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1">
@@ -1361,9 +1370,7 @@
       <factory
             class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
             adaptableType="org.eclipse.cdt.internal.ui.editor.CEditor">
-         <adapter
-               type="org.eclipse.debug.ui.actions.IRunToLineTarget">
-         </adapter>
+         <adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget"/>
       </factory>
@@ -1375,6 +1382,16 @@
          </adapter>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget"/>
+      </factory>
+            <factory
+            class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
+            adaptableType="org.eclipse.cdt.debug.internal.core.model.CRegister">  
+         <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActions"/>
+      </factory>
+            <factory
+            class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
+            adaptableType="org.eclipse.cdt.debug.internal.core.model.CRegisterGroup">  
+         <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActions"/>
       </factory>
       <factory
             class="org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointWorkbenchAdapterFactory"

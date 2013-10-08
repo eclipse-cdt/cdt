@@ -7,10 +7,12 @@
  *
  * Contributors:
  * Ericsson - Initial API and implementation
+ * Alvaro Sanchez-Leon - Add adapter for IRegisterGroupActions (Bug 235747)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget;
+import org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActions;
 import org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
@@ -37,6 +39,9 @@ public class RetargettableActionAdapterFactory implements IAdapterFactory {
 		if (adapterType == IResumeAtLineTarget.class) {
 			return new DisassemblyResumeAtLineAdapter();
 		}
+		if ( adapterType == IRegisterGroupActions.class ) {
+			return new DsfRegisterGroupActions();
+		} 
 		return null;
 	}
 
@@ -46,6 +51,6 @@ public class RetargettableActionAdapterFactory implements IAdapterFactory {
 	@Override
 	@SuppressWarnings("rawtypes")
 	public Class[] getAdapterList() {
-		return new Class[]{ IRunToLineTarget.class, IResumeAtLineTarget.class, IMoveToLineTarget.class };
+		return new Class[]{ IRunToLineTarget.class, IResumeAtLineTarget.class, IMoveToLineTarget.class, IRegisterGroupActions.class};
 	}
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Alvaro Sanchez-Leon (Ericsson) - preserve selection changes (needed by Bug 235747)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
@@ -187,6 +188,7 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 	 */
 	@Override
 	public void selectionChanged( IAction action, ISelection selection ) {
+		setSelection( selection );
 		update();
 	}
 

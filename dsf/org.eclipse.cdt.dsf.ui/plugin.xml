@@ -747,15 +747,19 @@
 	        adaptableType="org.eclipse.cdt.dsf.ui.viewmodel.IVMContext">
          <adapter type="org.eclipse.debug.core.model.ISuspendResume"/>
 	  </factory>
-       <factory
+      <factory
             class="org.eclipse.cdt.dsf.debug.internal.ui.actions.RetargettableActionAdapterFactory"
             adaptableType="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart">
          <adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget"/>
-      </factory>	  
+      </factory>
+      <factory
+            class="org.eclipse.cdt.dsf.debug.internal.ui.actions.RetargettableActionAdapterFactory"
+            adaptableType="org.eclipse.cdt.dsf.ui.viewmodel.IVMContext">  
+         <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActions"/>
+      </factory>	
    </extension>	
-
    <extension
          point="org.eclipse.ui.popupMenus">
       <viewerContribution

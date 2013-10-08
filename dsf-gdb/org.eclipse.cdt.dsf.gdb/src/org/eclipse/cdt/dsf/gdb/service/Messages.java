@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
+ *     Alvaro Sanchez-Leon (Ericsson) - Bug 235747
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -24,6 +25,10 @@ class Messages extends NLS {
 	public static String NoMatches;
 	public static String UniqueMatch;
 	public static String UniqueMatches;
+	public static String RegisterGroupInfo;
+	public static String RegisterGroup_not_editable;
+	public static String RegisterGroup_name_reserved;
+	public static String RegisterGroup_invalid_number_of_registers;
 	
 	static {
 		// initialize resource bundle

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,76 +7,44 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Alvaro Sanchez-Leon (Ericsson AB) - remove dependencies from Debug model (Bug 235747)
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions; 
+package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.model.ICDebugTarget;
-import org.eclipse.cdt.debug.core.model.IPersistableRegisterGroup;
-import org.eclipse.cdt.debug.core.model.IRegisterDescriptor;
-import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.actions.ActionDelegate;
- 
 
-public class EditRegisterGroupActionDelegate extends ActionDelegate implements IObjectActionDelegate {
-
-	private IPersistableRegisterGroup fSelection;
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
-	 */
+public class EditRegisterGroupActionDelegate extends AbstractRegisterGroupActionDelegate {
 	@Override
-	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
+	protected String getErrorDialogMessage() {
+		return ActionMessages.getString("EditRegisterGroupActionDelegate.0"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
-	public void selectionChanged( IAction action, ISelection selection ) {
-		if ( selection instanceof IStructuredSelection ) {
-			IStructuredSelection ss = (IStructuredSelection)selection;
-			if ( !ss.isEmpty() ) {
-				Object s = ss.getFirstElement();
-				if ( s instanceof IPersistableRegisterGroup ) {
-					fSelection = (IPersistableRegisterGroup)s;
-				}
+	protected void doAction() throws DebugException {
+		IAction action = getAction();
+		if (action != null) {
+
+			IRegisterGroupActions groupActions = getGroupActions();
+			if (groupActions != null) {
+				groupActions.editRegisterGroup(getView(), getSelection());
 			}
 		}
 	}
 
-	private IPersistableRegisterGroup getRegisterGroup() {
-		return fSelection;
+	@Override
+	protected void update() {
+		IAction action = getAction();
+		if (action != null) {
+
+			boolean canEdit = false;
+			IRegisterGroupActions groupActions = getGroupActions();
+			if (groupActions != null) {
+				canEdit = groupActions.canEditRegisterGroup(getView(), getSelection());
+			}
+
+			action.setEnabled(canEdit);
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	@Override
-	public void run( IAction action ) {
-		IPersistableRegisterGroup group = getRegisterGroup();
-		IRegisterDescriptor[] all;
-		try {
-			all = ((CDebugTarget)group.getDebugTarget()).getRegisterDescriptors();
-			RegisterGroupDialog dialog = new RegisterGroupDialog( Display.getCurrent().getActiveShell(), group.getName(), all, group.getRegisterDescriptors() );
-			if ( dialog.open() == Window.OK ) {
-				IDebugTarget target = group.getDebugTarget();
-				if ( target instanceof ICDebugTarget ) {
-					((ICDebugTarget)target).modifyRegisterGroup( group, dialog.getDescriptors() );
-				}
-			}
-		}
-		catch( DebugException e ) {
-			CDebugUIPlugin.errorDialog( ActionMessages.getString( "EditRegisterGroupActionDelegate.0" ), e.getStatus() ); //$NON-NLS-1$
-		}
-	}
 }

@@ -9,9 +9,11 @@
  *     Ericsson			  - Initial Implementation
  *     Marc Khouzam (Ericsson) - Add support to receive multiple events
  *     Alvaro Sanchez-Leon (Ericsson) - Add filter out and wait for a given type of event
+ *     Alvaro Sanchez-Leon (Ericsson) - Allow user to edit the register groups (Bug 235747)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -118,6 +120,36 @@ public class ServiceEventWaitor<V> {
 			}
 		}
 	}
+	
+	
+	/**
+	 * Wait for events of V type for the specified amount of time
+	 */
+	public synchronized List<V> waitForEvents(int timeout) {
+		long startMs = System.currentTimeMillis();
+		List<V> events = new ArrayList<V>();
+		
+		//Timeout exception will exit the loop and return the resulting list of events
+		while (true) {
+			int timeRemaining = (int) (timeout - (System.currentTimeMillis() - startMs));
+			if (timeRemaining > 0) {
+				V sevent;
+				try {
+					sevent = waitForEvent(timeRemaining);
+					if (sevent != null) {
+						events.add(sevent);
+					} 
+				} catch (Exception e) {
+					break;
+				}
+			} else {
+				break;
+			}
+		}
+		
+		return events;
+	}
+	
 	
 	/*
 	 * Block until 'timeout' or the expected event occurs. The expected event is

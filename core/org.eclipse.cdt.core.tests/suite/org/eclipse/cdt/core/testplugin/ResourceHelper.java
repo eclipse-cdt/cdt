@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *     James Blackburn (Broadcom Corp.)
+ *     Liviu Ionescu - [392416]
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin;
 
@@ -579,7 +580,8 @@ public class ResourceHelper {
 			throw new UnsupportedOperationException("Windows links .lnk are not supported.");
 		}
 
-		String command = "ln -s " + realPath.toOSString() + ' ' + linkPath.toOSString();
+		// [392416] - accept spaces in paths
+		String command[] = { "ln", "-s", realPath.toOSString(), linkPath.toOSString()};
 		Process process = Runtime.getRuntime().exec(command);
 
 		// Wait for up to 2.5s...

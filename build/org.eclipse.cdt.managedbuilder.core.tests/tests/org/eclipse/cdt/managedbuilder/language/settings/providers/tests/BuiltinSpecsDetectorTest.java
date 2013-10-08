@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
+ *     Liviu Ionescu - [392416]
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
 
@@ -46,6 +47,7 @@ import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
+import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -818,6 +820,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		compiler.createNewFile();
 		assertTrue(compiler.exists());
 		String compilerPath = compiler.getAbsolutePath();
+		
+		// [392416] accept path with spaces
+		compilerPath = GnuMakefileGenerator.escapeWhitespaces(GnuMakefileGenerator.ensureUnquoted(compilerPath));
 
 		// Create provider
 		MockBuiltinSpecsDetectorWithRunCount provider = new MockBuiltinSpecsDetectorWithRunCount();
@@ -833,7 +838,12 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(1, provider.getExecutedCount());
 
 		// "Upgrade" the "compiler"
-		compiler.setLastModified(compiler.lastModified() + 1);
+		long lastModified = compiler.lastModified();
+		// [392416] less than 1 sec might be truncated
+		compiler.setLastModified(lastModified + 1000);
+		long lastModifiedUpdated = compiler.lastModified();
+		long delta = lastModifiedUpdated - lastModified;
+		assertTrue(delta > 0);
 
 		// Check that an event triggers rerun after upgrade
 		provider.handleEvent(null);
@@ -857,11 +867,20 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		java.io.File compiler = new java.io.File("compiler");
 		compiler.createNewFile();
 		assertTrue(compiler.exists());
+
+		java.io.File compilerLink = new java.io.File("compilerLink");
+		// since createSymbolicLink() does not use -f to force re-creation of existing
+		// links, so we need to be sure that the destination does not exist.
+		compilerLink.delete();
+		assertTrue(!compilerLink.exists());
+				
 		// Create symbolic link to the test compiler
 		ResourceHelper.createSymbolicLink(new Path("compilerLink"), new Path(compiler.getAbsolutePath()));
-		java.io.File compilerLink = new java.io.File("compilerLink");
 		assertTrue(compilerLink.exists());
 		String compilerLinkPath = compilerLink.getAbsolutePath();
+
+		// [392416] accept path with spaces
+		compilerLinkPath = GnuMakefileGenerator.escapeWhitespaces(GnuMakefileGenerator.ensureUnquoted(compilerLinkPath));
 
 		// Create provider
 		MockBuiltinSpecsDetectorWithRunCount provider = new MockBuiltinSpecsDetectorWithRunCount();
@@ -877,7 +896,12 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(1, provider.getExecutedCount());
 
 		// "Upgrade" the "compiler"
-		compiler.setLastModified(compiler.lastModified() + 1);
+		long lastModified = compiler.lastModified();
+		// [392416] less than 1 sec might be truncated
+		compiler.setLastModified(lastModified + 1000);
+		long lastModifiedUpdated = compiler.lastModified();
+		long delta = lastModifiedUpdated - lastModified;
+		assertTrue(delta > 0);
 
 		// Check that an event triggers rerun after upgrade
 		provider.handleEvent(null);
@@ -900,6 +924,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 		// Create provider
 		MockBuiltinSpecsDetectorWithRunCount provider = new MockBuiltinSpecsDetectorWithRunCount();
+		
+		// [392416] accept path with spaces
+		compilerPath = GnuMakefileGenerator.escapeWhitespaces(GnuMakefileGenerator.ensureUnquoted(compilerPath));
+		
 		provider.setCommand(compilerPath + " arg1");
 		// register environment listener on workspace
 		provider.registerListener(null);

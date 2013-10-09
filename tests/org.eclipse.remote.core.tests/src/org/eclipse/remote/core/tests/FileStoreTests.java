@@ -43,6 +43,14 @@ public class FileStoreTests extends TestCase {
 	private IFileStore fRemoteDir;
 	private IFileStore fLocalDir;
 
+	private void createFile(IFileStore fileStore, String contents) throws CoreException, IOException {
+		OutputStream stream = fileStore.openOutputStream(EFS.NONE, new NullProgressMonitor());
+		assertNotNull(stream);
+		BufferedWriter buf = new BufferedWriter(new OutputStreamWriter(stream));
+		buf.write(contents);
+		buf.close();
+	}
+
 	public void testStreams() {
 		IFileStore remoteFileStore = fRemoteDir.getChild(REMOTE_FILE);
 
@@ -56,11 +64,7 @@ public class FileStoreTests extends TestCase {
 			assertFalse(remoteFileStore.fetchInfo().exists());
 
 			try {
-				OutputStream stream = remoteFileStore.openOutputStream(EFS.NONE, null);
-				assertNotNull(stream);
-				BufferedWriter buf = new BufferedWriter(new OutputStreamWriter(stream));
-				buf.write(TEST_STRING);
-				buf.close();
+				createFile(remoteFileStore, TEST_STRING);
 			} catch (Exception e) {
 				fail(e.getMessage());
 			}
@@ -86,9 +90,7 @@ public class FileStoreTests extends TestCase {
 		try {
 			localFileStore.delete(EFS.NONE, new NullProgressMonitor());
 			remoteFileStore.delete(EFS.NONE, new NullProgressMonitor());
-			OutputStream stream = localFileStore.openOutputStream(EFS.NONE, new NullProgressMonitor());
-			stream.write(new byte[] { 'f', 'o', 'o', '\n' });
-			stream.close();
+			createFile(localFileStore, "foo\n");
 			localFileStore.copy(remoteFileStore, EFS.NONE, new NullProgressMonitor());
 		} catch (CoreException e) {
 			fail(e.getMessage());
@@ -113,6 +115,28 @@ public class FileStoreTests extends TestCase {
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
+	}
+
+	public void testExecutable() {
+		IFileStore fs = fRemoteDir.getChild(REMOTE_FILE);
+		try {
+			fs.delete(EFS.NONE, new NullProgressMonitor());
+			createFile(fs, "contents");
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		IFileInfo fi = fs.fetchInfo();
+		boolean current = fi.getAttribute(EFS.ATTRIBUTE_EXECUTABLE);
+		boolean expected = !current;
+		fi.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, expected);
+		try {
+			fs.putInfo(fi, EFS.SET_ATTRIBUTES, new NullProgressMonitor());
+		} catch (CoreException e) {
+			fail(e.getMessage());
+		}
+		fs = fRemoteDir.getChild(REMOTE_FILE);
+		fi = fs.fetchInfo();
+		assertEquals(expected, fi.getAttribute(EFS.ATTRIBUTE_EXECUTABLE));
 	}
 
 	/*

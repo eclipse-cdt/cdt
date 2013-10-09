@@ -13,7 +13,7 @@
  *     Sergey Prigogin (Google)
  *     Axel Mueller - [289339] Surround with
  *     Tomasz Wesolowski - [320561] Override indicators
- *     Serge Beauchamp (Freescale Semiconductor) - Bug 417909
+ *     Serge Beauchamp (Freescale Semiconductor) - Bug 417909, 419052 
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -245,6 +245,9 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	/** Marker used for synchronization from Problems View to the editor on double-click. */
 	private IMarker fSyncProblemsViewMarker;
 
+	/** Action id used to manage the enablement of the Format action. */
+	private static String FORMAT_ACTION_ID = "Format"; //$NON-NLS-1$
+	
 	/**
 	 * A slightly modified implementation of IGotomarker compared to AbstractDecoratedTextEditor.
 	 * 
@@ -323,6 +326,16 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		@Override
 		public IContentAssistant getContentAssistant() {
 			return fContentAssistant;
+		}
+
+		@Override
+		public boolean canDoOperation(int operation) {
+			if (operation == FORMAT) {
+				if (isEnableScalablilityMode()
+						&& getPreferenceStore().getBoolean(PreferenceConstants.SCALABILITY_FORMAT_ACTION))
+					return false;
+			}
+			return super.canDoOperation(operation);
 		}
 
 		@Override
@@ -1593,7 +1606,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 */
 	@Override
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
-		String property = event.getProperty();
+		final String property = event.getProperty();
 
 		if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
 			/*
@@ -1732,6 +1745,16 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 								setOutlinePageInput(fOutlinePage, getEditorInput());
 								asv.unconfigure();
 								asv.configure(getSourceViewerConfiguration());
+							}});
+						return;
+					}
+					if (PreferenceConstants.SCALABILITY_FORMAT_ACTION.equals(property)) {
+						BusyIndicator.showWhile(getSite().getShell().getDisplay(), new Runnable() {
+							@Override
+							public void run() {
+								IAction action = getAction(FORMAT_ACTION_ID);
+								if (action instanceof IUpdate)
+									((IUpdate) action).update();
 							}});
 						return;
 					}
@@ -2270,8 +2293,8 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 		action = new TextOperationAction(bundle, "Format.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.FORMAT);
-		setAction("Format", action); //$NON-NLS-1$
-		markAsStateDependentAction("Format", true); //$NON-NLS-1$
+		setAction(FORMAT_ACTION_ID, action);
+		markAsStateDependentAction(FORMAT_ACTION_ID, true);
 
 		action = new SortLinesAction(this);
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.SORT_LINES);

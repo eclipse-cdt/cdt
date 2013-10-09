@@ -1525,6 +1525,16 @@ public class PreferenceConstants {
 	public static final String SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION = "scalability.contentAssistAutoActivation"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls whether the editor format action is disabled in scalability mode.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 5.7
+	 */
+	public static final String SCALABILITY_FORMAT_ACTION = "scalability.formatCommand"; //$NON-NLS-1$
+	
+	/**
 	 * A named preference that controls how an include guard symbol is created.
 	 * <p>
 	 * Value is of type <code>Integer</code>.
@@ -2344,6 +2354,7 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.SCALABILITY_SEMANTIC_HIGHLIGHT, false);
 		store.setDefault(PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST, false);
 		store.setDefault(PreferenceConstants.SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION, false);
+		store.setDefault(PreferenceConstants.SCALABILITY_FORMAT_ACTION, true);
 
 		// Code Templates
 		store.setDefault(PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME,

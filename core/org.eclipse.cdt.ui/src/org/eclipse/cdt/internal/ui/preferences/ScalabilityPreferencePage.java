@@ -66,6 +66,8 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 	
 	private Button fContentAssistAutoActivation;
 
+	private Button fFormatAction;
+
 	private BooleanFieldEditor fSkipTrivialExpressions;
 
 	private IntegerFieldEditor fMaximumTrivialExpressions;
@@ -225,7 +227,10 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 		fContentAssistAutoActivation = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_contentAssist_autoActivation, PreferenceConstants.SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION);
 		createDependency(fContentAssist, PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST, fContentAssistAutoActivation, true);
 		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fContentAssistAutoActivation, false);
-	}
+
+		fFormatAction = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_formatAction_label, PreferenceConstants.SCALABILITY_FORMAT_ACTION);
+		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fFormatAction, true);
+}
 
 	private void createParserSettings(Composite parent) {
 		final Composite parserSettingsGroup = createGroupComposite(parent, 1,

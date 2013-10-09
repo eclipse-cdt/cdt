@@ -13,6 +13,15 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 
 public class PutInfoCommand extends AbstractRemoteCommand<Void> {
+	private static final int S_IRUSR = 0400; // owner has read permission
+	private static final int S_IWUSR = 0200; // owner has write permission
+	private static final int S_IXUSR = 0100; // owner has execute permission
+	private static final int S_IRGRP = 0040; // group has read permission
+	private static final int S_IWGRP = 0020; // group has write permission
+	private static final int S_IXGRP = 0010; // group has execute permission
+	private static final int S_IROTH = 0004; // others have read permission
+	private static final int S_IWOTH = 0002; // others have write permission
+	private static final int S_IXOTH = 0001; // others have execute permission
 
 	private final IPath fRemotePath;
 	private final IFileInfo fFileInfo;
@@ -30,13 +39,11 @@ public class PutInfoCommand extends AbstractRemoteCommand<Void> {
 		final SubMonitor subMon = SubMonitor.convert(monitor, 30);
 
 		FetchInfoCommand command = new FetchInfoCommand(getConnection(), fRemotePath);
-		IFileInfo info = command.getResult(subMon.newChild(10));
 		if ((fOptions & EFS.SET_ATTRIBUTES) != 0) {
-			fFileInfo.setAttribute(EFS.ATTRIBUTE_READ_ONLY, info.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
-			fFileInfo.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, info.getAttribute(EFS.ATTRIBUTE_EXECUTABLE));
 			chmod(getPermissions(fFileInfo), fRemotePath.toString(), subMon.newChild(10));
 		}
 		if ((fOptions & EFS.SET_LAST_MODIFIED) != 0) {
+			IFileInfo info = command.getResult(subMon.newChild(10));
 			long oldMTime = info.getLastModified();
 			int newMTime = (int) (oldMTime / 1000);
 			if (oldMTime != newMTime) {
@@ -83,31 +90,31 @@ public class PutInfoCommand extends AbstractRemoteCommand<Void> {
 	private int getPermissions(IFileInfo info) {
 		int permissions = 0;
 		if (info.getAttribute(EFS.ATTRIBUTE_OWNER_READ)) {
-			permissions |= 0400;
+			permissions |= S_IRUSR;
 		}
 		if (info.getAttribute(EFS.ATTRIBUTE_OWNER_WRITE)) {
-			permissions |= 0200;
+			permissions |= S_IWUSR;
 		}
 		if (info.getAttribute(EFS.ATTRIBUTE_OWNER_EXECUTE)) {
-			permissions |= 0100;
+			permissions |= S_IXUSR;
 		}
 		if (info.getAttribute(EFS.ATTRIBUTE_GROUP_READ)) {
-			permissions |= 0040;
+			permissions |= S_IRGRP;
 		}
 		if (info.getAttribute(EFS.ATTRIBUTE_GROUP_WRITE)) {
-			permissions |= 0020;
+			permissions |= S_IWGRP;
 		}
 		if (info.getAttribute(EFS.ATTRIBUTE_GROUP_EXECUTE)) {
-			permissions |= 0010;
+			permissions |= S_IXGRP;
 		}
 		if (info.getAttribute(EFS.ATTRIBUTE_OTHER_READ)) {
-			permissions |= 0004;
+			permissions |= S_IROTH;
 		}
 		if (info.getAttribute(EFS.ATTRIBUTE_OTHER_WRITE)) {
-			permissions |= 0002;
+			permissions |= S_IWOTH;
 		}
 		if (info.getAttribute(EFS.ATTRIBUTE_OTHER_EXECUTE)) {
-			permissions |= 0001;
+			permissions |= S_IXOTH;
 		}
 		return permissions;
 	}

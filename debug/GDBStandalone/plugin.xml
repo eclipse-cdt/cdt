@@ -146,5 +146,46 @@
             activityId="GDBStandalone.activity.filterMenus"
             pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.ToggleComment">
       </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.managedbuilder.ui.properties.BuildLogPreferencePage">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.team.ui/org.eclipse.team.ui.GenericHistoryView">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.team.ui/org.eclipse.team.sync.views.SynchronizeView">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.team.ui/org.eclipse.team.ui.TeamSynchronizingPerspective">
+      </activityPatternBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="file"
+               label="%FileMenu.label">
+            <command
+                  commandId="org.eclipse.ui.file.exit"
+                  label="%ExitMenu.label"
+                  style="push">
+            </command>
+         </menu>
+         <menu
+               id="window"
+               label="%WindowMenu.label">
+            <command
+                  commandId="org.eclipse.ui.views.showView"
+                  label="%ShowView.label"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
    </extension>
 </plugin>

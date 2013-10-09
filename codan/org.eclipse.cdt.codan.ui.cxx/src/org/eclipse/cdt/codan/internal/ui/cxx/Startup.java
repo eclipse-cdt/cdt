@@ -37,6 +37,8 @@ public class Startup implements IStartup {
 			@Override
 			public void run() {
 				IWorkbenchWindow active = workbench.getActiveWorkbenchWindow();
+				if (active == null)
+					return;  // The workbench is shutting down.
 				final IWorkbenchPage page = active.getActivePage();
 				CodanPartListener partListener = new CodanPartListener();
 				page.addPartListener(partListener);

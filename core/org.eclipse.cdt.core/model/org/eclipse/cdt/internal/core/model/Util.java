@@ -16,6 +16,8 @@
 package org.eclipse.cdt.internal.core.model;
 
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,6 +32,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -435,15 +438,17 @@ public class Util implements ICLogConstants {
 	 *   <li> Operating system default line separator.
 	 * </ol>
 	 * @param file the file for which line separator should be returned
+	 * @param project the project containing the file or null if the file is not project specific. In the case of
+	 *            a new file, this will be used to take preferences into account.
 	 * @return line separator for the given file
 	 * 
 	 * Note: This was copied from org.eclipse.core.internal.utils.FileUtil
 	 */
-	public static String getLineSeparator(IFile file) {
+	public static String getLineSeparator(File file, IProject project) {
 		if (file.exists()) {
 			InputStream input = null;
 			try {
-				input = file.getContents();
+				input = new FileInputStream(file);
 				int c = input.read();
 				while (c != -1 && c != '\r' && c != '\n')
 					c = input.read();
@@ -454,8 +459,6 @@ public class Util implements ICLogConstants {
 						return "\r\n"; //$NON-NLS-1$
 					return "\r"; //$NON-NLS-1$
 				}
-			} catch (CoreException e) {
-				// ignore
 			} catch (IOException e) {
 				// ignore
 			} finally {
@@ -470,7 +473,9 @@ public class Util implements ICLogConstants {
 		Preferences rootNode = Platform.getPreferencesService().getRootNode();
 		String value = null;
 		// if the file does not exist or has no content yet, try with project preferences
-		value = getLineSeparatorFromPreferences(rootNode.node(ProjectScope.SCOPE).node(file.getProject().getName()));
+		if (project != null) {
+			value = getLineSeparatorFromPreferences(rootNode.node(ProjectScope.SCOPE).node(project.getName()));
+		}
 		if (value != null)
 			return value;
 		// try with instance preferences

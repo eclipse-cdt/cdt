@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.settings.model.xml;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.Reference;
@@ -44,7 +45,6 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.envvar.ContributedEnvironment;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
-import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.settings.model.AbstractCProjectDescriptionStorage;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
@@ -121,7 +121,6 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	static final String CONFIGURATION = "cconfiguration"; //$NON-NLS-1$
 
 	private static final QualifiedName LOAD_FLAG = new QualifiedName(CCorePlugin.PLUGIN_ID, "descriptionLoadded"); //$NON-NLS-1$
-	private static final String LINE_SEPARATOR = "line.separator"; //$NON-NLS-1$
 
 	public XmlProjectDescriptionStorage(CProjectDescriptionStorageTypeProxy type, IProject project, Version version) {
 		super(type, project, version);
@@ -573,12 +572,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				// Get the ProjectDescription as a utf-8 string
 				stream = write(element);
 				utfString = stream.toString("UTF-8"); //$NON-NLS-1$
-
-				// Make sure we keep the same line separator if the file exists
-				// or use the preferences if it's a new file
-				String fileLineSeparator = Util.getLineSeparator(projectFile);
-				String sysLineSeparator = System.getProperty(LINE_SEPARATOR);
-				utfString = utfString.replace(sysLineSeparator, fileLineSeparator);
+				utfString = XmlUtil.replaceWithFileEOL(utfString, new File(projectFile.getLocationURI()), projectFile.getProject());
 			} finally {
 				if (stream != null)
 					stream.close(); // Cleanup the stream

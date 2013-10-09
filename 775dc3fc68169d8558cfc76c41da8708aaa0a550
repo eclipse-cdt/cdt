@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_82ebc99d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/tests/org/eclipse/cdt/managedbuilder/language/settings/providers/tests/BuiltinSpecsDetectorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 899,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-10-09T01:31:29Z",
+      "side": 0,
+      "message": "There is really no need for creating any file in this test.",
+      "revId": "775dc3fc68169d8558cfc76c41da8708aaa0a550",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

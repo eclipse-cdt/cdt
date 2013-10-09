@@ -552,6 +552,7 @@ public final class PreferencesMessages extends NLS {
 	public static String ScalabilityPreferencePage_note;
 	public static String ScalabilityPreferencePage_preferenceOnlyForNewEditors;
 	public static String ScalabilityPreferencePage_contentAssist_autoActivation;
+	public static String ScalabilityPreferencePage_formatAction_label;
 	public static String ScalabilityPreferencePage_parserSettings_group_label;
 	public static String ScalabilityPreferencePage_skipTrivialExpressions_label;
 	public static String ScalabilityPreferencePage_maximumTrivialExpressions_label;

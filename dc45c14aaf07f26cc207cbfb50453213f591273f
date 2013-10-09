@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_1bc55b07",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-10-09T16:58:55Z",
+      "side": 1,
+      "message": "Please combine the two \u0027if\u0027 statements into one.",
+      "revId": "dc45c14aaf07f26cc207cbfb50453213f591273f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_9b020bc2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1752,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-10-09T16:58:55Z",
+      "side": 1,
+      "message": "Updating an action is a quick operation. Do we really need a busy indicator?",
+      "revId": "dc45c14aaf07f26cc207cbfb50453213f591273f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_5b73635b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/PreferenceConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2357,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-10-09T16:58:55Z",
+      "side": 1,
+      "message": "I don\u0027t think formatting should be disabled by default since it\u0027s a rare operation and it\u0027s ok if it takes some time.",
+      "revId": "dc45c14aaf07f26cc207cbfb50453213f591273f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

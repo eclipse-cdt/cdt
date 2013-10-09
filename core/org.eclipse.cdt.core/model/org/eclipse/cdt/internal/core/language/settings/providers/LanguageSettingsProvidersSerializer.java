@@ -557,7 +557,7 @@ public class LanguageSettingsProvidersSerializer {
 
 				try {
 					serializingLockWsp.acquire();
-					XmlUtil.serializeXml(doc, uriStoreWsp);
+					XmlUtil.serializeXml(doc, uriStoreWsp, null);
 					// manufacture events while inside the lock
 					events = createLanguageSettingsChangeEvents(broadcastingWorkspaceProviders);
 				} finally {
@@ -881,7 +881,7 @@ public class LanguageSettingsProvidersSerializer {
 				if (isWorkspaceStoreEmpty) {
 					new java.io.File(uriStoreWsp).delete();
 				} else {
-					XmlUtil.serializeXml(docStoreWsp, uriStoreWsp);
+					XmlUtil.serializeXml(docStoreWsp, uriStoreWsp, project);
 				}
 
 				// manufacture the event only if serialization was successful

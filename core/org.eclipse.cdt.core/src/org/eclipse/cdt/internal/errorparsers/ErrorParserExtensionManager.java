@@ -314,7 +314,7 @@ public class ErrorParserExtensionManager {
 				}
 			}
 
-			XmlUtil.serializeXml(doc, getStoreURI(STORAGE_ERRORPARSER_EXTENSIONS));
+			XmlUtil.serializeXml(doc, getStoreURI(STORAGE_ERRORPARSER_EXTENSIONS), null);
 
 		} catch (Exception e) {
 			throw new CoreException(CCorePlugin.createStatus("Failed serializing to file " + STORAGE_ERRORPARSER_EXTENSIONS, e)); //$NON-NLS-1$

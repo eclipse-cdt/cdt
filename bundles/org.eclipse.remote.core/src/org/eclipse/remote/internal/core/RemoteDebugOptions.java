@@ -37,15 +37,16 @@ public class RemoteDebugOptions implements DebugOptionsListener {
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_REMOTE_COMMANDS = false;
 
-	/**
-	 * The {@link DebugTrace} object to print to OSGi tracing
-	 */
 	private static DebugTrace fDebugTrace;
+	private static RemoteDebugOptions fDebugOptions;
 
-	/**
-	 * Constructor
-	 */
-	public RemoteDebugOptions(BundleContext context) {
+	public static void configure(BundleContext context) {
+		if (fDebugOptions == null) {
+			fDebugOptions = new RemoteDebugOptions(context);
+		}
+	}
+
+	private RemoteDebugOptions(BundleContext context) {
 		Hashtable<String, String> props = new Hashtable<String, String>(2);
 		props.put(DebugOptions.LISTENER_SYMBOLICNAME, RemoteCorePlugin.getUniqueIdentifier());
 		context.registerService(DebugOptionsListener.class.getName(), this, props);

@@ -129,7 +129,7 @@ public class AST2TemplateTests extends AST2TestBase {
 
 	protected IASTTranslationUnit parseAndCheckImplicitNameBindings() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP, false, true);
-		NameCollector col = new NameCollector(true /* visit implicit names */);
+		NameCollector col = new NameCollector(true /* Visit implicit names */);
 		tu.accept(col);
 		assertNoProblemBindings(col);
 		return tu;
@@ -406,7 +406,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//    const int *p;
 	//    f(p); //calls f(const T *) , 3 is more specialized than 1 or 2
 	// }
-	public void test_14_5_5_2s5_OrderingFunctionTemplates_a() throws Exception{
+	public void test14_5_5_2s5_OrderingFunctionTemplates_a() throws Exception{
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
@@ -430,7 +430,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//    float x;
 	//    f(x); //ambiguous 1 or 2
 	// }
-	public void test_14_5_5_2s5_OrderingFunctionTemplates_b() throws Exception{
+	public void test14_5_5_2s5_OrderingFunctionTemplates_b() throws Exception{
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
@@ -513,7 +513,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	// A <int, char*, 5> a3;		//uses #4, T is char
 	// A <int, char*, 1> a4;		//uses #5, T is int, T2 is char, I is1
 	// A <int*, int*, 2> a5;		//ambiguous, matches #3 & #5.
-	public void test_14_5_4_1s2_MatchingTemplateSpecializations() throws Exception{
+	public void test14_5_4_1s2_MatchingTemplateSpecializations() throws Exception{
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
@@ -573,7 +573,7 @@ public class AST2TemplateTests extends AST2TestBase {
 
 	// template<class T> void f(T*);
 	// void g(int* p) { f(p); }
-	public void test_14_5_5_1_FunctionTemplates_a() throws Exception {
+	public void test14_5_5_1_FunctionTemplates_a() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
@@ -587,7 +587,7 @@ public class AST2TemplateTests extends AST2TestBase {
 
 	// template<class T> void f(T);
 	// void g(int* p) { f(p); }
-	public void test_14_5_5_1_FunctionTemplates_b() throws Exception {
+	public void test14_5_5_1_FunctionTemplates_b() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
@@ -603,7 +603,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	// void g(){
 	//    int i = f<int>(5); // Y is int
 	// }
-	public void test_14_8_1s2_FunctionTemplates() throws Exception {
+	public void test14_8_1s2_FunctionTemplates() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
@@ -687,7 +687,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//    f(&a);              //call f<int>(int*)
 	//    f(&b);              //call f<char*>(char**)
 	// }
-	public void test14_8s2_() throws Exception {
+	public void test14_8s2() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
@@ -5199,8 +5199,8 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertEquals("CT<char, char>", names[0].toString());
 	}
 
-	// NOTE: If, after refactoring some AST code, this test hangs, check 
-	//		 if any methods that were added during the refactoring need 
+	// NOTE: If, after refactoring some AST code, this test hangs, check
+	//		 if any methods that were added during the refactoring need
 	//		 to be added to ASTComparer.methodsToIgnore.
 	public void testBug316704() throws Exception {
 		StringBuilder code= new StringBuilder("typedef if_< bool,");
@@ -8054,7 +8054,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testInstantiationOfTypedef_412555() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <class T>
 	//	struct B {};
 	//
@@ -8077,9 +8077,9 @@ public class AST2TemplateTests extends AST2TestBase {
 	//
 	//	template <typename T>
 	//	struct U {
-	//	    typedef typename decltype(foo(T()))::type type;    
+	//	    typedef typename decltype(foo(T()))::type type;
 	//	};
-	//	
+	//
 	//	struct S {
 	//		typedef int type;
 	//	};
@@ -8092,7 +8092,7 @@ public class AST2TemplateTests extends AST2TestBase {
 		helper.assertNonProblem("decltype(foo(T()))::type");
 		assertSameType((ITypedef) helper.assertNonProblem("U<S>::type"), CommonTypes.int_);
 	}
-	
+
 	//	namespace N {
 	//	    template <typename>
 	//	    struct C;

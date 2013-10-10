@@ -121,7 +121,6 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	static final String CONFIGURATION = "cconfiguration"; //$NON-NLS-1$
 
 	private static final QualifiedName LOAD_FLAG = new QualifiedName(CCorePlugin.PLUGIN_ID, "descriptionLoadded"); //$NON-NLS-1$
-	private static final String LINE_SEPARATOR = "line.separator"; //$NON-NLS-1$
 
 	public XmlProjectDescriptionStorage(CProjectDescriptionStorageTypeProxy type, IProject project, Version version) {
 		super(type, project, version);
@@ -573,12 +572,8 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				// Get the ProjectDescription as a utf-8 string
 				stream = write(element);
 				utfString = stream.toString("UTF-8"); //$NON-NLS-1$
-
-				// Make sure we keep the same line separator if the file exists
-				// or use the preferences if it's a new file
-				String fileLineSeparator = Util.getLineSeparator(projectFile);
-				String sysLineSeparator = System.getProperty(LINE_SEPARATOR);
-				utfString = utfString.replace(sysLineSeparator, fileLineSeparator);
+				String eol = Util.getLineSeparator(projectFile);
+				utfString = XmlUtil.replaceLineSeparatorInternal(utfString, eol);
 			} finally {
 				if (stream != null)
 					stream.close(); // Cleanup the stream

@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.internal.core.XmlUtil;
+import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationSpecSettings;
 import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
 import org.eclipse.cdt.internal.core.settings.model.SettingsModelMessages;
@@ -557,7 +558,11 @@ public class LanguageSettingsProvidersSerializer {
 
 				try {
 					serializingLockWsp.acquire();
-					XmlUtil.serializeXml(doc, uriStoreWsp);
+					String eol = Util.getLineSeparator(uriStoreWsp);
+					if (eol == null) {
+						eol = Util.getDefaultLineSeparator();
+					}
+					XmlUtil.serializeXml(doc, uriStoreWsp, eol);
 					// manufacture events while inside the lock
 					events = createLanguageSettingsChangeEvents(broadcastingWorkspaceProviders);
 				} finally {
@@ -881,7 +886,11 @@ public class LanguageSettingsProvidersSerializer {
 				if (isWorkspaceStoreEmpty) {
 					new java.io.File(uriStoreWsp).delete();
 				} else {
-					XmlUtil.serializeXml(docStoreWsp, uriStoreWsp);
+					String eol = Util.getLineSeparator(uriStoreWsp);
+					if (eol == null) {
+						eol =  Util.getDefaultLineSeparator(project);
+					}
+					XmlUtil.serializeXml(docStoreWsp, uriStoreWsp, eol);
 				}
 
 				// manufacture the event only if serialization was successful

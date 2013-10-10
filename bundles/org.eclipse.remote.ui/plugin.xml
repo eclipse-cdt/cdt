@@ -30,7 +30,7 @@
    <extension
          point="org.eclipse.ui.trace.traceComponents">
       <component
-            id="org.eclipse.remote.ui.component"
+            id="org.eclipse.remote.core.component"
             label="Remote Core">
          <bundle
                consumed="true"

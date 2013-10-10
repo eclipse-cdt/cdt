@@ -17,6 +17,7 @@ import java.util.Hashtable;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.osgi.service.debug.DebugTrace;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -31,18 +32,15 @@ import org.osgi.framework.BundleContext;
  */
 public class RemoteDebugOptions implements DebugOptionsListener {
 
-	private static final String DEBUG_FLAG = RemoteCorePlugin.getUniqueIdentifier() + "/debug"; //$NON-NLS-1$
-	private static final String DEBUG_REMOTE_COMMANDS_FLAG = RemoteCorePlugin.getUniqueIdentifier() + "/debug/commands"; //$NON-NLS-1$
-
-	public static boolean DEBUG = false;
-	public static boolean DEBUG_REMOTE_COMMANDS = false;
+	public static final String DEBUG_REMOTE_COMMANDS = "/debug/commands"; //$NON-NLS-1$
 
 	private static DebugTrace fDebugTrace;
-	private static RemoteDebugOptions fDebugOptions;
+	private static DebugOptions fDebugOptions;
+	private static RemoteDebugOptions fRemoteDebugOptions;
 
 	public static void configure(BundleContext context) {
-		if (fDebugOptions == null) {
-			fDebugOptions = new RemoteDebugOptions(context);
+		if (fRemoteDebugOptions == null) {
+			fRemoteDebugOptions = new RemoteDebugOptions(context);
 		}
 	}
 
@@ -59,26 +57,27 @@ public class RemoteDebugOptions implements DebugOptionsListener {
 	 */
 	@Override
 	public void optionsChanged(DebugOptions options) {
+		fDebugOptions = options;
 		fDebugTrace = options.newDebugTrace(RemoteCorePlugin.getUniqueIdentifier());
-		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
-		DEBUG_REMOTE_COMMANDS = DEBUG & options.getBooleanOption(DEBUG_REMOTE_COMMANDS_FLAG, false);
 	}
 
-	/**
-	 * Prints the given message to System.out and to the OSGi tracing (if started)
-	 * 
-	 * @param option
-	 *            the option or <code>null</code>
-	 * @param message
-	 *            the message to print or <code>null</code>
-	 * @param throwable
-	 *            the {@link Throwable} or <code>null</code>
-	 */
-	public static void trace(String option, String message, Throwable throwable) {
-		System.out.print(message);
-		// then pass the original message to be traced into a file
-		if (fDebugTrace != null) {
-			fDebugTrace.trace(option, message, throwable);
+	public static boolean isDebugging() {
+		return RemoteCorePlugin.getDefault().isDebugging();
+	}
+
+	public static boolean isDebugging(String option) {
+		if (fDebugOptions == null) {
+			return false;
+		}
+		return fDebugOptions.getBooleanOption(RemoteCorePlugin.getUniqueIdentifier() + option, false);
+	}
+
+	public static void setDebugging(String option, boolean value) {
+		if (fDebugOptions != null) {
+			if (value) {
+				fDebugOptions.setDebugEnabled(true);
+			}
+			fDebugOptions.setOption(option, Boolean.toString(value));
 		}
 	}
 
@@ -89,7 +88,30 @@ public class RemoteDebugOptions implements DebugOptionsListener {
 	 *            the message or <code>null</code>
 	 */
 	public static void trace(String message) {
-		trace(null, message, null);
+		trace(null, message);
+	}
+
+	/**
+	 * Prints the given message to System.out and to the OSGi tracing (if enabled)
+	 * 
+	 * @param option
+	 *            the option to determine if tracing is displayed
+	 * @param message
+	 *            the message or <code>null</code>
+	 * @param arguments
+	 *            optional arguments for the message or <code>null</code>
+	 */
+	public static void trace(String option, String message, String... arguments) {
+		String traceMsg = message;
+		if (arguments.length > 0) {
+			traceMsg = NLS.bind(message, arguments);
+		}
+		if ((option != null && isDebugging(option)) || isDebugging()) {
+			System.out.println(traceMsg);
+			if (fDebugTrace != null) {
+				fDebugTrace.trace(option, traceMsg, null);
+			}
+		}
 	}
 
 }

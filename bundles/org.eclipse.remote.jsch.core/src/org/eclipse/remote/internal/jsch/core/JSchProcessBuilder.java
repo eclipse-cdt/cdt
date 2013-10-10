@@ -182,9 +182,7 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 			exec.setPty((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
 			exec.setXForwarding((flags & FORWARD_X11) == FORWARD_X11);
 			exec.connect();
-			if (RemoteDebugOptions.DEBUG_REMOTE_COMMANDS) {
-				RemoteDebugOptions.trace("executing command: " + command); //$NON-NLS-1$
-			}
+			RemoteDebugOptions.trace(RemoteDebugOptions.DEBUG_REMOTE_COMMANDS, "executing command: " + command); //$NON-NLS-1$
 			return new JSchProcess(exec, redirectErrorStream());
 		} catch (RemoteConnectionException e) {
 			throw new IOException(e.getMessage());

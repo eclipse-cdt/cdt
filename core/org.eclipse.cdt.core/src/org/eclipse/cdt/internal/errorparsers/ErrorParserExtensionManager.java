@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.errorparsers.ErrorParserNamedWrapper;
 import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.internal.core.XmlUtil;
+import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -314,7 +315,11 @@ public class ErrorParserExtensionManager {
 				}
 			}
 
-			XmlUtil.serializeXml(doc, getStoreURI(STORAGE_ERRORPARSER_EXTENSIONS));
+			URI uri = getStoreURI(STORAGE_ERRORPARSER_EXTENSIONS);
+			String eol = Util.getLineSeparator(uri);
+			if (eol == null)
+				eol =  Util.getDefaultLineSeparator();
+			XmlUtil.serializeXml(doc, uri, eol);
 
 		} catch (Exception e) {
 			throw new CoreException(CCorePlugin.createStatus("Failed serializing to file " + STORAGE_ERRORPARSER_EXTENSIONS, e)); //$NON-NLS-1$

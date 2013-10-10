@@ -27,5 +27,16 @@
             name="%ConnectionsPreferencePage.name">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.trace.traceComponents">
+      <component
+            id="org.eclipse.remote.ui.component"
+            label="Remote Core">
+         <bundle
+               consumed="true"
+               name="org.eclipse.remote.core">
+         </bundle>
+      </component>
+   </extension>
 
 </plugin>

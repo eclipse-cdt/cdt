@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.remote.core,
  org.eclipse.core.filesystem,
- org.eclipse.core.resources
+ org.eclipse.core.resources,
+ org.eclipse.ui.trace
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.remote.internal.ui;x-internal:=true,

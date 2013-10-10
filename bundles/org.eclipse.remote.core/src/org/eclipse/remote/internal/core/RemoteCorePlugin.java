@@ -93,6 +93,7 @@ public class RemoteCorePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		new RemoteDebugOptions(context);
 		ResourcesPlugin.getWorkspace().addSaveParticipant(getUniqueIdentifier(), new ISaveParticipant() {
 			@Override
 			public void saving(ISaveContext saveContext) throws CoreException {

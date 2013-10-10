@@ -27,6 +27,7 @@ import org.eclipse.remote.core.AbstractRemoteProcessBuilder;
 import org.eclipse.remote.core.IRemoteFileManager;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
+import org.eclipse.remote.internal.core.RemoteDebugOptions;
 import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
 import com.jcraft.jsch.ChannelExec;
@@ -181,6 +182,9 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 			exec.setPty((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
 			exec.setXForwarding((flags & FORWARD_X11) == FORWARD_X11);
 			exec.connect();
+			if (RemoteDebugOptions.DEBUG_REMOTE_COMMANDS) {
+				RemoteDebugOptions.trace("executing command: " + command); //$NON-NLS-1$
+			}
 			return new JSchProcess(exec, redirectErrorStream());
 		} catch (RemoteConnectionException e) {
 			throw new IOException(e.getMessage());

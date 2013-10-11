@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.managedbuilder.core.regressions.RegressionTests;
 import org.eclipse.cdt.managedbuilder.core.tests.BuildDescriptionModelTests;
 import org.eclipse.cdt.managedbuilder.core.tests.BuildSystem40Tests;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCaseSensitivityTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests20;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests_SharedToolOptions;
@@ -88,6 +89,7 @@ public class AllManagedBuildTests {
 		suite.addTest(ManagedBuildDependencyCalculatorTests.suite());
 		suite.addTest(BuildDescriptionModelTests.suite());
 		suite.addTest(PathConverterTest.suite());
+		suite.addTest(ManagedBuildCaseSensitivityTests.suite());
 
 		// managedbuilder.templateengine.tests
 		suite.addTest(AllTemplateEngineTests.suite());

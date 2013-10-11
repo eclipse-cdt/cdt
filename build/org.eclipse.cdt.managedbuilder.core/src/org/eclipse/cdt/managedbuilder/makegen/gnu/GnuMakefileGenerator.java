@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Anna Dushistova  (Mentor Graphics) - [307244] extend visibility of fields in GnuMakefileGenerator
  *     James Blackburn (Broadcom Corp.)
  *     Marc-Andre Laperle
+ *     Serge Beauchamp (Freescale Semiconductor) - 365561
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
@@ -105,6 +106,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
+
 	private static final IPath DOT_SLASH_PATH = new Path("./");  //$NON-NLS-1$
 
 	/**
@@ -326,6 +328,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	private static final String MAINBUILD = "main-build"; //$NON-NLS-1$
 	private static final String POSTBUILD = "post-build"; //$NON-NLS-1$
 	private static final String SECONDARY_OUTPUTS = "secondary-outputs"; //$NON-NLS-1$
+
+	private static final String UPPER_SUFFIX = "_UPPER"; //$NON-NLS-1$
 
 	// Enumerations
 	public static final int
@@ -1105,28 +1109,17 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 						if(//!getOutputExtensions().contains(extensionName) &&
 							!handledInputExtensions.contains(extensionName)) {
 		 					handledInputExtensions.add(extensionName);
-		 					buildMacro = getSourceMacroName(extensionName).toString();
-							if (!buildSrcVars.containsKey(buildMacro)) {
-								buildSrcVars.put(buildMacro, new ArrayList<IPath>());
+							// Include an upper/lower case macro in case a source file extension differs from its
+							// input type case.
+							if (isUppercaseExtension(extensionName)) {
+			 					addBuildVariableForExtension(buildTool, extensionName);
+			 					addBuildVariableForExtension(buildTool, extensionName.toLowerCase());
+			 				}
+							else {
+			 					addBuildVariableForExtension(buildTool, extensionName);
+			 					addBuildVariableForExtension(buildTool, extensionName.toUpperCase());
 							}
-							// Add any generated dependency file macros
-				 			IManagedDependencyGeneratorType depType = buildTool.getDependencyGeneratorForExtension(extensionName);
-				 			if (depType != null) {
-				 				int calcType = depType.getCalculatorType();
-				 				if (calcType == IManagedDependencyGeneratorType.TYPE_COMMAND ||
-				 					calcType == IManagedDependencyGeneratorType.TYPE_BUILD_COMMANDS ||
-				 					calcType == IManagedDependencyGeneratorType.TYPE_PREBUILD_COMMANDS) {
-				 					buildMacro = getDepMacroName(extensionName).toString();
-									if (!buildDepVars.containsKey(buildMacro)) {
-										buildDepVars.put(buildMacro, new GnuDependencyGroupInfo(buildMacro,
-												(calcType != IManagedDependencyGeneratorType.TYPE_PREBUILD_COMMANDS)));
-									}
-									if (!buildOutVars.containsKey(buildMacro)) {
-										buildOutVars.put(buildMacro, new ArrayList<IPath>());
-									}
-				 				}
-				 			}
-		 				}
+						}
 		 			}
 					// Add the specified output build variables
 					IOutputType[] outTypes = buildTool.getOutputTypes();
@@ -1146,6 +1139,32 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 					}
 				}
 				return true;
+			}
+
+			private void addBuildVariableForExtension(ITool buildTool, String extensionName) {
+				String buildMacro;
+				buildMacro = getSourceMacroName(extensionName).toString();
+				if (!buildSrcVars.containsKey(buildMacro)) {
+					buildSrcVars.put(buildMacro, new ArrayList<IPath>());
+				}
+				
+				// Add any generated dependency file macros
+				IManagedDependencyGeneratorType depType = buildTool.getDependencyGeneratorForExtension(extensionName);
+				if (depType != null) {
+					int calcType = depType.getCalculatorType();
+					if (calcType == IManagedDependencyGeneratorType.TYPE_COMMAND ||
+						calcType == IManagedDependencyGeneratorType.TYPE_BUILD_COMMANDS ||
+						calcType == IManagedDependencyGeneratorType.TYPE_PREBUILD_COMMANDS) {
+						buildMacro = getDepMacroName(extensionName).toString();
+						if (!buildDepVars.containsKey(buildMacro)) {
+							buildDepVars.put(buildMacro, new GnuDependencyGroupInfo(buildMacro,
+									(calcType != IManagedDependencyGeneratorType.TYPE_PREBUILD_COMMANDS)));
+						}
+						if (!buildOutVars.containsKey(buildMacro)) {
+							buildOutVars.put(buildMacro, new ArrayList<IPath>());
+						}
+					}
+				}
 			}
 		});
 		// Add the macros to the makefile
@@ -3486,14 +3505,19 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		// extensions .c_upper, and .C, but realistically speaking the chances of this are
 		// practically nil so it doesn't seem worth the hassle of generating a truly
 		// unique name.
-		if(extensionName.equals(extensionName.toUpperCase())) {
-			macroName.append(extensionName.toUpperCase() + "_UPPER");	//$NON-NLS-1$
+		if(isUppercaseExtension(extensionName)) {
+			macroName.append(extensionName.toUpperCase() + UPPER_SUFFIX);
 		} else {
 			// lower case... no need for "UPPER_"
 			macroName.append(extensionName.toUpperCase());
 		}
 		macroName.append("_SRCS");	//$NON-NLS-1$
 		return macroName;
+	}
+
+
+	private boolean isUppercaseExtension(String extensionName) {
+		return extensionName.equals(extensionName.toUpperCase());
 	}
 
 	/**
@@ -3508,8 +3532,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		// extensions .c_upper, and .C, but realistically speaking the chances of this are
 		// practically nil so it doesn't seem worth the hassle of generating a truly
 		// unique name.
-		if(extensionName.equals(extensionName.toUpperCase())) {
-			macroName.append(extensionName.toUpperCase() + "_UPPER");	//$NON-NLS-1$
+		if(isUppercaseExtension(extensionName)) {
+			macroName.append(extensionName.toUpperCase() + UPPER_SUFFIX);	//$NON-NLS-1$
 		} else {
 			// lower case... no need for "UPPER_"
 			macroName.append(extensionName.toUpperCase());

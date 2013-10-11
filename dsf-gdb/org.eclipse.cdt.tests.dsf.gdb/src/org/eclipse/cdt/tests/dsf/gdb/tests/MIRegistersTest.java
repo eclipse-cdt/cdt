@@ -13,7 +13,7 @@ package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -590,7 +590,7 @@ public class MIRegistersTest extends BaseTestCase {
 		String sp_f1_str = getModelDataForRegisterDataValue(frame1, IFormattedValues.HEX_FORMAT, sp_reg_f1.getRegNo());
 		
 		//The stack pointer's are not expected to be the same among frames
-		assertNotEquals("Stack pointers shall be different among frames", sp_f0_str, sp_f1_str);
+		assertFalse("Stack pointers shall be different among frames", sp_f0_str.equals(sp_f1_str));
 	}
 
 	private IRegisterDMContext findStackPointerRegister(String sp_name, IRegisterDMContext[] registerDMCs) throws InterruptedException, ExecutionException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Intel Corporation and others.
+ * Copyright (c) 2006, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * IBM Corporation
+ * Serge Beauchamp (Freescale Semiconductor) - Bug 365561
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
@@ -498,8 +499,22 @@ public class BuildDescription implements IBuildDescription {
 		BuildIOType arg = (BuildIOType)rc.getProducerIOType();
 		String linkId = (checkVar && arg != null) ? arg.getLinkId() : null;
 
+		// First, attempt to retrieve the case sensitive ToolAndType
+		ToolAndType tt = getToolAndType(h, checkVar, locString, linkId, true);
+		if (tt == null) {
+			// If a case sensitive input type was not found, attempt to find a case-insensitive one.
+			locString = locString.toLowerCase();
+			tt = getToolAndType(h, checkVar, locString, linkId, false);
+		}
+		return tt;
+	}
+
+	private ToolAndType getToolAndType(ToolInfoHolder h, boolean checkVar, String locString, String linkId,
+			boolean caseSensitive) {
 		for (Entry<String, List<ToolAndType>> entry : h.fExtToToolAndTypeListMap.entrySet()) {
 			String ext = entry.getKey();
+			if (!caseSensitive)
+				ext = ext.toLowerCase();
 			if(locString.endsWith("." + ext)){	//$NON-NLS-1$
 				List<ToolAndType> list = entry.getValue();
 				for (ToolAndType tt : list) {

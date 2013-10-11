@@ -1514,8 +1514,9 @@ public class InputType extends BuildObject implements IInputType {
 
 	public boolean isSourceExtension(ITool tool, String ext, IProject project) {
 		String[] exts = getSourceExtensions(tool, project);
+		ext = ext.toLowerCase();
 		for (String srcExt : exts) {
-			if (ext.equals(srcExt)) return true;
+			if (ext.equals(srcExt.toLowerCase())) return true;
 		}
 		return false;
 	}

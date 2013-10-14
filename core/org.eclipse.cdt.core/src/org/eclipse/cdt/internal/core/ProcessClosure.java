@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
+import org.eclipse.core.runtime.Assert;
+
 /**
  * Bundled state of a launched process including the threads linking the process
  * in/output to console documents.
@@ -33,11 +35,11 @@ public class ProcessClosure {
 		private OutputStream fOutputStream;
 		private boolean fFinished = false;
 		private String lineSeparator;
-		/*
-		 * outputStream can be null
-		 */
+
 		public ReaderThread(ThreadGroup group, String name, InputStream in, OutputStream out) {
 			super(group, name);
+			Assert.isNotNull(in);
+			Assert.isNotNull(out);
 			fOutputStream = out;
 			fInputStream = in;
 			setDaemon(true);
@@ -58,7 +60,6 @@ public class ProcessClosure {
 					// ignore
 				} finally {
 					try {
-						//					writer.flush();
 						fOutputStream.flush();
 					} catch (IOException e) {
 						// ignore

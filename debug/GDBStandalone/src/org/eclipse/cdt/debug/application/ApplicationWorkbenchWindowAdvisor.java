@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.ICompileOptionsFinder;
 import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
@@ -78,30 +79,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setShowStatusLine(true);
 		configurer.setShowMenuBar(true);
 		configurer.setTitle(Messages.Debugger_Title);
-
-		// IWorkbenchActivitySupport support = getWindowConfigurer().getWindow()
-		// .getWorkbench().getActivitySupport();
-		// IActivityManager manager = support.getActivityManager();
-		// @SuppressWarnings("rawtypes")
-		// Set ids = manager.getEnabledActivityIds();
-		// @SuppressWarnings("rawtypes")
-		// Set defined = manager.getDefinedActivityIds();
-		// IActivity activity = manager
-		// .getActivity("GDBStandalone.activity.filterMenus");
-		// @SuppressWarnings("rawtypes")
-		// Set k = activity.getActivityPatternBindings();
-		// for (Object obj : ids) {
-		// String id = (String) obj;
-		// System.out.println("enabled id is " + id);
-		// }
-		// for (Object obj : defined) {
-		// String id = (String) obj;
-		// System.out.println("defined id is " + id);
-		// }
-		// for (Object obj : k) {
-		// IActivityPatternBinding binding = (IActivityPatternBinding) obj;
-		// System.out.println("pattern is " + binding.getString());
-		// }
 	}
 
 	private class CWDTracker implements IWorkingDirectoryTracker {
@@ -208,17 +185,21 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 										source.createLink(sourceFilePath, 0,
 												null);
 									}
-									// if (reader instanceof
-									// ICompileOptionsFinder) {
-									// ICompileOptionsFinder f =
-									// (ICompileOptionsFinder) reader;
-									// for (String fileName : sourceFiles) {
-									// parser.setCurrentResourceName(fileName);
-									// parser.processLine(f
-									// .getCompileOptions(fileName));
-									// }
-									// parser.shutdown();
-									// }
+									if (reader instanceof ICompileOptionsFinder) {
+										((ICompileOptionsFinder) reader)
+												.getCompileOptions(sourceFiles[0]);
+									}
+									if (reader instanceof
+											ICompileOptionsFinder) {
+										ICompileOptionsFinder f =
+												(ICompileOptionsFinder) reader;
+										for (String fileName : sourceFiles) {
+											parser.setCurrentResourceName(fileName);
+											parser.processLine(f
+													.getCompileOptions(fileName));
+										}
+										parser.shutdown();
+									}
 								} catch (CoreException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();

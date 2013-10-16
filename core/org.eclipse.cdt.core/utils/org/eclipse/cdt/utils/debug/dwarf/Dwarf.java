@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
+import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.debug.DebugUnknownType;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.debug.tools.DebugSym;
@@ -47,6 +47,7 @@ public class Dwarf {
 	final static String DWARF_DEBUG_VARNAMES = ".debug_varnames"; //$NON-NLS-1$
 	final static String DWARF_DEBUG_WEAKNAMES = ".debug_weaknames"; //$NON-NLS-1$
 	final static String DWARF_DEBUG_MACINFO = ".debug_macinfo"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_MACRO = ".debug_macro"; //$NON-NLS-1$
 	final static String[] DWARF_SCNNAMES =
 		{
 			DWARF_DEBUG_INFO,
@@ -62,6 +63,7 @@ public class Dwarf {
 			DWARF_DEBUG_TYPENAMES,
 			DWARF_DEBUG_VARNAMES,
 			DWARF_DEBUG_WEAKNAMES,
+            DWARF_DEBUG_MACRO,
 			DWARF_DEBUG_MACINFO };
 
 	class CompilationUnitHeader {
@@ -591,8 +593,34 @@ public class Dwarf {
 					int f = (int) read_unsigned_leb128(in);
 					return readAttribute(f, in, header);
 				}
+				
+			case DwarfConstants.DW_FORM_sec_offset :
+				// FIXME: we currently assume dwarf32 format, but we really
+				//        should be looking at the header length field to
+				//        determine whether this should be 4 or 8 bytes
+				obj = new Integer(read_4_bytes(in));
+			    break;
 
+			case DwarfConstants.DW_FORM_exprloc :
+			    {
+			    	int size = (int) read_unsigned_leb128(in);
+					byte[] bytes = new byte[size];
+					in.get(bytes);
+					obj = bytes;
+			    }
+			    break;
+			    
+			case DwarfConstants.DW_FORM_flag_present :
+				break;
+				
+			case DwarfConstants.DW_FORM_ref_sig8 :
+				{
+					obj = read_8_bytes(in);
+				}
+				break;
+				
 			default :
+//				System.out.println("Default for " + form); //$NON-NLS-1$
 				break;
 		}
 
@@ -750,6 +778,7 @@ public class Dwarf {
 
 					case DwarfConstants.DW_AT_name:
 						currentCU.name = (String)av.value;
+						System.out.println("currentCU.name is " + currentCU.name);
 						break;
 
 					case DwarfConstants.DW_AT_language:

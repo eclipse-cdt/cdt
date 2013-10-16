@@ -19,8 +19,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICompileOptionsFinder;
@@ -41,20 +39,16 @@ import org.eclipse.core.runtime.Path;
 public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptionsFinder {
 
 	// These are sections that need be parsed to get the source file list.
-	final static String[] DWARF_SectionsToParse =
-		{
-			DWARF_DEBUG_INFO,
-			DWARF_DEBUG_LINE,
-			DWARF_DEBUG_ABBREV,
-			DWARF_DEBUG_STR		// this is optional. Some compilers don't generate it.
-		};
+	final static String[] DWARF_SectionsToParse = { DWARF_DEBUG_INFO, DWARF_DEBUG_LINE,
+			DWARF_DEBUG_ABBREV, DWARF_DEBUG_STR, // this is optional. Some compilers don't generate it.
+			DWARF_DEBUG_MACRO, };
 
-	private final String[] patterns = { "GNU\\sC\\s+\\d+\\.\\d+\\.\\d+\\s+\\d+\\s+(\\(.*\\))?\\s+(-.*)", //$NON-NLS-1$
-	};
 	private final Collection<String>	m_fileCollection = new ArrayList<String>();
-	private final Map<String, String> m_producerStrings = new HashMap<String, String>();
+	private final Map<Long, String>  m_stmtFileMap = new HashMap<Long, String>();
+	private final Map<String, ArrayList<String>> m_compileOptionsMap = new HashMap<String, ArrayList<String>>();
 	private String[] 	m_fileNames = null;
 	private boolean		m_parsed = false;
+	private boolean		m_macros_parsed = false;
 	private final ArrayList<Integer>	m_parsedLineTableOffsets = new ArrayList<Integer>();
 	private int			m_parsedLineTableSize = 0;
 		
@@ -145,6 +139,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		ByteBuffer data = dwarfSections.get(DWARF_DEBUG_LINE);
 		if (data != null) {
 			try {
+				System.out.println("cuStmtList is " + cuStmtList);
 				data.position(cuStmtList);
 				
 				/* Read line table header:
@@ -368,6 +363,8 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	public String[] getSourceFiles() {
 		if (!m_parsed) {
 			m_fileCollection.clear();
+			m_stmtFileMap.clear();
+			m_compileOptionsMap.clear();
 
 			getSourceFilesFromDebugInfoSection();
 			
@@ -394,6 +391,12 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		parse(null);
 	}
 
+	private String addSourceFileWithStmt(String dir, String name, int stmt) {
+		String fullName = addSourceFile(dir, name);
+		m_stmtFileMap.put(Long.valueOf(stmt), fullName);
+		return fullName;
+	}
+	
 	private String addSourceFile(String dir, String name)
 	{
 		if (name == null || name.length() == 0)
@@ -461,10 +464,9 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	@Override
 	void processCompileUnit(IDebugEntryRequestor requestor, List<AttributeValue> list) {
 		
-		String cuName, cuCompDir, producerString;
+		String cuName, cuCompDir;
 		int		stmtList = -1;
 		
-		producerString = null;
 		cuName = cuCompDir = ""; //$NON-NLS-1$
 		
 		for (int i = 0; i < list.size(); i++) {
@@ -481,9 +483,6 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 				case DwarfConstants.DW_AT_stmt_list:
 					stmtList = ((Number) av.value).intValue();
 					break;
-				case DwarfConstants.DW_AT_producer:
-					producerString = (String) av.value;
-					break;
 				default:
 					break;
 				}
@@ -491,11 +490,9 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 			}
 		}
 
-		String fullName = addSourceFile(cuCompDir, cuName);
+		addSourceFileWithStmt(cuCompDir, cuName, stmtList);
 		if (stmtList > -1)	// this CU has "stmt_list" attribute
 			parseSourceInCULineInfo(cuCompDir, stmtList);
-		if (fullName != null && producerString != null)
-			m_producerStrings.put(fullName, producerString);
 	}
 	
 	/**
@@ -506,19 +503,318 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		return getSourceFiles();
 	}
 
-	@Override
-	public String getCompileOptions(String fileName) {
-		String producerString = m_producerStrings.get(fileName);
-		if (producerString != null) {
-			for (String pattern : patterns) {
-				Pattern p = Pattern.compile(pattern);
-				Matcher m = p.matcher(producerString);
-				if (m.matches()) {
-					return m.group(2);
+	private class OpcodeInfo {
+		private int numArgs;
+		private final boolean offset_size_8;
+		ArrayList<Integer> argTypes;
+		
+		public OpcodeInfo (boolean offset_size_8) {
+			this.offset_size_8 = offset_size_8;
+		}
+		
+		public void setNumArgs (int numArgs) {
+			this.numArgs = numArgs;
+		}
+		
+		public void addArgType(int argType) {
+			argTypes.add(Integer.valueOf(argType));
+		}
+		
+		public void readPastEntry(ByteBuffer data) {
+			for (int i = 0; i < numArgs; ++i) {
+				int argType = argTypes.get(i).intValue();
+				switch (argType) {
+				case DwarfConstants.DW_FORM_flag:
+				case DwarfConstants.DW_FORM_data1:
+					data.get();
+					break;
+				case DwarfConstants.DW_FORM_data2:
+					data.getShort();
+					break;
+				case DwarfConstants.DW_FORM_data4:
+					data.getInt();
+					break;
+				case DwarfConstants.DW_FORM_data8:
+					data.getLong();
+					break;
+				case DwarfConstants.DW_FORM_sdata:
+				case DwarfConstants.DW_FORM_udata:
+					try {
+						read_signed_leb128(data);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				case DwarfConstants.DW_FORM_block: {
+					try {
+						long off = read_signed_leb128(data);
+						data.position((int)(data.position() + off));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				break;
+				case DwarfConstants.DW_FORM_block1: {
+					int off = data.get();
+					data.position(data.position() + off + 1);
+				}
+				break;
+				case DwarfConstants.DW_FORM_block2: {
+					int off = data.getShort();
+					data.position(data.position() + off + 2);
+				}
+				break;
+				case DwarfConstants.DW_FORM_block4: {
+					int off = data.getInt();
+					data.position(data.position() + off + 4);
+				}
+				break;
+				case DwarfConstants.DW_FORM_string:
+					while (data.get() != 0) {
+						// loop until we find 0 byte
+					}
+					break;
+				case DwarfConstants.DW_FORM_strp:
+				case DwarfConstants.DW_FORM_sec_offset:
+					if (offset_size_8)
+						data.getLong();
+					else
+						data.getInt();
+					break;
 				}
 			}
 		}
-		return null;
+	}
+	
+	private String getCommandLineMacro(String macro) {
+		String commandLineMacro = "-D" + macro; //$NON-NLS-1$
+		commandLineMacro = commandLineMacro.replaceFirst(" ", "="); //$NON-NLS-1$ //$NON-NLS-2$
+		return commandLineMacro;
+	}
+
+	private void getCommandMacrosFromMacroSection() {
+		ByteBuffer data = dwarfSections.get(DWARF_DEBUG_MACRO);
+		ByteBuffer str = dwarfSections.get(DWARF_DEBUG_STR);
+		ArrayList<String> fixupList = new ArrayList<String>();
+		boolean DEBUG = false;
+		byte op;
+		if (data == null)
+			return;
+
+		HashMap <Long, ArrayList<String>> t_macros = new HashMap<Long, ArrayList<String>>();
+		
+		while (data.hasRemaining()) {
+			try {
+				int original_position = data.position();
+				int type = read_2_bytes(data);
+				byte flags = data.get();
+				boolean offset_size_8;
+				long lt_offset = -1;
+				String fileName = null;
+				
+				HashMap<Integer, OpcodeInfo> opcodeInfos = null;
+
+				if (DEBUG)
+					System.out.println("type is " + type); //$NON-NLS-1$
+
+				// bottom bit 0 tells us whether we have 8 byte offsets or 4 byte offsets
+				offset_size_8 = (flags & 0x1) == 1;
+				if (DEBUG)
+					System.out.println("offset size is " + (offset_size_8 ? 8 : 4)); //$NON-NLS-1$
+				// bit 1 indicates we have an offset from the start of .debug_line section
+				if ((flags & 0x2) != 0) {
+					lt_offset = (offset_size_8 ? read_8_bytes(data) : read_4_bytes(data));
+					fileName = m_stmtFileMap.get(Long.valueOf(lt_offset));
+					if (DEBUG)
+						System.out.println("debug line offset is " + lt_offset); //$NON-NLS-1$
+				}
+
+				// if bit 2 flag is on, then we have a macro entry table which may
+				// have non-standard entry types defined which we need to know when
+				// we come across macro entries later
+				if ((flags & 0x4) != 0) {
+					opcodeInfos = new HashMap<Integer, OpcodeInfo>();
+					int num_opcodes = data.get();
+					for (int i = 0; i < num_opcodes; ++i) {
+						OpcodeInfo info = new OpcodeInfo(offset_size_8);
+
+						int opcode = data.get();
+						long numArgs = read_unsigned_leb128(data);
+						info.setNumArgs((int)numArgs);
+						for (int j = 0; j < numArgs; ++j) {
+							int argType = data.get();
+							info.addArgType(argType);
+						}
+						opcodeInfos.put(Integer.valueOf(opcode), info);
+					}
+				}
+
+				ArrayList<String> macros = new ArrayList<String>();
+
+				boolean done = false;
+
+				while (!done) {
+					op = data.get();
+					switch (op) {
+
+					case DwarfConstants.DW_MACRO_start_file: {
+						long filenum;
+						long lineno;
+						lineno = read_signed_leb128(data);
+						filenum = read_signed_leb128(data);
+						// All command line macros are defined as being included before start of file
+						if (filenum == 1 && lt_offset >= 0) {
+							// we have a source file so add all macros defined before it with lineno 0
+							m_compileOptionsMap.put(fileName, macros);
+							if (DEBUG)
+								System.out.println("following macros found for file " + macros.toString()); //$NON-NLS-1$
+							macros = new ArrayList<String>();
+						}
+						if (fileName != null)
+							if (DEBUG)
+								System.out.println(" DW_MACRO_start_file - lineno: " + lineno + " filenum: " //$NON-NLS-1$ //$NON-NLS-2$
+										+ filenum + " " + fileName); //$NON-NLS-1$
+						else if (DEBUG)
+							System.out.println(" DW_MACRO_start_file - lineno: " + lineno + " filenum: " //$NON-NLS-1$ //$NON-NLS-2$
+									+ filenum);
+					}
+					break;
+					case DwarfConstants.DW_MACRO_end_file: {
+						if (DEBUG)
+							System.out.println(" DW_MACRO_end_file"); //$NON-NLS-1$
+					}
+					break;
+					case DwarfConstants.DW_MACRO_define: {
+						long lineno;
+						String string;
+						lineno = read_signed_leb128(data);
+						string = readString(data);
+						if (lineno == 0)
+							macros.add(getCommandLineMacro(string));
+						if (DEBUG)
+							System.out.println(" DW_MACRO_define - lineno : " + lineno + " macro : " //$NON-NLS-1$ //$NON-NLS-2$
+									+ string);
+					}
+					break;
+					case DwarfConstants.DW_MACRO_undef: {
+						long lineno;
+						String macro;
+						lineno = read_signed_leb128(data);
+						macro = readString(data);
+						if (DEBUG)
+							System.out.println(" DW_MACRO_undef - lineno : " + lineno + " macro : " //$NON-NLS-1$ //$NON-NLS-2$
+									+ macro);
+					}
+					break;
+					case DwarfConstants.DW_MACRO_define_indirect: {
+						long lineno;
+						long offset;
+						lineno = read_signed_leb128(data);
+						offset = (offset_size_8 ? read_8_bytes(data) : read_4_bytes(data));
+						str.position((int)offset);
+						String macro = readString(str);
+						if (lineno == 0)
+							macros.add(getCommandLineMacro(macro));
+						if (DEBUG)
+							System.out.println(" DW_MACRO_define_indirect - lineno : " + lineno + " macro : " //$NON-NLS-1$ //$NON-NLS-2$
+									+ macro);
+					}
+					break;
+					case DwarfConstants.DW_MACRO_undef_indirect: {
+						long lineno;
+						long offset;
+						String macro;
+						lineno = read_signed_leb128(data);
+						offset = (offset_size_8 ? read_8_bytes(data) : read_4_bytes(data));
+						str.position((int)offset);
+						macro = readString(str);
+						if (DEBUG)
+							System.out.println(" DW_MACRO_undef_indirect - lineno : " + lineno + " macro : " //$NON-NLS-1$ //$NON-NLS-2$
+									+ macro);
+					}
+					break;
+					case DwarfConstants.DW_MACRO_transparent_include: {
+						long offset;
+						offset = (offset_size_8 ? read_8_bytes(data) : read_4_bytes(data));
+						ArrayList<String> foundMacros = t_macros.get(Long.valueOf(offset));
+						if (foundMacros != null)
+							macros.addAll(foundMacros);
+						else if (lt_offset >= 0) {
+							macros.add("=FIXUP=" + offset); // leave a marker we can fix up later //$NON-NLS-1$
+							if (DEBUG)
+								System.out.println("Adding fixup for offset: " + offset + " for file: " + fileName); //$NON-NLS-1$ //$NON-NLS-2$
+							fixupList.add(fileName);
+						}
+							
+						if (DEBUG)
+							System.out.println(" DW_MACRO_transparent_include - offset : " + offset); //$NON-NLS-1$
+					}
+					break;
+					case DwarfConstants.DW_MACRO_end: {
+						if (lt_offset < 0) {
+							if (DEBUG)
+								System.out.println("creating transparent include macros for offset: " + original_position); //$NON-NLS-1$
+							t_macros.put(Long.valueOf(original_position), macros);
+						}
+						done = true;
+					}
+					break;
+					default: {
+						if (opcodeInfos != null) {
+							OpcodeInfo info = opcodeInfos.get(op);
+							info.readPastEntry(data);
+						}
+					}
+					break;
+					}
+				}
+			}  catch (IOException e) {
+				// do nothing
+			}
+		}
+
+		// Fix up all forward references from transparent includes
+		for (String name: fixupList) {
+			ArrayList<String> macros = m_compileOptionsMap.get(name);
+			for (int i = 0; i < macros.size(); ++i) {
+				String macroLine = macros.get(i);
+				if (macroLine.startsWith("=FIXUP=")) { //$NON-NLS-1$
+					Long offset = Long.valueOf(macroLine.substring(7));
+					if (DEBUG)
+						System.out.println("Found fixup needed for offset: " + offset + " for file: " + name); //$NON-NLS-1$ //$NON-NLS-2$
+					ArrayList<String> insertMacros = t_macros.get(offset);
+					if (DEBUG)
+						System.out.println("insert macros are: " + insertMacros.toString()); //$NON-NLS-1$
+					macros.remove(i);
+					macros.addAll(i, insertMacros);
+					i += insertMacros.size();
+				}
+			}
+			m_compileOptionsMap.put(name,  macros); // replace updated list
+		}
+
+	}
+
+	@Override
+	public String getCompileOptions(String fileName) {
+		if (!m_macros_parsed) {
+			getSourceFiles();
+			getCommandMacrosFromMacroSection();
+			m_macros_parsed = true;
+		}
+		ArrayList<String>macros = m_compileOptionsMap.get(fileName);
+		if (macros == null)
+			return ""; //$NON-NLS-1$
+		
+		StringBuffer sb = new StringBuffer();
+		for (String option: macros) {
+			sb.append(option);
+			sb.append(" "); //$NON-NLS-1$
+		}
+//		System.out.println("macros for " + fileName + " are " + sb.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+		return sb.toString();
 	}
 
 }

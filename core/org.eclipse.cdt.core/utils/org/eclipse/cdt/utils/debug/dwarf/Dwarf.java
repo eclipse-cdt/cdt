@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
+import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.debug.DebugUnknownType;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.debug.tools.DebugSym;
@@ -592,7 +592,38 @@ public class Dwarf {
 					return readAttribute(f, in, header);
 				}
 
-			default :
+			case DwarfConstants.DW_FORM_sec_offset :
+				// FIXME: we currently assume dwarf32 format, but we really
+				//        should be looking at the header length field to
+				//        determine whether this should be 4 or 8 bytes
+				{
+					int offset = read_4_bytes(in);
+					if (offset < 0) // we currently can't handle a 4-byte unsigned value with top-bit on
+						throw new IOException(CCorePlugin.getResourceString("Util.exception.invalidUnsignedValue")); //$NON-NLS-1$
+					obj = new Integer(offset);
+				}
+				break;
+
+			case DwarfConstants.DW_FORM_exprloc :
+				{
+					int size = (int) read_unsigned_leb128(in);
+					byte[] bytes = new byte[size];
+					in.get(bytes);
+					obj = bytes;
+				}
+				break;
+
+			case DwarfConstants.DW_FORM_flag_present :
+				obj = Byte.valueOf((byte)1);
+				break;
+
+			case DwarfConstants.DW_FORM_ref_sig8 :
+				{
+					obj = read_8_bytes(in);
+				}
+				break;
+
+			default:
 				break;
 		}
 

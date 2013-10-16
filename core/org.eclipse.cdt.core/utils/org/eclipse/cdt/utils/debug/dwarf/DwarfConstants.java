@@ -189,10 +189,10 @@ public class DwarfConstants {
 	public final static int DW_FORM_indirect = 0x16;
 	
 	/* DWARF4 form encodings. */
-    public final static int DW_FORM_sec_offset = 0x17;
-    public final static int DW_FORM_exprloc = 0x18;
-    public final static int DW_FORM_flag_present = 0x19;
-    public final static int DW_FORM_ref_sig8 = 0x20;
+	public final static int DW_FORM_sec_offset = 0x17;
+	public final static int DW_FORM_exprloc = 0x18;
+	public final static int DW_FORM_flag_present = 0x19;
+	public final static int DW_FORM_ref_sig8 = 0x20;
 
 
 	/* DWARF location operation encodings. */

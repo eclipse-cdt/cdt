@@ -63,7 +63,7 @@ public class Dwarf {
 			DWARF_DEBUG_TYPENAMES,
 			DWARF_DEBUG_VARNAMES,
 			DWARF_DEBUG_WEAKNAMES,
-            DWARF_DEBUG_MACRO,
+			DWARF_DEBUG_MACRO,
 			DWARF_DEBUG_MACINFO };
 
 	class CompilationUnitHeader {
@@ -778,7 +778,6 @@ public class Dwarf {
 
 					case DwarfConstants.DW_AT_name:
 						currentCU.name = (String)av.value;
-						System.out.println("currentCU.name is " + currentCU.name);
 						break;
 
 					case DwarfConstants.DW_AT_language:

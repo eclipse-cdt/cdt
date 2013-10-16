@@ -13,6 +13,7 @@ package org.eclipse.cdt.utils.debug.dwarf;
 
 /**
  * DWARF constant.
+ * @since 5.6
  */
 public class DwarfConstants {
 
@@ -188,7 +189,25 @@ public class DwarfConstants {
 	public final static int DW_FORM_ref_udata = 0x15;
 	public final static int DW_FORM_indirect = 0x16;
 
-	/* DWARF location operation encodings. */
+	/* DWARF4 form encodings. */
+	/**
+	 * @since 5.6
+	 */
+	public final static int DW_FORM_sec_offset = 0x17;
+	/**
+	 * @since 5.6
+	 */
+	public final static int DW_FORM_exprloc = 0x18;
+	/**
+	 * @since 5.6
+	 */
+	public final static int DW_FORM_flag_present = 0x19;
+	/**
+	 * @since 5.6
+	 */
+	public final static int DW_FORM_ref_sig8 = 0x20;
+
+    /* DWARF location operation encodings. */
 	public final static int DW_OP_addr = 0x03; /* Constant address. */
 	public final static int DW_OP_deref = 0x06;
 	public final static int DW_OP_const1u = 0x08; /* Unsigned 1-byte constant. */

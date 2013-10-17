@@ -51,6 +51,24 @@
       "revId": "4820895021cea1474fb5242343508d3b90c48731",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_8f2edc43",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 825,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2013-10-17T19:01:42Z",
+      "side": 1,
+      "message": "Fair enough. Our subclass of MIExpression is yucky anyway for other reasons.",
+      "parentUuid": "8748d3a1_6f7d508d",
+      "revId": "4820895021cea1474fb5242343508d3b90c48731",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

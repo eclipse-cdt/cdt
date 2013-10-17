@@ -675,6 +675,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		populateSourcesMakefile(srcsFileHandle);
 		checkCancel();
 
+		IPath objsFilePath = topBuildDir.append(OBJECTS_MAKFILE);
+		IFile objsFileHandle = createFile(objsFilePath);
+		populateObjectsMakefile(objsFileHandle);
+		checkCancel();
+
 		// Regenerate any fragments that are missing for the exisiting directories NOT modified
 		for (IResource res : getSubdirList()) {
 			IContainer subdirectory = (IContainer)res;

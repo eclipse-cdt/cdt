@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_4f897431",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-10-17T18:26:08Z",
+      "side": 1,
+      "message": "This should remain protected.  Those classes should not be instantiated directly by someone not extending the class.",
+      "revId": "4820895021cea1474fb5242343508d3b90c48731",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_6f7d508d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 825,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-10-17T18:26:08Z",
+      "side": 1,
+      "message": "This should remain private.  It can be easily obtained by any class using :\n  getServicesTracker().getService(IMICommandControl.class).getCommandFactory();",
+      "revId": "4820895021cea1474fb5242343508d3b90c48731",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

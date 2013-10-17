@@ -257,8 +257,10 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	
     /**
      * This class represents an expression.
+     * @noextend This class is not intended to be subclassed by clients.
+     * @since 4.3
      */
-    protected static class MIExpressionDMC extends AbstractDMContext implements IExpressionDMContext {
+    public static class MIExpressionDMC extends AbstractDMContext implements IExpressionDMContext {
         /**
          * This field holds an expression to be evaluated.
          */
@@ -337,9 +339,9 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
         }
 
         /**
-		 * @since 4.0
+		 * @since 4.3
 		 */
-        private MIExpressionDMC(String sessionId, ExpressionInfo info, IDMContext parent) {
+        public MIExpressionDMC(String sessionId, ExpressionInfo info, IDMContext parent) {
             super(sessionId, new IDMContext[] { parent });
             exprInfo = info;
         }
@@ -813,10 +815,14 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
         }
     }
 
-	private CommandCache fExpressionCache;
-	private MIVariableManager varManager;
+	/**
+	 * @since 4.3
+	 */
+	protected CommandCache fExpressionCache;
+
 	private CommandFactory fCommandFactory;
-	
+	private MIVariableManager varManager;
+
 	/** 
 	 * Indicates that we are currently visualizing trace data.
 	 * In this case, some errors should not be reported.

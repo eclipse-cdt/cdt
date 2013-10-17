@@ -52,7 +52,7 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 	/**
 	 * Constructor
 	 */
-	GdbMemoryBlock(DsfMemoryBlockRetrieval retrieval, IMemoryDMContext context,
+	public GdbMemoryBlock(DsfMemoryBlockRetrieval retrieval, IMemoryDMContext context,
 			String modelId, String expression, BigInteger address,
 			int word_size, long length, String memorySpaceID) {
 		super(retrieval, context, modelId, expression, address, word_size, length);

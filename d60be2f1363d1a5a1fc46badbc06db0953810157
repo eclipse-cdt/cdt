@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_d48359a4",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/Dwarf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-10-17T17:19:06Z",
+      "side": 1,
+      "message": "Agreed regarding the exception.  I have created an exception when an unsigned value is treated as negative (so it can be used elsewhere for 8-byte values as well).  To do it properly, does require an overhaul and the 8-byte situation is more difficult.",
+      "parentUuid": "8748d3a1_668f4488",
+      "revId": "d60be2f1363d1a5a1fc46badbc06db0953810157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_26aedcf1",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/Dwarf.java",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_f459350a",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/Dwarf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-10-17T17:19:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_26aedcf1",
+      "revId": "d60be2f1363d1a5a1fc46badbc06db0953810157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_469208ac",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfConstants.java",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2013-10-17T03:44:37Z",
       "side": 1,
       "message": "I\u0027m getting API error for missing @since tags on those. Can you double check your baseline?",
+      "revId": "d60be2f1363d1a5a1fc46badbc06db0953810157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_b47e8d1e",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-10-17T17:19:06Z",
+      "side": 1,
+      "message": "I hadn\u0027t set one up.  I have fixed them to all be since 5.6.",
+      "parentUuid": "8748d3a1_469208ac",
       "revId": "d60be2f1363d1a5a1fc46badbc06db0953810157",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

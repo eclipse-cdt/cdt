@@ -452,9 +452,9 @@ public class MIVariableManager implements ICommandControl {
 		public MIDisplayHint getDisplayHint() { return displayHint; };
 		
 		/**
-		 * @since 4.0
+		 * @since 4.3
 		 */
-		protected void setDisplayHint(MIDisplayHint displayHint) {
+		public void setDisplayHint(MIDisplayHint displayHint) {
 			this.displayHint = displayHint;
 		};
 		
@@ -700,7 +700,7 @@ public class MIVariableManager implements ICommandControl {
 		 * 
 		 * @since 4.1
 		 */
-        private void cleanupChild(ExpressionInfo child) {
+        public void cleanupChild(ExpressionInfo child) {
 			String childFullExpression = child.getFullExpr();
 			VariableObjectId childId = new VariableObjectId();
 			childId.generateId(childFullExpression, getInternalId());
@@ -1068,8 +1068,9 @@ public class MIVariableManager implements ICommandControl {
 		 *            The context containing the format to be used for the evaluation
 		 * @param rm
 		 *            The data request monitor that will hold the value returned
+		 * @since 4.4
 		 */
-		private void getValue(final FormattedValueDMContext dmc,
+		protected void getValue(final FormattedValueDMContext dmc,
 				              final DataRequestMonitor<FormattedValueDMData> rm) {
 
 			// We might already know the value
@@ -1301,7 +1302,7 @@ public class MIVariableManager implements ICommandControl {
 		 *            The data request monitor that will hold the children
 		 *            returned
 		 */
-		private void fetchChildren(final MIExpressionDMC exprDmc,
+		protected void fetchChildren(final MIExpressionDMC exprDmc,
 				int clientNumChildrenLimit, final DataRequestMonitor<ChildrenInfo> rm) {
 			
 			final int newNumChildrenLimit = clientNumChildrenLimit != IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED ?
@@ -1818,8 +1819,9 @@ public class MIVariableManager implements ICommandControl {
 		 * @param rm
 		 *            The data request monitor that will hold the count of
 		 *            children returned
+		 * @since 4.4
 		 */
-		private void getChildrenCount(MIExpressionDMC exprDmc, final int numChildrenLimit,
+		protected void getChildrenCount(MIExpressionDMC exprDmc, final int numChildrenLimit,
 				final DataRequestMonitor<ChildrenCountInfo> rm) {
 			if (isNumChildrenHintTrustworthy()){
 				rm.setData(new ChildrenCountInfo(getNumChildrenHint(), hasMore()));

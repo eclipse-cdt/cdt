@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_668f4488",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/Dwarf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-10-17T03:44:37Z",
+      "side": 1,
+      "message": "The spec says this is unsigned. But looking at where it gets used afterwards, it looks like it would be a much bigger change to use longs (because of ByteBuffer, etc). It might not be worth doing now. Maybe it could be useful to throw an exception here to catch the problem early if it\u0027s negative?",
+      "revId": "d60be2f1363d1a5a1fc46badbc06db0953810157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_26aedcf1",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/Dwarf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-10-17T03:44:37Z",
+      "side": 1,
+      "message": "Trailing white space. I wouldn\u0027t mention it but might as well fix it at the same time as fixing the API errors.",
+      "revId": "d60be2f1363d1a5a1fc46badbc06db0953810157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_469208ac",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-10-17T03:44:37Z",
+      "side": 1,
+      "message": "I\u0027m getting API error for missing @since tags on those. Can you double check your baseline?",
+      "revId": "d60be2f1363d1a5a1fc46badbc06db0953810157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

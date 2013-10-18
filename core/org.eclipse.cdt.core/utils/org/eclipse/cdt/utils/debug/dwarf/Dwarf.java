@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Salvatore Culcasi - Bug 322475
+ *     Serge Beauchamp - Bug 409916
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.debug.dwarf;
@@ -21,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
+import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.debug.DebugUnknownType;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.debug.tools.DebugSym;
@@ -65,10 +66,11 @@ public class Dwarf {
 			DWARF_DEBUG_MACINFO };
 
 	class CompilationUnitHeader {
-		int length;
+		long length;
 		short version;
 		int abbreviationOffset;
 		byte addressSize;
+		byte offsetSize;
 		@Override
 		public String toString() {
 			StringBuffer sb = new StringBuffer();
@@ -76,6 +78,7 @@ public class Dwarf {
 			sb.append("Version: " + version).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			sb.append("Abbreviation: " + abbreviationOffset).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			sb.append("Address size: " + addressSize).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append("Offset size: " + offsetSize).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			return sb.toString();
 		}
 	}
@@ -369,7 +372,17 @@ public class Dwarf {
 			try {
 				while (data.hasRemaining()) {
 					CompilationUnitHeader header = new CompilationUnitHeader();
-					header.length = read_4_bytes(data);
+					header.length = read_4_bytes(data) & 0xffffffffL;
+
+					if (header.length == 0xffffffffL) {
+						header.length = read_8_bytes(data);
+						header.offsetSize = 8;
+					} else if (header.length == 0) { // IRIX
+						header.length = read_8_bytes(data);
+						header.offsetSize = 8;
+					} else
+						header.offsetSize = 4;
+
 					header.version = read_2_bytes(data);
 					header.abbreviationOffset = read_4_bytes(data);
 					header.addressSize = data.get();
@@ -383,10 +396,10 @@ public class Dwarf {
 					Map<Long, AbbreviationEntry> abbrevs = parseDebugAbbreviation(header);
 					// Note "length+4" is the total size in bytes of the CU data.
 					ByteBuffer entryBuffer = data.slice();
-					entryBuffer.limit(header.length + 4 - 11);
+					entryBuffer.limit(((int) header.length) + 4 - 11);
 					parseDebugInfoEntry(requestor, entryBuffer, abbrevs, header);
 
-					data.position(data.position() + header.length + 4 - 11);
+					data.position(data.position() + ((int)  header.length) + 4 - 11);
 					
 					if (printEnabled)
 						System.out.println();
@@ -461,8 +474,10 @@ public class Dwarf {
 		Object obj = null;
 		switch (form) {
 			case DwarfConstants.DW_FORM_addr :
+				obj = readAddress(in, header, false);
+				break;
 			case DwarfConstants.DW_FORM_ref_addr :
-				obj = readAddress(in, header);
+				obj = readAddress(in, header, true);
 				break;
 
 			case DwarfConstants.DW_FORM_block :
@@ -545,7 +560,12 @@ public class Dwarf {
 
 			case DwarfConstants.DW_FORM_strp :
 				{
-					int offset = read_4_bytes(in);
+					long offset;
+					if (header.offsetSize == 8)
+						offset = read_8_bytes(in);
+					else
+						offset = read_4_bytes(in) & 0xffffffffL;
+
 					ByteBuffer data = dwarfSections.get(DWARF_DEBUG_STR);
 					if (data == null) {
 						obj = new String();
@@ -553,7 +573,7 @@ public class Dwarf {
 						obj = new String();
 					} else {
 						StringBuffer sb = new StringBuffer();
-						data.position(offset);
+						data.position((int) offset);
 						while (data.hasRemaining()) {
 							byte c = data.get();
 							if (c == 0) {
@@ -591,6 +611,25 @@ public class Dwarf {
 					int f = (int) read_unsigned_leb128(in);
 					return readAttribute(f, in, header);
 				}
+			case DwarfConstants.DW_FORM_sec_offset :
+					if (header.offsetSize == 8)
+						obj = new Long(read_8_bytes(in));
+					else
+						obj = new Long(read_4_bytes(in)  & 0xffffffffL);
+					break;
+			case DwarfConstants.DW_FORM_exprloc :
+					long size = read_unsigned_leb128(in);
+					byte[] bytes = new byte[(int) size];
+					in.get(bytes);
+					obj = bytes;
+					break;
+			case DwarfConstants.DW_FORM_flag_present :
+					// 0 byte value
+					obj = Byte.valueOf((byte)1);
+					break;
+			case DwarfConstants.DW_FORM_ref_sig8 :
+					obj = new Long(read_8_bytes(in));
+					break;
 
 			default :
 				break;
@@ -677,10 +716,15 @@ public class Dwarf {
 		}
 	}
 
-	Long readAddress(ByteBuffer in, CompilationUnitHeader header) throws IOException {
+	Long readAddress(ByteBuffer in, CompilationUnitHeader header, boolean reference) throws IOException {
 		long value = 0;
 
-		switch (header.addressSize) {
+		int size;
+		if (reference)
+			size = (header.version < 3) ? header.addressSize:header.offsetSize;
+		else
+			size = header.addressSize;
+		switch (size) {
 			case 2 :
 				value = read_2_bytes(in);
 				break;

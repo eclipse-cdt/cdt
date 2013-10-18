@@ -16,6 +16,24 @@
       "revId": "e26d6f88a46602dba5b7559ac6201e03a4281720",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_c17f0bd2",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfConstants.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-10-18T17:49:28Z",
+      "side": 1,
+      "message": "I didn\u0027t do this manually.  Java did when it complained about the ones below and I hit a quick fix.  I have removed it and it doesn\u0027t complain.  So done.",
+      "parentUuid": "8748d3a1_6c82790d",
+      "revId": "e26d6f88a46602dba5b7559ac6201e03a4281720",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

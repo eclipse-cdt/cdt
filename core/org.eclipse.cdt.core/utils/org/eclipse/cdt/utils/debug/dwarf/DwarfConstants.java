@@ -188,8 +188,6 @@ public class DwarfConstants {
 	public final static int DW_FORM_ref8 = 0x14;
 	public final static int DW_FORM_ref_udata = 0x15;
 	public final static int DW_FORM_indirect = 0x16;
-	
-	/* DWARF4 form encodings. */
 	/**
 	 * @since 5.6
 	 */
@@ -206,7 +204,6 @@ public class DwarfConstants {
 	 * @since 5.6
 	 */
 	public final static int DW_FORM_ref_sig8 = 0x20;
-
 
 	/* DWARF location operation encodings. */
 	public final static int DW_OP_addr = 0x03; /* Constant address. */

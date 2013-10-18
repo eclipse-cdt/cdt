@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_010e1373",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-10-18T16:33:57Z",
+      "side": 1,
+      "message": "I think we should leave protected and instead change the signature of fetchChildren to use IExpresionDMContext instead of MIExpressionDMC, and then cast to MIExpressionDMC within the method.",
+      "revId": "7a54c4406bb8311910127004fd91f4e8038c2f97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_e110478c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 823,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-10-18T16:33:57Z",
+      "side": 1,
+      "message": "No one likes it when I request this pattern of fetching the service explicitely :)  However, it reduces the amount of API (we may later change fCommandFactory since we are keeping it private).",
+      "revId": "7a54c4406bb8311910127004fd91f4e8038c2f97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_41f77bc6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1306,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-10-18T16:33:57Z",
+      "side": 1,
+      "message": "Before making protected, change signature to use IExpressionDMContext instead, which is public",
+      "revId": "7a54c4406bb8311910127004fd91f4e8038c2f97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

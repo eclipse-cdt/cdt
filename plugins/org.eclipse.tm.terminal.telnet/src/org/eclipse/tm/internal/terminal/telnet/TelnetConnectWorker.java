@@ -93,8 +93,11 @@ class TelnetConnectWorker extends Thread {
 				connectFailed(socketTimeoutException.getMessage(), "Connection Error!\n" + socketTimeoutException.getMessage()); //$NON-NLS-1$
 			} catch (ConnectException connectException) {
 				// In case of a ConnectException, do a re-try. The server could have been
-				// simply not ready yet and the worker would give up to early.
-				if (remaining == 0) connectFailed(connectException.getMessage(),"Connection refused!"); //$NON-NLS-1$
+				// simply not ready yet and the worker would give up to early. If the terminal
+				// control is already closed (disconnected), don't print "Connection refused" errors
+				if (remaining == 0 && TerminalState.CLOSED != fControl.getState()) {
+					connectFailed(connectException.getMessage(),"Connection refused!"); //$NON-NLS-1$
+				}
 			} catch (Exception exception) {
 				// Any other exception on connect. No re-try in this case either
 				remaining = 0;

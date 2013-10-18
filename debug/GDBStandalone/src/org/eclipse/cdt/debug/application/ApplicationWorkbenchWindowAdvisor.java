@@ -60,6 +60,7 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	private static final String GCC_BUILTIN_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"; //$NON-NLS-1$
+	private static final String GCC_COMPILE_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.debug.application.DwarfLanguageSettingsProvider"; //$NON-NLS-1$
 	private ILaunchConfiguration config;
 
     public ApplicationWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
@@ -89,6 +90,94 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		}
 
 	}
+	
+	private class CompilerOptionParser extends Job {
+		
+		private final IProject project;
+		private final ICProjectDescriptionManager projDescManager;
+		private final ILanguageSettingsProvider provider;
+		private final String executable;
+		
+		public CompilerOptionParser (String label, IProject project, ILanguageSettingsProvider provider, 
+				String executable, ICProjectDescriptionManager projDescManager) {
+			super(label);
+			this.project = project;
+			this.projDescManager = projDescManager;
+			this.provider = provider;
+			this.executable = executable;
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			IWorkingDirectoryTracker cwdTracker = new CWDTracker();
+			try {
+				ICProjectDescription projDesc = projDescManager
+						.getProjectDescription(project,
+								false);
+				ICConfigurationDescription ccdesc = projDesc
+						.getActiveConfiguration();
+				GCCCompileOptionsParser parser = null;
+				if (ccdesc instanceof ILanguageSettingsProvidersKeeper) {
+					ILanguageSettingsProvidersKeeper keeper = (ILanguageSettingsProvidersKeeper)ccdesc;
+					List<ILanguageSettingsProvider> list = keeper.getLanguageSettingProviders();
+					for (ILanguageSettingsProvider p : list) {
+						System.out.println("language settings provider " + p.getId());
+						if (p.getId().equals(GCC_COMPILE_OPTIONS_PROVIDER_ID))
+							parser = (GCCCompileOptionsParser)p;
+					}
+				}
+//				ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
+//				GCCCompileOptionsParser parser = (GCCCompileOptionsParser)rawProvider;
+				parser.startup(ccdesc, cwdTracker);
+				GNUElfParser binParser = new GNUElfParser();
+				IBinaryFile bf = binParser
+						.getBinary(new Path(executable));
+				ISymbolReader reader = (ISymbolReader)bf.getAdapter(ISymbolReader.class);
+				String[] sourceFiles = reader
+						.getSourceFiles();
+				for (String sourceFile : sourceFiles) {
+					IPath sourceFilePath = new Path(
+							sourceFile);
+					String sourceName = sourceFilePath
+							.lastSegment();
+					IContainer c = createFromRoot(project,
+							new Path(sourceFile));
+					Path sourceNamePath = new Path(
+							sourceName);
+					IFile source = c
+							.getFile(sourceNamePath);
+					source.createLink(sourceFilePath, 0,
+							null);
+				}
+				if (reader instanceof ICompileOptionsFinder) {
+					((ICompileOptionsFinder) reader)
+							.getCompileOptions(sourceFiles[0]);
+				}
+				if (reader instanceof
+						ICompileOptionsFinder) {
+					ICompileOptionsFinder f =
+							(ICompileOptionsFinder) reader;
+					for (String fileName : sourceFiles) {
+						parser.setCurrentResourceName(fileName);
+						String cmdline = f.getCompileOptions(fileName);
+						System.out.println("Command line is " + cmdline);
+						parser.processLine(f
+								.getCompileOptions(fileName));
+					}
+					parser.shutdown();
+				}
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			return Status.OK_STATUS;
+		}
+
+	};
+
 	@Override
 	public void postWindowOpen() {
 		super.postWindowOpen();
@@ -121,7 +210,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		try {
 			importJob.join();
 			if (importJob.getResult() == Status.OK_STATUS) {
-//				 See if the default project exists
+				//				 See if the default project exists
 				String defaultProjectName = "Executables"; //$NON-NLS-1$
 				ICProject cProject = CoreModel.getDefault().getCModel()
 						.getCProject(defaultProjectName);
@@ -150,74 +239,32 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						langProviderIds = Arrays.copyOf(langProviderIds,
 								langProviderIds.length + 1);
 						langProviderIds[langProviderIds.length - 1] = GCC_BUILTIN_PROVIDER_ID;
-						List<ILanguageSettingsProvider> providers = LanguageSettingsManager
-								.createLanguageSettingsProviders(langProviderIds);
-						final GCCCompileOptionsParser parser = new GCCCompileOptionsParser();
-						Job parseJob = new Job(Messages.GetCompilerOptions) {
-
-							@Override
-							protected IStatus run(IProgressMonitor monitor) {
-								IWorkingDirectoryTracker cwdTracker = new CWDTracker();
-								try {
-									ICProjectDescription projDesc = projDescManager
-											.getProjectDescription(project,
-													false);
-									ICConfigurationDescription ccdesc = projDesc
-											.getActiveConfiguration();
-									parser.startup(ccdesc, cwdTracker);
-									GNUElfParser binParser = new GNUElfParser();
-									IBinaryFile bf = binParser
-											.getBinary(new Path(fileNames[0]));
-									ISymbolReader reader = (ISymbolReader)bf.getAdapter(ISymbolReader.class);
-									String[] sourceFiles = reader
-											.getSourceFiles();
-									for (String sourceFile : sourceFiles) {
-										IPath sourceFilePath = new Path(
-												sourceFile);
-										String sourceName = sourceFilePath
-												.lastSegment();
-										IContainer c = createFromRoot(project,
-												new Path(sourceFile));
-										Path sourceNamePath = new Path(
-												sourceName);
-										IFile source = c
-												.getFile(sourceNamePath);
-										source.createLink(sourceFilePath, 0,
-												null);
-									}
-									if (reader instanceof ICompileOptionsFinder) {
-										((ICompileOptionsFinder) reader)
-												.getCompileOptions(sourceFiles[0]);
-									}
-									if (reader instanceof
-											ICompileOptionsFinder) {
-										ICompileOptionsFinder f =
-												(ICompileOptionsFinder) reader;
-										for (String fileName : sourceFiles) {
-											parser.setCurrentResourceName(fileName);
-											parser.processLine(f
-													.getCompileOptions(fileName));
-										}
-										parser.shutdown();
-									}
-								} catch (CoreException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								} catch (IOException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-								return Status.OK_STATUS;
-							}
-
-						};
-						parseJob.schedule();
-						providers.add(parser);
-						((ILanguageSettingsProvidersKeeper) ccd)
-								.setLanguageSettingProviders(providers);
-						projDescManager.setProjectDescription(project,
-								projectDescription);
 					}
+					found = false;
+					for (int i = 0; i < langProviderIds.length; ++i) {
+						if (langProviderIds[i].equals(GCC_COMPILE_OPTIONS_PROVIDER_ID)) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						langProviderIds = Arrays.copyOf(langProviderIds,
+								langProviderIds.length + 1);
+						langProviderIds[langProviderIds.length - 1] = GCC_COMPILE_OPTIONS_PROVIDER_ID;
+					}
+					List<ILanguageSettingsProvider> providers = LanguageSettingsManager
+							.createLanguageSettingsProviders(langProviderIds);
+					ILanguageSettingsProvider parser = LanguageSettingsManager.getWorkspaceProvider(GCC_COMPILE_OPTIONS_PROVIDER_ID);					
+					Job parseJob = new CompilerOptionParser(Messages.GetCompilerOptions, project, parser, 
+							executable, projDescManager);
+
+					((ILanguageSettingsProvidersKeeper) ccd)
+					.setDefaultLanguageSettingsProvidersIds(langProviderIds);
+					((ILanguageSettingsProvidersKeeper) ccd)
+					.setLanguageSettingProviders(providers);
+					projDescManager.setProjectDescription(project,
+							projectDescription);
+					parseJob.schedule();
 				}
 				config = createConfiguration(executable, arguments, true);
 				DebugUITools.launch(config, ILaunchManager.DEBUG_MODE);

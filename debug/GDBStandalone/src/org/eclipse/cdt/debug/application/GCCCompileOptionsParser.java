@@ -28,5 +28,15 @@ public class GCCCompileOptionsParser extends GCCBuildCommandParser {
 	protected String parseResourceName(String line) {
 		return getCurrentResourceName();
 	}
+	
+	@Override
+	public GCCCompileOptionsParser cloneShallow() throws CloneNotSupportedException {
+		return (GCCCompileOptionsParser) super.cloneShallow();
+	}
+
+	@Override
+	public GCCCompileOptionsParser clone() throws CloneNotSupportedException {
+		return (GCCCompileOptionsParser) super.clone();
+	}
 
 }

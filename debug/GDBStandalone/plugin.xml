@@ -16,7 +16,8 @@
       <provider
             class="org.eclipse.cdt.debug.application.GCCCompileOptionsParser"
             id="org.eclipse.cdt.debug.application.DwarfLanguageSettingsProvider"
-            name="%DwarfSettingEntries.name">
+            name="%DwarfSettingEntries.name"
+            prefer-non-shared="true">
       </provider>
    </extension>
    <extension

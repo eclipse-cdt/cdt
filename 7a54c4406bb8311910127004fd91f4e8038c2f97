@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_dcbecefb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2013-10-18T18:02:13Z",
+      "side": 1,
+      "message": "We need to be able to get at the ExpressionInfo object in this DMC from our subclass. Recommendations on how we can do that?",
+      "parentUuid": "8748d3a1_010e1373",
+      "revId": "7a54c4406bb8311910127004fd91f4e8038c2f97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_e110478c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
         "patchSetId": 4

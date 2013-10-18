@@ -48,12 +48,12 @@ import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
  */
 public class CSearchResult extends AbstractTextSearchResult implements IEditorMatchAdapter, IFileMatchAdapter {
 	private static final String KEY_SHOW_POLYMORPHIC_CALLS = "ShowPolymorphicCalls"; //$NON-NLS-1$
-	final static MatchFilter[] ALL_FILTERS = new MatchFilter[] {HidePolymorphicCalls.FILTER};
+	final static MatchFilter[] ALL_FILTERS = new MatchFilter[] { HidePolymorphicCalls.FILTER };
 	final static MatchFilter[] NO_FILTERS = {};
 
 	private CSearchQuery query;
 	private boolean indexerBusy;
-	
+
 	public CSearchResult(CSearchQuery query) {
 		super();
 		this.query = query;
@@ -73,48 +73,48 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 		final IEditorInput input= editor.getEditorInput();
 		IPath path= null;
 		if (input instanceof FileEditorInput) {
-			final FileEditorInput fileInput = (FileEditorInput)input;
+			final FileEditorInput fileInput = (FileEditorInput) input;
 			path= fileInput.getFile().getLocation();
 		} else if (input instanceof ExternalEditorInput) {
-			final ExternalEditorInput extInput = (ExternalEditorInput)input;
+			final ExternalEditorInput extInput = (ExternalEditorInput) input;
 			path= extInput.getPath();
 		} else if (input instanceof IStorageEditorInput) {
 			try {
-				final IStorage storage= ((IStorageEditorInput)input).getStorage();
+				final IStorage storage= ((IStorageEditorInput) input).getStorage();
 				path= storage.getFullPath();
-			} catch (CoreException exc) {
-				// ignore
+			} catch (CoreException e) {
+				CUIPlugin.log(e);
 			}
 		} else if (input instanceof IPathEditorInput) {
-			path= ((IPathEditorInput)input).getPath();
+			path= ((IPathEditorInput) input).getPath();
 		} else {
 			ILocationProvider provider= (ILocationProvider) input.getAdapter(ILocationProvider.class);
 			if (provider != null) {
 				path= provider.getPath(input);
 			}
-		}		
+		}
 		if (path != null)
 			return path.toOSString();
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
 		final String fileName= getFileName(editor);
 		if (fileName != null && match instanceof CSearchMatch) {
 			final IPath filePath= new Path(fileName);
-			return filePath.equals(IndexLocationFactory.getAbsolutePath(((CSearchMatch)match).getLocation()));
+			return filePath.equals(IndexLocationFactory.getAbsolutePath(((CSearchMatch) match).getLocation()));
 		}
 		return false;
 	}
-	
+
 	private Match[] computeContainedMatches(AbstractTextSearchResult result, String filename) throws CoreException {
 		IPath pfilename= new Path(filename);
-		List<Match> list = new ArrayList<Match>(); 
+		List<Match> list = new ArrayList<Match>();
 		Object[] elements = result.getElements();
 		for (int i = 0; i < elements.length; ++i) {
-			if (pfilename.equals(IndexLocationFactory.getAbsolutePath(((CSearchElement)elements[i]).getLocation()))) {
+			if (pfilename.equals(IndexLocationFactory.getAbsolutePath(((CSearchElement) elements[i]).getLocation()))) {
 				Match[] matches = result.getMatches(elements[i]);
 				for (int j = 0; j < matches.length; ++j) {
 					if (matches[j] instanceof CSearchMatch) {
@@ -125,7 +125,7 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 		}
 		return list.toArray(new Match[list.size()]);
 	}
-	
+
 	@Override
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
 		try {
@@ -152,17 +152,17 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 	@Override
 	public IFile getFile(Object element) {
 		if (element instanceof IIndexName) {
-			IIndexName name = (IIndexName)element;
+			IIndexName name = (IIndexName) element;
 			try {
 				IIndexFileLocation location = name.getFile().getLocation();
-				if(location.getFullPath()!=null) {
+				if (location.getFullPath() != null) {
 					return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(location.getFullPath()));
 				}
 			} catch(CoreException ce) { /* fall-through to return null */ }
 		} else if (element instanceof CSearchElement) {
-			CSearchElement searchElement = (CSearchElement)element;
+			CSearchElement searchElement = (CSearchElement) element;
 			IIndexFileLocation location = searchElement.getLocation();
-			if(location.getFullPath()!=null) {
+			if (location.getFullPath() != null) {
 				return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(location.getFullPath()));
 			}
 		}
@@ -191,15 +191,15 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 	}
 
 	/**
-	 * Remember whether the indexer was busy when the search was performed.
+	 * Remembers whether the indexer was busy when the search was performed.
 	 * @param b
 	 */
 	public void setIndexerBusy(boolean b) {
 		this.indexerBusy = b;
 	}
-	
+
 	/**
-	 * Tell if the indexer was busy when search results were gathered.
+	 * Tells if the indexer was busy when search results were gathered.
 	 */
 	public boolean wasIndexerBusy() {
 		return indexerBusy;
@@ -211,7 +211,7 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 	}
 
 	@Override
-	public MatchFilter[] getActiveMatchFilters() {	
+	public MatchFilter[] getActiveMatchFilters() {
 		MatchFilter[] result = super.getActiveMatchFilters();
 		if (result == null) {
 			if (CUIPlugin.getDefault().getDialogSettings().getBoolean(KEY_SHOW_POLYMORPHIC_CALLS)) {

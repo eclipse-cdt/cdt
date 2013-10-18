@@ -6,15 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchFilter;
 
 public class HidePolymorphicCalls extends MatchFilter {
-
 	public static final MatchFilter FILTER = new HidePolymorphicCalls();
 
 	@Override

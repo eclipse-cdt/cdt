@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_6c82790d",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfConstants.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-10-18T01:39:51Z",
+      "side": 1,
+      "message": "I think this tag is a bit misleading since this class wasn\u0027t introduced in 5.6. Is there an advantage to having it?",
+      "revId": "e26d6f88a46602dba5b7559ac6201e03a4281720",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

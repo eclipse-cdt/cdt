@@ -15,6 +15,10 @@ import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildComman
 public class GCCCompileOptionsParser extends GCCBuildCommandParser {
 
 	private String currentResourceName;
+	
+	public GCCCompileOptionsParser() {
+		super();
+	}
 
 	public String getCurrentResourceName() {
 		return currentResourceName;

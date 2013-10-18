@@ -13,6 +13,7 @@ package org.eclipse.cdt.utils.debug.dwarf;
 
 /**
  * DWARF constant.
+ * @since 5.6
  */
 public class DwarfConstants {
 
@@ -189,9 +190,21 @@ public class DwarfConstants {
 	public final static int DW_FORM_indirect = 0x16;
 	
 	/* DWARF4 form encodings. */
+	/**
+	 * @since 5.6
+	 */
 	public final static int DW_FORM_sec_offset = 0x17;
+	/**
+	 * @since 5.6
+	 */
 	public final static int DW_FORM_exprloc = 0x18;
+	/**
+	 * @since 5.6
+	 */
 	public final static int DW_FORM_flag_present = 0x19;
+	/**
+	 * @since 5.6
+	 */
 	public final static int DW_FORM_ref_sig8 = 0x20;
 
 
@@ -451,15 +464,45 @@ public class DwarfConstants {
 	public final static int DW_MACINFO_vendor_ext = 255;
 
 	/* DWARF macro type encodings. */
+	/**
+	 * @since 5.6
+	 */
 	public final static int DW_MACRO_end = 0;
+	/**
+	 * @since 5.6
+	 */
 	public final static int DW_MACRO_define = 1;
+	/**
+	 * @since 5.6
+	 */
 	public final static int DW_MACRO_undef = 2;
+	/**
+	 * @since 5.6
+	 */
 	public final static int DW_MACRO_start_file = 3;
+	/**
+	 * @since 5.6
+	 */
 	public final static int DW_MACRO_end_file = 4;
+	/**
+	 * @since 5.6
+	 */
 	public final static int DW_MACRO_define_indirect = 5;
+	/**
+	 * @since 5.6
+	 */
 	public final static int DW_MACRO_undef_indirect = 6;
+	/**
+	 * @since 5.6
+	 */
 	public final static int DW_MACRO_transparent_include = 7;
+	/**
+	 * @since 5.6
+	 */
 	public final static int DW_MACRO_lo_user = 0xe0;
+	/**
+	 * @since 5.6
+	 */
 	public final static int DW_MACRO_hi_user = 0xff;
 
 	/* DWARF call frame instruction encodings. */

@@ -36,6 +36,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -91,26 +94,33 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	}
 	
-	private class CompilerOptionParser extends Job {
+	private class CompilerOptionParser implements IWorkspaceRunnable {
 		
 		private final IProject project;
-		private final ICProjectDescriptionManager projDescManager;
-		private final ILanguageSettingsProvider provider;
 		private final String executable;
 		
-		public CompilerOptionParser (String label, IProject project, ILanguageSettingsProvider provider, 
-				String executable, ICProjectDescriptionManager projDescManager) {
-			super(label);
+		public CompilerOptionParser (IProject project, String executable) {
 			this.project = project;
-			this.projDescManager = projDescManager;
-			this.provider = provider;
 			this.executable = executable;
 		}
 
 		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-			IWorkingDirectoryTracker cwdTracker = new CWDTracker();
+		public void run(IProgressMonitor monitor) {
 			try {
+				// Calculate how many source files we have to process and use that as a basis
+				// for our work estimate.
+				GNUElfParser binParser = new GNUElfParser();
+				IBinaryFile bf = binParser
+						.getBinary(new Path(executable));
+				ISymbolReader reader = (ISymbolReader)bf.getAdapter(ISymbolReader.class);
+				String[] sourceFiles = reader
+						.getSourceFiles();
+				monitor.beginTask(Messages.GetCompilerOptions, sourceFiles.length * 2 + 1);
+				
+				// Find the GCCCompileOptions LanguageSettingsProvider for the configuration.
+				IWorkingDirectoryTracker cwdTracker = new CWDTracker();
+				ICProjectDescriptionManager projDescManager = CCorePlugin
+						.getDefault().getProjectDescriptionManager();
 				ICProjectDescription projDesc = projDescManager
 						.getProjectDescription(project,
 								false);
@@ -121,20 +131,14 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					ILanguageSettingsProvidersKeeper keeper = (ILanguageSettingsProvidersKeeper)ccdesc;
 					List<ILanguageSettingsProvider> list = keeper.getLanguageSettingProviders();
 					for (ILanguageSettingsProvider p : list) {
-						System.out.println("language settings provider " + p.getId());
-						if (p.getId().equals(GCC_COMPILE_OPTIONS_PROVIDER_ID))
+						//						System.out.println("language settings provider " + p.getId());
+						if (p.getId().equals(GCC_COMPILE_OPTIONS_PROVIDER_ID)) {
 							parser = (GCCCompileOptionsParser)p;
+						}
 					}
 				}
-//				ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
-//				GCCCompileOptionsParser parser = (GCCCompileOptionsParser)rawProvider;
+				// Start up the parser and process lines generated from the .debug_macro section.
 				parser.startup(ccdesc, cwdTracker);
-				GNUElfParser binParser = new GNUElfParser();
-				IBinaryFile bf = binParser
-						.getBinary(new Path(executable));
-				ISymbolReader reader = (ISymbolReader)bf.getAdapter(ISymbolReader.class);
-				String[] sourceFiles = reader
-						.getSourceFiles();
 				for (String sourceFile : sourceFiles) {
 					IPath sourceFilePath = new Path(
 							sourceFile);
@@ -148,23 +152,24 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							.getFile(sourceNamePath);
 					source.createLink(sourceFilePath, 0,
 							null);
+					monitor.worked(1);
 				}
-				if (reader instanceof ICompileOptionsFinder) {
-					((ICompileOptionsFinder) reader)
-							.getCompileOptions(sourceFiles[0]);
-				}
+				// Get compile options for each source file and process via the parser
+				// to generate LanguageSettingsEntries.
 				if (reader instanceof
 						ICompileOptionsFinder) {
 					ICompileOptionsFinder f =
 							(ICompileOptionsFinder) reader;
 					for (String fileName : sourceFiles) {
 						parser.setCurrentResourceName(fileName);
-						String cmdline = f.getCompileOptions(fileName);
-						System.out.println("Command line is " + cmdline);
+//						String cmdline = f.getCompileOptions(fileName);
+//						System.out.println("Command line is " + cmdline);
 						parser.processLine(f
 								.getCompileOptions(fileName));
+						monitor.worked(1);
 					}
-					parser.shutdown();
+					parser.shutdown(); // this will serialize the data to an xml file and create an event.
+					monitor.worked(1);
 				}
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
@@ -173,7 +178,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			return Status.OK_STATUS;
+			monitor.done();
 		}
 
 	};
@@ -235,6 +240,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							break;
 						}
 					}
+					// Look for the GCC builtin LanguageSettingsProvider id.  If it isn't already
+					// there, add it.
 					if (!found) {
 						langProviderIds = Arrays.copyOf(langProviderIds,
 								langProviderIds.length + 1);
@@ -247,24 +254,32 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							break;
 						}
 					}
+					// Look for our macro parser provider id.  If it isn't added already, do so now.
 					if (!found) {
 						langProviderIds = Arrays.copyOf(langProviderIds,
 								langProviderIds.length + 1);
 						langProviderIds[langProviderIds.length - 1] = GCC_COMPILE_OPTIONS_PROVIDER_ID;
 					}
+					
+					// Create all the LanguageSettingsProviders
 					List<ILanguageSettingsProvider> providers = LanguageSettingsManager
 							.createLanguageSettingsProviders(langProviderIds);
-					ILanguageSettingsProvider parser = LanguageSettingsManager.getWorkspaceProvider(GCC_COMPILE_OPTIONS_PROVIDER_ID);					
-					Job parseJob = new CompilerOptionParser(Messages.GetCompilerOptions, project, parser, 
-							executable, projDescManager);
 
+					// Update the ids and providers for the configuration.
 					((ILanguageSettingsProvidersKeeper) ccd)
 					.setDefaultLanguageSettingsProvidersIds(langProviderIds);
 					((ILanguageSettingsProvidersKeeper) ccd)
 					.setLanguageSettingProviders(providers);
+					
+					// Update the project description.
 					projDescManager.setProjectDescription(project,
 							projectDescription);
-					parseJob.schedule();
+					
+					// We need to parse the macro compile options if they exist.  We need to lock the
+					// workspace when we do this so we don't have multiple copies of our GCCCompilerOptionsParser
+					// LanguageSettingsProvider and we end up filling in the wrong one.
+					project.getWorkspace().run(new CompilerOptionParser(project, executable), 
+							ResourcesPlugin.getWorkspace().getRoot(), IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
 				}
 				config = createConfiguration(executable, arguments, true);
 				DebugUITools.launch(config, ILaunchManager.DEBUG_MODE);

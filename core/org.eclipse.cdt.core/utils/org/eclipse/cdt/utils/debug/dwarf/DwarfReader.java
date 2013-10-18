@@ -139,7 +139,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		ByteBuffer data = dwarfSections.get(DWARF_DEBUG_LINE);
 		if (data != null) {
 			try {
-				System.out.println("cuStmtList is " + cuStmtList);
+//				System.out.println("cuStmtList is " + cuStmtList);
 				data.position(cuStmtList);
 				
 				/* Read line table header:
@@ -797,6 +797,9 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 	}
 
+	/**
+	 * @since 5.6
+	 */
 	@Override
 	public String getCompileOptions(String fileName) {
 		if (!m_macros_parsed) {

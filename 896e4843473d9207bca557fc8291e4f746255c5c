@@ -69,6 +69,24 @@
       "revId": "896e4843473d9207bca557fc8291e4f746255c5c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_770b4bde",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/gettersandsetters/GenerateGettersAndSettersTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1663,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-10-19T19:03:11Z",
+      "side": 1,
+      "message": "Sure, as long as there is a bug that tracks it.",
+      "parentUuid": "8748d3a1_d4ae9df0",
+      "revId": "896e4843473d9207bca557fc8291e4f746255c5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

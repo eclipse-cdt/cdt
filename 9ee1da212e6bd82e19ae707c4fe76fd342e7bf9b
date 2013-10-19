@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_4eb5e3b1",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/Dwarf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 567,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-10-19T00:24:00Z",
+      "side": 1,
+      "message": "The value is supposed to be unsiged.  You should add an \u0026 0xffffffff to make sure the top bit hasn\u0027t been propagated to the long value.",
+      "revId": "9ee1da212e6bd82e19ae707c4fe76fd342e7bf9b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_ce7bb362",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/Dwarf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 576,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-10-19T00:24:00Z",
+      "side": 1,
+      "message": "You should throw an exception here if offset is \u003e 0xffffffff  Not sure what it does with negative values so that might have to be 0xfffffff.  Alternatively, you could fail above if the header length is too big for us to handle.\n\nThere is a general problem with using StringBuffer with 8 byte values or 4 byte offsets that are large enough.  Better to fail gracefully with a message than to do so indeterminately.",
+      "revId": "9ee1da212e6bd82e19ae707c4fe76fd342e7bf9b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_ae8587e9",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/Dwarf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 618,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-10-19T00:24:00Z",
+      "side": 1,
+      "message": "You need to do the same thing here regarding unsigned values (cast to long and then \u0026 0xffffffff to mask off any sign-bits).",
+      "revId": "9ee1da212e6bd82e19ae707c4fe76fd342e7bf9b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_8e8a4bf6",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/Dwarf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 627,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-10-19T00:24:00Z",
+      "side": 1,
+      "message": "While there isn\u0027t anything to read, the flag is considered on because it is present so anyone checking a flag will be looking at the attribute object and so IMO it would be simpler to set a default value instead of making them check for null.  I added a default value of 1 in my initial implementation.",
+      "revId": "9ee1da212e6bd82e19ae707c4fe76fd342e7bf9b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_4ed963ea",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-10-19T00:24:00Z",
+      "side": 1,
+      "message": "Not sure why Java does this.  Did it for me as well when I added the since tags below.  The class itself isn\u0027t since 5.6.  I removed it in my patch without error but it if it is meaningful, leave it in.",
+      "revId": "9ee1da212e6bd82e19ae707c4fe76fd342e7bf9b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_6edc1fdd",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2013-10-19T00:24:00Z",
+      "side": 1,
+      "message": "You might as well remove this as well while you are editing.",
+      "revId": "9ee1da212e6bd82e19ae707c4fe76fd342e7bf9b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

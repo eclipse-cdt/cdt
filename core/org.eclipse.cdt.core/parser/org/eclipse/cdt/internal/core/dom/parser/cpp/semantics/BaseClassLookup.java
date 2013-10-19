@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -191,7 +191,8 @@ class BaseClassLookup {
 					}
 				}
 
-				if (nameQualifier == null || Arrays.equals(baseClassScope.getScopeName().getSimpleID(), nameQualifier.toCharArray())) {
+				IName baseClassScopeName = baseClassScope.getScopeName();
+				if (nameQualifier == null || (baseClassScopeName != null && Arrays.equals(baseClassScopeName.getSimpleID(), nameQualifier.toCharArray()))) {
 					IBinding[] members= CPPSemantics.getBindingsFromScope(baseClassScope, data);
 					if (members != null && members.length > 0 && members[0] != null) {
 						if (data.isPrefixLookup()) {

@@ -51,6 +51,24 @@
       "revId": "896e4843473d9207bca557fc8291e4f746255c5c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_d4ae9df0",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/gettersandsetters/GenerateGettersAndSettersTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1663,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-10-19T17:24:43Z",
+      "side": 1,
+      "message": "Do you think it would be reasonable to do this as a separate patch? This is a bit more effort than I thought and at least with this change it generates valid code.",
+      "parentUuid": "AABOPn//2UU\u003d",
+      "revId": "896e4843473d9207bca557fc8291e4f746255c5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -131,7 +131,7 @@ public class InclusionContext {
 					!fCurrentDirectory.isPrefixOf(fullPath)) {
 				return null;
 			}
-			shortestInclude = fullPath.removeFirstSegments(fCurrentDirectory.segmentCount()).toString();
+			shortestInclude = fullPath.setDevice(null).removeFirstSegments(fCurrentDirectory.segmentCount()).toString();
 		}
 		include = new IncludeInfo(shortestInclude, isSystem);
 		// Don't put an include to fullPath to fIncludeResolutionCache since it may be wrong

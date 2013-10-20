@@ -591,8 +591,43 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 //		return new Object[] { value, Boolean.valueOf(false) };
 //	}
 
+	/**
+	 * Returns a string representing the workspace relative path with ${workspace_loc: stripped
+	 * or null if the String path doesn't contain workspace_loc
+	 * @param path String path to have workspace_loc removed
+	 * @return workspace path or null
+	 */
+	private static String locationToFullPath(String path){
+		path = path.trim();
+		if(!path.startsWith("${"))  //$NON-NLS-1$
+			return null;
+		final int index = path.lastIndexOf('}');
+		if(index == -1)
+			return null;
+
+		String varName = "workspace_loc"; //$NON-NLS-1$
+		String str1 = path.substring(2, index);
+		String result = null;
+		if(str1.startsWith(varName)){
+			str1 = str1.substring(varName.length());
+			if(str1.length() != 0){
+				if(str1.startsWith(":")){ //$NON-NLS-1$
+					result = str1.substring(1);
+				}
+			} else {
+				result = "/"; //$NON-NLS-1$
+			}
+			// If the user has a path like ${workspace_loc:/thing}/other/thing
+			// ensure we return /thing/other/thing
+			if (index < path.length() - 1)
+				result += path.substring(index + 1);
+		}
+
+		return result;
+	}
+
 	private static PathInfo optionPathValueToEntry(String str, SupplierBasedCdtVariableSubstitutor subst) {
-		String unresolvedStr = ManagedBuildManager.locationToFullPath(str);
+		String unresolvedStr = locationToFullPath(str);
 		boolean isWorkspacePath = false;
 		if (unresolvedStr == null) {
 			unresolvedStr = str;

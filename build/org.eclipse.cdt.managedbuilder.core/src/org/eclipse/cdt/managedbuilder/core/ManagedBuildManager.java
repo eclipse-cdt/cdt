@@ -102,6 +102,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.TargetPlatform;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildConfigurationData;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildEntryStorage;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
@@ -121,6 +122,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -3915,37 +3917,17 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	/**
 	 * Returns a string representing the workspace relative path with ${workspace_loc: stripped
-	 * or null if the String path doesn't contain workspace_log
+	 * or null if the String path doesn't contain workspace_loc
 	 * @param path String path to have workspace_loc removed
 	 * @return workspace path or null
+	 * 
+	 * @deprecated as of CDT 8.3. This method is useless as API as it does something very specfic to {@link BuildEntryStorage}.
+	 *    It was moved there as private method {@link BuildEntryStorage#locationToFullPath}.
 	 */
+	@Deprecated
 	public static String locationToFullPath(String path){
-		path = path.trim();
-		if(!path.startsWith("${"))  //$NON-NLS-1$
-			return null;
-		final int index = path.lastIndexOf('}');
-		if(index == -1)
-			return null;
-
-		String varName = "workspace_loc"; //$NON-NLS-1$
-		String str1 = path.substring(2, index);
-		String result = null;
-		if(str1.startsWith(varName)){
-			str1 = str1.substring(varName.length());
-			if(str1.length() != 0){
-				if(str1.startsWith(":")){ //$NON-NLS-1$
-					result = str1.substring(1);
-				}
-			} else {
-				result = "/"; //$NON-NLS-1$
-			}
-			// If the user has a path like ${workspace_loc:/thing}/other/thing
-			// ensure we return /thing/other/thing
-			if (index < path.length() - 1)
-				result += path.substring(index + 1);
-		}
-
-		return result;
+		Assert.isLegal(false, "Do not use this method"); //$NON-NLS-1$
+		return null;
 	}
 
 	public static String fullPathToLocation(String path){

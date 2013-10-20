@@ -599,9 +599,27 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	 */
 	private static String locationToFullPath(String path){
 		path = path.trim();
-		if(!path.startsWith("${"))  //$NON-NLS-1$
+		// A path starting from "${workspace_loc}" is always a filesystem path.
+		// Only ${workspace_loc:/thing} is treated here as workspace path
+		if(!path.startsWith("${workspace_loc:"))  //$NON-NLS-1$
 			return null;
-		final int index = path.lastIndexOf('}');
+		
+	
+		int index = -1;
+		int depth = 1;
+		for (int i = "${workspace_loc:".length(); i < path.length(); i++) { //$NON-NLS-1$
+			char c = path.charAt(i);
+			if (c == '}') {
+				depth--;
+				if (depth < 1) {
+					index = i;
+					break;
+				}
+			} else if (c == '{' && path.charAt(i-1) == '$') {
+				depth++;
+			}
+		}
+		
 		if(index == -1)
 			return null;
 
@@ -609,10 +627,10 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		String str1 = path.substring(2, index);
 		String result = null;
 		if(str1.startsWith(varName)){
-			str1 = str1.substring(varName.length());
-			if(str1.length() != 0){
-				if(str1.startsWith(":")){ //$NON-NLS-1$
-					result = str1.substring(1);
+			String str2= str1.substring(varName.length());
+			if(str2.length() != 0){
+				if(str2.startsWith(":")){ //$NON-NLS-1$
+					result = str2.substring(1);
 				}
 			} else {
 				result = "/"; //$NON-NLS-1$

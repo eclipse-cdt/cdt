@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite;
 
@@ -18,20 +18,21 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 public interface ICompositesFactory {
-	
+
 	public IIndexScope getCompositeScope(IIndexScope rscope);
 
 	/**
-	 * Returns a composite (in the sense of potentially spanning multiple index fragments - i.e. not to be confused
-	 * with ICompositeType) type for the specified type.
+	 * Returns a composite (in the sense of potentially spanning multiple index fragments -
+	 * i.e. not to be confused with ICompositeType) type for the specified type.
 	 */
 	public IType getCompositeType(IType rtype);
 
 	/**
 	 * Returns a composite (index context carrying) binding for the specified binding. It does not
-	 * matter which fragment the specified binding comes from
-	 * @param binding a binding that will be used when searching for information to return from the composite
-	 * binding methods
+	 * matter which fragment the specified binding comes from.
+	 *
+	 * @param binding a binding that will be used when searching for information to return from
+ 	 *     the composite binding methods
 	 * @return a composite (index context carrying) binding for the specified binding
 	 */
 	public IIndexBinding getCompositeBinding(IIndexFragmentBinding binding);

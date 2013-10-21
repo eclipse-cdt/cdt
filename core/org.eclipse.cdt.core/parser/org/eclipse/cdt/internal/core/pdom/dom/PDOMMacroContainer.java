@@ -6,12 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -24,25 +21,28 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A container collecting definitions and references for macros.
  * @since 5.0
  */
 public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroContainer, IPDOMBinding {
-	private static final int FIRST_DEF_OFFSET    = PDOMNamedNode.RECORD_SIZE + 0; // size 4
-	private static final int FIRST_REF_OFFSET    = PDOMNamedNode.RECORD_SIZE + 4; // size 4
-	
+	private static final int FIRST_DEF_OFFSET = PDOMNamedNode.RECORD_SIZE + 0; // size 4
+	private static final int FIRST_REF_OFFSET = PDOMNamedNode.RECORD_SIZE + 4; // size 4
+
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 8;
 
 	public PDOMMacroContainer(PDOMLinkage linkage, char[] name) throws CoreException {
 		super(linkage, linkage, name);
 	}
-	
+
 	PDOMMacroContainer(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
-		
+
 	@Override
 	public int getNodeType() {
 		return IIndexBindingConstants.MACRO_CONTAINER;
@@ -52,7 +52,7 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
-	
+
 	public boolean isOrphaned() throws CoreException {
 		Database db = getDB();
 		return db.getRecPtr(record + FIRST_DEF_OFFSET) == 0
@@ -67,7 +67,7 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 		}
 		setFirstDefinition(name);
 	}
-	
+
 	public void addReference(PDOMMacroReferenceName name) throws CoreException {
 		PDOMMacroReferenceName first = getFirstReference();
 		if (first != null) {
@@ -76,22 +76,22 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 		}
 		setFirstReference(name);
 	}
-	
+
 	public PDOMMacro getFirstDefinition() throws CoreException {
 		long namerec = getDB().getRecPtr(record + FIRST_DEF_OFFSET);
 		return namerec != 0 ? new PDOMMacro(getLinkage(), namerec) : null;
 	}
-	
+
 	void setFirstDefinition(PDOMMacro macro) throws CoreException {
 		long namerec = macro != null ? macro.getRecord() : 0;
 		getDB().putRecPtr(record + FIRST_DEF_OFFSET, namerec);
 	}
-	
+
 	public PDOMMacroReferenceName getFirstReference() throws CoreException {
 		long namerec = getDB().getRecPtr(record + FIRST_REF_OFFSET);
 		return namerec != 0 ? new PDOMMacroReferenceName(getLinkage(), namerec) : null;
 	}
-	
+
 	void setFirstReference(PDOMMacroReferenceName nextName) throws CoreException {
 		long namerec = nextName != null ? nextName.getRecord() : 0;
 		getDB().putRecPtr(record + FIRST_REF_OFFSET, namerec);
@@ -119,9 +119,6 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 		return IIndexBindingConstants.MACRO_CONTAINER;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.index.IIndexFragmentBinding#getFragment()
-	 */
 	@Override
 	public IIndexFragment getFragment() {
 		return getPDOM();

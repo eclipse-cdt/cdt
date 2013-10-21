@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.model.ext;
 
@@ -38,9 +38,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * Factory for creating CElement handles. These are a minimal implementation
- * of the ICElement interface and can be used for displaying information about
- * the index.
+ * Factory for creating CElement handles. These are a minimal implementation of
+ * the ICElement interface and can be used for displaying information about the index.
  * @since 4.0
  */
 public class CElementHandleFactory {
@@ -50,8 +49,7 @@ public class CElementHandleFactory {
 			IRegion region, long timestamp) throws CoreException {
 		try {
 			return internalCreate(tu, binding, isDefinition, region, timestamp);
-		}
-		catch (DOMException e) {
+		} catch (DOMException e) {
 			return null;
 		}
 	}
@@ -65,10 +63,8 @@ public class CElementHandleFactory {
 		return element;
 	}
 
-	
 	public static ICElementHandle internalCreate(ITranslationUnit tu, IBinding binding, boolean definition,
 			IRegion region, long timestamp) throws CoreException, DOMException {	
-
 		ICElement parentElement= createParent(tu, binding);
 		if (parentElement == null) {
 			return null;
@@ -93,29 +89,22 @@ public class CElementHandleFactory {
 				? new FunctionHandle(parentElement, (IFunction) binding)
 				: new FunctionDeclarationHandle(parentElement, (IFunction) binding);
 			}
-		}
-		else if (binding instanceof IField) {
+		} else if (binding instanceof IField) {
 			element= new FieldHandle(parentElement, (IField) binding);
-		}
-		else if (binding instanceof IVariable) {
+		} else if (binding instanceof IVariable) {
 			if (binding instanceof IParameter) {
 				return null;
 			}
 			element= new VariableHandle(parentElement, (IVariable) binding);
-		}
-		else if (binding instanceof IEnumeration) {
+		} else if (binding instanceof IEnumeration) {
 			element= new EnumerationHandle(parentElement, (IEnumeration) binding);
-		}
-		else if (binding instanceof IEnumerator) {
+		} else if (binding instanceof IEnumerator) {
 			element= new EnumeratorHandle(parentElement, (IEnumerator) binding);
-		}
-		else if (binding instanceof ICompositeType) {
+		} else if (binding instanceof ICompositeType) {
 			element= createHandleForComposite(parentElement, (ICompositeType) binding);
-		}
-		else if (binding instanceof ICPPNamespace) {
+		} else if (binding instanceof ICPPNamespace) {
 			element= new NamespaceHandle(parentElement, (ICPPNamespace) binding);
-		}
-		else if (binding instanceof ITypedef) {
+		} else if (binding instanceof ITypedef) {
 			element= new TypedefHandle(parentElement, (ITypedef) binding);
 		}
 		if (element != null && region != null) {
@@ -147,7 +136,7 @@ public class CElementHandleFactory {
 
 		if (parentBinding instanceof ICPPNamespace) {
 			char[] scopeName= parentBinding.getNameCharArray();
-			// skip unnamed namespace
+			// Skip unnamed namespace.
 			if (scopeName.length == 0) {
 				return createParent(tu, parentBinding);
 			} 

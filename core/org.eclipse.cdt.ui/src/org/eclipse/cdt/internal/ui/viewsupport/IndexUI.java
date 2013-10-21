@@ -124,7 +124,7 @@ public class IndexUI {
 	}
 
 	private static boolean checkBinding(IIndexBinding binding, ICElement element) {
-		switch(element.getElementType()) {
+		switch (element.getElementType()) {
 		case ICElement.C_ENUMERATION:
 			return binding instanceof IEnumeration;
 		case ICElement.C_NAMESPACE:

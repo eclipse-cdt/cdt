@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -103,7 +102,7 @@ public class IndexUI {
 
 	public static IIndexBinding elementToBinding(IIndex index, ICElement element, int linkageID) throws CoreException {
 		if (element instanceof ISourceReference) {
-			ISourceReference sf = ((ISourceReference)element);
+			ISourceReference sf = ((ISourceReference) element);
 			ISourceRange range= sf.getSourceRange();
 			if (range.getIdLength() != 0) {
 				IIndexName name= elementToName(index, element, linkageID);
@@ -182,7 +181,7 @@ public class IndexUI {
 
 	public static IIndexName elementToName(IIndex index, ICElement element, int linkageID) throws CoreException {
 		if (element instanceof ISourceReference) {
-			ISourceReference sf = ((ISourceReference)element);
+			ISourceReference sf = ((ISourceReference) element);
 			ITranslationUnit tu= sf.getTranslationUnit();
 			if (tu != null) {
 				IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
@@ -211,7 +210,7 @@ public class IndexUI {
 
 	public static boolean isIndexed(IIndex index, ICElement element) throws CoreException {
 		if (element instanceof ISourceReference) {
-			ISourceReference sf = ((ISourceReference)element);
+			ISourceReference sf = ((ISourceReference) element);
 			ITranslationUnit tu= sf.getTranslationUnit();
 			if (tu != null) {
 				IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
@@ -501,41 +500,38 @@ public class IndexUI {
 	public static List<? extends IBinding> findSpecializations(IIndex index, IBinding binding) throws CoreException {
 		List<IBinding> result= null;
 
-		// Check for instances of the given binding
+		// Check for instances of the given binding.
 		if (binding instanceof ICPPInstanceCache) {
-			final List<ICPPTemplateInstance> instances= Arrays.asList(((ICPPInstanceCache) binding).getAllInstances());
-			if (!instances.isEmpty()) {
-				for (ICPPTemplateInstance inst : instances) {
-					if (!ASTInternal.hasDeclaration(inst)) {
-						if (result == null)
-							result= new ArrayList<IBinding>(instances.size());
-						result.add(inst);
-					}
+			ICPPTemplateInstance[] instances= ((ICPPInstanceCache) binding).getAllInstances();
+			for (ICPPTemplateInstance inst : instances) {
+				if (!ASTInternal.hasDeclaration(inst)) {
+					if (result == null)
+						result= new ArrayList<IBinding>(instances.length);
+					result.add(inst);
 				}
 			}
 		}
 
-		// Check for specializations of the owner
+		// Check for specializations of the owner.
 		IBinding owner = binding.getOwner();
 		if (owner != null) {
 			IASTNode point= null; // Instantiation of dependent expressions may not work.
-			for (IBinding specOwner : findSpecializations(index, owner)) {
+			List<? extends IBinding> specializations = findSpecializations(index, owner);
+			for (IBinding specOwner : specializations) {
 				if (specOwner instanceof ICPPClassSpecialization) {
-					// Add the specialized member
+					// Add the specialized member.
 					IBinding specializedMember = ((ICPPClassSpecialization) specOwner).specializeMember(binding, point);
 					specializedMember= index.adaptBinding(specializedMember);
 					if (specializedMember != null) {
 						if (result == null)
-							result= new ArrayList<IBinding>(findSpecializations(index, owner).size());
+							result= new ArrayList<IBinding>(specializations.size());
 						result.add(specializedMember);
-						// Also add instances of the specialized member
+						// Also add instances of the specialized member.
 						if (specializedMember instanceof ICPPInstanceCache) {
-							final List<ICPPTemplateInstance> instances= Arrays.asList(((ICPPInstanceCache) specializedMember).getAllInstances());
-							if (!instances.isEmpty()) {
-								for (ICPPTemplateInstance inst : instances) {
-									if (!ASTInternal.hasDeclaration(inst)) {
-										result.add(inst);
-									}
+							ICPPTemplateInstance[] instances= ((ICPPInstanceCache) specializedMember).getAllInstances();
+							for (ICPPTemplateInstance inst : instances) {
+								if (!ASTInternal.hasDeclaration(inst)) {
+									result.add(inst);
 								}
 							}
 						}

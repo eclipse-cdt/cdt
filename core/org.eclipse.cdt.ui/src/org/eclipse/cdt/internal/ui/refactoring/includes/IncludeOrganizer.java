@@ -1004,8 +1004,10 @@ public class IncludeOrganizer {
 	    		for (IASTName name : declarations) {
 	    			if (name instanceof IAdaptable) {
 	    				IIndexName indexName = (IIndexName) ((IAdaptable) name).getAdapter(IIndexName.class);
-	    				indexNames = Arrays.copyOf(indexNames, indexNames.length + 1);
-	    				indexNames[indexNames.length - 1] = indexName;
+	    				if (indexName != null) {
+		    				indexNames = Arrays.copyOf(indexNames, indexNames.length + 1);
+		    				indexNames[indexNames.length - 1] = indexName;
+	    				}
 	    			}
 	    		}
 			} else if (allowDeclarations || binding instanceof IFunction || binding instanceof IVariable) {

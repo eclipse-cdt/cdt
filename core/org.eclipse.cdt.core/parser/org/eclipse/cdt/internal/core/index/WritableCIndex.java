@@ -6,14 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Andrew Ferguson (Symbian)
- *    Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *     Markus Schorn - initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.index.IIndexExtension;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
@@ -21,18 +22,18 @@ import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.core.runtime.CoreException;
 
 public class WritableCIndex extends CIndex implements IWritableIndex {
-	private boolean fIsWriteLocked= false;
+	private boolean fIsWriteLocked;
 	private Object fThread;
 
 	public WritableCIndex(IWritableIndexFragment writable) {
-		super(new IWritableIndexFragment[] {writable});
+		super(new IWritableIndexFragment[] { writable }, IIndexExtension.EMPTY_ARRAY);
 	}
 
 	@Override
 	public IWritableIndexFragment getWritableFragment() {
 		return (IWritableIndexFragment) getFragments()[0];
 	}
-	
+
 	@Override
 	public IIndexFragmentFile getWritableFile(int linkageID, IIndexFileLocation location,
 			ISignificantMacros macroDictionary) throws CoreException {
@@ -116,7 +117,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	public void acquireWriteLock() throws InterruptedException {
 		checkThread();
 		assert !fIsWriteLocked: "Multiple write locks is not allowed"; //$NON-NLS-1$
-		
+
 		getWritableFragment().acquireWriteLock(getReadLockCount());
 		fIsWriteLocked= true;
 	}
@@ -130,7 +131,6 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	public void releaseWriteLock(boolean flush) {
 		checkThread();
 		assert fIsWriteLocked: "No write lock to be released"; //$NON-NLS-1$
-		
 
 		// Bug 297641: Result cache of read only providers needs to be cleared.
 		int establishReadlockCount = getReadLockCount();
@@ -140,7 +140,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 
 		fIsWriteLocked= false;
 		getWritableFragment().releaseWriteLock(establishReadlockCount, flush);
-		
+
 		if (establishReadlockCount == 0) {
 			fThread= null;
 		}
@@ -153,7 +153,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 			throw new IllegalArgumentException("A writable index must not be used from multiple threads."); //$NON-NLS-1$
 		}
 	}
-	
+
 	@Override
 	public void clearResultCache() {
 		assert fIsWriteLocked: "Need to hold a write lock to clear result caches"; //$NON-NLS-1$
@@ -179,7 +179,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 			return;
 		target.transferIncluders(source);
 	}
-	
+
 	@Override
 	public void transferContext(IIndexFragmentFile source, IIndexFragmentFile target) throws CoreException {
 		if (source == null || target == null)

@@ -12,13 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.provider;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.provider.IIndexProvider;
@@ -45,6 +38,13 @@ import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Version;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * The IndexProviderManager is responsible for maintaining the set of index
  * fragments contributed via the CIndex extension point.
@@ -68,7 +68,7 @@ public final class IndexProviderManager implements IElementChangedListener {
     private static final String ELEMENT_RO_INDEX_FRAGMENT_PROVIDER= "ReadOnlyIndexFragmentProvider"; //$NON-NLS-1$
     private static final String ELEMENT_PROVIDER_USAGE= "FragmentProviderUsage"; //$NON-NLS-1$
 	@SuppressWarnings("nls")
-	private static final String 
+	private static final String
 		ATTRIBUTE_CLASS = "class",
 		ATTRIBUTE_NAVIGATION = "navigation",
 		ATTRIBUTE_CONTENT_ASSIST = "content_assist",
@@ -124,7 +124,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 							providers.add(new ReadOnlyPDOMProviderBridge((IReadOnlyPDOMProvider) provider));
 							usageSpecifications.add(element.getChildren(ELEMENT_PROVIDER_USAGE));
 						} else {
-							CCorePlugin.log(NLS.bind(Messages.IndexProviderManager_0,
+							CCorePlugin.log(NLS.bind(Messages.IndexProviderManager_InvalidIndexProvider,
 									extension.getContributor().getName()));
 						}
 					} else if (ELEMENT_RO_INDEX_FRAGMENT_PROVIDER.equals(element.getName())) {
@@ -134,10 +134,10 @@ public final class IndexProviderManager implements IElementChangedListener {
                         	providers.add((IIndexFragmentProvider) provider);
 							usageSpecifications.add(element.getChildren(ELEMENT_PROVIDER_USAGE));
                         } else {
-                            CCorePlugin.log(NLS.bind(Messages.IndexProviderManager_0,
+                            CCorePlugin.log(NLS.bind(Messages.IndexProviderManager_InvalidIndexProvider,
                                     extension.getContributor().getName()));
                         }
-                    } 
+                    }
 				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -173,7 +173,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 		result |= getOption(elem, ATTRIBUTE_SEARCH, IIndexManager.ADD_EXTENSION_FRAGMENTS_SEARCH);
 		result |= getOption(elem, ATTRIBUTE_TYPE_HIERARCHY, IIndexManager.ADD_EXTENSION_FRAGMENTS_TYPE_HIERARCHY);
 		result |= getOption(elem, ATTRIBUTE_EDITOR, IIndexManager.ADD_EXTENSION_FRAGMENTS_EDITOR);
-		
+
 		return result;
 	}
 
@@ -264,7 +264,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 								}
 							} catch (Exception e) {
 								// No logging, we are generating a msg for the log.
-							} 
+							}
 						}
 					}
 				} catch (CoreException e) {
@@ -361,7 +361,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 		}
 
 		final int length = fragmentProviders.length;
-		
+
 		IIndexFragmentProvider[] newProviders = new IIndexFragmentProvider[length + 1];
 		System.arraycopy(fragmentProviders, 0, newProviders, 0, length);
 		newProviders[length] = (IIndexFragmentProvider) provider;
@@ -386,12 +386,12 @@ public final class IndexProviderManager implements IElementChangedListener {
 				final int length = fragmentProviders.length;
 				IIndexFragmentProvider[] newProviders = new IIndexFragmentProvider[length - 1];
 				System.arraycopy(fragmentProviders, 0, newProviders, 0, i);
-				System.arraycopy(fragmentProviders, i+1, newProviders, i, length-i-1);
+				System.arraycopy(fragmentProviders, i + 1, newProviders, i, length - i - 1);
 				fragmentProviders = newProviders;
 
 				int[] newFilters = new int[length - 1];
 				System.arraycopy(fragmentProviderUsage, 0, newFilters, 0, i);
-				System.arraycopy(fragmentProviderUsage, i+1, newFilters, i, length-i-1);
+				System.arraycopy(fragmentProviderUsage, i + 1, newFilters, i, length - i - 1);
 				fragmentProviderUsage = newFilters;
 				return;
 			}

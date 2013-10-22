@@ -10,7 +10,6 @@
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.indexview;
 
 import org.eclipse.core.runtime.CoreException;
@@ -35,13 +34,13 @@ import org.eclipse.cdt.internal.ui.search.CSearchQuery;
  * This is the search query to be used for searching the PDOM.
  */
 public class IndexViewSearchQuery extends CSearchQuery {
-
 	private IIndexBinding fBinding;
 	private long fLastWrite;
 	private String fName;
 	private ICProject fProject;
 	
-	public IndexViewSearchQuery(ICElement[] scope, ICProject project, long pdomLastWrite, IIndexBinding binding, String name, int flags) {
+	public IndexViewSearchQuery(ICElement[] scope, ICProject project, long pdomLastWrite,
+			IIndexBinding binding, String name, int flags) {
 		super(scope, flags);
 		fProject= project;
 		fBinding = binding;
@@ -57,7 +56,7 @@ public class IndexViewSearchQuery extends CSearchQuery {
 			}
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
-			return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, e.getLocalizedMessage(), e);
+			return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, e.getLocalizedMessage(), e);
 		}
 	}
 

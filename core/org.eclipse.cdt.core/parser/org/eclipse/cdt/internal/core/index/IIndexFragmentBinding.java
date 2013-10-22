@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Andrew Ferguson (Symbian)
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -17,8 +16,8 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.core.runtime.CoreException;
 
 public interface IIndexFragmentBinding extends IIndexBinding {
-	IIndexFragmentBinding[] EMPTY_INDEX_BINDING_ARRAY= new IIndexFragmentBinding[0];
-	
+	IIndexFragmentBinding[] EMPTY_INDEX_BINDING_ARRAY= {};
+
 	/**
 	 * Returns the owner of the binding.
 	 */
@@ -29,7 +28,7 @@ public interface IIndexFragmentBinding extends IIndexBinding {
 	 */
 	@Override
 	ILinkage getLinkage();
-	
+
 	/**
      * Returns whether this binding has any definitions associated with it
      * in its associated fragment.
@@ -37,22 +36,22 @@ public interface IIndexFragmentBinding extends IIndexBinding {
 	boolean hasDefinition() throws CoreException;
 
 	/**
-     * Returns whether this binding has a declaration or definition associated with 
+     * Returns whether this binding has a declaration or definition associated with
      * it in its associated fragment.
      */
 	boolean hasDeclaration() throws CoreException;
-	
+
 	/**
 	 * Returns the constant identifying the type of binding stored in the index
 	 */
 	int getBindingConstant();
-	
+
 	/**
-	 * Returns the scope that contains this binding, or <code>null</code> for bindings in global scope.
+	 * Returns the scope that contains this binding, or {@code null} for bindings in global scope.
 	 */
 	@Override
 	IIndexScope getScope();
-	
+
 	/**
 	 * {@inheritDoc}
 	 * @since 5.1
@@ -61,7 +60,8 @@ public interface IIndexFragmentBinding extends IIndexBinding {
 	IIndexFragmentBinding getOwner();
 
 	/**
-	 * Returns a unique id for the binding within the fragment, or <code>null</code> for unknown bindings.
+	 * Returns a unique id for the binding within the fragment, or {@code null} for unknown
+	 * bindings.
 	 * @since 5.1
 	 */
 	long getBindingID();

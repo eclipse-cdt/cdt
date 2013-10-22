@@ -20,6 +20,7 @@ public class Messages extends NLS {
 	public static String ExecutablesView_ImportExecutables;
 	public static String Debugger_Title;
 	public static String GetCompilerOptions;
+	public static String GetBuildOptions;
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);

@@ -7,6 +7,7 @@
  */
 package org.eclipse.cdt.qt.core;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.QualifiedName;
@@ -51,22 +52,29 @@ public class QtPlugin extends Plugin {
 		return new Status(IStatus.ERROR, ID, msg, e);
 	}
 
-	public static IStatus log(String e) {
-		return log(IStatus.INFO, e, null);
+	public static void log(String e) {
+		log(IStatus.INFO, e, null);
 	}
 
-	public static IStatus log(Throwable e) {
-		String msg = e.getMessage();
-		return msg == null ? log("Error", e) : log("Error: " + msg, e);
+	public static void log(Throwable e) {
+		String msg= e.getMessage();
+		if (msg == null) {
+			log("Error", e); //$NON-NLS-1$
+		} else {
+			log("Error: " + msg, e); //$NON-NLS-1$
+		}
 	}
 
-	public static IStatus log(String message, Throwable e) {
-		return log(IStatus.ERROR, message, e);
+	public static void log(String message, Throwable e) {
+		Throwable nestedException;
+		if (e instanceof CModelException
+				&& (nestedException = ((CModelException)e).getException()) != null) {
+			e = nestedException;
+		}
+		log(IStatus.ERROR, message, e);
 	}
 
-	public static IStatus log(int code, String msg, Throwable e) {
-		IStatus status = new Status(code, ID, msg, e);
-		instance.getLog().log(status);
-		return status;
+	public static void log(int code, String msg, Throwable e) {
+		getDefault().getLog().log(new Status(code, ID, msg, e));
 	}
 }

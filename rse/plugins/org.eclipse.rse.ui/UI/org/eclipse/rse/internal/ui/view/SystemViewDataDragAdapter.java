@@ -20,6 +20,7 @@
  * Kevin Doyle (IBM) - [187536] Drag & Drop file to Editor launchs file in system editor
  * David McKnight   (IBM)        - [248339] [dnd][encodings] Cannot drag&drop / copy&paste files or folders with turkish or arabic names
  * David McKnight   (IBM)        - [407428] [shells] allow dragging of files in shell
+ * David McKnight   (IBM)        - [420190] Dragging anything other than a file causes Null Pointer
  *******************************************************************************/
  
 package org.eclipse.rse.internal.ui.view;
@@ -110,8 +111,13 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 	    {
 	        subSystem = adapter.getSubSystem(dragObject);	   
 	        if (adapter instanceof ISystemRemoteElementAdapter){
-	        	ISystemEditableRemoteObject editable = ((ISystemRemoteElementAdapter)adapter).getEditableRemoteObject(dragObject);
-	        	subSystem = editable.getSubSystem();	        	
+	        	ISystemRemoteElementAdapter rAdapter = (ISystemRemoteElementAdapter)adapter;
+	        	if (rAdapter.canEdit(dragObject)){
+	        		ISystemEditableRemoteObject editable = ((ISystemRemoteElementAdapter)adapter).getEditableRemoteObject(dragObject);
+	        		if (editable != null){
+	        			subSystem = editable.getSubSystem();	   
+	        		}
+	        	}
 	        } 
 			if (subSystem != null)
 			{

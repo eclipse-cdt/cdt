@@ -9,6 +9,7 @@
  *     IBM - Initial API and implementation
  *     Baltasar Belyavsky (Texas Instruments) - [279633] Custom option command-generator support
  *     Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability)
+ *     Liviu Ionescu - [322168]
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -4047,6 +4048,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				// find matching option
 				try {
 					if (op1.getValueType() == op2.getValueType() &&
+						op1.getName() != null &&
 						op1.getName().equals(op2.getName())) {
 						Object ob1 = op1.getValue();
 						Object ob2 = op2.getValue();

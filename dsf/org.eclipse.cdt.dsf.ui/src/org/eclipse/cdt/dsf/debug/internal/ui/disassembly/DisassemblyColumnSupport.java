@@ -175,9 +175,6 @@ class DisassemblyColumnSupport implements IColumnSupport {
 		if (getRuler() == null)
 			return false;
 
-		if (descriptor == null)
-			return false;
-
 		return descriptor.matchesPart(fDisassembly);
 	}
 

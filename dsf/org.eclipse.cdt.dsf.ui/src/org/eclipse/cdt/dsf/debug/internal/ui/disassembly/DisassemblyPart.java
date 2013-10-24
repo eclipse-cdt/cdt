@@ -1921,32 +1921,30 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private void startUpdate(final Runnable update) {
 		if (fViewer == null)
 			return;
-			
-	    final int updateCount = fUpdateCount;
-	    final SafeRunnable safeUpdate = new SafeRunnable() {
-	        @Override
+
+		final int updateCount = fUpdateCount;
+		final SafeRunnable safeUpdate = new SafeRunnable() {
+			@Override
 			public void run() {
-	            if (updateCount == fUpdateCount) {
-	                update.run();
-	            }
-	        }
-	        @Override
-	        public void handleException(Throwable e) {
-	            internalError(e);
-	        }
-	    };
-	    if (fUpdatePending) {
-	        invokeLater(new Runnable() {
-	            @Override
+				if (updateCount == fUpdateCount && fViewer != null) {
+					update.run();
+				}
+			}
+			@Override
+			public void handleException(Throwable e) {
+				internalError(e);
+			}
+		};
+		if (fUpdatePending) {
+			invokeLater(new Runnable() {
+				@Override
 				public void run() {
-	                if (updateCount == fUpdateCount) {
-	                    SafeRunner.run(safeUpdate);
-	                }
-	            }
-	        });
-	    } else {
-	        SafeRunner.run(safeUpdate);
-	    }
+					SafeRunner.run(safeUpdate);
+				}
+			});
+		} else {
+			SafeRunner.run(safeUpdate);
+		}
 	}
 
 	private void debugContextChanged() {

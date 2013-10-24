@@ -12,6 +12,7 @@
  *     Anna Dushistova  (Mentor Graphics) - [307244] extend visibility of fields in GnuMakefileGenerator
  *     James Blackburn (Broadcom Corp.)
  *     Marc-Andre Laperle
+ *     Liviu Ionescu - [322168] 
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
@@ -4013,7 +4014,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				Set<Entry<String, List<IPath>>> set = buildOutVars.entrySet();
 				for (Entry<String, List<IPath>> entry : set) {
 					String macroName = entry.getKey();
-					addMacroAdditionPrefix(map, macroName, "", false);	//$NON-NLS-1$
+					
+					// for projects with specific setting on folders/files do
+					// not clear the macro value on subsequent passes
+					if (!map.containsKey(macroName)) {
+						addMacroAdditionPrefix(map, macroName, "", false);	//$NON-NLS-1$
+					}
 				}
 
 				// Set of input extensions for which macros have been created so far

@@ -903,7 +903,7 @@ public class SystemViewFilterReferenceAdapter
 	    if (fRef != null)
 	    {
 	        ISubSystemConfiguration factory = getSubSystemConfiguration(fRef.getReferencedFilter());
-	        if (factory.supportsDropInFilters())
+	        if (factory.supportsDropInFilters() && !fRef.getReferencedFilter().isNonChangable())
 	        {
 	        	// if the drop is handled by the subsystem rather than this adapter, this will be true.
 		        if (factory.providesCustomDropInFilters())

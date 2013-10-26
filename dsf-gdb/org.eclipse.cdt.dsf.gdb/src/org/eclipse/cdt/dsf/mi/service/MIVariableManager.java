@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Monta Vista and others.
+ * Copyright (c) 2008, 2013 Monta Vista and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2143,9 +2143,12 @@ public class MIVariableManager implements ICommandControl {
 									
 									localExprInfo.setDynamic(getData()
 											.isDynamic());
-									localExprInfo.setParent(null);
-									localExprInfo.setIndexInParent(-1);
 									
+									// Do not initialize the parent or indexInParent, since they may
+									// already be set to something. This will happen for arrays.
+									// Their default values are ok for other cases i.e., null and -1
+									// bug 420366
+
 									setExpressionData(
 											localExprInfo,
 											getData().getType(),

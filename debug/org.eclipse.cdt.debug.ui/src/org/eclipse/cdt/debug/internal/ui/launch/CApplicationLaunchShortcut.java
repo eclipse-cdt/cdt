@@ -388,7 +388,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	 * @param objects
 	 * @param mode
 	 */
-	private void searchAndLaunch(final Object[] elements, String mode) {
+	protected void searchAndLaunch(final Object[] elements, String mode) {
 		if (elements != null && elements.length > 0) {
 			IBinary bin = null;
 			if (elements.length == 1 && elements[0] instanceof IBinary) {

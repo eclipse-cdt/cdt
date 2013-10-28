@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.utils.PathUtil;
 
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeSearchPath;
@@ -224,5 +225,31 @@ public class InclusionContext {
 			}
 		}
 		return false;
+	}
+
+	public IncludeInfo createIncludeInfo(IPath header, IncludeGroupStyle style) {
+		String name = null;
+		if (style.isRelativePath()) {
+			name = getRelativePath(header);
+		}
+		if (name == null) {
+			IncludeInfo includeInfo = getIncludeForHeaderFile(header);
+			if (includeInfo != null) {
+				name = includeInfo.getName();
+			} else {
+				name = getRelativePath(header);
+			}
+			if (name == null) {
+				name = header.toPortableString();  // Last resort. 
+			}
+		}
+		return new IncludeInfo(name, style.isAngleBrackets());
+	}
+
+	private String getRelativePath(IPath header) {
+		IPath relativePath = PathUtil.makeRelativePath(header, getCurrentDirectory());
+		if (relativePath == null)
+			return null;
+		return relativePath.toString();
 	}
 }

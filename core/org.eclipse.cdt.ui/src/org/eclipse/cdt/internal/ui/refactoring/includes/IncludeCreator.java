@@ -155,6 +155,8 @@ public class IncludeCreator {
 				}
 			}
 	
+			HeaderSubstitutor headerSubstitutor = new HeaderSubstitutor(fContext);
+
 			for (IIndexBinding indexBinding : bindings) {
 				// Replace ctor with the class itself.
 				if (indexBinding instanceof ICPPConstructor) {
@@ -169,7 +171,8 @@ public class IncludeCreator {
 				}
 				if (definitions != null) {
 					for (IIndexName definition : definitions) {
-						considerForInclusion(definition, indexBinding, index, candidatesMap);
+						considerForInclusion(definition, indexBinding, index, headerSubstitutor,
+								candidatesMap);
 					}
 					if (definitions.length > 0 && adaptedBinding != null) 
 						break;
@@ -178,7 +181,7 @@ public class IncludeCreator {
 			IIndexMacro[] macros = index.findMacros(nameChars, filter, new NullProgressMonitor());
 			for (IIndexMacro macro : macros) {
 				IIndexName definition = macro.getDefinition();
-				considerForInclusion(definition, macro, index, candidatesMap);
+				considerForInclusion(definition, macro, index, headerSubstitutor, candidatesMap);
 			}
 	
 			final ArrayList<IncludeCandidate> candidates = new ArrayList<IncludeCandidate>(candidatesMap.values());
@@ -404,8 +407,8 @@ public class IncludeCreator {
 	 * Adds an include candidate to the <code>candidates</code> map if the file containing
 	 * the definition is suitable for inclusion.
 	 */
-	private void considerForInclusion(IIndexName definition, IIndexBinding binding,
-			IIndex index, Map<String, IncludeCandidate> candidates) throws CoreException {
+	private void considerForInclusion(IIndexName definition, IIndexBinding binding, IIndex index,
+			HeaderSubstitutor headerSubstitutor, Map<String, IncludeCandidate> candidates) throws CoreException {
 		if (definition == null) {
 			return;
 		}
@@ -413,8 +416,16 @@ public class IncludeCreator {
 		// Consider the file for inclusion only if it is not a source file,
 		// or a source file that was already included by some other file. 
 		if (!isSource(getPath(file)) || index.findIncludedBy(file, 0).length > 0) {
-			IIndexFile representativeFile = getRepresentativeFile(file, index);
-			IncludeInfo include = getRequiredInclude(representativeFile, index);
+			IncludeInfo include;
+			if (fContext.getPreferences().heuristicHeaderSubstitution) {
+				include = getIncludeByHeuristic(file, index);
+			} else {
+				IPath header = getAbsolutePath(file.getLocation());
+				header = headerSubstitutor.getPreferredRepresentativeHeader(header);
+				IncludeGroupStyle style = fContext.getIncludeStyle(header);
+				include = fContext.createIncludeInfo(header, style);
+			}
+
 			if (include != null) {
 				IncludeCandidate candidate = new IncludeCandidate(binding, include);
 				if (!candidates.containsKey(candidate.toString())) {
@@ -431,11 +442,10 @@ public class IncludeCreator {
 		}
 		ArrayList<String> targetChain = getUsingChain(target);
 		if (targetChain.size() <= 1) {
-			return null;  // Target is not in a namespace
+			return null;  // Target is not in a namespace.
 		}
 
-		// Check if any of the existing using declarations and directives matches
-		// the target.
+		// Check if any of the existing using declarations and directives matches the target.
 		final IASTDeclaration[] declarations= ast.getDeclarations(false);
 		for (IASTDeclaration declaration : declarations) {
 			if (declaration.isPartOfTranslationUnitFile()) {
@@ -530,7 +540,8 @@ public class IncludeCreator {
 			processed.add(headerFile);
 			while (!front.isEmpty()) {
 				IIndexFile file = front.remove();
-				// A header without an extension is a good candidate for inclusion into a C++ source file.
+				// A header without an extension is a good candidate for inclusion into a C++ source
+				// file.
 				if (fContext.isCXXLanguage() && !hasExtension(getPath(file))) {
 					return file;
 				}
@@ -604,12 +615,14 @@ public class IncludeCreator {
 	}
 
 	/**
-	 * Returns the RequiredInclude object to be added to the include list
+	 * Returns the {@link IncludeInfo} object to be added to the include list
+	 *
 	 * @param path - the full path of the file to include
-	 * @return the required include
+	 * @return the {@link IncludeInfo} object
 	 * @throws CoreException 
 	 */
-	private IncludeInfo getRequiredInclude(IIndexFile file, IIndex index) throws CoreException {
+	private IncludeInfo getIncludeByHeuristic(IIndexFile file, IIndex index) throws CoreException {
+		file = getRepresentativeFile(file, index);
 		IIndexInclude[] includes = index.findIncludedBy(file);
 		if (includes.length > 0) {
 			// Let the existing includes vote. To be eligible to vote, an include

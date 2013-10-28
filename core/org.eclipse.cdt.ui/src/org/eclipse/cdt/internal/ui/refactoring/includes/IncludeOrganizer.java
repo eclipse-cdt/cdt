@@ -81,7 +81,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.CodeGeneration;
-import org.eclipse.cdt.utils.PathUtil;
 
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
@@ -219,7 +218,7 @@ public class IncludeOrganizer {
 		// Put the new includes into includePrototypes.
 		for (IPath header : fContext.getHeadersToInclude()) {
 			IncludeGroupStyle style = fContext.getIncludeStyle(header);
-			IncludeInfo includeInfo = createIncludeInfo(header, style);
+			IncludeInfo includeInfo = fContext.createIncludeInfo(header, style);
 			IncludePrototype prototype = new IncludePrototype(header, includeInfo, style);
 			updateIncludePrototypes(includePrototypes, prototype);
 		}
@@ -1060,32 +1059,6 @@ public class IncludeOrganizer {
 			}
 		}
 		return requests;
-	}
-
-	private IncludeInfo createIncludeInfo(IPath header, IncludeGroupStyle style) {
-		String name = null;
-		if (style.isRelativePath()) {
-			name = getRelativePath(header);
-		}
-		if (name == null) {
-			IncludeInfo includeInfo = fContext.getIncludeForHeaderFile(header);
-			if (includeInfo != null) {
-				name = includeInfo.getName();
-			} else {
-				name = getRelativePath(header);
-			}
-			if (name == null) {
-				name = header.toPortableString();  // Last resort. 
-			}
-		}
-		return new IncludeInfo(name, style.isAngleBrackets());
-	}
-
-	private String getRelativePath(IPath header) {
-		IPath relativePath = PathUtil.makeRelativePath(header, fContext.getCurrentDirectory());
-		if (relativePath == null)
-			return null;
-		return relativePath.toPortableString();
 	}
 
 	private String createIncludeDirective(IncludePrototype include, String lineComment) {

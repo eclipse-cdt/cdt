@@ -186,6 +186,15 @@
                   label="%ShowView.label"
                   style="push">
             </command>
+            <separator
+                  name="GDBStandalone.window.separator"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.ui.window.preferences"
+                  label="%Preferences.label"
+                  style="push">
+            </command>
          </menu>
       </menuContribution>
    </extension>

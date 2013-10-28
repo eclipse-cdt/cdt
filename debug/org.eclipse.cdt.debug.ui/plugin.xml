@@ -99,6 +99,19 @@
                        </adapt>
                      </and>
                    </or>
+                   <not>
+                      <adapt
+                            type="org.eclipse.core.resources.IResource">
+                         <adapt
+                               type="org.eclipse.core.resources.IFile">
+                            <test
+                                  forcePluginActivation="true"
+                                  property="org.eclipse.core.resources.extension"
+                                  value="core">
+                            </test>
+                         </adapt>
+                      </adapt>
+                   </not>                   
                </iterate>
              </with>
            </enablement>
@@ -113,6 +126,54 @@
                id="org.eclipse.cdt.launch.applicationLaunchType">
          </configurationType>
 	</shortcut>
+      <shortcut
+            class="org.eclipse.cdt.debug.internal.ui.launch.CApplicationLaunchShortcutPMD"
+            icon="icons/obj16/c_app.gif"
+            id="org.eclipse.cdt.debug.ui.localCShortcutPMD"
+            label="%CApplicationShortcutPMD.label"
+            modes="debug">
+         <description
+               description="%ContextualDebugCApplicationPMD.description"
+               mode="debug">
+         </description>
+         <contextualLaunch>
+            <enablement>
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <and>
+                        <adapt
+                              type="org.eclipse.core.resources.IResource">
+                           <adapt
+                                 type="org.eclipse.core.resources.IFile">
+                              <test
+                                    forcePluginActivation="true"
+                                    property="org.eclipse.core.resources.extension"
+                                    value="core">
+                              </test>
+                           </adapt>
+                        </adapt>
+                        <or>
+                           <instanceof
+                                 value="org.eclipse.cdt.core.model.IBinary">
+                           </instanceof>
+                           <test
+                                 forcePluginActivation="true"
+                                 property="org.eclipse.cdt.launch.isExecutable">
+                           </test>
+                        </or>
+                     </and>
+                  </iterate>
+               </with>
+            </enablement>
+         </contextualLaunch>
+         <configurationType
+               id="org.eclipse.cdt.launch.postmortemLaunchType">
+         </configurationType>       
+      </shortcut>	
    </extension>
 <!-- Property testers -->
    <extension point="org.eclipse.core.expressions.propertyTesters">

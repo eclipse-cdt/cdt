@@ -153,6 +153,14 @@
       </activityPatternBinding>
       <activityPatternBinding
             activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.preferences.BuildSettings">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.preferences.OrganizeIncludesPreferencePage">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
             pattern="org.eclipse.team.ui/org.eclipse.team.ui.GenericHistoryView">
       </activityPatternBinding>
       <activityPatternBinding
@@ -162,6 +170,14 @@
       <activityPatternBinding
             activityId="GDBStandalone.activity.filterMenus"
             pattern="org.eclipse.team.ui/org.eclipse.team.ui.TeamSynchronizingPerspective">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.team.ui/org.eclipse.team.ui.TeamPreferences">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="GDBStandalone.activity.filterMenus"
+            pattern="org.eclipse.ui.ide/org.eclipse.ui.preferencePages.BuildOrder">
       </activityPatternBinding>
    </extension>
    <extension

@@ -117,6 +117,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setShowCoolBar(true);
 		configurer.setShowStatusLine(true);
 		configurer.setShowMenuBar(true);
+		configurer.setShowProgressIndicator(true);
 		configurer.setTitle(Messages.Debugger_Title);
 	}
 
@@ -257,7 +258,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						}
 					}
 				}
-				ErrorParserManager epm = new ErrorParserManager(project, this, new String[]{"org.eclipse.cdt.core.CWDLocator"});
+				ErrorParserManager epm = new ErrorParserManager(project, this, new String[]{"org.eclipse.cdt.core.CWDLocator"}); //$NON-NLS-1$
 				// Start up the parser and process lines generated from the .debug_macro section.
 				parser.startup(ccdesc, epm);
 				monitor.beginTask(Messages.GetBuildOptions, 10);
@@ -334,6 +335,11 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					elist.toArray(executables);
 					@SuppressWarnings("unused")
 					IStatus rc = ExecutablesManager.getExecutablesManager().removeExecutables(executables, new NullProgressMonitor());
+					// Remove all old members of the Executables project from the last run
+					IResource[] resources = proj.members();
+					for (IResource resource : resources) {
+						resource.delete(IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+					}
 					// Find last launch if one exists
 					String memento = proj.getPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH));
 //					System.out.println("memento is " + memento);

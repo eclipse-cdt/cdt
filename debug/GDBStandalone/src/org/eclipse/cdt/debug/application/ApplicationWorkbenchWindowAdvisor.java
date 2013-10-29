@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
@@ -53,6 +54,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -67,6 +69,9 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -515,7 +520,52 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	@Override
 	public void postWindowClose() {
 		super.postWindowClose();
+		if (ResourcesPlugin.getWorkspace() != null)
+			disconnectFromWorkspace();
 	}
+
+	private void disconnectFromWorkspace() {
+
+		// save the workspace
+		final MultiStatus status = new MultiStatus(
+				Activator.PLUGIN_ID, 1,
+				Messages.ProblemSavingWorkbench, null);
+		try {
+			final ProgressMonitorDialog p = new ProgressMonitorDialog(
+					null);
+			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				@Override
+				public void  run(IProgressMonitor monitor) {
+					try {
+						status.merge(ResourcesPlugin
+								.getWorkspace().save(true, monitor));
+					} catch (CoreException e) {
+						status.merge(e.getStatus());
+					}
+				}
+			};
+			p.run(true, false, runnable);
+		} catch (InvocationTargetException e) {
+			status.merge(new Status(IStatus.ERROR,
+					Activator.PLUGIN_ID, 1,
+					Messages.InternalError, 
+					e.getTargetException()));
+		} catch (InterruptedException e) {
+			status.merge(new Status(IStatus.ERROR,
+					Activator.PLUGIN_ID, 1,
+					Messages.InternalError, e));
+		}
+
+		ErrorDialog.openError(null,
+				Messages.ProblemsSavingWorkspace, null, status,
+				IStatus.ERROR | IStatus.WARNING);
+
+		if (!status.isOK()) {
+			ResourcesPlugin.getPlugin().getLog().log(status);
+		}
+
+	}	
+
 
 	protected ILaunchConfigurationType getLaunchConfigType() {
 		return getLaunchManager().getLaunchConfigurationType(

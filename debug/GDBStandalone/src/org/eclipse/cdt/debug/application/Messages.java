@@ -21,6 +21,9 @@ public class Messages extends NLS {
 	public static String Debugger_Title;
 	public static String GetCompilerOptions;
 	public static String GetBuildOptions;
+	public static String ProblemSavingWorkbench;
+	public static String ProblemsSavingWorkspace;
+	public static String InternalError;
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);

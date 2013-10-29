@@ -45,7 +45,6 @@ import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
 import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
 
 public abstract class AbstractContentAssistTest extends BaseUITestCase {
-
 	public static final int COMPARE_ID_STRINGS = 0;
 	public static final int COMPARE_DISP_STRINGS = 1;
 	public static final int COMPARE_REP_STRINGS = 2;
@@ -65,8 +64,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		super.setUp();
 		if (fIsCpp) {
 			fCProject= CProjectHelper.createCCProject(getName(), "unused", IPDOMManager.ID_FAST_INDEXER);
-		}
-		else {
+		} else {
 			fCProject= CProjectHelper.createCProject(getName(), "unused", IPDOMManager.ID_FAST_INDEXER);
 		}
 		fCFile= setUpProjectContent(fCProject.getProject());
@@ -134,7 +132,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 			}
 		}
 
-		boolean allFound = true ;  // for the time being, let's be optimistic
+		boolean allFound = true;  // for the time being, let's be optimistic
 
 		for (String element : expected) {
 			boolean found = false;
@@ -148,7 +146,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 				}
 			}
 			if (!found)  {
-				allFound = false ;
+				allFound = false;
 				if (CTestPlugin.getDefault().isDebugging())  {
 					System.out.println( "Lookup failed for " + element); //$NON-NLS-1$
 				}
@@ -160,7 +158,6 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		} else if (doCheckExtraResults())  {
 			assertEquals("Extra results!", toString(expected), toString(resultStrings));
 		}
-
 	}
 	
 	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion, boolean isTemplate, int compareType) throws Exception {
@@ -258,7 +255,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	 * Override to relax checking of extra results
 	 */
 	protected boolean doCheckExtraResults() {
-		return true ;
+		return true;
 	}
 
 	/**
@@ -274,5 +271,4 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	protected IDocument getDocument() {
 		return EditorTestHelper.getDocument(fEditor);
 	}
-
 }

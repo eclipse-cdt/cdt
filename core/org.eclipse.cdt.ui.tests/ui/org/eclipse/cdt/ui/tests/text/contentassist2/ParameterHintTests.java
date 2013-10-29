@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 
 public class ParameterHintTests extends AbstractContentAssistTest {
-
 	private static final String HEADER_FILE_NAME = "PHTest.h";
 	private static final String SOURCE_FILE_NAME = "PHTest.cpp";
 	

@@ -43,7 +43,6 @@ import org.eclipse.cdt.internal.ui.actions.StructureSelectPreviousAction;
 import org.eclipse.cdt.internal.ui.actions.StructureSelectionAction;
 
 public class CEditorActionContributor extends TextEditorActionContributor {
-	
 	private RetargetTextEditorAction fContentAssist;
 	private RetargetTextEditorAction fContextInformation;
 	private TogglePresentationAction fTogglePresentation;
@@ -120,7 +119,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	 */
 	@Override
 	public void contributeToMenu(IMenuManager menu) {
-		
 		super.contributeToMenu(menu);
 		
 		IMenuManager editMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
@@ -187,7 +185,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	 */
 	@Override
 	public void setActiveEditor(IEditorPart part) {
-		
 		super.setActiveEditor(part);
 		
 		ITextEditor textEditor= null;
@@ -246,12 +243,8 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 			CEditor cEditor= (CEditor) part;
 			cEditor.fillActionBars(bars);
 		}
-
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorActionBarContributor#dispose()
-	 */
 	@Override
 	public void dispose() {
 		setActiveEditor(null);

@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
-import org.eclipse.cdt.core.index.IIndexExtension;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
@@ -26,7 +25,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	private Object fThread;
 
 	public WritableCIndex(IWritableIndexFragment writable) {
-		super(new IWritableIndexFragment[] { writable }, IIndexExtension.EMPTY_ARRAY);
+		super(new IWritableIndexFragment[] { writable });
 	}
 
 	@Override

@@ -88,6 +88,7 @@
  * David Mcknight   (IBM)        - [374681] Incorrect number of children on the properties page of a directory
  * David McKnight   (IBM)        - [404396] delete doesn't always properly unmap tree items in SystemView
  * David McKnight   (IBM)        - [411398] SystemView event handling for icon changes needs to handle multi-source
+ * Yang Yang        (IBM)        - [420578] Refresh action on connection level after a file deletion results in a problem occurred pop-up
  ********************************************************************************/
    
 package org.eclipse.rse.internal.ui.view;
@@ -328,10 +329,17 @@ public class SystemView extends SafeTreeViewer
 					subChildren.add(itemToExpand);
 				}
 				else {
-					// some objects might need explicit comparison
+					// some objects might need explicit comparison					
 					Object object = itemToExpand.data;
-					ISystemRemoteElementAdapter adapter = itemToExpand.remoteAdapter;
-					String childParentName = adapter.getAbsoluteParentName(object);
+					String childParentName = null;
+					ISystemRemoteElementAdapter elementAdapter = getRemoteAdapter(object);
+					if (elementAdapter != null){
+						childParentName = elementAdapter.getAbsoluteParentName(object);
+					} 
+					else {
+						ISystemViewElementAdapter viewAdapter = getViewAdapter(object);
+						childParentName = viewAdapter.getName(object);
+					}
 					if (absoluteParentName.equals(childParentName)){
 						subChildren.add(itemToExpand);
 					}

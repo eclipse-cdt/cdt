@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@
  * David McKnight   (IBM)        - [238365] Collapsing tree in new window collapses tree in Original window
  * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  * David McKnight   (IBM)        - [251654] System View Restore doesn't take into account Expand To Filter
+ * David McKnight   (IBM)        - [420749] Unhandled event loop exception rse.internal.ui.view.SystemViewPart.restoreInitialState
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -481,9 +482,10 @@ public class SystemViewPart
 			// assume this is the primary RSE view
 
 			// WE GET ALL THE WAY HERE, BUT THESE LINES OF CODE ARE INEFFECTIVE FOR SOME REASON!!
-
-			if (systemView.getTree().getItemCount() > 0) {
-				TreeItem firstItem = systemView.getTree().getItems()[0];
+			Tree t = systemView.getTree();
+			
+			if (!t.isDisposed()  && t.getItemCount() > 0) {
+				TreeItem firstItem = t.getItems()[0];
 				systemView.setSelection(new StructuredSelection(firstItem.getData()));
 				systemView.setExpandedState(firstItem.getData(), true);
 			}

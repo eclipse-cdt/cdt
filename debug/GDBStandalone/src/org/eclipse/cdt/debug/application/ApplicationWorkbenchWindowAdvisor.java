@@ -73,8 +73,10 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
@@ -299,214 +301,266 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	@Override
 	public void postWindowCreate() {
-		super.postWindowOpen();
-		String executable = "";
-		String buildLog = null;
-		String arguments = null;
-		String[] args = Platform.getCommandLineArgs();
-		for (int i = 0; i < args.length; ++i) {
-			if ("-application".equals(args[i]))
-				i++; // ignore the application specifier
-			else if ("-b".equals(args[i])) {
-				++i;
-				if (i < args.length)
-					buildLog = args[i];
-			}
-			else if ("-e".equals(args[i])) {
-				++i;
-				if (i < args.length)
-					executable = args[i];
-				++i;
-				if (i < args.length)
-					arguments = args[i];
-			}
-		}
+		super.postWindowCreate();
 		try {
-			if (executable.length() > 0) {
-				File executableFile = new File(executable);
-				String defaultProjectName = "Executables"; //$NON-NLS-1$
-				ICProject cProject = CoreModel.getDefault().getCModel()
-						.getCProject(defaultProjectName);
-				// if a valid executable is specified, remove any executables already loaded in workspace
-				if (cProject.exists() && executableFile.exists()) {
-					IProject proj = cProject.getProject();
-					Collection<Executable> elist = ExecutablesManager.getExecutablesManager().getExecutablesForProject(proj);
-					Executable[] executables = new Executable[elist.size()];
-					elist.toArray(executables);
-					@SuppressWarnings("unused")
-					IStatus rc = ExecutablesManager.getExecutablesManager().removeExecutables(executables, new NullProgressMonitor());
-					// Remove all old members of the Executables project from the last run
-					IResource[] resources = proj.members();
-					for (IResource resource : resources) {
-						resource.delete(IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
-					}
-					// Find last launch if one exists
-					String memento = proj.getPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH));
-//					System.out.println("memento is " + memento);
-					if (memento != null) {
-						ILaunchConfiguration lastConfiguration = getLaunchManager().getLaunchConfiguration(memento);
-						try {
-							lastConfiguration.getType();
-							if (lastConfiguration.exists())
-								lastConfiguration.delete();
-						} catch (CoreException e) {
-							// do nothing
-						}
-					}
-				}
-				final String[] fileNames = { executable };
-				Job importJob = new Job(Messages.ExecutablesView_ImportExecutables) {
-
-					@Override
-					public IStatus run(IProgressMonitor monitor) {
-						ExecutablesManager.getExecutablesManager().importExecutables(
-								fileNames, monitor);
-						return Status.OK_STATUS;
-					}
-				};
-				importJob.schedule();
-				importJob.join();
-				if (importJob.getResult() == Status.OK_STATUS) {
-					//				 See if the default project exists
-					cProject = CoreModel.getDefault().getCModel()
-							.getCProject(defaultProjectName);
-					if (cProject.exists()) {
-						File buildLogFile = null;
-						final IProject project = cProject.getProject();
-
-						final ICProjectDescriptionManager projDescManager = CCorePlugin
-								.getDefault().getProjectDescriptionManager();
-
-						ICProjectDescription projectDescription = projDescManager
-								.getProjectDescription(project,
-										ICProjectDescriptionManager.GET_WRITABLE);
-
-						final ICConfigurationDescription ccd = projectDescription
-								.getActiveConfiguration();
-						String[] langProviderIds = ((ILanguageSettingsProvidersKeeper) ccd)
-								.getDefaultLanguageSettingsProvidersIds();
-						boolean found = false;
-						for (int i = 0; i < langProviderIds.length; ++i) {
-							if (langProviderIds[i].equals(GCC_BUILTIN_PROVIDER_ID)) {
-								found = true;
-								break;
-							}
-						}
-						// Look for the GCC builtin LanguageSettingsProvider id.  If it isn't already
-						// there, add it.
-						if (!found) {
-							langProviderIds = Arrays.copyOf(langProviderIds,
-									langProviderIds.length + 1);
-							langProviderIds[langProviderIds.length - 1] = GCC_BUILTIN_PROVIDER_ID;
-						}
-						found = false;
-						for (int i = 0; i < langProviderIds.length; ++i) {
-							if (langProviderIds[i].equals(GCC_COMPILE_OPTIONS_PROVIDER_ID)) {
-								found = true;
-								break;
-							}
-						}
-						// Look for our macro parser provider id.  If it isn't added already, do so now.
-						if (!found) {
-							langProviderIds = Arrays.copyOf(langProviderIds,
-									langProviderIds.length + 1);
-							langProviderIds[langProviderIds.length - 1] = GCC_COMPILE_OPTIONS_PROVIDER_ID;
-						}
-
-						if (buildLog != null) {
-							File f = new File(buildLog);
-							if (f.exists()) {
-								buildLogFile = f;
-								found = false;
-								for (int i = 0; i < langProviderIds.length; ++i) {
-									if (langProviderIds[i].equals(GCC_BUILD_OPTIONS_PROVIDER_ID)) {
-										found = true;
-										break;
-									}
-								}
-								// Look for our macro parser provider id.  If it isn't added already, do so now.
-								if (!found) {
-									langProviderIds = Arrays.copyOf(langProviderIds,
-											langProviderIds.length + 1);
-									langProviderIds[langProviderIds.length - 1] = GCC_BUILD_OPTIONS_PROVIDER_ID;
-								}
-							}
-						}
-
-						// Create all the LanguageSettingsProviders
-						List<ILanguageSettingsProvider> providers = LanguageSettingsManager
-								.createLanguageSettingsProviders(langProviderIds);
-
-						// Update the ids and providers for the configuration.
-						((ILanguageSettingsProvidersKeeper) ccd)
-						.setDefaultLanguageSettingsProvidersIds(langProviderIds);
-						((ILanguageSettingsProvidersKeeper) ccd)
-						.setLanguageSettingProviders(providers);
-
-						// Update the project description.
-						projDescManager.setProjectDescription(project,
-								projectDescription);
-
-						if (!("".equals(executable)))
-							// We need to parse the macro compile options if they exist.  We need to lock the
-							// workspace when we do this so we don't have multiple copies of our GCCCompilerOptionsParser
-							// LanguageSettingsProvider and we end up filling in the wrong one.
-							project.getWorkspace().run(new CompilerOptionParser(project, executable), 
-									ResourcesPlugin.getWorkspace().getRoot(), IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
-
-						if (buildLogFile != null)	
-							// We need to parse the build log to get compile options.  We need to lock the
-							// workspace when we do this so we don't have multiple copies of GCCBuildOptionsParser
-							// LanguageSettingsProvider and we end up filling in the wrong one.
-							project.getWorkspace().run(new BuildOptionsParser(project, buildLogFile), 
-									ResourcesPlugin.getWorkspace().getRoot(), IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
-					}
-					IWorkbench workbench = PlatformUI.getWorkbench();
-					final IWorkbenchPage activePage = workbench.getActiveWorkbenchWindow().getActivePage();
-					activePage.closeAllEditors(false);
-					config = createConfiguration(executable, arguments, true);
-					String memento = config.getMemento();
-					cProject.getProject().setPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH), memento);
-				} 
-			} else {
-				String defaultProjectName = "Executables"; //$NON-NLS-1$
-				ICProject cProject = CoreModel.getDefault().getCModel()
-						.getCProject(defaultProjectName);
-				String memento = cProject.getProject().getPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH));
-				if (memento != null)
-					config = getLaunchManager().getLaunchConfiguration(memento);
-			}
-			final JobContainer LaunchJobs = new JobContainer();
-			Job.getJobManager().addJobChangeListener(new JobChangeAdapter() {
-
-				@Override
-				public void scheduled(IJobChangeEvent event) {
-					Job job = event.getJob();
-//					System.out.println("Job name is " + job.getName());
-					if (job.getName().contains(config.getName()))
-						LaunchJobs.setLaunchJob(job);
-				}
-				
-				@Override
-				public void done(IJobChangeEvent event) {
-//					System.out.println("Job " + event.getJob().getName() + " is done");
-				}
-			});
-			DebugUITools.launch(config, ILaunchManager.DEBUG_MODE);
-//			System.out.println("about to join " + LaunchJobs.getLaunchJob());
-			if (LaunchJobs.getLaunchJob() != null)
-				LaunchJobs.getLaunchJob().join();
+			IRunnableWithProgress op = new PostWindowCreateRunnable();
+			new ProgressMonitorDialog(getWindowConfigurer().getWindow().getShell()).run(true, true, op);
+		} catch (InvocationTargetException e) {
+			// handle exception
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// handle cancelation
 		}
-
 	}
 
+	public class PostWindowCreateRunnable implements IRunnableWithProgress {
+
+		@Override
+		public void run(IProgressMonitor monitor)
+				throws InvocationTargetException, InterruptedException {
+			monitor.beginTask(Messages.InitializingDebugger, 10);
+			String executable = "";
+			String buildLog = null;
+			String arguments = null;
+			String[] args = Platform.getCommandLineArgs();
+			for (int i = 0; i < args.length; ++i) {
+				if ("-application".equals(args[i]))
+					i++; // ignore the application specifier
+				else if ("-b".equals(args[i])) {
+					++i;
+					if (i < args.length)
+						buildLog = args[i];
+				}
+				else if ("-e".equals(args[i])) {
+					++i;
+					if (i < args.length)
+						executable = args[i];
+					++i;
+					if (i < args.length)
+						arguments = args[i];
+				}
+			}
+			monitor.worked(1);
+			try {
+				if (executable.length() > 0) {
+					File executableFile = new File(executable);
+					String defaultProjectName = "Executables"; //$NON-NLS-1$
+					ICProject cProject = CoreModel.getDefault().getCModel()
+							.getCProject(defaultProjectName);
+					// if a valid executable is specified, remove any executables already loaded in workspace
+					if (cProject.exists() && executableFile.exists()) {
+						monitor.subTask(Messages.RemoveOldExecutable);
+						IProject proj = cProject.getProject();
+						Collection<Executable> elist = ExecutablesManager.getExecutablesManager().getExecutablesForProject(proj);
+						Executable[] executables = new Executable[elist.size()];
+						elist.toArray(executables);
+						@SuppressWarnings("unused")
+						IStatus rc = ExecutablesManager.getExecutablesManager().removeExecutables(executables, new NullProgressMonitor());
+						// Remove all old members of the Executables project from the last run
+						IResource[] resources = proj.members();
+						for (IResource resource : resources) {
+							resource.delete(IResource.ALWAYS_DELETE_PROJECT_CONTENT|IResource.FORCE, new NullProgressMonitor());
+						}
+						monitor.worked(1);
+						// Find last launch if one exists
+						String memento = proj.getPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH));
+//						System.out.println("memento is " + memento);
+						if (memento != null) {
+							ILaunchConfiguration lastConfiguration = getLaunchManager().getLaunchConfiguration(memento);
+							try {
+								lastConfiguration.getType();
+								if (lastConfiguration.exists())
+									lastConfiguration.delete();
+							} catch (CoreException e) {
+								// do nothing
+							}
+						}
+						monitor.worked(1);
+					}
+					final String[] fileNames = { executable };
+					Job importJob = new Job(Messages.ExecutablesView_ImportExecutables) {
+
+						@Override
+						public IStatus run(IProgressMonitor monitor) {
+							ExecutablesManager.getExecutablesManager().importExecutables(
+									fileNames, monitor);
+							return Status.OK_STATUS;
+						}
+					};
+					monitor.subTask(Messages.ImportExecutable);
+					importJob.schedule();
+					importJob.join();
+					monitor.worked(3);
+					if (importJob.getResult() == Status.OK_STATUS) {
+						//				 See if the default project exists
+						cProject = CoreModel.getDefault().getCModel()
+								.getCProject(defaultProjectName);
+						if (cProject.exists()) {
+							File buildLogFile = null;
+							final IProject project = cProject.getProject();
+
+							final ICProjectDescriptionManager projDescManager = CCorePlugin
+									.getDefault().getProjectDescriptionManager();
+
+							ICProjectDescription projectDescription = projDescManager
+									.getProjectDescription(project,
+											ICProjectDescriptionManager.GET_WRITABLE);
+
+							monitor.subTask(Messages.SetLanguageProviders);
+							final ICConfigurationDescription ccd = projectDescription
+									.getActiveConfiguration();
+							String[] langProviderIds = ((ILanguageSettingsProvidersKeeper) ccd)
+									.getDefaultLanguageSettingsProvidersIds();
+							boolean found = false;
+							for (int i = 0; i < langProviderIds.length; ++i) {
+								if (langProviderIds[i].equals(GCC_BUILTIN_PROVIDER_ID)) {
+									found = true;
+									break;
+								}
+							}
+							// Look for the GCC builtin LanguageSettingsProvider id.  If it isn't already
+							// there, add it.
+							if (!found) {
+								langProviderIds = Arrays.copyOf(langProviderIds,
+										langProviderIds.length + 1);
+								langProviderIds[langProviderIds.length - 1] = GCC_BUILTIN_PROVIDER_ID;
+							}
+							found = false;
+							for (int i = 0; i < langProviderIds.length; ++i) {
+								if (langProviderIds[i].equals(GCC_COMPILE_OPTIONS_PROVIDER_ID)) {
+									found = true;
+									break;
+								}
+							}
+							// Look for our macro parser provider id.  If it isn't added already, do so now.
+							if (!found) {
+								langProviderIds = Arrays.copyOf(langProviderIds,
+										langProviderIds.length + 1);
+								langProviderIds[langProviderIds.length - 1] = GCC_COMPILE_OPTIONS_PROVIDER_ID;
+							}
+
+							if (buildLog != null) {
+								File f = new File(buildLog);
+								if (f.exists()) {
+									buildLogFile = f;
+									found = false;
+									for (int i = 0; i < langProviderIds.length; ++i) {
+										if (langProviderIds[i].equals(GCC_BUILD_OPTIONS_PROVIDER_ID)) {
+											found = true;
+											break;
+										}
+									}
+									// Look for our macro parser provider id.  If it isn't added already, do so now.
+									if (!found) {
+										langProviderIds = Arrays.copyOf(langProviderIds,
+												langProviderIds.length + 1);
+										langProviderIds[langProviderIds.length - 1] = GCC_BUILD_OPTIONS_PROVIDER_ID;
+									}
+								}
+							}
+
+							// Create all the LanguageSettingsProviders
+							List<ILanguageSettingsProvider> providers = LanguageSettingsManager
+									.createLanguageSettingsProviders(langProviderIds);
+
+							// Update the ids and providers for the configuration.
+							((ILanguageSettingsProvidersKeeper) ccd)
+							.setDefaultLanguageSettingsProvidersIds(langProviderIds);
+							((ILanguageSettingsProvidersKeeper) ccd)
+							.setLanguageSettingProviders(providers);
+							
+							monitor.worked(1);
+
+							// Update the project description.
+							projDescManager.setProjectDescription(project,
+									projectDescription);
+
+							monitor.worked(1);
+							
+							if (!("".equals(executable)))
+								// We need to parse the macro compile options if they exist.  We need to lock the
+								// workspace when we do this so we don't have multiple copies of our GCCCompilerOptionsParser
+								// LanguageSettingsProvider and we end up filling in the wrong one.
+								project.getWorkspace().run(new CompilerOptionParser(project, executable), 
+										ResourcesPlugin.getWorkspace().getRoot(), IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
+
+							if (buildLogFile != null)	
+								// We need to parse the build log to get compile options.  We need to lock the
+								// workspace when we do this so we don't have multiple copies of GCCBuildOptionsParser
+								// LanguageSettingsProvider and we end up filling in the wrong one.
+								project.getWorkspace().run(new BuildOptionsParser(project, buildLogFile), 
+										ResourcesPlugin.getWorkspace().getRoot(), IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
+						}
+						IWorkbench workbench = PlatformUI.getWorkbench();
+						if (workbench != null) {
+							final IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+							if (workbenchWindow != null) {
+								final IWorkbenchPage activePage = workbenchWindow.getActivePage();
+								if (activePage != null)
+									activePage.closeAllEditors(false);
+							}
+						}
+						config = createConfiguration(executable, arguments, true);
+						String memento = config.getMemento();
+						cProject.getProject().setPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH), memento);
+						monitor.worked(1);
+					} 
+				} else {
+					monitor.subTask(Messages.RestorePreviousLaunch);
+					String defaultProjectName = "Executables"; //$NON-NLS-1$
+					ICProject cProject = CoreModel.getDefault().getCModel()
+							.getCProject(defaultProjectName);
+					String memento = cProject.getProject().getPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH));
+					if (memento != null)
+						config = getLaunchManager().getLaunchConfiguration(memento);
+					monitor.worked(7);
+				}
+				final JobContainer LaunchJobs = new JobContainer();
+				Job.getJobManager().addJobChangeListener(new JobChangeAdapter() {
+
+					@Override
+					public void scheduled(IJobChangeEvent event) {
+						Job job = event.getJob();
+//						System.out.println("Job name is " + job.getName());
+						if (job.getName().contains(config.getName()))
+							LaunchJobs.setLaunchJob(job);
+					}
+					
+					@Override
+					public void done(IJobChangeEvent event) {
+//						System.out.println("Job " + event.getJob().getName() + " is done");
+					}
+				});
+				monitor.subTask(Messages.LaunchingConfig);
+				Display.getDefault().syncExec(new Runnable() {
+
+					@Override
+					public void run() {
+						DebugUITools.launch(config, ILaunchManager.DEBUG_MODE);
+//										System.out.println("about to join " + LaunchJobs.getLaunchJob());
+					}
+				});
+				if (LaunchJobs.getLaunchJob() != null) {
+				try {
+					LaunchJobs.getLaunchJob().join();
+				} catch (InterruptedException e) {
+					IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
+							Messages.LaunchInterruptedError, e);
+					ResourcesPlugin.getPlugin().getLog().log(status);
+				}
+			}
+
+			} catch (InterruptedException e) {
+				throw e; // rethrow exception
+			} catch (CoreException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				monitor.done();
+			}
+		}
+		
+	}
 	private IContainer createFromRoot(IProject exeProject, IPath path)
 			throws CoreException {
 		int segmentCount = path.segmentCount() - 1;

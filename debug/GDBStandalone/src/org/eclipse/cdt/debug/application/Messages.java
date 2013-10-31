@@ -24,6 +24,13 @@ public class Messages extends NLS {
 	public static String ProblemSavingWorkbench;
 	public static String ProblemsSavingWorkspace;
 	public static String InternalError;
+	public static String InitializingDebugger;
+	public static String ImportExecutable;
+	public static String SetLanguageProviders;
+	public static String RestorePreviousLaunch;
+	public static String RemoveOldExecutable;
+	public static String LaunchingConfig;
+	public static String LaunchInterruptedError;
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);

@@ -21,12 +21,13 @@
 		<cdt-install>/home/data/httpd/download.eclipse.org/tools/cdt/builds/${cdt-stream}/nightly</cdt-install>
 	</properties>
 
-	<!-- pluginRepositories>
+	<pluginRepositories>
    		<pluginRepository>
 			<id>maven.eclipse.org</id>
      		<url>http://maven.eclipse.org/nexus/content/repositories/public</url>
     	</pluginRepository>
-  	</pluginRepositories-->
+  	</pluginRepositories>
+  	
 	<build>
 		<finalName>${project.artifactId}</finalName>
 	</build>

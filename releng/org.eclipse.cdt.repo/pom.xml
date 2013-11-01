@@ -15,107 +15,86 @@
 	<artifactId>org.eclipse.cdt.repo</artifactId>
 	<packaging>eclipse-repository</packaging>
 	
-	<properties>
-		<cdt-stream>luna</cdt-stream>
-		<cdt-zipfile>org.eclipse.cdt.repo.zip</cdt-zipfile>
-		<cdt-install>/home/data/httpd/download.eclipse.org/tools/cdt/builds/${cdt-stream}/nightly</cdt-install>
-	</properties>
-
 	<pluginRepositories>
    		<pluginRepository>
-			<id>maven.eclipse.org</id>
-     		<url>http://maven.eclipse.org/nexus/content/repositories/public</url>
+			<id>cbi</id>
+     		<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
     	</pluginRepository>
   	</pluginRepositories>
   	
 	<build>
 		<finalName>${project.artifactId}</finalName>
 	</build>
+
 	<profiles>
 		<profile>
 			<id>production</id>
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.eclipse.dash.maven</groupId>
-						<artifactId>eclipse-signing-maven-plugin</artifactId>
-						<version>1.0.5</version>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>target-platform-configuration</artifactId>
+						<version>${tycho-verson}</version>
+						<configuration>
+							<includePackedArtifacts>false</includePackedArtifacts>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.tycho.extras</groupId>
+						<artifactId>tycho-pack200a-plugin</artifactId>
+						<version>${tycho-version}</version>
 						<executions>
 							<execution>
-								<id>pack</id>
-								<configuration>
-									<inputFile>${project.build.directory}/${cdt-zipfile}</inputFile>
-								</configuration>
-								<phase>package</phase>
+								<id>pack200-normalize</id>
 								<goals>
-									<goal>pack</goal>
+									<goal>normalize</goal>
 								</goals>
-							</execution>
-							<execution>
-								<id>sign</id>
-								<configuration>
-									<inputFile>${project.build.directory}/${cdt-zipfile}</inputFile>
-									<signerInputDirectory>/home/data/httpd/download-staging.priv/tools/cdt/hudson</signerInputDirectory>
-								</configuration>
-								<phase>package</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>repack</id>
-								<configuration>
-									<inputFile>${project.build.directory}/signed/site_assembly.zip</inputFile>
-								</configuration>
-								<phase>package</phase>
-								<goals>
-									<goal>pack</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>fixCheckSums</id>
-								<phase>package</phase>
-								<goals>
-									<goal>fixCheckSums</goal>
-								</goals>
+								<phase>verify</phase>
 							</execution>
 						</executions>
 					</plugin>
 					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
+						<groupId>org.eclipse.cbi.maven.plugins</groupId>
+						<artifactId>eclipse-jarsigner-plugin</artifactId>
+						<version>1.0.4</version>
+						<executions>
+							<id>sign</id>
+							<phase>verify</phase>
+							<goals>
+								<goal>sign</goal>
+							</goals>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.tycho.extras</groupId>
+						<artifactId>tycho-pack200b-plugin</artifactId>
+						<version>${tycho-version}</version>
 						<executions>
 							<execution>
-								<id>deploy</id>
-								<phase>install</phase>
+								<id>pack200-pack</id>
 								<goals>
-									<goal>run</goal>
+									<goal>pack</goal>
 								</goals>
-								<configuration>
-									<tasks>
-										<delete includeemptydirs="false">
-											<fileset dir="${cdt-install}">
-												<include name="**" />
-											</fileset>
-										</delete>
-										<zip destfile="${cdt-install}/org.eclipse.cdt.repo.zip">
-											<fileset dir="target/checksumFix">
-												<include name="**" />
-											</fileset>
-										</zip>
-										<copy includeemptydirs="false" todir="${cdt-install}">
-											<fileset dir="target/checksumFix">
-												<include name="**" />
-											</fileset>
-										</copy>
-										<chmod perm="g+w">
-											<fileset dir="${cdt-install}">
-												<include name="**"/>
-											</fileset>
-										</chmod>
-									</tasks>
-								</configuration>
+								<phase>verify</phase>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.tyco</groupId>
+						<artifactId>tycho-p2-plugin</artifactId>
+						<version>${tycho-version}</version>
+						<executions>
+							<execution>
+								<id>p2-metadata</id>
+								<goals>
+									<goal>p2-metadata</goal>
+								</goals>
+								<phase>verify</phase>
+							</execution>
+						</executions>
+						<configuration>
+							<defaultP2Metadata>false</defaultP2Metadata>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>

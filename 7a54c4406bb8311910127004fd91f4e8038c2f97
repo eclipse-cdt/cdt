@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_bc84a2ec",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2013-11-01T14:58:38Z",
+      "side": 1,
+      "message": "Adjusted our code to this idea, and yeah, the only error is getting at the ExpressionInfo object. We\u0027ve extended it with a field we need to complete the loop.\n\nGiven that this is all that this DMC does, why not make it public? ExpressionInfo is public.",
+      "parentUuid": "8748d3a1_dcbecefb",
+      "revId": "7a54c4406bb8311910127004fd91f4e8038c2f97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_e110478c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
         "patchSetId": 4

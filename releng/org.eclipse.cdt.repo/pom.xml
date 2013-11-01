@@ -58,11 +58,13 @@
 						<artifactId>eclipse-jarsigner-plugin</artifactId>
 						<version>1.0.4</version>
 						<executions>
-							<id>sign</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>sign</goal>
-							</goals>
+							<execution>
+								<id>sign</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
 						</executions>
 					</plugin>
 					<plugin>

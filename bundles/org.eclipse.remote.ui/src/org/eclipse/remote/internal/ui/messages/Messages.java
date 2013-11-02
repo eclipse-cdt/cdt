@@ -53,6 +53,8 @@ public class Messages extends NLS {
 	public static String LocalUIConnectionManager_2;
 	public static String LocalUIConnectionManager_3;
 	
+	public static String PendingUpdateAdapter_Pending;
+
 	public static String PTPRemoteUIPlugin_3;
 	public static String PTPRemoteUIPlugin_4;
 	
@@ -91,6 +93,10 @@ public class Messages extends NLS {
 	public static String RemoteResourceBrowser_NewFolder;
 	public static String RemoteResourceBrowser_Show_hidden_files;
 	public static String RemoteResourceBrowser_UpOneLevel;
+
+	public static String RemoteResourceBrowserWidget_New_Folder;
+
+	public static String RemoteResourceBrowserWidget_Unable_to_create_new_folder;
 	
 	public static String RemoteUIServices_Configuring_remote_services;
 

@@ -37,7 +37,10 @@ import org.eclipse.swt.widgets.Text;
  * button that uses the currently specified connection and a "Restore Default"
  * button to revert to the initial setting.
  * 
- * If title is supplied then the widget will be placed in a group.
+ * If GROUP_FLAG is set, then the widget will be placed in a group.
+ * If RESTORE_BUTTON_FLAG is set, then a "Restore Default" button will be added
+ * 
+ * If defaultPath is not null, then the initial path will be set to its value.
  * 
  * The browse message can be modified using {@link #setBrowseMessage(String)}
  * 
@@ -76,10 +79,6 @@ public class RemoteFileWidget extends Composite {
 			body = group;
 		}
 
-		// Composite textComp = new Composite(body, SWT.NONE);
-		// textComp.setLayout(new GridLayout(2, false));
-		// textComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
 		fLabel = new Label(body, SWT.NONE);
 		fLabel.setText(Messages.RemoteFileWidget_File);
 		fLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
@@ -87,18 +86,13 @@ public class RemoteFileWidget extends Composite {
 		fText = new Text(body, SWT.BORDER);
 		fText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		fText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				String path = fText.getText();
 				setSavedPath(path);
 				notifyListeners(e);
 			}
 		});
-
-		// Composite buttonComp = new Composite(body, SWT.NONE);
-		// buttonComp.setLayout(new GridLayout(2, true));
-		// GridData buttonCompData = new GridData(SWT.FILL, SWT.FILL, false, false);
-		// buttonCompData.horizontalAlignment = SWT.END;
-		// buttonComp.setLayoutData(buttonCompData);
 
 		fBrowseButton = new Button(body, SWT.NONE);
 		fBrowseButton.setText(Messages.RemoteFileWidget_Browse);

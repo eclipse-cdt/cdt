@@ -31,27 +31,33 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
 
-public class DeferredFileStore implements IDeferredWorkbenchAdapter {
+public class DeferredFileStore implements IDeferredWorkbenchAdapter, IAdaptable {
 	private final IFileStore fFileStore;
 	private IFileInfo fFileInfo;
 	private IFileInfo fTargetInfo;
 	private ImageDescriptor fImage;
 	private final boolean fExcludeHidden;
+	private final DeferredFileStore fParent;
 
-	/**
-	 * @since 7.0
-	 */
 	public DeferredFileStore(IFileStore store, boolean exclude) {
-		this(store, null, exclude);
+		this(store, null, exclude, null);
 	}
 
 	/**
 	 * @since 7.0
 	 */
-	public DeferredFileStore(IFileStore store, IFileInfo info, boolean exclude) {
+	public DeferredFileStore(IFileStore store, boolean exclude, DeferredFileStore parent) {
+		this(store, null, exclude, parent);
+	}
+
+	/**
+	 * @since 7.0
+	 */
+	public DeferredFileStore(IFileStore store, IFileInfo info, boolean exclude, DeferredFileStore parent) {
 		fFileStore = store;
 		fFileInfo = info;
 		fExcludeHidden = exclude;
+		fParent = parent;
 	}
 
 	/*
@@ -60,13 +66,14 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter {
 	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object,
 	 * org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
 		ArrayList<DeferredFileStore> children = new ArrayList<DeferredFileStore>();
 		try {
 			IFileInfo[] childInfos = fFileStore.childInfos(EFS.NONE, monitor);
 			for (IFileInfo info : childInfos) {
 				if (!(fExcludeHidden && info.getName().startsWith("."))) { //$NON-NLS-1$
-					children.add(new DeferredFileStore(fFileStore.getChild(info.getName()), info, fExcludeHidden));
+					children.add(new DeferredFileStore(fFileStore.getChild(info.getName()), info, fExcludeHidden, this));
 				}
 			}
 		} catch (CoreException e) {
@@ -75,6 +82,7 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter {
 		if (children != null) {
 			collector.add(children.toArray(), monitor);
 		}
+		collector.done();
 	}
 
 	/**
@@ -99,6 +107,15 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (IWorkbenchAdapter.class.equals(adapter)) {
+			return this;
+		}
+		return null;
+	}
+
 	/**
 	 * Return the IWorkbenchAdapter for element or the element if it is
 	 * an instance of IWorkbenchAdapter. If it does not exist return
@@ -109,58 +126,6 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter {
 	 */
 	protected IWorkbenchAdapter getAdapter(Object element) {
 		return (IWorkbenchAdapter) getAdapter(element, IWorkbenchAdapter.class);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-	 */
-	public Object[] getChildren(Object o) {
-		try {
-			IFileStore[] stores = fFileStore.childStores(EFS.NONE, null);
-			List<DeferredFileStore> def = new ArrayList<DeferredFileStore>();
-			for (int i = 0; i < stores.length; i++) {
-				if (!(fExcludeHidden && stores[i].getName().startsWith("."))) { //$NON-NLS-1$
-					def.add(new DeferredFileStore(stores[i], fExcludeHidden));
-				}
-			}
-			return def.toArray();
-		} catch (CoreException e) {
-			return new Object[0];
-		}
-	}
-
-	/**
-	 * Get the filestore backing this object
-	 * 
-	 * @return
-	 */
-	public IFileStore getFileStore() {
-		return fFileStore;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-	 */
-	public ImageDescriptor getImageDescriptor(Object object) {
-		fetchInfo();
-		if (fImage == null) {
-			boolean isDir = fFileInfo.isDirectory() || (fTargetInfo != null && fTargetInfo.isDirectory());
-			FileSystemElement element = new FileSystemElement(fFileStore.getName(), null, isDir);
-			IWorkbenchAdapter adapter = getAdapter(element);
-			if (adapter != null) {
-				ImageDescriptor imageDesc = adapter.getImageDescriptor(object);
-				if (fTargetInfo != null) {
-					imageDesc = new OverlayImageDescriptor(imageDesc, RemoteUIImages.DESC_OVR_SYMLINK,
-							OverlayImageDescriptor.BOTTOM_RIGHT);
-				}
-				fImage = imageDesc;
-			}
-		}
-		return fImage;
 	}
 
 	/**
@@ -215,8 +180,63 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
+	 */
+	@Override
+	public Object[] getChildren(Object o) {
+		try {
+			IFileStore[] stores = fFileStore.childStores(EFS.NONE, null);
+			List<DeferredFileStore> def = new ArrayList<DeferredFileStore>();
+			for (int i = 0; i < stores.length; i++) {
+				if (!(fExcludeHidden && stores[i].getName().startsWith("."))) { //$NON-NLS-1$
+					def.add(new DeferredFileStore(stores[i], fExcludeHidden, this));
+				}
+			}
+			return def.toArray();
+		} catch (CoreException e) {
+			return new Object[0];
+		}
+	}
+
+	/**
+	 * Get the filestore backing this object
+	 * 
+	 * @return
+	 */
+	public IFileStore getFileStore() {
+		return fFileStore;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
+	 */
+	@Override
+	public ImageDescriptor getImageDescriptor(Object object) {
+		fetchInfo();
+		if (fImage == null) {
+			boolean isDir = fFileInfo.isDirectory() || (fTargetInfo != null && fTargetInfo.isDirectory());
+			FileSystemElement element = new FileSystemElement(fFileStore.getName(), null, isDir);
+			IWorkbenchAdapter adapter = getAdapter(element);
+			if (adapter != null) {
+				ImageDescriptor imageDesc = adapter.getImageDescriptor(object);
+				if (fTargetInfo != null) {
+					imageDesc = new OverlayImageDescriptor(imageDesc, RemoteUIImages.DESC_OVR_SYMLINK,
+							OverlayImageDescriptor.BOTTOM_RIGHT);
+				}
+				fImage = imageDesc;
+			}
+		}
+		return fImage;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */
+	@Override
 	public String getLabel(Object o) {
 		return fFileStore.getName();
 	}
@@ -226,8 +246,9 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter {
 	 * 
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
 	 */
+	@Override
 	public Object getParent(Object o) {
-		return fFileStore.getParent();
+		return fParent;
 	}
 
 	/*
@@ -235,6 +256,7 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter {
 	 * 
 	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
 	 */
+	@Override
 	public ISchedulingRule getRule(Object object) {
 		return null;
 	}
@@ -244,6 +266,7 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter {
 	 * 
 	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		fetchInfo();
 		return fFileInfo.isDirectory() || (fTargetInfo != null && fTargetInfo.isDirectory());

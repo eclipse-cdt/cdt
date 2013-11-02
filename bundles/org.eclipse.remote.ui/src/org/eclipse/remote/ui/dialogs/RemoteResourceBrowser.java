@@ -41,7 +41,7 @@ public class RemoteResourceBrowser extends Dialog {
 	public static final int SINGLE = 0x01;
 	public static final int MULTI = 0x02;
 
-	private final static int widthHint = 300;
+	private final static int widthHint = 400;
 
 	private Button okButton;
 	private RemoteResourceBrowserWidget fWidget;

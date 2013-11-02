@@ -92,7 +92,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	private static final int widthHint = 300;
+	private static final int minimumWidth = 200;
 	private static final int heightHint = 300;
 
 	private RemoteTreeViewer treeViewer;
@@ -151,9 +151,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 		Label label = new Label(mainComp, SWT.NONE);
 		label.setText(dialogLabel);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 1;
-		label.setLayoutData(gd);
+		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 
 		remotePathText = new Text(mainComp, SWT.BORDER | SWT.SINGLE);
 		remotePathText.addModifyListener(new ModifyListener() {
@@ -176,11 +174,12 @@ public class RemoteResourceBrowserWidget extends Composite {
 			}
 
 		});
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = widthHint;
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd.minimumWidth = minimumWidth;
 		remotePathText.setLayoutData(gd);
 
 		upButton = new Button(mainComp, SWT.PUSH | SWT.FLAT);
+		upButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		upButton.setImage(RemoteUIImages.get(RemoteUIImages.IMG_ELCL_UP_NAV));
 		upButton.setToolTipText(Messages.RemoteResourceBrowser_UpOneLevel);
 		upButton.addSelectionListener(new SelectionAdapter() {
@@ -195,6 +194,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 		if ((optionFlags & SHOW_NEW_FOLDER_BUTTON) != 0) {
 			// new folder: See Bug 396334
 			newFolderButton = new Button(mainComp, SWT.PUSH | SWT.FLAT);
+			newFolderButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			newFolderButton.setImage(RemoteUIImages.get(RemoteUIImages.IMG_ELCL_NEW_FOLDER));
 			newFolderButton.setToolTipText(Messages.RemoteResourceBrowser_NewFolder);
 			newFolderButton.addSelectionListener(new SelectionAdapter() {
@@ -245,6 +245,10 @@ public class RemoteResourceBrowserWidget extends Composite {
 					}
 				}
 			});
+		} else {
+			gd = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+			gd.horizontalSpan = 2;
+			upButton.setLayoutData(gd);
 		}
 
 		if ((style & SWT.MULTI) == SWT.MULTI) {
@@ -252,7 +256,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 		} else {
 			treeViewer = new RemoteTreeViewer(mainComp, SWT.SINGLE | SWT.BORDER);
 		}
-		gd = new GridData(GridData.FILL_BOTH);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalSpan = 4;
 		// see bug 158380
 		gd.heightHint = Math.max(parent.getSize().y, heightHint);
@@ -307,6 +311,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 		if ((optionFlags & SHOW_HIDDEN_CHECKBOX) != 0) {
 			final Button showHiddenButton = new Button(mainComp, SWT.CHECK);
+			showHiddenButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			showHiddenButton.setText(Messages.RemoteResourceBrowser_Show_hidden_files);
 			showHiddenButton.addSelectionListener(new SelectionAdapter() {
 				@Override

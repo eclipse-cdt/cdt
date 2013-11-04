@@ -24,6 +24,7 @@ public class AllLanguageSettingsProvidersCoreTests {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllLanguageSettingsProvidersCoreTests.class.getName());
 
+		suite.addTestSuite(BuiltinSpecsDetectorTest.class);
 		suite.addTest(LanguageSettingsExtensionsTests.suite());
 		suite.addTest(LanguageSettingsManagerTests.suite());
 		suite.addTest(LanguageSettingsSerializableProviderTests.suite());

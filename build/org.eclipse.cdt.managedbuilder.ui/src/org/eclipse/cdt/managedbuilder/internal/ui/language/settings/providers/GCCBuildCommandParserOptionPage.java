@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 
+import org.eclipse.cdt.core.language.settings.providers.AbstractBuildCommandParser;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
-import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildCommandParser;
 import org.eclipse.cdt.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.jface.dialogs.Dialog;
@@ -158,16 +158,16 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 		gd.horizontalSpan = 2;
 		scopeFileRadioButton.setLayoutData(gd);
 
-		scopeFileRadioButton.setSelection(provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.FILE);
+		scopeFileRadioButton.setSelection(provider.getRcScope() == AbstractBuildCommandParser.ResourceScope.FILE);
 		scopeFileRadioButton.setEnabled(fEditable);
 		scopeFileRadioButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = scopeFileRadioButton.getSelection();
 				AbstractBuildCommandParser provider = (AbstractBuildCommandParser) getProvider();
-				if (enabled != (provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.FILE)) {
+				if (enabled != (provider.getRcScope() == AbstractBuildCommandParser.ResourceScope.FILE)) {
 					AbstractBuildCommandParser selectedProvider = (AbstractBuildCommandParser) getProviderWorkingCopy();
-					selectedProvider.setResourceScope(AbstractBuildCommandParser.ResourceScope.FILE);
+					selectedProvider.setRcScope(AbstractBuildCommandParser.ResourceScope.FILE);
 					refreshItem(selectedProvider);
 				}
 			}
@@ -183,16 +183,16 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 		gd.horizontalSpan = 2;
 		scopeFolderRadioButton.setLayoutData(gd);
 
-		scopeFolderRadioButton.setSelection(provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.FOLDER);
+		scopeFolderRadioButton.setSelection(provider.getRcScope() == AbstractBuildCommandParser.ResourceScope.FOLDER);
 		scopeFolderRadioButton.setEnabled(fEditable);
 		scopeFolderRadioButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = scopeFolderRadioButton.getSelection();
 				AbstractBuildCommandParser provider = (AbstractBuildCommandParser) getProvider();
-				if (enabled != (provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.FOLDER)) {
+				if (enabled != (provider.getRcScope() == AbstractBuildCommandParser.ResourceScope.FOLDER)) {
 					AbstractBuildCommandParser selectedProvider = (AbstractBuildCommandParser) getProviderWorkingCopy();
-					selectedProvider.setResourceScope(AbstractBuildCommandParser.ResourceScope.FOLDER);
+					selectedProvider.setRcScope(AbstractBuildCommandParser.ResourceScope.FOLDER);
 					refreshItem(selectedProvider);
 				}
 			}
@@ -208,16 +208,16 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 		gd.horizontalSpan = 2;
 		scopeProjectRadioButton.setLayoutData(gd);
 
-		scopeProjectRadioButton.setSelection(provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.PROJECT);
+		scopeProjectRadioButton.setSelection(provider.getRcScope() == AbstractBuildCommandParser.ResourceScope.PROJECT);
 		scopeProjectRadioButton.setEnabled(fEditable);
 		scopeProjectRadioButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = scopeProjectRadioButton.getSelection();
 				AbstractBuildCommandParser provider = (AbstractBuildCommandParser) getProvider();
-				if (enabled != (provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.PROJECT)) {
+				if (enabled != (provider.getRcScope() == AbstractBuildCommandParser.ResourceScope.PROJECT)) {
 					AbstractBuildCommandParser selectedProvider = (AbstractBuildCommandParser) getProviderWorkingCopy();
-					selectedProvider.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
+					selectedProvider.setRcScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
 					refreshItem(selectedProvider);
 				}
 			}

@@ -27,7 +27,6 @@ public class AllLanguageSettingsProvidersMBSTests extends TestSuite {
 
 		addTestSuite(LanguageSettingsProvidersMBSTest.class);
 		addTestSuite(GCCBuildCommandParserTest.class);
-		addTestSuite(BuiltinSpecsDetectorTest.class);
 		addTestSuite(GCCBuiltinSpecsDetectorTest.class);
 	}
 }

@@ -107,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_66cabbb4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1306,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2013-11-04T19:34:05Z",
+      "side": 1,
+      "message": "OK, but I end up casting these things to MIExpressionDMC in our subclass so I can call getExpressionInfo. Any changes there will break us anyway. The plan is to push our changes upstream at some point so you can get a better look at what we\u0027re doing.",
+      "parentUuid": "8748d3a1_41f77bc6",
+      "revId": "7a54c4406bb8311910127004fd91f4e8038c2f97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_95e72fa4",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
         "patchSetId": 4

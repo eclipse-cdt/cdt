@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 
+import org.eclipse.cdt.core.language.settings.providers.AbstractBuildCommandParser;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
-import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildCommandParser;
 import org.eclipse.cdt.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.jface.dialogs.Dialog;

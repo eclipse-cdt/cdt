@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.core.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.internal.core.ICConsole;
-import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.language.settings.providers.LanguageSettingsProvidersImages;
 import org.eclipse.core.resources.IProject;

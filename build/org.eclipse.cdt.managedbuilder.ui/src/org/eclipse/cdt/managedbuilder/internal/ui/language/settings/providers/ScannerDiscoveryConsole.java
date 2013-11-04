@@ -12,8 +12,8 @@ package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 
 import java.net.URL;
 
+import org.eclipse.cdt.core.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.internal.ui.buildconsole.CBuildConsole;
-import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.ui.language.settings.providers.LanguageSettingsProvidersImages;
 
 /**

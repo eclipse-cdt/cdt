@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.language.settings.providers.AbstractBuildCommandParser;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -40,7 +41,6 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
-import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildCommandParser;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -570,14 +570,14 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-		
+
 		IFile file=ResourceHelper.createFile(project, "file.cpp");
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
-		
+
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
-		
+
 		// parse line
 		parser.startup(cfgDescription, null);
 		parser.processLine("gcc"
@@ -595,7 +595,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 				+ " -I '/path with spaces3'"
 				+ " file.cpp");
 		parser.shutdown();
-		
+
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
 		CIncludePathEntry expected = new CIncludePathEntry("/path0", 0);
@@ -605,13 +605,13 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		assertEquals(expected.getKind(), entry.getKind());
 		assertEquals(expected.getFlags(), entry.getFlags());
 		assertEquals(expected, entry);
-		
+
 		assertEquals(new CIncludePathEntry("/path1", 0), entries.get(1));
 		assertEquals(new CIncludePathEntry("/path with spaces", 0), entries.get(2));
 		assertEquals(new CIncludePathEntry("/path with spaces2", 0), entries.get(3));
 		assertEquals(new CIncludePathEntry("/path with spaces3", 0), entries.get(4));
 	}
-	
+
 	/**
 	 * Parse Mac Frameworks.
 	 */
@@ -2168,26 +2168,26 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IFile file=ResourceHelper.createFile(project, "file.cpp");
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-		
+
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
-		
+
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		parser.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
-		
+
 		// parse line
 		parser.startup(cfgDescription, null);
 		parser.processLine("gcc "
 				+ "-IC:/path0 "
 				+ "/absolute/path/file.cpp");
 		parser.shutdown();
-		
+
 		// check entries
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, project, languageId);
 		assertEquals(new CIncludePathEntry("C:/path0", 0), entries.get(0));
 	}
-	
+
 	/**
 	 * Parsing of file being compiled outside of workspace saving entries at project scope.
 	 */

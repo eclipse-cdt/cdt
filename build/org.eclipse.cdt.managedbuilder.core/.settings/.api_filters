@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.managedbuilder.core" version="2">
+    <resource path="src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java" type="org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildCommandParser">
+        <filter comment="Class has been moved to org.eclipse.cdt.core.language.settings.providers" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildCommandParser"/>
+                <message_argument value="getResourceScope()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

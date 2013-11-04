@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_f0ba0108",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-04T15:14:50Z",
+      "side": 1,
+      "message": "It is bad practice to make DMCs defined in services public.  It limits what we can do with them in the future and makes the extending code brittle.\n\nThe proper way to do things is to define a new interface, IExpressionDMContextExtension which will provide the necessary access.  But that will require some effort to handle DSF vs DSF-GDB boundaries.\n\nSigh. Ok, let\u0027s make it public",
+      "parentUuid": "8748d3a1_bc84a2ec",
+      "revId": "7a54c4406bb8311910127004fd91f4e8038c2f97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_e110478c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
         "patchSetId": 4
@@ -83,6 +101,23 @@
       "writtenOn": "2013-10-18T16:33:57Z",
       "side": 1,
       "message": "Before making protected, change signature to use IExpressionDMContext instead, which is public",
+      "revId": "7a54c4406bb8311910127004fd91f4e8038c2f97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_95e72fa4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1825,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-04T15:14:50Z",
+      "side": 1,
+      "message": "Here too, replace MIExpressionDMC with IExpressionDMContext before making protected",
       "revId": "7a54c4406bb8311910127004fd91f4e8038c2f97",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

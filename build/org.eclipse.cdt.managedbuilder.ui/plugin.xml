@@ -713,14 +713,14 @@
               ui-edit-entries="false">
          </id-association>
       <class-association
-            class="org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildCommandParser"
+            class="org.eclipse.cdt.core.language.settings.providers.AbstractBuildCommandParser"
             icon="icons/obj16/log_obj.gif"
             page="org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers.GCCBuildCommandParserOptionPage"
             ui-clear-entries="true"
             ui-edit-entries="false">
       </class-association>
       <class-association
-            class="org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector"
+            class="org.eclipse.cdt.core.language.settings.providers.AbstractBuiltinSpecsDetector"
             icon="icons/obj16/inspect_sys.gif"
             page="org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers.BuiltinSpecsDetectorOptionPage"
             ui-clear-entries="true"

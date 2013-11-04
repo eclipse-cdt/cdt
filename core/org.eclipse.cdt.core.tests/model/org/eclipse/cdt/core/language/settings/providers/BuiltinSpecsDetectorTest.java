@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
+package org.eclipse.cdt.core.language.settings.providers;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IContributedEnvironment;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
+import org.eclipse.cdt.core.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
@@ -45,7 +46,6 @@ import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
-import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;

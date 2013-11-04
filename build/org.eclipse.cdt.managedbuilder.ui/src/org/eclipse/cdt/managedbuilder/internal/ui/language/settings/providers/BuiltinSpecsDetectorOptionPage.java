@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 
+import org.eclipse.cdt.core.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
-import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.ToolchainBuiltinSpecsDetector;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;

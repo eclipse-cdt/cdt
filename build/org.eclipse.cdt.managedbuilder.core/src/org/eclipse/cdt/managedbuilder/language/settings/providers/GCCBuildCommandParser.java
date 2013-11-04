@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
 
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
+import org.eclipse.cdt.core.language.settings.providers.AbstractBuildCommandParser;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 

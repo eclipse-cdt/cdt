@@ -239,6 +239,13 @@
             properties="isReverseDebuggingEnabled"
             type="org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext">
       </propertyTester>
+      <propertyTester
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.GDBBreakpointDetailTester"
+            id="org.eclipse.cdt.dsf.gdb.ui.breakpoints.targetDetailsTester"
+            namespace="org.eclipse.cdt.dsf.gdb.ui"
+            properties="areBreakpointDetailsAvailable"
+            type="java.util.List">
+      </propertyTester>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -448,5 +455,29 @@
             id="org.eclipse.cdt.dsf.gdb.ui.statusHandler"
             plugin="org.eclipse.cdt.dsf.gdb">
       </statusHandler>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.detailPaneFactories">
+      <detailFactories
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.GDBBreakpointsDetailPaneFactory"
+            id="org.eclipse.cdt.dsf.gdb.ui.breakpoints.detailPaneFactory">
+         <enablement>
+            <and>
+               <with
+                     variable="selection">
+                  <iterate>
+                     <instanceof
+                           value="org.eclipse.cdt.debug.core.model.ICBreakpoint">
+                     </instanceof>
+                  </iterate>
+               </with>
+               <!-- Commented out to allow a detailed pane for break points not involved in an active session
+               <test
+                     property="org.eclipse.cdt.dsf.gdb.ui.areBreakpointDetailsAvailable">
+               </test>
+               -->
+            </and>
+         </enablement>
+      </detailFactories>
    </extension>
 </plugin>

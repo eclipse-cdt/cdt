@@ -125,6 +125,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_2ea9a597",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1306,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-05T03:19:07Z",
+      "side": 1,
+      "message": "I don\u0027t expect any change that would cause you to break.  However, for safety, you should do an instanceof check in your subclass.  If it fails, add an assert for you to notice the problem, but recover as best you can when assertions are off.",
+      "parentUuid": "8748d3a1_66cabbb4",
+      "revId": "7a54c4406bb8311910127004fd91f4e8038c2f97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_95e72fa4",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
         "patchSetId": 4

@@ -9,6 +9,7 @@
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Nathan Ridge
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -98,8 +99,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 	}
 
 	public IBinding getBinding() {
-		if (fBinding == null) {
-			// fParameterOwner is guaranteed to be not null.
+		if (fBinding == null && fParameterOwner != null) {
 			ICPPParameter[] parameters = fParameterOwner.getParameters();
 			fBinding = parameters[fParameterPosition];
 		}

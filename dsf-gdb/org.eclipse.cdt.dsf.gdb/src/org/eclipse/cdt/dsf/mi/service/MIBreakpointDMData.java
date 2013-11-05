@@ -416,4 +416,11 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	public boolean isPending() {
 		return fBreakpoint.isPending();
 	}
+	
+	/**
+	 * @since 4.3
+	 */
+	public String[] getMessages() {
+		return fBreakpoint.getMessages();
+	}
 }

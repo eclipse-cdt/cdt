@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2012, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +9,14 @@
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Nathan Ridge
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -84,6 +86,9 @@ public class EvalBinding extends CPPDependentEvaluation {
 		fBinding= binding;
 		fType= type;
 		fFixedType= type != null;
+		if (fBinding == null) {
+			CCorePlugin.log(new NullPointerException());
+		}
 	}
 
 	public EvalBinding(ICPPFunction parameterOwner, int parameterPosition, IType type, IASTNode pointOfDefinition) {
@@ -98,8 +103,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 	}
 
 	public IBinding getBinding() {
-		if (fBinding == null) {
-			// fParameterOwner is guaranteed to be not null.
+		if (fBinding == null && fParameterOwner != null) {
 			ICPPParameter[] parameters = fParameterOwner.getParameters();
 			fBinding = parameters[fParameterPosition];
 		}

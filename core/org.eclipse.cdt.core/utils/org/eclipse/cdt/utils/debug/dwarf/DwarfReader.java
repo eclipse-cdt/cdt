@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -44,7 +45,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 			DWARF_DEBUG_STR		// this is optional. Some compilers don't generate it.
 		};
 
-	private final Collection<String>	m_fileCollection = new ArrayList<String>();
+	private final Collection<String>	m_fileCollection = new HashSet<String>();
 	private String[] 	m_fileNames = null;
 	private boolean		m_parsed = false;
 	private final ArrayList<Integer>	m_parsedLineTableOffsets = new ArrayList<Integer>();

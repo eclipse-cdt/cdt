@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
@@ -105,7 +106,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			long rec= getRecordPointer();
 			return (IBinding) PDOMNode.load(fLinkage.getPDOM(), rec);
 		} else if (firstBytes == NULL_TYPE || firstBytes == UNSTORABLE_TYPE) {
-			return null;
+			return new ProblemBinding(null, ISemanticProblem.TYPE_NOT_PERSISTED);
 		}
 
 		fPos = oldPos;  // fLinkage.unmarshalBinding() will read firstBytes again

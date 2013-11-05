@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Nokia and others.
+ * Copyright (c) 2007, 2013 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Nokia - initial API and implementation
  *     Ling Wang (Nokia) bug 201000
+ *     Serge Beauchamp (Freescale Semiconductor) - Bug 421070
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.debug.dwarf;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -44,7 +46,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 			DWARF_DEBUG_STR		// this is optional. Some compilers don't generate it.
 		};
 
-	private final Collection<String>	m_fileCollection = new ArrayList<String>();
+	private final Collection<String>	m_fileCollection = new HashSet<String>();
 	private String[] 	m_fileNames = null;
 	private boolean		m_parsed = false;
 	private final ArrayList<Integer>	m_parsedLineTableOffsets = new ArrayList<Integer>();

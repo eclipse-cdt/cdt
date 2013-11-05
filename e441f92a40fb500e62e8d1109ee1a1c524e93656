@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_ce676117",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 969,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-05T03:19:24Z",
+      "side": 1,
+      "message": "Why this new change of checking for !\u003d null?",
+      "revId": "e441f92a40fb500e62e8d1109ee1a1c524e93656",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_ae62d504",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 977,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-05T03:19:24Z",
+      "side": 1,
+      "message": "Why this new change of checking for !\u003d null?",
+      "revId": "e441f92a40fb500e62e8d1109ee1a1c524e93656",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_0e72e9d3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1010,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-05T03:19:24Z",
+      "side": 1,
+      "message": "Why this new change of checking for !\u003d null?",
+      "revId": "e441f92a40fb500e62e8d1109ee1a1c524e93656",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_6e61ed03",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1349,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-05T03:19:24Z",
+      "side": 1,
+      "message": "Don\u0027t cast blindly, as it could cause an exception.  Instead, first do an instanceof check and only cast if it succeeds; if it fails, use use fullExpr instead of calling getRelativeExpression()",
+      "revId": "e441f92a40fb500e62e8d1109ee1a1c524e93656",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_8e5ef947",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1833,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-05T03:19:24Z",
+      "side": 1,
+      "message": "Please change signature of getChildren() to also use IExpressionDMContext instead of casting here.",
+      "revId": "e441f92a40fb500e62e8d1109ee1a1c524e93656",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

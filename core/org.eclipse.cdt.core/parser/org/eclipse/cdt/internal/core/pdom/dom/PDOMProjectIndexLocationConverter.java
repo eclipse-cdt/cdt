@@ -20,6 +20,7 @@ import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -59,6 +60,11 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 		} else {
 			if (raw.startsWith(WS)) {
 				fullPath= raw.substring(WS.length());
+			} else if (raw.startsWith(ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString())){
+				// bug 421037: if raw is a absolute path, for example, when calling for local type hierarchy, need to retrieve the
+				// file name by get the last segment of its path, and then appended it to the fFullPathPrefix to get the fullPath.
+				IPath rawPath = new Path(raw); 
+				fullPath = fFullPathPrefix + rawPath.lastSegment();
 			} else {
 				fullPath= fFullPathPrefix+raw;  
 			}

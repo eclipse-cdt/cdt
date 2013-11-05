@@ -278,6 +278,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
     private volatile int fUpdateCount;
 	private BigInteger fPCAddress;
 	private BigInteger fGotoAddressPending= PC_UNKNOWN;
+	private boolean fGotoAddressOnTop;
 	private BigInteger fFocusAddress= PC_UNKNOWN;
 	private int fBufferZone;
 	private String fDebugSessionId;
@@ -1414,10 +1415,13 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		AddressRangePosition pos = getPositionOfAddress(address);
 		if (pos != null) {
 			if (pos.fValid) {
+				boolean onTop = false;
 				if (fGotoAddressPending.equals(address)) {
                 	fGotoAddressPending = PC_UNKNOWN;
+                	onTop = fGotoAddressOnTop;
+                	fGotoAddressOnTop = false;
                 }
-                gotoPosition(pos, false);
+                gotoPosition(pos, onTop);
 			} else {
 				int lines = fBufferZone+3;
 				BigInteger endAddress = pos.fAddressOffset.add(pos.fAddressLength).min(
@@ -2034,6 +2038,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 					fTargetFrame = targetFrame;
 					fFrameAddress = frameAddress;
 					fPCAddress = pcAddress;
+					fGotoAddressOnTop = true;
 					gotoAddress(topAddress);
 				} else {
 					refreshView((int)(refreshViewScheduled - now));

@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_63be04ad",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-07T21:15:04Z",
+      "side": 1,
+      "message": "Remove \u0027fixed\u0027.  A commit should start with \"Bug xyz - \"",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_fea90766",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-07T21:15:04Z",
+      "side": 1,
+      "message": "Please add your name and company in copyright header",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_9eba83a3",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-07T21:15:04Z",
+      "side": 1,
+      "message": "Remove \"local\" and replace \"Debugging\" with \"Debugger\" to be consistent with the launch configuration type which is called \"C/C++ Postmortem Debugger\"",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_3eab6f5d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-07T21:15:04Z",
+      "side": 1,
+      "message": "Should it be \"trace file\" instead of \"track file\"?  From the patch posted, I don\u0027t believe this launch shortcut support trace files; it will always default to core files, so you shoudl not mention trace files in this description.\n\nPlease replace \"dumped\" with \"generated\" and remove \"local\"",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_7ed977ea",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-07T21:15:04Z",
+      "side": 1,
+      "message": "Please add your name and company in copyright header",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_03d8e019",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-07T21:15:04Z",
+      "side": 1,
+      "message": "Please convert end-line characters to unix format",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_23d51ce4",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-07T21:15:04Z",
+      "side": 1,
+      "message": "Please fix year to 2013 only",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_be15bffe",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-07T21:15:04Z",
+      "side": 1,
+      "message": "First need to check \u0027elements\u0027 is not null and has at least one element",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_b2da135c",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-07T21:15:04Z",
+      "side": 1,
+      "message": "super.searchAndLaunch() handles multiple selections.  What it seems to do is to figure out the project of each element selected, and finding all binaries for those projects.  It then prompts the user for which binary should be used.\n\nIn your case, you should deal with multiple selection too.  You can either not support it by making sure there is only one selection, or you should prompt the user to choose one of the core files or binaries that you find in the selection (or project containing the selection)",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_1e89537a",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-07T21:15:04Z",
+      "side": 1,
+      "message": "No need to cast to IAdaptable since IBinary is an IAdaptable already",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_f20f7b6c",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-07T21:15:04Z",
+      "side": 1,
+      "message": "Why do we need to check that it is an IFile?",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_5268efe7",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-07T21:15:04Z",
+      "side": 1,
+      "message": "Notice that if you don\u0027t also set IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE (which you cannot access from this package), you will by default launch for a core file and not a trace file.  I think this is fine.  But please put a comment to explain this.",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

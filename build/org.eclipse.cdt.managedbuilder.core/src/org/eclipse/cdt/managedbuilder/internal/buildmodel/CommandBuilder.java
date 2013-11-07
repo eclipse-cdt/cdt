@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Intel Corporation and others.
+ * Copyright (c) 2006, 2013 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,12 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Serge Beauchamp (Freescale Semiconductor) - Bug 421276 - The CDT Managed Builder should support long command lines
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -20,7 +23,9 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
+import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand2;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.core.runtime.CoreException;
@@ -29,6 +34,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 
 /**
  *
@@ -41,7 +47,10 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  *
  */
 public class CommandBuilder implements IBuildModelBuilder {
+
 	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+
+	private static final String FILE_MACRO = "${file}"; //$NON-NLS-1$
 
 	private IBuildCommand fCmd;
 	private Process fProcess;
@@ -102,29 +111,68 @@ public class CommandBuilder implements IBuildModelBuilder {
 			ICommandLauncher launcher = createLauncher();
 			launcher.showCommand(true);
 
-			fProcess = launcher.execute(fCmd.getCommand(), fCmd.getArgs(), mapToStringArray(fCmd.getEnvironment()), fCmd.getCWD(), monitor);
-			if (fProcess != null) {
-				try {
-					// Close the input of the process since we will never write to it
-					fProcess.getOutputStream().close();
-				} catch (IOException e) {
-				}
+			String[] arguments = fCmd.getArgs();
+			File argumentFile = null;
+			
+			if (ACBuilder.useArgumentFiles() && (fCmd instanceof IBuildCommand2)) {
+				String argumentFileFormat = ((IBuildCommand2) fCmd).getArgumentFileFormat();
+				if (argumentFileFormat != null && argumentFileFormat.contains(FILE_MACRO)) {
+					try {
+						argumentFile = File.createTempFile("argument", ".args"); //$NON-NLS-1$//$NON-NLS-2$
 
-				// Wrapping out and err streams to avoid their closure
-				int st = launcher.waitAndRead(wrap(out), wrap(err), new SubProgressMonitor(monitor,	getNumCommands()));
-				switch (st) {
-				case ICommandLauncher.OK:
-					// assuming that compiler returns error code after compilation errors
-					status = fProcess.exitValue() == 0 ? STATUS_OK : STATUS_ERROR_BUILD;
-					break;
-				case ICommandLauncher.COMMAND_CANCELED:
-					status = STATUS_CANCELLED;
-					break;
-				case ICommandLauncher.ILLEGAL_COMMAND:
-				default:
-					status = STATUS_ERROR_LAUNCH;
-					break;
+						// Transform the String array into a single string
+						StringBuilder builder = new StringBuilder();
+						for (String argument : arguments)
+							builder.append(argument + " "); //$NON-NLS-1$
+						String serializedArguments = builder.toString();
+
+						// Write the arguments to the argument file
+						FileWriter writer = new FileWriter(argumentFile);
+						writer.write(serializedArguments);
+						writer.close();
+
+						// Write an informative message to the output stream
+						out.write(NLS
+								.bind(ManagedMakeMessages
+										.getResourceString("MakeBuilder.Using_Argument_file"), new Object[] { argumentFile.getName(), serializedArguments }).getBytes()); //$NON-NLS-1$
+						arguments = new String[] { argumentFileFormat.replace(FILE_MACRO,
+								argumentFile.getAbsolutePath()) };
+					} catch (IOException e) {
+						ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR,
+								ManagedBuilderCorePlugin.PLUGIN_ID, "Error creating temp file", e)); //$NON-NLS-1$
+					}
 				}
+			}
+			
+			try {
+				fProcess = launcher.execute(fCmd.getCommand(), arguments, mapToStringArray(fCmd.getEnvironment()), fCmd.getCWD(), monitor);
+				if (fProcess != null) {
+					try {
+						// Close the input of the process since we will never write to it
+						fProcess.getOutputStream().close();
+					} catch (IOException e) {
+					}
+	
+					// Wrapping out and err streams to avoid their closure
+					int st = launcher.waitAndRead(wrap(out), wrap(err), new SubProgressMonitor(monitor,	getNumCommands()));
+					switch (st) {
+					case ICommandLauncher.OK:
+						// assuming that compiler returns error code after compilation errors
+						status = fProcess.exitValue() == 0 ? STATUS_OK : STATUS_ERROR_BUILD;
+						break;
+					case ICommandLauncher.COMMAND_CANCELED:
+						status = STATUS_CANCELLED;
+						break;
+					case ICommandLauncher.ILLEGAL_COMMAND:
+					default:
+						status = STATUS_ERROR_LAUNCH;
+						break;
+					}
+				}
+			}
+			finally {
+				if (argumentFile != null)
+					argumentFile.delete();
 			}
 
 			fErrMsg = launcher.getErrorMessage();

@@ -5,6 +5,7 @@
          point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
       <managedBuildRevision fileVersion="4.0.0"/>
       <tool
+            argumentFileFormat="@${file}"
             command="cl /c"
             commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
             errorParsers="org.eclipse.cdt.core.VCErrorParser"
@@ -338,6 +339,7 @@
          </outputType>
       </tool>
       <tool
+            argumentFileFormat="@${file}"
             command="link"
             commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
             errorParsers="org.eclipse.cdt.core.VCErrorParser"

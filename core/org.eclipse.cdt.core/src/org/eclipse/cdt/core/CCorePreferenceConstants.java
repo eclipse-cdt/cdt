@@ -174,6 +174,13 @@ public class CCorePreferenceConstants {
 	public static final String PREF_BUILD_CONFIGS_RESOURCE_CHANGES = "build.proj.ref.configs.enabled"; //$NON-NLS-1$
 
 	/**
+	 * Preference key for "build only if resources in (related) projects are modified".
+	 *
+	 * @since 5.6
+	 */
+	public static final String PREF_BUILD_USE_ARGUMENT_FILES = "build.proj.use.argumentFiles"; //$NON-NLS-1$
+	
+	/**
 	 * Default value for {@link #INCLUDE_EXPORT_PATTERN}.
 	 * @since 5.5
 	 */

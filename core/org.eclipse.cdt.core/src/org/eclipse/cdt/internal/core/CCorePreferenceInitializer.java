@@ -61,6 +61,7 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 		// Build defaults.
 		defaultPreferences.putBoolean(CCorePreferenceConstants.PREF_BUILD_ALL_CONFIGS, false);
 		defaultPreferences.putBoolean(CCorePreferenceConstants.PREF_BUILD_CONFIGS_RESOURCE_CHANGES, false);
+		defaultPreferences.putBoolean(CCorePreferenceConstants.PREF_BUILD_USE_ARGUMENT_FILES, true);
 
 		// Indexer defaults.
 		IndexerPreferences.initializeDefaultPreferences(defaultPreferences);

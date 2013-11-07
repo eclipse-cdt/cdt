@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.cdtvariables;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 
@@ -89,6 +91,18 @@ public class CdtVariable implements ICdtVariable {
 			throw new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_NOT_STRINGLIST,fName,null,fName);
 
 		return fStringListValue;
+	}
+	
+	@Override
+	public String toString() {
+		try {
+			if (CdtVariableResolver.isStringListVariable(fType))
+				return getName() + "=" + Arrays.toString(getStringListValue()); //$NON-NLS-1$
+			else
+				return getName() + "=" + getStringValue(); //$NON-NLS-1$
+		} catch (CdtVariableException e) {
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 }

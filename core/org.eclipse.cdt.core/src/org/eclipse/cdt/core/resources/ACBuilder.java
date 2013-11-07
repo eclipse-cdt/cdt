@@ -262,4 +262,23 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 		return null;
 	}
 
+	/**
+	 * Preference for using argument files while invoking command line tools. 
+	 * @return true if the builders should use argument files while invoking command line tools.
+	 *         false otherwise
+	 * @see #setUseArgumentFiles(boolean)
+	 * @since 5.6
+	 */
+	public static boolean useArgumentFiles() {
+		return prefs.getBoolean(CCorePreferenceConstants.PREF_BUILD_USE_ARGUMENT_FILES, true);
+	}
+
+	/**
+	 * Preference for using argument files while invoking command line tools. 
+	 * @see #useArgumentFiles()
+	 * @since 5.6
+	 */
+	public static void setUseArgumentFiles(boolean enable) {
+		prefs.putBoolean(CCorePreferenceConstants.PREF_BUILD_USE_ARGUMENT_FILES, enable);
+	}
 }

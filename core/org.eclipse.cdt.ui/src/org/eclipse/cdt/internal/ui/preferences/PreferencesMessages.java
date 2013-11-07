@@ -313,6 +313,7 @@ public final class PreferencesMessages extends NLS {
 	public static String CPluginPreferencePage_refactoring_title;
 	public static String CPluginPreferencePage_refactoring_auto_save;
 	public static String CPluginPreferencePage_refactoring_lightweight;
+	public static String CPluginPreferencePage_argumentFile;
 
 	public static String PropertyAndPreferencePage_useworkspacesettings_change;
 	public static String PropertyAndPreferencePage_showprojectspecificsettings_label;

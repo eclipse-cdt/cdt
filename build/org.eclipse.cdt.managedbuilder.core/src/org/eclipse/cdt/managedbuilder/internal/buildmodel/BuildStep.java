@@ -318,7 +318,7 @@ public class BuildStep implements IBuildStep {
 				getInputResources(cwd, getPrimaryResources(true)),
 				fTool.getCommandLinePattern());
 
-		return createCommandsFromString(resolveMacros(info.getCommandLine(), data, true), cwd, getEnvironment());
+		return createCommandsFromString(resolveMacros(info.getCommandLine(), data, true), cwd, getEnvironment(), fTool.getArgumentFileFormat());
 	}
 
 	private IPath rmNamePrefix(IPath path, String prefix){
@@ -378,6 +378,10 @@ public class BuildStep implements IBuildStep {
 	}
 
 	protected IBuildCommand[] createCommandsFromString(String cmd, IPath cwd, Map<String, String> env){
+		return createCommandsFromString(cmd, cwd, env, null);
+	}
+	
+	protected IBuildCommand[] createCommandsFromString(String cmd, IPath cwd, Map<String, String> env, String argumentFileFormat) {
 		char arr[] = cmd.toCharArray();
 		char expect = 0;
 		char prev = 0;
@@ -427,8 +431,9 @@ public class BuildStep implements IBuildStep {
 
 		IPath c = new Path(list.remove(0));
 		String[] args = list.toArray(new String[list.size()]);
-
-		return new IBuildCommand[]{new BuildCommand(c, args, env, cwd, this)};
+		BuildCommand buildCommand = new BuildCommand(c, args, env, cwd, this);
+		buildCommand.setArgumentFileFormat(argumentFileFormat);
+		return new IBuildCommand[]{buildCommand};
 	}
 
 	private BuildResource[] getPrimaryResources(boolean input){

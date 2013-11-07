@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2010 IBM Corporation and others.
+ *  Copyright (c) 2003, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,16 +7,16 @@
  * 
  *  Contributors:
  *     IBM - Initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) 
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * This interface represents a utility of some sort that is used in the build process.
@@ -47,6 +47,10 @@ public interface ITool extends IHoldsOptions {
 	public static final String WHITE_SPACE = " ";	//$NON-NLS-1$
 	public static final String EMPTY_STRING = "";	//$NON-NLS-1$
 	public static final String IS_SYSTEM = "isSystem";							//$NON-NLS-1$
+	/**
+	 * @since 8.3
+	 */
+	public static final String ARGUMENT_FILE_FORMAT = "argumentFileFormat";							//$NON-NLS-1$
 	
 	public static final String VERSIONS_SUPPORTED = "versionsSupported";	//$NON-NLS-1$
 	public static final String CONVERT_TO_ID = "convertToId";				//$NON-NLS-1$
@@ -677,6 +681,20 @@ public interface ITool extends IHoldsOptions {
 	 */
 	public IOptionPathConverter getOptionPathConverter() ;
 	
+	/**
+	 * An argument file format specifies the syntax of how argument files
+	 * (or command files) can be passed to a command line tool to workaround
+	 * limitations in the command line length limit.
+	 * 
+	 * The argument file format is a string including the "${file}" macro, which 
+	 * will be replaced automatically by the path of the argument file, and passed
+	 * as argument to the command line tool.
+	 * 
+	 * @return the argument file format, or null if argument files are not supported
+	 * @since 8.3
+	 */
+	public String getArgumentFileFormat();
+
 	CLanguageData getCLanguageData(IInputType type);
 	
 	CLanguageData[] getCLanguageDatas();

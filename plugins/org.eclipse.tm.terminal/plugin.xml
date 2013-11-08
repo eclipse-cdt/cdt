@@ -41,11 +41,11 @@
       <command
             categoryId="org.eclipse.tm.terminal.category1"
             id="org.eclipse.tm.terminal.copy"
-            name="Copy"/>
+            name="%terminal.command.copy.name"/>
       <command
             categoryId="org.eclipse.tm.terminal.category1"
             id="org.eclipse.tm.terminal.paste"
-            name="Paste"/>
+            name="%terminal.command.paste.name"/>
       <category
             description="%terminal.view.insertion.description"
             id="org.eclipse.tm.terminal.category1"

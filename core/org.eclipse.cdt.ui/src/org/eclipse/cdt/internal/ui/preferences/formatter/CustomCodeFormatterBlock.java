@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import java.util.HashMap;
@@ -48,7 +47,6 @@ import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
  * If no formatter is contributed, nothing is shown.
  */
 public class CustomCodeFormatterBlock extends Observable {
-
 	private HashMap<String, String> idMap = new HashMap<String, String>();
 	private IEclipsePreferences fPrefs;
 	private String fDefaultFormatterId;
@@ -92,7 +90,7 @@ public class CustomCodeFormatterBlock extends Observable {
 		if (formatterId != null && !formatterId.equals(fDefaultFormatterId)) {
 			fPrefs.put(CCorePreferenceConstants.CODE_FORMATTER, formatterId);
 		} else {
-			// simply reset to the default one.
+			// Simply reset to the default one.
 			performDefaults();
 		}
 	}
@@ -105,9 +103,9 @@ public class CustomCodeFormatterBlock extends Observable {
 		}
 		fFormatterCombo.clearSelection();
 		fFormatterCombo.setText(DEFAULT);
-		Iterator<Map.Entry<String,String>> iterator = idMap.entrySet().iterator();
+		Iterator<Map.Entry<String, String>> iterator = idMap.entrySet().iterator();
 		while (iterator.hasNext()) {
-			Map.Entry<String,String> entry = iterator.next();
+			Map.Entry<String, String> entry = iterator.next();
 			String val = entry.getValue();
 			if (val != null && val.equals(fDefaultFormatterId)) {
 				fFormatterCombo.setText(entry.getKey());
@@ -125,7 +123,7 @@ public class CustomCodeFormatterBlock extends Observable {
 	}
 
 	/**
-	 * Get the currently selected formatter id.
+	 * Returns the currently selected formatter id.
 	 * 
 	 * @return the selected formatter id or <code>null</code> if the default is selected.
 	 */
@@ -137,9 +135,6 @@ public class CustomCodeFormatterBlock extends Observable {
 		return formatterId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	public Control createContents(Composite parent) {
 		if (getNumberOfAvailableFormatters() == 0) {
 			return parent;
@@ -182,7 +177,7 @@ public class CustomCodeFormatterBlock extends Observable {
 		boolean init = false;
 		String formatterID= fPrefs.get(CCorePreferenceConstants.CODE_FORMATTER, fDefaultFormatterId);
 		if (formatterID != null) {
-			Iterator<Map.Entry<String,String>> iterator = idMap.entrySet().iterator();
+			Iterator<Map.Entry<String, String>> iterator = idMap.entrySet().iterator();
 			while (iterator.hasNext()) {
 				Map.Entry<String, String> entry = iterator.next();
 				String val = entry.getValue();

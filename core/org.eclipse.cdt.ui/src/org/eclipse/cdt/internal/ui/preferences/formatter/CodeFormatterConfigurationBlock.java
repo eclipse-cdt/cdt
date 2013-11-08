@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,14 +52,14 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 				fCodeStylePreview.update();
 				return;
 			}
-			final int value= ((Integer)arg).intValue();
+			final int value= ((Integer) arg).intValue();
 			switch (value) {
-				case ProfileManager.PROFILE_CREATED_EVENT:
-				case ProfileManager.PROFILE_DELETED_EVENT:
-				case ProfileManager.SELECTION_CHANGED_EVENT:
-				case ProfileManager.SETTINGS_CHANGED_EVENT:
-					fCodeStylePreview.setWorkingValues(((ProfileManager)o).getSelected().getSettings());
-					fCodeStylePreview.update();
+			case ProfileManager.PROFILE_CREATED_EVENT:
+			case ProfileManager.PROFILE_DELETED_EVENT:
+			case ProfileManager.SELECTION_CHANGED_EVENT:
+			case ProfileManager.SETTINGS_CHANGED_EVENT:
+				fCodeStylePreview.setWorkingValues(((ProfileManager)o).getSelected().getSettings());
+				fCodeStylePreview.update();
 			}
 		}
 	}
@@ -91,8 +91,9 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 	 * The CPreview.
 	 */
 	protected TranslationUnitPreview fCodeStylePreview;
-	
+
 	protected CustomCodeFormatterBlock fCustomCodeFormatterBlock;
+
 	/**
 	 * Create a new <code>CodeFormatterConfigurationBlock</code>.
 	 */
@@ -105,7 +106,7 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 	protected IProfileVersioner createProfileVersioner() {
 	    return new ProfileVersioner();
     }
-	
+
 	@Override
 	protected ProfileStore createProfileStore(IProfileVersioner versioner) {
 	    return new FormatterProfileStore(versioner);
@@ -141,9 +142,6 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
         return new FormatterModifyDialog(shell, profile, profileManager, profileStore, newProfile, FORMATTER_DIALOG_PREFERENCE_KEY, DIALOGSTORE_LASTSAVELOADPATH);
     }
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ProfileConfigurationBlock#performApply()
-	 */
 	@Override
 	public void performApply() {
 		if (fCustomCodeFormatterBlock != null) {
@@ -152,9 +150,6 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 		super.performApply();
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ProfileConfigurationBlock#performDefaults()
-	 */
 	@Override
 	public void performDefaults() {
 		if (fCustomCodeFormatterBlock != null) {
@@ -163,9 +158,6 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 		super.performDefaults();
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ProfileConfigurationBlock#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		if (fCustomCodeFormatterBlock != null) {

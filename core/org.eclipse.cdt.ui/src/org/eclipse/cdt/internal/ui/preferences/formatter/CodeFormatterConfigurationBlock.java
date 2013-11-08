@@ -173,4 +173,12 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 		}
 		return super.performOk();
 	}
+
+	@Override
+	public void enableProjectSpecificSettings(boolean useProjectSpecificSettings) {
+		if (fCustomCodeFormatterBlock != null) {
+			fCustomCodeFormatterBlock.enableProjectSpecificSettings(useProjectSpecificSettings);
+		}
+		super.enableProjectSpecificSettings(useProjectSpecificSettings);
+	}
 }

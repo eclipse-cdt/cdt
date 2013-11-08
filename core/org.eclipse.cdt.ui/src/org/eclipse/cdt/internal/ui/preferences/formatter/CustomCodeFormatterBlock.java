@@ -116,6 +116,13 @@ public class CustomCodeFormatterBlock extends Observable {
 		handleFormatterChanged();
 	}
 
+	public void enableProjectSpecificSettings(boolean useProjectSpecificSettings) {
+		if (useProjectSpecificSettings) {
+			fPrefs.put(CCorePreferenceConstants.CODE_FORMATTER, fDefaultFormatterId);
+		} else {
+			initDefault();
+		}
+	}
 
 	/**
 	 * Get the currently selected formatter id.

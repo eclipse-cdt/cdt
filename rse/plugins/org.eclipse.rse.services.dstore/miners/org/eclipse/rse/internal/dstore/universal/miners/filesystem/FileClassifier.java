@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@
  * David McKnight   (IBM)        - [153635] [dstore-linux] dangling symbolic links are not classified properly
  * David McKnight   (IBM)        - [350581] [dstore] FileClassifier should default to English
  * David McKnight  (IBM)  - [358301] [DSTORE] Hang during debug source look up
+ * David McKnight  (IBM)         - [421632][dstore] option needed for disabling file classification
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -157,6 +158,11 @@ public class FileClassifier extends SecuredThread
 
         _systemShell = "sh"; //$NON-NLS-1$
         _canResolveLinks = osName.startsWith("linux"); //$NON-NLS-1$
+        
+        String disableClassificationStr = System.getProperty("disable.classification"); //$NON-NLS-1$
+        if (disableClassificationStr != null && disableClassificationStr.length() > 0){
+        	_systemSupportsClassify = !disableClassificationStr.equals("true"); //$NON-NLS-1$
+        }
 
     }
 

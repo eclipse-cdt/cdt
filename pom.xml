@@ -199,6 +199,9 @@
 		<module>xlc/org.eclipse.cdt.core.lrparser.xlc.tests</module>
 		<module>debug/org.eclipse.cdt.debug.ui.tests</module>
 -->
+		<module>releng/org.eclipse.cdt.testing</module>
+		<module>releng/org.eclipse.cdt.testing-feature</module>	
+		<module>releng/org.eclipse.cdt.testing.repo</module>
 		
 		<module>releng/org.eclipse.cdt.repo</module>
 	</modules>

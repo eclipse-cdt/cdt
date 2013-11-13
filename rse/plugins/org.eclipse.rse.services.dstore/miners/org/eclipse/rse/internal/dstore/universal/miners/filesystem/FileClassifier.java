@@ -562,6 +562,9 @@ public class FileClassifier extends SecuredThread
      */
     public String classifyFile(File aFile)
     {
+    	if (!_systemSupportsClassify){
+    		return "file"; //$NON-NLS-1$
+    	}
         String type = defaultType;
 
         try

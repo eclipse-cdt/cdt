@@ -8,9 +8,11 @@
  * Contributors:
  * 		Mentor Graphics - Initial API and implementation
  * 		John Dallaway - Add methods to get the endianness and address size (Bug 225609) 
+ * 		Philippe Gil (AdaCore) - Switch to c language when getting sizeof(void *) when required (Bug 421541)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -34,7 +36,9 @@ import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.MIMemory;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIShowEndianInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowLanguageInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataEvaluateExpressionInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
@@ -123,55 +127,114 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 
 	@Override
 	public void initializeMemoryData(final IMemoryDMContext memContext, RequestMonitor rm) {
+
 		ImmediateExecutor.getInstance().execute(new Sequence(getExecutor(), rm) {
-			
-			private Step[] fSteps = new Step[] {
-				new Step() {
-					@Override
-					public void execute(final RequestMonitor requestMonitor) {
-						Integer addrSize = fAddressSizes.get(memContext);
-						if (addrSize != null) {
-							requestMonitor.done();
-							return;
-						}
-						readAddressSize(
-							memContext, 
-							new DataRequestMonitor<Integer>(ImmediateExecutor.getInstance(), requestMonitor) {
+
+			private String originalLanguage = MIGDBShowLanguageInfo.AUTO;
+
+			private ArrayList<Step> steps = new ArrayList<Step>();
+
+			{{
+				if (fAddressSizes.get(memContext) == null) {
+					steps.add(
+						new Step() {
+							// store original language
+							@Override
+							public void execute(final RequestMonitor requestMonitor) {
+								CommandFactory commandFactory = fCommandControl.getCommandFactory();
+								fCommandControl.queueCommand(
+									commandFactory.createMIGDBShowLanguage(memContext),
+									new DataRequestMonitor<MIGDBShowLanguageInfo>(ImmediateExecutor.getInstance(), requestMonitor) {
+										@Override
+										@ConfinedToDsfExecutor("fExecutor")
+										protected void handleSuccess() {
+											originalLanguage = getData().getLanguage();
+											requestMonitor.done();
+										}
+									});
+							}
+						});
+					steps.add(
+						new Step() {
+							// switch to c language
+							@Override
+							public void execute(final RequestMonitor requestMonitor) {
+								CommandFactory commandFactory = fCommandControl.getCommandFactory();
+								fCommandControl.queueCommand(
+									commandFactory.createMIGDBSetLanguage(memContext, MIGDBShowLanguageInfo.C),
+									new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), requestMonitor) {
+										@Override
+										@ConfinedToDsfExecutor("fExecutor")
+										protected void handleSuccess() {
+											requestMonitor.done();
+										}
+									});
+							}
+						});
+
+					steps.add(
+						new Step() {
+							// read address size
+							@Override
+							public void execute(final RequestMonitor requestMonitor) {
+								readAddressSize(
+									memContext, 
+									new DataRequestMonitor<Integer>(ImmediateExecutor.getInstance(), requestMonitor) {
+										@Override
+										@ConfinedToDsfExecutor("fExecutor")
+										protected void handleSuccess() {
+											fAddressSizes.put(memContext, getData());
+											requestMonitor.done();
+										}
+									});
+							}
+						});
+
+					steps.add(
+							new Step() {
+								// restore original language
 								@Override
-								@ConfinedToDsfExecutor("fExecutor")
-								protected void handleSuccess() {
-									fAddressSizes.put(memContext, getData());
-									requestMonitor.done();
+								public void execute(final RequestMonitor requestMonitor) {
+									CommandFactory commandFactory = fCommandControl.getCommandFactory();
+									fCommandControl.queueCommand(
+										commandFactory.createMIGDBSetLanguage(memContext, originalLanguage),
+										new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), requestMonitor) {
+											@Override
+											@ConfinedToDsfExecutor("fExecutor")
+											protected void handleSuccess() {
+												requestMonitor.done();
+											}
+										});
 								}
 							});
+
 					}
-				},
-				
-				new Step() {
-					@Override
-					public void execute(final RequestMonitor requestMonitor) {
-						if ( fIsBigEndian != null) {
-							requestMonitor.done();
-							return;
-						}
-						readEndianness(
-								memContext, 
-								new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), requestMonitor) {
-									@Override
-									@ConfinedToDsfExecutor("fExecutor")
-									protected void handleSuccess() {
-										fIsBigEndian = getData();
-										requestMonitor.done();
-									}
-								});
-					}
-				},
-					
-			};
+
+				if (fIsBigEndian == null) {
+					steps.add(
+						new Step() {
+							// read endianness
+							@Override
+							public void execute(final RequestMonitor requestMonitor) {
+								readEndianness(
+										memContext, 
+										new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), requestMonitor) {
+											@Override
+											@ConfinedToDsfExecutor("fExecutor")
+											protected void handleSuccess() {
+												fIsBigEndian = getData();
+												requestMonitor.done();
+											}
+										});
+								}
+							});
+				}
+
+			}}
 
 			@Override
 			public Step[] getSteps() {
-				return fSteps;
+				return steps.toArray(new Step[steps.size()]);
 			}
 		});
 	}

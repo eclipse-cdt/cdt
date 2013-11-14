@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@
  *     Vladimir Prus (Mentor Graphics) - Support for -info-os (Bug 360314)
  *     John Dallaway - Support for -data-write-memory-bytes (Bug 387793)
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug (323552)
+ *     Philippe Gil (AdaCore) - Add show/set language CLI commands (Bug 421541)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -112,6 +113,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDetachOnFork;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetHostCharset;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetLanguage;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetNonStop;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPagination;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPrintObject;
@@ -124,6 +126,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetAsync;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetWideCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowExitCode;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowLanguage;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInfoOs;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExec;
@@ -194,6 +197,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfoOsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListFeaturesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowLanguageInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackInfoDepthInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListArgumentsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListFramesInfo;
@@ -698,6 +702,11 @@ public class CommandFactory {
 		return new MIGDBSetHostCharset(ctx, hostCharset);
 	}
 
+	/** @since 4.3 */
+	public ICommand<MIInfo> createMIGDBSetLanguage(IDMContext ctx, String language) {
+		return new MIGDBSetLanguage(ctx, language);
+	}
+
 	public ICommand<MIInfo> createMIGDBSetNonStop(ICommandControlDMContext ctx, boolean isSet) {
 		return new MIGDBSetNonStop(ctx, isSet);
 	}
@@ -750,6 +759,11 @@ public class CommandFactory {
 
 	public ICommand<MIGDBShowExitCodeInfo> createMIGDBShowExitCode(ICommandControlDMContext ctx) {
 		return new MIGDBShowExitCode(ctx);
+	}
+
+	/** @since 4.3 */
+	public ICommand<MIGDBShowLanguageInfo> createMIGDBShowLanguage(IDMContext ctx) {
+		return new MIGDBShowLanguage(ctx);
 	}
 
 	/** @since 4.0 */

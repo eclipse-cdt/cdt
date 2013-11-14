@@ -6,17 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Rational Software - Initial API and implementation
+ *     Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
-
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMethodTemplate;
 
 public class MethodTemplate extends Method implements IMethodTemplate {
-
 	protected Template fTemplate;
 
 	public MethodTemplate(ICElement parent, String name) {
@@ -55,34 +53,29 @@ public class MethodTemplate extends Method implements IMethodTemplate {
 		return fTemplate.getNumberOfTemplateParameters();
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateSignature()
-	 */
 	/*
 	 * The signature in the outline view will be:
 	 * The class X followed by its template parameters,
 	 * then the scope resolution, then the function name,
-	 * followed by its template parameters, folowed by its
+	 * followed by its template parameters, followed by its
 	 * normal parameter list, then a colon then the function's
 	 * return type.
 	 */
-
 	@Override
 	public String getTemplateSignature() throws CModelException {
 		StringBuffer sig = new StringBuffer(fTemplate.getTemplateSignature());
 		sig.append(this.getParameterClause());
-		if(isConst())
+		if (isConst())
 			sig.append(" const"); //$NON-NLS-1$
-		if(isVolatile())
+		if (isVolatile())
 			sig.append(" volatile"); //$NON-NLS-1$
 
-		if((this.getReturnType() != null) && (this.getReturnType().length() > 0)){
+		if ((this.getReturnType() != null) && (this.getReturnType().length() > 0)){
 			sig.append(" : "); //$NON-NLS-1$
 			sig.append(this.getReturnType());
 		}
 
 		return sig.toString();
 	}
-
 }
 

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
@@ -26,7 +26,7 @@ public class CallsToResult {
 		Set<CElementSet> elementSets = fElementSetsToReferences.keySet();
 		return elementSets.toArray(new CElementSet[elementSets.size()]);
 	}
-	
+
 	public IIndexName[] getReferences(CElementSet elementSet) {
 		List<IIndexName> references= fElementSetsToReferences.get(elementSet);
 		return references.toArray(new IIndexName[references.size()]);

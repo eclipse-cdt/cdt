@@ -17,7 +17,6 @@ package org.eclipse.cdt.core.model;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICContainer extends ICElement, IParent, IOpenable {
-
 	/**
 	 * Returns an array of non-C resources directly contained in this project.
 	 * It does not transitively answer non-C resources contained in folders;
@@ -97,5 +96,4 @@ public interface ICContainer extends ICElement, IParent, IOpenable {
 	 * @return the container with the given name
 	 */
 	ICContainer getCContainer(String name);
-
 }

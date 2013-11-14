@@ -117,9 +117,6 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		fProgressMonitor= monitor;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.model.IContributedModelBuilder#parse(boolean)
-	 */
 	@Override
 	public void parse(boolean quickParseMode) throws Exception {
 		final IIndexManager indexManager= CCorePlugin.getIndexManager();
@@ -865,7 +862,6 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		final FunctionInfo info;
 
 		if (declarator instanceof ICPPASTFunctionDeclarator) {
-
 			final ICPPASTFunctionDeclarator cppFunctionDeclarator= (ICPPASTFunctionDeclarator) declarator;
 			final IASTName simpleAstName;
 			if (name instanceof ICPPASTQualifiedName) {

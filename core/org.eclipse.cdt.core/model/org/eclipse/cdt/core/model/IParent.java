@@ -12,12 +12,10 @@ package org.eclipse.cdt.core.model;
 
 import java.util.List;
 
- 
 /**
  * Common protocol for C elements that contain other C elements.
  */
 public interface IParent {
-
 	/**
 	 * Returns the immediate children of this element.
 	 * The children are in no particular order.
@@ -34,8 +32,7 @@ public interface IParent {
 	/**
 	 * Returns whether this element has one or more immediate children.
 	 * This is a convenience method, and may be more efficient than
-	 * testing whether <code>getChildren</code> is an empty array.
+	 * testing whether {@link #getChildren()} returns an empty array.
 	 */
 	boolean hasChildren();
-	
 }

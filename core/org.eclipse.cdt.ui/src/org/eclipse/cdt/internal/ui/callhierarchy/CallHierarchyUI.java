@@ -63,13 +63,13 @@ public class CallHierarchyUI {
 	static final int INDEX_SEARCH_OPTION = IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT
 			| IIndexManager.ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY;
 	private static final ICElement[] NO_ELEMENTS = {};
-	private static boolean sIsJUnitTest= false;
+	private static boolean sIsJUnitTest;
 
 	/**
 	 * List of the Call Hierarchy views in LRU order, where the most recently used view is at index 0.
 	 */
 	private static List<CHViewPart> fLRUCallHierarchyViews= new ArrayList<CHViewPart>();
-	private static int fViewCount = 0;
+	private static int fViewCount;
 	
 	private static final int MAX_HISTORY_SIZE = 10;
 	private static List<ICElement> fHistoryEntries= new ArrayList<ICElement>(MAX_HISTORY_SIZE);
@@ -404,7 +404,7 @@ public class CallHierarchyUI {
 			}
 		}
 		if (!viewFoundInPage) {
-			// find unresolved views
+			// Find unresolved views
 			IViewReference[] viewReferences= page.getViewReferences();
 			for (IViewReference curr : viewReferences) {
 				if (CUIPlugin.ID_CALL_HIERARCHY.equals(curr.getId()) && page.equals(curr.getPage())) {
@@ -436,5 +436,4 @@ public class CallHierarchyUI {
     		}
     	}
 	}
-
 }

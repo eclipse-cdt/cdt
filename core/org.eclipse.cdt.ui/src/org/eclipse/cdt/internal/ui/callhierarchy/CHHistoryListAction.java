@@ -17,8 +17,8 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.StatusDialog;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -84,9 +84,6 @@ public class CHHistoryListAction extends Action {
 			fHistoryList.selectElements(sel);
 		}
 			
-		/*
-		 * @see Dialog#createDialogArea(Composite)
-		 */
 		@Override
 		protected Control createDialogArea(Composite parent) {
 			initializeDialogUnits(parent);
@@ -142,24 +139,17 @@ public class CHHistoryListAction extends Action {
 			return elems.toArray(new ICElement[elems.size()]);
 		}	
 		
-		/*
-		 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-		 */
 		@Override
 		protected void configureShell(Shell newShell) {
 			super.configureShell(newShell);
 //			PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, ...);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.window.Window#create()
-		 */
 		@Override
 		public void create() {
 			setShellStyle(getShellStyle() | SWT.RESIZE);
 			super.create();
 		}
-
 	}
 	
 	private CHViewPart fView;
@@ -169,9 +159,6 @@ public class CHHistoryListAction extends Action {
 		setText(CHMessages.CHHistoryListAction_OpenHistory_label); 
 	}
 		
-	/*
-	 * @see IAction#run()
-	 */
 	@Override
 	public void run() {
 		ICElement[] historyEntries= CallHierarchyUI.getHistoryEntries();

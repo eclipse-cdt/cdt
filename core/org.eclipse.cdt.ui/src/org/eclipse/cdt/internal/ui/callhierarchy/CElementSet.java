@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
@@ -56,8 +56,7 @@ public class CElementSet {
 			if (other.fSet != null) {
 				return false;
 			}
-		} 
-		else {
+		} else {
 			if (fSet.size() != other.fSet.size()) {
 				return false;
 			}

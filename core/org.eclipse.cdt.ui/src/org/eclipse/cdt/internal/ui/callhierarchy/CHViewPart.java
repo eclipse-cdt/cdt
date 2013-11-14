@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
@@ -224,9 +224,6 @@ public class CHViewPart extends ViewPart {
 	
 	private void addPartListener() {
 		fPartListener= new IPartListener2() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
-			 */
 			@Override
 			public void partActivated(IWorkbenchPartReference partRef) {
 				if (isThisView(partRef))
@@ -236,9 +233,6 @@ public class CHViewPart extends ViewPart {
 			@Override
 			public void partBroughtToTop(IWorkbenchPartReference partRef) { }
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
-			 */
 			@Override
 			public void partClosed(IWorkbenchPartReference partRef) {
 				if (isThisView(partRef)) {
@@ -249,16 +243,15 @@ public class CHViewPart extends ViewPart {
 			@Override
 			public void partDeactivated(IWorkbenchPartReference partRef) {}
 			@Override
-			public void partOpened(IWorkbenchPartReference partRef) { }
+			public void partOpened(IWorkbenchPartReference partRef) {}
 			@Override
-			public void partHidden(IWorkbenchPartReference partRef) { }
+			public void partHidden(IWorkbenchPartReference partRef) {}
 			@Override
-			public void partVisible(IWorkbenchPartReference partRef) { }
+			public void partVisible(IWorkbenchPartReference partRef) {}
 			@Override
-			public void partInputChanged(IWorkbenchPartReference partRef) { }
+			public void partInputChanged(IWorkbenchPartReference partRef) {}
 		};
 		getViewSite().getPage().addPartListener(fPartListener);
-		
 	}
 
 	@Override
@@ -396,7 +389,7 @@ public class CHViewPart extends ViewPart {
     }
 
     private void createActions() {
-    	// action groups
+    	// Action groups
     	fOpenViewActionGroup= new OpenViewActionGroup(this);
     	fOpenViewActionGroup.setSuppressCallHierarchy(true);
     	fOpenViewActionGroup.setSuppressProperties(true);
@@ -454,8 +447,7 @@ public class CHViewPart extends ViewPart {
 			public void run() {
                 if (isChecked()) {
                     fTreeViewer.addFilter(fVariableFilter);
-                }
-                else {
+                } else {
                     fTreeViewer.removeFilter(fVariableFilter);
                 }
             }
@@ -472,6 +464,7 @@ public class CHViewPart extends ViewPart {
                 }
                 return 1;
             }
+
             @Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
                 if (!(e1 instanceof CHNode)) {
@@ -591,22 +584,18 @@ public class CHViewPart extends ViewPart {
     		fNavigationNode= null;
     		return;
     	}
-    	
-    	
+
         if (selectedItem.getData().equals(fNavigationNode)) {
         	if (forward && fNavigationDetail < getReferenceCount(fNavigationNode)-1) {
         		fNavigationDetail++;
-        	}
-        	else if (!forward && fNavigationDetail > 0) {
+        	} else if (!forward && fNavigationDetail > 0) {
         		fNavigationDetail--;
-        	}
-        	else {
+        	} else {
         		selectedItem= navigator.getNextSibbling(selectedItem, forward);
                 fNavigationNode= selectedItem == null ? null : (CHNode) selectedItem.getData();
             	initNavigationDetail(forward);
         	}
-        }
-        else {
+        } else {
         	fNavigationNode= (CHNode) selectedItem.getData();
         	initNavigationDetail(forward);
         }
@@ -615,8 +604,7 @@ public class CHViewPart extends ViewPart {
 	private void initNavigationDetail(boolean forward) {
 		if (!forward && fNavigationNode != null) {
 			fNavigationDetail= Math.max(0, getReferenceCount(fNavigationNode) -1);
-		}
-		else {
+		} else {
 			fNavigationDetail= 0;
 		}
 	}
@@ -625,8 +613,7 @@ public class CHViewPart extends ViewPart {
 		CHNode node= selectionToNode(selection);
 		if (node != null && node == fNavigationNode && node.getReferenceCount() > 0) {
 			fNavigationDetail= (fNavigationDetail + 1) % node.getReferenceCount();
-		}
-		else {
+		} else {
 			fNavigationDetail= 0;
 		}
     	fNavigationNode= node; 
@@ -673,8 +660,7 @@ public class CHViewPart extends ViewPart {
     private void updateSorter() {
         if (fReferencedByAction.isChecked()) {
             fTreeViewer.setComparator(fSorterAlphaNumeric);
-        }
-        else {
+        } else {
             fTreeViewer.setComparator(fSorterReferencePosition);
         }
     }
@@ -693,16 +679,14 @@ public class CHViewPart extends ViewPart {
                 IWorkingSet workingSet= fWorkingSetFilterUI.getWorkingSet();
             	if (workingSet == null) {	
             		scope= CHMessages.CHViewPart_WorkspaceScope;
-            	}
-            	else {
+            	} else {
             		scope= workingSet.getLabel();
             	}
                 
             	// format
             	if (fReferencedByAction.isChecked()) {
             		format= CHMessages.CHViewPart_Title_callers;
-            	}
-            	else {
+            	} else {
             		format= CHMessages.CHViewPart_Title_callees;
             	}
             	
@@ -761,7 +745,7 @@ public class CHViewPart extends ViewPart {
 			}
 		}
 		
-		// action groups
+		// Action groups
 		ISelection selection = getSite().getSelectionProvider().getSelection();
 		if (OpenViewActionGroup.canActionBeAdded(selection)){
 			fOpenViewActionGroup.fillContextMenu(menu);
@@ -786,16 +770,14 @@ public class CHViewPart extends ViewPart {
         			long timestamp= fNavigationNode.getTimestamp();
         			if (fNavigationDetail < 0) {
         				fNavigationDetail= 0;
-        			}
-        			else if (fNavigationDetail >= fNavigationNode.getReferenceCount()-1) {
+        			} else if (fNavigationDetail >= fNavigationNode.getReferenceCount()-1) {
         				fNavigationDetail= fNavigationNode.getReferenceCount()-1;
         			}
 
         			CHReferenceInfo ref= fNavigationNode.getReference(fNavigationDetail);
         			Region region= new Region(ref.getOffset(), ref.getLength());
         			EditorOpener.open(page, file, region, timestamp);
-        		}
-        		else {
+        		} else {
         			try {
         				EditorOpener.open(page, fNavigationNode.getRepresentedDeclaration());
         			} catch (CModelException e) {
@@ -816,7 +798,6 @@ public class CHViewPart extends ViewPart {
     	}
 		return 0;
 	}
-		
 
 	private CHNode selectionToNode(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
@@ -834,7 +815,7 @@ public class CHViewPart extends ViewPart {
 	public Control getPageBook() {
 		return fPagebook;
 	}
-	
+
 	public ICElement getInput() {
         Object input= fTreeViewer.getInput();
         if (input instanceof ICElement) {
@@ -852,7 +833,7 @@ public class CHViewPart extends ViewPart {
 			super(CHMessages.CHViewPart_CopyCallHierarchy_label, view, viewer);
 		}
 	}
-	
+
 	/**
 	 * Marks the view as pinned.
 	 * 
@@ -861,7 +842,7 @@ public class CHViewPart extends ViewPart {
 	void setPinned(boolean pinned) {
 		fIsPinned= pinned;
 	}
-	
+
 	/**
 	 * Indicates whether the Call Hierarchy view is pinned.
 	 * 

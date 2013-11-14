@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.model.ext;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -16,7 +15,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMethod;
 
 public class MethodHandle extends MethodDeclarationHandle implements IMethod {
-	
+
 	public MethodHandle(ICElement parent, ICPPMethod method) {
 		super(parent, ICElement.C_METHOD, method);
 	}

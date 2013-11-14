@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.IPath;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICElement extends IAdaptable {
-
 	/**
 	 * IResource from 10-20
 	 */ 
@@ -296,17 +295,18 @@ public interface ICElement extends IAdaptable {
 	/**
 	 * Returns whether this C element exists in the model.
 	 *
-	 * @return <code>true</code> if this element exists in the C model
+	 * @return {@code true} if this element exists in the C model
 	 */
 	boolean exists();
 
 	/**
 	 * Returns the first ancestor of this C element that has the given type.
-	 * Returns <code>null</code> if no such an ancestor can be found.
+	 * Returns {@code null} if no such an ancestor can be found.
 	 * This is a handle-only method.
 	 *
 	 * @param ancestorType the given type
-	 * @return the first ancestor of this C element that has the given type, null if no such an ancestor can be found
+	 * @return the first ancestor of this C element that has the given type, {@code null} if no such
+	 *     an ancestor can be found
 	 * @since 2.0
 	 */
 	ICElement getAncestor(int ancestorType);
@@ -322,9 +322,7 @@ public interface ICElement extends IAdaptable {
 	 * Returns this element's kind encoded as an integer.
 	 * This is a handle-only method.
 	 *
-	 * @return the kind of element; one of the constants declared in
-	 *   <code>ICElement</code>
-	 * @see ICElement
+	 * @return the kind of element; one of the constants declared in {@link ICElement}
 	 */
 	int getElementType();
 
@@ -336,19 +334,19 @@ public interface ICElement extends IAdaptable {
 	ICModel getCModel();
 
 	/**
-	 * Returns the C project this element is contained in,
-	 * or <code>null</code> if this element is not contained in any C project
+	 * Returns the C project this element is contained in, or {@code null} if this element
+	 * is not contained in any C project
 	 *
-	 * @return the containing C project, or <code>null</code> if this element is
-	 *   not contained in a C project
+	 * @return the containing C project, or {@code null} if this element is
+	 *     not contained in a C project
 	 */
 	ICProject getCProject();
 
 	/**
 	 * Returns the element directly containing this element,
-	 * or <code>null</code> if this element has no parent.
+	 * or {@code null} if this element has no parent.
 	 *
-	 * @return the parent element, or <code>null</code> if this element has no parent
+	 * @return the parent element, or {@code null} if this element has no parent
 	 */
 	ICElement getParent();
 
@@ -360,7 +358,6 @@ public interface ICElement extends IAdaptable {
 	 * If this element is included in an external archive, 
 	 * the path returned is the absolute path to the archive in the file system.
 	 * This is a handle-only method.
-	 * 
 	 */
 	IPath getPath();
 	
@@ -374,19 +371,19 @@ public interface ICElement extends IAdaptable {
 
 	/**
 	 * Returns the underlying resource that contains
-	 * this element, or <code>null</code> if this element is not contained
+	 * this element, or {@code null} if this element is not contained
 	 * in a resource.
 	 *
-	 * @return the underlying resource, or <code>null</code> if none
+	 * @return the underlying resource, or {@code null} if none
 	 */
 	IResource getUnderlyingResource();
 
 	/**
 	 * Returns the Corresponding resource for
-	 * this element, or <code>null</code> if this element does not have
+	 * this element, or {@code null} if this element does not have
 	 * a corresponding resource.
 	 *
-	 * @return the corresponding resource, or <code>null</code> if none
+	 * @return the corresponding resource, or {@code null} if none
 	 */
 	IResource getResource();
 
@@ -394,21 +391,20 @@ public interface ICElement extends IAdaptable {
 	 * Returns whether this C element is read-only. An element is read-only
 	 * if its structure cannot be modified by the C model. 
 	 *
-	 * @return <code>true</code> if this element is read-only
+	 * @return {@code true} if this element is read-only
 	 */
 	boolean isReadOnly();
 
 	/**
 	 * Returns whether the structure of this element is known. For example, for a
-	 * translation unit that could not be parsed, <code>false</code> is returned.
+	 * translation unit that could not be parsed, {@code false} is returned.
 	 * If the structure of an element is unknown, navigations will return reasonable
-	 * defaults. For example, <code>getChildren</code> will return an empty collection.
+	 * defaults. For example, {@code getChildren} will return an empty collection.
 	 * <p>
 	 * Note: This does not imply anything about consistency with the
 	 * underlying resource/buffer contents.
-	 * </p>
 	 *
-	 * @return <code>true</code> if the structure of this element is known
+	 * @return {@code true} if the structure of this element is known
 	 * @exception CModelException if this element does not exist or if an
 	 *		exception occurs while accessing its corresponding resource
 	 */
@@ -422,7 +418,6 @@ public interface ICElement extends IAdaptable {
 	 */
 	void accept(ICElementVisitor visitor) throws CoreException;
 	
-
 	/**
 	 * Returns a string representation of this element handle. The format of the
 	 * string is not specified; however, the identifier is stable across
@@ -430,15 +425,13 @@ public interface ICElement extends IAdaptable {
 	 * <code>CoreModel.create(String)</code> method.
 	 * <p>
 	 * Some element types, like binaries, do not support handle identifiers and
-	 * return <code>null</code>.
+	 * return {@code null}.
 	 * </p>
 	 * 
-	 * @return the string handle identifier, or <code>null</code> if the
-	 *         element type is not supported
+	 * @return the string handle identifier, or {@code null} if the element type is not supported
 	 * @see CoreModel#create(java.lang.String)
 	 * 
 	 * @since 5.0
 	 */
 	String getHandleIdentifier();
-
 }

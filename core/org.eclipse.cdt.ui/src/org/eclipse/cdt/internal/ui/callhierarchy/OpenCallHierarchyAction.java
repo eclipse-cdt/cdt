@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -24,7 +23,6 @@ import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.actions.SelectionDispatchAction;
-
 
 public class OpenCallHierarchyAction extends SelectionDispatchAction {
 	private ITextEditor fEditor;

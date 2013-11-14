@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Patrick Hofer  [bug 325799]
+ *     Markus Schorn - initial API and implementation
+ *     Patrick Hofer  [bug 325799]
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
@@ -24,12 +24,12 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.ImageImageDescriptor;
 
@@ -56,8 +56,7 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
             if (node.isInitializer()) {
     			ImageDescriptor desc= CElementImageProvider.getFunctionImageDescriptor();
     			image= CUIPlugin.getImageDescriptorRegistry().get(desc);
-            }
-            else {
+            } else {
             	ICElement decl= node.getOneRepresentedDeclaration();
             	if (decl != null) {
             		image= fCLabelProvider.getImage(decl);
@@ -82,8 +81,7 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
             		fCLabelProvider.setTextFlags(LABEL_OPTIONS_SIMPLE);
             		label= fCLabelProvider.getText(decl);
             		fCLabelProvider.setTextFlags(options);
-            	}
-            	else {
+            	} else {
             		label= fCLabelProvider.getText(decl);
             		if (node.isInitializer()) {
             			label= addInitializerDecoration(label);
@@ -111,8 +109,7 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
             		fCLabelProvider.setTextFlags(LABEL_OPTIONS_SIMPLE);
             		label= fCLabelProvider.getStyledText(decl);
             		fCLabelProvider.setTextFlags(options);
-            	}
-            	else {
+            	} else {
             		label= fCLabelProvider.getStyledText(decl);
             		if (node.isInitializer()) {
             			label= addInitializerDecoration(label);
@@ -125,7 +122,6 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
                 	label.setStyle(offset, label.length() - offset, StyledString.COUNTER_STYLER);
     				
             	}
-            	//return label;
             	String decorated= decorateText(label.getString(), element);
         		if (decorated != null) {
         			return StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.DECORATIONS_STYLER, label);
@@ -174,7 +170,6 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
     	return label2;
 	}
     
-
 	@Override
 	public void dispose() {
         fCLabelProvider.dispose();
@@ -189,16 +184,13 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
         int flags= 0;        
         if (node.isRecursive()) {
             flags |= CElementImageDescriptor.RECURSIVE_RELATION;
-        }
-        else if (fContentProvider.hasChildren(node)) {
+        } else if (fContentProvider.hasChildren(node)) {
             if (fContentProvider.getComputeReferencedBy()) {
                 flags |= CElementImageDescriptor.REFERENCED_BY;
-            }
-            else {
+            } else {
             	if (node.isMultiDef()) {
             		flags |= CElementImageDescriptor.RELATES_TO_MULTIPLE;
-            	}
-            	else {
+            	} else {
             		flags |= CElementImageDescriptor.RELATES_TO;
             	}
             }

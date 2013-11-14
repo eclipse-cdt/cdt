@@ -40,7 +40,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
  * @since 4.0
  */
 public class CHQueries {
-	private static final CHNode[] EMPTY_NODES= new CHNode[0];
+	private static final CHNode[] EMPTY_NODES= {};
 	
     private CHQueries() {}
     
@@ -63,7 +63,7 @@ public class CHQueries {
 			
 			final String ct = tu.getContentTypeId();
 			if (ct.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER)) {
-				// bug 260262: in a header file we need to consider c and c++
+				// Bug 260262: in a header file we need to consider C and C++.
 				findCalledBy(callee, ILinkage.C_LINKAGE_ID, index, result);
 				findCalledBy(callee, ILinkage.CPP_LINKAGE_ID, index, result);
 				done= true;

@@ -21,17 +21,15 @@ package org.eclipse.cdt.core.model;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-
 public interface ISourceReference {
-
 	/**
 	 * Returns the source code associated with this element.
 	 * <p>
-	 * For binary files, this returns the source of the entire translation unit 
+	 * For binary files, this returns the source of the entire translation unit
 	 * associated with the binary file (if there is one).
 	 * </p>
 	 *
-	 * @return the source code, or <code>null</code> if this element has no 
+	 * @return the source code, or <code>null</code> if this element has no
 	 *   associated source code
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource
@@ -41,11 +39,11 @@ public interface ISourceReference {
 	/**
 	 * Returns the source range associated with this element.
 	 * <p>
-	 * For binary files, this returns the range of the entire translation unit 
+	 * For binary files, this returns the range of the entire translation unit
 	 * associated with the binary file (if there is one).
 	 * </p>
 	 *
-	 * @return the source range, or <code>null</code> if if this element has no 
+	 * @return the source range, or <code>null</code> if if this element has no
 	 *   associated source code
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource
@@ -57,7 +55,7 @@ public interface ISourceReference {
 	 * if this member is not declared in a translation unit (for example, a binary type).
 	 */
 	ITranslationUnit getTranslationUnit();
-	
+
 	/**
 	 * Returns whether this element is in active code. Code is inactive when it is hidden
 	 * by conditional compilation.

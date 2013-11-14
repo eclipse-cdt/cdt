@@ -6,14 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model.ext;
-
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
@@ -39,9 +35,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+
 abstract class CElementHandle implements ICElementHandle, ISourceReference {
-	protected static final String[] EMPTY_STRING_ARRAY = new String[0];
-	private static final ICElement[] NO_CHILDREN = new ICElement[0];
+	protected static final String[] EMPTY_STRING_ARRAY = {};
+	private static final ICElement[] NO_CHILDREN = {};
 
 	private ICElement fParent;
 	private String fName;
@@ -54,15 +54,14 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	public CElementHandle(ICElement parent, int type, String name) {
 		fParent= parent;
 		fType= type;
-		// anonymous types are assigned a name in the index, we
-		// undo this here
-		if (name.length() > 0 && name.charAt(0)=='{') {
+		// Anonymous types are assigned a name in the index, we undo this here.
+		if (name.length() > 0 && name.charAt(0) == '{') {
 			fName= ""; //$NON-NLS-1$
 			fIndex= name.hashCode();
 		} else {
 			fName= name;
 		}
-		fRegion= new Region(0,0);
+		fRegion= new Region(0, 0);
 	}
 
 	@Override
@@ -77,7 +76,6 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	public int hashCode() {
 		return CElement.hashCode(this);
 	}
-
 
 	@Override
 	@SuppressWarnings("rawtypes")

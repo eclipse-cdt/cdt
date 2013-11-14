@@ -12,12 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementVisitor;
@@ -38,6 +32,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
 
 public abstract class CElement extends PlatformObject implements ICElement {
 	public static final char CEM_ESCAPE = '\\';
@@ -61,9 +61,6 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		fType= type;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Object getAdapter(Class adapter) {
@@ -248,7 +245,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 
 	@Override
-	public abstract IResource getResource() ;
+	public abstract IResource getResource();
 
 	protected abstract CElementInfo createElementInfo();
 

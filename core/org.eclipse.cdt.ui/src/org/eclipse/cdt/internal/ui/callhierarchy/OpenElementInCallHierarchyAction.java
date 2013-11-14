@@ -61,7 +61,7 @@ public class OpenElementInCallHierarchyAction implements IWorkbenchWindowActionD
 			String message = NLS.bind(CHMessages.OpenElementInCallHierarchyAction_errorNoDefinition,
 					info.getQualifiedTypeName().toString());
 			MessageDialog.openError(getShell(), title, message);
-		}  else {
+		} else {
 			CallHierarchyUI.open(fWorkbenchWindow, elements[0]);
 		}
 	}

@@ -17,7 +17,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 
 public class CHPinAction extends Action {
-	private CHViewPart fView= null;
+	private CHViewPart fView;
 
 	/**
 	 * Constructs a 'Pin Call Hierarchy view' action.
@@ -31,9 +31,6 @@ public class CHPinAction extends Action {
 		fView= view;
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		fView.setPinned(isChecked());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@
  *     Vladimir Prus (Mentor Graphics) - Support for -info-os (Bug 360314)
  *     John Dallaway - Support for -data-write-memory-bytes (Bug 387793)
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug (323552)
+ *     Philippe Gil (AdaCore) - Add show/set language CLI commands (Bug 421541)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -54,7 +55,9 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.CLIMaintenance;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIPasscount;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIRecord;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIRemoteGet;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLISetLanguage;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIShowEndian;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIShowLanguage;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLISource;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIThread;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLITrace;
@@ -176,6 +179,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoProgramInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoThreadsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIShowEndianInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIShowLanguageInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIThreadInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceDumpInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceInfo;
@@ -1030,5 +1034,15 @@ public class CommandFactory {
 
 	public ICommand<MIVarUpdateInfo> createMIVarUpdate(ICommandControlDMContext dmc, String name) {
 		return new MIVarUpdate(dmc, name);
+	}
+
+	/** @since 4.3 */
+	public ICommand<CLIShowLanguageInfo> createCLIShowLanguage(IDMContext ctx) {
+		return new CLIShowLanguage(ctx);
+	}
+
+	/** @since 4.3 */
+	public ICommand<MIInfo> createCLISetLanguage(IDMContext ctx, String language) {
+		return new CLISetLanguage(ctx, language);
 	}
 }

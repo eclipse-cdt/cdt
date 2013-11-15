@@ -322,7 +322,9 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			String buildLog = null;
 			String arguments = null;
 			String[] args = Platform.getCommandLineArgs();
+//			System.out.println("program args length is " + args.length);
 			for (int i = 0; i < args.length; ++i) {
+//				System.out.println("arg <" + i + "> is " + args[i]);
 				if ("-application".equals(args[i]))
 					i++; // ignore the application specifier
 				else if ("-b".equals(args[i])) {
@@ -335,8 +337,15 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					if (i < args.length)
 						executable = args[i];
 					++i;
+					StringBuffer argBuffer = new StringBuffer();
+					// Remaining values are arguments to the executable
 					if (i < args.length)
-						arguments = args[i];
+						argBuffer.append(args[i++]);
+					while (i < args.length) {
+						argBuffer.append(" ");
+						argBuffer.append(args[i++]);
+					}
+					arguments = argBuffer.toString();
 				}
 			}
 			monitor.worked(1);
@@ -391,6 +400,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					importJob.join();
 					monitor.worked(3);
 					if (importJob.getResult() == Status.OK_STATUS) {
+//						System.out.println("importJob successful");
 						//				 See if the default project exists
 						cProject = CoreModel.getDefault().getCModel()
 								.getCProject(defaultProjectName);
@@ -458,6 +468,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 								}
 							}
 
+//							System.out.println("creating language settings providers");
 							// Create all the LanguageSettingsProviders
 							List<ILanguageSettingsProvider> providers = LanguageSettingsManager
 									.createLanguageSettingsProviders(langProviderIds);
@@ -470,9 +481,13 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							
 							monitor.worked(1);
 
+//							System.out.println("before setProjectDescription");
+							
 							// Update the project description.
 							projDescManager.setProjectDescription(project,
 									projectDescription);
+							
+//							System.out.println("after setProjectDescription");
 
 							monitor.worked(1);
 							
@@ -490,6 +505,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 								project.getWorkspace().run(new BuildOptionsParser(project, buildLogFile), 
 										ResourcesPlugin.getWorkspace().getRoot(), IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
 						}
+						
+//						System.out.println("about to close all editors");
 						IWorkbench workbench = PlatformUI.getWorkbench();
 						if (workbench != null) {
 							final IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
@@ -499,12 +516,16 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 									activePage.closeAllEditors(false);
 							}
 						}
+//						System.out.println("about to create launch configuration");
 						config = createConfiguration(executable, arguments, true);
 						String memento = config.getMemento();
 						cProject.getProject().setPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH), memento);
 						monitor.worked(1);
-					} 
+					} else {
+						System.out.println("Import job failed");
+					}
 				} else {
+//					System.out.println("restore previous launch");
 					monitor.subTask(Messages.RestorePreviousLaunch);
 					String defaultProjectName = "Executables"; //$NON-NLS-1$
 					ICProject cProject = CoreModel.getDefault().getCModel()
@@ -512,50 +533,60 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					String memento = cProject.getProject().getPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH));
 					if (memento != null)
 						config = getLaunchManager().getLaunchConfiguration(memento);
+					if (config == null) {
+						System.out.println(Messages.LaunchMissingError);
+					}
 					monitor.worked(7);
 				}
-				final JobContainer LaunchJobs = new JobContainer();
-				Job.getJobManager().addJobChangeListener(new JobChangeAdapter() {
+				if (config != null) {
+//					System.out.println("about to add job change listener");
+					final JobContainer LaunchJobs = new JobContainer();
+					Job.getJobManager().addJobChangeListener(new JobChangeAdapter() {
 
-					@Override
-					public void scheduled(IJobChangeEvent event) {
-						Job job = event.getJob();
-//						System.out.println("Job name is " + job.getName());
-						if (job.getName().contains(config.getName()))
-							LaunchJobs.setLaunchJob(job);
-					}
-					
-					@Override
-					public void done(IJobChangeEvent event) {
-//						System.out.println("Job " + event.getJob().getName() + " is done");
-					}
-				});
-				monitor.subTask(Messages.LaunchingConfig);
-				Display.getDefault().syncExec(new Runnable() {
+						@Override
+						public void scheduled(IJobChangeEvent event) {
+							Job job = event.getJob();
+//							System.out.println("Job name is " + job.getName());
+							if (job.getName().contains(config.getName()))
+								LaunchJobs.setLaunchJob(job);
+						}
 
-					@Override
-					public void run() {
-						DebugUITools.launch(config, ILaunchManager.DEBUG_MODE);
-//										System.out.println("about to join " + LaunchJobs.getLaunchJob());
+						@Override
+						public void done(IJobChangeEvent event) {
+//							System.out.println("Job " + event.getJob().getName() + " is done");
+						}
+					});
+					monitor.subTask(Messages.LaunchingConfig);
+					Display.getDefault().syncExec(new Runnable() {
+
+						@Override
+						public void run() {
+							DebugUITools.launch(config, ILaunchManager.DEBUG_MODE);
+//							System.out.println("about to join " + LaunchJobs.getLaunchJob());
+						}
+					});
+					if (LaunchJobs.getLaunchJob() != null) {
+						try {
+							LaunchJobs.getLaunchJob().join();
+						} catch (InterruptedException e) {
+							IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
+									Messages.LaunchInterruptedError, e);
+							ResourcesPlugin.getPlugin().getLog().log(status);
+						}
 					}
-				});
-				if (LaunchJobs.getLaunchJob() != null) {
-				try {
-					LaunchJobs.getLaunchJob().join();
-				} catch (InterruptedException e) {
-					IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
-							Messages.LaunchInterruptedError, e);
-					ResourcesPlugin.getPlugin().getLog().log(status);
 				}
-			}
-
+//				System.out.println("end");
 			} catch (InterruptedException e) {
+//				System.out.println("Interrupted exception");
 				throw e; // rethrow exception
 			} catch (CoreException e) {
+//				System.out.println("Core Exception");
 				e.printStackTrace();
 			} catch (Exception e) {
+//				System.out.println("Exception");
 				e.printStackTrace();
 			} finally {
+//				System.out.println("Finally");
 				monitor.done();
 			}
 		}
@@ -638,6 +669,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	protected ILaunchConfiguration createConfiguration(String bin,
 			String arguments, boolean save) {
+//		System.out.println("creating launch configuration");
 		ILaunchConfiguration config = null;
 		try {
 			String projectName = bin;

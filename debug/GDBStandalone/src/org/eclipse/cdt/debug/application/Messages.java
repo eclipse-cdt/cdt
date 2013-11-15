@@ -31,6 +31,7 @@ public class Messages extends NLS {
 	public static String RemoveOldExecutable;
 	public static String LaunchingConfig;
 	public static String LaunchInterruptedError;
+	public static String LaunchMissingError;
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);

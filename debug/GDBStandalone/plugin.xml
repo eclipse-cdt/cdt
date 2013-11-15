@@ -5,7 +5,10 @@
    <extension
          id="application"
          point="org.eclipse.core.runtime.applications">
-      <application>
+      <application
+            cardinality="singleton-global"
+            thread="main"
+            visible="true">
          <run
                class="org.eclipse.cdt.debug.application.Application">
          </run>
@@ -228,4 +231,22 @@
          </menu>
       </menuContribution>
    </extension>
+   
+   	<extension
+		point="org.eclipse.ui.intro">
+      <introProductBinding
+            introId="org.eclipse.ui.intro.universal"
+            productId="org.eclipse.platform.ide">
+      </introProductBinding>
+    </extension>
+    <extension
+          id="product"
+          point="org.eclipse.core.runtime.products">
+       <product
+             application="GDBStandalone.application"
+             description="Eclipse Standalone C/C++ GDB Debugger"
+             name="GDB Standalone">
+       </product>
+    </extension>
+   
 </plugin>

@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 
 /**
@@ -169,9 +168,13 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) expr).getImplicitNames();
 			if (implicitNames.length > 0)
 				return true;
-			IType operand1Type = expr.getOperand1().getExpressionType();
-			IType operand2Type = expr.getOperand2().getExpressionType();
-			if (!(operand1Type instanceof IBasicType && operand2Type instanceof IBasicType)) {
+			IASTExpression operand1 = expr.getOperand1();
+			IASTExpression operand2 = expr.getOperand2();
+			// This shouldn't happen, but if it does, it's better to have a
+			// false negative than a false positive warning. 
+			if (operand1 == null || operand2 == null)
+				return true;
+			if (!(operand1.getExpressionType() instanceof IBasicType && operand2.getExpressionType() instanceof IBasicType)) {
 				return true; // must be overloaded but parser could not find it
 			}
 		}
@@ -183,8 +186,12 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) expr).getImplicitNames();
 			if (implicitNames.length > 0)
 				return true;
-			IType operandType = expr.getOperand().getExpressionType();
-			if (!(operandType instanceof IBasicType)) {
+			IASTExpression operand = expr.getOperand();
+			// This shouldn't happen, but if it does, it's better to have a
+			// false negative than a false positive warning. 
+			if (operand == null)
+				return true;
+			if (!(operand.getExpressionType() instanceof IBasicType)) {
 				return true; // must be overloaded but parser could not find it
 			}
 		}

@@ -766,7 +766,7 @@ public class InputType extends BuildObject implements IInputType {
 	public IInputOrder getInputOrder(String path) {
 		// TODO Convert both paths to absolute?
 		for (InputOrder io : getInputOrderList()) {
-			if (path.compareToIgnoreCase(io.getPath()) != 0) {
+			if (path.compareToIgnoreCase(path) == 0) {
 				return io;
 			}
 		}

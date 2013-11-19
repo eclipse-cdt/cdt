@@ -87,8 +87,8 @@ public class CModel extends Openable implements ICModel {
 	}
 
 	/**
-	 * Finds the given project in the list of the java model's children.
-	 * Returns null if not found.
+	 * Finds the given project in the list of the C model's children.
+	 * Returns {@code null} if not found.
 	 */
 	public ICProject findCProject(IProject project) {
 		try {
@@ -112,7 +112,7 @@ public class CModel extends Openable implements ICModel {
 	@Override
 	public void copy(ICElement[] elements, ICElement[] containers, ICElement[] siblings,
 		String[] renamings, boolean replace, IProgressMonitor monitor) throws CModelException {
-		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT ) {
+		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
 			runOperation(new CopyResourceElementsOperation(elements, containers, replace), elements,
 					siblings, renamings, monitor);
 		} else {
@@ -184,8 +184,7 @@ public class CModel extends Openable implements ICModel {
 
 	/**
 	 * Workaround for bug 15168 circular errors not reported
-	 * Returns the list of java projects before resource delta processing
-	 * has started.
+	 * Returns the list of C projects before resource delta processing has started.
 	 */
 	public ICProject[] getOldCProjectsList() throws CModelException {
 		CModelManager manager = CModelManager.getDefault();
@@ -194,9 +193,6 @@ public class CModel extends Openable implements ICModel {
 				manager.cProjectsCache;
 	}
 
-	/* (non-Javadoc)
-	 * @see Openable#buildStructure(OpenableInfo, IProgressMonitor, Map, IResource)
-	 */
 	@Override
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement,
 			CElementInfo> newElements, IResource underlyingResource) throws CModelException {
@@ -214,9 +210,6 @@ public class CModel extends Openable implements ICModel {
 		return validInfo;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICModel#getNonCResources()
-	 */
 	@Override
 	public Object[] getNonCResources() throws CModelException {
 		return ((CModelInfo) getElementInfo()).getNonCResources();

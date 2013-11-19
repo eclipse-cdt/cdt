@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *     IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
@@ -14,12 +14,13 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 public class Util implements IDebugLogConstants{
 	public static boolean VERBOSE_CONTENTASSIST = false;
+
 	private Util() {
 	}
-	/*
-	 * Add a log entry
-	 */
 	
+	/**
+	 * Adds a log entry
+	 */
 	public static void debugLog(String message, DebugLogConstant client) {
 		if( CUIPlugin.getDefault() == null ) return;
 		if ( CUIPlugin.getDefault().isDebugging() && isActive(client)) {
@@ -42,5 +43,4 @@ public class Util implements IDebugLogConstants{
 		}
 		return false;
 	}
-	
 }

@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -138,7 +137,6 @@ public class CProject extends Openable implements ICProject {
 	 */
 	@Override
 	public boolean equals(Object o) {
-
 		if (this == o)
 			return true;
 
@@ -255,7 +253,6 @@ public class CProject extends Openable implements ICProject {
 		return PathEntryManager.getDefault().projectPrerequisites(entries);
 	}
 
-
 	/**
 	 * @see org.eclipse.cdt.core.model.ICProject#getOption(String, boolean)
 	 */
@@ -302,9 +299,6 @@ public class CProject extends Openable implements ICProject {
 		return options;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.model.ICProject#setOption(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void setOption(String optionName, String optionValue) {
 		if (!CModelManager.OptionNames.contains(optionName))
@@ -326,9 +320,6 @@ public class CProject extends Openable implements ICProject {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.model.ICProject#setOptions(Map)
-	 */
 	@Override
 	public void setOptions(Map<String, String> newOptions) {
 		Preferences preferences = new Preferences();
@@ -395,8 +386,8 @@ public class CProject extends Openable implements ICProject {
 		}
 	}
 
-	/*
-	 * Set cached preferences, no preferences are saved, only info is updated
+	/**
+	 * Sets cached preferences, no preferences are saved, only info is updated
 	 */
 	private void setPreferences(Preferences preferences) {
 		if (!isCProject()) {
@@ -405,33 +396,21 @@ public class CProject extends Openable implements ICProject {
 		// Do nothing
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICProject#getResolvedCPathEntries()
-	 */
 	@Override
 	public IPathEntry[] getResolvedPathEntries() throws CModelException {
 		return CoreModel.getResolvedPathEntries(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICProject#getRawCPathEntries()
-	 */
 	@Override
 	public IPathEntry[] getRawPathEntries() throws CModelException {
 		return CoreModel.getRawPathEntries(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICProject#setRawCPathEntries(org.eclipse.cdt.core.model.IPathEntry[], org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void setRawPathEntries(IPathEntry[] newEntries, IProgressMonitor monitor) throws CModelException {
 		CoreModel.setRawPathEntries(this, newEntries, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICProject#getSourceRoot(org.eclipse.cdt.core.model.ISourceEntry)
-	 */
 	@Override
 	public ISourceRoot getSourceRoot(ISourceEntry entry) throws CModelException {
 		return getSourceRoot(new CSourceEntry(entry.getPath(), entry.getExclusionPatterns(), 0));
@@ -456,9 +435,6 @@ public class CProject extends Openable implements ICProject {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICProject#findSourceRoot()
-	 */
 	@Override
 	public ISourceRoot findSourceRoot(IResource res) {
 	    try {
@@ -473,9 +449,6 @@ public class CProject extends Openable implements ICProject {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICProject#findSourceRoot()
-	 */
 	@Override
 	public ISourceRoot findSourceRoot(IPath path) {
 	    try {
@@ -490,9 +463,6 @@ public class CProject extends Openable implements ICProject {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICProject#getSourceRoots()
-	 */
 	@Override
 	public ISourceRoot[] getSourceRoots() throws CModelException {
 		Object[] children = getChildren();
@@ -506,7 +476,7 @@ public class CProject extends Openable implements ICProject {
 	}
 
 	/**
-	 * Get all source roots.
+	 * Returns all source roots.
 	 *
 	 * @return all source roots
 	 * @throws CModelException
@@ -547,9 +517,6 @@ public class CProject extends Openable implements ICProject {
 		return outs;
 	}
 
-	/**
-	 *
-	 */
 	public IOutputEntry[] getOutputEntries(IPathEntry[] entries) throws CModelException {
 		ArrayList<IPathEntry> list = new ArrayList<IPathEntry>(entries.length);
 		for (IPathEntry entrie : entries) {
@@ -562,9 +529,6 @@ public class CProject extends Openable implements ICProject {
 		return outputs;
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public boolean isOnOutputEntry(IResource resource) {
 		IPath path = resource.getFullPath();
@@ -595,9 +559,6 @@ public class CProject extends Openable implements ICProject {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
-	 */
 	@Override
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm,
 			Map<ICElement, CElementInfo> newElements, IResource underlyingResource)
@@ -647,11 +608,12 @@ public class CProject extends Openable implements ICProject {
 		children.addAll(sourceRoots);
 
 		boolean projectIsSourceRoot = false;
-		for (ISourceRoot sourceRoot : sourceRoots)
+		for (ISourceRoot sourceRoot : sourceRoots) {
 			if (sourceRoot.getResource().equals(getProject())) {
 				projectIsSourceRoot = true;
 				break;
 			}
+		}
 
 		// Now look for output folders
 		try {
@@ -686,9 +648,6 @@ public class CProject extends Openable implements ICProject {
 		return true;
 	}
 
-	/*
-	 * @see ICProject
-	 */
 	@Override
 	public boolean isOnSourceRoot(ICElement element) {
 		try {
@@ -704,9 +663,6 @@ public class CProject extends Openable implements ICProject {
 		return false;
 	}
 
-	/*
-	 * @see ICProject
-	 */
 	@Override
 	public boolean isOnSourceRoot(IResource resource) {
 		try {
@@ -722,9 +678,6 @@ public class CProject extends Openable implements ICProject {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElement#exists()
-	 */
 	@Override
 	public boolean exists() {
 		if (!isCProject()) {
@@ -733,17 +686,11 @@ public class CProject extends Openable implements ICProject {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICProject#getNonCResources()
-	 */
 	@Override
 	public Object[] getNonCResources() throws CModelException {
 		return ((CProjectInfo) getElementInfo()).getNonCResources(getResource());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.CElement#closing(java.lang.Object)
-	 */
 	@Override
 	protected void closing(Object info) throws CModelException {
 		if (info instanceof CProjectInfo) {
@@ -760,7 +707,7 @@ public class CProject extends Openable implements ICProject {
 		super.closing(info);
 	}
 
-	/*
+	/**
 	 * Resets this project's caches
 	 */
 	public void resetCaches() {
@@ -808,7 +755,7 @@ public class CProject extends Openable implements ICProject {
 				if (project != null) {
 					IResource resource= project.findMember(path);
 					if (resource != null && resource.getType() == IResource.FILE) {
-						final IFile file= (IFile)resource;
+						final IFile file= (IFile) resource;
 						tu= (CElement) CModelManager.getDefault().create(file, this);
 						if (tu == null) {
 							String contentTypeId= CoreModel.getRegistedContentTypeId(project, file.getName());
@@ -833,5 +780,4 @@ public class CProject extends Openable implements ICProject {
 	protected char getHandleMementoDelimiter() {
 		return CEM_CPROJECT;
 	}
-
 }

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
@@ -37,17 +37,18 @@ public final class FileExistsCache {
 	private static class Content {
 		public Content(String[] names) {
 			fNames= names;
-			fIsFile= new BitSet(names.length*2);
+			fIsFile= new BitSet(names.length * 2);
 		}
 		public String[] fNames;
 		public BitSet fIsFile;
 	}
-	private Reference<Map<String,Content>> fCache= null;
+
+	private Reference<Map<String, Content>> fCache;
 	private final boolean fCaseInSensitive;
 
 	public FileExistsCache(boolean caseInsensitive) {
 		fCaseInSensitive= caseInsensitive;
-		fCache= new SoftReference<Map<String,Content>>(new HashMap<String, Content>());	// before running out of memory the entire map will be thrown away.
+		fCache= new SoftReference<Map<String, Content>>(new HashMap<String, Content>());	// before running out of memory the entire map will be thrown away.
 	}
 	
 	public boolean isFile(String path) {
@@ -92,14 +93,13 @@ public final class FileExistsCache {
 		if (avail == null) {
 			String[] files = null;
 			try {
-				files = (parentStore == null) ? new File(parent).list() : parentStore.childNames(EFS.NONE, null);
+				files = parentStore == null ? new File(parent).list() : parentStore.childNames(EFS.NONE, null);
 			} catch (CoreException e) {
 				// Ignore
 			}
 			if (files == null || files.length == 0) {
 				avail= EMPTY_STRING_ARRAY;
-			}
-			else {
+			} else {
 				if (fCaseInSensitive) {
 					for (int i = 0; i < files.length; i++) {
 						files[i]= files[i].toUpperCase();
@@ -118,14 +118,14 @@ public final class FileExistsCache {
 		final BitSet isFileBitset = avail.fIsFile;
 		if (isFileBitset.get(idx))
 			return true;
-		if (isFileBitset.get(idx+1))
+		if (isFileBitset.get(idx + 1))
 			return false;
 		
 		if ((file != null && file.isFile()) || (fileStore != null && !fileStore.fetchInfo().isDirectory())) {
 			isFileBitset.set(idx);
 			return true;
 		}
-		isFileBitset.set(idx+1);
+		isFileBitset.set(idx + 1);
 		return false;
 	}
 

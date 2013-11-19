@@ -86,18 +86,16 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	private static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.ui/debug/ResultCollector"));  //$NON-NLS-1$//$NON-NLS-2$
 
 	/**
-	 * Dialog settings key for the "all categories are disabled" warning dialog. See
-	 * {@link OptionalMessageDialog}.
+	 * Dialog settings key for the "all categories are disabled" warning dialog.
+	 * See {@link OptionalMessageDialog}.
 	 */
 	private static final String PREF_WARN_ABOUT_EMPTY_ASSIST_CATEGORY= "EmptyDefaultAssistCategory"; //$NON-NLS-1$
 
 	private static final Comparator<CompletionProposalCategory> ORDER_COMPARATOR= new Comparator<CompletionProposalCategory>() {
-
 		@Override
 		public int compare(CompletionProposalCategory d1, CompletionProposalCategory d2) {
 			return d1.getSortOrder() - d2.getSortOrder();
 		}
-		
 	};
 
 	private static final ICompletionProposal[] NO_PROPOSALS= {};
@@ -110,9 +108,9 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	
 	/* cycling stuff */
 	private int fRepetition= -1;
-	private List<List<CompletionProposalCategory>> fCategoryIteration= null;
-	private String fIterationGesture= null;
-	private int fNumberOfComputedResults= 0;
+	private List<List<CompletionProposalCategory>> fCategoryIteration;
+	private String fIterationGesture;
+	private int fNumberOfComputedResults;
 	private String fErrorMessage;
 	private boolean fIsAutoActivated;
 
@@ -123,10 +121,6 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 		fCategories= CompletionProposalComputerRegistry.getDefault().getProposalCategories();
 		fAssistant= assistant;
 		fAssistant.addCompletionListener(new ICompletionListener() {
-			
-			/*
-			 * @see org.eclipse.jface.text.contentassist.ICompletionListener#assistSessionStarted(org.eclipse.jface.text.contentassist.ContentAssistEvent)
-			 */
 			@Override
 			public void assistSessionStarted(ContentAssistEvent event) {
 				if (event.processor != ContentAssistProcessor.this)
@@ -164,9 +158,6 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 				}
 			}
 			
-			/*
-			 * @see org.eclipse.jface.text.contentassist.ICompletionListener#assistSessionEnded(org.eclipse.jface.text.contentassist.ContentAssistEvent)
-			 */
 			@Override
 			public void assistSessionEnded(ContentAssistEvent event) {
 				if (event.processor != ContentAssistProcessor.this)
@@ -192,18 +183,12 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 				}
 			}
 
-			/*
-			 * @see org.eclipse.jface.text.contentassist.ICompletionListener#selectionChanged(org.eclipse.jface.text.contentassist.ICompletionProposal, boolean)
-			 */
 			@Override
 			public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {}
 			
 		});
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
-	 */
 	@Override
 	public final ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		long start= DEBUG ? System.currentTimeMillis() : 0;
@@ -250,7 +235,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	}
 
 	/**
-	 * Verify that auto activation is allowed.
+	 * Verifies that auto activation is allowed.
 	 * <p>
 	 * The default implementation always returns <code>true</code>.
 	 * </p>
@@ -296,9 +281,6 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 		return proposals;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
-	 */
 	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 		clearState();
@@ -362,26 +344,16 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 		fCompletionAutoActivationCharacters= activationSet;
 	}
 
-
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-	 */
 	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return fCompletionAutoActivationCharacters;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
-	 */
 	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage()
-	 */
 	@Override
 	public String getErrorMessage() {
 		if (fNumberOfComputedResults > 0)
@@ -391,9 +363,6 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 		return ContentAssistMessages.ContentAssistProcessor_no_completions;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
-	 */
 	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
@@ -494,9 +463,6 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 			final int restoreId= IDialogConstants.CLIENT_ID + 10;
 			final int settingsId= IDialogConstants.CLIENT_ID + 11;
 			final OptionalMessageDialog dialog= new OptionalMessageDialog(PREF_WARN_ABOUT_EMPTY_ASSIST_CATEGORY, shell, title, null /* default image */, message, MessageDialog.WARNING, new String[] { restoreButtonLabel, IDialogConstants.CLOSE_LABEL }, 1) {
-				/*
-				 * @see org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog#createCustomArea(org.eclipse.swt.widgets.Composite)
-				 */
 				@Override
 				protected Control createCustomArea(Composite composite) {
 					// wrap link and checkbox in one composite without space
@@ -533,9 +499,6 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 					return parent;
 	        	}
 				
-				/*
-				 * @see org.eclipse.jface.dialogs.MessageDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-				 */
 				@Override
 				protected void createButtonsForButtonBar(Composite parent) {
 			        Button[] buttons= new Button[2];

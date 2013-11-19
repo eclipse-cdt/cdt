@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model;
 
 import java.util.ArrayList;
@@ -36,11 +35,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+
 /**
  * ContentType processor
  */
 public class ContentTypeProcessor extends CModelOperation {
-
 	CModelManager fManager;
 	CElementDelta fCurrentDelta;
 	ContentTypeChangeEvent[] fEvents;
@@ -53,9 +52,6 @@ public class ContentTypeProcessor extends CModelOperation {
 		fCurrentDelta = new CElementDelta(root);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#isReadOnly()
-	 */
 	@Override
 	public boolean isReadOnly() {
 		return true;
@@ -76,8 +72,6 @@ public class ContentTypeProcessor extends CModelOperation {
 			addDelta(fCurrentDelta);
 		}
 	}
-	
-
 
 	static public void processContentTypeChanges(ContentTypeChangeEvent[] events) {
 		try {
@@ -213,8 +207,7 @@ public class ContentTypeProcessor extends CModelOperation {
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * Add the resource delta to the right CElementDelta tree.
 	 * @param parent
@@ -252,7 +245,6 @@ public class ContentTypeProcessor extends CModelOperation {
 	}
 
 	private void elementAdded(ICElement celement, ICElement parent) throws CModelException {
-
 		if (celement instanceof Openable) {
 			addToParentInfo((Openable)celement);
 		}
@@ -296,13 +288,13 @@ public class ContentTypeProcessor extends CModelOperation {
 		}
 		fCurrentDelta.changed(element, ICElementDelta.F_CONTENT |ICElementDelta.F_CONTENT_TYPE);
 	}
+
 	/**
 	 * Removes the given element from its parents cache of children. If the
 	 * element does not have a parent, or the parent is not currently open,
 	 * this has no effect. 
 	 */
 	private void removeFromParentInfo(ICElement child) throws CModelException {
-
 		// Remove the child from the parent list.
 		ICElement parent = child.getParent();
 		if (parent != null && parent instanceof Parent && fManager.peekAtInfo(parent) != null) {
@@ -338,5 +330,4 @@ public class ContentTypeProcessor extends CModelOperation {
 		}
 		return new ICProject[0];
 	}
-
 }

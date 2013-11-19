@@ -83,7 +83,7 @@ import org.eclipse.cdt.internal.ui.util.Messages;
  * @since 4.0
  */
 public class ContentAssistProcessor implements IContentAssistProcessor {
-	private static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.ui/debug/ResultCollector"));  //$NON-NLS-1$//$NON-NLS-2$
+	private static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.ui/debug/contentassist"));  //$NON-NLS-1$//$NON-NLS-2$
 
 	/**
 	 * Dialog settings key for the "all categories are disabled" warning dialog.
@@ -222,10 +222,10 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 			monitor.done();
 			
 			if (DEBUG) {
-				System.err.println("Code Assist Stats (" + result.length + " proposals)"); //$NON-NLS-1$ //$NON-NLS-2$
-				System.err.println("Code Assist (setup):\t" + (setup - start) ); //$NON-NLS-1$
-				System.err.println("Code Assist (collect):\t" + (collect - setup) ); //$NON-NLS-1$
-				System.err.println("Code Assist (sort):\t" + (filter - collect) ); //$NON-NLS-1$
+				System.out.println("Code Assist Stats (" + result.length + " proposals)"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("Code Assist (setup):\t" + (setup - start)); //$NON-NLS-1$
+				System.out.println("Code Assist (collect):\t" + (collect - setup)); //$NON-NLS-1$
+				System.out.println("Code Assist (sort):\t" + (filter - collect)); //$NON-NLS-1$
 			}
 			
 			return result;

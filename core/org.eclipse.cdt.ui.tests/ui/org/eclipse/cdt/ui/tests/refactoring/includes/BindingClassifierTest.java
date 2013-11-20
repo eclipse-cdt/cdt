@@ -411,6 +411,17 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertDeclared();
 	}
 
+	//	class Base {};
+
+	//	class Derived : public Base {
+	//	public:
+	//	  Derived();
+	//	};
+	public void testBaseClause_421398() throws Exception {
+		assertDefined("Base");
+		assertDeclared();
+	}
+
 	//	struct A {};
 	//	template<typename T> struct B {};
 	//	template<typename T, typename U = B<T>> struct C {};

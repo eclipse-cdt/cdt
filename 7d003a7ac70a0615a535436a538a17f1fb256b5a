@@ -206,6 +206,40 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_db53f3b1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisterManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 524,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "No need for any final above",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_5b9a43f5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisterManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 780,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "I don\u0027t think we should be notifying the user directly from the service unless we have too).  Instead, the methods that call notifyUser() should set rm.setStatus(status) or rm.done(status) to return an error code, and the UI/command code should deal with notifying the user.\n\nNotifying the user from the service directly is done when we don\u0027t have any UI code to return an error to.  For example, if we get some async message from GDB that we need to report to the user.  This is not the case in this classs.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_5fb499ea",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
         "patchSetId": 4
@@ -444,6 +478,23 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_d6890ffe",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/ServiceEventWaitor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "\"event\" instead of \"sevent\"?",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_b908c133",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
         "patchSetId": 4
@@ -580,6 +631,74 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_9bf1700a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "This is not a generic method since it gets the regs of the root group only, compared to getRegisters() above, which is generic.  Can you change the name to be more descriptive?",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_fbecf433",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "Please rename to getOriginalRegisterGroup() or something like that",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_fb7994e8",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "You did a great job replacing AsyncCompletionWaitor with Query.  This is the last instance of its use in this class.  Could you also replace it?",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_f6e24b0c",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 528,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "I looked into this test.  It fails because we start the string with a 0 above.  Let\u0027s re-enable it.  Replace the above line with:\nString regValue \u003d \"100101001\";\nRemove the below line.\nRemove the @Ignore above the test.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_8ddf7fcc",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
         "patchSetId": 4
@@ -591,6 +710,23 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "Missing @test",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_362b13ba",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "I think the context passed to canAddRegGroup should be a Process or thread or stack frame.  I don\u0027t think we would normally pass a group, would we?",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -625,6 +761,23 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "test is called canEdit, but we call canAdd",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_5be5284f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 720,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "Don\u0027t we need a composite to call getRegisters()?  Or can we get the reg of a group only?",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -801,6 +954,41 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_36ccb363",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_75959f94",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_967dc78f",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "Javadoc is important for our services interface.  Please add an explanation of what this interface is meant to be used for.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_b300ac3a",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
         "patchSetId": 4
@@ -812,6 +1000,126 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "How about calling this IRegisterGroups.\nAlso, since it seems like an independent interface, we could keep it independent an not extend IRegisters",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_36faf382",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "Forget the above comment.  Since IRegisters does take care of Groups in part, it makes sense to extend it and use IRegisters2",
+      "parentUuid": "8748d3a1_b300ac3a",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_d6258fad",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "This does not look like a very safe interface.  Partial data may not be such a good idea.  There are probably other ways around it.  For example, you can look at MIProcessDMCAndData which passes Data with the DMC, without defining a special call for it.  We can discuss this further, but my gut feeling is that this call should be removed from the interface.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_5624dfe3",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "Please remove all \"final\" keywords, they are not necessary in an interface declaration",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_d66aafdc",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "Please explain the params that need explanation and remove the other.  No need to just put parameter names.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_76ae3ba0",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "Why does canAdd() need a context but addRegGroup() does not?\n\nSince we discussed regGroups as being per process as one possibility, I think we should pass an IDMContext in both methods, to allow others to make use of it, even if we don\u0027t.  In our case, we could use the IControlDMC as our context, since our groups are global to GDB",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_76211bd4",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "\"selectionContext\" should be \"group\"",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_363dd3ea",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "Mention which parameters are optional and can be replaced by null, and what should happen then.",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -846,6 +1154,23 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "Should also have canRestore...()",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_16fd3779",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T10:36:55Z",
+      "side": 1,
+      "message": "I not sure what to do about this yet, but it does not sound like something that should be part of the interface.",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

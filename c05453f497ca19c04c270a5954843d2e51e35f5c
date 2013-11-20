@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_5b9ef16c",
+        "filename": "debug/org.eclipse.cdt.debug.core/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T11:50:44Z",
+      "side": 1,
+      "message": "Need to also change the pom.xml file",
+      "revId": "c05453f497ca19c04c270a5954843d2e51e35f5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_e4656b11",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 771,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T11:50:44Z",
+      "side": 1,
+      "message": "The below command is being sent multiple times each time we set an address bp.  If we make this call here, we should use a CommandCache to avoid multiple messages.  In fact, that would allow us to only the send the command once per process.  The cache would need to be cleared when a new process appeared or exited IStaredDMEvent, IExitedDMEvent (although that could be optional).",
+      "revId": "c05453f497ca19c04c270a5954843d2e51e35f5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_24475374",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2525,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T11:50:44Z",
+      "side": 1,
+      "message": "Same comment as GDBRunControl",
+      "revId": "c05453f497ca19c04c270a5954843d2e51e35f5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_bb90d555",
+        "filename": "dsf/org.eclipse.cdt.dsf/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T11:50:44Z",
+      "side": 1,
+      "message": "Need to also change the pom.xml file",
+      "revId": "c05453f497ca19c04c270a5954843d2e51e35f5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_1089b2ae",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRunControl4.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T11:50:44Z",
+      "side": 1,
+      "message": "I don\u0027t think this should be in DSF.  IN DSF-GDB we use container as a process, but DSF allows a container to be other things.  An container is officially anything that can contain executionDMCs and that can do RunControl operations itself.  When trying to add grouping support, we may re-define how we use Container.\n\nTherefore, I don\u0027t think we should associate an executable to an IContainer.  We could define a more generic IExecutionDMData2 directly in IRunControl, which we could use for processes, without explicitly associating the two by name.  This new interface would be optionally returned by IRunControl.getExecutionData() when relevant (dealing with processes).",
+      "revId": "c05453f497ca19c04c270a5954843d2e51e35f5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_a421a3d7",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRunControl4.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-20T11:50:44Z",
+      "side": 1,
+      "message": "Maybe we can re-use IRunControl.getExecutionData() for this, and when dealing with an IMIContainerDMC, we return IContainerDMData which should be an extension of IExecutionDMData.\n\nThis would avoid this new API",
+      "revId": "c05453f497ca19c04c270a5954843d2e51e35f5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

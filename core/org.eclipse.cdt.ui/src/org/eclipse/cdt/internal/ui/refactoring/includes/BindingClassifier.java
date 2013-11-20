@@ -515,7 +515,7 @@ public class BindingClassifier {
 				// Record the fact that we also have a definition of the typedef's target type.
 				markAsDefined((IBinding) type);
 			}
-		} else if (binding instanceof ICPPClassType) {
+		} else if (binding instanceof ICPPClassType && fAst.getDefinitionsInAST(binding).length == 0) {
 			// The header that defines a class must provide definitions of all its base classes.
 			ICPPClassType[] bases = ClassTypeHelper.getAllBases((ICPPClassType) binding, fAst);
 			for (ICPPClassType base : bases) {

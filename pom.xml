@@ -33,12 +33,12 @@
     </license>
   </licenses>
   <properties>
-    <tycho-version>0.18.0</tycho-version>
-    <tycho-extras-version>0.18.0</tycho-extras-version>
+    <tycho-version>0.19.0</tycho-version>
+    <tycho-extras-version>0.19.0</tycho-extras-version>
     <maven-resources-version>2.6</maven-resources-version>
     <maven-antrun-version>1.7</maven-antrun-version>
     <gmaven-version>1.4</gmaven-version>
-    <eclipse-jarsigner-version>1.0.2</eclipse-jarsigner-version>
+    <eclipse-jarsigner-version>1.0.4</eclipse-jarsigner-version>
     <platform-version-name>kepler</platform-version-name>
     <tm-stream>kepler</tm-stream>
     <eclipse-site>http://download.eclipse.org/releases/${platform-version-name}</eclipse-site>

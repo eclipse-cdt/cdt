@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_bd16d2d3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-11-20T18:51:29Z",
+      "side": 1,
+      "message": "This method as well as \"setLanguage()\" doesn\u0027t belong to GDBMemory. One option is to use the \"set language\" and \"show language\" commands directly in  the corresponding steps. Otherwise, we need to move these methods to some other service. It seems that IGDBControl is the most appropriate service to host them.",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_1d242639",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-11-20T18:51:29Z",
+      "side": 1,
+      "message": "See my comment for \"showLanguage()\".",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_78a458c0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLISetLanguage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-11-20T18:51:29Z",
+      "side": 1,
+      "message": "This class should extend \"MIInterpreterExecConsole\" instead of CLICommand to set the language for the proper inferior. It doesn\u0027t really matter now but the \"set language\" behaviour may change in future.",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

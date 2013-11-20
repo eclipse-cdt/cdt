@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial implementation
  *     Ken Ryall (Nokia) - Modified to launch on a project context.
+ *     Marc Khouzam (Ericsson) - Added support of 'isCore' property (Bug 410112)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.launch;
 
@@ -30,6 +31,8 @@ public class CPropertyTester extends PropertyTester {
 			return isExecutable(receiver);
 		if ("isCProject".equals(property)) //$NON-NLS-1$
 			return isCProject(receiver);
+		if ("isCore".equals(property)) //$NON-NLS-1$
+			return isCore(receiver);
 		return false;
 	}
 
@@ -49,6 +52,21 @@ public class CPropertyTester extends PropertyTester {
 			return CoreModel.hasCNature((IProject) receiver);
 		if (receiver instanceof ICProject)
 			return true;
+		return false;
+	}
+
+	private boolean isCore(Object receiver) {
+		if (receiver instanceof IAdaptable) {
+			IResource res = (IResource) ((IAdaptable) receiver).getAdapter(IResource.class);
+			if (res != null) {
+				ICElement celement = CoreModel.getDefault().create(res);
+				if (celement instanceof IBinary) {
+					if (((IBinary)celement).isCore()) {
+						return true;
+					}
+				}
+			}
+		}
 		return false;
 	}
 }

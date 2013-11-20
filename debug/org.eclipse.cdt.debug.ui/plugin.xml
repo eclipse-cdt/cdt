@@ -99,6 +99,14 @@
                        </adapt>
                      </and>
                    </or>
+                   <not>
+    	              <and>
+	    		         <instanceof value="org.eclipse.cdt.core.model.IBinary"/>
+                 		 <test property="org.eclipse.cdt.launch.isCore"
+                               forcePluginActivation="true">
+                         </test>
+                      </and>
+                   </not>                   
                </iterate>
              </with>
            </enablement>
@@ -113,12 +121,42 @@
                id="org.eclipse.cdt.launch.applicationLaunchType">
          </configurationType>
 	</shortcut>
+      <shortcut
+            class="org.eclipse.cdt.debug.internal.ui.launch.CApplicationLaunchShortcutPMD"
+            icon="icons/obj16/c_app.gif"
+            id="org.eclipse.cdt.debug.ui.localCShortcutPMD"
+            label="%CApplicationShortcutPMD.label"
+            modes="debug">
+         <description
+               description="%ContextualDebugCApplicationPMD.description"
+               mode="debug">
+         </description>
+         <contextualLaunch>
+            <enablement>
+               <with variable="selection">
+                  <count value="1">
+                  </count>
+                  <iterate>
+                     <and>
+	                     <instanceof value="org.eclipse.cdt.core.model.IBinary"/>
+                         <test property="org.eclipse.cdt.launch.isCore"
+                               forcePluginActivation="true">
+                         </test>
+                     </and>
+                  </iterate>
+               </with>
+            </enablement>
+         </contextualLaunch>
+         <configurationType
+               id="org.eclipse.cdt.launch.postmortemLaunchType">
+         </configurationType>       
+      </shortcut>	
    </extension>
 <!-- Property testers -->
    <extension point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
       		namespace="org.eclipse.cdt.launch"
-            properties="isExecutable,isCProject"
+            properties="isExecutable,isCProject,isCore"
             type="java.lang.Object"
             class="org.eclipse.cdt.debug.internal.ui.launch.CPropertyTester"
             id="org.eclipse.cdt.launch.CPropertyTester">

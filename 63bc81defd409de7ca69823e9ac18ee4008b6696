@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_33edd32f",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1604
+      },
+      "writtenOn": "2013-11-20T21:42:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_fea90766",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_9eba83a3",
         "filename": "debug/org.eclipse.cdt.debug.ui/plugin.properties",
         "patchSetId": 2
@@ -47,6 +65,24 @@
       "writtenOn": "2013-11-07T21:15:04Z",
       "side": 1,
       "message": "Remove \"local\" and replace \"Debugging\" with \"Debugger\" to be consistent with the launch configuration type which is called \"C/C++ Postmortem Debugger\"",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_13ea5716",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1604
+      },
+      "writtenOn": "2013-11-20T21:42:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_9eba83a3",
       "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_73aabbde",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1604
+      },
+      "writtenOn": "2013-11-20T21:42:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_3eab6f5d",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_7ed977ea",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
         "patchSetId": 2
@@ -81,6 +135,24 @@
       "writtenOn": "2013-11-07T21:15:04Z",
       "side": 1,
       "message": "Please add your name and company in copyright header",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_d3ef4f27",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 1604
+      },
+      "writtenOn": "2013-11-20T21:42:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_7ed977ea",
       "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -104,6 +176,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_5304df8a",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1604
+      },
+      "writtenOn": "2013-11-20T21:42:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_03d8e019",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_23d51ce4",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
         "patchSetId": 2
@@ -115,6 +205,24 @@
       "writtenOn": "2013-11-07T21:15:04Z",
       "side": 1,
       "message": "Please fix year to 2013 only",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_93fe67db",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1604
+      },
+      "writtenOn": "2013-11-20T21:42:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_23d51ce4",
       "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +263,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_d3910f26",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1604
+      },
+      "writtenOn": "2013-11-20T21:42:46Z",
+      "side": 1,
+      "message": "In the plugin.xml file, I did define the count as 1.",
+      "parentUuid": "8748d3a1_b2da135c",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_1e89537a",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
         "patchSetId": 2
@@ -166,6 +292,24 @@
       "writtenOn": "2013-11-07T21:15:04Z",
       "side": 1,
       "message": "No need to cast to IAdaptable since IBinary is an IAdaptable already",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_d33d8f47",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1604
+      },
+      "writtenOn": "2013-11-20T21:42:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_1e89537a",
       "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +333,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_932ca71f",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1604
+      },
+      "writtenOn": "2013-11-20T21:42:46Z",
+      "side": 1,
+      "message": "This short cut is only popped up when you selected one core file. So, I check if the selected resource is an IFile.",
+      "parentUuid": "8748d3a1_f20f7b6c",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_5268efe7",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
         "patchSetId": 2
@@ -200,6 +362,24 @@
       "writtenOn": "2013-11-07T21:15:04Z",
       "side": 1,
       "message": "Notice that if you don\u0027t also set IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE (which you cannot access from this package), you will by default launch for a core file and not a trace file.  I think this is fine.  But please put a comment to explain this.",
+      "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_f3408bbd",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1604
+      },
+      "writtenOn": "2013-11-20T21:42:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_5268efe7",
       "revId": "63bc81defd409de7ca69823e9ac18ee4008b6696",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

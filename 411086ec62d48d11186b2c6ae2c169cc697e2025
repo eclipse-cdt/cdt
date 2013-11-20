@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "8748d3a1_385770a2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-11-20T19:33:56Z",
+      "side": 1,
+      "message": "I am not sure if we need this step. We can always set the language to \"c\" before using \"sizeof\".",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_bd16d2d3",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 1

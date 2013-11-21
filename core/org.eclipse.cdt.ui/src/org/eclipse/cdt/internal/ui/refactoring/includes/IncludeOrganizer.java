@@ -72,6 +72,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -797,7 +798,10 @@ public class IncludeOrganizer {
 							IIndexFile indexFile = request.getDeclaringFiles().keySet().iterator().next();
 							if (!includedByPartner.contains(indexFile)) {
 								for (IIndexInclude include : indexFile.getIncludes()) {
-									fContext.addHeaderAlreadyIncluded(getAbsolutePath(include.getIncludesLocation()));
+									IIndexFileLocation headerLocation = include.getIncludesLocation();
+									if (headerLocation != null) {
+										fContext.addHeaderAlreadyIncluded(getAbsolutePath(headerLocation));
+									}
 								}
 								includedByPartner.add(indexFile);
 							}

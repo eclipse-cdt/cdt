@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_d9b92435",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-21T19:22:04Z",
+      "side": 1,
+      "message": "Very elegant trick!  I had not thought about it before.  Thanks!",
+      "revId": "66dba9f3ee245d0413851a1baa4c69d4464b0a63",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_19bb8c2b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-21T19:22:04Z",
+      "side": 1,
+      "message": "One brace instead of two?",
+      "revId": "66dba9f3ee245d0413851a1baa4c69d4464b0a63",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_d98be470",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-21T19:22:04Z",
+      "side": 1,
+      "message": "Since you do nothing special here, you don\u0027t have to redefine handleSuccess().  You can simply have:\n\tnew ImmediateDataRequestMonitor\u003cMIInfo\u003e(requestMonitor));\n\nNote that using an ImmediateDRM is a way of doing what you were doing with less characters :).",
+      "revId": "66dba9f3ee245d0413851a1baa4c69d4464b0a63",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_19542c4c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-21T19:22:04Z",
+      "side": 1,
+      "message": "As above, no need to override in this case",
+      "revId": "66dba9f3ee245d0413851a1baa4c69d4464b0a63",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_790e10f1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIGDBShowLanguageInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-21T19:22:04Z",
+      "side": 1,
+      "message": "Can you update the javadoc to match -gdb-show language?",
+      "revId": "66dba9f3ee245d0413851a1baa4c69d4464b0a63",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_f9dfc0cb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIGDBShowLanguageInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-21T19:22:04Z",
+      "side": 1,
+      "message": "I don\u0027t think we need the above one",
+      "revId": "66dba9f3ee245d0413851a1baa4c69d4464b0a63",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-     Copyright (c) 2011, 2012 Eclipse contributors and others.
+     Copyright (c) 2011, 2013 Eclipse contributors and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -76,7 +76,7 @@
       <layout>p2</layout>
     </repository>
     <repository>
-      <id>maven.eclipse.org</id>
+      <id>repo.eclipse.org</id>
       <url>https://repo.eclipse.org/content/repositories/releases/</url>
     </repository>
   </repositories>

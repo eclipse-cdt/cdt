@@ -37,6 +37,42 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_16f07b03",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-11-21T17:44:23Z",
+      "side": 1,
+      "message": "I remove the first try to read memory\nI change the way steps are created\nthey are created in the constructor only if needed. att the tests are\nremoved from the Step\n\nImmediateExecutor.getInstance().execute(\n\tnew Sequence(getExecutor(), rm) {\n\t\tprivate ArrayList\u003cStep\u003e steps \u003d new ArrayList\u003cStep\u003e();\n\n\t\t{{\n\t\t\tif (fAddressSizes.get(memContext) \u003d\u003d null) {\n\t\t\t\tsteps.add(\n\nI implement the set language show language call using\n-gdb-set or -gdb-show MI commands",
+      "parentUuid": "8748d3a1_e1539063",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_36a5b700",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-11-21T17:44:23Z",
+      "side": 1,
+      "message": "removed",
+      "parentUuid": "8748d3a1_385770a2",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_bd16d2d3",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 1
@@ -72,6 +108,42 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_56ea0317",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-11-21T17:44:23Z",
+      "side": 1,
+      "message": "method removed, code moved inside the step.",
+      "parentUuid": "8748d3a1_bd16d2d3",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_16a23bf7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-11-21T17:44:23Z",
+      "side": 1,
+      "message": "method removed, code moved inside the step",
+      "parentUuid": "8748d3a1_bd16d2d3",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_1d242639",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 1
@@ -83,6 +155,24 @@
       "writtenOn": "2013-11-20T18:51:29Z",
       "side": 1,
       "message": "See my comment for \"showLanguage()\".",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_b6aa67db",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-11-21T17:44:23Z",
+      "side": 1,
+      "message": "see showLanguage",
+      "parentUuid": "8748d3a1_1d242639",
       "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -106,6 +196,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_96680b15",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1038,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-11-21T17:44:23Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "8748d3a1_c1be544d",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_01767c4a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLISetLanguage.java",
         "patchSetId": 1
@@ -117,6 +225,24 @@
       "writtenOn": "2013-11-21T11:34:18Z",
       "side": 1,
       "message": "I think you should put your name:\nPhilippe Gil (AdaCore) - Initial API and implementation",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_d6629330",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLISetLanguage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-11-21T17:44:23Z",
+      "side": 1,
+      "message": "OK",
+      "parentUuid": "8748d3a1_01767c4a",
       "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -157,6 +283,42 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_1654fb4b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLISetLanguage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-11-21T17:44:23Z",
+      "side": 1,
+      "message": "thanks",
+      "parentUuid": "8748d3a1_61ddc08d",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_36577754",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLISetLanguage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-11-21T17:44:23Z",
+      "side": 1,
+      "message": "replaced by MIGDBSetLanguage extending MIGDBSet",
+      "parentUuid": "8748d3a1_78a458c0",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_e1727054",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIShowLanguage.java",
         "patchSetId": 1
@@ -168,6 +330,24 @@
       "writtenOn": "2013-11-21T11:34:18Z",
       "side": 1,
       "message": "I think you should put your name:\nPhilippe Gil (AdaCore) - Initial API and implementation",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_99b31c35",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIShowLanguage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-11-21T17:44:23Z",
+      "side": 1,
+      "message": "OK",
+      "parentUuid": "8748d3a1_e1727054",
       "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -191,6 +371,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_f9cfc09d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIShowLanguage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-11-21T17:44:23Z",
+      "side": 1,
+      "message": "done as suggested",
+      "parentUuid": "8748d3a1_c1e2d449",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_41808499",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/CLIShowLanguageInfo.java",
         "patchSetId": 1
@@ -208,6 +406,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_d9d48431",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/CLIShowLanguageInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-11-21T17:44:23Z",
+      "side": 1,
+      "message": "OK",
+      "parentUuid": "8748d3a1_41808499",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_41ed242e",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/CLIShowLanguageInfo.java",
         "patchSetId": 1
@@ -219,6 +435,24 @@
       "writtenOn": "2013-11-21T11:34:18Z",
       "side": 1,
       "message": "Should become much simpler once we use \u0027-gdb-show\u0027 instead of \u0027show\u0027",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_79e3b012",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/CLIShowLanguageInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-11-21T17:44:23Z",
+      "side": 1,
+      "message": "much more simpler.",
+      "parentUuid": "8748d3a1_41ed242e",
       "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

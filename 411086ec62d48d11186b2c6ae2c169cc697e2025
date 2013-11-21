@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_e1539063",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-21T11:34:18Z",
+      "side": 1,
+      "message": "I\u0027m on the fence on this one.  Waiting for an error makes the code a little harder to understand.\n\nI was thinking we could first get the language and check if it was already C or C++.  However, we won\u0027t be able to do that with \u0027-gdb-show language\u0027 since we will usually only get \u0027auto\u0027 as the language.\n\nPersonally, I prefer using \u0027-gdb-show language\u0027 because it makes parsing more solid.  With that in mind, I\u0027m thinking like Mikhail that we can set the language to C all the time before these steps.  That should simplify the sequence below.\n\nAs Mikhail also hinted, it would be nice to avoid repeatedly having to check if the addressSize is know, as a way to skip steps.  I\u0027m not sure how possible that will be, but let\u0027s first see how the sequence looks like if we always set the language to C when the address is not known.",
+      "parentUuid": "8748d3a1_385770a2",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_bd16d2d3",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2013-11-20T18:51:29Z",
       "side": 1,
       "message": "This method as well as \"setLanguage()\" doesn\u0027t belong to GDBMemory. One option is to use the \"set language\" and \"show language\" commands directly in  the corresponding steps. Otherwise, we need to move these methods to some other service. It seems that IGDBControl is the most appropriate service to host them.",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_dc175778",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-21T11:34:18Z",
+      "side": 1,
+      "message": "Agreed.  But we\u0027ll need a new IGDBControl2 if we move them.  As long as we keep them protected, we could even keep these methods as written; they are just keeping code isolated without provide their functionality as a \u0027service\u0027.",
+      "parentUuid": "8748d3a1_bd16d2d3",
       "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,40 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_c1be544d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1038,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-21T11:34:18Z",
+      "side": 1,
+      "message": "In this file, methods are ordered alphabetically.  Can you move the two new methods (once they are renamed based on in-line comments) to the appropriate location?",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_01767c4a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLISetLanguage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-21T11:34:18Z",
+      "side": 1,
+      "message": "I think you should put your name:\nPhilippe Gil (AdaCore) - Initial API and implementation",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_78a458c0",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLISetLanguage.java",
         "patchSetId": 1
@@ -64,6 +134,91 @@
       "writtenOn": "2013-11-20T18:51:29Z",
       "side": 1,
       "message": "This class should extend \"MIInterpreterExecConsole\" instead of CLICommand to set the language for the proper inferior. It doesn\u0027t really matter now but the \"set language\" behaviour may change in future.",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_61ddc08d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLISetLanguage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-21T11:34:18Z",
+      "side": 1,
+      "message": "Actually, you can inherit from MIGDBSet",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_e1727054",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIShowLanguage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-21T11:34:18Z",
+      "side": 1,
+      "message": "I think you should put your name:\nPhilippe Gil (AdaCore) - Initial API and implementation",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_c1e2d449",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIShowLanguage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-21T11:34:18Z",
+      "side": 1,
+      "message": "Can you create an new class MIGDBShow first, and then inherit from that (and rename this class)? It will make parsing much easier.  MIGDBShow should much much like MIGDBSet.\n\nNOTE: I realized that using -gdb-show language, we don\u0027t get the \u0027currently ada\u0027 output, we just get \u0027auto\u0027.  But that may not be a problem.  What do you think?\n\nThe reason CLIShowEndian did not use it is that GDB does not support it in the Endian case.  I\u0027ve verified that it works for the \u0027language\u0027 case even in GDB 6.5",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_41808499",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/CLIShowLanguageInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-21T11:34:18Z",
+      "side": 1,
+      "message": "I think you should put your name:\nPhilippe Gil (AdaCore) - Initial API and implementation",
+      "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_41ed242e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/CLIShowLanguageInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-21T11:34:18Z",
+      "side": 1,
+      "message": "Should become much simpler once we use \u0027-gdb-show\u0027 instead of \u0027show\u0027",
       "revId": "411086ec62d48d11186b2c6ae2c169cc697e2025",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

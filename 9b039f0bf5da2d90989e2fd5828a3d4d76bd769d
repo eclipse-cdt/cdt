@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_d700bb41",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-11-22T18:06:16Z",
+      "side": 1,
+      "message": "I\u0027ve been thinking about initializing the steps this way, and although I believe it is safe, I think we could make the code easier to read by having getSteps return \u0027steps\u0027 if non-null, and initializing it if null.\n\nAnd if I really push the concern further, I guess it could be possible that this code runs and checks fAddressSizes, while the executor has another memory initialization step queued, that would fill that fAddressSizes.  I don\u0027t think it is really worth figuring out if this could really happen or not, since it is easy to run the code in getSteps().\n\nI\u0027ll post a patch to fix this since I didn\u0027t mention it before.",
+      "revId": "9b039f0bf5da2d90989e2fd5828a3d4d76bd769d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

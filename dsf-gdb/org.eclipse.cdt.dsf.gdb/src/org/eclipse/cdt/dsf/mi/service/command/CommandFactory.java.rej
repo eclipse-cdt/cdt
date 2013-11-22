@@ -1,0 +1,10 @@
+--- dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java
++++ dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java
+@@ -20,6 +20,7 @@
+  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
+  *     Vladimir Prus (Mentor Graphics) - Support for -info-os (Bug 360314)
+  *     John Dallaway - Support for -data-write-memory-bytes (Bug 387793)
++ *     Dmitry Kozlov (Mentor Graphics) - New trace-related methods (Bug 390827)
+  *******************************************************************************/
+ 
+ package org.eclipse.cdt.dsf.mi.service.command;

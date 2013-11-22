@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Dmitry Kozlov (Mentor Graphics) - Trace control view enhancements (Bug 390827)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.tracepoints;
 
@@ -33,12 +34,16 @@ public class TracepointImageRegistry extends AbstractImageRegistry {
     private static final String ORG_ECLIPSE_UI_PLUGIN_ID = "org.eclipse.ui"; //$NON-NLS-1$
     private static final String ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID = "org.eclipse.cdt.dsf.gdb.ui"; //$NON-NLS-1$
 	
-    public static final String ICON_Refresh_enabled  = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/elcl16"}, "refresh_nav.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Refresh_enabled = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/elcl16"}, "refresh_nav.gif"); //$NON-NLS-1$ //$NON-NLS-2$
     public static final String ICON_Refresh_disabled = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/dlcl16"}, "refresh_nav.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-    public static final String ICON_Trace_Variables  = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID, new String[] {"full/obj16"}, "tracevariables.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Refresh_Auto = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID, new String[] {"full/view16"}, "refresh_auto.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Disconnected_Tracing = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID, new String[] {"full/view16"}, "disconnected_tracing.png"); //$NON-NLS-1$ //$NON-NLS-2$    
+    public static final String ICON_Circular_Buffer = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID, new String[] {"full/view16"}, "circular_buffer2.png"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Trace_Variables = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID, new String[] {"full/obj16"}, "tracevariables.gif"); //$NON-NLS-1$ //$NON-NLS-2$
     public static final String ICON_Exit_Visualization = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID, new String[] {"full/obj16"}, "stop_visual_trace.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Edit_enabled = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID, new String[] {"full/obj16"}, "write_obj.gif"); //$NON-NLS-1$ //$NON-NLS-2$
     
-    private static TracepointImageRegistry INSTANCE= new TracepointImageRegistry(GdbUIPlugin.getDefault());
+    private static TracepointImageRegistry INSTANCE = new TracepointImageRegistry(GdbUIPlugin.getDefault());
     
     TracepointImageRegistry(Plugin plugin) {
 		super(plugin);

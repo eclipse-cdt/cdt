@@ -10,6 +10,7 @@
  *     Sergey Prigogin (Google)
  *     Anton Gorenkov - Enable the "Index unused headers" preference by default (Bug 377992)
  *     IBM Corporation
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
@@ -64,6 +65,8 @@ public class IndexerPreferences {
 
 	public static final String KEY_REINDEX_ON_CONFIG_CHANGE = "reindexOnConfigChange"; //$NON-NLS-1$
 	public static final String KEY_REINDEX_ON_INDEXER_CHANGE = "reindexOnIndexerChange"; //$NON-NLS-1$
+	public static final String KEY_INDEX_ALL_HEADER_VERSIONS= "indexAllHeaderVersions"; //$NON-NLS-1$
+	public static final String KEY_INDEX_ALL_VERSIONS_SPECIFIC_HEADERS= "indexAllVersionsSpecificHeaders"; //$NON-NLS-1$
 
 	private static final String DEFAULT_INDEX_IMPORT_LOCATION = ".settings/cdt-index.zip"; //$NON-NLS-1$
 	private static final int DEFAULT_UPDATE_POLICY= 0;
@@ -329,6 +332,7 @@ public class IndexerPreferences {
 		prefs.putBoolean(KEY_SKIP_TYPE_REFERENCES, false);
 		prefs.putBoolean(KEY_SKIP_MACRO_REFERENCES, false);
 		prefs.put(KEY_INDEX_IMPORT_LOCATION, DEFAULT_INDEX_IMPORT_LOCATION);
+		prefs.putBoolean(KEY_INDEX_ALL_HEADER_VERSIONS, false);
 	}
 
 	public static void setDefaultIndexerId(String defaultId) {

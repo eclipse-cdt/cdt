@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *      IBM Corporation
  *      Andrew Ferguson (Symbian)
  *      Sergey Prigogin (Google)
+ *      Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
@@ -29,6 +30,8 @@ class DialogsMessages extends NLS {
 	public static String AbstractIndexerPage_skipTypeAndMacroReferences;
 	public static String AbstractIndexerPage_skipTypeReferences;
 	public static String AbstractIndexerPage_skipMacroReferences;
+	public static String AbstractIndexerPage_indexAllHeaderVersions;
+	public static String AbstractIndexerPage_indexAllVersionsSpecificHeaders;
 	public static String CacheSizeBlock_MB;
 	public static String IndexerBlock_fixedBuildConfig;
 	public static String IndexerBlock_indexerOptions;

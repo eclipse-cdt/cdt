@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 QNX Software Systems and others.
+ * Copyright (c) 2005, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     IBM Corporation
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
@@ -42,6 +43,8 @@ import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask.IndexFileContent;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Code reader factory, that fakes code readers for header files already stored in the index.
@@ -58,6 +61,9 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 	private long fFileSizeLimit= 0;
 	private IIndexFile[] fContextToHeaderGap;
 	private final Map<IIndexFileLocation, IFileNomination> fPragmaOnce= new HashMap<IIndexFileLocation, IFileNomination>();
+	private List<String> fHeadersToParseAllVersions = new ArrayList<String>();
+
+	private boolean fParseAllHeaderVersions = false;
 
 	public IndexBasedFileContentProvider(IIndex index,
 			ASTFilePathResolver pathResolver, int linkage, IncludeFileContentProvider fallbackFactory) {
@@ -304,5 +310,36 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			} catch (CoreException e) {
 			}
 		return null;
+	}
+
+	public void setHeadersToParseAllVersions(List<String> headers) {
+		fHeadersToParseAllVersions = headers;
+	}
+
+	public void setParseAllHeaderVersions(boolean parseAllHeaderVersions) {
+		fParseAllHeaderVersions = parseAllHeaderVersions;
+	}
+
+	@Override
+	public boolean parseAllHeaderVersions(String fileName) {
+		if (fParseAllHeaderVersions) {
+			return true;
+		}
+
+		IPath path = new Path(fileName);
+		String last = path.lastSegment();
+
+		for (String header : fHeadersToParseAllVersions) {
+			header = header.trim();
+			if (header.isEmpty()) {
+				continue;
+			}
+
+			if (header.equals(last)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

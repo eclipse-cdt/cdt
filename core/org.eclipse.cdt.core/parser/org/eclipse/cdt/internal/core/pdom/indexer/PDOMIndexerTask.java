@@ -8,13 +8,16 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -61,6 +64,8 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		setShowProblems(checkDebugOption(TRACE_PROBLEMS, TRUE));
 		final long limit = getIntProperty(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB, 0);
 		setFileSizeLimit(limit * 1024 * 1024);
+		setParseAllHeaderVersions(checkProperty(IndexerPreferences.KEY_INDEX_ALL_HEADER_VERSIONS));
+		setHeadersToParseAllVersions(getStringList(IndexerPreferences.KEY_INDEX_ALL_VERSIONS_SPECIFIC_HEADERS));
 		if (checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES)) {
 			setSkipReferences(SKIP_ALL_REFERENCES);
 		} else {
@@ -155,6 +160,18 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 
 	private boolean checkProperty(String key) {
 		return TRUE.equals(getIndexer().getProperty(key));
+	}
+
+	private List<String> getStringList(String key) {
+		String prefSetting = getIndexer().getProperty(key);
+		if (prefSetting != null) {
+			prefSetting = prefSetting.trim();
+			if (prefSetting.length() > 0) {
+				return Arrays.asList(prefSetting.split(",")); //$NON-NLS-1$
+			}
+		}
+
+		return new ArrayList<String>();
 	}
 
 	private int getIntProperty(String key, int defaultValue) {

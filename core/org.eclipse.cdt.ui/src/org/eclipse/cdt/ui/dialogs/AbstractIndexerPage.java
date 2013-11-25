@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Bogdan Gheorghe (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
@@ -28,6 +29,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -53,6 +55,8 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	private Button fSkipReferences;
 	private Button fSkipImplicitReferences;
 	private Button fSkipMacroAndTypeReferences;
+	private Button fIndexAllHeaderVersions;
+	private Text fIndexAllVersionsSpecificHeaders;
 
     private IPropertyChangeListener validityChangeListener = new IPropertyChangeListener() {
         @Override
@@ -97,6 +101,26 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			fAllHeadersDefault= createAllCppHeadersButton(group);
 			fAllHeadersAlt= createAllCHeadersButton(group);
 		}
+
+		fIndexAllHeaderVersions = ControlFactory.createCheckBox(group, DialogsMessages.AbstractIndexerPage_indexAllHeaderVersions);
+		fIndexAllHeaderVersions.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateEnablement();
+			}
+		});
+
+		Label label = ControlFactory.createLabel(group, DialogsMessages.AbstractIndexerPage_indexAllVersionsSpecificHeaders);
+		GridData layoutData = new GridData();
+		layoutData.horizontalSpan = 3;
+		layoutData.horizontalIndent = 10;
+		label.setLayoutData(layoutData);
+		fIndexAllVersionsSpecificHeaders = ControlFactory.createTextField(group);
+		layoutData = new GridData(GridData.FILL_HORIZONTAL);
+		layoutData.horizontalSpan = 3;
+		layoutData.horizontalIndent = 10;
+		fIndexAllVersionsSpecificHeaders.setLayoutData(layoutData);
+
 		fIndexOnOpen= createIndexOnOpenButton(group);
 
 		fIncludeHeuristics= createIncludeHeuristicsButton(group);
@@ -180,7 +204,15 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			boolean skipTypeReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES));
 			boolean skipMacroReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES));
 			fSkipMacroAndTypeReferences.setSelection(skipTypeReferences && skipMacroReferences);
-		}		
+		}
+		if (fIndexAllHeaderVersions != null) {
+			boolean indexAllHeaderVersions = TRUE.equals(properties.get((IndexerPreferences.KEY_INDEX_ALL_HEADER_VERSIONS)));
+			fIndexAllHeaderVersions.setSelection(indexAllHeaderVersions);
+		}
+		if (fIndexAllVersionsSpecificHeaders != null) {
+			String indexAllVersionsSpecificHeaders = properties.getProperty((IndexerPreferences.KEY_INDEX_ALL_VERSIONS_SPECIFIC_HEADERS), ""); //$NON-NLS-1$
+			fIndexAllVersionsSpecificHeaders.setText(indexAllVersionsSpecificHeaders);
+		}
 		updateEnablement();
 	}
 
@@ -219,6 +251,12 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			props.put(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES, value);
 			props.put(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES, value);
 		}
+		if (fIndexAllHeaderVersions != null) {
+			props.put((IndexerPreferences.KEY_INDEX_ALL_HEADER_VERSIONS), String.valueOf(fIndexAllHeaderVersions.getSelection()));
+		}
+		if (fIndexAllVersionsSpecificHeaders != null) {
+			props.put((IndexerPreferences.KEY_INDEX_ALL_VERSIONS_SPECIFIC_HEADERS), String.valueOf(fIndexAllVersionsSpecificHeaders.getText()));
+		}
 		return props;
 	}
 
@@ -247,6 +285,10 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			if (fSkipMacroAndTypeReferences != null) {
 				fSkipMacroAndTypeReferences.setEnabled(!skipReferences);
 			}
+		}
+
+		if (fIndexAllHeaderVersions != null) {
+			fIndexAllVersionsSpecificHeaders.setEnabled(!fIndexAllHeaderVersions.getSelection());
 		}
 	}
 	

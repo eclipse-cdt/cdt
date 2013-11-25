@@ -10,6 +10,7 @@
  *     IBM Corporation
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -295,6 +296,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private int fUpdateFlags= IIndexManager.UPDATE_ALL;
 	private UnusedHeaderStrategy fIndexHeadersWithoutContext= UnusedHeaderStrategy.useDefaultLanguage;
 	private boolean fIndexFilesWithoutConfiguration= true;
+	private boolean fIndexAllHeaderVersions = false;
+	private Set<String> fHeadersToIndexAllVersions = Collections.emptySet();
 	private List<LinkageTask> fRequestsPerLinkage= new ArrayList<LinkageTask>();
 	private Map<IIndexFile, IndexFileContent> fIndexContentCache= new LRUCache<IIndexFile, IndexFileContent>(500);
 	private Map<IIndexFileLocation, IIndexFragmentFile[]> fIndexFilesCache= new LRUCache<IIndexFileLocation, IIndexFragmentFile[]>(5000);
@@ -355,6 +358,14 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 	public final void setFileSizeLimit(long limit) {
 		fFileSizeLimit= limit;
+	}
+
+	public void setIndexAllHeaderVersions(boolean indexAllHeaderVersions) {
+		fIndexAllHeaderVersions = indexAllHeaderVersions;
+	}
+
+	public void setHeadersToIndexAllVersions(Set<String> headers) {
+		fHeadersToIndexAllVersions = headers;
 	}
 
 	/**
@@ -1159,6 +1170,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 						language.getLinkageID(), fileContentProvider, this);
 				ibfcp.setContextToHeaderGap(ctx2header);
 				ibfcp.setFileSizeLimit(fFileSizeLimit);
+				ibfcp.setHeadersToIndexAllVersions(fHeadersToIndexAllVersions);
+				ibfcp.setIndexAllHeaderVersions(fIndexAllHeaderVersions);
 				fCodeReaderFactory= ibfcp;
 			} else {
 				fCodeReaderFactory= fileContentProvider;

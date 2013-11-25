@@ -53,6 +53,7 @@
  * David McKnight   (IBM)        - [232084] [local] local file service should not throw operation cancelled exception due to file sizes
  * David McKnight   (IBM)        - [374538] [local] localFile service tries to set modified time on virtual files
  * Samuel Wu		(IBM)		 - [395981] Local file encoding is not handled properly 
+ * David McKnight   (IBM)        - [422508] Unable to map A:\ and B:\ as selectable drives in RSE View
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -126,6 +127,8 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 {
 	private static final String[] ALLDRIVES =
 	{
+		"A:\\", //$NON-NLS-1$
+		"B:\\", //$NON-NLS-1$
 		"C:\\", //$NON-NLS-1$
 		"D:\\", //$NON-NLS-1$
 		"E:\\", //$NON-NLS-1$

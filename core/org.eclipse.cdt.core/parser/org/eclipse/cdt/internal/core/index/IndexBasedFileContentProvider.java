@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 QNX Software Systems and others.
+ * Copyright (c) 2005, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,13 @@
  *     Anton Leherbauer (Wind River Systems)
  *     IBM Corporation
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -42,6 +44,7 @@ import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask.IndexFileContent;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Code reader factory, that fakes code readers for header files already stored in the index.
@@ -58,6 +61,9 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 	private long fFileSizeLimit= 0;
 	private IIndexFile[] fContextToHeaderGap;
 	private final Map<IIndexFileLocation, IFileNomination> fPragmaOnce= new HashMap<IIndexFileLocation, IFileNomination>();
+	private Set<String> fHeadersToIndexAllVersions = Collections.emptySet();
+
+	private boolean fIndexAllHeaderVersions;
 
 	public IndexBasedFileContentProvider(IIndex index,
 			ASTFilePathResolver pathResolver, int linkage, IncludeFileContentProvider fallbackFactory) {
@@ -304,5 +310,23 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			} catch (CoreException e) {
 			}
 		return null;
+	}
+
+	public void setHeadersToIndexAllVersions(Set<String> headers) {
+		fHeadersToIndexAllVersions = headers;
+	}
+
+	public void setIndexAllHeaderVersions(boolean indexAllHeaderVersions) {
+		fIndexAllHeaderVersions = indexAllHeaderVersions;
+	}
+
+	@Override
+	public boolean shouldIndexAllHeaderVersions(String fileName) {
+		if (fIndexAllHeaderVersions) {
+			return true;
+		}
+
+		String last = new Path(fileName).lastSegment();
+		return fHeadersToIndexAllVersions.contains(last);
 	}
 }

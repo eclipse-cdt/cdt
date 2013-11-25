@@ -8,6 +8,7 @@
  * Contributors:
  * 		Mentor Graphics - Initial API and implementation
  * 		John Dallaway - Add methods to get the endianness and address size (Bug 225609) 
+ * 		Philippe Gil (AdaCore) - Don't fail initializeMemoryData if sizeof(void *) cannot be evaluated (Bug 421541) 
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -141,6 +142,13 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 								@ConfinedToDsfExecutor("fExecutor")
 								protected void handleSuccess() {
 									fAddressSizes.put(memContext, getData());
+									requestMonitor.done();
+								}
+								@Override
+								@ConfinedToDsfExecutor("fExecutor")
+								protected void handleError() {
+									// log the error, but go on initializing memory data.
+									GdbPlugin.getDefault().getLog().log(getStatus());												
 									requestMonitor.done();
 								}
 							});

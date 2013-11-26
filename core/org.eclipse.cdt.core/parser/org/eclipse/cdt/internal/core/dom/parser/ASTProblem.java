@@ -123,12 +123,8 @@ public class ASTProblem extends ASTNode implements IASTProblem {
 	
 	@Override
 	public ASTProblem copy(CopyStyle style) {
-		ASTProblem problem = new ASTProblem(id, arg == null ? null : arg.clone(), isError);
-		problem.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			problem.setCopyLocation(this);
-		}
-		return problem;
+		ASTProblem copy = new ASTProblem(id, arg == null ? null : arg.clone(), isError);
+		return copy(copy, style);
 	}
 
 	@Override

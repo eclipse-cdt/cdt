@@ -59,11 +59,7 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 				: operand.copy(style));
 		copy.isGlobal = isGlobal;
 		copy.isVectored = isVectored;
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

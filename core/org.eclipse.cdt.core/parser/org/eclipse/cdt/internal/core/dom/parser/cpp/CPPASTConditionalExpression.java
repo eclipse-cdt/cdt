@@ -52,11 +52,7 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 		copy.setLogicalConditionExpression(fCondition == null ? null : fCondition.copy(style));
 		copy.setPositiveResultExpression(fPositive == null ? null : fPositive.copy(style));
 		copy.setNegativeResultExpression(fNegative == null ? null : fNegative.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

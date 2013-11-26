@@ -32,6 +32,11 @@ public class XlcCPPASTModifiedArrayModifier extends CPPASTArrayModifier implemen
 
 	@Override
 	public XlcCPPASTModifiedArrayModifier copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	@Override
+	public XlcCPPASTModifiedArrayModifier copy(CopyStyle style) {
 		IASTExpression exp = getConstantExpression();
 		XlcCPPASTModifiedArrayModifier copy = new XlcCPPASTModifiedArrayModifier(exp == null ? null : exp.copy());
 		copy.isVolatile = isVolatile;
@@ -39,8 +44,7 @@ public class XlcCPPASTModifiedArrayModifier extends CPPASTArrayModifier implemen
 		copy.isStatic = isStatic;
 		copy.isConst = isConst;
 		copy.varSized = varSized;
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(copy, style);
 	}
 	
 	public boolean isConst() {

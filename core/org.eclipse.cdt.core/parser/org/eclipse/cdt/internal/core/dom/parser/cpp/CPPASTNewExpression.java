@@ -83,11 +83,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 		}
 		copy.setTypeId(typeId == null ? null : typeId.copy(style));
 		copy.setInitializer(initializer == null ? null : initializer.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

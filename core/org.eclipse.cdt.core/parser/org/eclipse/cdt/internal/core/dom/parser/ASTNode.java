@@ -374,7 +374,7 @@ public abstract class ASTNode implements IASTNode {
 		return copy;
 	}
 
-	protected void setCopyLocation(IASTNode originalNode) {
+	private void setCopyLocation(IASTNode originalNode) {
 		locations = new IASTNodeLocation[] { new ASTCopyLocation(originalNode) };
 	}
 

@@ -58,11 +58,7 @@ public class CPPASTStaticAssertionDeclaration extends ASTNode implements ICPPAST
 		final ICPPASTLiteralExpression msgCopy = fMessage == null ? null : fMessage.copy(style);
 		CPPASTStaticAssertionDeclaration copy = new CPPASTStaticAssertionDeclaration(condCopy,
 				msgCopy);
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
     @Override

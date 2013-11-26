@@ -45,11 +45,7 @@ public class CASTCompoundStatementExpression extends ASTNode implements IGNUASTC
 	public CASTCompoundStatementExpression copy(CopyStyle style) {
 		CASTCompoundStatementExpression copy = new CASTCompoundStatementExpression();
 		copy.setCompoundStatement(statement == null ? null : statement.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

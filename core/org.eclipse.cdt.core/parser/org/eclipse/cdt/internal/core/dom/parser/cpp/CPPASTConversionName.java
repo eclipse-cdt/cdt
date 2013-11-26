@@ -45,11 +45,7 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 	public CPPASTConversionName copy(CopyStyle style) {
 		CPPASTConversionName copy = new CPPASTConversionName();
 		copy.setTypeId(typeId == null ? null : typeId.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

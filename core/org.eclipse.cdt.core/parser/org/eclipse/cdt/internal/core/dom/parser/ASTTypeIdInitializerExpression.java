@@ -35,10 +35,7 @@ public abstract class ASTTypeIdInitializerExpression extends ASTNode implements 
 	protected void initializeCopy(ASTTypeIdInitializerExpression copy, CopyStyle style) {
 		copy.setTypeId(typeId == null ? null : typeId.copy(style));
 		copy.setInitializer(initializer == null ? null : initializer.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 	}
 	
 	@Override

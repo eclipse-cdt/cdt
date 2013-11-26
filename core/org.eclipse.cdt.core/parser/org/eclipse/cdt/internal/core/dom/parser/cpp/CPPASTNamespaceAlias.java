@@ -37,11 +37,7 @@ public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAli
 		CPPASTNamespaceAlias copy = new CPPASTNamespaceAlias(
 				alias == null ? null : alias.copy(style),
 				qualifiedName == null ? null : qualifiedName.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 	
 	@Override

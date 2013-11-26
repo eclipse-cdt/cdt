@@ -35,11 +35,7 @@ public class GCCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier implement
 	@Override
 	public GCCASTSimpleDeclSpecifier copy(CopyStyle style) {
 		GCCASTSimpleDeclSpecifier copy = new GCCASTSimpleDeclSpecifier();
-		copySimpleDeclSpec(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

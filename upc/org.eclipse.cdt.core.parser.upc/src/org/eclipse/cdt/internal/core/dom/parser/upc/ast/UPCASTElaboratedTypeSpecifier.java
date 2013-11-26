@@ -48,11 +48,7 @@ public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier i
 		copy.referenceType = referenceType;
 		copy.sharedQualifier = sharedQualifier;
 		copy.setBlockSizeExpression(blockSizeExpression == null ? null : blockSizeExpression.copy(style));
-		copy.setOffsetAndLength(this);
-		if(style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

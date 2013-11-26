@@ -61,11 +61,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 	public CPPASTUnaryExpression copy(CopyStyle style) {
 		CPPASTUnaryExpression copy = new CPPASTUnaryExpression(fOperator, fOperand == null ? null
 				: fOperand.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

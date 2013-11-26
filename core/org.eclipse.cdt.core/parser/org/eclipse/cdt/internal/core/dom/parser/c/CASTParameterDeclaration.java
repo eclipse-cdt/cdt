@@ -46,11 +46,7 @@ public class CASTParameterDeclaration extends ASTNode implements IASTParameterDe
 		CASTParameterDeclaration copy = new CASTParameterDeclaration();
 		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy(style));
 		copy.setDeclarator(declarator == null ? null : declarator.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 	
 	@Override

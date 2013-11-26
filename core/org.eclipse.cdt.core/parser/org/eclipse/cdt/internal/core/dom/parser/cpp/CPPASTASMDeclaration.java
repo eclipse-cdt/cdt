@@ -36,11 +36,7 @@ public class CPPASTASMDeclaration extends ASTNode implements IASTASMDeclaration 
 	public CPPASTASMDeclaration copy(CopyStyle style) {
 		CPPASTASMDeclaration copy = new CPPASTASMDeclaration();
 		copy.assembly = assembly.clone();
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

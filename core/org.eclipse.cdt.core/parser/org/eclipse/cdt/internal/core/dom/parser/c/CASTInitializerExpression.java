@@ -35,10 +35,6 @@ public class CASTInitializerExpression extends CASTEqualsInitializer implements 
 		CASTInitializerExpression copy = new CASTInitializerExpression();
 		IASTInitializerClause init = getInitializerClause();
 		copy.setInitializerClause(init == null ? null : init.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 }

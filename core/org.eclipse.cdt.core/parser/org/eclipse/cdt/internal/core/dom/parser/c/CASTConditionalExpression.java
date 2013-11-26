@@ -52,11 +52,7 @@ public class CASTConditionalExpression extends ASTNode implements
 		copy.setLogicalConditionExpression(condition == null ? null : condition.copy(style));
 		copy.setPositiveResultExpression(positive == null ? null : positive.copy(style));
 		copy.setNegativeResultExpression(negative == null ? null : negative.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

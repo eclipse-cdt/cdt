@@ -53,11 +53,7 @@ public class CPPASTTemplateDeclaration extends ASTNode
 		copy.exported = exported;
 		for (ICPPASTTemplateParameter param : getTemplateParameters())
 			copy.addTemplateParameter(param == null ? null : param.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

@@ -40,14 +40,11 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
 	@Override
 	public CASTInitializerList copy(CopyStyle style) {
 		CASTInitializerList copy = new CASTInitializerList();
-		for (IASTInitializerClause initializer : getClauses())
+		for (IASTInitializerClause initializer : getClauses()) {
 			copy.addClause(initializer == null ? null : initializer.copy(style));
-		copy.setOffsetAndLength(this);
-		copy.actualSize = getSize();
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
 		}
-		return copy;
+		copy.actualSize = getSize();
+		return copy(copy, style);
 	}
 	
 	@Override

@@ -46,25 +46,15 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 	@Override
 	public CASTTranslationUnit copy(CopyStyle style) {
 		CASTTranslationUnit copy = new CASTTranslationUnit();
-		copyAbstractTU(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getScope()
-	 */
 	@Override
 	public IScope getScope() {
 		if (compilationUnit == null)
 			compilationUnit = new CScope(this, EScopeKind.eGlobal);
 		return compilationUnit;
 	}
-
 
 	@Override
 	public IASTName[] getDeclarationsInAST(IBinding binding) {

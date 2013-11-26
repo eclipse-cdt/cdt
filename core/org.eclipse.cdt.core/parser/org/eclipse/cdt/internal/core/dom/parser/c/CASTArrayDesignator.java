@@ -43,10 +43,7 @@ public class CASTArrayDesignator extends ASTNode implements
 	@Override
 	public CASTArrayDesignator copy(CopyStyle style) {
 		CASTArrayDesignator copy = new CASTArrayDesignator(exp == null ? null : exp.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 	

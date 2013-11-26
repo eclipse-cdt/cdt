@@ -37,10 +37,7 @@ public class CPPASTOperatorName extends CPPASTName implements ICPPASTOperatorNam
 	public CPPASTOperatorName copy(CopyStyle style) {
 		char[] name = toCharArray();
 		CPPASTOperatorName copy = new CPPASTOperatorName(name == null ? null : name.clone());
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 }

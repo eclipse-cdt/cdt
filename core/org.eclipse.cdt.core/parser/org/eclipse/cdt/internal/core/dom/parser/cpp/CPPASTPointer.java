@@ -37,10 +37,7 @@ public class CPPASTPointer extends ASTNode implements IASTPointer {
 		copy.isConst = isConst;
 		copy.isVolatile = isVolatile;
 		copy.isRestrict = isRestrict;
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

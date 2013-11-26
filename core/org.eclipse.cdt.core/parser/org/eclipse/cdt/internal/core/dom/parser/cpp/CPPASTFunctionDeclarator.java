@@ -63,7 +63,6 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 	@Override
 	public CPPASTFunctionDeclarator copy(CopyStyle style) {
 		CPPASTFunctionDeclarator copy = new CPPASTFunctionDeclarator();
-		copyBaseDeclarator(copy, style);
 		copy.varArgs = varArgs;
 		copy.pureVirtual = pureVirtual;
 		copy.isVolatile = isVolatile;
@@ -85,10 +84,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		if (trailingReturnType != null) {
 			copy.setTrailingReturnType(trailingReturnType.copy(style));
 		}
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

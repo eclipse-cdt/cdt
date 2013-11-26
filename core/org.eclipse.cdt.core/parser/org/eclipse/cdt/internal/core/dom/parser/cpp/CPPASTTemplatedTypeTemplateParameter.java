@@ -55,10 +55,7 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 		copy.fIsParameterPack = fIsParameterPack;
 		for (ICPPASTTemplateParameter param : getTemplateParameters())
 			copy.addTemplateParameter(param == null ? null : param.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

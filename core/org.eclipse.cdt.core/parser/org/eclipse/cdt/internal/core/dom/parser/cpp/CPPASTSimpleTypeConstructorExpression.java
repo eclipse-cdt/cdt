@@ -52,10 +52,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
 		CPPASTSimpleTypeConstructorExpression copy = new CPPASTSimpleTypeConstructorExpression();
 		copy.setDeclSpecifier(fDeclSpec == null ? null : fDeclSpec.copy(style));
 		copy.setInitializer(fInitializer == null ? null : fInitializer.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

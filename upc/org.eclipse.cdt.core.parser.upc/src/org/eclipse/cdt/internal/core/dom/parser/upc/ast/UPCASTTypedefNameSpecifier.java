@@ -45,14 +45,10 @@ public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier impleme
 	public UPCASTTypedefNameSpecifier copy(CopyStyle style) {
 		IASTName name = getName();
 		UPCASTTypedefNameSpecifier copy = new UPCASTTypedefNameSpecifier(name == null ? null : name.copy(style));
-		copyBaseDeclSpec(copy);
 		copy.referenceType = referenceType;
 		copy.sharedQualifier = sharedQualifier;
 		copy.setBlockSizeExpression(blockSizeExpression == null ? null : blockSizeExpression.copy(style));
-		if(style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

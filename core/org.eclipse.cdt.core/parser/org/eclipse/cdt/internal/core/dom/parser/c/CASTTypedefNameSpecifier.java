@@ -43,13 +43,9 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier implements
 	
 	@Override
 	public CASTTypedefNameSpecifier copy(CopyStyle style) {
-		CASTTypedefNameSpecifier copy = new CASTTypedefNameSpecifier(name == null ? null
-				: name.copy(style));
-		copyBaseDeclSpec(copy);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		CASTTypedefNameSpecifier copy =
+				new CASTTypedefNameSpecifier(name == null ? null : name.copy(style));
+		return copy(copy, style);
 	}
 
 	@Override

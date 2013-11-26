@@ -39,14 +39,10 @@ public class UPCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier
 	@Override
 	public UPCASTSimpleDeclSpecifier copy(CopyStyle style) {
 		UPCASTSimpleDeclSpecifier copy = new UPCASTSimpleDeclSpecifier();
-		copySimpleDeclSpec(copy, style);
 		copy.referenceType = referenceType;
 		copy.sharedQualifier = sharedQualifier;
 		copy.setBlockSizeExpression(blockSizeExpression == null ? null : blockSizeExpression.copy(style));
-		if(style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

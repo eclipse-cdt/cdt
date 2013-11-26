@@ -48,10 +48,7 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpr
 		CPPASTBinaryTypeIdExpression copy = new CPPASTBinaryTypeIdExpression(fOperator, 
 				fOperand1 == null ? null : fOperand1.copy(style),
 				fOperand2 == null ? null : fOperand2.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

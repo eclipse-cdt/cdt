@@ -32,10 +32,7 @@ public class CASTPointer extends ASTNode implements ICASTPointer {
 		copy.isRestrict = isRestrict;
 		copy.isVolatile = isVolatile;
 		copy.isConst = isConst;
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
     

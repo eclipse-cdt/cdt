@@ -43,10 +43,7 @@ public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpressio
 	public CASTTypeIdExpression copy(CopyStyle style) {
 		CASTTypeIdExpression copy = new CASTTypeIdExpression(op, typeId == null ? null
 				: typeId.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

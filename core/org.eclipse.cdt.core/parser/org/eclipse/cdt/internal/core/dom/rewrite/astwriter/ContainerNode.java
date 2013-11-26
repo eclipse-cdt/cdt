@@ -48,10 +48,7 @@ public class ContainerNode extends ASTNode {
 		ContainerNode copy = new ContainerNode();
 		for (IASTNode node : getNodes())
 			copy.addNode(node == null ? null : node.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

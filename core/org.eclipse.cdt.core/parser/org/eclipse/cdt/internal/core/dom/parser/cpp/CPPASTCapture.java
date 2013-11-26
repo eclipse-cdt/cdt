@@ -33,16 +33,12 @@ public class CPPASTCapture extends ASTNode implements ICPPASTCapture {
 
 	@Override
 	public CPPASTCapture copy(CopyStyle style) {
-		final CPPASTCapture result = new CPPASTCapture();
+		final CPPASTCapture copy = new CPPASTCapture();
 		if (fIdentifier != null)
-			result.setIdentifier(fIdentifier.copy(style));
-		result.fByReference = fByReference;
-		result.fPackExpansion = fPackExpansion;
-		result.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			result.setCopyLocation(this);
-		}
-		return result;
+			copy.setIdentifier(fIdentifier.copy(style));
+		copy.fByReference = fByReference;
+		copy.fPackExpansion = fPackExpansion;
+		return copy(copy, style);
 	}
 
 	@Override

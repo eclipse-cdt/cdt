@@ -54,10 +54,7 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 	@Override
 	public CASTName copy(CopyStyle style) {
 		CASTName copy = new CASTName(name == null ? null : name.clone());
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

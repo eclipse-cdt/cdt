@@ -50,19 +50,16 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 	@Override
 	public CASTCompositeTypeSpecifier copy(CopyStyle style) {
 		CASTCompositeTypeSpecifier copy = new CASTCompositeTypeSpecifier();
-		copyCompositeTypeSpecifier(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
-	protected void copyCompositeTypeSpecifier(CASTCompositeTypeSpecifier copy, CopyStyle style) {
-		copyBaseDeclSpec(copy);
+	protected <T extends CASTCompositeTypeSpecifier> T copy(T copy, CopyStyle style) {
 		copy.setKey(fKey);
 		copy.setName(fName == null ? null : fName.copy(style));
-		for (IASTDeclaration member : getMembers())
+		for (IASTDeclaration member : getMembers()) {
 			copy.addMemberDeclaration(member == null ? null : member.copy(style));
+		}
+		return super.copy(copy, style);
 	}
 	
     @Override

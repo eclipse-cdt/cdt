@@ -45,10 +45,7 @@ public class CASTArrayRangeDesignator extends ASTNode implements
 		CASTArrayRangeDesignator copy = new CASTArrayRangeDesignator();
 		copy.setRangeFloor(floor == null ? null : floor.copy(style));
 		copy.setRangeCeiling(ceiling == null ? null : ceiling.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 	

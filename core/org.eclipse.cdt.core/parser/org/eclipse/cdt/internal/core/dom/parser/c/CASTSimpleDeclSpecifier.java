@@ -39,15 +39,10 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier
 	@Override
 	public CASTSimpleDeclSpecifier copy(CopyStyle style) {
 		CASTSimpleDeclSpecifier copy = new CASTSimpleDeclSpecifier();
-		copySimpleDeclSpec(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
-	protected void copySimpleDeclSpec(CASTSimpleDeclSpecifier copy, CopyStyle style) {
-    	copyBaseDeclSpec(copy);
+	protected <T extends CASTSimpleDeclSpecifier> T copy(T copy, CopyStyle style) {
     	copy.simpleType = simpleType;
     	copy.isSigned = isSigned;
     	copy.isUnsigned = isUnsigned;
@@ -58,6 +53,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier
     	copy.imaginary = imaginary;
     	if (fDeclTypeExpression != null)
 			copy.setDeclTypeExpression(fDeclTypeExpression.copy(style));
+    	return super.copy(copy, style);
     }
     
     @Override

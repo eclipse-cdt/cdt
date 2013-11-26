@@ -38,10 +38,7 @@ public class CPPASTReferenceOperator extends ASTNode implements ICPPASTReference
 	@Override
 	public CPPASTReferenceOperator copy(CopyStyle style) {
 		CPPASTReferenceOperator copy = new CPPASTReferenceOperator(fIsRValue);
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

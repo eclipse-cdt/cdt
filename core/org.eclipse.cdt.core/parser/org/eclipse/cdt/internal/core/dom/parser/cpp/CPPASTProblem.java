@@ -32,12 +32,8 @@ public class CPPASTProblem extends ASTProblem {
 	@Override
 	public CPPASTProblem copy(CopyStyle style) {
     	char[] arg = getArgument();
-    	CPPASTProblem problem = new CPPASTProblem(getID(), arg == null ? null : arg.clone(), isError());
-		problem.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			problem.setCopyLocation(this);
-		}
-		return problem;
+    	CPPASTProblem copy = new CPPASTProblem(getID(), arg == null ? null : arg.clone(), isError());
+		return copy(copy, style);
 	}
     
     @Override

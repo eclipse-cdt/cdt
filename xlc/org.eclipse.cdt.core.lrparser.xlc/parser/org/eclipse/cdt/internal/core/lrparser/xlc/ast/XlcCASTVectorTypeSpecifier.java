@@ -15,7 +15,6 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTSimpleDeclSpecifier;
 
 @SuppressWarnings("restriction")
 public class XlcCASTVectorTypeSpecifier extends CASTSimpleDeclSpecifier implements IXlcCASTVectorTypeSpecifier {
-
 	private boolean isPixel;
 	private boolean isBool;
 
@@ -31,13 +30,9 @@ public class XlcCASTVectorTypeSpecifier extends CASTSimpleDeclSpecifier implemen
 	@Override
 	public XlcCASTVectorTypeSpecifier copy(CopyStyle style) {
 		XlcCASTVectorTypeSpecifier copy = new XlcCASTVectorTypeSpecifier();
-		copySimpleDeclSpec(copy, style);
 		copy.isPixel = isPixel;
 		copy.isBool = isBool;
-		if(style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	public boolean isPixel() {
@@ -55,5 +50,4 @@ public class XlcCASTVectorTypeSpecifier extends CASTSimpleDeclSpecifier implemen
 	public void setBool(boolean isBool) {
 		this.isBool = isBool;
 	}
-	
 }

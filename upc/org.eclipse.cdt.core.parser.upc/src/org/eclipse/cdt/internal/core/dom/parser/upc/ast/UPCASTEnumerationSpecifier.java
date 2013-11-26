@@ -44,14 +44,10 @@ public class UPCASTEnumerationSpecifier extends CASTEnumerationSpecifier impleme
 	@Override
 	public UPCASTEnumerationSpecifier copy(CopyStyle style) {
 		UPCASTEnumerationSpecifier copy = new UPCASTEnumerationSpecifier();
-		copyEnumerationSpecifier(copy, style);
 		copy.referenceType = referenceType;
 		copy.sharedQualifier = sharedQualifier;
 		copy.setBlockSizeExpression(blockSizeExpression == null ? null : blockSizeExpression.copy(style));
-		if(style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

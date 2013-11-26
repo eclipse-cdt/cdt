@@ -43,10 +43,7 @@ public class CPPASTTypenameExpression extends CPPASTSimpleTypeConstructorExpress
 		IASTInitializer init = getInitializer();
 		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy(style));
 		copy.setInitializer(init == null ? null : init.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

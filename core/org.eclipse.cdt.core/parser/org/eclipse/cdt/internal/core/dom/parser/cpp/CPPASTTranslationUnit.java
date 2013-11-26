@@ -55,11 +55,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	@Override
 	public CPPASTTranslationUnit copy(CopyStyle style) {
 		CPPASTTranslationUnit copy = new CPPASTTranslationUnit();
-		copyAbstractTU(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
     @Override

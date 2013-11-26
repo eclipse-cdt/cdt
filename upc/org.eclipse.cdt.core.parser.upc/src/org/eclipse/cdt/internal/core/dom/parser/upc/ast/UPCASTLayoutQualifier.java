@@ -33,11 +33,7 @@ public class UPCASTLayoutQualifier extends ASTNode implements IUPCASTLayoutQuali
 		copy.isPure = isPure;
 		copy.isIndefinite = isIndefinite;
 		copy.setBlockSizeExpression(blockSizeExpression == null ? null : blockSizeExpression.copy(style));
-		copy.setOffsetAndLength(this);
-		if(style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -45,37 +41,28 @@ public class UPCASTLayoutQualifier extends ASTNode implements IUPCASTLayoutQuali
 		return blockSizeExpression;
 	}
 
-
 	@Override
 	public boolean isIndefiniteBlockAllocation() {
 		return isIndefinite;
 	}
-
 
 	@Override
 	public boolean isPureBlockAllocation() {
 		return isPure;
 	}
 
-
 	@Override
 	public void setBlockSizeExpression(IASTExpression expr) {
 		this.blockSizeExpression = expr;
 	}
 
-
 	@Override
 	public void setIndefiniteBlockAllocation(boolean allocation) {
 		this.isIndefinite = allocation;
-
 	}
-
 
 	@Override
 	public void setPureBlockAllocation(boolean allocation) {
 		this.isPure = allocation;
 	}
-
-
-
 }

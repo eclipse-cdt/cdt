@@ -81,12 +81,12 @@ public abstract class CASTBaseDeclSpecifier extends ASTNode implements ICASTDecl
         this.isInline = value;
     }
     
-    protected void copyBaseDeclSpec(CASTBaseDeclSpecifier copy) {
+    protected <T extends CASTBaseDeclSpecifier> T copy(T copy, CopyStyle style) {
     	copy.storageClass = storageClass;
     	copy.isConst = isConst;
     	copy.isVolatile = isVolatile;
     	copy.isRestrict = isRestrict;
     	copy.isInline = isInline;
-    	copy.setOffsetAndLength(this);
+		return super.copy(copy, style);
     }
 }

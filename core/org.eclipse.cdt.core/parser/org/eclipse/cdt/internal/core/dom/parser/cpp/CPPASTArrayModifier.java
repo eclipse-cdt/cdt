@@ -44,10 +44,7 @@ public class CPPASTArrayModifier extends ASTNode implements IASTArrayModifier, I
 	@Override
 	public CPPASTArrayModifier copy(CopyStyle style) {
 		CPPASTArrayModifier copy = new CPPASTArrayModifier(exp == null ? null : exp.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

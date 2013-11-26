@@ -45,16 +45,12 @@ public class CASTArrayModifier extends ASTNode implements ICASTArrayModifier, IA
 	@Override
 	public CASTArrayModifier copy(CopyStyle style) {
 		CASTArrayModifier copy = new CASTArrayModifier(exp == null ? null : exp.copy(style));
-		copy.setOffsetAndLength(this);
 		copy.isVolatile = isVolatile;
 		copy.isRestrict = isRestrict;
 		copy.isStatic = isStatic;
 		copy.isConst = isConst;
 		copy.isVarSized = isVarSized;
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 	
     @Override

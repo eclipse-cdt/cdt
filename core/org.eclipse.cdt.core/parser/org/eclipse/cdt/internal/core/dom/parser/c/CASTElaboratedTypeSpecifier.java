@@ -50,13 +50,9 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 	
 	@Override
 	public CASTElaboratedTypeSpecifier copy(CopyStyle style) {
-		CASTElaboratedTypeSpecifier copy = new CASTElaboratedTypeSpecifier(kind, name == null
-				? null : name.copy(style));
-		copyBaseDeclSpec(copy);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		CASTElaboratedTypeSpecifier copy = new CASTElaboratedTypeSpecifier(kind,
+				name == null ? null : name.copy(style));
+		return copy(copy, style);
 	}
 
 	@Override

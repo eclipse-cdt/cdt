@@ -45,10 +45,7 @@ public class CPPASTExplicitTemplateInstantiation extends ASTNode implements
 		CPPASTExplicitTemplateInstantiation copy = new CPPASTExplicitTemplateInstantiation();
 		copy.setDeclaration(declaration == null ? null : declaration.copy(style));
 		copy.setModifier(modifier);
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

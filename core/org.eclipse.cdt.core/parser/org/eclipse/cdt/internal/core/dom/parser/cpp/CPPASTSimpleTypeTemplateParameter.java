@@ -48,10 +48,7 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
 		copy.fIsParameterPack = fIsParameterPack;
 		copy.setName(fName == null ? null : fName.copy(style));
 		copy.setDefaultType(fTypeId == null ? null : fTypeId.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

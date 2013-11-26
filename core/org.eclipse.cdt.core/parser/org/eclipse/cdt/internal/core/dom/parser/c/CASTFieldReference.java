@@ -60,10 +60,7 @@ public class CASTFieldReference extends ASTNode
 		copy.setFieldOwner(owner == null ? null : owner.copy(style));
 		copy.setFieldName(name == null ? null : name.copy(style));
 		copy.ptr = ptr;
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

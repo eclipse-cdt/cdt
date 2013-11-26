@@ -37,10 +37,7 @@ public class CPPASTPointerToMember extends CPPASTPointer implements ICPPASTPoint
 		copy.setConst(isConst());
 		copy.setVolatile(isVolatile());
 		copy.setRestrict(isRestrict());
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

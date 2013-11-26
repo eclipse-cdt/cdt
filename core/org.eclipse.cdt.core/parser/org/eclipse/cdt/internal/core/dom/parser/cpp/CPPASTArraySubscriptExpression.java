@@ -54,10 +54,7 @@ public class CPPASTArraySubscriptExpression extends ASTNode
 		CPPASTArraySubscriptExpression copy = new CPPASTArraySubscriptExpression();
 		copy.setArrayExpression(arrayExpression == null ? null : arrayExpression.copy(style));
 		copy.setArgument(subscriptExp == null ? null : subscriptExp.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

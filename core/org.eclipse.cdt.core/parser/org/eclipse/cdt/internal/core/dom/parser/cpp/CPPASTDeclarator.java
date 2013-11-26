@@ -71,14 +71,10 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
 	@Override
 	public CPPASTDeclarator copy(CopyStyle style) {
 		CPPASTDeclarator copy = new CPPASTDeclarator();
-		copyBaseDeclarator(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
-	protected void copyBaseDeclarator(CPPASTDeclarator copy, CopyStyle style) {
+	protected <T extends CPPASTDeclarator> T copy(T copy, CopyStyle style) {
 		copy.setName(name == null ? null : name.copy(style));
 		copy.setInitializer(initializer == null ? null : initializer.copy(style));
 		copy.setNestedDeclarator(nested == null ? null : nested.copy(style));
@@ -89,7 +85,7 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
 		for (IASTAttribute attribute : getAttributes()) {
 			copy.addAttribute(attribute.copy(style));
 		}
-		copy.setOffsetAndLength(this);
+		return super.copy(copy, style);
     }
 
 	@Override

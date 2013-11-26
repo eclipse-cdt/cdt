@@ -27,12 +27,16 @@ public class CASTProblem extends ASTProblem {
 
     @Override
 	public CASTProblem copy() {
-    	char[] arg = getArgument();
-    	CASTProblem problem = new CASTProblem(getID(), arg == null ? null : arg.clone(), isError());
-		problem.setOffsetAndLength(this);
-		return problem;
+		return copy(CopyStyle.withoutLocations);
 	}
-    
+
+	@Override
+	public CASTProblem copy(CopyStyle style) {
+    	char[] arg = getArgument();
+    	CASTProblem copy = new CASTProblem(getID(), arg == null ? null : arg.clone(), isError());
+		return copy(copy, style);
+	}
+
     @Override
 	public boolean accept(ASTVisitor action) {
     	if (action.shouldVisitProblems) {

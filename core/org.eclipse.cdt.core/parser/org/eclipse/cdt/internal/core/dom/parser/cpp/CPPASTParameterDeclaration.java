@@ -52,10 +52,7 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
 		CPPASTParameterDeclaration copy = new CPPASTParameterDeclaration();
 		copy.setDeclSpecifier(fDeclSpec == null ? null : fDeclSpec.copy(style));
 		copy.setDeclarator(fDeclarator == null ? null : fDeclarator.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

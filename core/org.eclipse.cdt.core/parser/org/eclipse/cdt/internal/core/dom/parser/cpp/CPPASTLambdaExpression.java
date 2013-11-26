@@ -55,27 +55,23 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 
 	@Override
 	public CPPASTLambdaExpression copy(CopyStyle style) {
-		CPPASTLambdaExpression result = new CPPASTLambdaExpression();
-		result.fCaptureDefault = fCaptureDefault;
+		CPPASTLambdaExpression copy = new CPPASTLambdaExpression();
+		copy.fCaptureDefault = fCaptureDefault;
 		if (fCaptures != null) {
 			for (ICPPASTCapture capture : fCaptures) {
 				if (capture != null) {
-					result.addCapture(capture.copy(style));
+					copy.addCapture(capture.copy(style));
 				}
 			}
 		}
 		if (fDeclarator != null) {
-			result.setDeclarator(fDeclarator.copy(style));
+			copy.setDeclarator(fDeclarator.copy(style));
 		}
 		if (fBody != null) {
-			result.setBody(fBody.copy(style));
+			copy.setBody(fBody.copy(style));
 		}
 
-		result.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			result.setCopyLocation(this);
-		}
-		return result;
+		return copy(copy, style);
 	}
 
     @Override

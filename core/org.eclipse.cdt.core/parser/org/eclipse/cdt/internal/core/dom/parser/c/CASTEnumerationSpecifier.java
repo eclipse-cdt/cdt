@@ -43,18 +43,15 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 	@Override
 	public CASTEnumerationSpecifier copy(CopyStyle style) {
 		CASTEnumerationSpecifier copy = new CASTEnumerationSpecifier();
-		copyEnumerationSpecifier(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
-	protected void copyEnumerationSpecifier(CASTEnumerationSpecifier copy, CopyStyle style) {
-		copyBaseDeclSpec(copy);
+	protected <T extends CASTEnumerationSpecifier> T copy(T copy, CopyStyle style) {
 		copy.setName(name == null ? null : name.copy(style));
-		for(IASTEnumerator enumerator : getEnumerators())
+		for (IASTEnumerator enumerator : getEnumerators()) {
 			copy.addEnumerator(enumerator == null ? null : enumerator.copy(style));
+		}
+		return super.copy(copy, style);
 	}
 	
 	

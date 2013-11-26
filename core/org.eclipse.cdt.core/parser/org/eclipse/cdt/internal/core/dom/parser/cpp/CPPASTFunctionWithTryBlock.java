@@ -58,10 +58,7 @@ public class CPPASTFunctionWithTryBlock extends CPPASTFunctionDefinition impleme
 			copy.addCatchHandler(handler == null ? null : handler.copy(style));
 		}
 
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

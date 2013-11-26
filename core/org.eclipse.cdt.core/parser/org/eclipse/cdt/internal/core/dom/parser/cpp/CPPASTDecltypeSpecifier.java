@@ -43,10 +43,7 @@ public class CPPASTDecltypeSpecifier extends ASTNode implements ICPPASTDecltypeS
 	@Override
 	public CPPASTDecltypeSpecifier copy(CopyStyle style) {
 		CPPASTDecltypeSpecifier copy = new CPPASTDecltypeSpecifier((ICPPASTExpression) fDecltypeExpression.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

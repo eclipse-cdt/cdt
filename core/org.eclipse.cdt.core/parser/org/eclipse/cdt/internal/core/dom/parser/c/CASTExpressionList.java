@@ -39,10 +39,7 @@ public class CASTExpressionList extends ASTNode implements IASTExpressionList,
 		CASTExpressionList copy = new CASTExpressionList();
 		for(IASTExpression expr : getExpressions())
 			copy.addExpression(expr == null ? null : expr.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 	

@@ -17,7 +17,6 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeIdExpression;
 
 @SuppressWarnings("restriction")
 public class UPCASTTypeIdSizeofExpression extends CASTTypeIdExpression implements IUPCASTTypeIdSizeofExpression {
-
 	private int upcSizeofOperator;
 
 	public UPCASTTypeIdSizeofExpression() {
@@ -44,11 +43,7 @@ public class UPCASTTypeIdSizeofExpression extends CASTTypeIdExpression implement
 		copy.setUPCSizeofOperator(upcSizeofOperator);
 		IASTTypeId typeId = getTypeId();
 		copy.setTypeId(typeId == null ? null : typeId.copy(style));
-		copy.setOffsetAndLength(this);
-		if(style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -60,5 +55,4 @@ public class UPCASTTypeIdSizeofExpression extends CASTTypeIdExpression implement
 	public void setUPCSizeofOperator(int upcSizeofOperator) {
 		this.upcSizeofOperator = upcSizeofOperator;
 	}
-
 }

@@ -42,10 +42,7 @@ public class CASTFieldDesignator extends ASTNode implements ICASTFieldDesignator
 	@Override
 	public CASTFieldDesignator copy(CopyStyle style) {
 		CASTFieldDesignator copy = new CASTFieldDesignator(name == null ? null : name.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

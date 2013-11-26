@@ -45,10 +45,7 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 	@Override
 	public CASTLiteralExpression copy(CopyStyle style) {
 		CASTLiteralExpression copy = new CASTLiteralExpression(kind, value == null ? null : value.clone());
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
+		copy(copy, style);
 		return copy;
 	}
 

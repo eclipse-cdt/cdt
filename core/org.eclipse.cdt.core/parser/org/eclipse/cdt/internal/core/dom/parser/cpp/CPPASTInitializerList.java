@@ -46,13 +46,9 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 		for (IASTInitializerClause initializer : getClauses()) {
 			copy.addClause(initializer == null ? null : initializer.copy(style));
 		}
-		copy.setOffsetAndLength(this);
 		copy.actualSize = getSize();
 		copy.fIsPackExpansion = fIsPackExpansion;
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

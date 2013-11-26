@@ -24,7 +24,6 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
-import org.eclipse.cdt.core.ICompileOptionsFinder;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
@@ -72,7 +71,6 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -115,7 +113,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
     @Override
 	public void preWindowOpen() {
         IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
-        configurer.setInitialSize(new Point(400, 300));
+//        configurer.setInitialSize(new Point(400, 300));
 		configurer.setShowCoolBar(true);
 		configurer.setShowStatusLine(true);
 		configurer.setShowMenuBar(true);
@@ -195,21 +193,21 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 				}
 				// Get compile options for each source file and process via the parser
 				// to generate LanguageSettingsEntries.
-				if (reader instanceof
-						ICompileOptionsFinder) {
-					ICompileOptionsFinder f =
-							(ICompileOptionsFinder) reader;
-					for (String fileName : sourceFiles) {
-						parser.setCurrentResourceName(fileName);
-//						String cmdline = f.getCompileOptions(fileName);
-//						System.out.println("Command line is " + cmdline);
-						parser.processLine(f
-								.getCompileOptions(fileName));
-						monitor.worked(1);
-					}
-					parser.shutdown(); // this will serialize the data to an xml file and create an event.
-					monitor.worked(1);
-				}
+//				if (reader instanceof
+//						ICompileOptionsFinder) {
+//					ICompileOptionsFinder f =
+//							(ICompileOptionsFinder) reader;
+//					for (String fileName : sourceFiles) {
+//						parser.setCurrentResourceName(fileName);
+////						String cmdline = f.getCompileOptions(fileName);
+////						System.out.println("Command line is " + cmdline);
+//						parser.processLine(f
+//								.getCompileOptions(fileName));
+//						monitor.worked(1);
+//					}
+//					parser.shutdown(); // this will serialize the data to an xml file and create an event.
+//					monitor.worked(1);
+//				}
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

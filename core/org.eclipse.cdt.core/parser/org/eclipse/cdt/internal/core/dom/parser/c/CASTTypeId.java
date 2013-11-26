@@ -42,11 +42,7 @@ public class CASTTypeId extends ASTNode implements IASTTypeId {
 		CASTTypeId copy = new CASTTypeId();
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
 		copy.setAbstractDeclarator(declarator == null ? null : declarator.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

@@ -423,7 +423,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	 */
 	abstract protected IType createType(IASTTypeId typeid);
 
-	protected void copyAbstractTU(ASTTranslationUnit copy, CopyStyle style) {
+	protected <T extends ASTTranslationUnit> T copy(T copy, CopyStyle style) {
 		copy.setIndex(fIndex);
 		copy.fIsHeader = fIsHeader;
 		copy.fNodeFactory = fNodeFactory;
@@ -436,7 +436,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 			copy.addDeclaration(declaration == null ? null : declaration.copy(style));
 		}
 
-		copy.setOffsetAndLength(this);
+		return super.copy(copy, style);
 	}
 	
 	@Override

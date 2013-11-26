@@ -50,11 +50,7 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 		CASTArraySubscriptExpression copy = new CASTArraySubscriptExpression();
 		copy.setArrayExpression(array == null ? null : array.copy(style));
 		copy.setSubscriptExpression(subscript == null ? null : subscript.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

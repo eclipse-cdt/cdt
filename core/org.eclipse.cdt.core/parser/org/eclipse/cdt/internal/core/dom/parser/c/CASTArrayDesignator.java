@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -22,12 +22,9 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * Implementation of array designators
  */
-public class CASTArrayDesignator extends ASTNode implements
-        ICASTArrayDesignator, IASTAmbiguityParent {
-
+public class CASTArrayDesignator extends ASTNode implements ICASTArrayDesignator, IASTAmbiguityParent {
     private IASTExpression exp;
 
-    
     public CASTArrayDesignator() {
 	}
 
@@ -43,11 +40,7 @@ public class CASTArrayDesignator extends ASTNode implements
 	@Override
 	public CASTArrayDesignator copy(CopyStyle style) {
 		CASTArrayDesignator copy = new CASTArrayDesignator(exp == null ? null : exp.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 	
     @Override
@@ -59,19 +52,19 @@ public class CASTArrayDesignator extends ASTNode implements
 	public void setSubscriptExpression(IASTExpression value) {
         assertNotFrozen();
         exp = value;
-        if(value != null) {
+        if (value != null) {
         	value.setParent(this);
         	value.setPropertyInParent(SUBSCRIPT_EXPRESSION);
         }
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
+	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitDesignators) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
 		if (exp != null && !exp.accept(action))
@@ -85,10 +78,9 @@ public class CASTArrayDesignator extends ASTNode implements
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if( child == exp )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == exp) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             exp = (IASTExpression) other;
         }
     }

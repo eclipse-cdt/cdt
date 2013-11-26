@@ -53,11 +53,7 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
 	@Override
 	public CPPASTName copy(CopyStyle style) {
 		CPPASTName copy = new CPPASTName(name == null ? null : name.clone());
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
     
 	@Override

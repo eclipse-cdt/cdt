@@ -40,10 +40,6 @@ public class GPPASTExplicitTemplateInstantiation extends
 		IASTDeclaration declaration = getDeclaration();
 		copy.setDeclaration(declaration == null ? null : declaration.copy(style));
 		copy.setModifier(getModifier());
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 }

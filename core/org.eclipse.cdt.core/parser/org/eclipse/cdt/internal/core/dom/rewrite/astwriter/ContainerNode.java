@@ -28,8 +28,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * @author Emanuel Graf IFS
  */
 public class ContainerNode extends ASTNode {
-	private final IASTTranslationUnit tu = null;
-	
 	private final ArrayList<IASTNode> nodes = new ArrayList<IASTNode>();
 	
 	public ContainerNode(IASTNode... nodes) {
@@ -46,20 +44,14 @@ public class ContainerNode extends ASTNode {
 	@Override
 	public ContainerNode copy(CopyStyle style) {
 		ContainerNode copy = new ContainerNode();
-		for (IASTNode node : getNodes())
+		for (IASTNode node : getNodes()) {
 			copy.addNode(node == null ? null : node.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
 		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	public void addNode(IASTNode node) {
 		nodes.add(node);
-		if (node.getParent() == null) {
-			node.setParent(tu);
-		}
 	}
 
 	@Override
@@ -72,10 +64,10 @@ public class ContainerNode extends ASTNode {
 	}
 	
 	public IASTTranslationUnit getTu() {
-		return tu;
+		return null;
 	}
 	
-	public List<IASTNode> getNodes(){
+	public List<IASTNode> getNodes() {
 		return Collections.unmodifiableList(nodes);
 	}
 }

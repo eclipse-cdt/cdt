@@ -44,14 +44,10 @@ public class CPPASTArrayDeclarator extends CPPASTDeclarator implements ICPPASTAr
 	@Override
 	public CPPASTArrayDeclarator copy(CopyStyle style) {
 		CPPASTArrayDeclarator copy = new CPPASTArrayDeclarator();
-		copyBaseDeclarator(copy, style);
-		for (IASTArrayModifier modifier : getArrayModifiers())
+		for (IASTArrayModifier modifier : getArrayModifiers()) {
 			copy.addArrayModifier(modifier == null ? null : modifier.copy(style));
-
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
 		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

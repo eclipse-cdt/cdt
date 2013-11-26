@@ -59,11 +59,7 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 		copy.isVirtual = isVirtual;
 		copy.visibility = visibility;
 		copy.fIsPackExpansion= fIsPackExpansion;
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 	
 	@Override

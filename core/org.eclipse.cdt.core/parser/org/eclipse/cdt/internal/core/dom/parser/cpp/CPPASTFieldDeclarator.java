@@ -46,12 +46,8 @@ public class CPPASTFieldDeclarator extends CPPASTDeclarator implements
 	@Override
 	public CPPASTFieldDeclarator copy(CopyStyle style) {
 		CPPASTFieldDeclarator copy = new CPPASTFieldDeclarator();
-		copyBaseDeclarator(copy, style);
 		copy.setBitFieldSize(bitField == null ? null : bitField.copy(style));
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 	 
 	@Override

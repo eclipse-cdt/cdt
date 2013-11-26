@@ -89,11 +89,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 			copy.addNameSpecifier(nameSpecifier == null ? null : nameSpecifier.copy(style));
 		}
 		copy.setFullyQualified(fIsFullyQualified);
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

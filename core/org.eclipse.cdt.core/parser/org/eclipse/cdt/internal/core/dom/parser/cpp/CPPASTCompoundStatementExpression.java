@@ -64,11 +64,7 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 	public CPPASTCompoundStatementExpression copy(CopyStyle style) {
 		CPPASTCompoundStatementExpression copy = new CPPASTCompoundStatementExpression();
 		copy.setCompoundStatement(statement == null ? null : statement.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

@@ -35,10 +35,6 @@ public class CPPASTEqualsInitializer extends ASTEqualsInitializer {
 		IASTInitializerClause arg = getInitializerClause();
 		CPPASTEqualsInitializer copy = new CPPASTEqualsInitializer(arg == null ? null
 				: arg.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 }

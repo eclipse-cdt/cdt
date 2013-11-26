@@ -38,11 +38,7 @@ public class CASTASMDeclaration extends ASTNode implements IASTASMDeclaration {
 	public CASTASMDeclaration copy(CopyStyle style) {
 		CASTASMDeclaration copy = new CASTASMDeclaration();
 		copy.assembly = assembly == null ? null : assembly.clone();
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

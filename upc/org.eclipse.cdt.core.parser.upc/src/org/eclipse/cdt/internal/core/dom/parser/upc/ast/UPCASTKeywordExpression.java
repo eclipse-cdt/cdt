@@ -38,11 +38,7 @@ public class UPCASTKeywordExpression extends ASTNode implements IUPCASTKeywordEx
 	@Override
 	public UPCASTKeywordExpression copy(CopyStyle style) {
 		UPCASTKeywordExpression copy = new UPCASTKeywordExpression(keywordKind);
-		copy.setOffsetAndLength(this);
-		if(style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

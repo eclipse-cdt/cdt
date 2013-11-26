@@ -49,11 +49,7 @@ public class CASTCastExpression extends ASTNode implements IASTCastExpression, I
 		copy.setTypeId(typeId == null ? null : typeId.copy(style));
 		IASTExpression operand = getOperand();
 		copy.setOperand(operand == null ? null : operand.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

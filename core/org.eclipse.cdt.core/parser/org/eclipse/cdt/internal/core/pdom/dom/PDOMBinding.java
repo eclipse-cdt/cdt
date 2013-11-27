@@ -37,6 +37,7 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
+import org.eclipse.cdt.internal.core.pdom.db.PDOMExternalReferencesList;
 import org.eclipse.cdt.internal.core.pdom.tag.PDOMTaggable;
 import org.eclipse.core.runtime.CoreException;
 
@@ -46,13 +47,14 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding {
 	public static final PDOMBinding[] EMPTY_PDOMBINDING_ARRAY = {};
 
-	private static final int FIRST_DECL_OFFSET   = PDOMNamedNode.RECORD_SIZE +  0; // size 4
+	private static final int FIRST_DECL_OFFSET   = PDOMNamedNode.RECORD_SIZE + 0; // size 4
 	private static final int FIRST_DEF_OFFSET    = PDOMNamedNode.RECORD_SIZE + 4; // size 4
 	private static final int FIRST_REF_OFFSET    = PDOMNamedNode.RECORD_SIZE + 8; // size 4
 	private static final int LOCAL_TO_FILE		 = PDOMNamedNode.RECORD_SIZE + 12; // size 4
+	private static final int FIRST_EXTREF_OFFSET = PDOMNamedNode.RECORD_SIZE + 16; // size 4
 
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 16;
+	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 20;
 	private byte hasDeclaration= -1;
 
 	protected PDOMBinding(PDOMLinkage linkage, PDOMNode parent, char[] name) throws CoreException {
@@ -95,7 +97,8 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		Database db = pdom.getDB();
 		return db.getRecPtr(record + FIRST_DECL_OFFSET) == 0
 				&& db.getRecPtr(record + FIRST_DEF_OFFSET) == 0
-				&& db.getRecPtr(record + FIRST_REF_OFFSET) == 0;
+				&& db.getRecPtr(record + FIRST_REF_OFFSET) == 0
+				&& db.getRecPtr(record + FIRST_EXTREF_OFFSET) == 0;
 	}
 
 	@Override
@@ -132,6 +135,14 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	}
 
 	public final void addReference(PDOMName name) throws CoreException {
+		// This needs to filter between the local and external lists because it can be used in
+		// contexts that don't know which type of list they are iterating over.  E.g., this is
+		// used when deleting names from a PDOMFile.
+		if (!getLinkage().equals(name.getLinkage())) {
+			new PDOMExternalReferencesList(getPDOM(), record + FIRST_EXTREF_OFFSET).add(name);
+			return;
+		}
+
 		PDOMName first = getFirstReference();
 		if (first != null) {
 			first.setPrevInBinding(name);
@@ -165,7 +176,25 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		return namerec != 0 ? new PDOMName(getLinkage(), namerec) : null;
 	}
 
+	/**
+	 * Returns an iterator over the names in other linkages that reference this binding.  Does
+	 * not return null.
+	 */
+	public IPDOMIterator<PDOMName> getExternalReferences() throws CoreException {
+		return new PDOMExternalReferencesList(getPDOM(), record + FIRST_EXTREF_OFFSET).getIterator();
+	}
+
 	public void setFirstReference(PDOMName name) throws CoreException {
+		// This needs to filter between the local and external lists because it can be used in
+		// contexts that don't know which type of list they are iterating over.  E.g., this is
+		// used when deleting names from a PDOMFile.
+		if (name != null
+		 && !getLinkage().equals(name.getLinkage())) {
+			new PDOMExternalReferencesList(getPDOM(), record + FIRST_EXTREF_OFFSET).add(name);
+			return;
+		}
+
+		// Otherwise put the reference into list of locals.
 		long namerec = name != null ? name.getRecord() : 0;
 		getDB().putRecPtr(record + FIRST_REF_OFFSET, namerec);
 	}

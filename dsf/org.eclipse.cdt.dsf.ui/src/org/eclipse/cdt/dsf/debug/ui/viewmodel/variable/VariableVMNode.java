@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Add support disable "View Memory" action (bug 418710)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.variable;
@@ -19,6 +20,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.core.model.ICastToArray;
 import org.eclipse.cdt.debug.core.model.ICastToType;
+import org.eclipse.cdt.debug.core.model.IViewInMemory;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
@@ -157,7 +159,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
      */
     private final FormattedValueRetriever fFormattedValueRetriever;
     
-    public class VariableExpressionVMC extends DMVMContext implements IFormattedValueVMContext  {
+    public class VariableExpressionVMC extends DMVMContext implements IFormattedValueVMContext, IViewInMemory {
         
         private IExpression fExpression;
         
@@ -210,6 +212,16 @@ public class VariableVMNode extends AbstractExpressionVMNode
         public int hashCode() {
             return super.hashCode() + (fExpression != null ? fExpression.hashCode() : 0);
         }
+
+		@Override
+		public boolean canViewInMemory() {
+			return true;
+		}
+
+		@Override
+		public void viewInMemory() {
+			assert false : "VariableExpressionVMC.viewInMemory() not implemented"; //$NON-NLS-1$
+		}
     }
     
     protected class VariableExpressionFactory implements IWatchExpressionFactoryAdapter2 {

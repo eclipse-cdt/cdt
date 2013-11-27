@@ -9809,7 +9809,7 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testFriendTemplateParameter() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	struct foo {
 	//	    foo();
 	//	    ~foo();
@@ -10176,7 +10176,7 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testIsBaseOf_399353() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
-	
+
 	//	struct base {};
 	//	struct derived : base {};
 	//	typedef derived derived2;
@@ -10334,7 +10334,7 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPClassType privateNestedClass = bh.assertNonProblem("privateNestedClass");
 		assertVisibility(ICPPClassType.v_private, aClass.getVisibility(privateNestedClass));
 	}
-	
+
 	//	int main() {
 	//		int i = 0;
 	//		__sync_bool_compare_and_swap(& i, 0, 1);
@@ -10344,12 +10344,12 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testGNUSyncBuiltins_bug389578() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
-	
+
 	//	class Waldo {
 	//		typedef int type;
 	//		static int value;
 	//	};
-	//	
+	//
 	//	int main() {
 	//		Waldo w;
 	//		decltype(w)::type i;
@@ -10385,15 +10385,65 @@ public class AST2CPPTests extends AST2TestBase {
 	//	typedef underlying_type<e_long>::type loong_type;
 	public void testUnderlyingTypeBuiltin_bug411196() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
-		
+
 		assertSameType((ITypedef) helper.assertNonProblem("short1_type"), CPPVisitor.SHORT_TYPE);
 		assertSameType((ITypedef) helper.assertNonProblem("short2_type"), CPPVisitor.SHORT_TYPE);
 
 		assertSameType((ITypedef) helper.assertNonProblem("scoped_type"), CPPVisitor.INT_TYPE);
-		
+
 		assertSameType((ITypedef) helper.assertNonProblem("unsigned_type"), CPPVisitor.UNSIGNED_INT);
 		assertSameType((ITypedef) helper.assertNonProblem("int_type"), CPPVisitor.INT_TYPE);
 		assertSameType((ITypedef) helper.assertNonProblem("ulong_type"), CPPVisitor.UNSIGNED_LONG);
 		assertSameType((ITypedef) helper.assertNonProblem("loong_type"), CPPVisitor.LONG_TYPE);
+	}
+
+	// namespace A {
+	//   int a;
+	//   namespace B {
+	//     int b;
+	//     namespace C {
+	//       int c;
+	//     }
+	//     namespace A {
+	//       int a;
+	//     }
+	//   }
+	// }
+	public void testQualifiedNameLookup() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
+
+		IScope scope = tu.getScope();
+		assertNotNull(scope);
+
+		IBinding[] bindings = CPPSemantics.findBindingsForQualifiedName(scope, "  A::a");
+		assertNotNull(bindings);
+		assertEquals(1, bindings.length);
+		IBinding a = bindings[0];
+		assertEquals("a", a.getName());
+
+		bindings = CPPSemantics.findBindingsForQualifiedName(scope, "A::B::b	");
+		assertNotNull(bindings);
+		assertEquals(1, bindings.length);
+		IBinding b = bindings[0];
+		assertEquals("b", b.getName());
+
+		bindings = CPPSemantics.findBindingsForQualifiedName(scope, "A::	B  ::C::c");
+		assertNotNull(bindings);
+		assertEquals(1, bindings.length);
+		IBinding c = bindings[0];
+		assertEquals("c", c.getName());
+
+		// From the level of c, there should be two A::a (::A::a and ::A::B::A::a).
+		IScope scopeC = c.getScope();
+		assertNotNull(scopeC);
+		bindings = CPPSemantics.findBindingsForQualifiedName(scopeC, "A::a");
+		assertNotNull(bindings);
+		assertEquals(2, bindings.length);
+
+		// From the level of c, there should be only one ::A::a.
+		assertNotNull(scopeC);
+		bindings = CPPSemantics.findBindingsForQualifiedName(scopeC, "::A::a");
+		assertNotNull(bindings);
+		assertEquals(1, bindings.length);
 	}
 }

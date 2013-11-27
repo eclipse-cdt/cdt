@@ -503,6 +503,29 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 
 	//	namespace std {
 	//	template<typename T>
+	//	struct unique_ptr {
+	//	  T* operator->();
+	//	};
+	//	}
+	//	struct A {
+	//	  void m();
+	//	};
+	//	class B : public A {
+	//	};
+	//	struct C {
+	//	  std::unique_ptr<B> x;
+	//	};
+
+	//	void test(C* c) {
+	//	  c->x->m();
+	//	}
+	public void testTemplatesAllowingIncompleteParameterType_3() throws Exception {
+		assertDefined("B", "C");
+		assertDeclared();
+	}
+
+	//	namespace std {
+	//	template<typename T>
 	//	struct shared_ptr {
 	//	  T* operator->();
 	//	};
@@ -517,8 +540,31 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	void test() {
 	//	  f()->m();
 	//	}
-	public void testTemplatesAllowingIncompleteParameterType_3() throws Exception {
+	public void testTemplatesAllowingIncompleteParameterType_4() throws Exception {
 		assertDefined("B", "f");
+		assertDeclared();
+	}
+
+	//	namespace std {
+	//	template<typename T>
+	//	struct unique_ptr {
+	//	  T* operator->();
+	//	};
+	//	}
+	//	struct A {
+	//	  void m();
+	//	};
+	//	class B : public A {
+	//	};
+	//	struct C {
+	//	  std::unique_ptr<B> f();
+	//	};
+
+	//	void test(C* c) {
+	//	  c->f()->m();
+	//	}
+	public void testTemplatesAllowingIncompleteParameterType_5() throws Exception {
+		assertDefined("B", "C");
 		assertDeclared();
 	}
 

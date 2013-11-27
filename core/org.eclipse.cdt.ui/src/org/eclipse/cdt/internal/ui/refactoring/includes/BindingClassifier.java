@@ -229,7 +229,7 @@ public class BindingClassifier {
 	 * @return {@code true} if the types have to be defined
 	 */
 	private boolean isTypeDefinitionRequiredForConversion(IType sourceType, IType targetType) {
-		if (!(targetType instanceof IPointerType) && !(targetType instanceof ICPPReferenceType))
+		if (!(targetType instanceof IPointerType || targetType instanceof ICPPReferenceType))
 			return true;
 		if (targetType instanceof IPointerType && Conversions.isNullPointerConstant(sourceType))
 			return false;
@@ -556,14 +556,14 @@ public class BindingClassifier {
 
 		// Handle return or expression type of the function or constructor call.
 		IType returnType = function.getType().getReturnType();
-		defineTypeOfBinding(function, returnType);
+		defineTypeForBinding(function, returnType);
 
 		// Handle parameters.
 		processFunctionParameters(function, arguments);
 	}
 
-	private void defineTypeOfBinding(IBinding binding, IType type) {
-		if (fBindingsToDefine.contains(binding) && !mayBeForwardDeclared(type)) {
+	private void defineTypeForBinding(IBinding binding, IType type) {
+		if (isDefined(binding) && !mayBeForwardDeclared(type)) {
 			if (type instanceof ICPPTemplateInstance) {
 				ICPPTemplateInstance instance = (ICPPTemplateInstance) type;
 				IBinding template = instance.getSpecializedBinding();
@@ -575,9 +575,18 @@ public class BindingClassifier {
 					}
 				}
 			}
-		} else if (!(type instanceof IPointerType) && !(type instanceof ICPPReferenceType)) {
+		} else if (!(type instanceof IPointerType || type instanceof ICPPReferenceType)) {
 			defineTypeExceptTypedefOrNonFixedEnum(type);
 		}
+	}
+
+	private boolean isDefined(IBinding binding) {
+		if (fBindingsToDefine.contains(binding))
+			return true;
+		IBinding owner = binding.getOwner();
+		if (owner instanceof IType && fBindingsToDefine.contains(owner))
+			return true;
+		return false;
 	}
 
 	private class BindingCollector extends ASTVisitor {
@@ -665,7 +674,7 @@ public class BindingClassifier {
 					if (declarator.getPropertyInParent() == IASTFunctionDefinition.DECLARATOR) {
 						// Define the return type if necessary.
 						IType returnType = functionType.getReturnType();
-						if (!(returnType instanceof IPointerType) && !(returnType instanceof ICPPReferenceType)) {
+						if (!(returnType instanceof IPointerType || returnType instanceof ICPPReferenceType)) {
 							defineTypeExceptTypedefOrNonFixedEnum(returnType);
 						}
 			
@@ -795,7 +804,7 @@ public class BindingClassifier {
 			if (memberBinding instanceof IVariable) {
 				// Variable construction.
 				IType memberType = ((IVariable) memberBinding).getType();
-				if (!(memberType instanceof IPointerType) && !(memberType instanceof ICPPReferenceType)) {
+				if (!(memberType instanceof IPointerType || memberType instanceof ICPPReferenceType)) {
 					// We're constructing a non-pointer type. We need to define the member type
 					// either way since we must be able to call its constructor.
 					defineTypeExceptTypedefOrNonFixedEnum(memberType);
@@ -938,7 +947,7 @@ public class BindingClassifier {
 				if (binding instanceof IVariable) {
 					// Get the declared type.
 					IType variableType = ((IVariable) binding).getType();
-					defineTypeOfBinding(binding, variableType);
+					defineTypeForBinding(binding, variableType);
 				}
 			} else if (expression instanceof IASTUnaryExpression) {
 				/*
@@ -1103,8 +1112,8 @@ public class BindingClassifier {
 				IASTFunctionCallExpression functionCallExpression = (IASTFunctionCallExpression) expression;
 				IASTExpression functionNameExpression = functionCallExpression.getFunctionNameExpression();
 
-				if (functionNameExpression instanceof IASTIdExpression) {
-					IBinding binding = ((IASTIdExpression) functionNameExpression).getName().resolveBinding();
+				IBinding binding = getBindingOfExpression(functionNameExpression);
+				if (binding != null) {
 					if (binding instanceof IFunction) {
 						declareFunction((IFunction) binding, functionCallExpression.getArguments());
 					} else  {
@@ -1121,7 +1130,7 @@ public class BindingClassifier {
 							}
 						}
 					}
-				} 
+				}
 			} else if (expression instanceof IASTFieldReference) {
 				/*
 				 * The type of the expression part of a field reference always requires a definition.
@@ -1135,12 +1144,17 @@ public class BindingClassifier {
 
 				IASTExpression fieldOwner = ((IASTFieldReference) expression).getFieldOwner();
 				IType expressionType = fieldOwner.getExpressionType();
-				if (!(fieldOwner instanceof IASTIdExpression || fieldOwner instanceof IASTFunctionCallExpression) ||
-						expressionType instanceof IPointerType || expressionType instanceof ICPPReferenceType) {
-					// Id expressions and function call expressions returning non pointer and
-					// non reference types are processed separately.
+				if (expressionType instanceof IPointerType || expressionType instanceof ICPPReferenceType) {
 					defineTypeExceptTypedefOrNonFixedEnum(expressionType);
+				} else if (!(fieldOwner instanceof IASTIdExpression || fieldOwner instanceof IASTFunctionCallExpression)) {
+					IBinding binding = getBindingOfExpression(fieldOwner);
+					if (binding != null) {
+						defineTypeForBinding(binding, expressionType);
+					} else {
+						defineTypeExceptTypedefOrNonFixedEnum(expressionType);
+					}
 				}
+				// Id expressions and function call expressions are handled elsewhere.
 			} else if (expression instanceof ICPPASTNewExpression) {
 				/*
 				 * The type specifier of a "new" expression always requires a definition.
@@ -1180,7 +1194,7 @@ public class BindingClassifier {
 					// We need to define both types, even if they're pointers.
 					defineTypeExceptTypedefOrNonFixedEnum(targetType);
 					defineTypeExceptTypedefOrNonFixedEnum(sourceType);
-				} else if (!(targetType instanceof IPointerType) && !(targetType instanceof ICPPReferenceType)) {
+				} else if (!(targetType instanceof IPointerType || targetType instanceof ICPPReferenceType)) {
 					// Define the target type if it's not a pointer or reference type.
 					defineTypeExceptTypedefOrNonFixedEnum(targetType);
 				}
@@ -1232,6 +1246,18 @@ public class BindingClassifier {
 			}
 			return PROCESS_CONTINUE;
 		}
+	}
+
+	/**
+	 * @return the binding corresponding to the ID or the field reference expression.
+	 */
+	private IBinding getBindingOfExpression(IASTExpression expression) {
+		if (expression instanceof IASTIdExpression) {
+			return ((IASTIdExpression) expression).getName().resolveBinding();
+		} else if (expression instanceof IASTFieldReference) {
+			return ((IASTFieldReference) expression).getFieldName().resolveBinding();
+		}
+		return null;
 	}
 
 	/**

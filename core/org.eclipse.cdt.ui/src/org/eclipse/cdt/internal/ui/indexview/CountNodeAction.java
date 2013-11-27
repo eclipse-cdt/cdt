@@ -26,6 +26,7 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.IPDOM;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMIterator;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
@@ -59,11 +60,11 @@ public class CountNodeAction extends IndexAction {
 	static final int REFS = 3;
 	static final int DECLS = 4;
 	static final int DEFS = 5;
-	
+
 	@Override
 	public void run() {
 		final int[] count = new int[6];
-		
+
 		try {
 			ISelection selection = viewer.getSelection();
 			if (!(selection instanceof IStructuredSelection))
@@ -115,6 +116,10 @@ public class CountNodeAction extends IndexAction {
 										.getFirstReference(); name != null; name = name
 										.getNextInBinding())
 									++count[REFS];
+								for (IPDOMIterator<PDOMName> i = binding.getExternalReferences();
+									 i.hasNext();
+									 i.next())
+									++count[REFS];
 								for (PDOMName name = binding
 										.getFirstDeclaration(); name != null; name = name
 										.getNextInBinding())
@@ -141,7 +146,7 @@ public class CountNodeAction extends IndexAction {
 			Thread.currentThread().interrupt();
 			return;
 		}
-		
+
 		MessageDialog.openInformation(null,
 				CUIPlugin.getResourceString("IndexView.CountSymbols.title"), //$NON-NLS-1$
 				CUIPlugin.getFormattedString("IndexView.CountSymbols.message", //$NON-NLS-1$

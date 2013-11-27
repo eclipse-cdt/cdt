@@ -30,6 +30,7 @@ public class PDOMTests extends TestSuite {
 		suite.addTest(PDOMCPPBugsTest.suite());
 		suite.addTest(PDOMSearchTest.suite());
 		suite.addTest(PDOMLocationTests.suite());
+		suite.addTest(PDOMNameTests.suite());
 		suite.addTest(PDOMProviderTests.suite());
 		suite.addTest(EnumerationTests.suite());
 		suite.addTest(ClassTests.suite());

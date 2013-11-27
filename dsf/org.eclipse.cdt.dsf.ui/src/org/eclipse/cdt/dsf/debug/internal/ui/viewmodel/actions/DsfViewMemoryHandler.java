@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Nokia and others.
+ * Copyright (c) 2010, 2013 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Nokia - Initial API and implementation
+ * Marc Khouzam (Ericsson) - Allow to disable ViewMemory handler (bug 418710)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions;
@@ -16,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.debug.core.model.IViewInMemory;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -32,6 +34,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -50,12 +53,11 @@ import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * DSF version of handler for viewing variable in memory view command.
@@ -63,25 +65,58 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class DsfViewMemoryHandler extends AbstractHandler {
 
+	private VariableExpressionVMC[] fMemoryViewables = new VariableExpressionVMC[0];
+
+	protected VariableExpressionVMC[] getMemoryViewables() {
+		return fMemoryViewables;
+	}
+
+	protected void setMemoryViewables(VariableExpressionVMC[] viewableMemoryITems) {
+		fMemoryViewables = viewableMemoryITems;
+	}
+
+	@Override
+	public void setEnabled(Object evaluationContext) {
+		VariableExpressionVMC[] viewableMemoryITems = getMemoryViewables(evaluationContext);
+		setBaseEnabled(viewableMemoryITems.length > 0);
+		setMemoryViewables(viewableMemoryITems);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ISelection selection = HandlerUtil.getCurrentSelection(event);
-		if (selection instanceof IStructuredSelection) {
-			List<Object> list = new ArrayList<Object>();
-			Iterator<?> iter = ((IStructuredSelection)selection).iterator();
-            while (iter.hasNext()) {
-            	Object obj = iter.next();
-            	if (obj instanceof VariableExpressionVMC) {
-            		list.add(obj);
-            	}
+   		if (getMemoryViewables() == null || getMemoryViewables().length == 0) {
+   			return null;
+   		}
+   		
+   		showInMemoryView(getMemoryViewables());
+		
+   		return null;
+	}
+
+	private VariableExpressionVMC[] getMemoryViewables(Object evaluationContext) {
+        List<VariableExpressionVMC> viewableMemoryItems = new ArrayList<VariableExpressionVMC>();
+	    if (evaluationContext instanceof IEvaluationContext) {
+	        Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
+	        if (s instanceof IStructuredSelection) {
+	        	Iterator<?> iter = ((IStructuredSelection)s).iterator();
+	        	while(iter.hasNext()) {
+	        		Object obj = iter.next();
+	        		if (obj instanceof VariableExpressionVMC) {
+	        			Object element = DebugPlugin.getAdapter(obj, IViewInMemory.class);
+	        			if (element != null) {
+	        				if (((IViewInMemory)element).canViewInMemory()) {
+	        					viewableMemoryItems.add((VariableExpressionVMC)obj);
+	        				}
+	        			}
+	        		}
+                }
             }
-            showInMemoryView(list.toArray(new VariableExpressionVMC[list.size()]));
-		} 
-		return null;
+	    }
+	    return viewableMemoryItems.toArray(new VariableExpressionVMC[viewableMemoryItems.size()]);
 	}
 
 	private void addDefaultRenderings(IMemoryBlock memoryBlock, IMemoryRenderingSite memRendSite) {

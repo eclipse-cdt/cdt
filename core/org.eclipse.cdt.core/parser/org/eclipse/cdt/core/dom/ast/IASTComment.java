@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Emanuel Graf & Leo Buettiker - initial API and implementation 
+ *     Emanuel Graf & Leo Buettiker - initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 

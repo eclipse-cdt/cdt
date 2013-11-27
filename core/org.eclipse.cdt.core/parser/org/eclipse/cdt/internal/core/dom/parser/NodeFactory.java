@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.INodeFactory;
 public abstract class NodeFactory implements INodeFactory {
 	@Override
 	public final void setOffsets(IASTNode node, int offset, int endOffset) {
-		((ASTNode) node).setOffsetAndLength(offset, endOffset-offset);
+		((ASTNode) node).setOffsetAndLength(offset, endOffset - offset);
 	}
 
 	@Override

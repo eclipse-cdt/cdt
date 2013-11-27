@@ -124,8 +124,8 @@ public class NodeCommentMapTest extends TestCase {
 		assertEquals(com3, map.getFreestandingCommentsForNode(node1).get(1));
 	}
 	
-	//=== InternalComment class for testing 
-	private class Comment extends ASTNode implements IASTComment {
+	//=== Internal Comment class for testing 
+	private static class Comment extends ASTNode implements IASTComment {
 		private char[] comment;
 		
 		@Override

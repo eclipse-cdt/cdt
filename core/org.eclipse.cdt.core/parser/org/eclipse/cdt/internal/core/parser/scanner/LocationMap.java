@@ -274,10 +274,10 @@ public class LocationMap implements ILocationResolver {
 			CharSequence text = getTrimmedCommentText(input.subSequence(offset, endOffset), isBlockComment);
 			IncludeExportPatterns patterns = fLexerOptions.fIncludeExportPatterns;
 			if (patterns.getIncludeExportPattern() != null
-				&& patterns.getIncludeExportPattern().matcher(text).matches()) {
+					&& patterns.getIncludeExportPattern().matcher(text).matches()) {
 				((LocationCtxFile) fCurrentContext).setOffsetOfIncludeExport(offset);
 			} else if (patterns.getIncludeBeginExportsPattern() != null
-						&& patterns.getIncludeBeginExportsPattern().matcher(text).matches()) {
+					&& patterns.getIncludeBeginExportsPattern().matcher(text).matches()) {
 				((LocationCtxFile) fCurrentContext).setInsideIncludeExportBlock(true);
 			} else if (patterns.getIncludeEndExportsPattern() != null
 					&& patterns.getIncludeEndExportsPattern().matcher(text).matches()) {

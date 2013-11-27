@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.IPath;
 public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	private final PDOMLinkage linkage;
 	private final long record;
-	
+
 	private static final int FILE_REC_OFFSET     = 0;
 	private static final int FILE_NEXT_OFFSET	 = 4;
 	private static final int CALLER_REC_OFFSET   = 8;
@@ -42,7 +42,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	private static final int BINDING_NEXT_OFFSET = 20;
 	private static final int NODE_OFFSET_OFFSET  = 24; // 3-byte unsigned int (sufficient for files <= 16mb)
 	private static final int NODE_LENGTH_OFFSET  = 27; // short (sufficient for names <= 32k)
-	private static final int FLAGS 				 = 29; 
+	private static final int FLAGS 				 = 29;
 
 	private static final int RECORD_SIZE = 30;	// 30 yields a 32-byte block. (31 would trigger a 40-byte block)
 
@@ -58,7 +58,6 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public static final int READ_ACCESS 						= 0x20;
 	public static final int WRITE_ACCESS 						= 0x40;
 
-	
 	public PDOMName(PDOMLinkage linkage, IASTName name, PDOMFile file, PDOMBinding binding, PDOMName caller)
 			throws CoreException {
 		this.linkage = linkage;
@@ -67,7 +66,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 		// What kind of name are we
 		int flags= getRoleOfName(name);
-		
+
 		flags |= binding.getAdditionalNameFlags(flags, name);
 		db.putByte(record + FLAGS, (byte) flags);
 
@@ -85,7 +84,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		}
 
 		db.putRecPtr(record + BINDING_REC_OFFSET, binding.getRecord());
-		
+
 		db.putRecPtr(record + FILE_REC_OFFSET, file.getRecord());
 		if (caller != null) {
 			db.putRecPtr(record + CALLER_REC_OFFSET, caller.getRecord());
@@ -100,18 +99,22 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	private int getRoleOfName(IASTName name) {
 		if (name.isDefinition()) {
 			return IS_DEFINITION;
-		}  
+		}
 		if (name.isDeclaration()) {
 			return IS_DECLARATION;
-		} 
+		}
 		return IS_REFERENCE;
 	}
-	
+
 	public PDOMName(PDOMLinkage linkage, long nameRecord) {
 		this.linkage = linkage;
 		this.record = nameRecord;
 	}
-	
+
+	public PDOMLinkage getLinkage() {
+		return linkage;
+	}
+
 	public long getRecord() {
 		return record;
 	}
@@ -127,7 +130,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public PDOM getPDOM() {
 		return linkage.getPDOM();
 	}
-	
+
 	@Override
 	public PDOMBinding getBinding() throws CoreException {
 		long bindingrec = getRecField(BINDING_REC_OFFSET);
@@ -160,11 +163,11 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public PDOMName getNextInBinding() throws CoreException {
 		return getNameField(BINDING_NEXT_OFFSET);
 	}
-	
+
 	public void setNextInBinding(PDOMName name) throws CoreException {
 		setNameField(BINDING_NEXT_OFFSET, name);
 	}
-	
+
 	@Override
 	public PDOMFile getFile() throws CoreException {
 		long filerec = linkage.getDB().getRecPtr(record + FILE_REC_OFFSET);
@@ -188,11 +191,11 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	long getEnclosingDefinitionRecord() throws CoreException {
 		return linkage.getDB().getRecPtr(record + CALLER_REC_OFFSET);
 	}
-	
+
 	public PDOMName getNextInFile() throws CoreException {
 		return getNameField(FILE_NEXT_OFFSET);
 	}
-	
+
 	public void setNextInFile(PDOMName name) throws CoreException {
 		setNameField(FILE_NEXT_OFFSET, name);
 	}
@@ -223,7 +226,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public String toString() {
 		return new String(getSimpleID());
 	}
-	
+
 	private int getFlags(int mask) throws CoreException {
 		return linkage.getDB().getByte(record + FLAGS) & mask;
 	}
@@ -254,7 +257,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public boolean isBaseSpecifier() throws CoreException {
 		return getFlags(INHERIT_FRIEND_INLINE_MASK) == IS_INHERITANCE_SPEC;
 	}
-	
+
 	@Override
 	public boolean isInlineNamespaceDefinition() throws CoreException {
 		return getFlags(INHERIT_FRIEND_INLINE_MASK) == IS_INLINE_NAMESPACE;

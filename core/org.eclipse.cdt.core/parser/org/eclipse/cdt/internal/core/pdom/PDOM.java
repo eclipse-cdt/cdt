@@ -76,6 +76,7 @@ import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMIterator;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.MacroContainerCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.MacroContainerPatternCollector;
@@ -242,10 +243,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *
 	 *  CDT 8.3 development (versions not supported on the 8.2.x branch)
 	 *  160.0 - Store specialized template parameters of class/function template specializations, bug 407497.
+	 *  161.0 - Allow reference to PDOMBinding from other PDOMLinkages, bug xyz.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(160, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(160, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(160, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(161, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(161, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(161, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;
@@ -1165,6 +1167,12 @@ public class PDOM extends PlatformObject implements IPDOM {
 				if (isCommitted(name)) {
 					names.add(name);
 				}
+			}
+			IPDOMIterator<PDOMName> iterator = pdomBinding.getExternalReferences();
+			while(iterator.hasNext()) {
+				name = iterator.next();
+				if (isCommitted(name))
+					names.add(name);
 			}
 		}
 	}

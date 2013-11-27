@@ -45,6 +45,7 @@ public class IncludePreferences implements Comparator<StyledInclude> {
 	public final boolean forwardDeclareExternalVariables;
 	public final boolean forwardDeclareTemplates;
 	public final boolean forwardDeclareNamespaceElements;
+	public final boolean assumeTemplatesMayBeForwardDeclared;
 	public final UnusedStatementDisposition unusedStatementsDisposition;
 	public final String[] partnerFileSuffixes;
 
@@ -83,6 +84,11 @@ public class IncludePreferences implements Comparator<StyledInclude> {
 				PreferenceConstants.FORWARD_DECLARE_TEMPLATES, project, false);
 		forwardDeclareNamespaceElements = PreferenceConstants.getPreference(
 				PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS, project, true);
+
+		// Although templates may be forward declared, it is done so rarely that we assume that it
+		// never happens.
+		// TODO(sprigogin): Create a preference for this.
+		assumeTemplatesMayBeForwardDeclared = false;
 
 		String value = PreferenceConstants.getPreference(
 				PreferenceConstants.INCLUDES_PARTNER_FILE_SUFFIXES, project, DEFAULT_PARTNER_FILE_SUFFIXES);

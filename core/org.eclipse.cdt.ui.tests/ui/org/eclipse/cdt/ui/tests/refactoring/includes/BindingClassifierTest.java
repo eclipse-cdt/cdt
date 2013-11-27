@@ -168,12 +168,15 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	struct A { void m(); };
 	//	class B : public A {};
 	//	B b;
+	//	class C : public A {};
+	//	C c;
 
 	//	void test() {
 	//	  b.m();
+	//	  c->m();
 	//	}
 	public void testClassHierarchy() throws Exception {
-		assertDefined("b", "B");
+		assertDefined("b", "B", "c", "C");
 		assertDeclared();
 	}
 
@@ -472,9 +475,51 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  shared_ptr<C> x;
 	//	  unique_ptr<C> y;
 	//	}
-	public void testTemplatesAllowingIncompleteParameterType() throws Exception {
+	public void testTemplatesAllowingIncompleteParameterType_1() throws Exception {
 		assertDefined("B", "C", "shared_ptr", "unique_ptr");
 		assertDeclared("A");
+	}
+
+	//	namespace std {
+	//	template<typename T>
+	//	struct unique_ptr {
+	//	  T* operator->();
+	//	};
+	//	}
+	//	struct A {
+	//	  void m();
+	//	};
+	//	class B : public A {
+	//	};
+	//	std::unique_ptr<B> b;
+
+	//	void test() {
+	//	  b->m();
+	//	}
+	public void testTemplatesAllowingIncompleteParameterType_2() throws Exception {
+		assertDefined("B", "b");
+		assertDeclared();
+	}
+
+	//	namespace std {
+	//	template<typename T>
+	//	struct shared_ptr {
+	//	  T* operator->();
+	//	};
+	//	}
+	//	struct A {
+	//	  void m();
+	//	};
+	//	class B : public A {
+	//	};
+	//	std::shared_ptr<B> f();
+
+	//	void test() {
+	//	  f()->m();
+	//	}
+	public void testTemplatesAllowingIncompleteParameterType_3() throws Exception {
+		assertDefined("B", "f");
+		assertDeclared();
 	}
 
 	//	struct A {};

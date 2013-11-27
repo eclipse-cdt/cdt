@@ -18,11 +18,10 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -105,6 +104,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -305,8 +305,8 @@ public class BindingClassifier {
 	 * @return The binding(s) which is/are suitable for either declaration or definition,
 	 *     or an empty list if no such binding is available.
 	 */
-	private List<IBinding> getRequiredBindings(IBinding binding) {
-		List<IBinding> bindings = new ArrayList<IBinding>();
+	private Set<IBinding> getRequiredBindings(IBinding binding) {
+		Set<IBinding> bindings = new HashSet<IBinding>();
 
 		if (binding instanceof ICPPMember) {
 			// If the binding is a member, get its owning composite type.
@@ -401,7 +401,7 @@ public class BindingClassifier {
 			return;
 		}
 
-		List<IBinding> requiredBindings = getRequiredBindings(binding);
+		Collection<IBinding> requiredBindings = getRequiredBindings(binding);
 
 		for (IBinding requiredBinding : requiredBindings) {
 			if (fBindingsToDeclare.contains(requiredBinding) || fBindingsToDefine.contains(requiredBinding)) {
@@ -431,14 +431,14 @@ public class BindingClassifier {
 	}
 
 	/**
-	 * Checks whether the binding can be forward declared or not.
+	 * Checks whether the binding can be forward declared or not according to preferences.
 	 */
 	private boolean canForwardDeclare(IBinding binding) {
 		boolean canDeclare = false;
 		if (binding instanceof ICompositeType) {
 			canDeclare = fPreferences.forwardDeclareCompositeTypes;
 		} else if (binding instanceof IEnumeration) {
-			canDeclare = fPreferences.forwardDeclareEnums;
+			canDeclare = fPreferences.forwardDeclareEnums && isEnumerationWithoutFixedUnderlyingType(binding);
 		} else if (binding instanceof IFunction && !(binding instanceof ICPPMethod)) {
 			canDeclare = fPreferences.forwardDeclareFunctions;
 		} else if (binding instanceof IVariable) {
@@ -451,6 +451,22 @@ public class BindingClassifier {
 			canDeclare = false;
 		}
 		return canDeclare;
+	}
+
+	/**
+	 * Checks whether the type may be forward declared according to language rules.
+	 */
+	private boolean mayBeForwardDeclared(IType type) {
+		IBinding binding = getTypeBinding(type);
+		if (binding == null)
+			return false;
+		if (!fPreferences.assumeTemplatesMayBeForwardDeclared &&
+				(binding instanceof ICPPTemplateDefinition || binding instanceof ICPPSpecialization)) {
+			return false; 
+		}
+		if (binding instanceof ICompositeType)
+			return true;
+		return binding instanceof ICPPEnumeration && ((ICPPEnumeration) binding).getFixedType() != null;
 	}
 
 	/**
@@ -481,7 +497,7 @@ public class BindingClassifier {
 		if (fAst.getDefinitionsInAST(binding).length != 0)
 			return;  // Defined locally.
 
-		List<IBinding> requiredBindings = getRequiredBindings(binding);
+		Collection<IBinding> requiredBindings = getRequiredBindings(binding);
 		for (IBinding requiredBinding : requiredBindings) {
 			fBindingsToDeclare.remove(requiredBinding);
 			if (requiredBinding == binding) {
@@ -540,13 +556,28 @@ public class BindingClassifier {
 
 		// Handle return or expression type of the function or constructor call.
 		IType returnType = function.getType().getReturnType();
-		if (!(returnType instanceof IPointerType) && !(returnType instanceof ICPPReferenceType)) {
-			// The return type needs a full definition.
-			defineTypeExceptTypedefOrNonFixedEnum(returnType);
-		}
+		defineTypeOfBinding(function, returnType);
 
 		// Handle parameters.
 		processFunctionParameters(function, arguments);
+	}
+
+	private void defineTypeOfBinding(IBinding binding, IType type) {
+		if (fBindingsToDefine.contains(binding) && !mayBeForwardDeclared(type)) {
+			if (type instanceof ICPPTemplateInstance) {
+				ICPPTemplateInstance instance = (ICPPTemplateInstance) type;
+				IBinding template = instance.getSpecializedBinding();
+				if (templatesAllowingIncompleteArgumentType.contains(template.getName())) {
+					ICPPTemplateArgument[] arguments = instance.getTemplateArguments();
+					if (arguments.length != 0) {
+						IType argumentType = arguments[0].getTypeValue();
+						defineTypeExceptTypedefOrNonFixedEnum(argumentType);
+					}
+				}
+			}
+		} else if (!(type instanceof IPointerType) && !(type instanceof ICPPReferenceType)) {
+			defineTypeExceptTypedefOrNonFixedEnum(type);
+		}
 	}
 
 	private class BindingCollector extends ASTVisitor {
@@ -555,7 +586,7 @@ public class BindingClassifier {
 		}
 
 		@Override
-		public int visit(IASTDeclaration declaration) {
+		public int leave(IASTDeclaration declaration) {
 			if (declaration instanceof IASTSimpleDeclaration) {
 				/*
 				 * The type specifier of a simple declaration of a variable must always be defined
@@ -614,7 +645,7 @@ public class BindingClassifier {
 		}
 
 		@Override
-		public int visit(IASTDeclarator declarator) {
+		public int leave(IASTDeclarator declarator) {
 			if (declarator instanceof IASTFunctionDeclarator) {
 				/*
 				 * The type specifier of a function definition doesn't need to be defined if it is
@@ -668,7 +699,7 @@ public class BindingClassifier {
 		}
 
 		@Override
-		public int visit(IASTDeclSpecifier declSpec) {
+		public int leave(IASTDeclSpecifier declSpec) {
 			if (declSpec instanceof IASTElaboratedTypeSpecifier) {
 				/*
 				 * The type specifier of an elaborated type neither needs to be defined nor needs to be
@@ -684,7 +715,7 @@ public class BindingClassifier {
 		}
 
 		@Override
-		public int visit(ICPPASTBaseSpecifier baseSpecifier) {
+		public int leave(ICPPASTBaseSpecifier baseSpecifier) {
 			/*
 			 * The type of a base specifier must always be defined.
 			 *
@@ -696,7 +727,7 @@ public class BindingClassifier {
 		}
 
 		@Override
-		public int visit(IASTInitializer initializer) {
+		public int leave(IASTInitializer initializer) {
 			/*
 			 * The type of the member of a constructor chain initializer doesn't need to be defined
 			 * if it is a pointer or reference type and if the argument type matches.
@@ -799,7 +830,7 @@ public class BindingClassifier {
 		}
 
 		@Override
-		public int visit(IASTStatement statement) {
+		public int leave(IASTStatement statement) {
 			if (statement instanceof IASTReturnStatement) {
 				/*
 				 * The type of the return value expression doesn't need to be defined if the actual
@@ -869,7 +900,7 @@ public class BindingClassifier {
 		}
 
 		@Override
-		public int visit(IASTExpression expression) {
+		public int leave(IASTExpression expression) {
 			ASTNodeProperty propertyInParent = expression.getPropertyInParent();
 			if (propertyInParent == IASTIfStatement.CONDITION
 					|| propertyInParent == IASTForStatement.CONDITION
@@ -906,10 +937,8 @@ public class BindingClassifier {
 				IBinding binding = idExpression.getName().resolveBinding();
 				if (binding instanceof IVariable) {
 					// Get the declared type.
-					IType expressionType = ((IVariable) binding).getType();
-					if (!(expressionType instanceof IPointerType) && !(expressionType instanceof ICPPReferenceType)) {
-						defineTypeExceptTypedefOrNonFixedEnum(expressionType);
-					}
+					IType variableType = ((IVariable) binding).getType();
+					defineTypeOfBinding(binding, variableType);
 				}
 			} else if (expression instanceof IASTUnaryExpression) {
 				/*
@@ -1104,7 +1133,14 @@ public class BindingClassifier {
 				 * 	}
 				 */
 
-				defineTypeExceptTypedefOrNonFixedEnum(((IASTFieldReference) expression).getFieldOwner().getExpressionType());
+				IASTExpression fieldOwner = ((IASTFieldReference) expression).getFieldOwner();
+				IType expressionType = fieldOwner.getExpressionType();
+				if (!(fieldOwner instanceof IASTIdExpression || fieldOwner instanceof IASTFunctionCallExpression) ||
+						expressionType instanceof IPointerType || expressionType instanceof ICPPReferenceType) {
+					// Id expressions and function call expressions returning non pointer and
+					// non reference types are processed separately.
+					defineTypeExceptTypedefOrNonFixedEnum(expressionType);
+				}
 			} else if (expression instanceof ICPPASTNewExpression) {
 				/*
 				 * The type specifier of a "new" expression always requires a definition.
@@ -1153,7 +1189,7 @@ public class BindingClassifier {
 		}
 
 		@Override
-		public int visit(IASTName name) {
+		public int leave(IASTName name) {
 			if (isPartOfExternalMacroDefinition(name))
 				return PROCESS_CONTINUE;
 
@@ -1188,7 +1224,7 @@ public class BindingClassifier {
 		}
 
 		@Override
-		public int visit(IASTTranslationUnit tu) {
+		public int leave(IASTTranslationUnit tu) {
 			for (IASTPreprocessorMacroExpansion macroExpansion : tu.getMacroExpansions()) {
 				IASTPreprocessorMacroDefinition macroDefinition = macroExpansion.getMacroDefinition();
 				IASTName name = macroDefinition.getName();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 
 	private static final int FULLY_RESOLVED         = 1;
 	private static final int RESOLUTION_IN_PROGRESS = 1 << 1;
-	private int bits = 0;
+	private int bits;
 
 	public CPPFunction(IASTDeclarator declarator) {
 	    if (declarator != null) {
@@ -99,7 +99,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	        } else if (declarations != null) {
 	            tu = declarations[0].getTranslationUnit();
 	        } else {
-	            //implicit binding
+	            // Implicit binding
 	            IScope scope = getScope();
                 IASTNode node = ASTInternal.getPhysicalNodeOfScope(scope);
 				if (node != null) {
@@ -464,22 +464,25 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         do {
             if (dtor != null) {
                 IASTNode parent = dtor.getParent();
-	            while (!(parent instanceof IASTDeclaration))
+	            while (!(parent instanceof IASTDeclaration)) {
 	                parent = parent.getParent();
+	            }
 
 	            IASTDeclSpecifier declSpec = null;
-	            if (parent instanceof IASTSimpleDeclaration)
+	            if (parent instanceof IASTSimpleDeclaration) {
 	                declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
-	            else if (parent instanceof IASTFunctionDefinition)
+	            } else if (parent instanceof IASTFunctionDefinition) {
 	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
+	            }
 
 	            if (declSpec != null && declSpec.isInline())
                     return true;
             }
-            if (ds != null && ++i < ds.length)
+            if (ds != null && ++i < ds.length) {
                 dtor = ds[i];
-            else
+            } else {
                 break;
+            }
         } while (dtor != null);
         return false;
     }

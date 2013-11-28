@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_cfb3c47e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMExternalReferencesList.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2013-11-28T00:30:51Z",
+      "side": 1,
+      "message": "Make this inherit Iterable\u003cPDOMName\u003e?",
+      "revId": "ada0e69315858f2e0dbc686833d6452e205a5ddd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_0f080cb7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/IPDOMIterator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2013-11-28T00:30:51Z",
+      "side": 1,
+      "message": "Not sure why we need to make our own when the world has Iterable\u003c\u003e and Iterator\u003c\u003e.",
+      "revId": "ada0e69315858f2e0dbc686833d6452e205a5ddd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

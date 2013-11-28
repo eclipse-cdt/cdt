@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Nathan Ridge.
+ * Copyright (c) 2013 Nathan Ridge and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Nathan Ridge - Initial API and implementation
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -17,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
@@ -93,6 +95,10 @@ public class CPPEnumerationSpecialization extends CPPSpecialization implements I
 
 	@Override
 	public IEnumerator specializeEnumerator(IEnumerator enumerator) {
+		if (enumerator instanceof ICPPSpecialization && ((ICPPSpecialization) enumerator).getOwner() == this) {
+			return enumerator;
+		}
+
 		// The specialized enumerators are already computed, just need
 		// to look up the right one.
 		IEnumerator[] unspecializedEnumerators = getSpecializedBinding().getEnumerators();

@@ -8122,4 +8122,29 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testMemberOfPartialSpecialization_416788() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template<bool>
+	//	struct enable_if {
+	//		typedef void type;
+	//	};
+	//
+	//	template<int I>
+	//	struct MyClass {
+	//		enum {
+	//			K
+	//		};
+	//
+	//		template<int J>
+	//		void method(typename enable_if<J == K>::type* = 0) {
+	//		}
+	//	};
+	//
+	//	int main() {
+	//		MyClass<0> myObject;
+	//		myObject.method<0>();
+	//		return 0;
+	//	}
+	public void testSpecializedEnumerator_418770() throws Exception {
+		parseAndCheckBindings();
+	}
 }

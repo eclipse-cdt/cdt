@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_6fba7027",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMExternalReferencesList.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-11-28T00:42:29Z",
+      "side": 1,
+      "message": "Since we have our own Iterator (in order to be able to throw CoreException from the methods) we can\u0027t use the normal Iterable.",
+      "parentUuid": "8748d3a1_cfb3c47e",
+      "revId": "ada0e69315858f2e0dbc686833d6452e205a5ddd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_0f080cb7",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/IPDOMIterator.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2013-11-28T00:30:51Z",
       "side": 1,
       "message": "Not sure why we need to make our own when the world has Iterable\u003c\u003e and Iterator\u003c\u003e.",
+      "revId": "ada0e69315858f2e0dbc686833d6452e205a5ddd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_2ffea8dc",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/IPDOMIterator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-11-28T00:42:29Z",
+      "side": 1,
+      "message": "I made new ones because I want to be able to throw CoreException from the methods.",
+      "parentUuid": "8748d3a1_0f080cb7",
       "revId": "ada0e69315858f2e0dbc686833d6452e205a5ddd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -2353,7 +2353,7 @@ public class CPPSemantics {
 					numArgs--;
 
 				boolean ok;
-				if (numArgs-packExpansionCount > numPars) {
+				if (numArgs - packExpansionCount > numPars) {
 					// More arguments than parameters --> need ellipsis or parameter pack
 					ok= fn.takesVarArgs() || fn.hasParameterPack();
 				} else {
@@ -2437,8 +2437,8 @@ public class CPPSemantics {
 			return CPPDeferredFunction.createForCandidates(fns);
 		}
 
-		IFunction[] ambiguousFunctions= null;   // ambiguity, 2 functions are equally good
-		FunctionCost bestFnCost = null;		    // the cost of the best function
+		IFunction[] ambiguousFunctions= null;   // Ambiguity, 2 functions are equally good.
+		FunctionCost bestFnCost = null;		    // The cost of the best function.
 
 		// Loop over all functions
 		List<FunctionCost> potentialCosts= null;

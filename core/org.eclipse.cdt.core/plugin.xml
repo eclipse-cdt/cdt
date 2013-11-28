@@ -43,6 +43,7 @@
    <extension-point id="CIndex" name="%CIndex.name" schema="schema/CIndex.exsd"/>
    <extension-point id="externalSettingsProvider" name="%externalSettingsProvider.name" schema="schema/externalSettingsProvider.exsd"/>
    <extension-point id="tagger" name="%tagger.name" schema="schema/tagger.exsd"/>
+   <extension-point id="PDOMASTProcessor" name="%PDOMASTProcessor.name" schema="schema/PDOMASTProcessor.exsd"/>
 <!-- =================================================================================== -->
 <!-- CProjectDescriptionStorage provides addition types of project description storage      -->
 <!-- =================================================================================== -->

@@ -56,8 +56,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * This class represents a collection of symbols that can be linked together at
- * link time. These are generally global symbols specific to a given language.
+ * The top-level node in the PDOM storage format.  A linkage is a collection of nodes
+ * that can be linked with references.  Several linkages can be created for an input
+ * AST.
+ *
+ * TODO Move this to a public interface and discuss the extension point (that already
+ *      exists).
  */
 public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage, IIndexBindingConstants {
 	// Record offsets.
@@ -84,13 +88,13 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		fDatabase= pdom.getDB();
 	}
 
-	protected PDOMLinkage(PDOM pdom, String languageId, char[] name) throws CoreException {
+	protected PDOMLinkage(PDOM pdom, String linkageID, char[] name) throws CoreException {
 		super(pdom.getDB(), name);
 		final Database db= pdom.getDB();
 
 		fPDOM= pdom;
 		fDatabase= db;
-		db.putRecPtr(record + ID_OFFSET, db.newString(languageId).getRecord());
+		db.putRecPtr(record + ID_OFFSET, db.newString(linkageID).getRecord());
 		pdom.insertLinkage(this);
 	}
 	

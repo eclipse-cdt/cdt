@@ -150,9 +150,6 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			fSource= null;
 		}
 
-		/*
-		 * @see org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable#runOnAST(IASTTranslationUnit)
-		 */
 		@Override
 		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 			if (ast != null) {
@@ -389,10 +386,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				}
 				String source= buffer.getDocument().get(sourceStart, sourceEnd - sourceStart);
 				return source;
-
 			} catch (BadLocationException e) {
-				// Ignore - should not happen anyway
-				if (DEBUG) e.printStackTrace();
+				CUIPlugin.log(e);
 			} finally {
 				mgr.disconnect(location, LocationKind.LOCATION, fMonitor);
 			}
@@ -408,12 +403,10 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 *     otherwise {@code null}.
 		 */
 		private String computeHoverForDeclaration(IASTName name) {
-			ICPPASTDeclarator declarator =
-					CPPVisitor.findAncestorWithType(name, ICPPASTDeclarator.class);
+			ICPPASTDeclarator declarator = CPPVisitor.findAncestorWithType(name, ICPPASTDeclarator.class);
 			if (declarator == null)
 				return null;
-			IASTDeclaration declaration =
-					CPPVisitor.findAncestorWithType(declarator, IASTDeclaration.class);
+			IASTDeclaration declaration = CPPVisitor.findAncestorWithType(declarator, IASTDeclaration.class);
 			IASTDeclSpecifier declSpec = null;
 			if (declaration instanceof IASTSimpleDeclaration) {
 				declSpec = ((IASTSimpleDeclaration) declaration).getDeclSpecifier();
@@ -672,9 +665,6 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		super();
 	}
 
-	/*
-	 * @see ITextHover#getHoverInfo(ITextViewer, IRegion)
-	 */
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		IEditorPart editor = getEditor();
@@ -862,10 +852,6 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		return keywords.contains(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
-	 * @since 3.0
-	 */
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
@@ -881,10 +867,6 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		};
 	}
 
-	/*
-	 * @see IInformationProviderExtension2#getInformationPresenterControlCreator()
-	 * @since 3.0
-	 */
 	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {

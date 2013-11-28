@@ -31,14 +31,14 @@ public abstract class DeclarationGenerator {
 	}
 	
 	/**
-	 * Creates a new {@link IASTDeclSpecifier}DeclSpecifier for a given {@link IType}.
+	 * Creates a new {@link IASTDeclSpecifier} for a given {@link IType}.
 	 * @param type the type to describe
 	 * @return the generated declaration specifier
 	 */
 	public abstract IASTDeclSpecifier createDeclSpecFromType(IType type);
 
 	/**
-	 * Creates a new {@link IASTDeclarator}Declarator for a given  {@link IType}.
+	 * Creates a new {@link IASTDeclarator} for a given {@link IType}.
 	 * @param type the type to describe
 	 * @param name the name for the declarator
 	 * @return the generated declarator

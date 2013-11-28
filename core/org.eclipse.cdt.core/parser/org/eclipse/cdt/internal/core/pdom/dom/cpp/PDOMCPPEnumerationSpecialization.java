@@ -7,6 +7,7 @@
  *
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -245,6 +246,10 @@ class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
 
 	@Override
 	public IEnumerator specializeEnumerator(IEnumerator enumerator) {
+		if (enumerator instanceof ICPPSpecialization && ((ICPPSpecialization) enumerator).getOwner() == this) {
+			return enumerator;
+		}
+
 		// The specialized enumerators are already computed, just need to look up the right one.
 		IEnumerator[] unspecializedEnumerators = getSpecializedBinding().getEnumerators();
 		for (int i = 0; i < unspecializedEnumerators.length; ++i) {

@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -39,6 +40,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.index.IPDOMASTProcessor;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -1196,7 +1198,19 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 		FileInAST[] fileKeys= orderedFileKeys.toArray(new FileInAST[orderedFileKeys.size()]);
 		try {
-			addSymbols(ast, fileKeys, fIndex, false, ctx, fTodoTaskUpdater, pm);
+			// The default processing is handled by the indexer task.
+			PDOMWriter.Data data = new PDOMWriter.Data(ast, fileKeys, fIndex);
+			int storageLinkageID = process(ast, data);
+			if (storageLinkageID != ILinkage.NO_LINKAGE_ID)
+				addSymbols(data, storageLinkageID, ctx, fTodoTaskUpdater, pm);
+
+			// Contributed processors now have an opportunity to examine the AST.
+			for(IPDOMASTProcessor processor : PDOMASTProcessorManager.getProcessors(ast)) {
+				data = new PDOMWriter.Data(ast, fileKeys, fIndex);
+				storageLinkageID = processor.process(ast, data);
+				if (storageLinkageID != ILinkage.NO_LINKAGE_ID)
+					addSymbols(data, storageLinkageID, ctx, fTodoTaskUpdater, pm);
+			}
 		} catch (CoreException e) {
 			// Avoid parsing files again, that caused an exception to be thrown.
 			withdrawRequests(linkageID, fileKeys);

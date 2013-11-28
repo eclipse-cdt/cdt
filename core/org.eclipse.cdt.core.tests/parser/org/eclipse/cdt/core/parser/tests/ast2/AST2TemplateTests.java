@@ -4999,6 +4999,16 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template <typename... T>
+	//	struct A {
+	//	  static int waldo(T... p, int q);
+	//	};
+	//
+	//	int x = A<>::waldo(0);
+	public void testVariadicTemplateWithNoArguments_422700() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	struct Test {
 	//		void Update() {}
 	//	};

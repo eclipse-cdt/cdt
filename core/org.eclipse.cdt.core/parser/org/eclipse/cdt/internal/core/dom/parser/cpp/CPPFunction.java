@@ -43,7 +43,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -602,19 +601,18 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	}
 
 	public static int getRequiredArgumentCount(ICPPParameter[] pars) {
-		int result= pars.length;
-		while (result > 0) {
-			final ICPPParameter p = pars[result - 1];
+		int result = pars.length;
+		for (int i = pars.length; --i >= 0;) {
+			final ICPPParameter p = pars[i];
 			if (p.hasDefaultValue() || p.isParameterPack()) {
 				result--;
 			} else {
 				if (pars.length == 1 && SemanticUtil.isVoidType(p.getType())) {
 					return 0;
 				}
-				return result;
 			}
 		}
-		return 0;
+		return result;
 	}
 
 	@Override

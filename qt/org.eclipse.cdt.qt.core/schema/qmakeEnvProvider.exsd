@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.qt.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.cdt.qt.core" id="qmakeEnvProvider" name="QMake Environment Provider"/>
+      </appinfo>
+      <documentation>
+         This extension point allows to provide environment for qmake cmd-line tool execution.
+      </documentation>
+   </annotation>
+
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="qmakeEnvProvider" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="qmakeEnvProvider">
+      <complexType>
+         <sequence>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Implementation of QMake environment provider which is used to determinate environment for running QMake.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.qt.core.index.IQMakeEnvProvider"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="integer" default="0">
+            <annotation>
+               <documentation>
+                  Priority of QMake environment provider. Less number means higher priority. Default priority is 0.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         8.2
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         The following is an example of a qmakeEnvProvider contribution:
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension
+    point=&quot;org.eclipse.cdt.qt.core.qmakeEnvProvider&quot;
+    id=&quot;example&quot;
+    name=&quot;Example QMake Env Provider Extension&quot;&gt;
+    &lt;qmakeEnvProvider
+        class=&quot;com.example.internal.ExampleProvider&quot;&gt;
+        &lt;enablement&gt;
+            &lt;with variable=&quot;projectNatures&quot;&gt;
+                &lt;iterate operator=&quot;or&quot;&gt;
+                    &lt;equals value=&quot;com.example.my-nature&quot;/&gt;
+                &lt;/iterate&gt;
+            &lt;/with&gt;
+        &lt;/enablement&gt;
+    &lt;/qmakeEnvProvider&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         The contributed class must implement &lt;code&gt;org.eclipse.cdt.qt.core.index.IQMakeEnvProvider&lt;/code&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright (c) 2013 QNX Software Systems and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+      </documentation>
+   </annotation>
+
+</schema>

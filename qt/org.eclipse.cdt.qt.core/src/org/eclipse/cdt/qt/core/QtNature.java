@@ -16,7 +16,16 @@ import org.eclipse.core.runtime.CoreException;
 
 public class QtNature implements IProjectNature {
 	public static final String ID = "org.eclipse.cdt.qt.core.qtNature";
-	
+
+	public static boolean hasNature(IProject project) {
+		try {
+			return project.hasNature(ID);
+		} catch (CoreException e) {
+			QtPlugin.log(e);
+			return false;
+		}
+	}
+
 	private IProject project;
 
 	@Override
@@ -36,5 +45,5 @@ public class QtNature implements IProjectNature {
 	public void setProject(IProject project) {
 		this.project = project;
 	}
-	
+
 }

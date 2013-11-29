@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
+import org.eclipse.cdt.codan.internal.core.FilterRegistry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -30,6 +31,7 @@ public abstract class AbstractChecker implements IChecker {
 	 */
 	private ICheckerInvocationContext context;
 	private IProblemReporter problemReporter;
+	private IProblemFilter filter;
 
 	/**
 	 * Default constructor
@@ -58,7 +60,7 @@ public abstract class AbstractChecker implements IChecker {
 	 *        internationalization)
 	 */
 	public void reportProblem(String id, IFile file, int lineNumber, Object... args) {
-		getProblemReporter().reportProblem(id, createProblemLocation(file, lineNumber), args);
+		reportProblem(id, createProblemLocation(file, lineNumber), args);
 	}
 
 	/**
@@ -111,7 +113,7 @@ public abstract class AbstractChecker implements IChecker {
 	 *        - line
 	 */
 	public void reportProblem(String id, IFile file, int lineNumber) {
-		getProblemReporter().reportProblem(id, createProblemLocation(file, lineNumber), new Object[] {});
+		reportProblem(id, file, lineNumber, new Object[]{});
 	}
 
 	/**
@@ -178,7 +180,9 @@ public abstract class AbstractChecker implements IChecker {
 	 * @param args - extra problem arguments
 	 */
 	public void reportProblem(String problemId, IProblemLocation loc, Object... args) {
-		getProblemReporter().reportProblem(problemId, loc, args);
+		if(!filter.shouldIgnore(problemId, loc)){
+			getProblemReporter().reportProblem(problemId, loc, args);
+		}
 	}
 
 	/**
@@ -205,6 +209,8 @@ public abstract class AbstractChecker implements IChecker {
 	@Override
 	public void before(IResource resource) {
 		IProblemReporter reporter = CodanRuntime.getInstance().getProblemReporter();
+		filter = FilterRegistry.getInstance().getActiveFilter();
+		filter.before(resource);
 		problemReporter = reporter;
 		if (reporter instanceof IProblemReporterSessionPersistent) {
 			// Create session problem reporter
@@ -221,6 +227,7 @@ public abstract class AbstractChecker implements IChecker {
 	 */
 	@Override
 	public void after(IResource resource) {
+		filter.after(resource);
 		if (problemReporter instanceof IProblemReporterSessionPersistent) {
 			// Delete general markers.
 			((IProblemReporterSessionPersistent) problemReporter).done();

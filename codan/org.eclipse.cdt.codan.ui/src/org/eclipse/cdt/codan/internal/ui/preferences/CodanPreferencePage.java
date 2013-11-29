@@ -9,6 +9,7 @@
  *     Alena Laskavaia  - initial API and implementation
  *     Alex Ruiz (Google)
  *     Sergey Prigogin (Google) 
+ *     Andreas Muelder (itemis)
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
@@ -28,6 +30,8 @@ import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
 import org.eclipse.cdt.codan.internal.core.CodanRunner;
+import org.eclipse.cdt.codan.internal.core.FilterRegistry;
+import org.eclipse.cdt.codan.internal.core.FilterRegistry.ProblemFilterDescriptor;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.cdt.codan.internal.ui.dialogs.CustomizeProblemDialog;
@@ -54,6 +58,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -78,13 +83,18 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 /**
- * This class represents a preference page that is contributed to the Preferences dialog.
- * By subclassing {@code FieldEditorPreferencePage}, we can use built-in field support in
- * JFace to create a page that is both small and knows how to save, restore and apply its
+ * This class represents a preference page that is contributed to the
+ * Preferences dialog.
+ * By subclassing {@code FieldEditorPreferencePage}, we can use built-in field
+ * support in
+ * JFace to create a page that is both small and knows how to save, restore and
+ * apply its
  * values.
  * <p>
- * This page is used to modify preferences only. They are stored in the preference store that
- * belongs to the main plug-in class. That way, preferences can be accessed directly via
+ * This page is used to modify preferences only. They are stored in the
+ * preference store that
+ * belongs to the main plug-in class. That way, preferences can be accessed
+ * directly via
  * the preference store.
  * </p>
  */
@@ -95,6 +105,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 	private ArrayList<IProblem> selectedProblems;
 	private Button infoButton;
 	private ProblemsTreeEditor checkedTreeEditor;
+	private ComboFieldEditor comboFieldEditor;
 
 	public CodanPreferencePage() {
 		super(GRID);
@@ -131,6 +142,9 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 	 */
 	@Override
 	public void createFieldEditors() {
+		comboFieldEditor = new ComboFieldEditor(FilterRegistry.FILTER_PREFERENCE, CodanUIMessages.CodanPreferencePage_ProblemsFilter,
+				getFilterEditorInput(), getFieldEditorParent());
+		addField(comboFieldEditor);
 		checkedTreeEditor = new ProblemsTreeEditor(getFieldEditorParent(), profile);
 		addField(checkedTreeEditor);
 		checkedTreeEditor.getTreeViewer().addSelectionChangedListener(problemSelectionListener);
@@ -155,6 +169,16 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 		Composite comp = (Composite) super.createContents(parent);
 		createInfoControl(comp);
 		return comp;
+	}
+
+	protected String[][] getFilterEditorInput() {
+		List<String[]> result = new ArrayList<String[]>();
+		Iterator<ProblemFilterDescriptor> iterator = FilterRegistry.getInstance().getFilters().iterator();
+		while (iterator.hasNext()) {
+			ProblemFilterDescriptor next = iterator.next();
+			result.add(new String[] { next.getName(), next.getId() });
+		}
+		return result.toArray(new String[][] {});
 	}
 
 	private void createInfoControl(Composite comp) {
@@ -262,7 +286,6 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 				}
 			}
 		}
-
 		Job job = new Job(CodanUIMessages.CodanPreferencePage_Update_markers) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -270,32 +293,28 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 				removeMarkersForDisabledProblems(resource, submonitor.newChild(1));
 				if (filesToUpdate.isEmpty())
 					return Status.OK_STATUS;
-
 				// Run checkers on the currently open files to update the problem markers.
 				for (final IFile file : filesToUpdate) {
 					ITranslationUnit tu = CoreModelUtil.findTranslationUnit(file);
 					if (tu != null) {
 						tu = CModelUtil.toWorkingCopy(tu);
-						ASTProvider.getASTProvider().runOnAST(
-								tu, ASTProvider.WAIT_ACTIVE_ONLY, submonitor.newChild(1),
-								new ASTRunnable() {
-									@Override
-									public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
-										if (ast != null) {
-											CodanRunner.runInEditor(ast, file, submonitor.newChild(1));
-										} else {
-											CodanRunner.processResource(file, CheckerLaunchMode.RUN_ON_FILE_OPEN,
-													submonitor.newChild(1));
-										}
-										return Status.OK_STATUS;
-									}
-								});
+						ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_ACTIVE_ONLY, submonitor.newChild(1), new ASTRunnable() {
+							@Override
+							public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
+								if (ast != null) {
+									CodanRunner.runInEditor(ast, file, submonitor.newChild(1));
+								} else {
+									CodanRunner.processResource(file, CheckerLaunchMode.RUN_ON_FILE_OPEN, submonitor.newChild(1));
+								}
+								return Status.OK_STATUS;
+							}
+						});
 					}
 				}
 				return Status.OK_STATUS;
 			}
 		};
-        IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
+		IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
 		job.setRule(ruleFactory.markerRule(resource));
 		job.setSystem(true);
 		job.schedule();
@@ -317,8 +336,8 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 		}
 	}
 
-	private static void removeMarkersForDisabledProblems(CheckersRegistry chegistry,
-			Set<String> markerTypes, IResource resource, IProgressMonitor monitor) throws CoreException {
+	private static void removeMarkersForDisabledProblems(CheckersRegistry chegistry, Set<String> markerTypes, IResource resource,
+			IProgressMonitor monitor) throws CoreException {
 		if (!resource.isAccessible()) {
 			return;
 		}
@@ -328,7 +347,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 		}
 		int numChildren = children == null ? 0 : children.length;
 		int childWeight = 10;
-        SubMonitor progress = SubMonitor.convert(monitor, 1 + numChildren * childWeight);
+		SubMonitor progress = SubMonitor.convert(monitor, 1 + numChildren * childWeight);
 		IProblemProfile resourceProfile = null;
 		for (String markerType : markerTypes) {
 			IMarker[] markers = resource.findMarkers(markerType, false, IResource.DEPTH_ZERO);
@@ -348,8 +367,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 			for (IResource child : children) {
 				if (monitor.isCanceled())
 					return;
-				removeMarkersForDisabledProblems(chegistry, markerTypes, child,
-						progress.newChild(childWeight));
+				removeMarkersForDisabledProblems(chegistry, markerTypes, child, progress.newChild(childWeight));
 			}
 		}
 	}

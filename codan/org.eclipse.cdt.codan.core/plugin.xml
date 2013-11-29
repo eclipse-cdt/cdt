@@ -3,6 +3,7 @@
 <plugin>
    <extension-point id="checkers" name="%codeAnalysisCheckersExtensionPoint" schema="schema/checkers.exsd"/>
    <extension-point id="checkerEnablement" name="%checkerEnablementExtensionPoint" schema="schema/checkerEnablement.exsd"/>
+   <extension-point id="filters" name="%filtersExtensionPoint" schema="schema/filters.exsd"/>
 
    <extension
          id="codanBuilder"
@@ -104,6 +105,19 @@
            </run>
         </application>
      </extension>
+      <extension
+            point="org.eclipse.cdt.codan.core.filters">
+         <filter
+               class="org.eclipse.cdt.codan.internal.core.model.CommentBasedProblemFilter"
+               id="org.eclipse.cdt.codan.internal.core.model.CommentBasedProblemFilter"
+               name="%filter.comments">
+         </filter>
+         <filter
+               class="org.eclipse.cdt.codan.internal.core.model.NoProblemsFilter"
+               id="org.eclipse.cdt.codan.internal.core.model.NoProblemsFilter"
+               name="%filter.none">
+         </filter>
+      </extension>
  
    
 

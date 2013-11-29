@@ -39,6 +39,12 @@ public interface IQObject extends IQElement {
 	public List<IQObject> getBases();
 
 	/**
+	 * Examines the Q_CLASSINFO expansions to return the value associated with the given
+	 * key.  Returns null if there isn't a Q_CLASSINFO for the given key.
+	 */
+	public String getClassInfo(String key);
+
+	/**
 	 * Returns an unsorted collection of all Q_ENUMS macro expansions within this QObject's class
 	 * declaration.
 	 * @see IQEnum

@@ -48,6 +48,41 @@ public class QObjectTests extends BaseQtTestCase {
 		assertNull(qobj_D2);
 	}
 
+    // #include "junit-QObject.hh"
+    // class B : public QObject
+    // {
+    // Q_OBJECT
+    // Q_CLASSINFO( "key1", "value1" )
+    // Q_CLASSINFO( "key2", "value\"2" )
+    // public:
+    //     bool isAllowed() const { return false; }
+    // };
+    // class D : public B
+    // {
+    // Q_OBJECT
+    // Q_CLASSINFO( "key2", "overridden value" )
+    // public:
+    //     bool isAllowed() const { return false; }
+    // };
+	public void testClassInfos() throws Exception {
+		loadComment("classinfos.hh");
+
+		QtIndex qtIndex = QtIndex.getIndex(fProject);
+		assertNotNull(qtIndex);
+
+		IQObject qobj_b = qtIndex.findQObject(new String[]{ "B" });
+		if (!isIndexOk("B", qobj_b))
+			return;
+		assertNotNull(qobj_b);
+		assertEquals("value1", qobj_b.getClassInfo("key1"));
+		assertEquals("value\\\"2", qobj_b.getClassInfo("key2"));
+
+		IQObject qobj_d = qtIndex.findQObject(new String[]{ "D" });
+		assertNotNull(qobj_d);
+		assertEquals("value1", qobj_d.getClassInfo("key1")); // inherited
+		assertEquals("overridden value", qobj_d.getClassInfo("key2"));
+	}
+
 	// #include "junit-QObject.hh"
 	// template <typename T> class QList {};
 	// class QString {};

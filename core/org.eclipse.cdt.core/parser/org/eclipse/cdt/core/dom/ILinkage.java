@@ -28,6 +28,11 @@ public interface ILinkage {
 	 */
 	final static String OBJC_LINKAGE_NAME= "Objective-C"; //$NON-NLS-1$
 
+	/**
+	 * @since 5.6
+	 */
+	final static String QT_LINKAGE_NAME= "Qt"; //$NON-NLS-1$
+
 	final static int NO_LINKAGE_ID= 0;
 	final static int CPP_LINKAGE_ID= 1;
 	final static int C_LINKAGE_ID= 2;
@@ -37,7 +42,12 @@ public interface ILinkage {
 	 */
 	final static int OBJC_LINKAGE_ID= 4;
 
-	
+	/**
+	 * @since 5.6
+	 */
+	final static int QT_LINKAGE_ID= 5;
+
+
 	/**
 	 * Additional linkage ids may be added in future.
 	 */

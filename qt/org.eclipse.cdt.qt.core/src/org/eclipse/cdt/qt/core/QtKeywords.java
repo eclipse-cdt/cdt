@@ -13,11 +13,27 @@ package org.eclipse.cdt.qt.core;
  */
 public class QtKeywords {
 	public static final String CONNECT = "connect";
+	public static final String DISCONNECT = "disconnect";
+	public static final String Q_CLASSINFO = "Q_CLASSINFO";
+	public static final String Q_DECLARE_FLAGS = "Q_DECLARE_FLAGS";
+	public static final String Q_ENUMS = "Q_ENUMS";
+	public static final String Q_FLAGS = "Q_FLAGS";
+	public static final String Q_GADGET = "Q_GADGET";
+	public static final String Q_INVOKABLE = "Q_INVOKABLE";
+	public static final String Q_OBJECT = "Q_OBJECT";
+	public static final String Q_PROPERTY = "Q_PROPERTY";
+	public static final String Q_REVISION = "Q_REVISION";
 	public static final String Q_SIGNAL = "Q_SIGNAL";
 	public static final String Q_SIGNALS = "Q_SIGNALS";
 	public static final String Q_SLOT = "Q_SLOT";
 	public static final String Q_SLOTS = "Q_SLOTS";
+	public static final String QMETAMETHOD = "QMetaMethod";
+	public static final String QML_ATTACHED_PROPERTIES = "qmlAttachedProperties";
+	public static final String QML_REGISTER_TYPE = "qmlRegisterType";
+	public static final String QML_REGISTER_UNCREATABLE_TYPE = "qmlRegisterUncreatableType";
 	public static final String QOBJECT = "QObject";
+	public static final String SIGNAL = "SIGNAL";
 	public static final String SIGNALS = "signals";
+	public static final String SLOT = "SLOT";
 	public static final String SLOTS = "slots";
 }

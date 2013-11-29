@@ -31,6 +31,7 @@ public class CodanUIMessages extends NLS {
 	public static String CodanPreferencePage_NoInfo;
 	public static String CodanPreferencePage_Parameters;
 	public static String CodanPreferencePage_Update_markers;
+	public static String CodanPreferencePage_ProblemsFilter;
 	public static String ProblemsTreeEditor_NameColumn;
 	public static String ProblemsTreeEditor_Problems;
 	public static String ProblemsTreeEditor_SeverityColumn;

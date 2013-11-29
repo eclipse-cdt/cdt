@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.cdt.codan.ui" id="checkers" name="Code Analysis Checkers"/>
       </appinfo>
       <documentation>
-         Define chckers for Code Analysis framework.
+         Define checkers for Code Analysis framework.
       </documentation>
    </annotation>
 
@@ -81,7 +81,7 @@ Sets id, name and class that implements checker
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  User Friendly name of the chcker, currently not used. Will default to a class name.
+                  User Friendly name of the checker, currently not used. Will default to a class name.
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>

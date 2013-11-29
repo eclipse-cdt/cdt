@@ -21,8 +21,7 @@
          <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
          <toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base"/>
          <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
-         <toolChain
-               id="cdt.managedbuild.toolchain.llvm.clang.macosx.base">
+         <toolChain id="cdt.managedbuild.toolchain.llvm.clang.macosx.base">
          </toolChain>
       </template>
    </extension>
@@ -53,12 +52,11 @@
       </runtime>
    </extension>
     <extension
-        point="org.eclipse.cdt.core.tagger"
-        id="qt.signalslots"
-        name="Qt Signal/Slot Tagger">
-        <bindingTagger
-            local-id="signalslot.tagger"
-            class="org.eclipse.cdt.qt.internal.core.QtSignalSlotTagger">
+        point="org.eclipse.cdt.core.PDOMASTProcessor"
+        id="qt.PDOMASTProcessor"
+        name="Qt PDOM AST Processor">
+        <processor
+            class="org.eclipse.cdt.qt.internal.core.pdom.QtPDOMASTProcessor">
             <enablement>
                 <with variable="projectNatures">
                     <iterate operator="or">
@@ -66,6 +64,11 @@
                     </iterate>
                 </with>
             </enablement>
-        </bindingTagger>            
+        </processor>
+    </extension>
+    <extension point="org.eclipse.cdt.core.language">
+        <pdomLinkageFactory
+            id="Qt"
+            class="org.eclipse.cdt.qt.internal.core.pdom.PDOMQtLinkageFactory"/>
     </extension>
 </plugin>

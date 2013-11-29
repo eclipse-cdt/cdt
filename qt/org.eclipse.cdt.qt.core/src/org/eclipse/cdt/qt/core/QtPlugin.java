@@ -1,11 +1,9 @@
 package org.eclipse.cdt.qt.core;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.internal.qt.core.index.QMakeProjectInfo;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
-import org.osgi.framework.BundleContext;
 
 public class QtPlugin extends Plugin {
 
@@ -18,62 +16,50 @@ public class QtPlugin extends Plugin {
 	public static final String QMAKE_ENV_PROVIDER_EXT_POINT_NAME = "qmakeEnvProvider"; //$NON-NLS-1$
 	public static final String QMAKE_ENV_PROVIDER_ID = ID + "." + QMAKE_ENV_PROVIDER_EXT_POINT_NAME; //$NON-NLS-1$
 
-	private static QtPlugin INSTANCE;
-    private static BundleContext context;
+    /**
+     * Instances of QtIndex are cached within the session properties of the project from
+     * which they are created.  This name is used to store the property.
+     */
+    public static final QualifiedName QTINDEX_PROP_NAME = new QualifiedName(ID, "qtindex");
 
-	static BundleContext getContext() {
-		return context;
+    private static QtPlugin instance;
+
+    public static QtPlugin getDefault() {
+    	return instance;
+    }
+
+    public QtPlugin() {
+    	instance = this;
+    }
+
+	public static IStatus info(String msg) {
+		return new Status(IStatus.INFO, ID, msg);
 	}
 
-	static QtPlugin getDefault() {
-		return INSTANCE;
+	public static IStatus error(String msg) {
+		return error(msg, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 */
-	@Override
-    public void start(BundleContext bundleContext) throws Exception {
-		INSTANCE = this;
-		QtPlugin.context = bundleContext;
-		QMakeProjectInfo.start();
+	public static IStatus error(String msg, Throwable e) {
+		return new Status(IStatus.ERROR, ID, msg, e);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
-	@Override
-    public void stop(BundleContext bundleContext) throws Exception {
-		QMakeProjectInfo.stop();
-		QtPlugin.context = null;
-		INSTANCE = null;
+	public static IStatus log(String e) {
+		return log(IStatus.INFO, e, null);
 	}
 
-	public static void log(String e) {
-		log(IStatus.INFO, e, null);
+	public static IStatus log(Throwable e) {
+		String msg = e.getMessage();
+		return msg == null ? log("Error", e) : log("Error: " + msg, e);
 	}
 
-	public static void log(Throwable e) {
-		String msg= e.getMessage();
-		if (msg == null) {
-			log("Error", e); //$NON-NLS-1$
-		} else {
-			log("Error: " + msg, e); //$NON-NLS-1$
-		}
+	public static IStatus log(String message, Throwable e) {
+		return log(IStatus.ERROR, message, e);
 	}
 
-	public static void log(String message, Throwable e) {
-		Throwable nestedException;
-		if (e instanceof CModelException && (nestedException = ((CModelException)e).getException()) != null) {
-			e = nestedException;
-		}
-		log(IStatus.ERROR, message, e);
+	public static IStatus log(int code, String msg, Throwable e) {
+		IStatus status = new Status(code, ID, msg, e);
+		instance.getLog().log(status);
+		return status;
 	}
-
-	public static void log(int code, String msg, Throwable e) {
-		getDefault().getLog().log(new Status(code, ID, msg, e));
-	}
-
 }

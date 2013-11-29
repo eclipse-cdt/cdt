@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.eclipse.cdt.qt.ui;
+package org.eclipse.cdt.qt.tests;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -13,18 +13,18 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class QtUIPlugin extends AbstractUIPlugin {
+public class QtTestPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.cdt.qt.ui"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.cdt.qt.ui.tests"; //$NON-NLS-1$
 
 	// The shared instance
-	private static QtUIPlugin plugin;
+	private static QtTestPlugin plugin;
 
 	/**
 	 * The constructor
 	 */
-	public QtUIPlugin() {
+	public QtTestPlugin() {
 	}
 
 	/*
@@ -52,7 +52,7 @@ public class QtUIPlugin extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static QtUIPlugin getDefault() {
+	public static QtTestPlugin getDefault() {
 		return plugin;
 	}
 

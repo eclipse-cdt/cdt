@@ -15,6 +15,7 @@ public class AllQtTests extends TestSuite {
 	public static Test suite() throws Exception {
 		return
 			new TestSuite(
+				SimpleTests.class,
 				QObjectTests.class,
 				QtIndexTests.class);
 	}

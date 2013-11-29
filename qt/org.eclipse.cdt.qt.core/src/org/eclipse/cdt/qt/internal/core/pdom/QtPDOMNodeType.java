@@ -26,7 +26,7 @@ public enum QtPDOMNodeType {
 	 * <p>
 	 * The version is needed because ordinals for these enumerators are written to the file.
 	 */
-	public static final int VERSION = 1;
+	public static final int VERSION = 2;
 
 	public static QtPDOMNodeType forType(int version, int type) {
 		// Nothing has been deleted or replaced yet, so the version is ignored.

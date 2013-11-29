@@ -7,6 +7,9 @@
  */
 package org.eclipse.cdt.qt.internal.core.pdom;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -25,6 +28,7 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
 public class QObjectName extends ASTDelegatedName {
 
 	private final ICPPASTCompositeTypeSpecifier spec;
+	private final Map<String, String> classInfos = new LinkedHashMap<String, String>();
 
 	private IASTNode parent;
 	private ASTNodeProperty propertyInParent;
@@ -34,6 +38,14 @@ public class QObjectName extends ASTDelegatedName {
 		this.spec = spec;
 		this.parent = delegate.getParent();
 		this.propertyInParent = delegate.getPropertyInParent();
+	}
+
+	public Map<String, String> getClassInfos() {
+		return classInfos;
+	}
+
+	public String addClassInfo(String key, String value) {
+		return classInfos.put(key, value);
 	}
 
 	@Override

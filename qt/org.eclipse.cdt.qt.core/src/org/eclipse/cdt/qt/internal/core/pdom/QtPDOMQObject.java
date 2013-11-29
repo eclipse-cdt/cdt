@@ -9,8 +9,11 @@ package org.eclipse.cdt.qt.internal.core.pdom;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -18,6 +21,8 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -37,6 +42,7 @@ public class QtPDOMQObject extends QtPDOMBinding implements ICompositeType {
 	private static int offsetInitializer = QtPDOMBinding.Field.Last.offset;
 	protected static enum Field {
 		Children(4 /* From PDOMNodeLinkedList.RECORD_SIZE, which is protected */),
+		ClassInfos(Database.PTR_SIZE),
 		Last(0);
 
 		private final int offset;
@@ -61,6 +67,76 @@ public class QtPDOMQObject extends QtPDOMBinding implements ICompositeType {
 	public QtPDOMQObject(QtPDOMLinkage linkage, QtBinding binding) throws CoreException {
 		super(linkage, null, binding);
 		children = new PDOMNodeLinkedList(linkage, Field.Children.getRecord(record));
+
+		IASTName qtName = binding.getQtName();
+		if (qtName instanceof QObjectName)
+			setClassInfos(((QObjectName) qtName).getClassInfos());
+	}
+
+	public void setClassInfos(Map<String, String> classInfos) throws CoreException {
+
+		// ClassInfo was not supported before version 2.
+		if (getQtLinkage().getVersion() < 2)
+			return;
+
+		// Delete all entries that are currently in the list.
+		long block = getDB().getRecPtr(Field.ClassInfos.getRecord(record));
+		if (block != 0) {
+			int numEntries = getDB().getInt(block);
+			for(long b = block + Database.INT_SIZE, end = block + (numEntries * 2 * Database.PTR_SIZE); b < end; b += Database.PTR_SIZE)
+				getDB().getString(b).delete();
+			getDB().free(block);
+		}
+
+		// Clear the pointer if the incoming map is empty.
+		if (classInfos.isEmpty()) {
+			getDB().putRecPtr(Field.ClassInfos.getRecord(record), 0);
+			return;
+		}
+
+		// Otherwise create a block large enough to hold the incoming list and then populate it.
+		block = getDB().malloc(Database.INT_SIZE + (classInfos.size() * 2 * Database.PTR_SIZE));
+		getDB().putInt(block, classInfos.size());
+
+		long b = block + Database.INT_SIZE;
+		for(Map.Entry<String, String> classInfo : classInfos.entrySet()) {
+			IString key = getDB().newString(classInfo.getKey());
+			IString val = getDB().newString(classInfo.getValue());
+
+			getDB().putRecPtr(b, key.getRecord()); b += Database.PTR_SIZE;
+			getDB().putRecPtr(b, val.getRecord()); b += Database.PTR_SIZE;
+		}
+
+		// Put the new block into the PDOM.
+		getDB().putRecPtr(Field.ClassInfos.getRecord(record), block);
+	}
+
+	public Map<String, String> getClassInfos() throws CoreException {
+		Map<String, String> classInfos = new LinkedHashMap<String, String>();
+
+		// ClassInfo was not supported before version 2.
+		if (getQtLinkage().getVersion() < 2)
+			return classInfos;
+
+		long block = getDB().getRecPtr(Field.ClassInfos.getRecord(record));
+		if (block != 0) {
+			int numEntries = getDB().getInt(block);
+			block += Database.INT_SIZE;
+
+			for(long end = block + (numEntries * 2 * Database.PTR_SIZE); block < end; /* in loop body */) {
+				long rec = getDB().getRecPtr(block);
+				IString key = getDB().getString(rec);
+				block += Database.PTR_SIZE;
+
+				rec = getDB().getRecPtr(block);
+				IString val = getDB().getString(rec);
+				block += Database.PTR_SIZE;
+
+				classInfos.put(key.getString(), val.getString());
+			}
+		}
+
+		return classInfos;
 	}
 
 	@Override

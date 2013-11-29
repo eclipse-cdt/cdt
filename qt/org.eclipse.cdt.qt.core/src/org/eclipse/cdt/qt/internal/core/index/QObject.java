@@ -10,6 +10,7 @@ package org.eclipse.cdt.qt.internal.core.index;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -25,6 +26,7 @@ public class QObject implements IQObject {
 	private final QtPDOMQObject pdomQObject;
 	private final List<IQObject> bases;
 	private final List<IQEnum> enums;
+	private final Map<String, String> classInfos;
 
 	public QObject(QtIndexImpl qtIndex, CDTIndex cdtIndex, QtPDOMQObject pdomQObject) throws CoreException {
 		this.name = pdomQObject.getName();
@@ -33,6 +35,8 @@ public class QObject implements IQObject {
 		this.bases = new ArrayList<IQObject>();
 		for(QtPDOMQObject base : pdomQObject.findBases())
 			this.bases.add(new QObject(qtIndex, cdtIndex, base));
+
+		this.classInfos = pdomQObject.getClassInfos();
 
 		this.enums = new ArrayList<IQEnum>();
 		for(IField field : pdomQObject.getFields())
@@ -55,6 +59,21 @@ public class QObject implements IQObject {
 	@Override
 	public List<IQObject> getBases() {
 		return bases;
+	}
+
+	@Override
+	public String getClassInfo(String key) {
+		String value = classInfos.get(key);
+		if (value != null)
+			return value;
+
+		for(IQObject base : bases) {
+			value = base.getClassInfo(key);
+			if (value != null)
+				return value;
+		}
+
+		return null;
 	}
 
 	@Override

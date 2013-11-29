@@ -41,6 +41,16 @@ public class QtASTVisitor extends ASTVisitor {
 
 	private static final Pattern declareFlagsRegex = Pattern.compile("^Q_DECLARE_FLAGS\\s*\\(\\s*([^\\s]+),\\s*([^\\s]+)\\s*\\)$");
 
+	/**
+	 * A regular expression for scanning the Q_CLASSINFO expansion and extracting the
+	 * expansion parameter key and value.  It provides the following capture groups:
+	 * <br>1 - the key
+	 * <br>2 - the value
+	 * <p>
+	 * The key must not have embedded quotes.
+	 */
+	private static final Pattern classInfoRegex = Pattern.compile("^Q_CLASSINFO\\s*\\(\\s*\"([^\"]+)\"\\s*,\\s*\"(.*)\"\\s*\\)$");
+
 	public QtASTVisitor(IIndexSymbols symbols, LocationMap locationMap) {
 		shouldVisitDeclSpecifiers = true;
 
@@ -140,6 +150,13 @@ public class QtASTVisitor extends ASTVisitor {
 					String flagName = m.group(1);
 					String enumName = m.group(2);
 					flagAliases.put(flagName, enumName);
+				}
+			} else if(QtKeywords.Q_CLASSINFO.equals(macroName)) {
+				Matcher m = classInfoRegex.matcher(expansion.getRawSignature());
+				if (m.matches()) {
+					String key = m.group(1);
+					String value = m.group(2);
+					qobjName.addClassInfo(key, value);
 				}
 			}
 		}

@@ -56,7 +56,7 @@ import org.eclipse.debug.core.ILaunch;
 
 public class FinalLaunchSequence extends ReflectionSequence {
 	// The launchConfiguration attributes
-	private Map<String, Object> fAttributes;
+	private final Map<String, Object> fAttributes;
 
 	private IGDBControl fCommandControl;
 	private IGDBBackend	fGDBBackend;
@@ -64,7 +64,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	private CommandFactory fCommandFactory;
 
 	private DsfServicesTracker fTracker;
-	private DsfSession fSession;
+	private final DsfSession fSession;
 
 	/**
 	 * @since 4.0
@@ -73,6 +73,22 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		super(session.getExecutor(), rm, LaunchMessages.getString("FinalLaunchSequence.0"), LaunchMessages.getString("FinalLaunchSequence.1"));     //$NON-NLS-1$ //$NON-NLS-2$
 		fSession = session;
 		fAttributes = attributes;
+	}
+
+	/**
+	 * Gets the DsfSession of this launch sequence.
+	 * @return the {@link DsfSession}
+	 */
+	protected DsfSession getDsfSession() {
+		return fSession;
+	}
+
+	/**
+	 * Gets the launch configuration attributes, as a {@link Map}.
+	 * @return the launch configuration attributes
+	 */
+	protected Map<String, Object> getAttributes() {
+		return fAttributes;
 	}
 
 	@Override

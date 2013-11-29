@@ -43,11 +43,9 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 
 	private IGDBControl fCommandControl;
 	private CommandFactory fCommandFactory;
-	private DsfSession fSession;
 
 	public FinalLaunchSequence_7_0(DsfSession session, Map<String, Object> attributes, RequestMonitorWithProgress rm) {
 		super(session, attributes, rm);
-		fSession = session;
 	}
 
 	@Override
@@ -75,7 +73,7 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 	 */
 	@Execute
 	public void stepInitializeFinalLaunchSequence_7_0(RequestMonitor rm) {
-		DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSession.getId());
+		DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), getDsfSession().getId());
 		fCommandControl = tracker.getService(IGDBControl.class);
 		tracker.dispose();
 

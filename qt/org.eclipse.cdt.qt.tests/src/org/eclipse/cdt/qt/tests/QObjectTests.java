@@ -10,6 +10,7 @@ package org.eclipse.cdt.qt.tests;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.cdt.qt.core.index.IQEnum;
 import org.eclipse.cdt.qt.core.index.IQObject;
 import org.eclipse.cdt.qt.core.index.QtIndex;
 
@@ -45,5 +46,133 @@ public class QObjectTests extends BaseQtTestCase {
 		// D2 is not a QObject because it doesn't expand the Q_OBJECT macro
 		IQObject qobj_D2 = qtIndex.findQObject(new String[]{ "D2" });
 		assertNull(qobj_D2);
+	}
+
+	// #include "junit-QObject.hh"
+	// template <typename T> class QList {};
+	// class QString {};
+	// class Q0 : public QObject
+	// {
+	// Q_OBJECT
+	// public:
+	//     enum EB { eb0 = 0xff };
+	// };
+	// class Q : public QObject
+	// {
+	// Q_OBJECT
+	//
+	// enum E0 { e0a, e0b };
+	//
+	// Q_ENUMS( E0 Q0::EB )
+	// Q_ENUMS( E1 )
+	//
+	// enum E1 { e1a, e1b = 2 };
+	// };
+	public void testEnums() throws Exception {
+		loadComment("qenums.hh");
+
+		QtIndex qtIndex = QtIndex.getIndex(fProject);
+		assertNotNull(qtIndex);
+
+		IQObject qobj = qtIndex.findQObject(new String[]{ "Q" });
+		if (!isIndexOk("Q", qobj))
+			return;
+		assertNotNull(qobj);
+
+		Collection<IQEnum> qEnums = qobj.getEnums();
+		assertNotNull(qEnums);
+		assertEquals(3, qEnums.size());
+		for(IQEnum qEnum : qEnums) {
+			String name = qEnum.getName();
+			assertFalse(qEnum.isFlag());
+			if ("E0".equals(name)) {
+				Collection<IQEnum.Enumerator> enumerators = qEnum.getEnumerators();
+				assertNotNull(enumerators);
+				assertEquals(2, enumerators.size());
+				for (IQEnum.Enumerator enumerator : enumerators) {
+					Long ordinal = enumerator.getOrdinal();
+					if (Long.valueOf(0).equals(ordinal))
+						assertEquals("e0a", enumerator.getName());
+					else if (Long.valueOf(1).equals(ordinal))
+						assertEquals("e0b", enumerator.getName());
+					else
+						fail("unexpected " + name + "::" + enumerator.getName() + " = " + String.valueOf(ordinal));
+				}
+			} else if("E1".equals(name)) {
+				Collection<IQEnum.Enumerator> enumerators = qEnum.getEnumerators();
+				assertNotNull(enumerators);
+				assertEquals(2, enumerators.size());
+				for (IQEnum.Enumerator enumerator : enumerators) {
+					Long ordinal = enumerator.getOrdinal();
+					if (Long.valueOf(0).equals(ordinal))
+						assertEquals("e1a", enumerator.getName());
+					else if (Long.valueOf(2).equals(ordinal))
+						assertEquals("e1b", enumerator.getName());
+					else
+						fail("unexpected " + name + "::" + enumerator.getName() + " = " + String.valueOf(ordinal));
+				}
+			} else if("Q0::EB".equals(name)) {
+				Collection<IQEnum.Enumerator> enumerators = qEnum.getEnumerators();
+				assertNotNull(enumerators);
+				assertEquals(1, enumerators.size());
+				for (IQEnum.Enumerator enumerator : enumerators) {
+					Long ordinal = enumerator.getOrdinal();
+					if (Long.valueOf(255).equals(ordinal))
+						assertEquals("eb0", enumerator.getName());
+					else
+						fail("unexpected " + name + "::" + enumerator.getName() + " = " + String.valueOf(ordinal));
+				}
+			} else {
+				fail("unexpected Q_ENUM " + name);
+			}
+		}
+	}
+
+	// #include "junit-QObject.hh"
+	// template <typename T> class QList {};
+	// class Q : public QObject
+	// {
+	// Q_OBJECT
+	// enum Enum { e0 };
+	// Q_DECLARE_FLAGS(Flag, Enum)
+	// Q_FLAGS(Flag);
+	// enum Enum2 { e2 };
+	// Q_FLAGS(Flag2);
+	// Q_DECLARE_FLAGS(Flag2, Enum2)
+	// Q_DECLARE_FLAGS(Flag2b, Enum2)
+	// enum Enum3 { e3 };
+	// Q_DECLARE_FLAGS(Flag3, Enum3)
+	// };
+	public void testFlags() throws Exception {
+		loadComment("qflags.hh");
+
+		QtIndex qtIndex = QtIndex.getIndex(fProject);
+		assertNotNull(qtIndex);
+
+		IQObject qobj = qtIndex.findQObject(new String[]{ "Q" });
+		if (!isIndexOk("Q", qobj))
+			return;
+		assertNotNull(qobj);
+
+		Collection<IQEnum> qEnums = qobj.getEnums();
+		assertNotNull(qEnums);
+		assertEquals(2, qEnums.size());
+
+		for(IQEnum qEnum : qEnums) {
+			assertNotNull(qEnum);
+			assertTrue(qEnum.isFlag());
+			if ("Flag".equals(qEnum.getName())) {
+				Collection<IQEnum.Enumerator> enumerators = qEnum.getEnumerators();
+				assertNotNull(enumerators);
+				assertEquals(1, enumerators.size());
+				assertEquals("e0", enumerators.iterator().next().getName());
+			} else if("Flag2".equals(qEnum.getName())) {
+				Collection<IQEnum.Enumerator> enumerators = qEnum.getEnumerators();
+				assertNotNull(enumerators);
+				assertEquals(1, enumerators.size());
+				assertEquals("e2", enumerators.iterator().next().getName());
+			} else
+				fail("unexpected Q_FLAGS " + qEnum.getName());
+		}
 	}
 }

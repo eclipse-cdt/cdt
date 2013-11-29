@@ -130,6 +130,9 @@ public class QtPDOMLinkage extends PDOMLinkage {
 			case QObject:
 				pdomBinding = new QtPDOMQObject(this, qtBinding);
 				break;
+			case QEnum:
+				pdomBinding = new QtPDOMQEnum(this, adaptBinding(qtBinding.getOwner()), qtBinding);
+				break;
 			}
 
 		// If a PDOMBinding was created, then add it to the linkage before returning it.

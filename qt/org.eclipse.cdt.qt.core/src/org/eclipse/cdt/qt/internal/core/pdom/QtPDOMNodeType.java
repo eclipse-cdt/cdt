@@ -14,7 +14,8 @@ import org.eclipse.core.runtime.CoreException;
 @SuppressWarnings("restriction")
 public enum QtPDOMNodeType {
 
-	QObject;
+	QObject,
+	QEnum;
 
 	public final int Type = IIndexBindingConstants.LAST_CONSTANT + 1 + ordinal();
 
@@ -45,6 +46,8 @@ public enum QtPDOMNodeType {
 		switch(node) {
 		case QObject:
 			return new QtPDOMQObject(linkage, record);
+		case QEnum:
+			return new QtPDOMQEnum(linkage, record);
 		}
 
 		return null;

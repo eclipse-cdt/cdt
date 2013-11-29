@@ -7,6 +7,7 @@
  */
 package org.eclipse.cdt.qt.core.index;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -36,4 +37,11 @@ public interface IQObject extends IQElement {
 	 * base classes.
 	 */
 	public List<IQObject> getBases();
+
+	/**
+	 * Returns an unsorted collection of all Q_ENUMS macro expansions within this QObject's class
+	 * declaration.
+	 * @see IQEnum
+	 */
+	public Collection<IQEnum> getEnums();
 }

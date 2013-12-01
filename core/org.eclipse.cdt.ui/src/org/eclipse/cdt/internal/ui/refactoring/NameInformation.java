@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -21,19 +21,23 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
+import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
 import org.eclipse.cdt.core.dom.rewrite.TypeHelper;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
 
 /**
@@ -185,7 +189,8 @@ public class NameInformation {
 	}
 
 	void setDeclarationName(IASTName declarationName) {
-		Assert.isTrue(declarationName.getParent() instanceof IASTDeclarator);
+		Assert.isTrue(declarationName.getPropertyInParent() == IASTDeclarator.DECLARATOR_NAME ||
+				declarationName.getPropertyInParent() == IASTLabelStatement.NAME);
 		this.declarationName = declarationName;
 		indirection = null;
 	}
@@ -210,6 +215,8 @@ public class NameInformation {
 			return newTypeName;
 		INodeFactory nodeFactory = name.getTranslationUnit().getASTNodeFactory();
 		IASTParameterDeclaration declaration = getParameterDeclaration(nodeFactory, null);
+		if (declaration == null)
+			return null;
 		ASTWriterVisitor writer = new ASTWriterVisitor();
 		declaration.accept(writer);
 		return writer.toString();
@@ -242,9 +249,21 @@ public class NameInformation {
 	}
 
 	private IASTParameterDeclaration getParameterDeclaration(INodeFactory nodeFactory, String paramName) {
+		IASTDeclSpecifier sourceDeclSpec = getDeclSpecifier();
 		IASTDeclarator sourceDeclarator = getDeclarator();
-		IASTDeclSpecifier declSpec = safeCopy(getDeclSpecifier());
-		IASTDeclarator declarator = createDeclarator(nodeFactory, sourceDeclarator, paramName);
+		IASTDeclSpecifier declSpec;
+		IASTDeclarator declarator;
+		if (sourceDeclSpec instanceof IASTSimpleDeclSpecifier &&
+				((IASTSimpleDeclSpecifier) sourceDeclSpec).getType() == IASTSimpleDeclSpecifier.t_auto) {
+			IType type = CPPVisitor.createType(sourceDeclarator);
+			DeclarationGenerator generator = DeclarationGenerator.create(nodeFactory);
+			declSpec = generator.createDeclSpecFromType(type);
+			declarator = generator.createDeclaratorFromType(type,
+					paramName == null ? null : paramName.toCharArray());
+		} else {
+			declSpec = safeCopy(sourceDeclSpec);
+			declarator = createDeclarator(nodeFactory, sourceDeclarator, paramName);
+		}
 
 		Indirection indirection = getIndirection();
 		if (indirection == Indirection.POINTER) {

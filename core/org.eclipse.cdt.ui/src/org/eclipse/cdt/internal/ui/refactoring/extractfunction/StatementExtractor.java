@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -19,11 +19,13 @@ import org.eclipse.text.edits.TextEditGroup;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
@@ -55,9 +57,14 @@ public class StatementExtractor extends FunctionExtractor {
 
 	@Override
 	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode,
-			NameInformation returnVariable) {
+			NameInformation returnVariable, List<IASTPointerOperator> pointerOperators) {
 		if (returnVariable != null) {
-			IASTNode decl = ASTHelper.getDeclarationForNode(returnVariable.getDeclarationName());
+			IASTName declarationName = returnVariable.getDeclarationName();
+			IASTDeclarator declarator = ASTHelper.getDeclaratorForNode(declarationName);
+			for (IASTPointerOperator pointerOperator : declarator.getPointerOperators()) {
+				pointerOperators.add(pointerOperator.copy(CopyStyle.withLocations));
+			}
+			IASTNode decl = ASTHelper.getDeclarationForNode(declarationName);
 			IASTDeclSpecifier declSpec = ASTHelper.getDeclarationSpecifier(decl);
 			return declSpec != null ? declSpec.copy(CopyStyle.withLocations) : null;
 		}

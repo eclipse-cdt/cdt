@@ -2167,6 +2167,51 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 		assertRefactoringSuccess();
 	}
 
+	//Test.h
+	//#ifndef TEST_H_
+	//#define TEST_H_
+	//
+	//struct A {
+	//	typedef A B;
+	//	const B* m(const char* p);
+	//};
+	//
+	//#endif // TEST_H_
+	//====================
+	//#ifndef TEST_H_
+	//#define TEST_H_
+	//
+	//struct A {
+	//	typedef A B;
+	//	const B* m(const char* p);
+	//};
+	//
+	//#endif // TEST_H_
+
+	//Test.cpp
+	//#include "Test.h"
+	//
+	//void test() {
+	//	auto x = new A();
+	//	const auto* y = "";
+	//	auto r = /*$*/x->m(y)/*$$*/;
+	//}
+	//====================
+	//#include "Test.h"
+	//
+	//const A::B* extracted(A* x, const char* y) {
+	//	return x->m(y);
+	//}
+	//
+	//void test() {
+	//	auto x = new A();
+	//	const auto* y = "";
+	//	auto r = extracted(x, y);
+	//}
+	public void testAuto_Bug422727() throws Exception {
+		assertRefactoringSuccess();
+	}
+
 	//testString.h
 	//namespace test {
 	//
@@ -2300,7 +2345,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//====================
 	//#include "testString.h"
 	//
-	//const char endTag(test::string name) {
+	//const char* endTag(test::string name) {
 	//	return "</" + name + ">";
 	//}
 	//
@@ -2350,7 +2395,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//====================
 	//#include "testString.h"
 	//
-	//const char extracted() {
+	//const char* extracted() {
 	//	return ">" + "</";
 	//}
 	//

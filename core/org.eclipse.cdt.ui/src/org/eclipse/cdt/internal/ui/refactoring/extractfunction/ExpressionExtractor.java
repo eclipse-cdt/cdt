@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -22,33 +22,27 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 
 import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
 
@@ -88,21 +82,28 @@ public class ExpressionExtractor extends FunctionExtractor {
 	}
 
 	@Override
-	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode, NameInformation _) {
+	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode, NameInformation _,
+			List<IASTPointerOperator> pointerOperators) {
+		IType returnType = determineReturnType(extractedNode); 
+		INodeFactory factory = extractedNode.getTranslationUnit().getASTNodeFactory();
+		DeclarationGenerator generator = DeclarationGenerator.create(factory);
+		IASTDeclarator declarator = generator.createDeclaratorFromType(returnType, null);
+		ArrayUtil.addAll(pointerOperators, declarator.getPointerOperators());
+		return generator.createDeclSpecFromType(returnType);
+	}
+
+	private IType determineReturnType(IASTNode extractedNode) {
 		List<ITypedef> typedefs = getTypedefs(extractedNode);
 		if (extractedNode instanceof IASTExpression) {
-			IASTExpression exp = (IASTExpression) extractedNode;
-			INodeFactory factory = extractedNode.getTranslationUnit().getASTNodeFactory();
-			DeclarationGenerator generator = DeclarationGenerator.create(factory);
-			IType expressionType = exp.getExpressionType();
+			IType expressionType = ((IASTExpression) extractedNode).getExpressionType();
 			for (ITypedef typedef : typedefs) {
 				if (typedef.getType().isSameType(expressionType)) {
-					return generator.createDeclSpecFromType(typedef);
+					return typedef;
 				}
 			}
-			return generator.createDeclSpecFromType(expressionType);
+			return expressionType;
 		} else { // Fallback
-			return createSimpleDeclSpecifier(Kind.eVoid);
+			return new CPPBasicType(Kind.eVoid, 0);
 		}
 	}
 
@@ -136,63 +137,6 @@ public class ExpressionExtractor extends FunctionExtractor {
 		return typeDefs;
 	}
 
-	private static IASTDeclSpecifier createSimpleDeclSpecifier(IBasicType.Kind type) {
-		IASTSimpleDeclSpecifier declSpec = new CPPASTSimpleDeclSpecifier();
-		declSpec.setType(type);
-		return declSpec;
-	}
-	
-	private static IASTName findCalledFunctionName(IASTFunctionCallExpression callExpression) {
-		IASTExpression functionNameExpression = callExpression.getFunctionNameExpression();
-		IASTName functionName = null;
-		
-		if (functionNameExpression instanceof CPPASTIdExpression) {
-			CPPASTIdExpression idExpression = (CPPASTIdExpression) functionNameExpression;
-			functionName = idExpression.getName();
-		} else if (functionNameExpression instanceof CPPASTFieldReference) {
-			CPPASTFieldReference fieldReference = (CPPASTFieldReference) functionNameExpression;
-			functionName = fieldReference.getFieldName();
-		}		
-		return functionName;
-	}
-
-	@Override
-	protected boolean hasPointerReturnType(IASTNode node) {
-		if (node instanceof ICPPASTNewExpression) {
-			return true;
-		} else if (!(node instanceof IASTFunctionCallExpression)) {
-			return false;
-		}
-
-		IASTName functionName = findCalledFunctionName((IASTFunctionCallExpression) node);
-		if (functionName != null) {
-			IBinding binding = functionName.resolveBinding();
-			if (binding instanceof CPPFunction) {
-				CPPFunction function =  (CPPFunction) binding;
-				if (function.getDefinition() != null) {
-					IASTNode parent = function.getDefinition().getParent();
-					if (parent instanceof CPPASTFunctionDefinition) {
-						CPPASTFunctionDefinition definition = (CPPASTFunctionDefinition) parent;
-						return definition.getDeclarator().getPointerOperators().length > 0;
-					}
-				} else if (hasDeclaration(function)) {
-					IASTNode parent = function.getDeclarations()[0].getParent();
-					if (parent instanceof CPPASTSimpleDeclaration) {
-						CPPASTSimpleDeclaration declaration = (CPPASTSimpleDeclaration) parent;
-						return declaration.getDeclarators().length > 0 &&
-								declaration.getDeclarators()[0].getPointerOperators().length > 0;
-					}
-				}
-			}
-		}
-		return false;
-	}
-
-	private static boolean hasDeclaration(CPPFunction function) {
-		return function != null && function.getDeclarations() != null &&
-				function.getDeclarations().length > 0;
-	}
-	
 	@Override
 	public IASTNode createReturnAssignment(IASTNode node, IASTExpressionStatement stmt,
 			IASTExpression callExpression) {

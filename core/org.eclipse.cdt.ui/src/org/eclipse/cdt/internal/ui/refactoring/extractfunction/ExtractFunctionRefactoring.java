@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -592,7 +593,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 	private void addMethod(IASTName methodName, MethodContext context, ASTRewrite rewrite,
 			IASTNode functionToExtractFrom, TextEditGroup group) {
-		ICPPASTQualifiedName qname = new CPPASTQualifiedName();
+		ICPPASTQualifiedName qname = new CPPASTQualifiedName((ICPPASTName) methodName);
 		if (context.getType() == ContextType.METHOD) {
 			if (context.getMethodQName() != null) {
 				for (ICPPASTNameSpecifier segment : context.getMethodQName().getQualifier()) {
@@ -600,19 +601,22 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				}
 			}
 		}
-		qname.addName(methodName);
 
 		IASTFunctionDefinition func = new CPPASTFunctionDefinition();
 		func.setParent(ast);
 
-		IASTDeclSpecifier returnType = getReturnType();
+		List<IASTPointerOperator> pointerOperators = new ArrayList<IASTPointerOperator>();
+		IASTDeclSpecifier returnType = getReturnType(pointerOperators);
 		func.setDeclSpecifier(returnType);
 
-		IASTStandardFunctionDeclarator createdFunctionDeclarator =
+		IASTStandardFunctionDeclarator declarator =
 				extractor.createFunctionDeclarator(qname,
 						info.getDeclarator(), info.getReturnVariable(), container.getNodesToWrite(),
 						info.getParameters(), nodeFactory);
-		func.setDeclarator(createdFunctionDeclarator);
+		for (IASTPointerOperator operator : pointerOperators) {
+			declarator.addPointerOperator(operator);
+		}
+		func.setDeclarator(declarator);
 
 		IASTCompoundStatement compound = new CPPASTCompoundStatement();
 		func.setBody(compound);
@@ -680,11 +684,10 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		return new CPPASTName(declaration.toCharArray());
 	}
 
-	private IASTDeclSpecifier getReturnType() {
+	private IASTDeclSpecifier getReturnType(List<IASTPointerOperator> pointerOperators) {
 		IASTNode firstNodeToWrite = container.getNodesToWrite().get(0);
 		NameInformation returnVariable = info.getReturnVariable();
-		return extractor.determineReturnType(firstNodeToWrite,
-				returnVariable);
+		return extractor.determineReturnType(firstNodeToWrite, returnVariable, pointerOperators);
 	}
 
 	protected IASTNode getMethodCall(IASTName astMethodName, Map<String, Integer> trailNameTable,
@@ -820,7 +823,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	private IASTSimpleDeclaration getDeclaration(ModificationCollector collector, IASTName name) {
-		IASTDeclSpecifier declSpec = getReturnType();
+		List<IASTPointerOperator> pointerOperators = new ArrayList<IASTPointerOperator>();
+		IASTDeclSpecifier declSpec = getReturnType(pointerOperators);
 		IASTSimpleDeclaration simpleDecl = nodeFactory.newSimpleDeclaration(declSpec);
 		if (info.isVirtual() && declSpec instanceof ICPPASTDeclSpecifier) {
 			((ICPPASTDeclSpecifier) declSpec).setVirtual(true);
@@ -830,6 +834,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				extractor.createFunctionDeclarator(name,
 						info.getDeclarator(), info.getReturnVariable(), container.getNodesToWrite(),
 						info.getParameters(), nodeFactory);
+		for (IASTPointerOperator operator : pointerOperators) {
+			declarator.addPointerOperator(operator);
+		}
 		simpleDecl.addDeclarator(declarator);
 		return simpleDecl;
 	}

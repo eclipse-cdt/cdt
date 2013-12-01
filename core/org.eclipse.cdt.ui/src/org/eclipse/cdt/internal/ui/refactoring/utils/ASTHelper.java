@@ -30,10 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 
@@ -43,15 +40,15 @@ public class ASTHelper {
 	private ASTHelper() {
 	}
 
-	static public IASTNode getDeclarationForNode(IASTNode tmpNode) {
-		while (tmpNode != null && !(tmpNode instanceof IASTSimpleDeclaration) && !(tmpNode instanceof IASTParameterDeclaration)) {
-			tmpNode = tmpNode.getParent();
+	static public IASTNode getDeclarationForNode(IASTNode node) {
+		while (node != null && !(node instanceof IASTSimpleDeclaration) && !(node instanceof IASTParameterDeclaration)) {
+			node = node.getParent();
 		}
-		return tmpNode;
+		return node;
 	}
 
-	static public IASTDeclarator getDeclaratorForNode(IASTNode aNode) {
-		IASTNode tmpNode = getDeclarationForNode(aNode);
+	static public IASTDeclarator getDeclaratorForNode(IASTNode node) {
+		IASTNode tmpNode = getDeclarationForNode(node);
 
 		IASTDeclarator declarator = null;
 		if (tmpNode instanceof IASTSimpleDeclaration) {
@@ -107,36 +104,9 @@ public class ASTHelper {
 		return false;
 	}
 
-	public static ArrayList<ICPPASTNamespaceDefinition> getNamespaces(IASTNode node) {
-		ArrayList<ICPPASTNamespaceDefinition> namespaces = new ArrayList<ICPPASTNamespaceDefinition>();
-		for (IASTNode aktNode = node; aktNode != null; aktNode = aktNode.getParent()) {
-			if (aktNode instanceof ICPPASTNamespaceDefinition) {
-				namespaces.add(0, (ICPPASTNamespaceDefinition) aktNode);
-			} else if (aktNode instanceof ICPPASTQualifiedName) {
-				namespaces.addAll(getNamespaces((ICPPASTQualifiedName) aktNode));
-			}
-		}
-		return namespaces;
-	}
-	
-	public static ArrayList<ICPPASTNamespaceDefinition> getNamespaces(ICPPASTQualifiedName qualifiedName) {
-		ArrayList<ICPPASTNamespaceDefinition> namespaces = new ArrayList<ICPPASTNamespaceDefinition>();
-		for (ICPPASTNameSpecifier aktQualifiedPartName : qualifiedName.getAllSegments()) {
-			IBinding binding = aktQualifiedPartName.resolveBinding();
-			for (IASTName aktResolvedName : qualifiedName.getTranslationUnit().getDefinitionsInAST(binding)) {
-				if (aktResolvedName.getParent() instanceof ICPPASTNamespaceDefinition) {
-					namespaces.add((ICPPASTNamespaceDefinition) aktResolvedName.getParent());
-					break;
-				}
-			}
-		}
-		return namespaces;
-	}
-
-	public static Collection<IASTDeclSpecifier> getCompositTypeSpecifiers(IASTNode baseNode) {
+	public static Collection<IASTDeclSpecifier> getCompositeTypeSpecifiers(IASTNode baseNode) {
 		final Collection<IASTDeclSpecifier> specifiers = new ArrayList<IASTDeclSpecifier>();
 		ASTVisitor visitor = new ASTVisitor() {
-
 			@Override
 			public int visit(IASTDeclSpecifier declSpec) {
 				specifiers.add(declSpec);

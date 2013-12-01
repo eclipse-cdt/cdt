@@ -12,14 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -70,6 +62,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Abstract class to write information from AST.
@@ -160,11 +160,11 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 			if (fSymbolMap.isEmpty())
 				return true;
 
-			for (Symbols symbols : fSymbolMap.values())
-				if (!symbols.fNames.isEmpty()
-				 || !symbols.fIncludes.isEmpty()
-				 || !symbols.fMacros.isEmpty())
+			for (Symbols symbols : fSymbolMap.values()) {
+				if (!symbols.fNames.isEmpty() || !symbols.fIncludes.isEmpty() || !symbols.fMacros.isEmpty()) {
 					return false;
+				}
+			}
 
 			return true;
 		}
@@ -250,10 +250,10 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 	 * When flushIndex is set to <code>false</code>, you must make sure to flush
 	 * the index after your last write operation.
 	 */
-	final protected void addSymbols(Data data, int storageLinkageID, FileContext ctx, ITodoTaskUpdater taskUpdater, IProgressMonitor pm) throws InterruptedException,
-			CoreException {
-		if (data.isEmpty()
-		 || storageLinkageID == ILinkage.NO_LINKAGE_ID)
+	final protected void addSymbols(Data data, int storageLinkageID, FileContext ctx,
+			ITodoTaskUpdater taskUpdater, IProgressMonitor pm)
+			throws InterruptedException, CoreException {
+		if (data.isEmpty() || storageLinkageID == ILinkage.NO_LINKAGE_ID)
 			return;
 
 		if (fShowProblems) {

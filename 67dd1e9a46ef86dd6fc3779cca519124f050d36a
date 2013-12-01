@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_66bd561d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/index/IndexBasedFileContentProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-01T04:15:45Z",
+      "side": 1,
+      "message": "Change to a HashSet and get rid of the loop in parseAllHeaderVersions method.",
+      "revId": "67dd1e9a46ef86dd6fc3779cca519124f050d36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_46f81af0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/index/IndexBasedFileContentProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-01T04:15:45Z",
+      "side": 1,
+      "message": "Redundant initialization.",
+      "revId": "67dd1e9a46ef86dd6fc3779cca519124f050d36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_26fd0ee0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/index/IndexBasedFileContentProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-01T04:15:45Z",
+      "side": 1,
+      "message": "Please move trimming and checking of headers to the preference page.",
+      "revId": "67dd1e9a46ef86dd6fc3779cca519124f050d36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_c6c6eaad",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/InternalFileContentProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-01T04:15:45Z",
+      "side": 1,
+      "message": "The name os the method sounds ambiguous. Consider shouldIndexAllHeaderVersions.",
+      "revId": "67dd1e9a46ef86dd6fc3779cca519124f050d36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_067f32d4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/indexer/IndexerPreferences.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-01T04:15:45Z",
+      "side": 1,
+      "message": "Initialization with an empty string is not necessary. The consuming code should gracefully handle the unset preference.",
+      "revId": "67dd1e9a46ef86dd6fc3779cca519124f050d36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_4685ba5c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/indexer/PDOMIndexerTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-01T04:15:45Z",
+      "side": 1,
+      "message": "Trimming should only be done in the preference page.",
+      "revId": "67dd1e9a46ef86dd6fc3779cca519124f050d36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_e6832659",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/indexer/PDOMIndexerTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-01T04:15:45Z",
+      "side": 1,
+      "message": "Why not Collections.emptyList()?",
+      "revId": "67dd1e9a46ef86dd6fc3779cca519124f050d36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

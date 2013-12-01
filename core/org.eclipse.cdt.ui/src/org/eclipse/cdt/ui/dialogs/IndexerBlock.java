@@ -222,10 +222,10 @@ public class IndexerBlock extends AbstractCOptionPage {
         fIndexerPageComposite.setLayout(new TabFolderLayout());
 
         if (needBuildConfigOptions()) {
-        	fBuildConfigGroup= group= ControlFactory.createGroup(composite, DialogsMessages.IndexerStrategyBlock_buildConfigGroup, 1);
+        	fBuildConfigGroup= group= ControlFactory.createGroup(composite, DialogsMessages.IndexerBlock_buildConfigGroup, 1);
         	gd= (GridData) group.getLayoutData();
         	gd.grabExcessHorizontalSpace= true;
-        	fUseActiveBuildButton= ControlFactory.createRadioButton(group, DialogsMessages.IndexerStrategyBlock_activeBuildConfig, null, null);
+        	fUseActiveBuildButton= ControlFactory.createRadioButton(group, DialogsMessages.IndexerBlock_activeBuildConfig, null, null);
         	fUseFixedBuildConfig= ControlFactory.createRadioButton(group, DialogsMessages.IndexerBlock_fixedBuildConfig, null, null);
         	fBuildConfigComboBox= ControlFactory.createSelectCombo(group, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
         	final SelectionAdapter listener = new SelectionAdapter() {

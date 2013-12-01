@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionPreferences;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionWorkspacePreferences;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
-import org.eclipse.cdt.ui.dialogs.DialogsMessages;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
@@ -69,21 +68,21 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
 			}
 		};
 
-		Group group= ControlFactory.createGroup(composite, DialogsMessages.IndexerStrategyBlock_strategyGroup, 1);
+		Group group= ControlFactory.createGroup(composite, PreferencesMessages.IndexerStrategyBlock_strategyGroup, 1);
 		gd= (GridData) group.getLayoutData();
 		gd.grabExcessHorizontalSpace= true;
 		gd.horizontalAlignment= GridData.FILL;	
-		fAutoUpdateButton= ControlFactory.createCheckBox(group, DialogsMessages.IndexerStrategyBlock_autoUpdate);
-		fImmediateUpdateButton= ControlFactory.createCheckBox(group, DialogsMessages.IndexerStrategyBlock_immediateUpdate);
+		fAutoUpdateButton= ControlFactory.createCheckBox(group, PreferencesMessages.IndexerStrategyBlock_autoUpdate);
+		fImmediateUpdateButton= ControlFactory.createCheckBox(group, PreferencesMessages.IndexerStrategyBlock_immediateUpdate);
 		fAutoUpdateButton.addSelectionListener(updateEnablement);
 		
 		if (IndexerPreferencePage.showBuildConfiguration()) {
-			group= ControlFactory.createGroup(composite, DialogsMessages.IndexerStrategyBlock_buildConfigGroup, 1);
+			group= ControlFactory.createGroup(composite, PreferencesMessages.IndexerStrategyBlock_buildConfigGroup, 1);
 			gd= (GridData) group.getLayoutData();
 			gd.grabExcessHorizontalSpace= true;
 			gd.horizontalAlignment= GridData.FILL;
-			fUseActiveBuildButton= ControlFactory.createRadioButton(group, DialogsMessages.IndexerStrategyBlock_activeBuildConfig, null, null);
-			fUseFixedBuildConfig= ControlFactory.createRadioButton(group, DialogsMessages.IndexerStrategyBlock_specificBuildConfig, null, null);
+			fUseActiveBuildButton= ControlFactory.createRadioButton(group, PreferencesMessages.IndexerStrategyBlock_activeBuildConfig, null, null);
+			fUseFixedBuildConfig= ControlFactory.createRadioButton(group, PreferencesMessages.IndexerStrategyBlock_specificBuildConfig, null, null);
 		}		
 		initializeValues();
     }

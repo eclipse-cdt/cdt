@@ -312,14 +312,23 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return fgCPlugin;
 	}
 
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
 	public static void log(Throwable e) {
 		log("Error", e); //$NON-NLS-1$
 	}
 
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
 	public static void log(String message, Throwable e) {
 		log(createErrorStatus(message, e));
 	}
 
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}

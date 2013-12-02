@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_926a4e61",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-02T11:20:35Z",
+      "side": 1,
+      "message": "Remove \u0027dsf-gdb\u0027 and start with a capital letter.",
+      "revId": "a4fb6a377332cf49cd57a65b5ae72166a540ca54",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_120c7ef5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-02T11:20:35Z",
+      "side": 1,
+      "message": "Why make this final?  It will not prevent from changing the content of the map.  In truth, I think the value of the changed proposed in this review is that someone could modify the attributes.",
+      "revId": "a4fb6a377332cf49cd57a65b5ae72166a540ca54",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_f208f2e2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-02T11:20:35Z",
+      "side": 1,
+      "message": "Why?",
+      "revId": "a4fb6a377332cf49cd57a65b5ae72166a540ca54",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_5239e68c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-02T11:20:35Z",
+      "side": 1,
+      "message": "Please name getSession() to be consistent with other classes (you couldn\u0027t not have easily known this).",
+      "revId": "a4fb6a377332cf49cd57a65b5ae72166a540ca54",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

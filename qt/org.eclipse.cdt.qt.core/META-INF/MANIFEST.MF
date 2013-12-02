@@ -13,4 +13,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.qt.core,
- org.eclipse.cdt.qt.core.index
+ org.eclipse.cdt.qt.core.index,
+ org.eclipse.cdt.internal.qt.core.index;x-friends:="org.eclipse.cdt.qt.tests"

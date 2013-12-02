@@ -1234,7 +1234,7 @@ public class MIVariableManager implements ICommandControl {
 		 *            The data request monitor that will hold the children
 		 *            returned
 		 */
-		private void getChildren(final MIExpressionDMC exprDmc,
+		private void getChildren(final IExpressionDMContext exprDmc,
 				final int clientNumChildrenLimit, final DataRequestMonitor<ChildrenInfo> rm) {
 			
 			if (fetchingChildren) {
@@ -1346,7 +1346,16 @@ public class MIVariableManager implements ICommandControl {
 	        	}
 	        	for (int i= 0; i < childrenOfArray.length; i++) {
 	        		String fullExpr = exprName + "[" + i + "]";//$NON-NLS-1$//$NON-NLS-2$
-	        		String relExpr = ((MIExpressionDMC)exprDmc).getRelativeExpression() + "[" + (castingIndex + i) + "]";//$NON-NLS-1$//$NON-NLS-2$
+	        		
+        			String relExpr;
+	        		if (exprDmc instanceof MIExpressionDMC) {
+	        			relExpr = ((MIExpressionDMC)exprDmc).getRelativeExpression();
+	        		} else {
+	        			// Unexpected, but avoid exception
+	        			relExpr = exprDmc.getExpression();
+	        		}
+	        		relExpr = relExpr + "[" + (castingIndex + i) + "]";//$NON-NLS-1$//$NON-NLS-2$
+	        		
 
 	        		childrenOfArray[i] = new ExpressionInfo(fullExpr, relExpr, false, exprInfo, i);
 	        	}
@@ -1830,7 +1839,7 @@ public class MIVariableManager implements ICommandControl {
 				return;
 			}
 			
-			getChildren((MIExpressionDMC)exprDmc, numChildrenLimit,
+			getChildren(exprDmc, numChildrenLimit,
 					new DataRequestMonitor<ChildrenInfo>(fSession.getExecutor(), rm) {
 
 				@Override

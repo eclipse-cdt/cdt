@@ -14,6 +14,7 @@
  *     Marc Khouzam (Ericsson) - No longer call method to check non-stop for GDB < 7.0 (Bug 365471)
  *     Mathias Kunter - Support for different charsets (bug 370462)
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
+ *     Xavier Raynaud (Kalray) - Avoid duplicating fields in sub-classes (add protected accessors)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -73,6 +74,22 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		super(session.getExecutor(), rm, LaunchMessages.getString("FinalLaunchSequence.0"), LaunchMessages.getString("FinalLaunchSequence.1"));     //$NON-NLS-1$ //$NON-NLS-2$
 		fSession = session;
 		fAttributes = attributes;
+	}
+
+	/**
+	 * Gets the DsfSession of this launch sequence.
+	 * @return the {@link DsfSession}
+	 */
+	protected DsfSession getSession() {
+		return fSession;
+	}
+
+	/**
+	 * Gets the launch configuration attributes, as a {@link Map}.
+	 * @return the launch configuration attributes
+	 */
+	protected Map<String, Object> getAttributes() {
+		return fAttributes;
 	}
 
 	@Override

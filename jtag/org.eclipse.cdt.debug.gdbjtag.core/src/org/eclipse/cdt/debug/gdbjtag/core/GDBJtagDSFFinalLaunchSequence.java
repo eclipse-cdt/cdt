@@ -94,11 +94,6 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		}
 	}
 
-	// The launchConfiguration attributes
-	private Map<String, Object> fAttributes;
-
-	private DsfSession fSession;
-
 	private IGDBControl fCommandControl;
 	private IGDBBackend	fGDBBackend;
 	private IMIProcesses fProcService;
@@ -112,8 +107,6 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	 */
 	public GDBJtagDSFFinalLaunchSequence(DsfSession session, Map<String, Object> attributes, RequestMonitorWithProgress rm) {
 		super(session, attributes, rm);
-		fSession = session;
-		fAttributes = attributes;
 	}
 
 	public GDBJtagDSFFinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType sessionType, boolean attach, RequestMonitorWithProgress rm) {
@@ -199,7 +192,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	 */
 	@Execute
 	public void stepInitializeJTAGFinalLaunchSequence(RequestMonitor rm) {
-		fTracker = new DsfServicesTracker(Activator.getBundleContext(), fSession.getId());
+		fTracker = new DsfServicesTracker(Activator.getBundleContext(), getSession().getId());
 		fGDBBackend = fTracker.getService(IGDBBackend.class);
 		if (fGDBBackend == null) {
 			rm.done(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot obtain GDBBackend service", null)); //$NON-NLS-1$
@@ -262,20 +255,20 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	@Execute
 	public void stepLoadSymbols(final RequestMonitor rm) {
 		try {
-			if (CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_LOAD_SYMBOLS, IGDBJtagConstants.DEFAULT_LOAD_SYMBOLS)) {
+			if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_LOAD_SYMBOLS, IGDBJtagConstants.DEFAULT_LOAD_SYMBOLS)) {
 				String symbolsFileName = null;
 
 				// New setting in Helios. Default is true. Check for existence
 				// in order to support older launch configs
-				if (fAttributes.containsKey(IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_SYMBOLS) &&
-						CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_SYMBOLS, IGDBJtagConstants.DEFAULT_USE_PROJ_BINARY_FOR_SYMBOLS)) {
+				if (getAttributes().containsKey(IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_SYMBOLS) &&
+						CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_SYMBOLS, IGDBJtagConstants.DEFAULT_USE_PROJ_BINARY_FOR_SYMBOLS)) {
 					IPath programFile = fGDBBackend.getProgramPath();
 					if (programFile != null) {
 						symbolsFileName = programFile.toOSString();
 					}
 				}
 				else {
-					symbolsFileName = CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_SYMBOLS_FILE_NAME, IGDBJtagConstants.DEFAULT_SYMBOLS_FILE_NAME);
+					symbolsFileName = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_SYMBOLS_FILE_NAME, IGDBJtagConstants.DEFAULT_SYMBOLS_FILE_NAME);
 					if (symbolsFileName.length() > 0) {
 						symbolsFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(symbolsFileName);
 					} else {
@@ -292,7 +285,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 				// Escape windows path separator characters TWICE, once for Java and once for GDB.						
 				symbolsFileName = symbolsFileName.replace("\\", "\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
 
-				String symbolsOffset = CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_SYMBOLS_OFFSET, IGDBJtagConstants.DEFAULT_SYMBOLS_OFFSET);
+				String symbolsOffset = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_SYMBOLS_OFFSET, IGDBJtagConstants.DEFAULT_SYMBOLS_OFFSET);
 				if (symbolsOffset.length() > 0) {
 					symbolsOffset = "0x" + symbolsOffset;					
 				}
@@ -317,16 +310,16 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	@Execute
 	public void stepConnectToTarget(final RequestMonitor rm) {
 		try {
-			if (CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET)) {
+			if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET)) {
 				List<String> commands = new ArrayList<String>();
 				if (fGdbJtagDevice instanceof IGDBJtagConnection) {
-					URI	uri = new URI(CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_CONNECTION, IGDBJtagConstants.DEFAULT_CONNECTION));
+					URI	uri = new URI(CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_CONNECTION, IGDBJtagConstants.DEFAULT_CONNECTION));
 					IGDBJtagConnection device = (IGDBJtagConnection)fGdbJtagDevice;
 					device.doRemote(uri.getSchemeSpecificPart(), commands);
 				} else {
 					// Handle legacy network device contributions that don't understand URIs
-					String ipAddress = CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS);
-					int portNumber = CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
+					String ipAddress = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS);
+					int portNumber = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
 					fGdbJtagDevice.doRemote(ipAddress, portNumber, commands);
 				}
 				queueCommands(commands, rm);
@@ -345,7 +338,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	/** @since 8.2 */
 	@Execute
 	public void stepResetBoard(final RequestMonitor rm) {
-			if (CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_DO_RESET, IGDBJtagConstants.DEFAULT_DO_RESET)) {
+			if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DO_RESET, IGDBJtagConstants.DEFAULT_DO_RESET)) {
 				List<String> commands = new ArrayList<String>();
 				fGdbJtagDevice.doReset(commands);
 				queueCommands(commands, rm);
@@ -362,7 +355,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	public void stepDelayStartup(final RequestMonitor rm) {
 		int defaultDelay = fGdbJtagDevice.getDefaultDelay();
 			List<String> commands = new ArrayList<String>();
-			fGdbJtagDevice.doDelay(CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_DELAY, defaultDelay), commands);
+			fGdbJtagDevice.doDelay(CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DELAY, defaultDelay), commands);
 			queueCommands(commands, rm);								
 	}
 	
@@ -372,7 +365,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	/** @since 8.2 */
 	@Execute
 	public void stepHaltBoard(final RequestMonitor rm) {
-			if (CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_DO_HALT, IGDBJtagConstants.DEFAULT_DO_HALT)) {
+			if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DO_HALT, IGDBJtagConstants.DEFAULT_DO_HALT)) {
 				List<String> commands = new ArrayList<String>();
 				fGdbJtagDevice.doHalt(commands);
 				queueCommands(commands, rm);								
@@ -388,7 +381,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	@Execute
 	public void stepUserInitCommands(final RequestMonitor rm) {
 		try {
-			String userCmd = CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_INIT_COMMANDS, IGDBJtagConstants.DEFAULT_INIT_COMMANDS);
+			String userCmd = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_INIT_COMMANDS, IGDBJtagConstants.DEFAULT_INIT_COMMANDS);
 			userCmd = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(userCmd);
 			if (userCmd.length() > 0) {
 				String[] commands = userCmd.split("\\r?\\n"); //$NON-NLS-1$
@@ -418,18 +411,18 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	public void stepLoadImage(final RequestMonitor rm) {
 		try {
 			String imageFileName = null;
-			if (CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_LOAD_IMAGE, IGDBJtagConstants.DEFAULT_LOAD_IMAGE)) {
+			if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_LOAD_IMAGE, IGDBJtagConstants.DEFAULT_LOAD_IMAGE)) {
 				// New setting in Helios. Default is true. Check for existence
 				// in order to support older launch configs
-				if (fAttributes.containsKey(IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_IMAGE) &&
-						CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_IMAGE, IGDBJtagConstants.DEFAULT_USE_PROJ_BINARY_FOR_IMAGE)) {
+				if (getAttributes().containsKey(IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_IMAGE) &&
+						CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_IMAGE, IGDBJtagConstants.DEFAULT_USE_PROJ_BINARY_FOR_IMAGE)) {
 					IPath programFile = fGDBBackend.getProgramPath();
 					if (programFile != null) {
 						imageFileName = programFile.toOSString();
 					}
 				}
 				else {
-					imageFileName = CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, IGDBJtagConstants.DEFAULT_IMAGE_FILE_NAME); 
+					imageFileName = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, IGDBJtagConstants.DEFAULT_IMAGE_FILE_NAME); 
 					if (imageFileName.length() > 0) {
 						imageFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(imageFileName);
 					} else {
@@ -446,9 +439,9 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 				// Escape windows path separator characters TWICE, once for Java and once for GDB.						
 				imageFileName = imageFileName.replace("\\", "\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
 
-				String imageOffset = CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_IMAGE_OFFSET);
+				String imageOffset = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_IMAGE_OFFSET);
 				if (imageOffset.length() > 0) {
-					imageOffset = (imageFileName.endsWith(".elf")) ? "" : "0x" + CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_IMAGE_OFFSET); //$NON-NLS-2$ 
+					imageOffset = (imageFileName.endsWith(".elf")) ? "" : "0x" + CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_IMAGE_OFFSET); //$NON-NLS-2$ 
 				}
 				List<String> commands = new ArrayList<String>();
 				fGdbJtagDevice.doLoadImage(imageFileName, imageOffset, commands);
@@ -483,7 +476,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	public void stepSetArguments(RequestMonitor rm) {
 		try {
 			String args = CDebugUtils.getAttribute(
-					fAttributes,
+					getAttributes(),
 					ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
 					""); //$NON-NLS-1$
 
@@ -544,8 +537,8 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	/** @since 8.2 */
 	@Execute
 	public void stepSetProgramCounter(final RequestMonitor rm) {
-			if (CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_SET_PC_REGISTER, IGDBJtagConstants.DEFAULT_SET_PC_REGISTER)) {
-				String pcRegister = CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_PC_REGISTER, CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_PC_REGISTER)); 
+			if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_SET_PC_REGISTER, IGDBJtagConstants.DEFAULT_SET_PC_REGISTER)) {
+				String pcRegister = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_PC_REGISTER, CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_PC_REGISTER)); 
 				List<String> commands = new ArrayList<String>();
 				fGdbJtagDevice.doSetPC(pcRegister, commands);
 				queueCommands(commands, rm);								
@@ -560,8 +553,8 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	/** @since 8.2 */
 	@Execute
 	public void stepStopScript(final RequestMonitor rm) {
-			if (CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_SET_STOP_AT, IGDBJtagConstants.DEFAULT_SET_STOP_AT)) {
-				String stopAt = CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_STOP_AT, IGDBJtagConstants.DEFAULT_STOP_AT); 
+			if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_SET_STOP_AT, IGDBJtagConstants.DEFAULT_SET_STOP_AT)) {
+				String stopAt = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_STOP_AT, IGDBJtagConstants.DEFAULT_STOP_AT); 
 				List<String> commands = new ArrayList<String>();
 				fGdbJtagDevice.doStopAt(stopAt, commands);
 				queueCommands(commands, rm);								
@@ -576,7 +569,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	/** @since 8.2 */
 	@Execute
 	public void stepResumeScript(final RequestMonitor rm) {
-			if (CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_SET_RESUME, IGDBJtagConstants.DEFAULT_SET_RESUME)) {
+			if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_SET_RESUME, IGDBJtagConstants.DEFAULT_SET_RESUME)) {
 				List<String> commands = new ArrayList<String>();
 				fGdbJtagDevice.doContinue(commands);
 				queueCommands(commands, rm);									
@@ -592,7 +585,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	@Execute
 	public void stepUserDebugCommands(final RequestMonitor rm) {
 		try {
-			String userCmd = CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_RUN_COMMANDS, IGDBJtagConstants.DEFAULT_RUN_COMMANDS); 
+			String userCmd = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_RUN_COMMANDS, IGDBJtagConstants.DEFAULT_RUN_COMMANDS); 
 			if (userCmd.length() > 0) {
 				userCmd = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(userCmd);
 				String[] commands = userCmd.split("\\r?\\n"); //$NON-NLS-1$
@@ -616,7 +609,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 
 	private IGDBJtagDevice getGDBJtagDevice () {
 		IGDBJtagDevice gdbJtagDevice = null;
-		String jtagDeviceName = CDebugUtils.getAttribute(fAttributes, IGDBJtagConstants.ATTR_JTAG_DEVICE, IGDBJtagConstants.DEFAULT_JTAG_DEVICE); 
+		String jtagDeviceName = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_JTAG_DEVICE, IGDBJtagConstants.DEFAULT_JTAG_DEVICE); 
 		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.getInstance().getGDBJtagDeviceContribution();
 		for (GDBJtagDeviceContribution availableDevice : availableDevices) {
 			if (jtagDeviceName.equals(availableDevice.getDeviceName())) {

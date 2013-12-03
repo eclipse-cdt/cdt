@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Marc Khouzam (Ericsson) - Use new FinalLaunchSequence_7_0 as base class (Bug 365471)
+ *     Xavier Raynaud (Kalray) - Avoid duplicating fields in sub-classes (add protected accessors)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -38,15 +39,9 @@ import org.eclipse.core.runtime.Status;
 public class FinalLaunchSequence_7_2 extends FinalLaunchSequence_7_0 {
 
 	private IGDBControl fGdbControl;
-	private DsfSession fSession;
-	
-	// The launchConfiguration attributes
-	private Map<String, Object> fAttributes;
 
 	public FinalLaunchSequence_7_2(DsfSession session, Map<String, Object> attributes, RequestMonitorWithProgress rm) {
 		super(session, attributes, rm);
-		fSession = session;
-		fAttributes = attributes;
 	}
 
 	@Override
@@ -72,7 +67,7 @@ public class FinalLaunchSequence_7_2 extends FinalLaunchSequence_7_0 {
 	 */
 	@Execute
 	public void stepInitializeFinalLaunchSequence_7_2(RequestMonitor rm) {
-		DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSession.getId());
+		DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), getSession().getId());
 		fGdbControl = tracker.getService(IGDBControl.class);
 		tracker.dispose();
 		
@@ -90,7 +85,7 @@ public class FinalLaunchSequence_7_2 extends FinalLaunchSequence_7_0 {
 	 */
 	@Execute
 	public void stepDetachOnFork(final RequestMonitor rm) {
-		boolean debugOnFork = CDebugUtils.getAttribute(fAttributes, 
+		boolean debugOnFork = CDebugUtils.getAttribute(getAttributes(), 
 				                                       IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
 				                                       IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_ON_FORK_DEFAULT);
 

@@ -375,26 +375,24 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	private static IBinding createBinding(IASTGotoStatement gotoStatement) {
-	    ICPPFunctionScope functionScope = (ICPPFunctionScope) getContainingScope(gotoStatement.getName());
 	    IASTName name = gotoStatement.getName();
-	    IBinding binding;
-        binding = functionScope.getBinding(name, false);
+	    ICPPFunctionScope functionScope = (ICPPFunctionScope) getContainingScope(name);
+	    IBinding binding = functionScope.getBinding(name, false);
 		if (binding == null || !(binding instanceof ILabel)) {
 		    binding = new CPPLabel(name);
-		    ASTInternal.addName(functionScope,  name);
+		    ASTInternal.addName(functionScope, name);
 		}
 
 	    return binding;
 	}
 
 	private static IBinding createBinding(IASTLabelStatement labelStatement) {
-	    ICPPFunctionScope functionScope = (ICPPFunctionScope) getContainingScope(labelStatement.getName());
 	    IASTName name = labelStatement.getName();
-	    IBinding binding;
-        binding = functionScope.getBinding(name, false);
+	    ICPPFunctionScope functionScope = (ICPPFunctionScope) getContainingScope(name);
+	    IBinding binding = functionScope.getBinding(name, false);
 		if (binding == null || !(binding instanceof ILabel)) {
 		    binding = new CPPLabel(name);
-		    ASTInternal.addName(functionScope,  name);
+		    ASTInternal.addName(functionScope, name);
 		} else {
 		    ((CPPLabel) binding).setLabelStatement(name);
 		}

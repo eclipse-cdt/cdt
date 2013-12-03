@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -56,8 +56,8 @@ public class ASTInternal {
 		if (scope instanceof IASTInternalScope) {
 			((IASTInternalScope) scope).addName(name);
 		}		
-	}		
-	
+	}
+
 	public static boolean isStatic(IFunction func, boolean resolveAll) {
 		if (func instanceof ICPPInternalFunction) {
 			return ((ICPPInternalFunction) func).isStatic(resolveAll);
@@ -103,7 +103,7 @@ public class ASTInternal {
 				if (node != null) {
 					if (!isPartOfSource(node))
 						return null;
-					if ((result= resolveConflict(result, node)) == null) 
+					if ((result= resolveConflict(result, node)) == null)
 						return null;
 				}
 			}
@@ -140,7 +140,7 @@ public class ASTInternal {
 			return n2;
 		
 		IASTFileLocation loc2= n2.getFileLocation();
-		if (loc2 != null && loc1.getContextInclusionStatement() != loc2.getContextInclusionStatement()) 
+		if (loc2 != null && loc1.getContextInclusionStatement() != loc2.getContextInclusionStatement())
 			return null;
 
 		return n1;
@@ -167,7 +167,7 @@ public class ASTInternal {
 		if (decls != null) {
 			for (final IASTNode node : decls) {
 				if (node != null) {
-					if ((result= resolveConflict(result, node)) == null) 
+					if ((result= resolveConflict(result, node)) == null)
 						return null;
 				}
 			}
@@ -194,14 +194,14 @@ public class ASTInternal {
 				return true;
 			IASTNode[] decls= internal.getDeclarations();
 			return decls != null && decls.length > 0 && decls[0] != null;
-		} 
+		}
 		if (binding instanceof IIndexBinding) {
 			try {
 				return IndexFilter.ALL_DECLARED.acceptBinding(binding);
 			} catch (CoreException e) {
 			}
 			return false;
-		} 
+		}
 		return binding != null;
 	}
 }

@@ -20,18 +20,18 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  */
 public interface IASTInternalScope extends IScope {
     /**
-     * Return the physical IASTNode that this scope was created for
+     * Returns the physical IASTNode that this scope was created for
      */
     public IASTNode getPhysicalNode();
 		
 	/**
-	 * This adds an IBinding to the scope.  It is primarily used by the parser to add
+	 * Adds an IBinding to the scope.  It is primarily used by the parser to add
 	 * implicit IBindings to the scope (such as GCC built-in functions).
 	 */
 	public void addBinding(IBinding binding);
 
 	/**
-	 * Add an IASTName to be cached in this scope
+	 * Adds an IASTName to be cached in this scope
 	 */
 	public void addName(IASTName name);
 	
@@ -47,5 +47,4 @@ public interface IASTInternalScope extends IScope {
 	 * node from the cache.
 	 */
 	public void removeNestedFromCache(IASTNode container);
-
 }

@@ -127,7 +127,7 @@ public class CharTable extends HashTable {
 	    if (i < 0 || i > currEntry)
 	        return null;
 	    
-	    return keyTable[ i ];
+	    return keyTable[i];
 	}
 	
 	public final boolean containsKey(char[] key, int start, int len) {
@@ -143,7 +143,7 @@ public class CharTable extends HashTable {
 	    if (idx == -1)
 	        return null;
 	    
-	    return keyTable[ idx ];
+	    return keyTable[idx];
 	}
 	
 	public int lookup(char[] buffer) {
@@ -177,7 +177,7 @@ public class CharTable extends HashTable {
 	}
 	
 	public Object[] keyArray() {
-	    Object[] keys = new Object[ size() ];
+	    Object[] keys = new Object[size()];
 	    System.arraycopy(keyTable, 0, keys, 0, keys.length);
 	    return keys;
 	}

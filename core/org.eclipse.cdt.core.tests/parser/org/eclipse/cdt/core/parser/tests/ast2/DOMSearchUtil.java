@@ -40,10 +40,7 @@ import org.eclipse.core.runtime.content.IContentType;
  * @author dsteffle
  */
 public class DOMSearchUtil {
-	private static final IASTName[] BLANK_NAME_ARRAY = new IASTName[0];
-//    private static final IASTName[] EMPTY_NAME_LIST = BLANK_NAME_ARRAY;
-
-    public static final int DECLARATIONS = 1;
+	public static final int DECLARATIONS = 1;
     public static final int DEFINITIONS = 2;
     public static final int DECLARATIONS_DEFINITIONS = 3;
     public static final int REFERENCES = 4;
@@ -135,7 +132,7 @@ public class DOMSearchUtil {
 		IASTTranslationUnit tu = searchName.getTranslationUnit();
 
 		if (tu == null) {
-			return BLANK_NAME_ARRAY;
+			return IASTName.EMPTY_NAME_ARRAY;
 		}
 
 		IBinding binding = searchName.resolveBinding();
@@ -162,7 +159,7 @@ public class DOMSearchUtil {
 					// fix for 86829, 95224
 					if ((binding instanceof ICPPConstructor || (binding instanceof ICPPMethod && ((ICPPMethod)binding).isDestructor()))
 							&& binding.getScope() instanceof ICPPClassScope) {
-						binding =  ((ICPPClassScope)binding.getScope()).getClassType();
+						binding =  ((ICPPClassScope) binding.getScope()).getClassType();
 						names = getNames(tu, binding, limitTo);
 					}
 				} catch (DOMException e) {

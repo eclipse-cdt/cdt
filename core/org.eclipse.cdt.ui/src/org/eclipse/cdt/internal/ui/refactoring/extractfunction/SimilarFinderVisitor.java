@@ -96,7 +96,7 @@ abstract class SimilarFinderVisitor extends ASTVisitor {
 	protected abstract void foundSimilar();
 
 	private boolean isInSelection(IASTStatement stmt) {
-		List<IASTNode>nodes = extractedNodes.getNodesToWrite();
+		List<IASTNode> nodes = extractedNodes.getNodesToWrite();
 		for (IASTNode node : nodes) {
 			if (node.equals(stmt)) {
 				return true;

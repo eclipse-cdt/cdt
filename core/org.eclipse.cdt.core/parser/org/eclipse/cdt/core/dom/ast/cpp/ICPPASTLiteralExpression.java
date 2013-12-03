@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTLiteralExpression extends IASTLiteralExpression, ICPPASTExpression {
-
 	/**
 	 * <code>lk_this</code> represents the 'this' keyword.
 	 */
@@ -40,7 +39,6 @@ public interface ICPPASTLiteralExpression extends IASTLiteralExpression, ICPPAST
 	 */
 	@Deprecated
 	public static final int lk_last = lk_false;
-	
 	
 	/**
 	 * @since 5.1

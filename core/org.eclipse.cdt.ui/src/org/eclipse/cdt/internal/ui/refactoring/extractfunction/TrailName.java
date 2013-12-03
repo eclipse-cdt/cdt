@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -20,12 +19,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
-import org.eclipse.cdt.internal.ui.refactoring.utils.ASTHelper;
-
 class TrailName extends ASTNode {
 	private int nameNumber;
-	private final IASTNode declaration = null;
-	private IASTName realName = null;
+	private IASTName realName;
 	
 	public TrailName(IASTName realName) {
 		super();
@@ -38,10 +34,6 @@ class TrailName extends ASTNode {
 
 	public void setNameNumber(int nameNumber) {
 		this.nameNumber = nameNumber;
-	}
-
-	public IASTDeclSpecifier getDeclSpecifier() {
-		return ASTHelper.getDeclarationSpecifier(declaration);
 	}
 
 	public IASTName getRealName() {

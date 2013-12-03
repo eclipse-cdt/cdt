@@ -137,7 +137,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	final Map<String, Integer> names;
 	final Container<Integer> namesCounter;
 	final Container<Integer> trailPos;
-	private final Container<Integer> returnNumber;
+	private int returnNumber;
 
 	HashMap<String, Integer> nameTrail;
 
@@ -155,7 +155,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		names = new HashMap<String, Integer>();
 		namesCounter = new Container<Integer>(NULL_INTEGER);
 		trailPos = new Container<Integer>(NULL_INTEGER);
-		returnNumber = new Container<Integer>(NULL_INTEGER);
 		formattingOptions = new DefaultCodeFormatterOptions(project.getOptions(true));
 	}
 
@@ -486,7 +485,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 							if (info.getReturnVariable() != null &&
 									info.getReturnVariable().getName().getRawSignature().equals(
 											name.getRawSignature())) {
-								returnNumber.setObject(Integer.valueOf(actCount));
+								returnNumber = actCount;
 							}
 
 							trail.add(trailName);
@@ -503,8 +502,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		return trail;
 	}
 
-	boolean isStatementInTrail(IASTStatement stmt, final List<IASTNode> trail) {
-		final Container<Boolean> same = new Container<Boolean>(Boolean.TRUE);
+	boolean isStatementInTrail(final IASTStatement stmt, final List<IASTNode> trail) {
+		final boolean same[] = { true };
 		final TrailNodeEqualityChecker equalityChecker =
 				new TrailNodeEqualityChecker(names, namesCounter, index);
 
@@ -514,7 +513,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				int pos = trailPos.getObject().intValue();
 
 				if (trail.size() <= 0 || pos >= trail.size()) {
-					same.setObject(Boolean.FALSE);
+					same[0] = false;
 					return PROCESS_ABORT;
 				}
 
@@ -533,13 +532,13 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 						return super.visitAll(node);
 					}
 				} else {
-					same.setObject(new Boolean(false));
+					same[0] = false;
 					return PROCESS_ABORT;
 				}
 			}
 		});
 
-		return same.getObject().booleanValue();
+		return same[0];
 	}
 
 	private boolean isMethodAllreadyDefined(IASTSimpleDeclaration methodDeclaration,
@@ -709,8 +708,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			for (Entry<String, Integer> entry : similarNameTable.entrySet()) {
 				if (entry.getValue().equals(trailSeqNumber)) {
 					origName = entry.getKey();
-					if (info.getReturnVariable() != null &&
-							trailSeqNumber.equals(returnNumber.getObject())) {
+					if (info.getReturnVariable() != null &&	trailSeqNumber.intValue() == returnNumber) {
 						theRetName = true;
 					}
 				}

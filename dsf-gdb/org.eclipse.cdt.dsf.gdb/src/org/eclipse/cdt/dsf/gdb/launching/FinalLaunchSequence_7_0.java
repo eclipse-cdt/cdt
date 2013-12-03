@@ -8,6 +8,7 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation (Bug 365471)
  *     Marc Khouzam (Ericsson) - Support for different charsets (bug 370462)
+ *     Xavier Raynaud (Kalray) - Avoid duplicating fields in sub-classes (add protected accessors)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -43,11 +44,9 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 
 	private IGDBControl fCommandControl;
 	private CommandFactory fCommandFactory;
-	private DsfSession fSession;
 
 	public FinalLaunchSequence_7_0(DsfSession session, Map<String, Object> attributes, RequestMonitorWithProgress rm) {
 		super(session, attributes, rm);
-		fSession = session;
 	}
 
 	@Override
@@ -75,7 +74,7 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 	 */
 	@Execute
 	public void stepInitializeFinalLaunchSequence_7_0(RequestMonitor rm) {
-		DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSession.getId());
+		DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), getSession().getId());
 		fCommandControl = tracker.getService(IGDBControl.class);
 		tracker.dispose();
 

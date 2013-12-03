@@ -31,11 +31,8 @@ import org.eclipse.core.runtime.Status;
  */
 public class GDBJtagDSFFinalLaunchSequence_7_2 extends GDBJtagDSFFinalLaunchSequence {
 
-	private DsfSession fSession;
-	
 	public GDBJtagDSFFinalLaunchSequence_7_2(DsfSession session, Map<String, Object> attributes, RequestMonitorWithProgress rm) {
 		super(session, attributes, rm);
-		fSession = session;
 	}
 
 	@Override
@@ -60,7 +57,7 @@ public class GDBJtagDSFFinalLaunchSequence_7_2 extends GDBJtagDSFFinalLaunchSequ
 	 */
 	@Execute
 	public void stepInitializeJTAGSequence_7_2(RequestMonitor rm) {
-		DsfServicesTracker tracker = new DsfServicesTracker(Activator.getBundleContext(), fSession.getId());
+		DsfServicesTracker tracker = new DsfServicesTracker(Activator.getBundleContext(), getSession().getId());
 		IGDBControl gdbControl = tracker.getService(IGDBControl.class);
 		IGDBProcesses procService = tracker.getService(IGDBProcesses.class);
 		tracker.dispose();

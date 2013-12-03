@@ -69,6 +69,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
@@ -101,6 +102,17 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		}
 	}
 
+	private class StartupException extends FileNotFoundException {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public StartupException(String s) {
+			super();
+		}
+	}
+	
     public ApplicationWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
         super(configurer);
     }
@@ -321,33 +333,69 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			String arguments = null;
 			String[] args = Platform.getCommandLineArgs();
 //			System.out.println("program args length is " + args.length);
-			for (int i = 0; i < args.length; ++i) {
-//				System.out.println("arg <" + i + "> is " + args[i]);
-				if ("-application".equals(args[i]))
-					i++; // ignore the application specifier
-				else if ("-b".equals(args[i])) {
-					++i;
-					if (i < args.length)
-						buildLog = args[i];
-				}
-				else if ("-e".equals(args[i])) {
-					++i;
-					if (i < args.length)
-						executable = args[i];
-					++i;
-					StringBuffer argBuffer = new StringBuffer();
-					// Remaining values are arguments to the executable
-					if (i < args.length)
-						argBuffer.append(args[i++]);
-					while (i < args.length) {
-						argBuffer.append(" ");
-						argBuffer.append(args[i++]);
-					}
-					arguments = argBuffer.toString();
-				}
-			}
-			monitor.worked(1);
 			try {
+				for (int i = 0; i < args.length; ++i) {
+					//				System.out.println("arg <" + i + "> is " + args[i]);
+					if ("-application".equals(args[i]))
+						i++; // ignore the application specifier
+					else if ("-b".equals(args[i])) {
+						++i;
+						if (i < args.length)
+							buildLog = args[i];
+					}
+					else if ("-e".equals(args[i])) {
+						++i;
+						if (i < args.length)
+							executable = args[i];
+						++i;
+						StringBuffer argBuffer = new StringBuffer();
+						// Remaining values are arguments to the executable
+						if (i < args.length)
+							argBuffer.append(args[i++]);
+						while (i < args.length) {
+							argBuffer.append(" ");
+							argBuffer.append(args[i++]);
+						}
+						arguments = argBuffer.toString();
+						File executableFile = new File(executable);
+						if (!executableFile.exists()) {
+							final NewExecutableInfo info = new NewExecutableInfo("", "", ""); //$NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+							final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
+									Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
+							final String executablePath = executable;
+							final String executableArgs = arguments;
+
+							Display.getDefault().syncExec(new Runnable() {
+
+								@Override
+								public void run() {
+
+									NewExecutableDialog dialog = new NewExecutableDialog(getWindowConfigurer().getWindow().getShell(),
+											0, executablePath, executableArgs);
+									dialog.setBlockOnOpen(true);
+									if (dialog.open() == IDialogConstants.OK_ID) {
+										NewExecutableInfo info2 = dialog.getExecutableInfo();
+										info.setHostPath(info2.getHostPath());
+										info.setArguments(info2.getArguments());
+									} else {
+										ErrorDialog.openError(null,
+												Messages.DebuggerInitializingProblem, null, errorStatus,
+												IStatus.ERROR | IStatus.WARNING);
+									}
+								}
+							});
+							// Check and see if we failed above and if so, quit
+							if (info.getHostPath().equals("")) {
+								monitor.done();
+								// throw internal exception which will be caught below
+								throw new StartupException(errorStatus.getMessage());
+							}
+							executable = info.getHostPath();
+							arguments = info.getArguments();
+						}
+					}
+				}
+				monitor.worked(1);
 				if (executable.length() > 0) {
 					File executableFile = new File(executable);
 					String defaultProjectName = "Executables"; //$NON-NLS-1$
@@ -580,6 +628,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			} catch (CoreException e) {
 //				System.out.println("Core Exception");
 				e.printStackTrace();
+			} catch (StartupException e) {
+				// do nothing..just quit
 			} catch (Exception e) {
 //				System.out.println("Exception");
 				e.printStackTrace();

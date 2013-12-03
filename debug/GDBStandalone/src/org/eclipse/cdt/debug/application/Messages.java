@@ -32,6 +32,25 @@ public class Messages extends NLS {
 	public static String LaunchingConfig;
 	public static String LaunchInterruptedError;
 	public static String LaunchMissingError;
+	public static String DebuggerInitializingProblem;
+	
+	public static String GdbDebugNewExecutableCommand_Arguments;
+	public static String GdbDebugNewExecutableCommand_Binary;
+	public static String GdbDebugNewExecutableCommand_Binary_file_does_not_exist;
+	public static String GdbDebugNewExecutableCommand_Binary_must_be_specified;
+	public static String GdbDebugNewExecutableCommand_Binary_on_host;
+	public static String GdbDebugNewExecutableCommand_Binary_on_target;
+	public static String GdbDebugNewExecutableCommand_Binary_on_target_must_be_specified;
+	public static String GdbDebugNewExecutableCommand_Browse;
+	public static String GdbDebugNewExecutableCommand_Debug_New_Executable;
+	public static String GdbDebugNewExecutableCommand_Host_binary_file_does_not_exist;
+	public static String GdbDebugNewExecutableCommand_Host_binary_must_be_specified;
+	public static String GdbDebugNewExecutableCommand_Invalid_binary;
+	public static String GdbDebugNewExecutableCommand_Invalid_host_binary;
+	public static String GdbDebugNewExecutableCommand_New_Executable_Prompt_Job;
+	public static String GdbDebugNewExecutableCommand_Select_binaries_on_host_and_target;
+	public static String GdbDebugNewExecutableCommand_Select_Binary;
+	public static String GdbDebugNewExecutableCommand_Select_binary_and_specify_arguments;
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);

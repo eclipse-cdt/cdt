@@ -67,6 +67,24 @@
       "revId": "a4fb6a377332cf49cd57a65b5ae72166a540ca54",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_87832511",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 849
+      },
+      "writtenOn": "2013-12-03T10:20:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_5239e68c",
+      "revId": "a4fb6a377332cf49cd57a65b5ae72166a540ca54",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

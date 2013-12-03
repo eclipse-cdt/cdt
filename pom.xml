@@ -39,8 +39,8 @@
     <maven-antrun-version>1.7</maven-antrun-version>
     <gmaven-version>1.4</gmaven-version>
     <eclipse-jarsigner-version>1.0.4</eclipse-jarsigner-version>
-    <platform-version-name>kepler</platform-version-name>
-    <tm-stream>kepler</tm-stream>
+    <platform-version-name>luna</platform-version-name>
+    <tm-stream>luna</tm-stream>
     <eclipse-site>http://download.eclipse.org/releases/${platform-version-name}</eclipse-site>
     <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20130827064939/repository</orbit-site>
     <rxtx-version>1.0.0.7837QcJa5vE7MnhE77YA7AU3SWUlbntVZAnlDoIGojcQd</rxtx-version>
@@ -82,24 +82,24 @@
   </repositories>
   <profiles>
     <profile>
-      <id>platform-kepler</id>
+      <id>platform-luna</id>
       <activation>
         <activeByDefault>true</activeByDefault>
         <property>
           <name>platform-version-name</name>
-          <value>kepler</value>
+          <value>luna</value>
         </property>
       </activation>
       <properties>
         <eclipse-site>http://download.eclipse.org/releases/staging</eclipse-site>
-        <platform-version>[4.3,)</platform-version>
-        <sdk-version>4.3</sdk-version>
+        <platform-version>[4.4,)</platform-version>
+        <sdk-version>4.4</sdk-version>
         <cdt-site>http://download.eclipse.org/tools/cdt/releases/kepler</cdt-site>
         <cdt-test-site>http://download.eclipse.org/tools/cdt/updates/indigo/</cdt-test-site>
       </properties>
       <repositories>
         <repository>
-          <id>kepler</id>
+          <id>luna</id>
           <layout>p2</layout>
           <url>${eclipse-site}</url>
         </repository>

@@ -12,7 +12,7 @@
   <artifactId>org.eclipse.tm.repo</artifactId>
   <packaging>eclipse-repository</packaging>
   <properties>
-    <tm-stream>kepler</tm-stream>
+    <tm-stream>luna</tm-stream>
     <tm-zipfile>${project.artifactId}-${project.version}.zip</tm-zipfile>
     <tm-install>/home/data/httpd/download.eclipse.org/tm/builds/${tm-stream}/nightly</tm-install>
   </properties>

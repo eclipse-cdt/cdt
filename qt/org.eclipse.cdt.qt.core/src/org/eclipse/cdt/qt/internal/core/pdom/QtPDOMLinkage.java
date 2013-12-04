@@ -7,6 +7,9 @@
  */
 package org.eclipse.cdt.qt.internal.core.pdom;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -14,10 +17,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
-import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -32,7 +33,6 @@ public class QtPDOMLinkage extends PDOMLinkage {
 	private static int offsetInitializer = PDOMLinkage.RECORD_SIZE;
 	private static enum Field {
 		Version(Database.INT_SIZE),
-		CppIndex(Database.PTR_SIZE),
 		Last(0);
 
 		private final int offset;
@@ -50,16 +50,12 @@ public class QtPDOMLinkage extends PDOMLinkage {
 	// The version that has been read from/written to the persisted file.
 	private int version;
 
-	// An index of C++ -> Qt Bindings.  This is used for fast lookup of things like the QObject
-	// for a C++ class in the base specifier list.  Each entry in the index is a pair like
-	// { CPP_Record, Qt_Record }, the CPP_Record is used for comparison when searching the index.
-	private final BTree cppIndex;
+	private final Map<IQtASTName, PDOMBinding> cache = new HashMap<IQtASTName, PDOMBinding>();
 
 	public QtPDOMLinkage(PDOM pdom, long record) throws CoreException {
 		super(pdom, record);
 
 		version = pdom.getDB().getInt(Field.Version.getRecord(record));
-		cppIndex = new BTree(pdom.getDB(), Field.CppIndex.getRecord(record), new CppRecordIndexComparator());
 	}
 
 	protected QtPDOMLinkage(PDOM pdom) throws CoreException {
@@ -68,11 +64,6 @@ public class QtPDOMLinkage extends PDOMLinkage {
 		// Initialize the version with whatever is current.
 		version = QtPDOMNodeType.VERSION;
 		pdom.getDB().putInt(Field.Version.getRecord(record), version);
-
-		long cppIndexRec = Field.CppIndex.getRecord(record);
-		Database db = pdom.getDB();
-		db.putRecPtr(cppIndexRec, 0);
-		cppIndex = new BTree(db, cppIndexRec, new CppRecordIndexComparator());
 	}
 
 	public int getVersion() {
@@ -87,16 +78,6 @@ public class QtPDOMLinkage extends PDOMLinkage {
 	@Override
 	public int getLinkageID() {
 		return ILinkage.QT_LINKAGE_ID;
-	}
-
-	public QtPDOMBinding findFromCppRecord(long cppRec) throws CoreException {
-		CppRecordIndexFinder finder = new CppRecordIndexFinder(cppRec);
-		cppIndex.accept(finder);
-		if (finder.foundQtRec == null)
-			return null;
-
-		PDOMNode node = getNode(finder.foundQtRec.longValue());
-		return node instanceof QtPDOMBinding ? (QtPDOMBinding) node : null;
 	}
 
 	@Override
@@ -123,18 +104,6 @@ public class QtPDOMLinkage extends PDOMLinkage {
 		 && pdomBinding.getLinkage() == this)
 			return pdomBinding;
 
-		// Otherwise try to create a new PDOMBinding.
-		QtBinding qtBinding = (QtBinding) binding.getAdapter(QtBinding.class);
-		if (qtBinding != null)
-			switch(qtBinding.getType()) {
-			case QObject:
-				pdomBinding = new QtPDOMQObject(this, qtBinding);
-				break;
-			case QEnum:
-				pdomBinding = new QtPDOMQEnum(this, adaptBinding(qtBinding.getOwner()), qtBinding);
-				break;
-			}
-
 		// If a PDOMBinding was created, then add it to the linkage before returning it.
 		if (pdomBinding != null) {
 			addChild(pdomBinding);
@@ -145,19 +114,8 @@ public class QtPDOMLinkage extends PDOMLinkage {
 		return getPDOM().getLinkage(ILinkage.CPP_LINKAGE_ID).adaptBinding(binding);
 	}
 
-	public void addChild(QtPDOMBinding child) throws CoreException {
-		super.addChild(child);
+	public long getCPPRecord(IASTName cppName) throws CoreException {
 
-		Database db = getDB();
-		long pair = db.malloc(Database.PTR_SIZE * 2);
-		db.putRecPtr(pair, child.getCppRecord());
-		db.putRecPtr(pair + Database.PTR_SIZE, child.getRecord());
-		cppIndex.insert(pair);
-	}
-
-	public long getCPPRecord(QtBinding qtBinding) throws CoreException {
-
-		IASTName cppName = qtBinding.getCppName();
 		if (cppName == null)
 			return 0;
 
@@ -176,14 +134,69 @@ public class QtPDOMLinkage extends PDOMLinkage {
 		return pdomBinding.getRecord();
 	}
 
+	/**
+	 * Return the PDOMBinding for the given Qt name creating a new binding if needed.  The
+	 * implementation caches the result using the name instance as the key.  This ensures
+	 * one-to-one uniqueness between AST names and PDOMBindings.
+	 * <p>
+	 * This method is not thread-safe.
+	 */
+	public PDOMBinding getBinding(IQtASTName qtAstName) throws CoreException {
+		// The Qt implementation ensures uniqueness by creating only a single instance of
+		// the IASTName for each thing that should create a single instance in the PDOM.
+		// This will work as long as all Qt elements are updated at once, which is currently
+		// the case.
+		//
+		// I don't think this needs to be thread-safe, because things are only added from
+		// the single indexer task.
+		PDOMBinding pdomBinding = null;
+		pdomBinding = cache.get(qtAstName);
+		if (pdomBinding != null)
+			return pdomBinding;
+
+		// The result is cached even when null is returned.
+		pdomBinding = qtAstName.createPDOMBinding(this);
+		cache.put(qtAstName, pdomBinding);
+
+		// Only add children that are actually created.
+		if (pdomBinding != null)
+			addChild(pdomBinding);
+
+		return pdomBinding;
+	}
+
 	@Override
 	public PDOMBinding addBinding(IASTName name) throws CoreException {
-		return name == null ? null : adaptBinding(name.getBinding());
+
+		// The Qt linkage is able to reference elements in other linkages.  This implementation
+		// needs to decide if the binding associated with this name is from the Qt linkage or
+		// from one of those external references.
+
+		if (name == null)
+			return null;
+
+		if (name instanceof IQtASTName)
+			return getBinding((IQtASTName) name);
+
+		IBinding binding = name.getBinding();
+		if (binding == null)
+			return null;
+
+		// Use the receiving linkage by default, and override only if the binding is found to
+		// have a linkage with a different id.
+		PDOMLinkage pdomLinkage = this;
+		ILinkage linkage = binding.getLinkage();
+		if (linkage != null
+		 && linkage.getLinkageID() != getLinkageID())
+			pdomLinkage = getPDOM().getLinkage(linkage.getLinkageID());
+
+		// Handle bindings in unknown linkages as though the name is to be added to this linkage.
+		return (pdomLinkage == null ? this : pdomLinkage).adaptBinding(binding);
 	}
 
 	@Override
 	public int getBindingType(IBinding binding) {
-		return binding instanceof QtBinding ? ((QtBinding) binding).getType().Type : 0;
+		return binding instanceof QtPDOMBinding ? ((QtPDOMBinding) binding).getNodeType() : 0;
 	}
 
 	@Override
@@ -204,45 +217,5 @@ public class QtPDOMLinkage extends PDOMLinkage {
 	@Override
 	public ISerializableEvaluation unmarshalEvaluation(ITypeMarshalBuffer typeMarshalBuffer) throws CoreException {
 		throw new CoreException(QtPlugin.error("Qt Linkage does not marshal evaluations")); //$NON-NLS-1$
-	}
-
-	private class CppRecordIndexComparator implements IBTreeComparator {
-
-		@Override
-		public int compare(long record1, long record2) throws CoreException {
-			Database db = getDB();
-
-			Long cppRec1 = Long.valueOf(db.getRecPtr(record1));
-			long cppRec2 = Long.valueOf(db.getRecPtr(record2));
-			return cppRec1.compareTo(cppRec2);
-		}
-	}
-
-	private class CppRecordIndexFinder extends CppRecordIndexComparator implements IBTreeVisitor {
-
-		private final Long targetCppRec;
-		public Long foundQtRec;
-
-		public CppRecordIndexFinder(long targetCppRec) {
-			this.targetCppRec = Long.valueOf(targetCppRec);
-		}
-
-		@Override
-		public int compare(long record) throws CoreException {
-			Long cppRec = Long.valueOf(getDB().getRecPtr(record));
-			return cppRec.compareTo(targetCppRec);
-		}
-
-		@Override
-		public boolean visit(long record) throws CoreException {
-			// Stop searching after the record is found.
-			if (foundQtRec != null)
-				return false;
-
-			// The record is the pair, so the Qt rec is the second element.
-			long qtRec = getDB().getRecPtr(record + Database.PTR_SIZE);
-			foundQtRec = Long.valueOf(qtRec);
-			return false;
-		}
 	}
 }

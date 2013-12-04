@@ -13,9 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.qt.core.index.IQEnum;
 import org.eclipse.cdt.qt.core.index.IQObject;
+import org.eclipse.cdt.qt.core.index.IQProperty;
+import org.eclipse.cdt.qt.internal.core.pdom.QtPDOMProperty;
 import org.eclipse.cdt.qt.internal.core.pdom.QtPDOMQEnum;
 import org.eclipse.cdt.qt.internal.core.pdom.QtPDOMQObject;
 import org.eclipse.core.runtime.CoreException;
@@ -25,6 +26,7 @@ public class QObject implements IQObject {
 	private final String name;
 	private final QtPDOMQObject pdomQObject;
 	private final List<IQObject> bases;
+	private final IQObject.IMembers<IQProperty> properties;
 	private final List<IQEnum> enums;
 	private final Map<String, String> classInfos;
 
@@ -32,18 +34,29 @@ public class QObject implements IQObject {
 		this.name = pdomQObject.getName();
 		this.pdomQObject = pdomQObject;
 
+		List<IQProperty> baseProps = new ArrayList<IQProperty>();
+
 		this.bases = new ArrayList<IQObject>();
-		for(QtPDOMQObject base : pdomQObject.findBases())
-			this.bases.add(new QObject(qtIndex, cdtIndex, base));
+		for(QtPDOMQObject base : pdomQObject.findBases()) {
+			QObject baseQObj = new QObject(qtIndex, cdtIndex, base);
+			this.bases.add(baseQObj);
+			baseProps.addAll(baseQObj.getProperties().all());
+		}
 
 		this.classInfos = pdomQObject.getClassInfos();
 
 		this.enums = new ArrayList<IQEnum>();
-		for(IField field : pdomQObject.getFields())
-			if (field instanceof QtPDOMQEnum) {
-				QtPDOMQEnum qEnum = (QtPDOMQEnum) field;
-				this.enums.add(new QEnum(field.getName(), qEnum.isFlag(), qEnum.getEnumerators()));
-			}
+		for(QtPDOMQEnum pdom : pdomQObject.getFields(QtPDOMQEnum.class))
+			this.enums.add(new QEnum(pdom.getName(), pdom.isFlag(), pdom.getEnumerators()));
+
+		List<IQProperty> props = new ArrayList<IQProperty>();
+		for(QtPDOMProperty pdom : pdomQObject.getFields(QtPDOMProperty.class)) {
+			QProperty qProp = new QProperty(this, pdom.getTypeStr(), pdom.getName());
+			for(QtPDOMProperty.Attribute attr : pdom.getAttributes())
+				qProp.setAttribute(attr.attr, attr.value);
+			props.add(qProp);
+		}
+		this.properties = QObjectMembers.create(props, baseProps);
 	}
 
 	@Override
@@ -59,6 +72,11 @@ public class QObject implements IQObject {
 	@Override
 	public List<IQObject> getBases() {
 		return bases;
+	}
+
+	@Override
+	public IQObject.IMembers<IQProperty> getProperties() {
+		return properties;
 	}
 
 	@Override

@@ -210,4 +210,54 @@ public class QObjectTests extends BaseQtTestCase {
 				fail("unexpected Q_FLAGS " + qEnum.getName());
 		}
 	}
+
+//	// namespace A {
+//	//   int a;
+//	//   namespace B {
+//	//     int b;
+//	//     namespace C {
+//	//       int c;
+//	//     }
+//	//     namespace A {
+//	//       int a;
+//	//     }
+//	//   }
+//	// }
+//	public void testQualifiedNameLookup() throws Exception {
+//		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
+//
+//		IScope scope = tu.getScope();
+//		assertNotNull(scope);
+//
+//		IBinding[] bindings = QtASTVisitor.findBindingsForQualifiedName(scope, "  A::a");
+//		assertNotNull(bindings);
+//		assertEquals(1, bindings.length);
+//		IBinding a = bindings[0];
+//		assertEquals("a", a.getName());
+//
+//		bindings = QtASTVisitor.findBindingsForQualifiedName(scope, "A::B::b	");
+//		assertNotNull(bindings);
+//		assertEquals(1, bindings.length);
+//		IBinding b = bindings[0];
+//		assertEquals("b", b.getName());
+//
+//		bindings = QtASTVisitor.findBindingsForQualifiedName(scope, "A::	B  ::C::c");
+//		assertNotNull(bindings);
+//		assertEquals(1, bindings.length);
+//		IBinding c = bindings[0];
+//		assertEquals("c", c.getName());
+//
+//		// From the level of c, there should be two A::a (::A::a and ::A::B::A::a).
+//		IScope scopeC = c.getScope();
+//		assertNotNull(scopeC);
+//		bindings = QtASTVisitor.findBindingsForQualifiedName(scopeC, "A::a");
+//		assertNotNull(bindings);
+//		assertEquals(2, bindings.length);
+//
+//		// From the level of c, there should be only one ::A::a.
+//		assertNotNull(scopeC);
+//		bindings = QtASTVisitor.findBindingsForQualifiedName(scopeC, "::A::a");
+//		assertNotNull(bindings);
+//		assertEquals(1, bindings.length);
+//	}
 }

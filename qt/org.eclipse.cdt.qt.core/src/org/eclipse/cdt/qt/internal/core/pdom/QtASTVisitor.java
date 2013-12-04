@@ -8,13 +8,20 @@
 package org.eclipse.cdt.qt.internal.core.pdom;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -23,7 +30,9 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.index.IIndexSymbols;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -37,6 +46,22 @@ public class QtASTVisitor extends ASTVisitor {
 	private final LocationMap locationMap;
 
 	private static final Pattern expansionParamRegex = Pattern.compile("^" + "(?:Q_ENUMS|Q_FLAGS)" + "\\s*\\((.*)\\)$");
+	// A regular expression for matching qualified names.  This allows for optional global qualification
+	// (leading ::) and then separates the first part of the name from the rest (if present).  There are
+	// three capture groups:
+	//   (1) If the input name specifies the global namespace (leading ::) then capture group 1 will
+	//       be ::.  Group 1 will be null otherwise.
+	//   (2) The text of the first component of the qualified name, including leading :: if present in
+	//       the input string.  Leading and trailing whitespace is trimmed.  There is no effort to check
+	//       that the name contains valid C++ identifier characters.
+	//   (3) The text of everything after the first component of the qualified name.
+	//
+	// E.g., -- Input Name --   ---- Capture Groups ----
+	//       "::nsA::nsB::b" => { "::", "nsA", "nsB::b" }
+	//       "a"             => { null, "a",   null     }
+	//       "::  i"         => { "::", "i",   null     }
+	private static final Pattern QUALNAME_REGEX = Pattern.compile("^\\s*(::)?\\s*([^\\s:]+)\\s*(?:::(.*))?$"); //$NON-NLS-1$
+
 	private static final Pattern qualNameRegex = Pattern.compile("\\s*((?:[^\\s:]+\\s*::\\s*)*[^\\s:]+).*");
 
 	private static final Pattern declareFlagsRegex = Pattern.compile("^Q_DECLARE_FLAGS\\s*\\(\\s*([^\\s]+),\\s*([^\\s]+)\\s*\\)$");
@@ -104,7 +129,7 @@ public class QtASTVisitor extends ASTVisitor {
 
 			String alias = aliases.get(name);
 
-			IBinding[] bindings = CPPSemantics.findBindingsForQualifiedName(spec.getScope(), alias == null ? name : alias);
+			IBinding[] bindings = findBindingsForQualifiedName(spec.getScope(), alias == null ? name : alias);
 			for(IBinding binding : bindings) {
 				// Create a reference from this Qt name to the target enum's definition.
 				IASTName cppName = null;
@@ -184,5 +209,111 @@ public class QtASTVisitor extends ASTVisitor {
 			String enumName = m.group(1);
 			decls.add(new EnumDecl(enumName, isFlag, refName, offset + start, end - start));
 		}
+	}
+
+	private static IScope getLookupScope(IASTNode node) {
+		if (node == null)
+			return null;
+
+		if (node instanceof IASTCompositeTypeSpecifier)
+			return ((IASTCompositeTypeSpecifier) node).getScope();
+
+		if (node instanceof ICPPASTNamespaceDefinition)
+			return ((ICPPASTNamespaceDefinition) node).getScope();
+
+		if (!(node instanceof ICPPInternalBinding))
+			return null;
+
+		IASTNode defn = ((ICPPInternalBinding) node).getDefinition();
+		if (defn == null)
+			return null;
+
+		return getLookupScope(defn.getParent());
+	}
+
+	private static IScope getLookupScope(IBinding binding) {
+		if (binding == null)
+			return null;
+
+		if (binding instanceof IASTCompositeTypeSpecifier)
+			return ((IASTCompositeTypeSpecifier) binding).getScope();
+
+		if (!(binding instanceof ICPPInternalBinding))
+			return null;
+
+		IASTNode defn = ((ICPPInternalBinding) binding).getDefinition();
+		if (defn == null)
+			return null;
+
+		return getLookupScope(defn.getParent());
+	}
+
+	/**
+	 * Use C++ lookup semantics to find the possible bindings for the given qualified name starting
+	 * in the given scope.
+	 */
+	public static IBinding[] findBindingsForQualifiedName(IScope scope, String qualifiedName) {
+		// Return immediately if the qualifiedName does not match a known format.
+		Matcher m = QUALNAME_REGEX.matcher(qualifiedName);
+		if (!m.matches())
+			return IBinding.EMPTY_BINDING_ARRAY;
+
+		// If the qualified name is rooted in the global namespace, then navigate to that scope.
+		boolean isGlobal = m.group(1) != null;
+		if (isGlobal) {
+			IScope global = scope;
+			try {
+				while(global.getParent() != null)
+					global = global.getParent();
+			} catch(DOMException e) {
+				CCorePlugin.log(e);
+			}
+			scope = global;
+		}
+
+		Set<IBinding> bindings = new HashSet<IBinding>();
+
+		// Look for the name in the given scope.
+		findBindingsForQualifiedName(scope, qualifiedName, bindings);
+
+		// If the qualified name is not rooted in the global namespace (with a leading ::), then
+		// look at all parent scopes.
+		if (!isGlobal)
+			try {
+				while(scope != null) {
+					scope = scope.getParent();
+					if (scope != null)
+						findBindingsForQualifiedName(scope, qualifiedName, bindings);
+				}
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
+
+		return bindings.size() <= 0 ? IBinding.EMPTY_BINDING_ARRAY : bindings.toArray(new IBinding[bindings.size()]);
+	}
+
+	private static void findBindingsForQualifiedName(IScope scope, String qualifiedName, Collection<IBinding> bindings) {
+		// Split the qualified name into the first part (before the first :: qualifier) and the rest. All
+		// bindings for the first part are found and their scope is used to find the rest of the name.  When
+		// the call tree gets to a leaf (non-qualified name) then a simple lookup happens and all matching
+		// bindings are added to the result.
+
+		Matcher m = QUALNAME_REGEX.matcher(qualifiedName);
+		if (!m.matches())
+			return;
+
+		String part1 = m.group(2);
+		String part2 = m.group(3);
+
+		// When we're down to a single component name, then use the normal lookup method.
+		if (part2 == null || part2.isEmpty()) {
+			bindings.addAll(Arrays.asList(CPPSemantics.findBindings(scope, part1, false)));
+			return;
+		}
+
+		// Find all bindings that match the first part of the name.  For each such binding,
+		// lookup the second part of the name.
+		for(IBinding binding : CPPSemantics.findBindings(scope, part1, false))
+			findBindingsForQualifiedName(getLookupScope(binding), part2, bindings);
 	}
 }

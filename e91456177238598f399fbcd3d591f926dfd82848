@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_8d933ab1",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-04T10:52:41Z",
+      "side": 1,
+      "message": "This will not work because a core file (which is elements[0]) is an IBinary, but we don\u0027t want to use that as the program for the debug session.  We need to make sure (probably in super.searchAndLaunch()) that no core file is selected as part of the list of binaries.  You can use IBinary.isCore() for that.",
+      "revId": "e91456177238598f399fbcd3d591f926dfd82848",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_cd89c283",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-04T10:52:41Z",
+      "side": 1,
+      "message": "Note that the \u0027bin\u0027 argument here is the program used for the launch, not the core file.",
+      "revId": "e91456177238598f399fbcd3d591f926dfd82848",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_8d65fa3d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-04T10:52:41Z",
+      "side": 1,
+      "message": "The above call is currently not enough.  The code will look for a post-mortem launch that has the same program and project, but will not check that the core file also matches.  I think we need to look for all post-mortem launches that:\n1- have the same program\n2- have the same project (an empty or null project should be accepted as long as the program matches; this is for project-less debugging)\n3- the core file matches\n\nOnce those three conditions are true, the launch config is good enough, and if there are more than one, we need to prompt the user for which one to use, just like super.findLaunchConfiguration() does.\n\nIf there are no launch configs that match, we need to create our own, and set the ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH attribute at that time.",
+      "revId": "e91456177238598f399fbcd3d591f926dfd82848",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_cd5b827f",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-04T10:52:41Z",
+      "side": 1,
+      "message": "Note that this should eventually give the resource behind the program not the core file, which is not what we want.",
+      "revId": "e91456177238598f399fbcd3d591f926dfd82848",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_0d59ea85",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcutPMD.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-04T10:52:41Z",
+      "side": 1,
+      "message": "I don\u0027t think we need to do this.  The launch config we have gotten should already contain the core file.",
+      "revId": "e91456177238598f399fbcd3d591f926dfd82848",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

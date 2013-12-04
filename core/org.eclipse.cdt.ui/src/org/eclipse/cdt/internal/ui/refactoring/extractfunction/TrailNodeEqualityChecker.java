@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
@@ -121,7 +122,7 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 			return trailName.equals(name);
 		} else if (trailNode instanceof TrailName && node instanceof IASTName) {
 			TrailName trailName = (TrailName) trailNode;
-			IASTName name = (IASTName)node;
+			IASTName name = (IASTName) node;
 			return isNameEqual(trailName, name);
 		} else {
 			return true;
@@ -275,7 +276,7 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 		} else if (trailNode instanceof IASTLiteralExpression) {
 			IASTLiteralExpression trailLiteral = (IASTLiteralExpression) trailNode;
 			IASTLiteralExpression literal = (IASTLiteralExpression) node;
-			return trailLiteral.getKind() == literal.getKind() && trailLiteral.toString().equals(literal.toString());
+			return trailLiteral.getKind() == literal.getKind() && trailLiteral.getRawSignature().equals(literal.getRawSignature());
 		} else if (trailNode instanceof IASTUnaryExpression) {
 			IASTUnaryExpression trailExpr = (IASTUnaryExpression) trailNode;
 			IASTUnaryExpression expr = (IASTUnaryExpression) node;
@@ -359,9 +360,10 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 			return false;
 		}
 
+		IASTName realName = trailName.getRealName();
+		IBinding realBind = realName.resolveBinding();
+		IBinding nameBind = name.resolveBinding();
 		if (trailName.isGloballyQualified()) {
-			IBinding realBind = trailName.getRealName().resolveBinding();
-			IBinding nameBind = name.resolveBinding();
 			IIndexName[] realDecs;
 			IIndexName[] nameDecs;
 			try {
@@ -371,25 +373,30 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 				CUIPlugin.log(e);
 				return false;
 			}
-			if (realDecs.length == nameDecs.length) {
-				for (int i = 0; i < realDecs.length; ++i) {
-					IASTFileLocation rfl = realDecs[i].getFileLocation();
-					IASTFileLocation nfl = nameDecs[i].getFileLocation();
-					if (rfl.getNodeOffset() != nfl.getNodeOffset() || !rfl.getFileName().equals(nfl.getFileName()))
-						return false;
-				}
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			IType oType = getType(trailName.getRealName().resolveBinding());
-			IType nType = getType(name.resolveBinding());
-			if (oType == null || nType == null)
-				return false;
 
-			if (oType.isSameType(nType))
-				return true;
+			if (realDecs.length != nameDecs.length)
+				return false;
+			for (int i = 0; i < realDecs.length; ++i) {
+				IASTFileLocation rfl = realDecs[i].getFileLocation();
+				IASTFileLocation nfl = nameDecs[i].getFileLocation();
+				if (rfl.getNodeOffset() != nfl.getNodeOffset() || !rfl.getFileName().equals(nfl.getFileName()))
+					return false;
+			}
+			return true;
+		} else {
+			if (realBind instanceof ILabel && nameBind instanceof ILabel) {
+				if (realName.getRawSignature().equals(name.getRawSignature())) {
+					return true;
+				}
+			} else {
+				IType oType = getType(realBind);
+				IType nType = getType(nameBind);
+				if (oType == null || nType == null)
+					return false;
+	
+				if (oType.isSameType(nType))
+					return true;
+			}
 		}
 		return false;
 	}

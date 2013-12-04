@@ -703,15 +703,19 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		boolean theRetName = false;
 
 		for (NameInformation nameInfo : info.getParameters()) {
-			Integer trailSeqNumber = trailNameTable.get(nameInfo.getDeclarationName().getRawSignature());
 			String origName = null;
-			for (Entry<String, Integer> entry : similarNameTable.entrySet()) {
-				if (entry.getValue().equals(trailSeqNumber)) {
-					origName = entry.getKey();
-					if (info.getReturnVariable() != null &&	trailSeqNumber.intValue() == returnNumber) {
-						theRetName = true;
+			Integer trailSeqNumber = trailNameTable.get(nameInfo.getDeclarationName().getRawSignature());
+			if (trailSeqNumber != null) {
+				for (Entry<String, Integer> entry : similarNameTable.entrySet()) {
+					if (entry.getValue().equals(trailSeqNumber)) {
+						origName = entry.getKey();
+						if (info.getReturnVariable() != null &&	trailSeqNumber.intValue() == returnNumber) {
+							theRetName = true;
+						}
 					}
 				}
+			} else {
+				origName = String.valueOf(nameInfo.getDeclarationName().getSimpleID());
 			}
 
 			if (origName != null) {
@@ -773,7 +777,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	private IASTNode getReturnAssignment(IASTExpressionStatement stmt,
 			IASTFunctionCallExpression callExpression, IASTName retname) {
 		if (info.getReturnVariable().equals(info.getMandatoryReturnVariable())) {
-			IASTSimpleDeclaration orgDecl = CPPVisitor.findAncestorWithType(info.getReturnVariable().getDeclarationName(), IASTSimpleDeclaration.class);
+			IASTSimpleDeclaration orgDecl =
+					CPPVisitor.findAncestorWithType(info.getReturnVariable().getDeclarationName(),
+							IASTSimpleDeclaration.class);
 			IASTSimpleDeclaration decl = new CPPASTSimpleDeclaration();
 
 			decl.setDeclSpecifier(orgDecl.getDeclSpecifier().copy(CopyStyle.withLocations));
@@ -804,8 +810,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		return getReturnAssignment(stmt, binaryExpression);
 	}
 
-	private IASTNode getReturnAssignment(IASTExpressionStatement stmt,
-			IASTExpression callExpression) {
+	private IASTNode getReturnAssignment(IASTExpressionStatement stmt, IASTExpression callExpression) {
 		IASTNode node = container.getNodesToWrite().get(0);
 		return extractor.createReturnAssignment(node, stmt, callExpression);
 	}

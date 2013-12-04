@@ -2919,6 +2919,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	public void testDuplicates() throws Exception {
 		assertRefactoringSuccess();
 	}
+
 	//A.h
 	//#ifndef A_H_
 	//#define A_H_
@@ -4189,6 +4190,78 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	return 42;
 	//}
 	public void testMultipleMacros() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//test.cpp
+	//template<typename T>
+	//void p(T p) {}
+	//
+	//#define TRACE(var) p(__LINE__), p(": "), p(#var), p("="), p(var)
+	//
+	//void test(int x, int y) {
+	//	/*$*/TRACE(x);/*$$*/
+	//	TRACE(y);
+	//	TRACE(x);
+	//}
+	//====================
+	//template<typename T>
+	//void p(T p) {}
+	//
+	//#define TRACE(var) p(__LINE__), p(": "), p(#var), p("="), p(var)
+	//
+	//void extracted(int x) {
+	//	TRACE(x);
+	//}
+	//
+	//void test(int x, int y) {
+	//	extracted(x);
+	//	TRACE(y);
+	//	extracted(x);
+	//}
+	public void testLiteralFromMacro() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//test.cpp
+	//#define LABEL(a, b) a ## b
+	//#define MACRO1(cond1, cond2, var, n) \
+	//if (cond1) { \
+	//  if (cond2) { \
+	//    var++; \
+	//    goto LABEL(label, n); \
+	//  } \
+	//} else LABEL(label, n): \
+	//  var--
+	//#define MACRO(var) MACRO1(true, false, var, __COUNTER__)
+	//
+	//void test1(int x, int y) {
+	//  MACRO(x);
+	//  MACRO(y);
+	//  /*$*/MACRO(x);/*$$*/
+	//}
+	//====================
+	//#define LABEL(a, b) a ## b
+	//#define MACRO1(cond1, cond2, var, n) \
+	//if (cond1) { \
+	//  if (cond2) { \
+	//    var++; \
+	//    goto LABEL(label, n); \
+	//  } \
+	//} else LABEL(label, n): \
+	//  var--
+	//#define MACRO(var) MACRO1(true, false, var, __COUNTER__)
+	//
+	//void extracted(int x) {
+	//	MACRO(x);
+	//}
+	//
+	//void test1(int x, int y) {
+	//	extracted(x);
+	//  MACRO(y);
+	//	extracted(x);
+	//}
+	public void testLabelFromMacro() throws Exception {
 		assertRefactoringSuccess();
 	}
 

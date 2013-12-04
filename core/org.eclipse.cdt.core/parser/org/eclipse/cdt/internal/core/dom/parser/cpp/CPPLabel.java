@@ -23,11 +23,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPLabel extends PlatformObject implements ILabel, ICPPInternalBinding {
-    private IASTName statement;
+    private IASTName name;
 
-    public CPPLabel(IASTName statement) {
-        this.statement = statement;
-        statement.setBinding(this);
+    public CPPLabel(IASTName name) {
+        this.name = name;
+        name.setBinding(this);
     }
 
     @Override
@@ -37,11 +37,12 @@ public class CPPLabel extends PlatformObject implements ILabel, ICPPInternalBind
 
     @Override
 	public IASTNode getDefinition() {
-        return statement;
+        return name;
     }
 
     @Override
 	public IASTLabelStatement getLabelStatement() {
+    	IASTNode statement = name.getParent();
         if (statement instanceof IASTLabelStatement)
             return (IASTLabelStatement) statement;
         
@@ -56,20 +57,20 @@ public class CPPLabel extends PlatformObject implements ILabel, ICPPInternalBind
 
     @Override
 	public char[] getNameCharArray() {
-        return statement.getSimpleID();
+        return name.getSimpleID();
     }
 
     @Override
 	public IScope getScope() {
-        return CPPVisitor.getContainingScope(statement);
+        return CPPVisitor.getContainingScope(name);
     }
 
     public IASTNode getPhysicalNode() {
-        return statement;
+        return name;
     }
 
     public void setLabelStatement(IASTName labelStatement) {
-        statement = labelStatement;
+        name = labelStatement;
     }
 
     @Override
@@ -102,7 +103,7 @@ public class CPPLabel extends PlatformObject implements ILabel, ICPPInternalBind
 
 	@Override
 	public IBinding getOwner() {
-		return CPPVisitor.findEnclosingFunction(statement);
+		return CPPVisitor.findEnclosingFunction(name);
 	}
 
 	@Override

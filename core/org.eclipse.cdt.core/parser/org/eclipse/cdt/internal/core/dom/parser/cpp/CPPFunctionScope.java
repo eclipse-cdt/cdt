@@ -37,7 +37,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * Scope of a function, containing labels.
  */
 public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
-    private CharArrayObjectMap<IBinding> labels = CharArrayObjectMap.emptyMap();
+    private CharArrayObjectMap<ILabel> labels = CharArrayObjectMap.emptyMap();
     
 	/**
 	 * @param physicalNode
@@ -56,22 +56,18 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	    //3.3.4 only labels have function scope
 	    if (!(binding instanceof ILabel))
 	        return;
-	    
-	    if (labels == CharArrayObjectMap.EMPTY_MAP)
-	        labels = new CharArrayObjectMap<IBinding>(2);
-	    
-	    labels.put(binding.getNameCharArray(), binding);
-	}
 
-	public IBinding getBinding(IASTName name) {
-	    return labels.get(name.getLookupKey());
+	    if (labels == CharArrayObjectMap.EMPTY_MAP)
+	        labels = new CharArrayObjectMap<ILabel>(2);
+
+	    labels.put(binding.getNameCharArray(), (ILabel) binding);
 	}
 
 	@Override
 	public IBinding[] find(String name) {
 	    char[] n = name.toCharArray();
 	    List<IBinding> bindings = new ArrayList<IBinding>();
-	    
+
 	    for (int i = 0; i < labels.size(); i++) {
 	    	char[] key = labels.keyAt(i);
 	    	if (CharArrayUtils.equals(key, n)) {

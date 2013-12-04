@@ -7,26 +7,26 @@
  */
 package org.eclipse.cdt.qt.internal.core.pdom;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.core.runtime.CoreException;
 
-public class QtEnumName extends AbstractQObjectFieldName implements IQtASTName  {
+public class QtPropertyAttributeName extends ASTDelegatedName implements IQtASTName {
 
-	private final IASTName cppEnumName;
-	private final boolean isFlag;
+	private final QtASTImageLocation location;
 
-	public QtEnumName(QObjectName qobjName, IASTName ast, String qtEnumName, IASTName cppEnumName, QtASTImageLocation location, boolean isFlag) {
-		super(qobjName, ast, qtEnumName, location);
-		this.cppEnumName = cppEnumName;
-		this.isFlag = isFlag;
+	public QtPropertyAttributeName(IASTName ast, String name, QtASTImageLocation location) {
+		super(ast);
+		this.location = location;
 	}
 
-	public boolean isFlag() {
-		return isFlag;
+	@Override
+	public IASTFileLocation getFileLocation() {
+		return location;
 	}
 
 	@Override
 	public QtPDOMBinding createPDOMBinding(QtPDOMLinkage linkage) throws CoreException {
-		return new QtPDOMQEnum(linkage, getOwner(linkage), this, cppEnumName);
+		return null;
 	}
 }

@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -19,7 +20,9 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.qt.core.QtPlugin;
 import org.eclipse.core.runtime.CoreException;
 
@@ -29,6 +32,7 @@ public class QtPDOMQEnum extends QtPDOMBinding implements IField {
 	private static int offsetInitializer = QtPDOMBinding.Field.Last.offset;
 	protected static enum Field {
 		Flags(1),
+		CppRecord(Database.PTR_SIZE),
 		Last(0);
 
 		public final int offset;
@@ -51,13 +55,14 @@ public class QtPDOMQEnum extends QtPDOMBinding implements IField {
 		super(linkage, record);
 	}
 
-	public QtPDOMQEnum(QtPDOMLinkage linkage, PDOMBinding parent, QtBinding binding) throws CoreException {
-		super(linkage, parent, binding);
+	public QtPDOMQEnum(QtPDOMLinkage linkage, PDOMBinding parent, IASTName qtName, IASTName cppName) throws CoreException {
+		super(linkage, parent, qtName);
+
+		getDB().putRecPtr(Field.CppRecord.getRecord(record), linkage.getCPPRecord(cppName));
 
 		// The flags are set in several sections, and then written to the Database in one operation.
 		byte flags = 0;
 
-		IASTName qtName = binding.getQtName();
 		if (qtName instanceof QtEnumName
 		 && ((QtEnumName) qtName).isFlag())
 			flags |= IS_FLAG_MASK;
@@ -76,6 +81,25 @@ public class QtPDOMQEnum extends QtPDOMBinding implements IField {
 	@Override
 	public int getRecordSize() {
 		return Field.Last.offset;
+	}
+
+	public IEnumeration getCppEnumeration() throws CoreException {
+		long cppRec = getDB().getRecPtr(Field.CppRecord.getRecord(record));
+		if (cppRec == 0)
+			return null;
+
+		PDOMLinkage cppLinkage = getPDOM().getLinkage(ILinkage.CPP_LINKAGE_ID);
+		if (cppLinkage == null)
+			return null;
+
+		PDOMBinding cppBinding = cppLinkage.getBinding(cppRec);
+
+		// TODO
+		if (cppBinding == null)
+			return null;
+		cppBinding.getAdapter(IEnumeration.class);
+
+		return cppBinding instanceof IEnumeration ? (IEnumeration) cppBinding : null;
 	}
 
 	public boolean isFlag() throws CoreException {
@@ -103,12 +127,8 @@ public class QtPDOMQEnum extends QtPDOMBinding implements IField {
 	}
 
 	public List<IEnumerator> getEnumerators() throws CoreException {
-		IBinding cppBinding = getCppBinding();
-		if (!(cppBinding instanceof IEnumeration))
-			return Collections.emptyList();
-
-		IEnumeration cppEnum = (IEnumeration) cppBinding;
-		return Arrays.asList(cppEnum.getEnumerators());
+		IEnumeration cppEnum = getCppEnumeration();
+		return cppEnum == null ? Collections.<IEnumerator>emptyList() : Arrays.asList(cppEnum.getEnumerators());
 	}
 
 	/**

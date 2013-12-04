@@ -8,6 +8,7 @@
 package org.eclipse.cdt.qt.core;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.QualifiedName;
@@ -38,6 +39,10 @@ public class QtPlugin extends Plugin {
 
     public QtPlugin() {
     	instance = this;
+    }
+
+    public static CoreException coreException(String msg) {
+    	return new CoreException(new Status(IStatus.INFO, ID, msg));
     }
 
 	public static IStatus info(String msg) {

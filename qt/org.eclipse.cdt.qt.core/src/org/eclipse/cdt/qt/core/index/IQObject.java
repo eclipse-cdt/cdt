@@ -16,6 +16,54 @@ import java.util.List;
  * @see IQMethod
  */
 public interface IQObject extends IQElement {
+
+	/**
+	 * The interface to be implemented by elements that can be returned as members of an
+	 * implementation of {@link IQObject}.
+	 */
+	public static interface IMember {
+		/**
+		 * Return the QObject class that declares this member.  Does not return null.
+		 */
+		public IQObject getOwner();
+
+		/**
+		 * Returns true if it is <strong>*possible*</strong> for this member and the parameter
+		 * to override each the other.  A true result indicates that <strong>*if*</strong> the members
+		 * owner's are related by inheritance then one will override the other; the implementation
+		 * does not check that there actually is such an inheritance relationship.
+		 */
+		public boolean isOverride(IMember member);
+	}
+
+	/**
+	 * A wrapper for unmodifiable collections of members of a class.  Accessors provide filtered
+	 * views of the member list.
+	 *
+	 * @see #all()
+	 * @see #locals()
+	 * @see #withoutOverrides()
+	 */
+	public static interface IMembers<T extends IMember> {
+		/**
+		 * Returns an unmodifiable collection with all locally declared, inherited, and overridden
+		 * members.  Does not return null.
+		 */
+		public Collection<T> all();
+
+		/**
+		 * Returns an unmodifiable collection with only the members that are locally declared in the
+		 * source class.  Does not return null.
+		 */
+		public Collection<T> locals();
+
+		/**
+		 * Returns an unmodifiable collection of all locally declared and inherited members with the
+		 * overridden members filtered out.  Does not return null.
+		 */
+		public Collection<T> withoutOverrides();
+	}
+
 	/**
 	 * Returns the name of the class.
 	 */
@@ -37,6 +85,11 @@ public interface IQObject extends IQElement {
 	 * base classes.
 	 */
 	public List<IQObject> getBases();
+
+	/**
+	 * Returns the expansions of the Q_PROPERTY macro.  Does not return null.
+	 */
+	public IMembers<IQProperty> getProperties();
 
 	/**
 	 * Examines the Q_CLASSINFO expansions to return the value associated with the given

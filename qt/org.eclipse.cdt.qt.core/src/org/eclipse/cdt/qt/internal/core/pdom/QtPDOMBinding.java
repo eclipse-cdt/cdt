@@ -7,13 +7,11 @@
  */
 package org.eclipse.cdt.qt.internal.core.pdom;
 
-import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.qt.core.QtPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 @SuppressWarnings("restriction")
@@ -40,39 +38,36 @@ public abstract class QtPDOMBinding extends PDOMBinding {
 		super(linkage, record);
 	}
 
-	protected QtPDOMBinding(QtPDOMLinkage linkage, PDOMNode parent, QtBinding qtBinding) throws CoreException {
-		super(linkage, parent, qtBinding.getNameCharArray());
-		qtBinding.setPDOMBinding(this);
-
-		getDB().putRecPtr(Field.CppRecord.getRecord(record), linkage.getCPPRecord(qtBinding));
+	protected QtPDOMBinding(QtPDOMLinkage linkage, PDOMNode parent, IASTName qtName) throws CoreException {
+		super(linkage, parent, qtName.getSimpleID());
 	}
 
 	@Override
 	protected int getRecordSize() {
 		return Field.Last.offset;
 	}
-
-	public long getCppRecord() {
-		try {
-			return getDB().getRecPtr(Field.CppRecord.getRecord(record));
-		} catch (CoreException e) {
-			QtPlugin.log(e);
-		}
-
-		return 0;
-	}
-
-	public IBinding getCppBinding() throws CoreException {
-		long cppRec = getCppRecord();
-		if (cppRec == 0)
-			return null;
-
-		PDOMLinkage cppLinkage = getPDOM().getLinkage(ILinkage.CPP_LINKAGE_ID);
-		if (cppLinkage == null)
-			return null;
-
-		return cppLinkage.getBinding(cppRec);
-	}
+//
+//	public long getCppRecord() {
+//		try {
+//			return getDB().getRecPtr(Field.CppRecord.getRecord(record));
+//		} catch (CoreException e) {
+//			QtPlugin.log(e);
+//		}
+//
+//		return 0;
+//	}
+//
+//	public IBinding getCppBinding() throws CoreException {
+//		long cppRec = getCppRecord();
+//		if (cppRec == 0)
+//			return null;
+//
+//		PDOMLinkage cppLinkage = getPDOM().getLinkage(ILinkage.CPP_LINKAGE_ID);
+//		if (cppLinkage == null)
+//			return null;
+//
+//		return cppLinkage.getBinding(cppRec);
+//	}
 
 	protected QtPDOMLinkage getQtLinkage() {
 		PDOMLinkage pdomLinkage = getLinkage();
@@ -85,6 +80,14 @@ public abstract class QtPDOMBinding extends PDOMBinding {
 	@Override
 	public String[] getQualifiedName() {
 		return super.getQualifiedName();
+	}
+
+	// Access to the base class is restricted in the cdt.core plugin.  Other classes in the qt.core
+	// plugin that need the name get an access warning.  This forwarding function moves those warnings
+	// to a single place (this method).
+	@Override
+	public String getName() {
+		return super.getName();
 	}
 
 	@Override

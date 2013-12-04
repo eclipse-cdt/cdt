@@ -15,7 +15,9 @@ import org.eclipse.core.runtime.CoreException;
 public enum QtPDOMNodeType {
 
 	QObject,
-	QEnum;
+	QEnum,
+	QProperty,
+	QPropertyAttribute;
 
 	public final int Type = IIndexBindingConstants.LAST_CONSTANT + 1 + ordinal();
 
@@ -26,7 +28,7 @@ public enum QtPDOMNodeType {
 	 * <p>
 	 * The version is needed because ordinals for these enumerators are written to the file.
 	 */
-	public static final int VERSION = 2;
+	public static final int VERSION = 3;
 
 	public static QtPDOMNodeType forType(int version, int type) {
 		// Nothing has been deleted or replaced yet, so the version is ignored.
@@ -48,6 +50,8 @@ public enum QtPDOMNodeType {
 			return new QtPDOMQObject(linkage, record);
 		case QEnum:
 			return new QtPDOMQEnum(linkage, record);
+		case QProperty:
+			return new QtPDOMProperty(linkage, record);
 		}
 
 		return null;

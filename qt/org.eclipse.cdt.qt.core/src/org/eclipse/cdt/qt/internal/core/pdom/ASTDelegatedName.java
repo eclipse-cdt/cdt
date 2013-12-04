@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -34,53 +33,6 @@ public abstract class ASTDelegatedName implements IASTName {
 	protected final IASTName delegate;
 
 	protected IBinding binding;
-
-	/**
-	 * Some Qt elements are introduced with empty macro expansions.  The Qt linkage handles this
-	 * by creating a new name and then adding it as a reference to the C++ language element.
-	 * This utility helps by containing that C++ name and the location of the Qt name.
-	 */
-	public static class Reference extends ASTDelegatedName {
-
-		private final IASTFileLocation location;
-
-		public Reference(IASTName name, IASTFileLocation location) {
-			super(name);
-			this.location = location;
-		}
-
-		@Override
-		protected IBinding createBinding() {
-			return delegate.resolveBinding();
-		}
-
-		@Override
-		public IASTFileLocation getFileLocation() {
-			return location;
-		}
-
-		@Override
-		public boolean isReference() {
-			return true;
-		}
-
-		@Override
-		public boolean isDefinition() {
-			return false;
-		}
-
-		@Override
-		public boolean isDeclaration() {
-			return false;
-		}
-
-		@Override
-		public int getRoleOfName(boolean allowResolution) {
-			return IASTNameOwner.r_reference;
-		}
-	}
-
-	protected abstract IBinding createBinding();
 
 	protected ASTDelegatedName(IASTName delegate) {
 		this.delegate = delegate;
@@ -208,14 +160,12 @@ public abstract class ASTDelegatedName implements IASTName {
 
 	@Override
 	public IBinding getBinding() {
-		return binding;
+		return null;
 	}
 
 	@Override
 	public IBinding resolveBinding() {
-		if (binding == null)
-			binding = createBinding();
-		return binding;
+		return null;
 	}
 
 	@Override

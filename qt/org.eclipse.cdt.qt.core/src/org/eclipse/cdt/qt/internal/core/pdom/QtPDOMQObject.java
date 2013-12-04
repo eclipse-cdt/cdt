@@ -9,10 +9,12 @@ package org.eclipse.cdt.qt.internal.core.pdom;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -22,9 +24,10 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.qt.core.QtPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -41,19 +44,30 @@ public class QtPDOMQObject extends QtPDOMBinding implements ICompositeType {
 	// The record size is retrieved as the offset of the special terminal enumerator Last.
 	private static int offsetInitializer = QtPDOMBinding.Field.Last.offset;
 	protected static enum Field {
-		Children(4 /* From PDOMNodeLinkedList.RECORD_SIZE, which is protected */),
-		ClassInfos(Database.PTR_SIZE),
-		Last(0);
+		CppRecord(Database.PTR_SIZE, 3),
+		Children(4 /* From PDOMNodeLinkedList.RECORD_SIZE, which is protected */, 0),
+		ClassInfos(Database.PTR_SIZE, 2),
+		Properties(Database.PTR_SIZE, 3),
+		Last(0, 0);
 
 		private final int offset;
+		private final int version;
 
-		private Field(int sizeof) {
+		private Field(int sizeof, int version) {
 			this.offset = offsetInitializer;
+			this.version = version;
 			offsetInitializer += sizeof;
 		}
 
 		public long getRecord(long baseRec) {
 			return baseRec + offset;
+		}
+
+		/**
+		 * Return true if this linkage in supported in the given instance of the linkage.
+		 */
+		public boolean isSupportedIn(QtPDOMLinkage linkage) {
+			return linkage.getVersion() >= version;
 		}
 	}
 
@@ -64,77 +78,92 @@ public class QtPDOMQObject extends QtPDOMBinding implements ICompositeType {
 		children = new PDOMNodeLinkedList(linkage, Field.Children.getRecord(record));
 	}
 
-	public QtPDOMQObject(QtPDOMLinkage linkage, QtBinding binding) throws CoreException {
-		super(linkage, null, binding);
+	public QtPDOMQObject(QtPDOMLinkage linkage, IASTName qtName, IASTName cppName) throws CoreException {
+		super(linkage, null, qtName);
+
+		IBinding cppBinding = getPDOM().findBinding(cppName);
+		if (cppBinding != null) {
+			IPDOMBinding cppPDOMBinding = (IPDOMBinding) cppBinding.getAdapter(IPDOMBinding.class);
+			if (cppPDOMBinding != null) {
+				if (cppPDOMBinding.getLinkage() != null
+				 && cppPDOMBinding.getLinkage().getLinkageID() == ILinkage.CPP_LINKAGE_ID)
+					getDB().putRecPtr(Field.CppRecord.getRecord(record), cppPDOMBinding.getRecord());
+			}
+		}
+
 		children = new PDOMNodeLinkedList(linkage, Field.Children.getRecord(record));
 
-		IASTName qtName = binding.getQtName();
-		if (qtName instanceof QObjectName)
-			setClassInfos(((QObjectName) qtName).getClassInfos());
+		if (qtName instanceof QObjectName) {
+			QObjectName qobjName = (QObjectName) qtName;
+			setClassInfos(qobjName.getClassInfos());
+		}
+	}
+
+	public void delete() throws CoreException {
+		long fieldRec = Field.ClassInfos.getRecord(record);
+		new QtPDOMArray<ClassInfo>(getQtLinkage(), ClassInfo.Codec, fieldRec).delete();
+		getDB().putRecPtr(Field.ClassInfos.getRecord(record), 0);
+	}
+
+	public ICPPClassType getCppClassType() throws CoreException {
+		long cppRec = getDB().getRecPtr(Field.CppRecord.getRecord(record));
+		if (cppRec == 0)
+			return null;
+
+		PDOMLinkage cppLinkage = getPDOM().getLinkage(ILinkage.CPP_LINKAGE_ID);
+		if (cppLinkage == null)
+			return null;
+
+		PDOMBinding cppBinding = cppLinkage.getBinding(cppRec);
+
+		// TODO
+		if (cppBinding == null)
+			return null;
+		cppBinding.getAdapter(ICPPClassType.class);
+
+		return cppBinding instanceof ICPPClassType ? (ICPPClassType) cppBinding : null;
 	}
 
 	public void setClassInfos(Map<String, String> classInfos) throws CoreException {
 
-		// ClassInfo was not supported before version 2.
-		if (getQtLinkage().getVersion() < 2)
+		// Make sure the version of the linkage contains this field.
+		if (!Field.ClassInfos.isSupportedIn(getQtLinkage()))
 			return;
 
-		// Delete all entries that are currently in the list.
-		long block = getDB().getRecPtr(Field.ClassInfos.getRecord(record));
-		if (block != 0) {
-			int numEntries = getDB().getInt(block);
-			for(long b = block + Database.INT_SIZE, end = block + (numEntries * 2 * Database.PTR_SIZE); b < end; b += Database.PTR_SIZE)
-				getDB().getString(b).delete();
-			getDB().free(block);
+		// Create an array to be stored to the PDOM.
+		ClassInfo[] array = new ClassInfo[classInfos.size()];
+		Iterator<Map.Entry<String, String>> iterator = classInfos.entrySet().iterator();
+		for(int i = 0; i < array.length && iterator.hasNext(); ++i) {
+			Map.Entry<String, String> entry = iterator.next();
+			array[i] = new ClassInfo(entry.getKey(), entry.getValue());
 		}
 
-		// Clear the pointer if the incoming map is empty.
-		if (classInfos.isEmpty()) {
-			getDB().putRecPtr(Field.ClassInfos.getRecord(record), 0);
-			return;
-		}
+		// Store the array into the Database.
+		long arrayRec = getDB().getRecPtr(Field.ClassInfos.getRecord(record));
+		QtPDOMArray<ClassInfo> pdomArray = new QtPDOMArray<QtPDOMQObject.ClassInfo>(getQtLinkage(), ClassInfo.Codec, arrayRec);
+		arrayRec = pdomArray.set(array);
 
-		// Otherwise create a block large enough to hold the incoming list and then populate it.
-		block = getDB().malloc(Database.INT_SIZE + (classInfos.size() * 2 * Database.PTR_SIZE));
-		getDB().putInt(block, classInfos.size());
-
-		long b = block + Database.INT_SIZE;
-		for(Map.Entry<String, String> classInfo : classInfos.entrySet()) {
-			IString key = getDB().newString(classInfo.getKey());
-			IString val = getDB().newString(classInfo.getValue());
-
-			getDB().putRecPtr(b, key.getRecord()); b += Database.PTR_SIZE;
-			getDB().putRecPtr(b, val.getRecord()); b += Database.PTR_SIZE;
-		}
-
-		// Put the new block into the PDOM.
-		getDB().putRecPtr(Field.ClassInfos.getRecord(record), block);
+		// Update the record that is stored in the receiver's field.
+		getDB().putRecPtr(Field.ClassInfos.getRecord(record), arrayRec);
 	}
 
 	public Map<String, String> getClassInfos() throws CoreException {
 		Map<String, String> classInfos = new LinkedHashMap<String, String>();
 
-		// ClassInfo was not supported before version 2.
-		if (getQtLinkage().getVersion() < 2)
+		// Make sure the version of the linkage contains this field.
+		if (!Field.ClassInfos.isSupportedIn(getQtLinkage()))
 			return classInfos;
 
-		long block = getDB().getRecPtr(Field.ClassInfos.getRecord(record));
-		if (block != 0) {
-			int numEntries = getDB().getInt(block);
-			block += Database.INT_SIZE;
+		// Read the array from the Database and insert the elements into the Map that is to be returned.
+		long arrayRec = getDB().getRecPtr(Field.ClassInfos.getRecord(record));
+		QtPDOMArray<ClassInfo> pdomArray = new QtPDOMArray<QtPDOMQObject.ClassInfo>(getQtLinkage(), ClassInfo.Codec, arrayRec);
 
-			for(long end = block + (numEntries * 2 * Database.PTR_SIZE); block < end; /* in loop body */) {
-				long rec = getDB().getRecPtr(block);
-				IString key = getDB().getString(rec);
-				block += Database.PTR_SIZE;
+		ClassInfo[] array = pdomArray.get();
+		if (array == null)
+			return classInfos;
 
-				rec = getDB().getRecPtr(block);
-				IString val = getDB().getString(rec);
-				block += Database.PTR_SIZE;
-
-				classInfos.put(key.getString(), val.getString());
-			}
-		}
+		for(ClassInfo classInfo : array)
+			classInfos.put(classInfo.key, classInfo.value);
 
 		return classInfos;
 	}
@@ -157,12 +186,12 @@ public class QtPDOMQObject extends QtPDOMBinding implements ICompositeType {
 	}
 
 	public List<QtPDOMQObject> findBases() throws CoreException {
-		IBinding cppBinding = getCppBinding();
-		if (!(cppBinding instanceof ICPPClassType))
+		ICPPClassType cppClassType = getCppClassType();
+		if (cppClassType == null)
 			return Collections.emptyList();
 
 		List<QtPDOMQObject> bases = new ArrayList<QtPDOMQObject>();
-		for (ICPPBase base : ((ICPPClassType) cppBinding).getBases()) {
+		for (ICPPBase base : cppClassType.getBases()) {
 			if (base.getVisibility() != ICPPBase.v_public)
 				continue;
 
@@ -170,18 +199,12 @@ public class QtPDOMQObject extends QtPDOMBinding implements ICompositeType {
 			if (baseCls == null)
 				continue;
 
-			IPDOMBinding pdomBase = (IPDOMBinding) baseCls.getAdapter(IPDOMBinding.class);
-			if (pdomBase == null)
-				continue;
-
-			QtPDOMBinding qtPDOMBinding = getQtLinkage().findFromCppRecord(pdomBase.getRecord());
-			if (qtPDOMBinding == null)
-				continue;
-
-			QtPDOMQObject pdomQObj = (QtPDOMQObject) qtPDOMBinding.getAdapter(QtPDOMQObject.class);
-			if (pdomQObj != null)
-				bases.add(pdomQObj);
+			PDOMBinding pdomBinding = (PDOMBinding) baseCls.getAdapter(PDOMBinding.class);
+			QtPDOMQObject baseQObj = ASTNameReference.findFromBinding(QtPDOMQObject.class, pdomBinding);
+			if (baseQObj != null)
+				bases.add(baseQObj);
 		}
+
 		return bases;
 	}
 
@@ -213,6 +236,18 @@ public class QtPDOMQObject extends QtPDOMBinding implements ICompositeType {
 		children.addMember(child);
 	}
 
+	public <T extends IField> List<T> getFields(Class<T> cls) throws CoreException {
+		QtPDOMVisitor.All<T> collector = new QtPDOMVisitor.All<T>(cls);
+		try {
+			children.accept(collector);
+		} catch(CoreException e) {
+			QtPlugin.log(e);
+			return Collections.emptyList();
+		}
+
+		return collector.list;
+	}
+
 	@Override
 	public IField[] getFields() {
 		QtPDOMVisitor.All<IField> collector = new QtPDOMVisitor.All<IField>(IField.class);
@@ -241,9 +276,7 @@ public class QtPDOMQObject extends QtPDOMBinding implements ICompositeType {
 	@Override
 	public IScope getCompositeScope() {
 		try {
-			IBinding cppBinding = getCppBinding();
-			if (cppBinding instanceof ICompositeType)
-				return ((ICompositeType) cppBinding).getCompositeScope();
+			return getCppClassType().getCompositeScope();
 		} catch(CoreException e) {
 			QtPlugin.log(e);
 		}
@@ -254,5 +287,47 @@ public class QtPDOMQObject extends QtPDOMBinding implements ICompositeType {
     @Override
 	public Object clone() {
 		throw new UnsupportedOperationException();
+    }
+
+    private static class ClassInfo {
+    	public final String key;
+    	public final String value;
+    	public ClassInfo(String key, String value) {
+    		this.key = key;
+    		this.value = value;
+    	}
+
+    	public static final IQtPDOMCodec<ClassInfo> Codec = new IQtPDOMCodec<ClassInfo>() {
+			@Override
+			public int getElementSize() {
+				return 2 * Database.PTR_SIZE;
+			}
+
+			@Override
+			public ClassInfo[] allocArray(int count) {
+				return new ClassInfo[count];
+			}
+
+			@Override
+			public ClassInfo decode(QtPDOMLinkage linkage, long record) throws CoreException {
+				long keyRec = linkage.getDB().getRecPtr(record);
+				long valRec = linkage.getDB().getRecPtr(record + Database.PTR_SIZE);
+				return new ClassInfo(linkage.getDB().getString(keyRec).getString(), linkage.getDB().getString(valRec).getString());
+			}
+
+			@Override
+			public void encode(QtPDOMLinkage linkage, long record, ClassInfo element) throws CoreException {
+				// Delete the existing strings then create and store new ones.
+				long rec = linkage.getDB().getRecPtr(record);
+				if (rec != 0)
+					linkage.getDB().getString(rec).delete();
+				linkage.getDB().putRecPtr(record, element == null ? 0 : linkage.getDB().newString(element.key).getRecord());
+
+				rec = linkage.getDB().getRecPtr(record + Database.PTR_SIZE);
+				if (rec != 0)
+					linkage.getDB().getString(rec).delete();
+				linkage.getDB().putRecPtr(record + Database.PTR_SIZE, element == null ? 0 : linkage.getDB().newString(element.value).getRecord());
+			}
+    	};
     }
 }

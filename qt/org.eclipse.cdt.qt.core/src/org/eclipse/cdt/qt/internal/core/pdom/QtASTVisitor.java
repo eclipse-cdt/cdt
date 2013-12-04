@@ -15,7 +15,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -23,12 +25,15 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.index.IIndexSymbols;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
 import org.eclipse.cdt.qt.core.QtKeywords;
+import org.eclipse.cdt.qt.core.index.IQProperty;
+import org.eclipse.cdt.qt.internal.core.index.QProperty;
 
 @SuppressWarnings("restriction")
 public class QtASTVisitor extends ASTVisitor {
@@ -36,10 +41,10 @@ public class QtASTVisitor extends ASTVisitor {
 	private final IIndexSymbols symbols;
 	private final LocationMap locationMap;
 
-	private static final Pattern expansionParamRegex = Pattern.compile("^" + "(?:Q_ENUMS|Q_FLAGS)" + "\\s*\\((.*)\\)$");
+	private static final Pattern expansionParamRegex = Pattern.compile("^(?:Q_ENUMS|Q_FLAGS)\\s*\\((.*)\\)$", Pattern.DOTALL);
 	private static final Pattern qualNameRegex = Pattern.compile("\\s*((?:[^\\s:]+\\s*::\\s*)*[^\\s:]+).*");
 
-	private static final Pattern declareFlagsRegex = Pattern.compile("^Q_DECLARE_FLAGS\\s*\\(\\s*([^\\s]+),\\s*([^\\s]+)\\s*\\)$");
+	private static final Pattern declareFlagsRegex = Pattern.compile("^Q_DECLARE_FLAGS\\s*\\(\\s*([^\\s]+),\\s*([^\\s]+)\\s*\\)$", Pattern.DOTALL);
 
 	/**
 	 * A regular expression for scanning the Q_CLASSINFO expansion and extracting the
@@ -49,7 +54,35 @@ public class QtASTVisitor extends ASTVisitor {
 	 * <p>
 	 * The key must not have embedded quotes.
 	 */
-	private static final Pattern classInfoRegex = Pattern.compile("^Q_CLASSINFO\\s*\\(\\s*\"([^\"]+)\"\\s*,\\s*\"(.*)\"\\s*\\)$");
+	private static final Pattern classInfoRegex = Pattern.compile("^Q_CLASSINFO\\s*\\(\\s*\"([^\"]+)\"\\s*,\\s*\"(.*)\"\\s*\\)$", Pattern.DOTALL);
+
+	private static final Pattern leadingWhitespaceRegex = Pattern.compile("^\\s*([^\\s].*)$");
+
+	private static final Pattern qPropertyRegex = Pattern.compile("^Q_PROPERTY\\s*\\(\\s*(.+?)\\s*([a-zA-Z_][\\w]*+)(?:(?:\\s+(READ\\s+.*))|\\s*)\\s*\\)$", Pattern.DOTALL);
+
+	/**
+	 * A regular expression for scanning Q_PROPERTY attributes.  The regular expression is built
+	 * from the values defined in IQProperty#Attribute.  It looks like:
+	 * <pre>
+	 * (:?READ)|(?:WRITE)|(:?RESET)|...
+	 * </pre>
+	 * This regular expression is used to recognize valid attributes while scanning the
+	 * Q_PROPERTY macro expansion.
+	 *
+	 * @see QProperty#scanAttributes(String)
+	 */
+	private static final Pattern qPropertyAttributeRegex;
+	static {
+		StringBuilder regexBuilder = new StringBuilder();
+		for(IQProperty.Attribute attr : IQProperty.Attribute.values()) {
+			if (attr.ordinal() > 0)
+				regexBuilder.append('|');
+			regexBuilder.append("(:?");
+			regexBuilder.append(attr.identifier);
+			regexBuilder.append(")");
+		}
+		qPropertyAttributeRegex = Pattern.compile(regexBuilder.toString());
+	}
 
 	public QtASTVisitor(IIndexSymbols symbols, LocationMap locationMap) {
 		shouldVisitDeclSpecifiers = true;
@@ -117,7 +150,7 @@ public class QtASTVisitor extends ASTVisitor {
 				symbols.add(owner, astName, qobjName);
 
 				if (cppName != null)
-					symbols.add(owner, new ASTDelegatedName.Reference(cppName, location), astName);
+					symbols.add(owner, new ASTNameReference(cppName, location), astName);
 			}
 		}
 	}
@@ -128,9 +161,12 @@ public class QtASTVisitor extends ASTVisitor {
 		QObjectName qobjName = new QObjectName(spec);
 		symbols.add(owner, qobjName, null);
 
+		// The QObject contains a reference to the C++ class that it annotates.
+		symbols.add(owner, new ASTNameReference(spec.getName()), qobjName);
+
 		// There are three macros that are significant to QEnums, Q_ENUMS, Q_FLAGS, and Q_DECLARE_FLAGS.
 		// All macro expansions in the QObject class definition are examined to find instances of these
-		// three.  Two lists are created during this processing.  Then the those lists are uses to create
+		// three.  Two lists are created during this processing.  Then those lists are uses to create
 		// the QEnum instances.
 
 		List<EnumDecl> enumDecls = new ArrayList<QtASTVisitor.EnumDecl>();
@@ -140,6 +176,7 @@ public class QtASTVisitor extends ASTVisitor {
 			String macroName = String.valueOf(expansion.getMacroReference());
 			if (QtKeywords.Q_OBJECT.equals(macroName))
 				continue;
+
 			if (QtKeywords.Q_ENUMS.equals(macroName))
 				extractEnumDecls(expansion, false, enumDecls);
 			else if (QtKeywords.Q_FLAGS.equals(macroName))
@@ -158,7 +195,8 @@ public class QtASTVisitor extends ASTVisitor {
 					String value = m.group(2);
 					qobjName.addClassInfo(key, value);
 				}
-			}
+			} else if(QtKeywords.Q_PROPERTY.equals(macroName))
+				handleQPropertyDefn(owner, qobjName, expansion);
 		}
 
 		for(EnumDecl decl : enumDecls)
@@ -184,5 +222,168 @@ public class QtASTVisitor extends ASTVisitor {
 			String enumName = m.group(1);
 			decls.add(new EnumDecl(enumName, isFlag, refName, offset + start, end - start));
 		}
+	}
+
+	private void handleQPropertyDefn(IASTPreprocessorIncludeStatement owner, QObjectName qobjName, IASTPreprocessorMacroExpansion expansion) {
+		Matcher m = qPropertyRegex.matcher(expansion.getRawSignature());
+		if (!m.matches())
+			return;
+
+		String type = m.group(1);
+		String name = m.group(2);
+
+		int nameStart = m.start(2);
+		int nameEnd = m.end(2);
+
+		IASTName refName = expansion.getMacroReference();
+		QtASTImageLocation location = new QtASTImageLocation(refName.getFileLocation(), nameStart, nameEnd - nameStart);
+
+		QtPropertyName propertyName = new QtPropertyName(qobjName, refName, name, location);
+		propertyName.setType(type);
+		qobjName.addProperty(propertyName);
+		symbols.add(owner, propertyName, qobjName);
+
+		// Create nodes for all the attributes.
+		AttrValue[] values = new AttrValue[IQProperty.Attribute.values().length];
+		String attributes = m.group(3);
+		if (attributes == null)
+			return;
+
+		int attrOffset = m.start(3);
+
+		int lastEnd = 0;
+		IQProperty.Attribute lastAttr = null;
+		for(Matcher attributeMatcher = qPropertyAttributeRegex.matcher(attributes); attributeMatcher.find(); lastEnd = attributeMatcher.end()) {
+			// set the value of attribute found in the previous iteration to the substring between
+			// the end of that attribute and the start of this one
+			if (lastAttr != null) {
+				String value = attributes.substring(lastEnd, attributeMatcher.start());
+				int wsOffset = 0;
+				Matcher ws = leadingWhitespaceRegex.matcher(value);
+				if (ws.matches()) {
+					value = ws.group(1);
+					wsOffset = ws.start(1);
+				}
+
+				values[lastAttr.ordinal()] = new AttrValue(attrOffset + lastEnd + wsOffset, value.trim());
+			}
+
+			// the regex is built from the definition of the enum, so none of the strings that it
+			// finds will throw an exception
+			lastAttr = IQProperty.Attribute.valueOf(IQProperty.Attribute.class, attributeMatcher.group(0));
+
+			// if this attribute doesn't have a value, then put it into the value map immediately
+			// and make sure it is not used later in this scan
+			if (!lastAttr.hasValue) {
+				values[lastAttr.ordinal()] = AttrValue.None;
+				lastAttr = null;
+			}
+		}
+
+		// the value of the last attribute in the expansion is the substring between the end of
+		// the attribute identifier and the end of the string
+		if (lastAttr != null) {
+			String value = attributes.substring(lastEnd);
+			int wsOffset = 0;
+			Matcher ws = leadingWhitespaceRegex.matcher(value);
+			if (ws.matches()) {
+				value = ws.group(1);
+				wsOffset = ws.start(1);
+			}
+
+			values[lastAttr.ordinal()] = new AttrValue(attrOffset + lastEnd + wsOffset, value.trim());
+		}
+
+		// Put all values into the property name.
+		for(int i = 0; i < values.length; ++i) {
+			IQProperty.Attribute attr = IQProperty.Attribute.values()[i];
+			AttrValue value = values[i];
+			if (value == null)
+				continue;
+
+			// If the attribute is not expected to have a C++ binding as the value, then it can
+			// be immediately added to the Q_PROPERTY.
+			if (!couldHaveBinding(attr)) {
+				propertyName.addAttribute(attr, value.value);
+				continue;
+			}
+
+			// Otherwise see if one or more bindings can be found for the value of the attribute.
+			// TODO Check whether the Qt moc allows for inherited methods.
+			IBinding[] bindings = null;
+			IASTNode specNode = qobjName.getParent();
+			if (specNode instanceof IASTCompositeTypeSpecifier) {
+				IScope scope = ((IASTCompositeTypeSpecifier) specNode).getScope();
+				bindings = CPPSemantics.findBindings(scope, value.value, false);
+			}
+
+			// If no bindings are found, then the attribute can be immediately added to the Q_PROPERTY.
+			if (bindings == null || bindings.length <= 0) {
+				propertyName.addAttribute(attr, value.value);
+				continue;
+			}
+
+			// Otherwise create a new attribute for each binding.
+			for(IBinding foundBinding : bindings) {
+				propertyName.addAttribute(attr, value.value, foundBinding);
+
+				IASTName cppName = findASTName(foundBinding);
+				if (cppName != null) {
+					QtASTImageLocation attrLoc = new QtASTImageLocation(refName.getFileLocation(), value.offset, value.value.length());
+					symbols.add(owner, new ASTNameReference(cppName, attrLoc), propertyName);
+				}
+			}
+		}
+	}
+
+	private static boolean couldHaveBinding(IQProperty.Attribute attr) {
+		switch(attr) {
+		case READ:
+		case WRITE:
+		case RESET:
+		case NOTIFY:
+		case DESIGNABLE:
+		case SCRIPTABLE:
+			return true;
+
+		case REVISION:
+		case STORED:
+		case USER:
+		case CONSTANT:
+		case FINAL:
+		default:
+			return false;
+		}
+	}
+
+	private static IASTName findASTName(IBinding binding) {
+		IASTNode node = null;
+		if (binding instanceof ICPPInternalBinding) {
+			node = ((ICPPInternalBinding) binding).getDefinition();
+			if (node == null)
+				node = ((ICPPInternalBinding) binding).getDeclarations()[0];
+		}
+
+		if (node == null)
+			return null;
+
+		IASTName astName = node instanceof IASTName ? (IASTName) node : null;
+		if (astName != null)
+			return astName;
+
+		if (node instanceof IASTDeclarator)
+			return ((IASTDeclarator) node).getName();
+
+		return null;
+	}
+
+	private static class AttrValue {
+		public final int offset;
+		public final String value;
+		public AttrValue(int offset, String value) {
+			this.offset = offset;
+			this.value = value;
+		}
+		public static final AttrValue None = new AttrValue(0, null);
 	}
 }

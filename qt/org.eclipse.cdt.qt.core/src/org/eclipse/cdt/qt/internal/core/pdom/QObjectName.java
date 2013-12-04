@@ -7,7 +7,9 @@
  */
 package org.eclipse.cdt.qt.internal.core.pdom;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -16,18 +18,19 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * QObjects are C++ classes that have been annotated with Qt marker macros.  This class is
  * used to introduce the QObject to the Qt linkage.
  */
 @SuppressWarnings("restriction")
-public class QObjectName extends ASTDelegatedName {
+public class QObjectName extends ASTDelegatedName implements IQtASTName {
 
 	private final ICPPASTCompositeTypeSpecifier spec;
+	private final List<QtPropertyName> properties = new ArrayList<QtPropertyName>();
 	private final Map<String, String> classInfos = new LinkedHashMap<String, String>();
 
 	private IASTNode parent;
@@ -40,6 +43,14 @@ public class QObjectName extends ASTDelegatedName {
 		this.propertyInParent = delegate.getPropertyInParent();
 	}
 
+	public List<QtPropertyName> getProperties() {
+		return properties;
+	}
+
+	public void addProperty(QtPropertyName property) {
+		properties.add(property);
+	}
+
 	public Map<String, String> getClassInfos() {
 		return classInfos;
 	}
@@ -49,8 +60,8 @@ public class QObjectName extends ASTDelegatedName {
 	}
 
 	@Override
-	protected IBinding createBinding() {
-		return new QtBinding(QtPDOMNodeType.QObject, this, spec.getName());
+	public QtPDOMBinding createPDOMBinding(QtPDOMLinkage linkage) throws CoreException {
+		return new QtPDOMQObject(linkage, this, spec.getName());
 	}
 
 	@Override

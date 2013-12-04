@@ -46,7 +46,9 @@ public class PDOMNameTests extends BaseTestCase {
 		IProject project = cproject.getProject();
 		// Use enum because this uses a different NodeType in C++ and C.
 		TestSourceReader.createFile(project, "file.cpp", "enum E_cpp { e_cpp }; extern E_cpp func_cpp() { func_cpp(); return e_cpp; }");
+		waitForIndexer(cproject);
 		TestSourceReader.createFile(project, "file.c", "enum E_c { e_c }; extern enum E_c func_c() { func_c(); return e_c; }");
+		waitForIndexer(cproject);
 
 		IndexerPreferences.set(project, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(cproject);

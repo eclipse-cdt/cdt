@@ -162,4 +162,22 @@ public class CharArrayObjectMap <T> extends CharTable {
 	    System.arraycopy(valueTable, 0, values, 0, values.length);
 	    return values;
 	}
+
+    @Override
+	public String toString() {
+    	StringBuilder buf = new StringBuilder();
+    	buf.append('{');
+    	for (int i = 0; i < size(); i++) {
+    		char[] key = keyAt(i);
+    		if (key != null) {
+    			if (i != 0)
+    				buf.append(", "); //$NON-NLS-1$
+    			buf.append(key);
+    			buf.append("="); //$NON-NLS-1$
+    			buf.append(getAt(i));
+    		}
+    	}
+    	buf.append('}');
+    	return buf.toString();
+    }
 }

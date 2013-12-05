@@ -996,10 +996,24 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			try {
 				CommandLauncher launcher = new CommandLauncher();
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				// Fix Bug 423192 - use environment variables when checking the Win OS Type using
+				// a shell command as the path to sh may be specified there
+				IEnvironmentVariable variables[] = 
+						CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cdesc, true);
+				String[] env = new String[0];
+				ArrayList<String> envList = new ArrayList<String>();
+				if (variables != null) {
+					for (int i = 0; i < variables.length; i++) {
+							envList.add(variables[i].getName()
+									+ "=" + variables[i].getValue()); //$NON-NLS-1$
+					}
+					env = (String[]) envList.toArray(new String[envList.size()]);
+				}
+
 				launcher.execute(
 						new Path(SHELL_COMMAND), //$NON-NLS-1$
 						new String[] { "-c", "echo $OSTYPE" }, //$NON-NLS-1$ //$NON-NLS-2$
-						new String[0],
+						env,
 						new Path("."), //$NON-NLS-1$
 						new NullProgressMonitor());
 				if (launcher.waitAndRead(out, out) == CommandLauncher.OK)

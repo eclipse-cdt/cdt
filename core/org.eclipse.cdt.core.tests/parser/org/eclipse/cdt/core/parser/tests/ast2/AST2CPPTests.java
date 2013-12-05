@@ -1275,17 +1275,13 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPConstructor[] ctors = A.getConstructors();
 
 		assertNotNull(ctors);
-		assertEquals(ctors.length, 2);
+		assertEquals(2, ctors.length);
 
-		assertEquals(ctors[0].getParameters().length, 1);
+		assertEquals(0, ctors[0].getParameters().length);
 
-		IType t = ctors[0].getParameters()[0].getType();
-		assertTrue(t instanceof IBasicType);
-		assertEquals(((IBasicType) t).getType(), IBasicType.t_void);
+		assertEquals(1, ctors[1].getParameters().length);
 
-		assertEquals(ctors[1].getParameters().length, 1);
-
-		t = ctors[1].getParameters()[0].getType();
+		IType t = ctors[1].getParameters()[0].getType();
 		assertTrue(t instanceof ICPPReferenceType);
 		assertTrue(((ICPPReferenceType) t).getType() instanceof IQualifierType);
 		IQualifierType qt = (IQualifierType) ((ICPPReferenceType) t).getType();
@@ -1305,8 +1301,8 @@ public class AST2CPPTests extends AST2TestBase {
 		assertNotNull(ctors);
 		assertEquals(ctors.length, 2);
 
-		assertEquals(ctors[0].getParameters().length, 1);
-		assertEquals(ctors[1].getParameters().length, 1);
+		assertEquals(0, ctors[0].getParameters().length);
+		assertEquals(1, ctors[1].getParameters().length);
 
 		IType t = ctors[1].getParameters()[0].getType();
 		assertTrue(t instanceof ICPPReferenceType);

@@ -103,6 +103,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 
 /**
@@ -1375,6 +1376,9 @@ public class CVisitor extends ASTQueries {
 		    for (int i = 0; i < parms.length; i++) {
 		    	parmTypes[i] = createType(parms[i].getDeclarator());
 		    }
+
+		    if (parmTypes.length == 1 && SemanticUtil.isVoidType(parmTypes[0]))
+				return IType.EMPTY_TYPE_ARRAY; // f(void) is the same as f()
 		    return parmTypes;
 		} else if (decltor instanceof ICASTKnRFunctionDeclarator) {
 			IASTName parms[] = ((ICASTKnRFunctionDeclarator) decltor).getParameterNames();

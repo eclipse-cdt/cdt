@@ -5617,6 +5617,23 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template <class T1, class T2, class U>
+	//	void A(T1* obj, void (T2::*member)(U));
+	//
+	//	template <class T1, class T2>
+	//	void A(T1* obj, void (T2::*member)());
+	//
+	//	class B {
+	//	  void m1(void);
+	//
+	//	  void m2() {
+	//	    A(this, &B::m1);
+	//	  }
+	//	};
+	public void testFunctionWithVoidParamInTypeDeduction_423127() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template<typename T, unsigned length> struct Templ {
 	//		Templ(){}
 	//	};

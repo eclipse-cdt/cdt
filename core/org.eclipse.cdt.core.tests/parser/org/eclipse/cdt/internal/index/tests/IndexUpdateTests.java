@@ -542,7 +542,7 @@ public class IndexUpdateTests extends IndexTestBase {
 				new String[] {IMPLICIT, PUBLIC});
 		updateFile();
 		checkImplicitMethods("MyClass", 
-				null, // no default constructor, because we declared the copy constr.
+				null, // no default constructor, because we declared the copy constructor.
 				new String[] {EXPLICIT, PRIVATE},
 				new String[] {IMPLICIT, PUBLIC});
 		updateFile();
@@ -563,7 +563,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			final char[] nchars = name.toCharArray();
 			final String refType = name + " &";
 			final String constRefType = "const " + refType;
-			IIndexBinding[] ctors= fIndex.findBindings(new char[][]{nchars, nchars}, IndexFilter.ALL_DECLARED_OR_IMPLICIT, npm());
+			IIndexBinding[] ctors= fIndex.findBindings(new char[][] {nchars, nchars}, IndexFilter.ALL_DECLARED_OR_IMPLICIT, npm());
 
 			int count= 0;
 			for (int i = 0; i < ctors.length; i++) {
@@ -574,13 +574,13 @@ public class IndexUpdateTests extends IndexTestBase {
 			}
 			assertEquals(m1 == null ? 1 : 2, count);
 			final IType[] parameterTypes = ((ICPPConstructor) ctors[0]).getType().getParameterTypes();
-			if (parameterTypes.length!=1 || !(parameterTypes[0] instanceof ICPPReferenceType)) {
+			if (parameterTypes.length != 1 || !(parameterTypes[0] instanceof ICPPReferenceType)) {
 				IIndexBinding h= ctors[0]; ctors[0]= ctors[1]; ctors[1]= h;
 			}
 			if (m1 != null) {
-				checkCppConstructor((ICPPConstructor) ctors[1], new String[]{"", "void"}, m1);
+				checkCppConstructor((ICPPConstructor) ctors[1], new String[] {""}, m1);
 			}
-			checkCppConstructor((ICPPConstructor) ctors[0], new String[]{"", constRefType}, m2);
+			checkCppConstructor((ICPPConstructor) ctors[0], new String[] {"", constRefType}, m2);
 
 			IIndexBinding[] assignmentOps= fIndex.findBindings(
 					new char[][] {nchars, "operator =".toCharArray() }, IndexFilter.ALL_DECLARED_OR_IMPLICIT, npm());

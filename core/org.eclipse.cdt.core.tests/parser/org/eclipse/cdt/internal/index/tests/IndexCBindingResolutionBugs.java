@@ -70,11 +70,10 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		assertTrue(b0 instanceof IFunction);
 		IFunction f0 = (IFunction) b0;
 		IParameter[] params= f0.getParameters();
-		assertEquals(1, params.length);
-		IType param= params[0].getType();
-		assertTrue(param instanceof IBasicType);
+		assertEquals(0, params.length);
 		IType returnType= f0.getType().getReturnType();
 		assertTrue(returnType instanceof IBasicType);
+		assertEquals(IBasicType.Kind.eVoid, ((IBasicType) returnType).getKind());
 	}
 
 	//  void func1(void);

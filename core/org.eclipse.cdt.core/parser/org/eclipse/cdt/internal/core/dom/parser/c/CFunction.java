@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -130,6 +131,9 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 						result[i] = (IParameter) ASTQueries.findInnermostDeclarator(p.getDeclarator())
 								.getName().resolveBinding();
 					}
+
+					if (result.length == 1 && SemanticUtil.isVoidType(result[0].getType()))
+						return IParameter.EMPTY_PARAMETER_ARRAY;
 				}
 				return result;
 			}

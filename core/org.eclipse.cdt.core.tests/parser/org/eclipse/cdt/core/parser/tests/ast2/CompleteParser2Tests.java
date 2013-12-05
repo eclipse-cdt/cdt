@@ -417,8 +417,7 @@ public class CompleteParser2Tests extends BaseTestCase {
  		IFunction foo = (IFunction) col.getName(0).resolveBinding();
  		IParameter p =  (IParameter) col.getName(1).resolveBinding();
 
- 		assertEquals(foo.getParameters().length, 1);
- 		assertSame(foo.getParameters()[0], p);
+ 		assertEquals(0, foo.getParameters().length);
  		assertSame(p.getScope(), foo.getFunctionScope());
 	}
 

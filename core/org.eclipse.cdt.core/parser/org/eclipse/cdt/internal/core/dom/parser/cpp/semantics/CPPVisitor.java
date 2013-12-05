@@ -1837,6 +1837,10 @@ public class CPPVisitor extends ASTQueries {
 	    for (int i = 0; i < params.length; i++) {
 	        pTypes[i]= createType(params[i], true);
 	    }
+
+	    if (pTypes.length == 1 && SemanticUtil.isVoidType(pTypes[0])) {
+	    	return IType.EMPTY_TYPE_ARRAY;  // f(void) is the same as f().
+	    }
 		return pTypes;
 	}
 

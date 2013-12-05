@@ -34,6 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CQualifierType;
+import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.composite.CompositeIndexBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -61,7 +62,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 
 	@Override
 	public int getNodeType() {
-		return LINKAGE;
+		return IIndexBindingConstants.LINKAGE;
 	}
 	
 	@Override

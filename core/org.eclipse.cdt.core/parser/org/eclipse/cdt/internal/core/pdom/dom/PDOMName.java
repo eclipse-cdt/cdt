@@ -212,9 +212,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	@Override
 	public char[] getSimpleID() {
 		try {
-			Database db = linkage.getDB();
-			long bindingRec = db.getRecPtr(record + BINDING_REC_OFFSET);
-			IPDOMBinding binding = linkage.getBinding(bindingRec);
+			PDOMBinding binding = getBinding();
 			return binding != null ? binding.getNameCharArray() : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

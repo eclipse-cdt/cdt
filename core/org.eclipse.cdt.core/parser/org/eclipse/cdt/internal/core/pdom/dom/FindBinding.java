@@ -44,8 +44,8 @@ public class FindBinding {
 				long t1= PDOMBinding.getLocalToFileRec(database, record1);
 				long t2= PDOMBinding.getLocalToFileRec(database, record2);
 				if (t1 == t2) {
-					t1 = PDOMNode.getNodeType(database, record1);
-					t2 = PDOMNode.getNodeType(database, record2);
+					t1 = PDOMNode.getNodeId(database, record1);
+					t2 = PDOMNode.getNodeId(database, record2);
 					if (t1 == t2 && t1 == IIndexBindingConstants.ENUMERATOR) {
 						// Allow to insert multiple enumerators into the global index.
 						t1= record1;

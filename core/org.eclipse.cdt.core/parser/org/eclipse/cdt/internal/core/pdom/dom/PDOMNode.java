@@ -13,7 +13,9 @@
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
@@ -24,7 +26,8 @@ import org.eclipse.core.runtime.CoreException;
  * This class managed the parent pointer.
  */
 public abstract class PDOMNode implements IInternalPDOMNode {
-	private static final int TYPE = 0;
+	private static final int FACTORY_ID = 0;
+	private static final int NODE_TYPE = 2;
 	private static final int PARENT = 4;
 	
 	protected static final int RECORD_SIZE = 8;
@@ -33,7 +36,36 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	protected final long record;
 	
 	private volatile long cachedParentRecord;
-	
+
+	/**
+	 * Load a node from the specified record in the given database.  Return null if a node cannot
+	 * be loaded.
+	 *
+	 * @param pdom The PDOM from which to load the node.
+	 * @param record The record of the node in the given PDOM.
+	 * @return The PDOMNode at the specified location or null if a node cannot be loaded.
+	 * @throws CoreException When there is a problem reading the given pdom's Database
+	 */
+	public static PDOMNode load(PDOM pdom, long record) throws CoreException {
+		if (record == 0) {
+			return null;
+		}
+
+		Database db = pdom.getDB();
+
+		// Decode the factory id from the serialized type.  If it is a valid PDOMLinkage then
+		// use that linkage to build the node.  Otherwise fall back to using this linkage.
+		short factoryId = db.getShort(record + FACTORY_ID);
+		short nodeType = db.getShort(record + NODE_TYPE);
+
+		// For an unknown reason linkages cannot be loaded with this method.
+		if (nodeType == IIndexBindingConstants.LINKAGE)
+			return null;
+
+		PDOMLinkage factory = pdom.getLinkage(factoryId);
+		return factory == null ? null : factory.getNode(record, nodeType);
+	}
+
 	protected PDOMNode(PDOMLinkage linkage, long record) {
 		fLinkage = linkage;
 		this.record = record;
@@ -54,8 +86,11 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 		this.fLinkage = linkage;
 
 		record = db.malloc(getRecordSize());
-		db.putInt(record + TYPE, getNodeType());
-		
+
+		short factoryId = (short) (linkage == null ? ILinkage.NO_LINKAGE_ID : linkage.getLinkageID());
+		db.putShort(record + FACTORY_ID, factoryId);
+		db.putShort(record + NODE_TYPE, (short) getNodeType());
+
 		cachedParentRecord = parentRec;
 		db.putRecPtr(record + PARENT, parentRec);
 	}
@@ -74,6 +109,13 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 
 	protected abstract int getRecordSize();
 
+	/**
+	 * Return a value to uniquely identify the node within the factory that is responsible for loading
+	 * instances of this node from the PDOM.
+	 * <b>
+	 * NOTE: For historical reasons the return value is an int.  However, implementations must ensure that
+	 *       the result fits in a short.  The upper two bytes will be ignored.
+	 */
 	public abstract int getNodeType();
 
 	@Override
@@ -119,9 +161,14 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		// No children here.
 	}
-	
-	public static int getNodeType(Database db, long record) throws CoreException {
-		return db.getInt(record + TYPE);
+
+	/**
+	 * Uniquely identifies the type of a node using the factoryId and the nodeType.  This
+	 * should only be used for comparison with the result of calls to this method on other
+	 * nodes.
+	 */
+	public static int getNodeId(Database db, long record) throws CoreException {
+		return (db.getShort(record + FACTORY_ID) << 16) | (db.getShort(record + NODE_TYPE));
 	}
 	
 	public long getParentNodeRec() throws CoreException {

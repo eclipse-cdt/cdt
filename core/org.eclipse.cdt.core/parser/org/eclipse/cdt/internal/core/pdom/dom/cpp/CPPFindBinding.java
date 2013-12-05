@@ -65,7 +65,7 @@ public class CPPFindBinding extends FindBinding {
 		public int compare(long record) throws CoreException {
 			int cmp= super.compare(record);
 			if (cmp == 0) {
-				int c1 = PDOMNode.getNodeType(fLinkage.getDB(), record);
+				int c1 = PDOMNode.getNodeId(fLinkage.getDB(), record);
 				int c2= fConstant;
 				if (c1 == c2) {
 					IPDOMBinding binding = fLinkage.getBinding(record);

@@ -106,7 +106,7 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo, ICProjectDescr
 		}
 	}
 
-	private final ICProjectDescription projectDescription;
+	private final IProject project;
 
 	// sync object for all mutable fields
 	private final Object sync = new Object();
@@ -122,8 +122,8 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo, ICProjectDescr
 	private final List<IQMakeProjectInfoListener> listeners = new CopyOnWriteArrayList<IQMakeProjectInfoListener>();
 
 	private QMakeProjectInfo(IProject project) {
-		projectDescription = CoreModel.getDefault().getProjectDescriptionManager().getProjectDescription(project);
-		CoreModel.getDefault().addCProjectDescriptionListener(this, ICDescriptionDelta.ACTIVE_CFG);
+		this.project = project;
+		CoreModel.getDefault().addCProjectDescriptionListener(this, ICDescriptionDelta.ACTIVE_CFG | ICDescriptionDelta.DESCRIPTION);
 		updateActiveConfiguration();
 	}
 
@@ -135,36 +135,39 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo, ICProjectDescr
 			}
 			live = false;
 			CoreModel.getDefault().removeCProjectDescriptionListener(this);
-			removeActiveConfiguration();
+			setActiveConfiguration(null);
 			qmakeInfo = QMakeInfo.INVALID;
 		}
 	}
 
-	// removes active configuration
-	private void removeActiveConfiguration() {
+	private void updateActiveConfiguration() {
+		synchronized (sync) {
+			if (! live) {
+				return;
+			}
+			ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescriptionManager().getProjectDescription(project);
+			setActiveConfiguration(projectDescription != null ? projectDescription.getActiveConfiguration() : null);
+			qmakeInfo = null;
+		}
+		notifyListeners();
+	}
+
+	// called under synchronized (sync)
+	private void setActiveConfiguration(ICConfigurationDescription configuration) {
 		ControllerImpl previous = activeController;
-		activeController = null;
+		activeController = configuration != null ? new ControllerImpl(configuration) : null;
 		if (previous != null) {
 			previous.destroy();
 		}
 	}
 
-	// updates active configuration
-	private void updateActiveConfiguration() {
-		ICConfigurationDescription configuration = projectDescription.getActiveConfiguration();
-		if (configuration != null) {
-			activeController = new ControllerImpl(configuration);
-		}
-		scheduleFetchQMakeInfo();
-	}
-
 	// called on active project configuration change
 	@Override
 	public void handleEvent(CProjectDescriptionEvent event) {
-		synchronized (sync) {
-			removeActiveConfiguration();
-			updateActiveConfiguration();
+		if (event.getProject() != project) {
+			return;
 		}
+		updateActiveConfiguration();
 	}
 
 	@Override
@@ -270,6 +273,10 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo, ICProjectDescr
 			}
 			qmakeInfo = null;
 		}
+		notifyListeners();
+	}
+
+	private void notifyListeners() {
 		for (IQMakeProjectInfoListener listener : listeners) {
 			listener.qmakeInfoChanged();
 		}

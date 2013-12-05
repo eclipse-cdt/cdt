@@ -85,4 +85,11 @@
 		</bundle>
 	</component>
    </extension>
+      <extension point="org.eclipse.core.runtime.adapters"> 
+	  <factory 
+        	class="org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlockRetrievalFactory" 
+	        adaptableType="org.eclipse.cdt.dsf.datamodel.IDMContext">
+         <adapter type="org.eclipse.debug.core.model.IMemoryBlockRetrieval"/>
+	  </factory>         
+   </extension>	
 </plugin>

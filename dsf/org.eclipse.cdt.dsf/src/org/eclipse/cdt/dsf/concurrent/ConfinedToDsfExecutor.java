@@ -18,8 +18,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation idicating that given package, class, method, or field can be 
- * access safely only from a DSF executor thread.  If declared on package or type,
+ * Annotation indicating that the given package, class, method, or field can be 
+ * accessed safely only from a DSF executor thread.  If declared on a package or type,
  * a field or method could still be declared with an annotation indicating that it's
  * thread-safe.
  * <p>

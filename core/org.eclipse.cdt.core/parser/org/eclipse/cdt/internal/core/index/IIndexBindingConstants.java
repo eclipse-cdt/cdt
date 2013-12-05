@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.index;
  * Constants used by IIndexFragment implementations for identifying persisted binding types
  */
 public interface IIndexBindingConstants {
+	int LINKAGE= 0;
 	int ENUMERATOR= 3;
 	int MACRO_DEFINITION = 4;
 	int MACRO_CONTAINER = 5;

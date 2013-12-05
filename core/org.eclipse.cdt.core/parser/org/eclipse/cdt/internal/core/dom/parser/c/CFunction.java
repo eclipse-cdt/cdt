@@ -48,7 +48,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 
 	private static final int FULLY_RESOLVED         = 1;
 	private static final int RESOLUTION_IN_PROGRESS = 1 << 1;
-	private int bits = 0;
+	private int bits;
 
 	protected IFunctionType type;
 
@@ -112,9 +112,6 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	    }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
-	 */
 	@Override
 	public IParameter[] getParameters() {
 		int j= -1;
@@ -140,8 +137,8 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 				IASTName[] names = ((ICASTKnRFunctionDeclarator) dtor).getParameterNames();
 				IParameter[] result = new IParameter[names.length];
 				if (names.length > 0) {
-					// Ensures that the list of parameters is created in the same order as the K&R C parameter
-					// names
+					// Ensures that the list of parameters is created in the same order as
+					// the K&R C parameter names
 					for (int i = 0; i < names.length; i++) {
 						IASTDeclarator decl = CVisitor.getKnRParameterDeclarator(
 								(ICASTKnRFunctionDeclarator) dtor, names[i]);
@@ -233,7 +230,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     	IASTDeclarator knrParamDtor = null;
     	if (parent instanceof IASTParameterDeclaration) {
     	    IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) parent.getParent();
-    	    IASTParameterDeclaration [] ps = fdtor.getParameters();
+    	    IASTParameterDeclaration[] ps = fdtor.getParameters();
         	for (; idx < ps.length; idx++) {
         		if (parent == ps[idx])
         			break;
@@ -241,8 +238,8 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     	} else if (parent instanceof IASTSimpleDeclaration) {
     	    //KnR: name in declaration list
     	    fKnRDtor = (ICASTKnRFunctionDeclarator) parent.getParent();
-    	    IASTName [] ps = fKnRDtor.getParameterNames();
-    	    char [] n = paramName.toCharArray();
+    	    IASTName[] ps = fKnRDtor.getParameterNames();
+    	    char[] n = paramName.toCharArray();
         	for (; idx < ps.length; idx++) {
         		if (CharArrayUtils.equals(ps[idx].toCharArray(), n))
         			break;
@@ -250,7 +247,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     	} else {
     	    //KnR: name in name list
     	    fKnRDtor = (ICASTKnRFunctionDeclarator) parent;
-    	    IASTName [] ps = fKnRDtor.getParameterNames();
+    	    IASTName[] ps = fKnRDtor.getParameterNames();
         	for (; idx < ps.length; idx++) {
         		if (ps[idx] == paramName)
         			break;
@@ -265,14 +262,14 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     	IASTParameterDeclaration temp = null;
     	if (definition != null) {
     	    if (definition instanceof IASTStandardFunctionDeclarator) {
-    	    	IASTParameterDeclaration [] parameters = ((IASTStandardFunctionDeclarator)definition).getParameters();
+    	    	IASTParameterDeclaration[] parameters = ((IASTStandardFunctionDeclarator)definition).getParameters();
     	    	if (parameters.length > idx) {
 	    	        temp = parameters[idx];
 	    	        ASTQueries.findInnermostDeclarator(temp.getDeclarator()).getName().setBinding(binding);
     	    	}
     	    } else if (definition instanceof ICASTKnRFunctionDeclarator) {
     	    	fKnRDtor = (ICASTKnRFunctionDeclarator) definition;
-    	    	IASTName [] parameterNames = fKnRDtor.getParameterNames();
+    	    	IASTName[] parameterNames = fKnRDtor.getParameterNames();
     	    	if (parameterNames.length > idx) {
 	    	        IASTName n = parameterNames[idx];
 	    	        n.setBinding(binding);
@@ -298,19 +295,19 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     }
 
     protected void updateParameterBindings(IASTFunctionDeclarator fdtor) {
-        IParameter [] params = getParameters();
+        IParameter[] params = getParameters();
         if (fdtor instanceof IASTStandardFunctionDeclarator) {
-        	IASTParameterDeclaration [] nps = ((IASTStandardFunctionDeclarator)fdtor).getParameters();
+        	IASTParameterDeclaration[] nps = ((IASTStandardFunctionDeclarator) fdtor).getParameters();
         	if (params.length < nps.length)
         	    return;
         	for (int i = 0; i < nps.length; i++) {
         		IASTName name = ASTQueries.findInnermostDeclarator(nps[i].getDeclarator()).getName();
         		name.setBinding(params[i]);
         		if (params[i] instanceof CParameter)
-        			((CParameter)params[i]).addDeclaration(name);
+        			((CParameter) params[i]).addDeclaration(name);
         	}
         } else {
-            IASTName [] ns = ((ICASTKnRFunctionDeclarator)fdtor).getParameterNames();
+            IASTName[] ns = ((ICASTKnRFunctionDeclarator) fdtor).getParameterNames();
             if (params.length > 0 && params.length != ns.length)
                 return; //problem
 
@@ -321,7 +318,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     			if (dtor != null) {
     			    dtor.getName().setBinding(params[i]);
     			    if (params[i] instanceof CParameter)
-    			    	((CParameter)params[i]).addDeclaration(dtor.getName());
+    			    	((CParameter) params[i]).addDeclaration(dtor.getName());
     			}
         	}
         }

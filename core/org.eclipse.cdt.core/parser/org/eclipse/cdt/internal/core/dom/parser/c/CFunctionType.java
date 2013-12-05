@@ -23,54 +23,50 @@ public class CFunctionType implements IFunctionType, ISerializableType {
     private final IType[] parameters;
     private final IType returnType;
     
-    public CFunctionType( IType returnType, IType []  types ) {
+    public CFunctionType(IType returnType, IType[] types) {
         this.returnType = returnType;
         this.parameters = types;
     }
 
     @Override
-	public boolean isSameType( IType o ){
-        if( o == this )
+	public boolean isSameType(IType o) {
+        if (o == this)
             return true;
-        if( o instanceof ITypedef )
-            return o.isSameType( this );
-        if( o instanceof IFunctionType ){
+        if (o instanceof ITypedef)
+            return o.isSameType(this);
+        if (o instanceof IFunctionType) {
             IFunctionType ft = (IFunctionType) o;
-            IType [] fps;
+            IType[] fps;
             fps = ft.getParameterTypes();
-            if( fps.length != parameters.length )
+            if (fps.length != parameters.length)
                 return false;
-            if( ! returnType.isSameType( ft.getReturnType() ) )
+            if (!returnType.isSameType(ft.getReturnType()))
 			    return false;
-            for( int i = 0; i < parameters.length; i++ )
-                if( ! parameters[i].isSameType( fps[i] ) )
+            for (int i = 0; i < parameters.length; i++) {
+                if (!parameters[i].isSameType(fps[i]))
                     return false;
+            }
             return true;
         }
         return false;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunctionType#getReturnType()
-     */
+
     @Override
 	public IType getReturnType() {
         return returnType;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunctionType#getParameterTypes()
-     */
     @Override
 	public IType[] getParameterTypes() {
         return parameters;
     }
 
     @Override
-	public Object clone(){
+	public Object clone() {
         IType t = null;
    		try {
             t = (IType) super.clone();
-        } catch ( CloneNotSupportedException e ) {
+        } catch (CloneNotSupportedException e) {
             //not going to happen
         }
         return t;
@@ -102,7 +98,7 @@ public class CFunctionType implements IFunctionType, ISerializableType {
 		if (((firstBytes & ITypeMarshalBuffer.LAST_FLAG) != 0)) {
 			len= buffer.getInt();
 		} else {
-			len= (firstBytes & (ITypeMarshalBuffer.LAST_FLAG-1))/ITypeMarshalBuffer.FIRST_FLAG;
+			len= (firstBytes & (ITypeMarshalBuffer.LAST_FLAG - 1)) / ITypeMarshalBuffer.FIRST_FLAG;
 		}
 		IType rt= buffer.unmarshalType();
 		IType[] pars= new IType[len];

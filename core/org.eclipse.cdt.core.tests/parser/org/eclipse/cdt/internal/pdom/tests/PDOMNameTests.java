@@ -44,8 +44,9 @@ public class PDOMNameTests extends BaseTestCase {
 
 	public void testExternalReferences() throws Exception {
 		IProject project = cproject.getProject();
-		TestSourceReader.createFile(project, "file.cpp", "extern void func_cpp() { func_cpp(); }");
-		TestSourceReader.createFile(project, "file.c", "extern void func_c() { func_c(); }");
+		// Use enum because this uses a different NodeType in C++ and C.
+		TestSourceReader.createFile(project, "file.cpp", "enum E_cpp { e_cpp }; extern E_cpp func_cpp() { func_cpp(); return e_cpp; }");
+		TestSourceReader.createFile(project, "file.c", "enum E_c { e_c }; extern enum E_c func_c() { func_c(); return e_c; }");
 
 		IndexerPreferences.set(project, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(cproject);
@@ -54,7 +55,7 @@ public class PDOMNameTests extends BaseTestCase {
 		PDOM pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		pdom.acquireWriteLock();
 		try {
-			IIndexBinding[] bindings = pdom.findBindings(new char[][]{"func_cpp".toCharArray()}, IndexFilter.ALL, npm());
+			IIndexBinding[] bindings = pdom.findBindings(new char[][]{"E_cpp".toCharArray()}, IndexFilter.ALL, npm());
 			assertEquals(1, bindings.length);
 			assertTrue(bindings[0] instanceof PDOMBinding);
 
@@ -63,7 +64,7 @@ public class PDOMNameTests extends BaseTestCase {
 			assertNotNull(name_cpp);
 			assertSame(binding_cpp.getLinkage(), name_cpp.getLinkage());
 
-			bindings = pdom.findBindings(new char[][]{"func_c".toCharArray()}, IndexFilter.ALL, npm());
+			bindings = pdom.findBindings(new char[][]{"E_c".toCharArray()}, IndexFilter.ALL, npm());
 			assertEquals(1, bindings.length);
 			assertTrue(bindings[0] instanceof PDOMBinding);
 
@@ -78,8 +79,15 @@ public class PDOMNameTests extends BaseTestCase {
 			assertFalse(extNames.hasNext());
 
 			// Make sure the C++ binding and the C name are in different linkages, then add the name
-			// as an external reference of the binding.
+			// as an external reference of the binding.  The case we're setting up is:
+			//
+			//     C++_Binding is referenced-by a C_Name which has a C++_Binding
+			//
+			// We can then test the following (see reference numbers below):
+			//     1) Getting the C name as an external reference of the C++ binding
+			//     2) Loading the C++ binding from the C name
 			assertNotSame(binding_cpp.getLinkage(), name_c.getLinkage());
+			name_c.setBinding(binding_cpp);
 			binding_cpp.addReference(name_c);
 
 			// Make sure there is an external reference, then retrieve it.  Then make sure there
@@ -91,13 +99,20 @@ public class PDOMNameTests extends BaseTestCase {
 			assertNotNull(extRef);
 			assertFalse(extNames.hasNext());
 
-			// Check that the external reference is the same as the C name that was added, that the
-			// external reference does not have the same linkage as the binding, and that it does
-			// have the same linkage as the initial name.
+			// 1) Check that the external reference is the same as the C name that was added, that the
+			//    external reference does not have the same linkage as the binding, and that it does
+			//    have the same linkage as the initial name.
 			assertSame(name_c.getLinkage(), extRef.getLinkage());
 			assertEquals(name_c.getRecord(), extRef.getRecord());
 			assertNotSame(binding_cpp.getLinkage(), extRef.getLinkage());
 			assertSame(binding_c.getLinkage(), extRef.getLinkage());
+
+			// 2) Make sure that the C name was able to properly load the C++ binding.
+			PDOMBinding extBinding = extRef.getBinding();
+			assertNotNull(extBinding);
+			assertEquals(binding_cpp.getRecord(), extBinding.getRecord());
+			assertEquals(binding_cpp.getNodeType(), extBinding.getNodeType());
+			assertTrue(binding_cpp.getClass() == extBinding.getClass());
 		} finally {
 			pdom.releaseWriteLock();
 		}

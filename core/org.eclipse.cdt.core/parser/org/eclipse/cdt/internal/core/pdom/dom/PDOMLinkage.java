@@ -75,9 +75,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 20;
 	protected static final long[] FILE_LOCAL_REC_DUMMY = new long[]{0};
 
-	// Node types
-	protected static final int LINKAGE= 0; // Special one for myself
-
 	private BTree fMacroIndex= null;  // No need for volatile, all fields of BTree are final.
 	private final PDOM fPDOM;
 	private final Database fDatabase;
@@ -120,7 +117,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 
 	@Override
 	public int getNodeType() {
-		return LINKAGE;
+		return IIndexBindingConstants.LINKAGE;
 	}
 
 	public static IString getLinkageID(PDOM pdom, long record) throws CoreException {
@@ -185,16 +182,12 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return null;
 	}
 
+	/**
+	 * @deprecated Use {@link PDOMNode#load(PDOM, long)} instead.
+	 */
+	@Deprecated
 	public final PDOMNode getNode(long record) throws CoreException {
-		if (record == 0) {
-			return null;
-		}
-		final int nodeType= PDOMNode.getNodeType(fDatabase, record);
-		switch (nodeType) {
-		case LINKAGE:
-			return null;
-		}
-		return getNode(record, nodeType);
+		return PDOMNode.load(getPDOM(), record);
 	}
 
 	abstract public PDOMNode getNode(long record, int nodeType) throws CoreException;
@@ -279,7 +272,21 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return null;
 	}
 
+	/**
+	 * Return an identifier that uniquely identifies the given binding within this linkage.  The
+	 * value cannot be used for global comparison because it does not include enough information
+	 * to globally identify the binding (across all linkages).
+	 */
 	public abstract int getBindingType(IBinding binding);
+
+	/**
+	 * Return an identifier that would globally identifies the given binding if it were to be
+	 * added to this linkage.  This value can be used for comparison with the result of
+	 * {@link PDOMNode#getNodeId(Database, long)}.
+	 */
+	public int getBindingId(IBinding binding) {
+		return PDOMNode.getNodeId(getLinkageID(), getBindingType(binding));
+	}
 
 	/**
 	 * Call-back informing the linkage that a name has been added. This is

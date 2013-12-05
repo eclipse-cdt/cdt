@@ -459,7 +459,9 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 
 	private void function(String returnType, String name, String... parameterTypes) {
 		int len = parameterTypes.length;
-		boolean varargs= len > 0 && parameterTypes[len-1].equals("...");
+		if (len == 1 && parameterTypes[0].equals("void"))
+			len--;
+		boolean varargs= len > 0 && parameterTypes[len - 1].equals("...");
 		if (varargs)
 			len--;
 
@@ -473,9 +475,10 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		IType rt = toType(returnType);
 		IFunctionType ft = fCpp ? new CPPFunctionType(rt, pTypes) : new CFunctionType(rt, pTypes);
 
-		IBinding b = fCpp ? new CPPImplicitFunction(toCharArray(name), fScope,
-				(ICPPFunctionType) ft, (ICPPParameter[]) theParms, varargs)
-				: new CImplicitFunction(toCharArray(name), fScope, ft, theParms, varargs);
+		IBinding b = fCpp ?
+				new CPPImplicitFunction(toCharArray(name), fScope, (ICPPFunctionType) ft,
+						(ICPPParameter[]) theParms, varargs) :
+				new CImplicitFunction(toCharArray(name), fScope, ft, theParms, varargs);
 		fBindingList.add(b);
 	}
 

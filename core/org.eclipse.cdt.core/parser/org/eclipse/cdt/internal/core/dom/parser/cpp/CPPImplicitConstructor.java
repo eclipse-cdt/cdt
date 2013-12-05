@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM Corporation) - initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -26,7 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class CPPImplicitConstructor extends CPPImplicitMethod implements ICPPConstructor {
 
     public CPPImplicitConstructor(ICPPClassScope scope, char[] name, ICPPParameter[] params) {
-        super( scope, name, createFunctionType(scope, params), params );
+        super(scope, name, createFunctionType(scope, params), params);
     }
 
 	private static ICPPFunctionType createFunctionType(ICPPClassScope scope, IParameter[] params) {

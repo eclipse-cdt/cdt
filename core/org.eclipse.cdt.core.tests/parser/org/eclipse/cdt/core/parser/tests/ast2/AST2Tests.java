@@ -22,6 +22,7 @@ import java.io.IOException;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -41,7 +42,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
@@ -2288,10 +2288,8 @@ public class AST2Tests extends AST2TestBase {
 			assertTrue(gt_2 instanceof IFunctionType);
 			IType gt_ret = ((IFunctionType) gt_2).getReturnType();
 			assertTrue(gt_ret instanceof IBasicType);
-			assertEquals(((IBasicType) gt_ret).getType(), IBasicType.t_int);
-			IType gt_parm = ((IFunctionType) gt_2).getParameterTypes()[0];
-			assertTrue(gt_parm instanceof IBasicType);
-			assertEquals(((IBasicType) gt_parm).getType(), IBasicType.t_void);
+			assertEquals(((IBasicType) gt_ret).getKind(), IBasicType.Kind.eInt);
+			assertEquals(0, ((IFunctionType) gt_2).getParameterTypes().length);
 
 			// test tu.getDeclarationsInAST(IBinding)
 			assertTrue(def.getDeclarator() instanceof IASTStandardFunctionDeclarator);
@@ -4970,31 +4968,24 @@ public class AST2Tests extends AST2TestBase {
     }
 
     //    typedef void VOID;
-    //    VOID func(VOID) {
+    //    VOID func(void) {
     //    }
     public void testTypedefVoid_221567() throws Exception {
     	String code= getAboveComment();
     	for (ParserLanguage lang: ParserLanguage.values()) {
     		BindingAssertionHelper ba= new BindingAssertionHelper(code, lang);
     		ITypedef td= ba.assertNonProblem("VOID;", 4, ITypedef.class);
-    		IBinding ref= ba.assertNonProblem("VOID)", 4);
-    		assertSame(td, ref);
 
     		IFunction func= ba.assertNonProblem("func", 4, IFunction.class);
     		IFunctionType ft= func.getType();
     		IType rt= ft.getReturnType();
     		IType[] pts= ft.getParameterTypes();
-    		assertEquals(1, pts.length);
-			IType pt = pts[0];
+    		assertEquals(0, pts.length);
 			assertInstance(rt, ITypedef.class);
-			assertInstance(pt, ITypedef.class);
 			rt= ((ITypedef) rt).getType();
-			pt= ((ITypedef) pt).getType();
 
 			assertTrue(rt instanceof IBasicType);
-    		assertEquals(IBasicType.t_void, ((IBasicType) rt).getType());
-    		assertTrue(pt instanceof IBasicType);
-    		assertEquals(IBasicType.t_void, ((IBasicType) pt).getType());
+    		assertEquals(IBasicType.Kind.eVoid, ((IBasicType) rt).getKind());
     	}
     }
 

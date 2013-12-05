@@ -184,10 +184,13 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 				if (binding instanceof ICPPParameter) {
 					result[i]= (ICPPParameter) binding;
 				} else {
-					result[i] = new CPPParameter.CPPParameterProblem(p, IProblemBinding.SEMANTIC_INVALID_TYPE,
-							name.toCharArray());
+					result[i] = new CPPParameter.CPPParameterProblem(p,
+							IProblemBinding.SEMANTIC_INVALID_TYPE, name.toCharArray());
 				}
 			}
+
+			if (result.length == 1 && SemanticUtil.isVoidType(result[0].getType()))
+				return ICPPParameter.EMPTY_CPPPARAMETER_ARRAY; // f(void) is the same as f()
 		}
 		return result;
 	}
@@ -609,10 +612,10 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 			final ICPPParameter p = pars[i];
 			if (p.hasDefaultValue() || p.isParameterPack()) {
 				result--;
-			} else {
-				if (pars.length == 1 && SemanticUtil.isVoidType(p.getType())) {
-					return 0;
-				}
+//			} else {
+//				if (pars.length == 1 && SemanticUtil.isVoidType(p.getType())) {
+//					return 0;
+//				}
 			}
 		}
 		return result;

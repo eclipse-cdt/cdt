@@ -43,6 +43,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * Implementation of function templates
@@ -117,6 +118,9 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 							IProblemBinding.SEMANTIC_INVALID_TYPE, pname.toCharArray());
 				}
 			}
+
+			if (result.length == 1 && SemanticUtil.isVoidType(result[0].getType()))
+				return ICPPParameter.EMPTY_CPPPARAMETER_ARRAY; // f(void) is the same as f()
 			return result;
 		}
 		return CPPBuiltinParameter.createParameterList(getType());

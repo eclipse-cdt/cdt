@@ -36,6 +36,41 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_98d0896f",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/model/IRegisterGroupDescriptor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_a85b49cc",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_182ab901",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/model/IRegisterGroupDescriptor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "What is this enabelment state?  Why is it there?",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_15525bae",
         "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
         "patchSetId": 4
@@ -81,6 +116,23 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "This can be different for CDI and DSF, so we can\u0027t just store it without re-setting it when changing the type of selection",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_582f2190",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/AbstractRegisterGroupActionDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "Not used.  Please remove.",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -200,6 +252,23 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "This class must register itself with the name of its interface (IRegister2)\nYou should override initialize() and code a private doInitialize() for this.  You can look at GDBRunControl and MIRunControl.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_6fe174b9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisterManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "Now that there is more than one group, if the user does define new groups, GDBPatternMatchingExpressions.java will break, because it assums a single group.",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -869,6 +938,92 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_8f34c0e2",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "Will continue once other comments are addressed, as things will change too much.",
+      "parentUuid": "8748d3a1_35c837b9",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_b8a105ab",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "Remove this suppress and make dsf.ui a friend for the package we want to use",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_58ac4173",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "Don\u0027t use the pattern of triggering an RM.  It is confusing when not necessary.  Instead, you can run the code in the executor by using:\n\ntry {\n            selectionContext.fsession().getExecutor().execute(new DsfRunnable() {\n                @Override\n                public void run() {\n                                 // code\n                }});\n        } catch (RejectedExecutionException e) {\n          // ignore?\n        }",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_384df546",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "You can pass in \u0027rm\u0027 directly instead of creating a new one.  \n\nFYI, you should have put \u0027rm\u0027 instead of null, or else the handleFailure() case would never have completed.  But using rm directly will fix this also.\n\nThe only times you can use null as the second param to an RM are:\n- if there is no main rm to complete anyway\nor \n- if you handle all cases in the new RM (usually through handleCompleted())",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_1850f9d8",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "You can pass in \u0027rm\u0027 directly instead of creating a new one",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_992185d7",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
         "patchSetId": 4
@@ -897,6 +1052,125 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "This mapping should be done in the service instead of here.  Here we really should have a canRestoreDefaultGroups() call",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_18c119c8",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "Use the @ConfinedToDsfExecutor annotation above each method that must be called when already on the executor",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_3895f5c3",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 764,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "Please remove all unnecessary \u0027final\u0027 keywords, throughout the class",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_d8a17127",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 765,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "You can get the executor from any DSF services, so here regServiceManager.getExecutor() can be used and we don\u0027t need to pass in the session.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_8f6960ee",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 772,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "Since this is actually really one line, why not put it where it is called directly?",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_2f5f6c45",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 782,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "Since this is actually really one line, why not put it where it is called directly?",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_58d0c1bf",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 787,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "Should not use CDI plugin id here and below",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_cfe2480d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 791,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-05T14:37:14Z",
+      "side": 1,
+      "message": "why use a MultiStatus?  I think a Status would be fine.",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

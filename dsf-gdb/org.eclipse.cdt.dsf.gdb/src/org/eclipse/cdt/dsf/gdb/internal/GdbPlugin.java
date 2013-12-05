@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems and others.
+ * Copyright (c) 2006, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Wind River Systems - initial API and implementation
  *     Abeer Bagul (Tensilica) - Updated error message (Bug 339048)
  *     Jason Litton (Sage Electronic Engineering, LLC) - Added support for dynamic tracing option (Bug 379169)
+ *     Alvaro Sanchez-Leon (Ericsson AB) - Each memory context needs a different MemoryRetrieval (Bug 250323)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal;
 
@@ -17,8 +18,12 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.internal.provisional.model.MemoryBlockRetrievalFactory;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -38,6 +43,8 @@ public class GdbPlugin extends Plugin {
 	
     private static BundleContext fgBundleContext;
     
+    private IAdapterFactory fMemoryRetrievalFactory =  null;
+    
 	/**
 	 * The constructor
 	 */
@@ -55,6 +62,9 @@ public class GdbPlugin extends Plugin {
 		plugin = this;
 		
         new GdbDebugOptions(context);
+        
+        fMemoryRetrievalFactory = new MemoryBlockRetrievalFactory();
+        Platform.getAdapterManager().registerAdapters(fMemoryRetrievalFactory, IDMContext.class);
 	}
 
 	/*
@@ -65,6 +75,11 @@ public class GdbPlugin extends Plugin {
     public void stop(BundleContext context) throws Exception {
 	    shutdownActiveLaunches();
 		plugin = null;
+		
+		if (fMemoryRetrievalFactory != null) {
+			Platform.getAdapterManager().unregisterAdapters(fMemoryRetrievalFactory, IDMContext.class);
+		}
+		
 		super.stop(context);
         fgBundleContext = null;
 	}

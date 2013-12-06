@@ -68,6 +68,7 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
 import org.eclipse.cdt.managedbuilder.pdomdepgen.PDOMDependencyGenerator;
 import org.eclipse.cdt.utils.EFSExtensionManager;
+import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
@@ -987,7 +988,8 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	private IPath getProjectLocation() {
-		return new Path(fProject.getLocationURI().getPath());
+		URI uri = fProject.getLocationURI();
+		return UNCPathConverter.toPath(uri);
 	}
 
 	private BuildResource[] addOutputs(IPath paths[], BuildIOType buildArg, IPath outDirPath){
@@ -997,7 +999,7 @@ public class BuildDescription implements IBuildDescription {
 				IPath outFullPath = path;
 				IPath outWorkspacePath = path;
 				IPath outProjPath;
-				IPath projLocation = new Path(fProject.getLocationURI().getPath());
+				IPath projLocation = UNCPathConverter.toPath(fProject.getLocationURI());
 
 				if(outFullPath.isAbsolute()){
 					outProjPath = outFullPath;

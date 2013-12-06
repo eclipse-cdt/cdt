@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2013 Alena Laskavaia 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.codan.core.cxx.model;
 
 import java.util.WeakHashMap;
 
-import org.eclipse.cdt.codan.core.cxx.Activator;
 import org.eclipse.cdt.codan.core.cxx.internal.model.CodanCommentMap;
 import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.CxxControlFlowGraph;
 import org.eclipse.cdt.codan.core.model.ICodanDisposable;
@@ -146,10 +145,11 @@ public class CxxModelsCache implements ICodanDisposable {
 		}
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		if (!disposed)
-			Activator.log("CxxASTCache was not disposed."); //$NON-NLS-1$
-		super.finalize();
-	}
+	// finalize() method delays garbage collection of objects. Uncomment only for testing.
+//	@Override
+//	protected void finalize() throws Throwable {
+//		if (!disposed)
+//			Activator.log("CxxASTCache was not disposed."); //$NON-NLS-1$
+//		super.finalize();
+//	}
 }

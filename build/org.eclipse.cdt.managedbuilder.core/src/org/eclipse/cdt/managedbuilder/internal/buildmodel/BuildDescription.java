@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Intel Corporation and others.
+ * Copyright (c) 2006, 2015 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
 import org.eclipse.cdt.managedbuilder.pdomdepgen.PDOMDependencyGenerator;
 import org.eclipse.cdt.utils.EFSExtensionManager;
+import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
@@ -987,7 +988,8 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	private IPath getProjectLocation() {
-		return new Path(fProject.getLocationURI().getPath());
+		URI uri = fProject.getLocationURI();
+		return UNCPathConverter.toPath(uri);
 	}
 
 	private BuildResource[] addOutputs(IPath paths[], BuildIOType buildArg, IPath outDirPath){
@@ -997,7 +999,7 @@ public class BuildDescription implements IBuildDescription {
 				IPath outFullPath = path;
 				IPath outWorkspacePath = path;
 				IPath outProjPath;
-				IPath projLocation = new Path(fProject.getLocationURI().getPath());
+				IPath projLocation = getProjectLocation();
 
 				if(outFullPath.isAbsolute()){
 					outProjPath = outFullPath;

@@ -52,10 +52,6 @@ public class CheckerInvocationContext implements ICheckerInvocationContext {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see ICheckerInvocationContext#add(Object)
-	 */
 	@Override
 	public synchronized <T extends ICodanDisposable> void add(T object) {
 		Object old = objectStorage.put(object.getClass(), object);
@@ -65,10 +61,6 @@ public class CheckerInvocationContext implements ICheckerInvocationContext {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IDisposableCache#dispose()
-	 */
 	@Override
 	public void dispose() {
 		for (Map.Entry<Class<?>, Object> entry : objectStorage.entrySet()) {

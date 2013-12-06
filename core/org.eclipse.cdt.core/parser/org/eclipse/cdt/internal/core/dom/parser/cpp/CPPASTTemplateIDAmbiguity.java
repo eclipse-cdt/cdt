@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayList;
@@ -40,14 +39,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.NameOrTemplateIDVariants.Var
 /**
  * Models expression variants for the ambiguity of a template id.
  */
-public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode implements IASTAmbiguousExpression,
-		ICPPASTExpression {
+public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
+		implements IASTAmbiguousExpression,	ICPPASTExpression {
 	private final BinaryOperator fEndOperator;
 	private final BranchPoint fVariants;
 	private IASTNode[] fNodes;
 	private final AbstractGNUSourceCodeParser fParser;
 
-	public CPPASTTemplateIDAmbiguity(AbstractGNUSourceCodeParser parser, BinaryOperator endOperator, BranchPoint variants) {
+	public CPPASTTemplateIDAmbiguity(AbstractGNUSourceCodeParser parser, BinaryOperator endOperator,
+			BranchPoint variants) {
 		fParser= parser;
 		fEndOperator= endOperator;
 		fVariants= variants;

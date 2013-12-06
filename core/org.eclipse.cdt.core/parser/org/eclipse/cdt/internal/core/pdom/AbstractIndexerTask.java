@@ -1006,6 +1006,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private DependsOnOutdatedFileException parseFile(Object tu, AbstractLanguage lang,
 			IIndexFileLocation ifl, IScannerInfo scanInfo, FileContext ctx, IProgressMonitor pm)
 			throws CoreException, InterruptedException {
+		boolean resultCacheCleared = false;
 		IPath path= getLabel(ifl);
 		Throwable th= null;
 		try {
@@ -1025,6 +1026,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				// to the index.
 				((ASTTranslationUnit) ast).setOriginatingTranslationUnit((ITranslationUnit) tu);
 				writeToIndex(lang.getLinkageID(), ast, codeReader, ctx, pm);
+				resultCacheCleared = true;  // The cache was cleared while writing to the index.
 			}
 		} catch (CoreException e) {
 			th= e;
@@ -1044,8 +1046,11 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 		if (th != null) {
 			swallowError(path, th);
-			// In case of a parsing error the result cache may not have been cleared.
-			// Clear if under a write lock to reduce interference with index readers.
+		}
+
+		if (!resultCacheCleared) {
+			// If the result cache has not been cleared, clear it under a write lock to reduce
+			// interference with index readers.
 			fIndex.acquireWriteLock();
 			try {
 				fIndex.clearResultCache();

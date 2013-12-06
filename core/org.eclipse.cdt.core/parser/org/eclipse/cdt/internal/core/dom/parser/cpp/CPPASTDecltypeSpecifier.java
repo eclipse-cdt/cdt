@@ -7,21 +7,25 @@
  *
  * Contributors:
  *     Nathan Ridge - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * Implementation of ICPPASTDecltypeSpecifier.
  */
-public class CPPASTDecltypeSpecifier extends ASTNode implements ICPPASTDecltypeSpecifier {
+public class CPPASTDecltypeSpecifier extends ASTNode
+		implements ICPPASTDecltypeSpecifier, IASTAmbiguityParent {
 	private ICPPASTExpression fDecltypeExpression;
 	private char[] fSignature;
 	
@@ -77,5 +81,15 @@ public class CPPASTDecltypeSpecifier extends ASTNode implements ICPPASTDecltypeS
 	@Override
 	public IBinding resolvePreBinding() {
 		return resolveBinding();
+	}
+
+	@Override
+	public void replace(IASTNode child, IASTNode other) {
+		if (child == fDecltypeExpression) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			fDecltypeExpression = (ICPPASTExpression) other;
+			fSignature = null;
+		}
 	}
 }

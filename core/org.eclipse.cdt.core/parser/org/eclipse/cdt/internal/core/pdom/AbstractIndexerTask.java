@@ -1055,6 +1055,14 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 		if (th != null) {
 			swallowError(path, th);
+			// In case of a parsing error the result cache may not have been cleared.
+			// Clear if under a write lock to reduce interference with index readers.
+			fIndex.acquireWriteLock();
+			try {
+				fIndex.clearResultCache();
+			} finally {
+				fIndex.releaseWriteLock();
+			}
 		}
 		return null;
 	}

@@ -9,7 +9,7 @@
  *     Markus Schorn - initial API and implementation
  *     Andrew Ferguson (Symbian)
  *     Bryan Wilkinson (QNX)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -33,8 +33,8 @@ abstract public class IndexFilter {
 	public static final IndexFilter C_DECLARED_OR_IMPLICIT= getDeclaredBindingFilter(ILinkage.C_LINKAGE_ID, true);
 
 	/**
-	 * Get an IndexFilter that filters out bindings from linkages other than that
-	 * specified
+	 * Get an IndexFilter that filters out bindings from linkages other than that specified.
+	 *
 	 * @param linkageID the id of the linkage whose bindings should be retained
 	 * @return an IndexFilter instance
 	 */
@@ -48,10 +48,11 @@ abstract public class IndexFilter {
 	}
 
 	/**
-	 * Get an IndexFilter that filters out bindings without declarations and those
-	 * from linkages other than that specified. 
-	 * @param linkageID the id of the linkage whose bindings should be retained, or -1 
-	 * to accept all linkages.
+	 * Get an IndexFilter that filters out bindings without declarations and those from linkages
+	 * other than that specified.
+	 *
+	 * @param linkageID the id of the linkage whose bindings should be retained, or -1
+	 *     to accept all linkages.
 	 * @return an IndexFilter instance
 	 */
 	public static IndexFilter getDeclaredBindingFilter(final int linkageID, boolean acceptImplicit) {
@@ -60,9 +61,10 @@ abstract public class IndexFilter {
 
 	/**
 	 * Get an IndexFilter that filters out bindings without declarations and those
-	 * from linkages other than that specified. 
-	 * @param linkageID the id of the linkage whose bindings should be retained, or -1 
-	 * to accept all linkages.
+	 * from linkages other than that specified.
+	 *
+	 * @param linkageID the id of the linkage whose bindings should be retained, or -1
+	 *     to accept all linkages.
 	 * @return an IndexFilter instance
 	 * @since 5.1
 	 */
@@ -73,19 +75,20 @@ abstract public class IndexFilter {
 	/**
 	 * Returns whether or not to include objects of the given linkage in the query.
 	 * @see IIndex#findBindings(java.util.regex.Pattern, boolean, IndexFilter, org.eclipse.core.runtime.IProgressMonitor)
+	 *
 	 * @param linkage a linkage to be tested
 	 * @return whether to include objects of the given linkage in the query.
 	 */
 	public boolean acceptLinkage(ILinkage linkage) {
 		return true;
 	}
-		
+
 	/**
 	 * Determines whether or not a binding is valid.
-	 * 
+	 *
 	 * @param binding the binding being checked for validity
 	 * @return whether or not the binding is valid
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public boolean acceptBinding(IBinding binding) throws CoreException {
 		return true;

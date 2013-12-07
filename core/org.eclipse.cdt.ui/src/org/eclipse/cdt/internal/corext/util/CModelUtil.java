@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM Rational Software - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.util;
 
@@ -40,7 +40,7 @@ public class CModelUtil {
 		}
 		return unit;
 	}
-	
+
 	public static ITranslationUnit toOriginal(ITranslationUnit unit) {
 		if (unit.isWorkingCopy()) {
 			return (((IWorkingCopy) unit).getOriginalElement());
@@ -84,7 +84,7 @@ public class CModelUtil {
 		}
 		return folder;
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if the given source root is
 	 * referenced. This means it is own by a different project but is referenced
@@ -100,7 +100,7 @@ public class CModelUtil {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the translation unit the element belongs to or <code>null</code> if it does not.
 	 */
@@ -113,7 +113,7 @@ public class CModelUtil {
 		}
 		return null;
 	}
-	
+
 	/*
      * Don't log not-exists exceptions
 	 */
@@ -126,5 +126,4 @@ public class CModelUtil {
 			return true;
 		return false;
 	}
-
 }

@@ -10442,4 +10442,29 @@ public class AST2CPPTests extends AST2TestBase {
 		assertNotNull(bindings);
 		assertEquals(1, bindings.length);
 	}
+
+	//	struct Test {
+	//		operator char* &();
+	//
+	//		void test(char) {
+	//			Test a;
+	//			test(*a);
+	//		}
+	//	};
+	public void testBuiltInOperator_423396() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	struct Test {
+	//		typedef void (*TypeFunc)(char);
+	//		operator TypeFunc* &();
+	//
+	//		void test(TypeFunc) {
+	//			Test a;
+	//			test(*a);
+	//		}
+	//	};
+	public void testBuiltInOperatorFunctionType_423396() throws Exception {
+		parseAndCheckBindings();
+	}
 }

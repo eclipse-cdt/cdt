@@ -274,7 +274,7 @@ class BuiltinOperators {
 	private void opDeref() {
 		IType[] types= getClassConversionTypes(FIRST);
 		for (IType type : types) {
-			type= SemanticUtil.getNestedType(type, TDEF);
+			type= SemanticUtil.getNestedType(type, TDEF|REF);
 			if (isPointer(type)) {
 				IType nested=  SemanticUtil.getNestedType(((IPointerType) type).getType(), TDEF);
 				if (nested instanceof ICPPFunctionType) {

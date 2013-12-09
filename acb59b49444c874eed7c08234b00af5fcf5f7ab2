@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_1b0c40ca",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-09T21:20:47Z",
+      "side": 1,
+      "message": "Defining an adapter on IDMContext could prevent other debuggers from doing something similar.  However, I don\u0027t have another suggestion.\n\nInstead of using plugin.xml, let\u0027s register the factory in the GdbPlugin class using the IAdapterManager interface, which seems to be the way used in other situations of DSF; for example DsfUIPlugin registers an adapter factory to convert IDMVMContext to IDisassemblyBackend",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_16c41709",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-09T21:20:47Z",
+      "side": 1,
+      "message": "Why throw an exception?",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_76759b6e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-09T21:20:47Z",
+      "side": 1,
+      "message": "Please update comment",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

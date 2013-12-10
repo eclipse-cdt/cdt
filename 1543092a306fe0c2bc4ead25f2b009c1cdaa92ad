@@ -34,6 +34,24 @@
       "revId": "1543092a306fe0c2bc4ead25f2b009c1cdaa92ad",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_58951c94",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMNameTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-10T22:52:53Z",
+      "side": 1,
+      "message": "The explanation given in the commit message indicates that this change doesn\u0027t address the problem of the test stability, but claims that it makes the failures less likely. This claim is not supported by any evidence and doesn\u0027t seem plausible.",
+      "parentUuid": "8748d3a1_5dfeaee0",
+      "revId": "1543092a306fe0c2bc4ead25f2b009c1cdaa92ad",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

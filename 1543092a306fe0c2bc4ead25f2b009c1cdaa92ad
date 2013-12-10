@@ -16,6 +16,24 @@
       "revId": "1543092a306fe0c2bc4ead25f2b009c1cdaa92ad",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_5dfeaee0",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMNameTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2013-12-10T21:14:16Z",
+      "side": 1,
+      "message": "The answer is in the commit message.",
+      "parentUuid": "8748d3a1_9dbdd653",
+      "revId": "1543092a306fe0c2bc4ead25f2b009c1cdaa92ad",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

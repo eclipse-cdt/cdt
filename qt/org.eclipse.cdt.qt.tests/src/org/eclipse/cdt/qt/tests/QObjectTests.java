@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.qt.core.index.IQEnum;
+import org.eclipse.cdt.qt.core.index.IQMethod;
 import org.eclipse.cdt.qt.core.index.IQObject;
 import org.eclipse.cdt.qt.core.index.IQProperty;
 import org.eclipse.cdt.qt.core.index.IQProperty.Attribute;
@@ -414,5 +415,107 @@ public class QObjectTests extends BaseQtTestCase {
 			missingAttrs.append(propName);
 		}
 		assertTrue("missing properties " + missingAttrs.toString(), missingAttrs.length() == 0);
+	}
+
+	// #include "junit-QObject.hh"
+    // class Q : public QObject
+    // {
+    // Q_OBJECT
+	// signals:
+	// public:    void notASignal();
+	// Q_SIGNALS: void signal();
+	// public:    void notAnotherSignal();
+	// Q_SIGNAL   void anotherSignal();
+    // };
+	public void testSimpleSignal() throws Exception {
+		loadComment("simple_signal.hh");
+
+		QtIndex qtIndex = QtIndex.getIndex(fProject);
+		assertNotNull(qtIndex);
+
+		IQObject qobj = qtIndex.findQObject(new String[]{ "Q" });
+		if (!isIndexOk("Q", qobj))
+			return;
+		assertNotNull(qobj);
+
+		IQObject.IMembers<IQMethod> signals = qobj.getSignals();
+		assertNotNull(signals);
+
+		Collection<IQMethod> locals = signals.locals();
+		assertNotNull(locals);
+
+		Iterator<IQMethod> i = locals.iterator();
+		assertTrue(i.hasNext());
+		assert_checkQMethod(i.next(), qobj, "signal", IQMethod.Kind.Signal, null);
+		assertTrue(i.hasNext());
+		assert_checkQMethod(i.next(), qobj, "anotherSignal", IQMethod.Kind.Signal, null);
+		assertFalse(i.hasNext());
+	}
+
+	// #include "junit-QObject.hh"
+	// template <typename T> class QList {};
+	// class QString {};
+    // class Q : public QObject
+    // {
+    // Q_OBJECT
+	//
+    // // From the QML test suite -- this is not valid C++.  The Qt moc generates duplicate const,
+	// // but our CDT-based implementation is not able to do the same.  Instead we generate what
+	// // would be the correct C++ signature.
+    // Q_INVOKABLE void someFunc(const QList<const QString const*> const &p1, QString p2 = "Hello");
+    //
+    // // variations on the above
+    // Q_INVOKABLE void someFunc1(const QList<const QString const*> &p1, QString p2 = "Hello");
+    // Q_INVOKABLE void someFunc2(QList<const QString const*> const &p1, QString p2 = "Hello");
+    // Q_INVOKABLE void someFunc3(const QList<const QString *> &p1, QString p2 = "Hello");
+    // Q_INVOKABLE void someFunc4(const QList<QString const*> &p1, QString p2 = "Hello");
+    // Q_INVOKABLE void someFunc5(const QList<const QString *> &p1, QString p2 = "Hello") const;
+    // Q_INVOKABLE void someFunc6(const QList<QString *const> &p1, QString p2 = "Hello");
+    // };
+	public void testInvokables() throws Exception {
+		loadComment("invokables.hh");
+
+		QtIndex qtIndex = QtIndex.getIndex(fProject);
+		assertNotNull(qtIndex);
+
+		IQObject qobj = qtIndex.findQObject(new String[]{ "Q" });
+		if (!isIndexOk("Q", qobj))
+			return;
+		assertNotNull(qobj);
+
+		IQObject.IMembers<IQMethod> invokables = qobj.getInvokables();
+		assertNotNull(invokables);
+		assertEquals(7, invokables.locals().size());
+
+		for(IQMethod invokable : invokables.locals()) {
+
+			assertTrue(invokable.getName(), qobj == invokable.getOwner());
+			assertEquals(invokable.getName(), IQMethod.Kind.Invokable, invokable.getKind());
+			assertNull(invokable.getRevision());
+
+			if ("someFunc".equals(invokable.getName()))
+				assertTrue(invokable.getSignatures().contains("someFunc(QList<const QString*>,QString)"));
+			else if ("someFunc1".equals(invokable.getName()))
+				assertTrue(invokable.getSignatures().contains("someFunc1(QList<const QString*>,QString)"));
+			else if ("someFunc2".equals(invokable.getName()))
+				assertTrue(invokable.getSignatures().contains("someFunc2(QList<const QString*>,QString)"));
+			else if ("someFunc3".equals(invokable.getName()))
+				assertTrue(invokable.getSignatures().contains("someFunc3(QList<const QString*>,QString)"));
+			else if ("someFunc4".equals(invokable.getName()))
+				assertTrue(invokable.getSignatures().contains("someFunc4(QList<const QString*>,QString)"));
+			else if ("someFunc5".equals(invokable.getName()))
+				assertTrue(invokable.getSignatures().contains("someFunc5(QList<const QString*>,QString)"));
+			else if ("someFunc6".equals(invokable.getName()))
+				assertTrue(invokable.getSignatures().contains("someFunc6(QList<QString*const>,QString)"));
+			else
+				fail("unexpected invokable " + invokable.getName());
+		}
+	}
+
+	private static void assert_checkQMethod(IQMethod method, IQObject expectedOwner, String expectedName, IQMethod.Kind expectedKind, Long expectedRevision) throws Exception {
+		assertEquals(expectedKind, method.getKind());
+		assertEquals(expectedName, method.getName());
+		assertSame(method.getName(), expectedOwner, method.getOwner());
+		assertEquals(expectedRevision, method.getRevision());
 	}
 }

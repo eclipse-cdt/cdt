@@ -17,9 +17,10 @@ import org.eclipse.cdt.qt.core.index.IQProperty;
 import org.eclipse.core.runtime.CoreException;
 
 @SuppressWarnings("restriction")
-public class QtPropertyName extends AbstractQObjectFieldName implements IQtASTName {
+public class QtPropertyName extends AbstractQObjectMemberName implements IQtASTName {
 
 	private String type;
+	// TODO The PDOM attrs should only be created in #createPDOMBinding
 	private List<QtPDOMProperty.Attribute> attributes = new ArrayList<QtPDOMProperty.Attribute>();
 
 	public QtPropertyName(QObjectName qobjName, IASTName ast, String name, QtASTImageLocation location) {

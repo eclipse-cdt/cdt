@@ -19,14 +19,14 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.runtime.CoreException;
 
 @SuppressWarnings("restriction")
-public abstract class AbstractQObjectFieldName extends ASTDelegatedName {
+public abstract class AbstractQObjectMemberName extends ASTDelegatedName {
 
 	private final QObjectName owner;
 	private final String name;
-	private final QtASTImageLocation location;
+	private final IASTImageLocation location;
 	private ASTNodeProperty propertyInParent;
 
-	protected AbstractQObjectFieldName(QObjectName owner, IASTName ast, String name, QtASTImageLocation location) {
+	protected AbstractQObjectMemberName(QObjectName owner, IASTName ast, String name, IASTImageLocation location) {
 		super(ast);
 		this.owner = owner;
 		this.name = name;

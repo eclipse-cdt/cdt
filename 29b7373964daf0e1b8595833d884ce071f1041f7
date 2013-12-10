@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_dec3e19b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/indexer/PDOMIndexerTask.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-12-10T05:32:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_3badbcf4",
+      "revId": "29b7373964daf0e1b8595833d884ce071f1041f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_db9818c9",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/dialogs/DialogsMessages.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2013-12-09T19:11:25Z",
       "side": 1,
       "message": "Please pull the latest version. This class in no longer part of the public API.",
+      "revId": "29b7373964daf0e1b8595833d884ce071f1041f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_9eb95934",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/dialogs/DialogsMessages.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-12-10T05:32:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_db9818c9",
       "revId": "29b7373964daf0e1b8595833d884ce071f1041f7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

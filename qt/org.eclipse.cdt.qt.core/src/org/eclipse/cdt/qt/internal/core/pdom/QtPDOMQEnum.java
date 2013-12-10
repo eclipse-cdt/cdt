@@ -13,21 +13,15 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
-import org.eclipse.cdt.core.dom.ast.IField;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.qt.core.QtPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 @SuppressWarnings("restriction")
-public class QtPDOMQEnum extends QtPDOMBinding implements IField {
+public class QtPDOMQEnum extends QtPDOMBinding {
 
 	private static int offsetInitializer = QtPDOMBinding.Field.Last.offset;
 	protected static enum Field {
@@ -112,68 +106,8 @@ public class QtPDOMQEnum extends QtPDOMBinding implements IField {
 		return QtPDOMNodeType.QEnum.Type;
 	}
 
-	@Override
-	public ICompositeType getCompositeTypeOwner() {
-		if (qobj == null)
-			try {
-				IBinding parent = getParentBinding();
-				if (parent instanceof QtPDOMQObject)
-					qobj = (QtPDOMQObject) parent;
-			} catch(CoreException e) {
-				QtPlugin.log(e);
-			}
-
-		return qobj;
-	}
-
 	public List<IEnumerator> getEnumerators() throws CoreException {
 		IEnumeration cppEnum = getCppEnumeration();
 		return cppEnum == null ? Collections.<IEnumerator>emptyList() : Arrays.asList(cppEnum.getEnumerators());
-	}
-
-	/**
-	 * A singleton that is used as the type for all instances of the QtEnum.
-	 */
-	private static final IType Type = new IType() {
-		@Override
-		public Object clone() {
-			// This is a stateless singleton instance, there is nothing to clone.
-	    	return this;
-	    }
-
-		@Override
-		public boolean isSameType(IType type) {
-			return type == this;
-		}
-	};
-
-	@Override
-	public IType getType() {
-		return Type;
-	}
-
-	@Override
-	public IValue getInitialValue() {
-		return null;
-	}
-
-	@Override
-	public boolean isStatic() {
-		return false;
-	}
-
-	@Override
-	public boolean isExtern() {
-		return false;
-	}
-
-	@Override
-	public boolean isAuto() {
-		return false;
-	}
-
-	@Override
-	public boolean isRegister() {
-		return false;
 	}
 }

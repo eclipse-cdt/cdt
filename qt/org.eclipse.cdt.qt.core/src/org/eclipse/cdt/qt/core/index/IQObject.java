@@ -87,6 +87,21 @@ public interface IQObject extends IQElement {
 	public List<IQObject> getBases();
 
 	/**
+	 * Returns the methods that have been tagged as Qt slots.  Does not return null.
+	 */
+	public IMembers<IQMethod> getSlots();
+
+	/**
+	 * Returns the methods that have been tagged as Qt signals.  Does not return null.
+	 */
+	public IMembers<IQMethod> getSignals();
+
+	/**
+	 * Returns the methods that have been tagged with Q_INVOKABLE.  Does not return null.
+	 */
+	public IMembers<IQMethod> getInvokables();
+
+	/**
 	 * Returns the expansions of the Q_PROPERTY macro.  Does not return null.
 	 */
 	public IMembers<IQProperty> getProperties();

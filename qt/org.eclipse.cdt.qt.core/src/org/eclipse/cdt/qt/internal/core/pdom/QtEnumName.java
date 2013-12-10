@@ -10,7 +10,7 @@ package org.eclipse.cdt.qt.internal.core.pdom;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.core.runtime.CoreException;
 
-public class QtEnumName extends AbstractQObjectFieldName implements IQtASTName  {
+public class QtEnumName extends AbstractQObjectMemberName implements IQtASTName  {
 
 	private final IASTName cppEnumName;
 	private final boolean isFlag;

@@ -165,7 +165,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     private static final int DEFAULT_PARM_LIST_SIZE = 4;
     private static final int DEFAULT_CATCH_HANDLER_LIST_SIZE= 4;
-    private static enum DtorStrategy {PREFER_FUNCTION, PREFER_NESTED}
+
+    // This is a parameter to the protected function {@link #declarator(DtorStrategy, DeclarationOptions)}
+    // so it needs to be protected too.
+    protected static enum DtorStrategy {PREFER_FUNCTION, PREFER_NESTED}
 
     private final boolean allowCPPRestrict;
     private final boolean supportExtendedTemplateSyntax;

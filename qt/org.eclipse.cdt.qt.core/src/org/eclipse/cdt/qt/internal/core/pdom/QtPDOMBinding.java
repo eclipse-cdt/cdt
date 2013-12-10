@@ -8,7 +8,6 @@
 package org.eclipse.cdt.qt.internal.core.pdom;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -17,9 +16,12 @@ import org.eclipse.core.runtime.CoreException;
 @SuppressWarnings("restriction")
 public abstract class QtPDOMBinding extends PDOMBinding {
 
+	// The offsetInitializer is initialized with the size of the parent.  It is incremented
+	// during loading of the Fields enum.  This value does not reliably store the size of
+	// the QtPDOMBinding record because the enum will not be initialized until it is needed.
+	// The record size is retrieved as the offset of the special terminal enumerator Last.
 	private static int offsetInitializer = RECORD_SIZE;
 	protected static enum Field {
-		CppRecord(Database.PTR_SIZE),
 		Last(0);
 
 		public final int offset;
@@ -46,28 +48,6 @@ public abstract class QtPDOMBinding extends PDOMBinding {
 	protected int getRecordSize() {
 		return Field.Last.offset;
 	}
-//
-//	public long getCppRecord() {
-//		try {
-//			return getDB().getRecPtr(Field.CppRecord.getRecord(record));
-//		} catch (CoreException e) {
-//			QtPlugin.log(e);
-//		}
-//
-//		return 0;
-//	}
-//
-//	public IBinding getCppBinding() throws CoreException {
-//		long cppRec = getCppRecord();
-//		if (cppRec == 0)
-//			return null;
-//
-//		PDOMLinkage cppLinkage = getPDOM().getLinkage(ILinkage.CPP_LINKAGE_ID);
-//		if (cppLinkage == null)
-//			return null;
-//
-//		return cppLinkage.getBinding(cppRec);
-//	}
 
 	protected QtPDOMLinkage getQtLinkage() {
 		PDOMLinkage pdomLinkage = getLinkage();

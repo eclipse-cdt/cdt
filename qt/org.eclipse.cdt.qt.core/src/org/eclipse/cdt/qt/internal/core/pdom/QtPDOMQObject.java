@@ -17,10 +17,6 @@ import java.util.Map;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IField;
-import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -36,18 +32,13 @@ import org.eclipse.core.runtime.CoreException;
  * The persisted form of QObjects.
  */
 @SuppressWarnings("restriction")
-public class QtPDOMQObject extends QtPDOMBinding implements ICompositeType {
+public class QtPDOMQObject extends QtPDOMBinding {
 
-	// The RecordSize is initialized with the size of the parent.  It is incremented during
-	// loading of the Fields enum.  This value does not reliably store the size of the
-	// QtPDOMQObject record because the enum will not be initialized until it is needed.
-	// The record size is retrieved as the offset of the special terminal enumerator Last.
 	private static int offsetInitializer = QtPDOMBinding.Field.Last.offset;
 	protected static enum Field {
 		CppRecord(Database.PTR_SIZE, 3),
 		Children(4 /* From PDOMNodeLinkedList.RECORD_SIZE, which is protected */, 0),
 		ClassInfos(Database.PTR_SIZE, 2),
-		Properties(Database.PTR_SIZE, 3),
 		Last(0, 0);
 
 		private final int offset;
@@ -115,12 +106,6 @@ public class QtPDOMQObject extends QtPDOMBinding implements ICompositeType {
 			return null;
 
 		PDOMBinding cppBinding = cppLinkage.getBinding(cppRec);
-
-		// TODO
-		if (cppBinding == null)
-			return null;
-		cppBinding.getAdapter(ICPPClassType.class);
-
 		return cppBinding instanceof ICPPClassType ? (ICPPClassType) cppBinding : null;
 	}
 
@@ -209,34 +194,11 @@ public class QtPDOMQObject extends QtPDOMBinding implements ICompositeType {
 	}
 
 	@Override
-	public boolean isSameType(IType type) {
-		if (type == this)
-			return true;
-
-		if (!(type instanceof QtPDOMQObject))
-			return false;
-
-		QtPDOMQObject other = (QtPDOMQObject) type;
-		return getRecord() == other.getRecord()
-			&& getLinkage().equals(other.getLinkage());
-	}
-
-	@Override
-	public int getKey() {
-		return ICPPClassType.k_class;
-	}
-
-	@Override
-	public boolean isAnonymous() {
-		return false;
-	}
-
-	@Override
 	public void addChild(PDOMNode child) throws CoreException {
 		children.addMember(child);
 	}
 
-	public <T extends IField> List<T> getFields(Class<T> cls) throws CoreException {
+	public <T extends QtPDOMBinding> List<T> getChildren(Class<T> cls) throws CoreException {
 		QtPDOMVisitor.All<T> collector = new QtPDOMVisitor.All<T>(cls);
 		try {
 			children.accept(collector);
@@ -247,47 +209,6 @@ public class QtPDOMQObject extends QtPDOMBinding implements ICompositeType {
 
 		return collector.list;
 	}
-
-	@Override
-	public IField[] getFields() {
-		QtPDOMVisitor.All<IField> collector = new QtPDOMVisitor.All<IField>(IField.class);
-		try {
-			children.accept(collector);
-		} catch(CoreException e) {
-			QtPlugin.log(e);
-			return IField.EMPTY_FIELD_ARRAY;
-		}
-
-		return collector.list.toArray(new IField[collector.list.size()]);
-	}
-
-	@Override
-	public IField findField(String name) {
-		QtPDOMVisitor.IFilter filter = new QtPDOMVisitor.PDOMNamedNodeFilter(name);
-		QtPDOMVisitor.Find<IField> finder = new QtPDOMVisitor.Find<IField>(IField.class, filter);
-		try {
-			accept(finder);
-		} catch(CoreException e) {
-			QtPlugin.log(e);
-		}
-		return finder.element;
-	}
-
-	@Override
-	public IScope getCompositeScope() {
-		try {
-			return getCppClassType().getCompositeScope();
-		} catch(CoreException e) {
-			QtPlugin.log(e);
-		}
-
-		return null;
-	}
-
-    @Override
-	public Object clone() {
-		throw new UnsupportedOperationException();
-    }
 
     private static class ClassInfo {
     	public final String key;

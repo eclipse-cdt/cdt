@@ -17,22 +17,28 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndexSymbols;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
 import org.eclipse.cdt.qt.core.QtKeywords;
+import org.eclipse.cdt.qt.core.index.IQMethod;
 import org.eclipse.cdt.qt.core.index.IQProperty;
+import org.eclipse.cdt.qt.internal.core.QtMethodUtil;
 import org.eclipse.cdt.qt.internal.core.index.QProperty;
 
 @SuppressWarnings("restriction")
@@ -140,12 +146,7 @@ public class QtASTVisitor extends ASTVisitor {
 			IBinding[] bindings = CPPSemantics.findBindingsForQualifiedName(spec.getScope(), alias == null ? name : alias);
 			for(IBinding binding : bindings) {
 				// Create a reference from this Qt name to the target enum's definition.
-				IASTName cppName = null;
-				if (binding instanceof ICPPInternalBinding) {
-					IASTNode node = ((ICPPInternalBinding) binding).getDefinition();
-					cppName = node instanceof IASTName ? (IASTName) node : null;
-				}
-
+				IASTName cppName = findASTName(binding);
 				QtEnumName astName = new QtEnumName(qobjName, refName, name, cppName, location, isFlag);
 				symbols.add(owner, astName, qobjName);
 
@@ -173,7 +174,9 @@ public class QtASTVisitor extends ASTVisitor {
 		Map<String, String> flagAliases = new HashMap<String, String>();
 
 		for (IASTPreprocessorMacroExpansion expansion : expansions) {
-			String macroName = String.valueOf(expansion.getMacroReference());
+
+			IASTName name = expansion.getMacroReference();
+			String macroName = name == null ? null : name.toString();
 			if (QtKeywords.Q_OBJECT.equals(macroName))
 				continue;
 
@@ -198,6 +201,9 @@ public class QtASTVisitor extends ASTVisitor {
 			} else if(QtKeywords.Q_PROPERTY.equals(macroName))
 				handleQPropertyDefn(owner, qobjName, expansion);
 		}
+
+		// Process the slot, signal, and invokable method declarations.
+		extractQMethods(owner, spec, qobjName);
 
 		for(EnumDecl decl : enumDecls)
 			decl.handle(owner, spec, qobjName, flagAliases);
@@ -385,5 +391,64 @@ public class QtASTVisitor extends ASTVisitor {
 			this.value = value;
 		}
 		public static final AttrValue None = new AttrValue(0, null);
+	}
+
+	private void extractQMethods(IASTPreprocessorIncludeStatement owner, ICPPASTCompositeTypeSpecifier spec, QObjectName qobjName) {
+		QtASTClass qtASTClass = QtASTClass.create(spec);
+		for (IASTDeclaration decl : spec.getMembers()) {
+
+			// We only care about this node if it is within a signal/slot region or if it
+			// has been tagged with a Qt annotating tag.
+			int offset = decl.getFileLocation().getNodeOffset();
+			IQMethod.Kind kind = qtASTClass.getKindFor(offset);
+			Long revision = qtASTClass.getRevisionFor(offset);
+			if (kind == IQMethod.Kind.Unspecified)
+				continue;
+
+			// Only named methods are processed, so skip this node if it is not a function or
+			// if it does not have a name.
+			IASTSimpleDeclaration simpleDecl = getSimpleDecl(decl);
+			if (simpleDecl == null)
+				continue;
+
+			ICPPASTFunctionDeclarator decltor = null;
+			for(IASTDeclarator d : simpleDecl.getDeclarators())
+				if (d instanceof ICPPASTFunctionDeclarator) {
+					decltor = (ICPPASTFunctionDeclarator) d;
+					break;
+				}
+			if (decltor == null)
+				continue;
+
+			IASTName cppName = decltor.getName();
+			if (cppName == null)
+				continue;
+
+			String qtEncSignatures = QtMethodUtil.getEncodedQtMethodSignatures(decltor);
+			symbols.add(owner, new QMethodName(qobjName, cppName, kind, qtEncSignatures, revision), qobjName);
+		}
+	}
+
+	private static IASTSimpleDeclaration getSimpleDecl(IASTNode node) {
+		while (node != null && !(node instanceof IASTSimpleDeclaration))
+			node = node.getParent();
+		return node instanceof IASTSimpleDeclaration ? (IASTSimpleDeclaration) node : null;
+	}
+
+	/**
+	 * Return the node's IASTName if it is a function and null otherwise.
+	 */
+	private static IASTName getFunctionName(IASTDeclaration decl) {
+		IASTSimpleDeclaration simpleDecl = getSimpleDecl(decl);
+		if (simpleDecl == null)
+			return null;
+
+		// Only functions can be signals or slots.  Return the name of the first declarator
+		// that is a function.
+		for( IASTDeclarator decltor : simpleDecl.getDeclarators())
+			if (decltor instanceof IASTFunctionDeclarator)
+				return decltor.getName();
+
+		return null;
 	}
 }

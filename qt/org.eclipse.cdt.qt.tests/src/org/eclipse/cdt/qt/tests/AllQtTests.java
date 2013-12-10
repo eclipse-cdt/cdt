@@ -17,6 +17,7 @@ public class AllQtTests extends TestSuite {
 			new TestSuite(
 				SimpleTests.class,
 				QObjectTests.class,
-				QtIndexTests.class);
+				QtIndexTests.class,
+				QtRegressionTests.class);
 	}
 }

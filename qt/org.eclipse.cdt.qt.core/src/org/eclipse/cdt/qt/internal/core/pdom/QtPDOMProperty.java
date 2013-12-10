@@ -7,11 +7,6 @@
  */
 package org.eclipse.cdt.qt.internal.core.pdom;
 
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IField;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -20,7 +15,7 @@ import org.eclipse.cdt.qt.core.index.IQProperty;
 import org.eclipse.core.runtime.CoreException;
 
 @SuppressWarnings("restriction")
-public class QtPDOMProperty extends QtPDOMBinding implements IField {
+public class QtPDOMProperty extends QtPDOMBinding {
 
 	private static int offsetInitializer = QtPDOMBinding.Field.Last.offset;
 	protected static enum Field {
@@ -40,8 +35,6 @@ public class QtPDOMProperty extends QtPDOMBinding implements IField {
 		}
 	}
 
-	private QtPDOMQObject qobj;
-
 	public QtPDOMProperty(QtPDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
@@ -51,12 +44,8 @@ public class QtPDOMProperty extends QtPDOMBinding implements IField {
 
 		setType(qtName.getType());
 
-		if (!(parent instanceof QtPDOMQObject))
-			this.qobj = null;
-		else {
-			this.qobj = (QtPDOMQObject) parent;
-			this.qobj.addChild(this);
-		}
+		if (parent instanceof QtPDOMQObject)
+			((QtPDOMQObject) parent).addChild(this);
 	}
 
 	@Override
@@ -93,8 +82,8 @@ public class QtPDOMProperty extends QtPDOMBinding implements IField {
 		getDB().putRecPtr(Field.Type.getRecord(record), getDB().newString(type).getRecord());
 	}
 
-	// TODO IType?
-	public String getTypeStr() throws CoreException {
+	// IType?
+	public String getType() throws CoreException {
 		long rec = getDB().getRecPtr(Field.Type.getRecord(record));
 		if (rec == 0)
 			return null;
@@ -113,66 +102,6 @@ public class QtPDOMProperty extends QtPDOMBinding implements IField {
 		long rec = getDB().getRecPtr(Field.Attributes.getRecord(record));
 		QtPDOMArray<Attribute> pdomArray = new QtPDOMArray<Attribute>(getQtLinkage(), Attribute.Codec, rec);
 		return pdomArray.get();
-	}
-
-	@Override
-	public ICompositeType getCompositeTypeOwner() {
-		if (qobj == null)
-			try {
-				IBinding parent = getParentBinding();
-				if (parent instanceof QtPDOMQObject)
-					qobj = (QtPDOMQObject) parent;
-			} catch(CoreException e) {
-				QtPlugin.log(e);
-			}
-
-		return qobj;
-	}
-
-	/**
-	 * TODO use the real type?
-	 */
-	private static final IType Type = new IType() {
-		@Override
-		public Object clone() {
-			// This is a stateless singleton instance, there is nothing to clone.
-	    	return this;
-	    }
-
-		@Override
-		public boolean isSameType(IType type) {
-			return type == this;
-		}
-	};
-
-	@Override
-	public IType getType() {
-		return Type;
-	}
-
-	@Override
-	public IValue getInitialValue() {
-		return null;
-	}
-
-	@Override
-	public boolean isStatic() {
-		return false;
-	}
-
-	@Override
-	public boolean isExtern() {
-		return false;
-	}
-
-	@Override
-	public boolean isAuto() {
-		return false;
-	}
-
-	@Override
-	public boolean isRegister() {
-		return false;
 	}
 
     public static class Attribute {

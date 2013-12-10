@@ -17,7 +17,7 @@ public enum QtPDOMNodeType {
 	QObject,
 	QEnum,
 	QProperty,
-	QPropertyAttribute;
+	QMethod;
 
 	public final int Type = IIndexBindingConstants.LAST_CONSTANT + 1 + ordinal();
 
@@ -28,7 +28,7 @@ public enum QtPDOMNodeType {
 	 * <p>
 	 * The version is needed because ordinals for these enumerators are written to the file.
 	 */
-	public static final int VERSION = 3;
+	public static final int VERSION = 4;
 
 	public static QtPDOMNodeType forType(int version, int type) {
 		// Nothing has been deleted or replaced yet, so the version is ignored.
@@ -52,6 +52,8 @@ public enum QtPDOMNodeType {
 			return new QtPDOMQEnum(linkage, record);
 		case QProperty:
 			return new QtPDOMProperty(linkage, record);
+		case QMethod:
+			return new QtPDOMQMethod(linkage, record);
 		}
 
 		return null;

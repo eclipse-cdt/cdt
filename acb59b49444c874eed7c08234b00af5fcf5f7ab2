@@ -160,6 +160,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_1078929b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-12-10T18:44:32Z",
+      "side": 1,
+      "message": "Done in patch set 3",
+      "parentUuid": "8748d3a1_2a9eff42",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_cabafbb6",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
         "patchSetId": 1
@@ -171,6 +189,24 @@
       "writtenOn": "2013-12-10T11:51:37Z",
       "side": 1,
       "message": "What do you think about moving this to DSF, in o.e.cdt.dsf.debug.internal.provisional.model?",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_f0d88611",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-12-10T18:44:32Z",
+      "side": 1,
+      "message": "Done in ps3",
+      "parentUuid": "8748d3a1_cabafbb6",
       "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -229,6 +265,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_e4ac4b77",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-12-10T18:44:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_4a6b8b99",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_8aa3d385",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
         "patchSetId": 1
@@ -264,6 +318,42 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_64803bd8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-12-10T18:44:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_10141273",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_04b4d7b5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-12-10T18:44:32Z",
+      "side": 1,
+      "message": "This make sense when moving the MemoryBlockRetrievalManager to DSF. \n\nDone in PS3",
+      "parentUuid": "8748d3a1_8aa3d385",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_8a759372",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
         "patchSetId": 1
@@ -281,6 +371,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_44853fe6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-12-10T18:44:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_8a759372",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_ea0ff738",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/IMemoryBlockRetrievalManager.java",
         "patchSetId": 1
@@ -292,6 +400,24 @@
       "writtenOn": "2013-12-10T11:51:37Z",
       "side": 1,
       "message": "How about we move this to DSF, in o.e.cdt.dsf.debug.internal.provisional.model?",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_a47a4367",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/IMemoryBlockRetrievalManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-12-10T18:44:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_ea0ff738",
       "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

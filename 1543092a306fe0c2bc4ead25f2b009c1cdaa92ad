@@ -52,6 +52,24 @@
       "revId": "1543092a306fe0c2bc4ead25f2b009c1cdaa92ad",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_931b0778",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMNameTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2013-12-10T23:51:38Z",
+      "side": 1,
+      "message": "Well, we can remove it and add this to our long list of test failures we get all the time. Not sure how that helps.",
+      "parentUuid": "8748d3a1_58951c94",
+      "revId": "1543092a306fe0c2bc4ead25f2b009c1cdaa92ad",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_fdd17a73",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/internal/provisional/model/MemoryBlockRetrievalManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-10T21:09:23Z",
+      "side": 1,
+      "message": "I think this should throw the DebugException and let the caller deal with it.  Someone else may want to do something else than log the error.",
+      "revId": "914f12179fd50c52cb61f44e7747a9723048fa15",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

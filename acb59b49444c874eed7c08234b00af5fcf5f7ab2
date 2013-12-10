@@ -19,6 +19,92 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_0ac50332",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-10T11:51:37Z",
+      "side": 1,
+      "message": "I recommend doing this change in GdbPlugin (not DsfPlugin), since there could technically be a conflict with someone else trying to register a similar adapter.",
+      "parentUuid": "8748d3a1_1b0c40ca",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_2a8f1f3a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-10T11:51:37Z",
+      "side": 1,
+      "message": "I think we can avoid this change by calling by having the caller of the constructor call initialize()",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_8a84731b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-10T11:51:37Z",
+      "side": 1,
+      "message": "The pattern could be that the caller of the constructor must call initialize().  This would follow the same API as DsfMemoryBlockRetrieval.",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_2a9eff42",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-10T11:51:37Z",
+      "side": 1,
+      "message": "What do you think about moving this to DSF, in o.e.cdt.dsf.debug.internal.provisional.model?\n\nYou\u0027ll have to change the MANIFEST file of o.e.cdt.dsf to add o.e.cdt.dsf.gdb as a friend to that package",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_cabafbb6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-10T11:51:37Z",
+      "side": 1,
+      "message": "What do you think about moving this to DSF, in o.e.cdt.dsf.debug.internal.provisional.model?",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_16c41709",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
         "patchSetId": 1
@@ -30,6 +116,74 @@
       "writtenOn": "2013-12-09T21:20:47Z",
       "side": 1,
       "message": "Why throw an exception?",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_4a6b8b99",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-10T11:51:37Z",
+      "side": 1,
+      "message": "If we move to DSF, the call below should become a call to a new\n\nprotected IMemoryBlockRetrieval createMemoryBlockRetrieval(model, config, session)\n\nwhich will create a DsfMemoryBlockRetrieval.\n\nWe\u0027ll then need to override this class and new method in DSF-GDB to use a GdbMemoryBlockRetrieval instead.",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_8aa3d385",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-10T11:51:37Z",
+      "side": 1,
+      "message": "How about calling memRetrieval.initialize(memDmc) here instead?",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_8a759372",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-10T11:51:37Z",
+      "side": 1,
+      "message": "Assuming above changes, check if instanceof DsfMemoryBlockRetrieval and then you can call saveMemBlocks()",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_ea0ff738",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/IMemoryBlockRetrievalManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-10T11:51:37Z",
+      "side": 1,
+      "message": "How about we move this to DSF, in o.e.cdt.dsf.debug.internal.provisional.model?",
       "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

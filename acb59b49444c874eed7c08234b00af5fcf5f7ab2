@@ -37,6 +37,42 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_302b0eba",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-12-10T14:29:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_1b0c40ca",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_b5a0b0ef",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-12-10T14:29:26Z",
+      "side": 1,
+      "message": "I think this is not applicable, based on previous comment.",
+      "parentUuid": "8748d3a1_0ac50332",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_2a8f1f3a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
         "patchSetId": 1
@@ -54,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_15ec0432",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-12-10T14:29:26Z",
+      "side": 1,
+      "message": "DsfMemoryBlockRetrieval needs a separate initialization as the memory context may not be available at the time it\u0027s constructed. \nThis was also the situation of the previous version of the GdbMemoryBlockRetrieval as it was created early in the launch sequence.  \nHowever this implementation creates it with the starting of a memory context entity (e.g. process, thread, etc..). Since it\u0027s now available why not simplify for GDB and use one step instead of two ?\n\nThe only concern I would have would be the breaking of the API, however this is an Internal package.",
+      "parentUuid": "8748d3a1_2a8f1f3a",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_8a84731b",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
         "patchSetId": 1
@@ -65,6 +119,24 @@
       "writtenOn": "2013-12-10T11:51:37Z",
       "side": 1,
       "message": "The pattern could be that the caller of the constructor must call initialize().  This would follow the same API as DsfMemoryBlockRetrieval.",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_f5e8781f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-12-10T14:29:26Z",
+      "side": 1,
+      "message": "see my comment above",
+      "parentUuid": "8748d3a1_8a84731b",
       "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -122,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_702596e0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-12-10T14:29:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_16c41709",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_4a6b8b99",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
         "patchSetId": 1
@@ -150,6 +240,24 @@
       "writtenOn": "2013-12-10T11:51:37Z",
       "side": 1,
       "message": "How about calling memRetrieval.initialize(memDmc) here instead?",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_10141273",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrievalManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-12-10T14:29:26Z",
+      "side": 1,
+      "message": "see answer in first comment of GdbMemoryBlockRetrieval",
+      "parentUuid": "8748d3a1_8aa3d385",
       "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -201,6 +309,24 @@
       "writtenOn": "2013-12-09T21:20:47Z",
       "side": 1,
       "message": "Please update comment",
+      "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_f0108680",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2013-12-10T14:29:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_76759b6e",
       "revId": "acb59b49444c874eed7c08234b00af5fcf5f7ab2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

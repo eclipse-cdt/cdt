@@ -869,10 +869,10 @@ public class EditorUtility {
 			}
 		}
 
-		if (!(ep instanceof ITextEditor))
+		ITextEditor textEditor = getTextEditor(ep);
+		if (textEditor == null)
 			return saveUnknownEditors;
 
-		ITextEditor textEditor= (ITextEditor) ep;
 		IDocumentProvider documentProvider= textEditor.getDocumentProvider();
 		if (!(documentProvider instanceof TextFileDocumentProvider))
 			return saveUnknownEditors;
@@ -1030,9 +1030,9 @@ public class EditorUtility {
 		if(window != null) {
 			IWorkbenchPage activePage = window.getActivePage();
 			if(activePage != null) {
-				IEditorPart activeEditor = activePage.getActiveEditor();
-				if(activeEditor instanceof ITextEditor) {
-					IEditorInput editorInput = ((ITextEditor)activeEditor).getEditorInput();
+				ITextEditor activeEditor = getTextEditor(activePage.getActiveEditor());
+				if (activeEditor != null) {
+					IEditorInput editorInput = activeEditor.getEditorInput();
 					IFile file = ResourceUtil.getFile(editorInput);
 					if(file != null) {
 						project = file.getProject();
@@ -1041,5 +1041,17 @@ public class EditorUtility {
 			}
 		}
 		return project;
+	}
+
+	/**
+	 * Try to convert the given editor to an implementation of ITextEditor.  Return that implementation
+	 * if possible and null otherwise.
+	 */
+	public static ITextEditor getTextEditor(IEditorPart editor) {
+		if (editor == null)
+			return null;
+		if (editor instanceof ITextEditor)
+			return (ITextEditor) editor;
+		return (ITextEditor) editor.getAdapter(ITextEditor.class);
 	}
 }

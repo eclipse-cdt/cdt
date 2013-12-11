@@ -10,7 +10,6 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.actions;
 
 import java.util.ArrayList;
@@ -42,9 +41,6 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 public class SelectionConverter {
-
-	protected static final ICElement[] EMPTY_RESULT= new ICElement[0];
- 
 	/**
 	 * Converts the selection provided by the given part into a structured selection.
 	 * The following conversion rules are used:
@@ -70,7 +66,7 @@ public class SelectionConverter {
 
 	/**
 	 * Converts objects of a structured selection to c elements if possible.
-	 * This is a convenience method, fully equivalent to 
+	 * This is a convenience method, fully equivalent to
 	 * <code>convertSelectionToCElements(s, false)</code>.
 	 * @param s The structured selection
 	 * @return The converted selection
@@ -148,7 +144,7 @@ public class SelectionConverter {
 	/**
 	 * Returns the selection adapted to IResource. Returns null if any of the
 	 * entries are not adaptable.
-	 * 
+	 *
 	 * @param selection
 	 *            the selection
 	 * @param resourceMask
@@ -232,7 +228,7 @@ public class SelectionConverter {
 	/**
 	 * Returns whether the type of the given resource is among the specified
 	 * resource types.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource
 	 * @param resourceMask
@@ -282,12 +278,12 @@ public class SelectionConverter {
 	            }
 	        }
 	    }
-		return EMPTY_RESULT;
+		return ICElement.EMPTY_ARRAY;
 	}
-	
+
 	/**
 	 * Converts the text selection provided by the given editor a Java element by
-	 * asking the user if code reolve returned more than one result. If the selection 
+	 * asking the user if code resolve returned more than one result. If the selection
 	 * doesn't cover a Java element <code>null</code> is returned.
 	 */
 	public static ICElement codeResolve(CEditor editor, Shell shell, String title, String message) throws CModelException {
@@ -300,7 +296,6 @@ public class SelectionConverter {
 		}
 		return candidate;
 	}
-	
 
 	/**
 	 * Converts the text selection provided by the given editor into an array of
@@ -325,11 +320,10 @@ public class SelectionConverter {
 		}
 		return null;
 	}
-	
+
 	public static boolean canOperateOn(CEditor editor) {
 		if (editor == null)
 			return false;
 		return getInput(editor) != null;
-		
 	}
 }

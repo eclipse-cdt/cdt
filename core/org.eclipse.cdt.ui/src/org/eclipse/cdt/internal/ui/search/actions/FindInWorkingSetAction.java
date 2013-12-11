@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
 import java.util.ArrayList;
@@ -29,24 +29,24 @@ import org.eclipse.cdt.internal.ui.search.CSearchUtil;
 import org.eclipse.cdt.internal.ui.util.Messages;
 
 public abstract class FindInWorkingSetAction extends FindAction {
-	
+
 	private IWorkingSet[] fWorkingSets;
 	private String scopeDescription = ""; //$NON-NLS-1$
-	
+
 	public FindInWorkingSetAction(CEditor editor, String label, String tooltip, IWorkingSet[] workingSets) {
 		super(editor);
-		setText(label); 
-		setToolTipText(tooltip); 
+		setText(label);
+		setToolTipText(tooltip);
 		fWorkingSets = workingSets;
 	}
-	
+
 	public FindInWorkingSetAction(IWorkbenchSite site, String label, String tooltip, IWorkingSet[] workingSets){
 		super(site);
-		setText(label); 
-		setToolTipText(tooltip); 
+		setText(label);
+		setToolTipText(tooltip);
 		fWorkingSets= workingSets;
 	}
-	
+
 	@Override
 	final public void run() {
 		IWorkingSet[] initial= fWorkingSets;
@@ -54,7 +54,7 @@ public abstract class FindInWorkingSetAction extends FindAction {
 			fWorkingSets= askForWorkingSets();
 		}
 		if (fWorkingSets != null) {
-			scopeDescription = Messages.format(CSearchMessages.WorkingSetScope, CSearchUtil.toString(fWorkingSets)); 
+			scopeDescription = Messages.format(CSearchMessages.WorkingSetScope, CSearchUtil.toString(fWorkingSets));
 			super.run();
 		}
 		fWorkingSets= initial;
@@ -68,7 +68,7 @@ public abstract class FindInWorkingSetAction extends FindAction {
 	@Override
 	final protected ICElement[] getScope() {
 		if (fWorkingSets == null) {
-			return new ICElement[0];
+			return ICElement.EMPTY_ARRAY;
 		}
 		List<ICElement> scope = new ArrayList<ICElement>();
 		for (int i = 0; i < fWorkingSets.length; ++i) {
@@ -79,13 +79,13 @@ public abstract class FindInWorkingSetAction extends FindAction {
 					scope.add(element);
 			}
 		}
-		
+
 		return scope.toArray(new ICElement[scope.size()]);
 	}
-	
+
 	private IWorkingSet[] askForWorkingSets() {
 		IWorkingSetManager wsm= PlatformUI.getWorkbench().getWorkingSetManager();
-		IWorkingSetSelectionDialog dlg= 
+		IWorkingSetSelectionDialog dlg=
 			wsm.createWorkingSetSelectionDialog(getSite().getShell(), true);
 		IWorkingSet[] mru= wsm.getRecentWorkingSets();
 		if (mru != null && mru.length > 0) {

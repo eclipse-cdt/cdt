@@ -24,19 +24,18 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 
 public class THHistoryDropDownAction extends Action implements IMenuCreator {
-	
-	public static class ClearHistoryAction extends Action {
 
+	public static class ClearHistoryAction extends Action {
 		private THViewPart fView;
-		
+
 		public ClearHistoryAction(THViewPart view) {
 			super(Messages.THHistoryDropDownAction_ClearHistory);
 			fView= view;
 		}
-			
+
 		@Override
 		public void run() {
-			fView.setHistoryEntries(new ICElement[0]);
+			fView.setHistoryEntries(ICElement.EMPTY_ARRAY);
 			fView.setInput(null, null);
 		}
 	}
@@ -45,11 +44,11 @@ public class THHistoryDropDownAction extends Action implements IMenuCreator {
 
 	private THViewPart fHierarchyView;
 	private Menu fMenu;
-	
+
 	public THHistoryDropDownAction(THViewPart viewPart) {
 		fHierarchyView= viewPart;
 		fMenu= null;
-		setToolTipText(Messages.THHistoryDropDownAction_tooltip); 
+		setToolTipText(Messages.THHistoryDropDownAction_tooltip);
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "history_list.gif"); //$NON-NLS-1$
 		setMenuCreator(this);
 	}
@@ -81,10 +80,10 @@ public class THHistoryDropDownAction extends Action implements IMenuCreator {
 		addActionToMenu(fMenu, new ClearHistoryAction(fHierarchyView));
 		return fMenu;
 	}
-	
+
 	private boolean addEntries(Menu menu, ICElement[] elements) {
 		boolean checked= false;
-		
+
 		int min= Math.min(elements.length, RESULTS_IN_DROP_DOWN);
 		for (int i= 0; i < min; i++) {
 			THHistoryAction action= new THHistoryAction(fHierarchyView, elements[i]);
@@ -92,11 +91,9 @@ public class THHistoryDropDownAction extends Action implements IMenuCreator {
 			checked= checked || action.isChecked();
 			addActionToMenu(menu, action);
 		}
-		
-		
+
 		return checked;
 	}
-	
 
 	protected void addActionToMenu(Menu parent, Action action) {
 		ActionContributionItem item= new ActionContributionItem(action);

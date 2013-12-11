@@ -657,7 +657,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			binaries = getBinaries(cproject);
 			archives = getArchives(cproject);
 		} catch (CModelException e) {
-			archives = binaries = new ICElement[0];
+			archives = binaries = ICElement.EMPTY_ARRAY;
 		}
 		ISourceRoot[] roots = null;
 		try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,23 +12,25 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-import java.net.URI;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 
+import java.net.URI;
+
 /**
  * Common protocol for all elements provided by the C model.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICElement extends IAdaptable {
+	public static final ICElement[] EMPTY_ARRAY = {};
+
 	/**
 	 * IResource from 10-20
-	 */ 
+	 */
 
 	/**
 	 * Constant representing a C Root workspace (IWorkspaceRoot object).
@@ -37,19 +39,19 @@ public interface ICElement extends IAdaptable {
 	static final int C_MODEL = 10;
 
 	/**
-	 * Constant representing a C project(IProject object).
+	 * Constant representing a C project (IProject object).
 	 * A C element with this type can be safely cast to <code>ICProject</code>.
 	 */
 	static final int C_PROJECT = 11;
 
 	/**
-	 * Constant representing a folder(ICContainer object).
+	 * Constant representing a folder (ICContainer object).
 	 * A C element with this type can be safely cast to <code>ICContainer</code>.
 	 */
 	static final int C_CCONTAINER = 12;
 
 	static final int C_BINARY = 14;
-	
+
 	static final int C_ARCHIVE = 18;
 	/**
 	 * Virtual container serving as a place holder.
@@ -103,7 +105,7 @@ public interface ICElement extends IAdaptable {
 	 * struct C;
 	 */
 	static final int C_UNION_DECLARATION = 68;
-	
+
 	/**
 	 * Constant representing a union structure.
 	 */
@@ -163,14 +165,14 @@ public interface ICElement extends IAdaptable {
 	 * a Typedef.
 	 */
 	static final int C_TYPEDEF = 80;
-	
+
 	/**
 	 * Enumerator.
 	 */
 	static final int C_ENUMERATOR = 81;
 
 	/**
-	 * C++ template class declaration without a definiton.
+	 * C++ template class declaration without a definition.
 	 */
 	static final int C_TEMPLATE_CLASS_DECLARATION = 82;
 
@@ -232,7 +234,7 @@ public interface ICElement extends IAdaptable {
 
 	/**
 	 * Assembly label.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	static final int ASM_LABEL= 94;
@@ -243,21 +245,21 @@ public interface ICElement extends IAdaptable {
 	 */
 	@Deprecated
 	static final int C_CLASS_CTOR = 0x100;
-	
+
 	/**
 	 * Modifier indicating a class destructor
 	 * @deprecated use {@link IMethodDeclaration#isDestructor()}
 	 */
 	@Deprecated
 	static final int C_CLASS_DTOR = 0x200;
-		
+
 	/**
 	 * Modifier indicating a static storage attribute
 	 * @deprecated use {@link IDeclaration#isStatic()}
 	 */
 	@Deprecated
 	static final int C_STORAGE_STATIC = 0x400;
-	
+
 	/**
 	 * Modifier indicating an extern storage attribute
 	 * @deprecated not used anymore
@@ -351,19 +353,19 @@ public interface ICElement extends IAdaptable {
 	ICElement getParent();
 
 	/**
-	 * Returns the path to the innermost resource enclosing this element. 
-	 * If this element is not included in an external archive, 
-	 * the path returned is the full, absolute path to the underlying resource, 
-	 * relative to the workbench. 
-	 * If this element is included in an external archive, 
+	 * Returns the path to the innermost resource enclosing this element.
+	 * If this element is not included in an external archive,
+	 * the path returned is the full, absolute path to the underlying resource,
+	 * relative to the workbench.
+	 * If this element is included in an external archive,
 	 * the path returned is the absolute path to the archive in the file system.
 	 * This is a handle-only method.
 	 */
 	IPath getPath();
-	
+
 	/**
 	 * Returns an absolute URI corresponding to the innermost file enclosing this element.
-	 * 
+	 *
 	 * @since 5.0
 	 * @return the URI corresponding to the location
 	 */
@@ -389,7 +391,7 @@ public interface ICElement extends IAdaptable {
 
 	/**
 	 * Returns whether this C element is read-only. An element is read-only
-	 * if its structure cannot be modified by the C model. 
+	 * if its structure cannot be modified by the C model.
 	 *
 	 * @return {@code true} if this element is read-only
 	 */
@@ -409,15 +411,15 @@ public interface ICElement extends IAdaptable {
 	 *		exception occurs while accessing its corresponding resource
 	 */
 	boolean isStructureKnown() throws CModelException;
-	
+
 	/**
 	 * Accept a visitor and walk the ICElement tree with it.
-	 * 
+	 *
 	 * @param visitor
 	 * @throws CModelException
 	 */
 	void accept(ICElementVisitor visitor) throws CoreException;
-	
+
 	/**
 	 * Returns a string representation of this element handle. The format of the
 	 * string is not specified; however, the identifier is stable across
@@ -426,11 +428,10 @@ public interface ICElement extends IAdaptable {
 	 * <p>
 	 * Some element types, like binaries, do not support handle identifiers and
 	 * return {@code null}.
-	 * </p>
-	 * 
+	 *
 	 * @return the string handle identifier, or {@code null} if the element type is not supported
 	 * @see CoreModel#create(java.lang.String)
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	String getHandleIdentifier();

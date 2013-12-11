@@ -70,6 +70,24 @@
       "revId": "1543092a306fe0c2bc4ead25f2b009c1cdaa92ad",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_b3c7230e",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMNameTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-11T00:02:33Z",
+      "side": 1,
+      "message": "Contaminating tests with extra delays that don\u0027t really serve any useful purpose certainly doesn\u0027t help.",
+      "parentUuid": "8748d3a1_931b0778",
+      "revId": "1543092a306fe0c2bc4ead25f2b009c1cdaa92ad",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

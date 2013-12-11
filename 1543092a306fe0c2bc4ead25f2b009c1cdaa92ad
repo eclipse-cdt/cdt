@@ -88,6 +88,24 @@
       "revId": "1543092a306fe0c2bc4ead25f2b009c1cdaa92ad",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_b3bd6353",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMNameTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-12-11T00:25:24Z",
+      "side": 1,
+      "message": "Fixing PDOMManager.joinIndexer so that it properly waits until the tasks started by PDOMManager.reindex have completed is definitely the preferred approach.  If the indexer were able to consistently signal it\u0027s completion then the implementation of waitForIndexer could be fixed to remove the delays and all test cases would benefit.\n\nAlthough I wouldn\u0027t characterize this change as ideal, I also don\u0027t think it is \"contaminating\" any more than other callers to waitForIndexer.\n\nIn concrete terms, this test case took about 700ms (with three waits) to run when I tested it on my machine and never in about a dozen tests.  I don\u0027t have an execution time with only a single call to wait, but the failure rate was something like 75%.",
+      "parentUuid": "8748d3a1_b3c7230e",
+      "revId": "1543092a306fe0c2bc4ead25f2b009c1cdaa92ad",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

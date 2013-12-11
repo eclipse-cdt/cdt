@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_39a76842",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/parser/QtParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-11T22:49:46Z",
+      "side": 1,
+      "message": "Can this class be moved to QT plugin?",
+      "revId": "a96ef42017f72f98a5efd6a2fa664c54c0ae888b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_f90fc0bd",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/parser/QtParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-11T22:49:46Z",
+      "side": 1,
+      "message": "Multiline \u0027if\u0027 statements should use curly braces for readability.",
+      "revId": "a96ef42017f72f98a5efd6a2fa664c54c0ae888b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.ITranslationUnitHolder;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.ASTCache;
@@ -41,7 +43,7 @@ import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 /**
  * Provides a shared AST for clients. The shared AST is
  * the AST of the active CEditor's input element.
- * 
+ *
  * @since 4.0
  */
 public final class ASTProvider {
@@ -69,7 +71,7 @@ public final class ASTProvider {
 	 * wants to wait until an AST is ready. If the translation unit is not open no AST will
 	 * be provided.
 	 * <p>
-	 * If not yet cached and if the translation unit is open, an AST will be created by 
+	 * If not yet cached and if the translation unit is open, an AST will be created by
 	 * this AST provider.
 	 * </p>
 	 */
@@ -77,7 +79,7 @@ public final class ASTProvider {
 
 	/**
 	 * Wait flag indicating that a client requesting an AST
-	 * only wants to wait for the shared AST of the active editor. 
+	 * only wants to wait for the shared AST of the active editor.
 	 * If the translation unit is not open no AST will be provided.
 	 * <p>
 	 * No AST will be created by the AST provider.
@@ -222,7 +224,17 @@ public final class ASTProvider {
 				return false;
 
 			String id= ref.getId();
-			return CUIPlugin.EDITOR_ID.equals(id) || ref.getPart(false) instanceof CEditor;
+			if (CUIPlugin.EDITOR_ID.equals(id))
+				return true;
+
+			IWorkbenchPart part = ref.getPart(false);
+			if (part instanceof CEditor)
+				return true;
+
+			// Other editors can behave as CEditors if they can provide a copy of their ITranslationUnit.
+			if (part instanceof IEditorPart)
+				return part.getAdapter(ITranslationUnitHolder.class) != null;
+			return false;
 		}
 	}
 
@@ -233,7 +245,7 @@ public final class ASTProvider {
 
 	/**
 	 * Returns the C plug-in's AST provider.
-	 * 
+	 *
 	 * @return the AST provider
 	 */
 	public static ASTProvider getASTProvider() {
@@ -264,14 +276,17 @@ public final class ASTProvider {
 	}
 
 	private void activeEditorChanged(IWorkbenchPart editor) {
-		ICElement cElement= null;
-		if (editor instanceof CEditor) {
-			cElement= ((CEditor) editor).getInputCElement();
+		ITranslationUnit tu = null;
+		if (editor != null) {
+			ITranslationUnitHolder provider = (ITranslationUnitHolder) editor.getAdapter(ITranslationUnitHolder.class);
+			if (provider != null)
+				tu = provider.getTranslationUnit();
 		}
+
 		synchronized (this) {
 			fActiveEditor= editor;
 			fTimeStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
-			fCache.setActiveElement((ITranslationUnit) cElement);
+			fCache.setActiveElement(tu);
 		}
 	}
 
@@ -343,7 +358,7 @@ public final class ASTProvider {
 	 * Executes {@link ASTRunnable#runOnAST(ILanguage, IASTTranslationUnit)}
 	 * with the shared AST for the given translation unit. Handles acquiring
 	 * and releasing the index read-lock for the client.
-	 * 
+	 *
 	 * @param cElement     the translation unit
 	 * @param waitFlag     condition for waiting for the AST to be built.
 	 * @param monitor      a progress monitor, may be <code>null</code>
@@ -368,7 +383,7 @@ public final class ASTProvider {
 	 * <p>
 	 * An index lock must be held by the caller when calling this method. The index lock may
 	 * not be released until the AST is released.
-	 * 
+	 *
 	 * @param tu The translation unit to get the AST for.
 	 * @param index index with read lock held.
 	 * @param waitFlag condition for waiting for the AST to be built.
@@ -396,7 +411,7 @@ public final class ASTProvider {
 
 	/**
 	 * Prepares the AST cache to be used for the given translation unit.
-	 * 
+	 *
 	 * @param tu the translation unit.
 	 * @param waitFlag condition for waiting for the AST to be built.
 	 * @return <code>true</code> if the AST cache can be used for the given translation unit,
@@ -407,7 +422,7 @@ public final class ASTProvider {
 			return false;
 
 		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=342506 explains
-		// benign nature of the race conditions in the code below. 
+		// benign nature of the race conditions in the code below.
 		final boolean isActive= fCache.isActiveElement(tu);
 		if (waitFlag == WAIT_ACTIVE_ONLY && !isActive) {
 			return false;

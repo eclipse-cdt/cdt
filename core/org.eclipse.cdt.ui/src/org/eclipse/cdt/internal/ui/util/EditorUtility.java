@@ -338,7 +338,7 @@ public class EditorUtility {
 		IEditorInput input= getEditorInputForLocation(location, element);
 		return EditorUtility.openInEditor(input, getEditorID(input, element), activate);
 	}
-	
+
 	public static IEditorPart openInEditor(URI locationURI, ICElement element) throws PartInitException {
 		IEditorInput input= getEditorInputForLocation(locationURI, element);
 		return EditorUtility.openInEditor(input, getEditorID(input, element), true);
@@ -376,7 +376,7 @@ public class EditorUtility {
 						IPath path = URIUtil.toPath(locationURI);
 						if(path == null)
 							path = new Path(locationURI.getPath());
-						
+
 						if (includeReferences[j].isOnIncludeEntry(path)) {
 							context = projects[i];
 							break outerFor;
@@ -405,7 +405,7 @@ public class EditorUtility {
 						e.printStackTrace();
 						return null;
 					}
-					
+
 					if(fileStore != null)
 						return new ExternalEditorInput(unit);
 				}
@@ -486,18 +486,18 @@ public class EditorUtility {
 		IFile file= ResourceLookup.selectFileForLocation(location, project);
 		if (file != null && file.isAccessible())
 			return file;
-		
+
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		// workaround http://bugs.eclipse.org/233939
 		file= root.getFileForLocation(location);
-		if (file != null && file.isAccessible()) 
+		if (file != null && file.isAccessible())
 			return file;
 
 		// try workspace relative path
 		if (location.segmentCount() >= 2) {
 			// @see IContainer#getFile for the required number of segments
 			file= root.getFile(location);
-			if (file != null && file.isAccessible()) 
+			if (file != null && file.isAccessible())
 				return file;
 		}
 		return null;
@@ -520,14 +520,14 @@ public class EditorUtility {
 				project= cProject.getProject();
 			}
 		}
-		
+
 		IFile file= ResourceLookup.selectFileForLocationURI(locationURI, project);
 		if (file != null && file.isAccessible())
 			return file;
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * If the current active editor edits a c element return it, else
 	 * return null
@@ -722,7 +722,7 @@ public class EditorUtility {
 		String newModifierString= Action.findModifierString(modifier);
 		if (modifierString.length() == 0)
 			return newModifierString;
-		return NLS.bind(CEditorMessages.EditorUtility_concatModifierStrings, new String[] {modifierString, newModifierString}); 
+		return NLS.bind(CEditorMessages.EditorUtility_concatModifierStrings, new String[] {modifierString, newModifierString});
 	}
 
 	public static IStorage getStorage(IBinary bin) {
@@ -869,10 +869,10 @@ public class EditorUtility {
 			}
 		}
 
-		if (!(ep instanceof ITextEditor))
+		ITextEditor textEditor = getTextEditor(ep);
+		if (textEditor == null)
 			return saveUnknownEditors;
 
-		ITextEditor textEditor= (ITextEditor) ep;
 		IDocumentProvider documentProvider= textEditor.getDocumentProvider();
 		if (!(documentProvider instanceof TextFileDocumentProvider))
 			return saveUnknownEditors;
@@ -885,7 +885,7 @@ public class EditorUtility {
 	 * last save occurred. Each region in the result spans over the size of at least one line.
 	 * If successive lines have changed a region spans over the size of all successive lines.
 	 * The regions include line delimiters.
-	 * 
+	 *
 	 * @param buffer the buffer to compare contents from
 	 * @param monitor to report progress to
 	 * @return the regions of the changed lines
@@ -896,7 +896,7 @@ public class EditorUtility {
 			final IProgressMonitor monitor) throws CoreException {
 		final IRegion[][] result= new IRegion[1][];
 		final IStatus[] errorStatus= new IStatus[] { Status.OK_STATUS };
-	
+
 		try {
 			SafeRunner.run(new ISafeRunnable() {
 				/*
@@ -912,7 +912,7 @@ public class EditorUtility {
 							ICStatusConstants.EDITOR_CHANGED_REGION_CALCULATION, msg, exception);
 					result[0]= null;
 				}
-	
+
 				/*
 				 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 				 */
@@ -920,14 +920,14 @@ public class EditorUtility {
 				public void run() throws Exception {
 					monitor.beginTask(Messages.EditorUtility_calculatingChangedRegions_message, 20);
 					IFileStore fileStore= buffer.getFileStore();
-	
+
 					ITextFileBufferManager fileBufferManager= FileBuffers.createTextFileBufferManager();
 					fileBufferManager.connectFileStore(fileStore, getSubProgressMonitor(monitor, 15));
 					try {
 						IDocument currentDocument= buffer.getDocument();
-						IDocument oldDocument= 
+						IDocument oldDocument=
 								((ITextFileBuffer) fileBufferManager.getFileStoreFileBuffer(fileStore)).getDocument();
-	
+
 						result[0]= getChangedLineRegions(oldDocument, currentDocument);
 					} finally {
 						fileBufferManager.disconnectFileStore(fileStore, getSubProgressMonitor(monitor, 5));
@@ -938,7 +938,7 @@ public class EditorUtility {
 				/**
 				 * Return regions of all lines which differ comparing <code>oldDocument</code>s content
 				 * with <code>currentDocument</code>s content. Successive lines are merged into one region.
-				 * 
+				 *
 				 * @param oldDocument a document containing the old content
 				 * @param currentDocument a document containing the current content
 				 * @return the changed regions
@@ -973,7 +973,7 @@ public class EditorUtility {
 								startLineRegion = currentDocument.getLineInformation(startLine);
 								if (startLine >= endLine) {
 									// startLine > endLine indicates a deletion of one or more lines.
-									// Deletions are ignored except at the end of the document. 
+									// Deletions are ignored except at the end of the document.
 									if (startLine == endLine ||
 											startLineRegion.getOffset() + startLineRegion.getLength() == currentDocument.getLength()) {
 										regions.add(startLineRegion);
@@ -997,7 +997,7 @@ public class EditorUtility {
 			if (!errorStatus[0].isOK())
 				throw new CoreException(errorStatus[0]);
 		}
-	
+
 		return result[0];
 	}
 
@@ -1015,13 +1015,13 @@ public class EditorUtility {
 
 		return new NullProgressMonitor();
 	}
-	
-	
+
+
 	/**
 	 * Returns the project contains the resource, which is currently open in the active editor.
-	 * If the active part is no ITextEditor or if the editorInput is no FileEditorInput, 
+	 * If the active part is no ITextEditor or if the editorInput is no FileEditorInput,
 	 * <code>null</code> is returned.
-	 * 
+	 *
 	 * @return the project which the selected editor input belongs to or null
 	 */
 	public static IProject getProjectForActiveEditor() {
@@ -1030,9 +1030,9 @@ public class EditorUtility {
 		if(window != null) {
 			IWorkbenchPage activePage = window.getActivePage();
 			if(activePage != null) {
-				IEditorPart activeEditor = activePage.getActiveEditor();
-				if(activeEditor instanceof ITextEditor) {
-					IEditorInput editorInput = ((ITextEditor)activeEditor).getEditorInput();
+				ITextEditor activeEditor = getTextEditor(activePage.getActiveEditor());
+				if (activeEditor != null) {
+					IEditorInput editorInput = activeEditor.getEditorInput();
 					IFile file = ResourceUtil.getFile(editorInput);
 					if(file != null) {
 						project = file.getProject();
@@ -1041,5 +1041,15 @@ public class EditorUtility {
 			}
 		}
 		return project;
+	}
+
+	/**
+	 * Tries to convert the given editor to an implementation of ITextEditor.  Returns that implementation
+	 * if possible and null otherwise.
+	 *
+	 * @param editor The editor to be converted or null if there is nothing to convert.
+	 */
+	public static ITextEditor getTextEditor(IEditorPart editor) {
+		return editor == null ? null : (ITextEditor) editor.getAdapter(ITextEditor.class);
 	}
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Philippe Gil (AdaCore) - Initial API and implementation
+ *     Marc-Andre Laperle (Ericsson) - Fix parsing for old versions of GDB
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -18,6 +19,10 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  *
  * -gdb-show language
  * ^done,value="auto"
+ *
+ * GDB 6.2-6.8:
+ * -gdb-show language
+ * ^done,value="auto; currently c"
  *
  * the different returned values are:
  * 
@@ -80,6 +85,13 @@ public class MIGDBShowLanguageInfo extends MIInfo {
                         MIValue value = results[i].getMIValue();
                         if (value instanceof MIConst) {
                             fLanguage = ((MIConst)value).getString();
+
+                            // Some versions of GDB (6.2-6.8) output "auto; currently c"
+                            // so we need to remove the semicolon part
+                            int semiColonIdx = fLanguage.indexOf(';');
+                            if (semiColonIdx != -1) {
+                                fLanguage = fLanguage.substring(0, semiColonIdx);
+                            }
                         }
                     }
                 }

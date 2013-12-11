@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Anton Gorenkov
+ * Copyright (c) 2011, 2013 Anton Gorenkov and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Gorenkov - initial API and implementation
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.model;
 
@@ -235,7 +236,9 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 				for (int childIndex = 0; childIndex < lastInsertIndex; childIndex++) {
 					newTestItem = checkTestItem(children.get(childIndex), name);
 					if (newTestItem != null) {
-						children.add(lastInsertIndex, children.remove(childIndex));
+						TestItem removed = children.remove(childIndex);
+						lastInsertIndex = Math.min(lastInsertIndex, children.size());
+						children.add(lastInsertIndex, removed);
 						notifyAboutChildrenUpdate(currTestSuite);
 						break;
 					}

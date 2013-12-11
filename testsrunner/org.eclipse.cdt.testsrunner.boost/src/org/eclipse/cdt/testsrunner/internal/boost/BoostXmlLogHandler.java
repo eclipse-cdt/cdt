@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Anton Gorenkov 
+ * Copyright (c) 2011, 2013 Anton Gorenkov and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Gorenkov - initial API and implementation
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.boost;
 
@@ -87,7 +88,14 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	/** Current test case status. */
 	private ITestItem.Status testStatus;
 	
-	
+	/**
+	 * Keep track of the last test case name so that we can handle
+	 * parameterized test cases which have the same name
+	 */
+	private String lastTestCaseName = ""; //$NON-NLS-1$
+	private static final int SAME_TEST_CASE_NAME_COUNT_START = 2;
+	private int sameTestCaseNameCount = SAME_TEST_CASE_NAME_COUNT_START;
+
 	BoostXmlLogHandler(ITestModelUpdater modelUpdater) {
 		this.modelUpdater = modelUpdater;
 	}
@@ -102,6 +110,15 @@ public class BoostXmlLogHandler extends DefaultHandler {
 
 		} else if (qName == XML_NODE_TEST_CASE) {
 			String testCaseName = attrs.getValue(XML_ATTR_TEST_CASE_NAME);
+
+			if (lastTestCaseName.equals(testCaseName)) {
+				testCaseName += " (" + sameTestCaseNameCount + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+				++sameTestCaseNameCount;
+			} else {
+				lastTestCaseName = testCaseName;
+				sameTestCaseNameCount = SAME_TEST_CASE_NAME_COUNT_START;
+			}
+
 			modelUpdater.enterTestCase(testCaseName);
 			testStatus = Status.Passed;
 

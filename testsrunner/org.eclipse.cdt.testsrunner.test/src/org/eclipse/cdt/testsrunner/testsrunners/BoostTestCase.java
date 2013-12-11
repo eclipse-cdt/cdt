@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2011 Anton Gorenkov
+ * Copyright (c) 2011, 2013 Anton Gorenkov and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Anton Gorenkov  - initial implementation
+ *     Anton Gorenkov - initial implementation
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.testsrunners;
 
@@ -478,4 +479,33 @@ public class BoostTestCase extends BaseTestCase {
 		expectTestingException();
 	}
 
+	// <TestLog>
+	// <TestSuite name="MainTS">
+	// <TestCase name="test_function">
+	// </TestCase>
+	// <TestCase name="test_function">
+	// </TestCase>
+	// <TestCase name="test_function">
+	// </TestCase>
+	// <TestCase name="another_test_function">
+	// </TestCase>
+	// <TestCase name="another_test_function">
+	// </TestCase>
+	// </TestSuite>
+	// </TestLog>
+	public void testParameterizedTests() {
+		mockModelUpdater.skipCalls("setTestStatus");
+		mockModelUpdater.enterTestSuite("MainTS");
+		mockModelUpdater.enterTestCase("test_function");
+		mockModelUpdater.exitTestCase();
+		mockModelUpdater.enterTestCase("test_function (2)");
+		mockModelUpdater.exitTestCase();
+		mockModelUpdater.enterTestCase("test_function (3)");
+		mockModelUpdater.exitTestCase();
+		mockModelUpdater.enterTestCase("another_test_function");
+		mockModelUpdater.exitTestCase();
+		mockModelUpdater.enterTestCase("another_test_function (2)");
+		mockModelUpdater.exitTestCase();
+		mockModelUpdater.exitTestSuite();
+	}
 }

@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.ITranslationUnitHolder;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.ASTCache;
@@ -222,7 +224,17 @@ public final class ASTProvider {
 				return false;
 
 			String id= ref.getId();
-			return CUIPlugin.EDITOR_ID.equals(id) || ref.getPart(false) instanceof CEditor;
+			if (CUIPlugin.EDITOR_ID.equals(id))
+				return true;
+
+			IWorkbenchPart part = ref.getPart(false);
+			if (part instanceof CEditor)
+				return true;
+
+			// Other editors can behave as CEditors if they can provide a copy of their ITranslationUnit.
+			if (part instanceof IEditorPart)
+				return part.getAdapter(ITranslationUnitHolder.class) != null;
+			return false;
 		}
 	}
 
@@ -264,14 +276,22 @@ public final class ASTProvider {
 	}
 
 	private void activeEditorChanged(IWorkbenchPart editor) {
-		ICElement cElement= null;
-		if (editor instanceof CEditor) {
-			cElement= ((CEditor) editor).getInputCElement();
+		ITranslationUnit tu = null;
+		if (editor instanceof CEditor)
+			tu = ((CEditor) editor).getTranslationUnit();
+
+		// If the editor is not a CEditor then see if it can be adapted to something that is able
+		// to provide the translation unit.
+		if (tu == null && editor != null) {
+			ITranslationUnitHolder provider = (ITranslationUnitHolder) editor.getAdapter(ITranslationUnitHolder.class);
+			if (provider != null)
+				tu = provider.getTranslationUnit();
 		}
+
 		synchronized (this) {
 			fActiveEditor= editor;
 			fTimeStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
-			fCache.setActiveElement((ITranslationUnit) cElement);
+			fCache.setActiveElement(tu);
 		}
 	}
 

@@ -184,6 +184,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.ITranslationUnitProvider;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ICEditor;
@@ -241,7 +242,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
 /**
  * C/C++ source editor.
  */
-public class CEditor extends TextEditor implements ICEditor, ISelectionChangedListener, ICReconcilingListener {
+public class CEditor extends TextEditor implements ICEditor, ISelectionChangedListener, ICReconcilingListener, ITranslationUnitProvider {
 	/** Marker used for synchronization from Problems View to the editor on double-click. */
 	private IMarker fSyncProblemsViewMarker;
 
@@ -1514,6 +1515,11 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(getEditorInput());
 	}
 
+	@Override
+	public ITranslationUnit getTranslationUnit() {
+		return getInputCElement();
+	}
+
 	/**
      * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
@@ -1580,7 +1586,8 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 				fTemplatesPage = new CTemplatesPage(this);
 			}
 			return fTemplatesPage;
-		}
+		} else if (ITranslationUnitProvider.class == required)
+			return this;
 		return super.getAdapter(required);
 	}
 	

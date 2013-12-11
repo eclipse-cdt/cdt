@@ -89,8 +89,8 @@ public class SelectionParseAction extends Action {
 		clearStatusLine();
 
 		IEditorPart editor = EditorUtility.openInEditor(path, fEditor.getInputCElement());
-		if (editor instanceof ITextEditor) {
-			ITextEditor textEditor = (ITextEditor) editor;
+		ITextEditor textEditor = EditorUtility.getTextEditor(editor);
+		if (textEditor != null) {
 			textEditor.selectAndReveal(currentOffset, currentLength);
 		} else {
 			reportSourceFileOpenFailure(path);
@@ -101,8 +101,8 @@ public class SelectionParseAction extends Action {
 		clearStatusLine();
 
 		IEditorPart editor = EditorUtility.openInEditor(tu, true);
-		if (editor instanceof ITextEditor) {
-			ITextEditor textEditor = (ITextEditor) editor;
+		ITextEditor textEditor = EditorUtility.getTextEditor(editor);
+		if (textEditor != null) {
 			textEditor.selectAndReveal(currentOffset, currentLength);
 		} else {
 			reportSourceFileOpenFailure(tu.getPath());

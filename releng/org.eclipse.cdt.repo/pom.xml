@@ -109,9 +109,9 @@
 					            <phase>verify</phase>
 					            <configuration>
 					                <target>
-					                    <delete dir="${cdt-download-dir}"
+					                    <delete dir="${cdt-download-dir}"/>
 					                    <unzip src="target/org.eclipse.cdt.repo.zip"
-					                        dest="${cdt-download-dir}"
+					                        dest="${cdt-download-dir}"/>
 					                </target>
 					            </configuration>
 					        </execution>

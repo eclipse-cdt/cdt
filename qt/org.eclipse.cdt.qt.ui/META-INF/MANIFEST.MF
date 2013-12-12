@@ -12,6 +12,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.core,
  org.eclipse.cdt.qt.core;bundle-version="[1.1.0,2.0.0)",
  org.eclipse.jface.text,
- org.eclipse.core.resources
+ org.eclipse.core.resources,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.ui.editors
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.cdt.internal.qt.ui.assist;x-friends:="org.eclipse.cdt.qt.tests",
+ org.eclipse.cdt.qt.ui

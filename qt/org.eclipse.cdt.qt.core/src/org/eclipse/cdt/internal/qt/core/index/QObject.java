@@ -48,6 +48,9 @@ public class QObject implements IQObject {
 		for(QtPDOMQObject base : pdomQObject.findBases()) {
 			QObject baseQObj = new QObject(qtIndex, cdtIndex, base);
 			this.bases.add(baseQObj);
+			baseSlots.addAll(baseQObj.getSlots().all());
+			baseSignals.addAll(baseQObj.getSignals().all());
+			baseInvokables.addAll(baseQObj.getInvokables().all());
 			baseProps.addAll(baseQObj.getProperties().all());
 		}
 

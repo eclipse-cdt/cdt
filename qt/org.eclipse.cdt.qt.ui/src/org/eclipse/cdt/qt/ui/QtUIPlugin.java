@@ -11,6 +11,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -29,6 +30,14 @@ public class QtUIPlugin extends AbstractUIPlugin {
 	 * The constructor
 	 */
 	public QtUIPlugin() {
+	}
+
+	public static Image getQtLogo() {
+		return null;
+	}
+
+	public static Image getQtLogoLarge() {
+		return null;
 	}
 
 	/*

@@ -12,6 +12,8 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
-Export-Package: org.eclipse.cdt.qt.core,
- org.eclipse.cdt.qt.core.index,
- org.eclipse.cdt.internal.qt.core.index;x-friends:="org.eclipse.cdt.qt.tests"
+Export-Package: org.eclipse.cdt.internal.qt.core;x-friends:="org.eclipse.cdt.qt.ui",
+ org.eclipse.cdt.internal.qt.core.index;x-friends:="org.eclipse.cdt.qt.tests",
+ org.eclipse.cdt.internal.qt.core.parser;x-friends:="org.eclipse.cdt.qt.ui",
+ org.eclipse.cdt.qt.core,
+ org.eclipse.cdt.qt.core.index

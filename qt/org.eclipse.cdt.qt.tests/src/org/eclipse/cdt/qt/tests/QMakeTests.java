@@ -18,7 +18,7 @@ import org.eclipse.cdt.internal.qt.core.index.QMakeInfo;
 import org.eclipse.cdt.internal.qt.core.index.QMakeParser;
 import org.eclipse.cdt.internal.qt.core.index.QMakeVersion;
 
-public class SimpleTests extends TestCase {
+public class QMakeTests extends TestCase {
 
 	public void testQMakeVersion() throws Exception {
 		// Make sure null is returned for invalid version strings.

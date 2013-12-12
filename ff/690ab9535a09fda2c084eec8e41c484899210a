@@ -1,0 +1,8 @@
+Code-Review+2: Doug Schaefer <dschaefer@qnx.com>
+IP-Clean+1: Doug Schaefer <dschaefer@qnx.com>
+Verified+1: Hudson CI
+Submitted-by: Doug Schaefer <dschaefer@qnx.com>
+Submitted-at: Thu, 12 Dec 2013 14:05:53 -0500
+Reviewed-on: https://git.eclipse.org/r/19721
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

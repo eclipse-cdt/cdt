@@ -1,16 +1,16 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: CDT Qt Support UI
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.qt.ui;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.eclipse.cdt.qt.ui.QtUIPlugin
-Bundle-Vendor: Eclipse CDT
+Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.cdt.ui,
  org.eclipse.cdt.core,
- org.eclipse.cdt.qt.core,
+ org.eclipse.cdt.qt.core;bundle-version="[1.1.0,2.0.0)",
  org.eclipse.jface.text,
  org.eclipse.core.resources
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

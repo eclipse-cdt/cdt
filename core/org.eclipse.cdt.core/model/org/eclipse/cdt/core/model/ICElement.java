@@ -26,6 +26,7 @@ import java.net.URI;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICElement extends IAdaptable {
+	/** @since 5.6 */
 	public static final ICElement[] EMPTY_ARRAY = {};
 
 	/**

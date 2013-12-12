@@ -86,6 +86,7 @@ public class DebugExecutable {
 			for (IResource resource : resources) {
 				resource.delete(IResource.ALWAYS_DELETE_PROJECT_CONTENT|IResource.FORCE, new NullProgressMonitor());
 			}
+
 			monitor.worked(1);
 			// Find last launch if one exists
 			String memento = proj.getPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH));
@@ -100,6 +101,10 @@ public class DebugExecutable {
 					// do nothing
 				}
 			}
+			// Delete project because we have deleted .cproject and settings files
+			// by this point so just create a new Executables C project to use for
+			// importing the new executable.
+			proj.delete(true, new NullProgressMonitor());
 			monitor.worked(1);
 		}
 		final String[] fileNames = { executable };

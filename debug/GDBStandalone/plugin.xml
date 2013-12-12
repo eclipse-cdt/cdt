@@ -196,7 +196,21 @@
             activityId="GDBStandalone.activity.filterMenus"
             pattern="org.eclipse.ui.ide/org.eclipse.ui.preferencePages.BuildOrder">
       </activityPatternBinding>
+      <activityPatternBinding
+      		activityId="GDBStandalone.activity.filterMenus"
+      		pattern="org.eclipse.cdt.debug.ui/org.eclipse.cdt.debug.ui.command.debugNewExecutable">
+      </activityPatternBinding>
    </extension>
+   <extension
+       point="org.eclipse.ui.commands">
+      <command
+      		categoryId="org.eclipse.cdt.debug.ui.category.debugViewLayout"
+       		description="%DebugNewExecutable.description"
+         	id="org.eclipse.cdt.debug.application.command.debugNewExecutable"
+         	name="%DebugNewExecutable.name">
+      </command>
+   </extension>
+   
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution

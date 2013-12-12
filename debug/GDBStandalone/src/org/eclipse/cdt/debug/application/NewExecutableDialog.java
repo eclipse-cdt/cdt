@@ -45,6 +45,10 @@ public class NewExecutableDialog extends TitleAreaDialog {
 	private final String fHostBinary;
 	private final String fArgs;
 
+	public NewExecutableDialog (Shell parentShell) {
+		this(parentShell, 0);
+	}
+	
 	public NewExecutableDialog( Shell parentShell, int flags ) {
 		this(parentShell, flags, null, null);
 	}

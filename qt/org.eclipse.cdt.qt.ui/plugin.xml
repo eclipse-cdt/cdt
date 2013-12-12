@@ -29,7 +29,7 @@
         name="Qt Completion Proposal Computer">
         <completionProposalComputer
             categoryId="org.eclipse.cdt.ui.parserProposalCategory"
-            class="org.eclipse.cdt.qt.internal.ui.QtCompletionProposalComputer"
+            class="org.eclipse.cdt.internal.qt.ui.QtCompletionProposalComputer"
             activate="true">
             <partition type="__dftl_partition_content_type"/>
             <partition type="__c_preprocessor"/>

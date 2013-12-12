@@ -29,6 +29,9 @@
 	<profiles>
 		<profile>
 			<id>production</id>
+			<properties>
+			    <cdt-download-dir>/home/data/httpd/download.eclipse.org/tools/cdt/builds/8.3/nightly</cdt-download-dir>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -97,6 +100,22 @@
 						<configuration>
 							<defaultP2Metadata>false</defaultP2Metadata>
 						</configuration>
+					</plugin>
+					<plugin>
+					    <artifactId>maven-antrun-plugin</artifactId>
+					    <version>1.7</version>
+					    <executions>
+					        <execution>
+					            <phase>verify</phase>
+					            <configuration>
+					                <target>
+					                    <delete dir="${cdt-download-dir}"
+					                    <unzip src="target/org.eclipse.cdt.repo.zip"
+					                        dest="${cdt-download-dir}"
+					                </target>
+					            </configuration>
+					        </execution>
+					    </executions>
 					</plugin>
 				</plugins>
 			</build>

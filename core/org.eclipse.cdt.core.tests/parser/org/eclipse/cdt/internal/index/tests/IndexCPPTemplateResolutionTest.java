@@ -2383,4 +2383,24 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testAmbiguousBaseClassLookup_413406() throws Exception {
 		getProblemFromASTName("eof();", 3);
 	}
+
+	//	template <typename = void>
+	//	struct S;
+
+	//	#include "header.h"
+	//	template <>
+	//	struct S<void> {
+	//		typedef int type;
+	//	};
+	//
+	//	template <typename>
+	//	struct S {
+	//		typedef char type;
+	//	};
+	//
+	//	typedef S<>::type T;
+	public void testExplicitSpecializationOfTemplateDeclaredInHeader_401820() throws Exception {
+		IType T = getBindingFromASTName("T", 1);
+		assertEquals("int", ASTTypeUtil.getType(T));
+	}
 }

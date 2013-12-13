@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.qt.core.QtNature;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class BaseQtTestCase extends BaseTestCase {
 
@@ -46,7 +47,7 @@ public class BaseQtTestCase extends BaseTestCase {
 
 		fCProject = CProjectHelper.createCCProject(projectName, "bin", IPDOMManager.ID_FAST_INDEXER);
 		fProject = fCProject.getProject();
-		QtNature.addNature(fProject);
+		QtNature.addNature(fProject, new NullProgressMonitor());
 		fIndex = CCorePlugin.getIndexManager().getIndex(fCProject);
 
 		indexQObject_h();

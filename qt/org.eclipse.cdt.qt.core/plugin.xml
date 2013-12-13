@@ -91,4 +91,13 @@
             <language-scope id="org.eclipse.cdt.core.g++"/>
         </provider>
     </extension>
+    <extension point="org.eclipse.core.expressions.definitions">
+        <definition id="org.eclipse.cdt.qt.core.isQtProject">
+            <with variable="projectNatures">
+                    <iterate operator="or">
+                        <equals value="org.eclipse.cdt.qt.core.qtNature"/>
+                    </iterate>
+            </with>
+        </definition>
+    </extension>
 </plugin>

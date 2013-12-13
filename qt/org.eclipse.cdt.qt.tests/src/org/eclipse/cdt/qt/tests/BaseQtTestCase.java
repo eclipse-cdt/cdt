@@ -46,7 +46,7 @@ public class BaseQtTestCase extends BaseTestCase {
 
 		fCProject = CProjectHelper.createCCProject(projectName, "bin", IPDOMManager.ID_FAST_INDEXER);
 		fProject = fCProject.getProject();
-		CProjectHelper.addNatureToProject(fProject, QtNature.ID, null);
+		QtNature.addNature(fProject);
 		fIndex = CCorePlugin.getIndexManager().getIndex(fCProject);
 
 		indexQObject_h();

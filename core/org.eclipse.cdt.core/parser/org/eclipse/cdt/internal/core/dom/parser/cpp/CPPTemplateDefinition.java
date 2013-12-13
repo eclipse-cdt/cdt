@@ -114,8 +114,11 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		final ICPPClassTemplate ib = getIndexBinding();
 		if (ib instanceof ICPPInstanceCache) {
 			ICPPTemplateInstance cand= ((ICPPInstanceCache) ib).getInstance(arguments);
-			if (cand instanceof IIndexBinding && 
-					getTemplateName().getTranslationUnit().getIndexFileSet().containsDeclaration((IIndexBinding) cand)) {
+			if (cand instanceof IIndexBinding) {
+				if (getTemplateName().getTranslationUnit().getIndexFileSet().containsDeclaration((IIndexBinding) cand)) {
+					return cand;
+				}
+			} else {
 				return cand;
 			}
 		}

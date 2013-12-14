@@ -313,6 +313,24 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 		checkErrorLine(13);
 	}
 
+	//	struct MyInterface {
+	//	    virtual void doIt() = 0;
+	//	};
+	//
+	//	struct Empty: virtual public MyInterface {};
+	//
+	//	struct Implementer: virtual public MyInterface {
+	//	    virtual void doIt();
+	//	};
+	//
+	//	struct Multiple: virtual public Implementer, virtual public Empty {};
+	//
+	//	static Multiple sharedMultiple;
+	public void testDiamondInheritanceWithOneImplementor_bug419938() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
 	//	struct A {
 	//	    virtual void test(int) = 0;
 	//	    virtual ~A();

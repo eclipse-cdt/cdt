@@ -11,10 +11,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * Useful utility methods for dealing with Collections.
@@ -132,5 +134,20 @@ public final class CollectionUtils {
 			return c1;
 		c1.addAll(c2);
 		return c1;
+	}
+
+	/**
+	 * Gets a List<U> corresponding to a T in a Map<T, List<U>>.
+	 * If the mapping doesn't exist, create it, with the empty
+	 * list as the initial value.
+	 * @since 5.6
+	 */
+	static public <T, U> List<U> listMapGet(Map<T, List<U>> m, T t) {
+		List<U> result = m.get(t);
+		if (result == null) {
+			result = new ArrayList<U>();
+			m.put(t, result);
+		}
+		return result;
 	}
 }

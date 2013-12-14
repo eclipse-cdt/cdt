@@ -23,6 +23,7 @@ import java.util.Set;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.parser.util.CollectionUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -107,51 +108,57 @@ public class SemanticQueries {
 		 * can contain multiple subobjects of the same type (if multiple, non-virtual
 		 * inheritance is used), and the pure virtual methods of each subobject must
 		 * be implemented independently, we give each subobject of a given type a
-		 * number, and for each method we keep track of the final overrider for each 
-		 * subobject number.
+		 * number, and for each method we keep track of the final overriders for each
+		 * subobject number. Generally, there should be only one final overrider per
+		 * subobject (in fact the program is ill-formed if there is more than one),
+		 * but to accurately detect pure virtual methods that haven't been overridden,
+		 * we need to be able to keep track of more than one at a time.
 		 */
 		private static class FinalOverriderMap {
-			private Map<ICPPMethod, Map<Integer, ICPPMethod>> fMap = new HashMap<ICPPMethod, Map<Integer, ICPPMethod>>();
+			private Map<ICPPMethod, Map<Integer, List<ICPPMethod>>> fMap
+					= new HashMap<ICPPMethod, Map<Integer, List<ICPPMethod>>>();
 			
 			/**
-			 * Record 'overrider' as being the final ovverider of 'method' in subobject
-			 * 'subobjectNumber'.   
+			 * Add 'overrider' as a final ovverider of 'method' in subobject
+			 * 'subobjectNumber'.
 			 */
 			public void add(ICPPMethod method, int subobjectNumber, ICPPMethod overrider) {
-				Map<Integer, ICPPMethod> overriders = fMap.get(method);
+				Map<Integer, List<ICPPMethod>> overriders = fMap.get(method);
 				if (overriders == null) {
-					overriders = new HashMap<Integer, ICPPMethod>();
+					overriders = new HashMap<Integer, List<ICPPMethod>>();
 					fMap.put(method, overriders);
 				}
-				overriders.put(subobjectNumber, overrider);
+				CollectionUtils.listMapGet(overriders, subobjectNumber).add(overrider);
 			}
 			
 			/**
-			 * For each subobject for which 'method' has been overridden, update
-			 * its final overrider to 'overrider'. 
+			 * For each subobject for which 'method' has been overridden, set
+			 * 'overrider' to be its (only) final overrider.
 			 */
 			public void replaceForAllSubobjects(ICPPMethod method, ICPPMethod overrider) {
-				Map<Integer, ICPPMethod> overriders = fMap.get(method);
+				Map<Integer, List<ICPPMethod>> overriders = fMap.get(method);
 				if (overriders == null)
 					return;
-				for (Integer i : overriders.keySet())
-					overriders.put(i, overrider);
+				for (Integer i : overriders.keySet()) {
+					List<ICPPMethod> overridersForSubobject = CollectionUtils.listMapGet(overriders, i);
+					overridersForSubobject.clear();
+					overridersForSubobject.add(overrider);
+				}
 			}
 			
 			/**
-			 * Merge the final overriders from another FinalOverriderMap into this one. 
+			 * Merge the final overriders from another FinalOverriderMap into this one.
 			 */
 			public void addOverriders(FinalOverriderMap other) {
 				for (ICPPMethod method : other.fMap.keySet()) {
-					Map<Integer, ICPPMethod> overriders = fMap.get(method);
+					Map<Integer, List<ICPPMethod>> overriders = fMap.get(method);
 					if (overriders == null) {
-						overriders = new HashMap<Integer, ICPPMethod>();
+						overriders = new HashMap<Integer, List<ICPPMethod>>();
 						fMap.put(method, overriders);
 					}
-					Map<Integer, ICPPMethod> otherOverriders = other.fMap.get(method);
+					Map<Integer, List<ICPPMethod>> otherOverriders = other.fMap.get(method);
 					for (Integer i : otherOverriders.keySet()) {
-						ICPPMethod overrider = otherOverriders.get(i);
-						overriders.put(i, overrider);
+						CollectionUtils.listMapGet(overriders, i).addAll(otherOverriders.get(i));
 					}
 				}
 			}
@@ -159,17 +166,17 @@ public class SemanticQueries {
 			/**
 			 * Go through the final overrider map and find functions which are
 			 * pure virtual in the hierarchy's root. These are functions which
-			 * are declared pure virtual, and whose final overrider is themself,
-			 * meaning they have not been overridden.
+			 * are declared pure virtual, and which have a single final overrider
+			 * which is themself, meaning they have not been overridden.
 			 */
 			public ICPPMethod[] collectPureVirtualMethods() {
 				List<ICPPMethod> pureVirtualMethods = new ArrayList<ICPPMethod>();
 				for (ICPPMethod method : fMap.keySet()) {
 					if (method.isPureVirtual()) {
-						Map<Integer, ICPPMethod> finalOverriders = fMap.get(method);
+						Map<Integer, List<ICPPMethod>> finalOverriders = fMap.get(method);
 						for (Integer subobjectNumber : finalOverriders.keySet()) {
-							ICPPMethod finalOverrider = finalOverriders.get(subobjectNumber);
-							if (finalOverrider == method) {
+							List<ICPPMethod> overridersForSubobject = finalOverriders.get(subobjectNumber);
+							if (overridersForSubobject.size() == 1 && overridersForSubobject.get(0) == method) {
 								pureVirtualMethods.add(method);
 							}
 						}
@@ -237,6 +244,7 @@ public class SemanticQueries {
 					baseOverriderMap = virtualBaseCache.get(baseType);
 					if (baseOverriderMap == null) {
 						baseOverriderMap = collectFinalOverriders(baseType, true, inheritanceChain, point);
+						virtualBaseCache.put(baseType, baseOverriderMap);
 					}
 				} else {
 					baseOverriderMap = collectFinalOverriders(baseType, false, inheritanceChain, point);

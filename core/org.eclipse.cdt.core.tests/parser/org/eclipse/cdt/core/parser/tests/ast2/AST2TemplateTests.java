@@ -8164,4 +8164,20 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testSpecializedEnumerator_418770() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template <typename T>
+	//	class A;
+	//
+	//	namespace ns {
+	//	    template <typename T>
+	//	    int waldo(const A<T>&);
+	//	}
+	//
+	//	template <typename T>
+	//	class A {
+	//	    friend int ns::waldo<T>(const A<T>&);
+	//	};
+	public void testDependentSpecializationOfFunctionTemplateAsFriend_422505() throws Exception {
+		parseAndCheckBindings();
+	}
 }

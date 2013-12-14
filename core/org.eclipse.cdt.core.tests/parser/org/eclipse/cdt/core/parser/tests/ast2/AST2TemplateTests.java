@@ -76,6 +76,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -8177,7 +8178,22 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	class A {
 	//	    friend int ns::waldo<T>(const A<T>&);
 	//	};
-	public void testDependentSpecializationOfFunctionTemplateAsFriend_422505() throws Exception {
+	public void testDependentSpecializationOfFunctionTemplateAsFriend_422505a() throws Exception {
 		parseAndCheckBindings();
+	}
+
+	//	template <typename T>
+	//	class A;
+	//
+	//	template <typename T>
+	//	int waldo(const A<T>&);
+	//
+	//	template <typename T>
+	//	class A {
+	//	    friend int waldo<T>(const A<T>&);
+	//	};
+	public void testDependentSpecializationOfFunctionTemplateAsFriend_422505b() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertNonProblem("waldo<T>", ICPPDeferredFunction.class);
 	}
 }

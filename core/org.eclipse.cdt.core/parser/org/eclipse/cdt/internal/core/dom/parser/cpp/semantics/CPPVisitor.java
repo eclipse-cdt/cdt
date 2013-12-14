@@ -146,6 +146,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
@@ -849,7 +850,7 @@ public class CPPVisitor extends ASTQueries {
         if (isFunction) {
 			if (binding instanceof ICPPInternalBinding && binding instanceof ICPPFunction && name.isActive()) {
 				ICPPFunction function = (ICPPFunction) binding;
-				boolean sameFunction = CPPSemantics.isSameFunction(function, typeRelevantDtor);
+				boolean sameFunction = CPPSemantics.isSameFunction(function, typeRelevantDtor) || function instanceof ICPPDeferredFunction;
 				if (function.getOwner() instanceof ICPPClassType) {
 					// Don't consider a function brought into scope from a base class scope
 					// to be the same as a function declared in a derived class scope.

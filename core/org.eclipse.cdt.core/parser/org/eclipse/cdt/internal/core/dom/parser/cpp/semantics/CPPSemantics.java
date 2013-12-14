@@ -2648,6 +2648,12 @@ public class CPPSemantics {
 		for (ICPPFunction fn : fns) {
 			if (fn instanceof ICPPFunctionTemplate
 					&& !(fn instanceof IProblemBinding) && !(fn instanceof ICPPUnknownBinding)) {
+				// If the declared function type is dependent, there is no point trying to use it
+				// to instantiate the template, so return a deferred function instead.
+				// Note that CPPTemplates.instantiateForFunctionCall() behaves similarly.
+				if (CPPTemplates.isDependentType(ft)) {
+					return CPPDeferredFunction.createForCandidates(fns);
+				}
 				ICPPFunctionTemplate template= (ICPPFunctionTemplate) fn;
 				ICPPFunction inst= CPPTemplates.instantiateForFunctionDeclaration(template, tmplArgs, ft, data.getLookupPoint());
 				if (inst != null) {

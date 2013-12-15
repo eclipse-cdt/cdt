@@ -348,7 +348,7 @@ public class Spawner extends Process {
 		}
 	}
 
-	private void exec_pty(String[] cmdarray, String[] envp, String dirpath, PTY pty) throws IOException {
+	private void exec_pty(String[] cmdarray, String[] envp, String dirpath, final PTY pty) throws IOException {
 		String command = cmdarray[0];
 		SecurityManager s = System.getSecurityManager();
 		if (s != null)
@@ -356,17 +356,15 @@ public class Spawner extends Process {
 		if (envp == null)
 			envp = new String[0];
 
-		final String slaveName = pty.getSlaveName();
-		final int masterFD = pty.getMasterFD().getFD();
-		final boolean console = pty.isConsole();
-		//int fdm = pty.get
 		Reaper reaper = new Reaper(cmdarray, envp, dirpath) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.utils.spawner.Spawner.Reaper#execute(java.lang.String[], java.lang.String[], java.lang.String, int[])
-			 */
 			@Override
 			int execute(String[] cmd, String[] env, String dir, int[] channels) throws IOException {
-				return exec2(cmd, env, dir, channels, slaveName, masterFD, console);
+				return pty.exec_pty(Spawner.this, cmd, env, dir, channels);
+			}
+
+			@Override
+			protected int waitFor(int pid) {
+			    return pty.waitFor(Spawner.this, pid);
 			}
 		};
 		reaper.setDaemon(true);
@@ -432,18 +430,20 @@ public class Spawner extends Process {
 
 	/**
 	 * Native method when executing with a terminal emulation. 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	native int exec2( String[] cmdarray, String[] envp, String dir, int[] chan, String slaveName, int masterFD, boolean console) throws IOException;
+	public native int exec2( String[] cmdarray, String[] envp, String dir, int[] chan, String slaveName, int masterFD, boolean console) throws IOException;
 
 	/**
 	 * Native method to drop a signal on the process with pid.
 	 */
 	public native int raise(int processID, int sig);
 
-	/*
+	/**
 	 * Native method to wait(3) for process to terminate.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	native int waitFor(int processID);
+	public native int waitFor(int processID);
 
 	static {
 		try {
@@ -475,6 +475,10 @@ public class Spawner extends Process {
 
 		int execute(String[] cmdarray, String[] envp, String dir, int[] channels) throws IOException {
 			return exec0(cmdarray, envp, dir, channels);
+		}
+
+		int waitFor(int pid) {
+			return Spawner.this.waitFor(pid);
 		}
 
 		@Override

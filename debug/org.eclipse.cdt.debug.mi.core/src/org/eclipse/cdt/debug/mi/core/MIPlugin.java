@@ -160,6 +160,7 @@ public class MIPlugin extends Plugin {
 
 		try {
 			PTY pseudo = new PTY();
+			pseudo.validateSlaveName();
 			pty = new MITTYAdapter(pseudo);
 		} catch (IOException e) {
 			// Should we not print/log this ?
@@ -436,6 +437,7 @@ public class MIPlugin extends Plugin {
 		if (usePty) {
 			try {
 				PTY pseudo = new PTY();
+				pseudo.validateSlaveName();
 				pty = new MITTYAdapter(pseudo);
 			} catch (IOException e) {
 				// Should we not print/log this ?

@@ -270,6 +270,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
     		// and requires a pty for it.
     		try {
     			fPty = new PTY();
+				fPty.validateSlaveName();
 
     			// Tell GDB to use this PTY
     			fCommandControl.queueCommand(

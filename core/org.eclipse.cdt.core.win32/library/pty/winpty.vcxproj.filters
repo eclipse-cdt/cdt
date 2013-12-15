@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{6f8f9f7f-1797-423e-9189-990b2baff405}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwinpty">
+      <UniqueIdentifier>{6fa1f334-3a7c-4a8c-970b-15c2a6a08ba2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shared">
+      <UniqueIdentifier>{84962cba-90e7-4b83-8656-6563b933bb73}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\winpty\shared\AgentMsg.h">
+      <Filter>shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\shared\Buffer.h">
+      <Filter>shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\shared\c99_snprintf.h">
+      <Filter>shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\shared\DebugClient.h">
+      <Filter>shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\include\winpty.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\winpty\shared\DebugClient.cc">
+      <Filter>shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\winpty\libwinpty\winpty.cc">
+      <Filter>libwinpty</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

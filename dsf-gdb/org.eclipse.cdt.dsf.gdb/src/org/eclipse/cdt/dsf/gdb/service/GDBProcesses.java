@@ -507,6 +507,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
     		// These types always use a PTY
     		try {
     			fPty = new PTY();
+				fPty.validateSlaveName();
 
     			// Tell GDB to use this PTY
     			fGdb.queueCommand(

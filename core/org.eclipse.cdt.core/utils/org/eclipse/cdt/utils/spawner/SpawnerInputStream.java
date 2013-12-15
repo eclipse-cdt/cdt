@@ -45,6 +45,9 @@ class SpawnerInputStream extends InputStream {
 	 */
 	@Override
 	public int read(byte[] buf, int off, int len) throws IOException {
+		if (fd == -1) {
+			return -1;
+		}
 		if (buf == null) {
 			throw new NullPointerException();
 		} else if (
@@ -85,6 +88,9 @@ class SpawnerInputStream extends InputStream {
 
 	@Override
 	public int available() throws IOException {
+		if (fd == -1) {
+			return 0;
+		}
 		try {
 			return available0(fd);
 		}

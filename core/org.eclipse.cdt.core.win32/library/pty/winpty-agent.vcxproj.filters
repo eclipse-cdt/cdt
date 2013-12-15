@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="agent">
+      <UniqueIdentifier>{a7174beb-334f-4496-868c-348a80e5f4d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shared">
+      <UniqueIdentifier>{0c9e153d-99b4-4f47-ba3c-57e53e1c71b7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\winpty\shared\AgentMsg.h">
+      <Filter>shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\shared\Buffer.h">
+      <Filter>shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\shared\c99_snprintf.h">
+      <Filter>shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\shared\DebugClient.h">
+      <Filter>shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\agent\Agent.h">
+      <Filter>agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\agent\AgentAssert.h">
+      <Filter>agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\agent\ConsoleInput.h">
+      <Filter>agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\agent\Coord.h">
+      <Filter>agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\agent\DsrSender.h">
+      <Filter>agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\agent\EventLoop.h">
+      <Filter>agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\agent\NamedPipe.h">
+      <Filter>agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\agent\SmallRect.h">
+      <Filter>agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\agent\Terminal.h">
+      <Filter>agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\winpty\agent\Win32Console.h">
+      <Filter>agent</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\winpty\shared\DebugClient.cc">
+      <Filter>shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\winpty\agent\Agent.cc">
+      <Filter>agent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\winpty\agent\AgentAssert.cc">
+      <Filter>agent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\winpty\agent\ConsoleInput.cc">
+      <Filter>agent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\winpty\agent\Coord.cc">
+      <Filter>agent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\winpty\agent\EventLoop.cc">
+      <Filter>agent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\winpty\agent\main.cc">
+      <Filter>agent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\winpty\agent\NamedPipe.cc">
+      <Filter>agent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\winpty\agent\SmallRect.cc">
+      <Filter>agent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\winpty\agent\Terminal.cc">
+      <Filter>agent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\winpty\agent\Win32Console.cc">
+      <Filter>agent</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

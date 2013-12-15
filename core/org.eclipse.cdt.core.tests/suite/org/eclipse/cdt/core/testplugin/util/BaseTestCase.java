@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin.util;
 
@@ -51,6 +52,10 @@ import org.eclipse.core.runtime.jobs.Job;
 public class BaseTestCase extends TestCase {
 	private static final String DEFAULT_INDEXER_TIMEOUT_SEC = "10";
 	private static final String INDEXER_TIMEOUT_PROPERTY = "indexer.timeout";
+	/**
+	 * Indexer timeout used by tests. To avoid this timeout expiring during debugging add
+	 * -Dindexer.timeout=some_large_number to VM arguments of the test launch configuration. 
+	 */
 	protected static final int INDEXER_TIMEOUT_SEC =
 			Integer.parseInt(System.getProperty(INDEXER_TIMEOUT_PROPERTY, DEFAULT_INDEXER_TIMEOUT_SEC));
 	protected static final int INDEXER_TIMEOUT_MILLISEC= INDEXER_TIMEOUT_SEC * 1000;
@@ -148,7 +153,7 @@ public class BaseTestCase extends TestCase {
 					case IResourceStatus.NO_LOCATION_LOCAL:
 					case IResourceStatus.FAILED_READ_LOCAL:
 					case IResourceStatus.RESOURCE_NOT_LOCAL:
-						// logged by the resources plugin.
+						// Logged by the resources plugin.
 						return;
 					}
 					statusLog.add(status);
@@ -156,7 +161,7 @@ public class BaseTestCase extends TestCase {
 			}
 		};
 		final CCorePlugin corePlugin = CCorePlugin.getDefault();
-		if (corePlugin != null) { // if we don't run a JUnit Plugin Test
+		if (corePlugin != null) { //Iif we don't run a JUnit Plugin Test
 			corePlugin.getLog().addLogListener(logListener);
 		}
 

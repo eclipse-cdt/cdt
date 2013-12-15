@@ -2987,7 +2987,7 @@ public class CPPSemantics {
     			}
     		}
 		}
-    	if (targetType == null && parent instanceof IASTExpression
+    	if (targetType == null && parent instanceof ICPPASTExpression
     			&& parent instanceof IASTImplicitNameOwner) {
 			// Trigger resolution of overloaded operator, which may resolve the
 			// function set.
@@ -2995,6 +2995,12 @@ public class CPPSemantics {
 			final IBinding newBinding = name.getPreBinding();
 			if (!(newBinding instanceof CPPFunctionSet))
 				return newBinding;
+
+			// If we're in a dependent context, we don't have enough information
+			// to resolve the function set.
+			if (((ICPPASTExpression) parent).getEvaluation().isTypeDependent()) {
+				return CPPDeferredFunction.createForCandidates(functionSet.getBindings());
+			}
 		}
 
     	ICPPFunction function = resolveTargetedFunction(targetType, functionSet, name);

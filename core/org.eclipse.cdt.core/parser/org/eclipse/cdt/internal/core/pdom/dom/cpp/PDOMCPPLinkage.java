@@ -21,6 +21,8 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -1041,17 +1043,20 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				}
 			}
 		} else if (parentNode instanceof ICPPASTFunctionDeclarator) {
+			IASTDeclSpecifier declSpec = null;
 			if (parentNode.getParent() instanceof IASTSimpleDeclaration) {
-				IASTSimpleDeclaration grandparentNode = (IASTSimpleDeclaration) parentNode.getParent();
-				if (grandparentNode.getDeclSpecifier() instanceof ICPPASTDeclSpecifier) {
-					if (((ICPPASTDeclSpecifier) grandparentNode.getDeclSpecifier()).isFriend()) {
-						pdomName.setIsFriendSpecifier();
-						PDOMName enclClassName = (PDOMName) pdomName.getEnclosingDefinition();
-						if (enclClassName != null) {
-							PDOMBinding enclClassBinding = enclClassName.getBinding();
-							if (enclClassBinding instanceof PDOMCPPClassType) {
-								((PDOMCPPClassType) enclClassBinding).addFriend(new PDOMCPPFriend(this,	pdomName));
-							}
+				declSpec = ((IASTSimpleDeclaration) parentNode.getParent()).getDeclSpecifier();
+			} else if (parentNode.getParent() instanceof IASTFunctionDefinition) {
+				declSpec = ((IASTFunctionDefinition) parentNode.getParent()).getDeclSpecifier();
+			}
+			if (declSpec instanceof ICPPASTDeclSpecifier) {
+				if (((ICPPASTDeclSpecifier) declSpec).isFriend()) {
+					pdomName.setIsFriendSpecifier();
+					PDOMName enclClassName = (PDOMName) pdomName.getEnclosingDefinition();
+					if (enclClassName != null) {
+						PDOMBinding enclClassBinding = enclClassName.getBinding();
+						if (enclClassBinding instanceof PDOMCPPClassType) {
+							((PDOMCPPClassType) enclClassBinding).addFriend(new PDOMCPPFriend(this,	pdomName));
 						}
 					}
 				}

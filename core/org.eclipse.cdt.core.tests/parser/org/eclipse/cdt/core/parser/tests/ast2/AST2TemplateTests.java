@@ -5375,6 +5375,26 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertSame(method, ((ICPPSpecialization) reference).getSpecializedBinding());
 	}
 
+	//	template <typename CharT>
+	//	struct ostream {
+	//	    template <typename T>
+	//	    ostream& operator<<(T);
+	//
+	//	    ostream& operator<<(ostream&(*)(ostream&));
+	//	};
+	//
+	//	template <typename CharT>
+	//	ostream<CharT>& endl(ostream<CharT>&);
+	//
+	//	template <typename T>
+	//	void test(T t) {
+	//	    ostream<char> out;
+	//	    out << t << endl;
+	//	}
+	public void testInstantiationOfEndlInTemplate_417700() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template<typename T> bool MySort(const T& a);
 	//	bool MySort(const int& a);
 	//	template<typename V> void sort(V __comp);

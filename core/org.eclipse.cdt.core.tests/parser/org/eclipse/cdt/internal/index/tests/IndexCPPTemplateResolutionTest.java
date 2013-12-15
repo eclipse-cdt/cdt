@@ -2383,4 +2383,55 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testAmbiguousBaseClassLookup_413406() throws Exception {
 		getProblemFromASTName("eof();", 3);
 	}
+
+	//	template <class T, class U>
+	//	struct multipliable2
+	//	{
+	//	    friend T operator *(const U& lhs, const T& rhs);
+	//	};
+	//
+	//	template <class T>
+	//	struct multipliable1
+	//	{
+	//	    friend T operator *(const T& lhs, const T& rhs);
+	//	};
+
+	//	#include "header.h"
+	//	struct overloaded : multipliable1<overloaded> {};
+	//
+	//	int foo(overloaded);
+	//
+	//	int main()
+	//	{
+	//	    overloaded c, d;
+	//	    foo(c * d);
+	//	}
+	public void testFriendFunctionOfClassSpecialization_419301a() throws Exception {
+		checkBindings();
+	}
+
+	//	template <class T, class U>
+	//	struct multipliable2
+	//	{
+	//	    friend T operator *(const U& lhs, const T& rhs);
+	//	};
+	//
+	//	template <class T>
+	//	struct multipliable1
+	//	{
+	//	    friend T operator *(const T& lhs, const T& rhs) {}
+	//	};
+
+	//	#include "header.h"
+	//	struct overloaded : multipliable1 <overloaded> {};
+	//
+	//	int foo(overloaded);
+	//
+	//	int main() {
+	//	    overloaded c, d;
+	//	    foo(c * d);
+	//	}
+	public void testFriendFunctionOfClassSpecialization_419301b() throws Exception {
+		checkBindings();
+	}
 }

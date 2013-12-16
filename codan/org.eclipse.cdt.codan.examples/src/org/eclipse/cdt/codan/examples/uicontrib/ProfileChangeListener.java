@@ -49,7 +49,9 @@ public class ProfileChangeListener implements INodeChangeListener, IPreferenceCh
 		 IProject[] projects = root.getRoot().getProjects();
 		 for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
-			CodanPreferencesLoader.getProjectNode(project).addPreferenceChangeListener(new ProfileChangeListener(project));
+			IEclipsePreferences prefs = CodanPreferencesLoader.getProjectNode(project);
+			if (prefs != null)
+				prefs.addPreferenceChangeListener(new ProfileChangeListener(project));
 		}
        // cannot do on plugin startup
 	   // CheckersRegistry.getInstance().getWorkspaceProfile().addProfileChangeListener(this);

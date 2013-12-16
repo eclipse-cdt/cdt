@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,13 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [422844] rse.files.ui fails to compile against Eclipse 4.4 Luna I20131126
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.widgets;
+import java.lang.reflect.Field;
+
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -23,6 +26,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileEmpty;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
 
 
 
@@ -36,11 +40,10 @@ import org.eclipse.swt.widgets.Composite;
  * We subclass this to add some slight additional functionality, including support for
  * refreshing the contents.
  */
-public class SystemFileTreeAndListGroup extends org.eclipse.ui.internal.ide.dialogs.ResourceTreeAndListGroup
+public class SystemFileTreeAndListGroup extends org.eclipse.ui.ide.dialogs.ResourceTreeAndListGroup
 {
 	private Object rootObject = null;
-	private Object lastSelectedElement = null;
-	//private ISelectionProvider selectionProvider = null;
+
 	// CONSTANTS
     private static final RemoteFileEmpty EMPTYROOT = new RemoteFileEmpty();
     	
@@ -122,29 +125,8 @@ public class SystemFileTreeAndListGroup extends org.eclipse.ui.internal.ide.dial
           }
           */
     	}
-    }
+    }        
 	
-    /**
-     * Refesh the contents of the file-selection checkbox viewer.
-     */
-    public void refreshFiles()
-    {
-        if (lastSelectedElement != null)
-          populateListViewer(lastSelectedElement);
-    }
-	
-    /**
-     *	Handle the selection of an item in the tree viewer.
-     *  Intercept of parent so we can record the last selected tree node.
-     *	@param event the selection changed event
-     */
-    public void selectionChanged(SelectionChangedEvent event) 
-    {
-    	IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-    	lastSelectedElement = selection.getFirstElement();
-    	//selectionProvider = event.getSelectionProvider();
-    	super.selectionChanged(event);
-    }
 
     /**
      * Set the root of the widget to be new Root. Regenerate all of the tables and lists from this
@@ -154,7 +136,6 @@ public class SystemFileTreeAndListGroup extends org.eclipse.ui.internal.ide.dial
      */
     public void setRoot(Object newRoot) 
     {
-    	lastSelectedElement = null;
     	rootObject = newRoot;
     	super.setRoot(newRoot);
     }
@@ -165,5 +146,21 @@ public class SystemFileTreeAndListGroup extends org.eclipse.ui.internal.ide.dial
     public void clearAll()
     {
     	setRoot(EMPTYROOT);
+    }
+    
+    /**
+     * Added this to preserve original behaviour with Luna
+     */
+    public Table getListTable(){
+		try {
+			Field f = getClass().getDeclaredField("listViewer"); //$NON-NLS-1$
+			f.setAccessible(true);
+			CheckboxTableViewer tableV = (CheckboxTableViewer) f.get(this); //IllegalAccessException			
+			return tableV.getTable();
+		}
+		catch (Exception e){			
+		}
+	
+		return null;
     }
 }

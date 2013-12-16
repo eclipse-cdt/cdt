@@ -20,11 +20,13 @@
  * David McKnight   (IBM)        - [191558] [importexport][efs] Import to Project doesn't work with remote EFS projects
  * David McKnight   (IBM)        - [368465] Import Files -RSE - Cyclic Symbolic Reference problem
  * David McKnight   (IBM)        - [417033] [import/export] RSE import wizard won't let user to select new source
+ * David McKnight   (IBM)        - [422844] rse.files.ui fails to compile against Eclipse 4.4 Luna I20131126
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,6 +58,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.model.IHost;
@@ -148,21 +151,25 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		private MinimizedFileSystemElement _element;
 		private List _resultsQueried;
 		private volatile boolean _isActive = false;
+		private RemoteImportWizardPage1 _page;
 		private Control _control;
 
-		public QueryAllJob(Object fileSystemObject, IImportStructureProvider provider, MinimizedFileSystemElement element, Control control){
+		//public QueryAllJob(Object fileSystemObject, IImportStructureProvider provider, MinimizedFileSystemElement element, Control control){
+		public QueryAllJob(Object fileSystemObject, IImportStructureProvider provider, MinimizedFileSystemElement element, RemoteImportWizardPage1 page){
 			super("Querying All"); //$NON-NLS-1$
 			_fileSystemObject = fileSystemObject;
 			_provider = provider;
 			_element = element;
-			_control = control;
+			_page = page;
 			_resultsQueried = new ArrayList();
 		}
 
 
 		public IStatus run(IProgressMonitor monitor){
 			_isActive = true;
-			
+			if (_control == null){
+				_control = _page.getControl();
+			}
 			final Display d = _control.getDisplay();
 			d.syncExec(new Runnable(){
 				public void run(){
@@ -234,15 +241,18 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			if (element == _element){
 				Display.getDefault().asyncExec(new Runnable(){
 					public void run(){
-						DummyProvider provider = new DummyProvider();
-
-						ISelection sel1 = new StructuredSelection(_element.getParent());
-						SelectionChangedEvent evt1 = new SelectionChangedEvent(provider, sel1);
-						selectionGroup.selectionChanged(evt1);
-
-						ISelection sel2 = new StructuredSelection(_element);
-						SelectionChangedEvent evt2 = new SelectionChangedEvent(provider, sel2);
-						selectionGroup.selectionChanged(evt2);
+						try {
+							Field treeViewerF = selectionGroup.getClass().getDeclaredField("treeViewer"); //$NON-NLS-1$
+							treeViewerF.setAccessible(true);
+							TreeViewer treeV = (TreeViewer) treeViewerF.get(selectionGroup);	
+							
+							// selection handling to get table populated
+							treeV.setSelection(new StructuredSelection(_element.getParent()));
+							treeV.setSelection(new StructuredSelection(_element));
+						} catch (NoSuchFieldException e) {
+						} catch (IllegalAccessException e){		
+						} catch (SecurityException e) {
+						} 
 					}
 				});
 			}
@@ -576,8 +586,9 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		result.setFileSystemObject(fileSystemObject);
 
 		if (_queryAllJob == null){
-			_queryAllJob = new QueryAllJob(fileSystemObject, provider, result, getControl());
-			_queryAllJob.schedule();
+			//_queryAllJob = new QueryAllJob(fileSystemObject, provider, result, getControl());
+			_queryAllJob = new QueryAllJob(fileSystemObject, provider, result, this);
+			_queryAllJob.schedule(1000); // need time for control to be created
 		}
 
 		////Get the files for the element so as to build the first level

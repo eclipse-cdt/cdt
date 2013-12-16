@@ -11,6 +11,7 @@
 package org.eclipse.cdt.dsf.gdb.service;
 
 import java.util.Hashtable;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
@@ -389,7 +390,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		}
 	}	
 
-    private CommandCache fTraceCache;
+    private CommandCache fTraceStatusCache;
 	private ICommandControlService fConnection;
 	private CommandFactory fCommandFactory;
 	private IGDBBackend fBackend;
@@ -437,8 +438,8 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		
 
 		fConnection = getServicesTracker().getService(ICommandControlService.class);
-        fTraceCache = new CommandCache(getSession(), fConnection);
-        fTraceCache.setContextAvailable(fConnection.getContext(), true);
+        fTraceStatusCache = new CommandCache(getSession(), fConnection);
+        fTraceStatusCache.setContextAvailable(fConnection.getContext(), true);
         
         fBackend = getServicesTracker().getService(IGDBBackend.class);
         fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
@@ -753,7 +754,18 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
             return;
     	}
 
-        fConnection.queueCommand(
+    	// Start an automatic one-time flushing of the TraceStatusCache.
+    	// This avoids sending -trace-status multiples time in a very short
+    	// amount of time.  We still have to clear the cache very quickly
+    	// because -trace-status can change very fast, it is reports
+    	// the number of frames collected.  Having a small interval of
+    	// stale data is not a big deal, and not user-visible.
+    	// Bug 353034
+    	getExecutor().schedule(new Runnable() {
+			@Override public void run() { fTraceStatusCache.reset(context); }
+		}, 300, TimeUnit.MILLISECONDS);
+    	
+    	fTraceStatusCache.execute(
         		fCommandFactory.createMITraceStatus(context),
         		new DataRequestMonitor<MITraceStatusInfo>(getExecutor(), rm) {
         			@Override
@@ -1120,6 +1132,6 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 	
 	@Override
 	public void flushCache(IDMContext context) {
-        fTraceCache.reset(context);
+        fTraceStatusCache.reset(context);
 	}
 }

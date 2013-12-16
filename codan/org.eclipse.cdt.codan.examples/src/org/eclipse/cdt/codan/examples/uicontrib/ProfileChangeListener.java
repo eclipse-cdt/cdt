@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    QNX Software Systems (Alena Laskavaia)  - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.codan.examples.uicontrib;
 
@@ -32,9 +32,9 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
  * Example of property change listener for changing error profiles
  */
 public class ProfileChangeListener implements INodeChangeListener, IPreferenceChangeListener, IProblemProfileChangeListener {
-	
+
 	static ProfileChangeListener instance = new ProfileChangeListener();
-	
+
 	public static ProfileChangeListener getInstance(){
 		return instance;
 	}
@@ -49,7 +49,9 @@ public class ProfileChangeListener implements INodeChangeListener, IPreferenceCh
 		 IProject[] projects = root.getRoot().getProjects();
 		 for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
-			CodanPreferencesLoader.getProjectNode(project).addPreferenceChangeListener(new ProfileChangeListener(project));
+			IEclipsePreferences prefs = CodanPreferencesLoader.getProjectNode(project);
+			if (prefs != null)
+				prefs.addPreferenceChangeListener(new ProfileChangeListener(project));
 		}
        // cannot do on plugin startup
 	   // CheckersRegistry.getInstance().getWorkspaceProfile().addProfileChangeListener(this);
@@ -59,9 +61,10 @@ public class ProfileChangeListener implements INodeChangeListener, IPreferenceCh
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
+	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (event.getSource() instanceof IEclipsePreferences) {
-			IEclipsePreferences ep =  (IEclipsePreferences) event.getSource(); 
+			IEclipsePreferences ep =  (IEclipsePreferences) event.getSource();
 			if (project!=null) {
 
 				if (GrepChecker.ID.equals(event.getKey())) {
@@ -71,39 +74,42 @@ public class ProfileChangeListener implements INodeChangeListener, IPreferenceCh
 						System.err.println("grep checker enabled!");
 					}
 				}
-			
+
 			}
 		}
 
-		
+
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 	 */
+	@Override
 	public void added(NodeChangeEvent event) {
 		System.err.println("node added "+event);
-		
+
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 	 */
+	@Override
 	public void removed(NodeChangeEvent event) {
 		// TODO Auto-generated method stub
-		
+
 	}
 	/**
-	 * 
+	 *
 	 */
 	public void dispose() {
 		CodanCorePlugin.getDefault().getStorePreferences().removeNodeChangeListener(this);
 		CodanCorePlugin.getDefault().getStorePreferences().removePreferenceChangeListener(this);
-		
+
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.codan.internal.core.CheckersRegistry.IProblemProfileChangeListener#profileChange(org.eclipse.cdt.codan.internal.core.CheckersRegistry.ProblemProfileChangeEvent)
 	 */
+	@Override
 	public void profileChange(ProblemProfileChangeEvent event) {
 		if (event.getKey().equals(ProblemProfileChangeEvent.PROBLEM_KEY)) {
 			IResource resource = (IResource) event.getSource();
@@ -111,6 +117,6 @@ public class ProfileChangeListener implements INodeChangeListener, IPreferenceCh
 			IProblem pp = profile.findProblem(GrepChecker.ID);
 			System.err.println(pp.getName() + " enabled "+ pp.isEnabled());
 		}
-		
+
 	}
 }

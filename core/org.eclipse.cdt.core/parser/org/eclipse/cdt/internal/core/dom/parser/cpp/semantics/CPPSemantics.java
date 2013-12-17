@@ -178,6 +178,7 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.ArrayUtil.IUnaryPredicate;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
@@ -597,10 +598,26 @@ public class CPPSemantics {
 				lookup(data, scope);
 			}
 		}
-		mergeResults(data, friendFns.toArray(), false);
+		ICPPFunction[] matchingFriendFns = ArrayUtil.filter(
+				friendFns.toArray(new ICPPFunction[friendFns.size()]), 
+				new NameMatcherPredicate(data.getLookupKey()));
+		mergeResults(data, matchingFriendFns, false);
 		data.qualified = originalQualified;
 	}
-
+	
+	private static class NameMatcherPredicate implements IUnaryPredicate<ICPPFunction> {
+		private char[] fKey;
+		
+		public NameMatcherPredicate(char[] key) {
+			fKey = key;
+		}
+		
+		@Override
+		public boolean apply(ICPPFunction argument) {
+			return Arrays.equals(argument.getNameCharArray(), fKey);
+		}
+	}
+	
 	static IBinding checkDeclSpecifier(IBinding binding, IASTName name, IASTNode decl) {
 		// Check for empty declaration specifiers.
 		if (!isCtorOrConversionOperator(binding)) {
@@ -1262,31 +1279,19 @@ public class CPPSemantics {
 		}
 
 		if (data.ignoreRecursionResolvingBindings()) {
-			bindings = filterOutRecursionResovingBindings(bindings);
+			bindings = ArrayUtil.filter(bindings, new RecursionResolvingBindingFilter());
 		}
 
 		return expandUsingDeclarationsAndRemoveObjects(bindings, data);
 	}
 
-	private static IBinding[] filterOutRecursionResovingBindings(IBinding[] bindings) {
-		IBinding[] result = bindings;
-		int resultIndex = 0;
-		for (int i = 0; i < bindings.length; ++i) {
-			if (bindings[i] instanceof IRecursionResolvingBinding) {
-				if (result == bindings) {
-					result = new IBinding[bindings.length - 1];
-					System.arraycopy(bindings, 0, result, 0, i);
-				}
-			} else {
-				if (result != bindings) {
-					result[resultIndex] = bindings[i];
-				}
-				++resultIndex;
-			}
+	private static class RecursionResolvingBindingFilter implements IUnaryPredicate<IBinding> {
+		@Override
+		public boolean apply(IBinding argument) {
+			return !(argument instanceof IRecursionResolvingBinding);
 		}
-		return ArrayUtil.trim(result);
 	}
-
+	
 	private static IBinding[] expandUsingDeclarationsAndRemoveObjects(final IBinding[] bindings,
 			LookupData data) {
 		if (bindings == null || bindings.length == 0)

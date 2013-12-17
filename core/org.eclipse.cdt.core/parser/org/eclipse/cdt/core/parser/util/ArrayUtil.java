@@ -741,4 +741,38 @@ public abstract class ArrayUtil {
         array[idx] = val;
         return array;
     }
+    
+    /**
+     * A generic unary predicate interface.
+     * Useful for operations that use unary predicates, like filtering an array.
+     * @since 5.6
+     */
+    public static interface IUnaryPredicate<T> {
+    	boolean apply(T argument);
+    }
+    
+    /**
+     * Filter the elements of an array down to just the ones
+     * that match the given predicate.
+	 * @since 5.6
+	 */
+    @SuppressWarnings("unchecked")
+	public static <T> T[] filter(T[] array, IUnaryPredicate<T> predicate) {
+		T[] result = array;
+		int resultIndex = 0;
+		for (int i = 0; i < array.length; ++i) {
+			if (predicate.apply(array[i])) {
+				if (result != array) {
+					result[resultIndex] = array[i];
+				}
+				++resultIndex;
+			} else {
+				if (result == array) {
+					result = (T[]) Array.newInstance(array.getClass().getComponentType(), array.length - 1);
+					System.arraycopy(array, 0, result, 0, i);
+				}
+			}
+		}
+		return trim(result);
+    }
 }

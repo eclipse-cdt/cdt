@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_9a7f4587",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/ArrayUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 750,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-17T20:43:29Z",
+      "side": 1,
+      "message": "It makes sense to move this interface to its own file.",
+      "revId": "0c13fdbc64ad1eabd33e9df88eff062a26ec8fbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_9a3105f4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/ArrayUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 760,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-17T20:43:29Z",
+      "side": 1,
+      "message": "A method similar to this but with first parameter Connection\u003cT\u003e would be more convenient for use in CPPSemantics. Such method could be moved to /org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/CollectionUtils.java",
+      "revId": "0c13fdbc64ad1eabd33e9df88eff062a26ec8fbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_1ac97554",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/ArrayUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 771,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-17T20:43:29Z",
+      "side": 1,
+      "message": "Why not use Arrays.copyOfRange?",
+      "revId": "0c13fdbc64ad1eabd33e9df88eff062a26ec8fbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_ba2681b7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/ArrayUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-17T20:43:29Z",
+      "side": 1,
+      "message": "This could be done more efficiently since the desired size of the array is known at this point.",
+      "revId": "0c13fdbc64ad1eabd33e9df88eff062a26ec8fbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

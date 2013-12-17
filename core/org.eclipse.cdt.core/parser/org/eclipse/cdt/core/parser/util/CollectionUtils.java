@@ -34,7 +34,7 @@ public final class CollectionUtils {
 	 * The remove() method is not implemented and will throw UnsupportedOperationException.
 	 * The returned iterator does not support the remove() method.
 	 * 
-	 * @throws NullPointerException if list is null
+	 * @throws NullPointerException if list is {@code null}
 	 */
 	public static <T> Iterator<T> reverseIterator(final List<T> list) {
 		return new Iterator<T>() {	
@@ -56,11 +56,13 @@ public final class CollectionUtils {
 	}
 
 	/**
-	 * Allows a foreach loop to iterate backwards over a list
-	 * from the end to the start.
+	 * Allows a foreach loop to iterate backwards over a list from the end to the start.
 	 * 
-	 * e.g.
-	 * for(Object o : reverseIterable(list)) { ... }
+	 * <p>
+	 * Example use:
+	 * <pre>
+	 *     for (Object o : reverseIterable(list)) { ... }
+	 * </pre>
 	 * 
 	 * @throws NullPointerException if list is null
 	 */
@@ -69,18 +71,17 @@ public final class CollectionUtils {
 	}
 
 	/**
-	 * Creates an Iterable instance that just returns
-	 * the given Iterator from its iterator() method.
+	 * Creates an Iterable instance that just returns the given Iterator from its iterator() method.
 	 * 
 	 * This is useful for using an iterator in a foreach loop directly.
 	 * 
-	 * e.g.
+	 * <p>
+	 * Example use:
+	 * <pre>
+	 *     for (Object o : iterable(iterator)) { ... }
+	 * </pre>
 	 * 
-	 * for(Object o : iterable(list.listIterator())) {
-	 *     // do something
-	 * }
-	 * 
-	 * @throws NullPointerException if list is null
+	 * @throws NullPointerException if list is {@code null}
 	 */
 	public static <T> Iterable<T> iterable(final Iterator<T> iter) {
 		if (iter == null)
@@ -101,7 +102,8 @@ public final class CollectionUtils {
 	 * unmodified and null is returned.
 	 * 
 	 * @throws NullPointerException if list or clazz is null
-	 * @throws UnsupportedOperationException if the list's Iterator does not support the remove() method
+	 * @throws UnsupportedOperationException if the list's Iterator does not support the remove()
+	 *     method
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T findFirstAndRemove(List<?> list, Class<T> clazz) {
@@ -137,9 +139,8 @@ public final class CollectionUtils {
 	}
 
 	/**
-	 * Gets a List<U> corresponding to a T in a Map<T, List<U>>.
-	 * If the mapping doesn't exist, create it, with the empty
-	 * list as the initial value.
+	 * Returns a List<U> corresponding to a T in a Map<T, List<U>>. If the mapping doesn't exist,
+	 * creates it with an empty list as the initial value.
 	 * @since 5.6
 	 */
 	static public <T, U> List<U> listMapGet(Map<T, List<U>> m, T t) {

@@ -1,0 +1,344 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_8f33137c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/icons/full/obj16/save_edit.gif",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "Does not seem to be used.  I removed it.",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_af7fefd1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/icons/full/obj16/write_obj_disabled.gif",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "Not used.  I removed.",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_8f82f354",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/icons/full/view16/circular_buffer2.png",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "Renamed to circular_buffer.gif and moved to obj16",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_ef85775e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/icons/full/view16/disconnected_tracing.png",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "Moved to obj16",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_cf887b77",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/icons/full/view16/refresh_auto.gif",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "Moved to obj16",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_5b33961b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "Do you really want to open the Trace Control view right next to the debug view, in its own space?  I find that putting it on top of the Outline view makes sense since you probably won\u0027t use both at the same time",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_128b517c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/FlatButton.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "Since this file is by a different author, I committed it separately and removed it from patchset 7 of this review.",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_8746d7f7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlModel.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "Now that \u0027currentTraceFrame\u0027 and \u0027tracepointIndexForCurrentTraceRecord\u0027, are part of ITraceStatusDMData2, we no longer need TraceStatusData, so I removed it.",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_4255dd23",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlModel.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "Now that you listen for debugContextChanged, I believe it will take care of the case where the session is ended.  I\u0027ve removed the SessionEnded listener.",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_fd4be8ab",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlModel.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 463,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "This method does not do anything, so I removed it.",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_629a9950",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlModel.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 495,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "We cannot assume that the IGDBTraceControl service will be an IGDBTraceControl2.  Some other implementors my not support it.  Therefore, we start with IGDBTraceControl and when we need IGDBTraceControl2, we check for it.  I\u0027ve done that.",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_458b342d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "This is better that what I had done.  Thanks.",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_c0edf77e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "Got an NPE here, as soon as I start a session that does not support tracing but have the Trace Control view open\n\nI added checks for (info \u003d\u003d null) for all methods in this class to avoid any NPEs",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_85009c0e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "This method was being used to display the information in the old Trace Control view.  Since we won\u0027t use it for that anymore, I have removed that method which is is hard to maintain.",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_6503d019",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1145,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "I moved to a new GDBTraceControl_7_4",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_c509043a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1165,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "I moved to a new GDBTraceControl_7_4",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_4d4c1c99",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBTraceControl2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "A new sub-interface can be added to an existing interface without breaking the API.  I have moved this to IGDBTraceControl to keep extending interfaces as small as possible.",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_e5ed207f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBTraceControl2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "I moved this to ITraceStatusDMData2.  I feel that -trace-status should be returning that info, just like \u0027tstatus\u0027 does.",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_4510540d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBTraceControl2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "I moved this to ITraceStatusDMData2.  I feel that -trace-status should be returning that info, just like \u0027tstatus\u0027 does.",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_5bf9d6f2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITraceStatusInfo.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-17T16:19:13Z",
+      "side": 1,
+      "message": "I couldn\u0027t find this output (stop-notes) in the GDB sources.  I think \"notes\" can be stop-notes or start-notes, depending on the case.  I have removed that field from here.",
+      "revId": "1b4b06698032d818de0cd0c5ca5b44ebb024c407",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

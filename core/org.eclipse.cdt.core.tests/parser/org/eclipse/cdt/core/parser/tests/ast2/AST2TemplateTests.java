@@ -8216,4 +8216,21 @@ public class AST2TemplateTests extends AST2TestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertNonProblem("waldo<T>", ICPPDeferredFunction.class);
 	}
+	
+	//	template <typename>
+	//	struct C {
+	//	    friend bool operator==(C, C);
+	//	    friend bool operator!=(C, C);
+	//	};
+	//
+	//	template <typename U>
+	//	void waldo(U, U);
+	//
+	//	void test() {
+	//	  C<int> x;
+	//	  waldo(x, x);
+	//	}
+	public void testStrayFriends_419301() throws Exception {
+		parseAndCheckBindings();
+	}
 }

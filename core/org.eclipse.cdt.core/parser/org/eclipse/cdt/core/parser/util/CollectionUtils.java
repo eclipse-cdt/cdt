@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Mike Kucera (IBM Corporation) - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
@@ -151,4 +152,19 @@ public final class CollectionUtils {
 		}
 		return result;
 	}
+	
+    /**
+     * Filter the elements of a collection down to just the ones
+     * that match the given predicate.
+	 * @since 5.6
+	 */
+	public static <T> Collection<T> filter(Collection<T> collection, IUnaryPredicate<T> predicate) {
+		if (collection.isEmpty())
+			return collection;
+		Collection<T> result = new ArrayList<T>();
+		for (T t : collection)
+			if (predicate.apply(t))
+				result.add(t);
+		return result;
+    }
 }

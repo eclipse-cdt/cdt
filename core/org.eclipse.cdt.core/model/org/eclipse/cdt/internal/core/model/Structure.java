@@ -8,13 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
@@ -23,8 +17,12 @@ import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
-public class Structure extends StructureDeclaration implements  IStructure {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
+public class Structure extends StructureDeclaration implements  IStructure {
 	Map<String, ASTAccessVisibility> superClassesNames = new TreeMap<String, ASTAccessVisibility>();
 
 	public Structure(ICElement parent, int kind, String name) {
@@ -43,7 +41,7 @@ public class Structure extends StructureDeclaration implements  IStructure {
 		try {
 			IField[] fields = getFields();
 			for (IField field : fields) {
-				if(field.getElementName().equals(name)){
+				if (field.getElementName().equals(name)){
 					return field;
 				}
 			}
@@ -65,7 +63,7 @@ public class Structure extends StructureDeclaration implements  IStructure {
 		try {
 			IMethodDeclaration[] methods = getMethods();
 			for (IMethodDeclaration method : methods) {
-				if(method.getElementName().equals(name)){
+				if (method.getElementName().equals(name)){
 					return method;
 				}
 			}
@@ -78,7 +76,7 @@ public class Structure extends StructureDeclaration implements  IStructure {
 	public boolean isAbstract() throws CModelException {
 		IMethodDeclaration[] methods = getMethods();
 		for (IMethodDeclaration method : methods) {
-			if(method.isPureVirtual())
+			if (method.isPureVirtual())
 				return true;
 		}
 		return false;
@@ -101,5 +99,4 @@ public class Structure extends StructureDeclaration implements  IStructure {
 	public void addSuperClass(String name, ASTAccessVisibility access) {
 		superClassesNames.put(name, access);
 	}
-
 }

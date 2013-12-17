@@ -8,20 +8,24 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.core.model;
 
 /**
  * Represent struct(ure), class or union.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IStructure extends IInheritance, IParent, IStructureDeclaration {
-	public IField getField(String name);
-	
 	/**
-	 * Returns the fields of a structure. 
+	 * Returns the specific field with the given name within the structure.
+	 * @param name the name of the field
+	 * @return the field with the given name, or {@code null} if not found
+	 */
+	public IField getField(String name);
+
+	/**
+	 * Returns the fields of a structure.
 	 * @return an array of IField elements
 	 * @throws CModelException
 	 */
@@ -29,12 +33,12 @@ public interface IStructure extends IInheritance, IParent, IStructureDeclaration
 
 	/**
 	 * Returns the specific method with the given name within the structure.
-	 * Returns the first occurance more than one method has the same name.
+	 * Returns the first occurrence more than one method has the same name.
 	 * @param name
 	 * @return IMethodDeclaration
 	 */
 	public IMethodDeclaration getMethod(String name);
-	
+
 	/**
 	 * Returns all methods within the structure.
 	 * @return array of IMethodDeclaration.

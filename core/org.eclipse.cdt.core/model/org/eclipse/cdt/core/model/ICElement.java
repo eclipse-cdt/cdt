@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
+import java.net.URI;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-
-import java.net.URI;
 
 /**
  * Common protocol for all elements provided by the C model.

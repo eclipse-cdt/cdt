@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_d179bda2",
+        "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/internal/core/CheckersRegistry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-17T04:37:18Z",
+      "side": 1,
+      "message": "Simpler and more readable:\n\t\t\t\tif (projectNode !\u003d null \u0026\u0026 !projectNode.getBoolean(PreferenceConstants.P_USE_PARENT, true)) {\n\t\t\t\t\tloader.load(projectNode);\n\t\t\t\t}",
+      "revId": "23c2fdc1f31748744767f8299431e269a9f7273e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

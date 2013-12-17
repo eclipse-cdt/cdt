@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Andrew Ferguson (Symbian)
  *     Mike Kucera (IBM)
  *     Sergey Prigogin (Google)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
@@ -740,5 +741,30 @@ public abstract class ArrayUtil {
         }
         array[idx] = val;
         return array;
+    }
+    
+    /**
+     * Filter the elements of an array down to just the ones
+     * that match the given predicate.
+	 * @since 5.6
+	 */
+	public static <T> T[] filter(T[] array, IUnaryPredicate<T> predicate) {
+		T[] result = array;
+		int resultIndex = 0;
+		for (int i = 0; i < array.length; ++i) {
+			if (predicate.apply(array[i])) {
+				if (result != array) {
+					result[resultIndex] = array[i];
+				}
+				++resultIndex;
+			} else {
+				if (result == array) {
+					// There will be at most array.length - 1 filtered elements. 
+					result = Arrays.copyOf(array, array.length - 1);
+					Arrays.fill(result, i, result.length, null);
+				}
+			}
+		}
+		return resultIndex == result.length ? result : Arrays.copyOf(result, resultIndex);
     }
 }

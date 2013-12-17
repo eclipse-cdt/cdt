@@ -260,6 +260,10 @@
              application="GDBStandalone.application"
              description="Eclipse Standalone C/C++ GDB Debugger"
              name="GDB Standalone">
+             <property name="windowImages" value="eclipse.gif,eclipse32.gif,eclipse48.gif"/> 
+             <property name="aboutImage" value="eclipse_lg.gif"/> 
+             <property name="aboutText" value="%aboutText"/> 
+             
        </product>
     </extension>
    

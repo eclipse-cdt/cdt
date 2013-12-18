@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_a6766c48",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/CollectionUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-12-18T05:12:30Z",
+      "side": 1,
+      "message": "I think this case is now unnecessary.",
+      "revId": "262fef7caa2dba3cac3435e48bc47681ba5f88a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

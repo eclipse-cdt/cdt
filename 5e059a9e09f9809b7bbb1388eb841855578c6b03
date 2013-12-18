@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_069e4042",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/CollectionUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2013-12-18T04:32:00Z",
+      "side": 1,
+      "message": "Can you in general iterate over a collection while you are already iterating over it?",
+      "revId": "5e059a9e09f9809b7bbb1388eb841855578c6b03",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

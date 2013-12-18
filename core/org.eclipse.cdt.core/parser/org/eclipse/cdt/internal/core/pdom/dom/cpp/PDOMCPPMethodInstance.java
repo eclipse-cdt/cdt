@@ -30,7 +30,7 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMetho
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionInstance.RECORD_SIZE + 0;
 	
-	public PDOMCPPMethodInstance(PDOMLinkage linkage, PDOMNode parent, ICPPMethod method, PDOMBinding instantiated)
+	public PDOMCPPMethodInstance(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method, PDOMBinding instantiated)
 			throws CoreException {
 		super(linkage, parent, method, instantiated);
 	}

@@ -2454,4 +2454,19 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testFriendFunctionOfClassSpecialization_419301b() throws Exception {
 		checkBindings();
 	}
+	
+	//	template <typename T>
+	//	constexpr T t(T) {
+	//	    return 0;
+	//	}
+	//
+	//	template <>
+	//	constexpr unsigned t<unsigned>(unsigned) {
+	//	    return 1 + 1;
+	//	}
+	
+	//	// empty source file
+	public void testSpecializationOfConstexprFunction_420995() throws Exception {
+		checkBindings();
+	}
 }

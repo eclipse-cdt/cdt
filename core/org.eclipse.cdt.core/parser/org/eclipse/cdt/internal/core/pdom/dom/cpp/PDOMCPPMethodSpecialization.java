@@ -51,7 +51,7 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 	 */
 	private static final int CV_OFFSET = PDOMCPPAnnotation.MAX_EXTRA_OFFSET + 1;
 	
-	public PDOMCPPMethodSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPMethod method, PDOMBinding specialized) throws CoreException {
+	public PDOMCPPMethodSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method, PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, method, specialized);		
 		Database db = getDB();
 

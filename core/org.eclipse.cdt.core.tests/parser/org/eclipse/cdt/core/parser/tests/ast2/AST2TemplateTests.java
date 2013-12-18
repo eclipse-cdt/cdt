@@ -8251,4 +8251,21 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testStrayFriends_419301() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T>
+	//	constexpr T t(T) {
+	//	    return 0;
+	//	}
+	//
+	//	template <>
+	//	constexpr unsigned t<unsigned>(unsigned) {
+	//	    return 1 + 1;
+	//	}
+	//
+	//	constexpr unsigned waldo = t(0u);
+	public void testSpecializationOfConstexprFunction_420995() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPVariable waldo = helper.assertNonProblem("waldo");
+		assertEquals(2, waldo.getInitialValue().numericalValue().longValue());
+	}
 }

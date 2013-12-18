@@ -422,7 +422,7 @@ public class Value implements IValue {
 
 		if (expr instanceof ICPPASTInitializerClause) {
 			ICPPEvaluation evaluation = ((ICPPASTInitializerClause) expr).getEvaluation();
-			return new Value(null, evaluation);
+			return evaluation.getValue(expr);
 		}
 		return UNKNOWN;
 	}

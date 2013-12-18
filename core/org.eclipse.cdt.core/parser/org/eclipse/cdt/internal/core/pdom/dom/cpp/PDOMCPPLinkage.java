@@ -251,6 +251,22 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					fReturnExpression);
 		}
 	}
+	
+	class ConfigureFunctionSpecialization implements Runnable {
+		private final PDOMCPPFunctionSpecialization fSpec; 
+		private final ICPPEvaluation fReturnExpression;
+		
+		public ConfigureFunctionSpecialization(ICPPFunction original, PDOMCPPFunctionSpecialization spec) {
+			fSpec = spec;
+			fReturnExpression = CPPFunction.getReturnExpression(original);
+			postProcesses.add(this);
+		}
+		
+		@Override
+		public void run() {
+			fSpec.initData(fReturnExpression);
+		}
+	}
 
 	class ConfigureFunctionTemplate implements Runnable {
 		private final PDOMCPPFunctionTemplate fTemplate;

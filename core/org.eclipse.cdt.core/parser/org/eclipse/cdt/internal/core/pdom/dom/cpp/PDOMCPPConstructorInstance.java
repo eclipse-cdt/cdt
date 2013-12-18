@@ -28,7 +28,7 @@ public class PDOMCPPConstructorInstance extends PDOMCPPMethodInstance implements
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPMethodInstance.RECORD_SIZE + 0;
 	
-	public PDOMCPPConstructorInstance(PDOMLinkage linkage, PDOMNode parent, ICPPMethod method,
+	public PDOMCPPConstructorInstance(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method,
 			PDOMBinding instantiated) throws CoreException {
 		super(linkage, parent, method, instantiated);
 	}

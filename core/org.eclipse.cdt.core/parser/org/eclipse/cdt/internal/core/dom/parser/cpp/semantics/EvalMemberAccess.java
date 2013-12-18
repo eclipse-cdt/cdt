@@ -264,7 +264,8 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 			return ((IEnumerator) fMember).getValue();
 		}
 		if (fMember instanceof IVariable) {
-			return ((IVariable) fMember).getInitialValue();
+			IValue initialValue = ((IVariable) fMember).getInitialValue();
+			return initialValue == null ? Value.UNKNOWN : initialValue;
 		}
 		if (fMember instanceof IFunction) {
 			return Value.UNKNOWN;

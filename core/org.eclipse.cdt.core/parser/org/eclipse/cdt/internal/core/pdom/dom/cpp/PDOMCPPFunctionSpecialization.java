@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPComputableFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -84,7 +83,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	private short fAnnotation= -1;
 	private int fRequiredArgCount= -1;
 	
-	public PDOMCPPFunctionSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPFunction astFunction,
+	public PDOMCPPFunctionSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunction astFunction,
 			PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) astFunction, specialized);
 		
@@ -123,10 +122,6 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 		fAnnotation = getAnnotation(astFunction);
 		db.putShort(record + ANNOTATION, fAnnotation);	
 		db.putShort(record + REQUIRED_ARG_COUNT , (short) astFunction.getRequiredArgumentCount());
-		ICPPEvaluation returnExpression = CPPFunction.getReturnExpression(astFunction);
-		if (returnExpression != null) {
-			linkage.storeEvaluation(record + RETURN_EXPRESSION, returnExpression);
-		}
 		long typelist= 0;
 		if (astFunction instanceof ICPPMethod && ((ICPPMethod) astFunction).isImplicit()) {
 			// Don't store the exception specification, it is computed on demand.
@@ -134,6 +129,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 			typelist = PDOMCPPTypeList.putTypes(this, astFunction.getExceptionSpecification());
 		}
 		db.putRecPtr(record + EXCEPTION_SPEC, typelist);
+		linkage.new ConfigureFunctionSpecialization(astFunction, this);
 	}
 
 	private short getAnnotation(ICPPFunction astFunction) {
@@ -152,6 +148,16 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 
 	public PDOMCPPFunctionSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
+	}
+	
+	public void initData(ICPPEvaluation returnExpression) {
+		if (returnExpression == null)
+			return;
+		try {
+			getLinkage().storeEvaluation(record + RETURN_EXPRESSION, returnExpression);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
 	}
 	
 	@Override

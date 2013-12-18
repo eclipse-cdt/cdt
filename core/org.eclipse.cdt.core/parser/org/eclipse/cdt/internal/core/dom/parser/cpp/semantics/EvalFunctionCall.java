@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromReturnType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromReturnType;
@@ -149,12 +148,10 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 	@Override
 	public IValue getValue(IASTNode point) {
 		ICPPEvaluation eval = computeForFunctionCall(Value.MAX_RECURSION_DEPTH, point);
-		if (eval != this) {
-			if (eval instanceof EvalFixed)
-				return ((EvalFixed) eval).getValue();
-			eval = new EvalFixed(getTypeOrFunctionSet(point), PRVALUE, eval.getValue(point));
-		}
-		return Value.create(eval);
+		if (eval == this) {
+			return Value.create(eval);
+		} 
+		return eval.getValue(point);
 	}
 
 	@Override

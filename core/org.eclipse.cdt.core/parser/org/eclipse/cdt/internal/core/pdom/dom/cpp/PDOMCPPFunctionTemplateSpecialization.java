@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPFunctionTemplateSpecialization extends	PDOMCPPFunctionSpecialization 
 		implements ICPPFunctionTemplate, ICPPInstanceCache, IPDOMMemberOwner {
 	
-	public PDOMCPPFunctionTemplateSpecialization(PDOMLinkage linkage, PDOMNode parent,
+	public PDOMCPPFunctionTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
 			ICPPFunctionTemplate template, PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, template, specialized);
 	}

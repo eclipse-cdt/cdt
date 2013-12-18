@@ -27,7 +27,7 @@ class PDOMCPPConstructorSpecialization extends PDOMCPPMethodSpecialization imple
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPMethodSpecialization.RECORD_SIZE + 0;
 
-	public PDOMCPPConstructorSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPConstructor constructor, PDOMBinding specialized) throws CoreException {
+	public PDOMCPPConstructorSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor constructor, PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, constructor, specialized);
 	}
 

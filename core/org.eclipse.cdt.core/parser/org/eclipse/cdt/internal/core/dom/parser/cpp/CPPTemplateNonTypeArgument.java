@@ -35,8 +35,14 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 				evaluation.isTypeDependent() || evaluation.isValueDependent()) {
 			fEvaluation= evaluation;
 		} else {
-			fEvaluation= new EvalFixed(evaluation.getTypeOrFunctionSet(point),
-					evaluation.getValueCategory(point), evaluation.getValue(point));
+			IValue value = evaluation.getValue(point);
+			// Avoid nesting EvalFixed's as nesting causes the signature to be different.
+			if (value.getEvaluation() instanceof EvalFixed) {
+				fEvaluation = value.getEvaluation();
+			} else {
+				fEvaluation= new EvalFixed(evaluation.getTypeOrFunctionSet(point),
+						evaluation.getValueCategory(point), value);
+			}
 		}
 	}
 

@@ -38,7 +38,7 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionSpecialization.RECORD_SIZE + 8;
 	
-	public PDOMCPPFunctionInstance(PDOMLinkage linkage, PDOMNode parent, ICPPFunction function, PDOMBinding orig)
+	public PDOMCPPFunctionInstance(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunction function, PDOMBinding orig)
 			throws CoreException {
 		super(linkage, parent, function, orig);
 

@@ -154,17 +154,30 @@ public final class CollectionUtils {
 	}
 	
     /**
-     * Filter the elements of a collection down to just the ones
-     * that match the given predicate.
+     * Filter the elements of a collection down to just the ones that match the given predicate.
 	 * @since 5.6
 	 */
 	public static <T> Collection<T> filter(Collection<T> collection, IUnaryPredicate<T> predicate) {
 		if (collection.isEmpty())
 			return collection;
-		Collection<T> result = new ArrayList<T>();
-		for (T t : collection)
-			if (predicate.apply(t))
-				result.add(t);
-		return result;
+		Collection<T> result = null;
+		int n = 0;
+		for (T t : collection) {
+			if (predicate.apply(t)) {
+				if (result != null) {
+					result.add(t);
+				} else {
+					++n;
+				}
+			} else if (result == null) {
+				result = new ArrayList<T>(collection.size() - 1);
+				for (T u : collection) {
+					if (--n < 0)
+						break;
+					result.add(u);
+				}
+			}
+		}
+		return result == null ? collection : result;
     }
 }

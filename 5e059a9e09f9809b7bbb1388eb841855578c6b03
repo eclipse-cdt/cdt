@@ -16,6 +16,24 @@
       "revId": "5e059a9e09f9809b7bbb1388eb841855578c6b03",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_a695cc13",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/CollectionUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-18T04:36:11Z",
+      "side": 1,
+      "message": "There is no problem with that apart from the fact that this will create another iterator object that was not present in the original code.",
+      "parentUuid": "8748d3a1_069e4042",
+      "revId": "5e059a9e09f9809b7bbb1388eb841855578c6b03",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

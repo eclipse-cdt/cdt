@@ -7741,6 +7741,24 @@ public class AST2TemplateTests extends AST2TestBase {
 		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
 		helper.assertProblem("bind(s, 0, foo)", "bind");
     }
+	
+	//	struct a3 {
+	//	    int xxx;
+	//	};
+	//
+	//	template <template <typename> class V>
+	//	struct S {};
+	//
+	//	template <typename V>
+	//	int foo(...);
+	//
+	//	template <typename V>
+	//	int foo(void*, S<V::template xxx>* = 0);
+	//
+	//	int value = sizeof(foo<a3>(0));
+	public void testNPE_395074() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template<typename T>
 	//	T forward(T);

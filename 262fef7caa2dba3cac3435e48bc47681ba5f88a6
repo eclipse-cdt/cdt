@@ -16,6 +16,24 @@
       "revId": "262fef7caa2dba3cac3435e48bc47681ba5f88a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_d4f3595e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/CollectionUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-18T17:28:49Z",
+      "side": 1,
+      "message": "It doesn\u0027t hurt since it bypasses creation of an iterator for the loop.",
+      "parentUuid": "8748d3a1_a6766c48",
+      "revId": "262fef7caa2dba3cac3435e48bc47681ba5f88a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

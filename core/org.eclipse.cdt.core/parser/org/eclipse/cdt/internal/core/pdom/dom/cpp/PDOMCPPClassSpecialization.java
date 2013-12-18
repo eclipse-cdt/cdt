@@ -367,7 +367,9 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public IBinding[] getFriends(IASTNode point) {
-		// Not yet supported.
+		ICPPClassScope scope= getCompositeScope();
+		if (scope instanceof ICPPClassSpecializationScope)
+			return ((ICPPClassSpecializationScope) scope).getFriends(point);
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 

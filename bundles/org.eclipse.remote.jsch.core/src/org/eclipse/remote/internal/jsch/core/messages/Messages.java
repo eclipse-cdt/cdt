@@ -25,6 +25,8 @@ public class Messages extends NLS {
 	public static String ExecCommand_Exec_command;
 	public static String FetchInfoCommand_Fetch_info;
 	public static String GetInputStreamCommand_Get_input_stream;
+	public static String JSchConnection_Connection_was_cancelled;
+
 	public static String JSchConnection_connectionNotOpen;
 	public static String JSchConnection_remote_address_must_be_set;
 	public static String JSchConnection_remotePort;

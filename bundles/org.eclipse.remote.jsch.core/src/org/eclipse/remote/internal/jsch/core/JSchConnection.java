@@ -62,6 +62,7 @@ public class JSchConnection implements IRemoteConnection {
 			fAuthenticator = authenticator;
 		}
 
+		@Override
 		public String[] promptKeyboardInteractive(String destination, String name, String instruction, String[] prompt,
 				boolean[] echo) {
 			if (logging) {
@@ -79,6 +80,7 @@ public class JSchConnection implements IRemoteConnection {
 			return new String[] { password };
 		}
 
+		@Override
 		public String getPassphrase() {
 			if (logging) {
 				System.out.println("getPassphrase"); //$NON-NLS-1$
@@ -86,6 +88,7 @@ public class JSchConnection implements IRemoteConnection {
 			return JSchConnection.this.getPassphrase();
 		}
 
+		@Override
 		public String getPassword() {
 			if (logging) {
 				System.out.println("getPassword"); //$NON-NLS-1$
@@ -93,6 +96,7 @@ public class JSchConnection implements IRemoteConnection {
 			return JSchConnection.this.getPassword();
 		}
 
+		@Override
 		public boolean promptPassword(String message) {
 			if (logging) {
 				System.out.println("promptPassword:" + message); //$NON-NLS-1$
@@ -112,6 +116,7 @@ public class JSchConnection implements IRemoteConnection {
 			return true;
 		}
 
+		@Override
 		public boolean promptPassphrase(String message) {
 			if (logging) {
 				System.out.println("promptPassphrase:" + message); //$NON-NLS-1$
@@ -130,6 +135,7 @@ public class JSchConnection implements IRemoteConnection {
 			return true;
 		}
 
+		@Override
 		public boolean promptYesNo(String message) {
 			if (logging) {
 				System.out.println("promptYesNo:" + message); //$NON-NLS-1$
@@ -142,6 +148,7 @@ public class JSchConnection implements IRemoteConnection {
 			return true;
 		}
 
+		@Override
 		public void showMessage(String message) {
 			if (logging) {
 				System.out.println("showMessage:" + message); //$NON-NLS-1$
@@ -187,6 +194,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * @see org.eclipse.remote.core.IRemoteConnection#addConnectionChangeListener
 	 * (org.eclipse.remote.core.IRemoteConnectionChangeListener)
 	 */
+	@Override
 	public void addConnectionChangeListener(IRemoteConnectionChangeListener listener) {
 		fListeners.add(listener);
 	}
@@ -237,6 +245,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#close()
 	 */
+	@Override
 	public synchronized void close() {
 		if (fSftpChannel != null) {
 			if (fSftpChannel.isConnected()) {
@@ -259,6 +268,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public int compareTo(IRemoteConnection o) {
 		return getName().compareTo(o.getName());
 	}
@@ -268,13 +278,16 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @param event
 	 */
+	@Override
 	public void fireConnectionChangeEvent(final int type) {
 		final IRemoteConnection connection = this;
 		IRemoteConnectionChangeEvent event = new IRemoteConnectionChangeEvent() {
+			@Override
 			public IRemoteConnection getConnection() {
 				return connection;
 			}
 
+			@Override
 			public int getType() {
 				return type;
 			}
@@ -289,6 +302,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#forwardLocalPort(int, java.lang.String, int)
 	 */
+	@Override
 	public void forwardLocalPort(int localPort, String fwdAddress, int fwdPort) throws RemoteConnectionException {
 		if (!isOpen()) {
 			throw new RemoteConnectionException(Messages.JSchConnection_connectionNotOpen);
@@ -306,6 +320,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * @see org.eclipse.remote.core.IRemoteConnection#forwardLocalPort(java.lang .String, int,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public int forwardLocalPort(String fwdAddress, int fwdPort, IProgressMonitor monitor) throws RemoteConnectionException {
 		if (!isOpen()) {
 			throw new RemoteConnectionException(Messages.JSchConnection_connectionNotOpen);
@@ -340,6 +355,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#forwardRemotePort(int, java.lang.String, int)
 	 */
+	@Override
 	public void forwardRemotePort(int remotePort, String fwdAddress, int fwdPort) throws RemoteConnectionException {
 		if (!isOpen()) {
 			throw new RemoteConnectionException(Messages.JSchConnection_connectionNotOpen);
@@ -357,6 +373,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * @see org.eclipse.remote.core.IRemoteConnection#forwardRemotePort(java. lang.String, int,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public int forwardRemotePort(String fwdAddress, int fwdPort, IProgressMonitor monitor) throws RemoteConnectionException {
 		if (!isOpen()) {
 			throw new RemoteConnectionException(Messages.JSchConnection_connectionNotOpen);
@@ -390,6 +407,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#getAddress()
 	 */
+	@Override
 	public String getAddress() {
 		return fAttributes.getAttribute(JSchConnectionAttributes.ADDRESS_ATTR, EMPTY_STRING);
 	}
@@ -399,6 +417,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#getAttributes()
 	 */
+	@Override
 	public Map<String, String> getAttributes() {
 		return Collections.unmodifiableMap(fAttributes.getAttributes());
 	}
@@ -408,6 +427,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteServices#getCommandShell(int)
 	 */
+	@Override
 	public IRemoteProcess getCommandShell(int flags) throws IOException {
 		throw new IOException("Not currently implemented"); //$NON-NLS-1$
 	}
@@ -433,6 +453,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#getEnv()
 	 */
+	@Override
 	public Map<String, String> getEnv() {
 		return Collections.unmodifiableMap(fEnv);
 	}
@@ -442,6 +463,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#getEnv(java.lang.String)
 	 */
+	@Override
 	public String getEnv(String name) {
 		return getEnv().get(name);
 	}
@@ -467,6 +489,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteServices#getFileManager()
 	 */
+	@Override
 	public IRemoteFileManager getFileManager() {
 		return new JSchFileManager(this);
 	}
@@ -488,6 +511,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#getName()
 	 */
+	@Override
 	public String getName() {
 		return fAttributes.getName();
 	}
@@ -505,6 +529,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#getPort()
 	 */
+	@Override
 	public int getPort() {
 		return fAttributes.getInt(JSchConnectionAttributes.PORT_ATTR, DEFAULT_PORT);
 	}
@@ -514,6 +539,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteServices#getProcessBuilder(java.util.List)
 	 */
+	@Override
 	public IRemoteProcessBuilder getProcessBuilder(List<String> command) {
 		return new JSchProcessBuilder(this, command);
 	}
@@ -523,6 +549,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteServices#getProcessBuilder(java.lang.String[])
 	 */
+	@Override
 	public IRemoteProcessBuilder getProcessBuilder(String... command) {
 		return new JSchProcessBuilder(this, command);
 	}
@@ -532,6 +559,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#getProperty(java.lang.String )
 	 */
+	@Override
 	public String getProperty(String key) {
 		return fProperties.get(key);
 	}
@@ -541,6 +569,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#getRemoteServices()
 	 */
+	@Override
 	public IRemoteServices getRemoteServices() {
 		return fRemoteServices;
 	}
@@ -575,6 +604,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#getUsername()
 	 */
+	@Override
 	public String getUsername() {
 		return fAttributes.getAttribute(JSchConnectionAttributes.USERNAME_ATTR, EMPTY_STRING);
 	}
@@ -584,6 +614,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#getWorkingCopy()
 	 */
+	@Override
 	public IRemoteConnectionWorkingCopy getWorkingCopy() {
 		return new JSchConnectionWorkingCopy(this);
 	}
@@ -593,6 +624,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#getWorkingDirectory()
 	 */
+	@Override
 	public String getWorkingDirectory() {
 		if (!isOpen()) {
 			return "/"; //$NON-NLS-1$
@@ -608,6 +640,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#isOpen()
 	 */
+	@Override
 	public boolean isOpen() {
 		boolean isOpen = fIsOpen & fSessions.size() > 0;
 		if (isOpen) {
@@ -744,7 +777,7 @@ public class JSchConnection implements IRemoteConnection {
 			if (isPasswordAuth()) {
 				session.setPassword(getPassword());
 			}
-			fJSchService.connect(session, 0, progress.newChild(10));
+			fJSchService.connect(session, getTimeout() * 1000, progress.newChild(10));
 			if (!progress.isCanceled()) {
 				fSessions.add(session);
 				return session;
@@ -760,6 +793,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#open()
 	 */
+	@Override
 	public void open(IProgressMonitor monitor) throws RemoteConnectionException {
 		open(null, monitor);
 	}
@@ -770,21 +804,23 @@ public class JSchConnection implements IRemoteConnection {
 	 * @see org.eclipse.remote.core.IRemoteConnection#open(org.eclipse.remote.core.IUserAuthenticator,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void open(final IUserAuthenticator authenticator, IProgressMonitor monitor) throws RemoteConnectionException {
 		if (!isOpen()) {
 			checkIsConfigured();
 			SubMonitor subMon = SubMonitor.convert(monitor, 70);
 			Session session = newSession(authenticator, subMon.newChild(10));
-			if (!subMon.isCanceled()) {
-				if (!checkConfiguration(session, subMon.newChild(20))) {
-					newSession(authenticator, subMon.newChild(10));
-					loadEnv(subMon.newChild(10));
-				}
-				fWorkingDir = getCwd(subMon.newChild(10));
-				loadProperties(subMon.newChild(10));
-				fIsOpen = true;
-				fireConnectionChangeEvent(IRemoteConnectionChangeEvent.CONNECTION_OPENED);
+			if (subMon.isCanceled()) {
+				throw new RemoteConnectionException(Messages.JSchConnection_Connection_was_cancelled);
 			}
+			if (!checkConfiguration(session, subMon.newChild(20))) {
+				newSession(authenticator, subMon.newChild(10));
+				loadEnv(subMon.newChild(10));
+			}
+			fWorkingDir = getCwd(subMon.newChild(10));
+			loadProperties(subMon.newChild(10));
+			fIsOpen = true;
+			fireConnectionChangeEvent(IRemoteConnectionChangeEvent.CONNECTION_OPENED);
 		}
 	}
 
@@ -804,6 +840,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * @see org.eclipse.remote.core.IRemoteConnection#removeConnectionChangeListener
 	 * (org.eclipse.remote.core.IRemoteConnectionChangeListener)
 	 */
+	@Override
 	public void removeConnectionChangeListener(IRemoteConnectionChangeListener listener) {
 		fListeners.remove(listener);
 	}
@@ -813,6 +850,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#removeLocalPortForwarding(int)
 	 */
+	@Override
 	public void removeLocalPortForwarding(int port) throws RemoteConnectionException {
 		if (!isOpen()) {
 			throw new RemoteConnectionException(Messages.JSchConnection_connectionNotOpen);
@@ -829,6 +867,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#removeRemotePortForwarding(int)
 	 */
+	@Override
 	public void removeRemotePortForwarding(int port) throws RemoteConnectionException {
 		if (!isOpen()) {
 			throw new RemoteConnectionException(Messages.JSchConnection_connectionNotOpen);
@@ -845,6 +884,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#setWorkingDirectory(java.lang.String)
 	 */
+	@Override
 	public void setWorkingDirectory(String path) {
 		if (new Path(path).isAbsolute()) {
 			fWorkingDir = path;
@@ -856,6 +896,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteConnection#supportsTCPPortForwarding()
 	 */
+	@Override
 	public boolean supportsTCPPortForwarding() {
 		return true;
 	}

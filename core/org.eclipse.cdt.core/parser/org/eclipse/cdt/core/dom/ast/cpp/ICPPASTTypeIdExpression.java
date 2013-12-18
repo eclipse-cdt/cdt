@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTTypeIdExpression extends IASTTypeIdExpression, ICPPASTExpression {
-
 	public static final int op_typeid = IASTTypeIdExpression.op_typeid;
 
 	/**
@@ -26,8 +25,7 @@ public interface ICPPASTTypeIdExpression extends IASTTypeIdExpression, ICPPASTEx
 	 */
 	@Deprecated
 	public static final int op_last = IASTTypeIdExpression.op_last;
-	
-	
+
 	/**
 	 * @since 5.1
 	 */

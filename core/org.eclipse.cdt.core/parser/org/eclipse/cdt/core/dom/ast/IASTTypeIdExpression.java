@@ -153,6 +153,12 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	public static final int op_sizeofParameterPack = 22;
 	
 	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.6
+	 */
+	public static final int op_is_final= 23;
+
+	/**
 	 * @deprecated constants should be declared here, to avoid using the same constant in different
 	 * interfaces.
 	 */

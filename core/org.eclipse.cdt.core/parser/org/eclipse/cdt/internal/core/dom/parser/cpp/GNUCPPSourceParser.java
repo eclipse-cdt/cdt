@@ -1342,6 +1342,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IGCCToken.tTT_is_class:
         case IGCCToken.tTT_is_empty:
         case IGCCToken.tTT_is_enum:
+        case IGCCToken.tTT_is_final:
         case IGCCToken.tTT_is_literal_type:
         case IGCCToken.tTT_is_pod:
         case IGCCToken.tTT_is_polymorphic:
@@ -1422,6 +1423,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	return IASTTypeIdExpression.op_is_empty;
         case IGCCToken.tTT_is_enum:
         	return IASTTypeIdExpression.op_is_enum;
+        case IGCCToken.tTT_is_final:
+        	return IASTTypeIdExpression.op_is_final;
         case IGCCToken.tTT_is_literal_type:
         	return IASTTypeIdExpression.op_is_literal_type;
         case IGCCToken.tTT_is_pod:

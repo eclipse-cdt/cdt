@@ -82,5 +82,6 @@ public class GCCKeywords {
 	
 	/** @since 5.6 */
 	public static final char[]
+		cp__is_final= 					"__is_final".toCharArray(),
 		cp__underlying_type=			"__underlying_type".toCharArray();
 }

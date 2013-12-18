@@ -106,7 +106,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 		if (version >= VERSION_4_7) {
 			addKeyword(GCCKeywords.cp__float128, IGCCToken.t__float128);
 			addKeyword(GCCKeywords.cp__int128, IGCCToken.t__int128);
-			
+			addKeyword(GCCKeywords.cp__is_final, IGCCToken.tTT_is_final);
 			addKeyword(GCCKeywords.cp__underlying_type, IGCCToken.tTT_underlying_type);
 		}
 	}

@@ -23,6 +23,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_abstract;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_class;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_empty;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_enum;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_final;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_literal_type;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_pod;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_polymorphic;
@@ -326,6 +327,8 @@ public class Value implements IValue {
 				break;  // TODO(sprigogin): Implement
 			case op_is_enum:
 				return type instanceof IEnumeration ? 1 : 0;
+			case op_is_final:
+				return type instanceof ICPPClassType && ((ICPPClassType) type).isFinal() ? 1 : 0;
 			case op_is_literal_type:
 				break;  // TODO(sprigogin): Implement
 			case op_is_pod:

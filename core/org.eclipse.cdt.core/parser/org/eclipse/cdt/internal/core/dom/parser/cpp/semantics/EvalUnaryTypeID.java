@@ -25,6 +25,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_abstract;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_class;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_empty;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_enum;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_final;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_literal_type;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_pod;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_polymorphic;
@@ -109,6 +110,7 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 		case op_is_class:
 		case op_is_empty:
 		case op_is_enum:
+		case op_is_final:
 		case op_is_literal_type:
 		case op_is_pod:
 		case op_is_polymorphic:
@@ -150,6 +152,7 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 		case op_is_class:
 		case op_is_empty:
 		case op_is_enum:
+		case op_is_final:
 		case op_is_literal_type:
 		case op_is_pod:
 		case op_is_polymorphic:

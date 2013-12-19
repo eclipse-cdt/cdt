@@ -113,6 +113,42 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
             class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
         <placement after="org.eclipse.rse.remotecdt.dsf.debug.RemoteCDSFDebuggerTab"/>        
+      </tab>
+      <tab
+            class="org.eclipse.debug.ui.EnvironmentTab"
+            group="org.eclipse.cdt.launch.remoteApplicationRunLaunchTabGroup"
+            id="org.eclipse.rse.remotecdt.launch.EnvironmentTab"
+            name="Environment">
+         <associatedDelegate
+               delegate="org.eclipse.rse.remotecdt.launch">
+         </associatedDelegate>
+         <placement
+               after="org.eclipse.cdt.cdi.launch.argumentsTab">
+         </placement>
+      </tab>
+      <tab
+            class="org.eclipse.debug.ui.EnvironmentTab"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+            id="org.eclipse.rse.remotecdt.debug.EnvironmentTab"
+            name="Environment">
+         <associatedDelegate
+               delegate="org.eclipse.rse.remotecdt.launch">
+         </associatedDelegate>
+         <placement
+               after="org.eclipse.debug.ui.sourceLookupTab">
+         </placement>
+      </tab>
+      <tab
+            class="org.eclipse.debug.ui.EnvironmentTab"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+            id="org.eclipse.rse.remotecdt.debug.dsf.EnvironmentTab"
+            name="Environment">
+         <associatedDelegate
+               delegate="org.eclipse.rse.remotecdt.dsf.debug">
+         </associatedDelegate>
+         <placement
+               after="org.eclipse.debug.ui.sourceLookupTab">
+         </placement>
       </tab>         
       <tab
             id="org.eclipse.rse.remotecdt.launch.CommonTab"
@@ -120,7 +156,7 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
             name="Common"
             class="org.eclipse.debug.ui.CommonTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
-        <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>        
+        <placement after="org.eclipse.debug.ui.environmentTab"/>        
       </tab>         
       <tab
             id="org.eclipse.rse.remotecdt.debug.CommonTab"
@@ -128,7 +164,7 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
             name="Common"
             class="org.eclipse.debug.ui.CommonTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
-        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>                
+        <placement after="org.eclipse.debug.ui.environmentTab"/>                
       </tab>         
       <tab
             id="org.eclipse.rse.remotecdt.debug.dsf.CommonTab"
@@ -136,8 +172,8 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
             name="Common"
             class="org.eclipse.debug.ui.CommonTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
-        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>                
-      </tab>         
+        <placement after="org.eclipse.debug.ui.environmentTab"/>                
+      </tab>
       
    </extension>
    

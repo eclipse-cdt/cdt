@@ -77,6 +77,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		IBinaryObject exeFile = null;
 		IPath exePath = CDebugUtils.verifyProgramPath(config);
 		ICProject project = CDebugUtils.verifyCProject(config);
+		String[] env = getEnvironment(config);
 		if (exePath != null) {
 			exeFile = verifyBinary(project, exePath);
 			String arguments = getProgramArguments(config);
@@ -139,7 +140,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 						IHostShell remoteShell = null;
 						try {
 							remoteShell = RSEHelper.execCmdInRemoteShell(config, prelaunchCmd,
-									gdbserver_command, command_arguments,
+									gdbserver_command, command_arguments, env,
 									new SubProgressMonitor(monitor, 5));
 						} catch (Exception e1) {
 							RSEHelper.abort(e1.getMessage(), e1,
@@ -301,7 +302,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 					// Use a remote shell to launch the binary.
 					monitor.setTaskName(Messages.RemoteRunLaunchDelegate_12);
 					remoteProcess = RSEHelper.remoteShellExec(config, prelaunchCmd,
-							remoteExePath, arguments, new SubProgressMonitor(
+							remoteExePath, arguments, env, new SubProgressMonitor(
 									monitor, 20));
 					DebugPlugin.newProcess(launch, remoteProcess,
 							renderProcessLabel(exePath.toOSString()));

@@ -67,6 +67,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 		}
 
 		IPath exePath = checkBinaryDetails(config);
+		String[] env = DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);
 		Process remoteShellProcess = null;
 		if (exePath != null) {
 			// 1.Download binary if needed
@@ -102,7 +103,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 			IHostShell remoteShell = null;
 			try {
 				remoteShell = RSEHelper.execCmdInRemoteShell(config, prelaunchCmd,
-						gdbserverCommand, commandArguments,
+						gdbserverCommand, commandArguments, env,
 						new SubProgressMonitor(monitor, 5));
 			} catch (Exception e1) {
 				RSEHelper.abort(e1.getMessage(), e1,

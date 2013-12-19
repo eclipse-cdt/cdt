@@ -234,8 +234,16 @@ public class RSEHelper {
 		return connection;
 	}
 
+
 	public static Process remoteShellExec(ILaunchConfiguration config,
 			String prelaunchCmd, String remoteCommandPath, String arguments,
+			IProgressMonitor monitor) throws CoreException {
+		return remoteShellExec(config, prelaunchCmd, remoteCommandPath, arguments,
+				null, monitor);
+	}
+
+	public static Process remoteShellExec(ILaunchConfiguration config,
+			String prelaunchCmd, String remoteCommandPath, String arguments, String[] env,
 			IProgressMonitor monitor) throws CoreException {
 		// The exit command is called to force the remote shell to close after
 		// our command
@@ -262,7 +270,7 @@ public class RSEHelper {
 
 			// This is necessary because runCommand does not actually run the
 			// command right now.
-			String env[] = new String[0];
+			if (env == null) env = new String[0];
 			try {
 				IHostShell hostShell = shellService.launchShell(
 						"", env, new SubProgressMonitor(monitor, 3)); //$NON-NLS-1$
@@ -287,6 +295,13 @@ public class RSEHelper {
 	public static IHostShell execCmdInRemoteShell(ILaunchConfiguration config,
 			String prelaunchCmd, String remoteCommandPath, String arguments,
 			IProgressMonitor monitor) throws Exception {
+		return execCmdInRemoteShell(config, prelaunchCmd, remoteCommandPath, arguments,
+				null, monitor);
+	}
+
+	public static IHostShell execCmdInRemoteShell(ILaunchConfiguration config,
+			String prelaunchCmd, String remoteCommandPath, String arguments,
+			String[] env, IProgressMonitor monitor) throws Exception {
 		// The exit command is called to force the remote shell to close after
 		// our command
 		// is executed. This is to prevent a running process at the end of the
@@ -309,8 +324,8 @@ public class RSEHelper {
 
 		// This is necessary because runCommand does not actually run the
 		// command right now.
-		String env[] = new String[0];
 		IHostShell hostShell = null;
+		if (env == null) env = new String[0];
 		if (shellService != null) {
 			hostShell = shellService.launchShell(
 					"", env, new SubProgressMonitor(monitor, 3)); //$NON-NLS-1$

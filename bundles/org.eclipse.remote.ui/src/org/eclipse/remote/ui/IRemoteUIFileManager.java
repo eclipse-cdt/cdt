@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.remote.ui;
 
+import java.util.List;
+
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.swt.widgets.Shell;
 
@@ -60,7 +62,7 @@ public interface IRemoteUIFileManager {
 	public String browseFile(Shell shell, String message, String initialPath, int flags);
 
 	/**
-	 * Browse for a set of remote files. The return value is an array of paths
+	 * Browse for a set of remote files. The return value is a list of paths
 	 * of the files <i>on the remote system</i>.
 	 * 
 	 * Equivalent to {@link org.eclipse.swt.widgets.FileDialog}.
@@ -74,10 +76,10 @@ public interface IRemoteUIFileManager {
 	 * @param flags
 	 *            options settings for dialog (@see IRemoteUIConstants)
 	 *            valid values are NONE, SAVE, or OPEN (@see IRemoteUIConstants)
-	 * @return the path to the file relative to the remote system or null if the
+	 * @return list of paths to the files relative to the remote system or null if the
 	 *         browser was cancelled
 	 */
-	public String[] browseFiles(Shell shell, String message, String initialPath, int flags);
+	public List<String> browseFiles(Shell shell, String message, String initialPath, int flags);
 
 	/**
 	 * Get the last connection that was selected in the browser.

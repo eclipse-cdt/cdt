@@ -23,6 +23,8 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -48,8 +50,6 @@ import org.eclipse.remote.internal.ui.messages.Messages;
 import org.eclipse.remote.ui.IRemoteUIConnectionManager;
 import org.eclipse.remote.ui.RemoteUIServices;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -59,7 +59,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
@@ -90,8 +89,6 @@ public class RemoteResourceBrowserWidget extends Composite {
 	 */
 	public static final int SHOW_CONNECTIONS = 0x40;
 
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-
 	private static final int minimumWidth = 200;
 	private static final int heightHint = 300;
 
@@ -105,15 +102,17 @@ public class RemoteResourceBrowserWidget extends Composite {
 	private String dialogLabel;
 
 	private boolean showHidden;
-	private final List<String> remotePaths = new ArrayList<String>();
+	private final List<IFileStore> fResources = new ArrayList<IFileStore>();
 	private String fInitialPath;
 	private IPath fRootPath;
 	private IRemoteFileManager fFileMgr;
 	private IRemoteConnection fConnection;
 
-	private final ListenerList fModifyListeners = new ListenerList();
+	private final ListenerList fSelectionListeners = new ListenerList();
 
 	private int optionFlags = FILE_BROWSER | SHOW_HIDDEN_CHECKBOX | SHOW_NEW_FOLDER_BUTTON;
+
+	private IRunnableContext fRunnableContext;
 
 	public RemoteResourceBrowserWidget(Composite parent, int style, int flags) {
 		super(parent, style);
@@ -131,20 +130,26 @@ public class RemoteResourceBrowserWidget extends Composite {
 		setLayout(layout);
 
 		final Composite mainComp = new Composite(this, SWT.NONE);
-		mainComp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+		mainComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		layout = new GridLayout();
 		layout.numColumns = 4;
 		mainComp.setLayout(layout);
 
 		if ((optionFlags & SHOW_CONNECTIONS) != 0) {
 			fRemoteConnectionWidget = new RemoteConnectionWidget(mainComp, SWT.NONE, null,
-					RemoteConnectionWidget.FLAG_NO_LOCAL_SELECTION, null);
+					RemoteConnectionWidget.FLAG_NO_LOCAL_SELECTION);
 			fRemoteConnectionWidget.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 4, 1));
 			fRemoteConnectionWidget.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent event) {
 					connectionSelected();
 					updateEnablement();
+					notifySelectionChangedListeners(new SelectionChangedEvent(treeViewer, new ISelection() {
+						@Override
+						public boolean isEmpty() {
+							return true;
+						}
+					}));
 				}
 			});
 		}
@@ -154,25 +159,12 @@ public class RemoteResourceBrowserWidget extends Composite {
 		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 
 		remotePathText = new Text(mainComp, SWT.BORDER | SWT.SINGLE);
-		remotePathText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				if (remotePaths.size() == 0) {
-					remotePaths.add(remotePathText.getText());
-				} else {
-					remotePaths.set(0, remotePathText.getText());
-				}
-				notifyListeners(e);
-				updateEnablement();
-			}
-		});
 		remotePathText.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				remotePathText.setSelection(remotePathText.getText().length());
 				setRoot(remotePathText.getText());
 			}
-
 		});
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.minimumWidth = minimumWidth;
@@ -261,7 +253,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 		// see bug 158380
 		gd.heightHint = Math.max(parent.getSize().y, heightHint);
 		treeViewer.getTree().setLayoutData(gd);
-		// treeViewer.setUseHashlookup(true);
+		treeViewer.setUseHashlookup(true);
 		treeViewer.setComparer(new DeferredFileStoreComparer());
 		treeViewer.setComparator(new RemoteResourceComparator());
 		treeViewer.setContentProvider(new RemoteContentProvider());
@@ -272,17 +264,18 @@ public class RemoteResourceBrowserWidget extends Composite {
 				ISelection selection = event.getSelection();
 				if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
 					IStructuredSelection ss = (IStructuredSelection) selection;
-					remotePaths.clear();
+					fResources.clear();
 					for (Object currentSelection : ss.toArray()) {
 						if (currentSelection instanceof DeferredFileStore) {
-							String path = ((DeferredFileStore) currentSelection).getFileStore().toURI().getPath();
-							remotePaths.add(path);
+							IFileStore store = ((DeferredFileStore) currentSelection).getFileStore();
+							fResources.add(store);
 						}
 					}
-					if (remotePaths.size() > 0) {
-						remotePathText.setText(remotePaths.get(0));
+					if (fResources.size() > 0) {
+						remotePathText.setText(fResources.get(0).toURI().getPath());
 					}
 					updateEnablement();
+					notifySelectionChangedListeners(event);
 				}
 			}
 		});
@@ -326,13 +319,13 @@ public class RemoteResourceBrowserWidget extends Composite {
 	}
 
 	/**
-	 * Add a listener that will be notified when the directory path is modified.
+	 * Add a listener that will be notified when the selection is changed.
 	 * 
 	 * @param listener
 	 *            listener to add
 	 */
-	public void addModifyListener(ModifyListener listener) {
-		fModifyListeners.add(listener);
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		fSelectionListeners.add(listener);
 	}
 
 	/**
@@ -348,7 +341,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 		}
 		IRemoteUIConnectionManager uiMgr = RemoteUIServices.getRemoteUIServices(conn.getRemoteServices()).getUIConnectionManager();
 		if (uiMgr != null) {
-			uiMgr.openConnectionWithProgress(getShell(), null, conn);
+			uiMgr.openConnectionWithProgress(getShell(), getRunnableContext(), conn);
 		}
 		if (!conn.isOpen()) {
 			return false;
@@ -372,11 +365,6 @@ public class RemoteResourceBrowserWidget extends Composite {
 		}
 
 		return false;
-	}
-
-	public void setConnection(IRemoteConnection connection) {
-		changeInput(connection);
-		updateEnablement();
 	}
 
 	/**
@@ -403,7 +391,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 		final String[] name = new String[1];
 		name[0] = null;
 		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+			IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				@Override
 				public void run(IProgressMonitor monitor) {
 					SubMonitor progress = SubMonitor.convert(monitor, 10);
@@ -425,13 +413,12 @@ public class RemoteResourceBrowserWidget extends Composite {
 								Messages.RemoteResourceBrowserWidget_Unable_to_create_new_folder, e.getStatus());
 					}
 				}
-			});
+			};
+			getRunnableContext().run(true, true, runnable);
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// Ignore, return null
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// Ignore, return null
 		}
 		return name[0];
 	}
@@ -468,29 +455,40 @@ public class RemoteResourceBrowserWidget extends Composite {
 	}
 
 	/**
-	 * Get the paths that were selected.
+	 * Get the resources that were selected.
 	 * 
-	 * @return selected paths
+	 * @return selected resources
 	 */
-	public List<String> getPaths() {
-		return remotePaths;
+	public List<IFileStore> getResources() {
+		return fResources;
 	}
 
-	private void notifyListeners(ModifyEvent e) {
-		for (Object listener : fModifyListeners.getListeners()) {
-			((ModifyListener) listener).modifyText(e);
+	public IRunnableContext getRunnableContext() {
+		if (fRunnableContext == null) {
+			return new ProgressMonitorDialog(getShell());
+		}
+		return fRunnableContext;
+	}
+
+	private void notifySelectionChangedListeners(SelectionChangedEvent e) {
+		for (Object listener : fSelectionListeners.getListeners()) {
+			((ISelectionChangedListener) listener).selectionChanged(e);
 		}
 	}
 
 	/**
-	 * Remove a listener that will be notified when the directory path is
-	 * modified.
+	 * Remove a listener that will be notified when the selection is changed
 	 * 
 	 * @param listener
 	 *            listener to remove
 	 */
-	public void removeModifyListener(ModifyListener listener) {
-		fModifyListeners.remove(listener);
+	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+		fSelectionListeners.remove(listener);
+	}
+
+	public void setConnection(IRemoteConnection connection) {
+		changeInput(connection);
+		updateEnablement();
 	}
 
 	/**
@@ -518,8 +516,14 @@ public class RemoteResourceBrowserWidget extends Composite {
 			treeViewer.setInput(new DeferredFileStore(root, !showHidden));
 			remotePathText.setText(path);
 			remotePathText.setSelection(remotePathText.getText().length());
+			fResources.clear();
+			fResources.add(root);
 			fRootPath = new Path(path);
 		}
+	}
+
+	public void setRunnableContext(IRunnableContext context) {
+		fRunnableContext = context;
 	}
 
 	/**
@@ -540,16 +544,20 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 	/**
 	 * Set the type of browser. Can be either a file browser (allows selection
-	 * of files) or a directory browser (allows selection of directories), or
-	 * both.
+	 * of files only) or a directory browser (allows selection of directories only), or
+	 * both files and directories.
 	 */
 	public void setType() {
-		if ((optionFlags & FILE_BROWSER) == FILE_BROWSER) {
+		if ((optionFlags & DIRECTORY_BROWSER) == 0) {
 			dialogLabel = Messages.RemoteResourceBrowser_fileLabel;
 			setTitle(Messages.RemoteResourceBrowser_fileTitle);
-		} else {
+		} else if ((optionFlags & FILE_BROWSER) == 0) {
 			dialogLabel = Messages.RemoteResourceBrowser_directoryLabel;
 			setTitle(Messages.RemoteResourceBrowser_directoryTitle);
+		} else {
+			dialogLabel = Messages.RemoteResourceBrowser_resourceLabel;
+			setTitle(Messages.RemoteResourceBrowser_resourceTitle);
+
 		}
 	}
 
@@ -558,16 +566,17 @@ public class RemoteResourceBrowserWidget extends Composite {
 		boolean newFolderEnabled = false;
 
 		if (fConnection != null && fConnection.isOpen()) {
-			if (remotePaths.size() == 1) {
-				String pathText = remotePaths.get(0);
-				if (!pathText.equals(EMPTY_STRING)) {
-					if (fConnection.getFileManager().getResource(pathText).fetchInfo().isDirectory()) {
-						newFolderEnabled = true;
-					}
-					IPath path = new Path(pathText);
-					if (!path.isRoot()) {
-						upEnabled = true;
-					}
+			if (fResources.size() == 1) {
+				IFileStore store = fResources.get(0);
+				/*
+				 * Assume that we have already called fetchInfo() on the file store, so this should
+				 * effectively be a noop.
+				 */
+				if (store.fetchInfo().isDirectory()) {
+					newFolderEnabled = true;
+				}
+				if (store.getParent() != null) {
+					upEnabled = true;
 				}
 			}
 		}

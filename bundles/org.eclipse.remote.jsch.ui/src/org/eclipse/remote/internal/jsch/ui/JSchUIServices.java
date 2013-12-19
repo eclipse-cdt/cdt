@@ -41,6 +41,7 @@ public class JSchUIServices implements IRemoteUIServices {
 	 * 
 	 * @see org.eclipse.ptp.remote.ui.IRemoteUIServicesDescriptor#getId()
 	 */
+	@Override
 	public String getId() {
 		return fServices.getId();
 	}
@@ -50,6 +51,7 @@ public class JSchUIServices implements IRemoteUIServices {
 	 * 
 	 * @see org.eclipse.ptp.remote.ui.IRemoteUIServicesDescriptor#getName()
 	 */
+	@Override
 	public String getName() {
 		return fServices.getName();
 	}
@@ -59,6 +61,7 @@ public class JSchUIServices implements IRemoteUIServices {
 	 * 
 	 * @see org.eclipse.ptp.remote.ui.IRemoteUIServicesDescriptor#getUIConnectionManager()
 	 */
+	@Override
 	public IRemoteUIConnectionManager getUIConnectionManager() {
 		return new JSchUIConnectionManager(fServices);
 	}
@@ -68,7 +71,8 @@ public class JSchUIServices implements IRemoteUIServices {
 	 * 
 	 * @see org.eclipse.ptp.remote.ui.IRemoteUIServicesDescriptor#getUIFileManager()
 	 */
+	@Override
 	public IRemoteUIFileManager getUIFileManager() {
-		return new JSchUIFileManager(fServices);
+		return new JSchUIFileManager();
 	}
 }

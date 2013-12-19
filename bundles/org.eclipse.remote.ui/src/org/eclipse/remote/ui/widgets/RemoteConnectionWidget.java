@@ -92,12 +92,14 @@ public class RemoteConnectionWidget extends Composite {
 			listenerEnabled = enabled;
 		}
 
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 			if (isEnabled()) {
 				widgetSelected(e);
 			}
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			if (isEnabled()) {
 				Object source = e.getSource();
@@ -161,9 +163,24 @@ public class RemoteConnectionWidget extends Composite {
 	 *            if a title is supplied then the widget will be placed in a group. Can be null.
 	 * @param flags
 	 *            a combination of flags that modify the behavior of the widget.
+	 */
+	public RemoteConnectionWidget(Composite parent, int style, String title, int flags) {
+		this(parent, style, title, flags, null);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param parent
+	 *            parent composite
+	 * @param style
+	 *            style or SWT.NONE
+	 * @param title
+	 *            if a title is supplied then the widget will be placed in a group. Can be null.
+	 * @param flags
+	 *            a combination of flags that modify the behavior of the widget.
 	 * @param context
 	 *            runnable context, or null
-	 * @since 7.0
 	 */
 	public RemoteConnectionWidget(Composite parent, int style, String title, int flags, IRunnableContext context) {
 		super(parent, style);

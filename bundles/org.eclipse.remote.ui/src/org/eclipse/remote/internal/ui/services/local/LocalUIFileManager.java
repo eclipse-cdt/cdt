@@ -11,6 +11,8 @@
 package org.eclipse.remote.internal.ui.services.local;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.ui.IRemoteUIFileManager;
@@ -29,6 +31,7 @@ public class LocalUIFileManager implements IRemoteUIFileManager {
 	 * org.eclipse.remote.core.IRemoteFileManager#browseDirectory(org.eclipse
 	 * .swt.widgets.Shell, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public String browseDirectory(Shell shell, String message, String filterPath, int flags) {
 		DirectoryDialog dialog = new DirectoryDialog(shell);
 		dialog.setText(message);
@@ -54,6 +57,7 @@ public class LocalUIFileManager implements IRemoteUIFileManager {
 	 * org.eclipse.remote.core.IRemoteFileManager#browseFile(org.eclipse
 	 * .swt.widgets.Shell, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public String browseFile(Shell shell, String message, String filterPath, int flags) {
 		FileDialog dialog = new FileDialog(shell, SWT.SINGLE);
 		dialog.setText(message);
@@ -79,7 +83,8 @@ public class LocalUIFileManager implements IRemoteUIFileManager {
 	 * org.eclipse.remote.core.IRemoteFileManager#browseFile(org.eclipse
 	 * .swt.widgets.Shell, java.lang.String, java.lang.String)
 	 */
-	public String[] browseFiles(Shell shell, String message, String filterPath, int flags) {
+	@Override
+	public List<String> browseFiles(Shell shell, String message, String filterPath, int flags) {
 		FileDialog dialog = new FileDialog(shell, SWT.MULTI);
 		dialog.setText(message);
 		if (filterPath != null) {
@@ -94,7 +99,7 @@ public class LocalUIFileManager implements IRemoteUIFileManager {
 			return null;
 		}
 
-		return dialog.getFileNames();
+		return Arrays.asList(dialog.getFileNames());
 	}
 
 	/*
@@ -102,6 +107,7 @@ public class LocalUIFileManager implements IRemoteUIFileManager {
 	 * 
 	 * @see org.eclipse.remote.ui.IRemoteUIFileManager#getConnection()
 	 */
+	@Override
 	public IRemoteConnection getConnection() {
 		return connection;
 	}
@@ -113,6 +119,7 @@ public class LocalUIFileManager implements IRemoteUIFileManager {
 	 * org.eclipse.remote.ui.IRemoteUIFileManager#setConnection(org.eclipse
 	 * .remote.core.IRemoteConnection)
 	 */
+	@Override
 	public void setConnection(IRemoteConnection connection) {
 		this.connection = connection;
 	}
@@ -123,6 +130,7 @@ public class LocalUIFileManager implements IRemoteUIFileManager {
 	 * @see
 	 * org.eclipse.remote.ui.IRemoteUIFileManager#showConnections(boolean)
 	 */
+	@Override
 	public void showConnections(boolean enable) {
 		// Not implemented
 	}

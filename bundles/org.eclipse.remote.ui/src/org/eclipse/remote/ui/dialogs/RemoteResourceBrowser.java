@@ -10,17 +10,25 @@
  *******************************************************************************/
 package org.eclipse.remote.ui.dialogs;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.internal.ui.messages.Messages;
 import org.eclipse.remote.ui.widgets.RemoteResourceBrowserWidget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -34,7 +42,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author greg
  * 
  */
-public class RemoteResourceBrowser extends Dialog {
+public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	public final static String EMPTY_STRING = ""; //$NON-NLS-1$
 	public final static int FILE_BROWSER = 0x01;
 	public final static int DIRECTORY_BROWSER = 0x02;
@@ -44,7 +52,8 @@ public class RemoteResourceBrowser extends Dialog {
 	private final static int widthHint = 400;
 
 	private Button okButton;
-	private RemoteResourceBrowserWidget fWidget;
+	private RemoteResourceBrowserWidget fResourceBrowserWidget;
+	private ProgressMonitorPart fProgressMonitor;
 
 	private int browserType;
 	private String dialogTitle;
@@ -54,7 +63,7 @@ public class RemoteResourceBrowser extends Dialog {
 	private final IRemoteConnection fConnection;
 	private int optionFlags = SINGLE;
 
-	public RemoteResourceBrowser(IRemoteServices services, IRemoteConnection conn, Shell parent, int flags) {
+	public RemoteResourceBrowser(IRemoteConnection conn, Shell parent, int flags) {
 		super(parent);
 		setShellStyle(SWT.RESIZE | getShellStyle());
 		fConnection = conn;
@@ -64,6 +73,10 @@ public class RemoteResourceBrowser extends Dialog {
 		}
 		setTitle(Messages.RemoteResourceBrowser_resourceTitle);
 		setType(FILE_BROWSER);
+	}
+
+	public RemoteResourceBrowser(Shell parent, int flags) {
+		this(null, parent, flags);
 	}
 
 	/*
@@ -94,10 +107,10 @@ public class RemoteResourceBrowser extends Dialog {
 		Control contents = super.createContents(parent);
 		setTitle(dialogTitle);
 		if (!showConnections) {
-			fWidget.setConnection(fConnection);
+			fResourceBrowserWidget.setConnection(fConnection);
 		}
 		if (fInitialPath != null) {
-			fWidget.setInitialPath(fInitialPath);
+			fResourceBrowserWidget.setInitialPath(fInitialPath);
 		}
 		updateDialog();
 		return contents;
@@ -113,7 +126,7 @@ public class RemoteResourceBrowser extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite main = (Composite) super.createDialogArea(parent);
-		GridData gd = new GridData(SWT.FILL, SWT.TOP, true, true);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.widthHint = widthHint;
 		main.setLayoutData(gd);
 		main.setLayout(new GridLayout(1, true));
@@ -130,14 +143,14 @@ public class RemoteResourceBrowser extends Dialog {
 			style = SWT.MULTI;
 		}
 
-		fWidget = new RemoteResourceBrowserWidget(main, style, options);
-		fWidget.addModifyListener(new ModifyListener() {
+		fResourceBrowserWidget = new RemoteResourceBrowserWidget(main, style, options);
+		fResourceBrowserWidget.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
-			public void modifyText(ModifyEvent e) {
+			public void selectionChanged(SelectionChangedEvent event) {
 				updateDialog();
 			}
 		});
-		fWidget.addFocusListener(new FocusListener() {
+		fResourceBrowserWidget.addFocusListener(new FocusListener() {
 			@Override
 			public void focusGained(FocusEvent e) {
 				getShell().setDefaultButton(null); // allow text widget to receive SWT.DefaultSelection event
@@ -148,7 +161,21 @@ public class RemoteResourceBrowser extends Dialog {
 				getShell().setDefaultButton(okButton);
 			}
 		});
-		fWidget.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
+		fResourceBrowserWidget.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		Composite monitorComposite = new Composite(main, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.numColumns = 2;
+		monitorComposite.setLayout(layout);
+		monitorComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fProgressMonitor = new ProgressMonitorPart(monitorComposite, new GridLayout(), true);
+		GridData gridData = new GridData(SWT.FILL, SWT.TOP, true, true);
+		fProgressMonitor.setLayoutData(gridData);
+		monitorComposite.setVisible(false);
+
+		fResourceBrowserWidget.setRunnableContext(this);
 
 		return main;
 	}
@@ -159,34 +186,52 @@ public class RemoteResourceBrowser extends Dialog {
 	 * @return selected connection
 	 */
 	public IRemoteConnection getConnection() {
-		if (fWidget != null) {
-			return fWidget.getConnection();
+		if (fResourceBrowserWidget != null) {
+			return fResourceBrowserWidget.getConnection();
 		}
 		return null;
 	}
 
 	/**
-	 * Get the path that was selected.
+	 * Get the resources that was selected.
 	 * 
-	 * @return selected path
+	 * @return selected resource or null if no resource is selected
 	 */
-	public String getPath() {
-		if (fWidget != null && fWidget.getPaths().size() > 0) {
-			return fWidget.getPaths().get(0);
+	public IFileStore getResource() {
+		if (fResourceBrowserWidget != null && fResourceBrowserWidget.getResources().size() > 0) {
+			return fResourceBrowserWidget.getResources().get(0);
 		}
 		return null;
 	}
 
 	/**
-	 * Get the paths that were selected.
+	 * Get the resources that were selected.
 	 * 
-	 * @return selected paths
+	 * @return selected resources
 	 */
-	public String[] getPaths() {
-		if (fWidget != null) {
-			return fWidget.getPaths().toArray(new String[0]);
+	public List<IFileStore> getResources() {
+		if (fResourceBrowserWidget != null) {
+			return fResourceBrowserWidget.getResources();
 		}
-		return null;
+		return new ArrayList<IFileStore>();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
+	 */
+	@Override
+	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException,
+			InterruptedException {
+		fProgressMonitor.attachToCancelComponent(null);
+		fProgressMonitor.getParent().setVisible(true);
+		try {
+			ModalContext.run(runnable, fork, fProgressMonitor, getShell().getDisplay());
+		} finally {
+			fProgressMonitor.getParent().setVisible(false);
+			fProgressMonitor.removeFromCancelComponent(null);
+		}
 	}
 
 	/**
@@ -241,8 +286,7 @@ public class RemoteResourceBrowser extends Dialog {
 
 	private void updateDialog() {
 		if (okButton != null) {
-			String path = getPath();
-			okButton.setEnabled(getConnection() != null && path != null && !path.equals(EMPTY_STRING));
+			okButton.setEnabled(getConnection() != null && getResource() != null);
 		}
 	}
 }

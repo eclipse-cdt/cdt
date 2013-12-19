@@ -10,21 +10,19 @@
  *******************************************************************************/
 package org.eclipse.remote.internal.jsch.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.jface.window.Window;
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.ui.IRemoteUIFileManager;
 import org.eclipse.remote.ui.dialogs.RemoteResourceBrowser;
 import org.eclipse.swt.widgets.Shell;
 
 public class JSchUIFileManager implements IRemoteUIFileManager {
-	private IRemoteServices services = null;
 	private IRemoteConnection connection = null;
 	private boolean showConnections = false;
-
-	public JSchUIFileManager(IRemoteServices services) {
-		this.services = services;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -33,8 +31,9 @@ public class JSchUIFileManager implements IRemoteUIFileManager {
 	 * org.eclipse.ptp.remote.core.IRemoteFileManager#browseDirectory(org.eclipse
 	 * .swt.widgets.Shell, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public String browseDirectory(Shell shell, String message, String filterPath, int flags) {
-		RemoteResourceBrowser browser = new RemoteResourceBrowser(services, connection, shell, RemoteResourceBrowser.SINGLE);
+		RemoteResourceBrowser browser = new RemoteResourceBrowser(connection, shell, RemoteResourceBrowser.SINGLE);
 		browser.setType(RemoteResourceBrowser.DIRECTORY_BROWSER);
 		browser.setInitialPath(filterPath);
 		browser.setTitle(message);
@@ -43,11 +42,11 @@ public class JSchUIFileManager implements IRemoteUIFileManager {
 			return null;
 		}
 		connection = browser.getConnection();
-		String path = browser.getPath();
-		if (path == null) {
+		IFileStore resource = browser.getResource();
+		if (resource == null) {
 			return null;
 		}
-		return path;
+		return resource.toURI().getPath();
 	}
 
 	/*
@@ -57,8 +56,9 @@ public class JSchUIFileManager implements IRemoteUIFileManager {
 	 * org.eclipse.ptp.remote.core.IRemoteFileManager#browseFile(org.eclipse
 	 * .swt.widgets.Shell, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public String browseFile(Shell shell, String message, String filterPath, int flags) {
-		RemoteResourceBrowser browser = new RemoteResourceBrowser(services, connection, shell, RemoteResourceBrowser.SINGLE);
+		RemoteResourceBrowser browser = new RemoteResourceBrowser(connection, shell, RemoteResourceBrowser.SINGLE);
 		browser.setType(RemoteResourceBrowser.FILE_BROWSER);
 		browser.setInitialPath(filterPath);
 		browser.setTitle(message);
@@ -67,11 +67,11 @@ public class JSchUIFileManager implements IRemoteUIFileManager {
 			return null;
 		}
 		connection = browser.getConnection();
-		String path = browser.getPath();
-		if (path == null) {
+		IFileStore resource = browser.getResource();
+		if (resource == null) {
 			return null;
 		}
-		return path;
+		return resource.toURI().getPath();
 	}
 
 	/*
@@ -81,8 +81,9 @@ public class JSchUIFileManager implements IRemoteUIFileManager {
 	 * org.eclipse.ptp.remote.core.IRemoteFileManager#browseFile(org.eclipse
 	 * .swt.widgets.Shell, java.lang.String, java.lang.String)
 	 */
-	public String[] browseFiles(Shell shell, String message, String filterPath, int flags) {
-		RemoteResourceBrowser browser = new RemoteResourceBrowser(services, connection, shell, RemoteResourceBrowser.MULTI);
+	@Override
+	public List<String> browseFiles(Shell shell, String message, String filterPath, int flags) {
+		RemoteResourceBrowser browser = new RemoteResourceBrowser(connection, shell, RemoteResourceBrowser.MULTI);
 		browser.setType(RemoteResourceBrowser.FILE_BROWSER);
 		browser.setInitialPath(filterPath);
 		browser.setTitle(message);
@@ -91,11 +92,11 @@ public class JSchUIFileManager implements IRemoteUIFileManager {
 			return null;
 		}
 		connection = browser.getConnection();
-		String path[] = browser.getPaths();
-		if (path == null) {
-			return null;
+		List<String> paths = new ArrayList<String>();
+		for (IFileStore store : browser.getResources()) {
+			paths.add(store.toURI().getPath());
 		}
-		return path;
+		return paths;
 	}
 
 	/*
@@ -103,6 +104,7 @@ public class JSchUIFileManager implements IRemoteUIFileManager {
 	 * 
 	 * @see org.eclipse.ptp.remote.ui.IRemoteUIFileManager#getConnection()
 	 */
+	@Override
 	public IRemoteConnection getConnection() {
 		return connection;
 	}
@@ -114,6 +116,7 @@ public class JSchUIFileManager implements IRemoteUIFileManager {
 	 * org.eclipse.ptp.remote.ui.IRemoteUIFileManager#setConnection(org.eclipse
 	 * .ptp.remote.core.IRemoteConnection)
 	 */
+	@Override
 	public void setConnection(IRemoteConnection connection) {
 		this.connection = connection;
 	}
@@ -124,6 +127,7 @@ public class JSchUIFileManager implements IRemoteUIFileManager {
 	 * @see
 	 * org.eclipse.ptp.remote.ui.IRemoteUIFileManager#showConnections(boolean)
 	 */
+	@Override
 	public void showConnections(boolean enable) {
 		showConnections = enable;
 	}

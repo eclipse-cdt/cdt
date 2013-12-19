@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8748d3a1_6f4d4b94",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/ASTProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-19T03:37:17Z",
+      "side": 1,
+      "message": "Instead of introducing a new ITranslationUnitProvider interface, it\u0027s simpler to get the editor\u0027s input and check if it is an instance of ITranslationUnitEditorInput.",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_2f5d034d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/ASTProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-19T03:37:17Z",
+      "side": 1,
+      "message": "This \u0027if\u0027 statement is redundant now.",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_8f42575f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1047,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-19T03:37:17Z",
+      "side": 1,
+      "message": "Try -\u003e Tries\nReturn -\u003e Returns",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_af475371",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1051,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-19T03:37:17Z",
+      "side": 1,
+      "message": "This method should not be called with null editor since it is not part of its contract.",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_4f484f83",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1053,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-19T03:37:17Z",
+      "side": 1,
+      "message": "This \u0027if\u0027 statement is redundant since it is already covered by the getAdapter method.",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

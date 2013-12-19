@@ -2,6 +2,74 @@
   "comments": [
     {
       "key": {
+        "uuid": "8748d3a1_af8f5302",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-19T04:24:18Z",
+      "side": 1,
+      "message": "What does 2009 mean?",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_6fd26bcb",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-19T04:24:18Z",
+      "side": 1,
+      "message": "Why copy and not the WorkingCopy being edited?",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_8fd7f7b6",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-19T04:24:18Z",
+      "side": 1,
+      "message": "The name of this interface is unfortunate since CEditor does not _provide_ a translation unit, just operates on it.",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_8f8a57f0",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-19T04:24:18Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_6f4d4b94",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/ASTProvider.java",
         "patchSetId": 2
@@ -72,6 +140,41 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_cf13bf17",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/ASTProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-19T04:24:18Z",
+      "side": 1,
+      "message": "The old behaviour is maintained because CEditor.getAdapter(ITranslationUnitProvider) returns this.",
+      "parentUuid": "8748d3a1_4f2ccf9b",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_2f1b4332",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1589,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-19T04:24:18Z",
+      "side": 1,
+      "message": "Use: required.isAssignableFrom(ITranslationUnitProvider.class)",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_8f42575f",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
         "patchSetId": 2
@@ -124,6 +227,24 @@
     },
     {
       "key": {
+        "uuid": "8748d3a1_6f2b8b35",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1051,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-19T04:24:18Z",
+      "side": 1,
+      "message": "The check should be removed.",
+      "parentUuid": "8748d3a1_2fea239b",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_4f484f83",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
         "patchSetId": 2
@@ -153,6 +274,24 @@
       "side": 1,
       "message": "To avoid breaking any clients, the implementation keeps exactly the old behaviour when a CEditor is used.  The new code is used only for the fallback cases, where the editor is not a CEditor.",
       "parentUuid": "8748d3a1_4f484f83",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_4f268f6c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1053,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-19T04:24:18Z",
+      "side": 1,
+      "message": "There could be no breakage because CEditor.getAdapter(ITextEditor.class) must return this.",
+      "parentUuid": "8748d3a1_8fc1b726",
       "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

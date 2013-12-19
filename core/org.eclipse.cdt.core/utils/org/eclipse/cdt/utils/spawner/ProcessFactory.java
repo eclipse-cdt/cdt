@@ -42,7 +42,7 @@ public class ProcessFactory {
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (UnsatisfiedLinkError e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}
 	}
 

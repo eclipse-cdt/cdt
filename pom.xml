@@ -89,6 +89,7 @@
 
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb</module>
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.ui</module>
+		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui</module>
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui</module>
 		<module>dsf-gdb/org.eclipse.cdt.gnu.dsf-feature</module>
 		<module>dsf-gdb/org.eclipse.cdt.gnu.dsf.source-feature</module>

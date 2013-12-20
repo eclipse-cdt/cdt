@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Andrew Ferguson (Symbian)
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -1531,13 +1532,17 @@ public class CVisitor extends ASTQueries {
     
 	private static IBinding[] findBindingForContentAssist(ICASTFieldDesignator fd, boolean isPrefix) {
 		IASTNode blockItem = getContainingBlockItem(fd);
-		
-		IASTNode parent= blockItem;
-		while (parent != null && !(parent instanceof IASTSimpleDeclaration))
-			parent= parent.getParent();
-		
-		if (parent instanceof IASTSimpleDeclaration) {
-			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;
+
+		IASTNode declarationNode = blockItem;
+		if (blockItem instanceof IASTDeclarationStatement && ((IASTDeclarationStatement) blockItem).getDeclaration() instanceof IASTSimpleDeclaration) {
+			declarationNode = ((IASTDeclarationStatement) blockItem).getDeclaration();
+		} else {
+			while (declarationNode != null && !(declarationNode instanceof IASTSimpleDeclaration))
+				declarationNode= declarationNode.getParent();
+		}
+
+		if (declarationNode instanceof IASTSimpleDeclaration) {
+			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) declarationNode;
 			IBinding struct= null;
 			if (simpleDecl.getDeclSpecifier() instanceof IASTNamedTypeSpecifier) {
 				struct = ((IASTNamedTypeSpecifier) simpleDecl.getDeclSpecifier()).getName().resolveBinding();
@@ -1554,6 +1559,7 @@ public class CVisitor extends ASTQueries {
 				}
 			}
 		}
+
 		return null;
 	}
 	

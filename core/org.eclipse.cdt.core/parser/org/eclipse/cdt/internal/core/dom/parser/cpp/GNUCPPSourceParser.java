@@ -658,46 +658,78 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		if (typeId != null
 				&& (lt1 == IToken.tCOMMA || lt1 == IToken.tGT || lt1 == IToken.tGT_in_SHIFTR
 						|| lt1 == IToken.tEOC || lt1 == IToken.tELLIPSIS)) {
-    		// This is potentially a type-id, now check ambiguity with id-expression
-			IASTDeclSpecifier declspec= typeId.getDeclSpecifier();
-			if (declspec instanceof IASTNamedTypeSpecifier) {
-				final IASTNamedTypeSpecifier namedDeclspec = (IASTNamedTypeSpecifier) declspec;
-				IASTName name= namedDeclspec.getName();
-				if (name.contains(typeId)) {
-					IToken typeIdEnd= mark();
-					IASTIdExpression idExpr= setRange(nodeFactory.newIdExpression(name), name);
-					try {
-						IASTExpression expression = expression(ExprKind.eAssignment, BinaryExprCtx.eInTemplateID, idExpr, strat);
-						boolean isAmbiguous= (expression == idExpr);
-						if (LT(1) == IToken.tELLIPSIS) {
-							IToken ellipsis= consume();
-							if (isAmbiguous) {
-								addPackExpansion(typeId, ellipsis);
-							}
-							expression= addPackExpansion(expression, ellipsis);
-						}
-						if (isAmbiguous) {
-							ICPPASTAmbiguousTemplateArgument ambiguity= createAmbiguousTemplateArgument();
-							ambiguity.addTypeId(typeId);
-							ambiguity.addIdExpression(expression);
-							return ambiguity;
-						}
-						return expression;
-					} catch (BacktrackException e) {
-						// Use the typeId
+			// This is potentially a type-id, now check ambiguity with expression.
+			IToken typeIdEnd= mark();
+			IASTNamedTypeSpecifier namedTypeSpec = null;
+			IASTName name = null;
+			try {
+				// If the type-id consists of a name, that name could be or contain
+				// a template-id, with template arguments of its own, which can
+				// themselves be ambiguous. If we parse the name anew as an 
+				// id-expression, our complexity becomes exponential in the nesting
+				// depth of template-ids (bug 316704). To avoid this, we do not
+				// re-parse the name, but instead synthesize an id-expression from
+				// it, and then continue parsing an expression from the id-expression
+				// onwards (as the id-expression could be the beginning of a larger
+				// expression).
+				IASTIdExpression idExpression = null;
+				IASTDeclSpecifier declSpec = typeId.getDeclSpecifier();
+				if (declSpec instanceof IASTNamedTypeSpecifier) {
+					namedTypeSpec = (IASTNamedTypeSpecifier) declSpec;
+					name = namedTypeSpec.getName();
+					if (name.contains(typeId)) {
+						idExpression = setRange(nodeFactory.newIdExpression(name), name);
 					}
-					backup(typeIdEnd);
-					namedDeclspec.setName(name);
 				}
+				
+				// Parse an expression, starting with the id-expression synthesized
+				// above if there is one, otherwise starting from the beginning of
+				// the argument.
+				if (idExpression == null)
+					backup(argStart);
+				IASTExpression expression = expression(ExprKind.eAssignment, BinaryExprCtx.eInTemplateID, idExpression, strat);
+				
+				// At this point we have a valid type-id and a valid expression.
+				// We prefer the longer one.
+				if (!typeId.contains(expression)) {
+					// The expression is longer.
+					if (LT(1) == IToken.tELLIPSIS) {
+						expression = addPackExpansion(expression, consume());
+					}
+					return expression;
+				} else if (expression.contains(typeId)) {
+					// The two are of the same length - ambiguous.
+					if (LT(1) == IToken.tELLIPSIS) {
+						IToken ellipsis = consume();
+						addPackExpansion(typeId, ellipsis);
+						expression = addPackExpansion(expression, ellipsis);
+					}
+					ICPPASTAmbiguousTemplateArgument ambiguity = createAmbiguousTemplateArgument();
+					ambiguity.addTypeId(typeId);
+					ambiguity.addExpression(expression);
+					return ambiguity;
+				}
+				// The type-id is longer, use it.
+			} catch (BacktrackException e) {
+				// Failed to parse an expression, use the type id.
 			}
-			// There is no ambiguity, use the type-id
+
+			// Clean up after our failed attempt to parse an expression. 
+			backup(typeIdEnd);
+			if (name != null && namedTypeSpec != null) {
+				// When we synthesized the id-expression, it took ownership
+				// of the name. Give ownership back to the type-id.
+				namedTypeSpec.setName(name);
+			}
+			
+			// Use the type-id.
 			if (LT(1) == IToken.tELLIPSIS) {
 				addPackExpansion(typeId, consume());
 			}
 			return typeId;
     	}
 
-		// Not a type-id, parse as expression
+		// Not a type-id, parse as expression.
 		backup(argStart);
 		IASTExpression expr= expression(ExprKind.eAssignment, BinaryExprCtx.eInTemplateID, null, strat);
 		if (LT(1) == IToken.tELLIPSIS) {

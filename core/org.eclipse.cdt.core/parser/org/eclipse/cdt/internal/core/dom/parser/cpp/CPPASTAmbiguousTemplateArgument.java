@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * Ambiguity node for deciding between type-id and id-expression in a template argument.
+ * Ambiguity node for deciding between type-id and expression in a template argument.
  */
 public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements ICPPASTAmbiguousTemplateArgument {
 	private List<IASTNode> fNodes;
@@ -43,15 +43,8 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 	public CPPASTAmbiguousTemplateArgument(IASTNode... nodes) {
 		fNodes= new ArrayList<IASTNode>(2);
 		for (IASTNode node : nodes) {
-			if (node instanceof IASTTypeId || node instanceof IASTIdExpression) {
+			if (node instanceof IASTTypeId || node instanceof IASTExpression) {
 				fNodes.add(node);
-			} else if (node instanceof ICPPASTPackExpansionExpression) {
-				final IASTExpression pattern = ((ICPPASTPackExpansionExpression) node).getPattern();
-				if (pattern instanceof IASTIdExpression) {
-					fNodes.add(node);
-				} else {
-					Assert.isLegal(false, pattern == null ? "null" : pattern.getClass().getName()); //$NON-NLS-1$
-				}
 			} else {
 				Assert.isLegal(false, node == null ? "null" : node.getClass().getName()); //$NON-NLS-1$
 			}
@@ -60,7 +53,9 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 	
 	@Override
 	protected void beforeAlternative(IASTNode node) {
-		// The name may be shared between the alternatives make sure it's parent is set correctly
+		// If the expression is an id-expression, the name may be shared 
+		// between the alternatives (see bug 316704), so make sure its parent 
+		// is set correctly.
 		if (node instanceof IASTTypeId) {
 			IASTDeclSpecifier declSpec = ((IASTTypeId) node).getDeclSpecifier();
 			if (declSpec instanceof IASTNamedTypeSpecifier) {
@@ -123,15 +118,19 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 	}
 	
 	@Override
+	public void addExpression(IASTExpression expression) {
+		assertNotFrozen();
+		addNode(expression);
+	}
+
+	@Override
 	public void addIdExpression(IASTIdExpression idExpression) {
-        assertNotFrozen();
-		addNode(idExpression);
+        addExpression(idExpression);
 	}
 
 	@Override
 	public void addIdExpression(IASTExpression idExpression) {
-        assertNotFrozen();
-		addNode(idExpression);
+        addExpression(idExpression);
 	}
 
 	private void addNode(IASTNode node) {

@@ -7265,6 +7265,20 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertEquals("bool", ASTTypeUtil.getType(td.getType()));
 		ah.assertProblem("B<int*>::type", "type");
 	}
+	
+	//	constexpr int f() { return 1; }
+	//
+	//	template <int>
+	//	struct A {
+	//	    static void g() {}
+	//	};
+	//
+	//	void bar() {
+	//	    A<f()>::g();
+	//	}
+	public void testConstexprFunctionCallInTemplateArgument_332829() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <typename From>
 	//	struct is_convertible {

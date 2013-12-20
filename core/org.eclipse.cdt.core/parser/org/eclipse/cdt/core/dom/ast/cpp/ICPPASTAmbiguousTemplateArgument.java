@@ -26,17 +26,23 @@ public interface ICPPASTAmbiguousTemplateArgument extends IASTNode {
 	/**
 	 * Add an partial parse tree that could be a suitable subtree representing
 	 * the template argument
-	 * @param idExpression a non-null id-expression or a pack expansion of an id-expression
-	 * @since 5.2
+	 * @param expression a non-null expression
+	 * @since 5.6
 	 */
-	public void addIdExpression(IASTExpression idExpression);
-
+	public void addExpression(IASTExpression expression);
+	
 	/**
 	 * Add an partial parse tree that could be a suitable subtree representing
 	 * the template argument
 	 * @param typeId a non-null type-id
 	 */
 	public void addTypeId(IASTTypeId typeId);
+	
+	/**
+	 * @deprecated Replaced by {@link #addExpression(IASTExpression)}.
+	 */
+	@Deprecated
+	public void addIdExpression(IASTExpression idExpression);
 	
 	/**
 	 * @deprecated Replaced by {@link #addIdExpression(IASTExpression)}.

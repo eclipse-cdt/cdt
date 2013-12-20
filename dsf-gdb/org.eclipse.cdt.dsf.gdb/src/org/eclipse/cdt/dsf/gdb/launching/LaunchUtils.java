@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Ericsson and others.
+ * Copyright (c) 2010, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -250,8 +250,9 @@ public class LaunchUtils {
 		// GNU gdb (Ericsson GDB 1.0-10) 6.8.50.20080730-cvs
         // GNU gdb (GDB) Fedora (7.0-3.fc12)
         // GNU gdb Red Hat Linux (6.3.0.0-1.162.el4rh)
+        // GNU gdb (GDB) STMicroelectronics/Linux Base 7.4-71 [build Mar  1 2013]
 
-        Pattern pattern = Pattern.compile(" gdb( \\(.*?\\))? (\\w* )*\\(?(\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
+        Pattern pattern = Pattern.compile(" gdb( \\(.*?\\))? (\\D* )*\\(?(\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
 
 		Matcher matcher = pattern.matcher(versionOutput);
 		if (matcher.find()) {

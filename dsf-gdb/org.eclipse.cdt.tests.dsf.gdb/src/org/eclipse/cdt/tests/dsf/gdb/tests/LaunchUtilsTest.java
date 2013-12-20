@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2010, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,8 @@ public class LaunchUtilsTest {
     	versions.put("GNU gdb 7.0", "7.0");
     	versions.put("GNU gdb Fedora (6.8-27.el5)", "6.8");
     	versions.put("GNU gdb Red Hat Linux (6.3.0.0-1.162.el4rh)", "6.3.0.0");
-    	
+    	versions.put("GNU gdb (GDB) STMicroelectronics/Linux Base 7.4-71 [build Mar  1 2013]", "7.4");
+
     	for (String key : versions.keySet()) {
     		assertEquals("From \"" + key + "\"", versions.get(key), LaunchUtils.getGDBVersionFromText(key));
     	}

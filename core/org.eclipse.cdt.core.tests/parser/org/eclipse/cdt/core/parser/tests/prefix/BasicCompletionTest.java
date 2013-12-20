@@ -373,7 +373,17 @@ public class BasicCompletionTest extends CompletionTestBase {
 	
 	// struct foo { int axx;};
 	// struct foo bar = {.a
-	public void testCompletionInDesignatedInitializor_353281() throws Exception {
+	public void testCompletionInDesignatedInitializor_353281a() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"axx"};
+		checkCompletion(code, false, expected);
+	}
+
+	//	struct foo { int axx;};
+	//	void func()
+	//	{
+	//		struct foo bar = {.a
+	public void testCompletionInDesignatedInitializor_353281b() throws Exception {
 		String code = getAboveComment();
 		String[] expected= {"axx"};
 		checkCompletion(code, false, expected);

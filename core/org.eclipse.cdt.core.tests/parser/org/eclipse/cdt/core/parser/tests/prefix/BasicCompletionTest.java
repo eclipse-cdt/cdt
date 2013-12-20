@@ -378,4 +378,14 @@ public class BasicCompletionTest extends CompletionTestBase {
 		String[] expected= {"axx"};
 		checkCompletion(code, false, expected);
 	}
+	
+	//	struct foo { int axx;};
+	//	void func()
+	//	{
+	//		struct foo bar = {.a
+	public void testCompletionInDesignatedInitializor_353281b() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"axx"};
+		checkCompletion(code, false, expected);
+	}
 }

@@ -192,6 +192,8 @@ public class RemoteConnectionWidget extends Composite {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		layout.numColumns = 4;
+		setLayout(layout);
+		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		if (title != null) {
 			Group group = new Group(this, SWT.NONE);
@@ -205,9 +207,6 @@ public class RemoteConnectionWidget extends Composite {
 			layout.numColumns = 1;
 			body = group;
 		}
-
-		setLayout(layout);
-		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		/*
 		 * Check if we need a remote services combo, or we should just use the default provider
@@ -225,12 +224,10 @@ public class RemoteConnectionWidget extends Composite {
 			 */
 			Label label = new Label(body, SWT.NONE);
 			label.setText(Messages.RemoteConnectionWidget_remoteServiceProvider);
-			GridData gd = new GridData();
-			gd.horizontalSpan = 1;
-			label.setLayoutData(gd);
+			label.setLayoutData(new GridData());
 
 			fServicesCombo = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
-			gd = new GridData(GridData.FILL_HORIZONTAL);
+			GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 			gd.horizontalSpan = 3;
 			fServicesCombo.setLayoutData(gd);
 			fServicesCombo.addSelectionListener(fWidgetListener);
@@ -240,29 +237,21 @@ public class RemoteConnectionWidget extends Composite {
 		if ((flags & FLAG_NO_LOCAL_SELECTION) == 0 && (flags & FLAG_FORCE_PROVIDER_SELECTION) == 0) {
 			fLocalButton = new Button(body, SWT.RADIO);
 			fLocalButton.setText(Messages.RemoteConnectionWidget_Local);
-			GridData data = new GridData();
-			data.horizontalSpan = 1;
-			fLocalButton.setLayoutData(data);
+			fLocalButton.setLayoutData(new GridData());
 			fLocalButton.addSelectionListener(fWidgetListener);
 			fLocalButton.setSelection(false);
 
 			fRemoteButton = new Button(body, SWT.RADIO);
 			fRemoteButton.setText(Messages.RemoteConnectionWidget_Remote);
-			data = new GridData();
-			data.horizontalSpan = 1;
-			fRemoteButton.setLayoutData(data);
+			fRemoteButton.setLayoutData(new GridData());
 		} else {
 			Label remoteLabel = new Label(body, SWT.NONE);
 			remoteLabel.setText(Messages.RemoteConnectionWidget_connectionName);
-			GridData gd = new GridData();
-			gd.horizontalSpan = 1;
-			remoteLabel.setLayoutData(gd);
+			remoteLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		}
 
 		fConnectionCombo = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 1;
-		fConnectionCombo.setLayoutData(gd);
+		fConnectionCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		fConnectionCombo.addSelectionListener(fWidgetListener);
 		if (fDefaultServices != null) {
 			fConnectionCombo.setFocus();
@@ -271,8 +260,7 @@ public class RemoteConnectionWidget extends Composite {
 
 		fNewConnectionButton = new Button(body, SWT.PUSH);
 		fNewConnectionButton.setText(Messages.RemoteConnectionWidget_new);
-		gd = new GridData();
-		fNewConnectionButton.setLayoutData(gd);
+		fNewConnectionButton.setLayoutData(new GridData());
 		fNewConnectionButton.addSelectionListener(fWidgetListener);
 
 		fRemoteServices = RemoteServicesImpl.getRemoteServiceDescriptors();

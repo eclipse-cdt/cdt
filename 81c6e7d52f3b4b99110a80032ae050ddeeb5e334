@@ -16,6 +16,24 @@
       "revId": "81c6e7d52f3b4b99110a80032ae050ddeeb5e334",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_8ecbdd4c",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/prefix/BasicCompletionTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-12-21T00:24:10Z",
+      "side": 1,
+      "message": "Done. I had to fix a compilation error in lrparser because it was overriding it.",
+      "parentUuid": "67591f73_cb60272c",
+      "revId": "81c6e7d52f3b4b99110a80032ae050ddeeb5e334",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

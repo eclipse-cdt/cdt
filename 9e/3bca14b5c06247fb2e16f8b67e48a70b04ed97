@@ -1,0 +1,10 @@
+Verified+1: Hudson CI
+Code-Review+1: Sergey Prigogin <eclipse.sprigogin@gmail.com>
+Code-Review+2: Marc-Andre Laperle <marc-andre.laperle@ericsson.com>
+IP-Clean+1: Marc-Andre Laperle <marc-andre.laperle@ericsson.com>
+Verified+1: Marc-Andre Laperle <marc-andre.laperle@ericsson.com>
+Submitted-by: Marc-Andre Laperle <marc-andre.laperle@ericsson.com>
+Submitted-at: Fri, 20 Dec 2013 20:33:20 -0500
+Reviewed-on: https://git.eclipse.org/r/20094
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

@@ -128,6 +128,7 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
         addExpression(idExpression);
 	}
 
+	@Deprecated
 	@Override
 	public void addIdExpression(IASTExpression idExpression) {
         addExpression(idExpression);
@@ -139,4 +140,3 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 		node.setPropertyInParent(ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT);
 	}
 }
-

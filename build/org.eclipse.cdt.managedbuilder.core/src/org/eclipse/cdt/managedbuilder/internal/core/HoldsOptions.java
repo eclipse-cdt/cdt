@@ -646,9 +646,15 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 
 		// Propagate "false" to the children
 		if (!rebuildState)
+		{
 			for (Option option : getOptionCollection())
 				if(!option.isExtensionElement())
 					option.setRebuildState(false);
+
+			// Bug 347174 : and superclass as well 
+			if (superClass != null )
+				superClass.setRebuildState(rebuild);
+		}
 	}
 
 	@Override

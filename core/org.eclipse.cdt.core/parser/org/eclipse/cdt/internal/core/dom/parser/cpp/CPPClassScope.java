@@ -257,8 +257,6 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	        }
             //9.2 ... The class-name is also inserted into the scope of the class itself
             result = ArrayUtil.append(IBinding.class, result, compName.resolveBinding());
-            if (!prefixLookup)
-            	return ArrayUtil.trim(IBinding.class, result);
 	    }
 	    result = ArrayUtil.addAll(IBinding.class, result, super.getBindings(lookup));
 	    return ArrayUtil.trim(IBinding.class, result);

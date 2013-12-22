@@ -10467,4 +10467,16 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testBuiltInOperatorFunctionType_423396() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct S {
+	//	  int S;
+	//	};
+	//	void tint(int);
+	//	void test() {
+	//	  S s;
+	//	  tint(s.S);
+	//	}
+	public void testFieldWithSameNameAsClass_326750() throws Exception {
+		parseAndCheckBindings();
+	}
 }

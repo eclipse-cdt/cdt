@@ -1,0 +1,9 @@
+Verified+1: Hudson CI
+Code-Review+2: Sergey Prigogin <eclipse.sprigogin@gmail.com>
+IP-Clean+1: Sergey Prigogin <eclipse.sprigogin@gmail.com>
+Verified+1: Sergey Prigogin <eclipse.sprigogin@gmail.com>
+Submitted-by: Sergey Prigogin <eclipse.sprigogin@gmail.com>
+Submitted-at: Mon, 23 Dec 2013 14:08:13 -0500
+Reviewed-on: https://git.eclipse.org/r/20147
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

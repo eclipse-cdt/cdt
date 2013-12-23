@@ -39,15 +39,20 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Generic file/directory browser for remote resources.
  * 
+ * A directory browser (DIRECTORY_BROWSER) only allows selection of directories.
+ * A file browser (FILE_BROWSER) allows selection of files and directories, but the ok button is only enabled when a file is
+ * selected.
+ * A resource browser (FILE_BROWSER|DIRECTORY_BROWSER) allows selection of files and directories. This is the default.
+ * 
+ * To select multiple resources, set the style to SWT.MULTI.
+ * 
  * @author greg
  * 
  */
 public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
-	public final static String EMPTY_STRING = ""; //$NON-NLS-1$
-	public final static int FILE_BROWSER = 0x01;
-	public final static int DIRECTORY_BROWSER = 0x02;
-	public static final int SINGLE = 0x01;
-	public static final int MULTI = 0x02;
+	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	public static final int FILE_BROWSER = 0x01;
+	public static final int DIRECTORY_BROWSER = 0x02;
 
 	private final static int widthHint = 400;
 
@@ -61,14 +66,16 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	private boolean showConnections = false;
 	private String fInitialPath;
 	private IRemoteConnection fConnection;
-	private int optionFlags = SINGLE;
+	private int fBrowserStyle = SWT.SINGLE;
 
-	public RemoteResourceBrowser(Shell parent, int flags) {
+	public RemoteResourceBrowser(Shell parent, int style) {
 		super(parent);
 		setShellStyle(SWT.RESIZE | getShellStyle());
-		this.optionFlags = flags;
+		if (style != SWT.NONE) {
+			fBrowserStyle = style;
+		}
 		setTitle(Messages.RemoteResourceBrowser_resourceTitle);
-		setType(FILE_BROWSER);
+		setType(FILE_BROWSER | DIRECTORY_BROWSER);
 	}
 
 	/*
@@ -124,18 +131,17 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 		main.setLayout(new GridLayout(1, true));
 
 		int options = RemoteResourceBrowserWidget.SHOW_HIDDEN_CHECKBOX | RemoteResourceBrowserWidget.SHOW_NEW_FOLDER_BUTTON;
-		int style = SWT.NONE;
 		if (fConnection == null || showConnections) {
 			options |= RemoteResourceBrowserWidget.SHOW_CONNECTIONS;
 		}
 		if (browserType == DIRECTORY_BROWSER) {
 			options |= RemoteResourceBrowserWidget.DIRECTORY_BROWSER;
+		} else if (browserType == FILE_BROWSER) {
+			options |= RemoteResourceBrowserWidget.FILE_BROWSER;
+		} else {
+			options |= RemoteResourceBrowserWidget.FILE_BROWSER | RemoteResourceBrowserWidget.DIRECTORY_BROWSER;
 		}
-		if ((optionFlags & MULTI) == MULTI) {
-			style = SWT.MULTI;
-		}
-
-		fResourceBrowserWidget = new RemoteResourceBrowserWidget(main, style, options);
+		fResourceBrowserWidget = new RemoteResourceBrowserWidget(main, fBrowserStyle, options);
 		fResourceBrowserWidget.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -267,14 +273,14 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 
 	/**
 	 * Set the type of browser. Can be either a file browser (allows selection
-	 * of files) or a directory browser (allows selection of directories), or
-	 * both.
+	 * of files), a directory browser (allows selection of directories), or
+	 * a resource browser (allows selection of files and directories).
 	 */
 	public void setType(int type) {
 		browserType = type;
 		if (type == DIRECTORY_BROWSER) {
 			setTitle(Messages.RemoteResourceBrowser_directoryTitle);
-		} else {
+		} else if (type == FILE_BROWSER) {
 			setTitle(Messages.RemoteResourceBrowser_fileTitle);
 		}
 	}
@@ -290,7 +296,12 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 
 	private void updateDialog() {
 		if (okButton != null) {
-			okButton.setEnabled(getConnection() != null && getResource() != null);
+			IFileStore resource = getResource();
+			boolean enabled = getConnection() != null && resource != null;
+			if (enabled && browserType == FILE_BROWSER) {
+				enabled &= !resource.fetchInfo().isDirectory();
+			}
+			okButton.setEnabled(enabled);
 		}
 	}
 }

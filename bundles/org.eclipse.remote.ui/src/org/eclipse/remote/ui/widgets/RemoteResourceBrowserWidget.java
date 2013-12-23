@@ -292,7 +292,10 @@ public class RemoteResourceBrowserWidget extends Composite {
 			}
 
 		});
-		if ((fOptionFlags & DIRECTORY_BROWSER) != 0) {
+		/*
+		 * Only add filter if we are a directory browser. File and resource browsers show everything.
+		 */
+		if (fOptionFlags == DIRECTORY_BROWSER) {
 			fTreeViewer.addFilter(new ViewerFilter() {
 				@Override
 				public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -567,7 +570,6 @@ public class RemoteResourceBrowserWidget extends Composite {
 		} else {
 			fDialogLabel = Messages.RemoteResourceBrowser_resourceLabel;
 			setTitle(Messages.RemoteResourceBrowser_resourceTitle);
-
 		}
 	}
 

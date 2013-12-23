@@ -18,6 +18,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.ui.IRemoteUIFileManager;
 import org.eclipse.remote.ui.dialogs.RemoteResourceBrowser;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 public class JSchUIFileManager implements IRemoteUIFileManager {
@@ -33,7 +34,7 @@ public class JSchUIFileManager implements IRemoteUIFileManager {
 	 */
 	@Override
 	public String browseDirectory(Shell shell, String message, String filterPath, int flags) {
-		RemoteResourceBrowser browser = new RemoteResourceBrowser(shell, RemoteResourceBrowser.SINGLE);
+		RemoteResourceBrowser browser = new RemoteResourceBrowser(shell, SWT.SINGLE);
 		browser.setType(RemoteResourceBrowser.DIRECTORY_BROWSER);
 		browser.setInitialPath(filterPath);
 		browser.setTitle(message);
@@ -59,7 +60,7 @@ public class JSchUIFileManager implements IRemoteUIFileManager {
 	 */
 	@Override
 	public String browseFile(Shell shell, String message, String filterPath, int flags) {
-		RemoteResourceBrowser browser = new RemoteResourceBrowser(shell, RemoteResourceBrowser.SINGLE);
+		RemoteResourceBrowser browser = new RemoteResourceBrowser(shell, SWT.SINGLE);
 		browser.setType(RemoteResourceBrowser.FILE_BROWSER);
 		browser.setInitialPath(filterPath);
 		browser.setTitle(message);
@@ -85,7 +86,7 @@ public class JSchUIFileManager implements IRemoteUIFileManager {
 	 */
 	@Override
 	public List<String> browseFiles(Shell shell, String message, String filterPath, int flags) {
-		RemoteResourceBrowser browser = new RemoteResourceBrowser(shell, RemoteResourceBrowser.MULTI);
+		RemoteResourceBrowser browser = new RemoteResourceBrowser(shell, SWT.MULTI);
 		browser.setType(RemoteResourceBrowser.FILE_BROWSER);
 		browser.setInitialPath(filterPath);
 		browser.setTitle(message);

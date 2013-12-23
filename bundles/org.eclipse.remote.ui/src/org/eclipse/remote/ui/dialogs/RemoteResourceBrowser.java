@@ -60,23 +60,15 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 
 	private boolean showConnections = false;
 	private String fInitialPath;
-	private final IRemoteConnection fConnection;
+	private IRemoteConnection fConnection;
 	private int optionFlags = SINGLE;
 
-	public RemoteResourceBrowser(IRemoteConnection conn, Shell parent, int flags) {
+	public RemoteResourceBrowser(Shell parent, int flags) {
 		super(parent);
 		setShellStyle(SWT.RESIZE | getShellStyle());
-		fConnection = conn;
 		this.optionFlags = flags;
-		if (conn == null) {
-			showConnections = true;
-		}
 		setTitle(Messages.RemoteResourceBrowser_resourceTitle);
 		setType(FILE_BROWSER);
-	}
-
-	public RemoteResourceBrowser(Shell parent, int flags) {
-		this(null, parent, flags);
 	}
 
 	/*
@@ -106,7 +98,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
 		setTitle(dialogTitle);
-		if (!showConnections) {
+		if (fConnection != null) {
 			fResourceBrowserWidget.setConnection(fConnection);
 		}
 		if (fInitialPath != null) {
@@ -133,7 +125,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 
 		int options = RemoteResourceBrowserWidget.SHOW_HIDDEN_CHECKBOX | RemoteResourceBrowserWidget.SHOW_NEW_FOLDER_BUTTON;
 		int style = SWT.NONE;
-		if (showConnections) {
+		if (fConnection == null || showConnections) {
 			options |= RemoteResourceBrowserWidget.SHOW_CONNECTIONS;
 		}
 		if (browserType == DIRECTORY_BROWSER) {
@@ -162,6 +154,9 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 			}
 		});
 		fResourceBrowserWidget.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		if (fConnection != null) {
+			fResourceBrowserWidget.setConnection(fConnection);
+		}
 
 		Composite monitorComposite = new Composite(main, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -232,6 +227,15 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 			fProgressMonitor.getParent().setVisible(false);
 			fProgressMonitor.removeFromCancelComponent(null);
 		}
+	}
+
+	/**
+	 * Set the initial connection for the browser.
+	 * 
+	 * @param connection
+	 */
+	public void setConnection(IRemoteConnection connection) {
+		fConnection = connection;
 	}
 
 	/**

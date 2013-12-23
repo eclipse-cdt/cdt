@@ -488,8 +488,16 @@ public class RemoteResourceBrowserWidget extends Composite {
 		fSelectionListeners.remove(listener);
 	}
 
+	/**
+	 * Set the connection for the browser
+	 * 
+	 * @param connection
+	 */
 	public void setConnection(IRemoteConnection connection) {
 		changeInput(connection);
+		if (fRemoteConnectionWidget != null) {
+			fRemoteConnectionWidget.setConnection(connection);
+		}
 		updateEnablement();
 	}
 

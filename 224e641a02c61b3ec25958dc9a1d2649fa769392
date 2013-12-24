@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_eae065b7",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-12-24T02:07:00Z",
+      "side": 1,
+      "message": "It is part of the name of the company.",
+      "parentUuid": "8748d3a1_af8f5302",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_6fd26bcb",
         "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitProvider.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2013-12-19T04:24:18Z",
       "side": 1,
       "message": "Why copy and not the WorkingCopy being edited?",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_0a8af9f7",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-12-24T02:07:00Z",
+      "side": 1,
+      "message": "This is just the existing behaviour.  However I think that I misunderstood the naming of the methods.  I was confused by the name #getWorkingCopy.  I thought it was returning a copy of what the CEditor was working on, rather than the instance of the \"Working Copy\".\n\nI\u0027ve updated this javadoc.",
+      "parentUuid": "8748d3a1_6fd26bcb",
       "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_6a7f355a",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-12-24T02:07:00Z",
+      "side": 1,
+      "message": "I\u0027ve changed it to ITranslationUnitHolder, let me know if you have a better idea.",
+      "parentUuid": "8748d3a1_8fd7f7b6",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_8f8a57f0",
         "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitProvider.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2013-12-19T04:24:18Z",
       "side": 1,
       "message": "Unnecessary blank line.",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_4a84f1e8",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-12-24T02:07:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_8f8a57f0",
       "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -158,6 +230,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_aa982d4b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/ASTProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-12-24T02:07:00Z",
+      "side": 1,
+      "message": "That doesn\u0027t help for clients that have specialized CEditor and overridden #getAdapter in their own way.",
+      "parentUuid": "8748d3a1_cf13bf17",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_2f1b4332",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditor.java",
         "patchSetId": 2
@@ -169,6 +259,24 @@
       "writtenOn": "2013-12-19T04:24:18Z",
       "side": 1,
       "message": "Use: required.isAssignableFrom(ITranslationUnitProvider.class)",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_8a956913",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1589,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-12-24T02:07:00Z",
+      "side": 1,
+      "message": "This method already has two different styles for testing the adapter, is it wise to introduce a third?",
+      "parentUuid": "8748d3a1_2f1b4332",
       "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -245,6 +353,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_6ae3b596",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1051,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-12-24T02:07:00Z",
+      "side": 1,
+      "message": "This method is (currently) called from 4 places.  Three of those places are passing an IEditorPart that could be null.  Pushing the null checks to those call sites would make all three of them uglier.\n\nIt would also introduce opportunity for bugs in new callers.  The most common one that I would anticipate would be callers like on line 1033 of this file, where the argument is the result of IWorkbenchPage.getActiveEditor().  In most testing the developer will have an editor open (since they are actively testing something) and the call would work properly.  It would only be the later cases, when all editors closed, that would throw the NPE.  Bugs that have a chance of shipping are bad.\n\nIs there some way that I could change this method so that passing a null editor would be \"part of its contract\"?",
+      "parentUuid": "8748d3a1_6f2b8b35",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_4f484f83",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
         "patchSetId": 2
@@ -292,6 +418,24 @@
       "side": 1,
       "message": "There could be no breakage because CEditor.getAdapter(ITextEditor.class) must return this.",
       "parentUuid": "8748d3a1_8fc1b726",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_ea922527",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1053,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2013-12-24T02:07:00Z",
+      "side": 1,
+      "message": "This doesn\u0027t apply to clients that have specialized CEditor and overridden #getAdapter in their own way.",
+      "parentUuid": "8748d3a1_4f268f6c",
       "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

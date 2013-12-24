@@ -154,7 +154,10 @@ public class RemoteResourceBrowserWidget extends Composite {
 		}
 
 		Composite textComp = new Composite(mainComp, SWT.NONE);
-		textComp.setLayout(new GridLayout(4, false));
+		layout = new GridLayout(4, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		textComp.setLayout(layout);
 		textComp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		Label label = new Label(textComp, SWT.NONE);

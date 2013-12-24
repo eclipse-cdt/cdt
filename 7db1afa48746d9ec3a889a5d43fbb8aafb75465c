@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_0eb84661",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlModel.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-24T18:19:29Z",
+      "side": 1,
+      "message": "I added a call to the new IGDBTraceControl2.stopTraceVisualization() here is we are dealing with IGDBTraceControl2",
+      "revId": "7db1afa48746d9ec3a889a5d43fbb8aafb75465c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_0e032685",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlModel.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-24T18:19:29Z",
+      "side": 1,
+      "message": "This event must be sent first, in case we are starting to visualize trace data.  I\u0027ve made the change.\n\nWithout the change, if you drag the scroll bar to start visualizing trace data you get an assertion",
+      "revId": "7db1afa48746d9ec3a889a5d43fbb8aafb75465c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_5aeadd9b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlView.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 600,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-24T18:19:29Z",
+      "side": 1,
+      "message": "I moved the tooltip setting to the setBufferLineVisible method because it needs to be updated each time we change sessions or start a new session.",
+      "revId": "7db1afa48746d9ec3a889a5d43fbb8aafb75465c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_836b50e1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlView.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 662,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-24T18:19:29Z",
+      "side": 1,
+      "message": "I made this one disabled at startup, since there is no debug session even started.",
+      "revId": "7db1afa48746d9ec3a889a5d43fbb8aafb75465c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8748d3a1_e33974ff",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlView.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 664,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-24T18:19:29Z",
+      "side": 1,
+      "message": "I made this one disabled at startup, since there is no debug session even started.",
+      "revId": "7db1afa48746d9ec3a889a5d43fbb8aafb75465c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_4ee35e96",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBTraceControl2.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-12-24T18:19:29Z",
+      "side": 1,
+      "message": "Since we have this new interface, I added\n  stopTraceVisualization(...)\nwhich was missing before.",
+      "revId": "7db1afa48746d9ec3a889a5d43fbb8aafb75465c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

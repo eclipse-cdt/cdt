@@ -1523,7 +1523,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 
 	/**
-	 * Gets the outline page of the c-editor.
+	 * Returns the outline page of the C/C++ editor.
      * @return Outline page.
 	 */
 	public CContentOutlinePage getOutlinePage() {
@@ -1535,15 +1535,12 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		return fOutlinePage;
 	}
 
-	/**
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class required) {
-		if (IContentOutlinePage.class.equals(required)) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Object getAdapter(Class adapterClass) {
+		if (adapterClass.isAssignableFrom(IContentOutlinePage.class)) {
 			return getOutlinePage();
-		} else if (required == IShowInTargetList.class) {
+		} else if (adapterClass.isAssignableFrom(IShowInTargetList.class)) {
 			return new IShowInTargetList() {
 				@Override
 				@SuppressWarnings("deprecation")
@@ -1551,9 +1548,8 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 					return new String[] { IPageLayout.ID_PROJECT_EXPLORER, IPageLayout.ID_OUTLINE, IPageLayout.ID_RES_NAV };
 				}
 			};
-		} else if (required == IShowInSource.class) {
-			ICElement ce= null;
-			ce= getElementAt(getSourceViewer().getSelectedRange().x, false);
+		} else if (adapterClass.isAssignableFrom(IShowInSource.class)) {
+			ICElement ce= getElementAt(getSourceViewer().getSelectedRange().x, false);
 			if (ce instanceof ITranslationUnit) {
 				ce = null;
 			}
@@ -1564,24 +1560,23 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 					return new ShowInContext(getEditorInput(), selection);
 				}
 			};
-		} else if (ProjectionAnnotationModel.class.equals(required)) {
+		} else if (adapterClass.isAssignableFrom(ProjectionAnnotationModel.class)) {
 			if (fProjectionSupport != null) {
-				Object adapter = fProjectionSupport.getAdapter(getSourceViewer(), required);
+				Object adapter = fProjectionSupport.getAdapter(getSourceViewer(), adapterClass);
 				if (adapter != null)
 					return adapter;
 			}
-		} else if (IContextProvider.class.equals(required)) {
+		} else if (adapterClass.isAssignableFrom(IContextProvider.class)) {
 			return new CUIHelp.CUIHelpContextProvider(this);
-		} else if (IGotoMarker.class.equals(required)) {
-			IGotoMarker gotoMarker= new GotoMarkerAdapter();
-			return gotoMarker;
-		} else if (ITemplatesPage.class.equals(required)) {
+		} else if (adapterClass.isAssignableFrom(IGotoMarker.class)) {
+			return new GotoMarkerAdapter();
+		} else if (adapterClass.isAssignableFrom(ITemplatesPage.class)) {
 			if (fTemplatesPage == null) {
 				fTemplatesPage = new CTemplatesPage(this);
 			}
 			return fTemplatesPage;
 		}
-		return super.getAdapter(required);
+		return super.getAdapter(adapterClass);
 	}
 	
 	/**

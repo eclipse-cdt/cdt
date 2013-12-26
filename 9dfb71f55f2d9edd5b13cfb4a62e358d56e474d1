@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_38c29e9c",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitHolder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-26T17:53:04Z",
+      "side": 1,
+      "message": "Method and class JavaDocs should use descriptive form of verbs (Return -\u003e Returns).",
+      "revId": "9dfb71f55f2d9edd5b13cfb4a62e358d56e474d1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

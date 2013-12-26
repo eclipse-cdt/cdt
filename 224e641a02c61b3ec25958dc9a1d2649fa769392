@@ -248,6 +248,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_78cc16cf",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/ASTProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-26T17:53:16Z",
+      "side": 1,
+      "message": "getAdapter of any subclass of CEditor must return this when called with CEditor.class.",
+      "parentUuid": "67591f73_aa982d4b",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_2f1b4332",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditor.java",
         "patchSetId": 2
@@ -277,6 +295,24 @@
       "side": 1,
       "message": "This method already has two different styles for testing the adapter, is it wise to introduce a third?",
       "parentUuid": "8748d3a1_2f1b4332",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_f3bcc706",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1589,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-26T17:53:16Z",
+      "side": 1,
+      "message": "isAssignableFrom is the only correct one. I\u0027ve fixed the other two.",
+      "parentUuid": "67591f73_8a956913",
       "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -371,6 +407,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_13e85bee",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1051,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-26T17:53:16Z",
+      "side": 1,
+      "message": "Making null a part of the contract is is fine since there are clients that rely on this behavior.",
+      "parentUuid": "67591f73_6ae3b596",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_4f484f83",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
         "patchSetId": 2
@@ -436,6 +490,24 @@
       "side": 1,
       "message": "This doesn\u0027t apply to clients that have specialized CEditor and overridden #getAdapter in their own way.",
       "parentUuid": "8748d3a1_4f268f6c",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_73e7171f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1053,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-12-26T17:53:16Z",
+      "side": 1,
+      "message": "Since CEditor implements ITextEditor, getAdaptor method of any subclass of CEditor must return this when called with ITextEditor.class.",
+      "parentUuid": "67591f73_ea922527",
       "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

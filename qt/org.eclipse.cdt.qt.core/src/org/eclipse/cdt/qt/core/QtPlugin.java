@@ -25,6 +25,8 @@ public class QtPlugin extends Plugin {
 	public static final String QMAKE_ENV_PROVIDER_EXT_POINT_NAME = "qmakeEnvProvider"; //$NON-NLS-1$
 	public static final String QMAKE_ENV_PROVIDER_ID = ID + "." + QMAKE_ENV_PROVIDER_EXT_POINT_NAME; //$NON-NLS-1$
 
+    public static final String QT_SYNTAX_ERR_ID = "org.eclipse.cdt.qt.core.qtproblem"; //$NON-NLS-1$
+
     /**
      * Instances of QtIndex are cached within the session properties of the project from
      * which they are created.  This name is used to store the property.

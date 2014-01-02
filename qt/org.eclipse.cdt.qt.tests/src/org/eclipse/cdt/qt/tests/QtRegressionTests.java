@@ -14,10 +14,27 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.internal.core.model.ext.SourceRange;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.search.CSearchResult;
+import org.eclipse.cdt.internal.ui.search.CSearchTextSelectionQuery;
 import org.eclipse.cdt.qt.core.index.IQMethod;
 import org.eclipse.cdt.qt.core.index.IQObject;
 import org.eclipse.cdt.qt.core.index.QtIndex;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 
+@SuppressWarnings("restriction")
 public class QtRegressionTests extends BaseQtTestCase {
 
 	private static Map<String, Set<String>> buildExpectedMap(String mocOutput) {
@@ -333,5 +350,71 @@ public class QtRegressionTests extends BaseQtTestCase {
 		for(IQMethod method : localSlots)
 			assertTrue("unexpected slot " + method.getName(), expected.remove(method.getName()));
 		assertEquals("missing slots " + expected.toString(), 0, expected.size());
+	}
+
+	// #include "junit-QObject.hh"
+	// class Q : public QObject
+	// {
+	// Q_OBJECT
+	// Q_SIGNAL void signal1();
+	// Q_SLOT   void slot1();
+	//     void function()
+	//     {
+	//         signal1();
+	//         QObject::connect(
+	//             this, SIGNAL( signal1() ),
+	//             this, SLOT( slot1() ) );
+	//     }
+	// };
+	public void testBug424499_FindQMethodReferences() throws Exception {
+		String filename = "signalRefs.hh";
+		loadComment(filename);
+		waitForIndexer(fCProject);
+
+		// The search query uses the ASTProvider which relies on the target translation unit being
+		// loaded in a CEditor.  The following opens a CEditor for the test file so that it will
+		// be the one used by the ASTProvider.
+		IFile file = fProject.getFile(filename);
+		assertNotNull(file);
+		assertTrue(file.exists());
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		assertNotNull(page);
+		IEditorPart editor = IDE.openEditor(page, file, CUIPlugin.EDITOR_ID);
+		assertNotNull(editor);
+		CEditor ceditor = (CEditor) editor.getAdapter(CEditor.class);
+		assertNotNull(ceditor);
+
+		// NOTE: This offset relies on the above comment being exactly as expected.  If it is edited,
+		//       then this offset should be adjusted to match.  It needs to put the cursor in the
+		//       declaration for signal1.
+		ceditor.setSelection(new SourceRange(86, 0), true);
+		ISelection sel = ceditor.getSelectionProvider().getSelection();
+		assertNotNull(sel);
+		assertTrue(sel instanceof ITextSelection);
+
+		// Now a query is created and executed.
+		CSearchTextSelectionQuery query = new CSearchTextSelectionQuery(null, ceditor.getInputCElement(), (ITextSelection) sel, IIndex.FIND_REFERENCES);
+
+		// The query sometimes fails (with Status.CANCEL_STATUS) if the TU is not open.  I
+		// haven't found a way to be notified when the TU gets "opened" -- the test case just
+		// looks that case and then try again.
+		IStatus status = null;
+		long end_ms = System.currentTimeMillis() + 1000;
+		do {
+			status = query.run(npm());
+			if (status == Status.CANCEL_STATUS) {
+				Thread.sleep(100);
+			}
+		} while(!status.isOK() && System.currentTimeMillis() < end_ms);
+		assertTrue("query failed: " + status.getMessage(), status.isOK());
+
+		// The query should have found two references, one for the function call and another
+		// for the SIGNAL expansion.
+		ISearchResult result = query.getSearchResult();
+		assertNotNull(result);
+		assertTrue(result instanceof CSearchResult);
+
+		CSearchResult searchResult = (CSearchResult) result;
+		assertEquals(2, searchResult.getMatchCount());
 	}
 }

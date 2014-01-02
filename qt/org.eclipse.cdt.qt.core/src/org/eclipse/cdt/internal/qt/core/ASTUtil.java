@@ -66,10 +66,9 @@ public class ASTUtil {
 	//					sig1(
 	//						int
 	//					), ...
-	// The two patterns are nearly identical.  The difference is because the first is for matching SIGNAL/
-	// SLOT expansions.  The second is for matching the argument to that expansion.
-	public static final Pattern Regex_SignalSlotExpansion = Pattern.compile("(?s)(SIGNAL|SLOT)\\s*\\(\\s*(.*?)\\s*\\)\\s*");
-	public static final Pattern Regex_FunctionCall = Pattern.compile("(?s)\\s*(.*)\\s*\\(\\s*(.*?)\\s*\\)\\s*");
+	// The regex trims leading and trailing whitespace within the expansion parameter.  This is needed
+	// so that the start of the capture group provides the proper offset into the expansion.
+	public static final Pattern Regex_MacroExpansion = Pattern.compile("(?s)([_a-zA-Z]\\w*)\\s*\\(\\s*(.*?)\\s*\\)\\s*");
 
 	public static IType getBaseType(IType type) {
 		while (type instanceof ITypeContainer)
@@ -118,11 +117,11 @@ public class ASTUtil {
 	/**
 	 * Does not return null.
 	 */
-	public static Collection<IQMethod> findMethods(IQObject qobj, QtSignalSlotReference ref) {
+	public static Collection<IQMethod> findMethods(IQObject qobj, QtMethodReference ref) {
 		Set<IQMethod> bindings = new LinkedHashSet<IQMethod>();
 
 		Iterable<IQMethod> methods = null;
-		switch(ref.type)
+		switch(ref.getType())
 		{
 		case Signal:
 			methods = qobj.getSignals().withoutOverrides();
@@ -133,7 +132,7 @@ public class ASTUtil {
 		}
 
 		if (methods != null) {
-			String qtNormalizedSig = QtMethodUtil.getQtNormalizedMethodSignature(ref.signature);
+			String qtNormalizedSig = QtMethodUtil.getQtNormalizedMethodSignature(ref.getRawSignature());
 			if (qtNormalizedSig == null)
 				return bindings;
 
@@ -145,7 +144,7 @@ public class ASTUtil {
 		return bindings;
 	}
 
-	public static IBinding resolveFunctionBinding(IASTFunctionCallExpression fnCall) {
+	public static <T extends IBinding> T resolveFunctionBinding(Class<T> cls, IASTFunctionCallExpression fnCall) {
 		IASTName fnName = null;
 		IASTExpression fnNameExpr = fnCall.getFunctionNameExpression();
 		if (fnNameExpr instanceof IASTIdExpression)
@@ -153,7 +152,11 @@ public class ASTUtil {
 		else if (fnNameExpr instanceof ICPPASTFieldReference)
 			fnName = ((ICPPASTFieldReference) fnNameExpr).getFieldName();
 
-		return fnName == null ? null : fnName.resolveBinding();
+		IBinding binding = fnName == null ? null : fnName.resolveBinding();
+		if (binding == null)
+			return null;
+
+		return cls.isAssignableFrom(binding.getClass()) ? cls.cast(binding) : null;
 	}
 
 	public static ICPPASTVisibilityLabel findVisibilityLabel(ICPPMethod method, IASTNode ast) {

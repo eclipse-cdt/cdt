@@ -8,6 +8,7 @@
 package org.eclipse.cdt.internal.qt.core.pdom;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +20,9 @@ import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
@@ -35,6 +37,7 @@ import org.eclipse.cdt.core.index.IIndexSymbols;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
+import org.eclipse.cdt.internal.qt.core.QtFunctionCall;
 import org.eclipse.cdt.internal.qt.core.QtMethodUtil;
 import org.eclipse.cdt.internal.qt.core.index.QProperty;
 import org.eclipse.cdt.qt.core.QtKeywords;
@@ -92,6 +95,7 @@ public class QtASTVisitor extends ASTVisitor {
 
 	public QtASTVisitor(IIndexSymbols symbols, LocationMap locationMap) {
 		shouldVisitDeclSpecifiers = true;
+		shouldVisitExpressions = true;
 
 		this.symbols = symbols;
 		this.locationMap = locationMap;
@@ -112,6 +116,23 @@ public class QtASTVisitor extends ASTVisitor {
 		}
 
 		return super.visit(declSpec);
+	}
+
+	@Override
+	public int visit(IASTExpression expr) {
+		if (expr instanceof IASTFunctionCallExpression) {
+			Collection<IASTName> refs = QtFunctionCall.getReferences((IASTFunctionCallExpression) expr);
+			if (refs != null)
+				for (IASTName ref : refs) {
+					IASTFileLocation nameLoc = ref.getFileLocation();
+					if (nameLoc != null) {
+						IASTPreprocessorIncludeStatement owner = nameLoc.getContextInclusionStatement();
+						symbols.add(owner, ref, null);
+					}
+				}
+		}
+
+		return super.visit(expr);
 	}
 
 	private boolean isQObject(ICPPASTCompositeTypeSpecifier spec, IASTPreprocessorMacroExpansion[] expansions) {
@@ -433,22 +454,5 @@ public class QtASTVisitor extends ASTVisitor {
 		while (node != null && !(node instanceof IASTSimpleDeclaration))
 			node = node.getParent();
 		return node instanceof IASTSimpleDeclaration ? (IASTSimpleDeclaration) node : null;
-	}
-
-	/**
-	 * Return the node's IASTName if it is a function and null otherwise.
-	 */
-	private static IASTName getFunctionName(IASTDeclaration decl) {
-		IASTSimpleDeclaration simpleDecl = getSimpleDecl(decl);
-		if (simpleDecl == null)
-			return null;
-
-		// Only functions can be signals or slots.  Return the name of the first declarator
-		// that is a function.
-		for( IASTDeclarator decltor : simpleDecl.getDeclarators())
-			if (decltor instanceof IASTFunctionDeclarator)
-				return decltor.getName();
-
-		return null;
 	}
 }

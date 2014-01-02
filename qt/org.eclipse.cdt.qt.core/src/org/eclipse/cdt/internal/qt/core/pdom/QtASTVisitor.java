@@ -38,6 +38,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
 import org.eclipse.cdt.internal.qt.core.QtFunctionCall;
+import org.eclipse.cdt.internal.qt.core.QtMethodReference;
 import org.eclipse.cdt.internal.qt.core.QtMethodUtil;
 import org.eclipse.cdt.internal.qt.core.index.QProperty;
 import org.eclipse.cdt.qt.core.QtKeywords;
@@ -121,7 +122,7 @@ public class QtASTVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTExpression expr) {
 		if (expr instanceof IASTFunctionCallExpression) {
-			Collection<IASTName> refs = QtFunctionCall.getReferences((IASTFunctionCallExpression) expr);
+			Collection<QtMethodReference> refs = QtFunctionCall.getReferences((IASTFunctionCallExpression) expr);
 			if (refs != null)
 				for (IASTName ref : refs) {
 					IASTFileLocation nameLoc = ref.getFileLocation();

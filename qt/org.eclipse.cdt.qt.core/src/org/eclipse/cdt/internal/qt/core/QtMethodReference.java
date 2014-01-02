@@ -82,6 +82,13 @@ public class QtMethodReference extends ASTNameReference {
 	}
 
 	/**
+	 * Return the C++ class that defines the Qt method that is being referenced.
+	 */
+	public ICPPClassType getContainingType() {
+		return cls;
+	}
+
+	/**
 	 * Look for SIGNAL or SLOT macro expansions at the location of the given node.  Return the
 	 * QMethod reference is an expansion is found and null otherwise.
 	 * <p>

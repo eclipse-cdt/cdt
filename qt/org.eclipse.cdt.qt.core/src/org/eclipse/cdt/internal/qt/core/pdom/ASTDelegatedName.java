@@ -134,11 +134,6 @@ public abstract class ASTDelegatedName implements IASTName {
 	}
 
 	@Override
-	public char[] getSimpleID() {
-		return delegate.getSimpleID();
-	}
-
-	@Override
 	public boolean isDeclaration() {
 		return delegate.isDeclaration();
 	}
@@ -159,8 +154,18 @@ public abstract class ASTDelegatedName implements IASTName {
 	}
 
 	@Override
+	public char[] getSimpleID() {
+		return toCharArray();
+	}
+
+	@Override
+	public char[] getLookupKey() {
+		return toCharArray();
+	}
+
+	@Override
 	public IBinding getBinding() {
-		return null;
+		return binding;
 	}
 
 	@Override
@@ -206,11 +211,6 @@ public abstract class ASTDelegatedName implements IASTName {
 	@Override
 	public void setBinding(IBinding binding) {
 		this.binding = binding;
-	}
-
-	@Override
-	public char[] getLookupKey() {
-		return delegate.getLookupKey();
 	}
 
 	@Override

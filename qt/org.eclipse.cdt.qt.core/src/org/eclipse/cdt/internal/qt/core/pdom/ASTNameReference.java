@@ -74,12 +74,9 @@ public class ASTNameReference extends ASTDelegatedName {
 
 	@Override
 	public IBinding resolveBinding() {
-		return delegate.resolveBinding();
-	}
-
-	@Override
-	public IBinding getBinding() {
-		return delegate.getBinding();
+		if (binding == null)
+			binding = delegate.resolveBinding();
+		return binding;
 	}
 
 	@Override

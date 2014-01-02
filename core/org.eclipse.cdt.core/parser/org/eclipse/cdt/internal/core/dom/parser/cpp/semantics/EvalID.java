@@ -72,6 +72,8 @@ public class EvalID extends CPPDependentEvaluation {
 	public EvalID(ICPPEvaluation fieldOwner, IBinding nameOwner, char[] simpleID, boolean addressOf,
 			boolean qualified, ICPPTemplateArgument[] templateArgs, IBinding templateDefinition) {
 		super(templateDefinition);
+		if (simpleID == null)
+			throw new NullPointerException("simpleID"); //$NON-NLS-1$
 		fFieldOwner= fieldOwner;
 		fName= simpleID;
 		fNameOwner= nameOwner;

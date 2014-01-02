@@ -10,6 +10,8 @@ package org.eclipse.cdt.qt.core;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 
 /**
@@ -42,26 +44,37 @@ public class QtKeywords {
 	public static final String SLOTS = "slots";
 
 	/**
+	 * Returns true if the argument type is for Qt's QObject class and false otherwise.
+	 */
+	public static boolean isQObject(IType type) {
+		if (!(type instanceof ICPPClassType))
+			return false;
+
+		ICPPClassType clsType = (ICPPClassType)type;
+		return QtKeywords.QOBJECT.equals(clsType.getName());
+	}
+
+	/**
+	 * Returns true if the argument type is for Qt's QMetaMethod class and false otherwise.
+	 */
+	public static boolean isQMetaMethod(IType type) {
+		if (!(type instanceof ICPPClassType))
+			return false;
+
+		ICPPClassType clsType = (ICPPClassType)type;
+		return QMETAMETHOD.equals(clsType.getName());
+	}
+
+	/**
 	 * Returns true if the argument binding is for the QObject::connect function
 	 * and false otherwise.
 	 */
 	public static boolean is_QObject_connect(IBinding binding) {
-		if (binding == null)
-			return false;
-
-		// IBinding#getAdapter returns null when binding is an instance of
-		// PDOMCPPMethod.
-		if (!(binding instanceof ICPPFunction))
-			return false;
-
-		try {
-			String[] qualName = ((ICPPFunction) binding).getQualifiedName();
-			return qualName.length == 2
-				&& QOBJECT.equals(qualName[0])
-				&& CONNECT.equals(qualName[1]);
-		} catch (DOMException e) {
-			return false;
-		}
+		String[] qualName = getFunctionQualifiedName(binding);
+		return qualName != null
+			&& qualName.length == 2
+			&& QOBJECT.equals(qualName[0])
+			&& CONNECT.equals(qualName[1]);
 	}
 
 	/**
@@ -69,21 +82,22 @@ public class QtKeywords {
 	 * and false otherwise.
 	 */
 	public static boolean is_QObject_disconnect(IBinding binding) {
-		if (binding == null)
-			return false;
+		String[] qualName = getFunctionQualifiedName(binding);
+		return qualName != null
+			&& qualName.length == 2
+			&& QOBJECT.equals(qualName[0])
+			&& DISCONNECT.equals(qualName[1]);
+	}
 
+	private static String[] getFunctionQualifiedName(IBinding binding) {
 		// IBinding#getAdapter returns null when binding is an instance of
 		// PDOMCPPMethod.
-		if (!(binding instanceof ICPPFunction))
-			return false;
-
-		try {
-			String[] qualName = ((ICPPFunction) binding).getQualifiedName();
-			return qualName.length == 2
-				&& QOBJECT.equals(qualName[0])
-				&& DISCONNECT.equals(qualName[1]);
-		} catch (DOMException e) {
-			return false;
-		}
+		if (binding instanceof ICPPFunction)
+			try {
+				return ((ICPPFunction) binding).getQualifiedName();
+			} catch (DOMException e) {
+				QtPlugin.log(e);
+			}
+		return null;
 	}
 }

@@ -14,7 +14,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.codan.core,
  org.eclipse.cdt.qt.ui,
  org.eclipse.jface.text,
- org.eclipse.cdt.ui
+ org.eclipse.cdt.ui,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.editors,
+ org.eclipse.search
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %vendorName

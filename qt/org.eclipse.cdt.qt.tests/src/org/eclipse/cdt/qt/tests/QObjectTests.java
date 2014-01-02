@@ -15,6 +15,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.qt.core.index.IQEnum;
 import org.eclipse.cdt.qt.core.index.IQMethod;
 import org.eclipse.cdt.qt.core.index.IQObject;
@@ -57,8 +60,6 @@ public class QObjectTests extends BaseQtTestCase {
 	}
 
 	// #include "junit-QObject.hh"
-	// template <typename T> class QList {};
-	// class QString {};
 	// class Q0 : public QObject
 	// {
 	// Q_OBJECT
@@ -137,7 +138,6 @@ public class QObjectTests extends BaseQtTestCase {
 	}
 
 	// #include "junit-QObject.hh"
-	// template <typename T> class QList {};
 	// class Q : public QObject
 	// {
 	// Q_OBJECT
@@ -452,9 +452,14 @@ public class QObjectTests extends BaseQtTestCase {
 		assertFalse(i.hasNext());
 	}
 
+	private static void assert_checkQMethod(IQMethod method, IQObject expectedOwner, String expectedName, IQMethod.Kind expectedKind, Long expectedRevision) throws Exception {
+		assertEquals(expectedKind, method.getKind());
+		assertEquals(expectedName, method.getName());
+		assertSame(method.getName(), expectedOwner, method.getOwner());
+		assertEquals(expectedRevision, method.getRevision());
+	}
+
 	// #include "junit-QObject.hh"
-	// template <typename T> class QList {};
-	// class QString {};
     // class Q : public QObject
     // {
     // Q_OBJECT
@@ -512,10 +517,173 @@ public class QObjectTests extends BaseQtTestCase {
 		}
 	}
 
-	private static void assert_checkQMethod(IQMethod method, IQObject expectedOwner, String expectedName, IQMethod.Kind expectedKind, Long expectedRevision) throws Exception {
-		assertEquals(expectedKind, method.getKind());
-		assertEquals(expectedName, method.getName());
-		assertSame(method.getName(), expectedOwner, method.getOwner());
-		assertEquals(expectedRevision, method.getRevision());
+	// #include "junit-QObject.hh"
+	// class QUnrelated : public QObject { Q_OBJECT };
+	// class Q : public QObject
+	// {
+	// Q_OBJECT
+	// Q_SIGNAL void signal1();
+	// Q_SLOT void slot1();
+	//
+	//     void f1();
+	//     void f2()
+	//     {
+	//         Q q, *q_sender = this, *q_receiver = this;
+	//         QUnrelated *q_unrelated;
+	//         QMetaMethod meta = q.metaObject()->method( 0 );
+	//
+	//         //    static bool connect(const QObject *sender, const char *signal,
+	//         //                        const QObject *receiver, const char *member,
+	//         //                        Qt::ConnectionType = Qt::AutoConnection);
+	//         QObject::connect( q_sender, SIGNAL(signal1()), q_receiver, SIGNAL(signal1()) );
+	//         QObject::connect( q_sender, SIGNAL(signal1()), q_receiver, SLOT(slot1()) );
+	//         QObject::connect( q_sender, SIGNAL(signal1()), q_receiver, SIGNAL(signal1()), Qt::AutoConnection );
+	//         QObject::connect( q_sender, SIGNAL(signal1()), q_receiver, SLOT(slot1()), Qt::AutoConnection );
+	//         q_unrelated->connect( q_sender, SIGNAL(signal1()), q_receiver, SIGNAL(signal1()) );
+	//         q_unrelated->connect( q_sender, SIGNAL(signal1()), q_receiver, SLOT(slot1()) );
+	//         q_unrelated->connect( q_sender, SIGNAL(signal1()), q_receiver, SIGNAL(signal1()), Qt::AutoConnection );
+	//         q_unrelated->connect( q_sender, SIGNAL(signal1()), q_receiver, SLOT(slot1()), Qt::AutoConnection );
+	//
+	//         //    static bool connect(const QObject *sender, const QMetaMethod &signal,
+	//         //                        const QObject *receiver, const QMetaMethod &method,
+	//         //                        Qt::ConnectionType type = Qt::AutoConnection);
+	//         QObject::connect( q_sender, meta, q_receiver, meta );
+	//         QObject::connect( q_sender, meta, q_receiver, meta, Qt::AutoConnection );
+	//         q_unrelated->connect( q_sender, meta, q_receiver, meta );
+	//         q_unrelated->connect( q_sender, meta, q_receiver, meta, Qt::AutoConnection );
+	//
+	//         //    inline bool connect(const QObject *sender, const char *signal,
+	//         //                        const char *member,
+	//         //                        Qt::ConnectionType type = Qt::AutoConnection) const;
+	//         q_receiver->connect( q_sender, SIGNAL(signal1()), SIGNAL(signal1()) );
+	//         q_receiver->connect( q_sender, SIGNAL(signal1()), SLOT(slot1()) );
+	//         q_receiver->connect( q_sender, SIGNAL(signal1()), SIGNAL(signal1()), Qt::AutoConnection );
+	//         q_receiver->connect( q_sender, SIGNAL(signal1()), SLOT(slot1()), Qt::AutoConnection );
+	//
+	//         //    static bool disconnect(const QObject *sender, const char *signal,
+	//         //                           const QObject *receiver, const char *member);
+	//         QObject::disconnect( q_sender, SIGNAL(signal1()), q_receiver, SIGNAL(signal1()) );
+	//         QObject::disconnect( q_sender, SIGNAL(signal1()), q_receiver, SLOT(slot1()) );
+	//         q_unrelated->disconnect( q_sender, SIGNAL(signal1()), q_receiver, SIGNAL(signal1()) );
+	//         q_unrelated->disconnect( q_sender, SIGNAL(signal1()), q_receiver, SLOT(slot1()) );
+	//
+	//         //    static bool disconnect(const QObject *sender, const QMetaMethod &signal,
+	//         //                           const QObject *receiver, const QMetaMethod &member);
+	//         QObject::disconnect( q_sender, meta, q_receiver, meta );
+	//         q_unrelated->disconnect( q_sender, meta, q_receiver, meta );
+	//
+	//         //    inline bool disconnect(const char *signal = 0,
+	//         //                           const QObject *receiver = 0, const char *member = 0);
+	//         q_sender->disconnect( SIGNAL(signal1()), q_receiver, SIGNAL(signal1()) );
+	//         q_sender->disconnect( SIGNAL(signal1()), q_receiver, SLOT(slot1()) );
+	//         q_sender->disconnect( SIGNAL(signal1()), q_receiver );
+	//         q_sender->disconnect( SIGNAL(signal1()) );
+	//         q_sender->disconnect();
+	//
+	//         //    inline bool disconnect(const QObject *receiver, const char *member = 0);
+	//         q_sender->disconnect( q_receiver, SIGNAL(signal1()) );
+	//         q_sender->disconnect( q_receiver, SLOT(slot1()) );
+	//         q_sender->disconnect( q_receiver );
+	//     }
+	// };
+	// // This is exactly the same as the inline function body.  It is duplicated here because of
+	// // an old bug where the function definitions were not properly indexed (for Qt).
+	// void Q::f1()
+	// {
+	//     Q q, *q_sender = this, *q_receiver = this;
+	//     QUnrelated *q_unrelated;
+	//     QMetaMethod meta = q.metaObject()->method( 0 );
+	//
+	//     //    static bool connect(const QObject *sender, const char *signal,
+	//     //                        const QObject *receiver, const char *member,
+	//     //                        Qt::ConnectionType = Qt::AutoConnection);
+	//     QObject::connect( q_sender, SIGNAL(signal1()), q_receiver, SIGNAL(signal1()) );
+	//     QObject::connect( q_sender, SIGNAL(signal1()), q_receiver, SLOT(slot1()) );
+	//     QObject::connect( q_sender, SIGNAL(signal1()), q_receiver, SIGNAL(signal1()), Qt::AutoConnection );
+	//     QObject::connect( q_sender, SIGNAL(signal1()), q_receiver, SLOT(slot1()), Qt::AutoConnection );
+	//     q_unrelated->connect( q_sender, SIGNAL(signal1()), q_receiver, SIGNAL(signal1()) );
+	//     q_unrelated->connect( q_sender, SIGNAL(signal1()), q_receiver, SLOT(slot1()) );
+	//     q_unrelated->connect( q_sender, SIGNAL(signal1()), q_receiver, SIGNAL(signal1()), Qt::AutoConnection );
+	//     q_unrelated->connect( q_sender, SIGNAL(signal1()), q_receiver, SLOT(slot1()), Qt::AutoConnection );
+	//
+	//     //    static bool connect(const QObject *sender, const QMetaMethod &signal,
+	//     //                        const QObject *receiver, const QMetaMethod &method,
+	//     //                        Qt::ConnectionType type = Qt::AutoConnection);
+	//     QObject::connect( q_sender, meta, q_receiver, meta );
+	//     QObject::connect( q_sender, meta, q_receiver, meta, Qt::AutoConnection );
+	//     q_unrelated->connect( q_sender, meta, q_receiver, meta );
+	//     q_unrelated->connect( q_sender, meta, q_receiver, meta, Qt::AutoConnection );
+	//
+	//     //    inline bool connect(const QObject *sender, const char *signal,
+	//     //                        const char *member,
+	//     //                        Qt::ConnectionType type = Qt::AutoConnection) const;
+	//     q_receiver->connect( q_sender, SIGNAL(signal1()), SIGNAL(signal1()) );
+	//     q_receiver->connect( q_sender, SIGNAL(signal1()), SLOT(slot1()) );
+	//     q_receiver->connect( q_sender, SIGNAL(signal1()), SIGNAL(signal1()), Qt::AutoConnection );
+	//     q_receiver->connect( q_sender, SIGNAL(signal1()), SLOT(slot1()), Qt::AutoConnection );
+	//
+	//     //    static bool disconnect(const QObject *sender, const char *signal,
+	//     //                           const QObject *receiver, const char *member);
+	//     QObject::disconnect( q_sender, SIGNAL(signal1()), q_receiver, SIGNAL(signal1()) );
+	//     QObject::disconnect( q_sender, SIGNAL(signal1()), q_receiver, SLOT(slot1()) );
+	//     q_unrelated->disconnect( q_sender, SIGNAL(signal1()), q_receiver, SIGNAL(signal1()) );
+	//     q_unrelated->disconnect( q_sender, SIGNAL(signal1()), q_receiver, SLOT(slot1()) );
+	//
+	//     //    static bool disconnect(const QObject *sender, const QMetaMethod &signal,
+	//     //                           const QObject *receiver, const QMetaMethod &member);
+	//     QObject::disconnect( q_sender, meta, q_receiver, meta );
+	//     q_unrelated->disconnect( q_sender, meta, q_receiver, meta );
+	//
+	//     //    inline bool disconnect(const char *signal = 0,
+	//     //                           const QObject *receiver = 0, const char *member = 0);
+	//     q_sender->disconnect( SIGNAL(signal1()), q_receiver, SIGNAL(signal1()) );
+	//     q_sender->disconnect( SIGNAL(signal1()), q_receiver, SLOT(slot1()) );
+	//     q_sender->disconnect( SIGNAL(signal1()), q_receiver );
+	//     q_sender->disconnect( SIGNAL(signal1()) );
+	//     q_sender->disconnect();
+	//
+	//     //    inline bool disconnect(const QObject *receiver, const char *member = 0);
+	//     q_sender->disconnect( q_receiver, SIGNAL(signal1()) );
+	//     q_sender->disconnect( q_receiver, SLOT(slot1()) );
+	//     q_sender->disconnect( q_receiver );
+	// }
+	public void testSignalSlotReferences() throws Exception {
+		loadComment("sig_slot_refs.hh");
+		waitForIndexer(fCProject);
+
+		// References are from the function's IBinding.
+		assertNotNull(fIndex);
+		fIndex.acquireReadLock();
+		try {
+			char[][] Q_signal1_qn = new char[][]{ "Q".toCharArray(), "signal1".toCharArray() };
+			IIndexBinding[] Q_signal1s = fIndex.findBindings(Q_signal1_qn, IndexFilter.CPP_DECLARED_OR_IMPLICIT, npm());
+			assertNotNull(Q_signal1s);
+			assertEquals(1, Q_signal1s.length);
+			IIndexBinding Q_signal1 = Q_signal1s[0];
+			assertNotNull(Q_signal1);
+
+			char[][] Q_slot1_qn = new char[][]{ "Q".toCharArray(), "slot1".toCharArray() };
+			IIndexBinding[] Q_slot1s = fIndex.findBindings(Q_slot1_qn, IndexFilter.CPP_DECLARED_OR_IMPLICIT, npm());
+			assertNotNull(Q_slot1s);
+			assertEquals(1, Q_slot1s.length);
+			IIndexBinding Q_slot1 = Q_slot1s[0];
+			assertNotNull(Q_slot1);
+
+			// Each valid variant of the connect function call should have one reference
+			// in the inline function (f2) and one reference in the function with a separate
+			// definition (f1).
+			int expectedSignalRefs = 2 * 30;
+			int expectedSlotRefs = 2 * 10;
+
+			IIndexName[] signalRefs = fIndex.findReferences(Q_signal1);
+			assertNotNull(signalRefs);
+			assertEquals(expectedSignalRefs, signalRefs.length);
+
+			IIndexName[] slotRefs = fIndex.findReferences(Q_slot1);
+			assertNotNull(slotRefs);
+			assertEquals(expectedSlotRefs, slotRefs.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
 	}
 }

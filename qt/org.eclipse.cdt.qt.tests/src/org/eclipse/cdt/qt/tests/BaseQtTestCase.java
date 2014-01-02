@@ -88,14 +88,23 @@ public class BaseQtTestCase extends BaseTestCase {
 	// #define SIGNAL(a) qFlagLocation("2"#a)
 	// #define QML_DECLARE_TYPEINFO( T, F ) template <> struct QDeclarativeTypeInfo<T> { enum { H = F }; };
 	// enum { QML_HAS_ATTACHED_PROPERTIES = 0x01 };
+	// namespace Qt { enum ConnectionType { AutoConnection }; }
+	// class QMetaMethod { };
 	// class QObject
 	// {
 	// Q_OBJECT
 	// Q_SIGNAL void destroyed( QObject * );
 	// public:
-	//     static bool connect( QObject *, const char *, QObject *, const char * );
+	//     static bool connect( const QObject *, const char *, const QObject *, const char *, Qt::ConnectionType = Qt::AutoConnection );
+	//     static bool connect( const QObject *, const QMetaMethod &, const QObject *, const QMetaMethod &, Qt::ConnectionType = Qt::AutoConnection );
+	//            bool connect( const QObject *, const char *, const char *, Qt::ConnectionType = Qt::AutoConnection );
+	//     static bool disconnect( const QObject *, const char *, const QObject *, const char * );
+	//     static bool disconnect( const QObject *, const QMetaMethod &, const QObject *, const QMetaMethod & );
+	//            bool disconnect( const char * = 0, const QObject * = 0, const char * = 0 );
+	//            bool disconnect( const QObject *, const char * = 0 );
 	// };
 	// class QString { public: QString( const char * ch ); };
+	// template<typename T> class QList { };
 	// template<typename T>                         int qmlRegisterType(const char *uri, int versionMajor, int versionMinor, const char *qmlName);
 	// template<typename T, int metaObjectRevision> int qmlRegisterType(const char *uri, int versionMajor, int versionMinor, const char *qmlName);
 	// template<typename T> int qmlRegisterUncreatableType(const char *uri, int versionMajor, int versionMinor, const char *qmlName, const QString& reason);

@@ -100,4 +100,33 @@
             </with>
         </definition>
     </extension>
+    <extension
+        point="org.eclipse.cdt.codan.core.checkers"
+        id="org.eclipse.cdt.core.qt.SyntaxCheckers">
+        <category
+              id="org.eclipse.cdt.qt.core.qtproblemcategory"
+              name="Qt Problems">
+        </category>
+        <checker
+            id="org.eclipse.cdt.core.qt.connectfunctioncallchecker"
+            name="Qt Connect Function Call Checker"
+            class="org.eclipse.cdt.internal.qt.core.codan.QtSyntaxChecker">
+            <problem
+                category="org.eclipse.cdt.qt.core.qtproblemcategory"
+                defaultEnabled="true"
+                defaultSeverity="Warning"
+                id="org.eclipse.cdt.qt.core.qtproblem"
+                markerType="org.eclipse.cdt.qt.core.qtproblem"
+                messagePattern="{0}"
+                name="Qt Syntax Problem">
+            </problem>
+        </checker>
+    </extension>
+    <extension
+        point="org.eclipse.core.resources.markers"
+        id="qtproblem"
+        name="Qt C/C++ Problem">
+        <super type="org.eclipse.cdt.codan.core.codanProblem"/> 
+        <persistent value="true"/>
+    </extension>
 </plugin>

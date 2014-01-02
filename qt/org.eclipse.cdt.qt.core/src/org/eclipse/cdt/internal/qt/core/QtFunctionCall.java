@@ -7,13 +7,12 @@
  */
 package org.eclipse.cdt.internal.qt.core;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -37,15 +36,11 @@ public class QtFunctionCall {
 	private QtFunctionCall() {
 	}
 
-	protected static IASTNode safeArgsAt(IASTNode[] args, int index) {
-		return args.length > index ? args[index] : null;
-	}
-
 	/**
 	 * Returns a collection of all Qt method references within the given function call.  Returns
 	 * null if there are no Qt method references.
 	 */
-	public static Collection<IASTName> getReferences(IASTFunctionCallExpression call) {
+	public static Collection<QtMethodReference> getReferences(IASTFunctionCallExpression call) {
 		ICPPFunction function = ASTUtil.resolveFunctionBinding(ICPPFunction.class, call);
 		if (function == null)
 			return null;
@@ -57,7 +52,7 @@ public class QtFunctionCall {
 		return null;
 	}
 
-	private static Collection<IASTName> getReferencesInConnect(ICPPFunction function, IASTFunctionCallExpression call) {
+	private static Collection<QtMethodReference> getReferencesInConnect(ICPPFunction function, IASTFunctionCallExpression call) {
 		if (function == null)
 			return null;
 
@@ -83,8 +78,8 @@ public class QtFunctionCall {
 		}
 
 		// Otherwise find the signal and member parameters based on the overload.
-		IASTName signal = null;
-		IASTName member = null;
+		QtMethodReference signal = null;
+		QtMethodReference member = null;
 
 		// static bool connect( const QObject *sender, const char *signal,
 		//                      const QObject *receiver, const char *member,
@@ -102,20 +97,10 @@ public class QtFunctionCall {
 			member = QtMethodReference.parse(call, ASTUtil.getReceiverType(call), safeArgsAt(args, 2));
 		}
 
-		// Merge non-null signal and slot to return a list of 0, 1, or 2 elements.
-		if (signal == null) {
-			if (member == null)
-				return null;
-			return Collections.singletonList(member);
-		}
-
-		if (member == null)
-			return Collections.singletonList(signal);
-
-		return Arrays.asList(signal, member);
+		return mergeNonNull(signal, member);
 	}
 
-	private static Collection<IASTName> getReferencesInDisconnect(ICPPFunction function, IASTFunctionCallExpression call) {
+	private static Collection<QtMethodReference> getReferencesInDisconnect(ICPPFunction function, IASTFunctionCallExpression call) {
 		if (function == null)
 			return null;
 
@@ -140,8 +125,8 @@ public class QtFunctionCall {
 		}
 
 		// Otherwise find the signal and member parameters based on the overload.
-		IASTName signal = null;
-		IASTName member = null;
+		QtMethodReference signal = null;
+		QtMethodReference member = null;
 
 		if (type1 instanceof IBasicType && ( (IBasicType)type1 ).getKind() == IBasicType.Kind.eChar ) {
 			switch(params.length) {
@@ -167,16 +152,34 @@ public class QtFunctionCall {
 			member = QtMethodReference.parse(call, ASTUtil.getBaseType(safeArgsAt(args, 1)), safeArgsAt(args, 2));
 		}
 
-		// Merge non-null signal and slot to return a list of 0, 1, or 2 elements.
-		if (signal == null) {
-			if (member == null)
-				return null;
-			return Collections.singletonList(member);
+		return mergeNonNull(signal, member);
+	}
+
+	private static IASTNode safeArgsAt(IASTNode[] args, int index) {
+		return args.length > index ? args[index] : null;
+	}
+
+	private static <T> Collection<T> mergeNonNull(T...withNulls) {
+		T firstNonNull = null;
+		ArrayList<T> list = null;
+		for(T t : withNulls) {
+			if (t == null)
+				continue;
+			else if(list != null)
+				list.add(t);
+			else if(firstNonNull == null)
+				firstNonNull = t;
+			else {
+				list = new ArrayList<T>(withNulls.length);
+				list.add(firstNonNull);
+				list.add(t);
+			}
 		}
 
-		if (member == null)
-			return Collections.singletonList(signal);
-
-		return Arrays.asList(signal, member);
+		if (list != null)
+			return list;
+		if (firstNonNull != null)
+			return Collections.singletonList(firstNonNull);
+		return null;
 	}
 }

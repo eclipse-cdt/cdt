@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -115,6 +115,11 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		index.acquireReadLock();
 		try {
 			ICElement element= input;
+            if (CHQueries.isExternal(element)) {
+              ITranslationUnit tu= CModelUtil.getTranslationUnit(element);
+              return new Object[] { new CHNode(null, tu, 0, element, -1) };
+            }
+
 			if (!IndexUI.isIndexed(index, input)) {
 				getDisplay().asyncExec(new Runnable() {
 					@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 QNX Software Systems and others.
+ * Copyright (c) 2006, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.extensions.IExternalSearchProvider;
 
 import org.eclipse.cdt.internal.core.browser.ASTTypeInfo;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
@@ -245,7 +246,15 @@ public abstract class CSearchQuery implements ISearchQuery {
 					IIndexName enclosingDefinition = name.getEnclosingDefinition();
 					if (enclosingDefinition != null) {
 						enclosingElement = IndexUI.getCElementForName(preferred, index, enclosingDefinition);
+					} else {
+						// Get names from the external search providers.
+						for (IExternalSearchProvider provider : CSearchProviderManager.INSTANCE.getExternalSearchProviders()) {
+							enclosingElement = provider.getEnclosingElement(name);
+							if (enclosingElement != null)
+								break;
+						}
 					}
+
 					boolean isWriteAccess = name.isWriteAccess();
 					matches.add(new Match(nodeOffset, nodeLength, isPolymorphicOnly, enclosingElement,
 							isWriteAccess));
@@ -373,6 +382,14 @@ public abstract class CSearchQuery implements ISearchQuery {
 				}
 			}
 		}
+
+		// Get names from the external search providers.
+		for (IExternalSearchProvider provider : CSearchProviderManager.INSTANCE.getExternalSearchProviders()) {
+			for (IBinding binding : bindings) {
+				provider.findNames(binding, flags, projects, index, names);
+			}
+		}
+
 		if (!names.isEmpty()) {
 			collectNames(index, names, polymorphicNames);
 		}

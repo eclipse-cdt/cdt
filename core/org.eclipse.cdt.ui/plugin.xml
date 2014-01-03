@@ -18,6 +18,8 @@
    <extension-point id="textHovers" name="%textHoversName" schema="schema/textHovers.exsd"/>
    <extension-point id="IndexerPage" name="%indexerPage.name" schema="schema/IndexerPage.exsd"/>
    <extension-point id="ProposalFilter" name="%proposalFilter.name" schema="schema/ProposalFilter.exsd"/>
+   <extension-point id="callHierarchyProviders" name="%callHierarchyProviders.name" schema="schema/callHierarchyProviders.exsd"/>
+   <extension-point id="externalSearchProviders" name="%externalSearchProviders.name" schema="schema/externalSearchProviders.exsd"/>
    <extension-point id="completionProposalComputer" name="%completionProposalComputer" schema="schema/completionProposalComputer.exsd"/>
    <extension-point id="newCfgDialog" name="%NewCfgDialog.name" schema="schema/newCfgDialog.exsd"/>
    <extension-point id="ConfigManager" name="%ConfigManager" schema="schema/ConfigManager.exsd"/>

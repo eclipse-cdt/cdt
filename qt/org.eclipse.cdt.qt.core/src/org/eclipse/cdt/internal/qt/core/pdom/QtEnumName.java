@@ -15,7 +15,7 @@ public class QtEnumName extends AbstractQObjectMemberName implements IQtASTName 
 	private final IASTName cppEnumName;
 	private final boolean isFlag;
 
-	public QtEnumName(QObjectName qobjName, IASTName ast, String qtEnumName, IASTName cppEnumName, QtASTImageLocation location, boolean isFlag) {
+	public QtEnumName(IQtASTName qobjName, IASTName ast, String qtEnumName, IASTName cppEnumName, QtASTImageLocation location, boolean isFlag) {
 		super(qobjName, ast, qtEnumName, location);
 		this.cppEnumName = cppEnumName;
 		this.isFlag = isFlag;

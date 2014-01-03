@@ -114,6 +114,8 @@ public class QtASTVisitor extends ASTVisitor {
 
 			if (isQObject(spec, expansions))
 				handleQObject(owner, spec, expansions);
+			if (isQGadget(spec, expansions))
+				handleQClass(owner, spec, new QGadgetName(spec), expansions);
 		}
 
 		return super.visit(declSpec);
@@ -148,6 +150,18 @@ public class QtASTVisitor extends ASTVisitor {
 		return false;
 	}
 
+	private boolean isQGadget(ICPPASTCompositeTypeSpecifier spec, IASTPreprocessorMacroExpansion[] expansions) {
+
+		// The class definition must contain a Q_GADGET expansion.
+		for (IASTPreprocessorMacroExpansion expansion : expansions) {
+			IASTPreprocessorMacroDefinition macro = expansion.getMacroDefinition();
+			if (QtKeywords.Q_GADGET.equals(String.valueOf(macro.getName())))
+				return true;
+		}
+
+		return false;
+	}
+
 	private class EnumDecl {
 		private final String name;
 		private final boolean isFlag;
@@ -161,7 +175,7 @@ public class QtASTVisitor extends ASTVisitor {
 			this.location = new QtASTImageLocation(refName.getFileLocation(), offset, length);
 		}
 
-		public void handle(IASTPreprocessorIncludeStatement owner, ICPPASTCompositeTypeSpecifier spec, QObjectName qobjName, Map<String, String> aliases) {
+		public void handle(IASTPreprocessorIncludeStatement owner, ICPPASTCompositeTypeSpecifier spec, IQtASTName qobjName, Map<String, String> aliases) {
 
 			String alias = aliases.get(name);
 
@@ -182,10 +196,37 @@ public class QtASTVisitor extends ASTVisitor {
 
 		// Put the QObject into the symbol map.
 		QObjectName qobjName = new QObjectName(spec);
-		symbols.add(owner, qobjName, null);
+		handleQClass(owner, spec, qobjName, expansions);
 
-		// The QObject contains a reference to the C++ class that it annotates.
-		symbols.add(owner, new ASTNameReference(spec.getName()), qobjName);
+		for (IASTPreprocessorMacroExpansion expansion : expansions) {
+
+			IASTName name = expansion.getMacroReference();
+			String macroName = name == null ? null : name.toString();
+			if (QtKeywords.Q_OBJECT.equals(macroName))
+				continue;
+
+			if(QtKeywords.Q_CLASSINFO.equals(macroName)) {
+				Matcher m = classInfoRegex.matcher(expansion.getRawSignature());
+				if (m.matches()) {
+					String key = m.group(1);
+					String value = m.group(2);
+					qobjName.addClassInfo(key, value);
+				}
+			} else if(QtKeywords.Q_PROPERTY.equals(macroName))
+				handleQPropertyDefn(owner, qobjName, expansion);
+		}
+
+		// Process the slot, signal, and invokable method declarations.
+		extractQMethods(owner, spec, qobjName);
+	}
+
+	private void handleQClass(IASTPreprocessorIncludeStatement owner, ICPPASTCompositeTypeSpecifier spec, IQtASTName qtName, IASTPreprocessorMacroExpansion[] expansions) {
+
+		// Put the Qt name into the symbol map.
+		symbols.add(owner, qtName, null);
+
+		// The QClass contains a reference to the C++ class that it annotates.
+		symbols.add(owner, new ASTNameReference(spec.getName()), qtName);
 
 		// There are three macros that are significant to QEnums, Q_ENUMS, Q_FLAGS, and Q_DECLARE_FLAGS.
 		// All macro expansions in the QObject class definition are examined to find instances of these
@@ -213,22 +254,11 @@ public class QtASTVisitor extends ASTVisitor {
 					String enumName = m.group(2);
 					flagAliases.put(flagName, enumName);
 				}
-			} else if(QtKeywords.Q_CLASSINFO.equals(macroName)) {
-				Matcher m = classInfoRegex.matcher(expansion.getRawSignature());
-				if (m.matches()) {
-					String key = m.group(1);
-					String value = m.group(2);
-					qobjName.addClassInfo(key, value);
-				}
-			} else if(QtKeywords.Q_PROPERTY.equals(macroName))
-				handleQPropertyDefn(owner, qobjName, expansion);
+			}
 		}
 
-		// Process the slot, signal, and invokable method declarations.
-		extractQMethods(owner, spec, qobjName);
-
 		for(EnumDecl decl : enumDecls)
-			decl.handle(owner, spec, qobjName, flagAliases);
+			decl.handle(owner, spec, qtName, flagAliases);
 	}
 
 	private void extractEnumDecls(IASTPreprocessorMacroExpansion expansion, boolean isFlag, List<EnumDecl> decls) {

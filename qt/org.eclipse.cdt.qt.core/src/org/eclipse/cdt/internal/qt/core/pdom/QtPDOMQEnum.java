@@ -43,8 +43,6 @@ public class QtPDOMQEnum extends QtPDOMBinding {
 
 	private static final int IS_FLAG_MASK = 1;
 
-	private QtPDOMQObject qobj;
-
 	protected QtPDOMQEnum(QtPDOMLinkage linkage, long record) throws CoreException {
 		super(linkage, record);
 	}
@@ -64,12 +62,8 @@ public class QtPDOMQEnum extends QtPDOMBinding {
 		// Write the flags to the database.
 		getDB().putByte(Field.Flags.getRecord(record), flags);
 
-		if (!(parent instanceof QtPDOMQObject))
-			this.qobj = null;
-		else {
-			this.qobj = (QtPDOMQObject) parent;
-			this.qobj.addChild(this);
-		}
+		if(parent instanceof AbstractQtPDOMClass)
+			((AbstractQtPDOMClass) parent).addChild(this);
 	}
 
 	@Override

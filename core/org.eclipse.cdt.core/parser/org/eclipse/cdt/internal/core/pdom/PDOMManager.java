@@ -521,7 +521,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 							enqueue(new NotifyCModelManagerTask(cproject.getProject()));
 						}
 					}
-					
+
 					if (IndexerPreferences.getReindexOnIndexerChange(cproject.getProject())) {
 						enqueue(new PDOMRebuildTask(indexer));
 					}
@@ -575,9 +575,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				IndexUpdatePolicy policy= createPolicy(project);
 
 				boolean rebuild=
-					pdom.isClearedBecauseOfVersionMismatch() ||
-					pdom.isCreatedFromScratch() ||
-					policy.isInitialRebuildRequested();
+						pdom.isClearedBecauseOfVersionMismatch() ||
+						pdom.isCreatedFromScratch() ||
+						policy.isInitialRebuildRequested();
 				if (rebuild) {
 					if (IPDOMManager.ID_NO_INDEXER.equals(indexer.getID())) {
 						rebuild= false;
@@ -1535,7 +1535,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	/**
 	 * @param cproject the project to check
 	 * @return whether the content in the project fragment of the specified project's index
-	 * is complete (contains all sources) and up to date.
+	 *     is complete (contains all sources) and up to date.
 	 * @throws CoreException
 	 */
 	public boolean isProjectContentSynced(ICProject cproject) throws CoreException {
@@ -1544,11 +1544,11 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	/**
-	 * Checks whether the index is in sync with the file system. 
+	 * Checks whether the index is in sync with the file system.
 	 * @param cproject the project to check
-	 * @return <code>null</code> when the content in the project fragment of the specified project's index
-	 *    is complete (contains all sources) and up to date; or an @link{IStatus} indicating the first
-	 *    occurrence of an index file found not up-to-date, along with its include trail.
+	 * @return {@code null} when the content in the project fragment of the specified project's
+	 *    index is complete (contains all sources) and up to date; or an {@link IStatus} indicating
+	 *    the first occurrence of an index file found not up-to-date, along with its include trail.
 	 * @throws CoreException in case of a file access or other internal error
 	 */
 	public IStatus getProjectContentSyncState(ICProject cproject) throws CoreException {
@@ -1567,7 +1567,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					IResource resource= tu.getResource();
 					if (resource instanceof IFile && isSubjectToIndexing(tu.getLanguage())) {
 						IIndexFileLocation location= IndexLocationFactory.getWorkspaceIFL((IFile) resource);
-						syncStatus = areSynchronized(new HashSet<IIndexFileLocation>(), index, resource, location); 
+						syncStatus = areSynchronized(new HashSet<IIndexFileLocation>(), index, resource, location);
 						if (syncStatus != null) {
 							return syncStatus;
 						}
@@ -1613,7 +1613,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				return new MultiStatus(CCorePlugin.PLUGIN_ID, IStatus.OK, "No index file found for: " + location, null); //$NON-NLS-1$
 
 			for (IIndexFile file : files) {
-				long diff = resource.getLocalTimeStamp() - file.getTimestamp(); 
+				long diff = resource.getLocalTimeStamp() - file.getTimestamp();
 				if (diff != 0) {
 					return new MultiStatus(CCorePlugin.PLUGIN_ID, IStatus.OK,
 							"Index timestamp for '" //$NON-NLS-1$
@@ -1632,7 +1632,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 						String path= newLocation.getFullPath();
 						if (path != null) {
 							IResource newResource= ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
-							MultiStatus m = areSynchronized(trail, index, newResource, newLocation); 
+							MultiStatus m = areSynchronized(trail, index, newResource, newLocation);
 							if (m != null) {
 								m.add(new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID,
 										"Included by " + file.getLocation().getFullPath())); //$NON-NLS-1$

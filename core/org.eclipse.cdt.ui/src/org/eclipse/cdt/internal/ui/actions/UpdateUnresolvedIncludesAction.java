@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.actions;
 import org.eclipse.cdt.core.index.IIndexManager;
 
 public class UpdateUnresolvedIncludesAction extends AbstractUpdateIndexAction {
-
 	@Override
 	protected int getUpdateOptions() {
 		return IIndexManager.UPDATE_UNRESOLVED_INCLUDES;

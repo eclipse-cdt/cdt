@@ -328,7 +328,7 @@ public interface IIndexFragment {
 	IIndexFragmentFile[] getDefectiveFiles() throws CoreException;
 
 	/**
-	 * @return an array of files containg unresolved includes.
+	 * @return an array of files containing unresolved includes.
 	 */
 	IIndexFragmentFile[] getFilesWithUnresolvedIncludes() throws CoreException;
 

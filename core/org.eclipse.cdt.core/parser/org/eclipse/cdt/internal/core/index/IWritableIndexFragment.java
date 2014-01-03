@@ -10,7 +10,6 @@
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
 ******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -26,7 +25,6 @@ import org.eclipse.core.runtime.CoreException;
  * The interface that an actual storage for an index has to implement.
  */
 public interface IWritableIndexFragment extends IIndexFragment {
-
 	/**
 	 * Clears the entire fragment.
 	 */

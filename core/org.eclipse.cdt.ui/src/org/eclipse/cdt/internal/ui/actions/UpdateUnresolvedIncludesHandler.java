@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
-
 /**
  * Handler for {@link org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction}
  *
@@ -18,7 +17,6 @@ package org.eclipse.cdt.internal.ui.actions;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class UpdateUnresolvedIncludesHandler extends AbstractUpdateIndexHandler {
-
 	private final UpdateUnresolvedIncludesAction updateAction = new UpdateUnresolvedIncludesAction();
 	
 	@Override

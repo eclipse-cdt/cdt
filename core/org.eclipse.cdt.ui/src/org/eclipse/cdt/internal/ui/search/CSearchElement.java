@@ -24,18 +24,17 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
  * @author Doug Schaefer
  */
 public class CSearchElement implements IAdaptable {
-
 	private final IIndexFileLocation location;
-	
+
 	public CSearchElement(IIndexFileLocation loc) {
 		this.location= loc;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return location.hashCode();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof CSearchElement))
@@ -47,7 +46,7 @@ public class CSearchElement implements IAdaptable {
 	final IIndexFileLocation getLocation() {
 		return location;
 	}
-	
+
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapterType) {

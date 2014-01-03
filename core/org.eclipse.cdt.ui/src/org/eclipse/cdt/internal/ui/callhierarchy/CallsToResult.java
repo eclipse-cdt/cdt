@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,9 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.ui.extensions.ICallToResult;
 
-public class CallsToResult {
+public class CallsToResult implements ICallToResult {
 	private Map<CElementSet, List<IIndexName>> fElementSetsToReferences= new HashMap<>();
 
 	public CElementSet[] getElementSets() {
@@ -32,6 +33,7 @@ public class CallsToResult {
 		return references.toArray(new IIndexName[references.size()]);
 	}
 
+	@Override
 	public void add(ICElement[] elems, IIndexName ref) {
 		CElementSet key= new CElementSet(elems);
 		List<IIndexName> list= fElementSetsToReferences.get(key);

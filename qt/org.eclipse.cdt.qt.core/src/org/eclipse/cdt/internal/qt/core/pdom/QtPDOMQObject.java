@@ -14,75 +14,40 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
-import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.qt.core.QtPlugin;
 import org.eclipse.core.runtime.CoreException;
 
-/**
- * The persisted form of QObjects.
- */
 @SuppressWarnings("restriction")
-public class QtPDOMQObject extends QtPDOMBinding {
+public class QtPDOMQObject extends AbstractQtPDOMClass {
 
-	private static int offsetInitializer = QtPDOMBinding.Field.Last.offset;
+	private static int offsetInitializer = AbstractQtPDOMClass.Field.Last.offset;
 	protected static enum Field {
-		CppRecord(Database.PTR_SIZE, 3),
-		Children(4 /* From PDOMNodeLinkedList.RECORD_SIZE, which is protected */, 0),
-		ClassInfos(Database.PTR_SIZE, 2),
-		Last(0, 0);
+		ClassInfos(Database.PTR_SIZE),
+		Last(0);
 
-		private final int offset;
-		private final int version;
+		public final int offset;
 
-		private Field(int sizeof, int version) {
+		private Field(int sizeof) {
 			this.offset = offsetInitializer;
-			this.version = version;
 			offsetInitializer += sizeof;
 		}
 
 		public long getRecord(long baseRec) {
 			return baseRec + offset;
 		}
-
-		/**
-		 * Return true if this linkage in supported in the given instance of the linkage.
-		 */
-		public boolean isSupportedIn(QtPDOMLinkage linkage) {
-			return linkage.getVersion() >= version;
-		}
 	}
-
-	private final PDOMNodeLinkedList children;
 
 	protected QtPDOMQObject(QtPDOMLinkage linkage, long record) throws CoreException {
 		super(linkage, record);
-		children = new PDOMNodeLinkedList(linkage, Field.Children.getRecord(record));
 	}
 
 	public QtPDOMQObject(QtPDOMLinkage linkage, IASTName qtName, IASTName cppName) throws CoreException {
-		super(linkage, null, qtName);
-
-		IBinding cppBinding = getPDOM().findBinding(cppName);
-		if (cppBinding != null) {
-			IPDOMBinding cppPDOMBinding = (IPDOMBinding) cppBinding.getAdapter(IPDOMBinding.class);
-			if (cppPDOMBinding != null) {
-				if (cppPDOMBinding.getLinkage() != null
-				 && cppPDOMBinding.getLinkage().getLinkageID() == ILinkage.CPP_LINKAGE_ID)
-					getDB().putRecPtr(Field.CppRecord.getRecord(record), cppPDOMBinding.getRecord());
-			}
-		}
-
-		children = new PDOMNodeLinkedList(linkage, Field.Children.getRecord(record));
+		super(linkage, qtName, cppName);
 
 		if (qtName instanceof QObjectName) {
 			QObjectName qobjName = (QObjectName) qtName;
@@ -96,24 +61,7 @@ public class QtPDOMQObject extends QtPDOMBinding {
 		getDB().putRecPtr(Field.ClassInfos.getRecord(record), 0);
 	}
 
-	public ICPPClassType getCppClassType() throws CoreException {
-		long cppRec = getDB().getRecPtr(Field.CppRecord.getRecord(record));
-		if (cppRec == 0)
-			return null;
-
-		PDOMLinkage cppLinkage = getPDOM().getLinkage(ILinkage.CPP_LINKAGE_ID);
-		if (cppLinkage == null)
-			return null;
-
-		PDOMBinding cppBinding = cppLinkage.getBinding(cppRec);
-		return cppBinding instanceof ICPPClassType ? (ICPPClassType) cppBinding : null;
-	}
-
 	public void setClassInfos(Map<String, String> classInfos) throws CoreException {
-
-		// Make sure the version of the linkage contains this field.
-		if (!Field.ClassInfos.isSupportedIn(getQtLinkage()))
-			return;
 
 		// Create an array to be stored to the PDOM.
 		ClassInfo[] array = new ClassInfo[classInfos.size()];
@@ -134,10 +82,6 @@ public class QtPDOMQObject extends QtPDOMBinding {
 
 	public Map<String, String> getClassInfos() throws CoreException {
 		Map<String, String> classInfos = new LinkedHashMap<String, String>();
-
-		// Make sure the version of the linkage contains this field.
-		if (!Field.ClassInfos.isSupportedIn(getQtLinkage()))
-			return classInfos;
 
 		// Read the array from the Database and insert the elements into the Map that is to be returned.
 		long arrayRec = getDB().getRecPtr(Field.ClassInfos.getRecord(record));
@@ -191,23 +135,6 @@ public class QtPDOMQObject extends QtPDOMBinding {
 		}
 
 		return bases;
-	}
-
-	@Override
-	public void addChild(PDOMNode child) throws CoreException {
-		children.addMember(child);
-	}
-
-	public <T extends QtPDOMBinding> List<T> getChildren(Class<T> cls) throws CoreException {
-		QtPDOMVisitor.All<T> collector = new QtPDOMVisitor.All<T>(cls);
-		try {
-			children.accept(collector);
-		} catch(CoreException e) {
-			QtPlugin.log(e);
-			return Collections.emptyList();
-		}
-
-		return collector.list;
 	}
 
     private static class ClassInfo {

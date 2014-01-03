@@ -21,12 +21,12 @@ import org.eclipse.core.runtime.CoreException;
 @SuppressWarnings("restriction")
 public abstract class AbstractQObjectMemberName extends ASTDelegatedName {
 
-	private final QObjectName owner;
+	private final IQtASTName owner;
 	private final String name;
 	private final IASTImageLocation location;
 	private ASTNodeProperty propertyInParent;
 
-	protected AbstractQObjectMemberName(QObjectName owner, IASTName ast, String name, IASTImageLocation location) {
+	protected AbstractQObjectMemberName(IQtASTName owner, IASTName ast, String name, IASTImageLocation location) {
 		super(ast);
 		this.owner = owner;
 		this.name = name;

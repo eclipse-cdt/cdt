@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems and others.
+ * Copyright (c) 2006, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  *     Marc Khouzam (Ericsson) - Pass errorStream to startCommandProcessing() (Bug 350837)
  *     Mikhail Khodjaiants (Mentor Graphics) - Terminate should cancel the initialization sequence 
  *                                             if it is still running (bug 373845)
+ *     Marc Khouzam (Ericsson) - Terminate the session if we lose the connection to the remote target (bug 422586)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
@@ -44,6 +45,7 @@ import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
@@ -66,7 +68,15 @@ import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.IEventProcessor;
 import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.MIRunControlEventProcessor;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIConsoleStreamOutput;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MILogStreamOutput;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIOOBRecord;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIResultRecord;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
@@ -127,12 +137,61 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		}		
 	}
 
+	/**
+	 * An event processor that handles some GDB life cycle events.
+     * Currently, it detects a lost connection with the remote.
+	 */
+	private class ControlEventProcessor implements IEventProcessor {
+
+		public ControlEventProcessor() {
+			addCommandListener(this);
+			addEventListener(this);
+		}
+		
+		@Override
+		public void dispose() {
+    		removeEventListener(this);
+    		removeCommandListener(this);			
+		}
+		
+		@Override
+		public void eventReceived(Object output) {
+			if (output instanceof MIOutput) {
+				verifyConnectionLost((MIOutput)output);
+			} else {
+				assert false;
+			}
+		}
+
+		@Override
+	    public void commandDone(ICommandToken token, ICommandResult cmdResult) {
+			if (cmdResult instanceof MIInfo) {
+				verifyConnectionLost(((MIInfo)cmdResult).getMIOutput());
+			} else {
+				assert false;
+			}
+		}
+
+		@Override
+		public void commandQueued(ICommandToken token) {
+		}
+
+		@Override
+		public void commandSent(ICommandToken token) {
+		}
+
+		@Override
+		public void commandRemoved(ICommandToken token) {
+		}
+	}
+	
     private GDBControlDMContext fControlDmc;
 
     private IGDBBackend fMIBackend;
         
     private IEventProcessor fMIEventProcessor;
     private IEventProcessor fCLICommandProcessor;
+    private IEventProcessor fControlEventProcessor;
     private AbstractCLIProcess fCLIProcess;
 
     private GdbCommandTimeoutManager fCommandTimeoutManager;
@@ -325,7 +384,6 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	/**
 	 * @since 4.0
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void completeInitialization(final RequestMonitor rm) {
 		// We take the attributes from the launchConfiguration
@@ -462,13 +520,15 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
             
             fCLICommandProcessor = createCLIEventProcessor(GDBControl.this, fControlDmc);
             fMIEventProcessor = createMIRunControlEventProcessor(GDBControl.this, fControlDmc);
+            fControlEventProcessor = createControlEventProcessor();
 
             requestMonitor.done();
         }
         
         @Override
         protected void shutdown(RequestMonitor requestMonitor) {
-            fCLICommandProcessor.dispose();
+        	fControlEventProcessor.dispose();
+        	fCLICommandProcessor.dispose();
             fMIEventProcessor.dispose();
             fCLIProcess.dispose();
 
@@ -594,6 +654,11 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		return new MIRunControlEventProcessor(connection, controlDmc);
 	}
 
+	/** @since 4.3 */
+	protected IEventProcessor createControlEventProcessor() {
+		return new ControlEventProcessor();
+	}
+
 	/**
 	 * @since 4.1
 	 */
@@ -654,6 +719,75 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		}
 	}
 
+	/** @since 4.3 */
+	protected boolean verifyConnectionLost(MIOutput output) {
+		boolean shouldTerminate = false;
+		for (MIOOBRecord oobr : output.getMIOOBRecords()) {
+			if (oobr instanceof MIConsoleStreamOutput) {
+				MIConsoleStreamOutput out = (MIConsoleStreamOutput) oobr;
+				String str = out.getString();
+				if (str != null && str.startsWith("Ending remote debugging")) { //$NON-NLS-1$
+					// This happens if the user types 'disconnect' in the console
+					shouldTerminate = true;
+					break;
+					
+					// Note that this will not trigger in the case where a
+					// -target-disconnect is used.  This is a case that CDT handles
+					// explicitly as it is an MI command; we shouldn't have to catch it here.
+					// In fact, catching it here and terminating the session would break
+					// the workaround for GDB 7.2 handled by GDBProcesses_7_2.needFixForGDB72Bug352998()
+				}
+			} else if (oobr instanceof MILogStreamOutput) {
+				MILogStreamOutput out = (MILogStreamOutput) oobr;
+				String str = out.getString().trim();
+				if (str != null && str.startsWith("Remote connection closed")) { //$NON-NLS-1$
+					// This happens if gdbserver is killed or dies
+					shouldTerminate = true;
+					break;
+				}
+			}
+		}
+
+		if (!shouldTerminate) {
+            // It can happen that GDB sends multiple responses to the same command.  
+			// In those cases, the second command result is sent as an event.
+			// Let's check if we have such a result.
+			// This case can happen for example in all-stop when sending an -exec-continue
+			// and then kill gdbserver while connected to a process; a second result
+			// to -exec-continue will be sent to indicate the remote connection is closed.
+			MIResultRecord rr = output.getMIResultRecord();
+			if (rr != null) {
+				String state = rr.getResultClass();
+				if ("error".equals(state)) { //$NON-NLS-1$
+					MIResult[] results = rr.getMIResults();
+					for (MIResult result : results) {
+						String var = result.getVariable();
+						if (var.equals("msg")) { //$NON-NLS-1$
+							MIValue value = result.getMIValue();
+							if (value instanceof MIConst) {
+								String str = ((MIConst)value).getCString();
+								if (str != null && str.startsWith("Remote connection closed")) { //$NON-NLS-1$
+									shouldTerminate = true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+    	if (shouldTerminate) {
+    		terminate(new ImmediateRequestMonitor() {
+    			@Override
+    			protected void handleErrorOrWarning() {
+    				GdbPlugin.getDefault().getLog().log(getStatus());
+    				super.handleErrorOrWarning();
+    			};
+    		});
+    	}
+        return false;
+	}
+	
 	/**
 	 * @since 4.1
 	 */

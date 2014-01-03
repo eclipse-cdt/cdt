@@ -245,10 +245,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  160.0 - Store specialized template parameters of class/function template specializations, bug 407497.
 	 *  161.0 - Allow reference to PDOMBinding from other PDOMLinkages, bug 422681.
 	 *  162.0 - PDOMNode now stores the factoryId for loading, bug 422681.
+	 *  163.0 - QtLinkage changed storage format of QObject to accommodate QGadget.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(162, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(162, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(162, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(163, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(163, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(163, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

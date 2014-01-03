@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -362,9 +362,6 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 				uncommittedFile.getRecord() != name.getFileRecord();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.index.IWritableIndexFragment#getDatabaseSizeBytes()
-	 */
 	@Override
 	public long getDatabaseSizeBytes() {
 		return getDB().getSizeBytes();

@@ -131,9 +131,9 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 				forInfo.mergeAction(actionInfo, fFlowContext);
 			} else {
 				// We have to merge two different cases. One if we reenter the for statement
-				// immediatelly (that means we have to consider increments, condition and action)
+				// immediately (that means we have to consider increments, condition and action)
 				// and the other case if we reenter the for in the next loop of
-				// the outer loop. Then we have to consider initializations, condtion and action.
+				// the outer loop. Then we have to consider initializations, condition and action.
 				// For a conditional flow info that means:
 				// (initializations | increments) & condition & action.
 				GenericConditionalFlowInfo initIncr= new GenericConditionalFlowInfo();

@@ -292,8 +292,9 @@ public abstract class FlowInfo {
 		// Must not consider return kind since a return statement can't control execution flow
 		// inside a method. It always leaves the method.
 		if (branches()) {
-			for (int i= 0; i < others.length; i++)
+			for (int i= 0; i < others.length; i++) {
 				others[i]= ACCESS_MODE_OPEN_BRANCH_TABLE[getIndex(others[i])];
+			}
 		}
 
 		if (fAccessModes == null) {	// all current variables are unused

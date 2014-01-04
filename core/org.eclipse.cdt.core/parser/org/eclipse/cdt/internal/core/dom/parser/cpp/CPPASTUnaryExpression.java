@@ -41,7 +41,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.FunctionSetType;
 public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpression, IASTAmbiguityParent {
 	private int fOperator;
     private ICPPASTExpression fOperand;
-    private IASTImplicitName[] fImplicitNames = null;
+    private IASTImplicitName[] fImplicitNames;
 	private ICPPEvaluation fEvaluation;
 
     public CPPASTUnaryExpression() {
@@ -59,8 +59,8 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 	
 	@Override
 	public CPPASTUnaryExpression copy(CopyStyle style) {
-		CPPASTUnaryExpression copy = new CPPASTUnaryExpression(fOperator, fOperand == null ? null
-				: fOperand.copy(style));
+		CPPASTUnaryExpression copy =
+				new CPPASTUnaryExpression(fOperator, fOperand == null ? null : fOperand.copy(style));
 		return copy(copy, style);
 	}
 
@@ -237,5 +237,4 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 	public boolean isLValue() {
 		return getValueCategory() == LVALUE;
 	}
-
 }

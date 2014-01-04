@@ -568,6 +568,33 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	public void testNamedTypedField() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//A.cpp
+	//void test() {
+	//	for (int i = 0; i < 2; i++) {
+	//		/*$*/for (int j = 0; j < i; j++) {
+	//			for (int k = 0; k < j; k++) {
+	//			}
+	//		}/*$$*/
+	//	}
+	//}
+	//====================
+	//void extracted(int i) {
+	//	for (int j = 0; j < i; j++) {
+	//		for (int k = 0; k < j; k++) {
+	//		}
+	//	}
+	//}
+	//
+	//void test() {
+	//	for (int i = 0; i < 2; i++) {
+	//		extracted(i);
+	//	}
+	//}
+	public void testNestedLoops_Bug424876() throws Exception {
+		assertRefactoringSuccess();
+	}
+
 	//A.h
 	//#ifndef A_H_
 	//#define A_H_

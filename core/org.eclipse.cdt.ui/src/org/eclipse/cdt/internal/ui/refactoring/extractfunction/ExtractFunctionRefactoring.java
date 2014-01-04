@@ -186,7 +186,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 			List<NameInformation> returnValueCandidates = container.getReturnValueCandidates();
 			if (returnValueCandidates.size() > 1) {
-				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_TooManySelected);
+				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_TooManyDeclarations);
 				return initStatus;
 			} else if (returnValueCandidates.size() == 1) {
 				info.setMandatoryReturnVariable(returnValueCandidates.get(0));

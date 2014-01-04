@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.ui.refactoring;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -44,6 +45,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
@@ -214,7 +216,19 @@ public class NodeContainer {
 
 		InputFlowAnalyzer analyzer = new InputFlowAnalyzer(flowContext, selection, true);
 		FlowInfo argInfo= analyzer.perform(enclosingFunction);
-		return argInfo.get(flowContext, FlowInfo.READ | FlowInfo.READ_POTENTIAL | FlowInfo.UNKNOWN);
+		Set<IVariable> variables = argInfo.get(flowContext, FlowInfo.READ | FlowInfo.READ_POTENTIAL | FlowInfo.UNKNOWN);
+
+		// Remove variables with scopes limited to the selection.
+		for (Iterator<IVariable> iter = variables.iterator(); iter.hasNext();) {
+			IVariable var = iter.next();
+			try {
+				IASTNode scopeNode = ASTInternal.getPhysicalNodeOfScope(var.getScope());
+				if (selection.covers(scopeNode))
+					iter.remove();
+			} catch (DOMException e) {
+			}
+		}
+		return variables;
 	}
 
 	public static boolean hasReferenceOperator(IASTDeclarator declarator) {

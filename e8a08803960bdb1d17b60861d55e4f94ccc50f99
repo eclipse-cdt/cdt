@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_d9ce8ca6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-01-06T21:50:30Z",
+      "side": 1,
+      "message": "You\u0027re right. Would you prefer adding a new protected method, something like handleConnectionLost()?",
+      "parentUuid": "67591f73_e7de4851",
+      "revId": "e8a08803960bdb1d17b60861d55e4f94ccc50f99",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_2ce5c798",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
         "patchSetId": 1

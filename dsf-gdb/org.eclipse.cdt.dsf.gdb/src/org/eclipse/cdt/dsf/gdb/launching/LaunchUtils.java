@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Ericsson and others.
+ * Copyright (c) 2010, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Ericsson   - Added support for Mac OS
  *     Sergey Prigogin (Google)
  *     Marc Khouzam (Ericsson) - Add timer when fetching GDB version (Bug 376203)
+ *     Marc Khouzam (Ericsson) - Better error reporting when obtaining GDB version (Bug 424996)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -289,20 +290,57 @@ public class LaunchUtils {
 	}
 	
 	/**
-	 * This method actually launches 'gdb --vesion' to determine the version
+	 * This method actually launches 'gdb --version' to determine the version
 	 * of the GDB that is being used.  This method should ideally be called
-	 * only once and the resulting version string stored for future uses.
+	 * only once per session and the resulting version string stored for future uses.
 	 */
 	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {        
-        final Process process;
         String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$ 
+        Process process = null;
         try {
         	process = ProcessFactory.getFactory().exec(cmd, getLaunchEnvironment(configuration));
-        } catch(IOException e) {
-        	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
-        			"Error while launching command: " + cmd, e.getCause()));//$NON-NLS-1$
-        }
 
+        	String streamOutput = readStreamForVersion(process, true);
+
+        	String gdbVersion = getGDBVersionFromText(streamOutput);
+        	if (gdbVersion == null || gdbVersion.isEmpty()) {
+        		Exception detailedException = null;
+        		if (!streamOutput.isEmpty()) {
+        			// We got some output but couldn't parse it.  Make that output visible to the user in the error dialog.
+        			detailedException = new Exception("Unexpected output format: \n\n" + streamOutput);  //$NON-NLS-1$        		
+        		} else {
+        			// We got no output.  Check if we got something on the error stream.
+        			streamOutput = readStreamForVersion(process, false);
+        			if (!streamOutput.isEmpty()) {
+        				detailedException = new Exception(streamOutput);
+        			}
+        		}
+        		
+        		throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
+        				"Could not determine GDB version after sending: " + cmd, //$NON-NLS-1$ 
+        				detailedException));
+        	}
+        	return gdbVersion;
+        } catch (IOException e) {
+        	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
+        			"Error while launching command: " + cmd, e));//$NON-NLS-1$
+        } finally {
+        	if (process != null) {
+        		process.destroy();
+        	}
+        }
+	}
+	
+	/**
+	 * Read from the input or error stream of the specified GDB process and return what was read.
+	 * A timeout is scheduled which will kill the process if it takes too long.
+	 * 
+	 * @param process The process started with 'gdb --version'
+	 * @param isInputStream True to read the input stream, false for the error stream
+	 * @return The data read from the stream
+	 * @throws IOException If an IOException happens when reading the stream
+	 */
+	private static String readStreamForVersion(final Process process, boolean isInputStream) throws IOException {
         // Start a timeout job to make sure we don't get stuck waiting for
         // an answer from a gdb that is hanging
         // Bug 376203
@@ -321,7 +359,11 @@ public class LaunchUtils {
         InputStream stream = null;
         StringBuilder cmdOutput = new StringBuilder(200);
         try {
-        	stream = process.getInputStream();
+        	if (isInputStream) {
+        		stream = process.getInputStream();
+        	} else {
+        		stream = process.getErrorStream();
+        	}
         	Reader r = new InputStreamReader(stream);
         	BufferedReader reader = new BufferedReader(r);
         	
@@ -330,33 +372,22 @@ public class LaunchUtils {
         		cmdOutput.append(line);
         		cmdOutput.append('\n');
         	}
-        } catch (IOException e) {
-        	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
-        			"Error reading GDB STDOUT after sending: " + cmd, e.getCause()));//$NON-NLS-1$
+        	return cmdOutput.toString();
         } finally {
-        	// If we get here we are obviously not stuck so we can cancel the timeout job.
+        	// If we get here we are obviously not stuck in the loop so we can cancel the timeout job.
         	// Note that it may already have executed, but that is not a problem.
         	timeoutJob.cancel();
         	
         	// Cleanup to avoid leaking pipes
-        	// Close the stream we used, and then destroy the process
         	// Bug 345164
         	if (stream != null) {
 				try { 
 					stream.close(); 
 				} catch (IOException e) {}
         	}
-        	process.destroy();
         }
-
-        String gdbVersion = getGDBVersionFromText(cmdOutput.toString());
-        if (gdbVersion == null || gdbVersion.isEmpty()) {
-        	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
-        			"Could not determine GDB version after sending: " + cmd, null));//$NON-NLS-1$
-        }
-        return gdbVersion;
 	}
-	
+        
 	public static boolean getIsAttach(ILaunchConfiguration config) {
     	try {
     		String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );

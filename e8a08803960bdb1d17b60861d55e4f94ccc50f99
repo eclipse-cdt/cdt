@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_cc436b14",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-01-06T19:31:20Z",
+      "side": 1,
+      "message": "Isn\u0027t it better to implement the event and command listeners as members of GDBControl class instead of extending the API?",
+      "revId": "e8a08803960bdb1d17b60861d55e4f94ccc50f99",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_2ce5c798",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 703,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-01-06T19:31:20Z",
+      "side": 1,
+      "message": "I am probably missing something but it seems that setting \"shouldTerminate\" to true contradicts the comment.",
+      "revId": "e8a08803960bdb1d17b60861d55e4f94ccc50f99",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

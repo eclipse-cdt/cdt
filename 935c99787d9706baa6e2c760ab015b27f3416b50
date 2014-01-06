@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_0e07cdd5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 760,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-01-06T19:13:24Z",
+      "side": 1,
+      "message": "\"it is reports\" doesn\u0027t sound right :)",
+      "revId": "935c99787d9706baa6e2c760ab015b27f3416b50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -54,27 +54,24 @@ public class CustomBuildSettingsDecorator implements ILightweightLabelDecorator 
 	}
 
 	private static boolean isCustomizedResource(ICConfigurationDescription cfgDescription, IResource rc) {
-		if (!ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(rc.getProject())) {
-			ICResourceDescription rcDescription = cfgDescription.getResourceDescription(rc.getProjectRelativePath(), true);
-			return rcDescription != null;
-		}
-
-		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-			IContainer parent = rc.getParent();
-			List<String> languages = LanguageSettingsManager.getLanguages(rc, cfgDescription);
-			for (ILanguageSettingsProvider provider: ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders()) {
-				for (String languageId : languages) {
-					List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
-					if (list != null) {
-						List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(cfgDescription, parent, languageId);
-						// != is OK here due as the equal lists will have the same reference in WeakHashSet
-						if (list != listDefault)
-							return true;
+		if (ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(rc.getProject()) && cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+				IContainer parent = rc.getParent();
+				List<String> languages = LanguageSettingsManager.getLanguages(rc, cfgDescription);
+				for (ILanguageSettingsProvider provider: ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders()) {
+					for (String languageId : languages) {
+						List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
+						if (list != null) {
+							List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(cfgDescription, parent, languageId);
+							// != is OK here due as the equal lists will have the same reference in WeakHashSet
+							if (list != listDefault)
+								return true;
+						}
 					}
 				}
-			}
 		}
-		return false;
+
+		ICResourceDescription rcDescription = cfgDescription.getResourceDescription(rc.getProjectRelativePath(), true);
+		return rcDescription != null;
 	}
 
 	@Override

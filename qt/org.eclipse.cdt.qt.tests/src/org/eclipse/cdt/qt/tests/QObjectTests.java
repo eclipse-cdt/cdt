@@ -452,6 +452,37 @@ public class QObjectTests extends BaseQtTestCase {
 		assertFalse(i.hasNext());
 	}
 
+	// #include "junit-QObject.hh"
+    // namespace N {
+	//     class Q : public QObject
+    //     {
+    //     Q_OBJECT
+	//     Q_SIGNAL void aSignal();
+    //     };
+	// }
+	public void testQObjectInNamespace() throws Exception {
+		loadComment("namespace_qobj.hh");
+
+		QtIndex qtIndex = QtIndex.getIndex(fProject);
+		assertNotNull(qtIndex);
+
+		IQObject qobj = qtIndex.findQObject(new String[]{ "N", "Q" });
+		if (!isIndexOk("N::Q", qobj))
+			return;
+		assertNotNull(qobj);
+
+		IQObject.IMembers<IQMethod> signals = qobj.getSignals();
+		assertNotNull(signals);
+
+		Collection<IQMethod> locals = signals.locals();
+		assertNotNull(locals);
+
+		Iterator<IQMethod> i = locals.iterator();
+		assertTrue(i.hasNext());
+		assert_checkQMethod(i.next(), qobj, "aSignal", IQMethod.Kind.Signal, null);
+		assertFalse(i.hasNext());
+	}
+
 	private static void assert_checkQMethod(IQMethod method, IQObject expectedOwner, String expectedName, IQMethod.Kind expectedKind, Long expectedRevision) throws Exception {
 		assertEquals(expectedKind, method.getKind());
 		assertEquals(expectedName, method.getName());

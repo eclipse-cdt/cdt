@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.internal.qt.core.ASTUtil;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -22,11 +23,19 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class QObjectName extends AbstractQClassName {
 
+	private final char[] fullyQualifiedName;
 	private final List<QtPropertyName> properties = new ArrayList<QtPropertyName>();
 	private final Map<String, String> classInfos = new LinkedHashMap<String, String>();
 
 	public QObjectName(ICPPASTCompositeTypeSpecifier spec) {
 		super(spec);
+		fullyQualifiedName = ASTUtil.getFullyQualifiedName(spec.getName()).toCharArray();
+	}
+
+	@Override
+	public char[] getSimpleID() {
+		// The Qt linkage uses the full qualified name when storing QObjects into the index.
+		return fullyQualifiedName;
 	}
 
 	public List<QtPropertyName> getProperties() {

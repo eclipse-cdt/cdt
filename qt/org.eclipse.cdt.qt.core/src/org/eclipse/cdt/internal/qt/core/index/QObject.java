@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMProperty;
@@ -35,8 +36,15 @@ public class QObject implements IQObject {
 	private final List<IQEnum> enums;
 	private final Map<String, String> classInfos;
 
+	/**
+	 * QObjects are stored in the QtLinkage using their fully qualified name.  The API
+	 * for IQObject does not expect the leading ::, so they are stripped when the
+	 * object is read from the PDOM.
+	 */
+	private static Pattern StripLeadingQual_Regex = Pattern.compile("^::(.*)$");
+
 	public QObject(QtIndexImpl qtIndex, CDTIndex cdtIndex, QtPDOMQObject pdomQObject) throws CoreException {
-		this.name = pdomQObject.getName();
+		this.name = StripLeadingQual_Regex.matcher(pdomQObject.getName()).replaceAll("$1");
 		this.pdomQObject = pdomQObject;
 
 		List<IQMethod> baseSlots = new ArrayList<IQMethod>();

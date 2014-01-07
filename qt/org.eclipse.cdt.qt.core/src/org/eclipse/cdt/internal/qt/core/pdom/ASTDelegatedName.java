@@ -149,18 +149,18 @@ public abstract class ASTDelegatedName implements IASTName {
 	}
 
 	@Override
-	public char[] toCharArray() {
-		return delegate.toCharArray();
+	public char[] getSimpleID() {
+		return delegate.getSimpleID();
 	}
 
 	@Override
-	public char[] getSimpleID() {
-		return toCharArray();
+	public char[] toCharArray() {
+		return getSimpleID();
 	}
 
 	@Override
 	public char[] getLookupKey() {
-		return toCharArray();
+		return getSimpleID();
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.internal.qt.core.ASTUtil;
 import org.eclipse.cdt.internal.qt.core.pdom.AbstractQtPDOMClass;
 import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQObject;
 import org.eclipse.cdt.qt.core.index.IQGadget;
@@ -51,12 +52,11 @@ public class QtIndexImpl extends QtIndex {
 
 	private class QObjectImplAccessor implements CDTIndex.Accessor<IQObject> {
 
-		private final char[][] name;
+		private final char[] name;
 
 		public QObjectImplAccessor(String[] qualName) {
-			name = new char[qualName.length][];
-			for(int i = 0; i < name.length; ++i)
-				name[i] = qualName[i].toCharArray();
+			// QObjects are stored in the Qt linkage using their fully qualified name.
+			name = ASTUtil.getFullyQualifiedName(qualName).toCharArray();
 		}
 
 		@Override

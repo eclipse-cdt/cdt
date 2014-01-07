@@ -160,7 +160,7 @@ public class QtMethodReference extends ASTNameReference {
 	}
 
 	@Override
-	public char[] toCharArray() {
+	public char[] getSimpleID() {
 		return expansionParam.toCharArray();
 	}
 

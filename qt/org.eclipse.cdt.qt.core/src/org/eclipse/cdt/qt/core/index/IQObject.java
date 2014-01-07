@@ -65,7 +65,7 @@ public interface IQObject extends IQElement {
 	}
 
 	/**
-	 * Returns the name of the class.
+	 * Returns the fully qualified name of the class.
 	 */
 	public String getName();
 

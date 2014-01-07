@@ -61,6 +61,38 @@ public class ASTUtil {
 		return cProject.getProject();
 	}
 
+	/**
+	 * Return the fully qualified name of the binding for the given name.  Returns null
+	 * if the name has no binding.  Tries to resolve the binding if needed.
+	 */
+	public static String getFullyQualifiedName(IASTName name) {
+		return getFullyQualifiedName(name.resolveBinding());
+	}
+
+	/**
+	 * Return the fully qualified name of the given binding.  Returns null if there
+	 * is no binding.
+	 */
+	public static String getFullyQualifiedName(IBinding binding) {
+		if (binding == null)
+			return null;
+
+		String ownerName = getFullyQualifiedName(binding.getOwner());
+		return (ownerName == null ? "" : ownerName) + "::" + binding.getName();
+	}
+
+	/**
+	 * Create and return a string representation of the fully qualified name in the
+	 * input array's elements.
+	 */
+	public static String getFullyQualifiedName(String[] qualName) {
+		String fullyQualifiedName = "";
+		for(int i = 0; i < qualName.length; ++i) {
+			fullyQualifiedName += "::" + qualName[i];
+		}
+		return fullyQualifiedName;
+	}
+
 	// NOTE: This expression allows embedded line terminators (?s) for cases where the code looks like:
 	// QObject::connect( &a, SIGNAL(
 	//					sig1(

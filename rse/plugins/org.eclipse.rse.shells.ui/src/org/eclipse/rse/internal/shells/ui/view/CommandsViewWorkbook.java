@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [165680] "Show in Remote Shell View" does not work
  * David McKnight   (IBM)        - [338031] Remote Shell view tabs should have close (x) icon
+ * David McKnight (IBM)  -[425014] profile commit job don't always complete during shutdown
  *******************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -245,7 +246,9 @@ public class CommandsViewWorkbook extends Composite
 						try {
 							IRemoteCmdSubSystem cmdSubSystem = command.getCommandSubSystem();
 							if (cmdSubSystem != null && cmdSubSystem.isConnected()){
-								cmdSubSystem.removeShell(command);
+								if (!_viewPart.getSite().getWorkbenchWindow().getWorkbench().isClosing()){
+									cmdSubSystem.removeShell(command);
+								}
 							}
 						}
 						catch (Exception ex){

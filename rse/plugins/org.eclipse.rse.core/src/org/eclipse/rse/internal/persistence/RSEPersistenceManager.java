@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -24,6 +24,7 @@
  * Kevin Doyle	 (IBM) - [243821] Save occurring on Main Thread
  * David Dykstal (IBM) - [243128] Problem during migration - NPE if provider does save without using a job.
  * Martin Oberhuber (Wind River) - [261503][cleanup] Get rid of deprecated getPluginPreferences()
+ * David McKnight (IBM)  -[425014] profile commit job don't always complete during shutdown
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -556,8 +557,9 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 				cleanTree(profile);
 				if (dom.needsSave()) {
 					Job job = provider.getSaveJob(dom);
-					if (job != null && canScheduleSave) {
-						job.addJobChangeListener(jobChangeListener);
+					if (job != null && canScheduleSave 
+							&& timeout > 0) { // timeout of zero indicates shutdown - no time for job scheduling
+						job.addJobChangeListener(jobChangeListener);	
 						job.schedule(2000); // two second delay
 					} else {
 						provider.saveRSEDOM(dom, new NullProgressMonitor());

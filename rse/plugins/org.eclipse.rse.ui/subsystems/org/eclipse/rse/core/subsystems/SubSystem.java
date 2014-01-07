@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -50,6 +50,7 @@
  * David McKnight   (IBM)        - [284018] concurrent SubSystem.connect() calls can result in double login-prompt
  * David McKnight   (IBM)        - [318836] Period in filter name causes wrong message on drag and drop
  * David McKnight   (IBM)        - [326555] Dead lock when debug session starts
+ * David McKnight   (IBM)         -[425014] profile commit job don't always complete during shutdown
  *  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -117,6 +118,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -3296,8 +3298,16 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	public boolean commit()
 	{
 		ISystemProfile profile = getSystemProfile();
-		boolean result = profile.commit();
-		return result;
+		if (PlatformUI.getWorkbench().isClosing()){
+			// commit job may fail due to shutdown
+			// force this by directly calling with true
+			IStatus status = SystemProfileManager.getDefault().commitSystemProfile(profile, true);
+			return status.isOK();
+		}
+		else {
+			boolean result = profile.commit();
+			return result;
+		}
 	}
 
 	public IRSEPersistableContainer getPersistableParent() {

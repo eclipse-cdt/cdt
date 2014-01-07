@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  * David Dykstal (IBM) - [200735][Persistence] Delete a profile that contains a connection and restart, profile is back without connections
  * David Dykstal (IBM) - [226728] NPE during init with clean workspace
+ * David McKnight (IBM)  -[425014] profile commit job don't always complete during shutdown
  *******************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -30,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -110,11 +113,20 @@ public class SystemProfileManager implements ISystemProfileManager {
 	}
 	
 	public IStatus commitSystemProfile(ISystemProfile profile) {
+		return commitSystemProfile(profile, false);
+	}
+	
+	public IStatus commitSystemProfile(ISystemProfile profile, boolean immediate) {
 		IStatus status = Status.OK_STATUS;
 		boolean scheduled =  false;
 		if (active) {
 			if (!RSECorePlugin.getThePersistenceManager().isBusy()) {
-				scheduled = RSECorePlugin.getThePersistenceManager().commitProfile(profile, 5000);
+				if (immediate){
+					scheduled = RSECorePlugin.getThePersistenceManager().commitProfile(profile, 0);
+				}
+				else {
+					scheduled = RSECorePlugin.getThePersistenceManager().commitProfile(profile, 5000);
+				}
 			}
 		} else {
 			scheduled = true;

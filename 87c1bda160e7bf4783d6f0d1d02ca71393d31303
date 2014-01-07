@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_8f94b749",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 737,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-01-07T21:34:50Z",
+      "side": 1,
+      "message": "I noticed a bug when we use the same call to verifyConnectionLost() for eventReceived() and for commandDone().  We would end up calling terminate twice because, in the case of commandDone(), the previous \"Remote connection closed\" string would be cached with the -gdb-exit command.\n\nThis didn\u0027t happen before because eventReceived() would deal with events, and commandDone() would only deal with the result string.  By merging the two to avoid duplicated code, we end up with this problem.\n\nInstead of splitting them up again, I added a flag to prevent checking events in the case of commandDone.\n\nI hope the comments I put explain this sufficiently.\n\nWhat do you think of this last version?",
+      "revId": "87c1bda160e7bf4783d6f0d1d02ca71393d31303",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

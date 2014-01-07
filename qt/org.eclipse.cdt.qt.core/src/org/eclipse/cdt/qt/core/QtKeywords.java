@@ -89,6 +89,18 @@ public class QtKeywords {
 			&& DISCONNECT.equals(qualName[1]);
 	}
 
+	/**
+	 * Returns true if the given binding will register a type with the QML type system and false
+	 * otherwise.
+	 */
+	public static boolean is_QmlType(IBinding binding) {
+		String[] qualName = getFunctionQualifiedName(binding);
+		return qualName != null
+			&& qualName.length == 1
+			&& (QML_REGISTER_TYPE.equals(qualName[0])
+			 || QML_REGISTER_UNCREATABLE_TYPE.equals(qualName[0]));
+	}
+
 	private static String[] getFunctionQualifiedName(IBinding binding) {
 		// IBinding#getAdapter returns null when binding is an instance of
 		// PDOMCPPMethod.

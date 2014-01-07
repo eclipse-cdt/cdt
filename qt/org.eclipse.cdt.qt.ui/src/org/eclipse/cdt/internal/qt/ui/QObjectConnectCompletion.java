@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -131,18 +130,6 @@ public class QObjectConnectCompletion {
 			default:
 				break;
 			}
-	}
-
-	private static boolean is_QObject_connect(ICEditorContentAssistInvocationContext context, IASTCompletionContext astContext, IASTName name) {
-
-		// Bug332201: Qt content assist should always be applied to the most specific part of
-		//            the target name.
-		IBinding[] funcBindings = astContext.findBindings(name.getLastName(), !context.isContextInformationStyle());
-		for (IBinding funcBinding : funcBindings)
-			if (QtKeywords.is_QObject_connect(funcBinding))
-				return true;
-
-		return false;
 	}
 
 	// Copied from org.eclipse.cdt.internal.ui.text.CParameterListValidator

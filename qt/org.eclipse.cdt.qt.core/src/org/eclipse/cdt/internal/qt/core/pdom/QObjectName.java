@@ -29,7 +29,9 @@ public class QObjectName extends AbstractQClassName {
 
 	public QObjectName(ICPPASTCompositeTypeSpecifier spec) {
 		super(spec);
-		fullyQualifiedName = ASTUtil.getFullyQualifiedName(spec.getName()).toCharArray();
+
+		String fqn = ASTUtil.getFullyQualifiedName(spec.getName());
+		fullyQualifiedName = fqn == null ? new char[0] : fqn.toCharArray();
 	}
 
 	@Override

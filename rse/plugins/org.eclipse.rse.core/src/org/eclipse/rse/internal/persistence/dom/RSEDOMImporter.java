@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -28,6 +28,7 @@
  * David McKnight (IBM) - [271243] [files] Switching service type brings up TWO file subsystems after restart
  * Uwe Stieber (Wind River) - [283844] NPE on restoring property set if persistent data is corrupted
  * David McKnight (IBM) -[391132] filterpools don't persist when profile names end in _
+ * David McKnight (IBM) -[425026] import connection fails to create default filters when no prior connections
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -149,7 +150,7 @@ public class RSEDOMImporter {
 			if (systemType != null) {
 				ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 				String profileName = profile.getName();
-				host = registry.createHost(profileName, systemType, hostName, hostAddress, description, false);
+				host = registry.createHost(profileName, systemType, hostName, hostAddress, description, true);
 				host.setOffline(isOffline);
 				host.setPromptable(isPromptable);
 			} else {

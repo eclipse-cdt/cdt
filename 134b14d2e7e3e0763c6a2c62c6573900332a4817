@@ -16,6 +16,24 @@
       "revId": "134b14d2e7e3e0763c6a2c62c6573900332a4817",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_29a64b0b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 779,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-01-07T19:18:18Z",
+      "side": 1,
+      "message": "Good idea.  When I moved code to verifyConnectionLost() I wondered if that is what you meant, as it was still pretty exhaustive to override.\n\nPatch coming.",
+      "parentUuid": "67591f73_49957fc0",
+      "revId": "134b14d2e7e3e0763c6a2c62c6573900332a4817",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -18,7 +18,9 @@ public enum QtPDOMNodeType {
 	QEnum,
 	QProperty,
 	QMethod,
-	QGadget;
+	QGadget,
+	QmlTypeRegistration,
+	QmlUncreatableRegistration;
 
 	public final int Type = IIndexBindingConstants.LAST_CONSTANT + 1 + ordinal();
 
@@ -32,7 +34,7 @@ public enum QtPDOMNodeType {
 	 * This version can be reset when the PDOM's version changes because older Qt linkages will
 	 * be dropped (along with everything else in that PDOM).
 	 */
-	public static final int VERSION = 1;
+	public static final int VERSION = 2;
 
 	public static QtPDOMNodeType forType(int version, int type) {
 		// Nothing has been deleted or replaced yet, so the version is ignored.
@@ -60,6 +62,10 @@ public enum QtPDOMNodeType {
 			return new QtPDOMQMethod(linkage, record);
 		case QGadget:
 			return new QtPDOMQGadget(linkage, record);
+		case QmlTypeRegistration:
+			return new QtPDOMQmlRegistration(linkage, record);
+		case QmlUncreatableRegistration:
+			return new QtPDOMQmlUncreatableRegistration(linkage, record);
 		}
 
 		return null;

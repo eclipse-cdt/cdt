@@ -91,7 +91,7 @@ public class QtPDOMLinkage extends PDOMLinkage {
 	}
 
 	// IBinding#getAdapter cannot create an instance of PDOMBinding because the Linkage is required.  This
-	// utility method uses #getAdapter to see if an instance has already been create.  If not then a new
+	// utility method uses #getAdapter to see if an instance has already been created.  If not then a new
 	// is created and stored in the AST binding.
 	@Override
 	public PDOMBinding adaptBinding(IBinding binding, boolean includeLocal) throws CoreException {

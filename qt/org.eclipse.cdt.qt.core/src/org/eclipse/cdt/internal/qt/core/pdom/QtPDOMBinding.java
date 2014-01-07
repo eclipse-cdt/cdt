@@ -30,10 +30,6 @@ public abstract class QtPDOMBinding extends PDOMBinding {
 			this.offset = offsetInitializer;
 			offsetInitializer += sizeof;
 		}
-
-		public long getRecord(long baseRec) {
-			return baseRec + offset;
-		}
 	}
 
 	protected QtPDOMBinding(QtPDOMLinkage linkage, long record) {
@@ -77,5 +73,50 @@ public abstract class QtPDOMBinding extends PDOMBinding {
 			return this;
 
 		return super.getAdapter(adapter);
+	}
+
+	/**
+	 * Returns a Long from the given offset within this node's record.  The permitted range of the Long
+	 * is [Long.MIN_VALUE, Long.MAX_VALUE).  Notice that Long.MAX_VALUE is excluded from the valid range.
+	 */
+	protected Long getLongOrNull(long offset) throws CoreException {
+		long val = getDB().getLong(record + offset);
+		return val == Long.MAX_VALUE ? null : Long.valueOf(val);
+	}
+
+	/**
+	 * Puts the given Long into the database at the specified offset within this node's record.  The permitted
+	 * range for val is [Long.MIN_VALUE, Long.MAX_VALUE).  Notice that Long.MAX_VALUE is excluded from
+	 * the valid range.
+	 * <p>
+	 * The val parameter is allowed to be null.  A value will be stored to the database so that later calls to
+	 * {@link #getLongOrNull(long)} will return null;
+	 */
+	protected void putLongOrNull(long offset, Long val) throws CoreException {
+		getDB().putLong(record + offset, val == null ? Long.MAX_VALUE : val.longValue());
+	}
+
+	/**
+	 * Returns a String from the given offset within this node's record.  This method will return null if the
+	 * database does not contain an IString at the specified location.
+	 */
+	protected String getStringOrNull(long offset) throws CoreException {
+		long rec = getDB().getRecPtr(record + offset);
+		return rec == 0 ? null : getDB().getString(rec).getString();
+	}
+
+	/**
+	 * Puts the given String into the database at the specified offset within this node's record.  Any IString
+	 * that happens to already exist at the specified location will be deleted before the new value is stored.
+	 * <p>
+	 * The val parameter is allowed to be null.  A value will be stored to the database so that later calls to
+	 * {@link #getStringOrNull(long)} will return null;
+	 */
+	protected void putStringOrNull(long offset, String val) throws CoreException {
+		long rec = getDB().getRecPtr(record + offset);
+		if (rec != 0)
+			getDB().getString(rec).delete();
+
+		getDB().putRecPtr(record + offset, val == null ? 0 : getDB().newString(val).getRecord());
 	}
 }

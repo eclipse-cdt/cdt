@@ -12,6 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -27,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.model.ICProject;
@@ -34,6 +36,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
+import org.eclipse.cdt.qt.core.QtPlugin;
 import org.eclipse.cdt.qt.core.index.IQMethod;
 import org.eclipse.cdt.qt.core.index.IQObject;
 import org.eclipse.core.resources.IProject;
@@ -76,6 +79,13 @@ public class ASTUtil {
 	public static String getFullyQualifiedName(IBinding binding) {
 		if (binding == null)
 			return null;
+		if (binding instanceof ICPPBinding)
+			try {
+				return getFullyQualifiedName(((ICPPBinding) binding).getQualifiedName());
+			} catch(DOMException e) {
+				QtPlugin.log(e);
+				return null;
+			}
 
 		String ownerName = getFullyQualifiedName(binding.getOwner());
 		return (ownerName == null ? "" : ownerName) + "::" + binding.getName();
@@ -86,11 +96,16 @@ public class ASTUtil {
 	 * input array's elements.
 	 */
 	public static String getFullyQualifiedName(String[] qualName) {
-		String fullyQualifiedName = "";
-		for(int i = 0; i < qualName.length; ++i) {
-			fullyQualifiedName += "::" + qualName[i];
+		boolean first = true;
+		StringBuilder str = new StringBuilder();
+		for(String name : qualName) {
+			if (first)
+				first = false;
+			else
+				str.append("::");
+			str.append(name);
 		}
-		return fullyQualifiedName;
+		return str.toString();
 	}
 
 	// NOTE: This expression allows embedded line terminators (?s) for cases where the code looks like:

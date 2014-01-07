@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
@@ -33,10 +34,12 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndexSymbols;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
+import org.eclipse.cdt.internal.qt.core.ASTUtil;
 import org.eclipse.cdt.internal.qt.core.QtFunctionCall;
 import org.eclipse.cdt.internal.qt.core.QtMethodReference;
 import org.eclipse.cdt.internal.qt.core.QtMethodUtil;
@@ -124,7 +127,10 @@ public class QtASTVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTExpression expr) {
 		if (expr instanceof IASTFunctionCallExpression) {
-			Collection<QtMethodReference> refs = QtFunctionCall.getReferences((IASTFunctionCallExpression) expr);
+			IASTFunctionCallExpression call = (IASTFunctionCallExpression) expr;
+
+			// See if this is a QObject::connect or disconnect function call.
+			Collection<QtMethodReference> refs = QtFunctionCall.getReferences(call);
 			if (refs != null)
 				for (IASTName ref : refs) {
 					IASTFileLocation nameLoc = ref.getFileLocation();
@@ -133,6 +139,27 @@ public class QtASTVisitor extends ASTVisitor {
 						symbols.add(owner, ref, null);
 					}
 				}
+
+			// See if this is a qmlRegisterType or qmlRegisterUncreatableType function call.
+			ICPPTemplateInstance templateFn = ASTUtil.resolveFunctionBinding(ICPPTemplateInstance.class, call);
+			if (QtKeywords.is_QmlType(templateFn)) {
+				IASTName fnName = null;
+				IASTExpression fnNameExpr = call.getFunctionNameExpression();
+				if (fnNameExpr instanceof IASTIdExpression) {
+					fnName = ((IASTIdExpression) fnNameExpr).getName();
+				}
+				IASTFileLocation nameLoc = call.getFileLocation();
+				if (nameLoc != null) {
+					QmlTypeRegistration qmlTypeReg = new QmlTypeRegistration(fnName, templateFn, call);
+
+					IASTPreprocessorIncludeStatement owner = nameLoc.getContextInclusionStatement();
+					symbols.add(owner, qmlTypeReg, null);
+
+					// the Qt data references the C++ function template instance specialization
+					if (fnName != null)
+						symbols.add(owner, new ASTNameReference(fnName), qmlTypeReg);
+				}
+			}
 		}
 
 		return super.visit(expr);

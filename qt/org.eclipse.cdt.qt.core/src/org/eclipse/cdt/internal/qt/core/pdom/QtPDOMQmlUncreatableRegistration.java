@@ -1,0 +1,53 @@
+/*
+ * Copyright (c) 2014 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.eclipse.cdt.internal.qt.core.pdom;
+
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.core.runtime.CoreException;
+
+@SuppressWarnings("restriction")
+public class QtPDOMQmlUncreatableRegistration extends QtPDOMQmlRegistration {
+
+	private static int offsetInitializer = QtPDOMQmlRegistration.Field.Last.offset;
+	protected static enum Field {
+		Reason(Database.PTR_SIZE),
+		Last(0);
+
+		public final int offset;
+
+		private Field(int sizeof) {
+			this.offset = offsetInitializer;
+			offsetInitializer += sizeof;
+		}
+	}
+
+	public QtPDOMQmlUncreatableRegistration(QtPDOMLinkage linkage, long record) {
+		super(linkage, record);
+	}
+
+	public QtPDOMQmlUncreatableRegistration(QtPDOMLinkage linkage, QmlTypeRegistration qmlTypeReg, IASTName cppName) throws CoreException {
+		super(linkage, qmlTypeReg, cppName);
+
+		putStringOrNull(Field.Reason.offset, qmlTypeReg.getReason());
+	}
+
+	@Override
+	protected int getRecordSize() {
+		return Field.Last.offset;
+	}
+
+	@Override
+	public int getNodeType() {
+		return QtPDOMNodeType.QmlUncreatableRegistration.Type;
+	}
+
+	public String getReason() throws CoreException {
+		return getStringOrNull(Field.Reason.offset);
+	}
+}

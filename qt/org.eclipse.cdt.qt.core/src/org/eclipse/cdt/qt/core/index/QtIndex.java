@@ -7,6 +7,8 @@
  */
 package org.eclipse.cdt.qt.core.index;
 
+import java.util.Collection;
+
 import org.eclipse.cdt.internal.qt.core.index.QtFactory;
 import org.eclipse.cdt.qt.core.QtPlugin;
 import org.eclipse.core.resources.IProject;
@@ -70,4 +72,13 @@ public abstract class QtIndex {
 	 * the given name.
 	 */
 	public abstract IQGadget findQGadget(String[] qualifiedName);
+
+	/**
+	 * Find and return the types that have been registered with the Qt meta type system.  This
+	 * is the result of the function calls like:
+	 * <pre>
+	 * qmlRegisterType<Q>( "uri", 1, 2, "Qv1.2" );
+	 * </pre>
+	 */
+	public abstract Collection<IQmlRegistered> getQmlRegistered();
 }

@@ -24,7 +24,7 @@
 </context>
 <context id ="make_targets_view">
    <description>Click below to see help.</description>
-   <topic href="rreference/cdt_u_make_targets_view.htm"
+   <topic href="reference/cdt_u_make_targets_view.htm"
    	label="Make Targets view"/>
 </context>
 <context id ="editor_view">
@@ -167,24 +167,14 @@
    <topic href="reference/cdt_u_prop_general_idx.htm"
    	label="Indexer"/>
 </context>
-<context id ="std_prop_info">
-   <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_info.htm"
-   	label="Info"/>
-</context>
-<context id ="std_prop_builder">
-   <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_builders.htm"
-   	label="Builders"/>
-</context>
 <context id ="std_prop_file_types">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_file_types.htm"
+   <topic href="reference/cdt_u_prop_general_typ.htm"
    	label="File Types"/>
 </context>
 <context id ="std_prop_include">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_includes.htm"
+   <topic href="reference/cdt_u_prop_general_pns_inc.htm"
    	label="Include Paths and Symbols"/>
 </context>
 <context id ="std_prop_indexer">
@@ -194,52 +184,52 @@
 </context>
 <context id ="std_prop_build">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_mbuild.htm"
+   <topic href="reference/cdt_u_prop_build.htm"
    	label="Make Builder"/>
 </context>
 <context id ="std_prop_error">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_merror.htm"
+   <topic href="reference/cdt_u_prop_build_settings_errparser.htm"
    	label="Error Parser"/>
 </context>
 <context id ="std_prop_binary">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_mbinary.htm"
+   <topic href="reference/cdt_u_prop_build_settings_binparser.htm"
    	label="Binary Parser"/>
 </context>
 <context id ="std_prop_discovery">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_mdiscovery.htm"
+   <topic href="reference/cdt_u_prop_build_discovery.htm"
    	label="Discovery Options"/>
 </context>
 <context id ="std_prop_source">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_psource.htm"
+   <topic href="reference/cdt_u_prop_general_pns_src.htm"
    	label="Source"/>
 </context>
 <context id ="std_prop_output">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_poutput.htm"
+   <topic href="reference/cdt_u_prop_general_pns_out.htm"
    	label="Output"/>
 </context>
 <context id ="std_prop_projects">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_pproj.htm"
+   <topic href="reference/cdt_u_prop_general_exp.htm"
    	label="Projects"/>
 </context>
 <context id ="std_prop_libraries">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_plib.htm"
+   <topic href="reference/cdt_u_prop_general_pns_lib.htm"
    	label="Libraries"/>
 </context>
 <context id ="std_prop_containers">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_pcontainers.htm"
+   <topic href="reference/cdt_u_prop_general_pns_sym.htm"
    	label="Path Containers"/>
 </context>
 <context id ="std_prop_references">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_ref.htm"
+   <topic href="reference/cdt_u_prop_general_pns_ref.htm"
    	label="Project References"/>
 </context>
 <context id ="new_proj_wiz">
@@ -249,62 +239,57 @@
 </context>
 <context id ="new_proj_wiz_m_name">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_m_name.htm"
+   <topic href="reference/cdt_u_new_proj_wiz_name.htm"
    	label="Name"/>
 </context>
 <context id ="new_proj_wiz_m_target">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_m_target.htm"
+   <topic href="reference/cdt_u_new_proj_wiz_type.htm"
           label="Select a Project Type"/>
 </context>
 <context id ="new_proj_wiz_m_proj">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_m_proj.htm"
+   <topic href="reference/cdt_u_prop_ref.htm"
    	label="Referenced Projects"/>
 </context>
 <context id ="new_proj_wiz_m_errorp">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_m_errorp.htm"
+   <topic href="reference/cdt_u_prop_build_settings_errparser.htm"
    	label="Error Parsers"/>
 </context>
 <context id ="new_proj_wiz_m_cindexer">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_m_cindexer.htm"
+   <topic href="reference/cdt_u_prop_general_idx.htm"
    	label="C/C++ Indexer"/>
 </context>
 <context id ="new_proj_wiz_s_name">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_s_name.htm"
+   <topic href="reference/cdt_u_new_proj_wiz_name.htm"
    	label="Name"/>
 </context>
 <context id ="new_proj_wiz_s_proj">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_s_proj.htm"
+   <topic href="reference/cdt_u_prop_ref.htm"
    	label="Referenced Projects"/>
-</context>
-<context id ="new_proj_wiz_s_mbuilder">
-   <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_s_mbuilder.htm"
-   	label="Make Builder"/>
 </context>
 <context id ="new_proj_wiz_s_errorp">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_s_errorp.htm"
+   <topic href="reference/cdt_u_prop_build_settings_errparser.htm"
    	label="Error Parsers"/>
 </context>
 <context id ="new_proj_wiz_s_binary">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_s_binary.htm"
+   <topic href="reference/cdt_u_prop_build_settings_binparser.htm"
    	label="Binary Parser"/>
 </context>
 <context id ="new_proj_wiz_s_discovery">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_s_discovery.htm"
+   <topic href="reference/cdt_u_prop_general_scanner_discovery.htm"
    	label="Discovery Options"/>
 </context>
 <context id ="new_proj_wiz_s_cindexer">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_s_cindexer.htm"
+   <topic href="reference/cdt_u_prop_general_idx.htm"
    	label="C/C++ Indexer"/>
 </context>
 <context id ="run_dbg_main">
@@ -383,22 +368,22 @@
 </context>             
 <context id="cdt_u_prop_build_setting_tool">
    <description></description>
-   <topic href="reference/cdt_u_prop_build_setting_tool.htm"    	
+   <topic href="reference/cdt_u_prop_build_settings_tool.htm"    	
    label="Tool Settings"/> 
 </context>            
 <context id="cdt_u_prop_build_setting_steps">
    <description></description>
-   <topic href="reference/cdt_u_prop_build_setting_steps.htm"    	
+   <topic href="reference/cdt_u_prop_build_settings_steps.htm"    	
    label="Build Steps"/> 
 </context>           
 <context id="cdt_u_prop_build_setting_artifact">
    <description></description>
-   <topic href="reference/cdt_u_prop_build_setting_artifact.htm"    	
+   <topic href="reference/cdt_u_prop_build_settings_artifact.htm"    	
    label="Build Artifact"/>
 </context>        
 <context id="cdt_u_prop_build_setting_binparser">
    <description></description>
-   <topic href="reference/cdt_u_prop_build_setting_binparser.htm"    	
+   <topic href="reference/cdt_u_prop_build_settings_binparser.htm"    	
    label="Binary Parsers"/> 
 </context>       
 <context id="cdt_u_prop_build_setting_errparser">
@@ -413,43 +398,38 @@
 </context>               
 <context id="cdt_u_prop_pns_inc">
    <description></description>
-   <topic href="reference/cdt_u_prop_pns_inc.htm"    	
+   <topic href="reference/cdt_u_prop_general_pns_inc.htm"    	
    label="Include paths"/> 
 </context>                       
 <context id="cdt_u_prop_pns_sym">
    <description></description>
-   <topic href="reference/cdt_u_prop_pns_sym.htm"    	
+   <topic href="reference/cdt_u_prop_general_pns_sym.htm"    	
    label="Symbols"/> </context>                       
 <context id="cdt_u_prop_pns_libpath">
    <description></description>
-   <topic href="reference/cdt_u_prop_pns_libpath.htm"    	
+   <topic href="reference/cdt_u_prop_general_pns_libpath.htm"    	
    label="Library paths"/> 
 </context>                   
 <context id="cdt_u_prop_pns_lib">
    <description></description>
-   <topic href="reference/cdt_u_prop_pns_lib.htm"    	
+   <topic href="reference/cdt_u_prop_general_pns_lib.htm"    	
    label="Libraries"/> 
 </context>                       
 <context id="cdt_u_prop_pns_ref">
    <description></description>
-   <topic href="reference/cdt_u_prop_pns_ref.htm"    	
+   <topic href="reference/cdt_u_prop_general_pns_ref.htm"    	
    label="References"/> 
 </context>                       
 <context id="cdt_u_prop_pns_src">
    <description></description>
-   <topic href="reference/cdt_u_prop_pns_src.htm"    	
+   <topic href="reference/cdt_u_prop_general_pns_src.htm"    	
    label="Source Location"/> 
 </context>                       
 <context id="cdt_u_prop_pns_out">
    <description></description>
-   <topic href="reference/cdt_u_prop_pns_out.htm"    	
+   <topic href="reference/cdt_u_prop_general_pns_out.htm"    	
    label="Output Locations"/> 
 </context>                       
-<context id="cdt_u_prop_exp">
-   <description></description>
-   <topic href="reference/cdt_u_prop_exp.htm"    	
-   label="Exported data"/> 
-</context>                           
 <context id="cdt_u_prop_resource">
    <description></description>
    <topic href="reference/cdt_u_prop_resource.htm"    	

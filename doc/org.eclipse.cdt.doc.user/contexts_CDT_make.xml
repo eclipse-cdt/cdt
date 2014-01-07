@@ -24,7 +24,7 @@
 </context>					
 <context id ="std_prop_discovery">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_mdiscovery.htm"
+   <topic href="reference/cdt_u_prop_build_discovery.htm"
    	label="Discovery Options"/>
 </context>
 <context id ="cdt_make_builder_page">
@@ -45,52 +45,47 @@
 </context>
 <context id ="new_proj_wiz_s_name">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_s_name.htm"
+   <topic href="reference/cdt_u_new_proj_wiz_name.htm"
    	label="Name"/>
 </context>
 <context id ="new_proj_wiz_s_proj">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_s_proj.htm"
+   <topic href="reference/cdt_u_prop_ref.htm.htm"
    	label="Referenced Projects"/>
-</context>
-<context id ="new_proj_wiz_s_mbuilder">
-   <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_s_mbuilder.htm"
-   	label="Make Builder"/>
 </context>
 <context id ="new_proj_wiz_s_errorp">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_s_errorp.htm"
+   <topic href="reference/cdt_u_prop_build_settings_errparser.htm"
    	label="Error Parsers"/>
 </context>
 <context id ="new_proj_wiz_s_binary">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_s_binary.htm"
+   <topic href="reference/cdt_u_prop_build_settings_binparser.htm"
    	label="Binary Parser"/>
 </context>
 <context id ="new_proj_wiz_s_discovery">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_s_discovery.htm"
+   <topic href="reference/cdt_u_prop_general_scanner_discovery.htm"
    	label="Discovery Options"/>
 </context>
 <context id ="new_proj_wiz_s_cindexer">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_new_proj_wiz_s_cindexer.htm"
+   <topic href="reference/cdt_u_prop_general_idx.htm"
    	label="C/C++ Indexer"/>
 </context>
 <context id ="std_prop_build">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_mbuild.htm"
+   <topic href="reference/cdt_u_prop_build.htm"
    	label="Make Builder"/>
 </context>
 <context id ="std_prop_error">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_merror.htm"
+   <topic href="reference/cdt_u_prop_build_settings_errparser.htm"
    	label="Error Parser"/>
 </context>
 <context id ="std_prop_binary">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_mbinary.htm"
+   <topic href="reference/cdt_u_prop_build_settings_binparser.htm"
    	label="Binary Parser"/>
 </context>
 <context id ="newproj_parser_error">
@@ -110,7 +105,7 @@
 </context>
 <context id ="make_targets_pref">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_make_pref.htm"
+   <topic href="reference/cdt_u_make_targets_pref.htm"
    	label="Make Targets preferences"/>
 </context>
 <context id ="make_settings_pref">

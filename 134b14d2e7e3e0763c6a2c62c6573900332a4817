@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_49957fc0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 779,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-01-07T19:06:22Z",
+      "side": 1,
+      "message": "I would extract the code in the brackets into another protected method - \"connectionClosed()\", for instance. We can pass the reason of the closing as an attribute. Overriding this method would allow clients to do something else before terminating the session. What do you think?",
+      "revId": "134b14d2e7e3e0763c6a2c62c6573900332a4817",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

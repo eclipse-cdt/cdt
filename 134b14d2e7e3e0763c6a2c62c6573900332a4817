@@ -34,6 +34,24 @@
       "revId": "134b14d2e7e3e0763c6a2c62c6573900332a4817",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_29580b80",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 779,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-01-07T19:27:51Z",
+      "side": 1,
+      "message": "How do you imagine passing the reason to connectionLost()?  What we have is a string from GDB saying the connection is lost, but the reason is unclear.  Were you thinking of passing a String as received from GDB?  So it would be:\n\"Remote connection closed\" or \"Ending remote debugging\"?",
+      "parentUuid": "67591f73_49957fc0",
+      "revId": "134b14d2e7e3e0763c6a2c62c6573900332a4817",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -112,17 +112,25 @@ public class BaseQtTestCase extends BaseTestCase {
 		loadComment("junit-QObject.hh");
 	}
 
-	private String[] getContentsForTest(int blocks) throws Exception {
-    	String callingMethod = Thread.currentThread().getStackTrace()[3].getMethodName();
+	private static String[] getContentsForTest(Class<?> testCaseCls, int frames, int blocks) throws Exception {
+    	String callingMethod = Thread.currentThread().getStackTrace()[frames].getMethodName();
     	CharSequence[] help= TestSourceReader.getContentsForTest(
-    			QtTestPlugin.getDefault().getBundle(), "src", getClass(), callingMethod, blocks);
+    			QtTestPlugin.getDefault().getBundle(), "src", testCaseCls, callingMethod, blocks);
     	String[] result= new String[help.length];
     	int i= 0;
     	for (CharSequence buf : help) {
 			result[i++]= buf.toString();
 		}
     	return result;
+	}
+
+	private String[] getContentsForTest(int blocks) throws Exception {
+		return getContentsForTest(getClass(), 4, blocks);
     }
+
+	/*package*/ static String[] getContentsForTest(Class<?> testCaseCls, int blocks) throws Exception {
+		return getContentsForTest(testCaseCls, 4, blocks);
+	}
 
 	/**
 	 * The implementation of TestSourceReader (called from BaseTestCase) imposes some restrictions

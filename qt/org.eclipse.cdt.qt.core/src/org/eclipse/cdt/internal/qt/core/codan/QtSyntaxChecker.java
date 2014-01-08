@@ -18,12 +18,12 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.internal.qt.core.ASTUtil;
 import org.eclipse.cdt.internal.qt.core.QtFunctionCall;
 import org.eclipse.cdt.internal.qt.core.QtMethodReference;
 import org.eclipse.cdt.qt.core.QtNature;
 import org.eclipse.cdt.qt.core.QtPlugin;
+import org.eclipse.cdt.qt.core.index.IQMethod;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -69,8 +69,8 @@ public class QtSyntaxChecker extends AbstractIndexAstChecker implements IChecker
 			Collection<QtMethodReference> refs = QtFunctionCall.getReferences(fncall);
 			if (refs != null)
 				for(QtMethodReference ref : refs) {
-					IBinding binding = ref.resolveBinding();
-					if (binding != null)
+					IQMethod method = ref.getMethod();
+					if (method != null)
 						continue;
 
 					// Either the macro expansion didn't have an argument, or the argument was not a valid method.

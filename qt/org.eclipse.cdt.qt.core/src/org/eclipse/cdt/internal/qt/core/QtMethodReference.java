@@ -9,6 +9,7 @@ package org.eclipse.cdt.internal.qt.core;
 
 import java.util.regex.Matcher;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -23,6 +24,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.qt.core.pdom.ASTNameReference;
 import org.eclipse.cdt.internal.qt.core.pdom.QtASTImageLocation;
 import org.eclipse.cdt.qt.core.QtKeywords;
+import org.eclipse.cdt.qt.core.QtPlugin;
+import org.eclipse.cdt.qt.core.index.IQMethod;
+import org.eclipse.cdt.qt.core.index.IQObject;
+import org.eclipse.cdt.qt.core.index.QtIndex;
+import org.eclipse.core.resources.IProject;
 
 /**
  * Qt signals and slots are referenced using the SIGNAL and SLOT macros.  The expansion
@@ -162,6 +168,37 @@ public class QtMethodReference extends ASTNameReference {
 	@Override
 	public char[] getSimpleID() {
 		return expansionParam.toCharArray();
+	}
+
+	private IQObject findQObject() {
+		String[] qualName = null;
+		try {
+			qualName = cls.getQualifiedName();
+		} catch(DOMException e) {
+			QtPlugin.log(e);
+		}
+
+		IProject project = ASTUtil.getProject(delegate);
+		if (project == null)
+			return null;
+
+		QtIndex qtIndex = QtIndex.getIndex(project);
+		if (qtIndex == null)
+			return null;
+
+		return qtIndex.findQObject(qualName);
+	}
+
+	public IQMethod getMethod() {
+		IQObject qobj = findQObject();
+		if (qobj == null)
+			return null;
+
+		// Return the first matching method.
+		for(IQMethod method : ASTUtil.findMethods(qobj, this))
+			return method;
+
+		return null;
 	}
 
 	@Override

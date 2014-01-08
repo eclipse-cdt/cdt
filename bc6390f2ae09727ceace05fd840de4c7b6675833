@@ -19,6 +19,41 @@
     },
     {
       "key": {
+        "uuid": "67591f73_5b9ede6f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-01-08T11:40:54Z",
+      "side": 1,
+      "message": "Now that you mention it, I don\u0027t think the word \u0027launch\u0027 should be used here, since we are using the gdb --version command within a launch.\n\nHow about?\n\"Could not determine GDB version using command: \"\ne.g.,\n\"Could not determine GDB version using command: /home/lmckhou/gdb --version\"",
+      "parentUuid": "67591f73_75cad4b3",
+      "revId": "bc6390f2ae09727ceace05fd840de4c7b6675833",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_9ba4f6ba",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 326,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-01-08T11:40:54Z",
+      "side": 1,
+      "message": "I then changed the above to be \"Error with command: \"",
+      "revId": "bc6390f2ae09727ceace05fd840de4c7b6675833",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_15af1869",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
         "patchSetId": 1
@@ -30,6 +65,24 @@
       "writtenOn": "2014-01-08T03:24:44Z",
       "side": 1,
       "message": "I think it\u0027s a bit simpler to just pass the InputStream of interest rather than having a conditional. So the method would become\nString readStreamForVersion(final Process process, InputStream inputStream) and the calls would become  readStreamForVersion(process, process.getInputStream())\nand\nreadStreamForVersion(process, process.getErrorStream())",
+      "revId": "bc6390f2ae09727ceace05fd840de4c7b6675833",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_7b3e4291",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-01-08T11:40:54Z",
+      "side": 1,
+      "message": "I did that, and it allowed me to clean up the method even more.  I moved the timeout job to the calling method which allows us to use it for both streams, instead of starting two jobs.\n\nAll this make readStream() so generic it makes me feel there should be something already available in java for it...",
+      "parentUuid": "67591f73_15af1869",
       "revId": "bc6390f2ae09727ceace05fd840de4c7b6675833",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

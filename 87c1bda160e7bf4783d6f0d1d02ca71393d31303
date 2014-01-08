@@ -16,6 +16,24 @@
       "revId": "87c1bda160e7bf4783d6f0d1d02ca71393d31303",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_3bf5eabc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 737,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-01-08T11:00:32Z",
+      "side": 1,
+      "message": "After thinking about it some more, instead of passing an extra flag, I realized we could figure it out directly from the MIOuput.  If there is a result we don\u0027t parse OOBRecords.\n\nI pushed patchset 6 which does that instead.",
+      "parentUuid": "67591f73_8f94b749",
+      "revId": "87c1bda160e7bf4783d6f0d1d02ca71393d31303",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

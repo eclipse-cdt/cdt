@@ -113,16 +113,20 @@ public class BaseQtTestCase extends BaseTestCase {
 	}
 
 	private String[] getContentsForTest(int blocks) throws Exception {
+		return getContentsForTest(getClass(), blocks);
+    }
+
+	/*package*/ static String[] getContentsForTest(Class<?> testCaseCls, int blocks) throws Exception {
     	String callingMethod = Thread.currentThread().getStackTrace()[3].getMethodName();
     	CharSequence[] help= TestSourceReader.getContentsForTest(
-    			QtTestPlugin.getDefault().getBundle(), "src", getClass(), callingMethod, blocks);
+    			QtTestPlugin.getDefault().getBundle(), "src", testCaseCls, callingMethod, blocks);
     	String[] result= new String[help.length];
     	int i= 0;
     	for (CharSequence buf : help) {
 			result[i++]= buf.toString();
 		}
     	return result;
-    }
+	}
 
 	/**
 	 * The implementation of TestSourceReader (called from BaseTestCase) imposes some restrictions

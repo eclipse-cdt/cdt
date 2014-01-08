@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_75cad4b3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-01-08T03:24:44Z",
+      "side": 1,
+      "message": "I don\u0027t think \"sending\" is the right word here. Maybe \"launching\" to make it consistent with the other message? \nHow does that sound:\n\"Could not determine GDB version after launching command:\"",
+      "revId": "bc6390f2ae09727ceace05fd840de4c7b6675833",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_15af1869",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-01-08T03:24:44Z",
+      "side": 1,
+      "message": "I think it\u0027s a bit simpler to just pass the InputStream of interest rather than having a conditional. So the method would become\nString readStreamForVersion(final Process process, InputStream inputStream) and the calls would become  readStreamForVersion(process, process.getInputStream())\nand\nreadStreamForVersion(process, process.getErrorStream())",
+      "revId": "bc6390f2ae09727ceace05fd840de4c7b6675833",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

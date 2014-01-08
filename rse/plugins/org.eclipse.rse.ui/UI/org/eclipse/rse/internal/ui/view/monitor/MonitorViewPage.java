@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  * David McKnight   (IBM)        - [372674] Enhancement - Preserve state of Remote Monitor view
+ * David McKnight   (IBM)        - [425113] Improve performance of RSE table views by using SWT.VIRTUAL
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -438,7 +439,7 @@ FocusListener
 		parent.setLayout(gridLayout);
 
 		// create table portion
-		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
+		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION | SWT.VIRTUAL);
 		_viewer = new SystemTableView(table, _viewPart);
 		
 		//Tree tree = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);

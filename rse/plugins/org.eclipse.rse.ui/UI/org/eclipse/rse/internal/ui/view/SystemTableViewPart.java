@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -49,6 +49,7 @@
  * David McKnight   (IBM)        - [363829] Closing Eclipse with a populated Remote System Details view forces a remote system connection
  * David McKnight   (IBM)        - [372674] Enhancement - Preserve state of Remote Monitor view
  * David McKnight   (IBM)        - [373673] Remote Systems Details view calling wrong method for setting action tooltips
+ * David McKnight   (IBM)        - [425113] Improve performance of RSE table views by using SWT.VIRTUAL
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1287,7 +1288,7 @@ public class SystemTableViewPart extends ViewPart
 		registry.addSystemResourceChangeListener(this);
 		registry.addSystemRemoteChangeListener(this);
 
-		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
+		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.HIDE_SELECTION | SWT.VIRTUAL);
 		_viewer = new SystemTableView(table, this);
 
 		table.setLinesVisible(true);

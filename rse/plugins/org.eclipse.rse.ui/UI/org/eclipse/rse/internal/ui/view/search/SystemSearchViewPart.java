@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [190015] [performance] Remove All Match's from Search Results Takes a while
  * David McKnight   (IBM)        - [296877] Allow user to choose the attributes for remote search result
  * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
+ * David McKnight   (IBM)        - [425113] Improve performance of RSE table views by using SWT.VIRTUAL
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.search;
@@ -946,7 +947,7 @@ public class SystemSearchViewPart extends ViewPart
 		// create table portion
 		// TODO change to tabletree when eclipse fixes the swt widget
 		//TableTree table = new TableTree(pageBook, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
-		Tree tabletree = new Tree(pageBook, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
+		Tree tabletree = new Tree(pageBook, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION | SWT.VIRTUAL);
 		SystemSearchTableView viewer = new SystemSearchTableView(tabletree, resultSet, this);
 		
 		getSite().registerContextMenu(viewer.getContextMenuManager(), viewer);

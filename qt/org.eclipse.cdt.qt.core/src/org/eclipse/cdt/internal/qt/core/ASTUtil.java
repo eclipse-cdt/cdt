@@ -22,13 +22,14 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.model.ICProject;
@@ -36,6 +37,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.qt.core.QtPlugin;
 import org.eclipse.cdt.qt.core.index.IQMethod;
 import org.eclipse.cdt.qt.core.index.IQObject;
@@ -144,21 +146,17 @@ public class ASTUtil {
 	}
 
 	public static ICPPClassType getReceiverType(IASTFunctionCallExpression fncall) {
+		// See the thread that starts at:
+		//     http://dev.eclipse.org/mhonarc/lists/cdt-dev/msg26972.html
+		try {
+			for(IScope scope = CPPVisitor.getContainingScope(fncall); scope != null; scope = scope.getParent())
+				if (scope instanceof ICPPClassScope)
+					return ((ICPPClassScope) scope).getClassType();
+		} catch (DOMException e) {
+			QtPlugin.log(e);
+		}
 
-		// NOTE: This cannot rely on the Evaluation because we're in a contest assist context.
-		//       At this point is likely that the full function call is not complete, so at least
-		//       some of the eval leads to a Problem.  We don't need the Eval anyhow, just lookup
-		//       the type of the receiver.
-
-		IASTExpression fnName = fncall.getFunctionNameExpression();
-		if (!(fnName instanceof ICPPASTFieldReference))
-			return null;
-
-		ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) fnName;
-		ICPPASTExpression receiver = fieldRef.getFieldOwner();
-
-		IType recvType = getBaseType(receiver);
-		return recvType instanceof ICPPClassType ? (ICPPClassType) recvType : null;
+		return null;
 	}
 
 	/**

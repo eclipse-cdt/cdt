@@ -56,14 +56,16 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 
 	private final static int widthHint = 400;
 
-	private Button okButton;
+	private Button fOkButton;
 	private RemoteResourceBrowserWidget fResourceBrowserWidget;
 	private ProgressMonitorPart fProgressMonitor;
 
-	private int browserType;
-	private String dialogTitle;
+	private int fBrowserType;
+	private String fDialogTitle;
 
-	private boolean showConnections = false;
+	private boolean fShowHiddenCheckbox = true;
+	private boolean fShowNewFolderButton = true;
+	private boolean fShowConnections = false;
 	private String fInitialPath;
 	private IRemoteConnection fConnection;
 	private int fBrowserStyle = SWT.SINGLE;
@@ -89,7 +91,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
 		Button button = super.createButton(parent, id, label, defaultButton);
 		if (id == IDialogConstants.OK_ID) {
-			okButton = button;
+			fOkButton = button;
 		}
 		return button;
 	}
@@ -104,7 +106,15 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	@Override
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
-		setTitle(dialogTitle);
+		if (fDialogTitle == null) {
+			if (fBrowserType == DIRECTORY_BROWSER) {
+				setTitle(Messages.RemoteResourceBrowser_directoryTitle);
+			} else if (fBrowserType == FILE_BROWSER) {
+				setTitle(Messages.RemoteResourceBrowser_fileTitle);
+			}
+		} else {
+			setTitle(fDialogTitle);
+		}
 		if (fConnection != null) {
 			fResourceBrowserWidget.setConnection(fConnection);
 		}
@@ -130,16 +140,22 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 		main.setLayoutData(gd);
 		main.setLayout(new GridLayout(1, true));
 
-		int options = RemoteResourceBrowserWidget.SHOW_HIDDEN_CHECKBOX | RemoteResourceBrowserWidget.SHOW_NEW_FOLDER_BUTTON;
-		if (fConnection == null || showConnections) {
+		int options = 0;
+		if (fConnection == null || fShowConnections) {
 			options |= RemoteResourceBrowserWidget.SHOW_CONNECTIONS;
 		}
-		if (browserType == DIRECTORY_BROWSER) {
+		if (fBrowserType == DIRECTORY_BROWSER) {
 			options |= RemoteResourceBrowserWidget.DIRECTORY_BROWSER;
-		} else if (browserType == FILE_BROWSER) {
+		} else if (fBrowserType == FILE_BROWSER) {
 			options |= RemoteResourceBrowserWidget.FILE_BROWSER;
 		} else {
 			options |= RemoteResourceBrowserWidget.FILE_BROWSER | RemoteResourceBrowserWidget.DIRECTORY_BROWSER;
+		}
+		if (fShowHiddenCheckbox) {
+			options |= RemoteResourceBrowserWidget.SHOW_HIDDEN_CHECKBOX;
+		}
+		if (fShowNewFolderButton) {
+			options |= RemoteResourceBrowserWidget.SHOW_NEW_FOLDER_BUTTON;
 		}
 		fResourceBrowserWidget = new RemoteResourceBrowserWidget(main, fBrowserStyle, options);
 		fResourceBrowserWidget.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -156,7 +172,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 
 			@Override
 			public void focusLost(FocusEvent e) {
-				getShell().setDefaultButton(okButton);
+				getShell().setDefaultButton(fOkButton);
 			}
 		});
 		fResourceBrowserWidget.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -256,18 +272,18 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	}
 
 	/**
-	 * Set the dialogTitle of the dialog.
+	 * Set the fDialogTitle of the dialog.
 	 * 
 	 * @param title
 	 */
 	public void setTitle(String title) {
-		dialogTitle = title;
-		if (dialogTitle == null) {
-			dialogTitle = ""; //$NON-NLS-1$
+		fDialogTitle = title;
+		if (fDialogTitle == null) {
+			fDialogTitle = ""; //$NON-NLS-1$
 		}
 		Shell shell = getShell();
 		if ((shell != null) && !shell.isDisposed()) {
-			shell.setText(dialogTitle);
+			shell.setText(fDialogTitle);
 		}
 	}
 
@@ -277,31 +293,44 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	 * a resource browser (allows selection of files and directories).
 	 */
 	public void setType(int type) {
-		browserType = type;
-		if (type == DIRECTORY_BROWSER) {
-			setTitle(Messages.RemoteResourceBrowser_directoryTitle);
-		} else if (type == FILE_BROWSER) {
-			setTitle(Messages.RemoteResourceBrowser_fileTitle);
-		}
+		fBrowserType = type;
 	}
 
 	/**
-	 * Show available connections on browser if possible.
+	 * Show available connections on browser if possible (default disabled).
 	 * 
 	 * @param enable
 	 */
 	public void showConnections(boolean enable) {
-		this.showConnections = enable;
+		fShowConnections = enable;
+	}
+
+	/**
+	 * Enable a checkbox to show hidden files (default enabled)
+	 * 
+	 * @param showHidden
+	 */
+	public void showHiddenCheckbox(boolean showHidden) {
+		fShowHiddenCheckbox = showHidden;
+	}
+
+	/**
+	 * Enable a button to create new folders (default enabled)
+	 * 
+	 * @param showNewFolderButton
+	 */
+	public void showNewFolderButton(boolean showNewFolderButton) {
+		fShowNewFolderButton = showNewFolderButton;
 	}
 
 	private void updateDialog() {
-		if (okButton != null) {
+		if (fOkButton != null) {
 			IFileStore resource = getResource();
 			boolean enabled = getConnection() != null && resource != null;
-			if (enabled && browserType == FILE_BROWSER) {
+			if (enabled && fBrowserType == FILE_BROWSER) {
 				enabled &= !resource.fetchInfo().isDirectory();
 			}
-			okButton.setEnabled(enabled);
+			fOkButton.setEnabled(enabled);
 		}
 	}
 }

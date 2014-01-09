@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 - 2013 QNX Software Systems and others.
+ * Copyright (c) 2007, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     John Dallaway - Wrong groupId during initialization (Bug 349736)    
  *     Marc Khouzam (Ericsson) - Updated to extend FinalLaunchSequence instead of copying it (bug 324101)
  *     William Riley (Renesas) - Memory viewing broken (Bug 413483)
+ *     Marc Khouzam (Ericsson) - Cannot disable Delay command (bug 413437)
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
@@ -353,10 +354,15 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	/** @since 8.2 */
 	@Execute
 	public void stepDelayStartup(final RequestMonitor rm) {
-		int defaultDelay = fGdbJtagDevice.getDefaultDelay();
+		// The delay is also controlled by the RESET attribute.
+		if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DO_RESET, IGDBJtagConstants.DEFAULT_DO_RESET)) {
+			int defaultDelay = fGdbJtagDevice.getDefaultDelay();
 			List<String> commands = new ArrayList<String>();
 			fGdbJtagDevice.doDelay(CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DELAY, defaultDelay), commands);
-			queueCommands(commands, rm);								
+			queueCommands(commands, rm);
+		} else {
+			rm.done();
+		}						
 	}
 	
 	/*

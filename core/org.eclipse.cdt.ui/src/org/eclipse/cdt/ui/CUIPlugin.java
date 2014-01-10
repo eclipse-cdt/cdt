@@ -98,6 +98,7 @@ import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
+import org.eclipse.cdt.internal.ui.preferences.formatter.FormatterProfileStore;
 import org.eclipse.cdt.internal.ui.refactoring.CTextFileChangeFactory;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
@@ -608,6 +609,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 		BuildConsolePreferencePage.initDefaults(getPreferenceStore());
 		//initialize ContentAssistMatcherPreference
 		ContentAssistPreference.getInstance();
+		//Initialize Formatter preferences
+		FormatterProfileStore.initAndCheckVersion();
 
 		// start make-ui plugin, such that it can check for project conversions.
 		Job job= new Job(Messages.CUIPlugin_jobStartMakeUI) {

@@ -9,6 +9,7 @@ package org.eclipse.cdt.qt.tests;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.internal.qt.core.index.QMakeInfo;
 import org.eclipse.cdt.internal.qt.core.index.QMakeParser;
 import org.eclipse.cdt.internal.qt.core.index.QMakeVersion;
+import org.eclipse.cdt.qt.core.index.IQMakeInfo;
 
 public class QMakeTests extends TestCase {
 
@@ -40,7 +42,7 @@ public class QMakeTests extends TestCase {
 		assertEquals(0, three_dot_zero.getMinor());
 	}
 
-	public void testQMakeInfo() throws Exception {
+	public void testQMake3Decoder() throws Exception {
 		StringReader content = new StringReader("A = \\\\\\\"\nB = A\\n\\tB\nC = \"A \\\" B\" \"A \\\" B\"");
 		BufferedReader reader = new BufferedReader(content);
 
@@ -62,6 +64,34 @@ public class QMakeTests extends TestCase {
 		List<String> D = QMakeParser.qmake3DecodeValueList(result, "D");
 		assertNotNull(D);
 		assertEquals(0, D.size());
+	}
+
+	public void testQMakeInfo() throws Exception {
+		StringReader qmake1Content = new StringReader("QMAKE_VERSION:3.0\nQT_VERSION:5.2\nQT_INSTALL_IMPORTS:QtImports\nQT_INSTALL_QML:QtQmls\nQT_INSTALL_DOCS:QtDocs\nCustomKey:CustomValue\n");
+		BufferedReader qmake1Reader = new BufferedReader(qmake1Content);
+		Map<String, String> qmake1 = QMakeParser.parse(QMakeInfo.PATTERN_QUERY_LINE, qmake1Reader);
+
+		StringReader qmake2Content = new StringReader("QMAKE_INTERNAL_INCLUDED_FILES=Internal1 Internal2\nSOURCES=Source1 Source2\nHEADERS=Header1 Header2\nINCLUDEPATH=Include1 Include2\nDEFINES=Def1 Def2\nRESOURCES=Resource1 Resource2\nFORMS=Form1 Form2\nOTHER_FILES=Other1 Other2\nQML_IMPORT_PATH=CustomImport\n");
+		BufferedReader qmake2Reader = new BufferedReader(qmake2Content);
+		Map<String, String> qmake2 = QMakeParser.parse(QMakeInfo.PATTERN_EVAL_LINE, qmake2Reader);
+
+		IQMakeInfo info = QMakeInfo.create(qmake1, qmake2);
+
+		assertNotNull(info);
+		assertEquals(5, info.getQtVersion().getMajor());
+		assertEquals(2, info.getQtVersion().getMinor());
+		assertEquals(Arrays.asList("QtImports", "CustomImport"), info.getQtImportPath());
+		assertEquals(Arrays.asList("QtQmls", "CustomImport"), info.getQtQmlPath());
+		assertEquals(Arrays.asList("QtDocs"), info.getQtDocPath());
+		assertEquals("CustomValue", info.getQMakeQueryMap().get("CustomKey"));
+
+		assertEquals(Arrays.asList("Include1", "Include2"), info.getIncludePath());
+		assertEquals(Arrays.asList("Def1", "Def2"), info.getDefines());
+		assertEquals(Arrays.asList("Header1", "Header2"), info.getHeaderFiles());
+		assertEquals(Arrays.asList("Source1", "Source2"), info.getSourceFiles());
+		assertEquals(Arrays.asList("Resource1", "Resource2"), info.getResourceFiles());
+		assertEquals(Arrays.asList("Form1", "Form2"), info.getFormFiles());
+		assertEquals(Arrays.asList("Other1", "Other2"), info.getOtherFiles());
 	}
 
 }

@@ -28,11 +28,15 @@ public final class QMakeParser {
 	public static final String KEY_QT_VERSION = "QT_VERSION";
 	public static final String KEY_QT_INSTALL_IMPORTS = "QT_INSTALL_IMPORTS";
 	public static final String KEY_QT_INSTALL_QML = "QT_INSTALL_QML";
+	public static final String KEY_QT_INSTALL_DOCS = "QT_INSTALL_DOCS";
 	public static final String KEY_QMAKE_INTERNAL_INCLUDED_FILES = "QMAKE_INTERNAL_INCLUDED_FILES";
 	public static final String KEY_SOURCES = "SOURCES";
 	public static final String KEY_HEADERS = "HEADERS";
 	public static final String KEY_INCLUDEPATH = "INCLUDEPATH";
 	public static final String KEY_DEFINES = "DEFINES";
+    public static final String KEY_RESOURCES = "RESOURCES";
+    public static final String KEY_FORMS = "FORMS";
+    public static final String KEY_OTHER_FILES = "OTHER_FILES";
 	public static final String KEY_QML_IMPORT_PATH = "QML_IMPORT_PATH";
 
 	/**

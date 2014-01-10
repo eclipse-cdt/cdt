@@ -8,6 +8,7 @@
 package org.eclipse.cdt.qt.core.index;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a QMake information.
@@ -24,6 +25,13 @@ public interface IQMakeInfo {
 	 * @return true if this information is valid
 	 */
 	boolean isValid();
+
+	/**
+	 * Returns a map of key-value pairs provided by "qmake -query" command.
+	 *
+	 * @return the map
+	 */
+	Map<String,String> getQMakeQueryMap();
 
 	/**
 	 * Returns a Qt version as provided by "qmake -query" command.
@@ -55,6 +63,13 @@ public interface IQMakeInfo {
 	List<String> getQtQmlPath();
 
 	/**
+	 * Returns a list of Qt Documentation paths.
+	 *
+	 * @return the list of Qt Documentation paths
+	 */
+	List<String> getQtDocPath();
+
+	/**
 	 * Returns a list of include paths that are used for compilation of a related project.
 	 *
 	 * @return the list of include paths
@@ -81,6 +96,20 @@ public interface IQMakeInfo {
 	 * @return the list of header file paths
 	 */
 	List<String> getHeaderFiles();
+
+	/**
+	 * Returns a list of resource file paths i.e. specified via RESOURCES QMake variable.
+	 *
+	 * @return the list of other file paths
+	 */
+	List<String> getResourceFiles();
+
+	/**
+	 * Returns a list of other file paths i.e. specified via FORMS QMake variable.
+	 *
+	 * @return the list of other file paths
+	 */
+	List<String> getFormFiles();
 
 	/**
 	 * Returns a list of other file paths i.e. specified via OTHER_FILES QMake variable.

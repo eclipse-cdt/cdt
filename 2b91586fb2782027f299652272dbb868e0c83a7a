@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_112d4c96",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-10T15:47:37Z",
+      "side": 1,
+      "message": "Is this static factory needed?  It looks like it never fails.  The reason I mention it is because the ctor for this class is getting to have alot of parameters and the chance of getting a collection in the wrong order are pretty high.\n\nIf all this parsing could be moved to the constructor, then the only parameters would be the two maps.\n\nAlternatively, you could keep this factory method (in case you do want it to maybe return null in the future) but move all the parsing into the ctor.",
+      "revId": "2b91586fb2782027f299652272dbb868e0c83a7a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

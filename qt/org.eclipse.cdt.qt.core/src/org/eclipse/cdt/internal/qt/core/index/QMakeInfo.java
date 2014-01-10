@@ -35,37 +35,47 @@ public final class QMakeInfo implements IQMakeInfo {
 	/**
 	 * Instance that is used to present an invalid IQMakeInfo.
 	 */
-	public static final IQMakeInfo INVALID = new QMakeInfo(
-			false, null, Collections.<String>emptyList(), Collections.<String>emptyList(),
-			Collections.<String>emptyList(), Collections.<String>emptyList(), Collections.<String>emptyList(),
-			Collections.<String>emptyList(), Collections.<String>emptyList(), Collections.<String>emptyList());
+	public static final IQMakeInfo INVALID = new QMakeInfo(false, Collections.<String,String>emptyMap(), Collections.<String,String>emptyMap());
 
 	private final boolean valid;
+	private final Map<String, String> qmakeQueryMap;
 	private final IQtVersion qtVersion;
 	private final List<String> involvedQMakeFiles;
 	private final List<String> qtImportPath;
 	private final List<String> qtQmlPath;
+	private final List<String> qtDocPath;
 	private final List<String> includePath;
 	private final List<String> defines;
 	private final List<String> sourceFiles;
 	private final List<String> headerFiles;
+	private final List<String> resourceFiles;
+	private final List<String> formFiles;
 	private final List<String> otherFiles;
 
-	private QMakeInfo(boolean valid, IQtVersion qtVersion, List<String> involvedQMakeFiles, List<String> qtImportPath, List<String> qtQmlPath, List<String> includePath, List<String> defines, List<String> sourceFiles, List<String> headerFiles, List<String> otherFiles) {
+	public QMakeInfo(boolean valid, Map<String,String> queryMap, Map<String,String> proMap) {
 		this.valid = valid;
-		this.qtVersion = qtVersion;
-		this.involvedQMakeFiles = Collections.unmodifiableList(involvedQMakeFiles);
-		this.qtImportPath = Collections.unmodifiableList(qtImportPath);
-		this.qtQmlPath = Collections.unmodifiableList(qtQmlPath);
-		this.includePath = Collections.unmodifiableList(includePath);
-		this.defines = Collections.unmodifiableList(defines);
-		this.sourceFiles = Collections.unmodifiableList(sourceFiles);
-		this.headerFiles = Collections.unmodifiableList(headerFiles);
-		this.otherFiles = Collections.unmodifiableList(otherFiles);
-	}
+		this.qmakeQueryMap = Collections.unmodifiableMap(queryMap);
 
-	public static IQMakeInfo create(File projectFile, File qmake, String[] extraEnv) {
-		return create(projectFile.getAbsolutePath(), qmake.getAbsolutePath(), extraEnv);
+		this.qtVersion = QMakeVersion.create(queryMap.get(QMakeParser.KEY_QT_VERSION));
+		List<String> tmpQtImportPaths = new ArrayList<String>(QMakeParser.singleValue(queryMap, QMakeParser.KEY_QT_INSTALL_IMPORTS));
+		List<String> tmpQtQmlPaths = new ArrayList<String>(QMakeParser.singleValue(queryMap, QMakeParser.KEY_QT_INSTALL_QML));
+		this.qtDocPath = QMakeParser.singleValue(queryMap, QMakeParser.KEY_QT_INSTALL_DOCS);
+
+		this.involvedQMakeFiles = QMakeParser.qmake3DecodeValueList(proMap, QMakeParser.KEY_QMAKE_INTERNAL_INCLUDED_FILES);
+		this.includePath = QMakeParser.qmake3DecodeValueList(proMap, QMakeParser.KEY_INCLUDEPATH);
+		this.defines = QMakeParser.qmake3DecodeValueList(proMap, QMakeParser.KEY_DEFINES);
+		this.sourceFiles = QMakeParser.qmake3DecodeValueList(proMap, QMakeParser.KEY_SOURCES);
+		this.headerFiles = QMakeParser.qmake3DecodeValueList(proMap, QMakeParser.KEY_HEADERS);
+		this.resourceFiles = QMakeParser.qmake3DecodeValueList(proMap, QMakeParser.KEY_RESOURCES);
+		this.formFiles = QMakeParser.qmake3DecodeValueList(proMap, QMakeParser.KEY_FORMS);
+		this.otherFiles = QMakeParser.qmake3DecodeValueList(proMap, QMakeParser.KEY_OTHER_FILES);
+
+		// combine qtImportPath and qtQmlPath from both qmake runs
+		List<String> qmlImportPath = QMakeParser.qmake3DecodeValueList(proMap, QMakeParser.KEY_QML_IMPORT_PATH);
+		tmpQtImportPaths.addAll(qmlImportPath);
+		tmpQtQmlPaths.addAll(qmlImportPath);
+		this.qtImportPath = Collections.unmodifiableList(tmpQtImportPaths);
+		this.qtQmlPath = Collections.unmodifiableList(tmpQtQmlPaths);
 	}
 
 	public static IQMakeInfo create(String proPath, String qmakePath, String[] extraEnv) {
@@ -75,35 +85,17 @@ public final class QMakeInfo implements IQMakeInfo {
 
 		// run "qmake -query"
 		Map<String, String> qmake1 = exec(PATTERN_QUERY_LINE, extraEnv, qmakePath, "-query");
-	    if (qmake1 == null)
+		if (qmake1 == null) {
 			return INVALID;
+		}
 
-	    // check the qmake version
+		// check the qmake version
 		QMakeVersion version = QMakeVersion.create(qmake1.get(QMakeParser.KEY_QMAKE_VERSION));
 
 		// TODO - no support for pre-3.0
 		// for QMake version 3.0 or newer, run "qmake -E file.pro"
 		Map<String, String> qmake2 = version != null && version.getMajor() >= 3 ? exec(PATTERN_EVAL_LINE, extraEnv, qmakePath, "-E", proPath) : Collections.<String,String>emptyMap();
-
-		IQtVersion qtVersion = QMakeVersion.create(qmake1.get(QMakeParser.KEY_QT_VERSION));
-		List<String> qtImportPaths = QMakeParser.singleValue(qmake1, QMakeParser.KEY_QT_INSTALL_IMPORTS);
-		List<String> qtQmlPaths = QMakeParser.singleValue(qmake1, QMakeParser.KEY_QT_INSTALL_QML);
-
-		List<String> involvedQMakeFiles = QMakeParser.qmake3DecodeValueList(qmake2, QMakeParser.KEY_QMAKE_INTERNAL_INCLUDED_FILES);
-		List<String> includePath = QMakeParser.qmake3DecodeValueList(qmake2, QMakeParser.KEY_INCLUDEPATH);
-		List<String> defines = QMakeParser.qmake3DecodeValueList(qmake2, QMakeParser.KEY_DEFINES);
-		List<String> sourceFiles = QMakeParser.qmake3DecodeValueList(qmake2, QMakeParser.KEY_SOURCES);
-		List<String> headerFiles = QMakeParser.qmake3DecodeValueList(qmake2, QMakeParser.KEY_HEADERS);
-		List<String> otherFiles = QMakeParser.qmake3DecodeValueList(qmake2, QMakeParser.KEY_HEADERS);
-		List<String> qmlImportPath = QMakeParser.qmake3DecodeValueList(qmake2, QMakeParser.KEY_QML_IMPORT_PATH);
-
-		// combine qtImportPath and qtQmlPath from both qmake runs
-		List<String> realQtImportPaths = new ArrayList<String>(qtImportPaths);
-		realQtImportPaths.addAll(qmlImportPath);
-		List<String> realQtQmlPaths = new ArrayList<String>(qtQmlPaths);
-		realQtQmlPaths.addAll(qmlImportPath);
-
-		return new QMakeInfo(true, qtVersion, involvedQMakeFiles, realQtImportPaths, realQtQmlPaths, includePath, defines, sourceFiles, headerFiles, otherFiles);
+		return new QMakeInfo(true, qmake1, qmake2);
 	}
 
 	@Override
@@ -112,8 +104,13 @@ public final class QMakeInfo implements IQMakeInfo {
 	}
 
 	@Override
+	public Map<String, String> getQMakeQueryMap() {
+		return qmakeQueryMap;
+	}
+
+	@Override
 	public IQtVersion getQtVersion() {
-	    return qtVersion;
+		return qtVersion;
 	}
 
 	@Override
@@ -129,6 +126,11 @@ public final class QMakeInfo implements IQMakeInfo {
 	@Override
 	public List<String> getQtQmlPath() {
 		return qtQmlPath;
+	}
+
+	@Override
+	public List<String> getQtDocPath() {
+	    return qtDocPath;
 	}
 
 	@Override
@@ -152,9 +154,19 @@ public final class QMakeInfo implements IQMakeInfo {
 	}
 
 	@Override
-    public List<String> getOtherFiles() {
+	public List<String> getResourceFiles() {
+		return resourceFiles;
+	}
+
+	@Override
+	public List<String> getFormFiles() {
+		return formFiles;
+	}
+
+	@Override
+	public List<String> getOtherFiles() {
 	    return otherFiles;
-    }
+	}
 
 	/**
 	 * Executes a command and parses its output into a map.
@@ -164,7 +176,6 @@ public final class QMakeInfo implements IQMakeInfo {
 	 * @param cmd the command line
 	 * @return the map of resolved key-value pairs
 	 */
-    @SuppressWarnings("resource")
     private static Map<String, String> exec(Pattern regex, String[] extraEnv, String...command) {
 		if (command.length < 1 || ! new File(command[0]).exists()) {
 			QtPlugin.log("qmake: cannot run command: " + (command.length > 0 ? command[0] : ""));

@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQObject;
 import org.eclipse.cdt.qt.core.QtKeywords;
 import org.eclipse.cdt.qt.core.index.IQGadget;
 import org.eclipse.cdt.qt.core.index.IQObject;
-import org.eclipse.cdt.qt.core.index.IQmlRegistered;
+import org.eclipse.cdt.qt.core.index.IQmlRegistration;
 import org.eclipse.cdt.qt.core.index.QtIndex;
 import org.eclipse.core.runtime.CoreException;
 
@@ -63,8 +63,8 @@ public class QtIndexImpl extends QtIndex {
 	}
 
 	@Override
-	public Collection<IQmlRegistered> getQmlRegistered() {
-		return cdtIndex.get(new QMLRegisteredAccessor());
+	public Collection<IQmlRegistration> getQmlRegistrations() {
+		return cdtIndex.get(new QmlRegistrationAccessor());
 	}
 
 	private class QObjectImplAccessor implements CDTIndex.Accessor<IQObject> {
@@ -110,21 +110,21 @@ public class QtIndexImpl extends QtIndex {
 		}
 	}
 
-	private class QMLRegisteredAccessor implements CDTIndex.Accessor<Collection<IQmlRegistered>> {
+	private class QmlRegistrationAccessor implements CDTIndex.Accessor<Collection<IQmlRegistration>> {
 
 		@Override
-		public Collection<IQmlRegistered> access(IIndex index) throws CoreException {
-			Collection<IQmlRegistered> types = null;
+		public Collection<IQmlRegistration> access(IIndex index) throws CoreException {
+			Collection<IQmlRegistration> types = null;
 			for(IIndexBinding binding : index.findBindings(QmlTypeNameRegex, false, QtLinkageFilter, null)) {
-				IQmlRegistered qml = QmlRegistered.create(QtIndexImpl.this, binding);
+				IQmlRegistration qml = QmlRegistration.create(QtIndexImpl.this, binding);
 				if (qml != null) {
 					if (types == null)
-						types = new ArrayList<IQmlRegistered>();
+						types = new ArrayList<IQmlRegistration>();
 					types.add(qml);
 				}
 			}
 
-			return types == null ? Collections.<IQmlRegistered>emptyList() : types;
+			return types == null ? Collections.<IQmlRegistration>emptyList() : types;
 		}
 	}
 }

@@ -19,13 +19,13 @@ package org.eclipse.cdt.qt.core.index;
  * Registers Q in the QML system with the name "Q", in the library imported from "uri"
  * having the version number 1.0.
  */
-public interface IQmlRegistered {
+public interface IQmlRegistration extends IQObject.IMember {
 	/**
 	 * Identifies the kind of qmlRegister* function that was used to register the
 	 * type.  Qt 4.8 only defines two kinds, but in 5.0 there several more.
 	 * <p>
 	 * If a type has been registered more than once, then there will be several
-	 * entries for it in the collection returned by {@link QtIndex#getQmlRegistered()}.
+	 * entries for it in the collection returned by {@link QtIndex#getQmlRegistrations()}.
 	 */
 	public enum Kind {
 		/**
@@ -49,10 +49,10 @@ public interface IQmlRegistered {
 	 * It is possible for the same type to be registered in different ways, although
 	 * this generally indicates a problem in the client code.
 	 */
-	public IQmlRegistered.Kind getKind();
+	public IQmlRegistration.Kind getKind();
 
 	/**
-	 * Returns QObject to which this registration applies.  In the sample at {@link IQmlRegistered}
+	 * Returns QObject to which this registration applies.  In the sample at {@link IQmlRegistration}
 	 * this would return the IQObject for Q.
 	 */
     public IQObject getQObject();

@@ -19,14 +19,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.qt.core.ASTUtil;
 import org.eclipse.cdt.qt.core.QtKeywords;
-import org.eclipse.cdt.qt.core.index.IQmlRegistered;
+import org.eclipse.cdt.qt.core.index.IQmlRegistration;
 import org.eclipse.core.runtime.CoreException;
 
 public class QmlTypeRegistration extends ASTDelegatedName implements IQtASTName {
 
 	private final ICPPTemplateInstance functionInstanceBinding;
 	private final IASTFunctionCallExpression fnCall;
-	private final IQmlRegistered.Kind kind;
+	private final IQmlRegistration.Kind kind;
 	private char[] simpleID;
 
 	public QmlTypeRegistration(IASTName ast, ICPPTemplateInstance functionInstanceBinding, IASTFunctionCallExpression fnCall) {
@@ -35,9 +35,9 @@ public class QmlTypeRegistration extends ASTDelegatedName implements IQtASTName 
 		this.fnCall = fnCall;
 
 		if (QtKeywords.QML_REGISTER_UNCREATABLE_TYPE.equals(functionInstanceBinding.getName()))
-			this.kind = IQmlRegistered.Kind.Uncreatable;
+			this.kind = IQmlRegistration.Kind.Uncreatable;
 		else
-			this.kind = IQmlRegistered.Kind.Type;
+			this.kind = IQmlRegistration.Kind.Type;
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class QmlTypeRegistration extends ASTDelegatedName implements IQtASTName 
 		case Type:
 			return new QtPDOMQmlRegistration(linkage, this, delegate);
 		case Uncreatable:
-			return new QtPDOMQmlUncreatableRegistration(linkage, this, delegate);
+			return new QtPDOMQmlUncreatable(linkage, this, delegate);
 		}
 		return null;
 	}

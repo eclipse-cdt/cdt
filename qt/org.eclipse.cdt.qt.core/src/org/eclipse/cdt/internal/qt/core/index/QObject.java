@@ -17,10 +17,12 @@ import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMProperty;
 import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQEnum;
 import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQMethod;
 import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQObject;
+import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQmlRegistration;
 import org.eclipse.cdt.qt.core.index.IQEnum;
 import org.eclipse.cdt.qt.core.index.IQMethod;
 import org.eclipse.cdt.qt.core.index.IQObject;
 import org.eclipse.cdt.qt.core.index.IQProperty;
+import org.eclipse.cdt.qt.core.index.IQmlRegistration;
 import org.eclipse.core.runtime.CoreException;
 
 public class QObject implements IQObject {
@@ -32,6 +34,7 @@ public class QObject implements IQObject {
 	private final IQObject.IMembers<IQMethod> signals;
 	private final IQObject.IMembers<IQMethod> invokables;
 	private final IQObject.IMembers<IQProperty> properties;
+	private final List<IQmlRegistration> qmlRegistrations;
 	private final List<IQEnum> enums;
 	private final Map<String, String> classInfos;
 
@@ -90,6 +93,10 @@ public class QObject implements IQObject {
 			props.add(qProp);
 		}
 		this.properties = QObjectMembers.create(props, baseProps);
+
+		this.qmlRegistrations = new ArrayList<IQmlRegistration>();
+		for(QtPDOMQmlRegistration pdom : QtPDOMQmlRegistration.findFor(pdomQObject))
+			this.qmlRegistrations.add(QmlRegistration.create(qtIndex, pdom));
 	}
 
 	@Override
@@ -125,6 +132,11 @@ public class QObject implements IQObject {
 	@Override
 	public IQObject.IMembers<IQProperty> getProperties() {
 		return properties;
+	}
+
+	@Override
+	public Collection<IQmlRegistration> getQmlRegistrations() {
+		return qmlRegistrations;
 	}
 
 	@Override

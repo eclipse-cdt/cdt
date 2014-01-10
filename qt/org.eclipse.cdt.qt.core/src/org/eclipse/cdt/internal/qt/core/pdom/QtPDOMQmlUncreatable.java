@@ -12,7 +12,7 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 
 @SuppressWarnings("restriction")
-public class QtPDOMQmlUncreatableRegistration extends QtPDOMQmlRegistration {
+public class QtPDOMQmlUncreatable extends QtPDOMQmlRegistration {
 
 	private static int offsetInitializer = QtPDOMQmlRegistration.Field.Last.offset;
 	protected static enum Field {
@@ -27,11 +27,11 @@ public class QtPDOMQmlUncreatableRegistration extends QtPDOMQmlRegistration {
 		}
 	}
 
-	public QtPDOMQmlUncreatableRegistration(QtPDOMLinkage linkage, long record) {
+	public QtPDOMQmlUncreatable(QtPDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
-	public QtPDOMQmlUncreatableRegistration(QtPDOMLinkage linkage, QmlTypeRegistration qmlTypeReg, IASTName cppName) throws CoreException {
+	public QtPDOMQmlUncreatable(QtPDOMLinkage linkage, QmlTypeRegistration qmlTypeReg, IASTName cppName) throws CoreException {
 		super(linkage, qmlTypeReg, cppName);
 
 		putStringOrNull(Field.Reason.offset, qmlTypeReg.getReason());

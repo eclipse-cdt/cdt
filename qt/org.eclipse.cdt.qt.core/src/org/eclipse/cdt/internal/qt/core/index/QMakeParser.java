@@ -28,11 +28,15 @@ public final class QMakeParser {
 	public static final String KEY_QT_VERSION = "QT_VERSION";
 	public static final String KEY_QT_INSTALL_IMPORTS = "QT_INSTALL_IMPORTS";
 	public static final String KEY_QT_INSTALL_QML = "QT_INSTALL_QML";
+	public static final String KEY_QT_INSTALL_DOCS = "QT_INSTALL_DOCS";
 	public static final String KEY_QMAKE_INTERNAL_INCLUDED_FILES = "QMAKE_INTERNAL_INCLUDED_FILES";
 	public static final String KEY_SOURCES = "SOURCES";
 	public static final String KEY_HEADERS = "HEADERS";
 	public static final String KEY_INCLUDEPATH = "INCLUDEPATH";
 	public static final String KEY_DEFINES = "DEFINES";
+    public static final String KEY_RESOURCES = "RESOURCES";
+    public static final String KEY_FORMS = "FORMS";
+    public static final String KEY_OTHER_FILES = "OTHER_FILES";
 	public static final String KEY_QML_IMPORT_PATH = "QML_IMPORT_PATH";
 
 	/**
@@ -40,7 +44,7 @@ public final class QMakeParser {
 	 *
 	 * @param regex the reg. exp.
 	 * @param reader the QMake output
-	 * @return the map of parsed key-value pairs
+	 * @return the modifiable map of parsed key-value pairs
 	 * @throws IOException when io error happens
 	 */
 	public static Map<String, String> parse(Pattern regex, BufferedReader reader) throws IOException {
@@ -64,11 +68,11 @@ public final class QMakeParser {
 	}
 
 	/**
-	 * Returns a list with 0-1 values for a specific QMake variable.
+	 * Returns an unmodifiable list with 0-1 values for a specific QMake variable.
 	 *
 	 * @param map the map
 	 * @param key the QMake variable
-	 * @return the list of values
+	 * @return the unmodifiable list of values
 	 */
 	public static List<String> singleValue(Map<String, String> map, String key) {
 		String value = map.get(key);
@@ -76,11 +80,11 @@ public final class QMakeParser {
 	}
 
 	/**
-	 * Returns a list of values for a specific QMake variable that is decoded as a list of values.
+	 * Returns an unmodifiable list of values for a specific QMake variable that is decoded as a list of values.
 	 *
 	 * @param map the map
 	 * @param key the QMake variable
-	 * @return the list of values
+	 * @return the unmodifiable list of values
 	 */
 	public static List<String> qmake3DecodeValueList(Map<String, String> map, String key) {
 		String value = map.get(key);
@@ -92,7 +96,7 @@ public final class QMakeParser {
 		for (String item : qmake3SplitValueList(value)) {
 			result.add(qmake3DecodeValue(item));
 		}
-		return result;
+		return Collections.unmodifiableList(result);
 	}
 
 	/**
@@ -151,7 +155,7 @@ public final class QMakeParser {
 	 * Splits a specified QMake variable value into a list of values.
 	 *
 	 * @param value the value
-	 * @return the list of values
+	 * @return the modifiable list of values
 	 */
 	private static List<String> qmake3SplitValueList(String value) {
 		List<String> result = new ArrayList<String>();

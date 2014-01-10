@@ -31,6 +31,7 @@ import org.eclipse.cdt.qt.core.index.IQMakeProjectInfo;
 import org.eclipse.cdt.qt.core.index.IQMakeProjectInfoListener;
 import org.eclipse.cdt.qt.core.index.QMakeEnvInfo;
 import org.eclipse.cdt.qt.core.index.IQMakeInfo;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -410,10 +411,12 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo, ICProjectDescr
 
 	private static final class SensitiveSet extends HashSet<IPath> {
 
+		private static final long serialVersionUID = 2684086006933209512L;
+
 		// adds a sensitive file in form of a specified absolute path
 		private void addSensitiveFile(String sensitiveFile) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IFile[] files = root.findFilesForLocation(Path.fromOSString(sensitiveFile));
+			IFile[] files = root.findFilesForLocationURI(URIUtil.toURI(Path.fromOSString(sensitiveFile).makeAbsolute()));
 			if (files != null && files.length > 0) {
 				IFile file = files[0];
 				addSensitiveFile(file);

@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.expressions;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.cdt.core,
  org.eclipse.cdt.codan.core,
- org.eclipse.cdt.codan.core.cxx
+ org.eclipse.cdt.codan.core.cxx,
+ org.eclipse.core.filesystem
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin

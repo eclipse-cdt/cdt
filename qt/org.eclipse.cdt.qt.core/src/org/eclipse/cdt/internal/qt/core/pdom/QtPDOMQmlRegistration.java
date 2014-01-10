@@ -7,8 +7,12 @@
  */
 package org.eclipse.cdt.internal.qt.core.pdom;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.core.runtime.CoreException;
 
 @SuppressWarnings("restriction")
@@ -46,6 +50,20 @@ public class QtPDOMQmlRegistration extends QtPDOMBinding {
 		putLongOrNull(Field.Major.offset, qmlTypeReg.getMajor());
 		putLongOrNull(Field.Minor.offset, qmlTypeReg.getMinor());
 		putStringOrNull(Field.QmlName.offset, qmlTypeReg.getQmlName());
+	}
+
+	public static Collection<QtPDOMQmlRegistration> findFor(QtPDOMQObject qobj) throws CoreException {
+		PDOMLinkage linkage = qobj.getLinkage();
+		if (linkage == null
+		 || !(linkage instanceof QtPDOMLinkage))
+			return Collections.emptyList();
+
+		String name = qobj.getName();
+		if (name == null)
+			return Collections.emptyList();
+
+		QtPDOMLinkage qtLinkage = (QtPDOMLinkage) linkage;
+		return qtLinkage.getQmlRegistrations(qobj.getName());
 	}
 
 	@Override

@@ -107,6 +107,11 @@ public interface IQObject extends IQElement {
 	public IMembers<IQProperty> getProperties();
 
 	/**
+	 * Returns the methods that have been tagged with Q_INVOKABLE.  Does not return null.
+	 */
+	public Collection<IQmlRegistration> getQmlRegistrations();
+
+	/**
 	 * Examines the Q_CLASSINFO expansions to return the value associated with the given
 	 * key.  Returns null if there isn't a Q_CLASSINFO for the given key.
 	 */

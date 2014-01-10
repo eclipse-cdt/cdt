@@ -80,5 +80,5 @@ public abstract class QtIndex {
 	 * qmlRegisterType<Q>( "uri", 1, 2, "Qv1.2" );
 	 * </pre>
 	 */
-	public abstract Collection<IQmlRegistered> getQmlRegistered();
+	public abstract Collection<IQmlRegistration> getQmlRegistrations();
 }

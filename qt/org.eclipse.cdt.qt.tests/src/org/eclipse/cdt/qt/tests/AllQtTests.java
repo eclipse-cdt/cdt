@@ -22,6 +22,6 @@ public class AllQtTests extends TestSuite {
 				QtContentAssistantTests.class,
 				QtIndexTests.class,
 				QtRegressionTests.class,
-				QmlRegisteredTests.class);
+				QmlRegistrationTests.class);
 	}
 }

@@ -150,7 +150,15 @@ public class RSEDOMImporter {
 			if (systemType != null) {
 				ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 				String profileName = profile.getName();
-				host = registry.createHost(profileName, systemType, hostName, hostAddress, description, true);
+				host = registry.createHost(profileName, systemType, hostName, hostAddress, description, false);
+
+				// make sure default filters available
+				ISubSystemConfiguration[] configsArray = registry.getSubSystemConfigurationsBySystemType(systemType, true);
+				for (int i = 0; i < configsArray.length; i++) {
+					ISubSystemConfiguration config = (ISubSystemConfiguration)configsArray[i];
+					config.getFilterPoolManager(profile, true); // create the filter pool
+				}
+				
 				host.setOffline(isOffline);
 				host.setPromptable(isPromptable);
 			} else {

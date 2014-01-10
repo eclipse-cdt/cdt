@@ -18,12 +18,14 @@ package org.eclipse.cdt.debug.application;
 public class NewExecutableInfo {
 	private String fHostPath;
 	private String fTargetPath;
+	private String fBuildLog;
 	private String fArguments;
 
-	public NewExecutableInfo(String hostPath, String targetPath, String args) {
+	public NewExecutableInfo(String hostPath, String targetPath, String buildLog, String args) {
 		super();
 		fHostPath = hostPath;
 		fTargetPath = targetPath;
+		fBuildLog = buildLog;
 		fArguments = args;
 	}
 	
@@ -54,6 +56,24 @@ public class NewExecutableInfo {
 	 */
 	public void setTargetPath(String path) {
 		fTargetPath = path;
+	}
+	
+	/**
+	 * Get the build log path.
+	 * 
+	 * @return the build log path or null
+	 */
+	public String getBuildLog() {
+		return fBuildLog;
+	}
+	
+	/**
+	 * Sets the build log path.
+	 * 
+	 * @param path
+	 */
+	public void setBuildLog(String path) {
+		fBuildLog = path;
 	}
 	
 	/**

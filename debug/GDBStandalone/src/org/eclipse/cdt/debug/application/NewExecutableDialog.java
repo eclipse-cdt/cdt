@@ -40,9 +40,11 @@ public class NewExecutableDialog extends TitleAreaDialog {
 	
 	private Text fHostBinaryText;
 	private Text fTargetBinaryText;
+	private Text fBuildLogText;
 	private Text fArgumentsText;
 	
 	private final String fHostBinary;
+	private final String fBuildLog;
 	private final String fArgs;
 
 	public NewExecutableDialog (Shell parentShell) {
@@ -50,14 +52,15 @@ public class NewExecutableDialog extends TitleAreaDialog {
 	}
 	
 	public NewExecutableDialog( Shell parentShell, int flags ) {
-		this(parentShell, flags, null, null);
+		this(parentShell, flags, null, null, null);
 	}
 
-	public NewExecutableDialog( Shell parentShell, int flags, String hostBinary, String args) {
+	public NewExecutableDialog( Shell parentShell, int flags, String hostBinary, String buildLog, String args) {
 		super( parentShell );
 		setShellStyle( getShellStyle() | SWT.RESIZE );
 		fFlags = flags;
 		fHostBinary = hostBinary;
+		fBuildLog = buildLog;
 		fArgs = args;
 	}
 
@@ -127,6 +130,7 @@ public class NewExecutableDialog extends TitleAreaDialog {
 				}
 			} );
 		}
+		
 
 		new Label( comp, SWT.None ).setText( Messages.GdbDebugNewExecutableCommand_Arguments );
 		fArgumentsText = new Text( comp, SWT.BORDER );
@@ -134,6 +138,19 @@ public class NewExecutableDialog extends TitleAreaDialog {
 		if (fArgs != null)
 			fArgumentsText.setText(fArgs);
 
+
+		new Label( comp, SWT.None ).setText( Messages.GdbDebugNewExecutableCommand_BuildLog );
+		fBuildLogText = new Text( comp, SWT.BORDER );
+		if (fBuildLog != null)
+			fBuildLogText.setText(fBuildLog);
+		fBuildLogText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 2, 1 ) );
+		fBuildLogText.addModifyListener( new ModifyListener() {
+			
+			@Override
+			public void modifyText( ModifyEvent e ) {
+				validate();
+			}
+		} );
 		return control;
 	}
 
@@ -141,7 +158,8 @@ public class NewExecutableDialog extends TitleAreaDialog {
 	protected void okPressed() {
 		String targetPath = ( fTargetBinaryText != null ) ? fTargetBinaryText.getText().trim() : null;
 		String args = fArgumentsText.getText().trim();
-		fInfo = new NewExecutableInfo( fHostBinaryText.getText().trim(), targetPath, args );
+		String buildLog = fBuildLogText.getText().trim();
+		fInfo = new NewExecutableInfo( fHostBinaryText.getText().trim(), targetPath, buildLog, args );
 		super.okPressed();
 	}
 
@@ -171,7 +189,17 @@ public class NewExecutableDialog extends TitleAreaDialog {
 					Messages.GdbDebugNewExecutableCommand_Invalid_binary );
 			}
 		}
-		if ( fTargetBinaryText != null ) {
+		String buildLog = fBuildLogText.getText();
+		if (sb.length() == 0 && !buildLog.isEmpty()) {
+			File file = new File( buildLog );
+			if ( !file.exists() ) {
+				sb.append( Messages.GdbDebugNewExecutableCommand_BuildLog_file_does_not_exist );
+			}
+			else if ( file.isDirectory() ) {
+				sb.append( Messages.GdbDebugNewExecutableCommand_Invalid_buildLog );
+			}
+		}
+		if (sb.length() == 0 && fTargetBinaryText != null) {
 			if ( fTargetBinaryText.getText().trim().length() == 0 ) {
 				if ( sb.length() != 0 ) {
 					sb.append( "\n " ); //$NON-NLS-1$

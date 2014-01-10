@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.debug.application.DebugExecutable;
+import org.eclipse.cdt.internal.debug.application.JobContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -46,17 +47,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	private static final String STANDALONE_QUALIFIER = "org.eclipse.cdt.debug.application"; //$NON-NLS-1$
 	private static final String LAST_LAUNCH = "lastLaunch"; //$NON-NLS-1$
 	private ILaunchConfiguration config;
-
-	private class JobContainer {
-		private Job launchJob;
-		public Job getLaunchJob() {
-			return launchJob;
-		}
-
-		public void setLaunchJob(Job job) {
-			this.launchJob = job;
-		}
-	}
 
 	private class StartupException extends FileNotFoundException {
 		/**
@@ -150,11 +140,12 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						arguments = argBuffer.toString();
 						File executableFile = new File(executable);
 						if (!executableFile.exists()) {
-							final NewExecutableInfo info = new NewExecutableInfo("", "", ""); //$NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+							final NewExecutableInfo info = new NewExecutableInfo("", "", "", ""); //$NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
 							final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
 									Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
 							final String executablePath = executable;
 							final String executableArgs = arguments;
+							final String buildLogPath = buildLog;
 
 							Display.getDefault().syncExec(new Runnable() {
 
@@ -162,7 +153,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 								public void run() {
 
 									NewExecutableDialog dialog = new NewExecutableDialog(getWindowConfigurer().getWindow().getShell(),
-											0, executablePath, executableArgs);
+											0, executablePath, buildLogPath, executableArgs);
 									dialog.setBlockOnOpen(true);
 									if (dialog.open() == IDialogConstants.OK_ID) {
 										NewExecutableInfo info2 = dialog.getExecutableInfo();

@@ -42,12 +42,14 @@ public class Messages extends NLS {
 	public static String GdbDebugNewExecutableCommand_Binary_on_target;
 	public static String GdbDebugNewExecutableCommand_Binary_on_target_must_be_specified;
 	public static String GdbDebugNewExecutableCommand_Browse;
+	public static String GdbDebugNewExecutableCommand_BuildLog;
+	public static String GdbDebugNewExecutableCommand_BuildLog_file_does_not_exist;
 	public static String GdbDebugNewExecutableCommand_Debug_New_Executable;
 	public static String GdbDebugNewExecutableCommand_Host_binary_file_does_not_exist;
 	public static String GdbDebugNewExecutableCommand_Host_binary_must_be_specified;
 	public static String GdbDebugNewExecutableCommand_Invalid_binary;
+	public static String GdbDebugNewExecutableCommand_Invalid_buildLog;
 	public static String GdbDebugNewExecutableCommand_Invalid_host_binary;
-	public static String GdbDebugNewExecutableCommand_New_Executable_Prompt_Job;
 	public static String GdbDebugNewExecutableCommand_Select_binaries_on_host_and_target;
 	public static String GdbDebugNewExecutableCommand_Select_Binary;
 	public static String GdbDebugNewExecutableCommand_Select_binary_and_specify_arguments;

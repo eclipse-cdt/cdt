@@ -204,10 +204,11 @@
    <extension
        point="org.eclipse.ui.commands">
       <command
-      		categoryId="org.eclipse.cdt.debug.ui.category.debugViewLayout"
-       		description="%DebugNewExecutable.description"
-         	id="org.eclipse.cdt.debug.application.command.debugNewExecutable"
-         	name="%DebugNewExecutable.name">
+            categoryId="org.eclipse.cdt.debug.ui.category.debugViewLayout"
+            defaultHandler="org.eclipse.cdt.internal.debug.application.DebugNewExecutableHandler"
+            description="%DebugNewExecutable.description"
+            id="org.eclipse.cdt.debug.application.command.debugNewExecutable"
+            name="%DebugNewExecutable.name">
       </command>
    </extension>
    
@@ -219,6 +220,11 @@
          <menu
                id="file"
                label="%FileMenu.label">
+            <command
+                  commandId="org.eclipse.cdt.debug.application.command.debugNewExecutable"
+                  label="%DebugNewExecutableMenu.label"
+                  style="push">
+            </command>
             <command
                   commandId="org.eclipse.ui.file.exit"
                   label="%ExitMenu.label"

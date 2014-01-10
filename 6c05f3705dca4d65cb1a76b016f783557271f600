@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_03433f16",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterProfileStore.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-10T17:59:53Z",
+      "side": 1,
+      "message": "Wouldn\u0027t this return statement bypass project-level updates?",
+      "revId": "6c05f3705dca4d65cb1a76b016f783557271f600",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_a32b7332",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterProfileStore.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-10T17:59:53Z",
+      "side": 1,
+      "message": "Doesn\u0027t this condition mean an internal inconsistency in plugin_customization.ini?",
+      "revId": "6c05f3705dca4d65cb1a76b016f783557271f600",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_a347f321",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterProfileStore.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-10T17:59:53Z",
+      "side": 1,
+      "message": "Have you tested this code with closed projects?",
+      "revId": "6c05f3705dca4d65cb1a76b016f783557271f600",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_e33d6b94",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/CUIPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 612,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-10T17:59:53Z",
+      "side": 1,
+      "message": "Please add a space after //",
+      "revId": "6c05f3705dca4d65cb1a76b016f783557271f600",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -9,15 +9,16 @@ package org.eclipse.cdt.internal.qt.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQmlRegistration;
-import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQmlUncreatableRegistration;
+import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQmlUncreatable;
 import org.eclipse.cdt.qt.core.index.IQObject;
-import org.eclipse.cdt.qt.core.index.IQmlRegistered;
+import org.eclipse.cdt.qt.core.index.IQObject.IMember;
+import org.eclipse.cdt.qt.core.index.IQmlRegistration;
 import org.eclipse.core.runtime.CoreException;
 
-public class QmlRegistered implements IQmlRegistered {
+public class QmlRegistration implements IQmlRegistration {
 
 	private final QtIndexImpl qtIndex;
-	private final IQmlRegistered.Kind kind;
+	private final IQmlRegistration.Kind kind;
 	private final String[] ownerName;
 	private final Long version;
 	private final String uri;
@@ -27,17 +28,17 @@ public class QmlRegistered implements IQmlRegistered {
 	private final String reason;
 	private IQObject qObject;
 
-	public static QmlRegistered create(QtIndexImpl qtIndex, IBinding pdom) throws CoreException {
-		if (pdom instanceof QtPDOMQmlUncreatableRegistration)
-			return new QmlRegistered(qtIndex, (QtPDOMQmlUncreatableRegistration) pdom);
+	public static QmlRegistration create(QtIndexImpl qtIndex, IBinding pdom) throws CoreException {
+		if (pdom instanceof QtPDOMQmlUncreatable)
+			return new QmlRegistration(qtIndex, (QtPDOMQmlUncreatable) pdom);
 		if (pdom instanceof QtPDOMQmlRegistration)
-			return new QmlRegistered(qtIndex, (QtPDOMQmlRegistration) pdom);
+			return new QmlRegistration(qtIndex, (QtPDOMQmlRegistration) pdom);
 		return null;
 	}
 
-	private QmlRegistered(QtIndexImpl qtIndex, QtPDOMQmlRegistration pdom) throws CoreException {
+	private QmlRegistration(QtIndexImpl qtIndex, QtPDOMQmlRegistration pdom) throws CoreException {
 		this.qtIndex = qtIndex;
-		this.kind = IQmlRegistered.Kind.Type;
+		this.kind = IQmlRegistration.Kind.Type;
 
 		String qobjName = pdom.getQObjectName();
 		this.ownerName = qobjName == null ? null : qobjName.split("::");
@@ -50,9 +51,9 @@ public class QmlRegistered implements IQmlRegistered {
 		this.reason = null;
 	}
 
-	private QmlRegistered(QtIndexImpl qtIndex, QtPDOMQmlUncreatableRegistration pdom) throws CoreException {
+	private QmlRegistration(QtIndexImpl qtIndex, QtPDOMQmlUncreatable pdom) throws CoreException {
 		this.qtIndex = qtIndex;
-		this.kind = IQmlRegistered.Kind.Uncreatable;
+		this.kind = IQmlRegistration.Kind.Uncreatable;
 
 		String qobjName = pdom.getQObjectName();
 		this.ownerName = qobjName == null ? null : qobjName.split("::");
@@ -66,7 +67,7 @@ public class QmlRegistered implements IQmlRegistered {
 	}
 
 	@Override
-	public IQmlRegistered.Kind getKind() {
+	public IQmlRegistration.Kind getKind() {
 		return kind;
 	}
 
@@ -76,6 +77,18 @@ public class QmlRegistered implements IQmlRegistered {
 		 && ownerName != null)
 			qObject = qtIndex.findQObject(ownerName);
 		return qObject;
+	}
+
+	// TODO remove getQObject from the API
+	@Override
+	public IQObject getOwner() {
+		return getQObject();
+	}
+
+	@Override
+	public boolean isOverride(IMember member) {
+		// TODO I think that qmlRegistrations are never overridden
+		return false;
 	}
 
 	@Override

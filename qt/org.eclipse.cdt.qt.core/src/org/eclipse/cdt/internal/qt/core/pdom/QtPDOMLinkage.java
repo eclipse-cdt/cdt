@@ -7,6 +7,9 @@
  */
 package org.eclipse.cdt.internal.qt.core.pdom;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +25,9 @@ import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.qt.core.QtPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -32,13 +37,16 @@ public class QtPDOMLinkage extends PDOMLinkage {
 
 	private static int offsetInitializer = PDOMLinkage.RECORD_SIZE;
 	private static enum Field {
-		Version(Database.INT_SIZE),
-		Last(0);
+		Version(Database.INT_SIZE, 0),
+		QmlRegistrationIndex(Database.PTR_SIZE, 3),
+		Last(0, 0);
 
 		private final int offset;
+		public final int version;
 
-		private Field(int sizeof) {
+		private Field(int sizeof, int version) {
 			this.offset = offsetInitializer;
+			this.version = version;
 			offsetInitializer += sizeof;
 		}
 
@@ -64,6 +72,15 @@ public class QtPDOMLinkage extends PDOMLinkage {
 		// Initialize the version with whatever is current.
 		version = QtPDOMNodeType.VERSION;
 		pdom.getDB().putInt(Field.Version.getRecord(record), version);
+
+		// Initialize all BTree's to 0.
+		if (version >= Field.QmlRegistrationIndex.version)
+			pdom.getDB().putRecPtr(Field.QmlRegistrationIndex.getRecord(record), 0);
+	}
+
+	@Override
+	protected int getRecordSize() {
+		return Field.Last.offset;
 	}
 
 	public int getVersion() {
@@ -192,6 +209,57 @@ public class QtPDOMLinkage extends PDOMLinkage {
 
 		// Handle bindings in unknown linkages as though the name is to be added to this linkage.
 		return (pdomLinkage == null ? this : pdomLinkage).adaptBinding(binding);
+	}
+
+	@Override
+	public void onCreateName(PDOMFile file, IASTName name, PDOMName pdomName) throws CoreException {
+		super.onCreateName(file, name, pdomName);
+
+		// If the new name was created for a QmlRegistration, then put it into the index.
+		if (name instanceof QmlTypeRegistration) {
+			String qobjName = ((QmlTypeRegistration) name).getQObjectName();
+			QtPDOMNameIndex index = getQmlRegistrationIndex();
+			if (index != null)
+				index.add(qobjName, pdomName);
+		}
+	}
+
+	@Override
+	public void onDeleteName(PDOMName name) throws CoreException {
+		// If this is a name for a QML registration, then the registration must be removed
+		// from the index.
+		PDOMBinding binding = name.getBinding();
+		if (binding instanceof QtPDOMQmlRegistration) {
+			QtPDOMNameIndex index = getQmlRegistrationIndex();
+			if (index != null)
+				index.remove(((QtPDOMQmlRegistration) binding).getQObjectName(), name);
+		}
+
+		super.onDeleteName(name);
+	}
+
+	public Collection<QtPDOMQmlRegistration> getQmlRegistrations(String qobjName) throws CoreException {
+		QtPDOMNameIndex index = getQmlRegistrationIndex();
+		if (index == null)
+			return Collections.emptyList();
+
+		Collection<PDOMName> names = index.get(qobjName);
+		if (names.isEmpty())
+			return Collections.emptyList();
+
+		ArrayList<QtPDOMQmlRegistration> registrations = new ArrayList<QtPDOMQmlRegistration>();
+		for (PDOMName name : names) {
+			PDOMBinding binding = name.getBinding();
+			if (binding instanceof QtPDOMQmlRegistration)
+				registrations.add((QtPDOMQmlRegistration) binding);
+		}
+		return registrations;
+	}
+
+	private QtPDOMNameIndex getQmlRegistrationIndex() throws CoreException {
+		return version >= Field.QmlRegistrationIndex.version
+				? new QtPDOMNameIndex(this, Field.QmlRegistrationIndex.getRecord(record))
+				: null;
 	}
 
 	@Override

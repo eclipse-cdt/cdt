@@ -34,7 +34,7 @@ public enum QtPDOMNodeType {
 	 * This version can be reset when the PDOM's version changes because older Qt linkages will
 	 * be dropped (along with everything else in that PDOM).
 	 */
-	public static final int VERSION = 2;
+	public static final int VERSION = 3;
 
 	public static QtPDOMNodeType forType(int version, int type) {
 		// Nothing has been deleted or replaced yet, so the version is ignored.
@@ -65,7 +65,7 @@ public enum QtPDOMNodeType {
 		case QmlTypeRegistration:
 			return new QtPDOMQmlRegistration(linkage, record);
 		case QmlUncreatableRegistration:
-			return new QtPDOMQmlUncreatableRegistration(linkage, record);
+			return new QtPDOMQmlUncreatable(linkage, record);
 		}
 
 		return null;

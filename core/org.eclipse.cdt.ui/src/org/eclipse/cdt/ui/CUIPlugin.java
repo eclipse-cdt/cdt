@@ -567,14 +567,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 		GlobalBuildConsoleManager.startGlobalConsole();
 	}
 
-	/*
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
-		//Set debug tracing options
+		// Set debug tracing options
 		configurePluginDebugOptions();
 
 		registerAdapters();
@@ -606,10 +603,10 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 		// A workaround for black console bug 320723.
 		BuildConsolePreferencePage.initDefaults(getPreferenceStore());
-		//initialize ContentAssistMatcherPreference
+		// Initialize ContentAssistMatcherPreference.
 		ContentAssistPreference.getInstance();
 
-		// start make-ui plugin, such that it can check for project conversions.
+		// Start make.ui plug-in, such that it can check for project conversions.
 		Job job= new Job(Messages.CUIPlugin_jobStartMakeUI) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -618,7 +615,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 					if (bundle != null) {
 						switch (bundle.getState()) {
 						case Bundle.RESOLVED:
-						case Bundle.STARTING:  // because make.ui uses lazy activation, we need to start it.
+						case Bundle.STARTING:  // Because make.ui uses lazy activation, we need to start it.
 							bundle.start(Bundle.START_TRANSIENT);
 							break;
 						}
@@ -633,9 +630,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 		job.schedule();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		CDTContextActivator.getInstance().uninstall();
@@ -823,7 +817,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return result.toArray(new IEditorPart[result.size()]);
 	}
 	/**
-	 * Returns an array of all instanciated editors.
+	 * Returns an array of all instantiated editors.
 	 */
 	public static IEditorPart[] getInstanciatedEditors() {
 		List<IEditorPart> result= new ArrayList<IEditorPart>(0);

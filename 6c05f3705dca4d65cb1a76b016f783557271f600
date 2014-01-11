@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_f2b9b3b0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterProfileStore.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-11T03:10:23Z",
+      "side": 1,
+      "message": "I meant code in lines 94-101.",
+      "parentUuid": "67591f73_66484905",
+      "revId": "6c05f3705dca4d65cb1a76b016f783557271f600",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_a32b7332",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterProfileStore.java",
         "patchSetId": 1
@@ -72,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_12754770",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterProfileStore.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-11T03:10:23Z",
+      "side": 1,
+      "message": "I don\u0027t think there is a need to create a workaround for internally inconsitent plugin_customization.ini files.",
+      "parentUuid": "67591f73_86975dcb",
+      "revId": "6c05f3705dca4d65cb1a76b016f783557271f600",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_a347f321",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterProfileStore.java",
         "patchSetId": 1
@@ -100,6 +136,24 @@
       "writtenOn": "2014-01-10T20:27:23Z",
       "side": 1,
       "message": "I tried to test the project specific formatter settings, and I got an error when I clicked \u0027C/C+ general-\u003e Fomatter\u0027 of a project properties. This issue also happens in my co-worker\u0027s environment, I\u0027m sure if it\u0027s normal?\n\nError dialog:\nThe currently displayed page contains invalid values.\n\n\n!ENTRY org.eclipse.jface 4 2 2014-01-10 14:51:39.316\n!MESSAGE Problems occurred when invoking code from plug-in: \"org.eclipse.jface\".\n!STACK 0\njava.lang.NullPointerException\n\tat org.eclipse.cdt.internal.ui.preferences.formatter.CustomCodeFormatterBlock.initDefault(CustomCodeFormatterBlock.java:185)\n\tat org.eclipse.cdt.internal.ui.preferences.formatter.CustomCodeFormatterBlock.enableProjectSpecificSettings(CustomCodeFormatterBlock.java:121)\n\tat org.eclipse.cdt.internal.ui.preferences.formatter.CodeFormatterConfigurationBlock.enableProjectSpecificSettings(CodeFormatterConfigurationBlock.java:172)\n\tat org.eclipse.cdt.internal.ui.preferences.CodeFormatterPreferencePage.enableProjectSpecificSettings(CodeFormatterPreferencePage.java:74)\n\tat org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage.createContents(PropertyAndPreferencePage.java:153)\n\tat org.eclipse.jface.preference.PreferencePage.createControl(PreferencePage.java:232)\n\tat org.eclipse.cdt.internal.ui.preferences.CodeFormatterPreferencePage.createControl(CodeFormatterPreferencePage.java:56)\n\tat org.eclipse.jface.preference.PreferenceDialog.createPageControl(PreferenceDialog.java:1502)\n\tat org.eclipse.jface.preference.PreferenceDialog$14.run(PreferenceDialog.java:1259)\n\tat org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)\n\tat org.eclipse.ui.internal.JFaceUtil$1.run(JFaceUtil.java:49)\n\tat org.eclipse.jface.util.SafeRunnable.run(SafeRunnable.java:175)\n\tat org.eclipse.jface.preference.PreferenceDialog.showPage(PreferenceDialog.java:1253)\n\tat org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog.showPage(FilteredPreferenceDialog.java:675)\n\tat org.eclipse.jface.preference.PreferenceDialog$10.run(PreferenceDialog.java:709)\n\tat org.eclipse.swt.custom.BusyIndicator.showWhile(BusyIndicator.java:70)\n\tat org.eclipse.jface.preference.PreferenceDialog$9.selectionChanged(PreferenceDialog.java:705)\n\tat org.eclipse.jface.viewers.StructuredViewer$3.run(StructuredViewer.java:888)\n\tat org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)\n\tat org.eclipse.ui.internal.JFaceUtil$1.run(JFaceUtil.java:49)\n\tat org.eclipse.jface.util.SafeRunnable.run(SafeRunnable.java:175)\n\tat org.eclipse.jface.viewers.StructuredViewer.firePostSelectionChanged(StructuredViewer.java:886)\n\tat org.eclipse.jface.viewers.StructuredViewer.handlePostSelect(StructuredViewer.java:1226)\n\tat org.eclipse.jface.viewers.StructuredViewer$5.widgetSelected(StructuredViewer.java:1251)\n\tat org.eclipse.jface.util.OpenStrategy.firePostSelectionEvent(OpenStrategy.java:262)\n\tat org.eclipse.jface.util.OpenStrategy.access$5(OpenStrategy.java:256)\n\tat org.eclipse.jface.util.OpenStrategy$3.run(OpenStrategy.java:433)\n\tat org.eclipse.swt.widgets.RunnableLock.run(RunnableLock.java:35)\n\tat org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Synchronizer.java:135)\n\tat org.eclipse.swt.widgets.Display.runAsyncMessages(Display.java:4145)\n\tat org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3762)\n\tat org.eclipse.jface.window.Window.runEventLoop(Window.java:826)\n\tat org.eclipse.jface.window.Window.open(Window.java:802)\n\tat org.eclipse.ui.dialogs.PropertyDialogAction.run(PropertyDialogAction.java:158)\n\tat org.eclipse.jface.action.Action.runWithEvent(Action.java:499)\n\tat org.eclipse.jface.action.ActionContributionItem.handleWidgetSelection(ActionContributionItem.java:584)\n\tat org.eclipse.jface.action.ActionContributionItem.access$2(ActionContributionItem.java:501)\n\tat org.eclipse.jface.action.ActionContributionItem$5.handleEvent(ActionContributionItem.java:411)\n\tat org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)\n\tat org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1057)\n\tat org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:4170)\n\tat org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3759)\n\tat org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$9.run(PartRenderingEngine.java:1113)\n\tat org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:332)\n\tat org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:997)\n\tat org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:138)\n\tat org.eclipse.ui.internal.Workbench$5.run(Workbench.java:610)\n\tat org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:332)\n\tat org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:567)\n\tat org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:150)\n\tat org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:124)\n\tat org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)\n\tat org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)\n\tat org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)\n\tat org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:354)\n\tat org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:181)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)\n\tat java.lang.reflect.Method.invoke(Method.java:597)\n\tat org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:636)\n\tat org.eclipse.equinox.launcher.Main.basicRun(Main.java:591)\n\tat org.eclipse.equinox.launcher.Main.run(Main.java:1450)\n\tat org.eclipse.equinox.launcher.Main.main(Main.java:1426)\n\n!ENTRY org.eclipse.jface 4 2 2014-01-10 15:04:02.376\n!MESSAGE Problems occurred when invoking code from plug-in: \"org.eclipse.jface\".\n!STACK 0\njava.lang.NullPointerException\n\tat org.eclipse.cdt.internal.ui.preferences.formatter.CustomCodeFormatterBlock.initDefault(CustomCodeFormatterBlock.java:185)\n\tat org.eclipse.cdt.internal.ui.preferences.formatter.CustomCodeFormatterBlock.enableProjectSpecificSettings(CustomCodeFormatterBlock.java:121)\n\tat org.eclipse.cdt.internal.ui.preferences.formatter.CodeFormatterConfigurationBlock.enableProjectSpecificSettings(CodeFormatterConfigurationBlock.java:172)\n\tat org.eclipse.cdt.internal.ui.preferences.CodeFormatterPreferencePage.enableProjectSpecificSettings(CodeFormatterPreferencePage.java:74)\n\tat org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage.createContents(PropertyAndPreferencePage.java:153)\n\tat org.eclipse.jface.preference.PreferencePage.createControl(PreferencePage.java:232)\n\tat org.eclipse.cdt.internal.ui.preferences.CodeFormatterPreferencePage.createControl(CodeFormatterPreferencePage.java:56)\n\tat org.eclipse.jface.preference.PreferenceDialog.createPageControl(PreferenceDialog.java:1502)\n\tat org.eclipse.jface.preference.PreferenceDialog$14.run(PreferenceDialog.java:1259)\n\tat org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)\n\tat org.eclipse.ui.internal.JFaceUtil$1.run(JFaceUtil.java:49)\n\tat org.eclipse.jface.util.SafeRunnable.run(SafeRunnable.java:175)\n\tat org.eclipse.jface.preference.PreferenceDialog.showPage(PreferenceDialog.java:1253)\n\tat org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog.showPage(FilteredPreferenceDialog.java:675)\n\tat org.eclipse.jface.preference.PreferenceDialog$10.run(PreferenceDialog.java:709)\n\tat org.eclipse.swt.custom.BusyIndicator.showWhile(BusyIndicator.java:70)\n\tat org.eclipse.jface.preference.PreferenceDialog$9.selectionChanged(PreferenceDialog.java:705)\n\tat org.eclipse.jface.viewers.StructuredViewer$3.run(StructuredViewer.java:888)\n\tat org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)\n\tat org.eclipse.ui.internal.JFaceUtil$1.run(JFaceUtil.java:49)\n\tat org.eclipse.jface.util.SafeRunnable.run(SafeRunnable.java:175)\n\tat org.eclipse.jface.viewers.StructuredViewer.firePostSelectionChanged(StructuredViewer.java:886)\n\tat org.eclipse.jface.viewers.StructuredViewer.setSelection(StructuredViewer.java:1726)\n\tat org.eclipse.jface.viewers.TreeViewer.setSelection(TreeViewer.java:1139)\n\tat org.eclipse.jface.preference.PreferenceDialog.selectSavedItem(PreferenceDialog.java:1055)\n\tat org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog.selectSavedItem(FilteredPreferenceDialog.java:730)\n\tat org.eclipse.jface.preference.PreferenceDialog$4.run(PreferenceDialog.java:376)\n\tat org.eclipse.swt.custom.BusyIndicator.showWhile(BusyIndicator.java:70)\n\tat org.eclipse.jface.preference.PreferenceDialog.createContents(PreferenceDialog.java:372)\n\tat org.eclipse.jface.window.Window.create(Window.java:432)\n\tat org.eclipse.jface.dialogs.Dialog.create(Dialog.java:1104)\n\tat org.eclipse.ui.internal.dialogs.PropertyDialog.createDialogOn(PropertyDialog.java:83)\n\tat org.eclipse.ui.dialogs.PropertyDialogAction.createDialog(PropertyDialogAction.java:175)\n\tat org.eclipse.ui.dialogs.PropertyDialogAction.run(PropertyDialogAction.java:156)\n\tat org.eclipse.jface.action.Action.runWithEvent(Action.java:499)\n\tat org.eclipse.jface.action.ActionContributionItem.handleWidgetSelection(ActionContributionItem.java:584)\n\tat org.eclipse.jface.action.ActionContributionItem.access$2(ActionContributionItem.java:501)\n\tat org.eclipse.jface.action.ActionContributionItem$5.handleEvent(ActionContributionItem.java:411)\n\tat org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)\n\tat org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1057)\n\tat org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:4170)\n\tat org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3759)\n\tat org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$9.run(PartRenderingEngine.java:1113)\n\tat org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:332)\n\tat org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:997)\n\tat org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:138)\n\tat org.eclipse.ui.internal.Workbench$5.run(Workbench.java:610)\n\tat org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:332)\n\tat org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:567)\n\tat org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:150)\n\tat org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:124)\n\tat org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)\n\tat org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)\n\tat org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)\n\tat org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:354)\n\tat org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:181)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)\n\tat java.lang.reflect.Method.invoke(Method.java:597)\n\tat org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:636)\n\tat org.eclipse.equinox.launcher.Main.basicRun(Main.java:591)\n\tat org.eclipse.equinox.launcher.Main.run(Main.java:1450)\n\tat org.eclipse.equinox.launcher.Main.main(Main.java:1426)",
+      "parentUuid": "67591f73_a347f321",
+      "revId": "6c05f3705dca4d65cb1a76b016f783557271f600",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_d2b46fb8",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterProfileStore.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-11T03:10:23Z",
+      "side": 1,
+      "message": "I don\u0027t quite understand. Was the NPE introduced by this change, or did it exist without it? What was the scenario of your test?",
       "parentUuid": "67591f73_a347f321",
       "revId": "6c05f3705dca4d65cb1a76b016f783557271f600",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",

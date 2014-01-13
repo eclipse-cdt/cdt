@@ -116,7 +116,8 @@ public class CustomCodeFormatterBlock extends Observable {
 
 	public void enableProjectSpecificSettings(boolean useProjectSpecificSettings) {
 		if (useProjectSpecificSettings) {
-			fPrefs.put(CCorePreferenceConstants.CODE_FORMATTER, fDefaultFormatterId);
+			if (fDefaultFormatterId != null)
+				fPrefs.put(CCorePreferenceConstants.CODE_FORMATTER, fDefaultFormatterId);
 		} else {
 			initDefault();
 		}
@@ -125,7 +126,7 @@ public class CustomCodeFormatterBlock extends Observable {
 	/**
 	 * Returns the currently selected formatter id.
 	 * 
-	 * @return the selected formatter id or <code>null</code> if the default is selected.
+	 * @return the selected formatter id or {@code null} if the default is selected.
 	 */
 	public String getFormatterId() {
 		if (fFormatterCombo == null) {

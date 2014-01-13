@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_432a337f",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/internal/provisional/model/IMemoryBlockRetrievalManager.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-01-13T22:19:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_528e8307",
+      "revId": "e1824c209026f4dad11d97e01caac61a094a95bb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_d25453d1",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/internal/provisional/model/MemoryBlockRetrievalManager.java",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2014-01-13T17:49:21Z",
       "side": 1,
       "message": "I think it would be a good practice to clear the map when the manager is disposed. See my comment for IMemoryBlockRetrievalManager.",
+      "revId": "e1824c209026f4dad11d97e01caac61a094a95bb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_83cf2b58",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/internal/provisional/model/MemoryBlockRetrievalManager.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-01-13T22:19:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_d25453d1",
       "revId": "e1824c209026f4dad11d97e01caac61a094a95bb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

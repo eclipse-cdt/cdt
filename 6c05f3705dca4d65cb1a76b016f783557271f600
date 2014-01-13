@@ -144,6 +144,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_e5126fe3",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterProfileStore.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 2070
+      },
+      "writtenOn": "2014-01-13T19:04:10Z",
+      "side": 1,
+      "message": "Ok, thanks. Do I need to abandon this change?",
+      "parentUuid": "67591f73_b2da7f95",
+      "revId": "6c05f3705dca4d65cb1a76b016f783557271f600",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_a347f321",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterProfileStore.java",
         "patchSetId": 1
@@ -227,6 +245,24 @@
       "side": 1,
       "message": "Could you please file a bug for this NPE. Thanks.",
       "parentUuid": "67591f73_afca1847",
+      "revId": "6c05f3705dca4d65cb1a76b016f783557271f600",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_2543c7c9",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterProfileStore.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 2070
+      },
+      "writtenOn": "2014-01-13T19:04:10Z",
+      "side": 1,
+      "message": "Ok, please see https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d425595 .",
+      "parentUuid": "67591f73_92df7b86",
       "revId": "6c05f3705dca4d65cb1a76b016f783557271f600",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_2fce08da",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/IProblemMarkerFilter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-01-13T15:57:23Z",
+      "side": 1,
+      "message": "2014 BlackBerry Limited?",
+      "revId": "d79da3f0172bd7da0d5a3512d914dc6721bc169a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_0fcb44c9",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ProblemMarkerFilterManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-01-13T15:57:23Z",
+      "side": 1,
+      "message": "2014 BlackBerry Limited?",
+      "revId": "d79da3f0172bd7da0d5a3512d914dc6721bc169a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

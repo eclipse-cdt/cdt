@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_ef1c102b",
+        "filename": "core/org.eclipse.cdt.core/schema/ProblemMarkerFilter.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-01-13T15:37:13Z",
+      "side": 1,
+      "message": "Actually since should be 8.3 since that\u0027s what the next release is going to be.",
+      "revId": "18699389bff5c7ac8c0cd28c9cbf234c8e0a580e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_cf214c5e",
+        "filename": "core/org.eclipse.cdt.core/schema/ProblemMarkerFilter.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-01-13T15:37:13Z",
+      "side": 1,
+      "message": "2014.",
+      "revId": "18699389bff5c7ac8c0cd28c9cbf234c8e0a580e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

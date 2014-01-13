@@ -126,6 +126,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_b2da7f95",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterProfileStore.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-13T17:41:21Z",
+      "side": 1,
+      "message": "It is internally inconsistent since cdt.core preferences are out of sync with cdt.ui ones. Making a formatting profile current through Eclipse UI updates org.eclipse.cdt.core/org.eclipse.cdt.core.formatter.* preferences. These preferences are absent in the plugin_cutsomization.ini attached to bug 425223.",
+      "parentUuid": "67591f73_2f81e807",
+      "revId": "6c05f3705dca4d65cb1a76b016f783557271f600",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_a347f321",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterProfileStore.java",
         "patchSetId": 1
@@ -191,6 +209,24 @@
       "side": 1,
       "message": "The NPE exists without my change, it exists in the head of master. Maybe it was introduced by your previous commit for \u0027Erase code_formatter preference when disabling project specific settings\u0027, because I tried to comment your change and it works fine.\n\nMy steps are:\n1. Create a \u0027Hello world\u0027 C++ project in a new workspace\n2. Right click the project in project explorer, open the properties dialog\n3. Click C/C++ General-\u003e Formatter, then the error dialog is shown",
       "parentUuid": "67591f73_d2b46fb8",
+      "revId": "6c05f3705dca4d65cb1a76b016f783557271f600",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_92df7b86",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterProfileStore.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-13T17:41:21Z",
+      "side": 1,
+      "message": "Could you please file a bug for this NPE. Thanks.",
+      "parentUuid": "67591f73_afca1847",
       "revId": "6c05f3705dca4d65cb1a76b016f783557271f600",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

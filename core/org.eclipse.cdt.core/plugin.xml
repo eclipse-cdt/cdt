@@ -675,6 +675,7 @@
    <extension-point id="RefreshExclusionFactory" name="%refreshExclusionFactory.name" schema="schema/RefreshExclusionFactory.exsd"/>
    <extension-point id="LanguageSettingsProvider" name="%LanguageSettingsProvider.name" schema="schema/LanguageSettingsProvider.exsd"/>
    <extension-point id="UNCPathConverter" name="%uncPathConverter.name" schema="schema/UNCPathConverter.exsd"/>
+   <extension-point id="ProblemMarkerFilter" name="%problemMarkerFilter.name" schema="schema/ProblemMarkerFilter.exsd"/>
 
    <extension
          point="org.eclipse.cdt.core.templateProcessTypes">

@@ -588,6 +588,8 @@ outer:
 	 * @since 5.4
 	 */
 	public void addProblemMarker(ProblemMarkerInfo problemMarkerInfo){
+		if ( ! ProblemMarkerFilterManager.getInstance().acceptMarker(problemMarkerInfo) )
+			return;
 		fErrors.add(problemMarkerInfo);
 		fMarkerGenerator.addMarker(problemMarkerInfo);
 		if (problemMarkerInfo.severity == IMarkerGenerator.SEVERITY_ERROR_RESOURCE) {

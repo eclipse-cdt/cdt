@@ -244,6 +244,15 @@
                   visible="true">
             </separator>
             <command
+                  commandId="org.eclipse.ui.window.customizePerspective"
+                  label="%CustomizePerspective.label"
+                  style="push">
+            </command>
+            <separator
+                  name="GDBStandalone.separator1"
+                  visible="true">
+            </separator>
+            <command
                   commandId="org.eclipse.ui.window.preferences"
                   label="%Preferences.label"
                   style="push">

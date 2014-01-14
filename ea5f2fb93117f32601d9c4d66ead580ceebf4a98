@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_1f7ecb5d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ProblemMarkerFilterManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-14T12:49:35Z",
+      "side": 1,
+      "message": "This and the following could be marked final.  I wouldn\u0027t respin the patch just for this change though.",
+      "revId": "ea5f2fb93117f32601d9c4d66ead580ceebf4a98",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_7fdb87e4",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ProblemMarkerFilterManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-14T12:49:35Z",
+      "side": 1,
+      "message": "This call to createExecutable will cause the contributing plugin to be activated.  The extension point should allow an enablement expression to be used in order to prevent activation in cases where the contribution isn\u0027t actually required.\n\nSee the PDOMASTProcessor extension point for an example.  There is a change in the .exsd to use the enablement node (from org.eclipse.core.expressions/schema/expressionLanguage.exsd) and there is a change during loading (here) to evaluate the expression before calling createExecutableExtension.",
+      "revId": "ea5f2fb93117f32601d9c4d66ead580ceebf4a98",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_984303c8",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/ProblemMarkerFilterManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-15T22:32:40Z",
+      "side": 1,
+      "message": "This could also make sure the project is open:\n\n    if (project \u003d\u003d null || !project.isOpen())\n\nHowever, I don\u0027t think we can get a marker from a project that isn\u0027t open, so I wouldn\u0027t respin the patch just for this change.",
+      "revId": "99a23c675b537b68775e655136382d4f808c9047",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_b8d52761",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/ProblemMarkerFilterManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-15T22:32:40Z",
+      "side": 1,
+      "message": "Should there be some synchronization here?  I think that there can be multiple ErrorParsers active, and they seem to all be sharing a static instance of this class.\n\nI would suggest a copy of the list to avoid invoking the user callback within the synchronized block.",
+      "revId": "99a23c675b537b68775e655136382d4f808c9047",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_d8d8db9a",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/ProblemMarkerFilterManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-15T22:32:40Z",
+      "side": 1,
+      "message": "I think that access to filtersCache should be synchronized, no?",
+      "revId": "99a23c675b537b68775e655136382d4f808c9047",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

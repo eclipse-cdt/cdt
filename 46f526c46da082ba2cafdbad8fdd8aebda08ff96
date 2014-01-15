@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_47d06ac2",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/IProblemMarkerFilter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-15T16:25:37Z",
+      "side": 1,
+      "message": "This class is new API so it needs an @since tag.  Setting up the API tooling is a pain, so if you just add a line like:\n\n * @since 5.6\n\nhere, then it will be fine.",
+      "revId": "46f526c46da082ba2cafdbad8fdd8aebda08ff96",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_a7d4e6b6",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ProblemMarkerFilterDesc.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-15T16:25:37Z",
+      "side": 1,
+      "message": "API tooling complains about this class being new API also.  Looking at it now, I think it should actually be an internal class.  If that is true, then it should be moved to the org.eclipse.cdt.internal.core or even org.eclipse.cdt.internal.errorparsers.  When the class is moved to an internal plugin, it won\u0027t need any @since tags.",
+      "revId": "46f526c46da082ba2cafdbad8fdd8aebda08ff96",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_87e282bd",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ProblemMarkerFilterDesc.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-15T16:25:37Z",
+      "side": 1,
+      "message": "Doesn\u0027t this need to add some variables to the context before evaluating it?  As it is, I don\u0027t think that the example code in the extension point\u0027s schema (which now includes a sample enablement expression) will do anything.\n\nSomething like:\n\n\tEvaluationContext evalContext \u003d new EvaluationContext(null, project);\n\n\tif (project !\u003d null) {\n\t\tString[] natures \u003d project.getDescription().getNatureIds();\n\t\tevalContext.addVariable(\"projectNatures\", Arrays.asList(natures));\n\t}\n\n\treturn enablementExpression.evaluate(evalContext) \u003d\u003d EvaluationResult.TRUE;\n\nThat probably means that the expression cannot be evaluated in this context.  This code will need to be moved to the code that processes the ProblemMarkerInfo.  There are several attributes of the ProblemMarkerInfo, it looks like it makes sense to add all of them to the evaluation context as well.\n\nIf the ProblemMarkerInfo is available then you can also change the default variable from project to ProblemMarkerInfo.file.",
+      "revId": "46f526c46da082ba2cafdbad8fdd8aebda08ff96",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_2713b61b",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ProblemMarkerFilterManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-15T16:25:37Z",
+      "side": 1,
+      "message": "API tooling complains about this class being new API also.  Looking at it now, I think it should actually be an internal class.  If that is true, then it should be moved to the org.eclipse.cdt.internal.core or even org.eclipse.cdt.internal.errorparsers.  When the class is moved to an internal plugin, it won\u0027t need any @since tags.\n\nIt also won\u0027t need the @noextend tag -- after it is an internal class it will implicitly be @noextend.",
+      "revId": "46f526c46da082ba2cafdbad8fdd8aebda08ff96",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

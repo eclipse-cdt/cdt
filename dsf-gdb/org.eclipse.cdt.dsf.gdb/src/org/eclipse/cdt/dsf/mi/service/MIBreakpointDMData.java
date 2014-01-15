@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Ericsson and others.
+ * Copyright (c) 2007, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - Initial API and implementation
+ *     Marc Khouzam (Ericsson) - Support for dynamic printf (400628)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
@@ -40,7 +41,8 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 
 	// Breakpoint types
 	public static enum MIBreakpointNature { UNKNOWN, BREAKPOINT, WATCHPOINT, CATCHPOINT, 
-		                                    /** @since 3.0*/ TRACEPOINT };
+		                                    /** @since 3.0*/ TRACEPOINT,
+		                                    /** @since 4.4*/ DYNAMICPRINTF };
 	private final MIBreakpointNature fNature;
 
 
@@ -71,6 +73,8 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		fBreakpoint = dsfMIBreakpoint;
 		if (dsfMIBreakpoint.isTracepoint()) {
 			fNature = MIBreakpointNature.TRACEPOINT;
+		} else if (dsfMIBreakpoint.isDynamicPrintf()) {
+			fNature = MIBreakpointNature.DYNAMICPRINTF;
 		} else if (dsfMIBreakpoint.isWatchpoint()) {
 			fNature = MIBreakpointNature.WATCHPOINT;
 		} else if (dsfMIBreakpoint.isCatchpoint()) {
@@ -148,6 +152,31 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				break;
 			}
 
+			case DYNAMICPRINTF:
+			{
+				// Generic breakpoint attributes
+				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.DYNAMICPRINTF);
+				fProperties.put(MIBreakpoints.FILE_NAME,       dsfMIBreakpoint.getFile());
+				fProperties.put(MIBreakpoints.LINE_NUMBER,     dsfMIBreakpoint.getLine());
+				fProperties.put(MIBreakpoints.FUNCTION,        dsfMIBreakpoint.getFunction());
+				fProperties.put(MIBreakpoints.ADDRESS,         dsfMIBreakpoint.getAddress());
+				fProperties.put(MIBreakpoints.CONDITION,       dsfMIBreakpoint.getCondition());
+				fProperties.put(MIBreakpoints.PRINTF_STRING,   dsfMIBreakpoint.getPrintfString());
+				fProperties.put(MIBreakpoints.IS_ENABLED,      new Boolean(dsfMIBreakpoint.isEnabled()));
+				fProperties.put(MIBreakpoints.COMMANDS,        dsfMIBreakpoint.getCommands());
+	
+				// MI-specific breakpoint attributes
+				fProperties.put(NUMBER,       dsfMIBreakpoint.getNumber());
+				fProperties.put(TYPE,         dsfMIBreakpoint.getType());
+				fProperties.put(THREAD_ID,    dsfMIBreakpoint.getThreadId());
+				fProperties.put(FULL_NAME,    dsfMIBreakpoint.getFullName());
+				fProperties.put(HITS,         dsfMIBreakpoint.getTimes());
+				fProperties.put(IS_TEMPORARY, new Boolean(dsfMIBreakpoint.isTemporary()));
+				fProperties.put(IS_HARDWARE,  new Boolean(dsfMIBreakpoint.isHardware()));
+				fProperties.put(LOCATION,     formatLocation());
+				break;
+			}
+			
 			case CATCHPOINT:
 			{
 				// Because gdb doesn't support catchpoints in mi, we end up using
@@ -278,6 +307,13 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	 */
 	public int getPassCount() {
 		return fBreakpoint.getPassCount();
+	}
+	
+	/**
+	 * @since 4.4
+	 */
+	public String getPrintfString() {
+		return fBreakpoint.getPrintfString();
 	}
 	
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,14 +13,19 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David McKnight   (IBM)        - [425788] SystemFilterSelectFilterPoolsAction does not preserve order of filter pool references
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.internal.ui.SystemResources;
@@ -263,7 +268,32 @@ public class SystemFilterSelectFilterPoolsAction
 		ISystemFilterPoolReferenceManagerProvider sfprmp = getReferenceManagerProviderSelection();
 		if (sfprmp != null)
 		{
-		  sfprmp.getSystemFilterPoolReferenceManager().setSystemFilterPoolReferences(selectedPools,true);
+			// need to compare against existing filter pool references to make sure the changes maintain the original order
+			ISystemFilterPoolReferenceManager refMgr = sfprmp.getSystemFilterPoolReferenceManager();
+			ISystemFilterPoolReference[] existingReferences = refMgr.getSystemFilterPoolReferences();
+			List selectedPoolsList = Arrays.asList(selectedPools);
+
+			List sortedPools = new ArrayList(existingReferences.length);
+			for (int i = 0; i < existingReferences.length; i++){
+				ISystemFilterPoolReference ref = existingReferences[i];
+				ISystemFilterPool pool = ref.getReferencedFilterPool();
+				if (selectedPoolsList.contains(pool)){ // only add pools that exist in the selected pools list
+					sortedPools.add(pool);
+				}
+			}
+			
+			// append any selected filter pools that didn't exist before 
+			for (int j = 0; j < selectedPools.length; j++){
+				ISystemFilterPool pool = selectedPools[j];
+				if (!sortedPools.contains(pool)){ 
+					sortedPools.add(pool);
+				}
+			}
+			
+			// selected pools now sorted
+			selectedPools = (ISystemFilterPool[])sortedPools.toArray(new ISystemFilterPool[sortedPools.size()]);
+
+			refMgr.setSystemFilterPoolReferences(selectedPools,true);
 		}
 	}
 	

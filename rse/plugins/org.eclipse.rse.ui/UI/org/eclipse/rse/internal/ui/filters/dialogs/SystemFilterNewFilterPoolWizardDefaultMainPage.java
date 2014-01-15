@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,14 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David McKnight   (IBM)        - [425788] SystemFilterSelectFilterPoolsAction does not preserve order of filter pool references
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.filters.dialogs;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -91,6 +94,16 @@ public class SystemFilterNewFilterPoolWizardDefaultMainPage
 	{
 		validatorsByManager = v;
 	}
+	
+	private String[] getFilterPoolNames(ISystemProfile profile){
+		ISystemFilterPool[] pools = profile.getFilterPools();
+		String[] names = new String[pools.length];
+		for (int i = 0; i < pools.length; i++) {
+			ISystemFilterPool pool = pools[i];
+			names[i] = pool.getName();
+		}
+		return names;
+	}
 
 	/**
 	 * Call this to specify the list of filter pool managers to allow the user to select from.
@@ -99,14 +112,27 @@ public class SystemFilterNewFilterPoolWizardDefaultMainPage
 	 */
 	public void setFilterPoolManagers(ISystemFilterPoolManager[] mgrs) {
 		mgrNames = new String[mgrs.length];
+		
+		// global filter pool names
+		String[] filterPoolNames = null;
+
 		validatorsByManager = new ISystemValidator[mgrNames.length];
 		for (int idx = 0; idx < mgrs.length; idx++) {
 			ISystemFilterPoolManager manager = mgrs[idx];
 			mgrNames[idx] = manager.getName();
-			ISystemValidator iiv = new ValidatorFilterPoolName(manager.getSystemFilterPoolNames());
+			
+			if (filterPoolNames == null){
+				filterPoolNames = getFilterPoolNames(manager.getSystemProfile());
+			}
+
+			ISystemValidator iiv = new ValidatorFilterPoolName(filterPoolNames);
+			
+			// used to find system filter pools for each subsystem configuration, but these names are global
+			//ISystemValidator iiv = new ValidatorFilterPoolName(manager.getSystemFilterPoolNames());
 			validatorsByManager[idx] = iiv;
 		}
 	}
+	
 	/**
 	 * Returns array of manager names to show in combo box.
 	 */

@@ -156,6 +156,49 @@
       </persistent>
    </extension>
    <extension
+         id="cDynamicPrintfMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.cdt.debug.core.cLineBreakpointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="org.eclipse.cdt.debug.core.message">
+      </attribute>
+   </extension>
+   <extension
+         id="cLineDynamicPrintfMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.cdt.debug.core.cDynamicPrintfMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         id="cAddressDynamicPrintfMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.cdt.debug.core.cDynamicPrintfMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         id="cFunctionDynamicPrintfMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.cdt.debug.core.cDynamicPrintfMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
          id="cWatchpointMarker"
          point="org.eclipse.core.resources.markers">
       <super
@@ -254,6 +297,24 @@
             name="%cFunctionTracepoints.name"
             markerType="org.eclipse.cdt.debug.core.cFunctionTracepointMarker"
             id="cFunctionTracepoint">
+      </breakpoint>
+      <breakpoint
+            class="org.eclipse.cdt.debug.internal.core.breakpoints.CLineDynamicPrintf"
+            name="%cLineDynamicPrintf.name"
+            markerType="org.eclipse.cdt.debug.core.cLineDynamicPrintfMarker"
+            id="cLineDynamicPrintf">
+      </breakpoint>
+      <breakpoint
+            class="org.eclipse.cdt.debug.internal.core.breakpoints.CAddressDynamicPrintf"
+            name="%cAddressDynamicPrintf.name"
+            markerType="org.eclipse.cdt.debug.core.cAddressDynamicPrintfMarker"
+            id="cAddressDynamicPrintf">
+      </breakpoint>
+      <breakpoint
+            class="org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionDynamicPrintf"
+            name="%cFunctionDynamicPrintf.name"
+            markerType="org.eclipse.cdt.debug.core.cFunctionDynamicPrintfMarker"
+            id="cFunctionDynamicPrintf">
       </breakpoint>
        <breakpoint
             class="org.eclipse.cdt.debug.internal.core.breakpoints.CEventBreakpoint"

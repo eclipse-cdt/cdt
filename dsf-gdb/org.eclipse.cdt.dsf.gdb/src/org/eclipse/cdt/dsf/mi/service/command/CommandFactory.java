@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug (323552)
  *     Philippe Gil (AdaCore) - Add show/set language CLI commands (Bug 421541)
  *     Dmitry Kozlov (Mentor Graphics) - New trace-related methods (Bug 390827)
+ *     Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400638)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -73,6 +74,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakList;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakPasscount;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakWatch;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIDPrintfInsert;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataDisassemble;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataEvaluateExpression;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataListRegisterNames;
@@ -112,6 +114,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetBreakpointPending;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetCircularTraceBuffer;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDPrintfStyle;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDetachOnFork;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDisconnectedTracing;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
@@ -484,6 +487,12 @@ public class CommandFactory {
 	public ICommand<MIInfo> createMIDataWriteMemoryBytes(IDMContext ctx, String address, byte[] contents) {
 		return new MIDataWriteMemoryBytes(ctx, address, contents);
 	}
+	
+	/** @since 4.4 */
+	public ICommand<MIBreakInsertInfo> createMIDPrintfInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary,
+			String condition, int ignoreCount, int tid, boolean disabled, String location, String printfStr) {
+		return new MIDPrintfInsert(ctx, isTemporary, condition, ignoreCount, tid, disabled, true, location, printfStr);
+	}
 
 	/** @since 4.0 */
 	public ICommand<MIInfo> createMIEnablePrettyPrinting(ICommandControlDMContext ctx) {
@@ -703,6 +712,11 @@ public class CommandFactory {
 	public ICommand<MIInfo> createMIGDBSetDisconnectedTracing(ITraceTargetDMContext ctx, boolean disconnectedTracing) {
 		return new MIGDBSetDisconnectedTracing(ctx, disconnectedTracing);
 	}
+
+	/** @since 4.4 */
+	public ICommand<MIInfo> createMIGDBSetDPrintfStyle(ICommandControlDMContext ctx, String style) {
+		return new MIGDBSetDPrintfStyle(ctx, style);
+	}	
 
 	public ICommand<MIInfo> createMIGDBSetEnv(ICommandControlDMContext dmc, String name) {
 		return new MIGDBSetEnv(dmc, name);

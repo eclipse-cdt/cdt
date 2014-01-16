@@ -182,14 +182,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return null;
 	}
 
-	/**
-	 * @deprecated Use {@link PDOMNode#load(PDOM, long)} instead.
-	 */
-	@Deprecated
-	public final PDOMNode getNode(long record) throws CoreException {
-		return PDOMNode.load(getPDOM(), record);
-	}
-
 	abstract public PDOMNode getNode(long record, int nodeType) throws CoreException;
 
 	public abstract IBTreeComparator getIndexComparator();

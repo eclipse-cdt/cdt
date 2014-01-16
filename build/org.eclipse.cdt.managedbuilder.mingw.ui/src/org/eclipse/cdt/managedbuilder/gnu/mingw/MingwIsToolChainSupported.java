@@ -13,7 +13,6 @@
 package org.eclipse.cdt.managedbuilder.gnu.mingw;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
-import org.eclipse.cdt.internal.core.MinGW;
 import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableManagerToolChain;

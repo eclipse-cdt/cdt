@@ -7,7 +7,6 @@ Bundle-Activator: org.eclipse.cdt.managedbuilder.gnu.ui.GnuUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.managedbuilder.gnu.cygwin,
- org.eclipse.cdt.managedbuilder.gnu.mingw;x-internal:=true,
  org.eclipse.cdt.managedbuilder.gnu.templates;x-internal:=true,
  org.eclipse.cdt.managedbuilder.gnu.ui
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",

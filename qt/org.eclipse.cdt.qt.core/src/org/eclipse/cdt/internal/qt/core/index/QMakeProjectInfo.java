@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICDescriptionDelta;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
-import org.eclipse.cdt.qt.core.QtNature;
 import org.eclipse.cdt.qt.core.index.IQMakeEnv;
 import org.eclipse.cdt.qt.core.index.IQMakeEnvProvider;
 import org.eclipse.cdt.qt.core.index.IQMakeProjectInfo;
@@ -66,13 +65,14 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo, ICProjectDescr
 	// called by QtPlugin activator to clean up this class
 	public static final void stop() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(LISTENER);
+		List<QMakeProjectInfo> infos;
 		synchronized (SYNC) {
-			while (true) {
-				Iterator<IProject> iterator = CACHE.keySet().iterator();
-				if (!iterator.hasNext()) {
-					break;
-				}
-				removeProjectFromCache(iterator.next());
+			infos = new ArrayList<QMakeProjectInfo>(CACHE.values());
+			CACHE.clear();
+		}
+		for (QMakeProjectInfo info : infos) {
+			if (info != null) {
+				info.destroy();
 			}
 		}
 	}
@@ -84,16 +84,17 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo, ICProjectDescr
 	 * @return the QMakeProjectInfo; or null if the project does not have QtNature
 	 */
 	public static QMakeProjectInfo getQMakeProjectInfoFor(IProject project) {
+		QMakeProjectInfo info;
 		synchronized (SYNC) {
-			QMakeProjectInfo info = CACHE.get(project);
-			if (info == null) {
-				if (QtNature.hasNature(project)) {
-					info = new QMakeProjectInfo(project);
-					CACHE.put(project,info);
-				}
+			info = CACHE.get(project);
+			if (info != null) {
+				return info;
 			}
-			return info;
+			info = new QMakeProjectInfo(project);
+			CACHE.put(project,info);
 		}
+		info.updateActiveConfiguration();
+		return info;
 	}
 
 	// removes the project from the CACHE
@@ -125,7 +126,6 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo, ICProjectDescr
 	private QMakeProjectInfo(IProject project) {
 		this.project = project;
 		CoreModel.getDefault().addCProjectDescriptionListener(this, ICDescriptionDelta.ACTIVE_CFG);
-		updateActiveConfiguration();
 	}
 
 	// called from removeProjectFromCache only
@@ -141,6 +141,7 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo, ICProjectDescr
 		}
 	}
 
+	// must not be called under synchronized (SYNC) or synchronized (sync)
 	private void updateActiveConfiguration() {
 		synchronized (sync) {
 			if (! live) {
@@ -179,6 +180,10 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo, ICProjectDescr
 	@Override
 	public void removeListener(IQMakeProjectInfoListener listener) {
 		listeners.remove(listener);
+	}
+
+	private IProject getProject() {
+		return project;
 	}
 
 	// calculates (if does not exist) and returns actual QMake info
@@ -356,6 +361,7 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo, ICProjectDescr
 	private static final class RDVisitor implements IResourceDeltaVisitor {
 
 		private final Set<IResource> projectsToDelete = new HashSet<IResource>();
+		private final Set<IResource> projectsToUpdate = new HashSet<IResource>();
 		private final Set<IPath> changedFiles = new HashSet<IPath>();
 
 		@Override
@@ -367,7 +373,13 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo, ICProjectDescr
 					addChangedFile(resource);
 					return false;
 				case IResource.PROJECT:
-					if (delta.getKind() == IResourceDelta.REMOVED) {
+					switch (delta.getKind()) {
+					case IResourceDelta.CHANGED:
+						if ((delta.getFlags() & IResourceDelta.DESCRIPTION) != 0) {
+							addProjectToUpdate(resource);
+						}
+						return true;
+					case IResourceDelta.REMOVED:
 						addProjectToDelete(resource);
 						return false;
 					}
@@ -375,6 +387,10 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo, ICProjectDescr
 				}
 			}
 			return true;
+		}
+
+		private void addProjectToUpdate(IResource project) {
+			projectsToUpdate.add(project);
 		}
 
 		private void addProjectToDelete(IResource project) {
@@ -399,6 +415,10 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo, ICProjectDescr
 				infos = new ArrayList<QMakeProjectInfo>(CACHE.values());
 			}
 			for (QMakeProjectInfo info : infos) {
+				// checking if any project description change affects QMakeProjectInfo
+				if (projectsToUpdate.contains(info.getProject())) {
+					info.updateActiveConfiguration();
+				}
 				// checking if any of the changed files affects QMakeProjectInfo
 				if (info.containsAnySensitiveFile(changedFiles)) {
 					// if so then scheduling update

@@ -2,28 +2,19 @@
 PRO   = {{baseName}}.pro
 QMAKE = {{qmake.Qt5}}
 
-all:   debug release
+all:	QtMakefile
+	$(MAKE) -f QtMakefile
 
-clean: clean-debug clean-release
+clean:
+	rm -fr QtMakefile QtMakefile.debug QtMakefile.release debug release
 
-build-debug/Makefile: $(PRO)
-	@mkdir -p $(dir $@)
-	$(QMAKE) -o $@ $(PRO) CONFIG+=debug
+QtMakefile:
+	$(QMAKE) -o QtMakefile $(PRO) CONFIG+=debug_and_release
 
-debug: build-debug/Makefile
-	$(MAKE) -wC build-debug all
+debug:	QtMakefile
+	$(MAKE) -f QtMakefile debug
 
-clean-debug:
-	rm -fr build-debug
-
-build-release/Makefile: $(PRO)
-	@mkdir -p $(dir $@)
-	$(QMAKE) -o $@ $(PRO) CONFIG+=release 
-
-release: build-release/Makefile
-	$(MAKE) -wC build-release
-
-clean-release:
-	rm -fr build-release
+release:	QtMakefile
+	$(MAKE) -f QtMakefile release
 
 .PHONY: all clean debug clean-debug release clean-release

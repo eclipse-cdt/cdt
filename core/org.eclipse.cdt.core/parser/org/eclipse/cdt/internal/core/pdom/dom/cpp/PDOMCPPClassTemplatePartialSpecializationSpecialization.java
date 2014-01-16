@@ -104,7 +104,7 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 		if (fPrimaryTemplate == null) {
 			try {
 				long specializedRec = getDB().getRecPtr(record + PRIMARY_TEMPLATE);
-				fPrimaryTemplate= (ICPPClassTemplate) getLinkage().getNode(specializedRec);
+				fPrimaryTemplate= (ICPPClassTemplate) PDOMNode.load(getPDOM(), specializedRec);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}

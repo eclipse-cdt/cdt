@@ -46,7 +46,7 @@ public class ApplyVisitor implements IBTreeVisitor, IPDOMVisitor {
 	public boolean visit(long record) throws CoreException {
 		if (record == 0)
 			return true;
-		PDOMNode node= linkage.getNode(record);
+		PDOMNode node= PDOMNode.load(linkage.getPDOM(), record);
 		if(node instanceof PDOMBinding) {
 			((PDOMBinding)node).accept(visitor);
 			((PDOMBinding)node).accept(this);

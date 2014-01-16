@@ -65,7 +65,7 @@ public class PDOMNodeLinkedList {
 				}
 				node= null;
 			} else {
-				node= linkage.getNode(record);
+				node= PDOMNode.load(linkage.getPDOM(), record);
 			}
 			if (visitor.visit(node) && node != null) {
 				node.accept(visitor);
@@ -102,7 +102,7 @@ public class PDOMNodeLinkedList {
 					}
 					return null;
 				} else {
-					return linkage.getNode(record);
+					return PDOMNode.load(linkage.getPDOM(), record);
 				}
 			}
 		} while ((item = db.getRecPtr(item + ListItem.NEXT)) != firstItem);

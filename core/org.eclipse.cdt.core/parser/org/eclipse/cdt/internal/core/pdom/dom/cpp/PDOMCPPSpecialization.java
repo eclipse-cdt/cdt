@@ -78,7 +78,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 	}
 
 	protected IPDOMBinding loadSpecializedBinding(long specializedRec) throws CoreException {
-		return (IPDOMBinding) getLinkage().getNode(specializedRec);
+		return (IPDOMBinding) PDOMNode.load(getPDOM(), specializedRec);
 	}
 		
 	@Override

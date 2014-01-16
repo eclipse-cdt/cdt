@@ -109,9 +109,9 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 	@Override
 	public IBinding getBinding() {
 		try {
-			return (IBinding) getLinkage().getNode(getPDOM().getDB().getRecPtr(record + NAMESPACE_BINDING));
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);
+			return (IBinding) PDOMNode.load(getPDOM(), getPDOM().getDB().getRecPtr(record + NAMESPACE_BINDING));
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
 		}
 		return null;
 	}

@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -46,8 +47,8 @@ public class PDOMTemplateParameterArray {
 	 * Restores an array of template arguments from the database.
 	 */
 	public static IPDOMCPPTemplateParameter[] getArray(PDOMNode parent, long rec) throws CoreException {
-		final PDOMLinkage linkage= parent.getLinkage();
-		final Database db= linkage.getDB();
+		final PDOM pdom= parent.getPDOM();
+		final Database db= pdom.getDB();
 		final short len= db.getShort(rec);
 		
 		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE - 2) / 8);
@@ -59,7 +60,7 @@ public class PDOMTemplateParameterArray {
 		IPDOMCPPTemplateParameter[] result= new IPDOMCPPTemplateParameter[len];
 		for (int i= 0; i < len; i++) {
 			final long nodeRec= db.getRecPtr(rec); rec += 4;
-			result[i]= nodeRec == 0 ? null : (IPDOMCPPTemplateParameter) linkage.getNode(nodeRec);
+			result[i]= nodeRec == 0 ? null : (IPDOMCPPTemplateParameter) PDOMNode.load(pdom, nodeRec);
 		}
 		return result;
 	}

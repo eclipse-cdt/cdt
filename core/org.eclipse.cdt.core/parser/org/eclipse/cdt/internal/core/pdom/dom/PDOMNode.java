@@ -198,7 +198,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	
 	public PDOMNode getParentNode() throws CoreException {
 		long parentrec = getParentNodeRec();
-		return parentrec != 0 ? getLinkage().getNode(parentrec) : null;
+		return parentrec != 0 ? load(getPDOM(), parentrec) : null;
 	}
 	
 	public void addChild(PDOMNode child) throws CoreException {

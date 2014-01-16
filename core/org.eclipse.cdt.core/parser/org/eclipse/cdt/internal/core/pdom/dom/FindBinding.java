@@ -89,7 +89,7 @@ public class FindBinding {
 		// IBTreeVisitor
 		@Override
 		public boolean visit(long record) throws CoreException {
-			final PDOMNamedNode nnode = (PDOMNamedNode) fLinkage.getNode(record);
+			final PDOMNamedNode nnode = (PDOMNamedNode) PDOMNode.load(fLinkage.getPDOM(), record);
 			if (nnode instanceof PDOMBinding) {
 				final PDOMBinding binding = (PDOMBinding) nnode;
 				if (matches(binding)) {

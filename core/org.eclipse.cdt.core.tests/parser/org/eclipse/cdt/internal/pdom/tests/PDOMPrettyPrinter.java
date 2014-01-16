@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Dump the contents of the PDOM index to stdout (for when you need
- * a lo-fidelity debugging tool)
+ * a low-fidelity debugging tool)
  */
 public class PDOMPrettyPrinter implements IPDOMVisitor {
 	StringBuilder indent = new StringBuilder();
@@ -89,7 +89,7 @@ public class PDOMPrettyPrinter implements IPDOMVisitor {
 					public boolean visit(long record) throws CoreException {
 						if (record == 0)
 							return false;
-						PDOMNode node = linkage.getNode(record);
+						PDOMNode node = PDOMNode.load(pdom, record);
 						if (v.visit(node))
 							node.accept(v);
 						v.leave(node);

@@ -158,7 +158,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				}
 				@Override
 				public boolean visit(long record) throws CoreException {
-					PDOMNode node= getNode(record);
+					PDOMNode node= PDOMNode.load(fPDOM, record);
 					if (node != null) {
 						if (visitor.visit(node))
 							node.accept(visitor);
@@ -176,7 +176,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 	
 	public final PDOMBinding getBinding(long record) throws CoreException {
-		final PDOMNode node= getNode(record);
+		final PDOMNode node= PDOMNode.load(fPDOM, record);
 		if (node instanceof PDOMBinding)
 			return (PDOMBinding) node;
 		return null;

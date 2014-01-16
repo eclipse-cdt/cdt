@@ -121,7 +121,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 		if (record == 0)
 			return true;
 		
-		PDOMNode node= linkage.getNode(record);
+		PDOMNode node= PDOMNode.load(linkage.getPDOM(), record);
 		if (node instanceof PDOMNamedNode) {
 			return addNode((PDOMNamedNode) node);
 		}

@@ -103,7 +103,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		if (firstBytes == BINDING_TYPE) {
 			fPos += 1;
 			long rec= getRecordPointer();
-			return (IBinding) fLinkage.getNode(rec);
+			return (IBinding) PDOMNode.load(fLinkage.getPDOM(), rec);
 		} else if (firstBytes == NULL_TYPE || firstBytes == UNSTORABLE_TYPE) {
 			return null;
 		}
@@ -133,7 +133,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		if (firstBytes == BINDING_TYPE) {
 			fPos += 1;
 			long rec= getRecordPointer();
-			return (IType) fLinkage.getNode(rec);
+			return (IType) PDOMNode.load(fLinkage.getPDOM(), rec);
 		} else if (firstBytes == NULL_TYPE) {
 			return null;
 		} else if (firstBytes == UNSTORABLE_TYPE) {

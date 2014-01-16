@@ -252,7 +252,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 				}
 				@Override
 				public boolean visit(long record) throws CoreException {
-					preresult.add(getLinkage().getNode(record));
+					preresult.add(PDOMNode.load(getPDOM(), record));
 					return true;
 				}
 			});

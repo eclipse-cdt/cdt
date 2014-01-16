@@ -66,7 +66,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	public ICPPNamespaceScope getNominatedScope() {
 		try {
 			long rec = fLinkage.getDB().getRecPtr(fRecord + NOMINATED_NAMESPACE);
-			PDOMNode node= fLinkage.getNode(rec);
+			PDOMNode node= PDOMNode.load(fLinkage.getPDOM(), rec);
 			if (node instanceof ICPPNamespace) {
 				return ((ICPPNamespace) node).getNamespaceScope();
 			}
@@ -85,7 +85,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 		try {
 			long rec = fLinkage.getDB().getRecPtr(fRecord + CONTAINER_NAMESPACE);
 			if (rec != 0) {
-				PDOMNode node= fLinkage.getNode(rec);
+				PDOMNode node= PDOMNode.load(fLinkage.getPDOM(), rec);
 				if (node instanceof PDOMCPPNamespace) {
 					return (PDOMCPPNamespace) node;
 				}

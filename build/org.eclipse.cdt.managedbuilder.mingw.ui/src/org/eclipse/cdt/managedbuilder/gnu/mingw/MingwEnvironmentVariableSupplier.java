@@ -14,13 +14,10 @@ package org.eclipse.cdt.managedbuilder.gnu.mingw;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
-import org.eclipse.cdt.internal.core.MinGW;
-import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
-import org.eclipse.cdt.managedbuilder.internal.envvar.BuildEnvVar;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -30,7 +27,7 @@ import org.eclipse.core.runtime.Path;
 public class MingwEnvironmentVariableSupplier implements IConfigurationEnvironmentVariableSupplier {
 	private static final String ENV_PATH = "PATH"; //$NON-NLS-1$
 	private static final String BACKSLASH = java.io.File.separator;
-	private static final String PATH_DELIMITER = EnvironmentVariableManager.getDefault().getDefaultDelimiter();
+	private static final String PATH_DELIMITER = CCorePlugin.getDefault().getBuildEnvironmentManager().getDefaultDelimiter();
 
 	/**
 	 * @return location of $MINGW_HOME/bin folder on the file-system.
@@ -72,33 +69,86 @@ public class MingwEnvironmentVariableSupplier implements IConfigurationEnvironme
 			IEnvironmentVariable varMinGWHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(MinGW.ENV_MINGW_HOME, null, false);
 			if (varMinGWHome == null) {
 				// Contribute if the variable does not already come from workspace environment
-				String minGWHome = MinGW.getMinGWHome();
-				if (minGWHome == null) {
+				String path = MinGW.getMinGWHome();
+				if (path == null) {
 					// If the variable is not defined still show it in the environment variables list as a hint to user
-					minGWHome = ""; //$NON-NLS-1$
+					path = ""; //$NON-NLS-1$
 				}
-				return new BuildEnvVar(MinGW.ENV_MINGW_HOME, new Path(minGWHome).toOSString(), IBuildEnvironmentVariable.ENVVAR_REPLACE);
+				final String minGWHome = path; 
+				return new IBuildEnvironmentVariable() {
+					@Override
+					public String getName() {
+						return MinGW.ENV_MINGW_HOME;
+					}
+					@Override
+					public String getValue() {
+						return new Path(minGWHome).toOSString();
+					}
+					@Override
+					public int getOperation() {
+						return IBuildEnvironmentVariable.ENVVAR_REPLACE;
+					}
+					@Override
+					public String getDelimiter() {
+						return PATH_DELIMITER;
+					}
+				};
 			}
 			return null;
-
 		} else if (variableName.equals(MinGW.ENV_MSYS_HOME)) {
 			IEnvironmentVariable varMsysHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(MinGW.ENV_MSYS_HOME, null, false);
 			if (varMsysHome == null) {
 				// Contribute if the variable does not already come from workspace environment
-				String msysHome = MinGW.getMSysHome();
-				if (msysHome == null) {
+				String path = MinGW.getMSysHome();
+				if (path == null) {
 					// If the variable is not defined still show it in the environment variables list as a hint to user
-					msysHome = ""; //$NON-NLS-1$
+					path = ""; //$NON-NLS-1$
 				}
-				return new BuildEnvVar(MinGW.ENV_MSYS_HOME, new Path(msysHome).toOSString(), IBuildEnvironmentVariable.ENVVAR_REPLACE);
+				final String msysHome = path;
+				return new IBuildEnvironmentVariable() {
+					@Override
+					public String getName() {
+						return MinGW.ENV_MSYS_HOME;
+					}
+					@Override
+					public String getValue() {
+						return new Path(msysHome).toOSString();
+					}
+					@Override
+					public int getOperation() {
+						return IBuildEnvironmentVariable.ENVVAR_REPLACE;
+					}
+					@Override
+					public String getDelimiter() {
+						return PATH_DELIMITER;
+					}
+				};
 			}
 			return null;
 
 		} else if (variableName.equals(ENV_PATH)) {
 			@SuppressWarnings("nls")
-			String path = "${" + MinGW.ENV_MINGW_HOME + "}" + BACKSLASH + "bin" + PATH_DELIMITER
+			final String path = "${" + MinGW.ENV_MINGW_HOME + "}" + BACKSLASH + "bin" + PATH_DELIMITER
 					+ "${" + MinGW.ENV_MSYS_HOME + "}" + BACKSLASH + "bin";
-			return new BuildEnvVar(ENV_PATH, path, IBuildEnvironmentVariable.ENVVAR_PREPEND);
+			
+			return new IBuildEnvironmentVariable() {
+				@Override
+				public String getName() {
+					return ENV_PATH;
+				}
+				@Override
+				public String getValue() {
+					return path;
+				}
+				@Override
+				public int getOperation() {
+					return IBuildEnvironmentVariable.ENVVAR_PREPEND;
+				}
+				@Override
+				public String getDelimiter() {
+					return PATH_DELIMITER;
+				}
+			};
 		}
 
 		return null;

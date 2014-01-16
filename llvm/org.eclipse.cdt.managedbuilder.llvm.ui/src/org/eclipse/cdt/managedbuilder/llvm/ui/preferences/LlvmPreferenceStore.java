@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.llvm.ui.preferences;
 
-import org.eclipse.cdt.managedbuilder.llvm.ui.LlvmEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.llvm.ui.LlvmUIPlugin;
 import org.eclipse.cdt.managedbuilder.llvm.util.FindStdLibPath;
 import org.eclipse.cdt.managedbuilder.llvm.util.LlvmToolOptionPathUtil;
@@ -299,15 +298,15 @@ public class LlvmPreferenceStore {
 		removeValue(PreferenceConstants.P_LLVM_LIBRARIES, lib);
 	}
 
-	public static void addMinGWStdLib() {
-		String path = LlvmEnvironmentVariableSupplier.getMinGWStdLib();
-		if (path != null) {
-			//add to preference store
-			appendLibraryPath(path);
-//			ProjectIndex.rebuiltIndex(proj);
-			appendLibrary("stdc++"); //$NON-NLS-1$
-		}
-	}
+//	public static void addMinGWStdLib() {
+//		String path = LlvmEnvironmentVariableSupplier.getMinGWStdLib();
+//		if (path != null) {
+//			//add to preference store
+//			appendLibraryPath(path);
+////			ProjectIndex.rebuiltIndex(proj);
+//			appendLibrary("stdc++"); //$NON-NLS-1$
+//		}
+//	}
 	
 	public static void addStdLibUnix() {
 		String path = FindStdLibPath.find();

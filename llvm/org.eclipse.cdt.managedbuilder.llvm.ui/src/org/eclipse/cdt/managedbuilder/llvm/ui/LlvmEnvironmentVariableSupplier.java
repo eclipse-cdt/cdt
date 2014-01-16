@@ -21,10 +21,8 @@ import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier;
-import org.eclipse.cdt.managedbuilder.gnu.mingw.MingwEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.llvm.ui.preferences.LlvmPreferenceStore;
 import org.eclipse.cdt.managedbuilder.llvm.util.Separators;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -65,14 +63,15 @@ public class LlvmEnvironmentVariableSupplier implements
 					//try to find mingw or cygwin path from PATH environment variable
 					IBuildEnvironmentVariable envPath = llvmEnvironmentVariables
 							.get(ENV_VAR_NAME_PATH);
-					IBuildEnvironmentVariable mingwPath=null, cygwinPath=null;
+					IBuildEnvironmentVariable cygwinPath=null;
 					//if path is empty
 					if (envPath == null) {
 						//try to find mingw path from MingwEnvironmentVariableSupplier
-						IConfigurationEnvironmentVariableSupplier mingwEnvironmentVariables = 
-							new MingwEnvironmentVariableSupplier();
-						mingwPath = mingwEnvironmentVariables.getVariable(
-								ENV_VAR_NAME_PATH, null, null);
+						// TODO turned off. Why does LLVM depend on MinGW?
+//						IConfigurationEnvironmentVariableSupplier mingwEnvironmentVariables = 
+//							new MingwEnvironmentVariableSupplier();
+//						mingwPath = mingwEnvironmentVariables.getVariable(
+//								ENV_VAR_NAME_PATH, null, null);
 						//try to find cygwin path from GnuCygwinConfigurationEnvironmentSupplier
 						IConfigurationEnvironmentVariableSupplier cygwinEnvironmentVariables =
 							new GnuCygwinConfigurationEnvironmentSupplier();
@@ -81,10 +80,10 @@ public class LlvmEnvironmentVariableSupplier implements
 
 					}
 					//if mingw found
-					if (mingwPath != null) {
-						//form full path
-						pathStr = pathStr + System.getProperty("path.separator") + mingwPath.getValue(); //$NON-NLS-1$
-					}
+//					if (mingwPath != null) {
+//						//form full path
+//						pathStr = pathStr + System.getProperty("path.separator") + mingwPath.getValue(); //$NON-NLS-1$
+//					}
 					//if cygwin found
 					if (cygwinPath != null) {
 						//form full path
@@ -311,31 +310,31 @@ public class LlvmEnvironmentVariableSupplier implements
 	 * 
 	 * @return stdc++ library path for MinGW
 	 */
-	public static String getMinGWStdLib() {
-		//get mingw bin path
-		IPath mingwBinPath = MingwEnvironmentVariableSupplier.getBinDir();
-		if (mingwBinPath != null) {
-			StringBuilder sB = new StringBuilder(mingwBinPath.toOSString());
-			// drop bin
-			if (sB.length() >= 3) {
-				sB.delete(sB.length() - 3, sB.length());
-				// append mingw lib subdir
-				sB.append("lib\\gcc\\mingw32\\"); //$NON-NLS-1$
-				// get all files in the directory
-				File f = new File(sB.toString());
-				if (f.isDirectory()) {
-					String[] list = f.list();
-					if (list.length > 0) {
-						// append the first dir
-						sB.append(list[0]);
-						return sB.toString();
-					}
-				}
-			}
-		}
-		
-		return null;
-	}
+//	public static String getMinGWStdLib() {
+//		//get mingw bin path
+//		IPath mingwBinPath = MingwEnvironmentVariableSupplier.getBinDir();
+//		if (mingwBinPath != null) {
+//			StringBuilder sB = new StringBuilder(mingwBinPath.toOSString());
+//			// drop bin
+//			if (sB.length() >= 3) {
+//				sB.delete(sB.length() - 3, sB.length());
+//				// append mingw lib subdir
+//				sB.append("lib\\gcc\\mingw32\\"); //$NON-NLS-1$
+//				// get all files in the directory
+//				File f = new File(sB.toString());
+//				if (f.isDirectory()) {
+//					String[] list = f.list();
+//					if (list.length > 0) {
+//						// append the first dir
+//						sB.append(list[0]);
+//						return sB.toString();
+//					}
+//				}
+//			}
+//		}
+//		
+//		return null;
+//	}
 	
 	/**
 	 * 

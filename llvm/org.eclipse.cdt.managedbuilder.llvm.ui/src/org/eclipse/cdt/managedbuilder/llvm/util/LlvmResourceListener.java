@@ -52,7 +52,7 @@ public class LlvmResourceListener implements IResourceChangeListener {
 		} else if (event.getType() == IResourceChangeEvent.PRE_BUILD) {
 			String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 			if (os.indexOf("win") >= 0) { //$NON-NLS-1$
-				LlvmPreferenceStore.addMinGWStdLib();
+//				LlvmPreferenceStore.addMinGWStdLib();
 //				LlvmToolOptionPathUtil.addMissingCppIncludesForMingw(); //TODO: Remove when Scanner Discovery has been fixed
 			} else if (os.indexOf( "nix") >=0 || os.indexOf( "nux") >=0 /*|| os.indexOf( "mac") >=0 */) { //$NON-NLS-1$ //$NON-NLS-2$
 				LlvmPreferenceStore.addStdLibUnix();

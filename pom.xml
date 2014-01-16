@@ -73,6 +73,7 @@
 		<module>releng/org.eclipse.cdt.platform.source-feature</module>
 
 		<module>build/org.eclipse.cdt.managedbuilder.gnu.ui</module>
+		<module>build/org.eclipse.cdt.managedbuilder.mingw.ui</module>
 		<module>build/org.eclipse.cdt.gnu.build-feature</module>
 		<module>build/org.eclipse.cdt.gnu.build.source-feature</module>
 

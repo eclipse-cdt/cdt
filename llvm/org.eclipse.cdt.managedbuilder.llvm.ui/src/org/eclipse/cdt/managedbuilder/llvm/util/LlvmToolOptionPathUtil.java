@@ -15,9 +15,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.resources.RefreshScopeManager;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -25,17 +22,10 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
-import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
-import org.eclipse.cdt.managedbuilder.gnu.mingw.MingwEnvironmentVariableSupplier;
-import org.eclipse.cdt.managedbuilder.llvm.ui.LlvmEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.llvm.ui.preferences.LlvmPreferenceStore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * The main purpose of this class is to add include paths and libraries and library search paths
@@ -153,64 +143,64 @@ public class LlvmToolOptionPathUtil {
 		}
 	}
 
-	/**
-	 * Adds a path to Tool option. Only for C++ projects.
-	 * 
-	 * @param path Path to add to Tool option
-	 * @param var Tool option's value
-	 */
-	private static void addPathToToolOptionCppProjects(String path, int var) {
-		//check if the given path exists
-		if (path.length()>0 && (pathExists(path) || var==LIB)) {
-			boolean success = false;
-			//get all projects in the workspace
-			IProject[] projects = getProjectsInWorkspace();
-			IConfiguration[] configs;
-			String projectPath = null;
-			for (IProject proj : projects) {
-				projectPath = proj.getLocation().toOSString();
-				if (projectPath!=null) {
-					//only apply to C++ projects
-					if (FileUtil.containsCppFile(new File(projectPath))) {
-						//get all build configurations of the IProject
-						configs = getAllBuildConfigs(proj);
-						//if build configurations found
-						if (configs.length>0) {
-							for (IConfiguration cf : configs) {
-								//Add path for the Tool's option
-								if (addPathToSelectedToolOptionBuildConf(cf, path, var)) {
-									success = true;
-								} else {
-									success = false;
-								}
-							}
-							//if the path was added successfully
-							if (success) {
-								//save project build info
-								ManagedBuildManager.saveBuildInfo(proj, true);		
-								ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescription(proj);
-								try {
-									CoreModel.getDefault().setProjectDescription(proj, projectDescription);
-								} catch (CoreException e) {
-									e.printStackTrace();
-								}
-								//use refresh scope manager to refresh
-						  		RefreshScopeManager manager = RefreshScopeManager.getInstance();
-						  		IWorkspaceRunnable runnable = manager.getRefreshRunnable(proj);
-						  		try {
-									ResourcesPlugin.getWorkspace().run(runnable, null, IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
-								} catch (CoreException e) {
-									e.printStackTrace();
-								}
-						  		//rebuilt the project index
-								ProjectIndex.rebuiltIndex(proj);
-							}
-						}
-					}
-				}
-			}			
-		}
-	}
+//	/**
+//	 * Adds a path to Tool option. Only for C++ projects.
+//	 * 
+//	 * @param path Path to add to Tool option
+//	 * @param var Tool option's value
+//	 */
+//	private static void addPathToToolOptionCppProjects(String path, int var) {
+//		//check if the given path exists
+//		if (path.length()>0 && (pathExists(path) || var==LIB)) {
+//			boolean success = false;
+//			//get all projects in the workspace
+//			IProject[] projects = getProjectsInWorkspace();
+//			IConfiguration[] configs;
+//			String projectPath = null;
+//			for (IProject proj : projects) {
+//				projectPath = proj.getLocation().toOSString();
+//				if (projectPath!=null) {
+//					//only apply to C++ projects
+//					if (FileUtil.containsCppFile(new File(projectPath))) {
+//						//get all build configurations of the IProject
+//						configs = getAllBuildConfigs(proj);
+//						//if build configurations found
+//						if (configs.length>0) {
+//							for (IConfiguration cf : configs) {
+//								//Add path for the Tool's option
+//								if (addPathToSelectedToolOptionBuildConf(cf, path, var)) {
+//									success = true;
+//								} else {
+//									success = false;
+//								}
+//							}
+//							//if the path was added successfully
+//							if (success) {
+//								//save project build info
+//								ManagedBuildManager.saveBuildInfo(proj, true);		
+//								ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescription(proj);
+//								try {
+//									CoreModel.getDefault().setProjectDescription(proj, projectDescription);
+//								} catch (CoreException e) {
+//									e.printStackTrace();
+//								}
+//								//use refresh scope manager to refresh
+//						  		RefreshScopeManager manager = RefreshScopeManager.getInstance();
+//						  		IWorkspaceRunnable runnable = manager.getRefreshRunnable(proj);
+//						  		try {
+//									ResourcesPlugin.getWorkspace().run(runnable, null, IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
+//								} catch (CoreException e) {
+//									e.printStackTrace();
+//								}
+//						  		//rebuilt the project index
+//								ProjectIndex.rebuiltIndex(proj);
+//							}
+//						}
+//					}
+//				}
+//			}			
+//		}
+//	}
 	
 	/**
 	 * Removes a path from Tool option.
@@ -929,52 +919,52 @@ public class LlvmToolOptionPathUtil {
 	}
 
 	//temporary hack until scanner discovery works
-	public static void addMissingCppIncludesForMingw() {
-		//try to find mingw path from MingwEnvironmentVariableSupplier
-		IConfigurationEnvironmentVariableSupplier mingwEnvironmentVariables = 
-			new MingwEnvironmentVariableSupplier();
-		IBuildEnvironmentVariable mingwPath = mingwEnvironmentVariables.getVariable(
-				"PATH", null, null); //$NON-NLS-1$
-		//may contain multiple paths therefore must be separated
-		String[] mingwPaths = mingwPath.getValue().split(Separators.getPathSeparator());
-		//bin folder is appended so it must be removed
-		for(int i=0; i<mingwPaths.length; i++) {
-			if(mingwPaths[i].contains("bin")) { //$NON-NLS-1$
-				mingwPaths[i] = mingwPaths[i].replace("bin", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-		//find the correct path
-		File f1 = null;
-		String rightPath = null;
-		findPath: for(int i=0; i<mingwPaths.length; i++) {
-			f1 = new File(mingwPaths[i]+"lib/gcc/mingw32"); //$NON-NLS-1$
-			if (f1.exists()) {
-				rightPath = f1.getAbsolutePath();
-				break findPath;
-			}
-		}
-		if (rightPath!=null && f1!=null) {
-			//get the first directory (mingw version)
-			f1 = f1.listFiles()[0];
-			//add three includes if they exist
-			File testFile = new File(f1.getAbsolutePath()+"/include/c++"); //$NON-NLS-1$
-			if (testFile.exists()) {
-				LlvmPreferenceStore.appendIncludePath(testFile.getAbsolutePath());
-				addPathToToolOptionCppProjects(testFile.getAbsolutePath(), INCLUDE);
-			}
-			testFile = new File(f1.getAbsolutePath()+"/include/c++/mingw32"); //$NON-NLS-1$
-			if (testFile.exists()) {
-				LlvmPreferenceStore.appendIncludePath(testFile.getAbsolutePath());
-				addPathToToolOptionCppProjects(testFile.getAbsolutePath(), INCLUDE);
-			}
-			testFile = new File(f1.getAbsolutePath()+"/include/c++/backward"); //$NON-NLS-1$
-			if (testFile.exists()) {
-				LlvmPreferenceStore.appendIncludePath(testFile.getAbsolutePath());
-				addPathToToolOptionCppProjects(testFile.getAbsolutePath(), INCLUDE);
-			}
-    		//inform LLVM environment variable supplier that there has been a change
-    		LlvmEnvironmentVariableSupplier.notifyPreferenceChange();
-		}
-	}
+//	public static void addMissingCppIncludesForMingw() {
+//		//try to find mingw path from MingwEnvironmentVariableSupplier
+//		IConfigurationEnvironmentVariableSupplier mingwEnvironmentVariables = 
+//			new MingwEnvironmentVariableSupplier();
+//		IBuildEnvironmentVariable mingwPath = mingwEnvironmentVariables.getVariable(
+//				"PATH", null, null); //$NON-NLS-1$
+//		//may contain multiple paths therefore must be separated
+//		String[] mingwPaths = mingwPath.getValue().split(Separators.getPathSeparator());
+//		//bin folder is appended so it must be removed
+//		for(int i=0; i<mingwPaths.length; i++) {
+//			if(mingwPaths[i].contains("bin")) { //$NON-NLS-1$
+//				mingwPaths[i] = mingwPaths[i].replace("bin", ""); //$NON-NLS-1$ //$NON-NLS-2$
+//			}
+//		}
+//		//find the correct path
+//		File f1 = null;
+//		String rightPath = null;
+//		findPath: for(int i=0; i<mingwPaths.length; i++) {
+//			f1 = new File(mingwPaths[i]+"lib/gcc/mingw32"); //$NON-NLS-1$
+//			if (f1.exists()) {
+//				rightPath = f1.getAbsolutePath();
+//				break findPath;
+//			}
+//		}
+//		if (rightPath!=null && f1!=null) {
+//			//get the first directory (mingw version)
+//			f1 = f1.listFiles()[0];
+//			//add three includes if they exist
+//			File testFile = new File(f1.getAbsolutePath()+"/include/c++"); //$NON-NLS-1$
+//			if (testFile.exists()) {
+//				LlvmPreferenceStore.appendIncludePath(testFile.getAbsolutePath());
+//				addPathToToolOptionCppProjects(testFile.getAbsolutePath(), INCLUDE);
+//			}
+//			testFile = new File(f1.getAbsolutePath()+"/include/c++/mingw32"); //$NON-NLS-1$
+//			if (testFile.exists()) {
+//				LlvmPreferenceStore.appendIncludePath(testFile.getAbsolutePath());
+//				addPathToToolOptionCppProjects(testFile.getAbsolutePath(), INCLUDE);
+//			}
+//			testFile = new File(f1.getAbsolutePath()+"/include/c++/backward"); //$NON-NLS-1$
+//			if (testFile.exists()) {
+//				LlvmPreferenceStore.appendIncludePath(testFile.getAbsolutePath());
+//				addPathToToolOptionCppProjects(testFile.getAbsolutePath(), INCLUDE);
+//			}
+//    		//inform LLVM environment variable supplier that there has been a change
+//    		LlvmEnvironmentVariableSupplier.notifyPreferenceChange();
+//		}
+//	}
 	
 }

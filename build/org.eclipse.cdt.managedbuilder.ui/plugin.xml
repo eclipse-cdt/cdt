@@ -85,6 +85,12 @@
             id="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_MultiConfig"
             name="%multicfg">
       </page>
+      <page
+            category="org.eclipse.cdt.ui.preferences.BuildSettings"
+            class="org.eclipse.cdt.managedbuilder.ui.preferences.ToolChainsPreferencePage"
+            id="org.eclipse.cdt.managedbuilder.ui.preferences.Toolchains"
+            name="%toolchainsPrefName">
+      </page>
    </extension>
    
    <!-- Action for Project Converter in context menu -->

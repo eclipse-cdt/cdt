@@ -8,11 +8,13 @@
 package org.eclipse.cdt.qt.core;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.internal.qt.core.index.QMakeProjectInfo;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.osgi.framework.BundleContext;
 
 public class QtPlugin extends Plugin {
 
@@ -42,6 +44,18 @@ public class QtPlugin extends Plugin {
     public QtPlugin() {
     	instance = this;
     }
+
+	@Override
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		QMakeProjectInfo.start();
+	}
+
+	@Override
+	public void stop(BundleContext context) throws Exception {
+		QMakeProjectInfo.stop();
+		super.stop(context);
+	}
 
     public static CoreException coreException(String msg) {
     	return new CoreException(new Status(IStatus.INFO, ID, msg));

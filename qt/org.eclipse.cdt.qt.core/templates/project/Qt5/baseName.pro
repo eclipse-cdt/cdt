@@ -1,5 +1,4 @@
-
 QT       += qml quick
-HEADERS   = DateTime.hh
-SOURCES   = DateTime.cpp {{baseName}}.cpp
+HEADERS   = src/DateTime.h
+SOURCES   = src/DateTime.cpp src/{{baseName}}.cpp
 RESOURCES =

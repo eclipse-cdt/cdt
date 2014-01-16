@@ -1,5 +1,5 @@
 
-#include "DateTime.hh"
+#include "DateTime.h"
 #include <QGuiApplication>
 #include <QtQuick>
 
@@ -11,7 +11,7 @@ int main( int argc, char * argv[] )
 
     QQuickView view;
     view.rootContext()->setContextProperty( "datetimeModel", &datetime );
-    view.setSource( QStringLiteral( "$(baseName).qml" ) );
+    view.setSource( QStringLiteral( "src/$(baseName).qml" ) );
     view.show();
 
     app.connect( view.engine(), SIGNAL( quit() ), SLOT( quit() ) );

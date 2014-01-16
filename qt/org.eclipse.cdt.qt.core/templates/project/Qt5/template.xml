@@ -21,6 +21,11 @@
         </simple-array>
     </process>
 
+	<process type="org.eclipse.cdt.core.CreateSourceFolder">
+		<simple name="projectName" value="$(projectName)"/>
+		<simple name="path" value="src"/>
+	</process>
+
     <process type="org.eclipse.cdt.core.SetEnvironmentVariable">
         <simple name="projectName" value="$(projectName)"/>
         <complex-array name="variables">
@@ -36,22 +41,22 @@
 		<complex-array name="files">
 			<element>
 				<simple name="source" value="baseName.cpp"/>
-				<simple name="target" value="$(projectName).cpp"/>
+				<simple name="target" value="src/$(projectName).cpp"/>
 				<simple name="replaceable" value="true"/>
 			</element>
 			<element>
 				<simple name="source" value="baseName.qml"/>
-				<simple name="target" value="$(projectName).qml"/>
+				<simple name="target" value="src/$(projectName).qml"/>
 				<simple name="replaceable" value="true"/>
 			</element>
             <element>
-                <simple name="source" value="DateTime.hh"/>
-                <simple name="target" value="DateTime.hh"/>
+                <simple name="source" value="DateTime.h"/>
+                <simple name="target" value="src/DateTime.h"/>
                 <simple name="replaceable" value="true"/>
             </element>
             <element>
                 <simple name="source" value="DateTime.cpp"/>
-                <simple name="target" value="DateTime.cpp"/>
+                <simple name="target" value="src/DateTime.cpp"/>
                 <simple name="replaceable" value="true"/>
             </element>
 		</complex-array>
@@ -79,7 +84,7 @@
 		<simple name="projectName" value="$(projectName)"/>
 		<complex-array name="files">
 			<element>
-				<simple name="target" value="$(projectName).cpp"/>
+				<simple name="target" value="src/$(projectName).cpp"/>
 			</element>
 		</complex-array>
 	</process>
@@ -91,13 +96,7 @@
 
     <process type="org.eclipse.cdt.make.core.AddMakeTarget">
         <simple name="projectName" value="$(projectName)"/>
-        <simple name="targetName" value="clean-debug"/>
-    </process>
-
-    <process type="org.eclipse.cdt.make.core.AddMakeTarget">
-        <simple name="projectName" value="$(projectName)"/>
-        <simple name="targetName" value="build-debug"/>
-        <simple name="makeTarget" value="debug"/>
+        <simple name="targetName" value="debug"/>
     </process>
 
 </template>

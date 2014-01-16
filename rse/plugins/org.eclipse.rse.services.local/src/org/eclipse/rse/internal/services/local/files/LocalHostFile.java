@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - Fix [168591] LocalHostFile missing equals()
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * David McKnight   (IBM)        - [294521] Local "hidden" files and folders are always shown
+ * David McKnight   (IBM)        - [420798] Slow performances in RDz 9.0 with opening 7000 files located on a network driver.
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -30,6 +31,14 @@ import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 {
 	private File _file;
+	
+	// cache
+	private long _lastQueryTime = 0;
+	private Boolean _isFile = null;
+	private Boolean _isDirectory = null;
+	private Boolean _exists = null;
+	private Boolean _isHidden = null;
+	
 	private boolean _isRoot = false;
 	private boolean _isArchive = false;
 	private IHostFilePermissions _permissions = null;
@@ -40,12 +49,15 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 		_isArchive = ArchiveHandlerManager.getInstance().isArchive(_file);
 	}
 	
-	public LocalHostFile(File file, boolean isRoot)
+	public LocalHostFile(File file, boolean isRoot, boolean isFile)
 	{
 		_file = file;
 		_isRoot = isRoot;
-		_isArchive = ArchiveHandlerManager.getInstance().isArchive(_file);
-
+		if (!isRoot){
+			_isArchive = ArchiveHandlerManager.getInstance().isArchive(_file);
+			_isFile = new Boolean(isFile);
+			_isDirectory = new Boolean(!isFile);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -75,8 +87,11 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	
 	public boolean isHidden()
 	{	
-		String name = getName();
-		return name.charAt(0) == '.' || (!_isRoot && _file.isHidden());				
+		if (_isHidden == null || needsQuery()){
+			String name = getName();
+			_isHidden = new Boolean(name.charAt(0) == '.' || (!_isRoot && _file.isHidden()));				
+		}
+		return _isHidden.booleanValue();
 	}
 
 	public String getParentPath() 
@@ -86,7 +101,10 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 
 	public boolean isDirectory() 
 	{
-		return _file.isDirectory();
+		if (_isDirectory == null){
+			_isDirectory = new Boolean(_file.isDirectory());
+		}
+		return _isDirectory.booleanValue();
 	}
 
 	public boolean isRoot() 
@@ -96,7 +114,10 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 
 	public boolean isFile() 
 	{
-		return _file.isFile();
+		if (_isFile == null){
+			_isFile = new Boolean(_file.isFile());
+		}
+		return _isFile.booleanValue();
 	}
 	
 	public File getFile()
@@ -106,7 +127,10 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 
 	public boolean exists()
 	{
-		return _file.exists();
+		if (_exists == null || needsQuery()){
+			_exists = new Boolean(_file.exists());
+		}
+		return _exists.booleanValue();
 	}
 
 	public String getAbsolutePath()
@@ -151,4 +175,12 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 		_permissions = permissions;
 	}
 
+	private boolean needsQuery(){
+		long t = System.currentTimeMillis();
+		if (_lastQueryTime == 0 || (t - _lastQueryTime) > 5000){
+			_lastQueryTime = t;
+			return true;
+		}
+		return false;
+	}
 }

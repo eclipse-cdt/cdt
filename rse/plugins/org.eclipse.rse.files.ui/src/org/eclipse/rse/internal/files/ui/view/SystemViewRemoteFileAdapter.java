@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2013 IBM Corporation and others.
+ * Copyright (c) 2002, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,6 +81,7 @@
  * David Mcknight   (IBM)        - [374681] Incorrect number of children on the properties page of a directory
  * Samuel Wu        (IBM)        - [398988] [ftp] FTP Only support to zVM
  * Xuan Chen        (IBM)        - [399101] RSE edit actions on local files that map to actually workspace resources should not use temp files
+ * David McKnight   (IBM)        - [420798] Slow performances in RDz 9.0 with opening 7000 files located on a network driver.
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -3961,6 +3962,9 @@ public class SystemViewRemoteFileAdapter
 	 */
 	public boolean supportsDeferredQueries(ISubSystem subSys)
 	{
+		if (subSys instanceof IRemoteFileSubSystem){
+			return ((IRemoteFileSubSystem)subSys).getParentRemoteFileSubSystemConfiguration().supportsDeferredQueries();
+		}
 		return !subSys.getHost().getSystemType().isLocal();
 	}
 

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
  * David McKnight (IBM) - [280605] SystemTextEditor.isLocal() returns false for LocalFileSubSystemConfiguration
+ * David McKnight   (IBM)        - [420798] Slow performances in RDz 9.0 with opening 7000 files located on a network driver.
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.local;
@@ -206,7 +207,8 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 
 	public boolean supportsDeferredQueries() {
 		//No need for deferred queries in Local, since these are always fast
-		return false;
+		//return false;
+		return true;
 	}
 
 	public IConnectorService getConnectorService(IHost host)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * Xuan Chen      (IBM) - [160775] [api] rename (at least within a zip) blocks UI threadj
  * Xuan Chen      (IBM) - [194865] [local][Archives] Searching contents of a file in an Archive doesn't work
  * Xuan Chen      (IBM) - [205448] [search]All the files are listed as in the Remote Search view even only found one match in a file
+ * David McKnight   (IBM)        - [420798] Slow performances in RDz 9.0 with opening 7000 files located on a network driver.
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.search;
@@ -270,7 +271,7 @@ public class LocalSearchHandler implements ISearchHandler
 			{
 
 				// note that the file can not be root
-				file = new LocalHostFile(theFile, false);
+				file = new LocalHostFile(theFile, false, true);
 
 				/* TODO
 				if (!isArchive)
@@ -378,7 +379,7 @@ public class LocalSearchHandler implements ISearchHandler
 							// file is root
 							boolean isRoot = false; //TODO
 
-							fileImpl = new LocalHostFile(theFile, isRoot);
+							fileImpl = new LocalHostFile(theFile, isRoot, true);
 						}
 						// create local file differently for virtual directory
 						else

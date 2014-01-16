@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.cdt.internal.core.IErrorMarkeredOutputStream;
+import org.eclipse.cdt.internal.core.ProblemMarkerFilterManager;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.errorparsers.ErrorParserExtensionManager;
 import org.eclipse.cdt.utils.EFSExtensionManager;
@@ -588,6 +589,8 @@ outer:
 	 * @since 5.4
 	 */
 	public void addProblemMarker(ProblemMarkerInfo problemMarkerInfo){
+		if ( ! ProblemMarkerFilterManager.getInstance().acceptMarker(problemMarkerInfo) )
+			return;
 		fErrors.add(problemMarkerInfo);
 		fMarkerGenerator.addMarker(problemMarkerInfo);
 		if (problemMarkerInfo.severity == IMarkerGenerator.SEVERITY_ERROR_RESOURCE) {

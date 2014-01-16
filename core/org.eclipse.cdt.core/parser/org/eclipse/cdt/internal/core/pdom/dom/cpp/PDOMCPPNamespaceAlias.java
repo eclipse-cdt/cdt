@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -28,7 +27,6 @@ import org.eclipse.core.runtime.CoreException;
  * Binding for namespace alias
  */
 class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias {
-
 	private static final int NAMESPACE_BINDING = PDOMCPPBinding.RECORD_SIZE;
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + Database.PTR_SIZE;

@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -135,7 +136,7 @@ public class PDOMCPPMemberBlock {
 		int item = 0;
 		long memberRecord;
 		while (item < MAX_MEMBER_COUNT && (memberRecord = getMemberRecord(item++)) != 0) {
-			PDOMNode node = linkage.getNode(memberRecord);
+			PDOMNode node = PDOMNode.load(getPDOM(), memberRecord);
 			if (node != null) {
 				if (visitor.visit(node))
 					node.accept(visitor);
@@ -174,16 +175,13 @@ public class PDOMCPPMemberBlock {
 	 * Returns visibility of the member, or -1 if the given binding is not a member.
 	 */
 	public int getVisibility(IBinding member) throws CoreException {
-		return getVisibility(this, member);
+		IIndexFragmentBinding indexMember = getPDOM().adaptBinding(member);
+		if (!(indexMember instanceof PDOMNode))
+			return -1;
+		return getVisibility(this, (PDOMNode) indexMember);
 	}
 
-	private static int getVisibility(PDOMCPPMemberBlock block, IBinding member) throws CoreException {
-		if (!(member instanceof PDOMNode))
-			return -1;
-		
-		PDOMNode memberNode = (PDOMNode) member;
-		if (memberNode.getPDOM() != block.getPDOM())
-			return -1;
+	private static int getVisibility(PDOMCPPMemberBlock block, PDOMNode memberNode) throws CoreException {
 		long memberRecord = memberNode.getRecord();
 
 		do {

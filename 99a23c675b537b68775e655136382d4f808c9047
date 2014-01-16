@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_2eac2a75",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/ProblemMarkerFilterManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 2909
+      },
+      "writtenOn": "2014-01-16T08:37:37Z",
+      "side": 1,
+      "message": "Yes, the checking for open project will not harm.",
+      "parentUuid": "67591f73_984303c8",
+      "revId": "99a23c675b537b68775e655136382d4f808c9047",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_b8d52761",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/ProblemMarkerFilterManager.java",
         "patchSetId": 5
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_2e7eea54",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/ProblemMarkerFilterManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 2909
+      },
+      "writtenOn": "2014-01-16T08:37:37Z",
+      "side": 1,
+      "message": "I think that it is not necessary to synchronize here. Descriptors already has synchronization on getFilter() to guard their creation of instance. The return list from findEnabledFilters() is immutable after its creation because the descriptor matches() are done only when new project is discovered and are never re-evaluated again.",
+      "parentUuid": "67591f73_b8d52761",
+      "revId": "99a23c675b537b68775e655136382d4f808c9047",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_d8d8db9a",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/ProblemMarkerFilterManager.java",
         "patchSetId": 5
@@ -47,6 +83,24 @@
       "writtenOn": "2014-01-15T22:32:40Z",
       "side": 1,
       "message": "I think that access to filtersCache should be synchronized, no?",
+      "revId": "99a23c675b537b68775e655136382d4f808c9047",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_4ea7de92",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/ProblemMarkerFilterManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 2909
+      },
+      "writtenOn": "2014-01-16T08:37:37Z",
+      "side": 1,
+      "message": "This class is used form only one place in ErrorParserManager::addMarker(). Each build creates its own manager instance. From my experiments Eclipse seems not to build C projects in parallel but I agree that it would do no harm to guard the cache just in case it will change in future.",
+      "parentUuid": "67591f73_d8d8db9a",
       "revId": "99a23c675b537b68775e655136382d4f808c9047",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

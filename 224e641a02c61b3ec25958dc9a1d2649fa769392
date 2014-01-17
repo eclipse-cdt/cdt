@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_883c43f0",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-17T00:32:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_0a8af9f7",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_8fd7f7b6",
         "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitProvider.java",
         "patchSetId": 2
@@ -107,6 +125,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_683f2fe3",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-17T00:32:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_6a7f355a",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_8f8a57f0",
         "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitProvider.java",
         "patchSetId": 2
@@ -136,6 +172,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "8748d3a1_8f8a57f0",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_c8363b0c",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-17T00:32:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_4a84f1e8",
       "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -266,6 +320,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_48734bd8",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/ASTProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-17T00:32:26Z",
+      "side": 1,
+      "message": "I\u0027m not sure why that statement is true, but I\u0027ve made the change.",
+      "parentUuid": "67591f73_78cc16cf",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_2f1b4332",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditor.java",
         "patchSetId": 2
@@ -319,6 +391,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_286ed7f2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1589,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-17T00:32:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_f3bcc706",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_8f42575f",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
         "patchSetId": 2
@@ -330,6 +420,24 @@
       "writtenOn": "2013-12-19T03:37:17Z",
       "side": 1,
       "message": "Try -\u003e Tries\nReturn -\u003e Returns",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_a83947fd",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1047,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-17T00:32:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_8f42575f",
       "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -425,6 +533,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_484a2b7c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1051,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-17T00:32:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_13e85bee",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_4f484f83",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
         "patchSetId": 2
@@ -508,6 +634,24 @@
       "side": 1,
       "message": "Since CEditor implements ITextEditor, getAdaptor method of any subclass of CEditor must return this when called with ITextEditor.class.",
       "parentUuid": "67591f73_ea922527",
+      "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_888e033c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/util/EditorUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1053,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-17T00:32:26Z",
+      "side": 1,
+      "message": "I\u0027m not sure why that statement is true, but I\u0027ve made the change.",
+      "parentUuid": "67591f73_73e7171f",
       "revId": "224e641a02c61b3ec25958dc9a1d2649fa769392",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

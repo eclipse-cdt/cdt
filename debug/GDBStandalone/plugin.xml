@@ -258,6 +258,34 @@
                   style="push">
             </command>
          </menu>
+         <menu
+               id="helpmenu"
+               label="%HelpMenu.label">
+            <command
+                  commandId="org.eclipse.ui.help.helpContents"
+                  label="%HelpContents.label"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.help.helpSearch"
+                  label="%HelpSearch.label"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.help.dynamicHelp"
+                  label="%DynamicHelp.label"
+                  style="push">
+            </command>
+            <separator
+                  name="GDBStandalone.help.separator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.ui.help.aboutAction"
+                  label="%AboutEclipse.label"
+                  style="push">
+            </command>
+         </menu>
       </menuContribution>
    </extension>
    

@@ -50,15 +50,18 @@ public abstract class AbstractRemoteCommand<T> {
 			fMonitor = monitor;
 		}
 
+		@Override
 		public boolean count(long count) {
 			fMonitor.worked((int) count);
 			return !(fMonitor.isCanceled());
 		}
 
+		@Override
 		public void end() {
 			fMonitor.done();
 		}
 
+		@Override
 		public void init(int op, String src, String dest, long max) {
 			String srcFile = new Path(src).lastSegment();
 			String desc = srcFile;
@@ -80,6 +83,7 @@ public abstract class AbstractRemoteCommand<T> {
 		 * 
 		 * @see java.util.concurrent.Callable#call()
 		 */
+		@Override
 		public abstract T1 call() throws JSchException, SftpException, IOException;
 
 		private void finalizeCmdInThread() {
@@ -154,6 +158,7 @@ public abstract class AbstractRemoteCommand<T> {
 		 * 
 		 * @see java.util.concurrent.Callable#call()
 		 */
+		@Override
 		public abstract T1 call() throws JSchException, IOException;
 
 		private void finalizeCmdInThread() {
@@ -297,7 +302,7 @@ public abstract class AbstractRemoteCommand<T> {
 				// Ignore
 			}
 		}
-		fileInfo.setLastModified(attrs.getMTime());
+		fileInfo.setLastModified(attrs.getMTime() * 1000L);
 		fileInfo.setLength(attrs.getSize());
 		return fileInfo;
 	}

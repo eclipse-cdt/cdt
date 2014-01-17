@@ -50,7 +50,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 	private String[] 	m_fileNames = null;
 	private boolean		m_parsed = false;
 	private final ArrayList<Integer>	m_parsedLineTableOffsets = new ArrayList<Integer>();
-	private int			m_parsedLineTableSize = 0;
+	private long			m_parsedLineTableSize = 0;
 		
 	public DwarfReader(String file) throws IOException {
 		super(file);
@@ -143,10 +143,11 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 				
 				/* Read line table header:
 				 * 
-				 *  total_length:				4 bytes (excluding itself)
+				 *  total_length:				4/12 bytes (excluding itself)
 				 *  version:					2
-				 *  prologue length:			4
+				 *  prologue length:			4/8 bytes (depending on section version)
 				 *  minimum_instruction_len:	1
+				 *  maximum_operations_per_instruction 1 - it is defined for version >= 4 
 				 *  default_is_stmt:			1
 				 *  line_base:					1
 				 *  line_range:					1
@@ -156,20 +157,30 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 				
 				// Remember the CU line tables we've parsed.
 				Integer cuOffset = new Integer(cuStmtList);
+				
+				boolean dwarf64Bit = false;
 				if (! m_parsedLineTableOffsets.contains(cuOffset)) {
 					m_parsedLineTableOffsets.add(cuOffset);
 
-					int length = read_4_bytes(data) + 4;
-					m_parsedLineTableSize += length + 4;
+					// Note the length does not including the "length" field(s) itself.
+					InitialLengthValue length = readInitialLengthField(data);
+					dwarf64Bit = length.offsetSize == 8;
+					m_parsedLineTableSize += length.length + (dwarf64Bit ? 12 : 4);
 				}
 				else {
 					// Compiler like ARM RVCT may produce several CUs for the
 					// same source files.
 					return;
 				}
-					
+				
+				short version = read_2_bytes(data);	
 				// Skip the following till "opcode_base"
-				data.position(data.position() + 10);
+				short skip_bytes = 8;
+				if (version >= 4)
+					skip_bytes += 1; // see maximum_operations_per_instruction
+				if (dwarf64Bit)
+					skip_bytes += 4; // see prologue length for 64-bit DWARF format
+				data.position(data.position() + skip_bytes);
 				int opcode_base = data.get();
 				data.position(data.position() + opcode_base - 1);
 
@@ -248,16 +259,16 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 		/*
 		 * Line table header for one compile_unit:
 		 * 
-		 * total_length: 			4 bytes (excluding itself) 
-		 * version: 				2 
-		 * prologue length: 		4
+		 * total_length: 			4/12 bytes (excluding itself)
+		 * version:					2
+		 * prologue length:			4/8 bytes (depending on section version)
 		 * minimum_instruction_len: 1 
-		 * default_is_stmt: 		1 
-		 * line_base: 				1
-		 * line_range: 				1
-		 * opcode_base: 			1 
-		 * standard_opcode_lengths: (value of opcode_base)
-		 */
+		 * maximum_operations_per_instruction 1 - it is defined for version >= 4 
+		 * default_is_stmt:			1
+		 * line_base:				1
+		 * line_range:				1
+		 * opcode_base:				1
+		 * standard_opcode_lengths: (value of opcode_base)		 */
 
 		int lineTableStart = 0;	// offset in the .debug_line section
 		
@@ -268,11 +279,15 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 				Integer currLineTableStart = new Integer(lineTableStart);
 				
 				// Read length of the line table for one compile unit
-				// Note the length does not including the "length" field itself.
-				int tableLength = read_4_bytes(data);
-				
+				// Note the length does not including the "length" field(s) itself.
+				InitialLengthValue sectionLength = readInitialLengthField(data);
+
+
 				// Record start of next CU line table
-				lineTableStart += tableLength + 4;
+				boolean dwarf64Bit = sectionLength.offsetSize == 8;
+				lineTableStart += (int)(sectionLength.length + (dwarf64Bit ? 12 : 4));
+				
+				m_parsedLineTableSize += sectionLength.length + (dwarf64Bit ? 12 : 4);
 
 				// According to Dwarf standard, the "tableLength" should cover the
 				// the whole CU line table. But some compilers (e.g. ARM RVCT 2.2)
@@ -289,14 +304,15 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 					int savedPosition = data.position();
 					data.position(lineTableStart);
 					
-					int ltLength = read_4_bytes(data);
+					long ltLength = dwarf64Bit ? read_8_bytes(data) : read_4_bytes(data);
+					
 					int dwarfVer = read_2_bytes(data);
-					int minInstLengh = data.get(data.position() + 4);
+					int minInstLengh = data.get(data.position() + (dwarf64Bit ? 8 : 4));
 					
 					boolean dataValid = 
 						ltLength > minHeaderSize && 
 						ltLength < 16*64*1024 &&   // One source file has that much line data ? 
-						dwarfVer > 0 &&	dwarfVer < 4 &&  // ver 3 is still draft at present.
+						dwarfVer > 0 &&	dwarfVer < 5 &&  // ver 5 is still draft at present.
 						minInstLengh > 0 && minInstLengh <= 8;
 						
 					if (! dataValid)	// padding exists !
@@ -309,8 +325,15 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 					// current line table has already been parsed, skip it.
 					continue;
 
+				short version = read_2_bytes(data);
+				
 				// Skip following fields till "opcode_base"
-				data.position(data.position() + 10);
+				short skip_bytes = 8;
+				if (version >= 4)
+					skip_bytes += 1; // see maximum_operations_per_instruction
+				if (dwarf64Bit)
+					skip_bytes += 4; // see prologue length for 64-bit DWARF format
+				data.position(data.position() + skip_bytes);
 				int opcode_base = data.get();
 				data.position(data.position() + opcode_base - 1);
 

@@ -372,19 +372,15 @@ public class Dwarf {
 			try {
 				while (data.hasRemaining()) {
 					CompilationUnitHeader header = new CompilationUnitHeader();
-					header.length = read_4_bytes(data) & 0xffffffffL;
-
-					if (header.length == 0xffffffffL) {
-						header.length = read_8_bytes(data);
-						header.offsetSize = 8;
-					} else if (header.length == 0) { // IRIX
-						header.length = read_8_bytes(data);
-						header.offsetSize = 8;
-					} else
-						header.offsetSize = 4;
+					InitialLengthValue sectionLength = readInitialLengthField(data);
+					header.length = sectionLength.length;
+					header.offsetSize = sectionLength.offsetSize;
 
 					header.version = read_2_bytes(data);
-					header.abbreviationOffset = read_4_bytes(data);
+					if (header.offsetSize == 8)
+						header.abbreviationOffset = (int)read_8_bytes(data);
+					else
+						header.abbreviationOffset = read_4_bytes(data);
 					header.addressSize = data.get();
 
 					if (printEnabled) {
@@ -394,12 +390,13 @@ public class Dwarf {
 
 					// read the abbrev section.
 					Map<Long, AbbreviationEntry> abbrevs = parseDebugAbbreviation(header);
-					// Note "length+4" is the total size in bytes of the CU data.
+					// A 4-byte or 12-byte unsigned integer representing the length of the .debug_info 
+					// contribution for that compilation unit, not including the length field itself.
 					ByteBuffer entryBuffer = data.slice();
-					entryBuffer.limit(((int) header.length) + 4 - 11);
+					entryBuffer.limit(((int)header.length) - (header.offsetSize == 8 ? 11 : 7));
 					parseDebugInfoEntry(requestor, entryBuffer, abbrevs, header);
 
-					data.position(data.position() + ((int)  header.length) + 4 - 11);
+					data.position(data.position() + ((int)header.length) - (header.offsetSize == 8 ? 11 : 7));
 					
 					if (printEnabled)
 						System.out.println();
@@ -408,6 +405,44 @@ public class Dwarf {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 *  
+	 */
+	class InitialLengthValue {
+		/**
+		 * section length
+		 */
+		long length;
+
+		/**
+		 * section offset size in bytes. 
+		 */
+		byte offsetSize; //
+	}
+
+	/**
+	 * Read section length field from the beginning of dwarf section. 
+	 * 
+	 * <p>See Chapter 7.4 32-Bit and 64-Bit DWARF Formats</p>
+	 * @param data - byte buffer positioned at the start of section length record
+	 * @return section length info. Cannot be null.
+	 * @throws IOException
+	 */
+	InitialLengthValue readInitialLengthField(ByteBuffer data) throws IOException {
+		InitialLengthValue info = new InitialLengthValue();  
+		info.length = read_4_bytes(data) & 0xffffffffL;
+
+		if (info.length == 0xffffffffL) {
+			info.length = read_8_bytes(data);
+			info.offsetSize = 8;
+		} else if (info.length == 0) { // IRIX
+			info.length = read_8_bytes(data);
+			info.offsetSize = 8;
+		} else
+			info.offsetSize = 4;
+		return info;
 	}
 
 	Map<Long, AbbreviationEntry> parseDebugAbbreviation(CompilationUnitHeader header) throws IOException {

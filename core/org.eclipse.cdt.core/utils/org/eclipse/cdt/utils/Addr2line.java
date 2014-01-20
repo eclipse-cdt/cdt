@@ -15,6 +15,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
@@ -120,7 +121,12 @@ public class Addr2line {
 					try {
 						return Integer.parseInt(number);
 					} catch(Exception ex) {
-						return -1;
+						try {
+							// Treat any non-digit characters as delimiter, and attempt to parse the first result
+							return Integer.parseInt(number.split("[^0-9]+")[0]); //$NON-NLS-1$
+						} catch (Exception ex2) {
+							return -1;
+						}						
 					}
 				}
 			}

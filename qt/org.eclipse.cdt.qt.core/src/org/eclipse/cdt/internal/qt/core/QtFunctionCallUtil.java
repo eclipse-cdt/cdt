@@ -14,8 +14,8 @@ import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.qt.core.QtKeywords;
 
 /**
@@ -93,30 +93,32 @@ public class QtFunctionCallUtil {
 	 * that will be used for this method.  Returns null if the argument is not a Qt method call or
 	 * if the associated node cannot be found.
 	 */
-	public static IASTNode getTypeNode(IASTFunctionCallExpression call, IASTInitializerClause[] args, int argIndex) {
+	public static IType getTargetType(IASTFunctionCallExpression call, IASTInitializerClause[] args, int argIndex) {
 		int sigExpIndex = getExpansionArgIndex(args, 0, SignalRegex);
 		if (argIndex == sigExpIndex)
-			return getSignalTargetNode(sigExpIndex, call, args);
+			return getSignalTargetType(sigExpIndex, call, args);
 
 		int methodExpIndex = getExpansionArgIndex(args, sigExpIndex + 1, MethodRegex);
 		if (argIndex == methodExpIndex)
-			return getMethodTargetNode(methodExpIndex, sigExpIndex, call, args);
+			return getMethodTargetType(methodExpIndex, sigExpIndex, call, args);
 
 		// Otherwise the given argument is not a SIGNAL or SLOT expansion.
 		return null;
 	}
 
-	private static IASTNode getSignalTargetNode(int sigExpIndex, IASTFunctionCallExpression call, IASTInitializerClause[] args) {
+	private static IType getSignalTargetType(int sigExpIndex, IASTFunctionCallExpression call, IASTInitializerClause[] args) {
 		// When the SIGNAL expansion is first, the type is based on the receiver of
 		// the function call.  Otherwise the type is the previous argument.
-		return sigExpIndex == 0 ? call : args[sigExpIndex - 1];
+		return ASTUtil.getBaseType(sigExpIndex == 0 ? call : args[sigExpIndex - 1]);
 	}
 
-	private static IASTNode getMethodTargetNode(int methodExpIndex, int sigExpIndex, IASTFunctionCallExpression call, IASTInitializerClause[] args) {
+	private static IType getMethodTargetType(int methodExpIndex, int sigExpIndex, IASTFunctionCallExpression call, IASTInitializerClause[] args) {
 		// If the method is right after the signal, then the type is based on the receiver
 		// of the function call.  Otherwise the method type is based on the parameter right
 		// before the expansion.
-		return (methodExpIndex == (sigExpIndex + 1)) ? call : args[methodExpIndex - 1];
+		if (methodExpIndex == (sigExpIndex + 1))
+			return ASTUtil.getReceiverType(call);
+		return ASTUtil.getBaseType(args[methodExpIndex - 1]);
 	}
 
 	private static int getExpansionArgIndex(IASTInitializerClause[] args, int begin, Pattern macroNameRegex) {

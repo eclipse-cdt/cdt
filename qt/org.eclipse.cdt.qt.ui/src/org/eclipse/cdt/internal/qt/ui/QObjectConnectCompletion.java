@@ -185,14 +185,13 @@ public class QObjectConnectCompletion {
 		return fields;
 	}
 
-	private static Collection<QObjectConnectCompletion> getCompletionsFor(IASTNode targetNode, IASTInitializerClause arg) {
+	private static Collection<QObjectConnectCompletion> getCompletionsFor(IType targetType, IASTInitializerClause arg) {
 
-		IType targetType = ASTUtil.getBaseType(targetNode);
 		if (!(targetType instanceof ICPPClassType))
 			return null;
 		ICPPClassType cls = (ICPPClassType) targetType;
 
-		QtIndex qtIndex = QtIndex.getIndex(ASTUtil.getProject(targetNode));
+		QtIndex qtIndex = QtIndex.getIndex(ASTUtil.getProject(arg));
 		if (qtIndex == null)
 			return null;
 
@@ -285,13 +284,13 @@ public class QObjectConnectCompletion {
 			int argIndex = args.length - 1;
 
 			// Find the type node that is used for this expansion.
-			IASTNode typeNode = QtFunctionCallUtil.getTypeNode(call, args, argIndex);
-			if (typeNode == null)
+			IType targetType = QtFunctionCallUtil.getTargetType(call, args, argIndex);
+			if (targetType == null)
 				return null;
 
 			// Returns completions for the given expansion using the given type as the
 			// source for Qt methods.
-			return getCompletionsFor(typeNode, args[argIndex]);
+			return getCompletionsFor(targetType, args[argIndex]);
 		}
 
 		return null;

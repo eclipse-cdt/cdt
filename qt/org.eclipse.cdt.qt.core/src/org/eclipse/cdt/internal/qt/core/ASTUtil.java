@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
@@ -146,8 +147,20 @@ public class ASTUtil {
 	}
 
 	public static ICPPClassType getReceiverType(IASTFunctionCallExpression fncall) {
-		// See the thread that starts at:
-		//     http://dev.eclipse.org/mhonarc/lists/cdt-dev/msg26972.html
+		// If the expression is calling a member function then find the type of the
+		// receiver.
+		IASTExpression fnName = fncall.getFunctionNameExpression();
+		if (fnName instanceof ICPPASTFieldReference) {
+			ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) fnName;
+			ICPPASTExpression receiver = fieldRef.getFieldOwner();
+
+			IType recvType = getBaseType(receiver);
+			if (recvType instanceof ICPPClassType)
+				return (ICPPClassType) recvType;
+		}
+
+		// Otherwise check for a call to implicit 'this'.  See details in the thread that
+		// starts at http://dev.eclipse.org/mhonarc/lists/cdt-dev/msg26972.html
 		try {
 			for(IScope scope = CPPVisitor.getContainingScope(fncall); scope != null; scope = scope.getParent())
 				if (scope instanceof ICPPClassScope)

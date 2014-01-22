@@ -106,6 +106,31 @@ public class PDOMExternalReferencesList {
 		pdom.getDB().putRecPtr(nodeRec + Database.INT_SIZE + Database.PTR_SIZE, name.getRecord());
 	}
 
+	public void setFirstReference(PDOMLinkage linkage, PDOMName name) throws CoreException {
+		// Find the head of this linkage's list.
+		PDOMName head = null;
+		Iterator iterator = new Iterator(record);
+		while(head == null) {
+			if (iterator.next == null)
+				break;
+
+			if (!linkage.equals(iterator.next.getLinkage()))
+				iterator.next = iterator.advance();
+			else
+				head = iterator.next;
+		}
+
+		// If there isn't already a node for this linkage then the new name can be inserted
+		// in the normal way.
+		if (head == null)
+			add(name);
+		else {
+			// Otherwise update the head of the node to point to the given name.
+			long nextNameRec = iterator.node + Database.INT_SIZE + Database.PTR_SIZE;
+			pdom.getDB().putRecPtr(nextNameRec, name == null ? 0 : name.getRecord());
+		}
+	}
+
 	private class Iterator implements IPDOMIterator<PDOMName> {
 		private long nodeAddr;
 		private long node;

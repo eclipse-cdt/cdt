@@ -683,7 +683,12 @@ public class NewClassCodeGenerator {
         text.append(" : "); //$NON-NLS-1$
         for (int i = 0; i < fBaseClasses.length; ++i) {
             IBaseClassInfo baseClass = fBaseClasses[i];
-            String baseClassName = baseClass.getType().getQualifiedTypeName().getFullyQualifiedName();
+            IQualifiedTypeName qualifiedTypeName = baseClass.getType().getQualifiedTypeName();
+
+            if (fNamespace != null)
+            	qualifiedTypeName = qualifiedTypeName.removeFirstSegments(qualifiedTypeName.matchingFirstSegments(fNamespace));
+            String baseClassName = qualifiedTypeName.getFullyQualifiedName();
+
             if (i > 0)
                 text.append(", "); //$NON-NLS-1$
             if (baseClass.getAccess() == ASTAccessVisibility.PRIVATE)

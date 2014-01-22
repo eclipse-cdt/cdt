@@ -10479,4 +10479,13 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testFieldWithSameNameAsClass_326750() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	void waldo(void(*)());
+	//
+	//	int main() {
+	//	    waldo([](){});
+	//	}
+	public void testConversionFromLambdaToFunctionPointer_424765() throws Exception {
+		parseAndCheckBindings();
+	}
 }

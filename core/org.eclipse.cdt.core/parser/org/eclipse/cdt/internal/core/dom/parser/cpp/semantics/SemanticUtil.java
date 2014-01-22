@@ -61,6 +61,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
@@ -99,31 +100,41 @@ public class SemanticUtil {
 
 	/**
 	 * Returns an array of ICPPMethod objects representing all conversion operators
-	 * declared by the specified class. This does not include inherited methods. Conversion
-	 * operators cannot be implicit.
+	 * declared by the specified class, and the implicitly generated conversion
+	 * operator for a closure type. This does not include inherited methods.
 	 * @param clazz
 	 * @return an array of conversion operators.
 	 */
 	public static final ICPPMethod[] getDeclaredConversionOperators(ICPPClassType clazz, IASTNode point) throws DOMException {
-		ICPPMethod[] methods= ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+		ICPPMethod[] conversionOps= ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		if (clazz instanceof ICPPDeferredClassInstance) {
 			clazz= (ICPPClassType) ((ICPPDeferredClassInstance) clazz).getTemplateDefinition();
 		}
-		ICPPMethod[] decs= ClassTypeHelper.getDeclaredMethods(clazz, point);
-		if (decs != null) {
-			for (ICPPMethod method : decs) {
+		ICPPMethod[] methods;
+		// For a closure type, getDeclaredMethods() does not return the conversion
+		// operator because it is implicitly generated. We can use getMethods()
+		// however as a closure type does not have base classes.
+		// A new API ICPPClosureType.getNoninheritedMethods() might be more
+		// appropriate here.
+		if (clazz instanceof CPPClosureType) {
+			methods = ClassTypeHelper.getMethods(clazz, point);
+		} else {
+			methods = ClassTypeHelper.getDeclaredMethods(clazz, point);
+		}
+		if (methods != null) {
+			for (ICPPMethod method : methods) {
 				if (isConversionOperator(method)) {
-					methods= ArrayUtil.append(methods, method);
+					conversionOps= ArrayUtil.append(conversionOps, method);
 				}
 			}
 		}
-		return methods;
+		return conversionOps;
 	}
 
 	/**
 	 * Returns an array of ICPPMethod objects representing all conversion operators
 	 * declared by the specified class and its ancestors. This includes inherited
-	 * methods. Conversion operators cannot be implicit.
+	 * methods, and the implicitly generated conversion operator for a closure type. 
 	 * @param clazz
 	 * @return an array of conversion operators.
 	 */

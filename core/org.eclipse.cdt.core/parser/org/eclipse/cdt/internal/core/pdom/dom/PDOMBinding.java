@@ -184,7 +184,19 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		return new PDOMExternalReferencesList(getPDOM(), record + FIRST_EXTREF_OFFSET).getIterator();
 	}
 
-	public void setFirstReference(PDOMName name) throws CoreException {
+	/**
+	 * In most cases the linkage can be found from the linkage of the name.  However, when the
+	 * list is being cleared (there is no next), the linkage must be passed in.
+	 */
+	public void setFirstReference(PDOMLinkage linkage, PDOMName name) throws CoreException {
+		if (linkage.equals(getLinkage())) {
+			setFirstReference(name);
+		} else {
+			new PDOMExternalReferencesList(getPDOM(), record + FIRST_EXTREF_OFFSET).setFirstReference(linkage, name);
+		}
+	}
+
+	private void setFirstReference(PDOMName name) throws CoreException {
 		// This needs to filter between the local and external lists because it can be used in
 		// contexts that don't know which type of list they are iterating over.  E.g., this is
 		// used when deleting names from a PDOMFile.

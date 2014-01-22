@@ -387,7 +387,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 				getBinding().setFirstDefinition(nextName);
 				break;
 			case IS_REFERENCE:
-				getBinding().setFirstReference(nextName);
+				getBinding().setFirstReference(getLinkage(), nextName);
 				break;
 			}
 		}

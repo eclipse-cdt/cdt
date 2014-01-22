@@ -69,14 +69,12 @@ public class PDOMNameTests extends BaseTestCase {
 			assertTrue(bindings[0] instanceof PDOMBinding);
 
 			PDOMBinding binding_c = (PDOMBinding) bindings[0];
-			PDOMName name_c = binding_c.getFirstReference();
-			assertNotNull(name_c);
-			assertSame(binding_c.getLinkage(), name_c.getLinkage());
+			PDOMName name_c1 = binding_c.getFirstReference();
+			assertNotNull(name_c1);
+			assertSame(binding_c.getLinkage(), name_c1.getLinkage());
 
 			// Check that the external references list is currently empty.
-			IPDOMIterator<PDOMName> extNames = binding_cpp.getExternalReferences();
-			assertNotNull(extNames);
-			assertFalse(extNames.hasNext());
+			assertEquals(0, countExternalReferences(binding_cpp));
 
 			// Make sure the C++ binding and the C name are in different linkages, then add the name
 			// as an external reference of the binding.  The case we're setting up is:
@@ -86,13 +84,13 @@ public class PDOMNameTests extends BaseTestCase {
 			// We can then test the following (see reference numbers below):
 			//     1) Getting the C name as an external reference of the C++ binding
 			//     2) Loading the C++ binding from the C name
-			assertNotSame(binding_cpp.getLinkage(), name_c.getLinkage());
-			name_c.setBinding(binding_cpp);
-			binding_cpp.addReference(name_c);
+			assertNotSame(binding_cpp.getLinkage(), name_c1.getLinkage());
+			name_c1.setBinding(binding_cpp);
+			binding_cpp.addReference(name_c1);
 
 			// Make sure there is an external reference, then retrieve it.  Then make sure there
 			// aren't anymore external references.
-			extNames = binding_cpp.getExternalReferences();
+			IPDOMIterator<PDOMName> extNames = binding_cpp.getExternalReferences();
 			assertNotNull(extNames);
 			assertTrue(extNames.hasNext());
 			PDOMName extRef = extNames.next();
@@ -102,8 +100,8 @@ public class PDOMNameTests extends BaseTestCase {
 			// 1) Check that the external reference is the same as the C name that was added, that the
 			//    external reference does not have the same linkage as the binding, and that it does
 			//    have the same linkage as the initial name.
-			assertSame(name_c.getLinkage(), extRef.getLinkage());
-			assertEquals(name_c.getRecord(), extRef.getRecord());
+			assertSame(name_c1.getLinkage(), extRef.getLinkage());
+			assertEquals(name_c1.getRecord(), extRef.getRecord());
 			assertNotSame(binding_cpp.getLinkage(), extRef.getLinkage());
 			assertSame(binding_c.getLinkage(), extRef.getLinkage());
 
@@ -113,8 +111,65 @@ public class PDOMNameTests extends BaseTestCase {
 			assertEquals(binding_cpp.getRecord(), extBinding.getRecord());
 			assertEquals(binding_cpp.getNodeType(), extBinding.getNodeType());
 			assertTrue(binding_cpp.getClass() == extBinding.getClass());
+
+			// Bug 426238: When names are deleted they need to be removed from the external references
+			//             list.  This test puts 3 names into the list and then removes the 2nd, last,
+			//             and then first.
+
+			// Add more external references and then check removals.
+			PDOMName name_c2 = name_c1.getNextInFile();
+			assertNotNull(name_c2);
+			PDOMName name_c3 = name_c2.getNextInFile();
+			name_c2.setBinding(binding_cpp);
+			binding_cpp.addReference(name_c2);
+			name_c3.setBinding(binding_cpp);
+			binding_cpp.addReference(name_c3);
+
+			// Collect the 3 names from the external reference list.
+			extNames = binding_cpp.getExternalReferences();
+			assertNotNull(extNames);
+			assertTrue(extNames.hasNext());
+			PDOMName extRef_1 = extNames.next();
+			assertNotNull(extRef);
+			assertTrue(extNames.hasNext());
+			PDOMName extRef_2 = extNames.next();
+			assertTrue(extNames.hasNext());
+			PDOMName extRef_3 = extNames.next();
+			assertFalse(extNames.hasNext());
+
+			// Check that the list is ordered as expected (reversed during insertion).
+			assertEquals(name_c3.getRecord(), extRef_1.getRecord());
+			assertEquals(name_c2.getRecord(), extRef_2.getRecord());
+			assertEquals(name_c1.getRecord(), extRef_3.getRecord());
+
+			// 3) Check deleting of middle entry.
+			extRef_2.delete();
+			assertEquals(2, countExternalReferences(binding_cpp));
+
+			// 4) Make sure extref head is updated when there is a next name.
+			extRef_1.delete();
+			assertEquals(1, countExternalReferences(binding_cpp));
+			extNames = binding_cpp.getExternalReferences();
+			assertNotNull(extNames);
+			assertTrue(extNames.hasNext());
+			assertEquals(extRef_3.getRecord(), extNames.next().getRecord());
+			assertFalse(extNames.hasNext());
+
+			// 5) Check deleting of first entry.
+			extRef_3.delete();
+			assertEquals(0, countExternalReferences(binding_cpp));
+
 		} finally {
 			pdom.releaseWriteLock();
 		}
+	}
+
+	private static int countExternalReferences(PDOMBinding binding) throws Exception {
+		IPDOMIterator<PDOMName> extRefs = binding.getExternalReferences();
+		assertNotNull(extRefs);
+		int count = 0;
+		for( ; extRefs.hasNext(); extRefs.next())
+			++count;
+		return count;
 	}
 }

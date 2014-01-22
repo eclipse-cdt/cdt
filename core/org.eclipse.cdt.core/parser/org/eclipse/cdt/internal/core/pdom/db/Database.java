@@ -456,7 +456,7 @@ public class Database {
 		if (blocksize < 0) {
 			// Already freed.
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0,
-					"Already freed", new Exception())); //$NON-NLS-1$
+					"Already freed record " + offset, new Exception())); //$NON-NLS-1$
 		}
 		addBlock(chunk, blocksize, block);
 		freed += blocksize;

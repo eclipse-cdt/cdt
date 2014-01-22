@@ -691,12 +691,13 @@ public class NewClassCodeGenerator {
 
             if (i > 0)
                 text.append(", "); //$NON-NLS-1$
-            if (baseClass.getAccess() == ASTAccessVisibility.PRIVATE)
+            if (baseClass.getAccess() == ASTAccessVisibility.PRIVATE) {
                 text.append("private"); //$NON-NLS-1$
-            else if (baseClass.getAccess() == ASTAccessVisibility.PROTECTED)
+            } else if (baseClass.getAccess() == ASTAccessVisibility.PROTECTED) {
                 text.append("private"); //$NON-NLS-1$
-            else
+            } else {
                 text.append("public"); //$NON-NLS-1$
+            }
             text.append(' ');
 
             if (baseClass.isVirtual())

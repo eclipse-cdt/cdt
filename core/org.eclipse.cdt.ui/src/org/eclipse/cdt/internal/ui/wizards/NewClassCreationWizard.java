@@ -10,16 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardMessages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.wizards.NewClassCreationWizardPage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.wizards.NewClassCreationWizardPage;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardMessages;
+
 public class NewClassCreationWizard extends NewElementWizard {
-    
     private NewClassCreationWizardPage fPage;
     
     public NewClassCreationWizard() {
@@ -40,31 +41,16 @@ public class NewClassCreationWizard extends NewElementWizard {
         fPage.init(getSelection());
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.ui.wizards.NewElementWizard#canRunForked()
-     */
     @Override
 	protected boolean canRunForked() {
         return !fPage.isNamespaceSelected();
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.ui.wizards.NewElementWizard#finishPage(org.eclipse.core.runtime.IProgressMonitor)
-     */
     @Override
 	protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
         fPage.createClass(monitor); // use the full progress monitor
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.wizard.IWizard#performFinish()
-     */
     @Override
 	public boolean performFinish() {
         boolean finished = super.performFinish();

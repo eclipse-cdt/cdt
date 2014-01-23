@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_c094074b",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMNameTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-23T12:21:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_5e22a555",
+      "revId": "60136441736b7668d2fef517dc0c780f5664c36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_de2cf51f",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMExternalReferencesList.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2014-01-22T19:41:32Z",
       "side": 1,
       "message": "Implementation of this method looks exceedingly complex. I\u0027m not sure how to simplify it since it is not clear to me what this method is trying to achieve.",
+      "revId": "60136441736b7668d2fef517dc0c780f5664c36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_0006ff28",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMExternalReferencesList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-23T12:21:05Z",
+      "side": 1,
+      "message": "I think that the way to simply this would be to change PDOMName.BINDING_PREV_OFFSET to store the address of the previous node\u0027s BINDING_NEXT_OFFSET pointer.  This would remove the special cases for deleting a PDOMName that happens to be the head of the list.\n\nI\u0027ve added a comment to the top of this class describing the storage format.",
+      "parentUuid": "67591f73_de2cf51f",
       "revId": "60136441736b7668d2fef517dc0c780f5664c36a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_600edb42",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMExternalReferencesList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-23T12:21:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_9e527db3",
+      "revId": "60136441736b7668d2fef517dc0c780f5664c36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_3e61b17b",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMExternalReferencesList.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2014-01-22T19:41:32Z",
       "side": 1,
       "message": "\u0027If\" statements with \u0027else\u0027 branches should have curly braces around both branches.",
+      "revId": "60136441736b7668d2fef517dc0c780f5664c36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_400bd72f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMExternalReferencesList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-23T12:21:05Z",
+      "side": 1,
+      "message": "It would be great if you could document all these little rules somewhere.",
+      "parentUuid": "67591f73_3e61b17b",
       "revId": "60136441736b7668d2fef517dc0c780f5664c36a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_a014734c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMExternalReferencesList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-23T12:21:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_5e54659a",
+      "revId": "60136441736b7668d2fef517dc0c780f5664c36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_1e5e6dbe",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMExternalReferencesList.java",
         "patchSetId": 1
@@ -98,6 +188,24 @@
       "writtenOn": "2014-01-22T19:41:32Z",
       "side": 1,
       "message": "Ditto.",
+      "revId": "60136441736b7668d2fef517dc0c780f5664c36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_80116f5c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMExternalReferencesList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-23T12:21:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_1e5e6dbe",
       "revId": "60136441736b7668d2fef517dc0c780f5664c36a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_c0d1a7f9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMExternalReferencesList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-23T12:21:05Z",
+      "side": 1,
+      "message": "I\u0027m using \"node\" to mean an entry in the outer list.  I\u0027ve changed this comment to \"... the node\u0027s head field ...\"",
+      "parentUuid": "67591f73_9ebd5d54",
+      "revId": "60136441736b7668d2fef517dc0c780f5664c36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_3e4531cc",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/PDOMBinding.java",
         "patchSetId": 1
@@ -132,6 +258,24 @@
       "writtenOn": "2014-01-22T19:41:32Z",
       "side": 1,
       "message": "\u0027If\" statements with \u0027else\u0027 branches should have curly braces around both branches.",
+      "revId": "60136441736b7668d2fef517dc0c780f5664c36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_20d34301",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/PDOMBinding.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-01-23T12:21:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_3e4531cc",
       "revId": "60136441736b7668d2fef517dc0c780f5664c36a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

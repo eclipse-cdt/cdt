@@ -37,6 +37,23 @@
     },
     {
       "key": {
+        "uuid": "67591f73_3b4ed543",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMExternalReferencesList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-23T19:56:02Z",
+      "side": 1,
+      "message": "Removing node layout was counterproductive. The layout should be made explicit like it is done in other PDOM* classes.",
+      "revId": "60136441736b7668d2fef517dc0c780f5664c36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_de2cf51f",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMExternalReferencesList.java",
         "patchSetId": 1
@@ -66,6 +83,24 @@
       "side": 1,
       "message": "I think that the way to simply this would be to change PDOMName.BINDING_PREV_OFFSET to store the address of the previous node\u0027s BINDING_NEXT_OFFSET pointer.  This would remove the special cases for deleting a PDOMName that happens to be the head of the list.\n\nI\u0027ve added a comment to the top of this class describing the storage format.",
       "parentUuid": "67591f73_de2cf51f",
+      "revId": "60136441736b7668d2fef517dc0c780f5664c36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_9bd9e1ed",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/PDOMExternalReferencesList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-23T19:56:02Z",
+      "side": 1,
+      "message": "I haven\u0027t changed my opinion that this class as a whole and this method in particular are way overcomplicated.",
+      "parentUuid": "67591f73_0006ff28",
       "revId": "60136441736b7668d2fef517dc0c780f5664c36a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

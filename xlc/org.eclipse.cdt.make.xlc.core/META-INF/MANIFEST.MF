@@ -16,4 +16,4 @@ Export-Package: org.eclipse.cdt.make.xlc.core.activator,
  org.eclipse.cdt.make.xlc.core.scannerconfig.util
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.cdt.make.xlc.core.activator.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

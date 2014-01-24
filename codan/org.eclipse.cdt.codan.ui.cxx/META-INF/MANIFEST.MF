@@ -16,7 +16,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.codan.ui,
  org.eclipse.jface.text,
  org.eclipse.ui.ide
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.codan.internal.ui.cxx;x-internal:=true,
  org.eclipse.cdt.codan.ui

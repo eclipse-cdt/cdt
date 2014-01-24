@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.ui.editors
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.internal.qt.ui.assist;x-friends:="org.eclipse.cdt.qt.tests",
  org.eclipse.cdt.qt.ui

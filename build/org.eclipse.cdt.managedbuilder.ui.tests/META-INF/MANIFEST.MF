@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.core,
  org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.cdt.managedbuilder.ui.tests,
  org.eclipse.cdt.managedbuilder.ui.tests.suite,
  org.eclipse.cdt.managedbuilder.ui.tests.testplugin,

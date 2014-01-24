@@ -78,7 +78,7 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
 		copy.setName(name == null ? null : name.copy(style));
 		copy.setInitializer(initializer == null ? null : initializer.copy(style));
 		copy.setNestedDeclarator(nested == null ? null : nested.copy(style));
-		copy.isPackExpansion= isPackExpansion;
+		((CPPASTDeclarator) copy).isPackExpansion= isPackExpansion;
 		for (IASTPointerOperator pointer : getPointerOperators()) {
 			copy.addPointerOperator(pointer.copy(style));
 		}

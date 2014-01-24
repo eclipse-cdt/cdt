@@ -41,14 +41,15 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
 	}
 
 	protected <T extends CPPASTSimpleDeclSpecifier> T copy(T copy, CopyStyle style) {
-    	copy.type = type;
-    	copy.isSigned = isSigned;
-    	copy.isUnsigned = isUnsigned;
-    	copy.isShort = isShort;
-    	copy.isLong = isLong;
-    	copy.isLonglong= isLonglong;
-    	copy.isComplex= isComplex;
-    	copy.isImaginary= isImaginary;
+		CPPASTSimpleDeclSpecifier target = copy;
+    	target.type = type;
+    	target.isSigned = isSigned;
+    	target.isUnsigned = isUnsigned;
+    	target.isShort = isShort;
+    	target.isLong = isLong;
+    	target.isLonglong= isLonglong;
+    	target.isComplex= isComplex;
+    	target.isImaginary= isImaginary;
     	if (fDeclTypeExpression != null) {
 			copy.setDeclTypeExpression(fDeclTypeExpression.copy(style));
     	}

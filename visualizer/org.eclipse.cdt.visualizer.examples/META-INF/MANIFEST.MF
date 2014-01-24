@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text,
  org.eclipse.cdt.visualizer.ui,
  org.eclipse.cdt.visualizer.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.visualizer.examples,
  org.eclipse.cdt.visualizer.examples.problemvisualizer

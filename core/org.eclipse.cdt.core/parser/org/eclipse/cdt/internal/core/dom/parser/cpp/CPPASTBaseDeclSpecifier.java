@@ -141,15 +141,16 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
     }
 
 	protected <T extends CPPASTBaseDeclSpecifier> T copy(T copy, CopyStyle style) {
-    	copy.friend = friend;
-    	copy.inline = inline;
-    	copy.isConst = isConst;
-    	copy.isConstexpr = isConstexpr;
-    	copy.isVolatile = isVolatile;
-    	copy.isRestrict= isRestrict;
-    	copy.virtual = virtual;
-    	copy.explicit = explicit;
-    	copy.sc = sc;
+		CPPASTBaseDeclSpecifier target = copy;
+    	target.friend = friend;
+    	target.inline = inline;
+    	target.isConst = isConst;
+    	target.isConstexpr = isConstexpr;
+    	target.isVolatile = isVolatile;
+    	target.isRestrict= isRestrict;
+    	target.virtual = virtual;
+    	target.explicit = explicit;
+    	target.sc = sc;
 		return super.copy(copy, style);
 	}
 

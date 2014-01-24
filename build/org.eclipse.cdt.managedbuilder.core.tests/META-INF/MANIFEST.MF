@@ -22,4 +22,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.managedbuilder.gnu.ui,
  org.eclipse.cdt.core.tests;bundle-version="5.0.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

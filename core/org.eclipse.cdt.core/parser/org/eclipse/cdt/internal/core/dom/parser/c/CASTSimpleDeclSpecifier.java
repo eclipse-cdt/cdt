@@ -43,14 +43,15 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier
 	}
 
 	protected <T extends CASTSimpleDeclSpecifier> T copy(T copy, CopyStyle style) {
-    	copy.simpleType = simpleType;
-    	copy.isSigned = isSigned;
-    	copy.isUnsigned = isUnsigned;
-    	copy.isShort = isShort;
-    	copy.isLong = isLong;
-    	copy.longlong = longlong;
-    	copy.complex = complex;
-    	copy.imaginary = imaginary;
+		CASTSimpleDeclSpecifier target = copy;
+    	target.simpleType = simpleType;
+    	target.isSigned = isSigned;
+    	target.isUnsigned = isUnsigned;
+    	target.isShort = isShort;
+    	target.isLong = isLong;
+    	target.longlong = longlong;
+    	target.complex = complex;
+    	target.imaginary = imaginary;
     	if (fDeclTypeExpression != null)
 			copy.setDeclTypeExpression(fDeclTypeExpression.copy(style));
     	return super.copy(copy, style);

@@ -10,5 +10,5 @@ Require-Bundle: org.eclipse.ui,
  org.junit;bundle-version="4.10.0",
  org.eclipse.cdt.core.tests
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Eclipse.org

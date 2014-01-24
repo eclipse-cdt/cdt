@@ -6,5 +6,5 @@ Bundle-Version: 5.2.0.qualifier
 Bundle-Vendor: %providerName
 Fragment-Host: org.eclipse.cdt.core;bundle-version="[5.2.0,6.0.0)"
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Eclipse-PlatformFilter: (osgi.os=linux)

@@ -22,7 +22,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.filesystem;bundle-version="1.2.0",
  org.eclipse.cdt.make.ui;bundle-version="6.0.0",
  org.eclipse.ui.views;bundle-version="3.4.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.autotools.ui,
  org.eclipse.cdt.autotools.ui.editors,

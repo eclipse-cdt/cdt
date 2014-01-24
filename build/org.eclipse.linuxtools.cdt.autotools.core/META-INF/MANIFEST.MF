@@ -9,5 +9,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.autotools.core;bundle-version="1.0.2"
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: %provider

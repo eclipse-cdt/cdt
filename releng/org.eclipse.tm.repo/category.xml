@@ -24,7 +24,10 @@
    <feature url="features/org.eclipse.tm.terminal.sdk_3.3.100.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.3.100.qualifier">
       <category name="tm_35_main"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.core.sdk_3.3.100.qualifier.jar" id="org.eclipse.tm.terminal.core.sdk" version="3.3.100.qualifier"/>
+   <feature url="features/org.eclipse.tm.terminal.core.sdk_3.3.100.qualifier.jar" id="org.eclipse.tm.terminal.core.sdk" version="3.3.100.qualifier">
+      <category name="tm_35_main"/>
+   </feature>
+   
    <category-def name="tm_35_main" label="TM and RSE 3.5 Main Features">
       <description>
          TM and RSE Main Features

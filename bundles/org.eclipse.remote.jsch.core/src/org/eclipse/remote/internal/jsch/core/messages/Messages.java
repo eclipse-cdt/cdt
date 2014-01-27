@@ -16,21 +16,18 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_ID = "org.eclipse.remote.internal.jsch.core.messages.messages"; //$NON-NLS-1$
 
-	public static String AbstractRemoteCommand_Execution_exception;
+	public static String AbstractRemoteCommand_format;
+
 	public static String AbstractRemoteCommand_Get_symlink_target;
 	public static String AbstractRemoteCommand_Operation_cancelled_by_user;
 	public static String AuthInfo_Authentication_message;
-	public static String ChildInfosCommand_Get_file_attributes;
-	public static String DeleteCommand_Remove_file;
 	public static String ExecCommand_Exec_command;
-	public static String FetchInfoCommand_Fetch_info;
-	public static String GetInputStreamCommand_Get_input_stream;
 	public static String JSchConnection_Connection_was_cancelled;
-
 	public static String JSchConnection_connectionNotOpen;
+
+	public static String JSchConnection_Executing_command;
 	public static String JSchConnection_remote_address_must_be_set;
 	public static String JSchConnection_remotePort;
-	public static String RemoteToolsConnection_open;
 	public static String JSchConnection_forwarding;
 	public static String JSchConnection_Remote_host_does_not_support_sftp;
 	public static String JSchConnection_Unable_to_open_sftp_channel;
@@ -46,22 +43,6 @@ public class Messages extends NLS {
 	public static String JschFileStore_No_remote_services_found_for_URI;
 	public static String JschFileStore_The_file_of_name_already_exists;
 	public static String JschFileStore_The_parent_of_directory_does_not_exist;
-	public static String MkdirCommand_Create_directory;
-	public static String PutInfoCommand_Change_permissions;
-	public static String PutInfoCommand_Set_modified_time;
-	public static String RemoteToolsFileStore_0;
-	public static String RemoteToolsFileStore_1;
-	public static String RemoteToolsFileStore_2;
-	public static String RemoteToolsFileStore_3;
-	public static String RemoteToolsFileStore_4;
-	public static String RemoteToolsFileStore_5;
-	public static String RemoteToolsFileStore_6;
-	public static String RemoteToolsFileStore_7;
-	public static String RemoteToolsFileStore_8;
-	public static String RemoteToolsFileStore_10;
-	public static String RemoteToolsFileStore_12;
-	public static String RemoteToolsFileStore_13;
-	public static String RemoteToolsFileStore_14;
 
 	static {
 		// load message values from bundle file

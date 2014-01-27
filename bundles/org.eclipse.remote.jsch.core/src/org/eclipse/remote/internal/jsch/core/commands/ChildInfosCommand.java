@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.JSchConnection;
-import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.JSchException;
@@ -60,7 +59,6 @@ public class ChildInfosCommand extends AbstractRemoteCommand<IFileInfo[]> {
 			}
 		};
 		try {
-			subMon.subTask(Messages.ChildInfosCommand_Get_file_attributes);
 			return c.getResult(subMon.newChild(10));
 		} catch (SftpException e) {
 			throw new RemoteConnectionException(e.getMessage());

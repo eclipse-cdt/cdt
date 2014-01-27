@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.JSchConnection;
-import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -63,7 +62,6 @@ public class PutInfoCommand extends AbstractRemoteCommand<Void> {
 			}
 		};
 		try {
-			subMon.subTask(Messages.PutInfoCommand_Change_permissions);
 			c.getResult(subMon.newChild(10));
 		} catch (SftpException e) {
 			throw new RemoteConnectionException(e.getMessage());
@@ -80,7 +78,6 @@ public class PutInfoCommand extends AbstractRemoteCommand<Void> {
 			}
 		};
 		try {
-			subMon.subTask(Messages.PutInfoCommand_Set_modified_time);
 			c.getResult(subMon.newChild(10));
 		} catch (SftpException e) {
 			throw new RemoteConnectionException(e.getMessage());

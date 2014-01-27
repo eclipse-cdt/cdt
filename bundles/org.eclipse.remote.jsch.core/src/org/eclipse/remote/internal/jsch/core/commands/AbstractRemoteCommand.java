@@ -12,6 +12,7 @@
 package org.eclipse.remote.internal.jsch.core.commands;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -45,6 +46,9 @@ import com.jcraft.jsch.SftpProgressMonitor;
 public abstract class AbstractRemoteCommand<T> {
 	protected static class CommandProgressMonitor implements SftpProgressMonitor {
 		private final IProgressMonitor fMonitor;
+		private double fWorkPercentFactor;
+		private Long fMaxWorkKB;
+		private long fWorkToDate;
 
 		public CommandProgressMonitor(IProgressMonitor monitor) {
 			fMonitor = monitor;
@@ -52,6 +56,13 @@ public abstract class AbstractRemoteCommand<T> {
 
 		@Override
 		public boolean count(long count) {
+			fWorkToDate += count;
+			Long workToDateKB = new Long(fWorkToDate / 1024L);
+			Double workPercent = new Double(fWorkPercentFactor * fWorkToDate);
+			String subDesc = MessageFormat.format(Messages.AbstractRemoteCommand_format,
+					new Object[] { workToDateKB, fMaxWorkKB, workPercent });
+
+			fMonitor.subTask(subDesc);
 			fMonitor.worked((int) count);
 			return !(fMonitor.isCanceled());
 		}
@@ -63,9 +74,10 @@ public abstract class AbstractRemoteCommand<T> {
 
 		@Override
 		public void init(int op, String src, String dest, long max) {
-			String srcFile = new Path(src).lastSegment();
-			String desc = srcFile;
-			fMonitor.beginTask(desc, (int) max);
+			fWorkPercentFactor = 1.0 / max;
+			fMaxWorkKB = new Long(max / 1024L);
+			fWorkToDate = 0;
+			fMonitor.beginTask(new Path(src).lastSegment(), (int) max);
 		}
 	}
 

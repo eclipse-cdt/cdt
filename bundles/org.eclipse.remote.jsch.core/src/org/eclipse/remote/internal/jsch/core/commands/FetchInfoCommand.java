@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.JSchConnection;
-import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
@@ -34,7 +33,6 @@ public class FetchInfoCommand extends AbstractRemoteCommand<IFileInfo> {
 		};
 		SftpATTRS attrs;
 		try {
-			subMon.subTask(Messages.FetchInfoCommand_Fetch_info);
 			attrs = c.getResult(subMon.newChild(10));
 			return convertToFileInfo(fRemotePath, attrs, subMon.newChild(10));
 		} catch (SftpException e) {

@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jsch.core.IJSchService;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionChangeEvent;
 import org.eclipse.remote.core.IRemoteConnectionChangeListener;
@@ -49,8 +50,6 @@ import com.jcraft.jsch.UserInfo;
  * @since 5.0
  */
 public class JSchConnection implements IRemoteConnection {
-	private final boolean logging = false;
-
 	/**
 	 * Class to supply credentials from connection attributes without user interaction.
 	 */
@@ -60,6 +59,22 @@ public class JSchConnection implements IRemoteConnection {
 
 		public JSchUserInfo(IUserAuthenticator authenticator) {
 			fAuthenticator = authenticator;
+		}
+
+		@Override
+		public String getPassphrase() {
+			if (logging) {
+				System.out.println("getPassphrase"); //$NON-NLS-1$
+			}
+			return JSchConnection.this.getPassphrase();
+		}
+
+		@Override
+		public String getPassword() {
+			if (logging) {
+				System.out.println("getPassword"); //$NON-NLS-1$
+			}
+			return JSchConnection.this.getPassword();
 		}
 
 		@Override
@@ -81,19 +96,22 @@ public class JSchConnection implements IRemoteConnection {
 		}
 
 		@Override
-		public String getPassphrase() {
+		public boolean promptPassphrase(String message) {
 			if (logging) {
-				System.out.println("getPassphrase"); //$NON-NLS-1$
+				System.out.println("promptPassphrase:" + message); //$NON-NLS-1$
 			}
-			return JSchConnection.this.getPassphrase();
-		}
-
-		@Override
-		public String getPassword() {
-			if (logging) {
-				System.out.println("getPassword"); //$NON-NLS-1$
+			if (firstTry && !getPassphrase().equals("")) { //$NON-NLS-1$
+				firstTry = false;
+				return true;
 			}
-			return JSchConnection.this.getPassword();
+			if (fAuthenticator != null) {
+				PasswordAuthentication auth = fAuthenticator.prompt(null, message);
+				if (auth == null) {
+					return false;
+				}
+				fAttributes.setSecureAttribute(JSchConnectionAttributes.PASSPHRASE_ATTR, new String(auth.getPassword()));
+			}
+			return true;
 		}
 
 		@Override
@@ -112,25 +130,6 @@ public class JSchConnection implements IRemoteConnection {
 				}
 				fAttributes.setAttribute(JSchConnectionAttributes.USERNAME_ATTR, auth.getUserName());
 				fAttributes.setSecureAttribute(JSchConnectionAttributes.PASSWORD_ATTR, new String(auth.getPassword()));
-			}
-			return true;
-		}
-
-		@Override
-		public boolean promptPassphrase(String message) {
-			if (logging) {
-				System.out.println("promptPassphrase:" + message); //$NON-NLS-1$
-			}
-			if (firstTry && !getPassphrase().equals("")) { //$NON-NLS-1$
-				firstTry = false;
-				return true;
-			}
-			if (fAuthenticator != null) {
-				PasswordAuthentication auth = fAuthenticator.prompt(null, message);
-				if (auth == null) {
-					return false;
-				}
-				fAttributes.setSecureAttribute(JSchConnectionAttributes.PASSPHRASE_ATTR, new String(auth.getPassword()));
 			}
 			return true;
 		}
@@ -159,6 +158,8 @@ public class JSchConnection implements IRemoteConnection {
 			}
 		}
 	}
+
+	private final boolean logging = false;
 
 	public static final int DEFAULT_PORT = 22;
 	public static final int DEFAULT_TIMEOUT = 5;
@@ -271,6 +272,22 @@ public class JSchConnection implements IRemoteConnection {
 	@Override
 	public int compareTo(IRemoteConnection o) {
 		return getName().compareTo(o.getName());
+	}
+
+	/**
+	 * Execute the command and return the result as a string.
+	 * 
+	 * @param cmd
+	 *            command to execute
+	 * @param monitor
+	 *            progress monitor
+	 * @return result of command
+	 * @throws RemoteConnectionException
+	 */
+	private String executeCommand(String cmd, IProgressMonitor monitor) throws RemoteConnectionException {
+		ExecCommand exec = new ExecCommand(this);
+		monitor.subTask(NLS.bind(Messages.JSchConnection_Executing_command, cmd));
+		return exec.setCommand(cmd).getResult(monitor).trim();
 	}
 
 	/**
@@ -439,9 +456,8 @@ public class JSchConnection implements IRemoteConnection {
 	 */
 	private String getCwd(IProgressMonitor monitor) {
 		SubMonitor subMon = SubMonitor.convert(monitor, 10);
-		ExecCommand exec = new ExecCommand(this);
 		try {
-			return exec.setCommand("pwd").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+			return executeCommand("pwd", subMon.newChild(10)); //$NON-NLS-1$
 		} catch (RemoteConnectionException e) {
 			// Ignore
 		}
@@ -660,8 +676,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	private void loadEnv(IProgressMonitor monitor) throws RemoteConnectionException {
 		SubMonitor subMon = SubMonitor.convert(monitor, 10);
-		ExecCommand exec = new ExecCommand(this);
-		String env = exec.setCommand("printenv").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+		String env = executeCommand("printenv", subMon.newChild(10)); //$NON-NLS-1$
 		String[] vars = env.split("\n"); //$NON-NLS-1$
 		for (String var : vars) {
 			String[] kv = var.split("="); //$NON-NLS-1$
@@ -728,31 +743,30 @@ public class JSchConnection implements IRemoteConnection {
 		fProperties.put(LINE_SEPARATOR_PROPERTY, "\n"); //$NON-NLS-1$
 		fProperties.put(USER_HOME_PROPERTY, getWorkingDirectory());
 
-		ExecCommand exec = new ExecCommand(this);
 		String osVersion;
 		String osArch;
-		String osName = exec.setCommand("uname").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+		String osName = executeCommand("uname", subMon.newChild(10)); //$NON-NLS-1$
 		if (osName.equalsIgnoreCase("Linux")) { //$NON-NLS-1$
-			osArch = exec.setCommand("uname -m").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
-			osVersion = exec.setCommand("uname -r").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+			osArch = executeCommand("uname -m", subMon.newChild(10)); //$NON-NLS-1$
+			osVersion = executeCommand("uname -r", subMon.newChild(10)); //$NON-NLS-1$
 		} else if (osName.equalsIgnoreCase("Darwin")) { //$NON-NLS-1$
-			osName = exec.setCommand("sw_vers -productName").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
-			osVersion = exec.setCommand("sw_vers -productVersion").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
-			osArch = exec.setCommand("uname -m").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+			osName = executeCommand("sw_vers -productName", subMon.newChild(10)); //$NON-NLS-1$
+			osVersion = executeCommand("sw_vers -productVersion", subMon.newChild(10)); //$NON-NLS-1$
+			osArch = executeCommand("uname -m", subMon.newChild(10)); //$NON-NLS-1$
 			if (osArch.equalsIgnoreCase("i386")) { //$NON-NLS-1$
-				String opt = exec.setCommand("sysctl -n hw.optional.x86_64").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+				String opt = executeCommand("sysctl -n hw.optional.x86_64", subMon.newChild(10)); //$NON-NLS-1$
 				if (opt.equals("1")) { //$NON-NLS-1$
 					osArch = "x86_64"; //$NON-NLS-1$
 				}
 			}
 		} else if (osName.equalsIgnoreCase("AIX")) { //$NON-NLS-1$
-			osArch = exec.setCommand("uname -p").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
-			osVersion = exec.setCommand("oslevel").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+			osArch = executeCommand("uname -p", subMon.newChild(10)); //$NON-NLS-1$
+			osVersion = executeCommand("oslevel", subMon.newChild(10)); //$NON-NLS-1$
 			if (osArch.equalsIgnoreCase("powerpc")) { //$NON-NLS-1$
 				/* Make the architecture match what Linux produces: either ppc or ppc64 */
 				osArch = "ppc"; //$NON-NLS-1$
 				/* Get Kernel type either 32-bit or 64-bit */
-				String opt = exec.setCommand("prtconf -k").getResult(subMon.newChild(10)).trim(); //$NON-NLS-1$
+				String opt = executeCommand("prtconf -k", subMon.newChild(10)); //$NON-NLS-1$
 				if (opt.indexOf("64-bit") > 0) { //$NON-NLS-1$
 					osArch += "64"; //$NON-NLS-1$
 				}

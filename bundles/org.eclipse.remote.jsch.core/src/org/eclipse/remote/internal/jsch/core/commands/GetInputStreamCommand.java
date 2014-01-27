@@ -1,7 +1,5 @@
 package org.eclipse.remote.internal.jsch.core.commands;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -10,7 +8,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.JSchConnection;
-import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -26,19 +23,19 @@ public class GetInputStreamCommand extends AbstractRemoteCommand<InputStream> {
 	@Override
 	public InputStream getResult(IProgressMonitor monitor) throws RemoteConnectionException {
 		final SubMonitor subMon = SubMonitor.convert(monitor, 10);
-		final ByteArrayOutputStream out = new ByteArrayOutputStream();
-		SftpCallable<Void> c = new SftpCallable<Void>() {
+		SftpCallable<InputStream> c = new SftpCallable<InputStream>() {
 			@Override
-			public Void call() throws JSchException, SftpException, IOException {
-				getChannel().get(fRemotePath.toString(), out, new CommandProgressMonitor(getProgressMonitor()));
-				out.close();
-				return null;
+			public InputStream call() throws JSchException, SftpException, IOException {
+				try {
+					return getConnection().getSftpChannel().get(fRemotePath.toString(),
+							new CommandProgressMonitor(getProgressMonitor()));
+				} catch (RemoteConnectionException e) {
+					throw new IOException(e.getMessage());
+				}
 			}
 		};
 		try {
-			subMon.subTask(Messages.GetInputStreamCommand_Get_input_stream);
-			c.getResult(subMon.newChild(10));
-			return new ByteArrayInputStream(out.toByteArray());
+			return c.getResult(subMon.newChild(10));
 		} catch (SftpException e) {
 			throw new RemoteConnectionException(e.getMessage());
 		}

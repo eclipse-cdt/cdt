@@ -66,6 +66,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	private boolean fShowHiddenCheckbox = true;
 	private boolean fShowNewFolderButton = true;
 	private boolean fShowConnections = false;
+	private boolean fShowLocalSelection = false;
 	private String fInitialPath;
 	private IRemoteConnection fConnection;
 	private int fBrowserStyle = SWT.SINGLE;
@@ -156,6 +157,9 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 		}
 		if (fShowNewFolderButton) {
 			options |= RemoteResourceBrowserWidget.SHOW_NEW_FOLDER_BUTTON;
+		}
+		if (fShowLocalSelection) {
+			options |= RemoteResourceBrowserWidget.SHOW_LOCAL_SELECTION;
 		}
 		fResourceBrowserWidget = new RemoteResourceBrowserWidget(main, fBrowserStyle, options);
 		fResourceBrowserWidget.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -312,6 +316,15 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	 */
 	public void showHiddenCheckbox(boolean showHidden) {
 		fShowHiddenCheckbox = showHidden;
+	}
+
+	/**
+	 * Enable selection of local files
+	 * 
+	 * @param showNewFolderButton
+	 */
+	public void showLocalSelection(boolean showLocalSelection) {
+		fShowLocalSelection = showLocalSelection;
 	}
 
 	/**

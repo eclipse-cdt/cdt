@@ -77,6 +77,10 @@ public class RemoteResourceBrowserWidget extends Composite {
 	 */
 	public static final int DIRECTORY_BROWSER = 0x02;
 	/**
+	 * Show local selection button
+	 */
+	public static final int SHOW_LOCAL_SELECTION = 0x04;
+	/**
 	 * Display checkbox to show/hide hidden files
 	 */
 	public static final int SHOW_HIDDEN_CHECKBOX = 0x10;
@@ -136,7 +140,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 		if ((fOptionFlags & SHOW_CONNECTIONS) != 0) {
 			fRemoteConnectionWidget = new RemoteConnectionWidget(mainComp, SWT.NONE, "", //$NON-NLS-1$
-					RemoteConnectionWidget.FLAG_NO_LOCAL_SELECTION);
+					(fOptionFlags & SHOW_LOCAL_SELECTION) == 0 ? RemoteConnectionWidget.FLAG_NO_LOCAL_SELECTION : 0);
 			fRemoteConnectionWidget.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 			fRemoteConnectionWidget.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -345,7 +349,8 @@ public class RemoteResourceBrowserWidget extends Composite {
 	 */
 	private boolean changeInput(final IRemoteConnection conn) {
 		if (conn == null) {
-			return false;
+			setRoot(null);
+			return true;
 		}
 		IRemoteUIConnectionManager uiMgr = RemoteUIServices.getRemoteUIServices(conn.getRemoteServices()).getUIConnectionManager();
 		if (uiMgr != null) {
@@ -521,18 +526,21 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 	/**
 	 * Set the root directory for the browser. This will also update the text
-	 * field with the path.
+	 * field with the path. If the path is null, the browser will be set to the initial state.
 	 * 
 	 * @param path
-	 *            path of root directory
+	 *            path of root directory or null
 	 */
 	private void setRoot(String path) {
-		if (fFileMgr != null) {
+		fResources.clear();
+		fRootPath = null;
+		if (path == null) {
+			fTreeViewer.setInput(null);
+		} else if (fFileMgr != null) {
 			IFileStore root = fFileMgr.getResource(path);
 			fTreeViewer.setInput(new DeferredFileStore(root, !fShowHidden));
 			fRemotePathText.setText(path);
 			fRemotePathText.setSelection(fRemotePathText.getText().length());
-			fResources.clear();
 			fResources.add(root);
 			fRootPath = new Path(path);
 		}

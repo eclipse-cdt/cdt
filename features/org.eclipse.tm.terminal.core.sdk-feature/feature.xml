@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.tm.terminal.core.sdk"
       label="%featureName"
-      version="3.3.100.qualifier"
+      version="3.3.200.qualifier"
       provider-name="%providerName"
       image="eclipse_update_120.jpg">
 

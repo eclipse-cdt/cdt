@@ -65,7 +65,8 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -672,7 +673,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		// modifying the text in method TerminalVerifyKeyListener.verifyKey().
 
 		fWndParent=new Composite(parent,SWT.NONE);
-		FillLayout layout=new FillLayout();
+		GridLayout layout=new GridLayout();
+		layout.marginWidth=0; layout.marginHeight=0; layout.verticalSpacing=0;
 		fWndParent.setLayout(layout);
 
 		ITerminalTextDataSnapshot snapshot=fTerminalModel.makeSnapshot();
@@ -681,6 +683,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		ITextCanvasModel canvasModel=new PollingTextCanvasModel(snapshot);
 		fCtlText=new TextCanvas(fWndParent,canvasModel,SWT.NONE,new TextLineRenderer(fCtlText,canvasModel));
 
+		fCtlText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fCtlText.addResizeHandler(new TextCanvas.ResizeListener() {
 			public void sizeChanged(int lines, int columns) {
 				fTerminalText.setDimensions(lines, columns);

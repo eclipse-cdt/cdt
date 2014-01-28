@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.tm.terminal"
       label="%featureName"
-      version="3.2.100.qualifier"
+      version="3.2.200.qualifier"
       provider-name="%providerName">
 
    <description>

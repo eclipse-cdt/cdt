@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Ericsson and others.
+ * Copyright (c) 2008, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -50,6 +51,7 @@ public class GDBMemory_7_0 extends GDBMemory {
 				MIMemory.class.getName(), 
 				IMemory.class.getName(),
 				IGDBMemory.class.getName(),
+				IGDBMemory2.class.getName(),
 				GDBMemory.class.getName(),
 				GDBMemory_7_0.class.getName()
 			}, 
@@ -66,7 +68,7 @@ public class GDBMemory_7_0 extends GDBMemory {
 
 	@Override
 	protected void readMemoryBlock(IDMContext dmc, IAddress address, long offset,
-			int word_size, int count, DataRequestMonitor<MemoryByte[]> drm)
+			int word_size, int word_count, DataRequestMonitor<MemoryByte[]> drm)
 	{
 		IDMContext threadOrMemoryDmc = dmc;
 
@@ -103,12 +105,12 @@ public class GDBMemory_7_0 extends GDBMemory {
 			}
 		}
 
-		super.readMemoryBlock(threadOrMemoryDmc, address, offset, word_size, count, drm);
+		super.readMemoryBlock(threadOrMemoryDmc, address, offset, word_size, word_count, drm);
 	}
 
 	@Override
 	protected void writeMemoryBlock(IDMContext dmc, IAddress address, long offset,
-			int word_size, int count, byte[] buffer, RequestMonitor rm)
+			int word_size, int word_count, byte[] buffer, RequestMonitor rm)
 	{
 		IDMContext threadOrMemoryDmc = dmc;
 
@@ -145,6 +147,6 @@ public class GDBMemory_7_0 extends GDBMemory {
 			}
 		}
 
-		super.writeMemoryBlock(threadOrMemoryDmc, address, offset, word_size, count, buffer, rm);
+		super.writeMemoryBlock(threadOrMemoryDmc, address, offset, word_size, word_count, buffer, rm);
 	}
 }

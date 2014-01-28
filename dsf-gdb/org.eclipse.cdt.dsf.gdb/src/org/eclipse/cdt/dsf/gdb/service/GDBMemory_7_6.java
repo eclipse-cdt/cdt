@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Ericsson and others.
+ * Copyright (c) 2013, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
+ *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -62,6 +63,7 @@ public class GDBMemory_7_6 extends GDBMemory_7_0 implements IEventListener {
 		register(new String[] { MIMemory.class.getName(), 
 				                IMemory.class.getName(), 
 				                IGDBMemory.class.getName(),
+								IGDBMemory2.class.getName(),
 				                GDBMemory.class.getName(),
 				                GDBMemory_7_0.class.getName(),
 				                GDBMemory_7_6.class.getName()}, 
@@ -140,8 +142,9 @@ public class GDBMemory_7_6 extends GDBMemory_7_0 implements IEventListener {
 	    		    		// Now refresh our memory cache, it case it contained this address.  Don't have
 	    		    		// it send the potential IMemoryChangedEvent as we will send it ourselves (see below).
 	    		    		final IMemoryDMContext memoryDMC = DMContexts.getAncestorOfType(containerDmc, IMemoryDMContext.class);
+	    		    		
 	    		    		final IAddress address = new Addr64(addr);
-	    		    		getMemoryCache(memoryDMC).refreshMemory(memoryDMC, address, 0, 1, count, false,
+	    		    		getMemoryCache(memoryDMC).refreshMemory(memoryDMC, address, 0, getAddressableSize(memoryDMC), count, false,
 	    		    				new RequestMonitor(getExecutor(), null) {
 	    		    			@Override
 	    		    			protected void handleCompleted() {

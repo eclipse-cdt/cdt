@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Mentor Graphics and others.
+ * Copyright (c) 2013, 2014 Mentor Graphics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * 		Mentor Graphics - Initial API and implementation
  * 		John Dallaway - Add methods to get the endianness and address size (Bug 225609) 
  * 		Philippe Gil (AdaCore) - Switch to c language when getting sizeof(void *) when required (Bug 421541)
+ *      Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -35,6 +36,7 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.MIMemory;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIAddressableSizeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIShowEndianInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowLanguageInfo;
@@ -48,7 +50,7 @@ import org.eclipse.debug.core.model.MemoryByte;
 /**
  * @since 4.2
  */
-public class GDBMemory extends MIMemory implements IGDBMemory {
+public class GDBMemory extends MIMemory implements IGDBMemory2 {
 
 	private IGDBControl fCommandControl;
 
@@ -57,6 +59,11 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 	 */
 	private Map<IMemoryDMContext, Integer> fAddressSizes = new HashMap<IMemoryDMContext, Integer>();
 
+	/**
+	 * Cache of the addressable sizes for each memory context. 
+	 */
+	private Map<IMemoryDMContext, Integer> fAddressableSizes = new HashMap<IMemoryDMContext, Integer>();
+	
 	/**
 	 * We assume the endianness is the same for all processes because GDB supports only one target.
 	 */
@@ -84,6 +91,7 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 				IMemory.class.getName(),
 				MIMemory.class.getName(),
 				IGDBMemory.class.getName(),
+				IGDBMemory2.class.getName(),
 				GDBMemory.class.getName(),
 			},
 			new Hashtable<String, String>());
@@ -94,19 +102,20 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 	public void shutdown(RequestMonitor requestMonitor) {
 		unregister();
     	getSession().removeServiceEventListener(this);
+    	fAddressableSizes.clear();
 		fAddressSizes.clear();
 		super.shutdown(requestMonitor);
 	}
 
 	@Override
 	protected void readMemoryBlock(final IDMContext dmc, IAddress address, 
-		long offset, int word_size, int count, final DataRequestMonitor<MemoryByte[]> drm) {
+		long offset, int word_size, int word_count, final DataRequestMonitor<MemoryByte[]> drm) {
 		super.readMemoryBlock(
 			dmc, 
 			address, 
 			offset, 
 			word_size, 
-			count, 
+			word_count, 
 			new DataRequestMonitor<MemoryByte[]>(ImmediateExecutor.getInstance(), drm) {
 				@Override
 				protected void handleSuccess() {
@@ -134,78 +143,88 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 
 			// Need a global here as getSteps() can be called more than once.
 			private Step[] steps = null;
-			
 			private void determineSteps()
 			{
 				ArrayList<Step> stepsList = new ArrayList<Step>();
-
+				
 				if (fAddressSizes.get(memContext) == null) {
 					stepsList.add(
-						new Step() {
-							// store original language
-							@Override
-							public void execute(final RequestMonitor requestMonitor) {
-								fCommandControl.queueCommand(
-									fCommandControl.getCommandFactory().createMIGDBShowLanguage(memContext),
-									new ImmediateDataRequestMonitor<MIGDBShowLanguageInfo>(requestMonitor) {
-										@Override
-										protected void handleCompleted() {
-											if (isSuccess()) {
-												originalLanguage = getData().getLanguage();
-											} else {
-												abortLanguageSteps = true;
-											}
-											requestMonitor.done();
-										}
-									});
-							}
-						});
-					stepsList.add(
-						new Step() {
-							// switch to c language
-							@Override
-							public void execute(final RequestMonitor requestMonitor) {
-								if (abortLanguageSteps) {
-									requestMonitor.done();
-									return;
-								}
-
-								fCommandControl.queueCommand(
-										fCommandControl.getCommandFactory().createMIGDBSetLanguage(memContext, MIGDBShowLanguageInfo.C),
-										new ImmediateDataRequestMonitor<MIInfo>(requestMonitor) {
+							new Step() {
+								// store original language
+								@Override
+								public void execute(final RequestMonitor requestMonitor) {
+									fCommandControl.queueCommand(
+										fCommandControl.getCommandFactory().createMIGDBShowLanguage(memContext),
+										new ImmediateDataRequestMonitor<MIGDBShowLanguageInfo>(requestMonitor) {
 											@Override
 											protected void handleCompleted() {
-												if (!isSuccess()) {
+												if (isSuccess()) {
+													originalLanguage = getData().getLanguage();
+												} else {
 													abortLanguageSteps = true;
 												}
-												// Accept failure
 												requestMonitor.done();
 											}
 										});
-							}
-						});
-
+								}
+							});
 					stepsList.add(
-						new Step() {
-							// read address size
-							@Override
-							public void execute(final RequestMonitor requestMonitor) {
-								// Run this step even if the language commands where aborted, but accept failures.
-								readAddressSize(
-									memContext, 
-									new ImmediateDataRequestMonitor<Integer>(requestMonitor) {
+							new Step() {
+								// switch to c language
+								@Override
+								public void execute(final RequestMonitor requestMonitor) {
+									if (abortLanguageSteps) {
+										requestMonitor.done();
+										return;
+									}
+
+									fCommandControl.queueCommand(
+											fCommandControl.getCommandFactory().createMIGDBSetLanguage(memContext, MIGDBShowLanguageInfo.C),
+											new ImmediateDataRequestMonitor<MIInfo>(requestMonitor) {
+												@Override
+												protected void handleCompleted() {
+													if (!isSuccess()) {
+														abortLanguageSteps = true;
+													}
+													// Accept failure
+													requestMonitor.done();
+												}
+											});
+								}
+							});
+					
+					stepsList.add(new Step() {
+						// Run this step even if the language commands where aborted, but accept failures.
+						// Resolve Addressable and Address size
+						@Override
+						public void execute(final RequestMonitor requestMonitor) {
+							//Read Minimum addressable memory size and actual address size
+							readAddressableSize(memContext, new ImmediateDataRequestMonitor<Integer>(requestMonitor) {
+								@Override
+								protected void handleCompleted() {
+									if (isSuccess()) {
+										final Integer minAddressableInOctets = getData();
+										//Preserve the addressable size per context
+										fAddressableSizes.put(memContext, minAddressableInOctets);
+									}
+									
+									readAddressSize(memContext, new ImmediateDataRequestMonitor<Integer>(requestMonitor) {
 										@Override
 										protected void handleCompleted() {
 											if (isSuccess()) {
+												//Preserve the address size per context
 												fAddressSizes.put(memContext, getData());
 											}
-											// Accept failure
+
+											// Accept failures
 											requestMonitor.done();
 										}
 									});
-							}
-						});
-
+								}
+							});
+						}
+					});
+					
 					stepsList.add(
 							new Step() {
 								// restore original language
@@ -250,8 +269,8 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 										});
 								}
 							});
-
-					}
+					
+				}
 
 				if (fIsBigEndian == null) {
 					stepsList.add(
@@ -283,7 +302,7 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 				if (steps == null) {
 					determineSteps();
 				}
-				
+
 				return steps;
 			}
 		});
@@ -295,6 +314,7 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 			IMemoryDMContext context = DMContexts.getAncestorOfType(event.getDMContext(), IMemoryDMContext.class);
 			if (context != null) {
 				fAddressSizes.remove(context);
+				fAddressableSizes.remove(context);
 			}
 		}
 	}
@@ -303,6 +323,15 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 	public int getAddressSize(IMemoryDMContext context) {
 		Integer addressSize = fAddressSizes.get(context);
 		return (addressSize != null) ? addressSize.intValue() : 8;
+	}
+
+	/**
+	 * @since 4.4
+	 */
+	@Override
+	public int getAddressableSize(IMemoryDMContext context) {
+		Integer addressableSize = fAddressableSizes.get(context);
+		return (addressableSize != null) ? addressableSize.intValue() : 1;
 	}
 
 	@Override
@@ -335,6 +364,33 @@ public class GDBMemory extends MIMemory implements IGDBMemory {
 			});
 	}
 
+	/**
+	 * The minimum addressable size is determined by the space used to store a "char" on a target system
+	 * This is then resolved by retrieving a hex representation of -1 casted to the size of a "char"
+	 * e.g. from GDB command line 
+	 *    > p/x (char)-1
+     *    > $7 = 0xffff 
+     *    
+     * Since two hex characters are representing one octet, for the above example this method should return 2
+	 * @since 4.4
+	 * 
+	 */
+	protected void readAddressableSize(IMemoryDMContext memContext, final DataRequestMonitor<Integer> drm) {
+		//We use a CLI command here instead of the expression services, since the target may not be available 
+		//e.g. when using a remote launch.  
+		// Using MI directly is a possibility although there is no way to specify the required output format to hex. 
+		CommandFactory commandFactory = fCommandControl.getCommandFactory();
+		fCommandControl.queueCommand(
+			commandFactory.createCLIAddressableSize(memContext),
+			new DataRequestMonitor<CLIAddressableSizeInfo>(ImmediateExecutor.getInstance(), drm) {
+				@Override
+				protected void handleSuccess() {
+					drm.setData(Integer.valueOf(getData().getAddressableSize()));
+					drm.done();
+				}
+			});
+	}
+	
 	protected void readEndianness(IMemoryDMContext memContext, final DataRequestMonitor<Boolean> drm) {
 		CommandFactory commandFactory = fCommandControl.getCommandFactory();
 		fCommandControl.queueCommand(

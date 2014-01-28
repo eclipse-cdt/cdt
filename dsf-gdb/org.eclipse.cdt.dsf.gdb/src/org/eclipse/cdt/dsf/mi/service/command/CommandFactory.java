@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug (323552)
  *     Philippe Gil (AdaCore) - Add show/set language CLI commands (Bug 421541)
  *     Dmitry Kozlov (Mentor Graphics) - New trace-related methods (Bug 390827)
+ *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -43,6 +44,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIAddressableSize;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIAttach;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICatch;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIDetach;
@@ -178,6 +180,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarSetUpdateRange;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowAttributes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowFormat;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarUpdate;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIAddressableSizeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLICatchInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoBreakInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoProgramInfo;
@@ -198,11 +201,11 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryBytesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataWriteMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowExitCodeInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowLanguageInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfoOsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListFeaturesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowLanguageInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackInfoDepthInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListArgumentsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListFramesInfo;
@@ -235,6 +238,13 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarUpdateInfo;
  * @since 3.0
  */
 public class CommandFactory {
+
+	/**
+	 * @since 4.4
+	 */
+	public ICommand<CLIAddressableSizeInfo> createCLIAddressableSize(IMemoryDMContext ctx) {
+		return new CLIAddressableSize(ctx);
+	}
 
 	public ICommand<MIInfo> createCLIAttach(IDMContext ctx, int pid) {
 		return new CLIAttach(ctx, pid);
@@ -475,6 +485,14 @@ public class CommandFactory {
 		return new MIDataReadMemoryBytes(ctx, address, offset, num_bytes);
 	}
 
+	/**
+	 * @since 4.4
+	 */
+	public ICommand<MIDataReadMemoryBytesInfo> createMIDataReadMemoryBytes(IDMContext ctx, String address, 
+			long offset, int word_count, int word_size) {
+		return new MIDataReadMemoryBytes(ctx, address, offset, word_count, word_size);
+	}
+	
 	public ICommand<MIDataWriteMemoryInfo> createMIDataWriteMemory(IDMContext ctx, long offset, String address, 
 			int wordFormat, int wordSize, String value) {
 		return new MIDataWriteMemory(ctx, offset, address, wordFormat, wordSize, value);

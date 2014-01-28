@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
+ *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.memory.traditional;
@@ -1616,8 +1617,12 @@ abstract class CopyAction extends Action
 //                    : 0);
 
             final int columns = fRendering.getColumnCount();
-
-            BigInteger lengthToRead = end.subtract(start);
+            int addressableSize = fRendering.getAddressableSize();
+            assert(addressableSize != 0);
+            
+            int addressesPerColumn = bytesPerColumn/addressableSize;
+            
+            BigInteger lengthToRead = end.subtract(start).multiply(BigInteger.valueOf(addressableSize));
 
             int rows = lengthToRead.divide(
                 BigInteger.valueOf(columns * bytesPerColumn)).intValue();
@@ -1630,7 +1635,7 @@ abstract class CopyAction extends Action
             for(int row = 0; row < rows; row++)
             {
                 BigInteger rowAddress = start.add(BigInteger.valueOf(row
-                    * columns * bytesPerColumn));
+                    * columns * addressesPerColumn));
 
                 if(copyAddress)
                 {
@@ -1643,7 +1648,7 @@ abstract class CopyAction extends Action
                     for(int col = 0; col < columns; col++)
                     {
                         BigInteger cellAddress = rowAddress.add(BigInteger
-                            .valueOf(col * bytesPerColumn));
+                            .valueOf(col * addressesPerColumn));
 
                         if(cellAddress.compareTo(end) < 0)
                         {
@@ -1685,7 +1690,7 @@ abstract class CopyAction extends Action
                     for(int col = 0; col < columns; col++)
                     {
                         BigInteger cellAddress = rowAddress.add(BigInteger
-                            .valueOf(col * fRendering.getBytesPerColumn()));
+                            .valueOf(col * addressesPerColumn));
 
                         if(cellAddress.compareTo(end) < 0)
                         {

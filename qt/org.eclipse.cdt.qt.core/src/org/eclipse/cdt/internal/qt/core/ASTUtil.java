@@ -130,7 +130,7 @@ public class ASTUtil {
 		if (node instanceof IASTIdExpression)
 			return getBaseType((IASTIdExpression) node);
 		if (node instanceof IASTFunctionCallExpression)
-			return getReceiverType((IASTFunctionCallExpression) node);
+			return getBaseType((IASTFunctionCallExpression) node);
 		if (node instanceof IASTExpression)
 			return getBaseType(((IASTExpression) node).getExpressionType());
 

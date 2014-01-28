@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Texas Instruments, Freescale Semiconductor and others.
+ * Copyright (c) 2010, 2014 Texas Instruments, Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,8 @@ import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlockRetrieval;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlock.MemorySpaceDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBMemory2;
 import org.eclipse.cdt.dsf.service.DsfServices;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
@@ -181,7 +183,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 		 * same memory block, a trip to the target could result. However,
 		 * the memory request cache should save the day.
 		 */
-		return new GdbMemoryBlock(this, memoryDmc, getModelId(), expression, blockAddress, getAddressableSize(), 0, memorySpaceID);
+		return new GdbMemoryBlock(this, memoryDmc, getModelId(), expression, blockAddress, getAddressableSize(memoryDmc, memorySpaceID), 0, memorySpaceID);
 	}
 
 	/*
@@ -363,7 +365,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
                         }
 
                         BigInteger blockAddress = new BigInteger(address);
-                        DsfMemoryBlock block = new GdbMemoryBlock(this, memoryCtx, getModelId(), label, blockAddress, getAddressableSize(), 0, memorySpaceID);
+                        DsfMemoryBlock block = new GdbMemoryBlock(this, memoryCtx, getModelId(), label, blockAddress, getAddressableSize(memoryCtx, memorySpaceID), 0, memorySpaceID);
                         blocks.add(block);
                     }
                 }
@@ -383,4 +385,29 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
         }
 		return false;
 	}
+	
+	private int getAddressableSize(IMemoryDMContext aContext, String memorySpaceID) {
+		IGDBMemory2 memoryService = (IGDBMemory2) getServiceTracker()
+				.getService();
+		
+		if (memoryService != null && aContext != null) {
+			IMemoryDMContext context = resolveMemSpaceContext(aContext, memorySpaceID);
+			return memoryService.getAddressableSize(context);
+		}
+		
+		return super.getAddressableSize();
+	}
+	
+	private IMemoryDMContext resolveMemSpaceContext(IMemoryDMContext aContext, String aMemorySpaceID) {
+		IMemoryDMContext context = aContext;
+		if (aMemorySpaceID != null && aMemorySpaceID.length() > 0) {
+			IMemorySpaces memorySpacesService = (IMemorySpaces) getMemorySpaceServiceTracker().getService();
+			if (memorySpacesService != null) {
+				context = new MemorySpaceDMContext(memorySpacesService.getSession().getId(), aMemorySpaceID, aContext);
+			}
+		}
+
+		return context;
+	}
+	
 }

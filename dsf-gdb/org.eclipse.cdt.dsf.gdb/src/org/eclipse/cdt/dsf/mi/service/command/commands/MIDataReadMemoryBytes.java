@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 CodeSourcery and others.
+ * Copyright (c) 2010, 2014 CodeSourcery and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Vladimir Prus (CodeSourcery) - Initial API and implementation
+ *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
@@ -37,13 +38,24 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  */                       
 public class MIDataReadMemoryBytes extends MICommand<MIDataReadMemoryBytesInfo> {
 	
+	private static final int DEFAULT_ADDRESSABLE_SIZE = 1;
 	private int fSize;
+	private int fword_size;
 
 	public MIDataReadMemoryBytes(IDMContext ctx, String address, long offset,
 			int num_bytes) {
+		this(ctx, address, offset, num_bytes, DEFAULT_ADDRESSABLE_SIZE);
+	}
+	
+	/**
+	 * @since 4.4
+	 */
+	public MIDataReadMemoryBytes(IDMContext ctx, String address, long offset,
+			int num_bytes, int word_size) {
 		super(ctx, "-data-read-memory-bytes"); //$NON-NLS-1$
 		
 		fSize = num_bytes;
+		fword_size = word_size;
 
 		if (offset != 0) {
 			setOptions(new String[] { "-o", Long.toString(offset) }); //$NON-NLS-1$
@@ -54,6 +66,6 @@ public class MIDataReadMemoryBytes extends MICommand<MIDataReadMemoryBytesInfo> 
 
 	@Override
 	public MIDataReadMemoryBytesInfo getResult(MIOutput out) {
-		return new MIDataReadMemoryBytesInfo(out, fSize);
+		return new MIDataReadMemoryBytesInfo(out, fSize, fword_size);
 	}
 }

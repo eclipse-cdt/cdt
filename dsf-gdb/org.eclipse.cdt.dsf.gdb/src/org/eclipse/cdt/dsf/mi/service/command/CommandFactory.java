@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug (323552)
  *     Philippe Gil (AdaCore) - Add show/set language CLI commands (Bug 421541)
  *     Dmitry Kozlov (Mentor Graphics) - New trace-related methods (Bug 390827)
+ *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -43,141 +44,12 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIAttach;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLICatch;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIDetach;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIExecAbort;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoBreak;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoProgram;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoSharedLibrary;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoThreads;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIJump;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIMaintenance;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIPasscount;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIRecord;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIRemoteGet;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIShowEndian;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLISource;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIThread;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLITrace;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLITraceDump;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIUnsetEnv;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIAddInferior;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakAfter;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakCommands;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakCondition;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDelete;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDisable;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakEnable;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakList;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakPasscount;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakWatch;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataDisassemble;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataEvaluateExpression;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataListRegisterNames;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataListRegisterValues;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataReadMemory;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataReadMemoryBytes;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataWriteMemory;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataWriteMemoryBytes;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnablePrettyPrinting;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentCD;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentDirectory;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecArguments;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecFinish;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecInterrupt;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecJump;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecNext;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecNextInstruction;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReturn;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseContinue;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseNext;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseNextInstruction;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseStep;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseStepInstruction;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecRun;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStep;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStepInstruction;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUncall;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUntil;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIFileExecAndSymbols;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIFileExecFile;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIFileSymbolFile;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBExit;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSet;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetArgs;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetAutoSolib;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetBreakpointPending;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetCharset;
+import org.eclipse.cdt.dsf.mi.service.command.commands.*;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIAddressableSizeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetCircularTraceBuffer;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDetachOnFork;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDisconnectedTracing;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetHostCharset;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetLanguage;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetNonStop;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPagination;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPrintObject;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPrintSevenbitStrings;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPythonPrintStack;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSchedulerLocking;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibAbsolutePrefix;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibSearchPath;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetAsync;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetCharset;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetWideCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTraceNotes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTraceUser;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowExitCode;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowLanguage;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIInfoOs;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExec;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsole;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsoleKill;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIListFeatures;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIListThreadGroups;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIRemoveInferior;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackInfoDepth;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackListArguments;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackListFrames;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackListLocals;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackSelectFrame;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetAttach;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetDetach;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetDisconnect;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetDownload;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetSelect;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetSelectCore;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetSelectTFile;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIThreadInfo;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIThreadListIds;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIThreadSelect;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceDefineVariable;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceFind;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceFindFrameNumber;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceFindNone;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceListVariables;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceSave;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceStart;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceStatus;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceStop;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarAssign;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarCreate;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarDelete;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarEvaluateExpression;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarInfoExpression;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarInfoNumChildren;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarInfoPathExpression;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarInfoType;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarListChildren;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarSetFormat;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarSetUpdateRange;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowAttributes;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowFormat;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarUpdate;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLICatchInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoBreakInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoProgramInfo;
@@ -235,6 +107,13 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarUpdateInfo;
  * @since 3.0
  */
 public class CommandFactory {
+
+	/**
+	 * @since 4.4
+	 */
+	public ICommand<CLIAddressableSizeInfo> createCLIAddressableSize(IMemoryDMContext ctx) {
+		return new CLIAddressableSize(ctx);
+	}
 
 	public ICommand<MIInfo> createCLIAttach(IDMContext ctx, int pid) {
 		return new CLIAttach(ctx, pid);
@@ -475,6 +354,14 @@ public class CommandFactory {
 		return new MIDataReadMemoryBytes(ctx, address, offset, num_bytes);
 	}
 
+	/**
+	 * @since 4.4
+	 */
+	public ICommand<MIDataReadMemoryBytesInfo> createMIDataReadMemoryBytes(IDMContext ctx, String address, 
+			long offset, int num_bytes, int word_size) {
+		return new MIDataReadMemoryBytes(ctx, address, offset, num_bytes, word_size);
+	}
+	
 	public ICommand<MIDataWriteMemoryInfo> createMIDataWriteMemory(IDMContext ctx, long offset, String address, 
 			int wordFormat, int wordSize, String value) {
 		return new MIDataWriteMemory(ctx, offset, address, wordFormat, wordSize, value);

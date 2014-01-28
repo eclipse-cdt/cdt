@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2010 CodeSourcery and others.
+ * Copyright (c) 2010, 2014 CodeSourcery and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Vladimir Prus (CodeSourcery) - Initial API and implementation     
+ *     Vladimir Prus (CodeSourcery) - Initial API and implementation
+ *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)     
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -25,12 +26,25 @@ import org.eclipse.debug.core.model.MemoryByte;
  */
 public class MIDataReadMemoryBytesInfo extends MIInfo {
 	
+	/**
+	 * Default Addressable size in octets
+	 */
+	private static final int DEFAULT_WORD_SIZE = 1;
 	/* The cached memory block.  */
 	private MemoryByte[] fBlock = null;
 
 	public MIDataReadMemoryBytesInfo(MIOutput output, int size) {
+		this(output, size, DEFAULT_WORD_SIZE);
+	}
+	
+	/**
+	 * @param size - Addressable units 
+	 * @param word_size - Addressable size in octets
+	 * @since 4.4
+	 */
+	public MIDataReadMemoryBytesInfo(MIOutput output, int size, int word_size) {
 		super(output);
-		parse(size);
+		parse(size, word_size);
 	}
 		
 	/**
@@ -40,11 +54,11 @@ public class MIDataReadMemoryBytesInfo extends MIInfo {
 		return fBlock;		
 	}
 	
-	private void parse(int size)
+	private void parse(int size, int word_size)
 	{		
-		fBlock = new MemoryByte[size];
+		fBlock = new MemoryByte[size*word_size];
 		// Fill the block with invalid bytes, initially.
-		for (int i = 0; i < size; i++)
+		for (int i = 0; i < fBlock.length; i++)
 			fBlock[i] = new MemoryByte((byte) 0, (byte) 0);
 
 		MIResult[] results = getMIOutput().getMIResultRecord().getMIResults();
@@ -72,9 +86,9 @@ public class MIDataReadMemoryBytesInfo extends MIInfo {
 							}
 						}
 
-						if (offset + contents.length()/2 <= size)
+						if (offset*word_size + contents.length()/2 <= size*word_size)
 							for (int k = 0; k < contents.length() / 2; ++k) {
-								fBlock[offset + k] = new MemoryByte(
+								fBlock[offset*word_size + k] = new MemoryByte(
 										(byte) Integer.parseInt(
 												contents.substring(k * 2, k * 2 + 2),
 												16));

@@ -1616,8 +1616,12 @@ abstract class CopyAction extends Action
 //                    : 0);
 
             final int columns = fRendering.getColumnCount();
-
-            BigInteger lengthToRead = end.subtract(start);
+            int addressableSize = fRendering.getAddressableSize();
+            assert(addressableSize != 0);
+            
+            int addressesPerColumn = bytesPerColumn/addressableSize;
+            
+            BigInteger lengthToRead = end.subtract(start).multiply(BigInteger.valueOf(addressableSize));
 
             int rows = lengthToRead.divide(
                 BigInteger.valueOf(columns * bytesPerColumn)).intValue();
@@ -1630,7 +1634,7 @@ abstract class CopyAction extends Action
             for(int row = 0; row < rows; row++)
             {
                 BigInteger rowAddress = start.add(BigInteger.valueOf(row
-                    * columns * bytesPerColumn));
+                    * columns * addressesPerColumn));
 
                 if(copyAddress)
                 {
@@ -1643,7 +1647,7 @@ abstract class CopyAction extends Action
                     for(int col = 0; col < columns; col++)
                     {
                         BigInteger cellAddress = rowAddress.add(BigInteger
-                            .valueOf(col * bytesPerColumn));
+                            .valueOf(col * addressesPerColumn));
 
                         if(cellAddress.compareTo(end) < 0)
                         {
@@ -1685,7 +1689,7 @@ abstract class CopyAction extends Action
                     for(int col = 0; col < columns; col++)
                     {
                         BigInteger cellAddress = rowAddress.add(BigInteger
-                            .valueOf(col * fRendering.getBytesPerColumn()));
+                            .valueOf(col * addressesPerColumn));
 
                         if(cellAddress.compareTo(end) < 0)
                         {

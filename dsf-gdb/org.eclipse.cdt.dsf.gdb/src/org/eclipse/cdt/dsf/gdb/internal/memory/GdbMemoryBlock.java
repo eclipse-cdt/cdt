@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, Texas Instruments, Freescale Semiconductor and others.
+ * Copyright (c) 2010, 2014 Texas Instruments, Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Texas Instruments, Freescale Semiconductor - initial API and implementation
+ *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.memory;
 
@@ -117,12 +118,12 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 	 * asynchronous calls to complete before returning.
 	 * 
 	 * @param bigAddress 
-	 * @param length 
-	 * @return MemoryByte[] 
+	 * @param count - The number of addressable units for this block
+	 * @return MemoryByte[]
 	 * @throws DebugException
 	 */
     @Override
-	protected MemoryByte[] fetchMemoryBlock(BigInteger bigAddress, final long length) throws DebugException {
+	protected MemoryByte[] fetchMemoryBlock(BigInteger bigAddress, final long count) throws DebugException {
 
     	// For the IAddress interface
     	final Addr64 address = new Addr64(bigAddress);
@@ -159,7 +160,7 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 			    if (memoryService != null) {
 			        // Go for it
 			        memoryService.getMemory( 
-			        	context, address, 0, addressableSize, (int) length,
+			        	context, address, 0, addressableSize, (int) count,
 			            //getContext(), address, 0, addressableSize, (int) length,
 			            new DataRequestMonitor<MemoryByte[]>(retrieval.getExecutor(), drm) {
 			                @Override
@@ -206,6 +207,12 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {
 				GdbMemoryBlockRetrieval retrieval = (GdbMemoryBlockRetrieval)getMemoryBlockRetrieval();
 				int addressableSize = 1;
+				try {
+					addressableSize = getAddressableSize();
+				} catch (DebugException e) {}
+				
+				int addressableUnits = bytes.length/addressableSize;
+				
 				// If this block was created with a memory space qualification,
 				// we need to create an enhanced context
 				IMemoryDMContext context = null;
@@ -227,7 +234,7 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 			    if (memoryService != null) {
 			        // Go for it
 	    	        memoryService.setMemory(
-		    	  	      context, address, offset, addressableSize, bytes.length, bytes,
+		    	  	      context, address, offset, addressableSize, addressableUnits, bytes,
 		    	  	      new RequestMonitor(retrieval.getExecutor(), drm));
 			    }
 			    else {
@@ -293,7 +300,7 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 		
 		throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, Messages.Err_MemoryServiceNotAvailable, null));
 	}
-
+	
 	@Override
 	@DsfServiceEventHandler
 	public void eventDispatched(ISuspendedDMEvent e) {

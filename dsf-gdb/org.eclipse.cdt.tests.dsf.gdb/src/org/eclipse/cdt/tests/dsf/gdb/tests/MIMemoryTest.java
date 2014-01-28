@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Ericsson and others.
+ * Copyright (c) 2007, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson	AB		- Initial Implementation
+ *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
@@ -530,16 +531,9 @@ public class MIMemoryTest extends BaseTestCase {
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
-		String expected = "Word size not supported (!= 1)";
+		String expected = "Word size not supported (< 1)";
 		fWait.waitReset();
 		readMemory(fMemoryDmc, fBaseAddress, offset, 0, count);
-		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-		assertFalse(fWait.getMessage(), fWait.isOK());
-		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-				fWait.getMessage().contains(expected));
-
-		fWait.waitReset();
-		readMemory(fMemoryDmc, fBaseAddress, offset, 2, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
@@ -823,16 +817,9 @@ public class MIMemoryTest extends BaseTestCase {
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
-		String expected = "Word size not supported (!= 1)";
+		String expected = "Word size not supported (< 1)";
 		fWait.waitReset();
 		writeMemory(fMemoryDmc, fBaseAddress, offset, 0, count, buffer);
-		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-		assertFalse(fWait.getMessage(), fWait.isOK());
-		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-				fWait.getMessage().contains(expected));
-
-		fWait.waitReset();
-		writeMemory(fMemoryDmc, fBaseAddress, offset, 2, count, buffer);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
@@ -1184,16 +1171,9 @@ public class MIMemoryTest extends BaseTestCase {
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
-		String expected = "Word size not supported (!= 1)";
+		String expected = "Word size not supported (< 1)";
 		fWait.waitReset();
 		fillMemory(fMemoryDmc, fBaseAddress, offset, 0, count, pattern);
-		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-		assertFalse(fWait.getMessage(), fWait.isOK());
-		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-				fWait.getMessage().contains(expected));
-
-		fWait.waitReset();
-		fillMemory(fMemoryDmc, fBaseAddress, offset, 2, count, pattern);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",

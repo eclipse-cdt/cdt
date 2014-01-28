@@ -66,7 +66,9 @@ public class QtFunctionCallUtil {
 	 * and false otherwise.
 	 */
 	public static boolean isQObjectFunctionCall(IASTCompletionContext astContext, boolean isPrefix, IASTName name) {
-		if (name == null)
+		if (name == null
+		 || name.getSimpleID() == null
+		 || name.getSimpleID().length <= 0)
 			return false;
 
 		// Bug332201: Qt content assist should always be applied to the most specific part of
@@ -79,14 +81,6 @@ public class QtFunctionCallUtil {
 
 		return false;
 	}
-
-	/**
-	 * Returns true if the given function call argument is a SIGNAL or SLOT expansion
-	 * and false otherwise.
-	public static boolean isQtMethodExpansion(IASTInitializerClause arg) {
-		return MethodRegex.matcher(arg.getRawSignature()).matches();
-	}
-	 */
 
 	/**
 	 * If the given argument is a SIGNAL or SLOT expansion then find and return the node in the AST

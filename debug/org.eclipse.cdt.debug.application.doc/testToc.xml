@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="Test TOC" topic="html/toc.html">
+<toc label="Stand-alone Debugger User Guide" topic="html/toc.html">
 	<link toc="toc.xml" />
 </toc>

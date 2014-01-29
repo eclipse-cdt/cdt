@@ -11,5 +11,20 @@
                 <topic label="Debug overview" href="concepts/cdt_c_over_dbg.htm"/>
                 <topic label="Debug information" href="concepts/cdt_c_dbg_info.htm"/>
         </topic>
+	<topic label="Views in the C/C++ perspective" href="concepts/cdt_c_views.htm"/> 
+	<topic label="Code aids" href="concepts/cdt_o_code_entry.htm">
+		<topic label="Comments" href="concepts/cdt_c_comments.htm"/>
+		<topic label="Content Assist" href="concepts/cdt_c_content_assist.htm"/>
+		<topic label="Templates" href="concepts/cdt_c_templates.htm"/> 
+	</topic>
+	<topic label="Editing C/C++ files" href="concepts/cdt_o_edit.htm"> 
+		<topic label="C/C++ editor" href="concepts/cdt_c_editor.htm"/>
+	</topic>
+	<topic label="Navigation aids" href="concepts/cdt_o_nav.htm"> 
+		<topic label="Outline View" href="concepts/cdt_c_outlineview.htm"/> 
+		<topic label="Project File views" href="concepts/cdt_c_proj_file_views.htm"/> 
+		<topic label="C/C++ Search" href="concepts/cdt_c_search.htm"/> 
+		<topic label="Open Declaration" href="concepts/cdt_c_open_declarations.htm"/>
+	</topic>
    </topic>
 </toc>

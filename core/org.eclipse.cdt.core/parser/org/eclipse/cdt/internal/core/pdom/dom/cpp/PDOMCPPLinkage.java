@@ -1092,11 +1092,27 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					bases= ((ICPPClassType) classBinding).getBases();
 				}
 				if (bases.length > 0) {
+					// Bug 426648: In some cases, e.g., when the template is specialized more than once,
+					//             the previous implementation of this code doubled the size of the bases
+					//             array on each call.  This happened because the #resolveBinding for the
+					//             AST would return the PDOMBinding that was created for the previous
+					//             specialization.  We now avoid creating new bases if the specialization
+					//             already has a base spec list.
+					// NOTE: This isn't the right solution either.  It is possible for the class to be
+					//       specialized in a different way each time.  E.g., with B1 as the base class
+					//       in one instance and B2 in the other.  However, this solution does match other
+					//       parts of the indexer that ignore all but the first definition.
 					PDOMBinding pdomBinding = pdomName.getBinding();
 					if (pdomBinding instanceof PDOMCPPClassType) {
-						((PDOMCPPClassType) pdomBinding).addBases(pdomName, bases);
+						PDOMCPPClassType pdomClass = (PDOMCPPClassType) pdomBinding;
+						ICPPBase[] existingBases = pdomClass.getBases();
+						if (existingBases == null || existingBases.length <= 0)
+							pdomClass.addBases(pdomName, bases);
 					} else if (pdomBinding instanceof PDOMCPPClassSpecialization) {
-						((PDOMCPPClassSpecialization) pdomBinding).addBases(pdomName, bases);
+						PDOMCPPClassSpecialization pdomSpec = (PDOMCPPClassSpecialization) pdomBinding;
+						ICPPBase[] existingBases = pdomSpec.getBases();
+						if (existingBases == null || existingBases.length <= 0)
+							pdomSpec.addBases(pdomName, bases);
 					}
 				}
 			}

@@ -3199,3 +3199,19 @@ void foo();
 =>leading
 =>trailing
 =>freestanding
+//!CommentRecognition comment in empty compound statement width include guard
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+void foo() {
+  // comment in body
+}
+#endif
+//=
+=>leading
+=>trailing
+=>freestanding
+{
+  // comment in body
+} = // comment in body

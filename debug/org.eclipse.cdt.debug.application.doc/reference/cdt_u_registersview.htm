@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Registers view</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+</head>
+<body>
+
+<div role="main"><h1>Registers view</h1>
+
+<p>The <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.debug.ui.RegisterView)")'>Registers</a> view of the Debug perspective lists information about the registers in a selected stack frame. 
+Values that have changed are highlighted in the Registers view when your program 
+stops. </p>
+<p><img src="../images/view_registers.png" width="414" height="269" alt="Registers View"></p>
+
+  <h2>Registers view toolbar options</h2>
+  <p>The table below lists the icons displayed in the Registers view toolbar.</p>
+  <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#999999" width="600">
+    <tr>
+      <th style="width:5%; height:35" id="icon"><strong>Icon</strong></th>
+      <th style="width:25%" id="name"><strong>Name</strong></th>
+      <th style="width:70%" id="description"><strong>Description</strong></th>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon"><div style="text-align:center;"><img src="../images/icon_show_type_names.png"  alt="Show Type Names icon" width="21" height="21"></div></td>
+      <td valign="top" headers="name"><div style="text-align:left"><strong>Show Type Names</strong> </div></td>
+      <td valign="top" headers="description"><div style="text-align:left">Displays the type, (such as <strong>int</strong>) beside each register value.</div></td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon"><div style="text-align:center;"><img src="../images/icon_show_logical_struct.png" alt="Show Logical Structure icon" width="22" height="21"></div></td>
+      <td valign="top" headers="name"><div style="text-align:left"><strong>Show Logical Structure </strong></div></td>
+      <td valign="top" headers="description"><div style="text-align:left">Changes if logical structures should be shown in the view or not. </div></td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon"><div style="text-align:center;"><img src="../images/icon_collapse_all.png" alt="Collapse All icon" width="22" height="22"></div></td>
+      <td valign="top" headers="name"><div style="text-align:left"><strong>Collapse All </strong></div></td>
+      <td valign="top" headers="description"><div style="text-align:left">Collapses all the the currently expanded registers.</div></td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon"><div style="text-align:center;"><img src="../images/icon_menu_white.png" alt="Menu Layout icon" width="24" height="19"></div></td>
+      <td valign="top" headers="name"><strong>View Menu &gt; Layout</strong></td>
+      <td valign="top" headers="description">Provides multiple layout options for the Registers view. </td>
+    </tr>
+  </table>
+
+  <h2>Registers view context menu commands </h2>
+  <p>The Registers view context menu commands   include:</p>
+  <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#999999" width="600">
+    <tr>
+      <th style="width:5%" id="icon2"><div style="text-align:center;"><strong>Icon</strong></div></th>
+      <th style="width:25%" id="name2"><div style="text-align:center;"><strong>Name</strong></div></th>
+      <th style="width:70%" id="description2"><div style="text-align:center;"><strong>Description</strong></div></th>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"></div></td>
+      <td valign="top" headers="name2"><strong>Add Register Group </strong></td>
+      <td valign="top" headers="description2">Open the <strong>Register Group</strong> dialog which allows you to define a register group that is shown in the Registers view. </td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"></div></td>
+      <td valign="top" headers="name2"><strong>Assign Value </strong></td>
+      <td valign="top" headers="description2">Assigns a value to the selected register. </td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"><img src="../images/icon_reg_cast_to_type.png" alt="Cast to Type icon" width="22" height="22"></div></td>
+      <td valign="top" headers="name2"><strong>Cast To Type... </strong></td>
+      <td valign="top" headers="description2">Open the <strong>Cast To Type</strong> dialog. </td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"><img src="../images/icon_reg_change_value.png" alt="Change Value icon" width="23" height="22"></div></td>
+      <td valign="top" headers="name2"><strong>Change Value... </strong></td>
+      <td valign="top" headers="description2">Open the <strong>Set Value</strong> dialog to change the selected registers value. </td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"></div></td>
+      <td valign="top" headers="name2"><strong>Content Assist </strong></td>
+      <td valign="top" headers="description2">Opens a content assist dialog at the current cursor position.</td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"></div></td>
+      <td valign="top" headers="name2"><strong>Copy</strong></td>
+      <td valign="top" headers="description2">Copies the currently selected text or elements to the clipboard </td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"><img src="../images/icon_reg_copy_registers.png" alt="Copy Registers icon" width="23" height="22"></div></td>
+      <td valign="top" headers="name2"><div style="text-align:left"><strong>Copy Registers</strong> </div></td>
+      <td valign="top" headers="description2">Copies the register names and contents  to the  clipboard </td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"><img src="../images/icon_reg_create_watch_expr.png" alt="Create Watch Expression icon" width="24" height="22"></div></td>
+      <td valign="top" headers="name2"><strong>Create Watch Expression </strong></td>
+      <td valign="top" headers="description2">Converts the selected register  into a watch expression.</td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"></div></td>
+      <td valign="top" headers="name2"><strong>Cut</strong></td>
+      <td valign="top" headers="description2">Copies the currently selected text or element to the clipboard and removes the element.</td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"><img src="../images/icon_reg_disable.png" alt="Disable icon" width="22" height="21"></div></td>
+      <td valign="top" headers="name2"><strong>Disable</strong></td>
+      <td valign="top" headers="description2">Disables the selected register. </td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"><img src="../images/icon_reg_display_array.png" alt="Display as Array icon" width="22" height="21"></div></td>
+      <td valign="top" headers="name2"><strong>Display As Array...</strong></td>
+      <td valign="top" headers="description2">Open the <strong>Display As Array</strong> dialog which allows you to specify the start and length of the array. </td>
+    </tr>
+    <tr>
+      <td valign="top" headers="description2">&nbsp;</td>
+      <td valign="top" headers="name2"><strong>Edit Register Group </strong></td>
+      <td valign="top" headers="description2">Open the <strong>Register Group</strong> dialog to edit the selected register group. </td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"><img src="../images/icon_reg_enable.png" alt="Enable icon" width="22" height="21"></div></td>
+      <td valign="top" headers="name2"><div style="text-align:left"><strong>Enable</strong></div></td>
+      <td valign="top" headers="description2">Enables the selected register. </td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"></div></td>
+      <td valign="top" headers="name2"><strong>Find...</strong></td>
+      <td valign="top" headers="description2">Open the <strong>Find</strong> dialog which allows you to find specific elements within the view.</td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"></div></td>
+      <td valign="top" headers="name2"><strong>Find/Replace</strong></td>
+      <td valign="top" headers="description2">Open the <strong>Find / Replace</strong> dialog.</td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"></div></td>
+      <td valign="top" headers="name2"><strong>Format</strong></td>
+      <td valign="top" headers="description2">Select a format type. Choices include: Default, Decimal, Hexadecimal, Octal or Binary. </td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"></div></td>
+      <td valign="top" headers="name2"><strong>Max Length... </strong></td>
+      <td valign="top" headers="description2">Open the <strong>Configure Details Pane</strong> dialog to set the maximum number of characters to display. Default is 10000. </td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"></div></td>
+      <td valign="top" headers="name2"><strong>Paste</strong></td>
+      <td valign="top" headers="description2">Paste the current clipboard content as text.</td>
+    </tr>
+    <tr>
+      <td valign="top" headers="description2">&nbsp;</td>
+      <td valign="top" headers="name2"><strong>Remove Register Group </strong></td>
+      <td valign="top" headers="description2">Removes the currently selected register group. </td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"></div></td>
+      <td valign="top" headers="name2"><strong>Restore Default Register Groups</strong></td>
+      <td valign="top" headers="description2">Restores the original register groups. </td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"></div></td>
+      <td valign="top" headers="name2"><strong>Restore Original Type </strong></td>
+      <td valign="top" headers="description2">Returns the selected register to the original type. </td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"></div></td>
+      <td valign="top" headers="name2"><strong>Select All </strong></td>
+      <td valign="top" headers="description2">Select all the editor content.</td>
+    </tr>
+    <tr>
+      <td valign="top" headers="icon2"><div style="text-align:center;"></div></td>
+      <td valign="top" headers="name2"><strong>Wrap Text </strong></td>
+      <td valign="top" headers="description2">Activate to wrap the text contents within the visible area of the Details pane of the Registers view. </td>
+    </tr>
+  </table>
+
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<br>
+<a href="../concepts/cdt_c_dbg_info.htm">Debug information</a></p>
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<br>
+<a href="../tasks/cdt_t_registers.htm">Working with registers</a></p>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<a href="cdt_o_views.htm">C/C++ Views</a></p>
+<hr >
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" > 
+
+</div></body>
+
+</html>

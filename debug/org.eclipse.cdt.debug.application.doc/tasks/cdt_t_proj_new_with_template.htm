@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Creating a project</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+
+<body>
+
+<div role="main"><h1>Creating a project via a project template</h1>
+
+<p>From CDT 4.0 its possible to create projects based upon templates defined by the IDE supplier. What this means is
+that you can easily create a project which contains customized source code and is ready for use in a few clicks. Some
+aspects of the generated project may be customized by the user as part of the new project wizard.</p>
+
+<p>To create a project from a template:</p>
+
+<ol>
+  
+  <li>Click <strong>File &gt; New &gt; C Project</strong> or <strong>File &gt; New &gt; C++ Project</strong>.
+  <br>
+  <br>
+  <img src="../images/cdt_t_proj_new_with_template_1.png" alt="File &gt;New &gt; C++ Project">
+  <br>
+  </li>
+  
+  <li>The wizard will open as shown below.<br>
+  Expand the project type that you are interested in. For more information on project types, see <a href="cdt_t_proj_platf.htm">Selecting a 
+  project type</a> This shows the template projects that you can use as a basis
+  for your new project. CDT comes with some simple templates, but ISVs can add further templates by using the
+  <em>org.eclipse.cdt.core.templates</em> extension point.<br>
+  In the <strong>Project Name</strong> box, type a name. The example uses &quot;HelloWorld&quot;
+  <br>
+  <br>
+  <img src="../images/cdt_t_proj_new_with_template_2.png" alt="New Project Wizard">
+  <br>
+  </li>
+  
+  <li>Click <strong>Next</strong>.</li>
+  <li>The next page is dependent on the type of template you selected. It will consist of a number of input fields, maybe with
+  default values, that will be fed into the template you create.
+  <br>
+  <br>
+  <img src="../images/cdt_t_proj_new_with_template_3.png" alt="New Project Wizard">
+  <br>
+  </li>
+  
+  <li>This last page &quot;Select Configurations&quot; can be skipped, or allows further project configuration in the same way as non-template-based projects.
+  <br>
+  <br>
+  <img src="../images/cdt_t_proj_new_with_template_4.png" alt="New Project Wizard">
+  <br>
+  </li>
+  <li>To create your project, click <strong>Finish</strong>.
+  
+  <li>In the Project Explorer you will see that the new project has been created. You will see that the source file has
+  been customized with the values you entered earlier in the wizard.
+  <br>
+  <br>
+  <img src="../images/cdt_t_proj_new_with_template_5.png" alt="The project created by the wizard">
+  <br>
+  </li>
+  
+  <li>Sometimes values you enter into the template wizard will be remembered between sessions in order that you do not
+  need enter them each time. If you want to change these you can use <strong>Window &gt; Preferences &gt; C/C++ &gt; Template Default Values</strong>
+  <br>
+  <br>
+  <img src="../images/cdt_t_proj_new_with_template_6.png" alt="New Project Wizard">
+  <br>
+  </li>
+</ol>
+
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<br><a href="../concepts/cdt_c_projects.htm">CDT Projects</a>
+<br><a href="../concepts/cdt_c_proj_file_views.htm">Project file views</a></p>
+
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21"> 
+<br><a href="cdt_o_proj_files.htm">Working with C/C++ project files</a>
+<br><a href="cdt_t_proj_new.htm">Creating a project</a></p>
+
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br><a href="../reference/cdt_u_properties.htm">Project properties</a>
+<br><a href="../reference/cdt_o_views.htm">Views</a></p>
+
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
+</div></body>
+
+</html>

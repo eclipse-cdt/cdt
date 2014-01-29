@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>C/C++ Project Properties, Resource</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+<body>
+<div role="main"><h1>C/C++ Project Properties, Resource</h1>
+<p>Shows resource information for the selected type.</p>
+<br>
+<p><img img="" src="../images/prop_resource.png"
+ alt="C/C++ Project Properties, Resource"></p>
+ <p></p>
+<table cellpadding="5" cellspacing="0" border="1" >
+	<br>
+		<caption><strong>Resource properties</strong></caption>
+	<br>	
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody> 
+		<tr class="hidden">
+			<th id="property">Property</th>
+			<th id="description">Description</th>
+		</tr>
+		<tr>
+			<td headers="property"><strong>Path</strong></td>
+			<td headers="description">Specifies the location of the selected resource type within the workspace. For example, similar to folders, projects map to directories in the file system.</td>
+		</tr>
+		<tr>
+			<td headers="property"><strong>Type</strong></td>
+			<td headers="description">Indicates the type for the selected resource: <strong>Folder</strong>, <strong>Project</strong>, or <strong>File</strong>.</td>
+		</tr>
+				<tr>
+			<td headers="property"><strong>Location</strong></td>
+			<td headers="description">Specifics the location of the selected resource within the file system.</td>
+		</tr>
+        <tr>
+			<td headers="property"><strong>Last modified</strong></td>
+			<td headers="description">Shows the date that the selected resource was last modified.</td>
+		</tr>
+		<tr>
+			<td headers="property"><strong>Text file encoding</strong></td>
+			<td headers="description">Sets an alternate text encoding. Because text files are encoded differently (depending on the locale and platform), use the default text file encoding for the locale of your host operating system. However, if you want to work with text files that originate from another source (for example, to work with text files that use a different encoding scheme than your native one, so that you can easily exchange files with another team), choose <strong>Other</strong> and select an appropriate one from the list.</td>
+		</tr>
+		<tr>
+			<td headers="property"><strong>Inherited from container</strong></td>
+			<td headers="description">When enabled, the selected resource inherits the text encoding specified for it's container resource.</td>
+		</tr>
+		<tr>
+			<td headers="property"><strong>Other</strong></td>
+			<td headers="description">When enabled, the selected resource uses an alternate text encoding other than that specified for its container resource. You can enable this option if you want to work with text files that originate from another source (ones that use a different encoding scheme than your native one), so that you can easily exchange files with others.</td>
+		</td>
+		</tr>
+		<tr>
+			<td headers="property"><strong>New text file line delimiter</strong></td>
+			<td headers="description">Specifies the end of line character(s) to use for new text files being created.</td>
+		</tr>
+		<tr>
+			<td headers="property"><strong>Inherited from container</strong></td>
+			<td headers="description">When enabled, the selected resource inherits the character line ending for new text files specified for it's container resource.</td>
+		</tr>
+		<tr>
+			<td headers="property"><strong>Other</strong></td>
+			<td headers="description">When enabled, the selected resource uses an alternate end of line character(s) for new text files other than that specified for its container resource. For example, you can set the <strong>Text file encoding</strong> option to UTF-8, and then set the line endings character for new files to <strong>Unix</strong>, so that text files are saved in a format that is not specific to the Windows operating system, and the files can easily be shared amongst various developer systems.</td>
+		</td>
+		</tr>
+   </tbody>
+</table>
+
+<br>
+  <p><strong>Available for:</strong> Any projects, folders and files regardless of project kind.</p>
+
+<p><img src="../images/ngref.gif" alt="Related reference"
+ width="143" height="21"><br>
+
+<ul>
+<li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>
+<li><a href="cdt_u_prop_builders.htm">Project Properties, Builders page</a>
+<li><a href="cdt_u_prop_build.htm">Project Properties, C/C++ Build category</a>
+   <ul style="list-style-type: disc">
+   <li><a href="cdt_u_prop_build_discovery.htm">Discovery options page</a>
+   <li><a href="cdt_u_prop_build_environment.htm">Environment page</a>
+   <li>Settings page
+       <ul> 
+       <li><a href="cdt_u_prop_build_settings_tool.htm">     Tool Settings tab</a>
+       <li><a href="cdt_u_prop_build_settings_steps.htm">    Build Steps tab</a>
+       <li><a href="cdt_u_prop_build_settings_artifact.htm"> Build Artifact tab</a>
+       <li><a href="cdt_u_prop_build_settings_binparser.htm">Binary Parsers tab</a>
+       <li><a href="cdt_u_prop_build_settings_errparser.htm">Error Parsers tab</a>
+       </ul> 
+   <li><a href="cdt_u_prop_build_toolchain.htm">Tool chain editor page</a>
+   <li><a href="cdt_u_prop_build_variables.htm">Variables page</a>
+   </ul>
+<li>Project Properties, <a href="cdt_u_prop_general.htm">C/C++ General category</a>
+   <ul style="list-style-type: disc"> 
+   <li><a href="cdt_u_prop_general_doc.htm">Documentation page</a>
+   <li><a href="cdt_u_prop_general_typ.htm">File Types page</a>
+   <li><a href="cdt_u_prop_general_idx.htm">Indexer page</a>
+   <li><a href="cdt_u_prop_general_lng.htm">Language Mapping page</a>
+   <li>Paths and Symbols page
+       <ul>
+       <li><a href="cdt_u_prop_general_pns_inc.htm">Includes tab</a>
+       <li><a href="cdt_u_prop_general_pns_sym.htm">Symbols tab</a>
+       <li><a href="cdt_u_prop_general_pns_libpath.htm">Libraries path tab</a>
+       <li><a href="cdt_u_prop_general_pns_src.htm">Source Location tab</a>
+       <li><a href="cdt_u_prop_general_pns_ref.htm">References tab</a>
+       </ul>
+   </ul>
+<li><a href="cdt_u_prop_ref.htm">C/C++ Project Properties, Project References page</a>
+<li><a href="cdt_u_prop_refactoring_history.htm">C/C++ Project Properties, Refactoring History page</a>
+<li><a href="cdt_u_prop_rundebug.htm">C/C++ Project Properties, Run/Debug Settings page</a>
+</ul>
+</p>
+<p><img src="../images/intl_07.gif" ALT="Intel Copyright Statement" ></p>
+
+</div></body>
+</html>

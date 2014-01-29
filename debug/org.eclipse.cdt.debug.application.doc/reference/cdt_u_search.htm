@@ -1,0 +1,202 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+<head>
+  <meta content="en-us" http-equiv="Content-Language">
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <title>C/C++ search</title>
+  <link href="../help.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+<div role="main"><h1>C/C++ search</h1>
+<p><img alt="Search Dialog Box" src="../images/search.png"></p>
+<p> </p>
+<dl>
+<dt>Search string</dt>
+<dd>Specifies a search string.</dd>
+<dd>The search functions support the following wildcards:
+<ul>
+  <li>Use * to represent any series of characters</li>
+  
+  <li>Use ? to represent any single character</li>
+  
+  <li>Use \* to find an asterisk character (*)</li>
+  
+</ul>
+<br><br>
+</dd>
+
+<dt>Case sensitive</dt>
+<dd>Searches will return results which match capitalization specified
+in the search string precisely.<br>
+&nbsp;<br></dd>
+
+<dt>Search for</dt>
+<dd>Specify the types of elements to include in the search:</dd>
+<dd><br>
+</dd>
+<dd>
+  <table cellspacing="0" border="1">
+    <tbody>
+      <tr>
+        <th id="search">Search for</th>
+        <th id="description">Description</th>
+      </tr>
+      <tr>
+        <td headers="search"><strong>Class/Struct</strong></td>
+        <td headers="description">Includes classes and structs in your search.</td>
+      </tr>
+      <tr>
+        <td headers="search"><strong>Function</strong></td>
+        <td headers="description">Searches for global functions or functions in a namespace
+(functions that are not members of a class, struct, or union).</td>
+      </tr>
+      <tr>
+        <td headers="search"><strong>Variable</strong></td>
+        <td headers="description">Searches for variables that are not members of a class,
+struct, or union.</td>
+      </tr>
+      <tr>
+        <td headers="search"><strong>Union</strong></td>
+        <td headers="description">Searches for unions.</td>
+      </tr>
+      <tr>
+        <td headers="search"><strong>Method</strong></td>
+        <td headers="description">Searches for methods that are members of a class, struct,
+or union.</td>
+      </tr>
+      <tr>
+        <td headers="search"><strong>Field</strong></td>
+        <td headers="description">Searches for fields that are members of a class, struct, or
+union.</td>
+      </tr>
+      <tr>
+        <td headers="search"><strong>Enumeration</strong></td>
+        <td headers="description">Searches for enumerations.</td>
+      </tr>
+      <tr>
+        <td headers="search"><strong>Enumerator</strong></td>
+        <td headers="description">Searches for enumerators.</td>
+      </tr>
+      <tr>
+        <td headers="search"><strong>Namespace</strong></td>
+        <td headers="description">Searches for namespaces.</td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;" headers="search"><span
+ style="font-weight: bold;">Typedef</span><br>
+        </td>
+        <td style="vertical-align: top;" headers="description">Searches for typedef.<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;" headers="search"><span
+ style="font-weight: bold;">Macro</span><br>
+        </td>
+        <td style="vertical-align: top;" headers="description">Searches for macro.<br>
+        </td>
+      </tr>
+      <tr>
+        <td headers="search"><strong>Any Element</strong></td>
+        <td headers="description">Includes all elements in the search.</td>
+      </tr>
+    </tbody>
+  </table>
+  <br>
+</dd>
+
+<dt>Limit to</dt>
+<dd>Specify the types of context to search:</dd>
+<dd><br>
+</dd>
+<dd>
+  <table cellspacing="0" border="1">
+    <tbody>
+      <tr>
+        <th id="limit">Limit to</th>
+        <th id="description2">Description</th>
+      </tr>
+      <tr>
+        <td headers="limit"><strong>Declarations</strong></td>
+        <td headers="description2">Limits the search to declarations.</td>
+      </tr>
+      <tr>
+        <td headers="limit"><strong>Definitions</strong></td>
+        <td headers="description2">Limits the search to definitions (for functions, methods,
+variables, and fields).</td>
+      </tr>
+      <tr>
+        <td headers="limit"><strong>References</strong></td>
+        <td headers="description2">Limits the search to references.</td>
+      </tr>
+      <tr>
+        <td headers="limit"><strong>All Occurrences</strong></td>
+        <td headers="description2">Includes declarations, definitions, and references in the
+search.</td>
+      </tr>
+    </tbody>
+  </table><br>
+</dd>
+
+<dt>Scope</dt>
+<dd>Choose the scope of the search:</dd>
+<dd><br>
+</dd>
+<dd>
+  <table cellspacing="0" border="1">
+    <tbody>
+      <tr>
+        <th id="scope">Scope</th>
+        <th id="avail">Availability</th>
+        <th id="description3">Description</th>
+      </tr>
+      <tr>
+        <td headers="scope"><strong>Workspace</strong></td>
+        <td headers="avail">all elements</td>
+        <td headers="description3">Searches in the full workspace</td>
+      </tr>
+      <tr>
+        <td headers="scope"><strong>Selected Resources</strong></td>
+        <td headers="avail">all elements</td>
+        <td headers="description3">Searches the resources selected in the <strong>Projects</strong> view</td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;" headers="scope"><span
+ style="font-weight: bold;">Enclosing Projects</span><br>
+        </td>
+        <td style="vertical-align: top;" headers="avail">all elements<br>
+        </td>
+        <td style="vertical-align: top;" headers="description3">Searches in the enclosing
+projects (plus the include paths) of the selected resource <br>
+        </td>
+      </tr>
+      <tr>
+        <td headers="scope"><strong>Workings Set</strong></td>
+        <td headers="avail">all elements</td>
+        <td headers="description3">Searches in a working set</td>
+      </tr>
+    </tbody>
+  </table><br>
+</dd>
+
+<dd>Working sets can be created and used from within the search dialog.</dd>
+</dl>
+<p><img height="21" width="143" alt="Related concepts"
+ src="../images/ngconcepts.gif" > <br>
+<a href="../concepts/cdt_o_code_entry.htm">Coding aids</a><br>
+<a href="../concepts/cdt_c_search.htm">C/C++ search</a></p>
+<p><img height="21" width="143" alt="Related tasks"
+ src="../images/ngtasks.gif" > <br>
+<a href="../tasks/cdt_t_search.htm">Searching for C/C++ elements</a><br>
+<a href="../tasks/cdt_t_cust_cpp_editor.htm">Customizing the C/C++
+editor</a></p>
+<p><img height="21" width="143" alt="Related reference"
+ src="../images/ngref.gif" >
+<br>
+<a href="cdt_o_ceditor_pref.htm">C/C++ editor preferences</a><br>
+<a href="cdt_u_m_search.htm">Search action</a><br>
+<a href="cdt_u_search_view.htm">Search view</a></p>
+<p>
+<img alt="Red Hat Copyright Statement" src="../images/rh03_04.gif"> <br>
+<img alt="IBM Copyright Statement" src="../images/ng00_04a.gif"> </p>
+</div></body>
+</html>

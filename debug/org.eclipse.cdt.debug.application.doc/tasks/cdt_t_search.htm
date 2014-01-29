@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Searching for C/C++ elements</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+
+<body>
+
+<div role="main"><h1>Searching for C/C++ elements</h1>
+
+<p>It is recommended that you perform searches on successfully compiled 
+programs to ensure the accuracy of search results. It is important to familiarize yourself with the correct search syntax 
+to use to complete an effective search. It is also important to ensure that 
+include paths and symbols are correctly defined. For more information, see
+<a href="../tasks/cdt_t_sd.htm">Setting up include paths and macros for C/C++ indexer</a>.</p>
+
+<p>See <a href="../concepts/cdt_c_search.htm">C/C++ search</a>, for more information on:</p>
+
+<ul>
+  <li>What you can search for</li>
+  <li>How to limit your search</li>
+  <li>How to use wildcard characters in your search</li>
+  <li>Syntax examples</li>
+</ul>
+
+
+
+<p>Performing a C/C++ Search can be done in a number of different ways but regardless of the manner chosen the same information must be provided to C/C++ Search.</p> 
+
+The info required to do a search is:
+
+<table border="1"  cellpadding="4" cellspacing="0" valign="top" bordercolor="#DDDDDD" width="700px" summary="Search options">
+   <tr>
+     <th id="option" style="width:25%" scope="col">Option</th>
+     <th id="explanation" style="width:75%" scope="col">Explanation</th>
+   </tr>
+	<tr>
+		<td valign="top" headers="option"><strong>Search string</strong></td>
+		<td valign="top" headers="explanation">this is the name of the element you are looking for. See <a href="../concepts/cdt_c_search.htm">C/C++ search</a> for more information on how to specify wildcard searches and how to further refine your searches by using fully qualified names</td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>Search For </strong></td>
+		<td valign="top" headers="explanation">this is the element type that you wish to search for. You can also select to search on 'Any Element' which will perform the search on a combination of all elements</td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>Limit To</strong></td>
+		<td valign="top" headers="explanation">this allows you to limit your search to declarations, definitions or references. You can also select 'All Occurrences' which will search for declarations, definitions and references that match the element</td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>Scope</strong></td>
+		<td valign="top" headers="explanation">this allows the user to limit the scope of the search. The three available scopes are:
+		<table cellpadding="2">
+			<tr class="hidden">
+				<th id="scope"> Scope</th>
+				<th id="description">Description</th>
+			</tr>
+			<tr>
+				<td valign="top" headers="scope"><strong>Workspace</strong></td>
+				<td valign="top" headers="description">this searches all of the open projects in the workspace</td>
+			</tr>
+			<tr>
+				<td valign="top" headers="scope"><strong>Selected Resources</strong></td>
+				<td valign="top" headers="description">this option becomes enabled whenever something is selected in one of the following views in the C/C++ perspective:
+				<ul>
+					<li>C/C++ Projects</li>
+					<li>Project Explorer</li>
+					<li>Search</li>
+					<li>Outline</li>
+				</ul>
+				<p>The scope will be limited to whatever element is selected in the view.</p>
+				</td>
+			</tr>
+			<tr>
+				<td valign="top" headers="scope"><strong>Working Set</strong></td>
+				<td valign="top" headers="description">working sets can be selected and created </td>
+				</tr>		
+			</table>
+		</td>
+	</tr>
+</table>
+
+<p>There are 3 main ways for initiating a C/C++ search:
+<ul>
+	<li>Using the <strong>C/C++ Search</strong> dialog</li>
+	<li>Selecting an element in the <strong>Editor</strong> view</li>
+	<li>Selecting an element in the <strong>C/C++ Projects</strong> view or Selecting an element from the <strong>Outline</strong> view</li>
+</ul>
+<br>
+<br>
+
+<h2>Using the C/C++ Search dialog</h2>
+<p> <img src="../images/search.png"  alt="Search dialog box"></p>
+
+<ol>
+	<li>Enter the search string in the <strong>Search String</strong> field (optional mark it case sensitive). <br>
+	<strong>Note: </strong>that previous search queries (from the same work session) are remembered and can be accessed via the drop down list.</li>
+	<li>Select the <strong>Search For</strong> element.</li>
+	<li>Select the <strong>Limit To</strong>.</li>
+	<li>Select the <strong>Scope</strong>.</li>
+	<li>Press <strong>Search</strong>.</li>
+</ol>
+<p>Results are displayed in the <a href="../reference/cdt_u_search_view.htm">Search</a> view.</p>
+
+
+<h2>Selecting an element in the Editor view</h2>
+<ol>
+	<li>Select the desired element in the editor.</li>
+	<li>Right click and select <strong>All Declarations</strong> or <strong>All References</strong> and the scope you wish to search.</li>
+</ol>
+<p>Results are displayed in the <strong>Search</strong> view.</p>
+
+<h2>Selecting an element in C/C++ Projects or Outline View</h2>
+
+<ol>
+	<li>Select the desired element in the tree.</li>
+	<li>Right click and select <strong>All Declarations</strong> or <strong>All References</strong> and the scope you wish to search.</li>
+</ol>
+<p>Results are displayed in the <strong>Search</strong> view.</p>
+
+
+<p>For more information, see:
+<ul>
+<li><strong>Workbench User Guide &gt; Concepts &gt; Views &gt; Search view</strong></li>
+<li><strong>Workbench User Guide &gt; Concepts &gt; Workbench &gt; Working Set</strong></li>
+<li><strong>Workbench User Guide &gt; Tasks &gt; Navigating and finding resources</strong></li>
+
+</ul>
+
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<br>
+<a href="../concepts/cdt_c_search.htm">C/C++ search</a><br>
+<a href="../concepts/cdt_c_indexer.htm">C/C++ Indexer</a><br>
+<a href="../concepts/cdt_c_projects.htm">CDT Projects</a><br>
+<a href="../concepts/cdt_c_open_declarations.htm">Open Declaration</a><br>
+</p>
+
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21"><br>
+<a href="cdt_t_sel_search.htm">Selection Searching for C/C++ elements</a><br>
+<a href="cdt_t_open_declarations.htm">Navigate to C/C++ declarations</a><br>
+</p>
+
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<a href="../reference/cdt_u_search.htm">C/C++ search page, Search dialog box</a></p>
+<hr >
+<img src="../images/ng00_07.gif" ALT="IBM Copyright Statement" >
+</div></body>
+
+</html>

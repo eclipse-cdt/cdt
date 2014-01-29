@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Multi-Configuration Edit preferences</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+	<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+</head>
+<body>
+
+<div role="main"><h1>Multi-Configuration Edit preferences</h1>
+<p>Use the <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_MultiConfig)")'>Multi-Configuration Edit</a> preference panel to simultaneously edit properties for multiple project configurations. Its possible to select one or more configurations for editing.</p>
+<p>But, then we deal with string list property values, it is not obvious how to concatenate them, if they differ.</p>
+<p><img src="../images/cdt_pref-multi-cfg.png" alt="Multi-Configuration Edit preferences tab"></p>
+
+<table width="600px" cellpadding="5" cellspacing="0" border="1" fgcolor="DDD" >
+	<caption><strong>Property Pages Settings Preference Options</strong></caption>
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<thead>
+		<tr>
+			<th id="option"><strong>Option</strong></th>
+			<th id="description"><strong>Description</strong></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr valign="top" >
+			<td headers="option"><strong>String list Display Mode</strong></td>
+			<td headers="description">Specifies how values are shown. The two options are:
+			  <ul>
+			  <li><strong>Conjunction</strong> shows common elements only, so if 1st configuration has 
+			  value &lt;A, B, C&gt; and 2nd configuration has &lt;B, C, D&gt;, &lt;B, C&gt; will be shown. 
+			  <li><strong>Disjunction</strong> shows all existing elements except doubles, so if 1st configuration has 
+			  value &lt;A, B, C&gt; and 2nd configuration has &lt;B, C, D&gt;, &lt;A, B, C, D&gt; will be shown. 
+			  </ul>
+			  Note that Display mode can be changed directly on each tab which deals with string lists.
+			  Result is immediate: data on the tab is refreshed according to selected mode.</td>
+		</tr>
+		<tr valign="top" >
+			<td headers="option"><strong>String list Write Mode</strong></td>
+			<td headers="description">Specifies how values are saved. The two options are:
+			  <ul>
+			  <li><strong>Modify mode</strong> adds, changes or removes elements affected by user's actions.
+			  Elements which were not touched by user are left unchanged.<br>   
+			  Example: cfg1 has &lt;A, B, C&gt;; cfg2 has &lt;B, C, D&gt;.<br>
+			  User removed B and added F.<br>
+			  Result: cfg1 has &lt;A, C, F&gt;; cfg2 has &lt;C, D, F&gt;.
+			  <li><strong>Replace mode</strong> puts currently visible elements to all configurations.
+			  Old contents will be lost.<br>
+			  Example: cfg1 has &lt;A, B, C&gt;; cfg2 has &lt;B, C, D&gt;.<br>
+			  Visible list depends of Display mode: &lt;B, C&gt; or &lt;A, B, C, D&gt;.<br>
+			  User removed B and added F.<br>
+			  Result: both cfgs will contain either &lt;C, F&gt; or &lt;A, C, D, F&gt; depending of Display mode.
+			  </ul>
+			  Note that Write mode can be changed directly on each tab which deals with string lists.</td>
+		</tr>
+	</tbody>
+</table>
+
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
+<a href="cdt_u_pref_prop_pages.htm">Property Pages Settings preferences</a></p>
+</div></body>
+
+</html>

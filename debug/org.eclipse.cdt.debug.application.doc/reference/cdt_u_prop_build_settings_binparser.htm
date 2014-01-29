@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>C/C++ Project Properties, Build, Settings, Binary Parser</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+<body>
+<div role="main"><h1>C/C++ Project Properties, Build, Settings, Binary Parser</h1>
+<p>Use the <strong>Binary Parsers</strong> properties tab to
+ensure the accuracy of the <a href="cdt_u_project_explorer_view.htm">Project Explorer</a> and <a href="cdt_u_cproj_view.htm">C/C++ Projects</a> views, and to successfully run
+and debug your programs. After you select the correct parser for your
+development environment and build your project, you can view the
+symbols of the object file using the C/C++ Projects view.</p>
+
+<p><img img="" src="../images/prop_bin.png"
+ alt="C/C++ Project Properties, Build, Settings, Binary Parser"></p>
+
+
+<table cellpadding="5" cellspacing="0" border="1" width="600px" bordercolor="#DDDDDD" >
+	<caption><strong>Binary parser options</strong></caption>
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody> 
+		<tr style="text-align:center;">
+			<th id="group"><strong>Group</strong></th>
+			<th id="description"><strong>Description</strong></th>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Configuration</strong></td>
+			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Manage Configurations...</strong></td>
+			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Binary Parser</strong> (top pane)</td>
+			<td headers="description">Lists all of the binary parsers currently known to CDT. Select the parsers that you want to use, and select the corresponding line to edit parser's options, if required.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Binary Parser Option</strong></td>
+			<td headers="description">Shows the parameters for the currently selected parser in the list above. Depending on the parser you select, the options in the list will be different (in particular, some may have no options at all).</td>
+			</tr>	
+		<tr>
+			<td headers="group"><strong>Move Up</strong></td>
+			<td headers="description">Moves the selected parser higher in list. <strong>Note:</strong> The order matters for selected parsers only: they are applied to binaries in the same sequence as defined by the user. The order is not preserved for unchecked parsers, so you do not have to move them.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Move Down</strong></td>
+			<td headers="description">Move the selected parser lower in list. <strong>Note:</strong> The order matters for selected parsers only: they are applied to binaries in the same sequence as defined by the user. The order is not preserved for unchecked parsers, so you do not have to move them.</td>
+			</tr>		
+	</tbody>
+</table>
+<br>
+<p><strong>Available for:</strong> CDT projects.</p>
+
+<p><img src="../images/ngtasks.gif" alt="Related tasks"
+ width="143" height="21">
+<br>
+<a href="../tasks/cdt_t_proj_parser.htm">Selecting a binary parser</a></p>
+
+
+<p style="margin-top: 0pt; margin-bottom: 0pt;"><img 
+ src="../images/ngref.gif" alt="Related reference" width="143"
+ height="21"><br>
+
+
+<ul>
+<li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>
+<li><a href="cdt_u_prop_builders.htm">Project Properties, Builders page</a>
+<li><a href="cdt_u_prop_all.htm">Project Properties, common C/C++ Configurations handling</a>
+   <ul style="list-style-type: disc">
+   <li><a href="cdt_u_prop_manage_dialog.htm">Manage Configurations dialog</a>
+   <li><a href="cdt_u_prop_manage_newdialog.htm">Create Configuration dialog</a>
+   <li><a href="cdt_u_prop_manage_rendialog.htm">Rename Configuration dialog</a>
+   </ul>
+<li><a href="cdt_u_prop_build.htm">Project Properties, C/C++ Build category</a>
+   <ul style="list-style-type: disc">
+   <li><a href="cdt_u_prop_build_discovery.htm">Discovery options page</a>
+   <li><a href="cdt_u_prop_build_environment.htm">Environment page</a>
+   <li>Settings page
+       <ul> 
+       <li><a href="cdt_u_prop_build_settings_tool.htm">     Tool Settings tab</a>
+       <li><a href="cdt_u_prop_build_settings_steps.htm">    Build Steps tab</a>
+       <li><a href="cdt_u_prop_build_settings_artifact.htm"> Build Artifact tab</a>
+       <li><a href="cdt_u_prop_build_settings_binparser.htm">Binary Parsers tab</a>
+       <li><a href="cdt_u_prop_build_settings_errparser.htm">Error Parsers tab</a>
+       </ul> 
+   <li><a href="cdt_u_prop_build_toolchain.htm">Tool chain editor page</a>
+   <li><a href="cdt_u_prop_build_variables.htm">Variables page</a>
+   </ul>
+<li>Project Properties, <a href="cdt_u_prop_general.htm">C/C++ General category</a>
+   <ul style="list-style-type: disc"> 
+   <li><a href="cdt_u_prop_general_doc.htm">Documentation page</a>
+   <li><a href="cdt_u_prop_general_exp.htm">Export Settings page</a>
+       <!--ul>
+       <li><a href="cdt_u_prop_general_exp_inc.htm">Includes tab</a>
+       <li><a href="cdt_u_prop_general_exp_sym.htm">Symbols tab</a>
+       <li><a href="cdt_u_prop_general_exp_lib.htm">Libraries tab</a>
+       <li><a href="cdt_u_prop_general_exp_libpath.htm">Libraries path tab</a>
+       </ul-->
+   <li><a href="cdt_u_prop_general_typ.htm">File Types page</a>
+   <li><a href="cdt_u_prop_general_idx.htm">Indexer page</a>
+   <li><a href="cdt_u_prop_general_lng.htm">Language Mapping page</a>
+   <li>Paths and Symbols page
+       <ul>
+       <li><a href="cdt_u_prop_general_pns_inc.htm">Includes tab</a>
+       <li><a href="cdt_u_prop_general_pns_sym.htm">Symbols tab</a>
+       <li><a href="cdt_u_prop_general_pns_lib.htm">Libraries tab</a>
+       <li><a href="cdt_u_prop_general_pns_libpath.htm">Libraries path tab</a>
+       <li><a href="cdt_u_prop_general_pns_src.htm">Source Location tab</a>
+       <li><a href="cdt_u_prop_general_pns_out.htm">Output Location tab</a>
+       <li><a href="cdt_u_prop_general_pns_ref.htm">References tab</a>
+       <li><a href="cdt_u_prop_general_pns_hier.htm">Data Hierarchy tab</a>
+       </ul>
+   </ul>
+<li><a href="cdt_u_prop_ref.htm">C/C++ Project Properties, Project References page</a>
+<li><a href="cdt_u_prop_rundebug.htm">C/C++ Project Properties, Run/Debug Settings page</a>
+</ul>
+</p>
+<hr >
+<p><img src="../images/intl_07.gif" ALT="Intel Copyright Statement" ></p>
+
+</div></body>
+</html>

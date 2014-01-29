@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Building C/C++ projects</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+<body>
+<div role="main">
+<h1>Building C/C++ projects</h1>
+<p>The CDT relies on an external make utility, such as GNU make, to
+build a project. The CDT can generate makefiles automatically when you
+create a Managed Make C project or a Managed Make C++ project. You have
+the option of creating a Standard Make C project or a Standard Make C++
+project and providing the makefile yourself.</p>
+<h2>Required utilities</h2>
+<p>You must install and configure the following utilities:
+</p>
+<ul>
+  <li>Build (e.g. make).</li>
+  <li>Compile (e.g. gcc).</li>
+  <li>Debug (e.g. gdb).</li>
+</ul>
+<strong>Note: </strong> while make, gcc and gdb are the examples used in the
+documentation, virtually any similar set of tools or utilities could be
+used.
+<p></p>
+<p><strong>Tip: </strong>Cygwin contains these utilities (make, gcc and gdb) for
+a Windows environment.&nbsp; While running the cygwin installation,
+ensure <span class="typewriter">gcc</span> and <span class="typewriter">make</span> are selected since they are not
+installed by default. For more information, see <a
+ href="http://www.cygwin.com">http://www.cygwin.com</a>. If you are a
+Red Hat user, all that you need to do to build your project is included
+in the Red Hat Linux installation.
+For other operating systems, please refer to your installation
+documentation.</p>
+<p></p>
+<h2>Build terminology</h2>
+<p>The CDT uses a number of terms to describe the scope of the build. </p>
+<h3>Build Project</h3>
+<p>This is an incremental build (make all, assuming all is defined in
+your makefile). Only the components affected by modified files in that
+particular project are built.</p>
+<h3>Rebuild Project</h3>
+<p>Builds every file in the project whether or not a file has been
+modified since the last build. A rebuild is a clean followed by a build.</p>
+<p>For more information on builds, see:</p>
+<ul>
+  <li><strong>Workbench User Guide &gt; Concepts &gt; Workbench &gt; Builds</strong></li>
+  <li><strong>Workbench User Guide &gt; Tasks &gt; Building resources</strong></li>
+</ul>
+<p>Build-related information is displayed as follows:</p>
+<ul>
+  <li>The Console view displays the output of the build tools.</li>
+  <li>The Problems view displays a list of compiler errors and warnings
+related to your projects.</li>
+  <li>For Standard Make projects, the Makefile targets are displayed in
+the Make Targets view.</li>
+</ul>
+<p>For more information about the Problems view, see <strong>Workbench User
+Guide &gt; Reference &gt; User interface information &gt; Views and
+editors &gt; Problems view</strong>.</p>
+
+<h2>Getting a makefile</h2>
+<p>You can either create a C/C++ project for which you supply the <strong>makefile</strong>
+or create a C/C++ project for which the CDT generates makefiles
+automatically.</p>
+<p>To create a new project, from the menu bar choose <strong>File &gt; New
+&gt; Project</strong>. In the dialog that appears, expand the C/C++ group
+and choose e.g. C Project</p>
+<ul>
+  <li>In the resulting wizard page, to create a project for which you supply the <strong>makefile</strong>,
+select  <strong>Makefile project</strong> and choose one of the alternatives under that.
+An empty project, or a simple "Hello World"  can be created. 
+You edit and manage the makefile yourself.
+<p>&nbsp;</p>
+</li>
+  <li>To create a project for which the CDT supplies a basic <strong>makefile</strong>,
+select another project type, e.g. <strong>Executable</strong> and choose one of the examples
+under that, or choose <strong>Empty Project</strong>. 
+</li>
+</ul>
+<h2>Setting build preferences</h2>
+<p>You can set build preferences in Eclipse:</p>
+<dl>
+  <dt>Build order</dt>
+  <dd>If certain projects must be built before others, you can set the <em>build
+order</em>. If your project refers to another project, the CDT must
+build the other project first. To set the build order, from the menu
+bar select <strong>Window &gt; Preferences</strong> and choose <strong> General > Preferences > Build Order</strong>.
+    <p>When you set the build order, the CDT does not rebuild projects
+that depend on a project; you must rebuild all projects to ensure all
+changes are propagated.</p>
+  </dd>
+  <dt>Automatic save</dt>
+  <dd>You can set the CDT to perform an <em>automatic save</em> of all
+modified resources when you perform a manual build. In the preferences dialog, 
+select <strong>General > Workspace</strong> and check <strong>Save automatically before build</strong>.
+By default,
+this feature is <em>not</em> enabled.</dd>
+</dl>
+
+<h2>Controlling the building of your project</h2>
+<p>For a Makefile project, the C/C++ compiler that a project uses
+is controlled by the project's <strong>Properties</strong> setting.
+To view a project's properties, right-click on the project and select <strong>Properties</strong>.
+In the dialog that appears, the <strong>C/C++ Build</strong>
+page enables you to control a variety of settings, including:</p>
+<dl>
+	<dt>Build Command</dt>
+	<dd>On the <strong>Builder Settings</strong> tab, this controls which <code>make</code> is used. To change it, uncheck <strong>Use
+	default build command</strong> and change it or add arguments to the make command.</dd>
+	
+	<dt>Build Setting</dt>
+	<dd>On the <strong>Behaviour</strong> tab, this controls whether the compiler will <strong>Stop on first build error</strong> or not
+	(keep going). Unchecking <strong>Stop on first build error</strong> will force the compiler to attempt to build all referenced
+	projects even if the current project has errors.</dd>
+
+	<dt>Workbench Build Behavior</dt>
+	<dd>On the <strong>Behaviour </strong> tab, this controls which makefile target will be built depending on the scope of the
+	build, e.g. <code>all</code> or <code>clean</code>.</dd>
+</dl>
+<p>For a standard (non-Makefile) project (often called "Managed Build" or "Managed Make" project from
+earlier CDT version), the project properties dialog enables
+you to manage the build configurations of your project. For additional
+information see:</p>
+<ul>
+  <li><strong>Reference &gt; C/C++  Properties &gt; C/C++ Project Properties &gt; Managed Make
+Projects</strong></li>
+  <li><strong>Reference &gt; C/C++  Properties &gt; C/C++ Project Properties &gt; Managed Make File
+Properties</strong></li>
+</ul>
+<h2>Viewing build information</h2>
+<p>Build-related information is displayed as follows: </p>
+<ul>
+  <li>The <strong>Console</strong> view displays the output of the make utility.</li>
+  <li>The <strong>Problems</strong> view displays a list of compiler errors and
+warnings related to your projects. </li>
+  <li>For a Standard Make project, build actions display in the <strong>Make
+Targets</strong> view.</li>
+</ul>
+<p><img src="../images/ngconcepts.gif" alt="Related concepts"
+ width="143" height="21">
+<br>
+<a href="cdt_c_projects.htm">CDT Projects</a><br>
+<a href="cdt_c_proj_file_views.htm">Project file views</a></p>
+<p><img src="../images/ngtasks.gif" alt="Related tasks"
+ width="143" height="21">
+<br>
+<a href="../tasks/cdt_o_build_task.htm">Building projects</a></p>
+<p><img src="../images/ngref.gif" alt="Related reference"
+ width="143" height="21">
+<br>
+<a href="../reference/cdt_u_properties.htm">Project Properties</a></p>
+&nbsp;
+<p><img src="../images/rh03_04.gif" alt="Red Hat Copyright Statement"><br>
+<img src="../images/ng00_04a.gif" alt="IBM Copyright Statement">
+</p>
+</div>
+</body>
+</html>

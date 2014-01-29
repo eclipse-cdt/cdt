@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>CDT projects</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+<body>
+<div role="main">
+<h1>CDT projects</h1>
+
+<p>Before you can work in the CDT, you must create a project to store your 
+source code, makefiles, binaries, and related files. C/C++ projects are displayed 
+in the C/C++ Projects view.</p>
+
+<p><strong>Tip:</strong> Nested projects are not supported. Each project must be organized as a 
+discrete entity. Project dependencies are supported by allowing a project 
+to reference other projects that reside in your workspace. For more information, 
+see <a href="../reference/cdt_u_prop_general_pns_ref.htm">Selecting referenced projects</a>.</p>
+
+<p>For more information about projects and where they are stored, see:</p>
+
+<ul>
+  <li> <strong>Workbench User Guide &gt; Tasks &gt; Resources</strong></li>
+  <li> <strong>Workbench User Guide &gt; Tasks &gt; Running Eclipse</strong></li>
+</ul>
+
+<h2>Project types</h2>
+
+<p>You can create a C or C++ project.</p>
+
+<p>To build your project, you can either create your own makefile,
+or let CDT generate the makefiles for you automatically.</p>
+
+<p>You can toggle these modes (generate makefiles or not) 
+at any time for existing project. Use <a href="../reference/cdt_o_proj_prop_pages.htm">properties.</a> </p>
+
+<p>When you create a new project, you are required to specify the project type. This project type will determine the toolchain and data, and tabs that the CDT uses. In the New CDT Project Wizard, you can choose from the following project types:</p>
+	<ul>
+	<li><strong>Executable</strong> - Provides an executable application. This project type folder contains three templates.</p>
+	<ul>
+	<li><strong>Hello World C++ Example</strong> provides a simple C++ Hello World application with main().
+	<li><strong>Hello World ANSI C Example</strong> provides a simple C Hello World application with main().<li><strong>Empty Project</strong> provides a single source project folder that contains no files.
+</ul>
+
+<p>After you select a template, the result is a project with only the meta-data files required for the project type. You are expected to modify these source files, as required, and provide source files for the project's target.</p><p>The makefile for the <strong>Executable</strong> project type is automatically created by the CDT.</p>
+		<li><strong>Shared Library</strong> - An executable module that is compiled and linked separately. When you create a project that uses a shared library (libxx.so), you define your shared library's project as a Project Reference for your application. For this project type, the CDT combines object files together and joins them so they're relocatable and can be shared by many processes. Shared libraries are named using the format
+libxx.so.<var>version</var>, where
+<var>version</var> is a number with a default of 1. The
+libxx.so file usually is a symbolic link to the
+latest version.</p><p>The makefile for this project type is automatically created by the CDT.
+		<li><strong>Static Library</strong> - A collection of object files that you can link into another application (libxx.a). The CDT combines object files (i.e. *.o)
+into an archive (*.a) that is directly linked into an
+executable.</p><p>The makefile for this project type is automatically created by the CDT.
+		<li><strong>Makefile Project</strong> - Creates an empty project without the meta-data files. This selection is useful for importing and modifying existing makefile-based projects; a new makefile is not created for this project type. 
+	</ul> 
+
+<h2>Project conversion</h2>
+
+<p>You can convert projects from C to C++ (or from C++ to C).  If, for 
+example, your requirements change and you must convert an existing C project to C++, 
+you can do this without recreating the project.  The CDT converts your project files and 
+resolves any source control issues.</p>
+
+<h2>A few notes about projects</h2>
+
+<ul>
+  <li>When you create a file within a project, a record (local history) of 
+  every change is created. For more information about local history, see 
+  <strong>Workbench User Guide &gt; Reference &gt; User interface 
+  information &gt; Development environment &gt; Local history</strong>.</li>
+  <li>Spaces in projects and filenames can cause problems with some 
+tools, such as the make utility or the compiler.</li>
+  <li>Be careful when you use only case to distinguish files and projects. UNIX-based 
+  operating system file names are case sensitive, but Windows filenames are not. Therefore, Hello.c and 
+hello.c are separate files in UNIX but overwrite each other in Windows.</li>
+</ul>
+
+
+<p>For more information about projects, see <strong>Workbench User Guide &gt; Concepts &gt; Workbench &gt; Resources</strong>.</p>
+
+
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<br>
+<a href="cdt_c_proj_file_views.htm">Project file views</a><br>
+<a href="../getting_started/cdt_w_existing_code.htm">How to bring C/C++ source into Eclipse</a></p>
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<br>
+<a href="../tasks/cdt_o_proj_files.htm">Working with C/C++ project files</a><br>
+<a href="../tasks/cdt_t_conv_proj.htm">Converting a C or C++ nature for a project</a>
+</p>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<a href="../reference/cdt_o_proj_prop_pages.htm">Project properties</a><br>
+<a href="../reference/cdt_o_views.htm">Views</a></p>
+
+
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
+</div>
+</body>
+
+</html>

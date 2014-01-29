@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="GDB Standalone Debugger User Guide">
+   <topic href="concepts/cdt_c_before_you_begin.htm" label="Before You Begin">
+   </topic>
+   <topic label="Concepts">
+   	    <topic label="Debug Perspective" href="concepts/cdt_c_perspectives.htm"/>
+        <topic label="Debug" href="concepts/cdt_o_dbg_concepts.htm">
+                <topic label="BreakPoints" href="concepts/cdt_c_brkpnts.htm"/>
+                <topic label="Debug overview" href="concepts/cdt_c_over_dbg.htm"/>
+                <topic label="Debug information" href="concepts/cdt_c_dbg_info.htm"/>
+        </topic>
+   </topic>
+</toc>

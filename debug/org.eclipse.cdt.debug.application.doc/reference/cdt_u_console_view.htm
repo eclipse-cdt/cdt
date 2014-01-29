@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Console view</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+</head>
+<body>
+<div role="main"><h1>Console view</h1>
+
+<p>The <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.ui.console.ConsoleView)")'>Console</a> view displays the output of a process and allows you to provide keyboard input to a process. There are numerous consoles available, see the Open Console dropdown list for those available to you. </p>
+<p><img src="../images/view_console.png" alt="Console View"></p>
+
+The output console shows several different kinds of text, each in a different color:
+<p></p>
+<ul>
+<li>Standard output</li>
+<li>Standard error</li>
+<li>Standard input</li>
+</ul>
+<p>Build console provides also highlighting of build problems. You can use double-click on a highlighted line
+to open code in an editor when error parsers are able to determine file and line from build output.
+</p> 
+<p>You can choose the different colors for these kinds of text on the <a href="cdt_u_console_pref.htm">Console</a> preferences panel.
+</p>
+
+<h2>Console view toolbar</h2>
+<p>The table below lists the toolbar options displayed in the <strong>Console</strong> view. Note that toolbar options may differ between the various consoles.</p>
+
+<table border="1" cellpadding="4" cellspacing="0" bordercolor="#DDDDDD"  width="600px">
+	<colgroup>
+		<col width="5%" valign="top" >
+		<col width="20%" valign="top" >
+		<col width="75%" valign="top" >
+	</colgroup>
+ 	<thead>
+ 		<tr>
+			<th id="icon">Icon</th>
+			<th id="icon-name">Name</th>	
+			<th id="icon-description">Description</th>
+		</tr>
+	 </thead>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_next_error.png" alt="next error icon"></td>
+		<td valign="top" headers="icon-name">Next Error</td>
+		<td valign="top" headers="icon-description">Show the next error in the Console view.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_prev_error.png" alt="previous error icon"></td>
+		<td valign="top" headers="icon-name">Previous Error</td>
+		<td valign="top" headers="icon-name">Show the previous error in the Console view.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_show_error.png" alt="show error icon"></td>
+		<td valign="top" headers="icon-name">Show Error in Editor</td>
+		<td valign="top" headers="icon-description">Toggle to synchronize the selected error with the Editor view (default).</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_save_output_file.png" alt="save output file icon"></td>
+		<td valign="top" headers="icon-name">Copy Build Log</td>
+		<td valign="top" headers="icon-description">Copy build output to file.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_con_scroll_lock.png" alt="Scroll Lock icon"></td>
+		<td valign="top" headers="icon-name">Scroll Lock</td>
+		<td valign="top" headers="icon-description">Toggles the Scroll Lock.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_clear_console.png" alt="Clear Console icon"></td>
+		<td valign="top" headers="icon-name">Clear Console</td>
+		<td valign="top" headers="icon-description">Clears the current console.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_con_pin.png" alt="Pin Console icon"></td>
+		<td valign="top" headers="icon-name">Pin Console</td>
+		<td valign="top" headers="icon-description">Forces the Console view to remain on top of other views in the window area.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_con_disp_console.png" alt="Display Selected Console icon"></td>
+		<td valign="top" headers="icon-name">Display Selected Console</td>
+		<td valign="top" headers="icon-description">If multiple consoles are open, you can select the one to display from a list.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_open_console.png" alt="open Console icon"></td>
+		<td valign="top" headers="icon-name">Open Console</td>
+		<td valign="top" headers="icon-description">Opens a new console to display the log for: <br>
+		<ul>
+			<li>New Console View</li>
+			<li>Program Output Console</li>
+			<li>Windows Program Output Console</li>
+			<li>CVS, and others based on installed features</li>
+		</ul></td>
+	</tr>
+
+</table>
+
+<h2>Console view context menu</h2>
+<p>When you right-click in the <strong>Console</strong> view
+(or when you press <strong>Shift+F10</strong> when the focus is on the <strong>Console</strong> view),
+you see one or more of the following options in a context menu depending on the console view visible:
+</p>
+
+<table border="1" cellpadding="4" cellspacing="0" bordercolor="#DDDDDD" width="600px">
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+ 	<thead>
+ 		<tr>
+			<th id="name">Name</th>
+			<th id="description">Description</th>
+		</tr>
+	 </thead>
+ 	<tr>
+		<td headers="name"><strong>Clear</strong></td>
+		<td headers="description">Clears the current console.</td>
+	 </tr>
+	<tr valign="top" >
+		<td headers="name"><strong>Editor options: Cut, Copy, Paste, Select All</strong></td>
+		<td headers="description">These options perform the standard edit operations. Which options are available depends on where the focus is in the <strong>Console</strong> view. For example, you cannot paste text into the program output, but you can paste text to the bottom of the file.</td>
+	</tr>
+ 	<tr>
+		<td headers="name"><strong>Go to Line</strong></td>
+		<td headers="description">Opens a dialog that moves the focus to the line you specify. The dialog also indicates the total number of lines in the console buffer.</td>
+	 </tr>
+ 	<tr>
+		<td headers="name"><strong>Find/Replace...</strong></td>
+		<td headers="description">Opens a <strong>Find/Replace</strong> dialog that operates only on the text in the <strong>Console</strong> view.</td>
+	 </tr>
+ 	<tr>
+		<td headers="name"><strong>Open Link</strong></td>
+		<td headers="description">Select to follow a detected hyperlink in any console view that supports. For example, the CVS console.</td>
+	 </tr>
+ 	<tr>
+		<td headers="name"><strong>Scroll Lock</strong></td>
+		<td headers="description">Toggles the Scroll Lock.</td>
+	 </tr>
+</table>
+
+<p><img src="../images/ngref.gif" ALT="Related references" width="143" height="21">
+<br><a href="../reference/cdt_o_views.htm">C/C++ Views and Editors</a>
+<br><a href="../tasks/cdt_t_proj_error_parser.htm">Tuning Error Parsers</a>
+</p>
+<hr >
+<p>
+<img src="../images/rh03_04.gif" ALT="Red Hat Copyright Statement">  <br>
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >  
+</p>
+</div></body>
+</html>

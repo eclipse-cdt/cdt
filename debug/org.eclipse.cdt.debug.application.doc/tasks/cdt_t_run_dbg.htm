@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Defining debug settings</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+<script language="JavaScript">
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
+</head>
+
+<body>
+
+<div role="main"><h1>Defining debug settings</h1>
+
+<p>Select a debugger to use when debugging an application.</p>
+
+<p>To select a debugger:</p>
+
+<ol>
+  <li>In  the C/C++ Projects view, select a project.</li>
+  <li>Click <strong>Run &gt; Run</strong> or <strong>Run &gt; Debug</strong>.</li>
+  <li>In the <strong>Configurations</strong> box, expand <strong>C/C++ Local</strong>.</li>
+  <li>Select a run or debug configuration.</li>
+  <li>Click the <strong>Debugger</strong> tab..<br>
+  	  <img src="../images/run_debugger.png" alt="Run Debugger window">
+  </li>
+  <li>Select a debugger from the <strong>Debugger</strong> list.</li>
+  <li>To let your program run until you interrupt it manually, or until it 
+      hits a breakpoint, clear the <strong>Stop at main() on startup</strong> check box .</li>  
+  <li>Specify debug options in the <strong>Debugger Options</strong> box.</li>
+  <li>Click <strong>Run</strong> or do the following, as required:<ul><li>To specify the 
+    execution arguments that an application uses and the working directory for a run 
+    configuration, see <a href="cdt_t_run_arg.htm">Specifying execution arguments</a>.</li><li>To set the environment variables 
+    and the values to use when an application runs, see <a href="cdt_t_run_env.htm">
+    Setting environment variables</a></li>
+  <li>To specify the location of source files used when debugging a C or C++ 
+  application, see <a href="cdt_t_run_source.htm">Specifying the location of 
+  source files</a></li>
+  <li>To specify where the run configuration is stored, how you access it, and 
+  the perspective to open when running an application, see
+  <a href="cdt_t_run_com.htm">Specifying the location of the run configuration</a></li></ul>
+  </ol>
+
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<br>
+<a href="../concepts/cdt_c_projects.htm">CDT Projects</a><br>
+<a href="../concepts/cdt_c_proj_file_views.htm">Project file views</a><br>
+<a href="../concepts/cdt_c_over_dbg.htm">Debug overview</a><br>
+<a href="../concepts/cdt_c_dbg_info.htm">Debug information</a></p>
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<br>
+<a href="cdt_o_run_config.htm">Creating or editing a run configuration</a></p>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<a href="../reference/cdt_o_run_dbg_pages.htm">Run and Debug dialog box</a></p>
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
+
+</div></body>
+
+</html>

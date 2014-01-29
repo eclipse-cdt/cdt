@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html lang="en">
+  <head>
+	<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>Include Browser View</title>
+    <link rel="stylesheet" href="../book.css" charset="ISO-8859-1" type="text/css">
+    <script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+  </head>
+  <body>
+    <div role="main"><h1>
+      Include Browser view
+    </h1>
+    <p>
+      The <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.cdt.ui.includeBrowser)")'>Include Browser</a> view shows the <span class="typewriter">&lt;include&gt;</span> and <span class="typewriter">#include</span> relationships between source and header files.
+    </p>
+    <p><img src="../images/view_include_browser.png" alt="Include Browser view" ></p>
+    <h2 class="Head">
+      Include Browser toolbar buttons
+    </h2>
+    <p>
+    The Include Browser tree shows files included by the focused file or files including the focused file depending on the selection made in the
+    toolbar.
+    </p>
+    <table border="1" cellspacing="0" cellpadding="4" width="600px" bordercolor="#DDDDDD" >
+    	<caption><strong>Include Browser Toolbar Options</strong></caption>
+	<colgroup>
+		<col width="5%" valign="top" >
+		<col width="30%" valign="top" >
+		<col width="65%" valign="top" >
+	</colgroup>
+ 	<tr>
+		<th id="icon">Icon</th>
+		<th id="name">Name</th>	
+		<th id="description">Description</th>
+	 </tr>
+      <tbody>
+        <tr>
+          <td valign="top" style="text-align:center;" headers="icon"><img src="../images/icon_next.png" alt="Show Next Include icon" ></td>
+          <td valign="top" headers="name">
+            <strong><p>
+              Show Next Include
+            </p></strong>
+          </td>
+          <td valign="top" headers="description">
+            <p>
+              This command selects the next include directive of the current file and opens it in the editor.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top" style="text-align:center;" headers="icon"><img src="../images/icon_previous.png" alt="Show Previous Include icon" ></td>
+          <td valign="top" headers="name">
+            <strong><p>
+              Show Previous Include
+            </p></strong>
+          </td>
+          <td valign="top" headers="description">
+            <p>
+              This command selects the previous include directive of the current file and opens it in the editor.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top" style="text-align:center;" headers="icon"><img src="../images/icon_hide_sys_includes.png" alt="Hide System Includes icon" ></td>
+          <td valign="top" headers="name">
+            <strong><p>
+              Hide System Includes
+            </p></strong>
+          </td>
+          <td valign="top" headers="description">
+            <p>
+              This command toggles the display of include directives with angle brackets (&lt;&gt;).
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top" style="text-align:center;" headers="icon"><img src="../images/icon_hide_inactive_includes.png" alt="Hide Inactive Code Includes icon" ></td>
+          <td valign="top" headers="name">
+            <strong><p>
+              Hide Includes from Inactive Code
+            </p></strong>
+          </td>
+          <td valign="top" headers="description">
+            <p>
+              This command toggles the display of include directives which are contained in an inactive conditional preprocessor branch.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top" style="text-align:center;" headers="icon"><img src="../images/icon_show_callers.png" alt="Show Includes icon" ></td>
+          <td valign="top" headers="name">
+            <strong><p>
+              Show Includers
+            </p></strong>
+          </td>
+          <td valign="top" headers="description">
+            <p>
+              Show files including the currently focused file.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top" style="text-align:center;" headers="icon"><img src="../images/icon_show_callees.png" alt="Show Included Files icon" ></td>
+          <td valign="top" headers="name">
+            <strong><p>
+              Show Included Files
+            </p></strong>
+          </td>
+          <td valign="top" headers="description">
+            <p>
+              Show files included by the currently focused file.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top" style="text-align:center;" headers="icon"><img src="../images/history_list.gif" alt="Show History List icon" ></td>
+          <td valign="top" headers="name">
+            <strong><p>
+              Show History List
+            </p></strong>
+          </td>
+          <td valign="top" headers="description">
+            <p>
+              This menu displays a history of previously displayed include relationships.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top" style="text-align:center;" headers="icon"><img src="../images/refresh_nav.gif" alt="Refresh icon" ></td>
+          <td valign="top" headers="name">
+            <strong><p>
+              Refresh View Content
+            </p></strong>
+          </td>
+          <td valign="top" headers="description">
+            <p>
+              This command updates the view content by running a new query on the index database.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top" style="text-align:center;" headers="icon"><img src="../images/icon_menu.png" alt="Menu icon" ></td>
+          <td valign="top" headers="name">
+            <strong><p>
+              View Menu
+            </p></strong>
+          </td>
+          <td valign="top" headers="description">
+            <p>
+              Shows additional options to manage the Include Browser view including: <br>
+              <ul>
+              	<li>Select Working Set...</li>
+              	<li>Deselect Working Set</li>
+              	<li>Edit Active Working Set...</li>
+              	<li>Show Includers</li>
+              	<li>Show Files Included</li>
+              	<li>Hide System Includes</li>
+              	<li>Hide Inactive Includes</li>
+              </ul>
+            <p></p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      <img src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
+      <a href="cdt_o_views.htm">Views</a>
+    </p>
+  <hr >
+<img src="../images/nokiaCopyright.png" alt="Nokia Copyright Statement" > 
+  </div></body>
+</html>

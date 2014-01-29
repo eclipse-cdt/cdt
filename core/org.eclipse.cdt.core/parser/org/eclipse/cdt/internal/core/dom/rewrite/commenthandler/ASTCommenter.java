@@ -38,7 +38,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * This is the starting point of the entire comment handling  process. The creation of the 
@@ -52,30 +51,30 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * @author Guido Zgraggen IFS 
  */
 public class ASTCommenter {
-	
+
 	private static final class PreprocessorRangeChecker extends ASTVisitor {
-		int statementOffset;
-		IASTFileLocation commentNodeLocation;
-		boolean isPreStatementComment = true;
-		
-		private PreprocessorRangeChecker(int statementOffset, IASTFileLocation commentNodeLocation) {
+		int ppStmtOffset;
+		IASTFileLocation commentLocation;
+		boolean isPrePpStmtComment = true;
+
+		private PreprocessorRangeChecker(int statementOffset, IASTFileLocation commentLocation) {
 			super(true);
-			this.statementOffset = statementOffset;
-			this.commentNodeLocation = commentNodeLocation;
+			this.ppStmtOffset = statementOffset;
+			this.commentLocation = commentLocation;
 		}
 
 		private int checkOffsets(IASTNode node) {
-			int offset = ((ASTNode) node).getOffset();
+			IASTFileLocation nodeLocation = node.getFileLocation();
+			int nodeEndOffset = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 			int status = PROCESS_CONTINUE;
-			
-			if (isCommentOnSameLine(node) 
-					|| offset > commentNodeLocation.getNodeOffset()
-					&& offset < statementOffset) {
-				isPreStatementComment = false;
+
+			boolean nodeInBetweenCommentAndPpStmt = nodeEndOffset > commentLocation.getNodeOffset() && nodeEndOffset < ppStmtOffset;
+			if (isCommentOnSameLine(node) || nodeInBetweenCommentAndPpStmt) {
+				isPrePpStmtComment = false;
 				status = PROCESS_ABORT;
-			} else if ((offset + ((ASTNode) node).getLength() < commentNodeLocation.getNodeOffset())) {
+			} else if (nodeEndOffset < commentLocation.getNodeOffset()) {
 				status = PROCESS_SKIP;
-			} else if (offset > statementOffset) {
+			} else if (nodeLocation.getNodeOffset() > ppStmtOffset) {
 				status = PROCESS_ABORT;
 			}
 			
@@ -84,8 +83,7 @@ public class ASTCommenter {
 
 		private boolean isCommentOnSameLine(IASTNode node) {
 			IASTFileLocation fileLocation = node.getFileLocation();
-			return fileLocation != null &&
-					commentNodeLocation.getStartingLineNumber() == fileLocation.getEndingLineNumber();
+			return fileLocation != null && commentLocation.getStartingLineNumber() == fileLocation.getEndingLineNumber();
 		}
 
 		@Override
@@ -205,7 +203,7 @@ public class ASTCommenter {
 		if (preprocessorOffset > commentLocation.getNodeOffset()) {
 			PreprocessorRangeChecker visitor = new PreprocessorRangeChecker(preprocessorOffset, commentLocation);
 			tu.accept(visitor);
-			return visitor.isPreStatementComment;
+			return visitor.isPrePpStmtComment;
 		}
 		return false;
 	}

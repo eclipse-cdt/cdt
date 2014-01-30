@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
@@ -37,7 +37,6 @@ import org.eclipse.cdt.internal.ui.callhierarchy.CallHierarchyUI;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 public class CallHierarchyBaseTest extends BaseUITestCase {
-	protected static final int INDEXER_WAIT_TIME = 8000;
 	private static int sProjectCounter= 0;
 
 	protected ICProject fCProject;
@@ -51,7 +50,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		CallHierarchyUI.setIsJUnitTest(true);
-		String prjName= "chTest"+sProjectCounter++;
+		String prjName= "chTest" + sProjectCounter++;
 		fCProject= CProjectHelper.createCCProject(prjName, "bin", IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(fCProject);
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
@@ -66,7 +65,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected void tearDown() throws Exception {
 		// Set ShowReferencedBy back to its default value
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CHViewPart ch= (CHViewPart)page.findView(CUIPlugin.ID_CALL_HIERARCHY);
+		CHViewPart ch= (CHViewPart) page.findView(CUIPlugin.ID_CALL_HIERARCHY);
 		if (ch != null) {
 			ch.onSetShowReferencedBy(true);
 		}
@@ -100,7 +99,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected void openCallHierarchy(CEditor editor, boolean showReferencedBy) throws InterruptedException {
 		openCallHierarchy(editor);
 		IWorkbenchPage page = editor.getSite().getPage();
-		CHViewPart ch= (CHViewPart)page.findView(CUIPlugin.ID_CALL_HIERARCHY);
+		CHViewPart ch= (CHViewPart) page.findView(CUIPlugin.ID_CALL_HIERARCHY);
 		assertNotNull(ch);
 		ch.onSetShowReferencedBy(showReferencedBy);
 		runEventQueue(0);
@@ -110,8 +109,8 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		runEventQueue(0);
 		CHViewPart ch= null;
-		for (int i=0; i<50; i++) {
-			ch= (CHViewPart)page.findView(CUIPlugin.ID_CALL_HIERARCHY);
+		for (int i= 0; i < 50; i++) {
+			ch= (CHViewPart) page.findView(CUIPlugin.ID_CALL_HIERARCHY);
 			if (ch != null) 
 				break;
 			runEventQueue(10);
@@ -122,7 +121,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected TreeItem checkTreeNode(TreeItem root, int i1, String label) {
 		TreeItem item= null;
 		try {
-			for (int i=0; i<200; i++) {
+			for (int i= 0; i < 200; i++) {
 				item= root.getItem(i1);
 				try {
 					String text= item.getText();
@@ -134,8 +133,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 				}
 				runEventQueue(10);
 			}
-		}
-		catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			assertNull("Tree node " + label + " does not exist!", label);
 			return null;
 		}
@@ -143,5 +141,4 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 		assertEquals(label, item.getText());
 		return item;
 	}
-
 }

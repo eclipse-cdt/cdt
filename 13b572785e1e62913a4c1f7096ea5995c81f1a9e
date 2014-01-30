@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_fbc38b01",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbVariableVMNode.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-01-30T05:48:49Z",
+      "side": 1,
+      "message": "adapter.isAssignableFrom(fGdbVariableExpressionFactory.getClass() instead?",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_fb570b2c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbVariableVMNode.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-01-30T05:48:49Z",
+      "side": 1,
+      "message": "This method gives false positives for some variables. For example, int $1 compiles and when I debug, I can\u0027t right-click view memory.",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_9b11af84",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbVariableVMNode.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-01-30T05:48:49Z",
+      "side": 1,
+      "message": "This method gives false positives for some variables. For example, int ca$h compiles and when I debug, I can\u0027t right-click view memory.",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_1b059f1c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbVariableVMNode.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-01-30T05:48:49Z",
+      "side": 1,
+      "message": "Because of the false positive of isConvenienceVariable, int $123 can\u0027t be right-clicked, Watch.",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_2a1c7627",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-01-30T05:48:49Z",
+      "side": 1,
+      "message": "is the new Object[] necessary here? if I try only methodName + \"()\" as the parameter it seems to work the same way.",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_bda29280",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-01-30T05:48:49Z",
+      "side": 1,
+      "message": "How about fThreadToReturnVariable, this would be consistent with the naming of the maps in MIExpressions.",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_5d6536be",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 814,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-01-30T05:48:49Z",
+      "side": 1,
+      "message": "is 0 parameter OK? With this, there might be two variable with index 0, one RETURN_VALUES and one LOCAL. What is this index for anyway? It doesn\u0027t seem to be used anywhere except hashing. In this case then since they will be different type then it will be OK.",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

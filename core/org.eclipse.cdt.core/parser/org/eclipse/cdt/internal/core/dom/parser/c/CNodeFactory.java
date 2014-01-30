@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Mike Kucera (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -78,12 +79,14 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
+import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.internal.core.dom.parser.ASTToken;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTokenList;
+import org.eclipse.cdt.internal.core.dom.parser.GCCASTAttributeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.NodeFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
@@ -282,6 +285,11 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 	public IASTFunctionDefinition newFunctionDefinition(IASTDeclSpecifier declSpecifier,
 			IASTFunctionDeclarator declarator, IASTStatement bodyStatement) {
 		return new CASTFunctionDefinition(declSpecifier, declarator, bodyStatement);
+	}
+
+	@Override
+	public IGCCASTAttributeSpecifier newGCCAttributeSpecifier() {
+		return new GCCASTAttributeSpecifier();
 	}
 	
 	@Override

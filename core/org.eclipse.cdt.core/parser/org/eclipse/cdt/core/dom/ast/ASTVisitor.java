@@ -250,6 +250,11 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 
+	/** @since 5.7 */
+	public int visit(IASTAttributeSpecifier specifier) {
+		return PROCESS_CONTINUE;
+	}
+
 	/** @since 5.4 */
 	public int visit(IASTToken token) {
 		return PROCESS_CONTINUE;
@@ -351,6 +356,11 @@ public abstract class ASTVisitor {
 
 	/** @since 5.4 */
 	public int leave(IASTAttribute attribute) {
+		return PROCESS_CONTINUE;
+	}
+
+	/** @since 5.7 */
+	public int leave(IASTAttributeSpecifier specifier) {
 		return PROCESS_CONTINUE;
 	}
 

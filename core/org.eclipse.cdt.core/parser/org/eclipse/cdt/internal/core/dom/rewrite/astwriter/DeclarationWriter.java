@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -14,7 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import java.util.EnumSet;
+
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -23,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
@@ -116,6 +120,7 @@ public class DeclarationWriter extends NodeWriter {
 		if (alias != null) {
 			alias.accept(visitor);
 		}
+		writeAttributes(aliasDeclaration, EnumSet.of(SpaceLocation.BEFORE));
 		scribe.print(EQUALS);
 		ICPPASTTypeId aliasedType = aliasDeclaration.getMappingTypeId();
 		if (aliasedType != null) {
@@ -146,6 +151,7 @@ public class DeclarationWriter extends NodeWriter {
 	}
 
 	private void writeUsingDirective(ICPPASTUsingDirective usingDirective) {
+		writeAttributes(usingDirective, EnumSet.of(SpaceLocation.AFTER));
 		scribe.printStringSpace(Keywords.USING);
 		scribe.printStringSpace(Keywords.NAMESPACE);
 		usingDirective.getQualifiedName().accept(visitor);
@@ -275,6 +281,9 @@ public class DeclarationWriter extends NodeWriter {
 	}
 
 	private void writeFunctionDefinition(IASTFunctionDefinition funcDef) {
+		if (funcDef instanceof IASTAttributeOwner) {
+			writeAttributes((IASTAttributeOwner) funcDef, EnumSet.of(SpaceLocation.AFTER));
+		}
 		IASTDeclSpecifier declSpecifier = funcDef.getDeclSpecifier();
 		if (declSpecifier != null)
 			declSpecifier.accept(visitor);
@@ -297,10 +306,23 @@ public class DeclarationWriter extends NodeWriter {
 		if (funcDef instanceof ICPPASTFunctionDefinition) {
 			ICPPASTFunctionDefinition cppFuncDef= (ICPPASTFunctionDefinition) funcDef;
 			writeCtorChainInitializer(cppFuncDef, cppFuncDef.getMemberInitializers());
+			if (cppFuncDef.isDefaulted()) {
+				scribe.print(EQUALS);
+				scribe.print(Keywords.DEFAULT);
+				scribe.printSemicolon();
+			}
+			else if (cppFuncDef.isDeleted()) {
+				scribe.print(EQUALS);
+				scribe.print(Keywords.DELETE);
+				scribe.printSemicolon();
+			}
 		}
 		scribe.newLine();
 
-		funcDef.getBody().accept(visitor);
+		IASTStatement body = funcDef.getBody();
+		if (body != null) {
+			body.accept(visitor);
+		}
 
 		if (funcDef instanceof ICPPASTFunctionWithTryBlock) {
 			ICPPASTFunctionWithTryBlock tryblock = (ICPPASTFunctionWithTryBlock) funcDef;
@@ -330,6 +352,7 @@ public class DeclarationWriter extends NodeWriter {
 		IASTDeclSpecifier declSpecifier = simpDec.getDeclSpecifier();
 		IASTDeclarator[] decls = simpDec.getDeclarators();
 
+		writeAttributes(simpDec, EnumSet.of(SpaceLocation.AFTER));
 		declSpecifier.accept(visitor);
 		boolean noSpace = false;
 		if (declSpecifier instanceof IASTSimpleDeclSpecifier) {

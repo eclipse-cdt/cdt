@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 
@@ -68,6 +69,17 @@ public class CPPASTProblemStatement extends CPPASTProblemOwner implements IASTPr
 
 	@Override
 	public void addAttribute(IASTAttribute attribute) {
+		assertNotFrozen();
+		// Ignore.
+	}
+
+	@Override
+	public IASTAttributeSpecifier[] getAttributeSpecifiers() {
+		return IASTAttributeSpecifier.EMPTY_ATTRIBUTE_SPECIFIER_ARRAY;
+	}
+
+	@Override
+	public void addAttributeSpecifier(IASTAttributeSpecifier attributeSpecifier) {
 		assertNotFrozen();
 		// Ignore.
 	}

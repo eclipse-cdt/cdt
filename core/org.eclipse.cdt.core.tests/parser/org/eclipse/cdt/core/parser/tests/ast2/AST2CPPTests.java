@@ -161,7 +161,12 @@ public class AST2CPPTests extends AST2TestBase {
 	}
 
 	protected IASTTranslationUnit parseAndCheckBindings(String code) throws Exception {
-		IASTTranslationUnit tu = parse(code, CPP);
+		return parseAndCheckBindings(code, CPP, false, true);
+	}
+
+	protected IASTTranslationUnit parseAndCheckBindings(String code, ParserLanguage lang, boolean useGNUExtensions,
+    		boolean expectNoProblems) throws Exception {
+		IASTTranslationUnit tu = parse(code, lang, useGNUExtensions, expectNoProblems);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 		assertNoProblemBindings(col);
@@ -5373,7 +5378,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	outer::foo x;
 	//	outer::inner::foo y;
 	public void testAttributeInUsingDirective_351228() throws Exception {
-		parseAndCheckBindings();
+		parseAndCheckBindings(getAboveComment(), CPP, true, true);
 	}
 
 	//	class C {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *    IBM - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Emanuel Graf (IFS)
+ *    Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -57,6 +58,7 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTest(ASTInactiveCodeTests.suite());
 		suite.addTest(AccessControlTests.suite());
 		suite.addTest(VariableReadWriteFlagsTest.suite());
+		suite.addTest(AST2CPPAttributeTests.suite());
 		return suite;
 	}
 }

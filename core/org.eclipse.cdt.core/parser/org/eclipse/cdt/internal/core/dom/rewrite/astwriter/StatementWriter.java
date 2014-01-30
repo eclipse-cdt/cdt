@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,8 +8,11 @@
  *
  * Contributors:
  *     Institute for Software - initial API and implementation
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
+
+import java.util.EnumSet;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
@@ -207,6 +210,7 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeIfStatement(IASTIfStatement ifStatement) {
+		writeAttributes(ifStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(IF);
 		scribe.noNewLines();
 		if (ifStatement instanceof ICPPASTIfStatement) {
@@ -249,6 +253,7 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeLabelStatement(IASTLabelStatement labelStatement) {
+		writeAttributes(labelStatement, EnumSet.of(SpaceLocation.AFTER));
 		labelStatement.getName().accept(visitor);
 		scribe.print(':');
 		scribe.newLine();
@@ -262,6 +267,7 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeReturnStatement(IASTReturnStatement returnStatement) {
+		writeAttributes(returnStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.noNewLines();
 		scribe.print(RETURN);
 		IASTExpression returnValue = returnStatement.getReturnValue();
@@ -282,6 +288,7 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeExpressionStatement(IASTExpressionStatement expStmt) {
+		writeAttributes(expStmt, EnumSet.of(SpaceLocation.AFTER));
 		expStmt.getExpression().accept(visitor);
 		scribe.printSemicolon();
 	}
@@ -301,6 +308,7 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeTryBlockStatement(ICPPASTTryBlockStatement tryStatement) {
+		writeAttributes(tryStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(TRY);
 		tryStatement.getTryBody().accept(visitor);
 		for (ICPPASTCatchHandler catchStatement : tryStatement.getCatchHandlers()) {
@@ -309,6 +317,7 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeWhileStatement(IASTWhileStatement whileStatment) {
+		writeAttributes(whileStatment, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(WHILE);
 		scribe.noNewLines();
 		if (whileStatment instanceof ICPPASTWhileStatement) {
@@ -333,6 +342,7 @@ public class StatementWriter extends NodeWriter {
 		if (!switchIsNew) {
 			scribe.decrementIndentationLevel();
 		}
+		writeAttributes(caseStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(CASE);
 		caseStatement.getExpression().accept(visitor);
 		scribe.print(':');
@@ -369,12 +379,14 @@ public class StatementWriter extends NodeWriter {
 		if (!switchIsNew) {
 			scribe.decrementIndentationLevel();
 		}
+		writeAttributes(defaultStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(DEFAULT);
 		scribe.incrementIndentationLevel();
 		switchIsNew = false;
 	}
 
 	private void writeCompoundStatement(IASTCompoundStatement compoundStatement) {
+		writeAttributes(compoundStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.printLBrace();
 		scribe.newLine();
 		for (IASTStatement statements : getNestedStatements(compoundStatement)) {

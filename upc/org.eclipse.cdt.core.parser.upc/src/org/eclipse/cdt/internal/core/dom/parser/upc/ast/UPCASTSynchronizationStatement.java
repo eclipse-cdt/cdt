@@ -75,7 +75,7 @@ public class UPCASTSynchronizationStatement extends ASTAttributeOwner implements
 			}
 		}
 
-        if (!acceptByAttributes(visitor)) return false;
+        if (!acceptByAttributeSpecifiers(visitor)) return false;
 		if (barrierExpression != null && !barrierExpression.accept(visitor)) return false;
 
 		if (visitor.shouldVisitStatements) {

@@ -8,12 +8,12 @@
  * Contributors:
  *     Mike Kucera (IBM) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
-import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -54,6 +54,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArraySubscriptExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttribute;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
@@ -117,10 +118,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
+import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.core.dom.parser.cpp.ICPPASTAttributeSpecifier;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.internal.core.dom.parser.ASTToken;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTokenList;
+import org.eclipse.cdt.internal.core.dom.parser.GCCASTAttributeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.NodeFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
@@ -161,8 +165,18 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	public IASTAttribute newAttribute(char[] name, IASTToken argumentClause) {
-		return new CPPASTAttribute(name, argumentClause);
+	public ICPPASTAttribute newAttribute(char[] name, IASTToken argumentClause) {
+		return newAttribute(name, null, argumentClause, false);
+	}
+
+	@Override
+	public ICPPASTAttribute newAttribute(char[] name, char[] scope, IASTToken argumentClause, boolean packExpansion) {
+		return new CPPASTAttribute(name, scope, argumentClause, packExpansion);
+	}
+
+	@Override
+	public ICPPASTAttributeSpecifier newAttributeSpecifier() {
+		return new CPPASTAttributeSpecifier();
 	}
 
 	@Override
@@ -394,7 +408,12 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 			IASTStatement bodyStatement) {
 		return new CPPASTFunctionWithTryBlock(declSpecifier, declarator, bodyStatement);
 	}
-	
+
+	@Override
+	public IGCCASTAttributeSpecifier newGCCAttributeSpecifier() {
+		return new GCCASTAttributeSpecifier();
+	}
+
 	@Override
 	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement) {
 		return new CPPASTCompoundStatementExpression(compoundStatement);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -1846,6 +1847,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * if both parses succeed then an ambiguity node is returned.
      */
     protected IASTStatement parseDeclarationOrExpressionStatement() throws EndOfFileException, BacktrackException {
+    	return parseDeclarationOrExpressionStatement(null);
+    }
+
+    protected IASTStatement parseDeclarationOrExpressionStatement(List<IASTAttribute> attributes) 
+    		throws EndOfFileException, BacktrackException {
         // First attempt to parse an expressionStatement
         // Note: the function style cast ambiguity is handled in expression
         // Since it only happens when we are in a statement
@@ -1856,6 +1862,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         try {
             IASTExpression expression = expression();
             expressionStatement = nodeFactory.newExpressionStatement(expression);
+            addAttributes(attributes, expressionStatement);
             setRange(expressionStatement, expression);
             afterExpression= LA();
 
@@ -1872,6 +1879,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         IASTDeclarationStatement ds = null;
         try {
             IASTDeclaration d = declaration(DeclarationOptions.LOCAL);
+            if (d instanceof IASTAttributeOwner) {
+                addAttributes(attributes, (IASTAttributeOwner) d);
+            }
             ds = nodeFactory.newDeclarationStatement(d);
             setRange(ds, d);
         } catch (BacktrackException b) {
@@ -2383,22 +2393,33 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	return result;
     }
 
-	private IASTAttribute singleAttribute() throws EndOfFileException, BacktrackException {
+	protected IASTAttribute singleAttribute() throws EndOfFileException, BacktrackException {
 		// Get an identifier including keywords
-		IToken attributeName = identifierOrKeyword();
+		IToken nameToken = identifierOrKeyword();
 		IASTToken argumentClause = null;
+		int endOffset = nameToken.getEndOffset();
+		
 		// Check for arguments
 		if (LT(1) == IToken.tLPAREN) {
-			consume();
-			argumentClause = balancedTokenSeq(IToken.tRPAREN);
-			consumeOrEOC(IToken.tRPAREN);
+			int argumentOffset = consume().getEndOffset();
+			argumentClause = balancedTokenSeq(argumentOffset, IToken.tRPAREN);
+			endOffset = consumeOrEOC(IToken.tRPAREN).getEndOffset();
 		}
-		IASTAttribute result = nodeFactory.newAttribute(attributeName.getCharImage(), argumentClause);
-		setRange(result, attributeName.getOffset(), getEndOffset());
+		char[] attributeName = nameToken.getCharImage();
+		IASTAttribute result = nodeFactory.newAttribute(attributeName, argumentClause);
+		setRange(result, nameToken.getOffset(), endOffset);
 		return result;
 	}
 
-	private IToken identifierOrKeyword() throws EndOfFileException, BacktrackException {
+	protected void addAttributes(List<IASTAttribute> attributes, IASTAttributeOwner owner) {
+		if (attributes != null && owner != null) {
+			for (IASTAttribute attribute : attributes) {
+				owner.addAttribute(attribute);
+			}
+		}
+	}
+
+	protected IToken identifierOrKeyword() throws EndOfFileException, BacktrackException {
 		IToken t = LA(1);
 		char[] image= t.getCharImage();
 		if (image.length == 0)
@@ -2410,11 +2431,20 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		return t;
 	}
 
-	private IASTToken balancedTokenSeq(int endType) throws EndOfFileException, BacktrackException {
-		IASTToken result = null;
+	/**
+	 * Parses sequence of tokens until encountering a token of a given type
+	 * @param offset the offset for the returned token node.
+	 * @param endType the type of the token to stop before
+	 * @return a token sequence, possibly empty but never {@code null}
+	 */
+	protected IASTTokenList balancedTokenSeq(int offset, int endType) 
+			throws EndOfFileException, BacktrackException {
+		IASTTokenList result = nodeFactory.newTokenList();
 		IToken t;
 		while ((t = LA(1)).getType() != endType) {
-			consume();
+			t = consume();
+			result.addToken(createASTToken(t));
+			
 			IASTToken token;
 			switch (t.getType()) {
 			case IToken.tLPAREN:
@@ -2430,51 +2460,23 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 				break;
 
 			default:
-				token = nodeFactory.newToken(t.getType(), t.getCharImage());
-				setRange(token, t.getOffset(), t.getEndOffset());
-				break;
+				continue;
 			}
-			result = addTokenToSequence(result, token);
+			result.addToken(token);
+			t = consume();
+			token = createASTToken(t);
+			result.addToken(token);
 		}
+
+		setRange(result, offset, t.getEndOffset());
 		return result;
 	}
 
-	/**
-	 * Parses sequence of tokens until encountering a token of a given type
-	 * @param offset the offset for the returned token node.
-	 * @param endType the type of the token to stop before
-	 * @return a token sequence, possibly empty but never {@code null}
-	 */
-	private IASTToken balancedTokenSeq(int offset, int endType) throws EndOfFileException, BacktrackException {
-		IASTToken token = balancedTokenSeq(endType);
-		if (token == null)
-			token = nodeFactory.newTokenList();
-		int endOffset = consumeOrEOC(endType).getEndOffset();
-		setRange(token, offset, endOffset);
+	private IASTToken createASTToken(IToken t) {
+		IASTToken token;
+		token = nodeFactory.newToken(t.getType(), t.getCharImage());
+		setRange(token, t.getOffset(), t.getEndOffset());
 		return token;
-	}
-
-	/**
-	 * Adds a token to a token sequence.
-	 *
-	 * @param sequence the token sequence, may be {@code null}
-	 * @param token the token to add
-	 * @return the modified token sequence that is never {@code null}
-	 */
-	private IASTToken addTokenToSequence(IASTToken sequence, IASTToken token) {
-		if (sequence == null) {
-			sequence = token;
-		} else if (sequence instanceof IASTTokenList) {
-			((IASTTokenList) sequence).addToken(token);
-			adjustLength(sequence, token);
-		} else {
-			IASTTokenList list = nodeFactory.newTokenList();
-			list.addToken(sequence);
-			list.addToken(token);
-			setRange(list, token);
-			sequence = list;
-		}
-		return sequence;
 	}
 
 	protected void __declspec() throws BacktrackException, EndOfFileException {

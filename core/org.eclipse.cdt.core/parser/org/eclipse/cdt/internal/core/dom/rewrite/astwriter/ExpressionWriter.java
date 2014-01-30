@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -110,8 +110,6 @@ public class ExpressionWriter extends NodeWriter{
 	private static final String MODULO_OP = " % "; //$NON-NLS-1$
 	private static final String DIVIDE_OP = " / "; //$NON-NLS-1$
 	private static final String MULTIPLY_OP = " * "; //$NON-NLS-1$
-	private static final String OPENING_SQUARE_BRACKET = "["; //$NON-NLS-1$
-	private static final String CLOSING_SQUARE_BRACKET = "]"; //$NON-NLS-1$
 	private static final String THIS = "this"; //$NON-NLS-1$
 	private static final String THROW = "throw "; //$NON-NLS-1$
 	private final MacroExpansionHandler macroHandler;

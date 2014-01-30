@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2006, 2014 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -8,6 +8,7 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.astwriter;
 
@@ -21,6 +22,8 @@ public class AstWriterTestSuite {
 
 	public static Test suite() throws Exception {
 		TestSuite suite = new TestSuite("AstWriterTests");
+		suite.addTest(SourceRewriteTester.suite("AttributeTests", "resources/rewrite/ASTWriterAttributeTestSource.awts"));
+
 		suite.addTest(SourceRewriteTester.suite("ExpressionTests", "resources/rewrite/ASTWriterExpressionTestSource.awts"));
 
 		suite.addTest(SourceRewriteTester.suite("DelcSpecifierTests", "resources/rewrite/ASTWriterDeclSpecTestSource.awts"));

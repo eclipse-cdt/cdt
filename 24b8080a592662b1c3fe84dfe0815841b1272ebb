@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_117562ed",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/Bug426648_MultipleClassSpecializations.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-30T20:41:11Z",
+      "side": 1,
+      "message": "This class should probably be hooked up to some test suite, shouldn\u0027t it? Alternatively, individual test cases could be moved to other classes that are already hooked up.",
+      "revId": "24b8080a592662b1c3fe84dfe0815841b1272ebb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_f16f0e1e",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/Bug426648_MultipleClassSpecializations.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-30T20:41:11Z",
+      "side": 1,
+      "message": "An unnecessary blank line.",
+      "revId": "24b8080a592662b1c3fe84dfe0815841b1272ebb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_51523a60",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/Bug426648_MultipleClassSpecializations.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-30T20:41:11Z",
+      "side": 1,
+      "message": "The include is not needed since everything is in the same file.",
+      "revId": "24b8080a592662b1c3fe84dfe0815841b1272ebb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_d4d0f83c",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/Bug426648_MultipleClassSpecializations.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-30T20:41:11Z",
+      "side": 1,
+      "message": "Isn\u0027t this an invalid redefinition?",
+      "revId": "24b8080a592662b1c3fe84dfe0815841b1272ebb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_b4d3c445",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/Bug426648_MultipleClassSpecializations.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-30T20:41:11Z",
+      "side": 1,
+      "message": "Different specializations of the same template class may have  different sets of bases classes. We should test that case too.",
+      "revId": "24b8080a592662b1c3fe84dfe0815841b1272ebb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_14f9d0b9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPLinkage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1103,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-30T20:41:11Z",
+      "side": 1,
+      "message": "instance -\u003e specialization.",
+      "revId": "24b8080a592662b1c3fe84dfe0815841b1272ebb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_f4f37cd6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPLinkage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1104,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-01-30T20:41:11Z",
+      "side": 1,
+      "message": "I don\u0027t think we ignore all specializations other than the first encountered.",
+      "revId": "24b8080a592662b1c3fe84dfe0815841b1272ebb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

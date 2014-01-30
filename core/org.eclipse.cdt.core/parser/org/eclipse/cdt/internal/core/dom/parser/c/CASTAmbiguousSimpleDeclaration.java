@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2014 IBM Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,13 @@
  * Contributors:
  *     Markus Schorn - Initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -93,8 +95,28 @@ public class CASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements 
 	}
 
 	@Override
+	public IASTAttributeSpecifier[] getGNUAttributeSpecifiers() {
+		return fSimpleDecl.getGNUAttributeSpecifiers();
+	}
+
+	@Override
+	public IASTAttributeSpecifier[] getCPPAttributeSpecifiers() {
+		return fSimpleDecl.getCPPAttributeSpecifiers();
+	}
+
+	@Override
 	public void addAttribute(IASTAttribute attribute) {
 		fSimpleDecl.addAttribute(attribute);
+	}
+
+	@Override
+	public IASTAttributeSpecifier[] getAttributeSpecifiers() {
+		return fSimpleDecl.getAttributeSpecifiers();
+	}
+
+	@Override
+	public void addAttributeSpecifier(IASTAttributeSpecifier attributeSpecifier) {
+		fSimpleDecl.addAttributeSpecifier(attributeSpecifier);
 	}
 
 	@Override

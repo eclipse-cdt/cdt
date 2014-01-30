@@ -1,34 +1,29 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2014 Institute for Software, HSR Hochschule fuer Technik
+ * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Doug Schaefer (IBM) - Initial API and implementation
+ *     Thomas Corbat (IFS) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.ast;
+package org.eclipse.cdt.core.dom.parser.cpp;
+
+import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 
 /**
+ * Represents a C++11 (ISO/IEC 14882:2011 7.6.1 [dcl.attr.grammar]) attribute specifier.
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @since 5.7
  */
-public interface IASTPointerOperator extends IASTAttributeOwner {
-	/**
-	 * Constant/sentinel.
-	 */
-	public static final IASTPointerOperator[] EMPTY_ARRAY = {};
-
-	/**
-	 * @since 5.1
-	 */
+public interface ICPPASTAttributeSpecifier extends IASTAttributeSpecifier {
 	@Override
-	public IASTPointerOperator copy();
+	public ICPPASTAttributeSpecifier copy();
 
-	/**
-	 * @since 5.3
-	 */
 	@Override
-	public IASTPointerOperator copy(CopyStyle style);
+	public ICPPASTAttributeSpecifier copy(CopyStyle style);
 }

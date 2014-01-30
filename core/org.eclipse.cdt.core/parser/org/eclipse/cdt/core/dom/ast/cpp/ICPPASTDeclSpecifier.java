@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 
 /**
@@ -20,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTDeclSpecifier extends IASTDeclSpecifier {
+public interface ICPPASTDeclSpecifier extends IASTDeclSpecifier, IASTAttributeOwner {
 	// A declaration in C++ can be a friend declaration
 	/**
 	 * Is this a friend declaration?

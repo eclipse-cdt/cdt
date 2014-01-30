@@ -168,6 +168,12 @@ public abstract class ASTVisitor {
 	public boolean shouldVisitImplicitNameAlternates = false;
 
 	/**
+	 * Set this flag to visit attribute specifiers.
+	 * @since 5.7
+	 */
+	public boolean shouldVisitAttributeSpecifiers = false;
+
+	/**
 	 * Creates a visitor that does not visit any kind of node per default.
 	 */
 	public ASTVisitor() {
@@ -204,6 +210,7 @@ public abstract class ASTVisitor {
 		shouldVisitTemplateParameters= visitNodes;
 		shouldVisitTranslationUnit= visitNodes;
 		shouldVisitTypeIds= visitNodes;
+		shouldVisitAttributeSpecifiers= visitNodes;
 	}
 
 	// visit methods
@@ -247,6 +254,11 @@ public abstract class ASTVisitor {
 
 	/** @since 5.4 */
 	public int visit(IASTAttribute attribute) {
+		return PROCESS_CONTINUE;
+	}
+
+	/** @since 5.7 */
+	public int visit(IASTAttributeSpecifier specifier) {
 		return PROCESS_CONTINUE;
 	}
 
@@ -351,6 +363,11 @@ public abstract class ASTVisitor {
 
 	/** @since 5.4 */
 	public int leave(IASTAttribute attribute) {
+		return PROCESS_CONTINUE;
+	}
+
+	/** @since 5.7 */
+	public int leave(IASTAttributeSpecifier specifier) {
 		return PROCESS_CONTINUE;
 	}
 

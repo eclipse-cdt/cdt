@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,11 +10,15 @@
  *     Institute for Software - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -28,14 +32,12 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
-
-import java.util.List;
 
 /**
  * Visits all nodes, prints leading comments and handles macro expansions. The
@@ -56,6 +58,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 	protected InitializerWriter initializerWriter;
 	protected NameWriter nameWriter;
 	protected TemplateParameterWriter tempParameterWriter;
+	protected AttributeWriter attributeWriter;
 	protected MacroExpansionHandler macroHandler;
 	private boolean insertLeadingBlankLine;
 	private boolean suppressLeadingBlankLine;
@@ -77,6 +80,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 		shouldVisitTemplateParameters = true;
 		shouldVisitTranslationUnit = true;
 		shouldVisitTypeIds = true;
+		shouldVisitAttributeSpecifiers = true;
 	}
 
 	/**
@@ -104,6 +108,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 //		ppStmtWriter = new PreprocessorStatementWriter(scribe, this, commentMap);
 		nameWriter = new NameWriter(scribe, this, commentMap);
 		tempParameterWriter = new TemplateParameterWriter(scribe, this, commentMap);
+		attributeWriter = new AttributeWriter(scribe, this, commentMap);
 	}
 
 	@Override
@@ -283,6 +288,12 @@ public class ASTWriterVisitor extends ASTVisitor {
 		if (!macroHandler.checkisMacroExpansionNode(parameter)) {
 			tempParameterWriter.writeTemplateParameter(parameter);
 		}
+		return ASTVisitor.PROCESS_SKIP;
+	}
+
+	@Override
+	public int visit(IASTAttributeSpecifier specifier) {
+		attributeWriter.writeAttributeSpecifier(specifier);
 		return ASTVisitor.PROCESS_SKIP;
 	}
 

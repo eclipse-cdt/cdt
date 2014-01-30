@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2014 IBM Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,13 @@
  * Contributors:
  *     Markus Schorn - Initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -129,6 +131,27 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
 	@Override
 	public void addAttribute(IASTAttribute attribute) {
         assertNotFrozen();
+		Assert.isLegal(false);
+	}
+
+	@Override
+	public IASTAttributeSpecifier[] getAttributeSpecifiers() {
+		return dtors[0].getAttributeSpecifiers();
+	}
+
+	@Override
+	public IASTAttributeSpecifier[] getGNUAttributeSpecifiers() {
+		return dtors[0].getGNUAttributeSpecifiers();
+	}
+
+	@Override
+	public IASTAttributeSpecifier[] getCPPAttributeSpecifiers() {
+		return dtors[0].getGNUAttributeSpecifiers();
+	}
+
+	@Override
+	public void addAttributeSpecifier(IASTAttributeSpecifier attributeSpecifier) {
+		assertNotFrozen();
 		Assert.isLegal(false);
 	}
 

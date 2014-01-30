@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,13 @@
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -95,6 +97,26 @@ public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbi
 	public void addAttribute(IASTAttribute attribute) {
 		throw new UnsupportedOperationException();
     }
+
+	@Override
+	public IASTAttributeSpecifier[] getAttributeSpecifiers() {
+		return IASTAttributeSpecifier.EMPTY_ATTRIBUTE_SPECIFIER_ARRAY;
+	}
+
+	@Override
+	public IASTAttributeSpecifier[] getGNUAttributeSpecifiers() {
+		return IASTAttributeSpecifier.EMPTY_ATTRIBUTE_SPECIFIER_ARRAY;
+	}
+
+	@Override
+	public IASTAttributeSpecifier[] getCPPAttributeSpecifiers() {
+		return IASTAttributeSpecifier.EMPTY_ATTRIBUTE_SPECIFIER_ARRAY;
+	}
+
+	@Override
+	public void addAttributeSpecifier(IASTAttributeSpecifier attributeSpecifier) {
+		throw new UnsupportedOperationException();
+	}
 
     @Override
 	public IASTNode[] getNodes() {

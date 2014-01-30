@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
-import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -1351,7 +1351,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
             
         // Accept __attribute__ or __declspec between pointer operators and declarator.
-        List<IASTAttribute> attributes =
+        List<IASTAttributeSpecifier> attributes =
         		__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
         
         // Look for identifier or nested declarator
@@ -1422,7 +1422,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
         
 	private IASTDeclarator declarator(final List<IASTPointerOperator> pointerOps,
-			List<IASTAttribute> attributes, final IASTName declaratorName,
+			List<IASTAttributeSpecifier> attributes, final IASTName declaratorName,
 			final IASTDeclarator nestedDeclarator, final int startingOffset, int endOffset, 
 			final DeclarationOptions option) throws EndOfFileException, BacktrackException {
         IASTDeclarator result= null;
@@ -1489,8 +1489,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
         if (attributes != null) {
-        	for (IASTAttribute attribute : attributes) {
-        		result.addAttribute(attribute);
+        	for (IASTAttributeSpecifier specifier : attributes) {
+        		result.addAttributeSpecifier(specifier);
         	}
         }
 

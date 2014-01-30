@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -65,7 +65,7 @@ public class DeclaratorWriter extends NodeWriter {
 		}
 
 		visitor.setSpaceNeededBeforeName(false);
-		writeTrailingComments(declarator, false);			
+		writeTrailingComments(declarator, false);
 	}
 
 	protected void writeDefaultDeclarator(IASTDeclarator declarator) {
@@ -74,6 +74,7 @@ public class DeclaratorWriter extends NodeWriter {
 		IASTName name = declarator.getName();
 		name.accept(visitor);
 		writeNestedDeclarator(declarator);
+		writeAttributes(declarator, SpaceLocation.BEFORE);
 		IASTInitializer init = getInitializer(declarator);
 		if (init != null) {
 			init.accept(visitor);
@@ -83,6 +84,7 @@ public class DeclaratorWriter extends NodeWriter {
 	protected void writePointerOperators(IASTDeclarator declarator, IASTPointerOperator[] pointOps) {
 		for (IASTPointerOperator operator : pointOps) {
 			writePointerOperator(operator);
+			writeAttributes(operator, SpaceLocation.NONE);
 		}
 	}
 
@@ -153,6 +155,7 @@ public class DeclaratorWriter extends NodeWriter {
 			scribe.print(PURE_VIRTUAL);
 		}
 		writeExceptionSpecification(funcDec, funcDec.getExceptionSpecification(), funcDec.getNoexceptExpression());
+		writeAttributes(funcDec, SpaceLocation.BEFORE);
 		if (funcDec.getTrailingReturnType() != null) {
 			scribe.printSpace();
 			scribe.print(ARROW_OPERATOR);
@@ -260,6 +263,7 @@ public class DeclaratorWriter extends NodeWriter {
 			ex.accept(visitor);
 		}
 		scribe.print(']');
+		writeAttributes(modifier, SpaceLocation.NONE);
 	}
 
 	private void writeFieldDeclarator(IASTFieldDeclarator fieldDecl) {

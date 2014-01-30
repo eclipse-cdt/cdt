@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -9,11 +9,14 @@
  * Contributors: 
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
@@ -34,6 +37,11 @@ public class NodeWriter {
 	protected static final String VAR_ARGS = "..."; //$NON-NLS-1$
 	protected static final String COLON_COLON = "::"; //$NON-NLS-1$
 	protected static final String COLON_SPACE = ": "; //$NON-NLS-1$
+	protected static final String OPENING_SQUARE_BRACKET = "["; //$NON-NLS-1$
+	protected static final String CLOSING_SQUARE_BRACKET = "]"; //$NON-NLS-1$
+	protected static final String OPENING_PARENTHESIS = "("; //$NON-NLS-1$
+	protected static final String CLOSING_PARENTHESIS = ")"; //$NON-NLS-1$
+	protected enum SpaceLocation {NONE, BEFORE, AFTER, BEFORE_AFTER}
 
 	public NodeWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
 		super();
@@ -105,6 +113,22 @@ public class NodeWriter {
 		for (IASTComment comment : getFreestandingComments(node)) {
 			scribe.print(comment.getComment());
 			scribe.newLine();
+		}
+	}
+
+	protected void writeAttributes(IASTAttributeOwner attributeOwner, SpaceLocation spaceLocation) {
+		IASTAttribute[] attributes = attributeOwner.getAttributes();
+		if (attributes.length == 0)
+			return;
+
+		if (spaceLocation == SpaceLocation.BEFORE || spaceLocation == SpaceLocation.BEFORE_AFTER) {
+			scribe.printSpace();
+		}
+		for (IASTAttribute attribute : attributes) {
+			attribute.accept(visitor);
+		}
+		if (spaceLocation == SpaceLocation.AFTER || spaceLocation == SpaceLocation.BEFORE_AFTER) {
+			scribe.printSpace();
 		}
 	}
 }

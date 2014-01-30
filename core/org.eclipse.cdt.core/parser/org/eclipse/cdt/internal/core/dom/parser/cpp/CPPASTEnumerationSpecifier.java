@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -122,7 +123,10 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		if (fBaseType != null && !fBaseType.accept(action)) {
 			return false;
 		}
-		
+
+		if (!acceptByAttributes(action))
+			return false;
+
 		for (IASTEnumerator e : getEnumerators()) {
 			if (!e.accept(action))
 				return false;

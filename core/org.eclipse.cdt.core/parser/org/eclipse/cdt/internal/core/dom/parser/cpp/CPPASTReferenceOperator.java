@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,17 +8,18 @@
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 
 /**
  * Reference operator for declarators.
  */
-public class CPPASTReferenceOperator extends ASTNode implements ICPPASTReferenceOperator {
+public class CPPASTReferenceOperator extends ASTAttributeOwner implements ICPPASTReferenceOperator {
 	private final boolean fIsRValue;
 
 	public CPPASTReferenceOperator(boolean isRValueReference) {
@@ -45,12 +46,18 @@ public class CPPASTReferenceOperator extends ASTNode implements ICPPASTReference
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitPointerOperators) {
 			switch (action.visit(this)) {
-    		case ASTVisitor.PROCESS_ABORT: return false;
-    		case ASTVisitor.PROCESS_SKIP: return true;
-    		}
+			case ASTVisitor.PROCESS_ABORT: return false;
+			case ASTVisitor.PROCESS_SKIP: return true;
+			}
+		}
+
+		if (!acceptByAttributes(action))
+			return false;
+
+		if (action.shouldVisitPointerOperators) {
 			if (action.leave(this) == ASTVisitor.PROCESS_ABORT)
 				return false;
     	}
-		return true;	    
+		return true;
     }
 }

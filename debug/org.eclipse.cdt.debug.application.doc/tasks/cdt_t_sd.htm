@@ -15,16 +15,18 @@
 <h1>Setting up include paths and macros for C/C++ indexer</h1>
 
 <p>
-CDT allows for comfortable environment with code highlighting, navigation, content assist and static analysis.
-However, most C/C++ projects have to be configured to enjoy those features. Most real life C/C++ projects heavily depend on code outside of the project itself,
-such as system headers or third party libraries. CDT indexer needs to process those to provide accurate index.
-Failure to set up these important settings assuredly will cause the assist tools misbehave.
+The Stand-alone Debugger supports a number of actions based on the application's code such as code highlighting, navigation, content assist and static analysis.
+Normally, C/C++ projects have to be configured to enjoy those features due to the fact that most real life C/C++ projects heavily depend on code outside of the project itself,
+such as system headers or third party libraries.  The C/C++ indexer needs to process those to provide an accurate index.
 </p>
 
-<p>CDT will try to discover include paths and preprocessor symbols automatically for supported toolchains. This process is known as <a href="../concepts/cdt_c_scanner_discovery.htm">Scanner Discovery</a> or <b>Autodiscovery</b>.
+<p>The Stand-alone Debugger will try to discover include paths and preprocessor symbols automatically. This process is known as <a href="../concepts/cdt_c_scanner_discovery.htm">Scanner Discovery</a> or <b>Autodiscovery</b>.
 This discovery of symbols is twofold.
-One way, CDT will try to detect built-in compiler symbols and include paths running the compiler with special options and parse the output.
-Another method that CDT employs is to analyze build output of the regular build with Build Output Parser. Often, include paths are supplied to the compiler with -I options, and macros with -D options.
+The first method is that the Stand-alone Debugger will try to detect built-in compiler symbols and include paths running the compiler with special options and parse the output.
+Another method that the Stand-alone Debugger employs is to analyze the output generated from a Makefile build.  Since the
+Stand-alone Debugger does not contain build support, this output must be saved externally and passed to the debugger either
+on the command line using the <strong>-b</strong> option or else by specifying the build log using the <strong>File &gt; New Executable...</strong>
+dialog.  Often, include paths are supplied to the compiler with -I options, and macros with -D options.
 That relies on verbose build output of your build where all these options are actually printed by make.
 </p>
 
@@ -34,14 +36,8 @@ Language Settings Providers can be configured on project properties page "Prepro
 and on preference page <a href="../reference/cdt_u_pref_build_scanner_discovery.htm">C/C++ Preferences: Scanner Discovery</a> for shared providers.
 </p>
 <p>
-If information retrieved by auto-discovery is insufficient or the project deviates from a standard one supported by CDT a user can inspect discovered entries and enter additional include paths and macros manually
+If information retrieved by auto-discovery is insufficient a user can inspect discovered entries and enter additional include paths and macros manually
 on the property page "Preprocessor Include Paths, Macros, etc.", <a href="../reference/cdt_u_prop_general_sd_entries.htm">Entries tab</a>.
-</p>
-
-
-<p>
-There are other ways to make C/C++ indexer aware of include paths or macros. One way is to set up them in MBS via "Paths and Symbols" project properties.
-See <a href="cdt_t_proj_paths.htm">Including paths and symbols in Managed Build System</a>. These entries are supplied to the indexer with MBS Language Settings Provider.
 </p>
 
 
@@ -55,7 +51,6 @@ See <a href="cdt_t_proj_paths.htm">Including paths and symbols in Managed Build 
 </p>
 
 <p><img src="../images/ngref.gif" alt="Related reference" width="143" height="21"><br>
-<a href="../reference/cdt_u_pref_build_scanner_discovery.htm">C/C++ Preferences: Scanner Discovery</a><br>
 <a href="../reference/cdt_u_prop_general_scanner_discovery.htm">C/C++ Project properties: Preprocessor Include Paths, Macros, etc.</a><br>
 </p>
 

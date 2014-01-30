@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.ui.tests.includebrowser;
 
 import org.eclipse.core.resources.IFile;
@@ -32,7 +31,6 @@ import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.cdt.internal.ui.includebrowser.IBViewPart;
 
 public class IncludeBrowserBaseTest extends BaseUITestCase {
-	protected static final int INDEXER_WAIT_TIME = 8000;
 	protected static IProgressMonitor NPM= new NullProgressMonitor();
 
 	private ICProject fCProject;

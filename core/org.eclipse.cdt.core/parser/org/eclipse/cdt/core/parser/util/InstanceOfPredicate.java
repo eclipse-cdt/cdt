@@ -11,16 +11,17 @@
 package org.eclipse.cdt.core.parser.util;
 
 /**
- * Unary predicate returning {@code true} if the object is an instance of the given class.
+ * Unary predicate returning {@code true} if the object is an instance of the given class
+ * or interface.
  * @since 5.7
  */
 public class InstanceOfPredicate<T> implements IUnaryPredicate<T> {
-	private Class<T> type;
+	private Class<?> type;
 
-	public InstanceOfPredicate(Class<T> type) {
+	public InstanceOfPredicate(Class<?> type) {
 		this.type = type;
 	}
-	
+
 	@Override
 	public boolean apply(T obj) {
 		return type.isInstance(obj);

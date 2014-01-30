@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2012, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,6 +12,7 @@
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
@@ -24,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTAliasDeclaration extends IASTDeclaration, IASTNameOwner {
+public interface ICPPASTAliasDeclaration extends IASTDeclaration, IASTNameOwner, IASTAttributeOwner {
 	public static final ICPPASTAliasDeclaration[] EMPTY_ALIAS_DECLARATION_ARRAY = {};
 
 	/**

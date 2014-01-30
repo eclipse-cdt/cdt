@@ -80,7 +80,7 @@ public class UPCASTForallStatement extends CASTForStatement implements IUPCASTFo
 			}
 		}
 
-        if (!acceptByAttributes(visitor)) return false;
+        if (!acceptByAttributeSpecifiers(visitor)) return false;
 
 		IASTStatement initializer = super.getInitializerStatement();
 		if (initializer != null && !initializer.accept(visitor)) return false;

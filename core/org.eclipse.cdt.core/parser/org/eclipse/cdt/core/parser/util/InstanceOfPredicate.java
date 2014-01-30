@@ -15,12 +15,12 @@ package org.eclipse.cdt.core.parser.util;
  * @since 5.7
  */
 public class InstanceOfPredicate<T> implements IUnaryPredicate<T> {
-	private Class<T> type;
+	private Class<?> type;
 
-	public InstanceOfPredicate(Class<T> type) {
+	public InstanceOfPredicate(Class<?> type) {
 		this.type = type;
 	}
-	
+
 	@Override
 	public boolean apply(T obj) {
 		return type.isInstance(obj);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,11 @@
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -43,14 +44,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * C++ specific declarator.
  */
-public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IASTImplicitNameOwner,
+public class CPPASTDeclarator extends ASTAttributeOwner implements ICPPASTDeclarator, IASTImplicitNameOwner,
 		IASTAmbiguityParent {
     private IASTInitializer initializer;
     private IASTName name;
 	private IASTImplicitName[] implicitNames; 
     private IASTDeclarator nested;
     private IASTPointerOperator[] pointerOps;
-    private IASTAttribute[] attributes;
     private boolean isPackExpansion;
    
     public CPPASTDeclarator() {
@@ -84,11 +84,8 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
 		for (IASTPointerOperator pointer : getPointerOperators()) {
 			copy.addPointerOperator(pointer.copy(style));
 		}
-		for (IASTAttribute attribute : getAttributes()) {
-			copy.addAttribute(attribute.copy(style));
-		}
 		return super.copy(copy, style);
-    }
+	}
 
 	@Override
 	public boolean declaresParameterPack() {
@@ -100,23 +97,6 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
         if (pointerOps == null) return IASTPointerOperator.EMPTY_ARRAY;
         pointerOps = ArrayUtil.trim(IASTPointerOperator.class, pointerOps);
         return pointerOps;
-    }
-
-	@Override
-	public IASTAttribute[] getAttributes() {
-        if (attributes == null) return IASTAttribute.EMPTY_ATTRIBUTE_ARRAY;
-        attributes = ArrayUtil.trim(IASTAttribute.class, attributes);
-        return attributes;
-    }
-
-    @Override
-	public void addAttribute(IASTAttribute attribute) {
-        assertNotFrozen();
-    	if (attribute != null) {
-    		attribute.setParent(this);
-			attribute.setPropertyInParent(ATTRIBUTE);
-    		attributes = ArrayUtil.append(IASTAttribute.class, attributes, attribute);
-    	}
     }
 
     @Override
@@ -199,14 +179,8 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
         	}
         }
 
-        if (attributes != null) {
-        	for (IASTAttribute attribute : attributes) {
-        		if (attribute == null)
-        			break;
-                if (!attribute.accept(action))
-                	return false;
-        	}
-        }
+        if (!acceptByAttributeSpecifiers(action))
+        	return false;
 
         if (nested == null && name != null) {
         	IASTDeclarator outermost= ASTQueries.findOutermostDeclarator(this);

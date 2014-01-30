@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation and others.
+ * Copyright (c) 2012, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Sergey Prigogin (Google) - Initial API and implementation
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -17,8 +18,14 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTAttributeOwner extends IASTNode {
+	@Deprecated
 	public static final ASTNodeProperty ATTRIBUTE = 
 			new ASTNodeProperty("IASTAttributeOwner.ATTRIBUTE"); //$NON-NLS-1$
+	/**
+	 * @since 5.7
+	 */
+	public static final ASTNodeProperty ATTRIBUTE_SPECIFIER = 
+			new ASTNodeProperty("IASTAttributeOwner.ATTRIBUTE_ATTRIBUTE_SPECIFIER"); //$NON-NLS-1$
 
 	/**
 	 * Returns the array of attributes.
@@ -26,7 +33,21 @@ public interface IASTAttributeOwner extends IASTNode {
 	public IASTAttribute[] getAttributes();
 
 	/**
-	 * Adds an attribute to the node.
+	 * @deprecated Ignored attributes should not be assigned to nodes directly, as an attribute
+	 * cannot represent the specifier used in the source code.
 	 */
+	@Deprecated
 	public void addAttribute(IASTAttribute attribute);
+
+	/**
+	 * Returns an array of all the node's attribute specifiers.
+	 * @since 5.7
+	 */
+	public IASTAttributeSpecifier[] getAttributeSpecifiers();
+
+	/**
+	 * Adds an attribute specifier to the node.
+	 * @since 5.7
+	 */
+	public void addAttributeSpecifier(IASTAttributeSpecifier attributeSpecifier);
 }

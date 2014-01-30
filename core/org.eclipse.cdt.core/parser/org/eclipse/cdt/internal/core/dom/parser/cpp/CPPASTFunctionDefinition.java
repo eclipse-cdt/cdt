@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -22,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
@@ -30,7 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * Models a function definition without a try-block. If used for a constructor definition
  * it may contain member initializers.
  */
-public class CPPASTFunctionDefinition extends ASTNode
+public class CPPASTFunctionDefinition extends ASTAttributeOwner
 		implements ICPPASTFunctionDefinition, IASTAmbiguityParent {
     private IASTDeclSpecifier declSpecifier;
     private IASTFunctionDeclarator declarator;
@@ -181,6 +182,9 @@ public class CPPASTFunctionDefinition extends ASTNode
 				break;
 			}
 		}
+
+		if (!acceptByAttributes(action))
+			return false;
 
 		if (declSpecifier != null && !declSpecifier.accept(action))
 			return false;

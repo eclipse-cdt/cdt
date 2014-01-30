@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2006, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -8,6 +8,7 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.astwriter;
 
@@ -48,6 +49,7 @@ public class AstWriterTestSuite {
 
 		suite.addTest(SourceRewriteTester.suite("CommentTests", "resources/rewrite/ASTWriterCommentedTestSource.awts"));
 		suite.addTest(SourceRewriteTester.suite("NewCommentTests", "resources/rewrite/ASTWriterCommentedTestSource2.awts"));
+		suite.addTest(SourceRewriteTester.suite("AttributeTests", "resources/rewrite/ASTWriterAttributeTestSource.awts"));
 		suite.addTestSuite(ExpressionWriterTest.class);
 		return suite;
 	}

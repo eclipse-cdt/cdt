@@ -177,6 +177,7 @@ public final class PreferencesMessages extends NLS {
 	public static String SaveActionsPreferencePage_inEditedLines;
 	public static String SaveActionsPreferencePage_inAllLines;
 	public static String SaveActionsPreferencePage_ensureNewline;
+	public static String SaveActionsPreferencePage_formatSourceCode;
 
 	public static String SmartTypingConfigurationBlock_autoclose_title;
 	public static String SmartTypingConfigurationBlock_autoindent_newlines;

@@ -11,8 +11,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.JSchConnection;
+import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
@@ -48,8 +50,11 @@ public class GetOutputStreamCommand extends AbstractRemoteCommand<OutputStream> 
 									if ((fOptions & EFS.APPEND) != 0) {
 										mode = ChannelSftp.APPEND;
 									}
-									getChannel().put(input, fRemotePath.toString(),
-											new CommandProgressMonitor(getProgressMonitor()), mode);
+									getChannel().put(
+											input,
+											fRemotePath.toString(),
+											new CommandProgressMonitor(NLS.bind(Messages.GetOutputStreamCommand_Sending, fRemotePath.toString()),
+													getProgressMonitor()), mode);
 									input.close();
 								} finally {
 									fIsClosed = true;

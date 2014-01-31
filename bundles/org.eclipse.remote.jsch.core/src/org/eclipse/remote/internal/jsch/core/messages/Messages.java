@@ -22,6 +22,10 @@ public class Messages extends NLS {
 	public static String AbstractRemoteCommand_Operation_cancelled_by_user;
 	public static String AuthInfo_Authentication_message;
 	public static String ExecCommand_Exec_command;
+
+	public static String GetInputStreamCommand_Receiving;
+
+	public static String GetOutputStreamCommand_Sending;
 	public static String JSchConnection_Connection_was_cancelled;
 	public static String JSchConnection_connectionNotOpen;
 	public static String JSchConnection_Executing_command;

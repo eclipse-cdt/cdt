@@ -50,8 +50,14 @@ public abstract class AbstractRemoteCommand<T> {
 		private Long fMaxWork;
 		private String fMaxWorkSize;
 		private long fWorkToDate;
+		private String fPrefix;
 
 		public CommandProgressMonitor(IProgressMonitor monitor) {
+			fMonitor = monitor;
+		}
+
+		public CommandProgressMonitor(String prefix, IProgressMonitor monitor) {
+			fPrefix = prefix;
 			fMonitor = monitor;
 		}
 
@@ -67,15 +73,18 @@ public abstract class AbstractRemoteCommand<T> {
 				size = "KB"; //$NON-NLS-1$
 				workToDate = fWorkToDate / 1024L;
 			}
-			String subDesc;
+			StringBuffer taskName = new StringBuffer();
+			if (fPrefix != null) {
+				taskName.append(fPrefix);
+			}
 			if (fWorkPercentFactor < 0) {
-				subDesc = MessageFormat.format(Messages.AbstractRemoteCommand_format1, new Object[] { workToDate, size });
+				taskName.append(MessageFormat.format(Messages.AbstractRemoteCommand_format1, new Object[] { workToDate, size }));
 			} else {
 				Double workPercent = new Double(fWorkPercentFactor * fWorkToDate);
-				subDesc = MessageFormat.format(Messages.AbstractRemoteCommand_format2, new Object[] { workToDate, size, fMaxWork,
-						fMaxWorkSize, workPercent });
+				taskName.append(MessageFormat.format(Messages.AbstractRemoteCommand_format2, new Object[] { workToDate, size,
+						fMaxWork, fMaxWorkSize, workPercent }));
 			}
-			fMonitor.subTask(subDesc);
+			fMonitor.subTask(taskName.toString());
 			fMonitor.worked((int) count);
 			return !(fMonitor.isCanceled());
 		}

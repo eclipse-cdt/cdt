@@ -55,7 +55,7 @@ public class CElementLabels {
 
 	/**
 	 * Method names contain thrown exceptions.
-	 * e.g. <code>foo throw( IOException )</code>
+	 * e.g. <code>foo throw (IOException)</code>
 	 */
 	public final static long M_EXCEPTIONS= 1L << 2;
 	
@@ -233,7 +233,6 @@ public class CElementLabels {
 	public final static String DECL_STRING  = CoreModelMessages.getString("CElementLabels.declseparator_string"); // "  "; // use for return type //$NON-NLS-1$
 
 	
-	
 	//====================
 	
 	
@@ -241,8 +240,8 @@ public class CElementLabels {
 	}
 
 	/**
-	 * Returns the label of the given object. The object must be of type {@link ICElement} or adapt to {@link IWorkbenchAdapter}.
-	 * If the element type is not known, the empty string is returned.
+	 * Returns the label of the given object. The object must be of type {@link ICElement} or adapt
+	 * to {@link IWorkbenchAdapter}. If the element type is not known, the empty string is returned.
 	 * The returned label is BiDi-processed with {@link TextProcessor#process(String, String)}.
 	 *
 	 * @param obj object to get the label for
@@ -269,9 +268,10 @@ public class CElementLabels {
 	}
 
 	/**
-	 * Returns the styled label of the given object. The object must be of type {@link ICElement} or adapt to {@link IWorkbenchAdapter}.
-	 * If the element type is not known, the empty string is returned.
-	 * The returned label is BiDi-processed with {@link TextProcessor#process(String, String)}.
+	 * Returns the styled label of the given object. The object must be of type {@link ICElement}
+	 * or adapt to {@link IWorkbenchAdapter}. If the element type is not known, the empty string is
+	 * returned. The returned label is BiDi-processed with
+	 * {@link TextProcessor#process(String, String)}.
 	 *
 	 * @param obj object to get the label for
 	 * @param flags the rendering flags
@@ -329,7 +329,7 @@ public class CElementLabels {
 	 * @return the label of the Java element
 	 */
 	public static String getElementLabel(ICElement element, long flags) {
-		StringBuffer result= new StringBuffer();
+		StringBuilder result= new StringBuilder();
 		getElementLabel(element, flags, result);
 		return Strings.markCElementLabelLTR(result.toString());
 	}
@@ -355,7 +355,7 @@ public class CElementLabels {
 	 * @param flags the rendering flags
 	 * @param buf the buffer to append the resulting label to
 	 */
-	public static void getElementLabel(ICElement element, long flags, StringBuffer buf) {
+	public static void getElementLabel(ICElement element, long flags, StringBuilder buf) {
 		new CElementLabelComposer(buf).appendElementLabel(element, flags);
 	}
 
@@ -371,12 +371,12 @@ public class CElementLabels {
 	}
 	
 	/**
-	 * Appends the label for a macro definition to a StringBuffer.
+	 * Appends the label for a macro definition to a StringBuilder.
 	 * @param macro a macro definition
 	 * @param flags {@link #MF_POST_FILE_QUALIFIED}, or 0.
 	 * @param buf the buffer to append the label to.
 	 */
-	public static void getMacroLabel(IMacro macro, int flags, StringBuffer buf) {
+	public static void getMacroLabel(IMacro macro, int flags, StringBuilder buf) {
 		new CElementLabelComposer(buf).appendMacroLabel(macro, flags);
 	}
 
@@ -392,12 +392,12 @@ public class CElementLabels {
 	}
 	
 	/**
-	 * Appends the label for a method declaration to a StringBuffer.
+	 * Appends the label for a method declaration to a StringBuilder.
 	 * @param method a method declaration
 	 * @param flags any of the M_* flags, and MF_POST_FILE_QUALIFIED
 	 * @param buf the buffer to append the label
 	 */
-	public static void getMethodLabel( IMethodDeclaration method, int flags, StringBuffer buf ) {
+	public static void getMethodLabel(IMethodDeclaration method, int flags, StringBuilder buf) {
 		new CElementLabelComposer(buf).appendMethodLabel(method, flags);
 	}
 
@@ -413,12 +413,12 @@ public class CElementLabels {
 	}
 	
 	/**
-	 * Appends the label for a field to a StringBuffer.
+	 * Appends the label for a field to a StringBuilder.
 	 * @param field a field
 	 * @param flags any of the F_* flags, and MF_POST_FILE_QUALIFIED
 	 * @param buf the buffer to append the label
 	 */
-	public static void getFieldLabel(IField field, int flags, StringBuffer buf ) {
+	public static void getFieldLabel(IField field, int flags, StringBuilder buf) {
 		new CElementLabelComposer(buf).appendFieldLabel(field, flags);	
 	}
 
@@ -428,17 +428,17 @@ public class CElementLabels {
 	 * @param flags any of the F_* flags, and MF_POST_FILE_QUALIFIED
 	 * @param result the buffer to append the label
 	 */
-	public static void getFieldLabel(IField field, int flags, StyledString result ) {
+	public static void getFieldLabel(IField field, int flags, StyledString result) {
 		new CElementLabelComposer(result).appendFieldLabel(field, flags);	
 	}
 
 	/**
-	 * Appends the label for a variable declaration to a StringBuffer.
+	 * Appends the label for a variable declaration to a StringBuilder.
 	 * @param var a variable declaration
 	 * @param flags any of the F_* flags, and MF_POST_FILE_QUALIFIED
 	 * @param buf the buffer to append the label
 	 */
-	public static void getVariableLabel(IVariableDeclaration var, int flags, StringBuffer buf ) {
+	public static void getVariableLabel(IVariableDeclaration var, int flags, StringBuilder buf) {
 		new CElementLabelComposer(buf).appendVariableLabel(var, flags);	
 	}
 
@@ -448,17 +448,17 @@ public class CElementLabels {
 	 * @param flags any of the F_* flags, and MF_POST_FILE_QUALIFIED
 	 * @param result the buffer to append the label
 	 */
-	public static void getVariableLabel(IVariableDeclaration var, int flags, StyledString result ) {
+	public static void getVariableLabel(IVariableDeclaration var, int flags, StyledString result) {
 		new CElementLabelComposer(result).appendVariableLabel(var, flags);	
 	}
 
 	/**
-	 * Appends the label for an enumerator to a StringBuffer.
+	 * Appends the label for an enumerator to a StringBuilder.
 	 * @param var an enumerator
 	 * @param flags any of the F_* flags, and MF_POST_FILE_QUALIFIED
 	 * @param buf the buffer to append the label
 	 */
-	public static void getEnumeratorLabel(IEnumerator var, int flags, StringBuffer buf ) {
+	public static void getEnumeratorLabel(IEnumerator var, int flags, StringBuilder buf) {
 		new CElementLabelComposer(buf).appendEnumeratorLabel(var, flags);	
 	}
 
@@ -468,17 +468,17 @@ public class CElementLabels {
 	 * @param flags any of the F_* flags, and MF_POST_FILE_QUALIFIED
 	 * @param result the buffer to append the label
 	 */
-	public static void getEnumeratorLabel(IEnumerator var, int flags, StyledString result ) {
+	public static void getEnumeratorLabel(IEnumerator var, int flags, StyledString result) {
 		new CElementLabelComposer(result).appendEnumeratorLabel(var, flags);	
 	}
 
 	/**
-	 * Appends the label for a function declaration to a StringBuffer.
+	 * Appends the label for a function declaration to a StringBuilder.
 	 * @param func a function declaration
 	 * @param flags any of the M_* flags, and MF_POST_FILE_QUALIFIED
 	 * @param buf the buffer to append the label
 	 */
-	public static void getFunctionLabel(IFunctionDeclaration func, int flags, StringBuffer buf) {
+	public static void getFunctionLabel(IFunctionDeclaration func, int flags, StringBuilder buf) {
 		new CElementLabelComposer(buf).appendFunctionLabel(func, flags);	
 	}
 
@@ -489,16 +489,16 @@ public class CElementLabels {
 	 * @param result the buffer to append the label
 	 */
 	public static void getFunctionLabel(IFunctionDeclaration func, int flags, StyledString result) {
-		new CElementLabelComposer(result).appendFunctionLabel(func, flags);	
+		new CElementLabelComposer(result).appendFunctionLabel(func, flags);
 	}
 
 	/**
-	 * Appends the label for a type definition to a StringBuffer.
+	 * Appends the label for a type definition to a StringBuilder.
 	 * @param typedef a type definition
 	 * @param flags any of the F_* flags, and MF_POST_FILE_QUALIFIED
 	 * @param buf the buffer to append the label
 	 */
-	public static void getTypeDefLabel(ITypeDef typedef, int flags, StringBuffer buf ) {
+	public static void getTypeDefLabel(ITypeDef typedef, int flags, StringBuilder buf) {
 		new CElementLabelComposer(buf).appendTypeDefLabel(typedef, flags);		
 	}
 
@@ -508,8 +508,7 @@ public class CElementLabels {
 	 * @param flags any of the F_* flags, and MF_POST_FILE_QUALIFIED
 	 * @param result the buffer to append the label
 	 */
-	public static void getTypeDefLabel(ITypeDef typedef, int flags, StyledString result ) {
+	public static void getTypeDefLabel(ITypeDef typedef, int flags, StyledString result) {
 		new CElementLabelComposer(result).appendTypeDefLabel(typedef, flags);		
 	}
-	
 }

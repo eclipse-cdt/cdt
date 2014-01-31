@@ -47,7 +47,8 @@ public abstract class AbstractRemoteCommand<T> {
 	protected static class CommandProgressMonitor implements SftpProgressMonitor {
 		private final IProgressMonitor fMonitor;
 		private double fWorkPercentFactor;
-		private Long fMaxWorkKB;
+		private Long fMaxWork;
+		private String fMaxWorkSize;
 		private long fWorkToDate;
 
 		public CommandProgressMonitor(IProgressMonitor monitor) {
@@ -57,11 +58,23 @@ public abstract class AbstractRemoteCommand<T> {
 		@Override
 		public boolean count(long count) {
 			fWorkToDate += count;
-			Long workToDateKB = new Long(fWorkToDate / 1024L);
-			Double workPercent = new Double(fWorkPercentFactor * fWorkToDate);
-			String subDesc = MessageFormat.format(Messages.AbstractRemoteCommand_format,
-					new Object[] { workToDateKB, fMaxWorkKB, workPercent });
-
+			String size;
+			Long workToDate;
+			if (fWorkToDate < 1024L) {
+				size = "bytes"; //$NON-NLS-1$
+				workToDate = fWorkToDate;
+			} else {
+				size = "KB"; //$NON-NLS-1$
+				workToDate = fWorkToDate / 1024L;
+			}
+			String subDesc;
+			if (fWorkPercentFactor < 0) {
+				subDesc = MessageFormat.format(Messages.AbstractRemoteCommand_format1, new Object[] { workToDate, size });
+			} else {
+				Double workPercent = new Double(fWorkPercentFactor * fWorkToDate);
+				subDesc = MessageFormat.format(Messages.AbstractRemoteCommand_format2, new Object[] { workToDate, size, fMaxWork,
+						fMaxWorkSize, workPercent });
+			}
 			fMonitor.subTask(subDesc);
 			fMonitor.worked((int) count);
 			return !(fMonitor.isCanceled());
@@ -75,7 +88,13 @@ public abstract class AbstractRemoteCommand<T> {
 		@Override
 		public void init(int op, String src, String dest, long max) {
 			fWorkPercentFactor = 1.0 / max;
-			fMaxWorkKB = new Long(max / 1024L);
+			if (max < 1024L) {
+				fMaxWorkSize = "bytes"; //$NON-NLS-1$
+				fMaxWork = max;
+			} else {
+				fMaxWorkSize = "KB"; //$NON-NLS-1$
+				fMaxWork = max / 1024L;
+			}
 			fWorkToDate = 0;
 			fMonitor.beginTask(new Path(src).lastSegment(), (int) max);
 		}

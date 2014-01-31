@@ -16,15 +16,14 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_ID = "org.eclipse.remote.internal.jsch.core.messages.messages"; //$NON-NLS-1$
 
-	public static String AbstractRemoteCommand_format;
-
+	public static String AbstractRemoteCommand_format1;
+	public static String AbstractRemoteCommand_format2;
 	public static String AbstractRemoteCommand_Get_symlink_target;
 	public static String AbstractRemoteCommand_Operation_cancelled_by_user;
 	public static String AuthInfo_Authentication_message;
 	public static String ExecCommand_Exec_command;
 	public static String JSchConnection_Connection_was_cancelled;
 	public static String JSchConnection_connectionNotOpen;
-
 	public static String JSchConnection_Executing_command;
 	public static String JSchConnection_remote_address_must_be_set;
 	public static String JSchConnection_remotePort;

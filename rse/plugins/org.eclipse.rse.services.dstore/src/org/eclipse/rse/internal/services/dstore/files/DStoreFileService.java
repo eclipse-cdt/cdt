@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@
  * David McKnight   (IBM)        - [390037] [dstore] Duplicated items in the System view
  * David McKnight   (IBM)        - [391164] [dstore] don't clear cached elements when they're not spirited or deleted
  * David McKnight   (IBM)        - [396783] [dstore] fix issues with the spiriting mechanism and other memory improvements (phase 2)
+ * David McKnight   (IBM)        - [427306] A couple cases where RSE doesn't indicate lack of space for upload
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -643,6 +644,13 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 						});
 					monitor.subTask(str);
 					isCancelled = monitor.isCanceled();
+					
+					String resultStr = result.getSource();
+					if (resultStr.equals("failed")){ //$NON-NLS-1$
+		    			String msgTxt = NLS.bind(ServiceResources.FILEMSG_COPY_FILE_FAILED, remotePath);
+		    			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+		    			throw new SystemMessageException(msg);
+					}
 				}
 
 				available = bufInputStream.available();
@@ -694,7 +702,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 //				UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error writing file " + remotePath, e);
 				throw new RemoteFileIOException(e);
 			}
-
+		}
 			if (isCancelled)
 			{
 				throw new SystemOperationCancelledException();
@@ -731,9 +739,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			    			throw new SystemMessageException(msg);
 			    		}
 			    	}
-			    	
 
-			    }
 			}
 		}
 	}

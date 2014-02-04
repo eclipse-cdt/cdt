@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_1d454169",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlModel.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-04T20:36:19Z",
+      "side": 1,
+      "message": "I made this one volatile as well to deal with the two threads (UI and DSF)",
+      "revId": "32fe1738e1bbb4c6fa9c89e8831480d06c950e32",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_7d8c3d45",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlView.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-04T20:36:19Z",
+      "side": 1,
+      "message": "I removed the async call, I don\u0027t know why I had that originally.  This is called on the UI thread already I believe.",
+      "revId": "32fe1738e1bbb4c6fa9c89e8831480d06c950e32",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_5d917957",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlView.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-04T20:36:19Z",
+      "side": 1,
+      "message": "I removed the updateContent() call because exitVisualizationMode() will trigger an event that will cause a refresh.",
+      "revId": "32fe1738e1bbb4c6fa9c89e8831480d06c950e32",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_57153c6e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlView.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-04T20:36:19Z",
+      "side": 1,
+      "message": "I\u0027ve special checked the case where the max is 0 since setMaximum would get ignored in that case and the slider would be small.  I\u0027ve made it so the slide would take then entire bar in that case.",
+      "revId": "32fe1738e1bbb4c6fa9c89e8831480d06c950e32",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_44c91921",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlView.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 646,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-04T20:36:19Z",
+      "side": 1,
+      "message": "I\u0027ve added an redrawing of the circular buffer button here, which is necessary if we debug more than one session at a time and switch between them.",
+      "revId": "32fe1738e1bbb4c6fa9c89e8831480d06c950e32",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_3d7125d0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlView.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 745,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-04T20:36:19Z",
+      "side": 1,
+      "message": "I added \n      setBufferLineVisible(true, traceData, true);\nwhich was missing for when looking at a trace file.  In fact, it was worse than that if we had two sessions running because the buffer would not get deleted when going from a trace session to a postmortem session, so we had inconsistent behaviour.",
+      "revId": "32fe1738e1bbb4c6fa9c89e8831480d06c950e32",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_24cea52a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlView.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 873,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-04T20:36:19Z",
+      "side": 1,
+      "message": "I\u0027ve set the checked state of fDisconnectedTracingAction here so that it updates when we change between multiple debug sessions.",
+      "revId": "32fe1738e1bbb4c6fa9c89e8831480d06c950e32",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

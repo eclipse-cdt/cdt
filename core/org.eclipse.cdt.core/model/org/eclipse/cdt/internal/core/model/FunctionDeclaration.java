@@ -10,7 +10,6 @@
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.CModelException;
@@ -32,14 +31,14 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	}
 
 	@Override
-	public String getReturnType(){
+	public String getReturnType() {
 		if (returnType != null) {
 			return returnType;
 		}
 		return ""; //$NON-NLS-1$
 	}
 
-	public void setReturnType(String type){
+	public void setReturnType(String type) {
 		returnType = type;
 	}
 
@@ -63,12 +62,12 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	}
 
 	public static String getSignature(IFunctionDeclaration func) {
-		StringBuffer sig = new StringBuffer(func.getElementName());
+		StringBuilder sig = new StringBuilder(func.getElementName());
 		sig.append(getParameterClause(func.getParameterTypes()));
 		try {
-			if(func.isConst())
+			if (func.isConst())
 				sig.append(" const"); //$NON-NLS-1$
-			if(func.isVolatile()) {
+			if (func.isVolatile()) {
 				sig.append(" volatile"); //$NON-NLS-1$
 			}
 		} catch (CModelException e) {
@@ -80,20 +79,19 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		return getParameterClause(getParameterTypes());
 	}
 
-	public static String getParameterClause(String[] paramTypes){
-		StringBuffer sig = new StringBuffer();
+	public static String getParameterClause(String[] paramTypes) {
+		StringBuilder sig = new StringBuilder();
 
-		if(paramTypes.length > 0){
+		if (paramTypes.length > 0) {
 			sig.append("("); //$NON-NLS-1$
 			int i = 0;
 			sig.append(paramTypes[i++]);
-			while (i < paramTypes.length){
+			while (i < paramTypes.length) {
 				sig.append(", "); //$NON-NLS-1$
 				sig.append(paramTypes[i++]);
 			}
 			sig.append(")"); //$NON-NLS-1$
-		}
-		else{
+		} else {
 			sig.append("()"); //$NON-NLS-1$
 		}
 		return sig.toString();
@@ -105,12 +103,12 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	}
 
 	@Override
-	public String[] getExceptions(){
+	public String[] getExceptions() {
 		return new String[] {};
 	}
 
 	@Override
-	protected CElementInfo createElementInfo () {
+	protected CElementInfo createElementInfo() {
 		return new FunctionInfo(this);
 	}
 
@@ -187,5 +185,4 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 			escapeMementoName(buff, fParameterTypes[i]);
 		}
 	}
-
 }

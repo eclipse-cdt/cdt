@@ -483,19 +483,21 @@ public class Spawner extends Process {
 
 		@Override
 		public void run() {
+			int _pid;
 			try {
-				pid = execute(fCmdarray, fEnvp, fDirpath, fChannels);
+				_pid = execute(fCmdarray, fEnvp, fDirpath, fChannels);
 			} catch (Exception e) {
-				pid = -1;
+				_pid = -1;
 				fException= e;
 			}
 
 			// Tell spawner that the process started.
 			synchronized (Spawner.this) {
+				pid = _pid;
 				Spawner.this.notifyAll();
 			}
 
-			if (pid != -1) {
+			if (_pid != -1) {
 				// Sync with spawner and notify when done.
 				status = waitFor(pid);
 				synchronized (Spawner.this) {

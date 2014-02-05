@@ -11,8 +11,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
 
@@ -20,7 +23,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 
 /**
  * Element class used to group matches.
- *  
+ *
  * @author Doug Schaefer
  */
 public class CSearchElement implements IAdaptable {
@@ -39,7 +42,7 @@ public class CSearchElement implements IAdaptable {
 	public boolean equals(Object obj) {
 		if (!(obj instanceof CSearchElement))
 			return false;
-		CSearchElement other = (CSearchElement)obj;
+		CSearchElement other = (CSearchElement) obj;
 		return location.equals(other.location);
 	}
 
@@ -55,6 +58,14 @@ public class CSearchElement implements IAdaptable {
 			if (fullPath != null) {
 				return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
 			}
+		} else if (adapterType.isAssignableFrom(IFileStore.class)) {
+			try {
+				return EFS.getStore(location.getURI());
+			} catch (CoreException e) {
+				return null;
+			}
+		} else if (adapterType.isAssignableFrom(IIndexFileLocation.class)) {
+			return location;
 		}
 		return null;
 	}

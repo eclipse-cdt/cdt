@@ -12,7 +12,7 @@ package org.eclipse.cdt.core.model;
  * example, the CEditor (in the CDT UI plugin) implements this interface in order to provide
  * the IWorkingCopy of the editor's active translation unit.
  *
- * @since 5.6
+ * @since 5.7
  */
 public interface ITranslationUnitHolder {
 	/**

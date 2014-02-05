@@ -103,7 +103,7 @@
 	<topic label="C/C++ Menubar" href="reference/cdt_o_menu.htm">
 		<topic label="File Menu" href="reference/cdt_u_m_file.htm"/>
 		<topic label="Window Menu" href="reference/cdt_u_m_window.htm"/>
-		<topic label="Help Menu" href="PLUGINS_ROOT/org.eclipse.platform.doc.user/reference/ref-61.htm"/>
+	<!--		<topic label="Help Menu" href="PLUGINS_ROOT/org.eclipse.platform.doc.user/reference/ref-61.htm"/> -->
 		<!-- <topic label="Edit Menu" href="reference/cdt_u_m_edit.htm"/> -->
 		<!-- <topic label="Source Menu" href="reference/cdt_u_m_source.htm"/> -->
 		<topic label="Search Menu" href="reference/cdt_u_m_search.htm"/>

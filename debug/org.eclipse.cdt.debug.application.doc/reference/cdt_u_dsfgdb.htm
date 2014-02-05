@@ -12,7 +12,7 @@
 
 <div role="main"><h1>GDB Debugging Preferences</h1>
 
-<p>Use this preferences panel to control how the CDT debugger behaves when debugging with GDB, 
+<p>Use this preferences panel to control how the C/C++ debugger behaves when debugging with GDB, 
 specifically when using a <em>GDB (DSF)</em> launcher. 
 <p><img src="../images/cdt_dsfgdb_preferences_page.png"  alt="GDB preferences panel"></p>
 
@@ -41,7 +41,7 @@ specifically when using a <em>GDB (DSF)</em> launcher.
 		<td valign="top" headers="option"><strong>GDB debugger</strong></td>
 		<td valign="top" headers="description">Specifies the GDB debugger binary that will be used by default for each 
 		newly created debug launch.  Using an absolute path will directly point to the binary (e.g, /home/user/myGdb), 
-		while using a binary name will have CDT look through the PATH variable for that binary (e.g., myGdb).  This can
+		while using a binary name will have C/C++ look through the PATH variable for that binary (e.g., myGdb).  This can
 		be useful of your GDB binary is not named 'gdb'.  Each launch configuration allows to override this setting in
 		the Debugger tab.</td>
 	</tr>
@@ -53,12 +53,12 @@ specifically when using a <em>GDB (DSF)</em> launcher.
 	</tr>
 	<tr>
 		<td valign="top" headers="option"><strong>Stop on startup</strong></td>
-		<td valign="top" headers="description">When checked, the CDT debugger will stop execution at the specified symbol when
-		launching or re-starting a process.  By default, this setting makes the CDT debugger stop when entering 'main'.</td>
+		<td valign="top" headers="description">When checked, the C/C++ debugger will stop execution at the specified symbol when
+		launching or re-starting a process.  By default, this setting makes the C/C++ debugger stop when entering 'main'.</td>
 	</tr>
 	<tr>
 		<td valign="top" headers="option"><strong>Command timeout</strong></td>
-		<td valign="top" headers="description">When checked, the CDT debugger will abort the debug session if any command sent 
+		<td valign="top" headers="description">When checked, the C/C++ debugger will abort the debug session if any command sent 
 		to GDB does not get an answer before the specified timeout.  Using this can prevent debug sessions from hanging forever 
 		when debugging un-reliable targets.
 		<p>
@@ -68,7 +68,7 @@ specifically when using a <em>GDB (DSF)</em> launcher.
 	</tr>
 	<tr>
 		<td valign="top" headers="option"><strong>Non-stop mode</strong></td>
-		<td valign="top" headers="description">When checked, the CDT debugger will run in non-stop mode for each newly created 
+		<td valign="top" headers="description">When checked, the C/C++ debugger will run in non-stop mode for each newly created 
 		debug launch.  <em>Non-stop</em> mode allows each thread of a debug session to be controlled independently. This allows to stop 
 		one or more threads while leaving others running. In contrast, <em>all-stop</em> mode interrupts and resumes all threads at the
 		same time.  Note that <em>non-stop</em> mode is only available starting with GDB 7.0.</td>
@@ -83,7 +83,7 @@ specifically when using a <em>GDB (DSF)</em> launcher.
 	</tr>
 	<tr>
 		<td valign="top" headers="option"><strong>Terminate GDB when last process exits</strong></td>
-		<td valign="top" headers="description">When checked, the CDT debugger will terminate the GDB
+		<td valign="top" headers="description">When checked, the C/C++ debugger will terminate the GDB
 		process (on the host) after all the target processes it is debugging have terminated. Otherwise it 
 		will leave it running.  It can be useful to keep GDB running if you expect to want to attach or create
 		new processes to debug after the previously debugged processes have terminated.</td>
@@ -113,9 +113,9 @@ specifically when using a <em>GDB (DSF)</em> launcher.
 	<tr>
 		<td valign="top" headers="option"><strong>Enable GDB traces</strong></td>
 		<td valign="top" headers="description">When checked, the debug session will produce an additional console which 
-		will contain all the gdb/mi activity. Basically, this details the interaction between the CDT debugger and GDB. 
+		will contain all the gdb/mi activity. Basically, this details the interaction between the C/C++ debugger and GDB. 
 		This information is often critical when the debugger is not behaving as you expect. Include this console output
-		when submitting a bugzilla report against the CDT debugger.  It is recommended to keep this setting enabled at 
+		when submitting a bugzilla report against the C/C++ debugger.  It is recommended to keep this setting enabled at 
 		all times, as it does not cause any negative effect.
 		<p>
 		Once the number of characters specified by the <em>limit</em> field is reached, older trace lines will be discarded
@@ -123,7 +123,7 @@ specifically when using a <em>GDB (DSF)</em> launcher.
 	</tr>
 	<tr>
 		<td valign="top" headers="option"><strong>Display run-time type of variables</strong></td>
-		<td valign="top" headers="description">When checked, the CDT debugger will show the actual variable type (not the 
+		<td valign="top" headers="description">When checked, the C/C++ debugger will show the actual variable type (not the 
 		declared one) in Variables and Expressions views.  Not only does this allow to see what is the current run-time
 		type of a variable, but it allows to access fields that may not be in the base class.
 		Note that this feature will only work starting with GDB 7.5.</td>
@@ -138,7 +138,7 @@ specifically when using a <em>GDB (DSF)</em> launcher.
 	</tr>
 	<tr>
 		<td valign="top" headers="option"><strong>Enable pretty printers in variable/expression tree</strong></td>
-		<td valign="top" headers="description">When checked, the CDT Debugger will display STL types in a user-friendly
+		<td valign="top" headers="description">When checked, the C/C++ Debugger will display STL types in a user-friendly
 		fashion.  This can be seen in the Variables and Expressions views, as well as in the advanced editor hover.
 		For example, Maps, Lists and Vectors will be shown in an array-style format instead of showing the
 		details of the actual implementation of the data struture.  Note that <em>pretty printing</em> requires a GDB that

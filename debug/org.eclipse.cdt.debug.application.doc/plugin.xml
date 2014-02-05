@@ -5,12 +5,12 @@
    <extension
          point="org.eclipse.help.toc">
       <toc
-            file="toc.xml">
-      </toc>
-      <toc
-            file="testToc.xml"
+            file="toc.xml"
             primary="true">
       </toc>
+      <index
+            path="index/">
+      </index>
    </extension>
 
 </plugin>

@@ -225,6 +225,13 @@
 		</repository>
 	</repositories>
 
+	<pluginRepositories>
+   		<pluginRepository>
+			<id>cbi</id>
+     		<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
+    	</pluginRepository>
+  	</pluginRepositories>
+  	
 	<profiles>
 		<profile>
 			<id>platform-4.3</id>

@@ -15,13 +15,6 @@
 	<artifactId>org.eclipse.cdt.repo</artifactId>
 	<packaging>eclipse-repository</packaging>
 	
-	<pluginRepositories>
-   		<pluginRepository>
-			<id>cbi</id>
-     		<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
-    	</pluginRepository>
-  	</pluginRepositories>
-  	
 	<build>
 		<finalName>${project.artifactId}</finalName>
 	</build>

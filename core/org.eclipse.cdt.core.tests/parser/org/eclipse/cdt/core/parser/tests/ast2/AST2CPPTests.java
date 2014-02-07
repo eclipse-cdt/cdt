@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -65,6 +66,8 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTToken;
+import org.eclipse.cdt.core.dom.ast.IASTTokenList;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
@@ -10487,5 +10490,29 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testConversionFromLambdaToFunctionPointer_424765() throws Exception {
 		parseAndCheckBindings();
+	}
+
+	//	void bar(void *a1, void *a2) __attribute__((nonnull(1, 2)));
+	public void testGCCAttributeSequence_416430() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
+		IASTDeclaration[] declarations = tu.getDeclarations();
+		assertEquals(1, declarations.length);
+		IASTDeclaration declaration = declarations[0];
+		IASTSimpleDeclaration functionDefinition = assertInstance(declaration, IASTSimpleDeclaration.class);
+		IASTDeclarator[] declarators = functionDefinition.getDeclarators();
+		assertEquals(1, declarators.length);
+		IASTDeclarator declarator = declarators[0];
+		IASTFunctionDeclarator functionDeclarator = assertInstance(declarator, IASTFunctionDeclarator.class);
+		IASTAttribute[] attributes = declarator.getAttributes();
+		assertEquals(1, attributes.length);
+		IASTAttribute nonnullAttribute = attributes[0];
+		assertEquals("nonnull(1, 2)", String.valueOf(nonnullAttribute.getRawSignature()));
+		IASTToken argumentClause = nonnullAttribute.getArgumentClause();
+		IASTTokenList argumentTokenList = assertInstance(argumentClause, IASTTokenList.class);
+		IASTToken[] argumentTokens = argumentTokenList.getTokens();
+		assertEquals(3, argumentTokens.length);
+		assertEquals('1', argumentTokens[0].getTokenCharImage()[0]);
+		assertEquals(',', argumentTokens[1].getTokenCharImage()[0]);
+		assertEquals('2', argumentTokens[2].getTokenCharImage()[0]);
 	}
 }

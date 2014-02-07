@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_e7ef01a9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbVariableVMNode.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-07T21:36:45Z",
+      "side": 1,
+      "message": "Interesting.  I find it makes the code harder to read but it is more future-proof, although marginally since the code will need to be changed elsewhere anyway if fGdbVariableExpressionFactory implements another interface.\n\nDid you see this pattern elsewhere?",
+      "parentUuid": "67591f73_fbc38b01",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_fb570b2c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbVariableVMNode.java",
         "patchSetId": 7
@@ -30,6 +48,24 @@
       "writtenOn": "2014-01-30T05:48:49Z",
       "side": 1,
       "message": "This method gives false positives for some variables. For example, int $1 compiles and when I debug, I can\u0027t right-click view memory.",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_41eb2f9f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbVariableVMNode.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-07T21:36:45Z",
+      "side": 1,
+      "message": "GDB cannot handle variables that start with $, so although it compiles, things will fail anyway.  So I think it is ok to not handle $1 etc.\n\nHowever, the problem you mention also affects a$123 (a variable containing a $ followed by a number but not starting with that $), which compiles and can be handled by GDB.  And you mention ca$h will be a false positive for isRegistersExpression() below also.\n\nThis is something that requires more discussion so I will take it on the bug (http://eclip.se/341731), please see the comment there.",
+      "parentUuid": "67591f73_fb570b2c",
       "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_4187af1e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbVariableVMNode.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-07T21:36:45Z",
+      "side": 1,
+      "message": "See answer of previous comment.",
+      "parentUuid": "67591f73_9b11af84",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_1b059f1c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbVariableVMNode.java",
         "patchSetId": 7
@@ -64,6 +118,24 @@
       "writtenOn": "2014-01-30T05:48:49Z",
       "side": 1,
       "message": "Because of the false positive of isConvenienceVariable, int $123 can\u0027t be right-clicked, Watch.",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_810b8730",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbVariableVMNode.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-07T21:36:45Z",
+      "side": 1,
+      "message": "See answer to comment above.",
+      "parentUuid": "67591f73_1b059f1c",
       "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_ec5368e5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-07T21:36:45Z",
+      "side": 1,
+      "message": "You are right.  The beauty of variable-length argument lists.\nDone.",
+      "parentUuid": "67591f73_2a1c7627",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_bda29280",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
         "patchSetId": 7
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_8cdd8cdb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-07T21:36:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_bda29280",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_5d6536be",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
         "patchSetId": 7
@@ -115,6 +223,24 @@
       "writtenOn": "2014-01-30T05:48:49Z",
       "side": 1,
       "message": "is 0 parameter OK? With this, there might be two variable with index 0, one RETURN_VALUES and one LOCAL. What is this index for anyway? It doesn\u0027t seem to be used anywhere except hashing. In this case then since they will be different type then it will be OK.",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_677771ac",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 814,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-07T21:36:45Z",
+      "side": 1,
+      "message": "That index an ugly hack but it has been there from the start.  It would be nice to clean it up eventually.  \n\nThe index is actually used directly in MIStack (not by using getIndex() but directly using fIndex; I\u0027m not sure if you noticed that or not).  When the view asks for the list of variable contexts (getLocals()) we issue -stack-list-locals, but only create an empty context for each variable and storing the index in the result of -stack-list-locals; when the view wants the details (getVariableData()) we send -stack-list-locals again, which is in our cache) and use the index to find the variable corresponding to the index.  Ugly.\n\nFor the return values which we deal with ourselves and have only one of, we don\u0027t use the index at all, so a value of 0 does not matter.  When we have more than one return value by supporting return values from a step-over, we might need to use the index (if we haven\u0027t cleaned it up yet :)).",
+      "parentUuid": "67591f73_5d6536be",
       "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

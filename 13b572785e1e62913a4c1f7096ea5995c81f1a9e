@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_c4cd8dac",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbVariableVMNode.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-02-07T22:59:22Z",
+      "side": 1,
+      "message": "I\u0027ve seen this in indexer code like PDOMMacro, etc. If you think it\u0027s harder to read, I say don\u0027t worry about it.",
+      "parentUuid": "67591f73_e7ef01a9",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_fb570b2c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbVariableVMNode.java",
         "patchSetId": 7
@@ -241,6 +259,24 @@
       "side": 1,
       "message": "That index an ugly hack but it has been there from the start.  It would be nice to clean it up eventually.  \n\nThe index is actually used directly in MIStack (not by using getIndex() but directly using fIndex; I\u0027m not sure if you noticed that or not).  When the view asks for the list of variable contexts (getLocals()) we issue -stack-list-locals, but only create an empty context for each variable and storing the index in the result of -stack-list-locals; when the view wants the details (getVariableData()) we send -stack-list-locals again, which is in our cache) and use the index to find the variable corresponding to the index.  Ugly.\n\nFor the return values which we deal with ourselves and have only one of, we don\u0027t use the index at all, so a value of 0 does not matter.  When we have more than one return value by supporting return values from a step-over, we might need to use the index (if we haven\u0027t cleaned it up yet :)).",
       "parentUuid": "67591f73_5d6536be",
+      "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_e406d15a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 814,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-02-07T22:59:22Z",
+      "side": 1,
+      "message": "OK thanks for the explanation!",
+      "parentUuid": "67591f73_677771ac",
       "revId": "13b572785e1e62913a4c1f7096ea5995c81f1a9e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -2469,6 +2469,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			adjustLength(sequence, token);
 		} else {
 			IASTTokenList list = nodeFactory.newTokenList();
+			list.addToken(sequence);
 			list.addToken(token);
 			setRange(list, token);
 			sequence = list;

@@ -37,8 +37,8 @@
     <tycho-extras-version>0.19.0</tycho-extras-version>
     <maven-resources-version>2.6</maven-resources-version>
     <maven-antrun-version>1.7</maven-antrun-version>
-    <gmaven-version>1.4</gmaven-version>
-    <eclipse-jarsigner-version>1.0.4</eclipse-jarsigner-version>
+    <gmaven-version>1.5</gmaven-version>
+    <eclipse-jarsigner-version>1.0.5</eclipse-jarsigner-version>
     <platform-version-name>luna</platform-version-name>
     <tm-stream>luna</tm-stream>
     <eclipse-site>http://download.eclipse.org/releases/${platform-version-name}</eclipse-site>
@@ -75,10 +75,11 @@
       <url>${rxtx-site}</url>
       <layout>p2</layout>
     </repository>
-    <repository>
+    <!--<repository>
       <id>repo.eclipse.org</id>
       <url>https://repo.eclipse.org/content/repositories/releases/</url>
     </repository>
+    -->
   </repositories>
   <profiles>
     <profile>
@@ -481,15 +482,6 @@
             </execution>
           </executions>
         </plugin>
-        <!--        <plugin>
-          <groupId>org.eclipse.tycho</groupId>
-          <artifactId>tycho-packaging-plugin</artifactId>
-          <version>${tycho-version}</version>
-          <configuration>
-            <format>'v'yyyyMMddHHmm</format>
-          </configuration>
-  </plugin>
-  -->
       </plugins>
     </pluginManagement>
   </build>

@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -38,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * This is the starting point of the entire comment handling  process. The creation of the 
@@ -179,7 +181,28 @@ public class ASTCommenter {
 		if (ast == null) {
 			return commentMap;
 		}
+		addCommentsToMap(ast, commentMap);
+		return commentMap;
+	}
+	
+	/**
+	 * Adds all comments given in {@code ast} to the {@code commentMap}. Calling this twice will have no
+	 * effect.
+	 * 
+	 * @param ast
+	 *            the AST which contains the comments to add
+	 * @param commentMap
+	 *            the comment map to which the comments are added to
+	 */
+	public static void addCommentsToMap(IASTTranslationUnit ast, NodeCommentMap commentMap) {
+		if (ast == null || commentMap.isASTCovered(ast)) {
+			return;
+		}
 		IASTComment[] commentsArray = ast.getComments();
+		if (commentsArray == null) {
+			CCorePlugin.log(IStatus.WARNING, Messages.NO_COMMENTS_IN_AST_WARNING);
+			return;
+		}
 		List<IASTComment> comments = new ArrayList<IASTComment>(commentsArray.length);
 		for (IASTComment comment : commentsArray) {
 			if (comment.isPartOfTranslationUnitFile()) {
@@ -189,8 +212,8 @@ public class ASTCommenter {
 		assignPreprocessorComments(commentMap, comments, ast);
 		CommentHandler commentHandler = new CommentHandler(comments);
 		ASTCommenterVisitor commenter = new ASTCommenterVisitor(commentHandler, commentMap);
+		commentMap.setASTCovered(ast);
 		ast.accept(commenter);
-		return commentMap;
 	}
 
 	private static boolean isCommentDirectlyBeforePreprocessorStatement(IASTComment comment,

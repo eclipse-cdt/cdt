@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
 
 /**
@@ -32,6 +33,7 @@ public class NodeCommentMap {
 	protected final Map<IASTNode, List<IASTComment>> leadingMap = new HashMap<IASTNode, List<IASTComment>>();
 	protected final Map<IASTNode, List<IASTComment>> trailingMap = new HashMap<IASTNode, List<IASTComment>>();
 	protected final Map<IASTNode, List<IASTComment>> freestandingMap = new HashMap<IASTNode, List<IASTComment>>();
+	protected final List<IASTTranslationUnit> coveredUnits = new ArrayList<IASTTranslationUnit>();
 	
 	/**
 	 * Add a comment to the map with the trailing comments.
@@ -187,5 +189,20 @@ public class NodeCommentMap {
 			node = children[children.length - 1];
 		}
 		return endOffset;
+	}
+
+	/**
+	 * Makes this comment map aware that comments of the given {@code ast} are already contained in the map.
+	 * This can be used to make sure no-one accidentally tries to re-add already contained comments.
+	 */
+	public void setASTCovered(IASTTranslationUnit ast) {
+		coveredUnits.add(ast);
+	}
+
+	/**
+	 * Checks whether comments of the {@code ast} are already present in the map.
+	 */
+	public boolean isASTCovered(IASTTranslationUnit ast) {
+		return coveredUnits.contains(ast);
 	}
 }

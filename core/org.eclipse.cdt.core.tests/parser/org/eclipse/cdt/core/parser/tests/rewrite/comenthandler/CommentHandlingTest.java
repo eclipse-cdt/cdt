@@ -97,13 +97,13 @@ public class CommentHandlingTest extends RewriteBaseTest {
 		
 		for (String fileName : fileMap.keySet()) {
 			TestSourceFile file = fileMap.get(fileName);
-			NodeCommentMap nodeMap = ASTCommenter.getCommentedNodeMap(getUnit(fileName));
-			
-			StringBuilder expectedResultBuilder = buildExpectedResult(file);
-			StringBuilder actualResultBuilder = buildActualResult(nodeMap);
-			
-			assertEquals(expectedResultBuilder.toString(), actualResultBuilder.toString());
+			NodeCommentMap nodeMap = getNodeMapForFile(fileName);
+			assertEquals(buildExpectedResult(file).toString(), buildActualResult(nodeMap).toString());
 		}
+	}
+
+	protected NodeCommentMap getNodeMapForFile(String fileName) throws Exception {
+		return ASTCommenter.getCommentedNodeMap(getUnit(fileName));
 	}
 
 	private StringBuilder buildExpectedResult(TestSourceFile file) {
@@ -177,7 +177,7 @@ public class CommentHandlingTest extends RewriteBaseTest {
 				ANY_CHAR_REGEXP + FREESTANDING_COMMENT_SEPARATOR + ANY_CHAR_REGEXP;
 	}
 	
-	private IASTTranslationUnit getUnit(String fileName) throws CoreException {
+	protected IASTTranslationUnit getUnit(String fileName) throws CoreException {
 		ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(
 				project.getFile(fileName));
 		return tu.getAST();

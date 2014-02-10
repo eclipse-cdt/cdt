@@ -188,6 +188,7 @@ public final class ASTRewrite {
 			}
 			mod= new ASTModification(ModificationKind.INSERT_BEFORE, insertionPoint, newNode, editGroup);
 		}
+		ASTCommenter.addCommentsToMap(newNode.getTranslationUnit(), fCommentMap);
 		fModificationStore.storeModification(fParentMod, mod);
 		return new ASTRewrite(newNode, fModificationStore, mod, fCommentMap);
 	}

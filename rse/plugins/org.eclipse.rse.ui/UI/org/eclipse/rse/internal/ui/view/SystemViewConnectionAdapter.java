@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2013 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -37,6 +37,7 @@
  * David McKnight   (IBM)        - [196166] [usability][dnd] Changing the sort order of hosts in the SystemView should work by drag & drop
  * David McKnight   (IBM)        - [286230] [dnd] Dropping resources on host nodes leads to classcast exception
  * David McKnight   (IBM)        - [402555] RSE default local host should not be deletable from UI
+ * David McKnight   (IBM)        - [427847] deletion of newly created local connection disabled
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -611,6 +612,16 @@ public class SystemViewConnectionAdapter
 	    {
 	    	IHost host = (IHost)element;
 	        ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+	        
+	        if (host.getSystemType().getId().equals(IRSESystemType.SYSTEMTYPE_LOCAL_ID)){
+	        	if (host == sr.getLocalHost()){
+	        		return false; // don't allow deleting the default local host
+	        	}	
+	        	else {
+	        		return true; // allow deletion of non-default local host, even when connected
+	        	}
+	        }
+	        
 	    	//do not allow delete if any subsystem is connected but supports disconnect.
 	        //specifically, this allows deletion of "Local" which is always connected (but does not support disconnect)
 	        //need to get subsystems from registry instead of host in order to be lazy:
@@ -619,12 +630,7 @@ public class SystemViewConnectionAdapter
         	for (int i=0; i<ss.length; i++) {
         		if (ss[i].isConnected() && ss[i].getSubSystemConfiguration().supportsSubSystemConnect())
         			return false;
-        	}
-        	if (host == sr.getLocalHost()){
-        		return false; // don't allow deleting the default local host
-        	}
-        	
-        	
+        	}        	
 	    }
 		return true;
 	}

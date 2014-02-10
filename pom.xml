@@ -52,7 +52,7 @@
     <pluginRepository>
       <id>CBI</id>
       <url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
-    </pluginRepository> 
+    </pluginRepository>
     <pluginRepository>
       <id>sonatype</id>
       <url>https://oss.sonatype.org/content/groups/public/</url>
@@ -81,42 +81,6 @@
     </repository>
     -->
   </repositories>
-  <profiles>
-    <profile>
-      <id>platform-luna</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-        <property>
-          <name>platform-version-name</name>
-          <value>luna</value>
-        </property>
-      </activation>
-      <properties>
-        <eclipse-site>http://download.eclipse.org/releases/staging</eclipse-site>
-        <platform-version>[4.4,)</platform-version>
-        <sdk-version>4.4</sdk-version>
-        <cdt-site>http://download.eclipse.org/tools/cdt/releases/kepler</cdt-site>
-        <cdt-test-site>http://download.eclipse.org/tools/cdt/updates/indigo/</cdt-test-site>
-      </properties>
-      <repositories>
-        <repository>
-          <id>luna</id>
-          <layout>p2</layout>
-          <url>${eclipse-site}</url>
-        </repository>
-        <repository>
-          <id>cdt</id>
-          <layout>p2</layout>
-          <url>${cdt-site}</url>
-        </repository>
-        <repository>
-          <id>cdttest</id>
-          <layout>p2</layout>
-          <url>${cdt-test-site}</url>
-        </repository>
-      </repositories>
-    </profile>
-  </profiles>
   <modules>
     <module>rse/doc/org.eclipse.dstore.doc.isv</module>
     <module>rse/doc/org.eclipse.rse.doc.isv</module>
@@ -485,4 +449,65 @@
       </plugins>
     </pluginManagement>
   </build>
+  <profiles>
+    <profile>
+      <id>platform-luna</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>platform-version-name</name>
+          <value>luna</value>
+        </property>
+      </activation>
+      <properties>
+        <eclipse-site>http://download.eclipse.org/releases/staging</eclipse-site>
+        <platform-version>[4.4,)</platform-version>
+        <sdk-version>4.4</sdk-version>
+        <cdt-site>http://download.eclipse.org/tools/cdt/releases/kepler</cdt-site>
+        <cdt-test-site>http://download.eclipse.org/tools/cdt/updates/indigo/</cdt-test-site>
+      </properties>
+      <repositories>
+        <repository>
+          <id>luna</id>
+          <layout>p2</layout>
+          <url>${eclipse-site}</url>
+        </repository>
+        <repository>
+          <id>cdt</id>
+          <layout>p2</layout>
+          <url>${cdt-site}</url>
+        </repository>
+        <repository>
+          <id>cdttest</id>
+          <layout>p2</layout>
+          <url>${cdt-test-site}</url>
+        </repository>
+      </repositories>
+    </profile>
+    <profile>
+      <id>sign</id>
+      <!-- Uses the new jarsigner from the CBI platform     -->
+      <!-- Works only if the build runs at a Eclipse build server -->
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.eclipse.tycho.extras</groupId>
+            <artifactId>tycho-pack200a-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.eclipse.cbi.maven.plugins</groupId>
+            <artifactId>eclipse-jarsigner-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.eclipse.tycho.extras</groupId>
+            <artifactId>tycho-pack200b-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.eclipse.tycho</groupId>
+            <artifactId>tycho-p2-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

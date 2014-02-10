@@ -1,0 +1,21 @@
+//!Comment Handling Test - Rewrite with otherTu node
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingWithRewriteTest
+//@main.cpp
+void foo() {
+	//comment1
+	int i = 0;
+}
+//=
+=>leading
+int j = 1; = //other.cpp comment
+int i = 0; = //comment1
+=>trailing
+=>freestanding
+//@other.cpp
+//other.cpp comment
+int j = 1;
+//=
+=>leading
+int j = 1; = //other.cpp comment
+=>trailing
+=>freestanding

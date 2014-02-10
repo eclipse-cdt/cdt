@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
@@ -22,6 +23,8 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
  * Base implementation for all ambiguous nodes.
@@ -63,7 +66,7 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
     	if (visitor.shouldVisitAmbiguousNodes && visitor.visit(this) == ASTVisitor.PROCESS_ABORT)
     		return false;
     		
-    	// alternatives are not visited on purpose.
+    	// Alternatives are not visited on purpose.
     	return true;
     }
     
@@ -156,15 +159,29 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 	}
 
 	public final IType getExpressionType() {
-		throw new UnsupportedOperationException();
+		logAmbiguousNodeError();
+		return ProblemType.UNKNOWN_FOR_EXPRESSION;
     }
-    public final ValueCategory getValueCategory() {
-		throw new UnsupportedOperationException();
+
+	public final ValueCategory getValueCategory() {
+		logAmbiguousNodeError();
+		return ValueCategory.PRVALUE;
     }
-	public final boolean isLValue() {
-		throw new UnsupportedOperationException();
+
+    public final boolean isLValue() {
+		logAmbiguousNodeError();
+		return false;
     }
+
 	public final ICPPEvaluation getEvaluation() {
-		throw new UnsupportedOperationException();
+		logAmbiguousNodeError();
+		return EvalFixed.INCOMPLETE;
+	}
+
+	private void logAmbiguousNodeError() {
+		CCorePlugin.log(new ParserException("Encountered an ambiguous node \"" + //$NON-NLS-1$
+				getRawSignature() + "\" at " + getFileLocation().getFileName() + //$NON-NLS-1$
+				", line " + getFileLocation().getStartingLineNumber() + //$NON-NLS-1$
+				" while parsing " + getTranslationUnit().getContainingFilename())); //$NON-NLS-1$
 	}
 }

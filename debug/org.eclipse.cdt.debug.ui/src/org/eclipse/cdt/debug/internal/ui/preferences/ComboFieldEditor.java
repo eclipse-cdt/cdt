@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Freescale - allow setting combo values after creating FieldEditor object (Bug 427898)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.internal.ui.preferences;
@@ -42,6 +43,14 @@ public class ComboFieldEditor extends FieldEditor {
 	 */
 	private String[][] fEntryNamesAndValues;
 
+	 /**
+	 * Create combo field editor with all choice values.  
+	 * @param name - property name, must be the same as breakpoint attribute 
+	 * @param labelText - text in front of field
+	 * @param entryNamesAndValues - The names (labels) and underlying values to populate the combo widget.  
+	 * 		These should be arranged as: { {name1, value1}, {name2, value2}, ...}
+	 * @param parent the parent control
+	 */
 	public ComboFieldEditor(String name, String labelText, String[][] entryNamesAndValues, Composite parent) {
 		init(name, labelText);
 		Assert.isTrue(checkArray(entryNamesAndValues));
@@ -210,4 +219,24 @@ public class ComboFieldEditor extends FieldEditor {
 	{
 		super.setPresentsDefaultValue( b );
 	}
+
+	/**
+	 * Load new values in combo selection.
+	 * @param namesAndValues: new values for combo widget. Cannot be null.
+	 * <p> See {@link ComboFieldEditor#ComboFieldEditor(String, String, String[][], Composite)} for names and values format
+	 */
+	protected void setEntries(String[][] entryNamesAndValues) {
+		fEntryNamesAndValues = entryNamesAndValues;
+		Combo combo = getComboBoxControl();
+		// dispose old items.
+		if (combo.getItemCount() > 0) {
+			combo.removeAll();
+		}
+		//load values from contribution
+		for (int i=0; i<fEntryNamesAndValues.length; ++i) {
+			combo.add(fEntryNamesAndValues[i][0], i);
+		}
+		fCombo.select(0);
+	}
+
 }

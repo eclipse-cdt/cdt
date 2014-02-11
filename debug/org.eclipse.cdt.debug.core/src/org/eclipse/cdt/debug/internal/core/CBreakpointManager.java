@@ -1197,6 +1197,11 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 			int oldLine = ( delta != null ) ? delta.getAttribute( IMarker.LINE_NUMBER, 0 ) : 0;
 			boolean basic = oldLine>0 && oldLine != line;
 			
+			if (breakpoint instanceof ICBreakpointType) {
+				int oldType = ( delta != null ) ? delta.getAttribute( ICBreakpointType.TYPE, -1 ) : -1;
+				basic |= oldType != -1 && (oldType != ((ICBreakpointType) breakpoint).getType());
+			}
+
 			if (basic) {
 				final ICBreakpoint[] breakpoints = new ICBreakpoint[] {breakpoint};
 				breakpointsRemoved(breakpoints, null);

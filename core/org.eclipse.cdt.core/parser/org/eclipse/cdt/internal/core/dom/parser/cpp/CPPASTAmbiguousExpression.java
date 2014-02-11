@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -24,8 +24,9 @@ public class CPPASTAmbiguousExpression extends ASTAmbiguousNode
     private int expPos= -1;
     
     public CPPASTAmbiguousExpression(IASTExpression... expressions) {
-		for(IASTExpression e : expressions)
+		for (IASTExpression e : expressions) {
 			addExpression(e);
+		}
 	}
     
     @Override

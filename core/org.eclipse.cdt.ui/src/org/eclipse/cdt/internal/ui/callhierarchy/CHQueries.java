@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
@@ -41,13 +41,13 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
  */
 public class CHQueries {
 	private static final CHNode[] EMPTY_NODES= {};
-	
+
     private CHQueries() {}
-    
+
 	/**
 	 * Searches for functions and methods that call a given element.
 	 */
-	public static CHNode[] findCalledBy(CHContentProvider cp, CHNode node, IIndex index, IProgressMonitor pm) 
+	public static CHNode[] findCalledBy(CHContentProvider cp, CHNode node, IIndex index, IProgressMonitor pm)
 			throws CoreException {
 		CalledByResult result= new CalledByResult();
 		ICElement callee= node.getRepresentedDeclaration();
@@ -60,7 +60,7 @@ public class CHQueries {
 			final ITranslationUnit tu = ((ISourceReference) callee).getTranslationUnit();
 			if (tu == null)
 				return EMPTY_NODES;
-			
+
 			final String ct = tu.getContentTypeId();
 			if (ct.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER)) {
 				// Bug 260262: in a header file we need to consider C and C++.
@@ -75,7 +75,7 @@ public class CHQueries {
 		return cp.createNodes(node, result);
 	}
 
-	private static void findCalledBy(ICElement callee, int linkageID, IIndex index, CalledByResult result) 
+	private static void findCalledBy(ICElement callee, int linkageID, IIndex index, CalledByResult result)
 			throws CoreException {
 		final ICProject project = callee.getCProject();
 		IIndexBinding calleeBinding= IndexUI.elementToBinding(index, callee, linkageID);
@@ -109,7 +109,7 @@ public class CHQueries {
 					ICElement elem= IndexUI.getCElementForName(project, index, caller);
 					if (elem != null) {
 						result.add(elem, rname);
-					} 
+					}
 				}
 			}
 		}
@@ -118,7 +118,7 @@ public class CHQueries {
 	/**
 	 * Searches for all calls that are made within a given range.
 	 */
-	public static CHNode[] findCalls(CHContentProvider cp, CHNode node, IIndex index, IProgressMonitor pm) 
+	public static CHNode[] findCalls(CHContentProvider cp, CHNode node, IIndex index, IProgressMonitor pm)
 			throws CoreException {
 		ICElement caller= node.getRepresentedDeclaration();
 		CallsToResult result= new CallsToResult();

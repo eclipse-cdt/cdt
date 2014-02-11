@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
 
 public class CallsToResult {
-	private Map<CElementSet, List<IIndexName>> fElementSetsToReferences= new HashMap<CElementSet, List<IIndexName>>();
+	private Map<CElementSet, List<IIndexName>> fElementSetsToReferences= new HashMap<>();
 
 	public CElementSet[] getElementSets() {
 		Set<CElementSet> elementSets = fElementSetsToReferences.keySet();
@@ -36,7 +36,7 @@ public class CallsToResult {
 		CElementSet key= new CElementSet(elems);
 		List<IIndexName> list= fElementSetsToReferences.get(key);
 		if (list == null) {
-			list= new ArrayList<IIndexName>();
+			list= new ArrayList<>();
 			fElementSetsToReferences.put(key, list);
 		}
 		list.add(ref);

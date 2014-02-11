@@ -14,9 +14,7 @@ package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.osgi.util.NLS;
 
-
 public final class CSearchMessages extends NLS {
-    private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.search.CSearchMessages"; //$NON-NLS-1$
 	public static String group_declarations;
 	public static String group_references;
 	public static String CSearchResultCollector_matches;
@@ -97,7 +95,7 @@ public final class CSearchMessages extends NLS {
 	public static String PDOMSearchUnresolvedIncludesQuery_title;
 
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, CSearchMessages.class);
+		NLS.initializeMessages(CSearchMessages.class.getName(), CSearchMessages.class);
 	}
 
     private CSearchMessages() {

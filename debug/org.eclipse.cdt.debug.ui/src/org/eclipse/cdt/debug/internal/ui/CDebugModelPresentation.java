@@ -35,6 +35,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
@@ -356,6 +357,13 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 				return getTracepointImage( (ICTracepoint)breakpoint );
 			}
 			if ( breakpoint instanceof ICLineBreakpoint ) {
+				// checks if the breakpoint type is a hardware breakpoint,
+				// if so, return the hardware breakpoint image
+				if( breakpoint instanceof ICBreakpointType) {
+					ICBreakpointType breakpointType = (ICBreakpointType) breakpoint;
+					if(breakpointType.getType() == ICBreakpointType.HARDWARE)
+						return getHWBreakpointImage( (ICLineBreakpoint) breakpoint);
+				}
 				return getLineBreakpointImage( (ICLineBreakpoint)breakpoint );
 			}
 			if ( breakpoint instanceof ICWatchpoint ) {
@@ -369,6 +377,17 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		catch( CoreException e ) {
 		}
 		return null;
+	}
+
+	protected Image getHWBreakpointImage(ICLineBreakpoint breakpoint) throws CoreException {
+		ImageDescriptor descriptor = null;
+		if ( breakpoint.isEnabled() ) {
+			descriptor = CDebugImages.DESC_OBJS_HWBREAKPOINT_ENABLED;
+		}
+		else {
+			descriptor = CDebugImages.DESC_OBJS_HWBREAKPOINT_DISABLED;
+		}
+		return getImageCache().getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeOverlays( breakpoint ) ) );
 	}
 
 	protected Image getTracepointImage( ICTracepoint tracepoint ) throws CoreException {

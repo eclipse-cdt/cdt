@@ -1824,8 +1824,7 @@
       </factory>
    </extension>
      <extension point="org.eclipse.cdt.debug.ui.breakpointContribution">
-     <breakpointLabels markerType="org.eclipse.cdt.debug.core.cBreakpointMarker"
-     debugModelId="org.eclipse.cdt.debug.core"> 
+     <breakpointLabels markerType="org.eclipse.cdt.debug.core.cBreakpointMarker">
      <attribute name="org.eclipse.cdt.debug.core.breakpointType" label="%breapointType.label" type="integer"
      fieldEditor="org.eclipse.cdt.debug.ui.preferences.ReadOnlyFieldEditor"
      >
@@ -1892,6 +1891,35 @@
             </and>
          </enablement>
       </toggleTargetFactory>
+      
+      <!-- Hardware breakpoint factory -->
+      <toggleTargetFactory
+            id="org.eclipse.cdt.debug.ui.ToggleCHWBreakpointsTargetFactory"
+            class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.ToggleCHWBreakpointsTargetFactory">
+            <enablement>
+            <!-- Enable the breakpoint toggle for CDT's editors and model elements -->
+            <and>
+               <reference
+                     definitionId="org.eclipse.cdt.debug.ui.testIsHardwareBreakpointActionSetActive">
+               </reference>
+               <or>
+                  <instanceof value="org.eclipse.cdt.internal.ui.editor.CEditor"/>
+                  <instanceof value="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"/>
+                  <instanceof value="org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditor"/>
+                  <with variable="selection">
+                     <count value="1"/>
+                     <iterate>
+                        <or>
+                           <instanceof value="org.eclipse.cdt.core.model.IFunction"/>
+                           <instanceof value="org.eclipse.cdt.core.model.IMethod"/>
+                           <instanceof value="org.eclipse.cdt.core.model.IVariable"/>
+                        </or>
+                     </iterate>
+                  </with>
+               </or>
+            </and>
+         </enablement>
+      </toggleTargetFactory>
    </extension>
  <extension
        point="org.eclipse.ui.actionSets">
@@ -1903,6 +1931,11 @@
       <actionSet
           id="org.eclipse.cdt.debug.ui.tracepointActionSet"
           label="%TracepointActionSet.label"
+          visible="false">
+      </actionSet>
+      <actionSet
+          id="org.eclipse.cdt.debug.ui.hwbreakpointActionSet"
+          label="%HWBreakpointActionSet.label"
           visible="false">
       </actionSet>
       <actionSet
@@ -2143,6 +2176,17 @@
             </iterate>
          </with>
       </definition>
+      
+      <!-- hardware breakpoint action set is active test -->
+      <definition id="org.eclipse.cdt.debug.ui.testIsHardwareBreakpointActionSetActive">
+         <with variable="activeContexts">
+            <iterate operator="or">
+               <equals value="org.eclipse.cdt.debug.ui.hwbreakpointActionSet">
+               </equals>
+            </iterate>
+         </with>
+      </definition>
+      
       <definition
             id="org.eclipse.cdt.debug.ui.testIsDebugActionSetActive">
          <with

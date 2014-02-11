@@ -33,6 +33,9 @@ public class Messages extends NLS {
 	public static String GdbThreadFilterEditor_Thread;
 	public static String GdbThreadFilterEditor_RestrictToSelected;
 
+	public static String ToggleHWBreakpoints_Description;
+	public static String ToggleHWBreakpoints_Name;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

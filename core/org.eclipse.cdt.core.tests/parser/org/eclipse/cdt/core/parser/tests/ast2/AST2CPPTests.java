@@ -9602,6 +9602,26 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template <typename T>
+	//	struct A {
+	//	  typedef char c;
+	//	  static constexpr int method() {
+	//	    return sizeof(c);
+	//	  }
+	//
+	//	  static const int x = method();
+	//	};
+	//
+	//	template<typename T, int x = A<int>::x>
+	//	struct B;
+	//
+	//	template<>
+	//	struct B<int> {
+	//	};
+	public void testAmbiguityResolution_427854() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template<typename T> struct C {
 	//		C(const C<T>& c) {}
 	//	};

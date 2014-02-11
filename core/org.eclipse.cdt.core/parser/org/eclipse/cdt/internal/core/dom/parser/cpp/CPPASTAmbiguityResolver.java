@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashSet;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -45,7 +47,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	private int fSkipInitializers= 0;
 	private int fDeferFunctions= 1;
 	private HashSet<IASTDeclaration> fRepopulate= new HashSet<>();
-	private ArrayDeque<IASTNode> fDeferredNodes= new ArrayDeque<>();
+	private Deque<Deque<IASTNode>> fDeferredNodes= new ArrayDeque<>();
 
 	public CPPASTAmbiguityResolver() {
 		super(false);
@@ -94,6 +96,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	public int visit(IASTDeclSpecifier declSpec) {
 		if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 			fDeferFunctions++;
+			fDeferredNodes.add(new ArrayDeque<IASTNode>());
 		}
 		return PROCESS_CONTINUE;
 	}
@@ -110,6 +113,8 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 			// Trigger computation of implicit members.
 			if (declSpec instanceof CPPASTCompositeTypeSpecifier)
 				((CPPASTCompositeTypeSpecifier) declSpec).setAmbiguitiesResolved();
+
+			processDeferredNodes(fDeferredNodes.removeLast());
 		}
 		return PROCESS_CONTINUE;
 	}
@@ -126,7 +131,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 			fSkipInitializers--;
 			fdef.getDeclSpecifier().accept(this);
 			// Defer visiting the body of the function until the class body has been visited.
-			fDeferredNodes.add(decl);
+			fDeferredNodes.getLast().add(decl);
 			return PROCESS_SKIP;
 		} 
 		return PROCESS_CONTINUE;
@@ -174,12 +179,24 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	}
 
 	@Override
+	public int visit(IASTTranslationUnit tu) {
+		fDeferredNodes.add(new ArrayDeque<IASTNode>());
+		return PROCESS_CONTINUE;
+	}
+
+	@Override
 	public int leave(IASTTranslationUnit tu) {
 		while (!fDeferredNodes.isEmpty()) {
-			fDeferFunctions= 0;
-			fDeferredNodes.removeFirst().accept(this);
+			processDeferredNodes(fDeferredNodes.removeLast());
 		}
 		return PROCESS_CONTINUE;
+	}
+
+	private void processDeferredNodes(Deque<IASTNode> deferredNodes) {
+		while (!deferredNodes.isEmpty()) {
+			fDeferFunctions= 0;
+			deferredNodes.removeFirst().accept(this);
+		}
 	}
 
 	private void repopulateScope(IASTDeclaration declaration) {

@@ -1823,11 +1823,10 @@
          </adapter>
       </factory>
    </extension>
-     <extension point="org.eclipse.cdt.debug.ui.breakpointContribution">
-     <breakpointLabels markerType="org.eclipse.cdt.debug.core.cBreakpointMarker"
-     debugModelId="org.eclipse.cdt.debug.core"> 
+ <extension point="org.eclipse.cdt.debug.ui.breakpointContribution">
+     <breakpointLabels markerType="org.eclipse.cdt.debug.core.commonCLineBreakpointMarker"> 
      <attribute name="org.eclipse.cdt.debug.core.breakpointType" label="%breapointType.label" type="integer"
-     fieldEditor="org.eclipse.cdt.debug.ui.preferences.ReadOnlyFieldEditor"
+     fieldEditor="org.eclipse.cdt.debug.internal.ui.preferences.ComboFieldEditor"
      >
         <value value="0" label="%breapointType.regular.label"></value>
         <value value="2" label="%breapointType.hardware.label"></value>

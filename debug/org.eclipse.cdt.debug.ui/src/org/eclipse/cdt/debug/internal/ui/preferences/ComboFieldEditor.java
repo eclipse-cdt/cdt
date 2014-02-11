@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2007, 2012, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Freescale - Extend to load combo values from ICBreakpointsUIContribution (Bug 427898)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.internal.ui.preferences;
 
+import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointsUIContribution;
+import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointsUIContributionUser;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.SWT;
@@ -24,7 +27,7 @@ import org.eclipse.swt.widgets.Control;
 /**
  * A field editor for a combo box that allows the drop-down selection of one of a list of items.
  */
-public class ComboFieldEditor extends FieldEditor {
+public class ComboFieldEditor extends FieldEditor implements ICBreakpointsUIContributionUser{
 
 	/**
 	 * The <code>Combo</code> widget.
@@ -42,6 +45,30 @@ public class ComboFieldEditor extends FieldEditor {
 	 */
 	private String[][] fEntryNamesAndValues;
 
+	private ICBreakpointsUIContribution fContribution;
+
+	private boolean isEmpty() {
+		return fEntryNamesAndValues.length == 0;
+	}
+
+	/**
+	 * Create combo field editor that would load choice values from {@link ICBreakpointsUIContribution} 
+	 * @param name - property name, must be the same as breakpoint attribute 
+	 * @param labelText - text in front of field
+	 * @param parent
+	 */
+	public ComboFieldEditor(String name, String labelText, Composite parent) {
+		this(name, labelText, new String[0][0], parent);
+	}
+
+	 /**
+	 * Create combo field editor with all choice values.  
+	 * @param name - property name, must be the same as breakpoint attribute 
+	 * @param labelText - text in front of field
+	 * @param entryNamesAndValues - The names (labels) and underlying values to populate the combo widget.  
+	 * 				These should be arranged as: { {name1, value1}, {name2, value2}, ...}
+	 * @param parent
+	 */
 	public ComboFieldEditor(String name, String labelText, String[][] entryNamesAndValues, Composite parent) {
 		init(name, labelText);
 		Assert.isTrue(checkArray(entryNamesAndValues));
@@ -104,7 +131,7 @@ public class ComboFieldEditor extends FieldEditor {
 	 */
 	@Override
 	protected void doLoad() {
-		updateComboForValue(getPreferenceStore().getString(getPreferenceName()));
+		updateComboForValue(storeToComboValue());
 	}
 
 	/**
@@ -125,7 +152,7 @@ public class ComboFieldEditor extends FieldEditor {
 			return;
 		}
 	
-		getPreferenceStore().setValue(getPreferenceName(), fValue);
+		comboValueToStore(fValue);
 	}
 
 	/**
@@ -193,6 +220,49 @@ public class ComboFieldEditor extends FieldEditor {
 		}
 	}
 
+	/**
+	 * load field value from preference store and return as combo widget value 
+	 * @return - "String" value of the attribute
+	 */
+	protected String storeToComboValue() {
+		String value = getPreferenceStore().getString(getPreferenceName());
+		if (fContribution!=null) {
+			if ("integer".equals (fContribution.getType())) { //$NON-NLS-1$
+				value = Integer.toString( getPreferenceStore().getInt(getPreferenceName()) );
+			} else if ("boolean".equals (fContribution.getType()) ) {//$NON-NLS-1$
+				value = Boolean.toString( getPreferenceStore().getBoolean(getPreferenceName()) );
+			} else if ("float".equals (fContribution.getType()) ) {//$NON-NLS-1$
+				value = Float.toString( getPreferenceStore().getFloat(getPreferenceName()) );
+			} else if ("double".equals (fContribution.getType()) ) {//$NON-NLS-1$
+				value = Double.toString( getPreferenceStore().getDouble(getPreferenceName()) );
+			}
+		}
+		return value;
+	}
+
+	/**
+	 * Save to preference store the selected combo value 
+	 * @param val - value to be stored.
+	 */
+	protected void comboValueToStore(String val) {
+		if (fContribution!=null) {
+			if ("integer".equals (fContribution.getType())) { //$NON-NLS-1$
+				getPreferenceStore().setValue(getPreferenceName(), Integer.parseInt(val)) ;
+			} else if ("boolean".equals (fContribution.getType()) ) {//$NON-NLS-1$
+				getPreferenceStore().setValue(getPreferenceName(), Boolean.parseBoolean(val)) ;
+			} else if ("float".equals (fContribution.getType()) ) {//$NON-NLS-1$
+				getPreferenceStore().setValue(getPreferenceName(), Float.parseFloat(val)) ;
+			} else if ("double".equals (fContribution.getType()) ) {//$NON-NLS-1$
+				getPreferenceStore().setValue(getPreferenceName(), Double.parseDouble(val)) ;
+			} else {
+				// handle "String" attribute type
+				getPreferenceStore().setValue(getPreferenceName(), val);
+			}
+		} else {
+			getPreferenceStore().setValue(getPreferenceName(), val);
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#fireValueChanged(String, Object, Object)
 	 */
@@ -209,5 +279,34 @@ public class ComboFieldEditor extends FieldEditor {
 	protected void setPresentsDefaultValue( boolean b )
 	{
 		super.setPresentsDefaultValue( b );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointsUIContributionUser#setContribution(org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointsUIContribution)
+	 */
+	@Override
+	public void setContribution(ICBreakpointsUIContribution contribution) {
+		fContribution = contribution;
+		if (isEmpty()) {
+			Combo combo = getComboBoxControl();
+			assert combo.getItemCount() == 0;
+			//load values from contribution
+			String[] possibleValues = fContribution.getPossibleValues();
+			fEntryNamesAndValues = new String[possibleValues.length][2];
+			for (int i=0; i<possibleValues.length; ++i) {
+				fEntryNamesAndValues[i][0] = fContribution.getLabelForValue(possibleValues[i]);
+				fEntryNamesAndValues[i][1] = possibleValues[i];
+				combo.add(fEntryNamesAndValues[i][0], i);
+			}
+			fCombo.select(0);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointsUIContributionUser#getContribution()
+	 */
+	@Override
+	public ICBreakpointsUIContribution getContribution() {
+		return fContribution;
 	}
 }

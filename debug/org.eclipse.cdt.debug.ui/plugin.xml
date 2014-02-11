@@ -1836,6 +1836,18 @@
      </attribute> 
      </breakpointLabels>
  </extension>
+     <extension point="org.eclipse.cdt.debug.ui.breakpointContribution">
+     <breakpointEditors markerType="org.eclipse.cdt.debug.core.cBreakpointMarker"> 
+     <attribute name="org.eclipse.cdt.debug.core.breakpointType" label="%breapointType.label" type="integer"
+     fieldEditor="org.eclipse.cdt.debug.internal.ui.preferences.ComboFieldEditor"
+     >
+        <value value="0" label="%breapointType.regular.label"></value>
+        <value value="2" label="%breapointType.hardware.label"></value>
+        <value value="1" label="%breapointType.temporay.label"></value>
+        <value value="3" label="%breapointType.hardwaretemporaty.label"></value>
+     </attribute> 
+     </breakpointEditors>
+ </extension>
      <extension
            point="org.eclipse.core.expressions.propertyTesters">
         <propertyTester

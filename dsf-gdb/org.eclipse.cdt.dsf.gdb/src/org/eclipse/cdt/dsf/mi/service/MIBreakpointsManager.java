@@ -1713,6 +1713,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         if (cdt_attributes.containsKey(ICBreakpoint.ENABLED))
             result.put(MIBreakpoints.IS_ENABLED, cdt_attributes.get(ICBreakpoint.ENABLED));
 
+        if (cdt_attributes.containsKey(ICBreakpointType.TYPE))
+            result.put(MIBreakpoints.BREAKPOINT_TYPE, cdt_attributes.get(ICBreakpointType.TYPE));
+
         // ICWatchpoint attributes
         if (cdt_attributes.containsKey(ICWatchpoint.EXPRESSION))
             result.put(MIBreakpoints.EXPRESSION, cdt_attributes.get(ICWatchpoint.EXPRESSION));
@@ -1893,6 +1896,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         // Check the "critical" attributes
         if (delta.containsKey(ATTR_DEBUGGER_PATH)            // File name
         ||  delta.containsKey(MIBreakpoints.LINE_NUMBER)     // Line number
+        ||  delta.containsKey(MIBreakpoints.BREAKPOINT_TYPE)     // breakpoint type
         ||  delta.containsKey(MIBreakpoints.FUNCTION)        // Function name
         ||  delta.containsKey(MIBreakpoints.ADDRESS)         // Absolute address
         ||  delta.containsKey(ATTR_THREAD_FILTER)            // Thread ID

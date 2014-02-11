@@ -340,7 +340,7 @@ public class AST2CPPTests extends AST2TestBase {
 	// short      sh(0);
 	// long       l(0L);
 	// long long  ll(0LL);
-	public void testInitializeUnsigned_Bug245070() throws Exception {
+	public void testInitializeUnsigned_245070() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 
@@ -2238,7 +2238,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//    friend void set();
 	//    friend void Other::m();
 	// };
-	public void testFriend_Bug275358() throws Exception {
+	public void testFriend_275358() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		ICPPClassType A = bh.assertNonProblem("A", 1);
@@ -5523,7 +5523,7 @@ public class AST2CPPTests extends AST2TestBase {
 	// void O::I::f() {
 	//    a=0;
 	// }
-	public void testUsingDirectiveWithNestedClass_Bug209582() throws Exception {
+	public void testUsingDirectiveWithNestedClass_209582() throws Exception {
 		BindingAssertionHelper bh= getAssertionHelper();
 
 		IBinding b= bh.assertNonProblem("a=", 1);
@@ -5542,7 +5542,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//    Test foo2 (bar, pBar);
 	//    Test foo3 (&bar);
 	// }
-	public void testCastAmbiguity_Bug211756() throws Exception {
+	public void testCastAmbiguity_211756() throws Exception {
 		BindingAssertionHelper bh= getAssertionHelper();
 
 		bh.assertNonProblem("foo1", 4);
@@ -5556,7 +5556,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	 if (relayIndex < 0 || relayIndex > numRelays)
 	//	    return 0;
 	// }
-	public void testTemplateIDAmbiguity_Bug104706() throws Exception {
+	public void testTemplateIDAmbiguity_104706() throws Exception {
 		BindingAssertionHelper bh= getAssertionHelper();
 
 		bh.assertNonProblem("relayIndex <", 10);
@@ -5579,7 +5579,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	    (base::has_trivial_copy<value_type>::value &&
 	//	    base::has_trivial_destructor<value_type>::value)>
 	//	    realloc_ok;
-	public void testTemplateIDAmbiguity_Bug228118() throws Exception {
+	public void testTemplateIDAmbiguity_228118() throws Exception {
 		parse(getAboveComment(), CPP);
 	}
 
@@ -5594,7 +5594,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//    func(qualified);
 	//    func(unqualified);
 	// }
-	public void testScopeOfUsingDelegates_Bug219424() throws Exception {
+	public void testScopeOfUsingDelegates_219424() throws Exception {
 		BindingAssertionHelper bh= getAssertionHelper();
 
 		bh.assertNonProblem("cl c", 2);
@@ -5609,7 +5609,7 @@ public class AST2CPPTests extends AST2TestBase {
 	// void Test::member1(){
 	//    member2();
 	// }
-	public void testQualifiedMemberDeclaration_Bug222026() throws Exception {
+	public void testQualifiedMemberDeclaration_222026() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 
@@ -5657,7 +5657,7 @@ public class AST2CPPTests extends AST2TestBase {
 	// void Test::member1(){
 	//    member2();
 	// }
-	public void testQualifiedMemberDeclarationInNamespace_Bug222026() throws Exception {
+	public void testQualifiedMemberDeclarationInNamespace_222026() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 
@@ -5699,7 +5699,7 @@ public class AST2CPPTests extends AST2TestBase {
 	}
 
 	// namespace ns { typedef int ns::TINT; } // illegal, still no CCE is expected.
-	public void testQualifiedTypedefs_Bug222093() throws Exception{
+	public void testQualifiedTypedefs_222093() throws Exception{
 		BindingAssertionHelper bh= getAssertionHelper();
 		IBinding td= bh.assertProblem("TINT", 4);
 		bh.assertProblem("ns::", 2);
@@ -5711,7 +5711,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//   if (a > b) {
 	//   }
 	// }
-	public void testResettingTemplateIdScopesStack_Bug223777() throws Exception{
+	public void testResettingTemplateIdScopesStack_223777() throws Exception{
 		parseAndCheckBindings(getAboveComment());
 	}
 
@@ -5806,7 +5806,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		SecondLevelProxy p2;
 	//		p2->doA();
 	//	}
-	public void testRecursiveUserDefinedFieldAccess_Bug205964() throws Exception {
+	public void testRecursiveUserDefinedFieldAccess_205964() throws Exception {
 		parseAndCheckBindings(getAboveComment());
 	}
 
@@ -6070,7 +6070,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		typeid(int).name();
 	//		typeid(s).name();
 	//	}
-	public void testTypeid_Bug209578() throws Exception {
+	public void testTypeid_209578() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP);
 	}
 
@@ -6107,7 +6107,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		test(y);
 	//		test(z);
 	//	}
-	public void testArrayToPtrConversionForTypedefs_Bug239931() throws Exception {
+	public void testArrayToPtrConversionForTypedefs_239931() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP);
 	}
 
@@ -6121,7 +6121,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	   test2(x); // problem binding here
 	//	   test3(x); // problem binding here
 	//	}
-	public void testAdjustmentOfParameterTypes_Bug239975() throws Exception {
+	public void testAdjustmentOfParameterTypes_239975() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP);
 	}
 
@@ -6135,12 +6135,12 @@ public class AST2CPPTests extends AST2TestBase {
 	//		ptr2mem= reinterpret_cast<void (A::*)(char)>(&A::m);
 	//      ptr2mem= (void (A::*)(int))(0);
 	//	}
-	public void testTypeIdForPtrToMember_Bug242197() throws Exception {
+	public void testTypeIdForPtrToMember_242197() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP);
 	}
 
 	// void restrict();
-	public void testRestrictIsNoCPPKeyword_Bug228826() throws Exception {
+	public void testRestrictIsNoCPPKeyword_228826() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, CPP, false);
 		parseAndCheckBindings(getAboveComment(), CPP, true);  // even with gnu extensions
@@ -6149,7 +6149,7 @@ public class AST2CPPTests extends AST2TestBase {
 	// void test1();
 	// void test2() throw ();
 	// void test3() throw (int);
-	public void testEmptyExceptionSpecification_Bug86943() throws Exception {
+	public void testEmptyExceptionSpecification_86943() throws Exception {
 		IASTTranslationUnit tu= parseAndCheckBindings(getAboveComment(), CPP);
 
 		IASTSimpleDeclaration d= getDeclaration(tu, 0);
@@ -6176,7 +6176,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		} catch (const char &ex) {
 	//		}
 	//	}
-	public void testScopeOfCatchHandler_Bug209579() throws Exception {
+	public void testScopeOfCatchHandler_209579() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP);
 	}
 
@@ -6458,7 +6458,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//    void test() {
 	//      donothing();
 	//    }
-	public void testVoidViaTypedef_Bug258694() throws Exception {
+	public void testVoidViaTypedef_258694() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP);
 	}
 
@@ -7182,7 +7182,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	   int ** x;
 	//	   f(x);  // problem binding here
 	//	}
-	public void testRankingOfQualificationConversion_Bug269321() throws Exception {
+	public void testRankingOfQualificationConversion_269321() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, CPP);
 	}
@@ -7203,7 +7203,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	    (1 + x).a; //2
 	//	    (x + 1.0).b; //3
 	//	}
-	public void testOverloadResolutionForOperators_Bug266211() throws Exception {
+	public void testOverloadResolutionForOperators_266211() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertNonProblem("a; //1", 1, ICPPField.class);
 		ba.assertNonProblem("a; //2", 1, ICPPField.class);
@@ -7223,7 +7223,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	    (x + x).a; //1
 	//	    (x + 1.0).a; //2
 	//	}
-	public void testOverloadResolutionForOperators_Bug268534() throws Exception {
+	public void testOverloadResolutionForOperators_268534() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertNonProblem("a; //1", 1, ICPPField.class);
 		ba.assertNonProblem("a; //2", 1, ICPPField.class);
@@ -7237,7 +7237,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		C* c= 0;
 	//		test(c);
 	//	}
-	public void testInvalidUserDefinedConversion_Bug269729() throws Exception {
+	public void testInvalidUserDefinedConversion_269729() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertProblem("test(c)", 4);
 	}
@@ -7253,7 +7253,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		foo('a');
 	//		foo(L'a');
 	//	}
-	public void testWideCharacterLiteralTypes_Bug270892() throws Exception {
+	public void testWideCharacterLiteralTypes_270892() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
@@ -7331,7 +7331,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//    C(T);  // ctor
 	//    C(s);  // instance s;
 	// };
-	public void testDeclarationAmbiguity_Bug269953() throws Exception {
+	public void testDeclarationAmbiguity_269953() throws Exception {
 		final String code = getAboveComment();
 		IASTTranslationUnit tu= parseAndCheckBindings(code, CPP);
 		ICPPASTCompositeTypeSpecifier ct= getCompositeType(tu, 1);
@@ -7352,7 +7352,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	typedef C3 T3;
 	//	T3::C3(int) {
 	//	}
-	public void testCTorWithTypedef_Bug269953() throws Exception {
+	public void testCTorWithTypedef_269953() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, CPP);
 	}
@@ -7364,7 +7364,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	};
 	//	typedef Compare<int> MY_COMPARE;
 	//	template<> MY_COMPARE::Compare() {}
-	public void testTemplateCTorWithTypedef_Bug269953() throws Exception {
+	public void testTemplateCTorWithTypedef_269953() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, CPP);
 	}
@@ -7394,7 +7394,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		d.base(); // Parser log reports ambiguity on 'base'
 	//		return 0;
 	//	}
-	public void testHiddenVirtualBase_Bug282993() throws Exception {
+	public void testHiddenVirtualBase_282993() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, CPP);
 	}
@@ -7406,7 +7406,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		C c;
 	//		c()()()()()()()()()()()()()();
 	//	}
-	public void testNestedOverloadedFunctionCalls_Bug283324() throws Exception {
+	public void testNestedOverloadedFunctionCalls_283324() throws Exception {
 		final String code = getAboveComment();
 		IASTTranslationUnit tu= parseAndCheckBindings(code, CPP);
 		IASTFunctionDefinition test= getDeclaration(tu, 1);
@@ -7574,7 +7574,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	int main() {
 	//	    return ~0;
 	//	}
-	public void testNonUserdefinedOperator_Bug291409_2() throws Exception {
+	public void testNonUserdefinedOperator_291409_2() throws Exception {
 		final String code = getAboveComment();
 		IASTTranslationUnit tu= parseAndCheckBindings(code, CPP);
 		IASTFunctionDefinition def= getDeclaration(tu, 1);
@@ -8726,7 +8726,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//      Y* m();//2
 	//      Y* m(Y*);//3
 	//	};
-	public void testOverrideSimpleCovariance_Bug321617() throws Exception {
+	public void testOverrideSimpleCovariance_321617() throws Exception {
 		BindingAssertionHelper helper= getAssertionHelper();
 		ICPPMethod m0= helper.assertNonProblem("m();//0", 1, ICPPMethod.class);
 		ICPPMethod m1= helper.assertNonProblem("m(X*);//1", 1, ICPPMethod.class);
@@ -9545,7 +9545,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	void f2(int (x), int y=x) {
 	//		x= 1;
 	//	}
-	public void testAmbiguityResolution_Bug354599() throws Exception {
+	public void testAmbiguityResolution_354599() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -9566,7 +9566,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	  C c;
 	//	  c.method(b);
 	//	}
-	public void testAmbiguityResolution_Bug356268() throws Exception {
+	public void testAmbiguityResolution_356268() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -9584,7 +9584,7 @@ public class AST2CPPTests extends AST2TestBase {
 
 	//	class A : A {
 	//	};
-	public void testRecursiveClassInheritance_Bug357256() throws Exception {
+	public void testRecursiveClassInheritance_357256() throws Exception {
 		BindingAssertionHelper bh= getAssertionHelper();
 		ICPPClassType c= bh.assertNonProblem("A", 1);
 		assertEquals(0, SemanticQueries.getPureVirtualMethods(c, null).length);
@@ -9598,7 +9598,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	};
 	//	template<> struct CT2<Tdef> {  // Accessed before ambiguity is resolved
 	//	};
-	public void testAmbiguityResolution_Bug359364() throws Exception {
+	public void testAmbiguityResolution_359364() throws Exception {
 		parseAndCheckBindings();
 	}
 

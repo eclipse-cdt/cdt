@@ -140,7 +140,7 @@ public class LRCPPTests extends AST2CPPTests {
 	@Override
 	public void testPureVirtualVsInitDeclarator_267184() throws Exception {}
 	@Override
-	public void testDeclarationAmbiguity_Bug269953() throws Exception {}
+	public void testDeclarationAmbiguity_269953() throws Exception {}
 	@Override
 	public void testInitSyntax_302412() throws Exception {}
 	@Override

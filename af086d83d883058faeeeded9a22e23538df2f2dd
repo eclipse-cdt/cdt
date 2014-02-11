@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_2fd8721a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ArtifactTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-02-11T21:11:23Z",
+      "side": 1,
+      "message": "I think it should reset to the default, ${ProjName}, when it becomes empty instead of the expanded project name. Just in case the user renames the project after.\nSo instead it would be:\nfCfg.getManagedProject().getDefaultArtifactName()\n\nwhat do you think?",
+      "revId": "af086d83d883058faeeeded9a22e23538df2f2dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_cfc8d64c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ArtifactTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-02-11T21:11:23Z",
+      "side": 1,
+      "message": "same here",
+      "revId": "af086d83d883058faeeeded9a22e23538df2f2dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

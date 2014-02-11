@@ -186,6 +186,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 
 	@Override
 	public int leave(IASTTranslationUnit tu) {
+		fDeferFunctions= 0;
 		while (!fDeferredNodes.isEmpty()) {
 			processDeferredNodes(fDeferredNodes.removeLast());
 		}
@@ -193,9 +194,14 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	}
 
 	private void processDeferredNodes(Deque<IASTNode> deferredNodes) {
-		while (!deferredNodes.isEmpty()) {
-			fDeferFunctions= 0;
-			deferredNodes.removeFirst().accept(this);
+		int deferFunctions = fDeferFunctions;
+		fDeferFunctions = 0;
+		try {
+			while (!deferredNodes.isEmpty()) {
+				deferredNodes.removeFirst().accept(this);
+			}
+		} finally {
+			fDeferFunctions = deferFunctions;
 		}
 	}
 

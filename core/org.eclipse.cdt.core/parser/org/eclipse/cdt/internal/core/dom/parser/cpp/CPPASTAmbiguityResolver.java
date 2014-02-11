@@ -10,8 +10,8 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.ArrayDeque;
 import java.util.HashSet;
-import java.util.LinkedList;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -39,14 +39,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * Visitor to resolve ast ambiguities in the right order
+ * Visitor to resolve AST ambiguities in the right order
  */
 final class CPPASTAmbiguityResolver extends ASTVisitor {
 	private int fSkipInitializers= 0;
 	private int fDeferFunctions= 1;
-	private HashSet<IASTDeclaration> fRepopulate= new HashSet<IASTDeclaration>();
-	private LinkedList<IASTNode> fDeferredNodes= new LinkedList<IASTNode>();
-	
+	private HashSet<IASTDeclaration> fRepopulate= new HashSet<>();
+	private ArrayDeque<IASTNode> fDeferredNodes= new ArrayDeque<>();
+
 	public CPPASTAmbiguityResolver() {
 		super(false);
 		includeInactiveNodes= true;
@@ -89,7 +89,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 		}
 		return PROCESS_SKIP;
 	}
-	
+
 	@Override
 	public int visit(IASTDeclSpecifier declSpec) {
 		if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
@@ -102,11 +102,11 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	public int leave(IASTDeclSpecifier declSpec) {
 		if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 			fDeferFunctions--;
-			
+
 			// Resolve class type definitions, such that the scope is available
 			// during ambiguity resolution.
 			((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
-			
+
 			// Trigger computation of implicit members.
 			if (declSpec instanceof CPPASTCompositeTypeSpecifier)
 				((CPPASTCompositeTypeSpecifier) declSpec).setAmbiguitiesResolved();
@@ -119,13 +119,13 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 		if (fDeferFunctions > 0 && decl instanceof IASTFunctionDefinition) {
 			final IASTFunctionDefinition fdef= (IASTFunctionDefinition) decl;
 
-			// visit the declarator first, it may contain ambiguous template arguments needed 
+			// Visit the declarator first, it may contain ambiguous template arguments needed 
 			// for associating the template declarations.
 			fSkipInitializers++;
 			ASTQueries.findOutermostDeclarator(fdef.getDeclarator()).accept(this);
 			fSkipInitializers--;
 			fdef.getDeclSpecifier().accept(this);
-			// defer visiting the body of the function until the class body has been visited.
+			// Defer visiting the body of the function until the class body has been visited.
 			fDeferredNodes.add(decl);
 			return PROCESS_SKIP;
 		} 
@@ -188,6 +188,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 			CPPSemantics.populateCache((ICPPASTInternalScope) scope, declaration);
 		}
 	}
+
 	private void repopulateScope(IASTParameterDeclaration declaration) {
 		IScope scope= CPPVisitor.getContainingNonTemplateScope(declaration);
 		if (scope instanceof ICPPASTInternalScope) {

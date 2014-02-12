@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Alena Laskavaia 
+ * Copyright (c) 2009, 2014 Alena Laskavaia 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Alena Laskavaia  - initial API and implementation
  *     Tomasz Wesolowski - Bug 348387
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -32,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
@@ -51,14 +53,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * The checker suppose to find issue related to mismatched return value/function
  * declaration<br>
  * <li>Function declared as returning non-void returns void
  * <li>Function declared as returning void has non-void return
- * <li>Function declared as returning non-void has no return (requires control
- * flow graph)
+ * <li>Function declared as returning non-void has no return (requires control flow graph)
  */
 public class ReturnChecker extends AbstractAstFunctionChecker {
 	public static final String PARAM_IMPLICIT = "implicit"; //$NON-NLS-1$
@@ -97,21 +99,21 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof IASTReturnStatement) {
 				IASTReturnStatement ret = (IASTReturnStatement) stmt;
-				boolean hasValue = ret.getReturnArgument() != null;
-				if (hasret == false && hasValue) {
+				IASTInitializerClause returnValue = ret.getReturnArgument();
+				if (returnValue != null) {
 					hasret = true;
 				}
 				if (!isVoid(func) && !isConstructorDestructor(func)) {
 					if (checkImplicitReturn(RET_NO_VALUE_ID) || isExplicitReturn(func)) {
-						if (!hasValue)
+						if (returnValue == null)
 							reportProblem(RET_NO_VALUE_ID, ret);
 					}
 				} else {
-					if (hasValue) {
-						IType type = ret.getReturnValue().getExpressionType();
+					if (returnValue instanceof IASTExpression) {
+						IType type = ((IASTExpression) returnValue).getExpressionType();
 						if (isVoid(type))
 							return PROCESS_SKIP;
-						reportProblem(RET_ERR_VALUE_ID, ret.getReturnValue());
+						reportProblem(RET_ERR_VALUE_ID, returnValue);
 					}
 				}
 				return PROCESS_SKIP;
@@ -120,11 +122,6 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		}
 	}
 
-	/**
-	 * @param func
-	 * @return
-	 * 
-	 */
 	public boolean isConstructorDestructor(IASTFunctionDefinition func) {
 		if (func instanceof ICPPASTFunctionDefinition) {
 			IBinding method = func.getDeclarator().getName().resolveBinding();
@@ -137,41 +134,35 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 
 	public boolean isMain(IASTFunctionDefinition func) {
 		try {
-			String functionName = func.getDeclarator().getName().getRawSignature();
-			if (functionName.equals("main")) { //$NON-NLS-1$
+			char[] functionName = func.getDeclarator().getName().getSimpleID();
+			if (CharArrayUtils.equals(functionName, "main")) { //$NON-NLS-1$
 				return true;
 			}
-		} catch (Exception e) {
-			// well, not main
+		} catch (RuntimeException e) {
+			// Well, not main.
 		}
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.codan.core.cxx.model.AbstractAstFunctionChecker#
-	 * processFunction(org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition)
-	 */
 	@Override
 	protected void processFunction(IASTFunctionDefinition func) {
 		if (func.getParent() instanceof ICPPASTTemplateDeclaration)
-			return; // if it is template get out of here
+			return; // If it is template get out of here.
 		ReturnStmpVisitor visitor = new ReturnStmpVisitor(func);
 		func.accept(visitor);
 		boolean nonVoid = !isVoid(func);
 		if (nonVoid && !isMain(func)) {
-			// there a return but maybe it is only on one branch
+			// There a return but maybe it is only on one branch.
 			IASTStatement body = func.getBody();
 			if (body instanceof IASTCompoundStatement) {
 				IASTStatement[] statements = ((IASTCompoundStatement) body).getStatements();
 				if (statements.length > 0) {
 					IASTStatement last = statements[statements.length - 1];
-					// get nested statement if this is a label
+					// Get nested statement if this is a label
 					while (last instanceof IASTLabelStatement) {
 						last = ((IASTLabelStatement) last).getNestedStatement();
 					}
-					// now check if last statement if complex (for optimization reasons, building CFG is expensive)
+					// Now check if last statement if complex (for optimization reasons, building CFG is expensive).
 					if (isCompoundStatement(last)) {
 						if (endsWithNoExitNode(func))
 							reportNoRet(func, visitor.hasret);
@@ -185,13 +176,10 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		}
 	}
 
-	/**
-	 * @param func
-	 */
 	protected void reportNoRet(IASTFunctionDefinition func, boolean hasRet) {
 		if (!hasRet) {
-			// no return at all
-			if (checkImplicitReturn(RET_NORET_ID) == false && isExplicitReturn(func) == false) {
+			// No return at all.
+			if (!checkImplicitReturn(RET_NORET_ID) && !isExplicitReturn(func)) {
 				return;
 			}
 			if (isConstructorDestructor(func)) {
@@ -201,10 +189,6 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		reportProblem(RET_NORET_ID, func.getDeclSpecifier());
 	}
 
-	/**
-	 * @param last
-	 * @return
-	 */
 	private boolean isCompoundStatement(IASTStatement last) {
 		return last instanceof IASTIfStatement || last instanceof IASTWhileStatement ||
 				last instanceof IASTDoStatement || last instanceof IASTForStatement || 
@@ -218,7 +202,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	}
 
 	/**
-	 * @param if - problem id
+	 * @param id the problem id
 	 * @return true if need to check inside functions with implicit return
 	 */
 	protected boolean checkImplicitReturn(String id) {
@@ -226,10 +210,6 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		return (Boolean) getPreference(pt, PARAM_IMPLICIT);
 	}
 
-	/**
-	 * @param func
-	 * @return
-	 */
 	protected boolean endsWithNoExitNode(IASTFunctionDefinition func) {
 		IControlFlowGraph graph = getModelCache().getControlFlowGraph(func);
 		Iterator<IExitNode> exitNodeIterator = graph.getExitNodeIterator();
@@ -237,9 +217,8 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		for (; exitNodeIterator.hasNext();) {
 			IExitNode node = exitNodeIterator.next();
 			if (((ICfgData) node).getData() == null) {
-				// if it real exit node such as return, exit or throw data
-				// will be an ast node, if it is null it is a fake node added by the
-				// graph builder
+				// If it real exit node such as return, exit or throw data will be an AST node,
+				// if it is null it is a fake node added by the graph builder.
 				noexitop = true;
 				break;
 			}
@@ -247,18 +226,10 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		return noexitop;
 	}
 
-	/**
-	 * @param func
-	 * @return
-	 */
 	protected boolean isExplicitReturn(IASTFunctionDefinition func) {
 		return getDeclSpecType(func) != IASTSimpleDeclSpecifier.t_unspecified;
 	}
 
-	/**
-	 * @param func
-	 * @return
-	 */
 	public boolean isVoid(IASTFunctionDefinition func) {
 		int type = getDeclSpecType(func);
 		if (type == IASTSimpleDeclSpecifier.t_void) {
@@ -274,29 +245,15 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	}
 
 	/**
-	 * check if type if void
-	 * (uses deprecated API for compatibility with 6.0)
+	 * Checks if type if void.
 	 * 
 	 * @param type
 	 * @throws DOMException
 	 */
-	@SuppressWarnings("deprecation")
 	public boolean isVoid(IType type) {
-		if (type instanceof IBasicType) {
-			try {
-				if (((IBasicType) type).getType() == IBasicType.t_void)
-					return true;
-			} catch (DOMException e) {
-				return false;
-			}
-		}
-		return false;
+		return type instanceof IBasicType && ((IBasicType) type).getKind() == IBasicType.Kind.eVoid;
 	}
 
-	/**
-	 * @param func
-	 * @return
-	 */
 	protected int getDeclSpecType(IASTFunctionDefinition func) {
 		IASTDeclSpecifier declSpecifier = func.getDeclSpecifier();
 		int type = -1;
@@ -311,7 +268,6 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		return type;
 	}
 
-	/* checker must implement @link ICheckerWithPreferences */
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
@@ -321,15 +277,14 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	}
 
 	/**
-	 * Checks if a "void" return type is specified using the C++0x
-	 * late-specified return type
-	 * for a given function definition
-	 * 
-	 * For example, auto f() -> void { } would return true
+	 * Checks if a {@code void} return type is specified using the C++11 late-specified return type
+	 * for a given function definition.
+	 * <p>
+	 * For example, <code>auto f() -> void {}</code> would return {@code true}.
 	 * 
 	 * @param functionDefinition
-	 * @return True if the function has a void (late-specified) return type,
-	 *         False otherwise
+	 * @return {@code true} if the function has a void (late-specified) return type,
+	 *         {@code false} otherwise
 	 */
 	private boolean isAutoVoid(IASTFunctionDefinition functionDefinition) {
 		IASTFunctionDeclarator declarator = functionDefinition.getDeclarator();
@@ -339,7 +294,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 			if (trailingReturnType != null) {
 				IASTDeclarator abstractDeclarator = trailingReturnType.getAbstractDeclarator();
 				if (abstractDeclarator != null) {
-					if (abstractDeclarator.getPointerOperators().length > 0) {
+					if (abstractDeclarator.getPointerOperators().length != 0) {
 						return false;
 					}
 					IASTDeclSpecifier declSpecifier = trailingReturnType.getDeclSpecifier();

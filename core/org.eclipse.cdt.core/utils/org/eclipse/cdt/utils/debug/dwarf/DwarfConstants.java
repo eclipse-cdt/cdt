@@ -65,6 +65,10 @@ public class DwarfConstants {
 	public final static int DW_TAG_variant_part = 0x33;
 	public final static int DW_TAG_variable = 0x34;
 	public final static int DW_TAG_volatile_type = 0x35;
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_TAG_partial_unit = 0x3c;
 	public final static int DW_TAG_lo_user = 0x4080;
 	public final static int DW_TAG_MIPS_loop = 0x4081;
 	public final static int DW_TAG_format_label = 0x4101;
@@ -187,22 +191,42 @@ public class DwarfConstants {
 	public final static int DW_FORM_ref8 = 0x14;
 	public final static int DW_FORM_ref_udata = 0x15;
 	public final static int DW_FORM_indirect = 0x16;
+	
 	/**
-	 * @since 5.6
+	 * @since 5.7
 	 */
 	public final static int DW_FORM_sec_offset = 0x17;
 	/**
-	 * @since 5.6
+	 * @since 5.7
 	 */
 	public final static int DW_FORM_exprloc = 0x18;
 	/**
-	 * @since 5.6
+	 * @since 5.7
 	 */
 	public final static int DW_FORM_flag_present = 0x19;
 	/**
-	 * @since 5.6
+	 * @since 5.7
 	 */
 	public final static int DW_FORM_ref_sig8 = 0x20;
+	/* Extensions for Fission. See http://gcc.gnu.org/wiki/DebugFission. */
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_FORM_GNU_addr_index = 0x1f01;
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_FORM_GNU_str_index = 0x1f02;
+	/* Extensions for DWZ multifile.
+	   See http://www.dwarfstd.org/ShowIssue.php?issue=120604.1&type=open . */	
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_FORM_GNU_ref_alt = 0x1f20;
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_FORM_GNU_strp_alt = 0x1f21;
 
 	/* DWARF location operation encodings. */
 	public final static int DW_OP_addr = 0x03; /* Constant address. */
@@ -458,6 +482,60 @@ public class DwarfConstants {
 	public final static int DW_MACINFO_start_file = 3;
 	public final static int DW_MACINFO_end_file = 4;
 	public final static int DW_MACINFO_vendor_ext = 255;
+
+	/* DWARF macro type encodings. */
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_MACRO_end = 0;
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_MACRO_define = 1;
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_MACRO_undef = 2;
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_MACRO_start_file = 3;
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_MACRO_end_file = 4;
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_MACRO_define_indirect = 5;
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_MACRO_undef_indirect = 6;
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_MACRO_transparent_include = 7;
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_MACRO_define_indirect_alt = 0x08;
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_MACRO_undef_indirect_alt = 0x09;
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_MACRO_transparent_include_alt = 0x0a;
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_MACRO_lo_user = 0xe0;
+	/**
+	 * @since 5.7
+	 */
+	public final static int DW_MACRO_hi_user = 0xff;
 
 	/* DWARF call frame instruction encodings. */
 	public final static int DW_CFA_advance_loc = 0x40;

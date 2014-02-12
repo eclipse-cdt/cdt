@@ -66,6 +66,10 @@ public class DwarfConstants {
 	public final static int DW_TAG_variant_part = 0x33;
 	public final static int DW_TAG_variable = 0x34;
 	public final static int DW_TAG_volatile_type = 0x35;
+	/**
+	 * @since 5.6
+	 */
+	public final static int DW_TAG_partial_unit = 0x3c;
 	public final static int DW_TAG_lo_user = 0x4080;
 	public final static int DW_TAG_MIPS_loop = 0x4081;
 	public final static int DW_TAG_format_label = 0x4101;
@@ -188,6 +192,7 @@ public class DwarfConstants {
 	public final static int DW_FORM_ref8 = 0x14;
 	public final static int DW_FORM_ref_udata = 0x15;
 	public final static int DW_FORM_indirect = 0x16;
+	
 	/**
 	 * @since 5.6
 	 */
@@ -204,6 +209,25 @@ public class DwarfConstants {
 	 * @since 5.6
 	 */
 	public final static int DW_FORM_ref_sig8 = 0x20;
+	/* Extensions for Fission. See http://gcc.gnu.org/wiki/DebugFission. */
+	/**
+	 * @since 5.6
+	 */
+	public final static int DW_FORM_GNU_addr_index = 0x1f01;
+	/**
+	 * @since 5.6
+	 */
+	public final static int DW_FORM_GNU_str_index = 0x1f02;
+	/* Extensions for DWZ multifile.
+	   See http://www.dwarfstd.org/ShowIssue.php?issue=120604.1&type=open . */	
+	/**
+	 * @since 5.6
+	 */
+	public final static int DW_FORM_GNU_ref_alt = 0x1f20;
+	/**
+	 * @since 5.6
+	 */
+	public final static int DW_FORM_GNU_strp_alt = 0x1f21;
 
 	/* DWARF location operation encodings. */
 	public final static int DW_OP_addr = 0x03; /* Constant address. */
@@ -493,6 +517,18 @@ public class DwarfConstants {
 	 * @since 5.6
 	 */
 	public final static int DW_MACRO_transparent_include = 7;
+	/**
+	 * @since 5.6
+	 */
+	public final static int DW_MACRO_define_indirect_alt = 0x08;
+	/**
+	 * @since 5.6
+	 */
+	public final static int DW_MACRO_undef_indirect_alt = 0x09;
+	/**
+	 * @since 5.6
+	 */
+	public final static int DW_MACRO_transparent_include_alt = 0x0a;
 	/**
 	 * @since 5.6
 	 */

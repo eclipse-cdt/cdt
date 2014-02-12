@@ -12,6 +12,7 @@
 
 package org.eclipse.cdt.utils.debug.dwarf;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	final static String[] DWARF_SectionsToParse = { DWARF_DEBUG_INFO, DWARF_DEBUG_LINE,
 			DWARF_DEBUG_ABBREV, DWARF_DEBUG_STR, // this is optional. Some compilers don't generate it.
 			DWARF_DEBUG_MACRO, };
+	final static String[] DWARF_ALT_SectionsToParse = { DWARF_DEBUG_STR };
 
 	private final Collection<String>	m_fileCollection = new ArrayList<String>();
 	private final Map<Long, String>  m_stmtFileMap = new HashMap<Long, String>();
@@ -74,22 +76,107 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		Elf.ELFhdr header = exe.getELFhdr();
 		isLE = header.e_ident[Elf.ELFhdr.EI_DATA] == Elf.ELFhdr.ELFDATA2LSB;
 
+		IPath debugInfoPath = new Path(exe.getFilename());
 		Elf.Section[] sections = exe.getSections();
 		
+		// Look for a .gnu_debuglink section which will have the name of the debug info file
+		Elf.Section gnuDebugLink = exe.getSectionByName(DWARF_GNU_DEBUGLINK);
+		if (gnuDebugLink != null) {
+			ByteBuffer data = gnuDebugLink.mapSectionData();
+			if (data != null) { // we have non-empty debug info link
+				try {
+					// name is zero-byte terminated character string
+					String debugName = ""; //$NON-NLS-1$
+					if (data.hasRemaining()) {
+						int c;
+						StringBuffer sb = new StringBuffer();
+						while ((c = data.get()) != -1) {
+							if (c == 0) {
+								break;
+							}
+							sb.append((char) c);
+						}
+						debugName = sb.toString();
+					}
+					if (debugName.length() > 0) {
+						// try and open the debug info from 3 separate places in order
+						File debugFile = null;
+						IPath exePath = new Path(exe.getFilename());
+						IPath p = exePath.removeLastSegments(1);
+						// 1. try and open the file in the same directory as the executable
+						debugFile = p.append(debugName).toFile();
+						if (!debugFile.exists()) {
+							// 2. try and open the file in the .debug directory where the executable is 
+							debugFile = p.append(".debug").append(debugName).toFile(); //$NON-NLS-1$
+							if (!debugFile.exists())
+								// 3. try and open /usr/lib/debug/$(EXE_DIR)/$(DEBUGINFO_NAME)
+								debugFile = new Path("/usr/lib/debug").append(p).append(debugName).toFile(); //$NON-NLS-1$
+						}
+						if (debugFile.exists()) {
+							// if the debug file exists from above, open it and get the section info from it
+							Elf debugInfo = new Elf(debugFile.getCanonicalPath());
+							sections = debugInfo.getSections();
+							debugInfoPath = new Path(debugFile.getCanonicalPath()).removeLastSegments(1);
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					CCorePlugin.log(e);
+				}
+			}
+				 
+		}
 		// Read in sections (and only the sections) we care about.
 		//
 		for (Section section : sections) {
 			String name = section.toString();
-			for (String element : DWARF_SectionsToParse) {
-				if (name.equals(element)) {
-					// catch out of memory exceptions which might happen trying to
-					// load large sections (like .debug_info).  not a fix for that
-					// problem itself, but will at least continue to load the other
-					// sections.
-					try {
-						dwarfSections.put(element, section.mapSectionData());
-					} catch (Exception e) {
-						CCorePlugin.log(e);
+			if (name.equals(DWARF_GNU_DEBUGALTLINK)) {
+				ByteBuffer data = section.mapSectionData();
+				try {
+					// name is zero-byte terminated character string
+					String altInfoName = read_string(data);
+					if (altInfoName.length() > 0) {
+						IPath altPath = new Path(altInfoName);
+						if (altPath.isAbsolute()) {
+
+						} else {
+							altPath = debugInfoPath.append(altPath);
+						}
+						File altFile = altPath.toFile();
+						if (altFile.exists()) {
+							Elf altInfo = new Elf(altFile.getCanonicalPath());
+							Elf.Section[] altSections = altInfo.getSections();
+							for (Section altSection : altSections) {
+								String altName = altSection.toString();
+								for (String element : DWARF_ALT_SectionsToParse) {
+									if (altName.equals(element)) {
+										try {
+											dwarfAltSections.put(element, altSection.mapSectionData());
+										} catch (Exception e) {
+											e.printStackTrace();
+											CCorePlugin.log(e);
+										}
+									}
+								}
+							}
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					CCorePlugin.log(e);
+				}
+			} else {
+				for (String element : DWARF_SectionsToParse) {
+					if (name.equals(element)) {
+						// catch out of memory exceptions which might happen trying to
+						// load large sections (like .debug_info).  not a fix for that
+						// problem itself, but will at least continue to load the other
+						// sections.
+						try {
+							dwarfSections.put(element, section.mapSectionData());
+						} catch (Exception e) {
+							CCorePlugin.log(e);
+						}
 					}
 				}
 			}
@@ -124,7 +211,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 			}
 		}
 		// Don't print during parsing.
-		printEnabled = false;
+		printEnabled = true;
 		m_parsed = false;
 	}
 
@@ -577,6 +664,8 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 					}
 					break;
 				case DwarfConstants.DW_FORM_strp:
+				case DwarfConstants.DW_FORM_GNU_strp_alt:
+				case DwarfConstants.DW_FORM_GNU_ref_alt:
 				case DwarfConstants.DW_FORM_sec_offset:
 					if (offset_size_8)
 						data.getLong();

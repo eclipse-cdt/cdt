@@ -13,6 +13,7 @@
 
 package org.eclipse.cdt.utils.debug.dwarf;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
@@ -30,6 +31,8 @@ import org.eclipse.cdt.utils.debug.tools.DebugSym;
 import org.eclipse.cdt.utils.debug.tools.DebugSymsRequestor;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.Elf.Section;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 public class Dwarf {
 
@@ -49,6 +52,10 @@ public class Dwarf {
 	final static String DWARF_DEBUG_WEAKNAMES = ".debug_weaknames"; //$NON-NLS-1$
 	final static String DWARF_DEBUG_MACINFO = ".debug_macinfo"; //$NON-NLS-1$
 	final static String DWARF_DEBUG_MACRO = ".debug_macro"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_TYPES = ".debug_types"; //$NON-NLS-1$
+	final static String DWARF_GNU_DEBUGLINK = ".gnu_debuglink"; //$NON-NLS-1$
+	final static String DWARF_GNU_DEBUGALTLINK = ".gnu_debugaltlink"; //$NON-NLS-1$
+	
 	final static String[] DWARF_SCNNAMES =
 		{
 			DWARF_DEBUG_INFO,
@@ -67,6 +74,14 @@ public class Dwarf {
 			DWARF_DEBUG_MACRO,
 			DWARF_DEBUG_MACINFO };
 
+	final static String[] DWARF_ALT_SCNNAMES =
+		{
+			DWARF_DEBUG_INFO,
+			DWARF_DEBUG_TYPES,
+			DWARF_DEBUG_MACRO,
+			DWARF_DEBUG_STR,
+		};
+	
 	class CompilationUnitHeader {
 		long length;
 		short version;
@@ -168,6 +183,7 @@ public class Dwarf {
 	}
 
 	Map<String, ByteBuffer> dwarfSections = new HashMap<String, ByteBuffer>();
+	Map<String, ByteBuffer> dwarfAltSections = new HashMap<String, ByteBuffer>();
 	Map<Integer, Map<Long, AbbreviationEntry>> abbreviationMaps = new HashMap<Integer, Map<Long, AbbreviationEntry>>();
 
 	boolean isLE;
@@ -198,15 +214,88 @@ public class Dwarf {
 		isLE = header.e_ident[Elf.ELFhdr.EI_DATA] == Elf.ELFhdr.ELFDATA2LSB;
 
 		Elf.Section[] sections = exe.getSections();
+		IPath debugInfoPath = new Path(exe.getFilename());
+		// Look for a .gnu_debuglink section which will have the name of the debug info file
+		Elf.Section gnuDebugLink = exe.getSectionByName(DWARF_GNU_DEBUGLINK);
+		if (gnuDebugLink != null) {
+			ByteBuffer data = gnuDebugLink.mapSectionData();
+			if (data != null) { // we have non-empty debug info link
+				try {
+					// name is zero-byte terminated character string
+					String debugName = read_string(data);
+					if (debugName.length() > 0) {
+						// try and open the debug info from 3 separate places in order
+						File debugFile = null;
+						IPath p = debugInfoPath.removeLastSegments(1);
+						// 1. try and open the file in the same directory as the executable
+						debugFile = p.append(debugName).toFile();
+						if (!debugFile.exists()) {
+							// 2. try and open the file in the .debug directory where the executable is 
+							debugFile = p.append(".debug").append(debugName).toFile(); //$NON-NLS-1$
+							if (!debugFile.exists())
+								// 3. try and open /usr/lib/debug/$(EXEPATH)/$(DEBUGINFO_NAME)
+								debugFile = new Path("/usr/lib/debug").append(p).append(debugName).toFile(); //$NON-NLS-1$
+						}
+						if (debugFile.exists()) {
+							// if the debug file exists from above, open it and get the section info from it
+							Elf debugInfo = new Elf(debugFile.getCanonicalPath());
+							sections = debugInfo.getSections();
+							debugInfoPath = new Path(debugFile.getCanonicalPath());
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					CCorePlugin.log(e);
+				}
+			}
+				 
+		}
 		for (Section section : sections) {
 			String name = section.toString();
-			for (String element : DWARF_SCNNAMES) {
-				if (name.equals(element)) {
-					try {
-						dwarfSections.put(element, section.mapSectionData());
-					} catch (Exception e) {
-						e.printStackTrace();
-						CCorePlugin.log(e);
+			if (name.equals(DWARF_GNU_DEBUGALTLINK)) {
+				ByteBuffer data = section.mapSectionData();
+				try {
+					// name is zero-byte terminated character string
+					String altInfoName = read_string(data);
+					if (altInfoName.length() > 0) {
+						IPath altPath = new Path(altInfoName);
+						if (altPath.isAbsolute()) {
+
+						} else {
+							altPath = debugInfoPath.append(altPath);
+						}
+						File altFile = altPath.toFile();
+						if (altFile.exists()) {
+							Elf altInfo = new Elf(altFile.getCanonicalPath());
+							Elf.Section[] altSections = altInfo.getSections();
+							for (Section altSection : altSections) {
+								String altName = altSection.toString();
+								for (String element : DWARF_ALT_SCNNAMES) {
+									if (altName.equals(element)) {
+										try {
+											dwarfAltSections.put(element, altSection.mapSectionData());
+										} catch (Exception e) {
+											e.printStackTrace();
+											CCorePlugin.log(e);
+										}
+									}
+								}
+							}
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					CCorePlugin.log(e);
+				}
+			} else {
+				for (String element : DWARF_SCNNAMES) {
+					if (name.equals(element)) {
+						try {
+							dwarfSections.put(element, section.mapSectionData());
+						} catch (Exception e) {
+							e.printStackTrace();
+							CCorePlugin.log(e);
+						}
 					}
 				}
 			}
@@ -243,6 +332,23 @@ public class Dwarf {
 
 	}
 
+	String read_string(ByteBuffer in) throws IOException {
+		// name is zero-byte terminated character string
+		String str = "";//$NON-NLS-1$
+		if (in.hasRemaining()) {
+			int c;
+			StringBuffer sb = new StringBuffer();
+			while ((c = in.get()) != -1) {
+				if (c == 0) {
+					break;
+				}
+				sb.append((char) c);
+			}
+			str = sb.toString();
+		}
+		return str;
+	}
+	
 	int read_4_bytes(ByteBuffer in) throws IOException {
 		try {
 			byte[] bytes = new byte[4];
@@ -430,7 +536,8 @@ public class Dwarf {
 					byte hasChildren = data.get();
 					AbbreviationEntry entry = new AbbreviationEntry(code, tag, hasChildren);
 
-					//System.out.println("\tAbrev Entry: " + code + " " + Long.toHexString(entry.tag) + " " + entry.hasChildren);
+					if (printEnabled)
+						System.out.println("\tAbrev Entry: " + code + " " + Long.toHexString(entry.tag) + " " + entry.hasChildren); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 					// attributes
 					long name = 0;
@@ -441,7 +548,8 @@ public class Dwarf {
 						if (name != 0) {
 							entry.attributes.add(new Attribute(name, form));
 						}
-						//System.out.println("\t\t " + Long.toHexString(name) + " " + Long.toHexString(value));
+						if (printEnabled)
+							System.out.println("\t\t " + Long.toHexString(name) + " " + Long.toHexString(form)); //$NON-NLS-1$ //$NON-NLS-2$
 					} while (name != 0 && form != 0);
 					abbrevs.put(new Long(code), entry);
 				}
@@ -472,6 +580,8 @@ public class Dwarf {
 		}
 	}
 
+	int oldForm = 0;
+	
 	Object readAttribute(int form, ByteBuffer in, CompilationUnitHeader header) throws IOException {
 		Object obj = null;
 		switch (form) {
@@ -587,6 +697,34 @@ public class Dwarf {
 					}
 				}
 				break;
+				
+			case DwarfConstants.DW_FORM_GNU_strp_alt :
+			    {
+				long offset;
+				if (header.offsetSize == 8)
+					offset = read_8_bytes(in);
+				else
+					offset = read_4_bytes(in) & 0xffffffffL;
+
+				ByteBuffer data = dwarfAltSections.get(DWARF_DEBUG_STR);
+				if (data == null) {
+					obj = new String();
+				} else if (offset < 0 || offset > data.capacity()) {
+					obj = new String();
+				} else {
+					StringBuffer sb = new StringBuffer();
+					data.position((int) offset);
+					while (data.hasRemaining()) {
+						byte c = data.get();
+						if (c == 0) {
+							break;
+						}
+						sb.append((char) c);
+					}
+					obj = sb.toString();
+				}
+			}
+			break;
 
 			case DwarfConstants.DW_FORM_ref1 :
 				obj = new Byte(in.get());
@@ -614,6 +752,13 @@ public class Dwarf {
 					return readAttribute(f, in, header);
 				}
 
+			case DwarfConstants.DW_FORM_GNU_ref_alt :
+				if (header.offsetSize == 8)
+					obj = new Long(read_8_bytes(in));
+				else
+					obj = new Long(read_4_bytes(in)  & 0xffffffffL);
+				break;
+				
 			case DwarfConstants.DW_FORM_sec_offset :
 					if (header.offsetSize == 8)
 						obj = new Long(read_8_bytes(in));
@@ -635,10 +780,14 @@ public class Dwarf {
 					break;
 
 			default :
-//				System.out.println("Default for " + form); //$NON-NLS-1$
+				if (printEnabled) {
+					System.out.println("Default for " + form); //$NON-NLS-1$
+					System.out.println("Last form is " + oldForm); //$NON-NLS-1$
+				}
 				break;
 		}
 
+		oldForm = form;
 		return obj;
 	}
 

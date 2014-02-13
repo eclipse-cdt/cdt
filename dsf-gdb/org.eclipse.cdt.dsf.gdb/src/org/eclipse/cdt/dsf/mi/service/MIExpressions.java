@@ -77,8 +77,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
-import com.ibm.icu.text.MessageFormat;
-
 /**
  * This class implements a debugger expression evaluator as a DSF service. The
  * primary interface that clients of this class should use is IExpressions.
@@ -861,7 +859,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
     		String alias = expr;
     		String methodName = fThreadToTopMethodName.get(threadDmc);
     		if (methodName != null) {
-    			alias = MessageFormat.format(Messages.MIExpressions_ReturnValueAlias, 
+    			alias = String.format(Messages.MIExpressions_ReturnValueAlias, 
     					                     methodName + "()"); //$NON-NLS-1$
     		}
 

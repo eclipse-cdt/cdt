@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_54cf21d5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 865,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-02-13T18:45:19Z",
+      "side": 1,
+      "message": "I would recommend using String.format() instead of MessageFormat.format(). It\u0027s not important but it is better to avoid references to com.ibm.icu,text as long as similar functionality supported in the standard Java.",
+      "revId": "ced108ff7516a337b05c75369fa4002b928bde65",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

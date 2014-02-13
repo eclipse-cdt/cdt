@@ -21,6 +21,7 @@
  * David McKnight   (IBM)        - [368465] Import Files -RSE - Cyclic Symbolic Reference problem
  * David McKnight   (IBM)        - [417033] [import/export] RSE import wizard won't let user to select new source
  * David McKnight   (IBM)        - [422844] rse.files.ui fails to compile against Eclipse 4.4 Luna I20131126
+ * David McKnight   (IBM)        - [428126] NPE in remote import wizard
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -167,12 +168,13 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 
 		public IStatus run(IProgressMonitor monitor){
 			_isActive = true;
-			if (_control == null){
-				_control = _page.getControl();
-			}
-			final Display d = _control.getDisplay();
+			
+			final Display d = getShell().getDisplay();
 			d.syncExec(new Runnable(){
 				public void run(){
+					if (_control == null){
+						_control = getControl();
+					}
 					if (!_control.isDisposed()){
 						Cursor bC = new Cursor(d, SWT.CURSOR_WAIT);
 						_control.setCursor(bC);

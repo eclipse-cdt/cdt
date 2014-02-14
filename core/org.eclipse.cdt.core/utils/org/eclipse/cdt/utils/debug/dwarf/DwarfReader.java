@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.DatatypeConverter;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICompileOptionsFinder;
 import org.eclipse.cdt.core.ISymbolReader;
@@ -79,44 +81,46 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		IPath debugInfoPath = new Path(exe.getFilename());
 		Elf.Section[] sections = exe.getSections();
 		
-		// Look for a .gnu_debuglink section which will have the name of the debug info file
-		Elf.Section gnuDebugLink = exe.getSectionByName(DWARF_GNU_DEBUGLINK);
-		if (gnuDebugLink != null) {
-			ByteBuffer data = gnuDebugLink.mapSectionData();
-			if (data != null) { // we have non-empty debug info link
+		boolean have_build_id = false;
+		
+		// Look for a special GNU build-id note which means the debug data resides in a separate
+		// file with a name based on the build-id.
+		for (Section section : sections) {
+			if (section.sh_type == Elf.Section.SHT_NOTE) {
+				ByteBuffer data = section.mapSectionData();
 				try {
-					// name is zero-byte terminated character string
-					String debugName = ""; //$NON-NLS-1$
-					if (data.hasRemaining()) {
-						int c;
-						StringBuffer sb = new StringBuffer();
-						while ((c = data.get()) != -1) {
-							if (c == 0) {
-								break;
-							}
-							sb.append((char) c);
+					// Read .note section, looking to see if it is named "GNU" and is of GNU_BUILD_ID type
+					@SuppressWarnings("unused")
+					int name_sz = read_4_bytes(data);
+					int data_sz = read_4_bytes(data);
+					int note_type = read_4_bytes(data);
+
+					String noteName = read_string(data);
+					String buildId = null;
+					if (noteName.equals("GNU") && note_type == Elf.Section.NT_GNU_BUILD_ID) { //$NON-NLS-1$
+						// We have the special GNU build-id note section.  Skip over the name to
+						// a 4-byte boundary.
+						byte[] byteArray = new byte[data_sz];
+						while ((data.position() & 0x3) != 0)
+							data.get();
+						int i = 0;
+						// Read in the hex bytes from the note section's data.
+						while (data.hasRemaining() && data_sz-- > 0) {
+							byteArray[i++] = data.get();
 						}
-						debugName = sb.toString();
-					}
-					if (debugName.length() > 0) {
-						// try and open the debug info from 3 separate places in order
-						File debugFile = null;
-						IPath exePath = new Path(exe.getFilename());
-						IPath p = exePath.removeLastSegments(1);
-						// 1. try and open the file in the same directory as the executable
-						debugFile = p.append(debugName).toFile();
-						if (!debugFile.exists()) {
-							// 2. try and open the file in the .debug directory where the executable is 
-							debugFile = p.append(".debug").append(debugName).toFile(); //$NON-NLS-1$
-							if (!debugFile.exists())
-								// 3. try and open /usr/lib/debug/$(EXE_DIR)/$(DEBUGINFO_NAME)
-								debugFile = new Path("/usr/lib/debug").append(p).append(debugName).toFile(); //$NON-NLS-1$
-						}
-						if (debugFile.exists()) {
+						// The build-id location is taken by converting the binary bytes to hex string.
+						// The first byte is used as a directory specifier (e.g. 51/a4578fe2).
+						String bName = DatatypeConverter.printHexBinary(byteArray).toLowerCase();
+						buildId = bName.substring(0, 2) + "/" + bName.substring(2) + ".debug"; //$NON-NLS-1$ //$NON-NLS-2$
+						// The build-id file should be in the special directory /usr/lib/debug/.build-id
+						IPath buildIdPath = new Path("/usr/lib/debug/.build-id").append(buildId); //$NON-NLS-1$
+						File buildIdFile = buildIdPath.toFile();
+						if (buildIdFile.exists()) {
 							// if the debug file exists from above, open it and get the section info from it
-							Elf debugInfo = new Elf(debugFile.getCanonicalPath());
+							Elf debugInfo = new Elf(buildIdFile.getCanonicalPath());
 							sections = debugInfo.getSections();
-							debugInfoPath = new Path(debugFile.getCanonicalPath()).removeLastSegments(1);
+							have_build_id = true;
+							debugInfoPath = new Path(buildIdFile.getCanonicalPath()).removeLastSegments(1);
 						}
 					}
 				} catch (Exception e) {
@@ -124,8 +128,58 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 					CCorePlugin.log(e);
 				}
 			}
-				 
 		}
+		
+		if (!have_build_id) {
+			// No build-id.  Look for a .gnu_debuglink section which will have the name of the debug info file
+			Elf.Section gnuDebugLink = exe.getSectionByName(DWARF_GNU_DEBUGLINK);
+			if (gnuDebugLink != null) {
+				ByteBuffer data = gnuDebugLink.mapSectionData();
+				if (data != null) { // we have non-empty debug info link
+					try {
+						// name is zero-byte terminated character string
+						String debugName = ""; //$NON-NLS-1$
+						if (data.hasRemaining()) {
+							int c;
+							StringBuffer sb = new StringBuffer();
+							while ((c = data.get()) != -1) {
+								if (c == 0) {
+									break;
+								}
+								sb.append((char) c);
+							}
+							debugName = sb.toString();
+						}
+						if (debugName.length() > 0) {
+							// try and open the debug info from 3 separate places in order
+							File debugFile = null;
+							IPath exePath = new Path(exe.getFilename());
+							IPath p = exePath.removeLastSegments(1);
+							// 1. try and open the file in the same directory as the executable
+							debugFile = p.append(debugName).toFile();
+							if (!debugFile.exists()) {
+								// 2. try and open the file in the .debug directory where the executable is 
+								debugFile = p.append(".debug").append(debugName).toFile(); //$NON-NLS-1$
+								if (!debugFile.exists())
+									// 3. try and open /usr/lib/debug/$(EXE_DIR)/$(DEBUGINFO_NAME)
+									debugFile = new Path("/usr/lib/debug").append(p).append(debugName).toFile(); //$NON-NLS-1$
+							}
+							if (debugFile.exists()) {
+								// if the debug file exists from above, open it and get the section info from it
+								Elf debugInfo = new Elf(debugFile.getCanonicalPath());
+								sections = debugInfo.getSections();
+								debugInfoPath = new Path(debugFile.getCanonicalPath()).removeLastSegments(1);
+							}
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						CCorePlugin.log(e);
+					}
+				}
+
+			}
+		}
+		
 		// Read in sections (and only the sections) we care about.
 		//
 		for (Section section : sections) {
@@ -165,7 +219,8 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 					e.printStackTrace();
 					CCorePlugin.log(e);
 				}
-			} else {
+			} 
+			else {
 				for (String element : DWARF_SectionsToParse) {
 					if (name.equals(element)) {
 						// catch out of memory exceptions which might happen trying to
@@ -511,27 +566,6 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		return fullName;
 	}
 	
-	/**
-	 * Read a null-ended string from the given "data" stream.
-	 * data	:  IN, byte buffer
-	 */
-	String readString(ByteBuffer data)
-	{
-		String str;
-		
-		StringBuffer sb = new StringBuffer();
-		while (data.hasRemaining()) {
-			byte c = data.get();
-			if (c == 0) {
-				break;
-			}
-			sb.append((char) c);
-		}
-
-		str = sb.toString();
-		return str;
-	}
-
 	// Override parent: only handle TAG_Compile_Unit.
 	@Override
 	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry, List<Dwarf.AttributeValue> list) {

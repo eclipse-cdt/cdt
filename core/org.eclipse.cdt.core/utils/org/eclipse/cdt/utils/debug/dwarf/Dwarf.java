@@ -893,6 +893,27 @@ public class Dwarf {
 		return new Long(value);
 	}
 
+	/**
+	 * Read a null-ended string from the given "data" stream.
+	 * data	:  IN, byte buffer
+	 */
+	String readString(ByteBuffer data)
+	{
+		String str;
+		
+		StringBuffer sb = new StringBuffer();
+		while (data.hasRemaining()) {
+			byte c = data.get();
+			if (c == 0) {
+				break;
+			}
+			sb.append((char) c);
+		}
+
+		str = sb.toString();
+		return str;
+	}
+	
 	void processSubProgram(IDebugEntryRequestor requestor, List<AttributeValue> list) {
 		long lowPC = 0;
 		long highPC = 0;

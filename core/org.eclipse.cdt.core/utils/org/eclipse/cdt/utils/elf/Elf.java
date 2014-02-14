@@ -11,12 +11,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.elf;
 
-import java.io.EOFException;
-
-import static org.eclipse.cdt.internal.core.ByteUtils.makeShort;
 import static org.eclipse.cdt.internal.core.ByteUtils.makeInt;
 import static org.eclipse.cdt.internal.core.ByteUtils.makeLong;
+import static org.eclipse.cdt.internal.core.ByteUtils.makeShort;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel.MapMode;
@@ -301,6 +300,12 @@ public class Elf {
 		public final static int SHF_WRITE = 1;
 		public final static int SHF_ALLOC = 2;
 		public final static int SHF_EXECINTR = 4;
+		
+		/* note_types */
+		/**
+		 * @since 5.6
+		 */
+		public final static int NT_GNU_BUILD_ID = 3;
 
 		public long sh_name;
 		public long sh_type;

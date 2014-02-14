@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2014 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     Nokia - converted from action to handler
+ *     Marc-Andre Laperle (Ericsson) - Reset language settings (Bug 424947)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 import java.util.ArrayList;
@@ -39,6 +40,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -48,6 +53,8 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractPage;
+
+import org.eclipse.cdt.internal.ui.util.ResourceConfigurationUtil;
 
 
 
@@ -104,15 +111,13 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 						if (!CoreModel.getDefault().isNewStyleProject(p))
 							continue;
 
-						IPath path = res.getProjectRelativePath();
 						// getting description in read-only mode
 						ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, false);
 						if (prjd == null) continue;
 						ICConfigurationDescription[] cfgds = prjd.getConfigurations();
 						if (cfgds == null || cfgds.length == 0) continue;
 						for (ICConfigurationDescription cfgd : cfgds) {
-							ICResourceDescription rd = cfgd.getResourceDescription(path, true);
-							if (rd != null) {
+							if (ResourceConfigurationUtil.isCustomizedResource(cfgd, res)) {
 								if (objects == null) objects = new ArrayList<IResource>();
 								objects.add(res);
 								break; // stop configurations scanning
@@ -183,7 +188,29 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 		// performs deletion
 		public void delete() {
 			try {
-				cfgd.removeResourceDescription(rdesc);
+				if (rdesc != null) {
+					cfgd.removeResourceDescription(rdesc);
+				}
+
+				ICConfigurationDescription cfgDescription = cfgd;
+				if (!(cfgDescription instanceof ILanguageSettingsProvidersKeeper)) {
+					return;
+				}
+
+				List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+				for (ILanguageSettingsProvider provider : providers) {
+					if (provider instanceof ILanguageSettingsEditableProvider) {
+						ILanguageSettingsEditableProvider editableProvider = (ILanguageSettingsEditableProvider) provider;
+						List<String> languages = LanguageSettingsManager.getLanguages(res, cfgDescription);
+						for (String langId : languages) {
+							if (editableProvider.getSettingEntries(cfgDescription, res, langId) != null) {
+								editableProvider.setSettingEntries(cfgDescription, res, langId, null);
+							}
+						}
+					}
+				}
+				((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+
 				CoreModel.getDefault().setProjectDescription(res.getProject(), prjd);
 			} catch (CoreException e) {}
 		}
@@ -221,9 +248,10 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 					}
 					if (cfgds != null) {
 						for (ICConfigurationDescription cfgd : cfgds) {
-							ICResourceDescription rd = cfgd.getResourceDescription(path, true);
-							if (rd != null)
+							if (ResourceConfigurationUtil.isCustomizedResource(cfgd, res)) {
+								ICResourceDescription rd = cfgd.getResourceDescription(path, true);
 								outData.add(new ResCfgData(res, prjd, cfgd, rd));
+							}
 						}
 					}
 				}

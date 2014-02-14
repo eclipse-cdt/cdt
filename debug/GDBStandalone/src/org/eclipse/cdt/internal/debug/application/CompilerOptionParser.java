@@ -2,8 +2,8 @@ package org.eclipse.cdt.internal.debug.application;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.debug.application.Messages;
 import org.eclipse.cdt.utils.elf.parser.GNUElfParser;
 import org.eclipse.core.resources.IContainer;
@@ -52,9 +52,15 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 						sourceName);
 				IFile source = c
 						.getFile(sourceNamePath);
-				if (!source.isLinked())
-					source.createLink(sourceFilePath, 0,
-						null);
+				if (!source.isLinked()) {
+					try {
+						source.createLink(sourceFilePath, 0,
+								null);
+					} catch (Exception e) {
+						// ignore file not found errors since certain headers might not be found
+						// or are a different version from that used to compile the source (e.g. std headers)
+					}
+				}
 				monitor.worked(1);
 			}
 			

@@ -1,0 +1,308 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="keywords" content="CDT/User/NewIn82" />
+	
+	<title>CDT 8.2 New and Noteworthy</title>
+</head>
+
+<body>
+<div>
+	<h1 id="top">CDT 8.2 - New and Noteworthy</h1>
+	<p>See <a href="http://wiki.eclipse.org/CDT/User/NewIn82">What's new in CDT 8.2</a> on the CDT Wiki
+	which may contain more recent information.
+	</p>
+
+<!-- ***** START MANUAL INSERT HTML FROM http://wiki.eclipse.org/CDT/User/NewIn82?action=render -->
+<table id="toc" class="toc" summary="Contents"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1"><a href="#Editor"><span class="tocnumber">1</span> <span class="toctext">Editor</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Organize_Includes_Command"><span class="tocnumber">1.1</span> <span class="toctext">Organize Includes Command</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Build"><span class="tocnumber">2</span> <span class="toctext">Build</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Console"><span class="tocnumber">2.1</span> <span class="toctext">Console</span></a></li>
+<li class="toclevel-2"><a href="#Improved_toolchain_detection"><span class="tocnumber">2.2</span> <span class="toctext">Improved toolchain detection</span></a></li>
+<li class="toclevel-2"><a href="#Scanner_Discovery_.2F_Language_Settings_Providers"><span class="tocnumber">2.3</span> <span class="toctext">Scanner Discovery / Language Settings Providers</span></a></li>
+<li class="toclevel-2"><a href="#Makefile_Editor"><span class="tocnumber">2.4</span> <span class="toctext">Makefile Editor</span></a></li>
+<li class="toclevel-2"><a href="#Misc"><span class="tocnumber">2.5</span> <span class="toctext">Misc</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Debug"><span class="tocnumber">3</span> <span class="toctext">Debug</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Enhanced_Expressions"><span class="tocnumber">3.1</span> <span class="toctext">Enhanced Expressions</span></a></li>
+<li class="toclevel-2"><a href="#OS_Resources_View"><span class="tocnumber">3.2</span> <span class="toctext">OS Resources View</span></a></li>
+<li class="toclevel-2"><a href="#Breakpoint_Filtering"><span class="tocnumber">3.3</span> <span class="toctext">Breakpoint Filtering</span></a></li>
+<li class="toclevel-2"><a href="#Enhanced_GDB_console_support"><span class="tocnumber">3.4</span> <span class="toctext">Enhanced GDB console support</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Breakpoints.2C_watchpoints_and_tracepoints"><span class="tocnumber">3.4.1</span> <span class="toctext">Breakpoints, watchpoints and tracepoints</span></a></li>
+<li class="toclevel-3"><a href="#Memory_and_variables"><span class="tocnumber">3.4.2</span> <span class="toctext">Memory and variables</span></a></li>
+<li class="toclevel-3"><a href="#Reverse_debugging_state"><span class="tocnumber">3.4.3</span> <span class="toctext">Reverse debugging state</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Breakpoint_actions_to_control_reverse_debugging"><span class="tocnumber">3.5</span> <span class="toctext">Breakpoint actions to control reverse debugging</span></a></li>
+<li class="toclevel-2"><a href="#Floating_Point_renderer_has_been_added_to_the_memory_package"><span class="tocnumber">3.6</span> <span class="toctext">Floating Point renderer has been added to the memory package</span></a></li>
+<li class="toclevel-2"><a href="#Debugging_multiple_processes_within_one_debug_session"><span class="tocnumber">3.7</span> <span class="toctext">Debugging multiple processes within one debug session</span></a></li>
+<li class="toclevel-2"><a href="#Load_information_in_the_Multicore_Visualizer_-_CPU.2Fcore_load_meters"><span class="tocnumber">3.8</span> <span class="toctext">Load information in the Multicore Visualizer - CPU/core load meters</span></a></li>
+<li class="toclevel-2"><a href="#Edit_Tracepoint_on_Create"><span class="tocnumber">3.9</span> <span class="toctext">Edit Tracepoint on Create</span></a></li>
+<li class="toclevel-2"><a href="#Step_Into_Selection"><span class="tocnumber">3.10</span> <span class="toctext">Step Into Selection</span></a></li>
+<li class="toclevel-2"><a href="#Multicore_Visualizer_enhanced_selection_and_filtering"><span class="tocnumber">3.11</span> <span class="toctext">Multicore Visualizer enhanced selection and filtering</span></a></li>
+<li class="toclevel-2"><a href="#Process_exit_code_shown_in_console"><span class="tocnumber">3.12</span> <span class="toctext">Process exit code shown in console</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Important_Notes"><span class="tocnumber">4</span> <span class="toctext">Important Notes</span></a></li>
+<li class="toclevel-1"><a href="#Bugs_Fixed_in_this_Release"><span class="tocnumber">5</span> <span class="toctext">Bugs Fixed in this Release</span></a></li>
+</ul>
+</td></tr></table><script type="text/javascript"> if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } </script>
+<a name="Editor"></a><h2> <span class="mw-headline"> Editor  </span></h2>
+<a name="Organize_Includes_Command"></a><h3> <span class="mw-headline"> Organize Includes Command  </span></h3>
+<p>The <i>Organize Includes</i> command is similar to <i>Organize Imports</i> in Java. It adds missing include statements, removes unnecessary ones, and reorders includes according to user preferences.
+</p><p><a><img alt="Image:OrganizeIncludes.png" src="../images/cdt82/OrganizeIncludes.png" width="356" height="339" border="0" /></a>
+</p><p>When determining which header files must be included the <i>Organize Includes</i> command follows the "Include What You Use" rule. See <a href="http://code.google.com/p/include-what-you-use/wiki/WhyIWYU" class="external text" title="http://code.google.com/p/include-what-you-use/wiki/WhyIWYU" rel="nofollow">Why Include What You Use?</a> and <a href="http://code.google.com/p/include-what-you-use/wiki/WhatIsAUse" class="external text" title="http://code.google.com/p/include-what-you-use/wiki/WhatIsAUse" rel="nofollow">What Is a Use?</a>.
+</p>
+<a name="Build"></a><h2> <span class="mw-headline"> Build </span></h2>
+<a name="Console"></a><h3> <span class="mw-headline"> Console </span></h3>
+<ul><li> Line wrap option on the console (<a href="http://bugs.eclipse.org/199605" class="external text" title="http://bugs.eclipse.org/199605" rel="nofollow">Bug 199605</a>).
+</li></ul>
+<p><a><img alt="Image:ConsoleWrapLine.png" src="../images/cdt82/ConsoleWrapLine.png" width="490" height="330" border="0" /></a> <a><img alt="Image:ConsoleWrapLinePreference.png" src="../images/cdt82/ConsoleWrapLinePreference.png" width="635" height="559" border="0" /></a>
+</p>
+<a name="Improved_toolchain_detection"></a><h3> <span class="mw-headline"> Improved toolchain detection </span></h3>
+<ul><li> Automatic detection of MinGW 64 bit (<a href="http://bugs.eclipse.org/380598" class="external text" title="http://bugs.eclipse.org/380598" rel="nofollow">Bug 380598</a>).
+</li><li> Detection of Visual Studio under Windows 7 64 bit (<a href="http://bugs.eclipse.org/385608" class="external text" title="http://bugs.eclipse.org/385608" rel="nofollow">Bug 385608</a>).
+</li><li> Recognize $PATH environment variable from workspace preferences for MinGW and Cygwin toolchains (<a href="http://bugs.eclipse.org/384520" class="external text" title="http://bugs.eclipse.org/384520" rel="nofollow">Bug 384520</a>).
+</li><li> Introduction of environment variables $MINGW_HOME and $CYGWIN_HOME that are recognized in preferences and project properties (<a href="http://bugs.eclipse.org/403257" class="external text" title="http://bugs.eclipse.org/403257" rel="nofollow">Bug 403257</a>,  <a href="http://bugs.eclipse.org/357442" class="external text" title="http://bugs.eclipse.org/357442" rel="nofollow">Bug 357442</a>).
+</li></ul>
+<p><a><img alt="Image:MINGW_HOME.png" src="../images/cdt82/MINGW_HOME.png" width="825" height="454" border="0" /></a> <a><img alt="Image:CYGWIN_HOME.png" src="../images/cdt82/CYGWIN_HOME.png" width="824" height="462" border="0" /></a>
+</p>
+<a name="Scanner_Discovery_.2F_Language_Settings_Providers"></a><h3> <span class="mw-headline"> Scanner Discovery / Language Settings Providers </span></h3>
+<ul><li> "Preprocessor Include Paths, Macros etc." property page now fully replaces older "Scanner Discovery" page. "Scanner Discovery" is now hidden by default (<a href="http://bugs.eclipse.org/403405" class="external text" title="http://bugs.eclipse.org/403405" rel="nofollow">Bug 403405</a>, <a href="http://bugs.eclipse.org/407087" class="external text" title="http://bugs.eclipse.org/407087" rel="nofollow">Bug 407087</a>).
+</li></ul>
+<p><a><img alt="Image:PropertyPageSettingsScannerDiscovery.png" src="../images/cdt82/PropertyPageSettingsScannerDiscovery.png" width="861" height="464" border="0" /></a>
+</p>
+<ul><li> Built-in Compiler Settings provider for MinGW is enabled by default now for MinGW toolchain (<a href="http://bugs.eclipse.org/382422" class="external text" title="http://bugs.eclipse.org/382422" rel="nofollow">Bug 382422</a>).
+</li><li> Added Built-in Compiler Settings provider for Cygwin (<a href="http://bugs.eclipse.org/382423" class="external text" title="http://bugs.eclipse.org/382423" rel="nofollow">Bug 382423</a>).
+</li></ul>
+<p><a><img alt="Image:CygwinProvider.png" src="../images/cdt82/CygwinProvider.png" width="836" height="624" border="0" /></a>
+</p>
+<ul><li> Project-relative include paths representation was stabilized and now officially supported in UI (<a href="http://bugs.eclipse.org/401734" class="external text" title="http://bugs.eclipse.org/401734" rel="nofollow">Bug 401734</a>).
+</li><li> Support for project-relative paths for Build Output Providers (<a href="http://bugs.eclipse.org/402023" class="external text" title="http://bugs.eclipse.org/402023" rel="nofollow">Bug 402023</a>).
+</li><li> Changes in environment variables (preferences or project properties - as applicable) automatically trigger re-discovery (<a href="http://bugs.eclipse.org/403406" class="external text" title="http://bugs.eclipse.org/403406" rel="nofollow">Bug 403406</a>).
+</li><li> Number of changes to support compatibility with older methods to provide include paths for indexer, namely pathEntryContainers, contributed ScannerInfo entries (<a href="http://bugs.eclipse.org/401961" class="external text" title="http://bugs.eclipse.org/401961" rel="nofollow">Bug 401961</a>, <a href="http://bugs.eclipse.org/398056" class="external text" title="http://bugs.eclipse.org/398056" rel="nofollow">Bug 398056</a>, <a href="http://bugs.eclipse.org/392966" class="external text" title="http://bugs.eclipse.org/392966" rel="nofollow">Bug 392966</a>).
+</li><li> Fixed compatibility issues related to import older projects (<a href="http://bugs.eclipse.org/393641" class="external text" title="http://bugs.eclipse.org/393641" rel="nofollow">Bug 393641</a>).
+</li></ul>
+<a name="Makefile_Editor"></a><h3> <span class="mw-headline"> Makefile Editor </span></h3>
+<ul><li> GNU Makefile functions highlighting fixed (<a href="http://bugs.eclipse.org/406911" class="external text" title="http://bugs.eclipse.org/406911" rel="nofollow">Bug 406911</a>).
+</li><li> Bracket matching (<a href="http://bugs.eclipse.org/405279" class="external text" title="http://bugs.eclipse.org/405279" rel="nofollow">Bug 405279</a>).
+</li></ul>
+<p><a><img alt="Image:MakeEditorBracketMatching.png" src="../images/cdt82/MakeEditorBracketMatching.png" width="558" height="82" border="0" /></a>
+</p>
+<ul><li> Content assist for automatic variables (<a href="http://bugs.eclipse.org/407169" class="external text" title="http://bugs.eclipse.org/407169" rel="nofollow">Bug 407169</a>).
+</li></ul>
+<p><a><img alt="Image:MakeEditorContentAssistAutoVars.png" src="../images/cdt82/MakeEditorContentAssistAutoVars.png" width="558" height="370" border="0" /></a>
+</p>
+<ul><li> Highlight for conditional variable assignment (<a href="http://bugs.eclipse.org/406596" class="external text" title="http://bugs.eclipse.org/406596" rel="nofollow">Bug 406596</a>).
+</li><li> Proper colorization of escaped # (<a href="http://bugs.eclipse.org/404599" class="external text" title="http://bugs.eclipse.org/404599" rel="nofollow">Bug 404599</a>).
+</li></ul>
+<a name="Misc"></a><h3> <span class="mw-headline"> Misc </span></h3>
+<ul><li> Ability to specify local includes for indexer, as in [#include "header.h"] as opposed to system includes [#include &lt;header.h&gt;] (<a href="http://bugs.eclipse.org/388368" class="external text" title="http://bugs.eclipse.org/388368" rel="nofollow">Bug 388368</a>).
+</li><li> Fixed some bugs related to storing environment variables, such as silently ignoring removals or additions (<a href="http://bugs.eclipse.org/348781" class="external text" title="http://bugs.eclipse.org/348781" rel="nofollow">Bug 348781</a>, <a href="http://bugs.eclipse.org/355488" class="external text" title="http://bugs.eclipse.org/355488" rel="nofollow">Bug 355488</a>).
+</li><li> Improved performance in certain areas (<a href="http://bugs.eclipse.org/405643" class="external text" title="http://bugs.eclipse.org/405643" rel="nofollow">Bug 405643</a>, <a href="http://bugs.eclipse.org/405638" class="external text" title="http://bugs.eclipse.org/405638" rel="nofollow">Bug 405638</a>, <a href="http://bugs.eclipse.org/405744" class="external text" title="http://bugs.eclipse.org/405744" rel="nofollow">Bug 405744</a>, <a href="http://bugs.eclipse.org/407483" class="external text" title="http://bugs.eclipse.org/407483" rel="nofollow">Bug 407483</a>).
+</li><li> User documentation for Scanner Discovery updated including property page "Preprocessor Includes, Macros" (<a href="http://bugs.eclipse.org/409392" class="external text" title="http://bugs.eclipse.org/409392" rel="nofollow">Bug 409392</a>).
+</li></ul>
+<a name="Debug"></a><h2> <span class="mw-headline"> Debug  </span></h2>
+<a name="Enhanced_Expressions"></a><h3> <span class="mw-headline"> Enhanced Expressions  </span></h3>
+<p>The Expressions view has been extended to allow the user to manually create <i>enhanced-expressions</i>. <i>Enhanced-expressions</i> define a set of expressions which can be easily described using glob-pattern matching. The user specifies an <i>enhanced-expression</i> by prefixing it with '='. For example: 
+</p>
+<ul><li>pattern-matched sorted groups of local variables, where the symbols * []&nbsp;? can be used e.g.,
+</li></ul>
+<pre>=v?r     -- Will show local variables starting with a 'v' and ending with 'r' with a single character in between
+=*       -- Will show all local variables of the selected stack frame in sorted order (the '=' is optional for this expression, i.e., '*')
+=*x      -- Will show local variables ending with 'x'
+</pre>
+<ul><li>array ranges including glob-expressions
+</li></ul>
+<pre>=array[30-40]        -- Will show array elements from 30 to 40
+=array[1-5,20,30-31] -- Will show array elements from 1 to 5, 20 and 30 to 31
+=array?[1-5]         -- Will show array elements from 1 to 5 for any array starting with 'array' followed by a single character
+</pre>
+<ul><li>pattern-matched sorted registers groups, where the symbols * []&nbsp;? can be used e.g.,
+</li></ul>
+<pre>=$e?x     -- Will show all registers starting with 'e' and ending with 'x' with a single character in between
+=$*       -- Will show all registers (the '=' is optional for this expression, i.e., '$*')
+=$*x      -- Will show registers ending with 'x'
+=$st[3-5] -- Will show registers $st3, $st4, $st5
+</pre>
+<ul><li>semi-colon-separated, individually sorted groups of expressions, e.g,
+</li></ul>
+<pre>var1; var2 -- Will create a group containing both var1 and var2 
+$eax; var1 -- Will show a group containing register $eax and variable var1
+var1; =$e*  -- Will show a group containing variable var1 as well as all registers starting with 'e'
+</pre>
+<p>This feature allows to quickly define multiple expressions that interest the user. Because groups are created from these special expressions, they can be collapsed when uninteresting and re-expanded later, without having to be re-entered by the user. 
+</p><p><a><img alt="Image:CDT GroupExpr.png" src="../images/cdt82/CDT_GroupExpr.png" width="545" height="521" border="0" /></a> 
+</p><p>This feature was completed on July 10th, 2012 and updated for local variables on December 19th, 2012. For details see <a href="http://bugs.eclipse.org/381754" class="external text" title="http://bugs.eclipse.org/381754" rel="nofollow">Bug 381754</a> and <a href="http://bugs.eclipse.org/394408" class="external text" title="http://bugs.eclipse.org/394408" rel="nofollow">Bug 394408</a>. 
+</p><p>Note that the comma (,) is not allowed as a group separator as it is used within valid expressions that use templates (e.g., <i>((((((class std::_Vector_base&lt;int, std::allocator&lt;int&gt; &gt;) v))._M_impl))._M_start)</i>).
+</p>
+<a name="OS_Resources_View"></a><h3> <span class="mw-headline"> OS Resources View  </span></h3>
+<p>CDT has a new view called "OS Resources". This view will display different information about the resources of the operating system. For example, it can give a list of all processes running on the target. The view will display the information as provided by GDB. 
+</p><p><a><img alt="Image:CDT OSResources.png" src="../images/cdt82/CDT_OSResources.png" width="630" height="391" border="0" /></a> 
+</p><p>As of writing, GDB supported the following information: 
+</p>
+<pre>Processes             - Listing of all processes
+Process groups        - Listing of all process groups
+Threads               - Listing of all threads
+File descriptors      - Listing of all file descriptors
+Sockets               - Listing of all internet-domain sockets
+Shared-memory regions - Listing of all shared-memory regions
+Semaphores            - Listing of all semaphores
+Message queues        - Listing of all message queues
+Kernel modules        - Listing of all loaded kernel modules
+</pre>
+<p><br /> Notes: 
+</p>
+<ul><li>For performance reasons, the view is not automatically refreshed. Press the <i>Refresh</i> button on the the view toolbar to fetch the latest information. Hovering over this <i>Refresh</i> button will display the time at which the information was last obtained. 
+</li><li>Columns can be re-sized. 
+</li><li>Columns can be removed or added using the view menu. 
+</li><li>Entries can be ordered by column by pressing on the column header. 
+</li><li>When doing debugging of a remote target, the information in the view pertains to the remote target.
+</li></ul>
+<p>This feature requires GDB 7.5 and higher. Furthermore, as of GDB 7.5, this feature only works for Linux. 
+</p><p>This feature was completed on September 20th, 2012. For details see <a href="https://bugs.eclipse.org/360314" class="external text" title="https://bugs.eclipse.org/360314" rel="nofollow">Bug 360314</a>. 
+</p>
+<a name="Breakpoint_Filtering"></a><h3> <span class="mw-headline"> Breakpoint Filtering  </span></h3>
+<p>The CDT has enhanced the standard behavior of the "Show Breakpoints Supported by Selected Target" option of the Breakpoints view. Using this option with the CDT will now only show breakpoints that are actually applicable to the current debug session. Therefore, when debugging a C/C++ application, the user will not be bothered with the breakpoints set in the code of an another C/C++ application. 
+</p><p><a><img alt="Image:BpFilter.png" src="../images/cdt82/BpFilter.png" width="1087" height="414" border="0" /></a> 
+</p><p>For backwards-compatibility, a preference is provided to revert this new behavior to the original one. The original behavior of this option is to have the Breakpoints view show all breakpoints that are of the same type as the current debug session. For example, if debugging Java, only Java breakpoints would be shown, and if debugging C/C++ only C/C++ breakpoints would be shown. This preference can be found under <i>"C/C++ -&gt; Debug -&gt; GDB -&gt; Use aggressive breakpoint filtering"</i>. 
+</p><p>This feature was completed on October 26th, 2012. For details see <a href="https://bugs.eclipse.org/360735" class="external text" title="https://bugs.eclipse.org/360735" rel="nofollow">Bug 360735</a>. 
+</p>
+<a name="Enhanced_GDB_console_support"></a><h3> <span class="mw-headline"> Enhanced GDB console support  </span></h3>
+<p>CDT is being improved to update its views with any change made to GDB by the user from the GDB console. Updates are being added gradually and the final goal is to allow the user to perform any command from the GDB console, and have CDT stay synchronized with the changes. 
+</p>
+<a name="Breakpoints.2C_watchpoints_and_tracepoints"></a><h4> <span class="mw-headline"> Breakpoints, watchpoints and tracepoints  </span></h4>
+<p>Breakpoints, watchpoints or tracepoints set from the GDB console are now shown in the Breakpoints view. All breakpoint related GDB commands are supported and synchronized with the UI. No support for catchpoints yet. This feature requires GDB 7.4 or higher. 
+</p><p>This feature was completed on November 29th, 2012. For details see <a href="https://bugs.eclipse.org/392512" class="external text" title="https://bugs.eclipse.org/392512" rel="nofollow">Bug 392512</a>. 
+</p>
+<a name="Memory_and_variables"></a><h4> <span class="mw-headline"> Memory and variables  </span></h4>
+<p>Memory and variables modified from the GDB console are now updated in the Memory, Memory Browser, Variables and Expressions views. This feature requires GDB 7.6 or higher. 
+</p><p>This feature was completed on January 26th, 2013. For details see <a href="https://bugs.eclipse.org/397715" class="external text" title="https://bugs.eclipse.org/397715" rel="nofollow">Bug 397715</a>.
+</p>
+<a name="Reverse_debugging_state"></a><h4> <span class="mw-headline"> Reverse debugging state </span></h4>
+<p>CDT will now properly update the status of reverse debugging if its state is modified through the GDB console. This feature requires GDB 7.6 or higher.
+</p><p>This feature was completed on January 31st, 2013. For details see <a href="https://bugs.eclipse.org/399163" class="external text" title="https://bugs.eclipse.org/399163" rel="nofollow">Bug 399163</a>
+</p>
+<a name="Breakpoint_actions_to_control_reverse_debugging"></a><h3> <span class="mw-headline"> Breakpoint actions to control reverse debugging  </span></h3>
+<p>It's now possible to control the enabling, disabling and toggling of the reverse debugging mode, through breakpoint actions. The reverse debugging mode can be useful to debug, but has a significant performance cost when enabled. Using the new breakpoint action to enable the reverse debug mode, one can program a breakpoint to enable that mode in the vicinity of the suspected source code. That way, until that point is reached, no performance impacts are felt. 
+</p><p>To use this feature, right-click on a breakpoint and select "Breakpoint Properties". Then in the left page, chose "Actions". Then click "New". In the new dialog, select the Action Type "Reverse Debug Action". Then chose if the action should enable, disable or toggle the reverse debug mode. Finally chose a name for the action. When done, click "Ok" 
+</p><p><a><img alt="Image:CDT-DSF-GDB-RevBPAction-create.png" src="../images/cdt82/CDT-DSF-GDB-RevBPAction-create.png" width="500" height="370" border="0" /></a> 
+</p><p>The newly created action will appear in the list of available actions, that can be attached to any breakpoint To attach it to the current breakpoint, click on "Attach". 
+</p><p><a><img alt="Image:CDT-DSF-GDB-RevBPAction-dialog.png" src="../images/cdt82/CDT-DSF-GDB-RevBPAction-dialog.png" width="985" height="548" border="0" /></a> 
+</p><p>Note: For the reverse debug breakpoint actions to work, reverse debugging must be available in the current debug session. For instance, it will not work if the "non-stop" mode is active. 
+</p><p>This feature was completed on December 13th, 2012. For details see <a href="https://bugs.eclipse.org/365776" class="external text" title="https://bugs.eclipse.org/365776" rel="nofollow">Bug 365776</a>. 
+</p>
+<a name="Floating_Point_renderer_has_been_added_to_the_memory_package"></a><h3> <span class="mw-headline"> Floating Point renderer has been added to the memory package  </span></h3>
+<p>A floating point render has been added to the memory package. So now there is the Traditional renderer and a Floating Point renderer available. This render allows display and editing of the floating point values. Since it originated from the Traditional render, it's workflow and style are similar. There is no ASCII data pane display, since this did not seem to make much sense with floating point data. 
+</p><p><a><img alt="Image:CDT FloatingPointMemory.png" src="../images/cdt82/CDT_FloatingPointMemory.png" width="834" height="352" border="0" /></a> 
+</p><p>This feature was completed on November 16th, 2012 as part of <a href="http://bugs.eclipse.org/394509" class="external text" title="http://bugs.eclipse.org/394509" rel="nofollow">Bug 394509</a>.
+</p>
+<a name="Debugging_multiple_processes_within_one_debug_session"></a><h3> <span class="mw-headline"> Debugging multiple processes within one debug session  </span></h3>
+<p>Debugging a new executable in the same debug session has been improved for GDB versions starting from 7.2. "Debug New Executable" action has been added to the context menu of the Debug view.
+</p><p><a><img alt="Image:CDT_DebugNewExecutableMenu.png" src="../images/cdt82/CDT_DebugNewExecutableMenu.png" width="610" height="600" border="0" /></a> 
+</p><p><br />
+The dialog for specifying an executable to debug for local sessions has been changed.
+</p><p><a><img alt="Image:CDT_NewExecutableDialog_Local.png" src="../images/cdt82/CDT_NewExecutableDialog_Local.png" width="609" height="332" border="0" /></a>
+</p><p><br />
+The ability to debug a remote executable using gdbserver has been added.
+</p><p><a><img alt="Image:CDT_NewExecutableDialog_Remote.png" src="../images/cdt82/CDT_NewExecutableDialog_Remote.png" width="570" height="305" border="0" /></a>
+</p><p>This feature was completed on January 25th, 2013. For details see <a href="https://bugs.eclipse.org/344890" class="external text" title="https://bugs.eclipse.org/344890" rel="nofollow">Bug 344890</a>.
+</p><p><br />
+</p>
+<a name="Load_information_in_the_Multicore_Visualizer_-_CPU.2Fcore_load_meters"></a><h3> <span class="mw-headline"> Load information in the Multicore Visualizer - CPU/core load meters  </span></h3>
+<p>The Multicore Visualizer view has been enhanced to support system load monitoring, in the form of graphical load meters, showing the load of the system being debugged (local or remote). This works only on Linux targets for now.  By default this feature is disabled, as it may cause a bit of increased load when remote-debugging.  Here is what it looks-like, when enabled:
+</p><p><a><img alt="Image:CDT-DSF-GDB-MulticoreVisualizer-LoadMeters.pngâ€Ž" src="../images/cdt82/CDT-DSF-GDB-MulticoreVisualizer-LoadMeters.png" width="338" height="338" border="0" /></a>
+</p><p>When enabled and space permits, a load meter is displayed for each core and also one for each CPU, that shows the average load for all contained cores.  
+</p><p>To enable the load meters, one has to use the context menu of the Multicore Visualizer; right-click on the visualizer, go into the "Load Meters" sub-menu and select "Enable Load Meters"&nbsp;: 
+</p><p><a><img alt="Image:CDT-DSF-GDB-MulticoreVisualizer-LoadMeters-enabling2.pngâ€Ž" src="../images/cdt82/CDT-DSF-GDB-MulticoreVisualizer-LoadMeters-enabling2.png" width="464" height="529" border="0" /></a>
+</p><p>It's also possible to choose the load meters refresh interval.  When the load meters are enabled, a "Refresh Speed" entry is added to the Load Meters sub-menu.  There you have a choice of three refresh speeds. Selecting one makes it take effect. 
+</p><p><a><img alt="Image:CDT-DSF-GDB-MulticoreVisualizer-selecting_loadMeters_refresh_speed.pngâ€Ž" src="../images/cdt82/CDT-DSF-GDB-MulticoreVisualizer-selecting_loadMeters_refresh_speed.png" width="522" height="350" border="0" /></a>
+</p><p><br />
+This feature was completed on February 28th, 2013. For details see <a href="https://bugs.eclipse.org/396268" class="external text" title="https://bugs.eclipse.org/396268" rel="nofollow">Bug 396268</a>.
+</p>
+<a name="Edit_Tracepoint_on_Create"></a><h3> <span class="mw-headline"> Edit Tracepoint on Create  </span></h3>
+<p>It is no longer necessary to first create a CDT Tracepoint, then edit its properties. Properties such as enabled, pass count, condition, can be set while creating the tracepoint. 
+</p><p>There are different methods to open the properties dialog before creating the Tracepoint.  First, using the editor popup menu by right-clicking on the editor gutter, one must  set the Breakpoint Type to "C/C++ Tracepoints".
+</p>
+<ul><li>Add Breakpoint action.
+<ol><li>Select the <i>Add Breakpoint...</i> menu item. 
+</li><li>This brings up the tracepoint properties dialog for a line tracepoint pre-filled with the tracepoint's location. 
+</li></ol>
+</li><li>Control-Double Click 
+<ol><li>Hold the <i>Control</i> key while double-clicking on the editor gutter. 
+</li><li>This brings up the breakpoint properties dialog for a line breakpoint pre-filled with the breakpoints location.
+</li></ol>
+</li></ul>
+<a name="Step_Into_Selection"></a><h3> <span class="mw-headline"> Step Into Selection </span></h3>
+<p>With the DSF debugger it is now possible to select a function to step into. <br />
+The selected method can be in a different line than the one under execution <br />
+The two main methods to do this are
+</p>
+<ul><li><b>Using the context menu</b>
+</li></ul>
+<p>Select a method, right-click and select "Step Into Selection" <br />
+or use the short key Ctrl+F5
+</p><p><a><img alt="Image:StepIntoSelction.pngâ€Ž" src="../images/cdt82/StepIntoSelction.png" width="560" height="200" border="0" /></a>
+</p>
+<ul><li><b>Using the hyper link navigation</b>
+</li></ul>
+<p>Press Ctrl-Alt, hover over a function and mouse click on it
+</p><p><a><img alt="Image:StepIntoSelectionHyperLink.pngâ€Ž" src="../images/cdt82/StepIntoSelectionHyperLink.png" width="560" height="200" border="0" /></a>
+</p><p>NOTE: This first implementation runs to the selected line, steps into its methods and stops when a method is entered having the same name and number of arguments of the selected method i.e. Argument types are not validated at this point.
+</p><p>This feature was completed on May 1st, 2013. For details see <a href="https://bugs.eclipse.org/244865" class="external text" title="https://bugs.eclipse.org/244865" rel="nofollow">Bug 244865</a>.
+</p>
+<a name="Multicore_Visualizer_enhanced_selection_and_filtering"></a><h3> <span class="mw-headline"> Multicore Visualizer enhanced selection and filtering </span></h3>
+<p>The multicore visualizer has been enhanced so that it's now possible to select CPUs and cores, in addition to threads.  The previous selection methods still work (ctrl-left-click add-to-selection, left-click and drag, etc), but now are also applicable to CPU and core graphical objects.  
+</p><p><a><img alt="Image:CDT-DSF-GDB-MulticoreVisualizer-Selection.png" src="../images/cdt82/CDT-DSF-GDB-MulticoreVisualizer-Selection.png" width="333" height="333" border="0" /></a>
+</p><p>This feature was completed on April 26th, 2013. For details see <a href="https://bugs.eclipse.org/404894" class="external text" title="https://bugs.eclipse.org/404894" rel="nofollow">Bug 404894</a>.
+</p><p><br />
+Building on the enhanced selection, it's now also possible to filter what is shown in the multicore visualizer.  This is especially useful in cases where there are many CPUs/cores/threads, and one wants to concentrate on a subset.  To filter the view, first select the graphical elements you want to keep, then from the context menu, chose "Filter to selection".  The selected graphical elements will be shown, along with any parent objects; for instance a thread will be shown in its core and CPU.  The filter stays in place until cleared, using the context menu "Clear filter".
+</p><p><a><img alt="Image:CDT-DSF-GDB-MulticoreVisualizer-Filtering.png" src="../images/cdt82/CDT-DSF-GDB-MulticoreVisualizer-Filtering.png" width="994" height="469" border="0" /></a>
+</p><p>This feature was completed on May 6th, 2013. For details see <a href="https://bugs.eclipse.org/405390" class="external text" title="https://bugs.eclipse.org/405390" rel="nofollow">Bug 405390</a>.
+</p>
+<a name="Process_exit_code_shown_in_console"></a><h3> <span class="mw-headline"> Process exit code shown in console </span></h3>
+<p>When a process completes execution normally, its exit code is shown in the title of that process' console.  If the process is terminated or disconnected by the user, no exit code will be shown.
+</p><p><a><img alt="Image:CDT_Debug_ExitCode.png" src="../images/cdt82/CDT_Debug_ExitCode.png" width="563" height="154" border="0" /></a>
+</p><p>Note that if there is no process console, then no exit code can be displayed.  This affects remote debugging and attach debugging.  We hope to address this in the next release of CDT.
+</p><p>This feature was completed on May 6th, 2013. For details see <a href="https://bugs.eclipse.org/402054" class="external text" title="https://bugs.eclipse.org/402054" rel="nofollow">Bug 402054</a>.
+</p>
+<a name="Important_Notes"></a><h2> <span class="mw-headline"> Important Notes  </span></h2>
+<p>Although CDT 8.2 is meant to be a backwards-compatible release, the following exceptions should be noted.
+</p>
+<ul><li> The package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal was made API by mistake when first released.  It has now been officially marked internal.  Note that the package has always had the word 'internal' in its name.  We don't believe there are any extenders to this package yet.
+</li></ul>
+<p><br />
+</p>
+<a name="Bugs_Fixed_in_this_Release"></a><h2> <span class="mw-headline"> Bugs Fixed in this Release  </span></h2>
+<p>See bugzilla report <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;resolution=FIXED;target_milestone=8.1.1;target_milestone=8.1.2;target_milestone=8.1.3;target_milestone=8.2;product=CDT;classification=Tools" class="external text" title="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;resolution=FIXED;target_milestone=8.1.1;target_milestone=8.1.2;target_milestone=8.1.3;target_milestone=8.2;product=CDT;classification=Tools" rel="nofollow">Bugs Fixed in CDT 8.2</a>.
+Open this report in new browser window.
+</p>
+<!-- ***** END MANUAL INSERT HTML FROM http://wiki.eclipse.org/CDT/User/NewIn82?action=render -->
+
+	<h2>What's new in other CDT releases</h2>
+	
+	<p>To learn what's new in other CDT releases see:</p>
+	<p><a href="cdt_c_whatsnew.htm">CDT - New and Noteworthy</a></p>
+	<p><a href="cdt_c_whatsnew_81.htm">CDT 8.1 - New and Noteworthy</a></p>
+	<p><a href="cdt_c_whatsnew_80.htm">CDT 8.0 - New and Noteworthy</a></p>
+	<p><a href="cdt_c_whatsnew_70.htm">CDT 7.0 - New and Noteworthy</a></p>
+	<p><a href="cdt_c_whatsnew_60.htm">CDT 6.0 - New and Noteworthy</a></p>
+	<p><a href="http://wiki.eclipse.org/CDT/User/NewIn50">CDT 5.0 - New and Noteworthy</a></p>
+	
+	<p><a href="#top">Back to Top</a></p>
+	
+	<p>&nbsp;</p>
+</div>
+</body>
+</html>

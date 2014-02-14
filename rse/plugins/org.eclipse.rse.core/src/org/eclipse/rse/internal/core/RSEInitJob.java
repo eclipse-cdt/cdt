@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * David Dykstal (IBM) - [235581] Initialize RSE should be a daemon job
  * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
  * David Dykstal (IBM) - [397995] RSEInitJob runs too early
+ * David McKnight (IBM) - [412209] RSE_UI_INIT - keeps hanging eclipse
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -58,6 +59,8 @@ public final class RSEInitJob extends Job {
 	 * @deprecated use {@link RSECorePlugin#isInitComplete(int)}
 	 */
 	public final static String NAME = "Initialize RSE"; //$NON-NLS-1$
+
+	private static boolean _isStarted = false;
 
 	private static RSEInitJob instance = new RSEInitJob();
 
@@ -145,6 +148,10 @@ public final class RSEInitJob extends Job {
 		addJobChangeListener(myJobChangeListener);
 	}
 
+	public boolean isStarted(){
+		return _isStarted;
+	}
+	
 	/**
 	 * Adds a new listener to the set of listeners to be notified when initialization phases complete.
 	 * If the listener is added after the phase has completed it will not be invoked.
@@ -192,6 +199,8 @@ public final class RSEInitJob extends Job {
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus run(IProgressMonitor monitor) {
+		_isStarted = true;
+		
 		IStatus result = Status.OK_STATUS;
 		// restore profiles
 		RSECorePlugin.getThePersistenceManager().restoreProfiles(5000);
@@ -318,6 +327,13 @@ public final class RSEInitJob extends Job {
 	 * @throws InterruptedException if the job is interrupted while waiting.
 	 */
 	public IStatus waitForCompletion() throws InterruptedException {
+		RSEInitJob j = getInstance();
+		synchronized(j){
+			if (!_isStarted){
+				j.schedule();
+				_isStarted = true; // make sure no one else schedules this
+			}
+		}
 		waitForCompletion(RSECorePlugin.INIT_ALL);
 		return getResult();
 	}

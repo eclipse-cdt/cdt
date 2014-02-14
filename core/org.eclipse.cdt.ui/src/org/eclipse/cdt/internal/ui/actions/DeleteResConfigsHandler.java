@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2014 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     Nokia - converted from action to handler
+ *     Marc-Andre Laperle (Ericsson) - Reset language settings (Bug 424947)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -39,11 +41,17 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -104,15 +112,13 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 						if (!CoreModel.getDefault().isNewStyleProject(p))
 							continue;
 
-						IPath path = res.getProjectRelativePath();
 						// getting description in read-only mode
 						ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, false);
 						if (prjd == null) continue;
 						ICConfigurationDescription[] cfgds = prjd.getConfigurations();
 						if (cfgds == null || cfgds.length == 0) continue;
 						for (ICConfigurationDescription cfgd : cfgds) {
-							ICResourceDescription rd = cfgd.getResourceDescription(path, true);
-							if (rd != null) {
+							if (isCustomizedResource(cfgd, res)) {
 								if (objects == null) objects = new ArrayList<IResource>();
 								objects.add(res);
 								break; // stop configurations scanning
@@ -123,6 +129,29 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 			}
 		}
 		setBaseEnabled(objects != null);
+	}
+
+	private static boolean isCustomizedResource(ICConfigurationDescription cfgDescription, IResource rc) {
+		if (ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(rc.getProject())) {
+			if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+				IContainer parent = rc.getParent();
+				List<String> languages = LanguageSettingsManager.getLanguages(rc, cfgDescription);
+				for (ILanguageSettingsProvider provider: ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders()) {
+					for (String languageId : languages) {
+						List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
+						if (list != null) {
+							List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(cfgDescription, parent, languageId);
+							// != is OK here due as the equal lists will have the same reference in WeakHashSet
+							if (list != listDefault)
+								return true;
+						}
+					}
+				}
+			}
+		}
+
+		ICResourceDescription rcDescription = cfgDescription.getResourceDescription(rc.getProjectRelativePath(), true);
+		return rcDescription != null;
 	}
 
 	private IFile getFileFromActiveEditor() {
@@ -183,7 +212,49 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 		// performs deletion
 		public void delete() {
 			try {
-				cfgd.removeResourceDescription(rdesc);
+				if (rdesc != null) {
+					cfgd.removeResourceDescription(rdesc);
+				}
+
+				ICConfigurationDescription cfgDescription = cfgd;
+				if (!(cfgDescription instanceof ILanguageSettingsProvidersKeeper)) {
+					return;
+				}
+
+				boolean changed = false;
+				IResource rc = res;
+				List<ILanguageSettingsProvider> oldProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+				List<ILanguageSettingsProvider> newProviders = new ArrayList<ILanguageSettingsProvider>(oldProviders.size());
+
+				// clear entries for a given resource for all languages where applicable
+				providers:	for (ILanguageSettingsProvider provider : oldProviders) {
+					ILanguageSettingsEditableProvider providerCopy = null;
+					if (provider instanceof ILanguageSettingsEditableProvider) {
+						List<String> languages = LanguageSettingsManager.getLanguages(rc, cfgDescription);
+						for (String langId : languages) {
+							if (provider.getSettingEntries(cfgDescription, rc, langId) != null) {
+								if (providerCopy == null) {
+									// copy providers to be able to "Cancel" in UI
+									providerCopy = LanguageSettingsManager.getProviderCopy((ILanguageSettingsEditableProvider) provider, true);
+									if (providerCopy == null) {
+										continue providers;
+									}
+								}
+								providerCopy.setSettingEntries(cfgDescription, rc, langId, null);
+								changed = true;
+							}
+						}
+					}
+					if (providerCopy != null) {
+						newProviders.add(providerCopy);
+					} else {
+						newProviders.add(provider);
+					}
+				}
+				if (changed) {
+					((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(newProviders);
+				}
+
 				CoreModel.getDefault().setProjectDescription(res.getProject(), prjd);
 			} catch (CoreException e) {}
 		}
@@ -221,9 +292,10 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 					}
 					if (cfgds != null) {
 						for (ICConfigurationDescription cfgd : cfgds) {
-							ICResourceDescription rd = cfgd.getResourceDescription(path, true);
-							if (rd != null)
+							if (isCustomizedResource (cfgd, res)) {
+								ICResourceDescription rd = cfgd.getResourceDescription(path, true);
 								outData.add(new ResCfgData(res, prjd, cfgd, rd));
+							}
 						}
 					}
 				}

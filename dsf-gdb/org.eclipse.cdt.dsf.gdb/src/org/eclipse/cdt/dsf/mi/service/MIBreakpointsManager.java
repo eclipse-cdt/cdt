@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River and others.
+ * Copyright (c) 2007, 2014 Wind River and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Ericsson   - Re-factored the service and put a few comments
  *     Ericsson   - Added Action support
  *     Marc Khouzam (Ericsson) - Fix support for thread filter (Bug 355833)
+ *     Marc Khouzam (Ericsson) - Accept multiple calls to startTrackingBreakpoints (Bug 389945)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
@@ -360,13 +361,14 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             return;
         }
 
-        // Make sure a mapping for this execution context does not already exist
         Map<ICBreakpoint,Map<String, Object>> platformBPs = fPlatformBPs.get(dmc);
         Map<ICBreakpoint, Vector<IBreakpointDMContext>> breakpointIDs = fBreakpointIDs.get(dmc);
         Map<IBreakpointDMContext, ICBreakpoint> targetIDs = fTargetBPs.get(dmc);
         Map<ICBreakpoint, Set<String>> threadIDs = fBreakpointThreads.get(dmc);
         if ((platformBPs != null) || (breakpointIDs != null) || (targetIDs != null) || (threadIDs != null)) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, CONTEXT_ALREADY_INITIALIZED, null));
+        	// If the maps already contains this context we can simply ignore this request.
+        	// This happens when we start or attach to another process with GDB >= 7.4
+            assert platformBPs != null && breakpointIDs != null && targetIDs != null && threadIDs != null;
             rm.done();
             return;
         }

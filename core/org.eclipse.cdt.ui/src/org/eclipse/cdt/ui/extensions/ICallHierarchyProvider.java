@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.model.ICElement;
  * that it will remain the same. Please do not use this API without consulting
  * with the CDT team.
  *
- * @since 5.7
+ * @since 5.8
  */
 public interface ICallHierarchyProvider {
 	/**

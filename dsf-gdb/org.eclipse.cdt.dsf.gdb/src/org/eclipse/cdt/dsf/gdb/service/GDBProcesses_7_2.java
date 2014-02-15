@@ -559,11 +559,11 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
     @Override
     public void eventDispatched(IExitedDMEvent e) {
     	IDMContext dmc = e.getDMContext();
-    	if (dmc instanceof IContainerDMContext) {
+    	if (dmc instanceof IBreakpointsTargetDMContext) {
     		// A process has died, we should stop tracking its breakpoints, but only if it is not restarting
     		if (!fProcRestarting.remove(dmc)) {
     			if (fBackend.getSessionType() != SessionType.CORE) {
-    				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
+    				IBreakpointsTargetDMContext bpTargetDmc = (IBreakpointsTargetDMContext)dmc;
     				MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
     				if (bpmService != null) {
     					bpmService.stopTrackingBreakpoints(bpTargetDmc, new ImmediateRequestMonitor() {

@@ -183,8 +183,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	 * Context representing a thread group of GDB/MI. 
 	 */
     @Immutable
-	private static class MIContainerDMC extends AbstractDMContext
-	implements IMIContainerDMContext, IBreakpointsTargetDMContext, IDisassemblyDMContext
+	static class MIContainerDMC extends AbstractDMContext
+	implements IMIContainerDMContext, IDisassemblyDMContext
 	{
 		/**
 		 * String ID that is used to identify the thread group in the GDB/MI protocol.
@@ -225,7 +225,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	}
 
 	private static class GDBContainerDMC extends MIContainerDMC 
-	implements IMemoryDMContext 
+	implements IMemoryDMContext, IBreakpointsTargetDMContext
 	{
 		public GDBContainerDMC(String sessionId, IProcessDMContext processDmc, String groupId) {
 			super(sessionId, processDmc, groupId);

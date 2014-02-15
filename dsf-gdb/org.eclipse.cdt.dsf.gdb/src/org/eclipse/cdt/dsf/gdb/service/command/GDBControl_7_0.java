@@ -183,7 +183,7 @@ public class GDBControl_7_0 extends GDBControl {
     
     private void listFeatures(final RequestMonitor requestMonitor) {
     	queueCommand(
-    			getCommandFactory().createMIListFeatures(getControlDMContext()), 
+    			getCommandFactory().createMIListFeatures(getContext()), 
     			new DataRequestMonitor<MIListFeaturesInfo>(getExecutor(), requestMonitor) {
     				@Override
     				public void handleSuccess() {
@@ -235,7 +235,7 @@ public class GDBControl_7_0 extends GDBControl {
 	@Override
 	public void enablePrettyPrintingForMIVariableObjects(RequestMonitor rm) {
 		queueCommand(
-				getCommandFactory().createMIEnablePrettyPrinting(getControlDMContext()),
+				getCommandFactory().createMIEnablePrettyPrinting(getContext()),
 				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 	
@@ -248,7 +248,7 @@ public class GDBControl_7_0 extends GDBControl {
 		String subCommand = "set python print-stack " + (enabled ? "on" : "off");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		
 		queueCommand(
-				getCommandFactory().createCLIMaintenance(getControlDMContext(), subCommand),
+				getCommandFactory().createCLIMaintenance(getContext(), subCommand),
 				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 }

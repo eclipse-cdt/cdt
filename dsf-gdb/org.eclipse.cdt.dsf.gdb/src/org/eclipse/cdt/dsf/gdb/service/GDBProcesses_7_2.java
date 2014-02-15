@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 TUBITAK BILGEM-ITI and others.
+ * Copyright (c) 2010, 2014 TUBITAK BILGEM-ITI and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *     Marc Khouzam (Ericsson) - Workaround for Bug 352998
+ *     Marc Khouzam (Ericsson) - Update breakpoint handling for GDB >= 7.4 (Bug 389945)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -329,9 +330,8 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		                new Step() { 
 		                    @Override
 		                    public void execute(RequestMonitor rm) {
-		                    	MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
 		                    	IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-		                    	bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
+		                    	startTtrackingBreakpoints(bpTargetDmc, rm);
 		                    }
 		                },
 		                // Turn on reverse debugging if it was enabled as a launch option
@@ -377,6 +377,15 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
             dataRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
             dataRm.done();
 	    }
+	}
+	
+	/**
+	 * This method is called to start tracking breakpoints during an attach sequence.
+	 * It can be overridden by sub classes.
+	 */
+	void startTtrackingBreakpoints(IBreakpointsTargetDMContext bpTargetDmc, RequestMonitor rm) {
+    	MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
+    	bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -559,11 +568,11 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
     @Override
     public void eventDispatched(IExitedDMEvent e) {
     	IDMContext dmc = e.getDMContext();
-    	if (dmc instanceof IContainerDMContext) {
+    	if (dmc instanceof IBreakpointsTargetDMContext) {
     		// A process has died, we should stop tracking its breakpoints, but only if it is not restarting
     		if (!fProcRestarting.remove(dmc)) {
     			if (fBackend.getSessionType() != SessionType.CORE) {
-    				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
+    				IBreakpointsTargetDMContext bpTargetDmc = (IBreakpointsTargetDMContext)dmc;
     				MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
     				if (bpmService != null) {
     					bpmService.stopTrackingBreakpoints(bpTargetDmc, new ImmediateRequestMonitor() {

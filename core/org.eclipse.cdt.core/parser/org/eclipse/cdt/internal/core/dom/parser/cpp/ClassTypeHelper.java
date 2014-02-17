@@ -952,10 +952,12 @@ public class ClassTypeHelper {
 					if (member.equals(memberBinding)) {
 						return visibility;
 					}
-					if (member instanceof IType && memberBinding instanceof IType &&
-							((IType) member).isSameType((IType) memberBinding)) {
-						return visibility;
-					}
+					// FIXME bug 427730
+					// does this break anything else?
+//					if (member instanceof IType && memberBinding instanceof IType &&
+//							((IType) member).isSameType((IType) memberBinding)) {
+//						return visibility;
+//					}
 				} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier
 						&& memberDeclaration.getDeclarators().length == 0) {
 					IBinding memberBinding =

@@ -2302,7 +2302,6 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//class A {
 	//	void /*$*/member/*$$*/() {
 	//		// return comment
-	//		return;
 	//	}
 	//};
 	//====================
@@ -2312,7 +2311,6 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//
 	//inline void A::member() {
 	//	// return comment
-	//	return;
 	//}
 	public void testClassToHeaderBodyComment() throws Exception {
 		assertRefactoringSuccess();

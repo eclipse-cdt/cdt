@@ -47,6 +47,10 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 		return INSTANCE.rwAnyNode(variable, 0);
 	}
 	
+	public static boolean isReadOnly(IASTName variable) {
+		return (getReadWriteFlags(variable) & WRITE) == 0;
+	}
+	
 	@Override
 	protected int rwAnyNode(IASTNode node, int indirection) {
 		final IASTNode parent = node.getParent();

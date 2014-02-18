@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.debug.internal.ui.preferences;
+package org.eclipse.cdt.utils.ui.controls;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  * An integer field editor with an enablement check box.
+ *
+ * @since 5.8
  */
 public class IntegerWithBooleanFieldEditor extends DecoratingIntegerFieldEditor {
 

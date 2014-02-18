@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.debug.internal.ui.preferences;
+package org.eclipse.cdt.utils.ui.controls;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  * A string field editor with an enablement check box.
+ *
+ * @since 5.8
  */
 public class StringWithBooleanFieldEditor extends DecoratingStringFieldEditor {
 
@@ -41,7 +43,7 @@ public class StringWithBooleanFieldEditor extends DecoratingStringFieldEditor {
 		super(nameKey, labelText, width, strategy, parent);
 		fEnableKey= enableKey;
 	}
-	
+
 	@Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
 		getCheckboxControl(parent);

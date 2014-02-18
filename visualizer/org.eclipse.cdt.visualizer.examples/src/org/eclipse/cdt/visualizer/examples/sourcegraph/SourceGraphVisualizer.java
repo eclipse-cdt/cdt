@@ -137,10 +137,11 @@ public class SourceGraphVisualizer extends Visualizer
 	 */
 	@Override
 	public void workbenchSelectionChanged(ISelection selection) {
-		TextSelection s =
-			(TextSelection) SelectionUtils.getSelectedObject(selection);
-		String text = s.getText();
-		m_sourceGraphControl.setSourceText(text);
+		Object o = SelectionUtils.getSelectedObject(selection);
+		if (o instanceof TextSelection) {
+			String text = ((TextSelection) o).getText();
+			m_sourceGraphControl.setSourceText(text);
+		}
 	}
 	
 	public SelectionManager getSelectionManager() {

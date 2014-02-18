@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_c8ad101f",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ComboFieldEditor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-02-18T17:38:34Z",
+      "side": 1,
+      "message": "I don\u0027t think we should modify this class by adding breakpoint specific functionality. ComboFieldEditor is a generic class that was copied from the Platform because it was internal at that time. The Platform now includes \u0027org.eclipse.jface.preferences.ComboFieldEditor\u0027 which I would recommend to extend and use for this purpose.",
+      "revId": "8df82e0df9be8b6b22f2860d19b03261ea5e1086",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

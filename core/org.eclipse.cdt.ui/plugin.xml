@@ -1834,6 +1834,27 @@
                retarget="true">
          </action>
          <action
+               definitionId="org.eclipse.cdt.ui.refactor.inline.temp"
+               label="%Refactoring.inlineTemp.label"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
+               id="org.eclipse.cdt.ui.actions.InlineTemp"
+               retarget="true">
+         </action>
+         <action
+               definitionId="org.eclipse.cdt.ui.refactor.pull.up"
+               label="%Refactoring.pullUp.label"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
+               id="org.eclipse.cdt.ui.actions.PullUp"
+               retarget="true">
+         </action>
+         <action
+               definitionId="org.eclipse.cdt.ui.refactor.push.down"
+               label="%Refactoring.pushDown.label"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
+               id="org.eclipse.cdt.ui.actions.PushDown"
+               retarget="true">
+         </action>
+         <action
                class="org.eclipse.ltk.ui.refactoring.actions.ShowRefactoringHistoryAction"
                definitionId="org.eclipse.ltk.ui.refactor.show.refactoring.history"
                id="org.eclipse.cdt.ui.actions.RefactoringHistory"
@@ -2707,6 +2728,11 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.refactor.extract.local.variable"/>
      <key
+            sequence="M2+M3+I"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.refactor.inline.temp"/>
+     <key
             platform="carbon"
             sequence="M2+M3+L"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -3134,6 +3160,21 @@
             description="%ActionDefinition.extractLocalVariable.description"
             categoryId="org.eclipse.cdt.ui.category.refactoring"
             id="org.eclipse.cdt.ui.refactor.extract.local.variable"/>
+      <command
+            name="%ActionDefinition.inlineTemp.name"
+            description="%ActionDefinition.inlineTemp.description"
+            categoryId="org.eclipse.cdt.ui.category.refactoring"
+            id="org.eclipse.cdt.ui.refactor.inline.temp"/>
+      <command
+            name="%ActionDefinition.pullUp.name"
+            description="%ActionDefinition.pullUp.description"
+            categoryId="org.eclipse.cdt.ui.category.refactoring"
+            id="org.eclipse.cdt.ui.refactor.pull.up"/>
+      <command
+            name="%ActionDefinition.pushDown.name"
+            description="%ActionDefinition.pushDown.description"
+            categoryId="org.eclipse.cdt.ui.category.refactoring"
+            id="org.eclipse.cdt.ui.refactor.push.down"/>
       <command
             name="%ActionDefinition.extractFunction.name"
             description="%ActionDefinition.extractFunction.description"
@@ -4394,6 +4435,18 @@
       <contribution
             class="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoringContribution"
             id="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring">
+      </contribution>
+      <contribution
+            class="org.eclipse.cdt.internal.ui.refactoring.inlinetemp.InlineTempRefactoringContribution"
+            id="org.eclipse.cdt.internal.ui.refactoring.inlinetemp.InlineTempRefactoring">
+      </contribution>
+      <contribution
+            class="org.eclipse.cdt.internal.ui.refactoring.pullup.PullUpRefactoringContribution"
+            id="org.eclipse.cdt.internal.ui.refactoring.pullup.PullUpRefactoring">
+      </contribution>
+      <contribution
+            class="org.eclipse.cdt.internal.ui.refactoring.pullup.PushDownRefactoringContribution"
+            id="org.eclipse.cdt.internal.ui.refactoring.pullup.PushDownRefactoring">
       </contribution>
    </extension>
 	<extension point="org.eclipse.ltk.core.refactoring.renameParticipants">

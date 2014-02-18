@@ -113,6 +113,24 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * <code>"org.eclipse.cdt.ui.refactor.extract.function"</code>).
 	 */
 	public static final String EXTRACT_FUNCTION = "org.eclipse.cdt.ui.refactor.extract.function"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition ID of the refactor -> inline constant action (value
+	 * <code>"org.eclipse.cdt.ui.refactor.inline.constant"</code>).
+	 */
+	public static final String INLINE_TEMP = "org.eclipse.cdt.ui.refactor.inline.constant"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition ID of the refactor -> pull up member constant action (value
+	 * <code>"org.eclipse.cdt.ui.refactor.pullup"</code>).
+	 */
+	public static final String PULL_UP_MEMBER = "org.eclipse.cdt.ui.refactor.pullup"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition ID of the refactor -> push down member constant action (value
+	 * <code>"org.eclipse.cdt.ui.refactor.pushdown"</code>).
+	 */
+	public static final String PUSH_DOWN_MEMBER = "org.eclipse.cdt.ui.refactor.pushdown"; //$NON-NLS-1$
 
 	/**
 	 * Action definition ID of the refactor -> toggle function action (value

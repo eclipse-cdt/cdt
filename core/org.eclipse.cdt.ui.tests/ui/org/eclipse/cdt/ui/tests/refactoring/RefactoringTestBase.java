@@ -64,6 +64,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	protected int expectedInitialWarnings;
 	protected int expectedFinalWarnings;
 	protected int expectedFinalInfos;
+	protected int expectedFinalErrors;
 
 	private boolean cpp = true;
 	private ICProject cproject;
@@ -192,6 +193,10 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 				assertStatusWarning(finalStatus, expectedFinalWarnings);
 			} else if (expectedFinalInfos != 0) {
 				assertStatusInfo(finalStatus, expectedFinalInfos);
+			} else if (expectedFinalErrors != 0) {
+				assertStatusError(finalStatus, expectedFinalErrors);
+				// do not create change when error expected
+				return;
 			} else {
 				assertStatusOk(finalStatus);
 			}

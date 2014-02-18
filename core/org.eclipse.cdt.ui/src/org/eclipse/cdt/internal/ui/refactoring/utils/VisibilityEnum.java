@@ -9,19 +9,21 @@
  * Contributors: 
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Simon Taddiken
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
+import org.eclipse.cdt.core.parser.Keywords;
 
 /**
  * Enum that represents C++ visibilities, with methods to convert to and from ICPPASTVisiblityLabel.
  */
 public enum VisibilityEnum {
 	// The values are ordered by increasing visibility.
-	v_private("private", ICPPASTVisibilityLabel.v_private),  //$NON-NLS-1$
-	v_protected("protected", ICPPASTVisibilityLabel.v_protected),   //$NON-NLS-1$
-	v_public("public", ICPPASTVisibilityLabel.v_public); //$NON-NLS-1$
+	v_private(Keywords.PRIVATE, ICPPASTVisibilityLabel.v_private),
+	v_protected(Keywords.PROTECTED, ICPPASTVisibilityLabel.v_protected),
+	v_public(Keywords.PUBLIC, ICPPASTVisibilityLabel.v_public);
 
 	private final String stringRepresentation;
 	private final int visibilityLabelValue;
@@ -32,7 +34,11 @@ public enum VisibilityEnum {
 	}
 	
 	public static VisibilityEnum from(ICPPASTVisibilityLabel visibility) {
-		switch (visibility.getVisibility()) {
+		return from(visibility.getVisibility());
+	}
+	
+	public static VisibilityEnum from(int visibility) {
+		switch (visibility) {
 		case ICPPASTVisibilityLabel.v_private:
 			return VisibilityEnum.v_private;
 		case ICPPASTVisibilityLabel.v_protected:

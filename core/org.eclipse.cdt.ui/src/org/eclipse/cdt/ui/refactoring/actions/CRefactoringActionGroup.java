@@ -118,6 +118,9 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
     private RefactoringAction fExtractFunctionAction;
 	private RefactoringAction fToggleFunctionAction;
     private RefactoringAction fHideMethodAction;
+    private RefactoringAction fInlineTemp;
+    private RefactoringAction fPullUpMember;
+    private RefactoringAction fPushDownMember;
 	private IWorkbenchSite fSite;
 	private List<RefactoringAction> fAllActions= new ArrayList<RefactoringAction>();
 
@@ -165,6 +168,18 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 			fToggleFunctionAction = new ToggleFunctionAction();
 			fToggleFunctionAction.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_FUNCTION);
 			fAllActions.add(fToggleFunctionAction);
+			
+			fInlineTemp = new InlineTempAction();
+			fInlineTemp.setActionDefinitionId(ICEditorActionDefinitionIds.INLINE_TEMP);
+			fAllActions.add(fInlineTemp);
+			
+			fPullUpMember = new PullUpMemberAction();
+			fPullUpMember.setActionDefinitionId(ICEditorActionDefinitionIds.PULL_UP_MEMBER);
+			fAllActions.add(fPullUpMember);
+			
+			fPushDownMember = new PushDownMemberAction();
+			fPushDownMember.setActionDefinitionId(ICEditorActionDefinitionIds.PUSH_DOWN_MEMBER);
+			fAllActions.add(fPushDownMember);
         }
 
         fHideMethodAction = new HideMethodAction();
@@ -210,6 +225,9 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 		setActionHandler(actionBar, CdtActionConstants.EXTRACT_METHOD, fExtractFunctionAction);
 		setActionHandler(actionBar, CdtActionConstants.TOGGLE_FUNCTION, fToggleFunctionAction);
 		setActionHandler(actionBar, CdtActionConstants.HIDE_METHOD, fHideMethodAction);		
+		setActionHandler(actionBar, CdtActionConstants.INLINE_CONSTANT, fInlineTemp);
+		setActionHandler(actionBar, CdtActionConstants.PULL_UP, fPullUpMember);
+		setActionHandler(actionBar, CdtActionConstants.PUSH_DOWN, fPushDownMember);
 	}
 
 	private void setActionHandler(IActionBars actionBar, String id, RefactoringAction action) {
@@ -242,6 +260,9 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 			addAction(refactorSubmenu, fExtractFunctionAction);
 			addAction(refactorSubmenu, fToggleFunctionAction);
 			addAction(refactorSubmenu, fHideMethodAction);
+			addAction(refactorSubmenu, fInlineTemp);
+			addAction(refactorSubmenu, fPullUpMember);
+			addAction(refactorSubmenu, fPushDownMember);
 			refactorSubmenu.add(new Separator(GROUP_REORG2));
 			refactorSubmenu.add(new Separator(GROUP_TYPE));
 			refactorSubmenu.add(new Separator(GROUP_TYPE2));

@@ -305,7 +305,15 @@ public class CdtActionConstants {
 	 * (value <code>"org.eclipse.cdt.ui.actions.ExtractMethod"</code>).
 	 */
 	public static final String EXTRACT_METHOD= "org.eclipse.cdt.ui.actions.ExtractMethod"; //$NON-NLS-1$
-
+	
+	/**
+	 * Refactor menu: name of standard inline constant action (value
+	 * <code>org.eclipse.cdt.ui.actions.InlineConstant</code>).
+	 * 
+	 * @since 5.6.0
+	 */
+	public static final String INLINE_CONSTANT = "org.eclipse.cdt.ui.actions.InlineConstant"; //$NON-NLS-1$
+	
 	/**
 	 * Refactor menu: name of standard Toggle Function global action (value
 	 * <code>"org.eclipse.cdt.ui.actions.ExtractMethod"</code>).
@@ -325,7 +333,13 @@ public class CdtActionConstants {
 	 * (value <code>"org.eclipse.cdt.ui.actions.ExtractInterface"</code>).
 	 */
 	public static final String EXTRACT_INTERFACE= "org.eclipse.cdt.ui.actions.ExtractInterface"; //$NON-NLS-1$
-
+	
+	/**
+	 * Refactor menu: name of standard Introduce Const global action
+	 * (value <code>"org.eclipse.cdt.ui.actions.IntroduceConst"</code>).
+	 */
+	public static final String INTRODUCE_CONST = "org.eclipse.cdt.ui.actions.IntroduceConst"; //$NON-NLS-1$
+	
 	/**
 	 * Refactor menu: name of standard Generalize Type global action
 	 * (value <code>"org.eclipse.cdt.ui.actions.ChangeType"</code>).
@@ -485,4 +499,5 @@ public class CdtActionConstants {
 	 * <code>"org.eclipse.cdt.ui.actions.ExceptionOccurrences"</code>).
 	 */
 	public static final String FIND_EXCEPTION_OCCURRENCES= "org.eclipse.cdt.ui.actions.ExceptionOccurrences"; //$NON-NLS-1$		
+
 }

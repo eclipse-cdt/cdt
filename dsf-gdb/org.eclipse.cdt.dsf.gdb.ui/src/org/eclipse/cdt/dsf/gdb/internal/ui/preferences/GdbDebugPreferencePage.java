@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.cdt.dsf.debug.internal.ui.preferences.IntegerWithBooleanFieldEditor;
-import org.eclipse.cdt.dsf.debug.internal.ui.preferences.StringWithBooleanFieldEditor;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.IGdbUIConstants;
 import org.eclipse.cdt.dsf.gdb.service.command.CustomTimeoutsMap;
+import org.eclipse.cdt.internal.utils.ui.controls.IntegerWithBooleanFieldEditor;
+import org.eclipse.cdt.internal.utils.ui.controls.StringWithBooleanFieldEditor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;

@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_e08e2889",
+        "filename": "core/org.eclipse.cdt.ui/utils.ui/org/eclipse/cdt/utils/ui/controls/DecoratingIntegerFieldEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-02-18T22:02:43Z",
+      "side": 1,
+      "message": "This class should not be a part of the public API.",
+      "revId": "54d6d7ce40ea19b04632d3e1c096d0b4ad043546",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_80edac30",
+        "filename": "core/org.eclipse.cdt.ui/utils.ui/org/eclipse/cdt/utils/ui/controls/DecoratingStringFieldEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-02-18T22:02:43Z",
+      "side": 1,
+      "message": "This class should not be a part of the public API.",
+      "revId": "54d6d7ce40ea19b04632d3e1c096d0b4ad043546",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_40a9d4da",
+        "filename": "core/org.eclipse.cdt.ui/utils.ui/org/eclipse/cdt/utils/ui/controls/IntegerWithBooleanFieldEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-02-18T22:02:43Z",
+      "side": 1,
+      "message": "This class should not be a part of the public API.",
+      "revId": "54d6d7ce40ea19b04632d3e1c096d0b4ad043546",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_20a4a001",
+        "filename": "core/org.eclipse.cdt.ui/utils.ui/org/eclipse/cdt/utils/ui/controls/StringWithBooleanFieldEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-02-18T22:02:43Z",
+      "side": 1,
+      "message": "This class should not be a part of the public API.",
+      "revId": "54d6d7ce40ea19b04632d3e1c096d0b4ad043546",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

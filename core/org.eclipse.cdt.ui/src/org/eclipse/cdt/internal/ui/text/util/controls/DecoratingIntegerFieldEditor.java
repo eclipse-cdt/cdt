@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.debug.internal.ui.preferences;
+package org.eclipse.cdt.internal.ui.text.util.controls;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * An {@link IntegerFieldEditor} with field decoration.
- * 
- * @since 1.1
+ *
+ * @since 5.8
  */
 public class DecoratingIntegerFieldEditor extends IntegerFieldEditor {
 
@@ -34,7 +34,7 @@ public class DecoratingIntegerFieldEditor extends IntegerFieldEditor {
 
     /**
      * Creates an integer field editor.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param parent the parent of the field editor's control
@@ -45,7 +45,7 @@ public class DecoratingIntegerFieldEditor extends IntegerFieldEditor {
 
     /**
      * Creates an integer field editor.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param parent the parent of the field editor's control
@@ -74,7 +74,7 @@ public class DecoratingIntegerFieldEditor extends IntegerFieldEditor {
 		}
 		return control;
 	}
-	
+
 	@Override
 	protected void showErrorMessage(String msg) {
 		super.showErrorMessage(msg);

@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.debug.internal.ui.preferences;
+package org.eclipse.cdt.internal.ui.text.util.controls;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
@@ -22,7 +22,8 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * A {@link StringFieldEditor} with field decoration.
- * @since 1.1
+ *
+ * @since 5.8
  */
 public class DecoratingStringFieldEditor extends StringFieldEditor {
 
@@ -34,7 +35,7 @@ public class DecoratingStringFieldEditor extends StringFieldEditor {
     /**
      * Creates a string field editor of unlimited width.
      * Use the method <code>setTextLimit</code> to limit the text.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param parent the parent of the field editor's control
@@ -46,7 +47,7 @@ public class DecoratingStringFieldEditor extends StringFieldEditor {
     /**
      * Creates a string field editor.
      * Use the method <code>setTextLimit</code> to limit the text.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param width the width of the text input field in characters,
@@ -60,7 +61,7 @@ public class DecoratingStringFieldEditor extends StringFieldEditor {
     /**
      * Creates a string field editor.
      * Use the method <code>setTextLimit</code> to limit the text.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param width the width of the text input field in characters,
@@ -93,7 +94,7 @@ public class DecoratingStringFieldEditor extends StringFieldEditor {
 		}
 		return control;
 	}
-	
+
 	@Override
 	protected void showErrorMessage(String msg) {
 		super.showErrorMessage(msg);

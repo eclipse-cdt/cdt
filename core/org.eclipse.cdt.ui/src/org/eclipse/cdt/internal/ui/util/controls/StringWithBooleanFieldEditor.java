@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.debug.internal.ui.preferences;
+package org.eclipse.cdt.internal.ui.util.controls;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -19,21 +19,28 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * An integer field editor with an enablement check box.
+ * A string field editor with an enablement check box.
+ *
+ * @since 5.8
  */
-public class IntegerWithBooleanFieldEditor extends DecoratingIntegerFieldEditor {
+public class StringWithBooleanFieldEditor extends DecoratingStringFieldEditor {
 
 	private final String fEnableKey;
 	private Button fCheckbox;
 	private boolean fWasSelected;
 
-	public IntegerWithBooleanFieldEditor(String enableKey, String nameKey, String labelText, Composite parent) {
+	public StringWithBooleanFieldEditor(String enableKey, String nameKey, String labelText, Composite parent) {
 		super(nameKey, labelText, parent);
 		fEnableKey= enableKey;
 	}
 
-	public IntegerWithBooleanFieldEditor(String enableKey, String nameKey, String labelText, Composite parent, int textLimit) {
-		super(nameKey, labelText, parent, textLimit);
+	public StringWithBooleanFieldEditor(String enableKey, String nameKey, String labelText, int width, Composite parent) {
+		super(nameKey, labelText, width, parent);
+		fEnableKey= enableKey;
+	}
+
+	public StringWithBooleanFieldEditor(String enableKey, String nameKey, String labelText, int width, int strategy, Composite parent) {
+		super(nameKey, labelText, width, strategy, parent);
 		fEnableKey= enableKey;
 	}
 

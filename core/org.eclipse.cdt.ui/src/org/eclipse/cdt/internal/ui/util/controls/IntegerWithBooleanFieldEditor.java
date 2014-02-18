@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.debug.internal.ui.preferences;
+package org.eclipse.cdt.internal.ui.util.controls;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -19,29 +19,26 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * A string field editor with an enablement check box.
+ * An integer field editor with an enablement check box.
+ *
+ * @since 5.8
  */
-public class StringWithBooleanFieldEditor extends DecoratingStringFieldEditor {
+public class IntegerWithBooleanFieldEditor extends DecoratingIntegerFieldEditor {
 
 	private final String fEnableKey;
 	private Button fCheckbox;
 	private boolean fWasSelected;
 
-	public StringWithBooleanFieldEditor(String enableKey, String nameKey, String labelText, Composite parent) {
+	public IntegerWithBooleanFieldEditor(String enableKey, String nameKey, String labelText, Composite parent) {
 		super(nameKey, labelText, parent);
 		fEnableKey= enableKey;
 	}
 
-	public StringWithBooleanFieldEditor(String enableKey, String nameKey, String labelText, int width, Composite parent) {
-		super(nameKey, labelText, width, parent);
+	public IntegerWithBooleanFieldEditor(String enableKey, String nameKey, String labelText, Composite parent, int textLimit) {
+		super(nameKey, labelText, parent, textLimit);
 		fEnableKey= enableKey;
 	}
 
-	public StringWithBooleanFieldEditor(String enableKey, String nameKey, String labelText, int width, int strategy, Composite parent) {
-		super(nameKey, labelText, width, strategy, parent);
-		fEnableKey= enableKey;
-	}
-	
 	@Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
 		getCheckboxControl(parent);

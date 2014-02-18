@@ -12,6 +12,8 @@ package org.eclipse.cdt.dsf.debug.internal.ui.preferences;
 
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.internal.ui.util.controls.DecoratingIntegerFieldEditor;
+import org.eclipse.cdt.internal.ui.util.controls.IntegerWithBooleanFieldEditor;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;

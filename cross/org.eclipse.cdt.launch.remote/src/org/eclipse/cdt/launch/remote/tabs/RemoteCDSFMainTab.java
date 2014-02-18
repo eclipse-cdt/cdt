@@ -20,6 +20,7 @@
  * Anna Dushistova  (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs
  * Anna Dushistova  (Mentor Graphics) - [318052] [remote launch] Properties are not saved/used
  * Anna Dushistova       (MontaVista) - [375067] [remote] Automated remote launch does not support project-less debug
+ * Dan Ungureanu          (Freescale) - [428367] [remote launch] Fix missing title for Properties dialog
  *******************************************************************************/
 package org.eclipse.cdt.launch.remote.tabs;
 
@@ -337,13 +338,20 @@ public class RemoteCDSFMainTab extends CMainTab {
 			boolean fbLocalHost;
 			private Button fSkipDownloadBtn;
 			private Text fWSRoot;
+			private String fDialogTitle;
 
 			public RemoteConnectionPropertyDialog(Shell parentShell,
 					String dialogTitle, IHost host) {
 				super(parentShell);
-				parentShell.setText(dialogTitle);
+				fDialogTitle = dialogTitle;
 				fHost = host;
 				fbLocalHost = fHost.getSystemType().isLocal();
+			}
+			
+			@Override
+			protected void configureShell(Shell shell) {
+				super.configureShell(shell);
+				shell.setText(fDialogTitle);
 			}
 
 			@Override

@@ -248,6 +248,11 @@
                   label="%CustomizePerspective.label"
                   style="push">
             </command>
+            <command
+                  commandId="org.eclipse.ui.window.resetPerspective"
+                  label="%ResetPerspective.label"
+                  style="push">
+            </command>
             <separator
                   name="GDBStandalone.separator1"
                   visible="true">

@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
@@ -952,8 +953,8 @@ public class ClassTypeHelper {
 					if (member.equals(memberBinding)) {
 						return visibility;
 					}
-					if (member instanceof IType && memberBinding instanceof IType &&
-							((IType) member).isSameType((IType) memberBinding)) {
+					if (member instanceof ICompositeType && memberBinding instanceof ICompositeType &&
+							((ICompositeType) member).isSameType((ICompositeType) memberBinding)) {
 						return visibility;
 					}
 				} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier

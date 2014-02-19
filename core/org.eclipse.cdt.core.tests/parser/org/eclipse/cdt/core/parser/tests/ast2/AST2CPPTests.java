@@ -10535,4 +10535,19 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals(',', argumentTokens[1].getTokenCharImage()[0]);
 		assertEquals('2', argumentTokens[2].getTokenCharImage()[0]);
 	}
+
+	//	class Outer {
+	//		class Inner {};
+	//	protected:
+	//		using AliasInner = Inner;
+	//		typedef Inner TypedefInner;
+	//	};
+	public void testAccessibilityForAliasedTypeInSameClass_427730() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		ICPPClassType outerClass = bh.assertNonProblem("Outer");
+		IBinding aliasInner = bh.assertNonProblem("AliasInner");
+		assertVisibility(ICPPClassType.v_protected, outerClass.getVisibility(aliasInner));
+		IBinding typedefInner = bh.assertNonProblem("TypedefInner");
+		assertVisibility(ICPPClassType.v_protected, outerClass.getVisibility(typedefInner));
+	}
 }

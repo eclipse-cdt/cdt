@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_e9bbb309",
+        "filename": "core/org.eclipse.cdt.ui/utils.ui/org/eclipse/cdt/internal/utils/ui/controls/DecoratingIntegerFieldEditor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-02-19T01:02:51Z",
+      "side": 1,
+      "message": "A better place for these controls is org.eclipse.cdt.internal.ui.text.util.controls. This package name would fit into the existing naming scheme.",
+      "revId": "65dec815e6a7bcaf9a9ed9e90ffa75eee97e76ea",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

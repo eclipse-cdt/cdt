@@ -34,6 +34,24 @@
       "revId": "8d99787e5bc971f53bcddfcca550c1bb6a86f602",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_b6346f65",
+        "filename": "core/org.eclipse.cdt.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-02-19T18:18:51Z",
+      "side": 1,
+      "message": "The word \"internal\" in the package name doesn\u0027t mean anything by itself. To exclude the package from the public interface it has to be exported as internal.",
+      "parentUuid": "67591f73_b6a2af28",
+      "revId": "8d99787e5bc971f53bcddfcca550c1bb6a86f602",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -16,6 +16,24 @@
       "revId": "8df82e0df9be8b6b22f2860d19b03261ea5e1086",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_5a753fe9",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ComboFieldEditor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-02-19T15:52:22Z",
+      "side": 1,
+      "message": "Unfortunately \u0027org.eclipse.jface.preferences.ComboFieldEditor\u0027 is expecting combo values specified in constructor and does not provide any setter methods to extending classes. \n\nI\u0027ve investigated also to use \u0027org.eclipse.cdt.debug.ui.breakpoints.IFieldEditorFactory\u0027 but that API is also limited as does not allow connecting field editor back to parent ICBreakpointsUIContribution priory to creating FieldEditor.\nI would need an API similar to ICBreakpointsUIContributionUser. e.g. IFieldEditorFactory2#createFieldEditor(String name, String labelText, Composite parent, ICBreakpointsUIContribution contribution)\n\nThe last option would be to hard-code in CBreakpointPropertyPage  the contribution for breakpoint type. But I would retrain to go that flow.",
+      "parentUuid": "67591f73_c8ad101f",
+      "revId": "8df82e0df9be8b6b22f2860d19b03261ea5e1086",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

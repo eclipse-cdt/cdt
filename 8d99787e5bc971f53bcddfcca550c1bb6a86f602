@@ -52,6 +52,24 @@
       "revId": "8d99787e5bc971f53bcddfcca550c1bb6a86f602",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_71ee617b",
+        "filename": "core/org.eclipse.cdt.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-02-19T19:20:48Z",
+      "side": 1,
+      "message": "We don\u0027t want it excluded from the public interface, it should be available to other plugins that need it. This is why I initially put it into a public package.",
+      "parentUuid": "67591f73_b6346f65",
+      "revId": "8d99787e5bc971f53bcddfcca550c1bb6a86f602",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

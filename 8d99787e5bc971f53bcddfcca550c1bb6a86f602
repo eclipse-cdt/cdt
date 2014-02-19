@@ -70,6 +70,24 @@
       "revId": "8d99787e5bc971f53bcddfcca550c1bb6a86f602",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_7120214c",
+        "filename": "core/org.eclipse.cdt.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-02-19T19:27:30Z",
+      "side": 1,
+      "message": "CDT is not a proper place for public a API not directly related to C/C++. The CDT plugins that need this package should be declared as x-friends.",
+      "parentUuid": "67591f73_71ee617b",
+      "revId": "8d99787e5bc971f53bcddfcca550c1bb6a86f602",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

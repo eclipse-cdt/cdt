@@ -1,11 +1,11 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
- * 
- *  Contributors:
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
@@ -22,14 +22,12 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.ui.text.IColorManager;
 
-
 /**
  * CDT color manager.
  */
 public class CColorManager implements IColorManager {
-	
-	protected Map<String, RGB> fKeyTable= new HashMap<String, RGB>(10);
-	protected Map<Display, Map<RGB, Color>> fDisplayTable= new HashMap<Display, Map<RGB, Color>>(2);
+	protected Map<String, RGB> fKeyTable= new HashMap<>(10);
+	protected Map<Display, Map<RGB, Color>> fDisplayTable= new HashMap<>(2);
 	
 	/**
 	 * Flag which tells if the colors are automatically disposed when
@@ -51,7 +49,8 @@ public class CColorManager implements IColorManager {
 	 *
 	 * @param autoDisposeOnDisplayDispose 	if <code>true</code>  the color manager
 	 * automatically disposes all managed colors when the current display gets disposed
-	 * and all calls to {@link org.eclipse.jface.text.source.ISharedTextColors#dispose()} are ignored.
+	 * and all calls to {@link org.eclipse.jface.text.source.ISharedTextColors#dispose()} are
+	 * ignored.
 	 *
 	 * @since 4.0
 	 */
@@ -68,19 +67,15 @@ public class CColorManager implements IColorManager {
 		}
 	}
 	
-	/*
-	 * @see IColorManager#getColor(RGB)
-	 */
 	@Override
 	public Color getColor(RGB rgb) {
-		
 		if (rgb == null)
 			return null;
 		
 		final Display display= Display.getCurrent();
 		Map<RGB, Color> colorTable= fDisplayTable.get(display);
 		if (colorTable == null) {
-			colorTable= new HashMap<RGB, Color>(10);
+			colorTable= new HashMap<>(10);
 			fDisplayTable.put(display, colorTable);
 			if (fAutoDisposeOnDisplayDispose) {
 				display.disposeExec(new Runnable() {
@@ -101,18 +96,12 @@ public class CColorManager implements IColorManager {
 		return color;
 	}
 	
-	/*
-	 * @see IColorManager#dispose
-	 */
 	@Override
 	public void dispose() {
 		if (!fAutoDisposeOnDisplayDispose)
 			dispose(Display.getCurrent());
 	}
 
-	/*
-	 * @see IColorManager#getColor(String)
-	 */
 	@Override
 	public Color getColor(String key) {
 		
@@ -123,9 +112,6 @@ public class CColorManager implements IColorManager {
 		return getColor(rgb);
 	}
 	
-	/*
-	 * @see IColorManager#bindColor(String, RGB)
-	 */
 	@Override
 	public void bindColor(String key, RGB rgb) {
 		Object value= fKeyTable.get(key);
@@ -135,9 +121,6 @@ public class CColorManager implements IColorManager {
 		fKeyTable.put(key, rgb);
 	}
 
-	/*
-	 * @see IColorManager#unbindColor(String)
-	 */
 	@Override
 	public void unbindColor(String key) {
 		fKeyTable.remove(key);

@@ -14,15 +14,10 @@ package org.eclipse.cdt.internal.ui.text.util;
 
 import org.eclipse.jface.text.rules.IWhitespaceDetector;
 
-
 /**
  * A simple white space detector.
  */
 public class CWhitespaceDetector implements IWhitespaceDetector {
-
-	/*
-	 * @see IWhitespaceDetector#isWhitespace(char)
-	 */
 	@Override
 	public boolean isWhitespace(char c) {
 		switch (c) {

@@ -13,23 +13,15 @@ package org.eclipse.cdt.internal.ui.text.util;
 
 import org.eclipse.jface.text.rules.IWordDetector;
 
-
 /**
  * A C aware word detector.
  */
 public class CWordDetector implements IWordDetector {
-
-	/*
-	 * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
-	 */
 	@Override
 	public boolean isWordStart(char c) {
 		return Character.isJavaIdentifierStart(c) || c == '@';
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.rules.IWordDetector#isWordPart(char)
-	 */
 	@Override
 	public boolean isWordPart(char c) {
 		return Character.isJavaIdentifierPart(c);

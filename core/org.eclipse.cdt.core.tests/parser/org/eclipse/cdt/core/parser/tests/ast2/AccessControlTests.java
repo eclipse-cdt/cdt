@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Google, Inc and others.
+ * Copyright (c) 2009, 2014 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,16 @@
  *
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
+ * 	   Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.eclipse.cdt.core.parser.tests.VisibilityAsserts.assertVisibility;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.AccessContext;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -169,4 +172,55 @@ public class AccessControlTests extends AST2TestBase {
 		ah.assertAccessible("mi=5;", 2);
 	}
 
+	//	class A {
+	//	private:
+	//		typedef int Waldo;
+	//	};
+	//	A::Waldo waldo;
+	public void testPrivateTypedef_427730() throws Exception {
+		AccessAssertionHelper ah = getAssertionHelper();
+		ah.assertNotAccessible("Waldo waldo", 5);
+	}
+
+	//	class A {
+	//	private:
+	//		class B {};
+	//	public:
+	//		typedef B Waldo;
+	//	};
+	//	A::Waldo waldo;
+	public void testPublicTypedefForPrivateMemberClass_427730() throws Exception {
+		AccessAssertionHelper ah = getAssertionHelper();
+		ah.assertAccessible("Waldo waldo", 5);
+	}
+
+	//	class A {
+	//	private:
+	//		class B {};
+	//		friend class C;
+	//	};
+	//	class C {
+	//	public:
+	//		typedef A::B Waldo;
+	//	};
+	//	C::Waldo waldo;
+	public void testPublicTypedefForFriendClass_427730() throws Exception {
+		AccessAssertionHelper ah = getAssertionHelper();
+		ah.assertAccessible("Waldo waldo", 5);
+	}
+
+	//	class Outer {
+	//		class Inner {};
+	//	protected:
+	//		using AliasInner = Inner;
+	//		typedef Inner TypedefInner;
+	//	};
+	public void testAccessibilityForAliasedTypeInSameClass_427730() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		ICPPClassType outerClass = bh.assertNonProblem("Outer");
+		IBinding aliasInner = bh.assertNonProblem("AliasInner");
+		assertVisibility(ICPPClassType.v_protected, outerClass.getVisibility(aliasInner));
+		IBinding typedefInner = bh.assertNonProblem("TypedefInner");
+		assertVisibility(ICPPClassType.v_protected, outerClass.getVisibility(typedefInner));
+	}
 }

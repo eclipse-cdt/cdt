@@ -952,10 +952,6 @@ public class ClassTypeHelper {
 					if (member.equals(memberBinding)) {
 						return visibility;
 					}
-					if (member instanceof IType && memberBinding instanceof IType &&
-							((IType) member).isSameType((IType) memberBinding)) {
-						return visibility;
-					}
 				} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier
 						&& memberDeclaration.getDeclarators().length == 0) {
 					IBinding memberBinding =
@@ -966,10 +962,6 @@ public class ClassTypeHelper {
 				} else if (declSpec instanceof ICPPASTEnumerationSpecifier) {
 					IBinding enumerationBinding = ((ICPPASTEnumerationSpecifier) declSpec).getName().resolveBinding();
 					if (member.equals(enumerationBinding)) {
-						return visibility;
-					}
-					if (member instanceof IType && enumerationBinding instanceof IType &&
-							((IType) member).isSameType((IType) enumerationBinding)) {
 						return visibility;
 					}
 				}

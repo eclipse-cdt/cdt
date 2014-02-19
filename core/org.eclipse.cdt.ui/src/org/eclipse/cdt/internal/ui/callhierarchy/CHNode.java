@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.callhierarchy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -83,7 +84,7 @@ public class CHNode implements IAdaptable {
 			return false;
 		}
 
-		return CoreUtility.safeEquals(fRepresentedDecl, rhs.fRepresentedDecl);
+		return Objects.equals(fRepresentedDecl, rhs.fRepresentedDecl);
     }
 
     private boolean computeIsRecursive(CHNode parent, ICElement decl) {

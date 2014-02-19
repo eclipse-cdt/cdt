@@ -77,7 +77,6 @@ import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.CopyTreeAction;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
-import org.eclipse.cdt.internal.ui.util.CoreUtility;
 import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.viewsupport.AdaptingSelectionProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
@@ -480,7 +479,7 @@ public class CHViewPart extends ViewPart {
                 CHNode n2= (CHNode) e2;
                 int offset1= n1.getFirstReferenceOffset();
                 int offset2= n2.getFirstReferenceOffset();
-                return CoreUtility.compare(offset1, offset2);
+                return Integer.compare(offset1, offset2);
             }
         };
         

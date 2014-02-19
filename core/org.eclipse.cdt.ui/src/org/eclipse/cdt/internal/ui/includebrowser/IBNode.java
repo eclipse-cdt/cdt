@@ -10,6 +10,8 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.includebrowser;
 
+import java.util.Objects;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -80,7 +82,7 @@ public class IBNode implements IAdaptable {
 			return false;
 		}
 
-		return CoreUtility.safeEquals(fRepresentedFile, rhs.fRepresentedFile); 
+		return Objects.equals(fRepresentedFile, rhs.fRepresentedFile); 
 	}
     
     private boolean computeIsRecursive(IBNode parent, IIndexFileLocation ifl) {

@@ -10,6 +10,8 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
+import java.util.Objects;
+
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
@@ -63,6 +65,6 @@ public class CHMultiDefNode extends CHNode {
     		return false;
 
     	final CHMultiDefNode rhs = (CHMultiDefNode) o;
-		return CoreUtility.safeEquals(getOneRepresentedDeclaration(), rhs.getOneRepresentedDeclaration());
+		return Objects.equals(getOneRepresentedDeclaration(), rhs.getOneRepresentedDeclaration());
     }
 }

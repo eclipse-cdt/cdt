@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -66,7 +67,7 @@ public class THNode implements IAdaptable {
 			return false;
 		}
 
-		return CoreUtility.safeEquals(fElement, rhs.fElement);
+		return Objects.equals(fElement, rhs.fElement);
     }
     
 	/**

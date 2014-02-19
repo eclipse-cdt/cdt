@@ -12,6 +12,8 @@
 
 package org.eclipse.cdt.internal.ui.includebrowser;
 
+import java.util.Objects;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -60,17 +62,17 @@ public class IBFile {
 	public boolean equals(Object obj) {
 		if (obj instanceof IBFile) {
 			IBFile file = (IBFile) obj;
-			return (CoreUtility.safeEquals(fLocation, file.fLocation) &&
-					CoreUtility.safeEquals(fTU, file.fTU));
+			return (Objects.equals(fLocation, file.fLocation) &&
+					Objects.equals(fTU, file.fTU));
 		}
 		return super.equals(obj);
 	}
 
 	@Override
 	public int hashCode() {
-		return CoreUtility.safeHashcode(fLocation)
-			+ 31* (CoreUtility.safeHashcode(fTU) 
-			+ 31* CoreUtility.safeHashcode(fName));
+		return Objects.hashCode(fLocation)
+			+ 31* (Objects.hashCode(fTU) 
+			+ 31* Objects.hashCode(fName));
 	}
 
 	public ITranslationUnit getTranslationUnit() {

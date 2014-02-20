@@ -34,6 +34,24 @@
       "revId": "8df82e0df9be8b6b22f2860d19b03261ea5e1086",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_b4346493",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ComboFieldEditor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-02-20T01:32:16Z",
+      "side": 1,
+      "message": "Is it possible to modify \u0027org.eclipse.cdt.debug.internal.ui.preferences.ComboFieldEditor\u0027 and make it extendable for our purposes?",
+      "parentUuid": "67591f73_5a753fe9",
+      "revId": "8df82e0df9be8b6b22f2860d19b03261ea5e1086",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

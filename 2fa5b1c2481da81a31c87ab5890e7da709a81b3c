@@ -1,0 +1,242 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_4cb2a2ce",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-20T18:52:25Z",
+      "side": 1,
+      "message": "It is not obvious whey we need addressableUnits here but not for the read case.  I see the reason after inspection though.  Can you update the javadoc of fetchMemoryBlock() to specify that length is in addressable units?",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_0c770a79",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-20T18:52:25Z",
+      "side": 1,
+      "message": "Please another entry for this change",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_89149e02",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-20T18:52:25Z",
+      "side": 1,
+      "message": "4.4",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_69178a05",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-20T18:52:25Z",
+      "side": 1,
+      "message": "4.4",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_6c75e6e9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory_7_6.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-20T18:52:25Z",
+      "side": 1,
+      "message": "The event generating this \u0027length\u0027 is triggered when we change memory (or a variable) from a CLI command i.e., the gdb console.  I had made the assumption that the length was in octets but I guess it should be in addressable units, so I think this code must be updated.",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_696aea0c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 575,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-20T18:52:25Z",
+      "side": 1,
+      "message": "I\u0027m finding these changes quite confusing.  fAddressesLength vs fOctetsLength...  Why not stick to the regular pattern of length and word_size instead of these two lengths, and do the conversion fAddessesLength \u003d fOctetsLength/word_size or maybe fOctetsLength \u003d fAddessesLength*word_size.\n\nThat should hopefully reduce the amount of changes in the below code (although I didn\u0027t try it)",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_f11a7172",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-20T18:52:25Z",
+      "side": 1,
+      "message": "Don\u0027t replace with \u0027*\u0027.  Eclipse does that automatically so you have to change a preference.  Preferences-\u003eJava-\u003eCode style-\u003eOrganize imports: increase the number for \"Number of imports needed for .*\"",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_2920f24a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIDataReadMemoryBytes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-20T18:52:25Z",
+      "side": 1,
+      "message": "Can you put comments here explaining that both offset and num_bytes are in addressable bytes and not necessarily octets?  Also put that in the class javadoc above.",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_d1dc8d94",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/DsfMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 608,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-20T18:52:25Z",
+      "side": 1,
+      "message": "I think we should put a try/catch around this.  If not, the debug exception will not be caught higher up and will fail, which is not what we do in getBytesFromAddress()",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_f1e55151",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/DsfMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-20T18:52:25Z",
+      "side": 1,
+      "message": "Also surround with try/catch or should we always let the debug exception be thrown?  I\u0027m not sure.  What do you think?",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_ac737e8b",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/DsfMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 666,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-20T18:52:25Z",
+      "side": 1,
+      "message": "I think bytes.length should be changed like it was in GdbMemoryBlock",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_51d07d70",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/DsfMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 720,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-20T18:52:25Z",
+      "side": 1,
+      "message": "I don\u0027t think we should use fWordSize directly.  We should use getAddressableSize() as you have done elsewhere in case it gets overridden.",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_44cc2bae",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 910,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-20T18:52:25Z",
+      "side": 1,
+      "message": "Copyright",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_e4c0df73",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1609,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-20T18:52:25Z",
+      "side": 1,
+      "message": "Copyright",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

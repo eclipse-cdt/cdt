@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_35416b0d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 10545,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-20T12:35:14Z",
+      "side": 1,
+      "message": "Done - Moved my test and your suggested tests to AccessControlTests.",
+      "parentUuid": "67591f73_9614cb4c",
+      "revId": "7481bc8cc0222f254e593010fa392e7e244ffeee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_560eb341",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTest_TypeAliasRef_Prefix.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-02-19T17:51:45Z",
       "side": 1,
       "message": "Access control-related tests should go to org.eclipse.cdt.core.parser.tests.ast2.AccessControlTests.",
+      "revId": "7481bc8cc0222f254e593010fa392e7e244ffeee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_153c2796",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTest_TypeAliasRef_Prefix.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-20T12:35:14Z",
+      "side": 1,
+      "message": "Done - Removed this test as it just depends on the accessibilty.",
+      "parentUuid": "67591f73_560eb341",
       "revId": "7481bc8cc0222f254e593010fa392e7e244ffeee",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

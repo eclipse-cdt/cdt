@@ -35,6 +35,14 @@ public class ParseError extends Error {
 		OFFSET_RANGE_NOT_NAME,
 
 		TIMEOUT_OR_CANCELLED,
+
+		/**
+		 * The user preference for {@link CCorePreferenceConstants#SCALABILITY_LIMIT_TOKENS_PER_TU} is enabled
+		 * and more than {@link CCorePreferenceConstants#SCALABILITY_MAXIMUM_TOKENS} tokens were created while
+		 * parsing a single translation unit.
+		 * @since 5.7
+		 */
+		TOO_MANY_TOKENS
 	}
 
 	public ParseErrorKind getErrorKind()
@@ -44,6 +52,14 @@ public class ParseError extends Error {
 	
 	public ParseError( ParseErrorKind kind )
 	{
+		errorKind = kind;
+	}
+
+	/**
+	 * @since 5.7
+	 */
+	public ParseError(String message, ParseErrorKind kind) {
+		super(message);
 		errorKind = kind;
 	}
 }

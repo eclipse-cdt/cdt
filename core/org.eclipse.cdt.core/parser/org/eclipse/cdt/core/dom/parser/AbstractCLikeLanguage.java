@@ -35,6 +35,8 @@ import org.eclipse.cdt.core.parser.IParserSettings;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
+import org.eclipse.cdt.core.parser.ParseError;
+import org.eclipse.cdt.core.parser.ParseError.ParseErrorKind;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
@@ -165,6 +167,20 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 			IASTTranslationUnit ast= parser.parse();
 			ast.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0);
 			return ast;
+		} catch(ParseError e) {
+			// Only the TOO_MANY_TOKENS error can be handled here.
+			if (e.getErrorKind() != ParseErrorKind.TOO_MANY_TOKENS)
+				throw e;
+
+			// Otherwise generate a log because parsing was stopped because of a user preference.
+			if (log != null) {
+				String tuName = null;
+				if (scanner.getLocationResolver() != null)
+					tuName = scanner.getLocationResolver().getTranslationUnitPath();
+
+				log.traceLog(e.getMessage() + (tuName == null ? new String() : (" while parsing " + tuName))); //$NON-NLS-1$
+			}
+			return null;
 		} finally {
 			if (canceler != null) {
 				canceler.setCancelable(null);

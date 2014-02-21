@@ -71,5 +71,7 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 		// Scalability defaults.
 		defaultPreferences.putBoolean(CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS, CCorePreferenceConstants.DEFAULT_SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS);
 		defaultPreferences.putInt(CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS, CCorePreferenceConstants.DEFAULT_SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS);
+		defaultPreferences.putBoolean(CCorePreferenceConstants.SCALABILITY_LIMIT_TOKENS_PER_TU, CCorePreferenceConstants.DEFAULT_SCALABILITY_LIMIT_TOKENS_PER_TU);
+		defaultPreferences.putInt(CCorePreferenceConstants.SCALABILITY_MAXIMUM_TOKENS, CCorePreferenceConstants.DEFAULT_SCALABILITY_MAXIMUM_TOKENS);
 	}
 }

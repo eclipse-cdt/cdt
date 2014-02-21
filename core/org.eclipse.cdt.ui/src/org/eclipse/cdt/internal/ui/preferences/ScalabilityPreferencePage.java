@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -63,14 +62,12 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 	private Button fSemanticHighlighting;
 	
 	private Button fContentAssist;
-	
+
 	private Button fContentAssistAutoActivation;
 
-	private BooleanFieldEditor fSkipTrivialExpressions;
+	private ScalabilityIntegerFieldEditor fMaximumTrivialExpressions;
 
-	private IntegerFieldEditor fMaximumTrivialExpressions;
-
-	private Composite fParserSettingsComposite;
+	private ScalabilityIntegerFieldEditor fMaximumTokens;
 
 	private final Map<Object, String> fCheckBoxes= new HashMap<Object, String>();
 
@@ -116,10 +113,8 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
             listener.widgetSelected(null);
         }
         fLinesToTrigger.setStringValue(Integer.toString(prefs.getInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));
-        fSkipTrivialExpressions.load();
         fMaximumTrivialExpressions.load();
-
-        updateEnable();
+        fMaximumTokens.load();
 	}
 
 	/*
@@ -162,23 +157,23 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 		createParserSettings(composite);
 
 		new Separator().doFillIntoGrid(composite, nColumns);
-		
+
 		String noteTitle= PreferencesMessages.ScalabilityPreferencePage_note;
 		String noteMessage= PreferencesMessages.ScalabilityPreferencePage_preferenceOnlyForNewEditors;
 		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), composite, noteTitle, noteMessage);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		noteControl.setLayoutData(gd);
-		
+
 		initFields();
-		
+
 		Dialog.applyDialogFont(composite);
 		return composite;
 	}
-	
+
 	/**
 	 * Creates composite group and sets the default layout data.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent of the new composite
 	 * @param numColumns
@@ -190,7 +185,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 	private Composite createGroupComposite( Composite parent, int numColumns, String labelText ) {
 		return ControlFactory.createGroup( parent, labelText, numColumns );
 	}
-	
+
 	/**
 	 * Create the view setting preferences composite widget
 	 */
@@ -228,30 +223,25 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 	}
 
 	private void createParserSettings(Composite parent) {
-		final Composite parserSettingsGroup = createGroupComposite(parent, 1,
-				PreferencesMessages.ScalabilityPreferencePage_parserSettings_group_label);
+		Composite group = createGroupComposite( parent, 1, PreferencesMessages.ScalabilityPreferencePage_parserSettings_group_label );
 
-		final Composite skipTrivialComposite = new Composite(parserSettingsGroup, SWT.NONE);
-		fSkipTrivialExpressions = new BooleanFieldEditor(CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS, 
-				PreferencesMessages.ScalabilityPreferencePage_skipTrivialExpressions_label, skipTrivialComposite);
-		fSkipTrivialExpressions.setPreferenceStore(CUIPlugin.getDefault().getCorePreferenceStore());
-
-		fParserSettingsComposite = new Composite(parserSettingsGroup, SWT.NONE);
-		fMaximumTrivialExpressions = createIntegerField(fParserSettingsComposite,
-				CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS,
-				PreferencesMessages.ScalabilityPreferencePage_maximumTrivialExpressions_label, 0, Integer.MAX_VALUE);
+		fMaximumTrivialExpressions
+			= createScalabilityIntegerField(
+					group,
+					CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS,
+					CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS,
+					PreferencesMessages.ScalabilityPreferencePage_skipTrivialExpressions_label,
+					1, Integer.MAX_VALUE);
 		fMaximumTrivialExpressions.setPreferenceStore(CUIPlugin.getDefault().getCorePreferenceStore());
 
-		fSkipTrivialExpressions.setPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				updateEnable();
-			}
-		});
-	}
-
-	private void updateEnable() {
-		fMaximumTrivialExpressions.setEnabled(fSkipTrivialExpressions.getBooleanValue(), fParserSettingsComposite);
+		fMaximumTokens
+			= createScalabilityIntegerField(
+					group,
+					CCorePreferenceConstants.SCALABILITY_LIMIT_TOKENS_PER_TU,
+					CCorePreferenceConstants.SCALABILITY_MAXIMUM_TOKENS,
+					PreferencesMessages.ScalabilityPreferencePage_maximumTokensPerTU_label,
+					1, 1000000000);
+		fMaximumTokens.setPreferenceStore(CUIPlugin.getDefault().getCorePreferenceStore());
 	}
 
 	private IntegerFieldEditor createIntegerField(Composite parent, String name, String labelText, int rangeMinimum, int rangeMaximum) {
@@ -274,6 +264,28 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 			}
 		});
 		return integerField;
+	}
+
+	private ScalabilityIntegerFieldEditor createScalabilityIntegerField(Composite parent, String enable, String name, String labelText, int rangeMinimum, int rangeMaximum) {
+		final ScalabilityIntegerFieldEditor field = new ScalabilityIntegerFieldEditor(enable, name, labelText, parent);
+
+		GridData data = (GridData) field.getTextControl(parent).getLayoutData();
+		data.horizontalAlignment = GridData.BEGINNING;
+		data.widthHint = convertWidthInCharsToPixels(11);
+		field.setPage(this);
+		field.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+		field.setValidRange(rangeMinimum, rangeMaximum);
+		field.setErrorMessage(NLS.bind(PreferencesMessages.ScalabilityPreferencePage_error,
+				new Object[] { rangeMinimum, rangeMaximum }));
+		field.load();
+		field.setPropertyChangeListener(new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(FieldEditor.IS_VALID))
+					setValid(field.isValid());
+			}
+		});
+		return field;
 	}
 
 	private static void indent(Control control, GridData masterLayoutData) {
@@ -329,8 +341,8 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 			prefs.setValue(key, b.getSelection());
 		}
 		prefs.setValue(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES, fLinesToTrigger.getIntValue());
-		fSkipTrivialExpressions.store();
 		fMaximumTrivialExpressions.store();
+		fMaximumTokens.store();
 		return super.performOk();
 	}
 	
@@ -355,8 +367,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
             listener.widgetSelected(null);
         }
         fLinesToTrigger.setStringValue(Integer.toString(prefs.getDefaultInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));
-        fSkipTrivialExpressions.loadDefault();
         fMaximumTrivialExpressions.loadDefault();
-        updateEnable();
+        fMaximumTokens.loadDefault();
 	}
 }

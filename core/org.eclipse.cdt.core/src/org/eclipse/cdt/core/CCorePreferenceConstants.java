@@ -250,6 +250,39 @@ public class CCorePreferenceConstants {
 	 */
 	public static final int DEFAULT_SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS = 1000;
 
+	/**
+	 * A named preference that specifies whether the parser should abort when too many Tokens are created
+	 * during parse of a single TU.  This is a heuristic that is used to detect translation units that
+	 * are too complex to be handled the by the CDT parser.
+	 *
+	 * @since 5.7
+	 */
+	public static final String SCALABILITY_LIMIT_TOKENS_PER_TU = "scalability.limitTokensPerTU"; //$NON-NLS-1$
+
+	/**
+	 * Default value for {@link #SCALABILITY_LIMIT_TOKENS_PER_TU}.
+	 * @since 5.7
+	 */
+	public static final boolean DEFAULT_SCALABILITY_LIMIT_TOKENS_PER_TU = false;
+
+	/**
+	 * A named preference that specifies the parser's token limit.  Parsing will be aborted when a single
+	 * translation unit has produced a maximum number of tokens.  This is a heuristic that is used to
+	 * detect translation units that are too complex to be handled the by the CDT parser.
+	 *
+	 * @since 5.7
+	 */
+	public static final String SCALABILITY_MAXIMUM_TOKENS = "scalability.maximumTokens"; //$NON-NLS-1$
+
+	/**
+	 * Default value for {@link #SCALABILITY_MAXIMUM_TOKENS}.
+	 *
+	 * @since 5.7
+	 */
+	public static final int DEFAULT_SCALABILITY_MAXIMUM_TOKENS = 25 * 1000 * 1000;
+	// NOTE: This default came from measurements using a 1Gb heap on a 64-bit VM.  The test project was
+	//       boost-1.55.0.  This default will index all but 9 files without running out of memory.
+
     /**
      * Returns the node in the preference in the given context.
      * @param key The preference key.

@@ -555,6 +555,7 @@ public final class PreferencesMessages extends NLS {
 	public static String ScalabilityPreferencePage_parserSettings_group_label;
 	public static String ScalabilityPreferencePage_skipTrivialExpressions_label;
 	public static String ScalabilityPreferencePage_maximumTrivialExpressions_label;
+	public static String ScalabilityPreferencePage_maximumTokensPerTU_label;
 
 	public static String IndexerStrategyBlock_activeBuildConfig;
 	public static String IndexerStrategyBlock_autoUpdate;

@@ -22,4 +22,5 @@ public class IndexerStatistics {
 	public int fUnresolvedIncludesCount= 0;
 	public int fPreprocessorProblemCount= 0;
 	public int fSyntaxProblemsCount= 0;
+	public int fTooManyTokensCount= 0;
 }

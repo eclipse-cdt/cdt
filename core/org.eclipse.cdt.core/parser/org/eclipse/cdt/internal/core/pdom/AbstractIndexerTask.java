@@ -54,7 +54,6 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.IncludeExportPatterns;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
-import org.eclipse.cdt.core.parser.ParserSettings;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
@@ -64,6 +63,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
+import org.eclipse.cdt.internal.core.parser.ParserSettings2;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider.DependsOnOutdatedFileException;
 import org.eclipse.cdt.internal.core.parser.util.LRUCache;
@@ -417,7 +417,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	protected IParserSettings createParserSettings() {
-		return new ParserSettings();
+		return new ParserSettings2();
 	}
 
 	/**
@@ -1043,7 +1043,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			long start= System.currentTimeMillis();
 			IASTTranslationUnit ast= createAST(lang, codeReader, scanInfo, isSource, fASTOptions, ctx, pm);
 			fStatistics.fParsingTime += System.currentTimeMillis() - start;
-			if (ast != null) {
+			if (ast == null) {
+				++fStatistics.fTooManyTokensCount;
+			} else {
 				// Give the new AST a chance to recognize its translation unit before it is written
 				// to the index.
 				((ASTTranslationUnit) ast).setOriginatingTranslationUnit((ITranslationUnit) tu);

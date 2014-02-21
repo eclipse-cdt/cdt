@@ -272,6 +272,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     public CPreprocessor(FileContent fileContent, IScannerInfo info, ParserLanguage language,
     		IParserLogService log, IScannerExtensionConfiguration configuration,
     		IncludeFileContentProvider readerFactory) {
+		Token.resetCounterFor(info);
     	if (readerFactory instanceof InternalFileContentProvider) {
         	fFileContentProvider= (InternalFileContentProvider) readerFactory;
     	} else if (readerFactory == null) {

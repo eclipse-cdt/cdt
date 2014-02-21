@@ -282,6 +282,9 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 					+ fStatistics.fUnresolvedIncludesCount + " include, "     //$NON-NLS-1$
 					+ fStatistics.fPreprocessorProblemCount + " scanner, "     //$NON-NLS-1$
 					+ fStatistics.fSyntaxProblemsCount + " syntax errors.");    //$NON-NLS-1$
+			if (fStatistics.fTooManyTokensCount > 0)
+				System.out.println(ident + " Tokens: " //$NON-NLS-1$
+					+ fStatistics.fTooManyTokensCount + " TUs with too many tokens."); //$NON-NLS-1$
 
 			NumberFormat nfPercent= NumberFormat.getPercentInstance();
 			nfPercent.setMaximumFractionDigits(2);

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_bf8d51bd",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/Addr2line.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-02-21T02:07:52Z",
+      "side": 1,
+      "message": "I think it should be possible to use a Pattern with a capturing group here instead of doing this in the catch. What do you think?",
+      "revId": "209d9500f22685dec3213167a08cef69ec5be935",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

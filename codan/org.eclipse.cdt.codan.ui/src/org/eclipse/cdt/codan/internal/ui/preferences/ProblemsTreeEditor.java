@@ -293,7 +293,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 
 			@Override
 			protected CellEditor getCellEditor(Object element) {
-				return new ComboBoxCellEditor(getTreeViewer().getTree(), CodanSeverity.stringValues());
+				return new ComboBoxCellEditor(getTreeViewer().getTree(), CodanSeverity.stringValues(), SWT.READ_ONLY);
 			}
 
 			@Override

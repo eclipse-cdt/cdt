@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_dcb2c8c9",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/breakpoints/BreakpointComboFieldEditor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-02-21T16:50:56Z",
+      "side": 1,
+      "message": "The new specialized Field editor to load values from extension",
+      "revId": "2489710210d57e512f3a3d55d5a4fbbcff1ef474",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_fcb7ccb9",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ComboFieldEditor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-02-21T16:50:56Z",
+      "side": 1,
+      "message": "The new setter method that will dispose any old values (if any) and load combo with new values",
+      "revId": "2489710210d57e512f3a3d55d5a4fbbcff1ef474",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

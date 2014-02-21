@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_85791a6d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/buildmodel/BuildDescription.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1002,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-02-21T05:27:26Z",
+      "side": 1,
+      "message": "I think this can be replaced with a call to getProjectLocation?",
+      "revId": "5e59688b46df086994dcf8980fbe35d030c7f1e8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

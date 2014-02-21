@@ -577,7 +577,7 @@ public class LanguageManager {
 			IPath location = file.getLocation();
 			String filename;
 			if (location != null) {
-				filename = location.toString();
+				filename = location.lastSegment();
 			} else {
 				filename = file.getName();
 			}

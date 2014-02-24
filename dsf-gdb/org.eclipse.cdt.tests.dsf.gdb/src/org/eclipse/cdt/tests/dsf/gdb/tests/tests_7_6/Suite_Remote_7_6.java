@@ -24,7 +24,7 @@ import org.junit.runners.Suite;
  * want to run.  When creating a new test class, it should be
  * added to the list below.
  * 
- *  This suite is for tests to be run with GDB 7.6
+ * This suite is for tests to be run with GDB 7_6
  */
 
 @RunWith(Suite.class)
@@ -51,7 +51,7 @@ import org.junit.runners.Suite;
 	TraceFileTest_7_6.class,
 	GDBConsoleSynchronizingTest_7_6.class,
 	StepIntoSelectionTest_7_6.class,
-	StepIntoSelectionTest_7_6_NS.class,
+	StepIntoSelectionNonStopTest_7_6.class,
 	/* Add your test class here */
 })
 

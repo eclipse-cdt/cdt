@@ -8,14 +8,14 @@
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
  *******************************************************************************/
-package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_5;
+package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_1;
 
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class StepIntoSelectionTest_7_5_NS extends StepIntoSelectionTest_7_5 {
+public class StepIntoSelectionNonStopTest_7_1 extends StepIntoSelectionTest_7_1 {
     @Override
 	protected void setLaunchAttributes() {
 		super.setLaunchAttributes();

@@ -49,7 +49,7 @@ import org.junit.runners.Suite;
 	Suite_Sessionless_Tests.class,
 	GDBConsoleBreakpointsTest_7_5.class,
 	StepIntoSelectionTest_7_5.class,
-	StepIntoSelectionTest_7_5_NS.class,
+	StepIntoSelectionNonStopTest_7_5.class,
 	/* Add your test class here */
 })
 

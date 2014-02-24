@@ -1,0 +1,9 @@
+Code-Review-1: Hudson CI
+Code-Review+2: Andrew Gvozdev <angvoz.dev@gmail.com>
+IP-Clean+1: Andrew Gvozdev <angvoz.dev@gmail.com>
+Verified+1: Andrew Gvozdev <angvoz.dev@gmail.com>
+Submitted-by: Andrew Gvozdev <angvoz.dev@gmail.com>
+Submitted-at: Mon, 24 Feb 2014 06:52:00 -0500
+Reviewed-on: https://git.eclipse.org/r/22362
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

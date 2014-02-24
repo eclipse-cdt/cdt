@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Ericsson and others.
+ * Copyright (c) 2009, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_3.Suite_Remote_7_3;
 import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_4.Suite_Remote_7_4;
 import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_5.Suite_Remote_7_5;
 import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_6.Suite_Remote_7_6;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_7.Suite_Remote_7_7;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -34,6 +35,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+	Suite_Remote_7_7.class,
 	Suite_Remote_7_6.class,
 	Suite_Remote_7_5.class,
 	Suite_Remote_7_4.class,

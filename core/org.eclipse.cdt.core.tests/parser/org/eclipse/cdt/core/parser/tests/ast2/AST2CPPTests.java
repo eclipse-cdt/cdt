@@ -96,6 +96,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -6933,6 +6934,23 @@ public class AST2CPPTests extends AST2TestBase {
 		ba.assertNonProblem("B*", 1, ICPPVariable.class);
 
 		parseAndCheckBindings(code, CPP);
+	}
+	
+	//	typedef struct xx{} type;
+	//	void test(void* ptr) {
+	//		delete (type)(ptr);
+	//	}
+	public void testAmbiguityResolutionInDeleteExpression_428922() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
+		ba.assertNonProblem("type)", 4, ITypedef.class);
+		ba.assertNonProblem("ptr);", 3, ICPPVariable.class);
+
+		IASTTranslationUnit tu = parseAndCheckBindings(code, CPP);
+		ICPPASTFunctionDefinition test= getDeclaration(tu, 1);
+		IASTExpressionStatement stmt= getStatement(test, 0);
+		ICPPASTDeleteExpression dexpr= (ICPPASTDeleteExpression) stmt.getExpression();
+		assertTrue(dexpr.getOperand() instanceof ICPPASTCastExpression);
 	}
 
 	//	void f(int x);

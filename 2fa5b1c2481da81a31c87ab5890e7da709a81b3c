@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_640bec63",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-25T18:40:35Z",
+      "side": 1,
+      "message": "did few changes for this, \n* fetchMemoryBlock\n   o add description for count\n   o re-factored to use count instead of length\n* Similarly as above for DsfMemoryBlock\n* MIMemory#setMemory updated to validate that buffer.length is \u003c count * word_size",
+      "parentUuid": "67591f73_4cb2a2ce",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_0c770a79",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2014-02-20T18:52:25Z",
       "side": 1,
       "message": "Please another entry for this change",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_443988fa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-25T18:40:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_0c770a79",
       "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_04915058",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-25T18:40:35Z",
+      "side": 1,
+      "message": "Done, my API checks did not get this one :-(",
+      "parentUuid": "67591f73_89149e02",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_69178a05",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2014-02-20T18:52:25Z",
       "side": 1,
       "message": "4.4",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_a44d0497",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-25T18:40:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_69178a05",
       "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_84a280f5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory_7_6.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-25T18:40:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_6c75e6e9",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_696aea0c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
         "patchSetId": 1
@@ -98,6 +188,24 @@
       "writtenOn": "2014-02-20T18:52:25Z",
       "side": 1,
       "message": "I\u0027m finding these changes quite confusing.  fAddressesLength vs fOctetsLength...  Why not stick to the regular pattern of length and word_size instead of these two lengths, and do the conversion fAddessesLength \u003d fOctetsLength/word_size or maybe fOctetsLength \u003d fAddessesLength*word_size.\n\nThat should hopefully reduce the amount of changes in the below code (although I didn\u0027t try it)",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_87f0c205",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 575,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-25T18:40:35Z",
+      "side": 1,
+      "message": "The constructor receives the two types of length since one of the callers don\u0027t have a direct access to the word_size. see. \"compact(int)\", however the two lengths are available as the combination of memory blocks requires it.\n   I agree with the change of names, so I re-factored the the two fields as well as the callers of the constructor to reflect LengthInOctets and LengthInAddressableUnits",
+      "parentUuid": "67591f73_696aea0c",
       "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_e751be5c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-25T18:40:35Z",
+      "side": 1,
+      "message": "Done, Thanks for the tip",
+      "parentUuid": "67591f73_f11a7172",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_2920f24a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIDataReadMemoryBytes.java",
         "patchSetId": 1
@@ -132,6 +258,24 @@
       "writtenOn": "2014-02-20T18:52:25Z",
       "side": 1,
       "message": "Can you put comments here explaining that both offset and num_bytes are in addressable bytes and not necessarily octets?  Also put that in the class javadoc above.",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_aa0aed2a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIDataReadMemoryBytes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-25T18:40:35Z",
+      "side": 1,
+      "message": "Re-named num_bytes to count and explained count to be in addressable units. \nI did a similar rename to count in MIDataReadMemoryBytesInfo",
+      "parentUuid": "67591f73_2920f24a",
       "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_4a8cf189",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/DsfMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 608,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-25T18:40:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_d1dc8d94",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_f1e55151",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/DsfMemoryBlock.java",
         "patchSetId": 1
@@ -166,6 +328,24 @@
       "writtenOn": "2014-02-20T18:52:25Z",
       "side": 1,
       "message": "Also surround with try/catch or should we always let the debug exception be thrown?  I\u0027m not sure.  What do you think?",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_aa602db0",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/DsfMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-25T18:40:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_f1e55151",
       "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_8a6d692a",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/DsfMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 666,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-25T18:40:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_ac737e8b",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_51d07d70",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/DsfMemoryBlock.java",
         "patchSetId": 1
@@ -200,6 +398,24 @@
       "writtenOn": "2014-02-20T18:52:25Z",
       "side": 1,
       "message": "I don\u0027t think we should use fWordSize directly.  We should use getAddressableSize() as you have done elsewhere in case it gets overridden.",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_4ae87129",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/DsfMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 720,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-25T18:40:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_51d07d70",
       "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_aabe6d19",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 910,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-25T18:40:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_44cc2bae",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_e4c0df73",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
         "patchSetId": 1
@@ -234,6 +468,24 @@
       "writtenOn": "2014-02-20T18:52:25Z",
       "side": 1,
       "message": "Copyright",
+      "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_6a873567",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1609,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-25T18:40:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_e4c0df73",
       "revId": "2fa5b1c2481da81a31c87ab5890e7da709a81b3c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

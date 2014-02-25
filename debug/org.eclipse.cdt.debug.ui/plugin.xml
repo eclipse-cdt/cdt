@@ -360,6 +360,13 @@
             </command>
        </menuContribution>
        <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.ExpressionView?after=additions">
+            <command
+            	commandId="org.eclipse.cdt.debug.ui.commands.viewMemory"
+            	label="%command.viewMemory.name">
+            </command>
+       </menuContribution>
+       <menuContribution
             locationURI="popup:org.eclipse.debug.ui.RegisterView?after=variableGroup">
             <menu 
                  id="org.eclipse.cdt.debug.ui.registerView_CVariableFormatMenu" 

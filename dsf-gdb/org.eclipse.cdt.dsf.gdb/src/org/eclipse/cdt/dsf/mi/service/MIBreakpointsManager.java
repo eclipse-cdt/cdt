@@ -658,7 +658,14 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
                     @Override
                     protected void handleError() {
-                    	String description = MessageFormat.format(Messages.Breakpoint_attribute_problem, new Object[] { Messages.Breakpoint_installation_failed });
+                    	String detailedMessage;
+                    	if (getStatus().getException() != null &&
+                    			getStatus().getException().getMessage() != null) {
+                    		detailedMessage = getStatus().getException().getMessage();
+                    	} else {
+                    		detailedMessage = getStatus().getMessage();
+                    	}
+                    	String description = MessageFormat.format(Messages.Breakpoint_attribute_detailed_problem, new Object[] { Messages.Breakpoint_installation_failed, detailedMessage});
                         addBreakpointProblemMarker(breakpoint, description, IMarker.SEVERITY_WARNING);
                         installRM.done();
                     }

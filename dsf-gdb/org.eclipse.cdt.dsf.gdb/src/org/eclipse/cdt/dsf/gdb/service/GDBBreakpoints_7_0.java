@@ -170,7 +170,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 
     						@Override
     						protected void handleError() {
-    							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
+    							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, getStatus().getException()));
     							rm.done();
     						}
     					});

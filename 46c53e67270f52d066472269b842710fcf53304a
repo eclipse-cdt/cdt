@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_fe22e7a9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory_7_6.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-25T21:16:43Z",
+      "side": 1,
+      "message": "Darn, the original code was broken even for addressableSize\u003d\u003d1.\n\nThanks for fixing!",
+      "revId": "46c53e67270f52d066472269b842710fcf53304a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_13ab54e2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-25T21:16:43Z",
+      "side": 1,
+      "message": "I think we have a count issue here.  Unlike other places, this count is something completely different.  I think the \u0027count*length\u0027 param should be \u0027count*length/word_size\u0027 probably checking if +1 is needed.  What do you think?\n\nNote that this method does not seem to be called outside the tests, which would explain why it wasn\u0027t noticed before.",
+      "revId": "46c53e67270f52d066472269b842710fcf53304a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_f3818053",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 931,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-25T21:16:43Z",
+      "side": 1,
+      "message": "Should we check for the need of a +1 if block.length/word_size has a remainder?",
+      "revId": "46c53e67270f52d066472269b842710fcf53304a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_fe05c74f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-25T21:16:43Z",
+      "side": 1,
+      "message": "I think \u0027num_bytes\u0027 is wrong now, right?  This is in addressable units for both lines above.  I suggest \u0027word_size\u0027.  All this may seem superficial but in about a month we\u0027ll forget about this change and we won\u0027t remember what the parameter was meant to be.",
+      "revId": "46c53e67270f52d066472269b842710fcf53304a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

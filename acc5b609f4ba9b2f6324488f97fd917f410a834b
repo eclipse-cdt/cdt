@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_c74e3abe",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-02-25T15:33:39Z",
+      "side": 1,
+      "message": "Exception message contains backend message extracted from GDB-MI error reply. See org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl.RxThread.processMIOutput(String)",
+      "revId": "acc5b609f4ba9b2f6324488f97fd917f410a834b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_2aaffdce",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 664,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-02-25T15:33:39Z",
+      "side": 1,
+      "message": "If there\u0027s an exception in the error status, use it.",
+      "revId": "acc5b609f4ba9b2f6324488f97fd917f410a834b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

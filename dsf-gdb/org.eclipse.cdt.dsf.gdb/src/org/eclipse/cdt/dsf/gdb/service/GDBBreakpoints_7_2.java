@@ -250,7 +250,7 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 
 					@Override
 					protected void handleError() {
-						drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
+						drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, getStatus().getException()));
 						drm.done();
 					}
 				});

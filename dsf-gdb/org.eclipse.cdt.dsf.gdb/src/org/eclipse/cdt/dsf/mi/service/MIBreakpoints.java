@@ -688,7 +688,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 
 							@Override
 							protected void handleError() {
-								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
+    							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, getStatus().getException()));
 								rm.done();
 							}
 						});
@@ -783,7 +783,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 
 				@Override
 	            protected void handleError() {
-               		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, WATCHPOINT_INSERTION_FAILURE, null));
+					drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, WATCHPOINT_INSERTION_FAILURE, getStatus().getException()));
                		drm.done();
 				}
 			};
@@ -858,7 +858,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 
 							@Override
 							protected void handleError() {
-								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, CATCHPOINT_INSERTION_FAILURE, null));
+    							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, CATCHPOINT_INSERTION_FAILURE, getStatus().getException()));
 								rm.done();
 							}
 						});

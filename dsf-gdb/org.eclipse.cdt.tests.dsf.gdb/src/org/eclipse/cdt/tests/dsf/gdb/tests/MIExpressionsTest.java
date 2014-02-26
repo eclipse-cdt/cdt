@@ -4021,7 +4021,7 @@ public class MIExpressionsTest extends BaseTestCase {
     	assertEquals(3, result.length);  // Two variables and one return value
 
     	// Return value
-    	assertEquals("$1", result[0].getName());
+    	assertEquals("$2", result[0].getName());
     	assertEquals("6", result[0].getValue());
     	// first variable
     	assertEquals("a",  result[1].getName());
@@ -4031,7 +4031,7 @@ public class MIExpressionsTest extends BaseTestCase {
     	assertEquals("false", result[2].getValue());
     	
     	// Now check how the return value will be displayed to the user
-    	final IExpressionDMContext returnExprDmc = SyncUtil.createExpression(frameDmc, "$1");
+    	final IExpressionDMContext returnExprDmc = SyncUtil.createExpression(frameDmc, "$2");
 		Query<IExpressionDMData> query = new Query<IExpressionDMData>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IExpressionDMData> rm) {
@@ -4071,7 +4071,7 @@ public class MIExpressionsTest extends BaseTestCase {
     	assertEquals(3, result.length);  // Two variables and one return value
 
     	// Return value
-    	assertEquals("$1", result[0].getName());
+    	assertEquals("$2", result[0].getName());
 
     	// first variable
     	assertEquals("a",  result[1].getName());
@@ -4081,7 +4081,7 @@ public class MIExpressionsTest extends BaseTestCase {
     	assertEquals("false", result[2].getValue());
 
     	// Now check how the return value will be displayed to the user
-    	final IExpressionDMContext returnExprDmc = SyncUtil.createExpression(frameDmc, "$1");
+    	final IExpressionDMContext returnExprDmc = SyncUtil.createExpression(frameDmc, "$2");
     	Query<IExpressionDMData> query = new Query<IExpressionDMData>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IExpressionDMData> rm) {

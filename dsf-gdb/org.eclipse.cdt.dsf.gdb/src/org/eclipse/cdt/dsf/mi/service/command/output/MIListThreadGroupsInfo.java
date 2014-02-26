@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - Initial API and implementation
+ *     Xavier Raynaud, Kalray - MIThread can be overridden (Bug 429124)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -194,7 +195,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
 	}
 	
 	@Immutable
-	private static class ThreadGroupInfo implements IThreadGroupInfo2 {
+	protected static class ThreadGroupInfo implements IThreadGroupInfo2 {
 		final String fGroupId;
 		final String fDescription;
 		final String fName;
@@ -221,7 +222,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
 			fThreadList = threads;
 		}
 		
-		private static String parseName(String desc) {
+		protected String parseName(String desc) {
 			String name = ""; //$NON-NLS-1$
 
 			// Find the string "name: " followed by the smallest set of characters that
@@ -298,7 +299,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
 	public IThreadGroupInfo[] getGroupList() { return fGroupList; }
 	public MIThreadInfoInfo getThreadInfo() { return fThreadInfo; }
 	
-	private void parse() {
+	protected void parse() {
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIResultRecord rr = out.getMIResultRecord();
@@ -326,7 +327,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		}
 	}
 
-	private void parseGroups(MIList list) {
+	protected void parseGroups(MIList list) {
 		MIValue[] values = list.getMIValues();
 		fGroupList = new IThreadGroupInfo[values.length];
 		for (int i = 0; i < values.length; i++) {
@@ -384,10 +385,9 @@ public class MIListThreadGroupsInfo extends MIInfo {
 					}
 				} else if (var.equals("threads")) { //$NON-NLS-1$
 					// Staring with GDB 7.1
-					// Re-use the MIThreadInfoInfo parsing
 					MIValue value = result.getMIValue();
 					if (value instanceof MIList) {
-						threads = MIThreadInfoInfo.parseThreads(((MIList)value));
+						threads = parseThreads(((MIList)value));
 					}
 				}
 			}
@@ -402,8 +402,13 @@ public class MIListThreadGroupsInfo extends MIInfo {
 			fGroupList[i] = new ThreadGroupInfo(id, desc, type, pid, user, cores, exec, threads);
 		}
 	}
+
+	// Re-use the MIThreadInfoInfo parsing
+	protected MIThread[] parseThreads(MIList value) {
+		return MIThreadInfoInfo.parseThreads(value);
+	}
 	
-	private String[] parseCores(MIList list) {
+	protected String[] parseCores(MIList list) {
 		List<String> cores = new ArrayList<String>();
 		
 		MIValue[] values = list.getMIValues();

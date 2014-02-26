@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Ericsson and others.
+ * Copyright (c) 2008, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Ericsson - Initial API and implementation
  *     Wind River Systems - refactored to match pattern in package
  *     John Dallaway - GDB 7.x getOsId() pattern match too restrictive (Bug 325552)
+ *     Xavier Raynaud (Kalray) - MIThread can be overridden (Bug 429124)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
@@ -39,8 +40,9 @@ public class MIThread {
 	final private String       fState;
 	final private String       fCore;
 	
-	private MIThread(String threadId, String targetId, String osId, String parentId,
-			          MIFrame topFrame, String details, String state, String core) {
+	/** @since 4.4 */
+	protected MIThread(String threadId, String targetId, String osId, String parentId,
+			           MIFrame topFrame, String details, String state, String core) {
 		fThreadId  = threadId;
 		fTargetId  = targetId;
 		fOsId      = osId;

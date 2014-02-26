@@ -15,11 +15,12 @@ package org.eclipse.cdt.dsf.gdb.internal.memory;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlock;
 import org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlock;
@@ -58,7 +59,7 @@ import org.w3c.dom.NodeList;
 public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 		IMemorySpaceAwareMemoryBlockRetrieval {
 
-    private final ServiceTracker  fMemorySpaceServiceTracker;
+    private final ServiceTracker<IMemorySpaces, IMemorySpaces>  fMemorySpaceServiceTracker;
 
 	// No need to use the constants in our base class. Serializing and
 	// recreating the blocks is done entirely by us
@@ -85,7 +86,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 		// Create a tracker for the memory spaces service
  		String filter = DsfServices.createServiceFilter(IMemorySpaces.class, session.getId());
  		try {
-			fMemorySpaceServiceTracker = new ServiceTracker(
+			fMemorySpaceServiceTracker = new ServiceTracker<>(
 					bundle,	bundle.createFilter(filter), null);
 		} catch (InvalidSyntaxException e) {
 			throw new DebugException(new Status(IStatus.ERROR,
@@ -193,18 +194,19 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	 */
 	@Override
 	public void getMemorySpaces(final Object context, final GetMemorySpacesRequest request) {
-		Query<String[]> query = new Query<String[]>() {
+        try {
+        	getExecutor().execute(new DsfRunnable() {
 			@Override
-			protected void execute(final DataRequestMonitor<String[]> drm) {
+			public void run() {
 		        IDMContext dmc = null;
 		        if (context instanceof IAdaptable) {
 		        	dmc = (IDMContext)((IAdaptable)context).getAdapter(IDMContext.class);
 		            if (dmc != null) {
-		        		IMemorySpaces service = (IMemorySpaces)fMemorySpaceServiceTracker.getService();
+		        		IMemorySpaces service = fMemorySpaceServiceTracker.getService();
 		                if (service != null) {
 		        			service.getMemorySpaces(
 		        				dmc, 
-		        				new DataRequestMonitor<String[]>(getExecutor(), drm) {
+		        				new DataRequestMonitor<String[]>(getExecutor(), null) {
 			            			@Override
 			            			protected void handleCompleted() {
 			            				// Store the result
@@ -215,20 +217,22 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 			            					request.setStatus(getStatus());
 			            				}
 		            					request.done();
-			            				drm.done(); // don't bother with status; we don't check it below
 			            			}
 		        				});
-		                }
-		                else {
-		                	request.setStatus(new Status(IStatus.ERROR,	GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, Messages.Err_MemoryServiceNotAvailable, null));
-		                	request.done();
-            				drm.done();		                	
+		        			return;
 		                }
 		            }
 		        }
+		        
+		        // If we get here, something didn't work as expected
+		        request.setStatus(new Status(IStatus.ERROR,	GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Unable to get memory spaces", null)); //$NON-NLS-1$
+                request.done();
 			}
-		};
-		getExecutor().execute(query);
+		});
+        } catch (RejectedExecutionException e) {
+	        request.setStatus(new Status(IStatus.ERROR,	GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Unable to get memory spaces", null)); //$NON-NLS-1$
+        	request.done();
+        }
 	}
 	
 	/* (non-Javadoc)
@@ -237,7 +241,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	@Override
 	public String encodeAddress(String expression, String memorySpaceID) {
 		String result = null;
-    	IMemorySpaces service = (IMemorySpaces)fMemorySpaceServiceTracker.getService();
+    	IMemorySpaces service = fMemorySpaceServiceTracker.getService();
         if (service != null) {
         	// the service can tell us to use our default encoding by returning null
 			result = service.encodeAddress(expression, memorySpaceID);
@@ -254,7 +258,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	 */
 	@Override
 	public DecodeResult decodeAddress(String str) throws CoreException {
-    	IMemorySpaces service = (IMemorySpaces)fMemorySpaceServiceTracker.getService();
+    	IMemorySpaces service = fMemorySpaceServiceTracker.getService();
     	if (service != null) {
     		final IMemorySpaces.DecodeResult result = service.decodeAddress(str);
     		if (result != null) {	// service can return null to tell use to use default decoding 
@@ -284,7 +288,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
  
 	}
 
-	ServiceTracker getMemorySpaceServiceTracker() {
+	ServiceTracker<IMemorySpaces, IMemorySpaces> getMemorySpaceServiceTracker() {
 		return fMemorySpaceServiceTracker;
 	}
 	
@@ -380,7 +384,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	 */
 	@Override
 	public boolean creatingBlockRequiresMemorySpaceID() {
-		IMemorySpaces service = (IMemorySpaces)fMemorySpaceServiceTracker.getService();
+		IMemorySpaces service = fMemorySpaceServiceTracker.getService();
         if (service != null) {
         	return service.creatingBlockRequiresMemorySpaceID();
         }
@@ -402,7 +406,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	private IMemoryDMContext resolveMemSpaceContext(IMemoryDMContext aContext, String aMemorySpaceID) {
 		IMemoryDMContext context = aContext;
 		if (aMemorySpaceID != null && aMemorySpaceID.length() > 0) {
-			IMemorySpaces memorySpacesService = (IMemorySpaces) getMemorySpaceServiceTracker().getService();
+			IMemorySpaces memorySpacesService = getMemorySpaceServiceTracker().getService();
 			if (memorySpacesService != null) {
 				context = new MemorySpaceDMContext(memorySpacesService.getSession().getId(), aMemorySpaceID, aContext);
 			}

@@ -96,7 +96,7 @@ public class GDBMemory_7_6 extends GDBMemory_7_0 implements IEventListener {
 					if ("memory-changed".equals(asyncClass)) { //$NON-NLS-1$
 	    				String groupId = null;
 	    				String addr = null;
-	    				int length = 0;
+	    				int count = 0;
 
 		   				MIResult[] results = notifyOutput.getMIResults();
 	    				for (int i = 0; i < results.length; i++) {
@@ -114,10 +114,11 @@ public class GDBMemory_7_6 extends GDBMemory_7_0 implements IEventListener {
 	    						if (val instanceof MIConst) {
 	    							try {
 	    								String lenStr = ((MIConst)val).getString().trim();
+	    								// count is expected in addressable units
 	    								if (lenStr.startsWith("0x")) { //$NON-NLS-1$
-	    									length = Integer.parseInt(lenStr.substring(2), 16);	    									
+	    									count = Integer.parseInt(lenStr.substring(2), 16);	    									
 	    								} else {
-	    									length = Integer.parseInt(lenStr);
+	    									count = Integer.parseInt(lenStr);
 	    								}
 	    			                } catch (NumberFormatException e) {
 	    			                	assert false;
@@ -132,7 +133,7 @@ public class GDBMemory_7_6 extends GDBMemory_7_0 implements IEventListener {
 	    				}
 	    				
 	    		    	IMIProcesses procService = getServicesTracker().getService(IMIProcesses.class);
-	    		    	if (procService != null && groupId != null && addr != null && length > 0) {
+	    		    	if (procService != null && groupId != null && addr != null && count > 0) {
 	    		    		IContainerDMContext containerDmc = 
 	    		    				procService.createContainerContextFromGroupId(fConnection.getContext(), groupId);
 	    		    		
@@ -140,9 +141,6 @@ public class GDBMemory_7_6 extends GDBMemory_7_0 implements IEventListener {
 	    		    		// it send the potential IMemoryChangedEvent as we will send it ourselves (see below).
 	    		    		final IMemoryDMContext memoryDMC = DMContexts.getAncestorOfType(containerDmc, IMemoryDMContext.class);
 	    		    		final IAddress address = new Addr64(addr);
-	    		    		// The length returned by GDB is in bytes, while the memory cache expects
-	    		    		// a count of number of addresses of 8 bytes.
-	    		    		int count = length/8 + 1;
 	    		    		getMemoryCache(memoryDMC).refreshMemory(memoryDMC, address, 0, 1, count, false,
 	    		    				new RequestMonitor(getExecutor(), null) {
 	    		    			@Override

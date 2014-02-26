@@ -81,8 +81,8 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	private final DsfSession       fSession;
     private final DsfExecutor      fExecutor;
     private final String           fContextString;
-    private final ServiceTracker   fMemoryServiceTracker;
-    private final ServiceTracker   fExpressionServiceTracker;
+    private final ServiceTracker<IMemory, IMemory>   fMemoryServiceTracker;
+    private final ServiceTracker<IExpressions, IExpressions>   fExpressionServiceTracker;
 
     private final ILaunchConfiguration fLaunchConfig;
 	private final ILaunch          fLaunch;
@@ -129,7 +129,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
  		String memoryServiceFilter = DsfServices.createServiceFilter(IMemory.class, session.getId());
 
  		try {
-			fMemoryServiceTracker = new ServiceTracker(
+			fMemoryServiceTracker = new ServiceTracker<>(
 					bundle,	bundle.createFilter(memoryServiceFilter), null);
 		} catch (InvalidSyntaxException e) {
 			throw new DebugException(new Status(IStatus.ERROR,
@@ -148,7 +148,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 				")"; //$NON-NLS-1$
 
 		try {
-			fExpressionServiceTracker = new ServiceTracker(
+			fExpressionServiceTracker = new ServiceTracker<>(
 					bundle, bundle.createFilter(expressionServiceFilter), null);
 		} catch (InvalidSyntaxException e) {
 			throw new DebugException(new Status(IStatus.ERROR,
@@ -328,7 +328,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 		return fExecutor;
 	}
 
-	public ServiceTracker getServiceTracker() {
+	public ServiceTracker<IMemory, IMemory> getServiceTracker() {
 		return fMemoryServiceTracker;
 	}
 
@@ -485,7 +485,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 			@Override
 			protected void execute(final DataRequestMonitor<BigInteger> drm) {
 				// Lookup for the ExpressionService
-				final IExpressions expressionService = (IExpressions) fExpressionServiceTracker.getService();
+				final IExpressions expressionService = fExpressionServiceTracker.getService();
 				if (expressionService != null) {
 					// Create the expression
 					final IExpressionDMContext expressionDMC = expressionService.createExpression(dmc, expression);

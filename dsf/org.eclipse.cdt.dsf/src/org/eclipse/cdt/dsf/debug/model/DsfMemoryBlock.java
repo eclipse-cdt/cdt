@@ -621,7 +621,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
         Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
 			@Override
 			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {
-			    IMemory memoryService = (IMemory) fRetrieval.getServiceTracker().getService();
+			    IMemory memoryService = fRetrieval.getServiceTracker().getService();
 			    if (memoryService != null) {
 			        // Go for it
 			        memoryService.getMemory( 
@@ -677,7 +677,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
         Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
 			@Override
 			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {
-			    IMemory memoryService = (IMemory) fRetrieval.getServiceTracker().getService();
+			    IMemory memoryService = fRetrieval.getServiceTracker().getService();
 			    if (memoryService != null) {
 			        // Go for it
 	    	        memoryService.setMemory(

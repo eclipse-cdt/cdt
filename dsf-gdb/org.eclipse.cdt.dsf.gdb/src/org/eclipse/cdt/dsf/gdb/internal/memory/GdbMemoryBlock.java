@@ -142,7 +142,7 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 				// we need to create an enhanced context
 				IMemoryDMContext context = null;
 				if (fMemorySpaceID != null) {
-				    IMemorySpaces memoryService = (IMemorySpaces) retrieval.getMemorySpaceServiceTracker().getService();
+				    IMemorySpaces memoryService = retrieval.getMemorySpaceServiceTracker().getService();
 				    if (memoryService != null) {
 						context = new MemorySpaceDMContext(memoryService.getSession().getId(), fMemorySpaceID, getContext());
 				    }
@@ -156,7 +156,7 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 					 context = getContext();
 				}
 						
-			    IMemory memoryService = (IMemory) retrieval.getServiceTracker().getService();
+			    IMemory memoryService = retrieval.getServiceTracker().getService();
 			    if (memoryService != null) {
 			        // Go for it
 			        memoryService.getMemory( 
@@ -217,7 +217,7 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 				// we need to create an enhanced context
 				IMemoryDMContext context = null;
 				if (fMemorySpaceID != null) {
-				    IMemorySpaces memoryService = (IMemorySpaces) retrieval.getMemorySpaceServiceTracker().getService();
+				    IMemorySpaces memoryService = retrieval.getMemorySpaceServiceTracker().getService();
 				    if (memoryService != null) {
 						context = new MemorySpaceDMContext(memoryService.getSession().getId(), fMemorySpaceID, getContext());
 				    }
@@ -230,7 +230,7 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 				else {
 					 context = getContext();
 				}
-			    IMemory memoryService = (IMemory) retrieval.getServiceTracker().getService();
+			    IMemory memoryService = retrieval.getServiceTracker().getService();
 			    if (memoryService != null) {
 			        // Go for it
 	    	        memoryService.setMemory(
@@ -285,7 +285,7 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 		GdbMemoryBlockRetrieval retrieval = (GdbMemoryBlockRetrieval)getMemoryBlockRetrieval();
 		IMemoryDMContext context = null;
 		if (fMemorySpaceID != null) {
-			IMemorySpaces memorySpacesService = (IMemorySpaces) retrieval.getMemorySpaceServiceTracker().getService();
+			IMemorySpaces memorySpacesService = retrieval.getMemorySpaceServiceTracker().getService();
 			if (memorySpacesService != null) {
 				context = new MemorySpaceDMContext(memorySpacesService.getSession().getId(), fMemorySpaceID, getContext());
 			}

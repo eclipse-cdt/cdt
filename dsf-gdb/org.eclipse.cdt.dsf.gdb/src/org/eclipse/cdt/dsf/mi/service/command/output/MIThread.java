@@ -9,6 +9,7 @@
  *     Ericsson - Initial API and implementation
  *     Wind River Systems - refactored to match pattern in package
  *     John Dallaway - GDB 7.x getOsId() pattern match too restrictive (Bug 325552)
+ *     Xavier Raynaud, Kalray - MIThread can be overridden (Bug 429124)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
@@ -39,7 +40,7 @@ public class MIThread {
 	final private String       fState;
 	final private String       fCore;
 	
-	private MIThread(String threadId, String targetId, String osId, String parentId,
+	protected MIThread(String threadId, String targetId, String osId, String parentId,
 			          MIFrame topFrame, String details, String state, String core) {
 		fThreadId  = threadId;
 		fTargetId  = targetId;

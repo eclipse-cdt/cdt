@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - Initial API and implementation
  *     Wind River Systems - refactored to match pattern in package
+ *     Xavier Raynaud, Kalray - MIThread can be overridden (Bug 429124)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
@@ -106,7 +107,7 @@ public class MIThreadInfoInfo extends MIInfo {
 
 	// General format:
 	//		threads=[{...}],current-thread-id="n"
-	private void parse() {
+	protected void parse() {
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIResultRecord rr = out.getMIResultRecord();
@@ -138,7 +139,7 @@ public class MIThreadInfoInfo extends MIInfo {
 	//		id="n",target-id="Thread 0xb7c8ab90 (LWP 7010)",frame={...},state="stopped"
 	//		id="n",target-id="Thread 0xb7c8eb90 (LWP 7807)",state="running"
 	//      id="n",target-id="Thread 162.32942",details="...",frame={...},state="stopped"
-	static MIThread[] parseThreads(MIList list) {
+	protected MIThread[] parseThreads(MIList list) {
 		MIValue[] values = list.getMIValues();
 		MIThread[] threadList = new MIThread[values.length];
 		

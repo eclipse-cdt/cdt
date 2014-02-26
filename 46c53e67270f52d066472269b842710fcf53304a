@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_d0b9c766",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory_7_6.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-26T14:34:24Z",
+      "side": 1,
+      "message": "Yeah It was surprising.",
+      "parentUuid": "67591f73_fe22e7a9",
+      "revId": "46c53e67270f52d066472269b842710fcf53304a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_13ab54e2",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2014-02-25T21:16:43Z",
       "side": 1,
       "message": "I think we have a count issue here.  Unlike other places, this count is something completely different.  I think the \u0027count*length\u0027 param should be \u0027count*length/word_size\u0027 probably checking if +1 is needed.  What do you think?\n\nNote that this method does not seem to be called outside the tests, which would explain why it wasn\u0027t noticed before.",
+      "revId": "46c53e67270f52d066472269b842710fcf53304a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_225396b4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-26T14:34:24Z",
+      "side": 1,
+      "message": "Good find !\nYes calling setMemory should go with addressable units and therefore is missing a division by word_size as you have mentioned. \n\nAnd as you have noted we need to consider a pattern which after multiplying with count is not divisible by word_size, \n  So we can detect it using the modulo operator and if not divisible we add one to the word_count and let setMemory do the padding of an extra octet as per its current implementation.",
+      "parentUuid": "67591f73_13ab54e2",
       "revId": "46c53e67270f52d066472269b842710fcf53304a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_e5efe8ee",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 931,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-26T14:34:24Z",
+      "side": 1,
+      "message": "Since the actual read requested addressable units the resulting block of bytes is expected to be divisible by word_size but if it\u0027s not it\u0027s better to truncate the additional octet than create a new word with some padding which will not reflect the actual content in memory.\n\nDo you agree ?",
+      "parentUuid": "67591f73_f3818053",
+      "revId": "46c53e67270f52d066472269b842710fcf53304a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_fe05c74f",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2014-02-25T21:16:43Z",
       "side": 1,
       "message": "I think \u0027num_bytes\u0027 is wrong now, right?  This is in addressable units for both lines above.  I suggest \u0027word_size\u0027.  All this may seem superficial but in about a month we\u0027ll forget about this change and we won\u0027t remember what the parameter was meant to be.",
+      "revId": "46c53e67270f52d066472269b842710fcf53304a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_05993c86",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-26T14:34:24Z",
+      "side": 1,
+      "message": "Done, \nI am sure you meant \u0027word_count\u0027",
+      "parentUuid": "67591f73_fe05c74f",
       "revId": "46c53e67270f52d066472269b842710fcf53304a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

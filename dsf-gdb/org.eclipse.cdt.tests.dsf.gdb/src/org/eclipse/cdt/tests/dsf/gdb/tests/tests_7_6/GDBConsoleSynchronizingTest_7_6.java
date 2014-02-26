@@ -62,6 +62,9 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
 
 	final static private int DEFAULT_TIMEOUT = 1000;
 	final static private TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
+	final static private String NEW_VAR_VALUE = "0x12345678";
+	final static private int NEW_VAR_SIZE = 4; // The number of bytes of NEW_VAR_VALUE
+	final static private byte[] NEW_MEM = { 0x12, 0x34, 0x56, 0x78 }; // The individual bytes of NEW_VAR_VALUE
 
 	private DsfSession fSession;
 	private DsfServicesTracker fServicesTracker;
@@ -157,11 +160,11 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
 		IExpressionDMAddress data = query.get();
 		
         IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
-        readMemory(memoryDmc, data.getAddress(), 1);
+        readMemory(memoryDmc, data.getAddress(), NEW_VAR_SIZE);
         
         fEventsReceived.clear();
         
-        final String newValue = "100";
+        String newValue = NEW_VAR_VALUE;
         queueConsoleCommand("set variable i=" + newValue);
         
         IMemoryChangedEvent memoryEvent = waitForEvent(IMemoryChangedEvent.class);
@@ -169,11 +172,18 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
         assertEquals(data.getAddress(), memoryEvent.getAddresses()[0]);
 
         // Now verify the memory service knows the new memory value
-        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), 1);
-        assertEquals(newValue, Byte.toString(memory[0].getValue()));
+        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), NEW_VAR_SIZE);
+        assertEquals(NEW_VAR_SIZE, memory.length);
+        for (int i=0; i<NEW_VAR_SIZE; i++) {
+        	if (memory[0].isBigEndian()) {
+        		assertEquals(NEW_MEM[i], memory[i].getValue());
+        	} else {
+        		assertEquals(NEW_MEM[i], memory[NEW_VAR_SIZE-1-i].getValue());
+        	}
+        }
         
         // Now verify the expressions service knows the new value
-        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.DECIMAL_FORMAT);
+        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.HEX_FORMAT);
         assertEquals(newValue, exprValue);
 	}
 
@@ -202,7 +212,7 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
 		
         fEventsReceived.clear();
 
-        final String newValue = "100";
+        final String newValue = NEW_VAR_VALUE;
         queueConsoleCommand("set variable i=" + newValue);
         
         IMemoryChangedEvent memoryEvent = waitForEvent(IMemoryChangedEvent.class);
@@ -211,11 +221,18 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
 
         // Now verify the memory service knows the new memory value
         IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
-        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), 1);
-        assertEquals(newValue, Byte.toString(memory[0].getValue()));
+        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), NEW_VAR_SIZE);
+        assertEquals(NEW_VAR_SIZE, memory.length);
+        for (int i=0; i<NEW_VAR_SIZE; i++) {
+        	if (memory[0].isBigEndian()) {
+        		assertEquals(NEW_MEM[i], memory[i].getValue());
+        	} else {
+        		assertEquals(NEW_MEM[i], memory[NEW_VAR_SIZE-1-i].getValue());
+        	}
+        }
 
         // Now verify the expressions service knows the new value
-        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.DECIMAL_FORMAT);
+        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.HEX_FORMAT);
         assertEquals(newValue, exprValue);
 	}
 
@@ -244,7 +261,7 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
 
 		fEventsReceived.clear();
 		
-        final String newValue = "100";
+        final String newValue = NEW_VAR_VALUE;
         queueConsoleCommand("print i=" + newValue);
         
         IMemoryChangedEvent memoryEvent = waitForEvent(IMemoryChangedEvent.class);
@@ -253,11 +270,18 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
         
         // Now verify the memory service knows the new memory value
         IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
-        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), 1);
-        assertEquals(newValue, Byte.toString(memory[0].getValue()));
+        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), NEW_VAR_SIZE);
+        assertEquals(NEW_VAR_SIZE, memory.length);
+        for (int i=0; i<NEW_VAR_SIZE; i++) {
+        	if (memory[0].isBigEndian()) {
+        		assertEquals(NEW_MEM[i], memory[i].getValue());
+        	} else {
+        		assertEquals(NEW_MEM[i], memory[NEW_VAR_SIZE-1-i].getValue());
+        	}
+        }
 
         // Now verify the expressions service knows the new value
-        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.DECIMAL_FORMAT);
+        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.HEX_FORMAT);
         assertEquals(newValue, exprValue);
 	}
 
@@ -285,7 +309,7 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
 		
         fEventsReceived.clear();
 
-        final String newValue = "100";
+        final String newValue = NEW_VAR_VALUE;
         queueConsoleCommand("set {int}&i=" + newValue);
 
         IMemoryChangedEvent memoryEvent = waitForEvent(IMemoryChangedEvent.class);
@@ -294,11 +318,18 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
         
         // Now verify the memory service knows the new memory value
         IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
-        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), 1);
-        assertEquals(newValue, Byte.toString(memory[0].getValue()));
+        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), NEW_VAR_SIZE);
+        assertEquals(NEW_VAR_SIZE, memory.length);
+        for (int i=0; i<NEW_VAR_SIZE; i++) {
+        	if (memory[0].isBigEndian()) {
+        		assertEquals(NEW_MEM[i], memory[i].getValue());
+        	} else {
+        		assertEquals(NEW_MEM[i], memory[NEW_VAR_SIZE-1-i].getValue());
+        	}
+        }
 
         // Now verify the expressions service knows the new value
-        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.DECIMAL_FORMAT);
+        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.HEX_FORMAT);
         assertEquals(newValue, exprValue);
 	}
 	

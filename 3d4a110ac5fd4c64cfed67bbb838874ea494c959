@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_f0916baa",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/comenthandler/CommentHandlingWithRewriteTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-26T13:13:42Z",
+      "side": 1,
+      "message": "Please use the same header as in Messages.java.",
+      "revId": "3d4a110ac5fd4c64cfed67bbb838874ea494c959",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_90c58fa3",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/comenthandler/CommentHandlingWithRewriteTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-26T13:13:42Z",
+      "side": 1,
+      "message": "@author is not required if added to the copyright header.",
+      "revId": "3d4a110ac5fd4c64cfed67bbb838874ea494c959",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_b0c893bb",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/comenthandler/CommentHandlingWithRewriteTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-26T13:13:42Z",
+      "side": 1,
+      "message": "Unnecessary blank line",
+      "revId": "3d4a110ac5fd4c64cfed67bbb838874ea494c959",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_50bbf729",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/comenthandler/CommentHandlingWithRewriteTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-26T13:13:42Z",
+      "side": 1,
+      "message": "Unnecessary blank line",
+      "revId": "3d4a110ac5fd4c64cfed67bbb838874ea494c959",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_d096e7a0",
+        "filename": "core/org.eclipse.cdt.core.tests/resources/rewrite/CommentHandlingWithRewriteTest.rts",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-26T13:13:42Z",
+      "side": 1,
+      "message": "Couldn\u0027t the name have blanks, that would look better:\nComment Handling Test - Rewrite with other TU node",
+      "revId": "3d4a110ac5fd4c64cfed67bbb838874ea494c959",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_308c8392",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/rewrite/ASTRewrite.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-26T13:13:42Z",
+      "side": 1,
+      "message": "Trailing blank",
+      "revId": "3d4a110ac5fd4c64cfed67bbb838874ea494c959",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_10917fa6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/commenthandler/ASTCommenter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-26T13:13:42Z",
+      "side": 1,
+      "message": "Please remove the tab on an empty line.",
+      "revId": "3d4a110ac5fd4c64cfed67bbb838874ea494c959",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_427a0a96",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/commenthandler/ASTCommenter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-26T13:13:42Z",
+      "side": 1,
+      "message": "commentArray cannot be null according to the documentation in IASTTranslationUnit (the implementation supports this assumption). Please remove the reporting of this case, as it cannot occur.",
+      "revId": "3d4a110ac5fd4c64cfed67bbb838874ea494c959",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_70a55bff",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/commenthandler/messages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-26T13:13:42Z",
+      "side": 1,
+      "message": "Please add (IFS) behind the name.",
+      "revId": "3d4a110ac5fd4c64cfed67bbb838874ea494c959",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

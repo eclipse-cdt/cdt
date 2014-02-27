@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_33b2bc31",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-02-27T14:43:39Z",
+      "side": 1,
+      "message": "Ahh !!, NIce to see Java 7 in action",
+      "revId": "0c60289362c40e8f3fdee7aafa47c98efd331e46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

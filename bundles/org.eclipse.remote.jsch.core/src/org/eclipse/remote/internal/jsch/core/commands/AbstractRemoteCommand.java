@@ -12,7 +12,9 @@
 package org.eclipse.remote.internal.jsch.core.commands;
 
 import java.io.IOException;
+import java.text.CharacterIterator;
 import java.text.MessageFormat;
+import java.text.StringCharacterIterator;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -109,6 +111,78 @@ public abstract class AbstractRemoteCommand<T> {
 		}
 	}
 
+	protected abstract class ExecCallable<T1> implements Callable<T1> {
+		private IProgressMonitor fProgressMonitor;
+		private ChannelExec fExecChannel;
+
+		private Future<T1> asyncCmdInThread() throws RemoteConnectionException {
+			setChannel(fConnection.getExecChannel());
+			return fPool.submit(this);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.util.concurrent.Callable#call()
+		 */
+		@Override
+		public abstract T1 call() throws JSchException, IOException;
+
+		private void finalizeCmdInThread() {
+			setChannel(null);
+		}
+
+		public ChannelExec getChannel() {
+			return fExecChannel;
+		}
+
+		public IProgressMonitor getProgressMonitor() {
+			return fProgressMonitor;
+		}
+
+		/**
+		 * Function opens exec channel and then executes the exec operation. If
+		 * run on the main thread it executes it on a separate thread
+		 */
+		public T1 getResult(IProgressMonitor monitor) throws RemoteConnectionException {
+			Future<T1> future = null;
+			fProgressMonitor = SubMonitor.convert(monitor, 10);
+			try {
+				future = asyncCmdInThread();
+				return waitCmdInThread(future);
+			} finally {
+				finalizeCmdInThread();
+			}
+		}
+
+		public void setChannel(ChannelExec channel) {
+			fExecChannel = channel;
+		}
+
+		private T1 waitCmdInThread(Future<T1> future) throws RemoteConnectionException {
+			boolean bInterrupted = Thread.interrupted();
+			while (!getProgressMonitor().isCanceled()) {
+				try {
+					return future.get(100, TimeUnit.MILLISECONDS);
+				} catch (InterruptedException e) {
+					bInterrupted = true;
+				} catch (TimeoutException e) {
+					// ignore
+				} catch (ExecutionException e) {
+					getChannel().disconnect();
+					throw new RemoteConnectionException(e.getMessage());
+				}
+				getProgressMonitor().worked(1);
+			}
+			if (bInterrupted) {
+				Thread.currentThread().interrupt(); // set current thread flag
+			}
+			future.cancel(true);
+			getChannel().disconnect();
+			throw new RemoteConnectionException(Messages.AbstractRemoteCommand_Operation_cancelled_by_user);
+		}
+	}
+
 	protected abstract class SftpCallable<T1> implements Callable<T1> {
 		private IProgressMonitor fProgressMonitor;
 		private ChannelSftp fSftpChannel;
@@ -170,78 +244,6 @@ public abstract class AbstractRemoteCommand<T> {
 					if (e.getCause() instanceof SftpException) {
 						throw (SftpException) e.getCause();
 					}
-					getChannel().disconnect();
-					throw new RemoteConnectionException(e.getMessage());
-				}
-				getProgressMonitor().worked(1);
-			}
-			if (bInterrupted) {
-				Thread.currentThread().interrupt(); // set current thread flag
-			}
-			future.cancel(true);
-			getChannel().disconnect();
-			throw new RemoteConnectionException(Messages.AbstractRemoteCommand_Operation_cancelled_by_user);
-		}
-	}
-
-	protected abstract class ExecCallable<T1> implements Callable<T1> {
-		private IProgressMonitor fProgressMonitor;
-		private ChannelExec fExecChannel;
-
-		private Future<T1> asyncCmdInThread() throws RemoteConnectionException {
-			setChannel(fConnection.getExecChannel());
-			return fPool.submit(this);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.concurrent.Callable#call()
-		 */
-		@Override
-		public abstract T1 call() throws JSchException, IOException;
-
-		private void finalizeCmdInThread() {
-			setChannel(null);
-		}
-
-		public ChannelExec getChannel() {
-			return fExecChannel;
-		}
-
-		public IProgressMonitor getProgressMonitor() {
-			return fProgressMonitor;
-		}
-
-		/**
-		 * Function opens exec channel and then executes the exec operation. If
-		 * run on the main thread it executes it on a separate thread
-		 */
-		public T1 getResult(IProgressMonitor monitor) throws RemoteConnectionException {
-			Future<T1> future = null;
-			fProgressMonitor = SubMonitor.convert(monitor, 10);
-			try {
-				future = asyncCmdInThread();
-				return waitCmdInThread(future);
-			} finally {
-				finalizeCmdInThread();
-			}
-		}
-
-		public void setChannel(ChannelExec channel) {
-			fExecChannel = channel;
-		}
-
-		private T1 waitCmdInThread(Future<T1> future) throws RemoteConnectionException {
-			boolean bInterrupted = Thread.interrupted();
-			while (!getProgressMonitor().isCanceled()) {
-				try {
-					return future.get(100, TimeUnit.MILLISECONDS);
-				} catch (InterruptedException e) {
-					bInterrupted = true;
-				} catch (TimeoutException e) {
-					// ignore
-				} catch (ExecutionException e) {
 					getChannel().disconnect();
 					throw new RemoteConnectionException(e.getMessage());
 				}
@@ -347,6 +349,10 @@ public abstract class AbstractRemoteCommand<T> {
 		return fileInfo;
 	}
 
+	public JSchConnection getConnection() {
+		return fConnection;
+	}
+
 	public int getFinishStatus() {
 		int code = 0;
 
@@ -429,7 +435,53 @@ public abstract class AbstractRemoteCommand<T> {
 
 	protected abstract T getResult(IProgressMonitor monitor) throws RemoteConnectionException;
 
-	public JSchConnection getConnection() {
-		return fConnection;
+	protected String quote(String path, boolean full) {
+		StringBuffer buffer = new StringBuffer();
+		StringCharacterIterator iter = new StringCharacterIterator(path);
+		for (char c = iter.first(); c != CharacterIterator.DONE; c = iter.next()) {
+			switch (c) {
+			case '(':
+			case ')':
+			case '[':
+			case ']':
+			case '{':
+			case '}':
+			case '|':
+			case '\\':
+			case '*':
+			case '&':
+			case '^':
+			case '%':
+			case '$':
+			case '#':
+			case '@':
+			case '!':
+			case '~':
+			case '`':
+			case '\'':
+			case '"':
+			case ':':
+			case ';':
+			case '?':
+			case '<':
+			case '>':
+			case ',':
+			case '\n':
+				if (full) {
+					buffer.append('\\');
+				}
+				buffer.append(c);
+				continue;
+			case ' ':
+				buffer.append('\\');
+				buffer.append(c);
+				continue;
+			default:
+				buffer.append(c);
+				continue;
+			}
+		}
+		return buffer.toString();
 	}
+
 }

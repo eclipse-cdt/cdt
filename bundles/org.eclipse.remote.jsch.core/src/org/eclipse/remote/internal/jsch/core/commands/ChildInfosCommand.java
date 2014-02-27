@@ -55,7 +55,7 @@ public class ChildInfosCommand extends AbstractRemoteCommand<IFileInfo[]> {
 			@SuppressWarnings("unchecked")
 			@Override
 			public Vector<LsEntry> call() throws JSchException, SftpException {
-				return getChannel().ls(fRemotePath.toString());
+				return getChannel().ls(quote(fRemotePath.toString(), true));
 			}
 		};
 		try {

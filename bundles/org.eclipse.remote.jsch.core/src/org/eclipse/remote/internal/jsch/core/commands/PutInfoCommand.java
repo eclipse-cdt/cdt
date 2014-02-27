@@ -38,15 +38,16 @@ public class PutInfoCommand extends AbstractRemoteCommand<Void> {
 		final SubMonitor subMon = SubMonitor.convert(monitor, 30);
 
 		FetchInfoCommand command = new FetchInfoCommand(getConnection(), fRemotePath);
+		String quotedPath = quote(fRemotePath.toString(), true);
 		if ((fOptions & EFS.SET_ATTRIBUTES) != 0) {
-			chmod(getPermissions(fFileInfo), fRemotePath.toString(), subMon.newChild(10));
+			chmod(getPermissions(fFileInfo), quotedPath, subMon.newChild(10));
 		}
 		if ((fOptions & EFS.SET_LAST_MODIFIED) != 0) {
 			IFileInfo info = command.getResult(subMon.newChild(10));
 			long oldMTime = info.getLastModified();
 			int newMTime = (int) (oldMTime / 1000);
 			if (oldMTime != newMTime) {
-				setMTime(newMTime, fRemotePath.toString(), subMon.newChild(10));
+				setMTime(newMTime, quotedPath, subMon.newChild(10));
 			}
 		}
 		return null;

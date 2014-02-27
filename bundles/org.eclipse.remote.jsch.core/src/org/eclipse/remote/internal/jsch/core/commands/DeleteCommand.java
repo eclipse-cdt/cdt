@@ -1,8 +1,5 @@
 package org.eclipse.remote.internal.jsch.core.commands;
 
-import java.text.CharacterIterator;
-import java.text.StringCharacterIterator;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
@@ -29,54 +26,5 @@ public class DeleteCommand extends AbstractRemoteCommand<Void> {
 			throw new RemoteConnectionException(result);
 		}
 		return null;
-	}
-
-	private String quote(String path, boolean full) {
-		StringBuffer buffer = new StringBuffer();
-		StringCharacterIterator iter = new StringCharacterIterator(path);
-		for (char c = iter.first(); c != CharacterIterator.DONE; c = iter.next()) {
-			switch (c) {
-			case '(':
-			case ')':
-			case '[':
-			case ']':
-			case '{':
-			case '}':
-			case '|':
-			case '\\':
-			case '*':
-			case '&':
-			case '^':
-			case '%':
-			case '$':
-			case '#':
-			case '@':
-			case '!':
-			case '~':
-			case '`':
-			case '\'':
-			case '"':
-			case ':':
-			case ';':
-			case '?':
-			case '<':
-			case '>':
-			case ',':
-			case '\n':
-				if (full) {
-					buffer.append('\\');
-				}
-				buffer.append(c);
-				continue;
-			case ' ':
-				buffer.append('\\');
-				buffer.append(c);
-				continue;
-			default:
-				buffer.append(c);
-				continue;
-			}
-		}
-		return buffer.toString();
 	}
 }

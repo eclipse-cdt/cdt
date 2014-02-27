@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_ea6b21e0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPLinkage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1104,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-02-27T22:20:47Z",
+      "side": 1,
+      "message": "I disagree with the statement \"However, this solution does match other parts of the indexer that ignore all but the first definition.\" We should clearly distinguish cases with ODR violation and without it. Ignoring parts of template specializations in situations without ODR violations is a horrible hack that will inevitably brake parsing on some code bases.",
+      "revId": "26ac8375a5c323e17c63096b5b7c5da68aef7716",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

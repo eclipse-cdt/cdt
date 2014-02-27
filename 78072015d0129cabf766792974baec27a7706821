@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_935e2870",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeProjectInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-02-27T16:00:20Z",
+      "side": 1,
+      "message": "Since only the project is affected in this call, we should use it as the scheduling rule, i.e., change this to:\n\n.run( new IWorkspaceRunnable..., project, IWorkspace.AVOID_UPDATE, null);",
+      "revId": "78072015d0129cabf766792974baec27a7706821",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

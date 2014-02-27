@@ -177,6 +177,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_6a51d1dd",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTArrayModifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-02-27T23:06:04Z",
+      "side": 1,
+      "message": "Good. The source code order is very important for the code formatter.",
+      "parentUuid": "67591f73_78153647",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_9c8c8546",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTAttribute.java",
         "patchSetId": 2
@@ -486,6 +504,24 @@
       "side": 1,
       "message": "That\u0027s the point I\u0027m not happy with in this implementation. An ICPPASTAttributeSpecifier satisfies this interface only for the purpose of being assignable as an attribute in a IASTAttributeOwner. I would have had to break the current API if this dependency would not exist. Any suggestions on that?",
       "parentUuid": "67591f73_b11ed21e",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_c41bb4a5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ICPPASTAttributeSpecifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-02-27T23:06:04Z",
+      "side": 1,
+      "message": "I think we need a more explicit distinction between the two kinds of attributes. We can possibly add getAttributeSpecifiers/addAttributeSpecifier methods to IASTAttributeOwner. What to do with IASTAttributeOwner.getAttributes method is an open question. We can probably deprecate getAttribute and addAttribute methods in favor of more explicitly named getLegacyAttributes/addLegacyAttribute.",
+      "parentUuid": "67591f73_93a8eb94",
       "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

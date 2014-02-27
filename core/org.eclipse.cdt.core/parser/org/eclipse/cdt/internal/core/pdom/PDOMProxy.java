@@ -308,7 +308,7 @@ public class PDOMProxy implements IPDOM {
 
 	@Override
 	public IIndexFragmentFileSet createFileSet() {
-		return new PDOMFileSet();
+		return new PDOMFileSet(null);
 	}
 
 	@Override

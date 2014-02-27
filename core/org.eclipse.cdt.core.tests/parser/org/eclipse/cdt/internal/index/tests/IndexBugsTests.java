@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -2535,6 +2536,85 @@ public class IndexBugsTests extends BaseTestCase {
 			IndexerPreferences.set(fCProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG,
 					defaults.getProperty(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG));
 			IndexerPreferences.setUpdatePolicy(fCProject.getProject(), IndexerPreferences.getDefaultUpdatePolicy());
+		}
+	}
+
+	// extern int h1;
+
+	// extern int h2;
+
+	// #include "../p1/h1.hh"
+	// #include "h2.hh"
+	// static int i = h1;
+	public void testStaticVarInSourceWithTwoPDOMFragments_Bug429196() throws Exception {
+		// Bug429196: StackOverflow when creating a PDOMBinding in the following case:
+		//            1) The variable is file-local
+		//            2) The TU's indexFileSet has more than one fragment
+
+		IIndex index = null;
+		boolean locked = false;
+		String[] contents = getContentsForTest(3);
+
+		ICProject p1 = CProjectHelper.createCCProject("p1", "bin", IPDOMManager.ID_FAST_INDEXER);
+		try {
+			IProjectDescription desc = fCProject.getProject().getDescription();
+			desc.setReferencedProjects(new IProject[]{ p1.getProject() });
+			fCProject.getProject().setDescription(desc, npm());
+
+			// make sure the header is read from the other pdom when the ast is created
+			IFile head1 = TestSourceReader.createFile(p1.getProject(), "h1.hh", contents[0]);
+			CCorePlugin.getIndexManager().reindex(p1);
+			waitForIndexer(p1);
+
+			IFile head3 = TestSourceReader.createFile(fCProject.getProject(), "h2.hh", contents[1]);
+			IFile impl3 = TestSourceReader.createFile(fCProject.getProject(), "file.cc", contents[2]);
+			CCorePlugin.getIndexManager().reindex(fCProject);
+			waitForIndexer(fCProject);
+
+			index = CCorePlugin.getIndexManager().getIndex(new ICProject[]{ p1, fCProject });
+
+			ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(impl3);
+			assertNotNull(tu);
+
+			index.acquireReadLock();
+			locked = true;
+			IASTTranslationUnit ast
+				= tu.getAST(
+						index,
+						ITranslationUnit.AST_SKIP_ALL_HEADERS
+						| ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT
+						| ITranslationUnit.AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS
+						| ITranslationUnit.AST_PARSE_INACTIVE_CODE);
+			assertNotNull(ast);
+
+			IASTDeclaration[] decls = ast.getDeclarations();
+			assertNotNull(decls);
+			assertEquals(1, decls.length);
+			assertTrue(decls[0] instanceof IASTSimpleDeclaration);
+
+			IASTDeclarator[] decltors = ((IASTSimpleDeclaration)decls[0]).getDeclarators();
+			assertNotNull(decltors);
+			assertEquals(1, decltors.length);
+
+			IASTName name = decltors[0].getName();
+			assertNotNull(name);
+			assertEquals("i", name.getRawSignature());
+
+			IBinding var = name.resolveBinding();
+			assertNotNull(var);
+
+			IIndexBinding adapted = null;
+			try {
+				adapted = index.adaptBinding(var);
+			} catch(StackOverflowError e) {
+				fail();
+			}
+			assertNotNull(adapted);
+		} finally {
+			if (index != null && locked)
+				index.releaseReadLock();
+			if (p1 != null)
+				CProjectHelper.delete(p1);
 		}
 	}
 }

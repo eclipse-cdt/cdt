@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_78fff69d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPAttributeTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "Done - I\u0027ve added a method for checking the relationship in both directions, but still starting from the attribute specifiers, as it is what the tests have in common.",
+      "parentUuid": "67591f73_7166faa0",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_d16d467c",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPAttributeTests.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-02-26T21:05:21Z",
       "side": 1,
       "message": "Makes sense to make the two attributes distinguishable from each other.",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_9d859ce9",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPAttributeTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "Done - They have a distinguishable name now.",
+      "parentUuid": "67591f73_d16d467c",
       "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_9d211ca9",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPAttributeTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 500,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "Done - Yes, actually a naming issue. I renamed the method to getAttributeSpecifiers and changed the return type. That\u0027s more clear. I extended the test to check the attributes of the specifier.",
+      "parentUuid": "67591f73_3153e2b4",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_3cfa99ac",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTAliasDeclaration.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2014-02-26T21:05:21Z",
       "side": 1,
       "message": "Too many spaces before {",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_58431265",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTAliasDeclaration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "It\u0027s only one space. I think the gerrit diff view breaks after 100 characters, therefore, { is always on a new line.",
+      "parentUuid": "67591f73_3cfa99ac",
       "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_78153647",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTArrayModifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "In C++11 they don\u0027t, array modifiers occur in new-expressions [expr.new] and in declarators [dcl.decl]. The associated attributes come after the array modifiers in both cases.\nHere we visit the attribute after the expression in the array modifier, which would be the order in source code.",
+      "parentUuid": "67591f73_5ca30db2",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_9c8c8546",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTAttribute.java",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2014-02-26T21:05:21Z",
       "side": 1,
       "message": "Are there spaces after the last parameter? If so, please remove.",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_38fa9e37",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTAttribute.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "No, there are no spaces after packExpansion. Seems to be the same problem as in CPPASTAliasDeclaration.",
+      "parentUuid": "67591f73_9c8c8546",
       "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_5885d28f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTAttributeSpecifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_516bf692",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_71571ad6",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTAttributeSpecifier.java",
         "patchSetId": 2
@@ -132,6 +258,24 @@
       "writtenOn": "2014-02-26T21:05:21Z",
       "side": 1,
       "message": "assertNotFrozen(); call is required.",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_b807cea7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTAttributeSpecifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_71571ad6",
       "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_f81146e0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTAttributeSpecifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_517ad695",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_d1ea669a",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTAttributeSpecifier.java",
         "patchSetId": 2
@@ -166,6 +328,24 @@
       "writtenOn": "2014-02-26T21:05:21Z",
       "side": 1,
       "message": "Slightly more efficient:\nCPPASTAttributeSpecifier copy \u003d copy(new CPPASTAttributeSpecifier(), style);\ncopy.attributes \u003d ArrayUtil.trim(attributes);\nfor (int i \u003d 0; i \u003c copy.attributes.length; i++) {\n    copy.attributes[i] \u003d copy.attributes[i].copy(style);\n}\nreturn copy;",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_18535a66",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTAttributeSpecifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "Done - I added the forceNew parameter to take the corresponding overload of trim, otherwise it does not necessarily create a new array, which then results in a changed original attribute specifier.",
+      "parentUuid": "67591f73_d1ea669a",
       "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_b3536f41",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTAttributeSpecifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_d14ee642",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_51481682",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ICPPASTAttributeSpecifier.java",
         "patchSetId": 2
@@ -200,6 +398,24 @@
       "writtenOn": "2014-02-26T21:05:21Z",
       "side": 1,
       "message": "Add a blank line above.",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_5343f364",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ICPPASTAttributeSpecifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_51481682",
       "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_b3a52fbe",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ICPPASTAttributeSpecifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "Done + added tag [dcl.attr.grammar]",
+      "parentUuid": "67591f73_f17a0a95",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_b11ed21e",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ICPPASTAttributeSpecifier.java",
         "patchSetId": 2
@@ -234,6 +468,24 @@
       "writtenOn": "2014-02-26T21:05:21Z",
       "side": 1,
       "message": "The purpose of extending IASTAttribute is not clear.",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_93a8eb94",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ICPPASTAttributeSpecifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "That\u0027s the point I\u0027m not happy with in this implementation. An ICPPASTAttributeSpecifier satisfies this interface only for the purpose of being assignable as an attribute in a IASTAttributeOwner. I would have had to break the current API if this dependency would not exist. Any suggestions on that?",
+      "parentUuid": "67591f73_b11ed21e",
       "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +509,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_73a397b2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ICPPASTAttributeSpecifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_f1484a85",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67591f73_9c1e456a",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/astwriter/NodeWriter.java",
         "patchSetId": 2
@@ -268,6 +538,24 @@
       "writtenOn": "2014-02-26T21:05:21Z",
       "side": 1,
       "message": "An EnumSet would be more appropriate here.",
+      "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_b8b50e6c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/astwriter/NodeWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-02-27T11:50:41Z",
+      "side": 1,
+      "message": "Done - Much better!",
+      "parentUuid": "67591f73_9c1e456a",
       "revId": "a546a029e0154419b6ca943312ab0a3420c40e5c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -75,24 +75,21 @@ public class IndexFileSet implements IIndexFileSet {
 	@Override
 	public boolean containsNonLocalDeclaration(IBinding binding, IIndexFragment ignore) {
 		for (Map.Entry<IIndexFragment, IIndexFragmentFileSet> entry : fSubSets.entrySet()) {
-			try {
-				final IIndexFragment fragment = entry.getKey();
-				final IIndexFragmentFileSet subset = entry.getValue();
-				if (fragment != ignore) {
-					IIndexFragmentName[] names =
-							fragment.findNames(binding, IIndexFragment.FIND_DECLARATIONS_DEFINITIONS | IIndexFragment.FIND_NON_LOCAL_ONLY);
-					for (IIndexFragmentName name : names) {
-						try {
-							if (subset.contains((IIndexFragmentFile) name.getFile())) {
-								return true;
-							}
-						} catch (CoreException e) {
-							CCorePlugin.log(e);
-						}
-					}
+			final IIndexFragment fragment = entry.getKey();
+			final IIndexFragmentFileSet subset = entry.getValue();
+			if (fragment != ignore) {
+				// Bug 429976: Don't search the full fragment for names, look in only the files that
+				//             are part of this set.  Find the non-local bindings that match
+				//             the given AST binding.
+
+				try {
+					IIndexFragmentName[] names
+						= subset.findNames(binding, IIndexFragment.FIND_DECLARATIONS_DEFINITIONS | IIndexFragment.FIND_NON_LOCAL_ONLY);
+					if (names.length != 0)
+						return true;
+				} catch(CoreException e) {
+					CCorePlugin.log(e);
 				}
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
 			}
 		}
 		return false;

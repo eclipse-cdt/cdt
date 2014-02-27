@@ -1598,7 +1598,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	@Override
 	public IIndexFragmentFileSet createFileSet() {
-		return new PDOMFileSet();
+		return new PDOMFileSet(this);
 	}
 
 	// For debugging lock issues

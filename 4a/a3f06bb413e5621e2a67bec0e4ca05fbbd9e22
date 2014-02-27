@@ -1,0 +1,12 @@
+Code-Review-1: Hudson CI
+Code-Review+2: Marc Khouzam <marc.khouzam@ericsson.com>
+IP-Clean+1: Marc Khouzam <marc.khouzam@ericsson.com>
+Verified+1: Marc Khouzam <marc.khouzam@ericsson.com>
+Code-Review+2: Teodor Madan <teodor.madan@freescale.com>
+IP-Clean+1: Teodor Madan <teodor.madan@freescale.com>
+Verified+1: Teodor Madan <teodor.madan@freescale.com>
+Submitted-by: Teodor Madan <teodor.madan@freescale.com>
+Submitted-at: Thu, 27 Feb 2014 11:02:49 -0500
+Reviewed-on: https://git.eclipse.org/r/22511
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

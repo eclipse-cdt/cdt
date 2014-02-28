@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67591f73_67b61c46",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 528,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-02-28T21:32:29Z",
+      "side": 1,
+      "message": "I believe the logic here is trying to figure out if the end address shown is bigger than what the block supports.  If it is, it moves the start address of the view so that the end address now fits.\n\nThe problem is maybe not limited to the fact that this start address could be negative, but that this new start address may be less than the start address of the block, which is the case we check for right above.\n\nI think that if the view start address is less than the block start address (which includes the case where the start address is negative), we should set the view start address to the block start address.",
+      "revId": "a2f7214c500f3a456e90c47ef4c16e52037198ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

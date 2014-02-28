@@ -12,13 +12,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.INamespace;
 
-public class Namespace extends SourceManipulation implements INamespace{
-
+public class Namespace extends SourceManipulation implements INamespace {
 	String typeName = ""; //$NON-NLS-1$
+
 	public Namespace(ICElement parent, String name) {
 		super(parent, name, ICElement.C_NAMESPACE);
 	}
@@ -40,9 +39,6 @@ public class Namespace extends SourceManipulation implements INamespace{
 		this.typeName = typeName;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.core.model.CElement#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof INamespace && equals(this, (INamespace) other)) {

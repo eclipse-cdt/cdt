@@ -363,6 +363,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 
 	/**
 	 * @since 5.4
+	 * 
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void setPragmaOnceSemantics(boolean value);

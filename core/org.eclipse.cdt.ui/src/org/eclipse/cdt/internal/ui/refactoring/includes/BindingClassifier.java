@@ -1313,7 +1313,7 @@ public class BindingClassifier {
 		ICPPClassScope classScope = ((ICPPASTCompositeTypeSpecifier) parent).getScope();
 		ICPPClassType classType = classScope.getClassType();
 		ICPPMethod destructor = ClassTypeHelper.getMethodInClass(classType, MethodKind.DTOR, parent);
-		if (fAst.getDefinitionsInAST(destructor).length != 0)
+		if (destructor != null && fAst.getDefinitionsInAST(destructor).length != 0)
 			return true;
 		return false;
 	}

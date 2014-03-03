@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 
@@ -47,7 +46,7 @@ import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
  * If no formatter is contributed, nothing is shown.
  */
 public class CustomCodeFormatterBlock extends Observable {
-	private HashMap<String, String> idMap = new HashMap<String, String>();
+	private final HashMap<String, String> idMap = new HashMap<String, String>();
 	private IEclipsePreferences fPrefs;
 	private String fDefaultFormatterId;
 	private Combo fFormatterCombo;
@@ -68,7 +67,7 @@ public class CustomCodeFormatterBlock extends Observable {
 		fPrefs= scope.getNode(CCorePlugin.PLUGIN_ID);
 		fDefaultFormatterId= defaults.get(CCorePreferenceConstants.CODE_FORMATTER, null);
 		if (fDefaultFormatterId == null) {
-			// backward compatibility: use UI prefs
+			// Backward compatibility: use UI prefs
 			IEclipsePreferences instance= access.getInstanceScope().getNode(CUIPlugin.PLUGIN_ID);
 			fDefaultFormatterId= instance.get(CCorePreferenceConstants.CODE_FORMATTER, null);
 			if (fDefaultFormatterId != null) {
@@ -102,15 +101,8 @@ public class CustomCodeFormatterBlock extends Observable {
 			return;
 		}
 		fFormatterCombo.clearSelection();
-		fFormatterCombo.setText(DEFAULT);
-		Iterator<Map.Entry<String, String>> iterator = idMap.entrySet().iterator();
-		while (iterator.hasNext()) {
-			Map.Entry<String, String> entry = iterator.next();
-			String val = entry.getValue();
-			if (val != null && val.equals(fDefaultFormatterId)) {
-				fFormatterCombo.setText(entry.getKey());
-			}
-		}
+		String formatter = getFormatterById(fDefaultFormatterId);
+		fFormatterCombo.setText(formatter);
 		handleFormatterChanged();
 	}
 
@@ -132,16 +124,15 @@ public class CustomCodeFormatterBlock extends Observable {
 		if (fFormatterCombo == null) {
 			return fPrefs.get(CCorePreferenceConstants.CODE_FORMATTER, fDefaultFormatterId);
 		}
-		String formatterId= idMap.get(fFormatterCombo.getText());
-		return formatterId;
+		return idMap.get(fFormatterCombo.getText());
 	}
 
 	public Control createContents(Composite parent) {
-		if (getNumberOfAvailableFormatters() == 0) {
-			return parent;
+		if (idMap.size() == 1) {
+			return parent; // No selector is needed since there is only one formatter.
 		}
 		Composite composite = ControlFactory.createGroup(parent, FormatterMessages.CustomCodeFormatterBlock_formatter_name, 1);
-		((GridData)composite.getLayoutData()).horizontalSpan = 5;
+		((GridData) composite.getLayoutData()).horizontalSpan = 5;
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.CODEFORMATTER_PREFERENCE_PAGE);
 
@@ -154,9 +145,8 @@ public class CustomCodeFormatterBlock extends Observable {
 				handleFormatterChanged();
 			}
 		});
-		Iterator<String> items = idMap.keySet().iterator();
-		while (items.hasNext()) {
-			fFormatterCombo.add(items.next());
+		for (String item : idMap.keySet()) {
+			fFormatterCombo.add(item);
 		}
 
 		final String noteTitle= FormatterMessages.CustomCodeFormatterBlock_formatter_note;
@@ -175,27 +165,29 @@ public class CustomCodeFormatterBlock extends Observable {
 	}
 
 	private void initDefault() {
-		boolean init = false;
+		if (fFormatterCombo == null) {
+			return;
+		}
 		String formatterID= fPrefs.get(CCorePreferenceConstants.CODE_FORMATTER, fDefaultFormatterId);
-		if (formatterID != null) {
-			Iterator<Map.Entry<String, String>> iterator = idMap.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Map.Entry<String, String> entry = iterator.next();
+		fFormatterCombo.setText(getFormatterById(formatterID));
+	}
+
+	private String getFormatterById(String formatterId) {
+		String formatter = DEFAULT;
+		if (formatterId != null) {
+			for (Map.Entry<String, String> entry : idMap.entrySet()) {
 				String val = entry.getValue();
-				if (val != null && val.equals(formatterID)) {
-					fFormatterCombo.setText(entry.getKey());
-					init = true;
+				if (formatterId.equals(val)) {
+					formatter = entry.getKey();
+					break;
 				}
 			}
 		}
-		if (!init) {
-			formatterID= null;
-			fFormatterCombo.setText(DEFAULT);
-		}
+		return formatter;
 	}
 
 	private void initializeFormatters() {
-		idMap = new HashMap<String, String>();
+		idMap.clear();
 		idMap.put(DEFAULT, CCorePreferenceConstants.DEFAULT_CODE_FORMATTER);
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.FORMATTER_EXTPOINT_ID);
 		if (point != null) {
@@ -209,9 +201,5 @@ public class CustomCodeFormatterBlock extends Observable {
 		 		}
 			}
 		}
-	}
-	
-	private final int getNumberOfAvailableFormatters() {
-		return idMap.size() - 1;
 	}
 }

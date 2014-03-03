@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.breakpointactions.BreakpointActionManager;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
@@ -709,10 +710,13 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                         // Add a problem marker to the resource
                         IMarker problem_marker = resource.createMarker(BreakpointProblems.BREAKPOINT_PROBLEM_MARKER_ID);
                         int line_number = lineBreakpoint.getLineNumber();
+                        String sourceHandle = lineBreakpoint.getSourceHandle();
                         problem_marker.setAttribute(IMarker.LOCATION,    String.valueOf(line_number));
                         problem_marker.setAttribute(IMarker.MESSAGE,     description);
                         problem_marker.setAttribute(IMarker.SEVERITY,    severity);
                         problem_marker.setAttribute(IMarker.LINE_NUMBER, line_number);
+                        if (sourceHandle != null)
+                            problem_marker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, sourceHandle);
 
                         // And save the baby
                         fBreakpointMarkerProblems.put(breakpoint, problem_marker);

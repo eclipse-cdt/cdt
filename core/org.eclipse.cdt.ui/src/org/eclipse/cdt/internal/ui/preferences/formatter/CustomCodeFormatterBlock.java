@@ -46,7 +46,7 @@ import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
  * If no formatter is contributed, nothing is shown.
  */
 public class CustomCodeFormatterBlock extends Observable {
-	private HashMap<String, String> idMap = new HashMap<String, String>();
+	private final Map<String, String> idMap = new HashMap<>();
 	private IEclipsePreferences fPrefs;
 	private String fDefaultFormatterId;
 	private Combo fFormatterCombo;
@@ -187,7 +187,7 @@ public class CustomCodeFormatterBlock extends Observable {
 	}
 
 	private void initializeFormatters() {
-		idMap = new HashMap<>();
+		idMap.clear();
 		idMap.put(DEFAULT, CCorePreferenceConstants.DEFAULT_CODE_FORMATTER);
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.FORMATTER_EXTPOINT_ID);
 		if (point != null) {

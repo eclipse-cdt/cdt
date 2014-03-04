@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.debug.application.ICDTStandaloneDebugLaunchConstants;
 import org.eclipse.cdt.debug.application.Messages;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.executables.Executable;
@@ -243,7 +244,7 @@ public class DebugExecutable {
 				}
 			}
 //					System.out.println("about to create launch configuration");
-			config = createConfiguration(executable, arguments, true);
+			config = createConfiguration(executable, arguments, buildLog, true);
 			String memento = config.getMemento();
 			ResourcesPlugin.getWorkspace().getRoot().setPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH), memento);
 			monitor.worked(1);
@@ -261,7 +262,7 @@ public class DebugExecutable {
 	
 	
 	protected static ILaunchConfiguration createConfiguration(String bin,
-			String arguments, boolean save) {
+			String arguments, String buildLog, boolean save) {
 //		System.out.println("creating launch configuration");
 		ILaunchConfiguration config = null;
 		try {
@@ -275,6 +276,8 @@ public class DebugExecutable {
 					progName);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
 					"Executables"); //$NON-NLS-1$
+			wc.setAttribute(ICDTStandaloneDebugLaunchConstants.BUILD_LOG_LOCATION,
+					buildLog);
 			wc.setAttribute(
 					ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
 					(String) null);

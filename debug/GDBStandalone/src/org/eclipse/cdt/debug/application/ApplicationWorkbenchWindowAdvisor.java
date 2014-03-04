@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.internal.debug.application.DebugExecutable;
 import org.eclipse.cdt.internal.debug.application.JobContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -30,6 +31,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -181,7 +183,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 				if (executable.length() > 0) {
 					config = DebugExecutable.importAndCreateLaunchConfig(monitor, executable, buildLog, arguments);
 				} else {
-//					System.out.println("restore previous launch");
+					// No executable specified, look for last launch
+					// and offer that to the end-user.
 					monitor.subTask(Messages.RestorePreviousLaunch);
 					String defaultProjectName = "Executables"; //$NON-NLS-1$
 					ICProject cProject = CoreModel.getDefault().getCModel()
@@ -189,9 +192,65 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					String memento = cProject.getProject().getPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH));
 					if (memento != null)
 						config = DebugExecutable.getLaunchManager().getLaunchConfiguration(memento);
-					if (config == null) {
-						System.out.println(Messages.LaunchMissingError);
+					String oldExecutable = "";
+					String oldArguments = "";
+					String oldBuildLog = "";
+					if (config != null) {
+						oldExecutable = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, ""); //$NON-NLS-1$
+						oldArguments = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
+						oldBuildLog = config.getAttribute(ICDTStandaloneDebugLaunchConstants.BUILD_LOG_LOCATION, ""); //$NON-NLS-1$
 					}
+					final NewExecutableInfo info = new NewExecutableInfo("", "", "", ""); //$NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+					final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
+							Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
+					final String executablePath = oldExecutable;
+					final String executableArgs = oldArguments;
+					final String buildLogPath = oldBuildLog;
+					// Bring up New Executable dialog with values from
+					// the last launch.
+					Display.getDefault().syncExec(new Runnable() {
+
+						@Override
+						public void run() {
+
+							NewExecutableDialog dialog = new NewExecutableDialog(getWindowConfigurer().getWindow().getShell(),
+									0, executablePath, buildLogPath, executableArgs);
+							dialog.setBlockOnOpen(true);
+							if (dialog.open() == IDialogConstants.OK_ID) {
+								NewExecutableInfo info2 = dialog.getExecutableInfo();
+								info.setHostPath(info2.getHostPath());
+								info.setArguments(info2.getArguments());
+								info.setBuildLog(info2.getBuildLog());
+							} else {
+								ErrorDialog.openError(null,
+										Messages.DebuggerInitializingProblem, null, errorStatus,
+										IStatus.ERROR | IStatus.WARNING);
+							}
+						}
+					});
+					// Check and see if we failed above and if so, quit
+					if (info.getHostPath().equals("")) {
+						monitor.done();
+						// throw internal exception which will be caught below
+						throw new StartupException(errorStatus.getMessage());
+					}
+					executable = info.getHostPath();
+					arguments = info.getArguments();
+					buildLog = info.getBuildLog();
+					// If no last configuration or user has changed
+					// the executable, we need to create a new configuration
+					// and remove artifacts from the old one.
+					if (config == null || !executable.equals(oldExecutable))
+						config = DebugExecutable.importAndCreateLaunchConfig(monitor, executable, buildLog, arguments);
+					ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+					wc.setAttribute(ICDTStandaloneDebugLaunchConstants.BUILD_LOG_LOCATION,
+							buildLog);
+					if (arguments != null)
+						wc.setAttribute(
+								ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
+								arguments);
+					config = wc.doSave();
+
 					monitor.worked(7);
 				}
 				if (config != null) {

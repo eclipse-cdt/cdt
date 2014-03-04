@@ -149,11 +149,7 @@ public class LookupData extends ScopeLookupData {
 		
 		IASTNode parent = tn.getParent();
 		IASTNode nameParent= parent;
-		if (parent instanceof ICPPASTBaseSpecifier
-				|| parent instanceof ICPPASTElaboratedTypeSpecifier
-				|| parent instanceof ICPPASTCompositeTypeSpecifier) {
-			typesOnly= true;
-		} else if (parent instanceof ICPPASTQualifiedName) {
+		if (parent instanceof ICPPASTQualifiedName) {
 			final ICPPASTQualifiedName qn = (ICPPASTQualifiedName) parent;
 			if (qn.getLastName() != tn) {
 				// For resolving template id ambiguities we need to consider non-types.
@@ -173,7 +169,11 @@ public class LookupData extends ScopeLookupData {
 			}
 		} 
 		
-		if (nameParent instanceof ICPPASTUsingDeclaration) {
+		if (nameParent instanceof ICPPASTBaseSpecifier
+				|| nameParent instanceof ICPPASTElaboratedTypeSpecifier
+				|| nameParent instanceof ICPPASTCompositeTypeSpecifier) {
+			typesOnly= true;
+		} else if (nameParent instanceof ICPPASTUsingDeclaration) {
 			forUsingDeclaration= true;
 		} else if (nameParent instanceof IASTDeclarator) {
 			fDeclarator= (IASTDeclarator) nameParent;

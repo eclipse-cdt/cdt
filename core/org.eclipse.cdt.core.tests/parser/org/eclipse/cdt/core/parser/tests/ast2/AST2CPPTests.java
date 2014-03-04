@@ -10553,4 +10553,18 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals(',', argumentTokens[1].getTokenCharImage()[0]);
 		assertEquals('2', argumentTokens[2].getTokenCharImage()[0]);
 	}
+	
+	//	struct MyStruct {
+	//	    struct Inner {
+	//	        int waldo;
+	//	    } Inner;
+	//	};
+	//
+	//	void foo() {
+	//	    struct MyStruct::Inner in;
+	//	    in.waldo;
+	//	}
+	public void testFieldAndNestedTypeWithSameName_425033() throws Exception {
+		parseAndCheckBindings();
+	}
 }

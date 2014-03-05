@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Lukas Felber (IFS) - initial API and implementation
+ *    Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.comenthandler;
 
@@ -14,7 +15,6 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.parser.tests.rewrite.TestSourceFile;
@@ -33,12 +33,9 @@ public class CommentHandlingWithRewriteTest extends CommentHandlingTest {
 		IASTTranslationUnit tu = getUnit("main.cpp");
 		IASTTranslationUnit otherTu = getUnit("other.cpp");
 
-		IASTNodeSelector selector = tu.getNodeSelector(null);
-		IASTNodeSelector otherSelector = otherTu.getNodeSelector(null);
-
-		IASTNode fooBody = selector.findNode(11, 27);
-		IASTNode iNode = selector.findEnclosingNode(26, 10).getParent();
-		IASTNode jNode = otherSelector.findNode(20, 10);
+		IASTNode fooBody = tu.getDeclarations()[0].getChildren()[2];
+		IASTNode iNode = fooBody.getChildren()[0];
+		IASTNode jNode = otherTu.getDeclarations()[0];
 
 		ASTRewrite rewrite = ASTRewrite.create(tu);
 		newRewrite = rewrite.insertBefore(fooBody, iNode, jNode, new TextEditGroup("test group"));

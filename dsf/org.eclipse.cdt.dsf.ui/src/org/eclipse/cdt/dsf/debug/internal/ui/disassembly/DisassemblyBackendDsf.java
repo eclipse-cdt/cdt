@@ -13,6 +13,7 @@
  *     Patrick Chuong (Texas Instruments) - Bug 328168
  *     Patrick Chuong (Texas Instruments) - Bug 353351
  *     Patrick Chuong (Texas Instruments) - Bug 337851
+ *     William Riley (Renesas) - Bug 357270
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
@@ -40,6 +41,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly2;
+import org.eclipse.cdt.dsf.debug.service.IDisassembly3;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
@@ -49,6 +51,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContex
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IInstruction;
 import org.eclipse.cdt.dsf.debug.service.IInstructionWithSize;
+import org.eclipse.cdt.dsf.debug.service.IInstructionWithRawOpcodes;
 import org.eclipse.cdt.dsf.debug.service.IMixedInstruction;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -595,7 +598,13 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 											disassemblyRequest.done();
 											return;
 										}
-										disassembly.getMixedInstructions(context, file, lineNumber, lines*2, disassemblyRequest);
+										
+										//Get with Opcodes if available
+										if(disassembly instanceof IDisassembly3){
+											((IDisassembly3)disassembly).getMixedInstructions(context, file, lineNumber, lines*2, true, disassemblyRequest);	
+										} else{
+											disassembly.getMixedInstructions(context, file, lineNumber, lines*2, disassemblyRequest);											
+										}
 									}});
 							} else {
 								executor.execute(new Runnable() {
@@ -607,7 +616,13 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 											disassemblyRequest.done();
 											return;
 										}
-										disassembly.getMixedInstructions(context, finalStartAddress, finalEndAddress, disassemblyRequest);
+										
+										//Get with Opcodes if available
+										if(disassembly instanceof IDisassembly3){
+											((IDisassembly3)disassembly).getMixedInstructions(context, finalStartAddress, finalEndAddress, true, disassemblyRequest);
+										} else {
+											disassembly.getMixedInstructions(context, finalStartAddress, finalEndAddress, disassemblyRequest);
+										}
 									}});
 							}
 						} else {
@@ -654,7 +669,13 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 										disassemblyRequest.done();
 										return;
 									}
-									disassembly.getInstructions(context, finalStartAddress, finalEndAddress, disassemblyRequest);
+									
+									//Get with Opcodes if available
+									if(disassembly instanceof IDisassembly3){
+										((IDisassembly3)disassembly).getInstructions(context, finalStartAddress, finalEndAddress, true, disassemblyRequest);
+									} else{
+										disassembly.getInstructions(context, finalStartAddress, finalEndAddress, disassemblyRequest);
+									}
 								}});
 						}
 					}
@@ -729,15 +750,21 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 						break;
 					}
 				}
-				final String opCode;
+				final String functionOffset; // Renamed from opCode to avoid confusion
 				// insert function name+offset instead of opcode bytes
 				if (functionName != null && functionName.length() > 0) {
-					opCode= functionName + '+' + instruction.getOffset();
+					functionOffset= functionName + '+' + instruction.getOffset();
 				} else {
-					opCode= ""; //$NON-NLS-1$
+					functionOffset= ""; //$NON-NLS-1$
+				}
+				
+				BigInteger opCodes = null;
+				// Get raw Opcodes if available
+				if(instruction instanceof IInstructionWithRawOpcodes){
+					opCodes = ((IInstructionWithRawOpcodes)instruction).getRawOpcodes();
 				}
 
-				p = fCallback.getDocument().insertDisassemblyLine(p, address, instrLength.intValue(), opCode, instruction.getInstruction(), compilationPath, -1);
+				p = fCallback.getDocument().insertDisassemblyLine(p, address, instrLength.intValue(), functionOffset, opCodes, instruction.getInstruction(), compilationPath, -1);
 				if (p == null) {
 					break;
 				}
@@ -863,14 +890,20 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 							break;
 						}
 					}
-					final String opCode;
+					final String funcOffset;
 					// insert function name+offset instead of opcode bytes
 					if (functionName != null && functionName.length() > 0) {
-						opCode= functionName + '+' + instruction.getOffset();
+						funcOffset= functionName + '+' + instruction.getOffset();
 					} else {
-						opCode= ""; //$NON-NLS-1$
+						funcOffset= ""; //$NON-NLS-1$
 					}
-					p = fCallback.getDocument().insertDisassemblyLine(p, address, instrLength.intValue(), opCode, instruction.getInstruction(), file, lineNumber);
+					
+					BigInteger opCode = null;
+					if(instruction instanceof IInstructionWithRawOpcodes){
+						opCode = ((IInstructionWithRawOpcodes)instruction).getRawOpcodes();
+					}
+					
+					p = fCallback.getDocument().insertDisassemblyLine(p, address, instrLength.intValue(), funcOffset, opCode, instruction.getInstruction(), file, lineNumber);
 					if (p == null) {
 						break;
 					}

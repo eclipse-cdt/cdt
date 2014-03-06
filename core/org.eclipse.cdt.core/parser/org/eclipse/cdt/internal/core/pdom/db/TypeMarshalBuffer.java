@@ -26,6 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -202,7 +203,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			fPos = oldPos;
 			IType type = unmarshalType();
 			IType originalType = unmarshalType();
-			if (originalType == null || originalType == UNSTORABLE_TYPE_PROBLEM)
+			if (originalType == null || !SemanticUtil.isValidType(originalType))
 				originalType= type;
 			return new CPPTemplateTypeArgument(type, originalType);
 		}

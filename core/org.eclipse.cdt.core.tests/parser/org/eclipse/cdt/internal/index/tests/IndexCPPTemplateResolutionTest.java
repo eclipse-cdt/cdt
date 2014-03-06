@@ -464,6 +464,36 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		checkBindings();
 	}
 
+	//	template<class T>
+	//	struct A {
+	//	  typedef T t;
+	//	};
+	
+	//	template<typename T>
+	//	struct B {};
+	//
+	//	typedef B<int> C;
+	//
+	//	template <typename T>
+	//	struct D {
+	//	  typedef A<const T> t2;
+	//	};
+	//
+	//	template <typename U>
+	//	void waldo(const U& a, typename U::t2::t& b);
+	//	template <typename U>
+	//	void waldo(U& a, typename U::t2::t& b);
+	//
+	//	void test() {
+	//	  typedef A<C> E;
+	//	  D<E> x;
+	//	  E y;
+	//	  waldo(x, y);
+	//	}
+	public void testOverloadedFunctionTemplate_429624() throws Exception {
+		checkBindings();
+	}
+
 	//	template<typename T, template<typename U> class S>
 	//	class Foo {
 	//	public:
@@ -975,13 +1005,11 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	void func(U& u, const typename U::t& v) {
 	//	}
 
-	//	template <typename T> class A {
+	//	template <typename T> struct A {
 	//	  typedef T t;
 	//	};
 	//
-	//	void test() {
-	//	  const A<int>& a;
-	//	  int b;
+	//	void test(const A<int>& a, int b) {
 	//	  func(a, b);
 	//	}
 	public void testFunctionTemplate_319498() throws Exception {

@@ -356,7 +356,9 @@ public class CPPTemplates {
 
 		IBinding owner= template.getOwner();
 		instance = createInstance(owner, template, map, arguments, point);
-		addInstance(template, arguments, instance);
+		if (instance instanceof ICPPFunction && SemanticUtil.isValidType(((ICPPFunction) instance).getType())) {
+			addInstance(template, arguments, instance);
+		}
 		return instance;
 	}
 
@@ -1992,7 +1994,7 @@ public class CPPTemplates {
 				IBinding instance= instantiateFunctionTemplate(template, args, map, point);
 				if (instance instanceof ICPPFunction) {
 					final ICPPFunction f = (ICPPFunction) instance;
-					if (isValidType(f.getType()))
+					if (SemanticUtil.isValidType(f.getType()))
 						return f;
 				}
 			}
@@ -2358,37 +2360,13 @@ public class CPPTemplates {
 		return TemplateArgumentDeduction.fromTemplateArguments(tpars2, targs2, transferredArgs1, deductionMap, point);
 	}
 
-	static boolean isValidType(IType t) {
-		while (true) {
-			if (t instanceof ISemanticProblem) {
-				return false;
-			} else if (t instanceof IFunctionType) {
-				IFunctionType ft= (IFunctionType) t;
-				for (IType parameterType : ft.getParameterTypes()) {
-					if (!isValidType(parameterType))
-						return false;
-				}
-				t= ft.getReturnType();
-			} else if (t instanceof ICPPPointerToMemberType) {
-				ICPPPointerToMemberType mptr= (ICPPPointerToMemberType) t;
-				if (!isValidType(mptr.getMemberOfClass()))
-					return false;
-				t= mptr.getType();
-			} else if (t instanceof ITypeContainer) {
-				t= ((ITypeContainer) t).getType();
-			} else {
-				return true;
-			}
-		}
-	}
-
 	static boolean isValidArgument(ICPPTemplateArgument arg) {
-		return arg != null && isValidType(arg.isTypeValue() ? arg.getTypeValue() : arg.getTypeOfNonTypeValue());
+		return arg != null && SemanticUtil.isValidType(arg.isTypeValue() ? arg.getTypeValue() : arg.getTypeOfNonTypeValue());
 	}
 
 	static ICPPTemplateArgument matchTemplateParameterAndArgument(ICPPTemplateDefinition template,
 			ICPPTemplateParameter param, ICPPTemplateArgument arg, CPPTemplateParameterMap map, IASTNode point) {
-		if (arg == null || !isValidType(arg.getTypeValue())) {
+		if (arg == null || !SemanticUtil.isValidType(arg.getTypeValue())) {
 			return null;
 		}
 		if (param instanceof ICPPTemplateTypeParameter) {

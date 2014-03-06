@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -447,6 +448,33 @@ public class SemanticUtil {
 			if (!(t instanceof ITypeContainer))
 				return null;
 			containerType = (ITypeContainer) t;
+		}
+	}
+
+	/**
+	 * Checks if the given type is problem-free.
+	 */
+	public static boolean isValidType(IType t) {
+		while (true) {
+			if (t instanceof ISemanticProblem) {
+				return false;
+			} else if (t instanceof IFunctionType) {
+				IFunctionType ft= (IFunctionType) t;
+				for (IType parameterType : ft.getParameterTypes()) {
+					if (!isValidType(parameterType))
+						return false;
+				}
+				t= ft.getReturnType();
+			} else if (t instanceof ICPPPointerToMemberType) {
+				ICPPPointerToMemberType mptr= (ICPPPointerToMemberType) t;
+				if (!isValidType(mptr.getMemberOfClass()))
+					return false;
+				t= mptr.getType();
+			} else if (t instanceof ITypeContainer) {
+				t= ((ITypeContainer) t).getType();
+			} else {
+				return true;
+			}
 		}
 	}
 

@@ -134,7 +134,7 @@ public class TemplateArgumentDeduction {
 				}
 				
 				par= CPPTemplates.instantiateType(par, map, -1, null, point);
-				if (!CPPTemplates.isValidType(par))
+				if (!SemanticUtil.isValidType(par))
 					return false;
 				
 				if (CPPTemplates.isDependentType(par)) {
@@ -326,7 +326,7 @@ public class TemplateArgumentDeduction {
 				
 		IType par= template.getType();
 		par= CPPTemplates.instantiateType(par, map, -1, null, point);
-		if (!CPPTemplates.isValidType(par))
+		if (!SemanticUtil.isValidType(par))
 			return null;
 
 		boolean isDependentPar= CPPTemplates.isDependentType(par);
@@ -398,7 +398,7 @@ public class TemplateArgumentDeduction {
 
 		IType a= SemanticUtil.getSimplifiedType(ftype);
 		IType p= CPPTemplates.instantiateType(template.getType(), map, -1, null, point);
-		if (!CPPTemplates.isValidType(p))
+		if (!SemanticUtil.isValidType(p))
 			return null;
 
 		TemplateArgumentDeduction deduct= new TemplateArgumentDeduction(tmplParams, map, new CPPTemplateParameterMap(tmplParams.length), 0);
@@ -1038,7 +1038,7 @@ public class TemplateArgumentDeduction {
 				p= parameterPack;
 				deduct.incPackOffset();
 				p= CPPTemplates.instantiateType(p, fExplicitArgs, deduct.fPackOffset, null, point);
-				if (!CPPTemplates.isValidType(p))
+				if (!SemanticUtil.isValidType(p))
 					return false;
 			} else {
 				p= pParams[i];
@@ -1046,7 +1046,7 @@ public class TemplateArgumentDeduction {
 					p= parameterPack= ((ICPPParameterPackType) p).getType();
 					deduct= new TemplateArgumentDeduction(this, aParams.length - i);
 					p= CPPTemplates.instantiateType(p, fExplicitArgs, deduct.fPackOffset, null, point);
-					if (!CPPTemplates.isValidType(p))
+					if (!SemanticUtil.isValidType(p))
 						return false;
 				}
 			}

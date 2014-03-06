@@ -200,9 +200,7 @@ public class DebugExecutable {
 				List<ILanguageSettingsProvider> providers = LanguageSettingsManager
 						.createLanguageSettingsProviders(langProviderIds);
 
-				// Update the ids and providers for the configuration.
-				((ILanguageSettingsProvidersKeeper) ccd)
-				.setDefaultLanguageSettingsProvidersIds(langProviderIds);
+				// Update the providers for the configuration.
 				((ILanguageSettingsProvidersKeeper) ccd)
 				.setLanguageSettingProviders(providers);
 				
@@ -213,6 +211,13 @@ public class DebugExecutable {
 				// Update the project description.
 				projDescManager.setProjectDescription(project,
 						projectDescription);
+				
+				// Serialize the language settings for the project now in case we don't run a
+				// language settings provider which will do this in shutdown.
+				ICProjectDescription projDescReadOnly = projDescManager
+						.getProjectDescription(project,
+								false);
+				LanguageSettingsManager.serializeLanguageSettings(projDescReadOnly);
 				
 //						System.out.println("after setProjectDescription");
 

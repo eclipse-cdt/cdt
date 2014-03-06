@@ -14,8 +14,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.internal.debug.application.DebugExecutable;
 import org.eclipse.cdt.internal.debug.application.JobContainer;
@@ -186,10 +184,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					// No executable specified, look for last launch
 					// and offer that to the end-user.
 					monitor.subTask(Messages.RestorePreviousLaunch);
-					String defaultProjectName = "Executables"; //$NON-NLS-1$
-					ICProject cProject = CoreModel.getDefault().getCModel()
-							.getCProject(defaultProjectName);
-					String memento = cProject.getProject().getPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH));
+					String memento = ResourcesPlugin.getWorkspace().getRoot().getPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH));
 					if (memento != null)
 						config = DebugExecutable.getLaunchManager().getLaunchConfiguration(memento);
 					String oldExecutable = "";

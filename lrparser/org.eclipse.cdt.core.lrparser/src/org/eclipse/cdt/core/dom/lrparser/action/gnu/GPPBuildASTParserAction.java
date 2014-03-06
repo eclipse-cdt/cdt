@@ -22,13 +22,10 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ParserUtil;
@@ -39,7 +36,6 @@ import org.eclipse.cdt.core.dom.lrparser.action.cpp.ICPPSecondaryParserFactory;
 import org.eclipse.cdt.internal.core.dom.lrparser.gpp.GPPParsersym;
 
 public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
-	
 	private final ICPPNodeFactory nodeFactory;
 	
 	private final ITokenMap gppTokenMap;
@@ -125,8 +121,6 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 		astStack.push(declSpec);
 	}
 
-	
-
 	private boolean hasRestrict(List<Object> tokens) {
 		for(Object o : tokens) {
 			IToken t = (IToken)o;
@@ -137,7 +131,6 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 		return false;
 	}
 	
-	
 	/**
 	 * Restrict is allowed as a keyword.
 	 */
@@ -147,21 +140,18 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 		super.consumePointer();
 		
 		if(hasRestrict) {
-			IGPPASTPointer gppPointer = nodeFactory.newPointerGPP();
-			initializeGPPPointer((IASTPointer)astStack.pop(), gppPointer);
+			IASTPointer gppPointer = nodeFactory.newPointer();
+			initializePointer((IASTPointer) astStack.pop(), gppPointer);
 			astStack.push(gppPointer);
 		}
 	}
 
-	
-	private static void initializeGPPPointer(IASTPointer pointer, IGPPASTPointer gppPointer) {
+	private static void initializePointer(IASTPointer pointer, IASTPointer gppPointer) {
 		gppPointer.setConst(pointer.isConst());
 		gppPointer.setVolatile(pointer.isVolatile());
 		gppPointer.setRestrict(true);
 		ParserUtil.setOffsetAndLength(gppPointer, pointer);
 	}
-		
-	
 
 	@Override
 	public void consumePointerToMember() {
@@ -170,22 +160,20 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 		
 		if(hasRestrict) {
 			ICPPASTPointerToMember pointer = (ICPPASTPointerToMember) astStack.pop();
-			IGPPASTPointerToMember gppPointer = nodeFactory.newPointerToMemberGPP(pointer.getName());
-			initializeGPPPointer(pointer, gppPointer);
+			ICPPASTPointerToMember gppPointer = nodeFactory.newPointerToMember(pointer.getName());
+			initializePointer(pointer, gppPointer);
 			astStack.push(gppPointer);
 		}
 		
 	}
 	
-	
 	public void consumeTemplateExplicitInstantiationGCC(int modifier) {
 		IASTDeclaration declaration = (IASTDeclaration) astStack.pop();
-		IGPPASTExplicitTemplateInstantiation instantiation = nodeFactory.newExplicitTemplateInstantiationGPP(declaration);
+		ICPPASTExplicitTemplateInstantiation instantiation = nodeFactory.newExplicitTemplateInstantiation(declaration);
 		instantiation.setModifier(modifier);
 		setOffsetAndLength(instantiation);
 		astStack.push(instantiation);
 	}
-	
 
 	/**
 	 * postfix_expression ::= '(' type_id ')' initializer_list      

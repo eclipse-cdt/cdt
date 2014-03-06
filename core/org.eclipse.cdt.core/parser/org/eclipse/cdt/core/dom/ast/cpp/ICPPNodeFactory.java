@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -242,9 +242,19 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember newPointerToMemberGPP(IASTName name);
 	
 	public IASTProblemTypeId newProblemTypeId(IASTProblem problem);
-	
+
+	/**
+	 * Creates a {@link ICPPASTQualifiedName}.
+	 * @since 5.7
+	 */
+	public ICPPASTQualifiedName newQualifiedName(ICPPASTName name);
+
+	/**
+	 * @deprecated Replaced by {@link #newQualifiedName(ICPPASTName)}.
+	 */
+	@Deprecated
 	public ICPPASTQualifiedName newQualifiedName();
-	
+
 	/**
 	 * Creates a range based for statement.
 	 * @since 5.3

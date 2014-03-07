@@ -221,18 +221,20 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 			NumberFormat nfGroup= NumberFormat.getNumberInstance();
 			nfGroup.setGroupingUsed(true);
 			NumberFormat nfPercent= NumberFormat.getPercentInstance();
-			nfPercent.setMaximumFractionDigits(2);
-			nfPercent.setMinimumFractionDigits(2);
+			int fractionalDigits = Math.max(1 - (int) Math.floor(Math.log10(problemPct * 100.)), 0);
+			nfPercent.setMaximumFractionDigits(fractionalDigits);
+			nfPercent.setMinimumFractionDigits(0);
 			NumberFormat nfTime= NumberFormat.getNumberInstance();
-			nfTime.setMaximumFractionDigits(2);
-			nfTime.setMinimumFractionDigits(2);
+			fractionalDigits = Math.max(2 - (int) Math.floor(Math.log10(totalTime / 1000.)), 0);
+			nfTime.setMaximumFractionDigits(fractionalDigits);
+			nfTime.setMinimumFractionDigits(0);
 			nfTime.setGroupingUsed(true);
 			final String msg= NLS.bind(Messages.PDOMIndexerTask_indexerInfo,
 					new Object[] {
 						getCProject().getElementName(),
 						nfGroup.format(info.fCompletedSources),
 						nfGroup.format(info.fCompletedHeaders),
-						nfTime.format((double) totalTime / 1000),
+						nfTime.format(totalTime / 1000.),
 						nfGroup.format(fStatistics.fDeclarationCount),
 						nfGroup.format(fStatistics.fReferenceCount),
 						nfGroup.format(fStatistics.fUnresolvedIncludesCount),

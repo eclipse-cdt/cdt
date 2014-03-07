@@ -36,13 +36,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * C++ specific declarator.
  */
-public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IASTImplicitNameOwner {
+public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IASTImplicitNameOwner,
+		IASTAmbiguityParent {
     private IASTInitializer initializer;
     private IASTName name;
 	private IASTImplicitName[] implicitNames; 
@@ -317,5 +319,14 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
     	}
 
     	return implicitNames;  
+	}
+
+	@Override
+	public void replace(IASTNode child, IASTNode other) {
+		if (child == nested) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			nested= (IASTDeclarator) other;
+		}
 	}
 }

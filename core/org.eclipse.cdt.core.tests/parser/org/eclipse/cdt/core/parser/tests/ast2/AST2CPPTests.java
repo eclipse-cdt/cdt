@@ -10567,4 +10567,9 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testFieldAndNestedTypeWithSameName_425033() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	void f(double (&(x)));
+	public void testParenthesizedReferenceArgument_424898() throws Exception {
+		parseAndCheckBindings();
+	}
 }

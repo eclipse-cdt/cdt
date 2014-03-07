@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_87347095",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTAttributeOwner.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T17:10:09Z",
+      "side": 1,
+      "message": "Should probably be IASTAttributeOwner.ATTRIBUTE_SPECIFIER.",
+      "revId": "79b54574a2a64ce5948ec290cf4ec2194dc93f73",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_273f6474",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTAttributeOwner.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T17:10:09Z",
+      "side": 1,
+      "message": "I meant two separate sentences: \"Ignored. Attributes...\"",
+      "revId": "79b54574a2a64ce5948ec290cf4ec2194dc93f73",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

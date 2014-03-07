@@ -1,0 +1,378 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_81a74092",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPAttributeTests.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Add a space after ...",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_61acac76",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Please rename useGNUExtensions to useGCCExtensions.",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_c1b018c8",
+        "filename": "core/org.eclipse.cdt.core.tests/resources/rewrite/ASTWriterAttributeTestSource.awts",
+        "patchSetId": 5
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Are the blank lines inside namespace necessary? Same applies to the namespaces below.",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_01bb30aa",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/ASTVisitor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "I\u0027m not sure is a separate flag for attribute specifiers is needed. It should be sufficient to apply shouldVisitAttributes to both, attributes and attribute specifiers.",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_e169dc9a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTAttributeOwner.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Please deprecate ATTRIBUTE and introduce ATTRIBUTE_SPECIFIER property to replace it.",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_215bd403",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTAttributeOwner.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Please remove this line. It is not important what the method was doing before it was deprecated.",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_8150e0dc",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTAttributeOwner.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Please add \"Ignored. \" in front of \"Attributes\"",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_feca19b2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTAttributeOwner.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Extra space before \"attribute\".",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_9e6f9d20",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTAttributeOwner.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Since GCC and C++ attribute specifiers have distinct types, they can be easily filtered by the client code using ArrayUtil.filter method in combination with InstanceOfPredicate that I\u0027ve just added. It makes sense to remove this method from the interface to keep the interface simple. The same applies to getCPPAttributeSpecifiers.",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_a1940416",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/INodeFactory.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Rename to newGCCAttributeSpecifier",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_c1ebf8eb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/gnu/IGNUASTAttributeSpecifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Please rename to IGCCASTAttributeSpecifier for consistency with other similar interfaces.\n\nFor convenience it makes sense to add:\npublic IUnaryPredicate\u003cIASTAttributeSpecifier\u003e TYPE_FILTER \u003d new InstanceOfPredicate\u003c\u003e(IGCCASTAttributeSpecifier.class);",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_212f54c6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/cpp/ICPPASTAttributeSpecifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "For convenience please add:\nFor convenience it makes sense to add:\npublic IUnaryPredicate\u003cIASTAttributeSpecifier\u003e TYPE_FILTER \u003d new InstanceOfPredicate\u003c\u003e(ICPPASTAttributeSpecifier.class);",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_01c9704e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ASTAttributeOwner.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Superseded by InstanceOfPredicate and should not be needed in this class.",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_6155ccca",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ASTAttributeOwner.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Add @Deprecated",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_c1be58ab",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ASTAttributeOwner.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Rename to acceptByGCCAttributeSpecifiers.",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_a1bb64b9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ASTAttributeOwner.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "It\u0027s cheaper to do filtering on the fly without creating a filtered array.",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_0101703d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/GNUASTAttributeSpecifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Please rename to GCCASTAttributeSpecifier.",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_41f24893",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ASTAttributeSpecifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_c1fbf839",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ASTAttributeSpecifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Also call attribute.setPropertyInParent.",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_a146c425",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTAmbiguousDeclarator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Add @Deprecated",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_e1f27c5a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPNodeFactory.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 412,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Please rename to newGCCAttributeSpecifier",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_811d8027",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/astwriter/DeclarationWriter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-07T00:51:27Z",
+      "side": 1,
+      "message": "Please put on the same line with the closing brace.",
+      "revId": "ce1eb683edac37b89e73fb821f4e28c3a46d5b78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

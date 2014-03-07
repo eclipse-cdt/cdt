@@ -8173,6 +8173,21 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertSameType((ITypedef) helper.assertNonProblem("U<S>::type"), CommonTypes.int_);
 	}
 
+	//	template <typename T>
+	//	struct A {
+	//	  typedef T type;
+	//	};
+	//
+	//	struct B {
+	//	  static const A<int> c;
+	//	};
+	//
+	//	decltype(B::c)::type x;
+	public void testDependentDecltypeInNameQualifier_429837() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		assertSameType((ITypedef) helper.assertNonProblem("decltype(B::c)::type"), CommonTypes.int_);
+	}
+
 	//	namespace N {
 	//	    template <typename>
 	//	    struct C;

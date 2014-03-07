@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.internal.debug.application.DebugAttachedExecutable;
 import org.eclipse.cdt.internal.debug.application.DebugExecutable;
 import org.eclipse.cdt.internal.debug.application.JobContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -109,6 +110,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
 			monitor.beginTask(Messages.InitializingDebugger, 10);
+			boolean attachExecutable = false;
 			String executable = "";
 			String buildLog = null;
 			String arguments = null;
@@ -123,6 +125,10 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						++i;
 						if (i < args.length)
 							buildLog = args[i];
+					}
+					else if ("-a".equals(args[i])) {
+						++i;
+						attachExecutable = true;
 					}
 					else if ("-e".equals(args[i])) {
 						++i;
@@ -178,7 +184,9 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					}
 				}
 				monitor.worked(1);
-				if (executable.length() > 0) {
+				if (attachExecutable) {
+					config = DebugAttachedExecutable.createLaunchConfig(monitor, buildLog);
+				} else if (executable.length() > 0) {
 					config = DebugExecutable.importAndCreateLaunchConfig(monitor, executable, buildLog, arguments);
 				} else {
 					// No executable specified, look for last launch

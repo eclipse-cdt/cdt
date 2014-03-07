@@ -18,6 +18,6 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab;
 public class GDBJtagDSFCMainTab extends CMainTab {
 
 	public GDBJtagDSFCMainTab() {
-		super(CMainTab.DONT_CHECK_PROGRAM | CMainTab.INCLUDE_BUILD_SETTINGS);
+		super(CMainTab.INCLUDE_BUILD_SETTINGS);
 	}
 }

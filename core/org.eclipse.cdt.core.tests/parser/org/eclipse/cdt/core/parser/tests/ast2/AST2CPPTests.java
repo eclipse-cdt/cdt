@@ -10567,4 +10567,13 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testFieldAndNestedTypeWithSameName_425033() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	typedef unsigned char u8;
+	//
+	//	#ifndef X
+	//	u8 var;
+	//	#endif
+	public void testU8TokenAfterIfdef_429361() throws Exception {
+		parseAndCheckBindings();
+	}
 }

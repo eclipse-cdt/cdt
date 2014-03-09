@@ -7357,7 +7357,33 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testSFINAEInTemplatedConversionOperator_409056() throws Exception {
 		parseAndCheckImplicitNameBindings();
 	}
-
+	
+	//	template<typename T>
+	//	struct A {
+	//	  static constexpr bool value = false;
+	//	};
+	//
+	//	template<bool, typename T = void>
+	//	struct enable_if {};
+	//
+	//	template<typename T>
+	//	struct enable_if<true, T> {
+	//	  typedef T type;
+	//	};
+	//
+	//	template <class U>
+	//	void
+	//	waldo();
+	//
+	//	template <class U>
+	//	typename enable_if<A<U>::value>::type
+	//	waldo();
+	//
+	//	auto x = waldo<int>;  // problem on valdo<int>
+	public void testSfinaeWhenResolvingAddressOfFunction_429928() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 	//	template <typename>
 	//	struct M {
 	//	    template <typename... Args>

@@ -90,10 +90,17 @@ final public class Lexer implements ITokenSequence {
 	private Token fLastToken;
 	
 	// For the few cases where we have to lookahead more than one character
+	private int fMarkPhase3Offset;
+	private int fMarkPhase3EndOffset;
+	private int fMarkPhase3PrefetchedChar;
+	
+	// To store the entire state. Note that we don't reuse the variables
+	// used for saving the phase3 because calls to markPhase3() and
+	// restorePhase3() can occur in between calls to saveState() and
+	// restoreState().
 	private int fMarkOffset;
 	private int fMarkEndOffset;
 	private int fMarkPrefetchedChar;
-	// To store the entire state.
 	private boolean fMarkInsideIncludeDirective;
 	private Token fMarkToken;
 	private Token fMarkLastToken;
@@ -1006,18 +1013,18 @@ final public class Lexer implements ITokenSequence {
 	 * with a long prefix.
 	 */
 	private void markPhase3() {
-		fMarkOffset= fOffset;
-		fMarkEndOffset= fEndOffset;
-		fMarkPrefetchedChar= fCharPhase3;
+		fMarkPhase3Offset= fOffset;
+		fMarkPhase3EndOffset= fEndOffset;
+		fMarkPhase3PrefetchedChar= fCharPhase3;
 	}
 	
 	/**
 	 * Restores a previously saved state of phase3.
 	 */
 	private void restorePhase3() {
-		fOffset= fMarkOffset;
-		fEndOffset= fMarkEndOffset;
-		fCharPhase3= fMarkPrefetchedChar;
+		fOffset= fMarkPhase3Offset;
+		fEndOffset= fMarkPhase3EndOffset;
+		fCharPhase3= fMarkPhase3PrefetchedChar;
 	}
 	
 	/**

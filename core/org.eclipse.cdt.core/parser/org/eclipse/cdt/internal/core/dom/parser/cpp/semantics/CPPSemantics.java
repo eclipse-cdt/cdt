@@ -2578,7 +2578,12 @@ public class CPPSemantics {
 					ICPPFunctionTemplate funcTemp = (ICPPFunctionTemplate) f;
 					final ICPPTemplateParameter[] tpars = funcTemp.getTemplateParameters();
 					final CPPTemplateParameterMap map = new CPPTemplateParameterMap(tpars.length);
-					isCandidate= TemplateArgumentDeduction.addExplicitArguments(funcTemp, tpars, args, map, point);
+					if (!TemplateArgumentDeduction.addExplicitArguments(funcTemp, tpars, args, map, point)) {
+						isCandidate= false;
+					} else {
+						f = CPPTemplates.instantiateForAddressOfFunction(funcTemp, null, args, point);
+						isCandidate= f != null;
+					}
 				}
 			} else {
 				isCandidate= args == null;

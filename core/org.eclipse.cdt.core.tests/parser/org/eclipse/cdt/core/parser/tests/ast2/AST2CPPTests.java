@@ -10572,4 +10572,13 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testParenthesizedReferenceArgument_424898() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	typedef unsigned char u8;
+	//
+	//	#ifndef X
+	//	u8 var;
+	//	#endif
+	public void testU8TokenAfterIfdef_429361() throws Exception {
+		parseAndCheckBindings();
+	}
 }

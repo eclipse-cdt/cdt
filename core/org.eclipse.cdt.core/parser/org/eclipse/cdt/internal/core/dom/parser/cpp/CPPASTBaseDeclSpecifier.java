@@ -16,19 +16,19 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 
 /**
- * Base for all c++ declaration specifiers
+ * Base for all c++ declaration specifiers.
  */
 public abstract class CPPASTBaseDeclSpecifier extends ASTAttributeOwner implements ICPPASTDeclSpecifier {
+    private boolean explicit;
     private boolean friend;
     private boolean inline;
     private boolean isConst;
     private boolean isConstexpr;
-    private boolean isVolatile;
     private boolean isRestrict;
-    private int sc;
     private boolean isThreadLocal;
+    private boolean isVolatile;
+    private int sc;
     private boolean virtual;
-    private boolean explicit;
     
     @Override
 	public boolean isFriend() {
@@ -142,15 +142,16 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTAttributeOwner implemen
 
 	protected <T extends CPPASTBaseDeclSpecifier> T copy(T copy, CopyStyle style) {
 		CPPASTBaseDeclSpecifier target = copy;
+    	target.explicit = explicit;
     	target.friend = friend;
     	target.inline = inline;
     	target.isConst = isConst;
     	target.isConstexpr = isConstexpr;
-    	target.isVolatile = isVolatile;
     	target.isRestrict= isRestrict;
-    	target.virtual = virtual;
-    	target.explicit = explicit;
+    	target.isThreadLocal = isThreadLocal;
+    	target.isVolatile = isVolatile;
     	target.sc = sc;
+    	target.virtual = virtual;
 		return super.copy(copy, style);
 	}
 

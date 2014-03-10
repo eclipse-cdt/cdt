@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_7ff1e089",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/InstanceOfPredicate.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-03-10T07:28:39Z",
+      "side": 1,
+      "message": "I don\u0027t think this restriction is necessary. It narrows the applicability of this class down to a subset of its capabilities. Consider the following:\n- We have two independent interfaces I1 and I2.\n- We have a class C that implements both interfaces I1 and I2\n- W have an array of I1 objects A.\n- An instance of C could be an element of A.\n\nWe could not create an InstanceOfPredicate for filtering I2 (new InstanceOfPredicate(I2.class), which might be a desired filter.",
+      "revId": "2534e17d7cb1d7ac9dc2ee3239be5c8a3c16e894",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

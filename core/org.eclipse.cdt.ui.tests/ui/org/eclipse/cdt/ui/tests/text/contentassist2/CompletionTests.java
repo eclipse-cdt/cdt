@@ -172,6 +172,16 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	namespace _B_331056 {
 	//		using ::_A_331056::Reference;
 	//	}
+	//
+	//	template<typename T1, typename T2>
+	//	struct Specialization {
+	//	};
+	//	template<typename T2>
+	//	struct Specialization<int, T2> {
+	//	};
+	//	template<>
+	//	struct Specialization<int, int> {
+	//	};
 
 	public CompletionTests(String name) {
 		super(name, true);
@@ -411,7 +421,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 
 	//void C2::f() {T/*cursor*/
 	public void testTypes_MethodScope() throws Exception {
-		final String[] expected= { "T1", "T2", "T3", "TClass" };
+		final String[] expected= { "T1", "T2", "T3", "TClass<typename T>" };
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
@@ -1349,6 +1359,12 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	int x = __CDT_PARSER__;
 	public void testPredefinedMacro_412463() throws Exception {
 		final String[] expected = { "Cat", "meow(void)" };
+		assertContentAssistResults(fCursorOffset, expected, true, COMPARE_ID_STRINGS);
+	}
+
+	//	void foo() { Spec/*cursor*/
+	public void testTemplateSpecialization() throws Exception {
+		final String[] expected = { "Specialization<typename T1, typename T2>" };
 		assertContentAssistResults(fCursorOffset, expected, true, COMPARE_ID_STRINGS);
 	}
 }

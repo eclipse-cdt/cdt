@@ -6339,7 +6339,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	};
 	//
 	//	typedef A<C> type;
-	public void testSFINAE_a() throws Exception {
+	public void testSfinae_a() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -6371,7 +6371,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	  A<double>::get();
 	//	  A<int>::get();
 	//	}
-	public void testSFINAE_b() throws Exception {
+	public void testSfinae_b() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -7304,7 +7304,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	int main() {
 	//	    foo(S());
 	//	}
-	public void testSFINAEInDefaultArgument() throws Exception {
+	public void testSfinaeInDefaultArgument() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -7325,7 +7325,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	};
 	//
 	//	const bool B = has_type<int>::value;
-	public void testSFINAEInNestedTypeInTemplateArgument_402257() throws Exception {
+	public void testSfinaeInNestedTypeInTemplateArgument_402257() throws Exception {
 		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
 		ICPPVariable B = helper.assertNonProblem("B");
 		Long val = B.getInitialValue().numericalValue();
@@ -7354,7 +7354,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	    S waldo;
 	//	    A() : waldo(B{}) {}
 	//	};
-	public void testSFINAEInTemplatedConversionOperator_409056() throws Exception {
+	public void testSfinaeInTemplatedConversionOperator_409056() throws Exception {
 		parseAndCheckImplicitNameBindings();
 	}
 	

@@ -1224,4 +1224,15 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
 	    assertTrue(decl instanceof IASTName);
 	}
 
+	//	int waldo;
+	//	void foo() {
+	//		extern int waldo;
+	//	}
+	public void testLocallyDeclaredExternVariable_372004() throws Exception {
+		String code = getAboveComment();
+		IFile file = importFile("testWaldo.cpp", code);
+		
+		int offset = code.indexOf("extern int waldo") + 12;
+		assertTrue(testF3(file, offset) instanceof IASTName);
+	}
 }

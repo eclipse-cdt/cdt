@@ -1045,14 +1045,16 @@ final public class Lexer implements ITokenSequence {
 			fEndOffset= ++pos;
 			fCharPhase3= c;
 			switch (c) {
-			// windows line-ending
 			case '\r':
+				// windows line-ending
 				if (fInput.get(pos) == '\n') {	
 					fEndOffset= pos+1;
 					fCharPhase3= '\n';
 					return '\n';
 				}
-				return c;
+				// mac os 9 line ending
+				fCharPhase3= '\n';
+				return '\n';
 
 				// trigraph sequences
 			case '?':

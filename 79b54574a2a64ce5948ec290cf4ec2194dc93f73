@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2753a756_bfe258bd",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTAttributeOwner.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-03-10T07:27:23Z",
+      "side": 1,
+      "message": "Yes, of course. Thanks for the correction.",
+      "parentUuid": "2753a756_87347095",
+      "revId": "79b54574a2a64ce5948ec290cf4ec2194dc93f73",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2753a756_273f6474",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTAttributeOwner.java",
         "patchSetId": 6
@@ -30,6 +48,24 @@
       "writtenOn": "2014-03-07T17:10:09Z",
       "side": 1,
       "message": "I meant two separate sentences: \"Ignored. Attributes...\"",
+      "revId": "79b54574a2a64ce5948ec290cf4ec2194dc93f73",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_1fe0a4b4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTAttributeOwner.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-03-10T07:27:23Z",
+      "side": 1,
+      "message": "Oh, I obviously got that wrong. Thanks for correcting it.",
+      "parentUuid": "2753a756_273f6474",
       "revId": "79b54574a2a64ce5948ec290cf4ec2194dc93f73",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

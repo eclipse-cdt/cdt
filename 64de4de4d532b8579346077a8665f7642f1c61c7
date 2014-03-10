@@ -34,6 +34,24 @@
       "revId": "64de4de4d532b8579346077a8665f7642f1c61c7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_1801da3d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10576,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-10T17:16:00Z",
+      "side": 1,
+      "message": "Something like:\n\n#define MACRO aaa \\\u003cCR\u003e\u003cLF\u003e\n   bbb",
+      "parentUuid": "2753a756_38081e67",
+      "revId": "64de4de4d532b8579346077a8665f7642f1c61c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

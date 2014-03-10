@@ -655,13 +655,8 @@ public class SemanticHighlightings {
 							&& !(binding instanceof IField)
 							&& !(binding instanceof IParameter)
 							&& !(binding instanceof IProblemBinding)) {
-						try {
-							IScope scope= binding.getScope();
-							if (LocalVariableHighlighting.isLocalScope(scope)) {
-								return true;
-							}
-						} catch (DOMException exc) {
-							CUIPlugin.log(exc);
+						if (LocalVariableHighlighting.isLocalVariable((IVariable) binding)) {
+							return true;
 						}
 					}
 				}
@@ -715,13 +710,8 @@ public class SemanticHighlightings {
 							&& !(binding instanceof IField)
 							&& !(binding instanceof IParameter)
 							&& !(binding instanceof IProblemBinding)) {
-						try {
-							IScope scope= binding.getScope();
-							if (isLocalScope(scope)) {
-								return true;
-							}
-						} catch (DOMException exc) {
-							CUIPlugin.log(exc);
+						if (isLocalVariable((IVariable) binding)) {
+							return true;
 						}
 					}
 				}
@@ -729,20 +719,30 @@ public class SemanticHighlightings {
 			return false;
 		}
 
-	    public static boolean isLocalScope(IScope scope) {
-	        while (scope != null) {
-	            if (scope instanceof ICPPFunctionScope ||
-	                    scope instanceof ICPPBlockScope ||
-	                    scope instanceof ICFunctionScope) {
-	                return true;
-	            }
-	            try {
-	                scope= scope.getParent();
-	            } catch (DOMException e) {
-	                scope= null;
-	            }
-	        }
-	        return false;
+	    public static boolean isLocalVariable(IVariable variable) {
+	    	// A variable marked 'extern' declares a global
+	    	// variable even if the declaration is local.
+	    	if (variable.isExtern()) {
+	    		return false;
+	    	}
+	    	try {
+		    	IScope scope= variable.getScope();
+		        while (scope != null) {
+		            if (scope instanceof ICPPFunctionScope ||
+		                    scope instanceof ICPPBlockScope ||
+		                    scope instanceof ICFunctionScope) {
+		                return true;
+		            }
+		            try {
+		                scope= scope.getParent();
+		            } catch (DOMException e) {
+		                scope= null;
+		            }
+		        }
+	    	} catch (DOMException exc) {
+	    		CUIPlugin.log(exc);
+	    	}
+	    	return false;
 	    }
 	}
 
@@ -794,13 +794,8 @@ public class SemanticHighlightings {
 						&& !(binding instanceof IParameter)
 						&& !(binding instanceof ICPPTemplateNonTypeParameter)
 						&& !(binding instanceof IProblemBinding)) {
-					try {
-						IScope scope= binding.getScope();
-						if (!LocalVariableHighlighting.isLocalScope(scope)) {
-							return true;
-						}
-					} catch (DOMException exc) {
-						CUIPlugin.log(exc);
+					if (!LocalVariableHighlighting.isLocalVariable((IVariable) binding)) {
+						return true;
 					}
 				}
 			}

@@ -146,3 +146,8 @@ EMPTY int f();
 
 //http://bugs.eclipse.org/340492
 template< template<class> class U > class myClass {};
+
+//http://bugs.eclipse.org/372004
+void g() {
+    extern int globalVariable;  // declared as global near top
+}

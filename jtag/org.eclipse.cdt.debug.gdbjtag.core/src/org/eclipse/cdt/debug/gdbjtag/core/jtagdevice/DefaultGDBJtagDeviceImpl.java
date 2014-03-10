@@ -101,7 +101,7 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 			addCmd(commands, "symbol-file " + file);
 		}
 		else {
-			addCmd(commands, "add-sym " + file + " " + symbolOffset);			
+			addCmd(commands, "add-symbol-file " + file + " " + symbolOffset);
 		}
 	}
 	

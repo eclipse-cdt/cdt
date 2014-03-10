@@ -53,3 +53,4 @@ activated on the host as follows:
   the kill -HUP inetd.
 * On Windows/Cygwin, with xinetd installed, edit config
   files like described for Linux, then start xinetd.exe
+

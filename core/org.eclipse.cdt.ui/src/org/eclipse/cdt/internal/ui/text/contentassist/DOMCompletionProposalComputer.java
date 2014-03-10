@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 QNX Software Systems and others.
+ * Copyright (c) 2007, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,11 @@
  *     Sergey Prigogin (Google)
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *     Nathan Ridge
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -64,6 +67,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -94,6 +101,10 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
  * @author Bryan Wilkinson
  */
 public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer {
+	private static final String TEMPLATE_PARAMETER_PATTERN = "template<{0}> class"; //$NON-NLS-1$;
+	private static final String TYPENAME = "typename"; //$NON-NLS-1$;
+	private static final String ELLIPSIS = "..."; //$NON-NLS-1$;
+
 	/**
 	 * Default constructor is required (executable extension).
 	 */
@@ -336,7 +347,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				|| binding instanceof CImplicitFunction
 				|| binding instanceof CImplicitTypedef
 				|| binding instanceof CBuiltinVariable
-				|| binding instanceof CBuiltinParameter)
+				|| binding instanceof CBuiltinParameter
+				|| binding instanceof ICPPClassTemplatePartialSpecialization)
 				&& !(binding instanceof CPPImplicitMethod)) {
 			return;
 		}
@@ -375,26 +387,65 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		return name.length == 0 || name[0] == '{';
 	}
 
+	private void addProposalForClassTemplate(ICPPClassTemplate templateType, CContentAssistInvocationContext context,
+			int baseRelevance, List<ICompletionProposal> proposals) {
+		int relevance = getClassTypeRelevance(templateType);
+		StringBuilder representation = new StringBuilder(templateType.getName());
+		representation.append("<{0}>"); //$NON-NLS-1$
+
+		String representationString = MessageFormat.format(representation.toString(), ""); //$NON-NLS-1$
+
+		String templateParameterRepresentation = buildTemplateParameters(templateType);
+		String displayString = MessageFormat.format(representation.toString(), templateParameterRepresentation);
+
+		CCompletionProposal proposal = createProposal(representationString, displayString, getImage(templateType),
+				baseRelevance + relevance, context);
+
+		CProposalContextInformation info =
+				new CProposalContextInformation(getImage(templateType), displayString, templateParameterRepresentation);
+		info.setContextInformationPosition(context.getContextInformationOffset());
+		proposal.setContextInformation(info);
+		proposal.setCursorPosition(representationString.length() - 1);
+		proposals.add(proposal);
+	}
+
+	private String buildTemplateParameters(ICPPClassTemplate templateType) {
+		ICPPTemplateParameter[] parameters = templateType.getTemplateParameters();
+		StringBuilder representation = new StringBuilder();
+
+		for (int i = 0; i < parameters.length; i++) {
+			ICPPTemplateParameter parameter = parameters[i];
+			if (i > 0) {
+				representation.append(", "); //$NON-NLS-1$
+			}
+			if (parameter instanceof ICPPTemplateNonTypeParameter) {
+				IType parameterType = ((ICPPTemplateNonTypeParameter) parameter).getType();
+				String typeName = ASTTypeUtil.getType(parameterType);
+				representation.append(typeName);
+			} else if (parameter instanceof ICPPTemplateTypeParameter) {
+				representation.append(TYPENAME);
+			} else if (parameter instanceof ICPPTemplateTemplateParameter) {
+				String templateParameterParameters = buildTemplateParameters((ICPPTemplateTemplateParameter) parameter);
+				representation.append(MessageFormat.format(TEMPLATE_PARAMETER_PATTERN, templateParameterParameters));
+				representation.append(templateParameterParameters);
+			}
+			if (parameter.isParameterPack()) {
+				representation.append(ELLIPSIS);
+			}
+			representation.append(' ');
+			representation.append(parameter.getName());
+		}
+		return representation.toString();
+	}
+
 	private void handleClass(ICPPClassType classType, IASTCompletionContext astContext,
 			CContentAssistInvocationContext context, int baseRelevance, List<ICompletionProposal> proposals) {
 		if (context.isContextInformationStyle()) {
-			ICPPConstructor[] constructors = classType.getConstructors();
-			for (ICPPConstructor constructor : constructors) {
-				handleFunction(constructor, context, baseRelevance, proposals);
-			}
+			addProposalsForConstructors(classType, context, baseRelevance, proposals);
+		} else if (classType instanceof ICPPClassTemplate) {
+			addProposalForClassTemplate((ICPPClassTemplate) classType, context, baseRelevance, proposals);
 		} else {
-			int relevance= 0;
-			switch (classType.getKey()) {
-			case ICPPClassType.k_class:
-				relevance= RelevanceConstants.CLASS_TYPE_RELEVANCE;
-				break;
-			case ICompositeType.k_struct:
-				relevance= RelevanceConstants.STRUCT_TYPE_RELEVANCE;
-				break;
-			case ICompositeType.k_union:
-				relevance= RelevanceConstants.UNION_TYPE_RELEVANCE;
-				break;
-			}
+			int relevance = getClassTypeRelevance(classType);
 			if (astContext instanceof IASTName && !(astContext instanceof ICPPASTQualifiedName)) {
 				IASTName name= (IASTName)astContext;
 				if (name.getParent() instanceof IASTDeclarator) {
@@ -405,6 +456,30 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			proposals.add(createProposal(classType.getName(), classType.getName(), getImage(classType),
 					baseRelevance + RelevanceConstants.CLASS_TYPE_RELEVANCE, context));
 		}
+	}
+
+	private void addProposalsForConstructors(ICPPClassType classType,
+			CContentAssistInvocationContext context, int baseRelevance, List<ICompletionProposal> proposals) {
+		ICPPConstructor[] constructors = classType.getConstructors();
+		for (ICPPConstructor constructor : constructors) {
+			handleFunction(constructor, context, baseRelevance, proposals);
+		}
+	}
+
+	private int getClassTypeRelevance(ICPPClassType classType) {
+		int relevance= 0;
+		switch (classType.getKey()) {
+		case ICPPClassType.k_class:
+			relevance= RelevanceConstants.CLASS_TYPE_RELEVANCE;
+			break;
+		case ICompositeType.k_struct:
+			relevance= RelevanceConstants.STRUCT_TYPE_RELEVANCE;
+			break;
+		case ICompositeType.k_union:
+			relevance= RelevanceConstants.UNION_TYPE_RELEVANCE;
+			break;
+		}
+		return relevance;
 	}
 
 	private void handleFunction(IFunction function, CContentAssistInvocationContext context,

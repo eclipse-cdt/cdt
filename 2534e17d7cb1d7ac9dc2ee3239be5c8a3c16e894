@@ -16,6 +16,24 @@
       "revId": "2534e17d7cb1d7ac9dc2ee3239be5c8a3c16e894",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_98bb2a0d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/InstanceOfPredicate.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-10T16:59:09Z",
+      "side": 1,
+      "message": "Good point.",
+      "parentUuid": "2753a756_7ff1e089",
+      "revId": "2534e17d7cb1d7ac9dc2ee3239be5c8a3c16e894",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

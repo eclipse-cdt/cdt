@@ -210,26 +210,34 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 			if (fTextViewer != null && string != null) {
 				int index= string.indexOf("()"); //$NON-NLS-1$
 				if (index != -1 && index + 1 == fCursorPosition) {
-					int newOffset= fReplacementOffset + fCursorPosition;
-					
-					LinkedPositionGroup group= new LinkedPositionGroup();
-					group.addPosition(new LinkedPosition(document, newOffset, 0, LinkedPositionGroup.NO_STOP));
-					
-					LinkedModeModel model= new LinkedModeModel();
-					model.addGroup(group);
-					model.forceInstall();
-					
-					LinkedModeUI ui= new EditorLinkedModeUI(model, fTextViewer);
-					ui.setSimpleMode(true);
-					ui.setExitPolicy(new ExitPolicy(')'));
-					ui.setExitPosition(fTextViewer, newOffset + 1, 0, Integer.MAX_VALUE);
-					ui.setCyclingMode(LinkedModeUI.CYCLE_NEVER);
-					ui.enter();
+					addParameterListLinkedMode(document, ')');
+				}
+				index = string.indexOf("<>"); //$NON-NLS-1$
+				if (index != -1 && index + 1 == fCursorPosition) {
+					addParameterListLinkedMode(document, '>');
 				}
 			}
 		} catch (BadLocationException x) {
 			// Ignore
 		}		
+	}
+
+	private void addParameterListLinkedMode(IDocument document, char endSymbol) throws BadLocationException {
+		int newOffset= fReplacementOffset + fCursorPosition;
+		
+		LinkedPositionGroup group= new LinkedPositionGroup();
+		group.addPosition(new LinkedPosition(document, newOffset, 0, LinkedPositionGroup.NO_STOP));
+		
+		LinkedModeModel model= new LinkedModeModel();
+		model.addGroup(group);
+		model.forceInstall();
+		
+		LinkedModeUI ui= new EditorLinkedModeUI(model, fTextViewer);
+		ui.setSimpleMode(true);
+		ui.setExitPolicy(new ExitPolicy(endSymbol));
+		ui.setExitPosition(fTextViewer, newOffset + 1, 0, Integer.MAX_VALUE);
+		ui.setCyclingMode(LinkedModeUI.CYCLE_NEVER);
+		ui.enter();
 	}
 
 	/**

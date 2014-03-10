@@ -10572,4 +10572,8 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testParenthesizedReferenceArgument_424898() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	public void testMacOS9LineEnding_151329() throws Exception {
+		parseAndCheckBindings("int waldo;\r#define bar");
+	}
 }

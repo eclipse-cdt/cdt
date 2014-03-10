@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_1554034b",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10576,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-10T16:57:45Z",
+      "side": 1,
+      "message": "We probably also need a test for macro continuation with \\r\\n to check that \\r\\n is treated as a single line break, not two. The tests should probably be moved to AST2Tests since they are not C++ specific.",
+      "revId": "64de4de4d532b8579346077a8665f7642f1c61c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

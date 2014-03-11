@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Ericsson - Adapted for DSF
  *     Dmitry Kozlov (Mentor Graphics) - Add tab symbols parsing (Bug 391115)
+ *     William Riley (Renesas) - Add raw Opcode parsing (Bug 357270)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -21,10 +22,11 @@ public class MIInstruction extends AbstractInstruction {
 
     // The parsed information
     BigInteger address;
-    String     function = ""; //$NON-NLS-1$
+    String     function   = ""; //$NON-NLS-1$
     long       offset;
-    String     opcode   = ""; //$NON-NLS-1$
-    String     args     = ""; //$NON-NLS-1$
+    String     opcode     = ""; //$NON-NLS-1$
+    String     args       = ""; //$NON-NLS-1$
+    BigInteger rawOpcodes = null;
 
     public MIInstruction(MITuple tuple) {
         parse(tuple);
@@ -59,6 +61,11 @@ public class MIInstruction extends AbstractInstruction {
     public String getArgs() {
         return args;
     }
+	
+	@Override
+	public BigInteger getRawOpcodes() {
+		return rawOpcodes;
+	}
 
     /**
      *  Parse the assembly instruction result. Each instruction has the following
@@ -66,13 +73,20 @@ public class MIInstruction extends AbstractInstruction {
      *   - Address
      *   - Function name
      *   - Offset
-     *   - Instruction
+     *   - Instruction   
      * 
      *   {address="0x000107c0",func-name="main",offset="4",inst="mov 2, %o0"},
      *   {address="0x000107c4",func-name="main",offset="8",inst="sethi %hi(0x11800), %o2"},
      *   ...,
      *   {address="0x00010820",func-name="main",offset="100",inst="restore "}
      * 
+     * 	An instruction may also:
+     *    - Opcode bytes
+     *    
+     *  {address="0x004016b9",func-name="main",offset="9",opcodes="e8 a2 05 00 00",
+     *  	inst="call   0x401c60 <__main>"},
+     *  ...,
+     *    
      *  In addition, the opcode and arguments are extracted form the assembly instruction.
      */
     private void parse(MITuple tuple) {
@@ -132,6 +146,14 @@ public class MIInstruction extends AbstractInstruction {
                 if( index < chars.length )
                     args = str.substring( index );
             }
+            
+            if (var.equals("opcodes")) { //$NON-NLS-1$	
+            	try {
+            		rawOpcodes = decodeOpcodes(str);
+            	} catch (NumberFormatException e) {
+                }
+                continue;
+            }
         }
 
     }
@@ -150,5 +172,17 @@ public class MIInstruction extends AbstractInstruction {
 		}
 		return new BigInteger(string);
 	}
-
+	
+	/**
+	 * Decode given string representation of a space separated hex encoded byte
+	 * array
+	 * 
+	 * @param string
+	 *            space separated hexadecimal byte array
+	 * @return opcode bytes as <code>BigInteger</code>
+	 */
+	private static BigInteger decodeOpcodes(String string) {
+		// Removing space separation and parse as single big integer
+		return new BigInteger(string.replace(" ", ""), 16); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 }

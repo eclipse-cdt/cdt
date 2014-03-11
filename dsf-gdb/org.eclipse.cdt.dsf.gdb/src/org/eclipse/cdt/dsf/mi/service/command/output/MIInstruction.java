@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Ericsson - Adapted for DSF
  *     Dmitry Kozlov (Mentor Graphics) - Add tab symbols parsing (Bug 391115)
+ *     William Riley (Renesas) - Add raw Opcode parsing (Bug 357270)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -21,10 +22,11 @@ public class MIInstruction extends AbstractInstruction {
 
     // The parsed information
     BigInteger address;
-    String     function = ""; //$NON-NLS-1$
+    String     function   = ""; //$NON-NLS-1$
     long       offset;
-    String     opcode   = ""; //$NON-NLS-1$
-    String     args     = ""; //$NON-NLS-1$
+    String     opcode     = ""; //$NON-NLS-1$
+    String     args       = ""; //$NON-NLS-1$
+    BigInteger rawOpcodes = null;
 
     public MIInstruction(MITuple tuple) {
         parse(tuple);
@@ -59,6 +61,11 @@ public class MIInstruction extends AbstractInstruction {
     public String getArgs() {
         return args;
     }
+	
+	@Override
+	public BigInteger getRawOpcodes() {
+		return rawOpcodes;
+	}
 
     /**
      *  Parse the assembly instruction result. Each instruction has the following
@@ -73,6 +80,13 @@ public class MIInstruction extends AbstractInstruction {
      *   ...,
      *   {address="0x00010820",func-name="main",offset="100",inst="restore "}
      * 
+     * 	An instruction may also contain:
+     *    - Opcode bytes
+     *    
+     *  {address="0x004016b9",func-name="main",offset="9",opcodes="e8 a2 05 00 00",
+     *  	inst="call   0x401c60 <__main>"},
+     *  ...,
+     *    
      *  In addition, the opcode and arguments are extracted form the assembly instruction.
      */
     private void parse(MITuple tuple) {
@@ -82,7 +96,7 @@ public class MIInstruction extends AbstractInstruction {
             MIValue value = results[i].getMIValue();
             String str = ""; //$NON-NLS-1$
 
-            if (value != null && value instanceof MIConst) {
+            if (value instanceof MIConst) {
                 str = ((MIConst)value).getCString();
             }
 
@@ -111,7 +125,9 @@ public class MIInstruction extends AbstractInstruction {
                 /* for the instruction, we do not want the C string but the
                 translated string since the only thing we are doing is
                 displaying it. */
-                str = ((MIConst) value).getString();
+                if (value instanceof MIConst) {
+                	str = ((MIConst) value).getString();
+                }
                 /* to avoid improper displaying of instructions we need to translate tabs */
                 str = str.replace("\\t", "\t"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -131,6 +147,16 @@ public class MIInstruction extends AbstractInstruction {
                 // guard no argument
                 if( index < chars.length )
                     args = str.substring( index );
+
+                continue;
+            }
+            
+            if (var.equals("opcodes")) { //$NON-NLS-1$	
+            	try {
+            		rawOpcodes = decodeOpcodes(str);
+            	} catch (NumberFormatException e) {
+                }
+                continue;
             }
         }
 
@@ -150,5 +176,17 @@ public class MIInstruction extends AbstractInstruction {
 		}
 		return new BigInteger(string);
 	}
-
+	
+	/**
+	 * Decode given string representation of a space separated hex encoded byte
+	 * array
+	 * 
+	 * @param string
+	 *            space separated hexadecimal byte array
+	 * @return opcode bytes as <code>BigInteger</code>
+	 */
+	private static BigInteger decodeOpcodes(String string) {
+		// Removing space separation and parse as single big integer
+		return new BigInteger(string.replace(" ", ""), 16); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 }

@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Starting The Debugger</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+<body>
+<div role="main">
+
+<h1>Starting The Debugger</h2>
+
+<p>The debugger is started from the command-line using the <strong>run-gdbstandalone.sh</strong> script.
+The script contains the command-line needed to start Eclipse and to pass appropriate
+parameters at start-up.  The following are the command-line options supported:
+
+<h4>-a</h4>
+<p>This option specifies that you want to attach and debug an existing executable that is running on your system.
+The option will bring up a dialog which contains a list of current executables running and you may choose the
+executable(s) you wish to attach to.  You also have the option of starting a new executable, if desired, but you
+cannot specify a build log using this method.
+
+<h4>-b &lt;build log&gt;</h4>
+<p>This option specifies an optional build log to use for indexing the source.  The build log
+is simply the output of a makefile build where the options used to compile the various source files
+are displayed.  The indexer uses these options to figure out what flags and include paths were used
+and thus can properly parse the code to match the executable.  The parsed tree is used to navigate
+within the code to search for C/C++ elements or to calculate a call hierarchy.  If this log is
+not provided, the Stand-alone Debugger has only the compiler built-ins and default include paths
+to use which means it may not search properly.</p>
+
+<h4>-e &lt;executable&gt; [args*]</h4>
+<p>This option specifies an executable is being debugged and provides the path to the executable.  Following
+the executable path, a user may specify optional arguments to be passed to the <strong>main</strong> method
+of the C/C++ application.  If an executable is not specified (e.g. starting up the Stand-alone Debugger
+with no arguments), the last valid executable used invoking the debugger (if this isn't the first invocation) 
+will be offered to you via a dialog, which includes the original program arguments.  
+You then have the choice of simply hitting the OK button to debug the last executable again or to change the arguments
+as desired.  If the executable location you specify is invalid or no executable is specified and no previous executable exists,
+a dialog will be brought up to allow you to enter the required information.</p>
+
+<h2>Automated Set-up</h3>
+
+<p>As mentioned, the Stand-alone Debugger will initialize Eclipse objects on your behalf on
+start-up so you can immediately start debugging.  For starters, the executable you specify is
+is imported on your behalf into an Eclipse
+C/C++ project within the Workspace.  An Eclipse project is a virtual container object that contains folders, files, etc.  and has a particular
+nature.  Folders and files may be virtual and may actually link to objects outside of the workspace.  In this particular
+case, the debug info of the executable specified is used to determine the location of the source files.  Each source
+file is imported in the project, virtually, via a link.  This is done so that the C/C++ indexer, which usually works on
+a project being developed within Eclipse, has access to all code when it is parsing.
+<p>The nature of a project determines what menus, actions, and views are valid for that project.
+Menus, actions, and views that are not valid are not made visible.
+This helps to remove the clutter of all contributed plug-ins to what is pertinent to the task at hand
+(e.g. if the C/C++ and Java IDE plug-ins are both present, one does not want to see Java tasks when
+working on a C/C++ project).  Many of the plug-ins being used in the Stand-alone debugger only
+work on C/C++ projects.  In most cases, the name of the C/C++ project being used will be <strong>Executables</strong>.
+This project is reserved for importing executables into the CDT without creating a project first.</p>
+<p>Another Eclipse concept is the Perspective.  An Eclipse perspective is a set of views and the layout of the main Eclipse
+Window.  A perspective will have a default layout and can be modified the end-user for future reference (e.g. adding or removing 
+views).  For the purposes of debugging,
+one should use the Debug Perspective.  The Stand-alone Debugger opens the Debug Perspective by default for you which brings
+up the various views needed to debug your program.</p>
+<p>To debug and executable, one needs to launch it via the debugger and to provide options both for the executable and the
+debugger (in this case, GDB).  All the information required to launch and debug the executable is stored
+in an Eclipse object known as a Launch Configuration.  Various plug-ins can contribute different forms of Launch Configuration
+which can in turn provide UI elements for settings.  In the case of the Stand-alone Debugger, debugging an executable
+results in the automatic creation of a C/C++ Local Application Launch configuration.  This just means that the particular
+launch configuration is meant to be used for a local application.  This launch configuration is shared for debugging purposes
+and when debugging, additional parameters are available in the UI for gdb settings (e.g. gdb path, reverse debugging).
+You do not need to create a launch configuration yourself, but you may wish to edit the one created on your behalf.</p>
+
+<h2>Initial Debugger Layout</h3>
+
+<p><img img src="../images/standalone_debugger.png" alt="Stand-alone Debugger"></p>
+
+<p><img style="border: 0px solid ; width: 143px; height: 21px;"
+ src="../images/ngconcepts.gif" alt="Related concepts"> <br>
+<a href="../concepts/cdt_c_over_cdt.htm">CDT Overview</a><br>
+<a href="../concepts/cdt_c_projects.htm">C/C++ Projects</a><br>
+<a href="../concepts/cdt_c_perspectives.htm">C/C++ Perspectives</a><br>
+<a href="../concepts/cdt_c_indexer.htm">C/C++ Indexer</a><br>
+<a href="../concepts/cdt_c_search.htm">C/C++ Search</a></p>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<a href="../reference/cdt_o_views.htm">Views</a><br>
+<img src="../images/intl_07.gif" ALT="Intel Copyright Statement" >
+
+</div>
+</body>
+
+</html>

@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="GDB Standalone Debugger User Guide">
+<toc label="Stand-alone Debugger User Guide">
    <topic href="concepts/cdt_c_before_you_begin.htm" label="Before You Begin">
+   </topic>
+   <topic href="concepts/cdt_c_standalone_intro.htm" label="Introduction"/>
+   <topic label="Getting Started">
+   		<topic label="Starting the debugger" href="tasks/cdt_t_standalone_startup.htm"/>
    </topic>
    <topic label="Concepts">
    	    <topic label="Debug Perspective" href="concepts/cdt_c_perspectives.htm"/>
@@ -28,7 +32,7 @@
 	</topic>
    </topic>
    <topic label="Tasks">
-		<topic label="Running and debugging projects" href="tasks/cdt_o_run.htm">
+		<topic label="Using Run/Debug Configurations" href="tasks/cdt_o_run.htm">
 			<topic label="Creating or editing a run/debug configuration" href="tasks/cdt_o_run_config.htm">
 				<topic label="Selecting a run or debug configuration" href="tasks/cdt_t_run_config.htm"/>
 				<topic label="Creating a run or debug configuration" href="tasks/cdt_t_new_run_config.htm"/>

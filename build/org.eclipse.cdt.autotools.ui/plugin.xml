@@ -167,8 +167,7 @@
             class="org.eclipse.cdt.autotools.ui.editors.AutoconfEditor"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             default="true"
-            extensions="m4"
-            filenames="configure.in,configure.ac"
+            filenames="configure.in,configure.ac,aclocal.m4,acinclude.m4,libtool.m4,ltversion.m4,ltsugar.m4,ltoptions.m4,ltdl.m4,ltgcc.m4,lt~obsolete.m4"
             icon="icons/autoconf.gif"
             id="org.eclipse.cdt.autotools.ui.editor.autoconf"
             name="%Autoconf.editor.name"/>

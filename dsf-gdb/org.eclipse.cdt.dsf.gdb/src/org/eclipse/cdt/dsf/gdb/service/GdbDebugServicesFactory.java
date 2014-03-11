@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Ericsson and others.
+ * Copyright (c) 2008, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Vladimir Prus (Mentor Graphics) - Support for OS resources.
  *     Marc Khouzam (Ericsson) - Support for GDB 7.6 memory service
  *     Marc Khouzam (Ericsson) - Support for GDB 7.4 trace control service
+ *     William Riley (Renesas) - Support for GDB 7.3 disassembly service (Bug 357270)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -163,6 +164,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IDisassembly createDisassemblyService(DsfSession session) {
+		if (GDB_7_3_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBDisassembly_7_3(session);
+		}
 		return new MIDisassembly(session);
 	}
 	

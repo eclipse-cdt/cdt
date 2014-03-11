@@ -42,6 +42,7 @@ import org.eclipse.cdt.internal.core.parser.ParserSettings2;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.SettingsModelMessages;
 import org.eclipse.cdt.utils.EFSExtensionManager;
+import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -268,7 +269,7 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 			} else {
 				// have to use getName() rather than getLocation() to avoid collapsing ".."
 				String loc = entryPath.getName();
-				if (entryPath.isResolved()) {
+				if (entryPath.isResolved() || UNCPathConverter.isUNC(loc)) {
 					locations.add(loc);
 				} else {
 					loc = resolveEntry(loc, cfgDescription);

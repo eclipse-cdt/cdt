@@ -14,6 +14,7 @@
  *     Vladimir Prus (Mentor Graphics) - Support for OS resources.
  *     Marc Khouzam (Ericsson) - Support for GDB 7.6 memory service
  *     Marc Khouzam (Ericsson) - Support for GDB 7.4 trace control service
+ *     William Riley (Renesas) - Support for GDB 7.3 disassembly service (Bug 357270)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -163,6 +164,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IDisassembly createDisassemblyService(DsfSession session) {
+		if (GDB_7_3_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBDisassembly_7_3(session);
+		}
 		return new MIDisassembly(session);
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Patrick Chuong (Texas Instruments) - Bug 328168
  *     Patrick Chuong (Texas Instruments) - Bug 353351
  *     Patrick Chuong (Texas Instruments) - Bug 337851
+ *     William Riley (Renesas) - Bug 357270
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
@@ -30,10 +31,12 @@ import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.ErrorPosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback;
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -48,6 +51,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IInstruction;
+import org.eclipse.cdt.dsf.debug.service.IInstructionWithRawOpcodes;
 import org.eclipse.cdt.dsf.debug.service.IInstructionWithSize;
 import org.eclipse.cdt.dsf.debug.service.IMixedInstruction;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
@@ -729,15 +733,21 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 						break;
 					}
 				}
-				final String opCode;
+				final String functionOffset; // Renamed from opCode to avoid confusion
 				// insert function name+offset instead of opcode bytes
 				if (functionName != null && functionName.length() > 0) {
-					opCode= functionName + '+' + instruction.getOffset();
+					functionOffset= functionName + '+' + instruction.getOffset();
 				} else {
-					opCode= ""; //$NON-NLS-1$
+					functionOffset= ""; //$NON-NLS-1$
+				}
+				
+				BigInteger opCodes = null;
+				// Get raw Opcodes if available
+				if(instruction instanceof IInstructionWithRawOpcodes){
+					opCodes = ((IInstructionWithRawOpcodes)instruction).getRawOpcodes();
 				}
 
-				p = fCallback.getDocument().insertDisassemblyLine(p, address, instrLength.intValue(), opCode, instruction.getInstruction(), compilationPath, -1);
+				p = fCallback.getDocument().insertDisassemblyLine(p, address, instrLength.intValue(), functionOffset, opCodes, instruction.getInstruction(), compilationPath, -1);
 				if (p == null) {
 					break;
 				}
@@ -863,14 +873,20 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 							break;
 						}
 					}
-					final String opCode;
+					final String funcOffset;
 					// insert function name+offset instead of opcode bytes
 					if (functionName != null && functionName.length() > 0) {
-						opCode= functionName + '+' + instruction.getOffset();
+						funcOffset= functionName + '+' + instruction.getOffset();
 					} else {
-						opCode= ""; //$NON-NLS-1$
+						funcOffset= ""; //$NON-NLS-1$
 					}
-					p = fCallback.getDocument().insertDisassemblyLine(p, address, instrLength.intValue(), opCode, instruction.getInstruction(), file, lineNumber);
+					
+					BigInteger opCodes = null;
+					if(instruction instanceof IInstructionWithRawOpcodes){
+						opCodes = ((IInstructionWithRawOpcodes)instruction).getRawOpcodes();
+					}
+					
+					p = fCallback.getDocument().insertDisassemblyLine(p, address, instrLength.intValue(), funcOffset, opCodes, instruction.getInstruction(), file, lineNumber);
 					if (p == null) {
 						break;
 					}
@@ -1162,6 +1178,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	 * @param addr the address
 	 * @param rm the data request monitor
 	 */
+	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	void alignOpCodeAddress(final BigInteger addr, final DataRequestMonitor<BigInteger> rm) { 
 		IDisassembly2 disassembly = getService(IDisassembly2.class); 
 		if (disassembly == null) { 
@@ -1170,9 +1187,8 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			return; 
 		} 
 
-		final DsfExecutor executor= DsfSession.getSession(fDsfSessionId).getExecutor(); 
 		final IDisassemblyDMContext context = DMContexts.getAncestorOfType(fTargetContext, IDisassemblyDMContext.class); 
-		disassembly.alignOpCodeAddress(context, addr, new DataRequestMonitor<BigInteger>(executor, rm) { 
+		disassembly.alignOpCodeAddress(context, addr, new ImmediateDataRequestMonitor<BigInteger>(rm) { 
 			@Override 
 			protected void handleFailure() { 
 				rm.setData(addr); 

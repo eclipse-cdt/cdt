@@ -49,19 +49,31 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  * '-- MODE'
  *     - 0 disassembly
  *     - 1 mixed source and disassembly
- *      - 2 disassembly with raw opcodes
- *      - 3 mixed source and disassembly with raw opcodes
- *      Note: Modes 2 and 3 are only available starting with GDB 7.3
+ *     - 2 disassembly with raw opcodes
+ *     - 3 mixed source and disassembly with raw opcodes
+ *     Note: Modes 2 and 3 are only available starting with GDB 7.3
  */
 
 public class MIDataDisassemble extends MICommand<MIDataDisassembleInfo> {
 
 	private static final int MIN_MODE = 0;
+
+	/** @since 4.4 */
+	public static final int DATA_DISASSEMBLE_MODE_DISASSEMBLY = 0;
+	/** @since 4.4 */
+	public static final int DATA_DISASSEMBLE_MODE_MIXED = 1;
+	/** @since 4.4 */
+	public static final int DATA_DISASSEMBLE_MODE_DISASSEMBLY_OPCODES = 2;
+	/** @since 4.4 */
+	public static final int DATA_DISASSEMBLE_MODE_MIXED_OPCODES = 3;
+
 	private static final int MAX_MODE = 3;
+	
+	
 	private static final String MODE_OUT_OF_RANGE = "Mode out of range: "; //$NON-NLS-1$
 	
 	public MIDataDisassemble(IDisassemblyDMContext ctx, String start, String end, boolean mode) {
-		this(ctx, start, end, mode ? 1 : 0);
+		this(ctx, start, end, mode ? DATA_DISASSEMBLE_MODE_MIXED : DATA_DISASSEMBLE_MODE_DISASSEMBLY);
 	}
 	
 	/** @since 4.1 */
@@ -77,7 +89,7 @@ public class MIDataDisassemble extends MICommand<MIDataDisassembleInfo> {
 	}
 
     public MIDataDisassemble(IDisassemblyDMContext ctx, String file, int linenum, int lines, boolean mode) {
-    	this(ctx, file, linenum, lines, mode ? 1 : 0);
+    	this(ctx, file, linenum, lines, mode ? DATA_DISASSEMBLE_MODE_MIXED : DATA_DISASSEMBLE_MODE_DISASSEMBLY);
     }
 
 	/** @since 4.1 */

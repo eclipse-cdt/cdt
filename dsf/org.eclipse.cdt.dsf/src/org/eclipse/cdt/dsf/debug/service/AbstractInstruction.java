@@ -7,8 +7,11 @@
  *
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     William Riley (Renesas) - Add raw Opcodes parsing (Bug 357270)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.service;
+
+import java.math.BigInteger;
 
 /**
  * Implementers of {@link IInstruction} should extend this abstract class
@@ -16,7 +19,7 @@ package org.eclipse.cdt.dsf.debug.service;
  *
  * @since 2.2
  */
-public abstract class AbstractInstruction implements IInstructionWithSize {
+public abstract class AbstractInstruction implements IInstructionWithSize, IInstructionWithRawOpcodes {
     /*
      * @see org.eclipse.cdt.dsf.debug.service.IInstructionWithSize#getSize()
      */
@@ -25,4 +28,13 @@ public abstract class AbstractInstruction implements IInstructionWithSize {
         // unkown size
         return null;
     }
+    
+	/**
+	 * @since 2.5
+	 */
+	@Override
+	public BigInteger getRawOpcodes() {
+		return null;
+	}
+
 }

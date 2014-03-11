@@ -29,6 +29,9 @@ import org.eclipse.core.runtime.Path;
  * @since 5.3
  */
 public abstract class UNCPathConverter {
+	static final char BSLASH = '\\';
+	static final char SLASH  = '/';
+
 	/**
 	 * Get the instance of the class that combines the registered converters.
 	 * @return instance of UNCPathConverter
@@ -39,20 +42,24 @@ public abstract class UNCPathConverter {
 
 	/**
 	 * Test if the string path is in UNC format.
+	 * UNC format is defined as a path that begins with either \\ or //
 	 * 
 	 * @param path
 	 *            path to test
 	 * @return true if the path is in UNC format, false otherwise
 	 */
 	public static boolean isUNC(String path) {
-		if (path.length() >= 2) {
-			char c= path.charAt(0);
-			if (c == IPath.SEPARATOR  || c == File.separatorChar) {
-				c= path.charAt(1);
-				return c == IPath.SEPARATOR || c == File.separatorChar;
-			}
+		if (path.length() < 2) {
+			return false;
 		}
-		return false;
+		
+		char c0 = path.charAt(0);
+		char c1 = path.charAt(1);
+		if (c0 != c1) {
+			return false;
+		}
+
+		return (c0 == BSLASH || c0 == SLASH);
 	}
 
 	/**

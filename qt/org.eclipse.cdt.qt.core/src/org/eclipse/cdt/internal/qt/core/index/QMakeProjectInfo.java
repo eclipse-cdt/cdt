@@ -24,6 +24,10 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICDescriptionDelta;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
+import org.eclipse.cdt.internal.core.settings.model.CExternalSettingChangeEvent;
+import org.eclipse.cdt.internal.core.settings.model.CExternalSettingsContainerChangeInfo;
+import org.eclipse.cdt.internal.core.settings.model.CExternalSettingsManager;
+import org.eclipse.cdt.qt.core.QtPlugin;
 import org.eclipse.cdt.qt.core.index.IQMakeEnv;
 import org.eclipse.cdt.qt.core.index.IQMakeEnvProvider;
 import org.eclipse.cdt.qt.core.index.IQMakeProjectInfo;
@@ -38,10 +42,13 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -143,15 +150,36 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo, ICProjectDescr
 
 	// must not be called under synchronized (SYNC) or synchronized (sync)
 	private void updateActiveConfiguration() {
-		synchronized (sync) {
-			if (! live) {
-				return;
+		final boolean[] fire = new boolean[] { false };
+
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
+			public void run(IProgressMonitor monitor) throws CoreException {
+				synchronized (sync) {
+					if (! live) {
+						return;
+					}
+					ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescriptionManager().getProjectDescription(project);
+					setActiveConfiguration(projectDescription != null ? projectDescription.getActiveConfiguration() : null);
+					qmakeInfo = null;
+					fire[0] = true;
+				}
 			}
-			ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescriptionManager().getProjectDescription(project);
-			setActiveConfiguration(projectDescription != null ? projectDescription.getActiveConfiguration() : null);
-			qmakeInfo = null;
+		};
+
+		try {
+			if (ResourcesPlugin.getWorkspace().isTreeLocked()) {
+				runnable.run(null);
+			} else {
+				ResourcesPlugin.getWorkspace().run(runnable, project, IWorkspace.AVOID_UPDATE, null);
+			}
+		} catch (CoreException e) {
+			QtPlugin.log(e);
 		}
-		notifyListeners();
+
+		if (fire[0]) {
+			notifyListeners();
+		}
 	}
 
 	// called under synchronized (sync)

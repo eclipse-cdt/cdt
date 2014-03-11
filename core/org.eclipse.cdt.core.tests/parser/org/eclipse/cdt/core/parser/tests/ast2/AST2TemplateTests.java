@@ -7378,7 +7378,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	typename enable_if<A<U>::value>::type waldo();
 	//
 	//	auto x = waldo<int>;
-	public void testSfinaeWhenResolvingAddressOfFunction_429928a() throws Exception {
+	public void testSfinaeWhenResolvingAddressOfFunction_429928() throws Exception {
 		parseAndCheckBindings();
 	}
 	
@@ -7400,7 +7400,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	typename enable_if<A<U>::value>::type waldo();
 	//
 	//	auto x = waldo<int>;
-	public void testSfinaeWhenResolvingAddressOfFunction_429928b() throws Exception {
+	public void testSfinaeInNonTypeTemplateParameter_429928() throws Exception {
 		parseAndCheckBindings();
 	}
 

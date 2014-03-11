@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_090eaeee",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeProjectInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-03-11T18:55:54Z",
+      "side": 1,
+      "message": "What is this call for?  It looks like:\n\n1) It introduces a new race condition between this test and running the result\n\n2) It unnecessarily avoids the scheduling rule when unrelated projects are being used in a way that locks the tree.",
+      "revId": "1eea994ac0b85f19b0f08fd87b18bde81d0355ec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

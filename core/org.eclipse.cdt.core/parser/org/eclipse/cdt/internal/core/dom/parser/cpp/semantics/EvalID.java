@@ -324,7 +324,7 @@ public class EvalID extends CPPDependentEvaluation {
 
 			if (!(type instanceof IBinding))
 				return EvalFixed.INCOMPLETE;
-			nameOwner = (IBinding)type;
+			nameOwner = (IBinding) type;
 		}
 
 		if (fieldOwner instanceof IProblemBinding || nameOwner instanceof IProblemBinding)
@@ -337,6 +337,8 @@ public class EvalID extends CPPDependentEvaluation {
 			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, templateArgs, null, point);
 			if (eval != null)
 				return eval;
+			if (!CPPTemplates.isDependentType((ICPPClassType) nameOwner))
+				return EvalFixed.INCOMPLETE;
 		}
 		
 		if (fieldOwner != null && !fieldOwner.isTypeDependent()) {

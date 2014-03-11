@@ -7372,18 +7372,38 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	};
 	//
 	//	template <class U>
-	//	void
-	//	waldo();
+	//	void waldo();
 	//
 	//	template <class U>
-	//	typename enable_if<A<U>::value>::type
-	//	waldo();
+	//	typename enable_if<A<U>::value>::type waldo();
 	//
-	//	auto x = waldo<int>;  // problem on valdo<int>
-	public void testSfinaeWhenResolvingAddressOfFunction_429928() throws Exception {
+	//	auto x = waldo<int>;
+	public void testSfinaeWhenResolvingAddressOfFunction_429928a() throws Exception {
 		parseAndCheckBindings();
 	}
 	
+	//	template<typename T>
+	//	struct A {};
+	//
+	//	template<bool, typename T = void>
+	//	struct enable_if {};
+	//
+	//	template<typename T>
+	//	struct enable_if<true, T> {
+	//	  typedef T type;
+	//	};
+	//
+	//	template <class U>
+	//	void waldo();
+	//
+	//	template <class U>
+	//	typename enable_if<A<U>::value>::type waldo();
+	//
+	//	auto x = waldo<int>;
+	public void testSfinaeWhenResolvingAddressOfFunction_429928b() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <typename>
 	//	struct M {
 	//	    template <typename... Args>

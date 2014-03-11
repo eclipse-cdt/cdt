@@ -12,6 +12,8 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
 
+import org.eclipse.cdt.utils.UNCPathConverter;
+
 /**
  * @author jcamelon
  */
@@ -55,15 +57,21 @@ public class ScannerUtility {
 		char[] aus = new char[len + 1];
 		
 		originalPath.getChars(0, len, ein, 0);
-		
-		// allow double backslash at beginning for windows UNC paths, bug 233511
-		// also allow Unix UNC paths
-		if (ein.length >= 2) {
-			if (ein[0] == BSLASH && ein[1] == BSLASH && File.separatorChar == BSLASH) {
-				aus[j++] = BSLASH;
-			} else if (ein[0] == SLASH && ein[1] == SLASH && File.separatorChar == SLASH) {
-				aus[j++] = SLASH;
+
+		// Support remote UNC paths by using path's leading separator instead
+		// of the system default. See bugs 416658, 343437, and 233511
+		char separatorChar = File.separatorChar;
+		if (UNCPathConverter.isUNC(originalPath))
+		{
+			// Assert that UNC path starts with two identical slashes
+			if ((len < 2) || ((ein[0] != BSLASH) && (ein[0] != SLASH)) || 
+					         ((ein[1] != BSLASH) && (ein[1] != SLASH)) ||
+					         ((ein[0] != ein[1])))
+			{
+				assert false : "Unknown UNC path format"; //$NON-NLS-1$
 			}
+			separatorChar = ein[0];
+			aus[j++] = separatorChar;
 		}
 
 		for (int i= 0; i < len; i++) {
@@ -76,7 +84,7 @@ public class ScannerUtility {
 			case BSLASH:    // in the same way
 				if (noSepBefore) {
 					noSepBefore = false;
-					aus[j++] = File.separatorChar;
+					aus[j++] = separatorChar;
 				}
 				break;
 			case DOT:

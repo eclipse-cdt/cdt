@@ -16,6 +16,24 @@
       "revId": "e91e3669b7ff26bb2c75aca34ae82d81f0dfacbd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_a9bb420c",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 7403,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-11T15:57:23Z",
+      "side": 1,
+      "message": "Renamed to testSfinaeInNonTypeTemplateParameter.",
+      "parentUuid": "2753a756_7303d74c",
+      "revId": "e91e3669b7ff26bb2c75aca34ae82d81f0dfacbd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -16,6 +16,24 @@
       "revId": "78072015d0129cabf766792974baec27a7706821",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_c91af6a1",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeProjectInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 1821
+      },
+      "writtenOn": "2014-03-11T16:13:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67591f73_935e2870",
+      "revId": "78072015d0129cabf766792974baec27a7706821",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

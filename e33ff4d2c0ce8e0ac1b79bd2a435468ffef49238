@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_4a17f550",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/ScannerUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-12T15:56:27Z",
+      "side": 1,
+      "message": "Asserting stricter conditions than the ones guaranteed by  UNCPathConverter.isUNC doesn\u0027t make sense and is dangerous. If stricter conditions are needed, the checks in UNCPathConverter.isUNC should be changed to guarantee them.",
+      "revId": "e33ff4d2c0ce8e0ac1b79bd2a435468ffef49238",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

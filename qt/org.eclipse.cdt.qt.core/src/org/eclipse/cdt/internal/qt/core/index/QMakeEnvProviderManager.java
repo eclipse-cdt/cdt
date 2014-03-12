@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.qt.core.QtPlugin;
 import org.eclipse.cdt.qt.core.index.IQMakeEnv;
+import org.eclipse.cdt.qt.core.index.IQMakeEnv2;
 import org.eclipse.cdt.qt.core.index.IQMakeEnvProvider;
 import org.eclipse.cdt.qt.core.index.QMakeEnvInfo;
 import org.eclipse.core.resources.IFile;
@@ -77,7 +78,7 @@ public final class QMakeEnvProviderManager {
 	 * Represents a fallback IQMakeEnvProvider that is used for a project that has QtNature
 	 * while there is no registered IQMakeEnvProvider that would provide any IQMakeEnv.
 	 */
-	private static class ConfigurationQMakeEnv implements IQMakeEnv {
+	private static class ConfigurationQMakeEnv implements IQMakeEnv2 {
 
 		private static final String PRO_FILE_SUFFIX = ".pro"; //$NON-NLS-1$
 		private static final String ENV_VAR_QMAKE = "QMAKE"; //$NON-NLS-1$
@@ -87,6 +88,10 @@ public final class QMakeEnvProviderManager {
 		public ConfigurationQMakeEnv(ICConfigurationDescription configuration) {
 			this.configuration = configuration;
 	    }
+
+		@Override
+		public void init() {
+		}
 
 		@Override
 		public void destroy() {

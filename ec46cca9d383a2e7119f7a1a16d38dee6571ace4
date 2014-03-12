@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_69adaaf4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/ScannerUtility.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-12T03:05:39Z",
+      "side": 1,
+      "message": "Opening bracket should be on the same line with the statement.",
+      "revId": "ec46cca9d383a2e7119f7a1a16d38dee6571ace4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_89bc7e25",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/ScannerUtility.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-12T03:05:39Z",
+      "side": 1,
+      "message": "Use Assert class instead and assert each condition separately. The current condition set is redundant.",
+      "revId": "ec46cca9d383a2e7119f7a1a16d38dee6571ace4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -7,7 +7,7 @@
  */
 package org.eclipse.cdt.qt.core.index;
 
-import org.eclipse.cdt.internal.qt.core.index.QMakeProjectInfo;
+import org.eclipse.cdt.internal.qt.core.index.QMakeProjectInfoManager;
 import org.eclipse.core.resources.IProject;
 
 /**
@@ -27,7 +27,7 @@ public final class QMakeProjectInfoFactory {
 	 *         in the specified project.
 	 */
 	public static IQMakeProjectInfo getForActiveConfigurationIn(IProject project) {
-		return QMakeProjectInfo.getQMakeProjectInfoFor(project);
+		return QMakeProjectInfoManager.getQMakeProjectInfoFor(project);
 	}
 
 }

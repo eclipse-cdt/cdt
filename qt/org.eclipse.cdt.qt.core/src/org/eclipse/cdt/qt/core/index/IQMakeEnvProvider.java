@@ -41,6 +41,8 @@ public interface IQMakeEnvProvider {
 		/**
 		 * Request the controller to schedule a new qmake run to retrieve new QMake information.
 		 * This method should be called when there is any change in IQMakeEnv that might affect resulting IQMakeEnvInfo.
+		 *
+		 * Note that calculation of new QMakeInfo is done immediately if this controller is still active and used.
 		 */
 		void scheduleUpdate();
 

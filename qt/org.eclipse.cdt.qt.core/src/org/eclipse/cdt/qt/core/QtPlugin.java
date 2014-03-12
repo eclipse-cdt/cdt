@@ -7,14 +7,18 @@
  */
 package org.eclipse.cdt.qt.core;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.internal.qt.core.index.QMakeProjectInfo;
+import org.eclipse.cdt.internal.qt.core.index.QMakeProjectInfoManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
 
 public class QtPlugin extends Plugin {
 
@@ -47,13 +51,27 @@ public class QtPlugin extends Plugin {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
+		// have to wait for STARTED event because
+		// cannot access CoreModel.getDefault().addCProjectDescriptionListener()
+		// since the CoreModel is not completely initialized at this time
+		BundleListener bundleListener = new BundleListener() {
+			final AtomicBoolean initStarted = new AtomicBoolean(false);
+			@Override
+			public void bundleChanged(BundleEvent bundleEvent) {
+				if (bundleEvent.getType() == BundleEvent.STARTED) {
+					if (!initStarted.getAndSet(true)) {
+						QMakeProjectInfoManager.start();
+					}
+				}
+			}
+		};
+		context.addBundleListener(bundleListener);
 		super.start(context);
-		QMakeProjectInfo.start();
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		QMakeProjectInfo.stop();
+		QMakeProjectInfoManager.stop();
 		super.stop(context);
 	}
 

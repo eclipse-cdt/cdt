@@ -39,8 +39,6 @@ public final class QMakeEnvProviderDescriptor implements Comparable<QMakeEnvProv
 	private final AtomicReference<Boolean> evaluation = new AtomicReference<Boolean>();
 	private final Expression enablementExpression;
 
-	private IQMakeEnvProvider provider;
-
 	QMakeEnvProviderDescriptor(IConfigurationElement element) {
 		this.element = element;
 
@@ -99,17 +97,12 @@ public final class QMakeEnvProviderDescriptor implements Comparable<QMakeEnvProv
 		if (! matches(controller)) {
 			return null;
 		}
-		if (provider == null) {
-			synchronized (this) {
-				if (provider == null) {
-					try {
-						provider = (IQMakeEnvProvider) element.createExecutableExtension(ATTR_CLASS);
-					} catch (CoreException e) {
-						QtPlugin.log("Error in class attribute of " + id, e); //$NON-NLS-1$
-						return null;
-					}
-				}
-			}
+		IQMakeEnvProvider provider;
+		try {
+			provider = (IQMakeEnvProvider) element.createExecutableExtension(ATTR_CLASS);
+		} catch (CoreException e) {
+			QtPlugin.log("Error in class attribute of " + id, e); //$NON-NLS-1$
+			return null;
 		}
 		return provider.createEnv(controller);
 	}

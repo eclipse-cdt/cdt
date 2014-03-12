@@ -16,6 +16,24 @@
       "revId": "e33ff4d2c0ce8e0ac1b79bd2a435468ffef49238",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_ca34a596",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/ScannerUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 631
+      },
+      "writtenOn": "2014-03-12T17:04:43Z",
+      "side": 1,
+      "message": "To work correctly, this code has to assume that a UNC path begins with either \u0027//\u0027 or \u0027\\\\\u0027. It was already doing this before. The new code just makes the assumptions explicit and generates a warning if the assumptions are wrong, which makes the code less dangerous.\n\nUNCPathConverter.isUNC defines what is and is not a valid UNC path. I agree it would be best if this code guaranteed the needed conditions, but I don\u0027t know if these conditions must always be true. If I were to change the definition instead, and the definition is later expanded, the code would silently fail.",
+      "parentUuid": "2753a756_4a17f550",
+      "revId": "e33ff4d2c0ce8e0ac1b79bd2a435468ffef49238",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

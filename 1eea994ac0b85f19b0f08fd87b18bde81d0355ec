@@ -16,6 +16,24 @@
       "revId": "1eea994ac0b85f19b0f08fd87b18bde81d0355ec",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_042b3383",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeProjectInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1821
+      },
+      "writtenOn": "2014-03-12T08:46:40Z",
+      "side": 1,
+      "message": "Done\n\nI have seen the \u0027if\u0027 test on several places in Eclipse. I always seemed to be some shortcut for avoid running IWorkspaceRunnable within another IWorkspaceRunnable.\n\nAnyway I have removed this \u0027if\u0027 and keeping the \u0027else\u0027 statement only.",
+      "parentUuid": "2753a756_090eaeee",
+      "revId": "1eea994ac0b85f19b0f08fd87b18bde81d0355ec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

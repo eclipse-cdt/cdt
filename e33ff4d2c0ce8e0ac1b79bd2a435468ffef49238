@@ -70,6 +70,24 @@
       "revId": "e33ff4d2c0ce8e0ac1b79bd2a435468ffef49238",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_2ddd7b00",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/ScannerUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-12T20:28:39Z",
+      "side": 1,
+      "message": "Asserting stricter conditions than the code guarantees is not acceptable.",
+      "parentUuid": "2753a756_4d2eef94",
+      "revId": "e33ff4d2c0ce8e0ac1b79bd2a435468ffef49238",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

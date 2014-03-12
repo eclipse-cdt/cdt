@@ -491,4 +491,12 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTDeclarator.class);
 	}
+
+	//	struct S {
+	//	  void foo() override __attribute__((attr));
+	//	};
+	public void testGCCAttributeAfterOverride_bug413615() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTFunctionDeclarator.class);
+	}
 }

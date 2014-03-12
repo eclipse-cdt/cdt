@@ -3559,6 +3559,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 // For member functions we need to consider virtual specifiers and pure-virtual syntax.
 				if (option == DeclarationOptions.CPP_MEMBER) {
 					optionalVirtSpecifierSeq((ICPPASTFunctionDeclarator) typeRelevantDtor);
+					List<IASTAttributeSpecifier> attributeSpecifiers = __attribute_decl_seq(supportAttributeSpecifiers, false);
+					addAttributeSpecifiers(attributeSpecifiers, dtor);
 					int lt1 = LTcatchEOF(1);
 					if (lt1 == IToken.tASSIGN && LTcatchEOF(2) == IToken.tINTEGER) {
 						consume();

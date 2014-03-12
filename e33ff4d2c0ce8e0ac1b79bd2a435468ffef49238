@@ -34,6 +34,24 @@
       "revId": "e33ff4d2c0ce8e0ac1b79bd2a435468ffef49238",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_6aa3d92f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/ScannerUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-12T17:37:09Z",
+      "side": 1,
+      "message": "For this change to move forward, the concerns expressed in the previous comment have to be addressed.",
+      "parentUuid": "2753a756_ca34a596",
+      "revId": "e33ff4d2c0ce8e0ac1b79bd2a435468ffef49238",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

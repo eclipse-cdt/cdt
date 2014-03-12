@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_b0d71e33",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/qt/core/QtPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1042
+      },
+      "writtenOn": "2014-03-12T23:48:32Z",
+      "side": 1,
+      "message": "With the special code to prevent duplicated starts, do you also need to protected against duplicate stops?  I doubt the plugin will ever be stopped anyhow, it just seems odd that it isn\u0027t consistent.",
+      "revId": "aadf1753c9b0c810f54542e0bdcdba9f91b5c61b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

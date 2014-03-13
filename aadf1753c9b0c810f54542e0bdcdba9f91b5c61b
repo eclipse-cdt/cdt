@@ -16,6 +16,24 @@
       "revId": "aadf1753c9b0c810f54542e0bdcdba9f91b5c61b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_53e68c23",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/qt/core/QtPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1821
+      },
+      "writtenOn": "2014-03-13T09:09:03Z",
+      "side": 1,
+      "message": "The QMakeProjectInfoManager.stop() method is implemented the way that it should ok to call it multiple times.\n\nBut agree that implementing such a protection would make the code more consistent. I will implement it as an addon to my next patch.",
+      "parentUuid": "2753a756_b0d71e33",
+      "revId": "aadf1753c9b0c810f54542e0bdcdba9f91b5c61b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

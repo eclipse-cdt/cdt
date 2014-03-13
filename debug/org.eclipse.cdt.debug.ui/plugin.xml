@@ -645,7 +645,7 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.cdt.debug.internal.core.ICWatchpointTarget"
+            objectClass="org.eclipse.cdt.debug.core.ICWatchpointTarget"
             id="org.eclipse.cdt.debug.ui.WatchpointActions">
          <action
                class="org.eclipse.cdt.debug.ui.breakpoints.AddWatchpointOnVariableActionDelegate"

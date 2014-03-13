@@ -31,16 +31,16 @@ import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTExpressionList;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.core.runtime.Assert;
 
 
@@ -267,11 +267,19 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
-			IType t= CPPVisitor.createType(getTypeId());
+			IType t = CPPVisitor.createType(getTypeId());
 			if (t instanceof IArrayType) {
-				t= ((IArrayType) t).getType();
+				t = ((IArrayType) t).getType();
 			}
-			fEvaluation= new EvalFixed(new CPPPointerType(t), PRVALUE, Value.UNKNOWN);
+			ICPPEvaluation[] arguments = ICPPEvaluation.EMPTY_ARRAY;
+			if (initializer instanceof ICPPASTConstructorInitializer) {
+				IASTInitializerClause[] args = ((ICPPASTConstructorInitializer) initializer).getArguments();
+				arguments= new ICPPEvaluation[args.length];
+				for (int i = 0; i < arguments.length; i++) {
+					arguments[i] = ((ICPPASTInitializerClause) args[i]).getEvaluation();
+				}
+			}
+			fEvaluation = EvalTypeId.createForNewExpression(t, this, arguments);
 		}
 		return fEvaluation;
 	}

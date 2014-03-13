@@ -7404,6 +7404,53 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template<typename T, typename = decltype(T(0))>
+	//	static void test(int);
+	//
+	//	template<typename>
+	//	static int test(...);
+	//
+	//	struct A {};
+	//
+	//	int waldo(int p);
+	//
+	//	int x = waldo(test<A>(0));
+	public void testSfinaeInConstructorCall_430230() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template<typename T, typename = decltype(new T(0))>
+	//	static void test(int);
+	//
+	//	template<typename>
+	//	static int test(...);
+	//
+	//	struct A {};
+	//
+	//	int waldo(int p);
+	//
+	//	int x = waldo(test<A>(0));
+	public void testSfinaeInNewExpression_430230() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template<typename T, typename = decltype(new T)>
+	//	static void test(int);
+	//
+	//	template<typename>
+	//	static int test(...);
+	//
+	//	struct A {
+	//	  A() = delete; 
+	//	};
+	//
+	//	int waldo(int p);
+	//
+	//	int x = waldo(test<A>(0));
+	public void testSfinaeInNewExpressionWithDeletedConstructor_430230() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <typename>
 	//	struct M {
 	//	    template <typename... Args>

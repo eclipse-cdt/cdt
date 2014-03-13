@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.Method;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
@@ -64,11 +63,22 @@ public class CDescriptorTests extends BaseTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(CDescriptorTests.class.getName());
 
-		// Add all the tests in this class
-		for (Method m : CDescriptorTests.class.getMethods()) {
-			if (m.getName().startsWith("test"))
-				suite.addTest(new CDescriptorTests(m.getName()));
-		}
+		// Always run the tests in the same order because they were not written with random order in mind.
+		suite.addTest(new CDescriptorTests("testDescriptorCreation"));
+		suite.addTest(new CDescriptorTests("testDescriptorOwner"));
+		suite.addTest(new CDescriptorTests("testConcurrentDescriptorModification"));
+		suite.addTest(new CDescriptorTests("testConcurrentDifferentStorageElementModification"));
+		suite.addTest(new CDescriptorTests("testConcurrentSameStorageElementModification"));
+		suite.addTest(new CDescriptorTests("testDeadlockDuringProjectCreation"));
+		suite.addTest(new CDescriptorTests("testDescriptorConversion"));
+		suite.addTest(new CDescriptorTests("testExtensionCreation"));
+		suite.addTest(new CDescriptorTests("testExtensionGet"));
+		suite.addTest(new CDescriptorTests("testExtensionData"));
+		suite.addTest(new CDescriptorTests("testExtensionRemove"));
+		suite.addTest(new CDescriptorTests("testProjectDataCreate"));
+		suite.addTest(new CDescriptorTests("testProjectDataDelete"));
+		suite.addTest(new CDescriptorTests("testCProjectDescriptionDescriptorInteraction"));
+		suite.addTest(new CDescriptorTests("testAccumulatingBlankLinesInProjectData"));
 
 		TestSetup wrapper = new TestSetup(suite) {
 			@Override

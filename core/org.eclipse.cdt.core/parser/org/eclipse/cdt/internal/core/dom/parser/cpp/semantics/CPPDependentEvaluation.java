@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.PlatformObject;
  * starting from their point of definition.
  */
 public abstract class CPPDependentEvaluation extends CPPEvaluation {
-
 	private IBinding fTemplateDefinition;
 	private IScope fTemplateDefinitionScope;
 	

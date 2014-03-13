@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Wind River Systems - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Bug 315446: Invalid event breakpoint type (group) name 
  *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
+ *     Alvaro Sanchez-Leon (Ericsson AB) - Support Register Groups (Bug 235747)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui;
 
@@ -18,6 +19,8 @@ public class Messages extends NLS {
 	public static String ToggleBreakpointsTargetFactory_description;
 	public static String ToggleBreakpointsTargetFactory_name;
 	public static String DsfUIStepIntoEditorSelection;
+	public static String RegisterGroupInfo;
+	public static String Information;
 	
 	static {
 		// initialize resource bundle

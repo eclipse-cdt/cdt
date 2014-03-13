@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2013 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -90,6 +90,7 @@
  * David McKnight   (IBM)        - [411398] SystemView event handling for icon changes needs to handle multi-source
  * Yang Yang        (IBM)        - [420578] Refresh action on connection level after a file deletion results in a problem occurred pop-up
  * David McKnight   (IBM)        - [420837] EVENT_ICON_CHANGE should not be handled with a refresh()
+ * David McKnight   (IBM)        - [430321] SystemView call to disassociate() should check that data isn't null
  ********************************************************************************/
    
 package org.eclipse.rse.internal.ui.view;
@@ -2069,12 +2070,20 @@ public class SystemView extends SafeTreeViewer
 					getControl().setRedraw(false);
 					collapseNode(parent, true); // collapse and flush gui widgets from memory
 					//setExpandedState(parent, true); // expand the parent
-					setExpanded((Item) parentItem, true); // expand the parent without calling resolveFilterString
+					setExpanded((Item) parentItem, true); // expand the parent without calling resolveFilterString										
 					TreeItem[] kids = ((TreeItem) parentItem).getItems(); // any kids? Like a dummy node?
-					if (kids != null) for (int idx = 0; idx < kids.length; idx++){
-						disassociate(kids[idx]);
-						kids[idx].dispose();
+					if (kids != null){ 
+						for (int idx = 0; idx < kids.length; idx++){
+							TreeItem kid = kids[idx];
+							if (kid != null){
+								if (kid.getData() != null){
+									disassociate(kid);
+								}
+								kid.dispose();
+							}
+						}
 					}
+
 					//boolean addingConnections = (multiSource[0] instanceof SystemConnection);
 					for (int idx = 0; idx < multiSource.length; idx++) {
 						//if (debug && addingConnections)

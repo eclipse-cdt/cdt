@@ -31,6 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
@@ -170,7 +171,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 				args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();
 			}
 		} else {
-			args = ICPPEvaluation.EMPTY_ARRAY;  // arguments must not be null
+			args = ICPPEvaluation.EMPTY_ARRAY;  // Arguments must not be null
 		}
 		IBinding templateDefinition= buffer.unmarshalBinding();
 		boolean forNewExpression = (firstBytes & ITypeMarshalBuffer.FLAG2) != 0;
@@ -185,12 +186,12 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		if (args == fArguments && type == fInputType)
 			return this;
 
-		if (!CPPTemplates.isDependentType(type) && type instanceof ICPPClassType) {
+		if (!CPPTemplates.isDependentType(type) && !areArgumentTypesDependent() && type instanceof ICPPClassType) {
 			// Check the constructor call and return EvalFixed.INCOMPLETE to indicate a substitution
 			// failure if the call cannot be resolved.
 			ICPPClassType classType = (ICPPClassType) type;
 			LookupData data = new LookupData(classType.getNameCharArray(), null, point);
-			ICPPConstructor[] constructors = classType.getConstructors();
+			ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, point);
 			data.foundItems = constructors;
 			data.setFunctionArguments(false, fArguments);
 			try {
@@ -239,6 +240,14 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	public boolean referencesTemplateParameter() {
 		for (ICPPEvaluation arg : fArguments) {
 			if (arg.referencesTemplateParameter())
+				return true;
+		}
+		return false;
+	}
+
+	private boolean areArgumentTypesDependent() {
+		for (ICPPEvaluation arg : fArguments) {
+			if (arg.isTypeDependent())
 				return true;
 		}
 		return false;

@@ -7381,7 +7381,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testSfinaeWhenResolvingAddressOfFunction_429928() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template<typename T>
 	//	struct A {};
 	//
@@ -7430,7 +7430,57 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	int waldo(int p);
 	//
 	//	int x = waldo(test<A>(0));
-	public void testSfinaeInNewExpression_430230() throws Exception {
+	public void testSfinaeInNewExpression_430230a() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template<bool __v>
+	//	struct bool_constant {
+	//	  static constexpr bool value = __v;
+	//	};
+	//
+	//	typedef bool_constant<true> true_type;
+	//	typedef bool_constant<false> false_type;
+	//
+	//	struct B {
+	//	  template<typename T, typename Arg, typename = decltype(::new T(Arg()))>
+	//	  static true_type test(int);
+	//
+	//	  template<typename, typename>
+	//	  static false_type test(...);
+	//	};
+	//
+	//	template<typename T, typename Arg>
+	//	struct C : public B {
+	//	  typedef decltype(test<T, Arg>(0)) type;
+	//	};
+	//
+	//	template<typename T, typename Arg>
+	//	struct D : public C<T, Arg>::type {};
+	//
+	//	template<typename T, typename Arg>
+	//	struct E : public bool_constant<D<T, Arg>::value> {};
+	//
+	//	template<bool, typename T = void>
+	//	struct enable_if {};
+	//
+	//	template<typename T>
+	//	struct enable_if<true, T> {
+	//	  typedef T type;
+	//	};
+	//
+	//	struct A {};
+	//
+	//	template <class F>
+	//	typename enable_if<true>::type
+	//	waldo();
+	//
+	//	template <class F>
+	//	typename enable_if<E<F, int>::value>::type
+	//	waldo();
+	//
+	//	auto x = waldo<A>;
+	public void testSfinaeInNewExpression_430230b() throws Exception {
 		parseAndCheckBindings();
 	}
 

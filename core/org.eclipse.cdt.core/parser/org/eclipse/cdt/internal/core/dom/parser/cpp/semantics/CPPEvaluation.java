@@ -73,4 +73,20 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 		return binding;
 	}
+
+	public static boolean containsDependentType(ICPPEvaluation[] evaluations) {
+		for (ICPPEvaluation eval : evaluations) {
+			if (eval.isTypeDependent())
+				return true;
+		}
+		return false;
+	}
+
+	public static boolean containsDependentValue(ICPPEvaluation[] evaluations) {
+		for (ICPPEvaluation eval : evaluations) {
+			if (eval.isValueDependent())
+				return true;
+		}
+		return false;
+	}
 }

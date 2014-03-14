@@ -93,7 +93,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	}
 
 	private IType computeType() {
-		if (CPPTemplates.isDependentType(fInputType))
+		if (CPPTemplates.isDependentType(fInputType) || containsDependentType(fArguments))
 			return new TypeOfDependentExpression(this);
 
 		IType type = typeFromReturnType(fInputType);
@@ -186,14 +186,14 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		if (args == fArguments && type == fInputType)
 			return this;
 
-		if (!CPPTemplates.isDependentType(type) && !areArgumentTypesDependent() && type instanceof ICPPClassType) {
+		if (!CPPTemplates.isDependentType(type) && !containsDependentType(args) && type instanceof ICPPClassType) {
 			// Check the constructor call and return EvalFixed.INCOMPLETE to indicate a substitution
 			// failure if the call cannot be resolved.
 			ICPPClassType classType = (ICPPClassType) type;
 			LookupData data = new LookupData(classType.getNameCharArray(), null, point);
 			ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, point);
 			data.foundItems = constructors;
-			data.setFunctionArguments(false, fArguments);
+			data.setFunctionArguments(false, args);
 			try {
 				IBinding binding = CPPSemantics.resolveFunction(data, constructors, true);
 				if (binding == null || binding instanceof IProblemBinding ||
@@ -240,14 +240,6 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	public boolean referencesTemplateParameter() {
 		for (ICPPEvaluation arg : fArguments) {
 			if (arg.referencesTemplateParameter())
-				return true;
-		}
-		return false;
-	}
-
-	private boolean areArgumentTypesDependent() {
-		for (ICPPEvaluation arg : fArguments) {
-			if (arg.isTypeDependent())
 				return true;
 		}
 		return false;

@@ -76,20 +76,12 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isTypeDependent() {
-		for (ICPPEvaluation arg : fArguments) {
-			if (arg.isTypeDependent())
-				return true;
-		}
-		return false;
+		return containsDependentType(fArguments);
 	}
 
 	@Override
 	public boolean isValueDependent() {
-		for (ICPPEvaluation arg : fArguments) {
-			if (arg.isValueDependent())
-				return true;
-		}
-		return false;
+		return containsDependentValue(fArguments);
 	}
 
 	public ICPPFunction getOverload(IASTNode point) {

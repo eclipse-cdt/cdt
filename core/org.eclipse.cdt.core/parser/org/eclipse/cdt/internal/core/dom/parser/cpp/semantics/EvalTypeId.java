@@ -144,18 +144,14 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
 		short firstBytes = ITypeMarshalBuffer.EVAL_TYPE_ID;
-		if (includeValue)
-			firstBytes |= ITypeMarshalBuffer.FLAG1;
 		if (fRepresentsNewExpression)
-			firstBytes |= ITypeMarshalBuffer.FLAG2;
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
 
 		buffer.putShort(firstBytes);
 		buffer.marshalType(fInputType);
-		if (includeValue) {
-			buffer.putInt(fArguments.length);
-			for (ICPPEvaluation arg : fArguments) {
-				buffer.marshalEvaluation(arg, includeValue);
-			}
+		buffer.putInt(fArguments.length);
+		for (ICPPEvaluation arg : fArguments) {
+			buffer.marshalEvaluation(arg, includeValue);
 		}
 		marshalTemplateDefinition(buffer);
 	}
@@ -164,17 +160,13 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			throws CoreException {
 		IType type= buffer.unmarshalType();
 		ICPPEvaluation[] args= null;
-		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0) {
-			int len= buffer.getInt();
-			args = new ICPPEvaluation[len];
-			for (int i = 0; i < args.length; i++) {
-				args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();
-			}
-		} else {
-			args = ICPPEvaluation.EMPTY_ARRAY;  // Arguments must not be null
+		int len= buffer.getInt();
+		args = new ICPPEvaluation[len];
+		for (int i = 0; i < args.length; i++) {
+			args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		}
 		IBinding templateDefinition= buffer.unmarshalBinding();
-		boolean forNewExpression = (firstBytes & ITypeMarshalBuffer.FLAG2) != 0;
+		boolean forNewExpression = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
 		return new EvalTypeId(type, templateDefinition, forNewExpression, args);
 	}
 
@@ -186,23 +178,26 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		if (args == fArguments && type == fInputType)
 			return this;
 
-		if (!CPPTemplates.isDependentType(type) && !containsDependentType(args) && type instanceof ICPPClassType) {
-			// Check the constructor call and return EvalFixed.INCOMPLETE to indicate a substitution
-			// failure if the call cannot be resolved.
-			ICPPClassType classType = (ICPPClassType) type;
-			LookupData data = new LookupData(classType.getNameCharArray(), null, point);
-			ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, point);
-			data.foundItems = constructors;
-			data.setFunctionArguments(false, args);
-			try {
-				IBinding binding = CPPSemantics.resolveFunction(data, constructors, true);
-				if (binding == null || binding instanceof IProblemBinding ||
-						binding instanceof ICPPFunction && ((ICPPFunction) binding).isDeleted()) {
+		if (!CPPTemplates.isDependentType(type) && !containsDependentType(args)) {
+			IType simplifiedType = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
+			if (simplifiedType instanceof ICPPClassType) {
+				// Check the constructor call and return EvalFixed.INCOMPLETE to indicate a substitution
+				// failure if the call cannot be resolved.
+				ICPPClassType classType = (ICPPClassType) type;
+				LookupData data = new LookupData(classType.getNameCharArray(), null, point);
+				ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, point);
+				data.foundItems = constructors;
+				data.setFunctionArguments(false, args);
+				try {
+					IBinding binding = CPPSemantics.resolveFunction(data, constructors, true);
+					if (binding == null || binding instanceof IProblemBinding ||
+							binding instanceof ICPPFunction && ((ICPPFunction) binding).isDeleted()) {
+						return EvalFixed.INCOMPLETE;
+					}
+				} catch (DOMException e) {
+					CCorePlugin.log(e);
 					return EvalFixed.INCOMPLETE;
 				}
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
-				return EvalFixed.INCOMPLETE;
 			}
 		}
 		return new EvalTypeId(type, getTemplateDefinition(), fRepresentsNewExpression, args);

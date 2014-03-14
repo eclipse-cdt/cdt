@@ -2053,7 +2053,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	};
 	//
 	//	typedef A<C> type;
-	public void testSFINAE_a() throws Exception {
+	public void testSfinae_a() throws Exception {
 		checkBindings();
 	}
 
@@ -2085,7 +2085,22 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	  A<double>::get();
 	//	  A<int>::get();
 	//	}
-	public void testSFINAE_b() throws Exception {
+	public void testSfinae_b() throws Exception {
+		checkBindings();
+	}
+
+	//	template<typename T, typename = decltype(new T(0))>
+	//	static void test(int);
+	//
+	//	template<typename>
+	//	static int test(...);
+
+	//	struct A {};
+	//
+	//	int waldo(int p);
+	//
+	//	int x = waldo(test<A>(0));
+	public void testSfinaeInNewExpression_430230() throws Exception {
 		checkBindings();
 	}
 

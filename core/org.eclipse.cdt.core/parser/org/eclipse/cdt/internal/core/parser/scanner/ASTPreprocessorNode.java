@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -785,6 +786,22 @@ class ASTFileLocation implements IASTFileLocation {
 	@Override
 	public IASTPreprocessorIncludeStatement getContextInclusionStatement() {
 		return fLocationCtx.getInclusionStatement();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ASTFileLocation other = (ASTFileLocation) obj;
+		if (fOffset != other.fOffset)
+			return false;
+		if (fLength != other.fLength)
+			return false;
+		return Objects.equals(fLocationCtx, fLocationCtx);
 	}
 }
 

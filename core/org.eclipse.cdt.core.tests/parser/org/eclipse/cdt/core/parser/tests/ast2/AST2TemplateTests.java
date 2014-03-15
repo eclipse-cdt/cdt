@@ -3218,6 +3218,20 @@ public class AST2TemplateTests extends AST2TestBase {
 		ba.assertNonProblem("A(other", 1);
 	}
 
+	//	template<class T>
+	//	struct A {};
+	//
+	//	template <typename U>
+	//	A<int> waldo(U p);
+	//
+	//	void test() {
+	//	  typedef int INT;
+	//	  A<INT> x = waldo([](int data) { return false; });
+	//	}
+	public void testLambda_430428() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	class A {};
 	//
 	//	class B {

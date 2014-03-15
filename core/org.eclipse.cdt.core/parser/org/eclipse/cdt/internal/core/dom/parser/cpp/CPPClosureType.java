@@ -226,7 +226,9 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 			return true;
 		if (type instanceof ITypedef || type instanceof IIndexBinding)
 			return type.isSameType(this);
-		return false;
+		if (!getClass().equals(type.getClass()))
+			return false;
+		return fLambdaExpression.getFileLocation().equals(((CPPClosureType) type).fLambdaExpression.getFileLocation());
 	}
 	
 	@Override

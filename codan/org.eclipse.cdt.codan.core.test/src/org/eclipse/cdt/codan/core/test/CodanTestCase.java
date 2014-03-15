@@ -225,9 +225,11 @@ public class CodanTestCase extends BaseTestCase {
 			currentFile = testFile;
 			try {
 				cproject.getProject().refreshLocal(1, null);
+				waitForIndexer(cproject);
 			} catch (CoreException e) {
 				// hmm
 				fail(e.getMessage());
+			} catch (InterruptedException e) {
 			}
 			currentCElem = cproject.findElement(new Path(currentFile.toString()));
 			currentIFile = (IFile) currentCElem.getResource();

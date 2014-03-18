@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Ericsson and others.
+ * Copyright (c) 2012, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - Initial Implementation
  *     Marc Khouzam (Ericsson) - Tests for Pattern Matching for variables (Bug 394408)
+ *     Alvaro Sanchez-Leon (Ericsson AB) - Allow user to edit register groups (Bug 235747)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
@@ -36,9 +37,9 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions3.IExpressionDMDataExtensio
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
-import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRegisters2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -67,7 +68,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	private DsfServicesTracker fServicesTracker;
 
 	protected IMIExpressions fExpService;
-	protected IRegisters fRegService;
+	protected IRegisters2 fRegService;
 
 	@Override
 	protected void setLaunchAttributes() {
@@ -88,7 +89,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 
 				fExpService = fServicesTracker.getService(IMIExpressions.class);
 
-				fRegService = fServicesTracker.getService(IRegisters.class);
+				fRegService = fServicesTracker.getService(IRegisters2.class);
 			}
 		};
 		fSession.getExecutor().submit(runnable).get();
@@ -173,11 +174,11 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		Query<String> query = new Query<String>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
-				fRegService.getRegisterGroups(threadDmc, new ImmediateDataRequestMonitor<IRegisterGroupDMContext[]>(rm) {
+				fRegService.findTargetRegisterGroup(threadDmc, new ImmediateDataRequestMonitor<IRegisterGroupDMContext>(rm) {
 					@Override
 					protected void handleSuccess() {
 						fRegService.getRegisters(
-								new CompositeDMContext(new IDMContext[] { getData()[0], threadDmc } ), 
+								new CompositeDMContext(new IDMContext[] { getData(), threadDmc } ), 
 								new ImmediateDataRequestMonitor<IRegisterDMContext[]>(rm) {
 									@Override
 									protected void handleSuccess() {

@@ -122,7 +122,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			}
 		}, npm());
 		assertTrue("Timestamp was not increased", file.getLocalTimeStamp() >= timestamp);
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 4000);
+		waitUntilFileIsIndexed(fIndex, file);
 		fIndex.acquireReadLock();
 		try {
 			IIndexFile ifile= getIndexFile(file);
@@ -155,7 +155,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		TestSourceReader.createFile(fProject.getProject(), "user20061107.h", "");
 		TestSourceReader.createFile(fProject.getProject(), "system20061107.h", "");
 		IFile file= TestSourceReader.createFile(fProject.getProject(), "source20061107.cpp", content);
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 4000);
+		waitUntilFileIsIndexed(fIndex, file);
 
 		fIndex.acquireReadLock();
 		try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Alvaro Sanchez-Leon (Ericsson) - Allow user to edit the register groups (Bug 235747)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.internal.ui;
 
@@ -22,6 +23,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -168,5 +171,19 @@ public class DsfUIPlugin extends AbstractUIPlugin {
     public static IStatus newErrorStatus(int code, String message, Throwable exception) {
         return new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, code, message, exception);
     }
+	
+	/**
+	 * Returns the active workbench shell or <code>null</code> if none
+	 * 
+	 * @return the active workbench shell or <code>null</code> if none
+	 */
+	public static Shell getActiveWorkbenchShell() {
+		IWorkbenchWindow window = getDefault().getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			return window.getShell();
+		}
+		
+		return null;
+	}
 
 }

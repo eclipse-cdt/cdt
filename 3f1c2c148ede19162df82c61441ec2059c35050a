@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_00ae716c",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IDisassembly3.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-03-18T14:19:48Z",
+      "side": 1,
+      "message": "What if the new parameter was \u0027int mode\u0027 instead of opCodes?  That way, if some other feature gets added, we may be able to re-use this interface, instead of having to create yet a new one?\n\nIf you agree, I can make the change myself, because I\u0027ve done some other minor modifications to your patch, which were easier to code than to write comments about.",
+      "revId": "3f1c2c148ede19162df82c61441ec2059c35050a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

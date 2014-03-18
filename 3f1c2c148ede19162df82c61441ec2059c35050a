@@ -16,6 +16,24 @@
       "revId": "3f1c2c148ede19162df82c61441ec2059c35050a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_c039198d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IDisassembly3.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2014-03-18T15:25:28Z",
+      "side": 1,
+      "message": "The reason I added it as a boolean was to avoid the need for GDB specific modes to be known by callers. If that isn\u0027t a concern then I agree a generic \u0027int modes\u0027 would be better.\n\nIf the current disassembly functions are also going to return OpCodes by default and callers who don\u0027t want them need to explicitly not request them, then I think it is even less of a concern. As it will reduce the number of places where the mode would need to be considered.",
+      "parentUuid": "2753a756_00ae716c",
+      "revId": "3f1c2c148ede19162df82c61441ec2059c35050a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

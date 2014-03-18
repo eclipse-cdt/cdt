@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Ericsson and others.
+ * Copyright (c) 2012, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     Grzegorz Kuligowski - Cannot cast to type that contain commas (bug 393474)
  *     Marc Khouzam (Ericsson) - Support for glob-expressions for local variables (bug 394408)
+ *     Alvaro Sanchez-Leon (Ericsson AB) - Allow user to edit register groups (Bug 235747)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -37,9 +38,9 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2;
 import org.eclipse.cdt.dsf.debug.service.IExpressions3;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
-import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRegisters2;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMContext;
@@ -781,17 +782,17 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 	 * @param rm RequestMonitor that will contain the unsorted matches.
 	 */
 	protected void matchRegisters(final IExpressionGroupDMContext globDmc, final DataRequestMonitor<List<IExpressionDMContext>> rm) {
-		final IRegisters registerService = getServicesTracker().getService(IRegisters.class);
+		final IRegisters2 registerService = getServicesTracker().getService(IRegisters2.class);
 		if (registerService == null) {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Register service unavailable", null)); //$NON-NLS-1$
 			return;
 		}
 
-		registerService.getRegisterGroups(globDmc, new ImmediateDataRequestMonitor<IRegisterGroupDMContext[]>(rm) {
+		registerService.findTargetRegisterGroup(globDmc, new ImmediateDataRequestMonitor<IRegisterGroupDMContext>(rm) {
 			@Override
 			protected void handleSuccess() {
 				registerService.getRegisters(
-						new CompositeDMContext(new IDMContext[] { getData()[0], globDmc } ), 
+						new CompositeDMContext(new IDMContext[] { getData(), globDmc } ), 
 						new ImmediateDataRequestMonitor<IRegisterDMContext[]>(rm) {
 							@Override
 							protected void handleSuccess() {

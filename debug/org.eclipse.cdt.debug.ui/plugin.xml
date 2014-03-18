@@ -792,34 +792,6 @@
                   class="org.eclipse.cdt.debug.core.model.ICVariable">
             </selection>
          </action>
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.RestoreDefaultRegisterGroupsActionDelegate"
-               helpContextId="restore_default_register_groups_action_context"
-               id="org.eclipse.cdt.debug.ui.restoreDefaultRegisterGroupsAction"
-               label="%RestoredefaultRegisterGroupsAction.label"
-               menubarPath="additions"
-               style="push"
-               tooltip="%RestoredefaultRegisterGroupsAction.tooltip">
-            <enablement>
-               <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated"/>
-            </enablement>
-         </action>
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddRegisterGroupActionDelegate"
-               helpContextId="add_register_group_action_context"
-               id="org.eclipse.cdt.debug.ui.addRegisterGroupAction"
-               label="%AddRegisterGroupAction.label"
-               menubarPath="additions"
-               style="push"
-               tooltip="%AddRegisterGroupAction.tooltip">
-            <enablement>
-               <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated"/>
-            </enablement>
-         </action>
       </viewerContribution>
       <objectContribution
             objectClass="org.eclipse.cdt.debug.core.model.ICModule"
@@ -862,27 +834,6 @@
             </enablement>
          </action>
       </viewerContribution>
-      <objectContribution
-            adaptable="false"
-            id="org.eclipse.cdt.debug.ui.RegisterGroupActions"
-            objectClass="org.eclipse.cdt.debug.core.model.IPersistableRegisterGroup">
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.RemoveRegisterGroupActionDelegate"
-               enablesFor="+"
-               helpContextId="remove_register_group_action_context"
-               id="org.eclipse.cdt.debug.ui.removeRegisterGroupAction"
-               label="%RemoveRegisterGroupAction.label"
-               menubarPath="additions"
-               tooltip="%RemoveRegisterGroupAction.tooltip"/>
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.EditRegisterGroupActionDelegate"
-               enablesFor="1"
-               helpContextId="edit_register_group_action_context"
-               id="org.eclipse.cdt.debug.ui.editRegisterGroupAction"
-               label="%EditRegisterGroupAction.label"
-               menubarPath="additions"
-               tooltip="%EditRegisterGroupAction.tooltip"/>
-      </objectContribution>
       <viewerContribution
             id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.popupMenu.1"
             targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1">
@@ -1389,18 +1340,14 @@
       <factory
             class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
             adaptableType="org.eclipse.cdt.internal.ui.editor.CEditor">
-         <adapter
-               type="org.eclipse.debug.ui.actions.IRunToLineTarget">
-         </adapter>
+         <adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget"/>
       </factory>
       <factory
             class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
             adaptableType="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor">
-         <adapter
-               type="org.eclipse.debug.ui.actions.IRunToLineTarget">
-         </adapter>
+         <adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget"/>
       </factory>
@@ -1957,6 +1904,35 @@
  <extension
        point="org.eclipse.ui.commands">
     <category
+          description="%RegisterGroupingCategory.description"
+          id="org.eclipse.cdt.debug.ui.category.registerGrouping"
+          name="%RegisterGroupingCategory.name">
+    </category>
+    <command
+          categoryId="org.eclipse.cdt.debug.ui.category.registerGrouping"
+          description="%AddRegisterGroup.description"
+          id="org.eclipse.cdt.debug.ui.command.addRegisterGroup"
+          name="%AddRegisterGroup.name">
+    </command>
+    <command
+          categoryId="org.eclipse.cdt.debug.ui.category.registerGrouping"
+          description="%EditRegisterGroup.description"
+          id="org.eclipse.cdt.debug.ui.command.editRegisterGroup"
+          name="%EditRegisterGroup.name">
+    </command>
+    <command
+          categoryId="org.eclipse.cdt.debug.ui.category.registerGrouping"
+          description="%RestoreRegisterGroups.description"
+          id="org.eclipse.cdt.debug.ui.command.restoreRegisterGroups"
+          name="%RestoreRegisterGroups.name">
+    </command>
+    <command
+          categoryId="org.eclipse.cdt.debug.ui.category.registerGrouping"
+          description="%RemoveRegisterGroups.description"
+          id="org.eclipse.cdt.debug.ui.command.removeRegisterGroups"
+          name="%RemoveRegisterGroups.name">
+    </command>
+    <category
           description="%ReverseDebuggingCategory.description"
           id="org.eclipse.cdt.debug.ui.category.reverseDebugging"
           name="%ReverseDebuggingCategory.name">
@@ -2064,6 +2040,76 @@
  </extension>
  <extension
          point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.cdt.debug.internal.ui.commands.AddRegisterGroupCommandHandler"
+            commandId="org.eclipse.cdt.debug.ui.command.addRegisterGroup">
+            <activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+                  <or>
+                     <instanceof
+                           value="org.eclipse.cdt.debug.internal.core.model.CRegisterGroup">
+                     </instanceof>
+                     <instanceof
+                           value="org.eclipse.cdt.debug.internal.core.model.CRegister">
+                     </instanceof>
+                  </or>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.cdt.debug.internal.ui.commands.EditRegisterGroupCommandHandler"
+            commandId="org.eclipse.cdt.debug.ui.command.editRegisterGroup">
+            <activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+                     <instanceof
+                           value="org.eclipse.cdt.debug.internal.core.model.CRegisterGroup">
+                     </instanceof>
+			        </iterate>
+			        <count value="1">
+			        </count>
+			    </with>
+			</activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.cdt.debug.internal.ui.commands.RestoreRegisterGroupsCommandHandler"
+            commandId="org.eclipse.cdt.debug.ui.command.restoreRegisterGroups">
+            <activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+                  <or>
+                     <instanceof
+                           value="org.eclipse.cdt.debug.internal.core.model.CRegisterGroup">
+                     </instanceof>
+                     <instanceof
+                           value="org.eclipse.cdt.debug.internal.core.model.CRegister">
+                     </instanceof>
+                  </or>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.cdt.debug.internal.ui.commands.RemoveRegisterGroupsCommandHandler"
+            commandId="org.eclipse.cdt.debug.ui.command.removeRegisterGroups">
+            <activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+                     <instanceof
+                           value="org.eclipse.cdt.debug.internal.core.model.CRegisterGroup">
+                     </instanceof>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen>
+      </handler>
       <handler
             class="org.eclipse.cdt.debug.internal.ui.commands.ReverseToggleCommandHandler"
             commandId="org.eclipse.cdt.debug.ui.command.reverseToggle">
@@ -2270,6 +2316,48 @@
  </extension>
  <extension
        point="org.eclipse.ui.menus">
+       
+<!-- Register Grouping contributions to the registers view popup -->      
+      <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.RegisterView?after=additions">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.restoreRegisterGroups"
+               label="%RestoreRegisterGroups.label"
+               style="push">
+            <visibleWhen checkEnabled="true">
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.RegisterView?after=additions">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.addRegisterGroup"
+               label="%AddRegisterGroup.label"
+               style="push">
+            <visibleWhen checkEnabled="true">
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.RegisterView?after=additions">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.removeRegisterGroups"
+               label="%RemoveRegisterGroups.label"
+               style="push">
+          <visibleWhen checkEnabled="true">
+           </visibleWhen>
+          </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.RegisterView?after=additions">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.editRegisterGroup"
+               label="%EditRegisterGroup.label"
+               style="push">
+          <visibleWhen checkEnabled="true">
+           </visibleWhen>
+         </command>
+      </menuContribution>
        
  <!-- Reverse debugging contributions to Debug view -->      
     <menuContribution

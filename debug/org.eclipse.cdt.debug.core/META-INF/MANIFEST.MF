@@ -22,7 +22,7 @@ Export-Package: org.eclipse.cdt.debug.core,
  org.eclipse.cdt.debug.internal.core.breakpoints;x-friends:="org.eclipse.cdt.debug.edc,org.eclipse.cdt.dsf.gdb",
  org.eclipse.cdt.debug.internal.core.disassembly;x-internal:=true,
  org.eclipse.cdt.debug.internal.core.executables;x-internal:=true,
- org.eclipse.cdt.debug.internal.core.model;x-internal:=true,
+ org.eclipse.cdt.debug.internal.core.model;x-friends:=" org.eclipse.cdt.dsf.ui",
  org.eclipse.cdt.debug.internal.core.srcfinder;x-internal:=true,
  org.eclipse.cdt.debug.internal.core.sourcelookup;
   x-friends:="org.eclipse.cdt.dsf.ui,

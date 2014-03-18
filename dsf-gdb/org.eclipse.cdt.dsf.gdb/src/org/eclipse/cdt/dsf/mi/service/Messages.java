@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2010, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Alvaro Sanchez-Leon (Ericsson) - Support Register Groups (Bug 235747) 
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -23,6 +24,8 @@ class Messages extends NLS {
 	public static String Breakpoint_installation_failed;
 	public static String MIExpressions_NotAvailableBecauseChildOfDynamicVarobj;
 	public static String MIExpressions_ReturnValueAlias;
+	public static String MIRegisters_0;
+	public static String MIRegisters_1;
 	
 	static {
 		// initialize resource bundle

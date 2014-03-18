@@ -17,6 +17,7 @@
  *     William Riley (Renesas) - Support for GDB 7.3 disassembly service (Bug 357270)
  *     Marc Khouzam (Ericsson) - Support for GDB 7.4 processes service (Bug 389945)
  *     Marc Khouzam (Ericsson) - Support dynamic printf in bp service 7.5 (Bug 400628)
+ *     Alvaro Sanchez-Leon (Ericsson) - Allow user to edit the register groups (Bug 235747)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -48,7 +49,6 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpointsSynchronizer;
 import org.eclipse.cdt.dsf.mi.service.MIDisassembly;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions;
 import org.eclipse.cdt.dsf.mi.service.MIModules;
-import org.eclipse.cdt.dsf.mi.service.MIRegisters;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -231,7 +231,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IRegisters createRegistersService(DsfSession session) {
-		return new MIRegisters(session);
+		return new GDBRegisters(session);
 	}
 
 	@Override

@@ -71,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_3ab2d651",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/model/IRegisterGroupDescriptor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "This field exist and comes from the CDI implementation, so cdi can disable register groups. I don\u0027t think we should implement it in dsf-gdb until we see a need for it.  \n  However since we use the same memento format we need to handle reading and writing of default values.",
+      "parentUuid": "8748d3a1_182ab901",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_15525bae",
         "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
         "patchSetId": 4
@@ -82,6 +100,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "Now is a good opportunity to convert these actions to commands.  You can imitate what is done for org.eclipse.cdt.debug.ui.command.castToType which works for both DSF and CDI",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_e07edd5c",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 808,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "I would propose to finish the implementation with commands and then move to commands as a second step as this change is already large lets divide it in steps.",
+      "parentUuid": "8748d3a1_15525bae",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -105,6 +141,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_5a7fcad3",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/AbstractRegisterGroupActionDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_5fff79d8",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_9da41204",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/AbstractRegisterGroupActionDelegate.java",
         "patchSetId": 4
@@ -116,6 +170,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "This can be different for CDI and DSF, so we can\u0027t just store it without re-setting it when changing the type of selection",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_b1843ded",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/AbstractRegisterGroupActionDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done, \nTrue I missed testing CDI and DSF-GDB sessions together, \nUpdated to refresh it after selection changes",
+      "parentUuid": "8748d3a1_9da41204",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -139,6 +211,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_952933c0",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/AbstractRegisterGroupActionDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_582f2190",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_02238332",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/IRegisterGroupActions.java",
         "patchSetId": 4
@@ -150,6 +240,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "To be consistent with others, can we call this IRegisterGroupActionsTarget?",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_55415b61",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/IRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_02238332",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -173,6 +281,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_b588b72f",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/RegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "No sure about this one. \n\nIRegisterGroupActions is the interface implemented by CDI with this class i.e. RegisterGroupActions\n\nThe DSF implementation is called DsfRegisterGroupActions.\n\nLets talk about this one.",
+      "parentUuid": "8748d3a1_62fd27df",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_a2bd6f1f",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/RetargettableActionAdapterFactory.java",
         "patchSetId": 4
@@ -184,6 +310,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "Note that this factory is generic for CDT so it is used for both CDI and DSF.  That implies that the RegistersGroupActions class must also be generic.  Nothing to change here, but just an explanation for changes to RegisterGroupActions.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_55f79b81",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/RetargettableActionAdapterFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "RegisterGroupActions is the CDI implementation, \nfor DSF we use DSFRegisterGroupActions, \n   CDI took this place as it was the default / fist implementation.",
+      "parentUuid": "8748d3a1_a2bd6f1f",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -224,6 +368,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_8e4456d1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisterManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_f5f6cf00",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_95fcabe4",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisterManager.java",
         "patchSetId": 4
@@ -235,6 +397,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "Let\u0027s name this class GDBRegisters to be consistent",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_d5ad6b71",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisterManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_95fcabe4",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -258,6 +438,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_553f9b72",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisterManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_bf815d09",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_6fe174b9",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisterManager.java",
         "patchSetId": 4
@@ -269,6 +467,24 @@
       "writtenOn": "2013-12-05T14:37:14Z",
       "side": 1,
       "message": "Now that there is more than one group, if the user does define new groups, GDBPatternMatchingExpressions.java will break, because it assums a single group.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_118a376f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisterManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done\nVery important catch !!  \nI should have noticed this \n\nThanks",
+      "parentUuid": "8748d3a1_6fe174b9",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -292,6 +508,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_acddf057",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisterManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 524,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_db53f3b1",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_5b9a43f5",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisterManager.java",
         "patchSetId": 4
@@ -303,6 +537,24 @@
       "writtenOn": "2013-11-20T10:36:55Z",
       "side": 1,
       "message": "I don\u0027t think we should be notifying the user directly from the service unless we have too).  Instead, the methods that call notifyUser() should set rm.setStatus(status) or rm.done(status) to return an error code, and the UI/command code should deal with notifying the user.\n\nNotifying the user from the service directly is done when we don\u0027t have any UI code to return an error to.  For example, if we get some async message from GDB that we need to report to the user.  This is not the case in this classs.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_ce83eea4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisterManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 780,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_5b9a43f5",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -326,6 +578,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_ced92e9e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_5fb499ea",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_bf683de9",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/Messages.java",
         "patchSetId": 4
@@ -337,6 +607,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "Not used.  Remove?",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_aed67a69",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/Messages.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_bf683de9",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -360,6 +648,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_ee07d28d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/Messages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_9f63c10a",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_1faa118c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/Messages.properties",
         "patchSetId": 4
@@ -371,6 +677,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "How about:\nThe group name \"{0}\" is reserved.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_2ebd4a20",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/Messages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_1faa118c",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -394,6 +718,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_8ec1f699",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/Messages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_7fb195fa",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_b4aa2407",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
         "patchSetId": 4
@@ -405,6 +747,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "Should be translatable, no?  Should have been from the start.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_ee6b520e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Added to Messages.java and Messages.properties. \nNot sure if there is additional work for this.",
+      "parentUuid": "8748d3a1_b4aa2407",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -428,6 +788,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_ae7afad9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Added to Messages.java and Messages.properties. \nNot sure if there is additional work for this.",
+      "parentUuid": "8748d3a1_94a56839",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_f482eca0",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
         "patchSetId": 4
@@ -439,6 +817,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "I think this IGroupsChangedDMEvent is meant to indicate all groups have changed, while the below IGroupChangedDMEvent is for a single group.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_e15a4355",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "This event triggers the re-built of available register groups needed after the addition or removal of a group.\n  I have updated the comment to reflect this.",
+      "parentUuid": "8748d3a1_f482eca0",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -462,6 +858,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_d2d9f320",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done.\nThe context is actually not used today but make sense as you mentioned so it\u0027s been updated.",
+      "parentUuid": "8748d3a1_d47d3025",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_54c480d8",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
         "patchSetId": 4
@@ -473,6 +887,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "Remove NON-NLS",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_b2ac3ffa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_54c480d8",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -496,6 +928,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_9283fb5a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done\nTrue !",
+      "parentUuid": "8748d3a1_140cb8ca",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_d49c10be",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
         "patchSetId": 4
@@ -507,6 +957,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "The below seems to only make sense if there is a single group.  I believe this is what you had in mind for MIRegisters.  However, this isn\u0027t clear with the comment as it stands now.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_e5d1cf40",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 556,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "This implementation in MIRegisters is for a single group as you have noted but this is overridden in GDBRegisters.java (former GDBRegisterManager.java) to cover for multiple groups.\n  I think the comment is fine, isn\u0027t it ?",
+      "parentUuid": "8748d3a1_d49c10be",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -530,6 +998,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_e55eef48",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 586,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_b4598488",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_1f2df1cb",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
         "patchSetId": 4
@@ -541,6 +1027,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "I wonder if we need this check at all.  It could prove to be limiting for extensions of this class.  I\u0027d remove it.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_259aa77b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 708,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done, although this part of the  code was not touched but this change",
+      "parentUuid": "8748d3a1_1f2df1cb",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -564,6 +1068,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_65165f56",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/ServiceEventWaitor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "this method was removed as part of  re-factoring i.e. no longer needed.",
+      "parentUuid": "8748d3a1_d6890ffe",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_b908c133",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
         "patchSetId": 4
@@ -575,6 +1097,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "fContainerDmc should be an IContainerDMC, or else we should rename fContainerDmc to describe what it is.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_e5ca6f16",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Renamed to fCompositeDmc, needed with Registers to access the container Dmc as well as the frame dmc.",
+      "parentUuid": "8748d3a1_b908c133",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -598,6 +1138,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_6fb2c07d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_19c6153e",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_f90ec93c",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
         "patchSetId": 4
@@ -609,6 +1167,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "I think this should be initializing fContainerDmc above",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_25fbc73c",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "fContainerDmc has now been renamed to fCompositeDmc and initialized in the next line as we need a dmc wich can resolve the container as well as the frame context.",
+      "parentUuid": "8748d3a1_f90ec93c",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -632,6 +1208,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_45f23b5c",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_5921bda5",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_b9ba81b3",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
         "patchSetId": 4
@@ -643,6 +1237,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "I don\u0027t think we need this all the time.  Can we move to getAllRegisters()?",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_a59357b1",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_b9ba81b3",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -666,6 +1278,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_e8ba4608",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_99d225fa",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_4dcc5764",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
         "patchSetId": 4
@@ -677,6 +1307,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "maybe rename the variable since it does not deal with groups",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_4af87f3d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_4dcc5764",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -700,6 +1348,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_4aa7df3f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done and applied to all TimeUnit instances",
+      "parentUuid": "8748d3a1_39a1517e",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_9bf1700a",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
         "patchSetId": 4
@@ -711,6 +1377,24 @@
       "writtenOn": "2013-11-20T10:36:55Z",
       "side": 1,
       "message": "This is not a generic method since it gets the regs of the root group only, compared to getRegisters() above, which is generic.  Can you change the name to be more descriptive?",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_4a407fba",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done, changed to \"getTargetRegisters\"\nmeaning the registers from the target",
+      "parentUuid": "8748d3a1_9bf1700a",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -734,6 +1418,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_532af77e",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done, changed to \"resolveTargetRegisterGroup()\"",
+      "parentUuid": "8748d3a1_fbecf433",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_fb7994e8",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
         "patchSetId": 4
@@ -745,6 +1447,24 @@
       "writtenOn": "2013-11-20T10:36:55Z",
       "side": 1,
       "message": "You did a great job replacing AsyncCompletionWaitor with Query.  This is the last instance of its use in this class.  Could you also replace it?",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_b3c0b3f8",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done, AsyncCompletionWaitor is no longer used :-)",
+      "parentUuid": "8748d3a1_fb7994e8",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -768,6 +1488,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_33fb033d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 528,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done, \nThanks for looking into this",
+      "parentUuid": "8748d3a1_f6e24b0c",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_8ddf7fcc",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
         "patchSetId": 4
@@ -779,6 +1517,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "Missing @test",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_7310db07",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 618,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_8ddf7fcc",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -802,6 +1558,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_93692f72",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "It is possible to get frame, thread, Process upon selection from the debug view but selections from the registers view will also trigger a call to canAddRegisterGroup e.g. with a group or register context.\n  I wonder if we should in fact look into suppressing the listening of selections in the debug view.",
+      "parentUuid": "8748d3a1_362b13ba",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_6de2f391",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
         "patchSetId": 4
@@ -813,6 +1587,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "Wrong error message",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_c4910d25",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_6de2f391",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -836,6 +1628,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_fe594762",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done, bad copy paste issue. Thanks!",
+      "parentUuid": "8748d3a1_0df36f60",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_5be5284f",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
         "patchSetId": 4
@@ -847,6 +1657,24 @@
       "writtenOn": "2013-11-20T10:36:55Z",
       "side": 1,
       "message": "Don\u0027t we need a composite to call getRegisters()?  Or can we get the reg of a group only?",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_24d0c9c1",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 720,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "A composite is used to include the frame / execution context in addition to the container context. However it\u0027s possible to receive a context with no frame context e.g. the selection of a process in the debug view.\n  For this test case the use of origRegisters is to be able to differentiate with the use of a new set of registers. I have updated the test case to make sure parents are not validated as well as to make sure the size of the register arrays are the same, so the validation goes deeper to the registers names. \n  We could use a composite for consistency but does not make a difference to the test case.\n   Let me know what you think.",
+      "parentUuid": "8748d3a1_5be5284f",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -870,6 +1698,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_a4f21959",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 725,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_080ebdee",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_eded637e",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
         "patchSetId": 4
@@ -881,6 +1727,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "Maybe call getRegisters(int, int)",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_a4b17978",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1122,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_eded637e",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -904,6 +1768,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_64f2c10e",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1201,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_c8fcd534",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_5f1db96a",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
         "patchSetId": 4
@@ -915,6 +1797,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "This does not look to me like it should be in this file.  This factory is for the Disassembly view which is provided by DSF, that is why the factory is added in this plugin.xml.\n\nFor RegGroups, i don\u0027t think we need to change the Disassembly factory, so we shouldn\u0027t have to add this here.\n\nWe probably need to change the other factory, as provided by core CDT instead.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_7feb6eed",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 757,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "The CDT factory is used to provide the CDI implementation, \nwhereas this factory provides the DSF implementation. \n  So it seems to make sense to have it at DSF level, \nThe name of this factory is quite generic so I thought we could extend its use and adjust the internal comments.\n  Or we could create a separate factory in DSF, \nLet me know what you think,",
+      "parentUuid": "8748d3a1_5f1db96a",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -973,6 +1873,24 @@
     },
     {
       "key": {
+        "uuid": "2753a756_4d9ef9ec",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_b8a105ab",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_58ac4173",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
         "patchSetId": 4
@@ -984,6 +1902,24 @@
       "writtenOn": "2013-12-05T14:37:14Z",
       "side": 1,
       "message": "Don\u0027t use the pattern of triggering an RM.  It is confusing when not necessary.  Instead, you can run the code in the executor by using:\n\ntry {\n            selectionContext.fsession().getExecutor().execute(new DsfRunnable() {\n                @Override\n                public void run() {\n                                 // code\n                }});\n        } catch (RejectedExecutionException e) {\n          // ignore?\n        }",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_2da3c530",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done, changed in all applicable places",
+      "parentUuid": "8748d3a1_58ac4173",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1007,6 +1943,24 @@
     },
     {
       "key": {
+        "uuid": "2753a756_8d9811fe",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done, \nIt was not quite clear to me when the data was accessible. \nthanks for the remark",
+      "parentUuid": "8748d3a1_384df546",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_1850f9d8",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
         "patchSetId": 4
@@ -1018,6 +1972,24 @@
       "writtenOn": "2013-12-05T14:37:14Z",
       "side": 1,
       "message": "You can pass in \u0027rm\u0027 directly instead of creating a new one",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_6d9dbdeb",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_1850f9d8",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1041,6 +2013,24 @@
     },
     {
       "key": {
+        "uuid": "2753a756_cd9169d7",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_992185d7",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_792479e4",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
         "patchSetId": 4
@@ -1052,6 +2042,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "This mapping should be done in the service instead of here.  Here we really should have a canRestoreDefaultGroups() call",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_ad8eb5b6",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 442,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_792479e4",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1075,6 +2083,24 @@
     },
     {
       "key": {
+        "uuid": "2753a756_ad199507",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_18c119c8",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_3895f5c3",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
         "patchSetId": 4
@@ -1086,6 +2112,24 @@
       "writtenOn": "2013-12-05T14:37:14Z",
       "side": 1,
       "message": "Please remove all unnecessary \u0027final\u0027 keywords, throughout the class",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_4d30b971",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 764,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done, \nI removed all the ones that are not needed, however there is no performance impact on using \"final\" more than needed.",
+      "parentUuid": "8748d3a1_3895f5c3",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1109,6 +2153,24 @@
     },
     {
       "key": {
+        "uuid": "2753a756_8d2ad101",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 765,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_d8a17127",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_8f6960ee",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
         "patchSetId": 4
@@ -1120,6 +2182,24 @@
       "writtenOn": "2013-12-05T14:37:14Z",
       "side": 1,
       "message": "Since this is actually really one line, why not put it where it is called directly?",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_6d2f7d13",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 772,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Do you mean, remove this method and place the code on the caller ?\n\nThe caller has a very long chain of async calls making the lines very, very short and difficult to read. \n\nSo I added this one to see more clearly.",
+      "parentUuid": "8748d3a1_8f6960ee",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1143,6 +2223,24 @@
     },
     {
       "key": {
+        "uuid": "2753a756_cd4329c7",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 782,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Do you mean, remove this method and place the code on the caller ?\n\nThe caller has a very long chain of async calls making the lines very, very short and difficult to read. \n\nSo I added this one to see more clearly",
+      "parentUuid": "8748d3a1_2f5f6c45",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_58d0c1bf",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
         "patchSetId": 4
@@ -1154,6 +2252,24 @@
       "writtenOn": "2013-12-05T14:37:14Z",
       "side": 1,
       "message": "Should not use CDI plugin id here and below",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_ad4075bb",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 787,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_58d0c1bf",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1177,6 +2293,24 @@
     },
     {
       "key": {
+        "uuid": "2753a756_0d3ec141",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfRegisterGroupActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 791,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "The MultiStatus was used to concatenate the Register group status message with the exception status info. \nI have replaced it to used a Status and concatenated the strings instead,",
+      "parentUuid": "8748d3a1_cfe2480d",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_1f2331b0",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/RetargettableActionAdapterFactory.java",
         "patchSetId": 4
@@ -1194,6 +2328,24 @@
     },
     {
       "key": {
+        "uuid": "2753a756_d183b1df",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/RetargettableActionAdapterFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Being discussed at DSF plugin.xml",
+      "parentUuid": "8748d3a1_1f2331b0",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_93fdb0a6",
         "filename": "dsf/org.eclipse.cdt.dsf/META-INF/MANIFEST.MF",
         "patchSetId": 4
@@ -1205,6 +2357,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "Must also change pom.xml to match",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_5f65ca0d",
+        "filename": "dsf/org.eclipse.cdt.dsf/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_93fdb0a6",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1263,6 +2433,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_7f81ae06",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_967dc78f",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_b300ac3a",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
         "patchSetId": 4
@@ -1298,6 +2486,42 @@
     },
     {
       "key": {
+        "uuid": "67591f73_bf7b4698",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "OK",
+      "parentUuid": "8748d3a1_36faf382",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_5f7e6a8b",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "N/A based on next comment",
+      "parentUuid": "8748d3a1_b300ac3a",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_d6258fad",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
         "patchSetId": 4
@@ -1309,6 +2533,24 @@
       "writtenOn": "2013-11-20T10:36:55Z",
       "side": 1,
       "message": "This does not look like a very safe interface.  Partial data may not be such a good idea.  There are probably other ways around it.  For example, you can look at MIProcessDMCAndData which passes Data with the DMC, without defining a special call for it.  We can discuss this further, but my gut feeling is that this call should be removed from the interface.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_d48d5f3f",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done, \nI replaced it by getRegistersData which uses individual async calls to getRegisterData with the help of Count Request monitor. \n  So this new interface resolves all available data for the given contexts.",
+      "parentUuid": "8748d3a1_d6258fad",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1332,6 +2574,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_9f2ac27c",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_5624dfe3",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_d66aafdc",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
         "patchSetId": 4
@@ -1343,6 +2603,24 @@
       "writtenOn": "2013-11-20T10:36:55Z",
       "side": 1,
       "message": "Please explain the params that need explanation and remove the other.  No need to just put parameter names.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_c550e4dd",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_d66aafdc",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1366,6 +2644,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_a59b30f7",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done,\naddRegGroup takes the context from any of the provided registers, but you are right that an extension may want to have a different type of context so I have added it.",
+      "parentUuid": "8748d3a1_76ae3ba0",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_76211bd4",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
         "patchSetId": 4
@@ -1377,6 +2673,24 @@
       "writtenOn": "2013-11-20T10:36:55Z",
       "side": 1,
       "message": "\"selectionContext\" should be \"group\"",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_48922b29",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_76211bd4",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1400,6 +2714,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_a8ce6728",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "I am not sure about this one, \none implementation may be ok with null for some parameters but  another one may not, i.e. I think they should not be documented as the behavior may vary.\n  This is best to leave it to the implementation as they can return IStatus with a corresponding error as needed.\n  For the gdb implementation of \"editRegisterGroup\" I don\u0027t expect null arguments although I am protecting the implementation against null pointer exceptions.",
+      "parentUuid": "8748d3a1_363dd3ea",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_592b7db8",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
         "patchSetId": 4
@@ -1411,6 +2743,24 @@
       "writtenOn": "2013-11-18T21:27:39Z",
       "side": 1,
       "message": "Should have canRemove...()",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67591f73_ce16d14f",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_592b7db8",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1434,6 +2784,24 @@
     },
     {
       "key": {
+        "uuid": "67591f73_1a5712a2",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8748d3a1_392e71c8",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_16fd3779",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
         "patchSetId": 4
@@ -1445,6 +2813,24 @@
       "writtenOn": "2013-11-20T10:36:55Z",
       "side": 1,
       "message": "I not sure what to do about this yet, but it does not sound like something that should be part of the interface.",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_518fa102",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-18T14:28:48Z",
+      "side": 1,
+      "message": "Done, I removed this method and added \n\tpublic void getRegisterGroupsData(IDMContext ctx, DataRequestMonitor\u003cIRegisterGroupDMData[]\u003e rm );\n\nthen moved the resolution of a proposed name to the UI using the ...GroupDMData[]",
+      "parentUuid": "8748d3a1_16fd3779",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

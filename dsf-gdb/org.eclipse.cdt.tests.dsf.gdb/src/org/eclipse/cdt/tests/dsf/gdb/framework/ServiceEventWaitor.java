@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Ericsson and others.
+ * Copyright (c) 2007, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,11 @@
  *     Ericsson			  - Initial Implementation
  *     Marc Khouzam (Ericsson) - Add support to receive multiple events
  *     Alvaro Sanchez-Leon (Ericsson) - Add filter out and wait for a given type of event
+ *     Alvaro Sanchez-Leon (Ericsson) - Allow user to edit the register groups (Bug 235747)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -96,28 +98,33 @@ public class ServiceEventWaitor<V> {
 	}
 
 	/**
-	 * Will wait and discard events that are not either of the specified type or a subtype
-	 * It will stop and return the first one found or exit after the specified timeout 
-	 *  
-	 * @param type - The parent type of an acceptable event
-	 * @param timeout the maximum time to wait in milliseconds to wait for a specified event
+	 * Wait for events of V type for the specified amount of time
 	 */
-	@SuppressWarnings("unchecked")
-	public synchronized <T extends V> T waitForEvent(Class<T> type, int timeout) throws Exception {
+	public synchronized List<V> waitForEvents(int period) {
 		long startMs = System.currentTimeMillis();
-		//The Specified Event received or Timeout exception will exit the loop
+		List<V> events = new ArrayList<V>();
+		
+		//Timeout exception will exit the loop and return the resulting list of events
 		while (true) {
-			int timeRemaining = (int) (timeout - (System.currentTimeMillis() - startMs));
-			if (timeRemaining > 0) {				
-				V sevent = waitForEvent(timeRemaining);
-				if (type.isAssignableFrom(sevent.getClass())) {
-					return (T) sevent;
-				} 
+			int timeRemaining = (int) (period - (System.currentTimeMillis() - startMs));
+			if (timeRemaining > 0) {
+				V sevent;
+				try {
+					sevent = waitForEvent(timeRemaining);
+					if (sevent != null) {
+						events.add(sevent);
+					} 
+				} catch (Exception e) {
+					break;
+				}
 			} else {
-				throw new Exception("Timed out waiting for ServiceEvent: " + type.getName());
+				break;
 			}
 		}
+		
+		return events;
 	}
+	
 	
 	/*
 	 * Block until 'timeout' or the expected event occurs. The expected event is

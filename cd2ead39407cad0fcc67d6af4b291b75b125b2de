@@ -52,6 +52,24 @@
       "revId": "cd2ead39407cad0fcc67d6af4b291b75b125b2de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_d720baa5",
+        "filename": "core/org.eclipse.cdt.core.tests/suite/org/eclipse/cdt/core/testplugin/util/BaseTestCase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-03-19T22:08:15Z",
+      "side": 1,
+      "message": "This can be seen has a time out, not a delay so it\u0027s not longer unless the Hudson instance is under heavy load then the tests can take up to 300 sec to index then fail. The whole build aborts after 180 mins anyway (in the job configuration). So this just gives the tests that depend on the index more chance to succeed even when Hudson is busier than usual.\n\nSee https://hudson.eclipse.org/cdt/job/cdt-verify/423/",
+      "parentUuid": "2753a756_1704f220",
+      "revId": "cd2ead39407cad0fcc67d6af4b291b75b125b2de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

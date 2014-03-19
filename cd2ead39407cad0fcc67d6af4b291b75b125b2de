@@ -16,6 +16,24 @@
       "revId": "cd2ead39407cad0fcc67d6af4b291b75b125b2de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_17899232",
+        "filename": "core/org.eclipse.cdt.core.tests/suite/org/eclipse/cdt/core/testplugin/util/BaseTestCase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-03-19T21:37:03Z",
+      "side": 1,
+      "message": "Yes, I tested locally and it went through twice on Hudson. Just to be clear, I was debating whether or not to override the timeout by using the property (-Dindexer.timeout) but that would mean polluting the pom.xml files and possibly the Hudson job configurations. There\u0027s also the fact that I\u0027ve seen the indexer time out and fail tests randomly on a very good local machine (and from within Eclipse!). So instead of having everyone have to override this property, I think it\u0027s easier to just increase the default to a somewhat high value and it can still be overridden to something even higher in the case of debugging the tests for a long period.",
+      "parentUuid": "2753a756_97cf62a3",
+      "revId": "cd2ead39407cad0fcc67d6af4b291b75b125b2de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

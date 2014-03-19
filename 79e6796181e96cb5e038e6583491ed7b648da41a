@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_34a8140f",
+        "filename": "core/org.eclipse.cdt.ui/templateengine/org/eclipse/cdt/ui/templateengine/TemplateEngineUIUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-03-19T16:59:03Z",
+      "side": 1,
+      "message": "\"p !\u003d null\" part is redundant here. The second part of the condition covers the \"null\" case.",
+      "revId": "79e6796181e96cb5e038e6583491ed7b648da41a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

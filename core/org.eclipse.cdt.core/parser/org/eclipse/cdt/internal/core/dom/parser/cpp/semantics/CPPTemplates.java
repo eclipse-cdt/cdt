@@ -174,7 +174,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMod
  */
 public class CPPTemplates {
 	// The three constants below are used as special return values for the various overloads
-	// of CPPTemplates.determinePackSize() an d for ICPPEvaluation.determinePackSize(), which
+	// of CPPTemplates.determinePackSize() and for ICPPEvaluation.determinePackSize(), which
 	// search a type, template argument, or value for a usage of a template parameter pack
 	// and return the number of arguments bound to that parameter pack in an
 	// ICPPTemplateParameterMap.

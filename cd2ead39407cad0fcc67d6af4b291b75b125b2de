@@ -124,6 +124,24 @@
       "revId": "cd2ead39407cad0fcc67d6af4b291b75b125b2de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_97c92251",
+        "filename": "core/org.eclipse.cdt.core.tests/suite/org/eclipse/cdt/core/testplugin/util/BaseTestCase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-03-19T22:38:12Z",
+      "side": 1,
+      "message": "Then if that\u0027s the case it will still fail and nothing is lost, right? If one looks at the time taken by those build, they took longer than usual (one of them 2x the time!) which makes it probable that those are legit timeout.",
+      "parentUuid": "2753a756_b7d0a6f5",
+      "revId": "cd2ead39407cad0fcc67d6af4b291b75b125b2de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

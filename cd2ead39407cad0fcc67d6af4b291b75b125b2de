@@ -106,6 +106,24 @@
       "revId": "cd2ead39407cad0fcc67d6af4b291b75b125b2de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_b7d0a6f5",
+        "filename": "core/org.eclipse.cdt.core.tests/suite/org/eclipse/cdt/core/testplugin/util/BaseTestCase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-19T22:27:31Z",
+      "side": 1,
+      "message": "In the past I saw this kind of error being caused by some kind of synchronization problem. The problem did not go away no matter how large the timeout was.",
+      "parentUuid": "2753a756_772bae82",
+      "revId": "cd2ead39407cad0fcc67d6af4b291b75b125b2de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

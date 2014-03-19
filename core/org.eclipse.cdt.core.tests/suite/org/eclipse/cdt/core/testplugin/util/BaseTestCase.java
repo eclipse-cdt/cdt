@@ -50,7 +50,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
 public class BaseTestCase extends TestCase {
-	private static final String DEFAULT_INDEXER_TIMEOUT_SEC = "10";
+	private static final String DEFAULT_INDEXER_TIMEOUT_SEC = "300";
 	private static final String INDEXER_TIMEOUT_PROPERTY = "indexer.timeout";
 	/**
 	 * Indexer timeout used by tests. To avoid this timeout expiring during debugging add

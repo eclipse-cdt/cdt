@@ -44,10 +44,25 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
 	private static final byte MAX_RESOLUTION_DEPTH= 6;
 
 	protected final static class RecursionResolvingBinding extends ProblemBinding implements IRecursionResolvingBinding {
-		public RecursionResolvingBinding(IASTName node) {
-			super(node, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP);
+		public RecursionResolvingBinding(IASTName node, char[] arg) {
+			super(node, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP, arg);
 			Assert.isTrue(sAllowRecursionBindings, getMessage());
 		}
+	}
+	
+	private RecursionResolvingBinding createRecursionResolvingBinding() {
+		// We create a recursion resolving binding when the resolution depth
+		// exceeds MAX_RESOLUTION_DEPTH. If the resolution depth exceeds
+		// MAX_RESOLUTION_DEPTH + 1, it means that attempting to create the
+		// recursion resolving binding has led us back to trying to resolve
+		// the bidning for this name again, so the recursion isn't broken. 
+		// This can happen because the constructor of RecursionResolvingBinding 
+		// calls ProblemBinding.getMessage(), which can try to do name 
+		// resolution to build an argument string if one wasn't provided in the
+		// ProblemBinding constructor. To break the recursion in a case
+		// like, this we provide the argument string "(unknown)" instead.
+		char[] args = (fResolutionDepth > MAX_RESOLUTION_DEPTH + 1) ? "(unknown)".toCharArray() : null;  //$NON-NLS-1$
+		return new RecursionResolvingBinding(this, args);
 	}
 	
 	private IBinding fBinding;
@@ -56,7 +71,7 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
 
 	public final void incResolutionDepth() {
 		if (fBinding == null && ++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
-			setBinding(new RecursionResolvingBinding(this));
+			setBinding(createRecursionResolvingBinding());
 		}
 	}
 	
@@ -74,7 +89,7 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
 	public IBinding resolvePreBinding() {
     	if (fBinding == null) {
     		if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
-    			setBinding(new RecursionResolvingBinding(this));
+    			setBinding(createRecursionResolvingBinding());
     		} else {
     			setBinding(createIntermediateBinding());
     		}
@@ -86,7 +101,7 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
 	public IBinding resolveBinding() {
     	if (fBinding == null) {
     		if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
-    			setBinding(new RecursionResolvingBinding(this));
+    			setBinding(createRecursionResolvingBinding());
     		} else {
     			fIsFinal= false;
     			final IBinding b= createIntermediateBinding();
@@ -137,7 +152,7 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
 		if (fBinding instanceof ICPPTwoPhaseBinding) {
     		ICPPTwoPhaseBinding intermediateBinding= (ICPPTwoPhaseBinding) fBinding;
     		if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
-    			setBinding(new RecursionResolvingBinding(this));
+    			setBinding(createRecursionResolvingBinding());
     		} else {
     			setBinding(intermediateBinding.resolveFinalBinding(astName));
     		}

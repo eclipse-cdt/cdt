@@ -31,6 +31,13 @@ public interface IGraphicObject
 	 *  If decorations is true, paints optional "decorations" layer.
 	 */
 	public void paint(GC gc, boolean decorations);
+
+	/**
+	 * Return the tooltip to display when mouse stays on this object.
+	 * It may return <code>null</code> if there is nothing to display.
+	 * @return the tooltip to display on this object.
+	 */
+	public String getTooltip();
 	
 	/** Returns true if object has decorations to paint. */
 	public boolean hasDecorations();

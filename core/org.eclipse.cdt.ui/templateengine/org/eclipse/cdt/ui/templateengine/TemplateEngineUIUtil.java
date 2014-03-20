@@ -43,7 +43,7 @@ public class TemplateEngineUIUtil {
 					Throwable p = t;
 					do {
 						p = p.getCause();
-						if (p != null) {
+						if (p instanceof ProcessFailureException) {
 							statuses = ((ProcessFailureException) p).getStatuses();
 						}
 					} while ((statuses == null || statuses.isEmpty()) && p != null && p instanceof ProcessFailureException);

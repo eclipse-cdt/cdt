@@ -142,6 +142,24 @@
       "revId": "cd2ead39407cad0fcc67d6af4b291b75b125b2de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_57602a77",
+        "filename": "core/org.eclipse.cdt.core.tests/suite/org/eclipse/cdt/core/testplugin/util/BaseTestCase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-20T04:42:03Z",
+      "side": 1,
+      "message": "Let make it 1 minute and see if that eliminates the error. Since the timeout is controlled by a system property, the change can be made in Hudson configuration without affecting the test behavior on the developers\u0027 machines.",
+      "parentUuid": "2753a756_97c92251",
+      "revId": "cd2ead39407cad0fcc67d6af4b291b75b125b2de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

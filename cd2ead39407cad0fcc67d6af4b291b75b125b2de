@@ -160,6 +160,24 @@
       "revId": "cd2ead39407cad0fcc67d6af4b291b75b125b2de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_975ac2c7",
+        "filename": "core/org.eclipse.cdt.core.tests/suite/org/eclipse/cdt/core/testplugin/util/BaseTestCase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-03-20T04:58:20Z",
+      "side": 1,
+      "message": "OK 1 minute sounds good. 5 minutes was really arbitrary. I already tried to set it in the Hudson configuration before (it still is) but the property doesn\u0027t propagate to the forked test VMs. I\u0027ll try to find a way to make it propagate. Hopefully it won\u0027t involve editing many pom.xml files.",
+      "parentUuid": "2753a756_57602a77",
+      "revId": "cd2ead39407cad0fcc67d6af4b291b75b125b2de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

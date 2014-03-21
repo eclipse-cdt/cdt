@@ -217,23 +217,37 @@ public class JschFileStore extends FileStore {
 		JSchConnection connection = checkConnection();
 		SubMonitor subMon = SubMonitor.convert(monitor, 20);
 
-		IFileInfo info = fetchInfo(EFS.NONE, subMon.newChild(10));
-		if (!subMon.isCanceled()) {
-			if (!info.exists()) {
-				if ((options & EFS.SHALLOW) == EFS.SHALLOW) {
-					IFileStore parent = getParent();
-					if (parent != null && !parent.fetchInfo(EFS.NONE, subMon.newChild(10)).exists()) {
-						throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRITE,
-								NLS.bind(Messages.JschFileStore_The_parent_of_directory_does_not_exist, fRemotePath.toString()),
-								null));
-					}
-				}
+		if ((options & EFS.SHALLOW) == EFS.SHALLOW) {
+			IFileStore parent = getParent();
+			if (parent != null && !parent.fetchInfo(EFS.NONE, subMon.newChild(10)).exists()) {
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRITE, NLS.bind(
+						Messages.JschFileStore_The_parent_of_directory_does_not_exist, fRemotePath.toString()), null));
+			}
+			if (subMon.isCanceled()) {
+				return this;
+			}
+		}
 
-				MkdirCommand command = new MkdirCommand(connection, fRemotePath);
-				command.getResult(subMon.newChild(10));
-			} else if (!info.isDirectory()) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE, NLS.bind(
-						Messages.JschFileStore_The_file_of_name_already_exists, fRemotePath.toString()), null));
+		try {
+			MkdirCommand command = new MkdirCommand(connection, fRemotePath);
+			command.getResult(subMon.newChild(10));
+		} catch (Exception e) {
+			// Ignore any exceptions
+		}
+		if (!subMon.isCanceled()) {
+			/*
+			 * Check if the result exists and is a directory, throw an exception if neither.
+			 */
+			IFileInfo info = fetchInfo(EFS.NONE, subMon.newChild(10));
+			if (!subMon.isCanceled()) {
+				if (!info.exists()) {
+					throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRITE, NLS.bind(
+							Messages.JschFileStore_The_directory_could_not_be_created, fRemotePath.toString()), null));
+				}
+				if (!info.isDirectory()) {
+					throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE,
+							NLS.bind(Messages.JschFileStore_A_file_of_name_already_exists, fRemotePath.toString()), null));
+				}
 			}
 		}
 

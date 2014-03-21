@@ -44,7 +44,9 @@ public class Messages extends NLS {
 	public static String JschFileStore_Invalid_connection_for_URI;
 	public static String JschFileStore_Is_a_directory;
 	public static String JschFileStore_No_remote_services_found_for_URI;
-	public static String JschFileStore_The_file_of_name_already_exists;
+	public static String JschFileStore_The_directory_could_not_be_created;
+
+	public static String JschFileStore_A_file_of_name_already_exists;
 	public static String JschFileStore_The_parent_of_directory_does_not_exist;
 
 	static {

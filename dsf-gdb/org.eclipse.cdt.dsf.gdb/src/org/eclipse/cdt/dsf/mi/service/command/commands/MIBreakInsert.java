@@ -172,30 +172,13 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
         if (opts.length > 0) {
             setOptions(opts);
         }
-        setParameters(new Adjustable[]{ new PathAdjustable(location)});
+        // Code that replaced double backslashes with single backslashes is removed.
+        // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=426834 for details.
+        setParameters(new Adjustable[]{ new MIStandardParameterAdjustable(location)});
     }
 
     @Override
     public MIBreakInsertInfo getResult(MIOutput output) {
         return new MIBreakInsertInfo(output);
     }
-    
-	/**
-	 * This adjustable makes sure that the path parameter will not get the
-	 * backslashes substituted with double backslashes.
-	 */
-	private class PathAdjustable
-			extends
-			org.eclipse.cdt.dsf.mi.service.command.commands.MICommand.MIStandardParameterAdjustable {
-
-		public PathAdjustable(String path) {
-			super(path);
-		}
-
-		@Override
-		public String getAdjustedValue() {
-			String adjustedValue = super.getAdjustedValue();
-			return adjustedValue.replace("\\\\", "\\"); //$NON-NLS-1$//$NON-NLS-2$
-		}
-	}
 }

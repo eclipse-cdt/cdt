@@ -66,6 +66,7 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 	protected SimpleDateFormat _dateFormat = new SimpleDateFormat();
 	protected Viewer _viewer = null;
 	protected int _maxCharsInColumnZero = 0;
+	private boolean _sortOnly = false;
 
 	/**
 	 * The cache of images that have been dispensed by this provider.
@@ -77,7 +78,7 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 	/**
 	 * Constructor for table view provider where a column manager is present.
 	 * In this case, the columns are customizable by the user.
-	 * @param columnManager
+	 * @param columnManager the column manager
 	 */
 	public SystemTableViewProvider(ISystemTableViewColumnManager columnManager)
 	{
@@ -163,14 +164,13 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 	public Object[] getElements(Object object)
 	{
 		Object[] results = null;
-		/*
-		if (object == _lastObject && (_lastResults != null && _lastResults.length > 0)
+		if (_sortOnly && (object == _lastObject && (_lastResults != null && _lastResults.length > 0)))
 		{
+			// _sortOnly is used to by-pass a remote query when we're just sorting by columns
+			_sortOnly = false; // after using the cache once, revert back to normal query
 			return _lastResults;
 		}
-		else
-			if (object instanceof IAdaptable)
-			*/
+		else 
 			{
 				ISystemViewElementAdapter adapter = getAdapterFor(object);
 				if (adapter != null)
@@ -383,7 +383,9 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 
 	public void dispose()
 	{
-		// TODO Auto-generated method stub
-
+	}
+	
+	public void setSortOnly(boolean flag){
+		_sortOnly = flag;
 	}
 }

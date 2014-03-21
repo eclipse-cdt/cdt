@@ -82,6 +82,7 @@
  * Samuel Wu        (IBM)        - [398988] [ftp] FTP Only support to zVM
  * Xuan Chen        (IBM)        - [399101] RSE edit actions on local files that map to actually workspace resources should not use temp files
  * David McKnight   (IBM)        - [420798] Slow performances in RDz 9.0 with opening 7000 files located on a network driver.
+ * David McKnight   (IBM)        - [430900] RSE table enhancement to populate full column when clicking column for sorting purposes
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -309,7 +310,7 @@ public class SystemViewRemoteFileAdapter
 			synchronized (_files){
 				files = (IRemoteFile[])_files.toArray(new IRemoteFile[_files.size()]);			
 			}
-			for (int i = 0; i < files.length; i++){			
+			for (int i = 0; i < files.length && !monitor.isCanceled(); i++){			
 				IRemoteFile rFile = files[i];
 
 				try {
@@ -321,7 +322,10 @@ public class SystemViewRemoteFileAdapter
 				}
 			}
 						
-			_permissionsJobMap.remove(_service);
+			_permissionsJobMap.remove(_service);			
+			if (monitor.isCanceled()){
+				return Status.CANCEL_STATUS;
+			}
 			return Status.OK_STATUS;
 		}
 

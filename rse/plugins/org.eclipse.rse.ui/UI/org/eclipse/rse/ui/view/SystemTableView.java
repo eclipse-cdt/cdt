@@ -33,6 +33,7 @@
  * David McKnight   (IBM)        - [363392] system table views shows open view actions when they shouldn't
  * David McKnight   (IBM)        - [388947] column sort icon issue with Remote Systems Details view
  * David McKnight   (IBM)        - [398306] table sorting of RSE table views inconsistent with Eclipse
+ * David McKnight   (IBM)        - [430900] RSE table enhancement to populate full column when clicking column for sorting purposes
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -202,7 +203,6 @@ public class SystemTableView
 
 	private class HeaderSelectionListener extends SelectionAdapter
 	{
-
 	    public HeaderSelectionListener()
 	    {
 	        _upI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_MOVEUP_ID);
@@ -225,6 +225,9 @@ public class SystemTableView
 			Table table = getTable();
 			if (!table.isDisposed())
 			{
+				// setting the sorter can trigger a query
+				_provider.setSortOnly(true); // set sort only to avoid requery - after provider.getChildren(), this get automatically reset
+				
 				// column selected - need to sort
 			    TableColumn tcolumn = (TableColumn)e.widget;
 				int column = table.indexOf(tcolumn);
@@ -265,6 +268,20 @@ public class SystemTableView
 				        }
 				    }
 				}
+				// update all items in column to ensure they're visible
+				TableItem[] items = table.getItems();
+				if (items != null && items.length > 0){
+					for (int i = 0; i < items.length; i++){
+						TableItem item = items[i];
+						Object data = item.getData();
+						if (data == null){
+							table.showItem(item);
+						}
+					}
+					table.showItem(items[0]);
+				}
+				
+				_provider.setSortOnly(true); // set sort only to avoid requery - after provider.getChildren(), this get automatically reset
 				refresh();
 			}
 		}
@@ -472,6 +489,18 @@ public class SystemTableView
 			}
 
 			_objectInput = newObject;
+			
+			// clear sorter
+			SystemTableViewSorter oldSorter = (SystemTableViewSorter) getSorter();
+			if (oldSorter != null){
+				int colNo = oldSorter.getColumnNumber();
+				TableColumn col = getTable().getColumn(colNo);
+				if (col != null){ // remove sort icon
+					col.setImage(null);
+				}
+				setSorter(null);
+			}
+			
 			computeLayout();
 
 			// reset the filter
@@ -1006,6 +1035,8 @@ public class SystemTableView
 						if (w != null)
 						{
 							updateItem(w, child);
+							_provider.setSortOnly(true); // set sort only to avoid requery - after provider.getChildren(), this get automatically reset
+							refresh();
 						}
 						
 						ISelection selection = getSelection();
@@ -1018,7 +1049,6 @@ public class SystemTableView
 					}
 					catch (Exception e)
 					{
-
 					}
 				}
 				return;
@@ -1702,7 +1732,6 @@ public class SystemTableView
 		String[] newNames = null;
 		Object[] elements = null;
 		Object[] elementAdapters = null;
-		Object parentElement = null;
 		String renameMessage = null;
 		/**
 		 * RenameJob job.

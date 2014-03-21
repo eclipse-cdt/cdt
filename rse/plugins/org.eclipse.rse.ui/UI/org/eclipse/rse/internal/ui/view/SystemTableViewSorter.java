@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2013 IBM Corporation and others.
+ * Copyright (c) 2002, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [355467] The result of sorting resources that contains null blank cells is not correct in Remote System Details view.
  * David McKnight   (IBM)        - [357587] Custom sorter is changed to SystemTableViewSorter
  * David McKnight   (IBM)        - [398306] table sorting of RSE table views inconsistent with Eclipse
+ * David McKnight   (IBM)        - [430900] RSE table enhancement to populate full column when clicking column for sorting purposes
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -95,7 +96,13 @@ public class SystemTableViewSorter extends ViewerSorter
 
 		// deal with equal objects
 		if (name1 == name2){
-			return 0;
+			if (_columnNumber > 0){		
+				name1 = getValueFor(e1, 0);
+				name2 = getValueFor(e2, 0);
+			}
+			else {
+				return 0;
+			}
 		}
 		
 		try

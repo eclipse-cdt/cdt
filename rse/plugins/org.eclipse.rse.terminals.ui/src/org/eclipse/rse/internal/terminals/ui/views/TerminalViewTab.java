@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2013 IBM Corporation and others.
+ * Copyright (c) 2002, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@
  * Anna Dushistova  (MontaVista) - [267609] [rseterminal] The first "Launch Terminal" command creates no terminal tab 
  * Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Terminal Widget
  * David McKnight   (IBM)        - [270618][terminal][accessibility] Accessibility issues with Terminal view
+ * David McKnight   (IBM)        - [430898][terminal] first RSE terminal view doesn't get focus on prompt
  ********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
@@ -256,6 +257,7 @@ public class TerminalViewTab extends Composite {
 													((ITerminalViewControl) data)
 															.pasteString(initialWorkingDirCmd);
 											}
+											setFocus(); // set focus here since we need to be connected at first launch in order to properly set focus
 										}
 									}
 								});

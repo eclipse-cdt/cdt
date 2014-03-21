@@ -326,7 +326,15 @@ public class RemoteCDSFMainTab extends CMainTab {
 			Object retObj = dlg.getSelectedObject();
 			if (retObj instanceof IRemoteFile) {
 				IRemoteFile selectedFile = (IRemoteFile) retObj;
-				remoteProgText.setText(selectedFile.getAbsolutePath());
+				String absPath = selectedFile.getAbsolutePath();
+				if (selectedFile.isDirectory()) {
+					// The user selected a destination folder to upload the binary
+					// Append the Program name as the default file destination
+					IPath appPath = new Path(fProgText.getText());
+					IPath remotePath = new Path(selectedFile.getAbsolutePath()).append(appPath.lastSegment());
+					absPath = remotePath.toPortableString();
+				}
+				remoteProgText.setText(absPath);
 			}
 
 		}

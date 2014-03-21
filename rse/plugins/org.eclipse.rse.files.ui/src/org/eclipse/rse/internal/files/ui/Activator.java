@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Martin Oberhuber (Wind River) - [228353] Asynchronously initialize the remote edit project
  * David McKnight   (IBM)        - [245260] Different user's connections on a single host are mapped to the same temp files cache
+ * David McKnight   (IBM)        - [430896] On shutdown, RSE should call SystemRemoteEditManager.refreshRemoteEditProject() in order to clear cache files
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;
@@ -178,6 +179,7 @@ public class Activator extends AbstractUIPlugin
 			IWorkspace ws = ResourcesPlugin.getWorkspace();
 			ws.removeResourceChangeListener(_tempFileListener);
 			_tempFileListener = null;
+			SystemRemoteEditManager.getInstance().refreshRemoteEditProject();
 		}
 		plugin = null;
 	}

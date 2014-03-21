@@ -29,6 +29,7 @@
  * Uwe Stieber (Wind River) - [283844] NPE on restoring property set if persistent data is corrupted
  * David McKnight (IBM) -[391132] filterpools don't persist when profile names end in _
  * David McKnight (IBM) -[425026] import connection fails to create default filters when no prior connections
+ * David McKnight (IBM) -[430905] need to check for duplicate subsystem on profile restore
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -323,7 +324,9 @@ public class RSEDOMImporter {
 					// need to switch factories
 					subSystem.switchServiceFactory(factory);
 				}
-			} else {
+			}
+			if (subSystem == null){ // just because we didn't find a service subsystem, doesn't mean we won't find
+									// a subsystem that matches this type
 				ISubSystemConfiguration config = _registry.getSubSystemConfiguration(type);
 				if (config!=null) {
 					ISubSystem[] existingSubSystems = config.getSubSystems(host, true);

@@ -144,6 +144,12 @@ public class EvalUnary extends CPPDependentEvaluation {
 			return fArgument.isValueDependent();
 		}
 	}
+	
+	@Override
+	public boolean isConstantExpression(IASTNode point) {
+		return fArgument.isConstantExpression(point)
+			&& isConstexprFuncOrNull(getOverload(point));
+	}
 
 	public ICPPFunction getOverload(IASTNode point) {
 		if (fOverload == CPPFunction.UNINITIALIZED_FUNCTION) {

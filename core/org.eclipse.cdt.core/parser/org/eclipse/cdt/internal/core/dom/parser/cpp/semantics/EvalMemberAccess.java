@@ -139,7 +139,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 		}
 		return fIsValueDependent;
 	}
-
+	
 	private boolean computeIsValueDependent() {
 		if (fMember instanceof ICPPUnknownBinding) {
 			return true;
@@ -153,6 +153,15 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 		if (fMember instanceof IFunction) {
 			return false;
 		}
+		return false;
+	}
+
+	@Override
+	public boolean isConstantExpression(IASTNode point) {
+		// TODO(nathanridge):
+		//   This could be a constant expression if the field owner
+		//   is a constant expression, but we don't have access to
+		//   the field owner's evaluation, only its type.
 		return false;
 	}
 

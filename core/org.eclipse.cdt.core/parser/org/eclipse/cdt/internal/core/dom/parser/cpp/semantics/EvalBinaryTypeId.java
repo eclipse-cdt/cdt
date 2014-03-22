@@ -102,6 +102,11 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 		}
 		return fIsValueDependent;
 	}
+	
+	@Override
+	public boolean isConstantExpression(IASTNode point) {
+		return true;
+	}
 
 	@Override
 	public ValueCategory getValueCategory(IASTNode point) {

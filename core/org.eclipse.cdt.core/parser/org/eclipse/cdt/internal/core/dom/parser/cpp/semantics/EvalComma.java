@@ -72,6 +72,19 @@ public class EvalComma extends CPPDependentEvaluation {
 	public boolean isValueDependent() {
 		return containsDependentValue(fArguments);
 	}
+	
+	@Override
+	public boolean isConstantExpression(IASTNode point) {
+		if (!areAllConstantExpressions(fArguments, point)) {
+			return false;
+		}
+		for (ICPPFunction overload : fOverloads) {
+			if (!isConstexprFuncOrNull(overload)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	public ICPPFunction[] getOverloads(IASTNode point) {
 		if (fOverloads == null) {

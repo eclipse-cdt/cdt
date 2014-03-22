@@ -84,6 +84,12 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		return containsDependentValue(fArguments);
 	}
 
+	@Override
+	public boolean isConstantExpression(IASTNode point) {
+		return areAllConstantExpressions(fArguments, point)
+			&& isConstexprFuncOrNull(getOverload(point));
+	}
+
 	public ICPPFunction getOverload(IASTNode point) {
 		if (fOverload == CPPFunction.UNINITIALIZED_FUNCTION) {
 			fOverload= computeOverload(point);
@@ -222,6 +228,10 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 
 	private ICPPEvaluation computeForFunctionCall(int maxdepth, IASTNode point) {
 		if (isValueDependent())
+			return this;
+		// If the arguments are not all constant expressions, there is
+		// no point trying to substitute them into the return expression.
+		if (!areAllConstantExpressions(fArguments, point))
 			return this;
 		ICPPFunction function = getOverload(point);
 		if (function == null) {

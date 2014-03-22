@@ -1137,6 +1137,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			s= createStatus(getMessage(MessageKind.errorWhileParsing, file), e);
 		}
 		logError(s);
+		if (fShowProblems) {
+			reportException(e);
+		}
 		if (++fStatistics.fErrorCount > MAX_ERRORS) {
 			throw new CoreException(createStatus(getMessage(MessageKind.tooManyIndexProblems)));
 		}

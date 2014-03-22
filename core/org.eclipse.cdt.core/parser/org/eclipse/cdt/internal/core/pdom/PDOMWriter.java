@@ -63,6 +63,8 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -191,7 +193,7 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 		}
 	}
 
-	private boolean fShowProblems;
+	protected boolean fShowProblems;
 	protected boolean fShowInclusionProblems;
 	private boolean fShowScannerProblems;
 	private boolean fShowSyntaxProblems;
@@ -661,6 +663,14 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 
 	private void reportProblem(IASTProblem problem) {
 		String msg= "Indexer: " + problem.getMessageWithLocation(); //$NON-NLS-1$
+		trace(msg);
+	}
+	
+	protected void reportException(Throwable th) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		th.printStackTrace(pw);
+		String msg= "Indexer: exception: " + sw.toString();  //$NON-NLS-1$
 		trace(msg);
 	}
 

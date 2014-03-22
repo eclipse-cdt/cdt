@@ -97,6 +97,11 @@ public class EvalFixed extends CPPEvaluation {
 		}
 		return fIsValueDependent;
 	}
+	
+	@Override
+	public boolean isConstantExpression(IASTNode point) {
+		return isConstexprValue(fValue, point);
+	}
 
 	@Override
 	public IType getTypeOrFunctionSet(IASTNode point) {

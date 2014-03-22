@@ -147,6 +147,13 @@ public class EvalConditional extends CPPDependentEvaluation {
 				|| fNegative.isValueDependent();
 	}
 
+	@Override
+	public boolean isConstantExpression(IASTNode point) {
+		return fCondition.isConstantExpression(point)
+			&& (fPositive == null || fPositive.isConstantExpression(point))
+			&& fNegative.isConstantExpression(point);
+	}
+
 	private void evaluate(IASTNode point) {
     	if (fValueCategory != null)
     		return;

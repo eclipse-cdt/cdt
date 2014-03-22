@@ -237,6 +237,13 @@ public class EvalBinding extends CPPDependentEvaluation {
 		}
 		return false;
 	}
+ 	
+	@Override
+	public boolean isConstantExpression(IASTNode point) {
+		return fBinding instanceof IEnumerator
+			|| fBinding instanceof ICPPFunction
+			|| (fBinding instanceof IVariable && isConstexprValue(((IVariable) fBinding).getInitialValue(), point)); 
+	}
 
 	@Override
 	public IType getTypeOrFunctionSet(IASTNode point) {

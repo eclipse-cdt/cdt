@@ -8454,4 +8454,27 @@ public class AST2TemplateTests extends AST2TestBase {
 		ICPPVariable waldo = helper.assertNonProblem("waldo");
 		assertEquals(2, waldo.getInitialValue().numericalValue().longValue());
 	}
+	
+	//	struct Test {
+	//        static constexpr unsigned calc_sig(const char *s, unsigned n) {
+	//                return (n == 0 || *s == '\0' ? 0 :
+	//                                n > 1 && *s == '%' && s[1] == '%' ?
+	//                                                calc_sig(s + 2, n - 2) :
+	//                                                calc_sig(s + 1, n - 1));
+	//        }
+	//
+	//        template<unsigned sig, class ... T>
+	//        static void validate_sig();
+	//
+	//        template<class ... T>
+	//        static inline constexpr bool validate(const char *s, unsigned n) {
+	//                constexpr auto sig = calc_sig(s, n);
+	//                validate_sig<sig, T...>();
+	//                return true;
+	//        }
+	//
+	//	};
+	public void testConstexprFunctionCallWithNonConstexprArguments_429891() throws Exception {
+		parseAndCheckBindings();
+	}
 }

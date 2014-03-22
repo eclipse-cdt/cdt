@@ -40,6 +40,13 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	 * Returns {@code true} if the value of the expression depends on template parameters.
 	 */
 	boolean isValueDependent();
+	
+	/**
+	 * Returns {@code true} if the expression is a compile-time constant expression.
+	 * 
+	 * @param point the thing we pass around everywhere these days
+	 */
+	boolean isConstantExpression(IASTNode point);
 
 	/**
 	 * Returns the type of the expression, or a {@code FunctionSetType} if the expression evaluates

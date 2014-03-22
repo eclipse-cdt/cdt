@@ -133,6 +133,11 @@ public class EvalID extends CPPDependentEvaluation {
 	}
 
 	@Override
+	public boolean isConstantExpression(IASTNode point) {
+		return false;
+	}
+
+	@Override
 	public IType getTypeOrFunctionSet(IASTNode point) {
 		return new TypeOfDependentExpression(this);
 	}

@@ -64,6 +64,11 @@ public class EvalCompound extends CPPDependentEvaluation {
 	public boolean isValueDependent() {
 		return fDelegate.isValueDependent();
 	}
+	
+	@Override
+	public boolean isConstantExpression(IASTNode point) {
+		return fDelegate.isConstantExpression(point);		
+	}
 
 	@Override
 	public IType getTypeOrFunctionSet(IASTNode point) {

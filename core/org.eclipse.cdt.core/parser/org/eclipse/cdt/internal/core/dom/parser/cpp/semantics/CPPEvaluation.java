@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
@@ -74,7 +75,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		return binding;
 	}
 
-	public static boolean containsDependentType(ICPPEvaluation[] evaluations) {
+	protected static boolean containsDependentType(ICPPEvaluation[] evaluations) {
 		for (ICPPEvaluation eval : evaluations) {
 			if (eval.isTypeDependent())
 				return true;
@@ -82,11 +83,32 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		return false;
 	}
 
-	public static boolean containsDependentValue(ICPPEvaluation[] evaluations) {
+	protected static boolean containsDependentValue(ICPPEvaluation[] evaluations) {
 		for (ICPPEvaluation eval : evaluations) {
 			if (eval.isValueDependent())
 				return true;
 		}
 		return false;
+	}
+	
+	protected static boolean allConstantExpressions(ICPPEvaluation[] evaluations, IASTNode point) {
+		for (ICPPEvaluation eval : evaluations) {
+			if (!eval.isConstantExpression(point)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	protected static boolean isConstexprValue(IValue value, IASTNode point) {
+		if (value == null) {
+			return false;
+		}
+		ICPPEvaluation innerEval = value.getEvaluation();
+		if (innerEval == null) {
+			return value.numericalValue() != null;
+		}
+		return innerEval.isConstantExpression(point);
+
 	}
 }

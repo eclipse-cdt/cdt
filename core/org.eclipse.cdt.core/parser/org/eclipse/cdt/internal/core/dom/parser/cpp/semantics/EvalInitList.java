@@ -57,20 +57,17 @@ public class EvalInitList extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isTypeDependent() {
-		for (ICPPEvaluation clause : fClauses) {
-			if (clause.isTypeDependent())
-				return true;
-		}
-		return false;
+		return containsDependentType(fClauses);
 	}
 
 	@Override
 	public boolean isValueDependent() {
-		for (ICPPEvaluation clause : fClauses) {
-			if (clause.isValueDependent())
-				return true;
-		}
-		return false;
+		return containsDependentValue(fClauses);
+	}
+	
+	@Override
+	public boolean isConstantExpression(IASTNode point) {
+		return areAllConstantExpressions(fClauses, point);
 	}
 
 	@Override

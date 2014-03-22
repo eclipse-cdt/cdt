@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -43,6 +44,10 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	private final ICPPEvaluation[] fArguments;
 	private final boolean fRepresentsNewExpression;
 	private IType fOutputType;
+	
+	private ICPPFunction fConstructor = CPPFunction.UNINITIALIZED_FUNCTION;
+	private boolean fCheckedIsTypeDependent;
+	private boolean fIsTypeDependent;
 
 	public EvalTypeId(IType type, IASTNode pointOfDefinition, ICPPEvaluation... arguments) {
 		this(type, findEnclosingTemplate(pointOfDefinition), false, arguments);
@@ -93,7 +98,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	}
 
 	private IType computeType() {
-		if (CPPTemplates.isDependentType(fInputType) || containsDependentType(fArguments))
+		if (isTypeDependent())
 			return new TypeOfDependentExpression(this);
 
 		IType type = typeFromReturnType(fInputType);
@@ -121,10 +126,11 @@ public class EvalTypeId extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isTypeDependent() {
-		if (fOutputType == null) {
-			fOutputType= computeType();
+		if (!fCheckedIsTypeDependent) {
+			fCheckedIsTypeDependent = true;
+			fIsTypeDependent = CPPTemplates.isDependentType(fInputType) || containsDependentType(fArguments);
 		}
-		return fOutputType instanceof TypeOfDependentExpression;
+		return fIsTypeDependent;
 	}
 
 	@Override
@@ -137,8 +143,45 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	}
 
 	@Override
+	public boolean isConstantExpression(IASTNode point) {
+		return !fRepresentsNewExpression
+			&& areAllConstantExpressions(fArguments, point)
+			&& isConstexprFuncOrNull(getConstructor(point));
+	}
+
+	@Override
 	public ValueCategory getValueCategory(IASTNode point) {
 		return valueCategoryFromReturnType(fInputType);
+	}
+	
+	public ICPPFunction getConstructor(IASTNode point) {
+		if (fConstructor == CPPFunction.UNINITIALIZED_FUNCTION) {
+			fConstructor = computeConstructor(point);
+		}
+		return fConstructor;
+	}
+	
+	private ICPPFunction computeConstructor(IASTNode point) {
+		if (isTypeDependent())
+			return null;
+		
+		IType simplifiedType = SemanticUtil.getNestedType(fInputType, SemanticUtil.TDEF);
+		if (simplifiedType instanceof ICPPClassType) {
+			ICPPClassType classType = (ICPPClassType) simplifiedType;
+			LookupData data = new LookupData(classType.getNameCharArray(), null, point);
+			ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, point);
+			data.foundItems = constructors;
+			data.setFunctionArguments(false, fArguments);
+			try {
+				IBinding binding = CPPSemantics.resolveFunction(data, constructors, true);
+				if (binding instanceof ICPPFunction) {
+					return (ICPPFunction) binding;
+				}
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -177,30 +220,22 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		IType type = CPPTemplates.instantiateType(fInputType, tpMap, packOffset, within, point);
 		if (args == fArguments && type == fInputType)
 			return this;
-
-		if (!CPPTemplates.isDependentType(type) && !containsDependentType(args)) {
+		
+		EvalTypeId result = new EvalTypeId(type, getTemplateDefinition(), fRepresentsNewExpression, args);
+		
+		if (!result.isTypeDependent()) {
 			IType simplifiedType = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
 			if (simplifiedType instanceof ICPPClassType) {
 				// Check the constructor call and return EvalFixed.INCOMPLETE to indicate a substitution
 				// failure if the call cannot be resolved.
-				ICPPClassType classType = (ICPPClassType) type;
-				LookupData data = new LookupData(classType.getNameCharArray(), null, point);
-				ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, point);
-				data.foundItems = constructors;
-				data.setFunctionArguments(false, args);
-				try {
-					IBinding binding = CPPSemantics.resolveFunction(data, constructors, true);
-					if (binding == null || binding instanceof IProblemBinding ||
-							binding instanceof ICPPFunction && ((ICPPFunction) binding).isDeleted()) {
-						return EvalFixed.INCOMPLETE;
-					}
-				} catch (DOMException e) {
-					CCorePlugin.log(e);
+				ICPPFunction constructor = result.getConstructor(point);
+				if (constructor == null || constructor instanceof IProblemBinding || constructor.isDeleted()) {
 					return EvalFixed.INCOMPLETE;
 				}
 			}
 		}
-		return new EvalTypeId(type, getTemplateDefinition(), fRepresentsNewExpression, args);
+		
+		return result;
 	}
 
 	@Override

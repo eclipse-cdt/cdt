@@ -127,6 +127,11 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	}
 
 	@Override
+	public boolean isConstantExpression(IASTNode point) {
+		return true;
+	}
+
+	@Override
 	public IType getTypeOrFunctionSet(IASTNode point) {
 		if (fType == null)
 			fType= computeType(point);

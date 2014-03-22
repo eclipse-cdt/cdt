@@ -67,6 +67,11 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 	}
 
 	@Override
+	public boolean isConstantExpression(IASTNode point) {
+		return false;
+	}
+
+	@Override
 	public IType getTypeOrFunctionSet(IASTNode point) {
 		if (fType == null) {
 			IType type = fExpansionPattern.getTypeOrFunctionSet(point);

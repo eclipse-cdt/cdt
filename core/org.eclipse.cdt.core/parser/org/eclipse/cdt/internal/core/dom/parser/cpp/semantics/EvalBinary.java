@@ -186,6 +186,13 @@ public class EvalBinary extends CPPDependentEvaluation {
 	public boolean isValueDependent() {
 		return fArg1.isValueDependent() || fArg2.isValueDependent();
 	}
+	
+	@Override
+	public boolean isConstantExpression(IASTNode point) {
+		return fArg1.isConstantExpression(point)
+			&& fArg2.isConstantExpression(point)
+			&& isConstexprFuncOrNull(getOverload(point));
+	}
 
 	@Override
 	public ValueCategory getValueCategory(IASTNode point) {

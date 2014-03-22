@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_833ba44f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ICPPEvaluation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-22T16:51:41Z",
+      "side": 1,
+      "message": "With all due respect for the informal style of this comment, for consistency we should probably just copy the line 55.",
+      "revId": "2a6844ccc049f608ad02401b6ca6637b027a6484",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_43ccecdf",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPEvaluation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-22T16:51:41Z",
+      "side": 1,
+      "message": "areConstantExpressions or areAllConstantExpressions is probably a better name.",
+      "revId": "2a6844ccc049f608ad02401b6ca6637b027a6484",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_a3d9889e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinary.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-22T16:51:41Z",
+      "side": 1,
+      "message": "Avoid calling getOverload twice.",
+      "revId": "2a6844ccc049f608ad02401b6ca6637b027a6484",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_83d6046a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionCall.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-22T16:51:41Z",
+      "side": 1,
+      "message": "Avoid calling getOverload twice.",
+      "revId": "2a6844ccc049f608ad02401b6ca6637b027a6484",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_e302607f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-22T16:51:41Z",
+      "side": 1,
+      "message": "Avoid calling getOverload twice.",
+      "revId": "2a6844ccc049f608ad02401b6ca6637b027a6484",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *    QNX Software Systems - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    IBM Corporation
+ *    Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
@@ -31,13 +32,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -47,11 +42,8 @@ import org.eclipse.core.runtime.Path;
  * CPathEntryTest
  */
 public class CPathEntryTest extends BaseTestCase {
-	IWorkspace workspace;
-	IWorkspaceRoot root;
-	IProject project_c, project_cc;
-	NullProgressMonitor monitor;
-	String pluginRoot;
+
+	private ICProject testProject;
 
 	class CElementListener implements IElementChangedListener {
 
@@ -104,23 +96,10 @@ public class CPathEntryTest extends BaseTestCase {
 	 */
 	@Override
 	protected void setUp() throws CoreException {
-		/***************************************************************************************************************************
-		 * The test of the tests assume that they have a working workspace and workspace root object to use to create
-		 * projects/files in, so we need to get them setup first.
-		 */
-		IWorkspaceDescription desc;
-		workspace = ResourcesPlugin.getWorkspace();
-		root = workspace.getRoot();
-		monitor = new NullProgressMonitor();
-		if (workspace == null)
-			fail("Workspace was not setup");
-		if (root == null)
-			fail("Workspace root was not setup");
-		pluginRoot = CTestPlugin.getDefault().find(new Path("/")).getFile();
-		desc = workspace.getDescription();
-		desc.setAutoBuilding(false);
-		workspace.setDescription(desc);
-
+		testProject = CProjectHelper.createCProject("cpathtest", "none", IPDOMManager.ID_NO_INDEXER);
+		if (testProject == null) {
+			fail("Unable to create project");
+		}
 	}
 
 	/**
@@ -129,16 +108,12 @@ public class CPathEntryTest extends BaseTestCase {
 	 * Called after every test case method.
 	 */
 	@Override
-	protected void tearDown() {
-		// release resources here and clean-up
+	protected void tearDown() throws CoreException {
+		testProject.getProject().delete(true, null);
 	}
 
 	public static TestSuite suite() {
 		return suite(CPathEntryTest.class);
-	}
-
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
 	}
 
 	/*******************************************************************************************************************************
@@ -147,11 +122,6 @@ public class CPathEntryTest extends BaseTestCase {
 	 * @see CProjectHelper#createCProject
 	 */
 	public void testCPathEntries() throws CoreException {
-		ICProject testProject;
-		testProject = CProjectHelper.createCProject("cpathtest", "none", IPDOMManager.ID_NO_INDEXER);
-		if (testProject == null) {
-			fail("Unable to create project");
-		}
 		IPathEntry[] entries = testProject.getResolvedPathEntries();
 		// We always have at least two entries:
 		//  1) the default sourceEntry becomes the project
@@ -176,11 +146,6 @@ public class CPathEntryTest extends BaseTestCase {
 	 * @see CProjectHelper#createCProject
 	 */
 	public void testCPathEntriesDelta() throws CoreException {
-		ICProject testProject;
-		testProject = CProjectHelper.createCProject("cpathtest", "none", IPDOMManager.ID_NO_INDEXER);
-		if (testProject == null) {
-			fail("Unable to create project");
-		}
 		CProjectHelper.addCContainer(testProject, "foo");
 		IPathEntry[] entries = new IPathEntry[3];
 		entries[0] = CoreModel.newIncludeEntry(new Path(""), null, new Path("/usr/include"), true);
@@ -199,11 +164,6 @@ public class CPathEntryTest extends BaseTestCase {
 	 * Check the IPathEntryContainer.
 	 */
 	public void testPathEntryContainer() throws CoreException {
-		ICProject testProject;
-		testProject = CProjectHelper.createCProject("cpathtest", "none", IPDOMManager.ID_NO_INDEXER);
-		if (testProject == null) {
-			fail("Unable to create project");
-		}
 		final IPath containerID = new Path("Testing/Container");
 		IContainerEntry containerEntry = CoreModel.newContainerEntry(containerID);
 		IPathEntryContainer container = new IPathEntryContainer() {
@@ -239,17 +199,6 @@ public class CPathEntryTest extends BaseTestCase {
 	}	
 	
 	public void testSetExclusionFilter_Bug197486() throws Exception {
-		ICProject testProject = null;
-		try {
-			testProject = CProjectHelper.createCProject("cpathtest", "none", IPDOMManager.ID_NO_INDEXER);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if (testProject == null) {
-			fail("Unable to create project");
-		}
-
 		// get project description
 		ICProjectDescription prjDesc= CoreModel.getDefault().getProjectDescription(testProject.getProject(), true);
 		ICConfigurationDescription activeCfg= prjDesc.getActiveConfiguration();

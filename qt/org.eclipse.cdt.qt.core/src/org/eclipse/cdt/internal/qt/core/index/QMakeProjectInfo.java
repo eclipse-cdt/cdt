@@ -75,11 +75,13 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo {
 	// must not be called under any QMake-related sync-lock, except for workspace lock
 	// we are running outside of synchronized block to prevent deadlock involving workspace lock
 	// this means that theoretically there might be multiple thread calculating the same results but only the last one wins
-	void updateState() {
+	State updateState() {
 		// note that getProjectDescription might acquire workspace lock
 		ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescriptionManager().getProjectDescription(project);
 		ICConfigurationDescription configuration = projectDescription != null ? projectDescription.getActiveConfiguration() : null;
-		setState(configuration != null ? new State(configuration) : STATE_INVALID);
+		State newState = configuration != null ? new State(configuration) : STATE_INVALID;
+		setState(newState);
+		return newState;
 	}
 
 	private void setState(State newState) {
@@ -123,6 +125,11 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo {
 		synchronized (stateSync) {
 			return state.getQMakeInfo();
 		}
+	}
+
+	@Override
+	public IQMakeInfo updateActualInfo() {
+		return updateState().getQMakeInfo();
 	}
 
 	// converts IFile to absolute path

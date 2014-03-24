@@ -31,6 +31,7 @@ import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.IUserAuthenticator;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.core.exception.UnableToForwardPortException;
+import org.eclipse.remote.internal.core.RemoteCorePlugin;
 import org.eclipse.remote.internal.core.messages.Messages;
 
 public class LocalConnection implements IRemoteConnection {
@@ -263,6 +264,15 @@ public class LocalConnection implements IRemoteConnection {
 	 */
 	@Override
 	public String getProperty(String key) {
+		/*
+		 * Convert os.name and os.arch to framework properties so they make more sense
+		 */
+		switch (key) {
+		case IRemoteConnection.OS_NAME_PROPERTY:
+			return RemoteCorePlugin.getDefault().getBundle().getBundleContext().getProperty("osgi.os"); //$NON-NLS-1$
+		case IRemoteConnection.OS_ARCH_PROPERTY:
+			return RemoteCorePlugin.getDefault().getBundle().getBundleContext().getProperty("osgi.arch"); //$NON-NLS-1$
+		}
 		return System.getProperty(key);
 	}
 

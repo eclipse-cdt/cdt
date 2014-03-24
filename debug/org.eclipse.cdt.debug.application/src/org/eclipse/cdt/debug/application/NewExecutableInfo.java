@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Mentor Graphics and others.
+ * Copyright (c) 2013, 2014 Mentor Graphics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Mentor Graphics - Initial API and implementation
+ * Red Hat Inc. - modified for use in Standalone Debugger
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.application;

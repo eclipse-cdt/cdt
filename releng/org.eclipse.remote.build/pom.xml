@@ -39,10 +39,12 @@
 
 	<modules>
 		<module>../../bundles/org.eclipse.remote.core</module>
+		<module>../../bundles/org.eclipse.remote.cdt.core</module>
 		<module>../../bundles/org.eclipse.remote.jsch.core</module>
 		<module>../../bundles/org.eclipse.remote.jsch.ui</module>
 		<module>../../bundles/org.eclipse.remote.ui</module>
 		<module>../../features/org.eclipse.remote-feature</module>
+		<module>../../features/org.eclipse.remote.cdt-feature</module>
 		<module>../../releng/org.eclipse.remote.repo</module>
 	</modules>
 

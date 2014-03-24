@@ -11,3 +11,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %pluginProvider
 Import-Package: org.eclipse.core.resources
+Export-Package: org.eclipse.remote.cdt.core

@@ -82,6 +82,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.filesystem.provider.FileInfo;
+import org.eclipse.core.internal.filesystem.local.LocalFileNativesManager;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -161,12 +163,22 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 	private boolean _isWin95 = false;
 	private boolean _isWinNT = false;
 	private String  _osCmdShell = null;
+	
+	private boolean _getParentCanonicalPath = false;
 
 	protected ISystemFileTypes _fileTypeRegistry;
 
 	public LocalFileService(ISystemFileTypes fileTypeRegistry)
 	{
 		_fileTypeRegistry = fileTypeRegistry;
+		String getParentCanonicalPathStr = System.getProperty("local.get.parent.canonical.path"); //$NON-NLS-1$
+		if (getParentCanonicalPathStr != null){
+			try {
+				_getParentCanonicalPath = Boolean.parseBoolean(getParentCanonicalPathStr);
+			}
+			catch (Exception e){				
+			}
+		}
 	}
 
 
@@ -226,13 +238,11 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		public boolean accept(File dir, String name) {
 			boolean result = false;
 			File entry = new File(dir, name);
-			if (entry.exists()) {
-				boolean isDirectory = entry.isDirectory();
+			FileInfo info = fetchInfo(entry);
+			
+			if (info.exists()) {
+				boolean isDirectory = info.isDirectory();
 				boolean isFile = !isDirectory;
-				if (isFile){
-					isFile = entry.isFile();
-				}
-				
 				if (isFile) {
 					result = _matcher.matches(name);
 				} else if (isDirectory) {
@@ -731,15 +741,18 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 	protected IHostFile[] internalFetch(String remoteParent, String fileFilter, int type, IProgressMonitor monitor) throws SystemMessageException {
 		LocalFileNameFilter fFilter = new LocalFileNameFilter(fileFilter, type);
 		File localParent = new File(remoteParent);
+		FileInfo parentInfo = fetchInfo(localParent);
+		
 		boolean isArchive = false;
 		boolean isVirtual = false;
-		if (localParent.exists()) {
-			if (localParent.isFile()) {
+		boolean parentExists = parentInfo.exists();
+		if (parentExists) {
+			if (!parentInfo.isDirectory()) {
 				isArchive = ArchiveHandlerManager.getInstance().isArchive(localParent);
 			}
 			// if the system type is Windows, we get the canonical path so that we have the correct case in the path
 			// this is needed because Windows paths are case insensitive
-			if (isWindows()) {
+			if (isWindows() && _getParentCanonicalPath) { // slows things down significantly so only do if property is on
 				try {
 					localParent = localParent.getCanonicalFile(); // can this be avoided for network drives?
 				} catch (IOException e) {
@@ -783,7 +796,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				return convertToHostFiles(new File[] { file }, type);
 			}
 			*/
-			if (localParent.exists()) {
+			if (parentExists) {
 				File[] files = localParent.listFiles(fFilter);
 				if (files == null) {
 					//throw new RemoteFileException("Error listing: " + localParent.getAbsolutePath());
@@ -804,18 +817,16 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			for (int i = 0; i < files.length; i++)
 			{
 				File file = files[i];
-				boolean isDirectory = file.isDirectory();
-				boolean isFile = !isDirectory;
-				if (isFile){
-					isFile = file.isFile();
-				}
+				FileInfo info = fetchInfo(file);
 				
+				boolean isDirectory = info.isDirectory();
+				boolean isFile = !isDirectory;
 				if (isDirectory)
 				{
 					if (type == IFileService.FILE_TYPE_FILES_AND_FOLDERS ||
 					    type == IFileService.FILE_TYPE_FOLDERS)
 					{
-						results.add(new LocalHostFile(file, false, isFile));
+						results.add(new LocalHostFile(file, false, info));
 					}
 				}
 				else if (isFile)
@@ -823,28 +834,43 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 					if (type == IFileService.FILE_TYPE_FILES_AND_FOLDERS ||
 						type == IFileService.FILE_TYPE_FILES)
 					{
-						results.add(new LocalHostFile(file, false, isFile));
+						results.add(new LocalHostFile(file, false, info));
 					} else if (type == IFileService.FILE_TYPE_FOLDERS &&
 						ArchiveHandlerManager.getInstance().isArchive(file)) {
 						// On Local Archive's should be considered Folders
 						// as they are containers that can be opened.
-						results.add(new LocalHostFile(file, false, isFile));
+						results.add(new LocalHostFile(file, false, info));
 					}
 				}
-				else if (file.exists())
+				else if (info.exists())
 				{
-					results.add(new LocalHostFile(file, false, isFile));
+					results.add(new LocalHostFile(file, false, info));
 				}
 			}
 		}
 		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
+	}
+	
+	private FileInfo fetchInfo(File file) {
+		if (LocalFileNativesManager.isUsingNatives()) {
+			FileInfo info = LocalFileNativesManager.fetchFileInfo(file.getAbsolutePath());
+			//natives don't set the file name on all platforms
+			if (info.getName().length() == 0) {
+				String name = file.getName();
+				//Bug 294429: make sure that substring baggage is removed
+				info.setName(new String(name.toCharArray()));
+			}
+			return info;
+		}
+		return null;
 	}
 
 	public IHostFile getUserHome()
 	{
 		String userHome  =System.getProperty("user.home"); //$NON-NLS-1$
 		File userHomeFile = new File(userHome);
-		return new LocalHostFile(userHomeFile, (userHomeFile.getParent() == null), userHomeFile.isFile());
+		FileInfo info = fetchInfo(userHomeFile);
+		return new LocalHostFile(userHomeFile, (userHomeFile.getParent() == null), info);
 	}
 
 
@@ -876,7 +902,9 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		IHostFile[] fileObjs = new LocalHostFile[v.size()];
 		for (int idx = 0; idx < v.size(); idx++)
 		{
-			fileObjs[idx] = new LocalHostFile((File) v.get(idx), true, false);
+			File file = (File)v.get(idx);
+			FileInfo info = fetchInfo(file);
+			fileObjs[idx] = new LocalHostFile((File) v.get(idx), true, info);
 		}
 
 		return fileObjs;
@@ -895,17 +923,17 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		boolean isArchiveParent = false;
 		boolean isRoot = (remoteParent == null || remoteParent.length() == 0);
 		if (!isRoot) {
-			File remoteParentFile = new File(remoteParent);
-			if (!remoteParentFile.exists()) {
-				isVirtualParent = ArchiveHandlerManager.isVirtual(remoteParent);
-			} else if (remoteParentFile.isFile()) {
+			isVirtualParent = ArchiveHandlerManager.isVirtual(remoteParent);
+			if (!isVirtualParent){
+				File remoteParentFile = new File(remoteParent);
 				isArchiveParent = ArchiveHandlerManager.getInstance().isArchive(remoteParentFile);
 			}
 		}
 		if (!isVirtualParent && !isArchiveParent)
 		{
 			File file = isRoot ? new File(name) : new File(remoteParent, name);
-			return new LocalHostFile(file, isRoot, file.isFile());
+			FileInfo info = fetchInfo(file);
+			return new LocalHostFile(file, isRoot, info);
 		}
 		else
 		{

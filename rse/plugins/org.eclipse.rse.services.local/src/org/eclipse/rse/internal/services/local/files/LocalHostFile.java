@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,12 +16,16 @@
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * David McKnight   (IBM)        - [294521] Local "hidden" files and folders are always shown
  * David McKnight   (IBM)        - [420798] Slow performances in RDz 9.0 with opening 7000 files located on a network driver.
+ * David McKnight   (IBM)        - [431060][local] RSE performance over local network drives are suboptimal
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
 
 import java.io.File;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.provider.FileInfo;
+import org.eclipse.core.internal.filesystem.local.LocalFileNativesManager;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
@@ -42,24 +46,38 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	private boolean _isRoot = false;
 	private boolean _isArchive = false;
 	private IHostFilePermissions _permissions = null;
+	private FileInfo _info = null;
 	
 	public LocalHostFile(File file)
 	{
 		_file = file;
 		_isArchive = ArchiveHandlerManager.getInstance().isArchive(_file);
+		fetchInfo(); 
 	}
 	
-	public LocalHostFile(File file, boolean isRoot, boolean isFile)
+	public LocalHostFile(File file, boolean isRoot, FileInfo info)
 	{
 		_file = file;
+		_info = info;
 		_isRoot = isRoot;
 		if (!isRoot){
 			_isArchive = ArchiveHandlerManager.getInstance().isArchive(_file);
-			_isFile = new Boolean(isFile);
-			_isDirectory = new Boolean(!isFile);
 		}
 	}
 	
+	private void fetchInfo() {
+		if (LocalFileNativesManager.isUsingNatives()) {
+			_info = LocalFileNativesManager.fetchFileInfo(_file.getAbsolutePath());
+			//natives don't set the file name on all platforms
+			if (_info.getName().length() == 0) {
+				String name = _file.getName();
+				//Bug 294429: make sure that substring baggage is removed
+				_info.setName(new String(name.toCharArray()));
+			}
+		}
+	}
+	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -88,8 +106,13 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	public boolean isHidden()
 	{	
 		if (_isHidden == null || needsQuery()){
-			String name = getName();
-			_isHidden = new Boolean(name.charAt(0) == '.' || (!_isRoot && _file.isHidden()));				
+			if (_info != null){
+				_isHidden = new Boolean(_info.getAttribute(EFS.ATTRIBUTE_HIDDEN));
+			}
+			else {
+				String name = getName();
+				_isHidden = new Boolean(name.charAt(0) == '.' || (!_isRoot && _file.isHidden()));			
+			}
 		}
 		return _isHidden.booleanValue();
 	}
@@ -102,7 +125,13 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	public boolean isDirectory() 
 	{
 		if (_isDirectory == null){
-			_isDirectory = new Boolean(_file.isDirectory());
+			if (_info != null){
+				// use cached info
+				_isDirectory = new Boolean(_info.isDirectory());
+			}
+			else {
+				_isDirectory = new Boolean(_file.isDirectory());
+			}
 		}
 		return _isDirectory.booleanValue();
 	}
@@ -115,7 +144,13 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	public boolean isFile() 
 	{
 		if (_isFile == null){
-			_isFile = new Boolean(_file.isFile());
+			if (_info != null){
+				// use cached info
+				_isFile = new Boolean(!_info.isDirectory());
+			}
+			else {
+				_isFile = new Boolean(_file.isFile());
+			}
 		}
 		return _isFile.booleanValue();
 	}
@@ -128,7 +163,12 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	public boolean exists()
 	{
 		if (_exists == null || needsQuery()){
-			_exists = new Boolean(_file.exists());
+			if (_info != null){
+				_exists = new Boolean(_info.exists());
+			}
+			else {
+				_exists = new Boolean(_file.exists());
+			}
 		}
 		return _exists.booleanValue();
 	}
@@ -140,11 +180,17 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 
 	public long getSize()
 	{
+		if (_info != null){
+			return _info.getLength();
+		}
 		return _file.length();
 	}
 
 	public long getModifiedDate()
 	{
+		if (_info != null){
+			return _info.getLastModified();
+		}
 		return _file.lastModified();
 	}
 
@@ -160,10 +206,16 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	}
 
 	public boolean canRead() {
+		if (_info != null){
+			return _info.getAttribute(EFS.ATTRIBUTE_OWNER_READ);
+		}
 		return _file.canRead();
 	}
 
 	public boolean canWrite() {
+		if (_info != null){
+			return _info.getAttribute(EFS.ATTRIBUTE_OWNER_WRITE);
+		}
 		return _file.canWrite();
 	}
 

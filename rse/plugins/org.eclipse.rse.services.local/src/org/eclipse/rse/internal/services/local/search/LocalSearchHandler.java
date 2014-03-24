@@ -17,6 +17,7 @@
  * Xuan Chen      (IBM) - [194865] [local][Archives] Searching contents of a file in an Archive doesn't work
  * Xuan Chen      (IBM) - [205448] [search]All the files are listed as in the Remote Search view even only found one match in a file
  * David McKnight   (IBM)        - [420798] Slow performances in RDz 9.0 with opening 7000 files located on a network driver.
+ * David McKnight   (IBM)        - [431060][local] RSE performance over local network drives are suboptimal
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.search;
@@ -271,7 +272,8 @@ public class LocalSearchHandler implements ISearchHandler
 			{
 
 				// note that the file can not be root
-				file = new LocalHostFile(theFile, false, true);
+				
+				file = new LocalHostFile(theFile);
 
 				/* TODO
 				if (!isArchive)
@@ -379,7 +381,7 @@ public class LocalSearchHandler implements ISearchHandler
 							// file is root
 							boolean isRoot = false; //TODO
 
-							fileImpl = new LocalHostFile(theFile, isRoot, true);
+							fileImpl = new LocalHostFile(theFile);
 						}
 						// create local file differently for virtual directory
 						else

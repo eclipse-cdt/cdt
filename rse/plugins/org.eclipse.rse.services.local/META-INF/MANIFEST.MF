@@ -2,12 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.services.local;singleton:=true
-Bundle-Version: 2.1.500.qualifier
+Bundle-Version: 3.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.internal.services.local.Activator
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.rse.services;bundle-version="[3.0.0,4.0.0)"
+ org.eclipse.rse.services;bundle-version="[3.0.0,4.0.0)",
+  org.eclipse.core.filesystem
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.internal.services.local;x-friends:="org.eclipse.rse.subsystems.files.local,org.eclipse.rse.subsystems.processes.local,org.eclipse.rse.subsystems.shells.local",

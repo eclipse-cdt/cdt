@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GDBStandalone
-Bundle-SymbolicName: GDBStandalone;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-SymbolicName: org.eclipse.cdt.debug.application;singleton:=true
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.debug.application.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

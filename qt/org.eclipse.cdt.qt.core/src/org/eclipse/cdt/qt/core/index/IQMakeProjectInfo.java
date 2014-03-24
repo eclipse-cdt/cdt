@@ -31,10 +31,17 @@ public interface IQMakeProjectInfo {
 	/**
 	 * Returns an actual QMake information.
 	 *
-	 * Note that this is a long-term operation and the method call is blocked until an actual QMake information is calculated.
-	 *
 	 * @return non-null IQMakeInfo instance representing the actual QMake information
 	 */
 	IQMakeInfo getActualInfo();
+
+	/**
+	 * Updates the actual QMake information and returns it.
+	 *
+	 * Note that this is a long-term operation and the method call is blocked until an actual QMake information is calculated.
+	 *
+	 * @return non-null IQMakeInfo instance representing the actual QMake information calculated at the time of this method call.
+	 */
+	IQMakeInfo updateActualInfo();
 
 }

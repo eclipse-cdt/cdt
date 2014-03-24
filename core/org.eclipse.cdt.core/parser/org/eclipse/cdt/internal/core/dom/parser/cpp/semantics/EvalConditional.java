@@ -356,6 +356,18 @@ public class EvalConditional extends CPPDependentEvaluation {
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
 			int maxdepth, IASTNode point) {
 		ICPPEvaluation condition = fCondition.computeForFunctionCall(parameterMap, maxdepth, point);
+		// If the condition can be evaluated, fold the conditional into
+		// just the branch that is taken. This avoids infinite recursion
+		// when computing a recursive constexpr function where the base
+		// case of the recursion is one of the branches of the conditional.
+		Long conditionValue = condition.getValue(point).numericalValue();
+		if (conditionValue != null) {
+			if (conditionValue.longValue() != 0) {
+				return fPositive == null ? null : fPositive.computeForFunctionCall(parameterMap, maxdepth, point);
+			} else {
+				return fNegative.computeForFunctionCall(parameterMap, maxdepth, point);
+			}
+		}
 		ICPPEvaluation positive = fPositive == null ?
 				null : fPositive.computeForFunctionCall(parameterMap, maxdepth, point);
 		ICPPEvaluation negative = fNegative.computeForFunctionCall(parameterMap, maxdepth, point);

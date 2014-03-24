@@ -8477,4 +8477,17 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testConstexprFunctionCallWithNonConstexprArguments_429891() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	constexpr int naive_fibonacci(int x) {
+	//		return x == 0 ? 0
+	//			 : x == 1 ? 1
+	//			 : naive_fibonacci(x - 2) + naive_fibonacci(x - 1);
+	//	}
+	//
+	//	constexpr int waldo = naive_fibonacci(5);
+	public void testConditionalExpressionFolding_429891() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IVariable waldo = helper.assertNonProblem("waldo");
+		assertEquals(5, waldo.getInitialValue().numericalValue().longValue());
+	}
 }

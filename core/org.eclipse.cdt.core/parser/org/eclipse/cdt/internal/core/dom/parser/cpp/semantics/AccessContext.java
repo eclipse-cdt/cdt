@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -262,7 +263,8 @@ public class AccessContext {
 		ICPPClassType classType = firstCandidateForNamingClass;
 		if (classType != null && isUnqualifiedLookup) {
 			IBinding owner = classType.getOwner();
-			while (owner instanceof ICPPClassType && !derivesFrom(classType, accessOwner, CPPSemantics.MAX_INHERITANCE_DEPTH)) {
+			while (owner instanceof ICPPClassType &&
+					!derivesFrom(classType, accessOwner, name, CPPSemantics.MAX_INHERITANCE_DEPTH)) {
 				classType= (ICPPClassType) owner;
 				owner= classType.getOwner();
 			}
@@ -270,19 +272,20 @@ public class AccessContext {
 		return classType;
 	}
 
-	private static boolean derivesFrom(ICPPClassType derived, ICPPClassType target, int maxdepth) {
+	private static boolean derivesFrom(ICPPClassType derived, ICPPClassType target, IASTNode point,
+			int maxdepth) {
 		if (derived == target || derived.isSameType(target)) {
 			return true;
 		}
 		if (maxdepth > 0) {
-			for (ICPPBase cppBase : derived.getBases()) {
+			for (ICPPBase cppBase : ClassTypeHelper.getBases(derived, point)) {
 				IBinding base= cppBase.getBaseClass();
 				if (base instanceof ICPPClassType) {
 					ICPPClassType tbase= (ICPPClassType) base;
 					if (tbase.isSameType(target)) {
 						return true;
 					}
-					if (derivesFrom(tbase, target, maxdepth - 1))
+					if (derivesFrom(tbase, target, point, maxdepth - 1))
 						return true;
 				}
 			}

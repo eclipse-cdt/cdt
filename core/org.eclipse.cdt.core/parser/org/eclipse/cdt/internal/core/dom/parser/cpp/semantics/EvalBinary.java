@@ -191,7 +191,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 	public boolean isConstantExpression(IASTNode point) {
 		return fArg1.isConstantExpression(point)
 			&& fArg2.isConstantExpression(point)
-			&& isConstexprFuncOrNull(getOverload(point));
+			&& isNullOrConstexprFunc(getOverload(point));
 	}
 
 	@Override

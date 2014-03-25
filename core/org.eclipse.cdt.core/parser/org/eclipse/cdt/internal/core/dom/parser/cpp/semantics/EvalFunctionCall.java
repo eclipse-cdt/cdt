@@ -87,7 +87,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
 		return areAllConstantExpressions(fArguments, point)
-			&& isConstexprFuncOrNull(getOverload(point));
+			&& isNullOrConstexprFunc(getOverload(point));
 	}
 
 	public ICPPFunction getOverload(IASTNode point) {

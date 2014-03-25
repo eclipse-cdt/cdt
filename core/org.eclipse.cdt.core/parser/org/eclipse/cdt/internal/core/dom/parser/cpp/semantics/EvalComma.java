@@ -79,7 +79,7 @@ public class EvalComma extends CPPDependentEvaluation {
 			return false;
 		}
 		for (ICPPFunction overload : fOverloads) {
-			if (!isConstexprFuncOrNull(overload)) {
+			if (!isNullOrConstexprFunc(overload)) {
 				return false;
 			}
 		}

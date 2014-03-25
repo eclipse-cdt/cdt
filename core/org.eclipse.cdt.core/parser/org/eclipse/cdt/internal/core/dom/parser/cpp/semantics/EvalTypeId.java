@@ -44,7 +44,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	private final ICPPEvaluation[] fArguments;
 	private final boolean fRepresentsNewExpression;
 	private IType fOutputType;
-	
+
 	private ICPPFunction fConstructor = CPPFunction.UNINITIALIZED_FUNCTION;
 	private boolean fCheckedIsTypeDependent;
 	private boolean fIsTypeDependent;
@@ -56,7 +56,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	public EvalTypeId(IType type, IBinding templateDefinition, ICPPEvaluation... arguments) {
 		this(type, templateDefinition, false, arguments);
 	}
-	
+
 	private EvalTypeId(IType type, IBinding templateDefinition, boolean forNewExpression, ICPPEvaluation... arguments) {
 		super(templateDefinition);
 		if (arguments == null)
@@ -146,25 +146,25 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	public boolean isConstantExpression(IASTNode point) {
 		return !fRepresentsNewExpression
 			&& areAllConstantExpressions(fArguments, point)
-			&& isConstexprFuncOrNull(getConstructor(point));
+			&& isNullOrConstexprFunc(getConstructor(point));
 	}
 
 	@Override
 	public ValueCategory getValueCategory(IASTNode point) {
 		return valueCategoryFromReturnType(fInputType);
 	}
-	
+
 	public ICPPFunction getConstructor(IASTNode point) {
 		if (fConstructor == CPPFunction.UNINITIALIZED_FUNCTION) {
 			fConstructor = computeConstructor(point);
 		}
 		return fConstructor;
 	}
-	
+
 	private ICPPFunction computeConstructor(IASTNode point) {
 		if (isTypeDependent())
 			return null;
-		
+
 		IType simplifiedType = SemanticUtil.getNestedType(fInputType, SemanticUtil.TDEF);
 		if (simplifiedType instanceof ICPPClassType) {
 			ICPPClassType classType = (ICPPClassType) simplifiedType;
@@ -220,9 +220,9 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		IType type = CPPTemplates.instantiateType(fInputType, tpMap, packOffset, within, point);
 		if (args == fArguments && type == fInputType)
 			return this;
-		
+
 		EvalTypeId result = new EvalTypeId(type, getTemplateDefinition(), fRepresentsNewExpression, args);
-		
+
 		if (!result.isTypeDependent()) {
 			IType simplifiedType = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
 			if (simplifiedType instanceof ICPPClassType) {
@@ -234,13 +234,13 @@ public class EvalTypeId extends CPPDependentEvaluation {
 				}
 			}
 		}
-		
+
 		return result;
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap, int maxdepth,
+			IASTNode point) {
 		ICPPEvaluation[] args = fArguments;
 		for (int i = 0; i < fArguments.length; i++) {
 			ICPPEvaluation arg = fArguments[i].computeForFunctionCall(parameterMap, maxdepth, point);

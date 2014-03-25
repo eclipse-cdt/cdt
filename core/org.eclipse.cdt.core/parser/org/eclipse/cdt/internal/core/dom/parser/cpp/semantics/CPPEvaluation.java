@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Google, Inc and others.
+ * Copyright (c) 2012, 2014 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,10 +30,10 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	}
 
 	@Override
-	public IBinding getTemplateDefinition() {	
+	public IBinding getTemplateDefinition() {
 		return null;
 	}
-	
+
 	@Override
 	public char[] getSignature() {
 		SignatureBuilder buf = new SignatureBuilder();
@@ -91,7 +91,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 		return false;
 	}
-	
+
 	protected static boolean areAllConstantExpressions(ICPPEvaluation[] evaluations, IASTNode point) {
 		for (ICPPEvaluation eval : evaluations) {
 			if (!eval.isConstantExpression(point)) {
@@ -100,7 +100,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 		return true;
 	}
-	
+
 	protected static boolean isConstexprValue(IValue value, IASTNode point) {
 		if (value == null) {
 			return false;
@@ -111,8 +111,8 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 		return innerEval.isConstantExpression(point);
 	}
-	
-	protected static boolean isConstexprFuncOrNull(ICPPFunction function) {
+
+	protected static boolean isNullOrConstexprFunc(ICPPFunction function) {
 		return function == null || function.isConstexpr();
 	}
 }

@@ -55,7 +55,7 @@
  * Samuel Wu		(IBM)		 - [395981] Local file encoding is not handled properly 
  * David McKnight   (IBM)        - [422508] Unable to map A:\ and B:\ as selectable drives in RSE View
  * David McKnight   (IBM)        - [420798] Slow performances in RDz 9.0 with opening 7000 files located on a network driver.
- * David McKnight   (IBM)        - [427306] A couple cases where RSE doesn't indicate lack of space for upload
+ * David McKnight   (IBM)        - [431060][local] RSE performance over local network drives are suboptimal
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [187571] Classification is empty for local directories
  * Martin Oberhuber (Wind River) - [234726] Update IRemoteFile Javadocs
+ * David McKnight   (IBM)        -  [431060][local] RSE performance over local network drives are suboptimal
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.local.model;
@@ -74,7 +75,9 @@ public class LocalFile extends AbstractRemoteFile
 		return _classification;
 	}
 
-
-
+	public void markStale(boolean isStale) {
+		super.markStale(isStale);
+		_localHostFile.setNeedsQuery(isStale);
+	}
 
 }

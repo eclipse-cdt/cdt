@@ -47,6 +47,7 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	private boolean _isArchive = false;
 	private IHostFilePermissions _permissions = null;
 	private FileInfo _info = null;
+	private boolean _needsQuery = false;
 	
 	public LocalHostFile(File file)
 	{
@@ -75,6 +76,7 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 				_info.setName(new String(name.toCharArray()));
 			}
 		}
+		_needsQuery = false;
 	}
 	
 
@@ -162,8 +164,10 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 
 	public boolean exists()
 	{
-		if (_exists == null || needsQuery()){
+		boolean needsQuery = needsQuery();
+		if (_exists == null || needsQuery){
 			if (_info != null){
+				if (needsQuery) fetchInfo();
 				_exists = new Boolean(_info.exists());
 			}
 			else {
@@ -181,6 +185,7 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	public long getSize()
 	{
 		if (_info != null){
+			if (needsQuery()) fetchInfo();
 			return _info.getLength();
 		}
 		return _file.length();
@@ -189,6 +194,7 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	public long getModifiedDate()
 	{
 		if (_info != null){
+			if (needsQuery()) fetchInfo();
 			return _info.getLastModified();
 		}
 		return _file.lastModified();
@@ -198,6 +204,7 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	{
 		_file = new File(newAbsolutePath);
 		_isArchive = ArchiveHandlerManager.getInstance().isArchive(_file);
+		fetchInfo();
 	}
 
 	public boolean isArchive() 
@@ -207,6 +214,7 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 
 	public boolean canRead() {
 		if (_info != null){
+			if (needsQuery()) fetchInfo();
 			return _info.getAttribute(EFS.ATTRIBUTE_OWNER_READ);
 		}
 		return _file.canRead();
@@ -214,6 +222,11 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 
 	public boolean canWrite() {
 		if (_info != null){
+			if (needsQuery()) fetchInfo();
+			boolean readOnly = _info.getAttribute(EFS.ATTRIBUTE_READ_ONLY);
+			if (readOnly){
+				return false;
+			}
 			return _info.getAttribute(EFS.ATTRIBUTE_OWNER_WRITE);
 		}
 		return _file.canWrite();
@@ -228,11 +241,18 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	}
 
 	private boolean needsQuery(){
+		if (LocalFileNativesManager.isUsingNatives() && _needsQuery){
+			return true;
+		}
 		long t = System.currentTimeMillis();
 		if (_lastQueryTime == 0 || (t - _lastQueryTime) > 5000){
 			_lastQueryTime = t;
 			return true;
 		}
 		return false;
+	}
+	
+	public void setNeedsQuery(boolean flag){
+		_needsQuery = true;
 	}
 }

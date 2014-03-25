@@ -87,6 +87,11 @@
 		<module>debug/org.eclipse.cdt.gnu.debug-feature</module>
 		<module>debug/org.eclipse.cdt.gnu.debug.source-feature</module>
 
+		<module>debug/org.eclipse.cdt.debug.application</module>
+		<module>debug/org.eclipse.cdt.debug.application.doc</module>
+		<module>debug/org.eclipse.cdt.debug.standalone-feature</module>
+		<module>debug/org.eclipse.cdt.debug.standalone.source-feature</module>
+
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb</module>
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.ui</module>
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui</module>

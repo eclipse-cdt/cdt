@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.cdt.remote.core;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.cdt.remote.internal.core.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.cdt.core,
+ org.eclipse.remote.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %pluginProvider
+Import-Package: org.eclipse.core.resources
+Export-Package: org.eclipse.cdt.remote.core;x-internal:=true

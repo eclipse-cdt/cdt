@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_26573cd8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBDisassembly_7_3.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-03-26T22:50:13Z",
+      "side": 1,
+      "message": "Since DisassemblyBackendDsf.java does not actually request disassembly without the opCodes, I thought we could simplify the code by having the opCodes on by default, as long as we are dealing with GDB \u003e\u003d 7.3.  So I overrode the methods of IDisassembly to ask for opCodes in this class.",
+      "revId": "b468322c0bb870d8e0f4978a0c62a4c52c9c0471",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_065cb8f8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBDisassembly_7_3.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-03-26T22:50:13Z",
+      "side": 1,
+      "message": "To keep the hierarchy consistent of IDisassembly3-\u003eIDisassembly2-\u003eIDisassembly, I made this class implement IDisassembly2 but return an error when called.",
+      "revId": "b468322c0bb870d8e0f4978a0c62a4c52c9c0471",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_4656b0d8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIDisassembly.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-03-26T22:50:13Z",
+      "side": 1,
+      "message": "To avoid code duplication, I suggest we add the below helper methods than can be used for different calls.",
+      "revId": "b468322c0bb870d8e0f4978a0c62a4c52c9c0471",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_86472823",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyBackendDsf.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 602,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-03-26T22:50:13Z",
+      "side": 1,
+      "message": "Since the proposed solution always asks for opCodes for GDB \u003e\u003d 7.3, we can delegate to the service to decide if it should ask for opCodes or not, based on the GDB version.",
+      "revId": "b468322c0bb870d8e0f4978a0c62a4c52c9c0471",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_e6442420",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyBackendDsf.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1191,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-03-26T22:50:13Z",
+      "side": 1,
+      "message": "I put an ImmediateExecutor here to behave exactly as before and when alignOpCodes() is not available.  This change is probably not super important, but I wanted to play it safe.",
+      "revId": "b468322c0bb870d8e0f4978a0c62a4c52c9c0471",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

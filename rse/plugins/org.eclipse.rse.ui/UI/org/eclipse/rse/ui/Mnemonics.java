@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [187860] review for adding foreign lang support
  * David Dykstal (IBM) - [226561] Add API markup for noextend / noimplement where needed
  * Kevin Doyle 	 (IBM) - [242250] Using Mnemonics twice as fast as we should be
+ * David McKnight (IBM) - [431291] RSE dialogs missing some mnemonics
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -35,6 +36,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.rse.ui.widgets.InheritableEntryField;
+import org.eclipse.rse.ui.widgets.SystemHistoryCombo;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -579,7 +581,7 @@ public class Mnemonics {
 			parent.layout(true);
 		}
 	}
-
+	
 	private boolean setCompositeMnemonics(Composite parent, Set ignoredControls) {
 		Control children[] = parent.getChildren();
 		Control currentChild = null;
@@ -588,8 +590,8 @@ public class Mnemonics {
 			Control previousChild = currentChild;
 			currentChild = children[i];
 			if (!ignoredControls.contains(currentChild)) {
-				if (currentChild instanceof Combo || currentChild instanceof InheritableEntryField) {
-					if (applyMnemonicsToPrecedingLabels && previousChild instanceof Label) {
+				if (currentChild instanceof Combo || currentChild instanceof InheritableEntryField || currentChild instanceof Text) {
+					if (applyMnemonicsToPrecedingLabels && previousChild instanceof Label && currentChild.isEnabled()) {
 						Label label = (Label) previousChild;
 						String text = label.getText();
 						if ((text != null) && (text.trim().length() > 0)) {
@@ -609,11 +611,26 @@ public class Mnemonics {
 					 * It's meaningless for a combo to have children.
 					 */
 					mustLayout |= setCompositeMnemonics((Composite) currentChild, ignoredControls);
+					if (currentChild instanceof SystemHistoryCombo){
+						// also apply the preceding label
+						if (applyMnemonicsToPrecedingLabels && previousChild instanceof Label && currentChild.isEnabled()) {
+							Label label = (Label) previousChild;
+							String text = label.getText();
+							if ((text != null) && (text.trim().length() > 0)) {
+								String newText = setUniqueMnemonic(text);
+								if (!text.equals(newText)) {
+									label.setText(newText);
+									mustLayout = true;
+								}
+							}
+						}
+					}
 				} // ignore other controls
 			}
 		}
 		return mustLayout;
 	}
+
 
 	private void gatherCompositeMnemonics(Composite parent) {
 		Control children[] = parent.getChildren();

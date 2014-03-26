@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 PalmSource, Inc. and others.
+ * Copyright (c) 2006, 2014 PalmSource, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@
  * Anna Dushistova  (Mentor Graphics) - [318052] [remote launch] Properties are not saved/used
  * Anna Dushistova       (MontaVista) - [375067] [remote] Automated remote launch does not support project-less debug
  * Dan Ungureanu          (Freescale) - [428367] [remote launch] Fix missing title for Properties dialog
+ * Alvaro Sanchez-Leon     (Ericsson) - [430313] [remote] Auto Remote Debug - Unable to download to folder
  *******************************************************************************/
 package org.eclipse.cdt.launch.remote.tabs;
 
@@ -326,7 +327,18 @@ public class RemoteCDSFMainTab extends CMainTab {
 			Object retObj = dlg.getSelectedObject();
 			if (retObj instanceof IRemoteFile) {
 				IRemoteFile selectedFile = (IRemoteFile) retObj;
-				remoteProgText.setText(selectedFile.getAbsolutePath());
+				String absPath = selectedFile.getAbsolutePath();
+				if (selectedFile.isDirectory()) {
+					// The user selected a destination folder to upload the binary
+					// Append the Program name as the default file destination
+					IPath appPath = new Path(fProgText.getText().trim());
+					String lastSegment = appPath.lastSegment();
+					if (lastSegment != null && lastSegment.trim().length() > 0) {
+						IPath remotePath = new Path(selectedFile.getAbsolutePath()).append(lastSegment.trim());
+						absPath = remotePath.toPortableString();
+					}
+				}
+				remoteProgText.setText(absPath);
 			}
 
 		}

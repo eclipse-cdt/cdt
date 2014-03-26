@@ -75,6 +75,9 @@
    <feature url="features/org.eclipse.cdt.qt_0.0.0.qualifier.jar" id="org.eclipse.cdt.qt" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.remote_0.0.0.qualifier.jar" id="org.eclipse.cdt.remote" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <category-def name="main" label="CDT Main Features"/>
    <category-def name="extra" label="CDT Optional Features"/>
 </site>

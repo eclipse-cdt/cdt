@@ -21,6 +21,7 @@
 		<platform-site>${download-site}/eclipse/updates/${platform-version}</platform-site>
 		<orbit-site>${download-site}/tools/orbit/downloads/drops/${orbit-version}/repository</orbit-site>
 		<tm-site>${download-site}/tm/updates/${tm-version}</tm-site>
+		<remote-site>${download-site}/tools/ptp/builds/remote/luna/nightly</remote-site>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
@@ -195,6 +196,10 @@
 		<module>qt/org.eclipse.cdt.qt-feature</module>
 
 		<module>xlc/org.eclipse.cdt.errorparsers.xlc.tests</module>
+		
+		<module>remote/org.eclipse.cdt.remote.core</module>
+		<module>remote/org.eclipse.cdt.remote-feature</module>
+		
 <!-- 
 		<module>lrparser/org.eclipse.cdt.core.lrparser.tests</module>
 		<module>upc/org.eclipse.cdt.core.parser.upc.tests</module>
@@ -222,6 +227,11 @@
 		<repository>
 			<id>tm</id>
 			<url>${tm-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>remote</id>
+			<url>${remote-site}</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>

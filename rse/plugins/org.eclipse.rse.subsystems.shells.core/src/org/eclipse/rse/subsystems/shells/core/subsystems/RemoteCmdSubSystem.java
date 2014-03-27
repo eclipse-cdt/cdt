@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@
  * David McKnight     (IBM)   [302724] problems with environment variable substitution
  * David McKnight   (IBM)        - [338031] Remote Shell view tabs should have close (x) icon
  * David McKnight   (IBM)        - [349491] possible NPE on shutdown due to event firing
+ * David McKnight (IBM)  -[431378] [shells] Remote shells not always restored properly on reconnect
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems;
@@ -79,6 +80,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	protected IRemoteCommandShell _defaultShell;
 
 	protected IRemoteFileSubSystem _fileSubSystem;
+	private boolean _hasRestoredState = false;
 
 	public RemoteCmdSubSystem(IHost host, IConnectorService connectorService)
 	{
@@ -88,10 +90,11 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 	public void initializeSubSystem(IProgressMonitor monitor) throws SystemMessageException {
 		super.initializeSubSystem(monitor);
+		_hasRestoredState = false; // reset so shells are restored after this connect
 		// load UI plugin for adapters right after successful connect
 		Platform.getAdapterManager().loadAdapter(new RemoteOutput(null, ""), "org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
+	
 	/**
 	 * Return parent subsystem factory, cast to a RemoteCmdSubSystemConfiguration
 	 */
@@ -564,7 +567,6 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	{
 		// DKM: changing this so that only first active shell is saved
 		StringBuffer shellBuffer = new StringBuffer();
-		boolean gotShell = false;
 		for (int i = 0; i < cmdShells.size() /*&& !gotShell*/; i++)
 		{
 		
@@ -573,18 +575,16 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			}
 
 			IRemoteCommandShell cmd = (IRemoteCommandShell) cmdShells.get(i);
-			if (cmd.isActive())
+			if (cmd != null && cmd.isActive())
 			{
 				Object context = cmd.getContextString();
 				if (context instanceof String)
 				{
 					shellBuffer.append(context);
-					gotShell = true;
 				}
 				else
 				{
 					shellBuffer.append(cmd.getType());
-					gotShell = true;
 				}
 			}
 		}
@@ -624,14 +624,15 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			_cmdShells.remove(command);
 			Display.getDefault().asyncExec(new RefreshRemovedShell(this, cmdShell));
 		}
-
-
-
 	}
+
 
 	// called to restore running shells - behaviour determined by UI
 	public IRemoteCommandShell[] restoreShellState(Shell shellWindow)
 	{
+		if (_hasRestoredState){
+			return null; // already did this, don't do it again! Returning null just means shells view won't restore again
+		}
 		this.shell = shellWindow;
 		IRemoteCommandShell[] results = null;
 
@@ -665,11 +666,11 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 				}
 			}
 		}
-
-		//ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-//		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
-
-		Display.getDefault().asyncExec(new Refresh(this));
+		
+		if (numShells > 0){
+			Display.getDefault().asyncExec(new Refresh(this));
+		}
+		_hasRestoredState = true;
 		return results;
 	}
 

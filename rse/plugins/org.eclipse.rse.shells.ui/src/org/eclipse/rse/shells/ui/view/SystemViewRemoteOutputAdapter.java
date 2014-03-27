@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2013 IBM Corporation and others.
+ * Copyright (c) 2002, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@
  * Martin Oberhuber (Wind River) - [227135] Cryptic exception when sftp-server is missing
  * David McKnight   (IBM)        - [336640] SystemViewRemoteOutputAdapter should not use hard-coded editor id
  * David McKnight   (IBM)        - [404310] [shells][performance] view adapter should not query file in getSubSystem()
+ * David McKnight (IBM)  -[431378] [shells] Remote shells not always restored properly on reconnect
  *******************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -825,11 +826,21 @@ implements ISystemRemoteElementAdapter
 			ImageDescriptor imageDescriptor = null;
 			if (command.isActive())
 			{
-				imageDescriptor = factoryAdapter.getActiveCommandShellImageDescriptor();
+				if (factoryAdapter == null){ // handle case where adapter not loaded yet
+					imageDescriptor = ShellsUIPlugin.getDefault().getImageDescriptor(ShellsUIPlugin.ICON_SYSTEM_SHELLLIVE_ID);
+				}
+				else {
+					imageDescriptor = factoryAdapter.getActiveCommandShellImageDescriptor();
+				}
 			}
 			else
 			{
-			    imageDescriptor = factoryAdapter.getInactiveCommandShellImageDescriptor();
+				if (factoryAdapter == null){  // handle case where adapter not loaded yet
+					imageDescriptor = ShellsUIPlugin.getDefault().getImageDescriptor(ShellsUIPlugin.ICON_SYSTEM_SHELL_ID);
+				}
+				else {
+					imageDescriptor = factoryAdapter.getInactiveCommandShellImageDescriptor();
+				}
 			}
 			return imageDescriptor;
 		}

@@ -15,6 +15,7 @@
  * David McKnight   (IBM)        - [165680] "Show in Remote Shell View" does not work
  * David McKnight   (IBM)        - [338031] Remote Shell view tabs should have close (x) icon
  * David McKnight (IBM)  -[425014] profile commit job don't always complete during shutdown
+ * David McKnight (IBM)  -[431378] [shells] Remote shells not always restored properly on reconnect
  *******************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -180,7 +181,8 @@ public class CommandsViewWorkbook extends Composite
 			for (int i = 0; i < _folder.getItemCount(); i++)
 			{
 				CTabItem item = _folder.getItem(i);
-				CommandsViewPage page = (CommandsViewPage) item.getData();
+				Object data = item.getData();
+				CommandsViewPage page = (CommandsViewPage)data;
 				if (page != null && root == page.getInput())
 				{
 					if (!root.isActive())
@@ -192,14 +194,6 @@ public class CommandsViewWorkbook extends Composite
 
 					page.updateOutput();
 
-					/* DKM - changing focus can get annoying 
-					 * see defect 142978
-					 * 
-					if (_folder.getSelectionIndex() != i)
-					{
-						_folder.setSelection(item);
-					}
-					*/
 					updateActionStates();
 					//page.setFocus();
 					return;
@@ -220,7 +214,7 @@ public class CommandsViewWorkbook extends Composite
 
 		CTabItem titem = new CTabItem(_folder, SWT.CLOSE);	
 		setTabTitle(root, titem);
- 
+
 		titem.setData(commandsViewPage);
 		titem.setControl(commandsViewPage.createTabFolderPage(_folder, _viewPart.getEditorActionHandler()));
 		_folder.setSelection(titem );

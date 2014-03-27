@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -21,6 +21,7 @@
  * Radoslav Gerganov (ProSyst) - [181563] Fix hardcoded Ctrl+Space for remote shell content assist
  * David McKnight   (IBM)        - [294398] [shells] SystemCommandsViewPart always assumes systemResourceChanged() called on Display thread
  * David McKnight   (IBM)        - [351750] [shells] need to check for disposed widget when handling events
+ * David McKnight (IBM)  -[431378] [shells] Remote shells not always restored properly on reconnect
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -726,13 +727,10 @@ public class SystemCommandsViewPart
 	}
 
 	protected void restoreCommandShells(IRemoteCmdSubSystem cmdSS)
-	{
-	   
-		try
-		{
+	{	   
+		try {
 			IRemoteCommandShell[] cmds = cmdSS.getShells();
-			if (cmds == null || cmds.length == 0)
-			{
+			if (cmds == null || cmds.length == 0){
 				cmds = cmdSS.restoreShellState(getShell());
 				if (cmds!=null)
 				{
@@ -743,11 +741,8 @@ public class SystemCommandsViewPart
 				}
 			}
 		}
-		catch (Exception e)
-		{
+		catch (Exception e){
 		}
-			
-		
 	}
 	
 	
@@ -778,10 +773,8 @@ public class SystemCommandsViewPart
 								updateActionStates();
 							}
 						}					
-					});
+					});	
 				}
-				
-			
 			}
 		} 
 		

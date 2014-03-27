@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2753a756_6ccc7533",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteCDSFMainTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-27T16:49:24Z",
+      "side": 1,
+      "message": "Good find, \nI have updated to cover cases where the box is empty or has spaces which could result on invalid names,  corner cases but better to have.",
+      "parentUuid": "2753a756_c68f6001",
+      "revId": "22fdc221a56fb399c522dc3fab85ea78a4c620d5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2753a756_0675d870",
         "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteCDSFMainTab.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-03-26T22:32:13Z",
       "side": 1,
       "message": "Why use PortableString() here and getAbsolutePath() above?  Should they be the same, whichever one is best?",
+      "revId": "22fdc221a56fb399c522dc3fab85ea78a4c620d5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_0c197939",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteCDSFMainTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-27T16:49:24Z",
+      "side": 1,
+      "message": "the IPath interface does not offer a getAbsolutePath. \nhowever there are several options e.g. toString, toPortableString, toOSString, \n  I had picked portable string as is neutral and these paths could work on any platform, however we probably don\u0027t need this unless we cover for cases of importing launches creating on a different platform and being updated on a different one.\n\nSo, to be consistent I checked how this is dealt with when setting the string for the fProgText box, and it currently uses toOSSString, therefore I have updated it accordingly.",
+      "parentUuid": "2753a756_0675d870",
       "revId": "22fdc221a56fb399c522dc3fab85ea78a4c620d5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

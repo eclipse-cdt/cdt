@@ -128,6 +128,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
     private ITerminalConnector		  fConnector;
     private final ITerminalConnector[]      fConnectors;
 	private final boolean fUseCommonPrefs;
+	private boolean connectOnEnterIfClosed	= true;
 
     PipedInputStream fInputStream;
 	private static final String defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
@@ -868,7 +869,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			char character = event.character;
 
 			//if (!isConnected()) {
-			if (fState==TerminalState.CLOSED) {
+			if (fState==TerminalState.CLOSED && isConnectOnEnterIfClosed()) {
 				// Pressing ENTER while not connected causes us to connect.
 				if (character == '\r') {
 					connectTerminal();
@@ -1157,4 +1158,20 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	public void setInvertedColors(boolean invert) {
 		fCtlText.setInvertedColors(invert);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#setConnectOnEnterIfClosed(boolean)
+	 */
+	public final void setConnectOnEnterIfClosed(boolean on) {
+		connectOnEnterIfClosed = on;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#isConnectOnEnterIfClosed()
+	 */
+	public final boolean isConnectOnEnterIfClosed() {
+		return connectOnEnterIfClosed;
+	}
+	
+	
 }

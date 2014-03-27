@@ -44,6 +44,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	public static final CPPBasicType UNSIGNED_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
 	public static final CPPBasicType UNSIGNED_LONG_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG_LONG | IBasicType.IS_UNSIGNED);
 	public static final CPPBasicType UNSIGNED_INT128 = new CPPBasicType(Kind.eInt128, IBasicType.IS_UNSIGNED);
+	public static final CPPBasicType CHAR = new CPPBasicType(Kind.eChar, 0);
 
 	private static final int FROM_STRING_LITERAL = 1 << 31;
 

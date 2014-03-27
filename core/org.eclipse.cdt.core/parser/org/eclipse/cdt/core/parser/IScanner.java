@@ -118,4 +118,11 @@ public interface IScanner {
 	 */
 	@Deprecated
 	public void setScanComments(boolean val);
+	
+	/**
+	 * Returns a list of additional (compiler specific) suffixes which can
+	 * be placed on numbers. e.g. 'u' 'l' -> 1l or 1u.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public char[] getAdditionalNumericLiteralSuffixes();
 }

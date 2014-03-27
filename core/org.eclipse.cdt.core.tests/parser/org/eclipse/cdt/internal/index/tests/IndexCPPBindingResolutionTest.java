@@ -173,7 +173,18 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		assertNotNull(numericalValue);
 		assertEquals(i, numericalValue.longValue());
 	}
-
+	
+	private void userDefinedLiteralAssertionHelper() {
+		userDefinedLiteralAssertionHelper("Ret");
+	}
+	
+	private void userDefinedLiteralAssertionHelper(String retName) {
+		IBinding b1= getBindingFromASTName("test =", 4);
+		assertInstance(b1, ICPPVariable.class);
+		ICPPVariable v0= (ICPPVariable) b1;
+		assertInstance(v0.getType(), ICPPClassType.class);
+		assertEquals(retName, ((ICPPClassType)v0.getType()).getName());
+	}
 
 	//	namespace ns { class A; enum E {E1}; typedef int T; }
 	//
@@ -1878,4 +1889,335 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	public void testNameLookupFromArrayModifier_435075() throws Exception {
 		checkBindings();
 	}
+	
+
+	// class Ret {};
+	// Ret operator "" X(unsigned long long i) { return Ret(); }
+	
+	// auto test = 123X;
+	public void testUserDefinedLiteralOperatorTypes1() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(long double i) { return Ret(); }
+	
+	// auto test = 12.3X;
+	public void testUserDefinedLiteralOperatorTypes2() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+
+	// class Ret {};
+	// Ret operator "" X(const char* s) { return Ret(); }
+	
+	// auto test = 123X;
+	public void testUserDefinedLiteralOperatorTypes1a() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s) { return Ret(); }
+	
+	// auto test = 12.3X;
+	public void testUserDefinedLiteralOperatorTypes2a() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(unsigned long long d) { return Ret(); }
+	// bool operator "" X(const char* s) { return false; }
+	
+	// auto test = 123X;
+	public void testUserDefinedLiteralOperatorTypes1b() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(long double d) { return Ret(); }
+	// bool operator "" X(const char* s) { return false; }
+	
+	// auto test = 12.3X;
+	public void testUserDefinedLiteralOperatorTypes2b() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	
+	// auto test = "123"X;
+	public void testUserDefinedLiteralOperatorTypes3() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const wchar_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = L"123"X;
+	public void testUserDefinedLiteralOperatorTypes3a() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+
+	// class Ret {};
+	// Ret operator "" X(const char16_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = u"123"X;
+	public void testUserDefinedLiteralOperatorTypes3b() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char32_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = U"123"X;
+	public void testUserDefinedLiteralOperatorTypes3c() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// template<char... Chars> Ret operator "" X() { return Ret(); }
+	
+	// auto test = 123X;
+	public void testUserDefinedLiteralOperatorTypes4a() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// template<char... Chars> Ret operator "" X() { return Ret(); }
+	
+	// auto test = 123.123X;
+	public void testUserDefinedLiteralOperatorTypes4b() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	
+	// auto test = "123" "123"X;
+	public void testUserDefinedLiteralConcatenation1a() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	
+	// auto test = "123"X "123";
+	public void testUserDefinedLiteralConcatenation1b() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	
+	// auto test = u8"123" "123"X;
+	public void testUserDefinedLiteralConcatenation2a() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	
+	// auto test = u8"123"X "123";
+	public void testUserDefinedLiteralConcatenation2b() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	
+	// auto test = "123" u8"123"X;
+	public void testUserDefinedLiteralConcatenation2c() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	
+	// auto test = "123"X u8"123";
+	public void testUserDefinedLiteralConcatenation2d() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+
+	// class Ret {};
+	// Ret operator "" X(const wchar_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = L"123" "123"X;
+	public void testUserDefinedLiteralConcatenation3a() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const wchar_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = L"123"X "123";
+	public void testUserDefinedLiteralConcatenation3b() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const wchar_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = "123" L"123"X;
+	public void testUserDefinedLiteralConcatenation3c() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const wchar_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = "123"X L"123";
+	public void testUserDefinedLiteralConcatenation3d() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+
+	// class Ret {};
+	// Ret operator "" X(const char16_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = u"123" "123"X;
+	public void testUserDefinedLiteralConcatenation4a() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char16_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = u"123"X "123";
+	public void testUserDefinedLiteralConcatenation4b() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char16_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = "123" u"123"X;
+	public void testUserDefinedLiteralConcatenation4c() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char16_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = "123"X u"123";
+	public void testUserDefinedLiteralConcatenation4d() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+
+	// class Ret {};
+	// Ret operator "" X(const char32_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = U"123" "123"X;
+	public void testUserDefinedLiteralConcatenation5a() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char32_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = U"123"X "123";
+	public void testUserDefinedLiteralConcatenation5b() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char32_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = "123" U"123"X;
+	public void testUserDefinedLiteralConcatenation5c() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char32_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = "123"X U"123";
+	public void testUserDefinedLiteralConcatenation5d() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char32_t* s, unsigned sz) { return Ret(); }
+	
+	// auto test = "123"X U"123"X;
+	public void testUserDefinedLiteralConcatenation6() throws Exception {
+		userDefinedLiteralAssertionHelper();
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	// Ret operator "" Y(const char* s, unsigned sz) { return Ret(); }
+	
+	// auto test = "123"X "123"Y;
+	public void testUserDefinedLiteralBadConcat1() throws Exception {
+		getProblemFromASTName("Ret test", 1);
+	}
+	
+	// // Test literals with spaces before the suffix
+	// int operator "" X(const char* s) { return 0; }
+	
+	// auto a = 1 X;
+	// auto b = 1.0 X;
+	// auto c1 = '1' X;
+	// auto c2 = L'1' X;
+	// auto c3 = u8'1' X;
+	// auto c4 = u'1' X;
+	// auto c5 = U'1' X;
+	// auto d1 = "1" X;
+	// auto d2 = L"1" X;
+	// auto d3 = u8"1" X;
+	// auto d4 = u"1" X;
+	// auto d5 = U"1" X;
+	// auto e1 = "1" X "2";
+	// auto e2 = L"1" X "2";
+	// auto e3 = u8"1" X "2";
+	// auto e4 = u"1" X "2";
+	// auto e5 = U"1" X "2";
+	public void testUserDefinedLiteralNoWhiteSpace2() throws Exception {
+		getProblemFromASTName("a", 1);
+		getProblemFromASTName("b", 1);
+		getProblemFromASTName("c1", 2);
+		getProblemFromASTName("c2", 2);
+		getProblemFromASTName("c3", 2);
+		getProblemFromASTName("c4", 2);
+		getProblemFromASTName("c5", 2);
+		getProblemFromASTName("d1", 2);
+		getProblemFromASTName("d2", 2);
+		getProblemFromASTName("d3", 2);
+		getProblemFromASTName("d4", 2);
+		getProblemFromASTName("d5", 2);
+		getProblemFromASTName("e1", 2);
+		getProblemFromASTName("e2", 2);
+		getProblemFromASTName("e3", 2);
+		getProblemFromASTName("e4", 2);
+		getProblemFromASTName("e5", 2);
+	}
+	
+	// class RetA {};
+	// class RetB {};
+	// template<char... Chars> RetA operator "" X() { return RetA(); }
+	// RetB operator "" X(unsigned long long i) { return RetB(); }
+	
+	// auto test = 123X;
+	public void testUserDefinedLiteralResolution1() throws Exception {
+		userDefinedLiteralAssertionHelper("RetB");
+	}
+	
+	// class RetA {};
+	// class RetB {};
+	// template<char... Chars> RetA operator "" X() { return RetA(); }
+	// RetB operator "" X(long double i) { return RetB(); }
+	
+	// auto test = 123.123X;
+	public void testUserDefinedLiteralResolution2() throws Exception {
+		userDefinedLiteralAssertionHelper("RetB");
+	}
+	
+	// class RetA {};
+	// class RetB {};
+	// template<char... Chars> RetA operator "" X() { return RetA(); }
+	// RetB operator "" X(const char * c) { return RetB(); }
+	
+	// auto test = 123X;
+	public void testUserDefinedLiteralResolution3() throws Exception {
+		getProblemFromASTName("test", 4);
+	}
+	
 }

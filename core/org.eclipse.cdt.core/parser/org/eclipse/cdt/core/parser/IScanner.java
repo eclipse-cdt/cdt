@@ -118,4 +118,9 @@ public interface IScanner {
 	 */
 	@Deprecated
 	public void setScanComments(boolean val);
+	
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public char[] getAdditionalNumericLiteralSuffixes();
 }

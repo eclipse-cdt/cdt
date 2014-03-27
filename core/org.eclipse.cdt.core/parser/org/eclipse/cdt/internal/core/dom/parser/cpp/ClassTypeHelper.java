@@ -590,7 +590,8 @@ public class ClassTypeHelper {
 		for (ICPPBase base : bases) {
 			IBinding b= base.getBaseClass();
 			if (b instanceof ICPPClassType) {
-				findOverridden((ICPPClassType) b, point, mname, methodType, virtualInClass, result);
+				findOverridden((ICPPClassType) b, point, mname, methodType, virtualInClass, 
+						result, CPPSemantics.MAX_INHERITANCE_DEPTH);
 			}
 		}
 
@@ -608,7 +609,12 @@ public class ClassTypeHelper {
 	 */
 	private static boolean findOverridden(ICPPClassType classType, IASTNode point, char[] methodName,
 			ICPPFunctionType methodType, Map<ICPPClassType, Boolean> virtualInClass,
-			List<ICPPMethod> result) {
+			List<ICPPMethod> result, int maxdepth) {
+		// Prevent recursion due to a hierarchy of unbounded depth,
+		// e.g. A<I> deriving from A<I - 1>.
+		if (maxdepth <= 0)
+			return false;
+		
 		Boolean visitedBefore= virtualInClass.get(classType);
 		if (visitedBefore != null)
 			return visitedBefore;
@@ -626,13 +632,14 @@ public class ClassTypeHelper {
 			}
 		}
 
-		// Prevent recursion.
+		// Prevent recursion due to a class inheriting (directly or indirectly) from itself.
 		virtualInClass.put(classType, hasOverridden);
 		ICPPBase[] bases= getBases(classType, point);
 		for (ICPPBase base : bases) {
 			IBinding b= base.getBaseClass();
 			if (b instanceof ICPPClassType) {
-				if (findOverridden((ICPPClassType) b, point, methodName, methodType, virtualInClass, result)) {
+				if (findOverridden((ICPPClassType) b, point, methodName, methodType, virtualInClass, 
+						result, maxdepth - 1)) {
 					hasOverridden= true;
 				}
 			}

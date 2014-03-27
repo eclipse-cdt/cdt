@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.CollectionUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
@@ -197,7 +198,8 @@ public class SemanticQueries {
 		private Map<ICPPClassType, FinalOverriderMap> virtualBaseCache = new HashMap<ICPPClassType, FinalOverriderMap>();
 		
 		public ICPPMethod[] collect(ICPPClassType root, IASTNode point) {
-			FinalOverriderMap finalOverriderMap = collectFinalOverriders(root, false, new HashSet<ICPPClassType>(), point);
+			FinalOverriderMap finalOverriderMap = collectFinalOverriders(root, false, new HashSet<ICPPClassType>(), 
+					CPPSemantics.MAX_INHERITANCE_DEPTH, point);
 			return finalOverriderMap.collectPureVirtualMethods();
 		}
 
@@ -212,7 +214,7 @@ public class SemanticQueries {
 		 * @return the computed final overrider map
 		 */
 		private FinalOverriderMap collectFinalOverriders(ICPPClassType classType, boolean isVirtualBase, 
-				Set<ICPPClassType> inheritanceChain, IASTNode point) {
+				Set<ICPPClassType> inheritanceChain, int maxdepth, IASTNode point) {
 			FinalOverriderMap result = new FinalOverriderMap();
 			
 			inheritanceChain.add(classType);
@@ -236,6 +238,12 @@ public class SemanticQueries {
 				if (inheritanceChain.contains(baseType))
 					continue;
 				
+				// Guard against infinite recursion in inheritance
+				// for example A<I> deriving from A<I - 1> without
+				// a base case to end the recursion.
+				if (maxdepth <= 0)
+					continue;
+				
 				// Collect final overrider information from the base class.
 				// If it's a virtual base class and we've already processed it
 				// in this class hierarchy, don't process it again.
@@ -243,11 +251,11 @@ public class SemanticQueries {
 				if (base.isVirtual()) {
 					baseOverriderMap = virtualBaseCache.get(baseType);
 					if (baseOverriderMap == null) {
-						baseOverriderMap = collectFinalOverriders(baseType, true, inheritanceChain, point);
+						baseOverriderMap = collectFinalOverriders(baseType, true, inheritanceChain, maxdepth - 1, point);
 						virtualBaseCache.put(baseType, baseOverriderMap);
 					}
 				} else {
-					baseOverriderMap = collectFinalOverriders(baseType, false, inheritanceChain, point);
+					baseOverriderMap = collectFinalOverriders(baseType, false, inheritanceChain, maxdepth - 1, point);
 				}
 			
 				// Merge final overrider information from base class into this class.

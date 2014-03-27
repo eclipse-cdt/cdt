@@ -156,6 +156,7 @@
 		<module>dsf/org.eclipse.cdt.examples.dsf-feature</module>
 
 		<module>visualizer/org.eclipse.cdt.visualizer.core</module>
+		<module>visualizer/org.eclipse.cdt.visualizer.examples</module>
 		<module>visualizer/org.eclipse.cdt.visualizer.ui</module>
 		<module>visualizer/org.eclipse.cdt.visualizer-feature</module>
 

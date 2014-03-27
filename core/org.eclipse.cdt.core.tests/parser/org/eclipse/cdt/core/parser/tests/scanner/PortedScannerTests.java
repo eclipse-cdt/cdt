@@ -1808,23 +1808,23 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		IASTProblem[] problems= fLocationResolver.getScannerProblems();
 		assertEquals(17, problems.length);
 		int i= 0;
-		assertEquals(IProblem.SCANNER_BAD_OCTAL_FORMAT,          problems[i].getID() );  
-		assertEquals(IProblem.SCANNER_BAD_DECIMAL_FORMAT,        problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_BAD_HEX_FORMAT,            problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_BAD_HEX_FORMAT,            problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_DIVIDE_BY_ZERO,            problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_MISSING_R_PAREN,           problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_MISSING_R_PAREN,           problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_ILLEGAL_IDENTIFIER,        problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_BAD_CONDITIONAL_EXPRESSION,problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_BAD_CHARACTER,   			 problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() ); 
-		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() ); 
-		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() ); 
-		assertEquals(IProblem.SCANNER_MISSING_R_PAREN,           problems[++i].getID() ); 
-		assertEquals(IProblem.SCANNER_ASSIGNMENT_NOT_ALLOWED,    problems[++i].getID() ); 
-		assertEquals(IProblem.SCANNER_BAD_OCTAL_FORMAT,          problems[++i].getID() ); 
+		assertEquals(IProblem.SCANNER_BAD_OCTAL_FORMAT,          problems[i].getID() );
+		assertEquals(IProblem.SCANNER_CONSTANT_WITH_BAD_SUFFIX,    problems[++i].getID() );
+		assertEquals(IProblem.SCANNER_CONSTANT_WITH_BAD_SUFFIX,    problems[++i].getID() );
+		assertEquals(IProblem.SCANNER_CONSTANT_WITH_BAD_SUFFIX,    problems[++i].getID() );
+		assertEquals(IProblem.SCANNER_DIVIDE_BY_ZERO,            problems[++i].getID() );
+		assertEquals(IProblem.SCANNER_MISSING_R_PAREN,           problems[++i].getID() );
+		assertEquals(IProblem.SCANNER_MISSING_R_PAREN,           problems[++i].getID() );
+		assertEquals(IProblem.SCANNER_ILLEGAL_IDENTIFIER,        problems[++i].getID() );
+		assertEquals(IProblem.SCANNER_BAD_CONDITIONAL_EXPRESSION,problems[++i].getID() );
+		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() );
+		assertEquals(IProblem.SCANNER_BAD_CHARACTER,   			 problems[++i].getID() );
+		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() );
+		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() );
+		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() );
+		assertEquals(IProblem.SCANNER_MISSING_R_PAREN,           problems[++i].getID() );
+		assertEquals(IProblem.SCANNER_ASSIGNMENT_NOT_ALLOWED,    problems[++i].getID() );
+		assertEquals(IProblem.SCANNER_BAD_OCTAL_FORMAT,          problems[++i].getID() );
 	}
 
 	public void testExpressionEvalProblems() throws Exception {

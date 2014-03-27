@@ -41,4 +41,8 @@ public class ScannerExtensionConfiguration extends AbstractScannerExtensionConfi
 		return true;
 	}
 
+	public boolean supportUserDefinedLiterals() {
+		return false;
+	}
+
 }

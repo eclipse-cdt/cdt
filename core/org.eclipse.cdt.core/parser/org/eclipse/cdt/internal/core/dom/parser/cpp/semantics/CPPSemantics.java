@@ -83,6 +83,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -194,17 +195,23 @@ import org.eclipse.cdt.internal.core.dom.parser.IRecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespaceScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
@@ -229,6 +236,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Contex
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -3020,6 +3028,155 @@ public class CPPSemantics {
 
     	return function;
     }
+	
+	/**
+	 * Given a LiteralExpression with a UDL suffix, find the corresponding
+	 * defined operator.
+	 * Tries to implement 2.14.8.(2-10)
+	 * @param exp
+	 * @return CPPFunction or null
+	 * @throws DOMException
+	 */
+	public static IBinding findUDLOperator(IASTLiteralExpression exp) throws DOMException {
+		IBinding ret = null;
+		/*
+		 * 2.14.8.2
+		 * Let `IASTLiteralExpression exp` = L
+		 * Let `exp.getSuffix()` = X
+		 * Let `bindings` = S
+		 * Given UDL 'L' with ud-suffix X, the literal-operator-id whose literal
+		 * suffix identifier is X is looked up in the context of L. S is the set
+		 * of declarations found by this lookup
+		 * 
+		 * TODO: why does findBindings return PDOMNodes?
+		 */
+		IBinding[] bindings = findBindings(exp.getTranslationUnit().getScope(), ((CPPASTLiteralExpression) exp).getOperatorName(), false);
+		ICPPFunction[] funcs = new ICPPFunction[bindings.length];
+		ICPPFunctionTemplate[] tplFunctions = new ICPPFunctionTemplate[bindings.length];
+		LookupData data = new LookupData(((CPPASTLiteralExpression) exp).getOperatorName(), null, exp);
+		
+		int i = 0, j = 0;
+		for (IBinding binding : bindings) {
+			if (binding instanceof PDOMNode) {
+				continue;
+			}
+			if (binding instanceof CPPFunction || binding instanceof ICPPFunctionTemplate) {
+				funcs[i++] = (ICPPFunction) binding;
+				if (binding instanceof ICPPFunctionTemplate) {
+					tplFunctions[j++] = (ICPPFunctionTemplate) binding;
+				}
+			}
+		}
+		
+		funcs = ArrayUtil.trim(funcs);
+		tplFunctions = ArrayUtil.trim(tplFunctions);
+		
+		int kind = exp.getKind();
+		
+		if (kind == IASTLiteralExpression.lk_integer_constant || kind == IASTLiteralExpression.lk_float_constant) {
+			if (kind == IASTLiteralExpression.lk_integer_constant) {
+				/*
+				 * 2.14.8.3
+				 * Let `exp.getValue()` = n
+				 * If L is a user-defined-integer-literal, let n be the literal
+				 * without its ud-suffix. If S contains a literal operator with 
+				 * parameter type unsigned long long, then use operator "" X(n ULL)
+				 */
+				CPPBasicType t = new CPPBasicType(Kind.eInt, IBasicType.IS_UNSIGNED | IBasicType.IS_LONG_LONG, exp);
+				data.setFunctionArguments(false, createArgForType(exp, t));
+				ret = resolveFunction(data, funcs, true);
+				if (ret != null && !(ret instanceof ProblemBinding)) {
+					return ret;
+				}
+			}
+			else if (kind == IASTLiteralExpression.lk_float_constant) {
+				/*
+				 * 2.14.8.4
+				 * Let `exp.getValue()` = f
+				 * If L is a user-defined-floating-literal, let f be the literal
+				 * without its ud-suffix. If S contains a literal operator with
+				 * parameter type long double, then use operator "" X(f L)
+				 */
+				CPPBasicType t = new CPPBasicType(Kind.eDouble, IBasicType.IS_LONG, exp);
+				data.setFunctionArguments(false, createArgForType(exp, t));
+				ret = resolveFunction(data, funcs, true);
+				if (ret != null && !(ret instanceof ProblemBinding)) {
+					return ret;
+				}
+			}
+			
+			/*
+			 * 2.14.8.3 (cont.), 2.14.8.4 (cont.)
+			 * Otherwise, S shall contain a raw literal operator or a literal
+			 * operator template but not both.
+			 */
+			// Raw literal operator
+			CPPPointerType charArray = new CPPPointerType(new CPPBasicType(Kind.eChar, 0, null), true, false, false);
+			data = new LookupData(((CPPASTLiteralExpression) exp).getOperatorName(), null, exp);
+			data.setFunctionArguments(false, createArgForType(exp, charArray));
+			ret = resolveFunction(data, funcs, true);
+			
+			
+			//  TODO: This is a mess, but I don't know a better way to do it
+			
+			IBinding[] tplBindings = new IBinding[j];
+			for (ICPPFunctionTemplate func : tplFunctions) {
+				// Get an instance of each template given the char literals as
+				// template arguments, then resolve.
+				CPPASTTemplateId tplName = new CPPASTTemplateId(((CPPFunctionTemplate)func).getTemplateName().copy());
+				for (char c : exp.getValue()) {
+					tplName.addTemplateArgument(new CPPASTLiteralExpression(ICPPASTLiteralExpression.lk_char_constant, new char[]{ '\'', c, '\'' }));
+				}
+				data = new LookupData(tplName);
+				tplBindings[--j] = resolveFunction(data, tplFunctions, true);
+			}
+			
+			// Do we have valid template and non-template bindings?
+			if (ret != null && tplBindings.length == 1) {
+				if (!(ret instanceof IProblemBinding) && tplBindings[0] instanceof CPPFunctionInstance) {
+					// Ambiguity? It has two valid options, and the spec says it shouldn't
+					ret = null;
+				}
+				
+				if ((ret instanceof IProblemBinding) && tplBindings[0] instanceof CPPFunctionInstance) {
+					// Only the template binding is valid
+					ret = tplBindings[0];
+				}
+			}
+		}
+		
+		else if (kind == IASTLiteralExpression.lk_string_literal) {
+			/*
+			 * 2.14.8.5
+			 * If L is a user-defined-string-literal, let str be the literal
+			 * without its ud-suffix and let len be the number of code units in
+			 * str (i.e., its length excluding the terminating null character).
+			 * L is treated as operater "" X(str, len)
+			 */
+			CPPPointerType strType = new CPPPointerType(new CPPBasicType(((CPPASTLiteralExpression)exp).getBasicCharKind(), 0, null), true, false, false);
+			CPPBasicType szType = new CPPBasicType(Kind.eInt, IBasicType.IS_UNSIGNED, null);
+			IASTInitializerClause[] initializer = new IASTInitializerClause[] {
+				createArgForType(exp, strType),
+				createArgForType(null, szType)
+			};
+			data.setFunctionArguments(false, initializer);
+			ret = resolveFunction(data, funcs, true);
+		}
+		else if (kind == IASTLiteralExpression.lk_char_constant) {
+			/*
+			 * 2.14.8.6
+			 * If L is a user-defined-character-literal, let ch be the literal
+			 * without its ud-suffix. S shall contain a literal operator whose
+			 * only parameter has the type ch and the literal L is treated as a
+			 * call operator "" X(ch)
+			 */
+			CPPBasicType t = new CPPBasicType(((CPPASTLiteralExpression)exp).getBasicCharKind(), 0, exp);
+			data.setFunctionArguments(false, createArgForType(exp, t));
+			ret = resolveFunction(data, funcs, true);
+		}
+		
+		return ret;
+	}
 
 	static ICPPFunction resolveTargetedFunction(IType targetType, CPPFunctionSet set, IASTNode point) {
 		targetType= getNestedType(targetType, TDEF | REF | CVTYPE | PTR | MPTR);

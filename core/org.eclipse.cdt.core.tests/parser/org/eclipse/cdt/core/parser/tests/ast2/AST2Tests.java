@@ -101,6 +101,7 @@ import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -122,12 +123,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
@@ -7538,5 +7541,329 @@ public class AST2Tests extends AST2TestBase {
 		ICPPTemplateInstance f = helper.assertNonProblem("f(STRINGIFY", "f");
 		// 7 characters for "foobar" + the null terminator.
 		assertEquals(7, f.getTemplateArguments()[0].getNonTypeValue().numericalValue().longValue());
+	}
+	
+	private void checkUDLIsType(String code, String type_name) throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings(code, CPP);
+		IASTDeclaration[] declarations = tu.getDeclarations();
+		IASTDeclaration declaration = declarations[declarations.length - 1];
+		
+		IASTInitializer init = ((IASTSimpleDeclaration) declaration).getDeclarators()[0].getInitializer();
+		IType type = ((IASTExpression)((IASTEqualsInitializer) init).getInitializerClause()).getExpressionType();
+		
+		assertEquals(type_name, type.toString());
+	}
+	
+	private void checkUDLIsRet(String code) throws Exception {
+		checkUDLIsType(code, "Ret");
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(unsigned long long i) { return Ret(); }
+	// auto test = 123X;
+	public void testUDLOperatorTypes1() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(long double i) { return Ret(); }
+	// auto test = 12.3X;
+	public void testUDLOperatorTypes2() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" X(const char* s) { return Ret(); }
+	// auto test = 123X;
+	public void testUDLOperatorTypes1a() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s) { return Ret(); }
+	// auto test = 12.3X;
+	public void testUDLOperatorTypes2a() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(unsigned long long d) { return Ret(); }
+	// bool operator "" X(const char* s) { return false; }
+	// auto test = 123X;
+	public void testUDLOperatorTypes1b() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(long double d) { return Ret(); }
+	// bool operator "" X(const char* s) { return false; }
+	// auto test = 12.3X;
+	public void testUDLOperatorTypes2b() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	// auto test = "123"X;
+	public void testUDLOperatorTypes3() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const wchar_t* s, unsigned sz) { return Ret(); }
+	// auto test = L"123"X;
+	public void testUDLOperatorTypes3a() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" X(const char16_t* s, unsigned sz) { return Ret(); }
+	// auto test = u"123"X;
+	public void testUDLOperatorTypes3b() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char32_t* s, unsigned sz) { return Ret(); }
+	// auto test = U"123"X;
+	public void testUDLOperatorTypes3c() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// template<char... Chars> Ret operator "" X() { return Ret(); }
+	// auto test = 123X;
+	public void testUDLOperatorTypes4a() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// template<char... Chars> Ret operator "" X() { return Ret(); }
+	// auto test = 123.123X;
+	public void testUDLOperatorTypes4b() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	// auto test = "123" "123"X;
+	public void testUDLConcatenation1a() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	// auto test = "123"X "123";
+	public void testUDLConcatenation1b() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	// auto test = u8"123" "123"X;
+	public void testUDLConcatenation2a() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	// auto test = u8"123"X "123";
+	public void testUDLConcatenation2b() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	// auto test = "123" u8"123"X;
+	public void testUDLConcatenation2c() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	// auto test = "123"X u8"123";
+	public void testUDLConcatenation2d() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" X(const wchar_t* s, unsigned sz) { return Ret(); }
+	// auto test = L"123" "123"X;
+	public void testUDLConcatenation3a() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const wchar_t* s, unsigned sz) { return Ret(); }
+	// auto test = L"123"X "123";
+	public void testUDLConcatenation3b() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const wchar_t* s, unsigned sz) { return Ret(); }
+	// auto test = "123" L"123"X;
+	public void testUDLConcatenation3c() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const wchar_t* s, unsigned sz) { return Ret(); }
+	// auto test = "123"X L"123";
+	public void testUDLConcatenation3d() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" X(const char16_t* s, unsigned sz) { return Ret(); }
+	// auto test = u"123" "123"X;
+	public void testUDLConcatenation4a() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char16_t* s, unsigned sz) { return Ret(); }
+	// auto test = u"123"X "123";
+	public void testUDLConcatenation4b() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char16_t* s, unsigned sz) { return Ret(); }
+	// auto test = "123" u"123"X;
+	public void testUDLConcatenation4c() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char16_t* s, unsigned sz) { return Ret(); }
+	// auto test = "123"X u"123";
+	public void testUDLConcatenation4d() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" X(const char32_t* s, unsigned sz) { return Ret(); }
+	// auto test = U"123" "123"X;
+	public void testUDLConcatenation5a() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char32_t* s, unsigned sz) { return Ret(); }
+	// auto test = U"123"X "123";
+	public void testUDLConcatenation5b() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char32_t* s, unsigned sz) { return Ret(); }
+	// auto test = "123" U"123"X;
+	public void testUDLConcatenation5c() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char32_t* s, unsigned sz) { return Ret(); }
+	// auto test = "123"X U"123";
+	public void testUDLConcatenation5d() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char32_t* s, unsigned sz) { return Ret(); }
+	// auto test = "123"X U"123"X;
+	public void testUDLConcatenation6() throws Exception {
+		checkUDLIsRet(getAboveComment());
+	}
+	
+	// class Ret {};
+	// Ret operator "" X(const char* s, unsigned sz) { return Ret(); }
+	// Ret operator "" Y(const char* s, unsigned sz) { return Ret(); }
+	// auto test = "123"X "123"Y;
+	public void testUDLBadConcat1() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, false);
+		
+		IASTProblem[] problems = tu.getPreprocessorProblems();
+		assertEquals(1, problems.length);
+		
+		assertEquals(IProblem.PREPROCESSOR_MULTIPLE_USERDEFINED_SUFFIXES_IN_CONCATENATION, problems[0].getID());
+	}
+	
+	// // Test name lacking a space
+	// int operator ""X(const char* s) { return 0; }
+	public void testUDLNoWS1() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, false);
+		IASTDeclaration decl = tu.getDeclarations()[0];
+		
+		assertTrue(decl instanceof IASTProblemDeclaration);
+		assertEquals(IProblem.SYNTAX_ERROR, ((IASTProblemDeclaration)decl).getProblem().getID());
+	}
+	
+	// // Test literals with spaces before the suffix
+	// int operator "" X(const char* s) { return 0; }
+	// auto a = 1 X;
+	// auto b = 1.0 X;
+	// auto c1 = '1' X;
+	// auto c2 = L'1' X;
+	// auto c3 = u8'1' X;
+	// auto c4 = u'1' X;
+	// auto c5 = U'1' X;
+	// auto d1 = "1" X;
+	// auto d2 = L"1" X;
+	// auto d3 = u8"1" X;
+	// auto d4 = u"1" X;
+	// auto d5 = U"1" X;
+	// auto e1 = "1" X "2";
+	// auto e2 = L"1" X "2";
+	// auto e3 = u8"1" X "2";
+	// auto e4 = u"1" X "2";
+	// auto e5 = U"1" X "2";
+	// auto d5 = U"1" X;
+	public void testUDLNoWS2() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, false);
+		IASTDeclaration[] decls = tu.getDeclarations();
+		
+		for (int i = 1; i < decls.length; i++) {
+			IASTDeclaration decl = decls[i];
+			assertTrue(decl instanceof IASTProblemDeclaration);
+			assertEquals(IProblem.SYNTAX_ERROR, ((IASTProblemDeclaration)decl).getProblem().getID());
+		}
+	}
+	
+	// class RetA {}; 
+	// class RetB {};
+	// template<char... Chars> RetA operator "" X() { return RetA(); }
+	// RetB operator "" X(unsigned long long i) { return RetB(); }
+	// auto a = 123X;
+	public void testUDLResolution1() throws Exception {
+		checkUDLIsType(getAboveComment(), "RetB");
+	}
+	
+	// class RetA {}; 
+	// class RetB {};
+	// template<char... Chars> RetA operator "" X() { return RetA(); }
+	// RetB operator "" X(long double i) { return RetB(); }
+	// auto a = 123.123X;
+	public void testUDLResolution2() throws Exception {
+		checkUDLIsType(getAboveComment(), "RetB");
+	}
+	
+	// class RetA {}; 
+	// class RetB {};
+	// template<char... Chars> RetA operator "" X() { return RetA(); }
+	// RetB operator "" X(const char * c) { return RetB(); }
+	// auto test = 123X;
+	public void testUDLResolution3() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, false);
+		NameCollector col = new NameCollector();
+		tu.accept(col);
+		
+		for (Object obj: col.nameList) {
+			IBinding binding = ((IASTName) obj).resolveBinding();
+			if (binding.getName().equals("test")) {
+				assertTrue(((CPPVariable)binding).getType() instanceof IProblemType);
+			}
+		}
 	}
 }

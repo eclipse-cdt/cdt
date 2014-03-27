@@ -10577,4 +10577,73 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testU8TokenAfterIfdef_429361() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	// int operator "" _A(unsigned long long i) { return 1; }
+	// int operator "" _B(long double d) { return 1; }
+	// int operator "" _C(const char* s, unsigned int sz) { return sz; }
+	// int operator "" _D(const wchar_t* s, unsigned int sz) { return sz; }
+	// int operator "" _E(const char16_t* s, unsigned int sz) { return sz; }
+	// int operator "" _F(const char32_t* s, unsigned int sz) { return sz; }
+	// int operator "" _G(char c) { return (int)c; }
+	// constexpr double operator "" _km_to_miles(long double km) { return km * 0.6213; } 
+	public void testSimpleUDLOperators() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	int integers[] = {
+	//			1,
+	//			1U,
+	//			1L,
+	//			1LL,
+	//			1ULL,
+	//			1suff,
+	//			1_suff,
+	//			0x3003,
+	//			0x3003U,
+	//			0x3003L,
+	//			0x3003LL,
+	//			0x3003ULL,
+	//			0x3003suff,
+	//			0x3003_suff,
+	//			0xabcdef,
+	//			0xABCDEF,
+	//			0Xabcdef,
+	//			0xABCDEF,
+	//			0xABCDEFU,
+	//			0xABCDEFL,
+	//			0xABCDEFULL,
+	//			0xABCDEFsuff,
+	//			0xABCDEF_suff,
+	//			01,
+	//			01U,
+	//			01L,
+	//			07LL,
+	//			04ULL,
+	//			01_suff,
+	//			1ULL << 34,
+	//	};
+	public void testIntegerUserDefinedLiterals() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	double numbers[] = {
+	//		1f,
+	//		1.f,
+	//		1.X,
+	//		1.0x,
+	//		0x01p3,
+	//		0x01p3XX,
+	//		1._X
+	//	};
+	public void testDoublesUserDefinedLiterals() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	// char c1 = '0'_suff;
+	// char c2 = '0'suff;
+	// char* c3 = "Hello"_suff;
+	// char* c4 = "Hello"suff;
+	public void testCharStringUserDefinedLiterals() throws Exception {
+		parseAndCheckBindings();
+	} 
 }

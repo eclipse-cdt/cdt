@@ -298,18 +298,42 @@ public class CharArrayUtils {
 	}
 
 	public static final int lastIndexOf(char[] toBeFound, char[] array) {
-	    int j = toBeFound.length - 1;
-		for (int i = array.length; --i >= 0;) {
+		return lastIndexOf(toBeFound, array, 0);
+	}
+	
+	/**
+	 * @since 5.7
+	 */
+	public static final int lastIndexOf(char toBeFound, char[] array) {
+		return lastIndexOf(toBeFound, array, 0);
+	}
+	
+	/**
+	 * @since 5.7
+	 */
+	public static final int lastIndexOf(char toBeFound, char[] array, final int fromIndex) {
+		return lastIndexOf(new char[]{toBeFound}, array, fromIndex);
+	}
+	
+	/**
+	 * @since 5.7
+	 */
+	public static final int lastIndexOf(char[] toBeFound, char[] array, final int fromIndex) {
+		int j = toBeFound.length - 1;
+		for (int i = array.length; --i >= fromIndex;) {
 			if (toBeFound[j] == array[i]) {
-			    if (--j == -1)
-			        return i;
-			} else {
+				if (--j == -1) {
+					return i;
+				}
+			}
+			else {
 				j = toBeFound.length - 1;
 			}
 		}
+		
 		return -1;
 	}
-
+	
 	static final public char[] trim(char[] chars) {
 		if (chars == null)
 			return null;

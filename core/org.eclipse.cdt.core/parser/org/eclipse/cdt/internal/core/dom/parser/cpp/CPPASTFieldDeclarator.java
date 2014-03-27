@@ -16,13 +16,12 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * Field declarator for c++.
  */
 public class CPPASTFieldDeclarator extends CPPASTDeclarator implements
-        ICPPASTFieldDeclarator, IASTAmbiguityParent {
+        ICPPASTFieldDeclarator {
 
     private IASTExpression bitField;
  

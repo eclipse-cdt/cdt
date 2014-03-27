@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 
 
 /**
@@ -222,8 +223,22 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define tp(x,y) #x##y
 	// tp(a, );
 	// tp(a,b);
-	public void testStringifyAndPaste() throws Exception {
-		initializeScanner();
+	public void testStringifyAndPasteCPP() throws Exception {
+		initializeScanner(getAboveComment(), ParserLanguage.CPP);
+		validateString("a");
+		validateToken(IToken.tSEMI);
+
+		validateUDLString("a", "b");
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	// #define tp(x,y) #x##y
+	// tp(a, );
+	// tp(a,b);
+	public void testStringifyAndPasteC() throws Exception {
+		initializeScanner(getAboveComment(), ParserLanguage.C);
 		validateString("a");
 		validateToken(IToken.tSEMI);
 
@@ -1355,13 +1370,39 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateToken(IToken.tSEMI);
 		validateEOF();
 		validateProblemCount(0);
+	}
 	
+	public void testBadBinaryNumbersC() throws Exception {
+		String badbinary = "{0b012, 0b01b, 0b1111e01, 0b1111p10, 0b10010.10010}";
+		initializeScanner(badbinary, ParserLanguage.C);
+		fullyTokenize();
+		validateProblemCount(5);
+		validateProblem(0, IProblem.SCANNER_BAD_BINARY_FORMAT, null);
+		validateProblem(1, IProblem.SCANNER_BAD_SUFFIX_ON_CONSTANT, "b");
+		validateProblem(2, IProblem.SCANNER_BAD_PREFIX_ON_FLOAT, "0b");
+		validateProblem(3, IProblem.SCANNER_BAD_SUFFIX_ON_CONSTANT, "p10");
+		validateProblem(4, IProblem.SCANNER_BAD_PREFIX_ON_FLOAT, "0b");
+	}
+	
+	public void testBadBinaryNumbersCPP() throws Exception {
+		// First, third, and fift are invalid in c++11
 		String badbinary = "{0b012, 0b01b, 0b1111e01, 0b1111p10, 0b10010.10010}";
 		initializeScanner(badbinary);
 		fullyTokenize();
-		validateProblemCount(5);
-		for (int i = 0; i < 5; i++) {
-			validateProblem(i, IProblem.SCANNER_BAD_BINARY_FORMAT, null);
-		}
+		validateProblemCount(3);
+		validateProblem(0, IProblem.SCANNER_BAD_BINARY_FORMAT, null);
+		validateProblem(1, IProblem.SCANNER_BAD_PREFIX_ON_FLOAT, "0b");
+		validateProblem(2, IProblem.SCANNER_BAD_PREFIX_ON_FLOAT, "0b");
+	}
+	// #if 123ASDF
+	// #endif
+	// #if 0xU
+	// #endif
+	public void testUDLInPP() throws Exception {
+		initializeScanner();
+		validateEOF();
+		validateProblemCount(2);
+		validateProblem(0, IProblem.SCANNER_BAD_SUFFIX_ON_CONSTANT, "ASDF");
+		validateProblem(1, IProblem.SCANNER_BAD_SUFFIX_ON_CONSTANT, "xU");
 	}
 }

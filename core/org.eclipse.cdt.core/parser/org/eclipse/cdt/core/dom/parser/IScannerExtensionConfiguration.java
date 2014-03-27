@@ -9,6 +9,7 @@
  *    IBM - Initial API and implementation
  *    Anton Leherbauer (Wind River Systems)
  *    Markus Schorn (Wind River Systems)
+ *    Richard Eames
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
@@ -115,4 +116,10 @@ public interface IScannerExtensionConfiguration {
 	 * @since 5.5
 	 */
 	public boolean supportRawStringLiterals();
+		
+	/**
+	 * Support for User Defined Literals such as 123_suffix
+	 * @since 5.7
+	 */
+	public boolean supportUserDefinedLiterals();
 }

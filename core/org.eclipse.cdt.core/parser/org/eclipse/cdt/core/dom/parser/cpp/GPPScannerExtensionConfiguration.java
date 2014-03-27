@@ -123,4 +123,15 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
     public boolean supportRawStringLiterals() {
     	return true;
     }
+
+
+	/**
+	 * User Defined Literals
+	 * TODO: Should this only be enabled if the version is >= 4.7?
+	 * @since 5.7
+	 */
+	@Override
+	public boolean supportUserDefinedLiterals() {
+		return true;
+	}
 }

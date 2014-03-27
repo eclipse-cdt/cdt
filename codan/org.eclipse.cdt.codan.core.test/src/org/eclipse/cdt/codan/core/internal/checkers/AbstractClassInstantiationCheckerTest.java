@@ -365,4 +365,13 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 		// Just check that codan runs without any exceptions being thrown.
 		loadCodeAndRun(getAboveComment());
 	}
+
+	//	template <int I>
+	//	struct S : S<I - 1> {};
+	//
+	//	S<1> waldo;
+	public void testMaxInstantiationDepth_430282() throws Exception {
+		// Just check that codan runs without any exceptions being thrown.
+		loadCodeAndRun(getAboveComment());
+	}
 }

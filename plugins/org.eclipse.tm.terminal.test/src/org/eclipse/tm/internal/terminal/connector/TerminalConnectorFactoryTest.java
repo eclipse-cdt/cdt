@@ -76,6 +76,13 @@ public class TerminalConnectorFactoryTest extends TestCase {
 
 		public void setupTerminal(Composite parent) {
 		}
+		
+		public boolean isConnectOnEnterIfClosed() {
+			return false;
+		}
+		
+		public void setConnectOnEnterIfClosed(boolean on) {
+		}
 	}
 	static class ConnectorMock extends TerminalConnectorImpl {
 

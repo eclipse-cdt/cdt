@@ -111,6 +111,15 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 		return false;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @since 5.7
+	 */
+	@Override
+	public boolean supportUserDefinedLiterals() {
+		return false;
+	}
+	
 	@Override
 	public CharArrayIntMap getAdditionalPreprocessorKeywords() {
 		return fAddPreprocessorKeywords;

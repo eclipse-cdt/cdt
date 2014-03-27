@@ -123,4 +123,21 @@ public interface ITerminalControl {
 	 */
 	void setMsg(String msg);
 
+	/**
+	 * Sets if or if not the terminal view control should try to reconnect
+	 * the terminal connection if the user hits ENTER in a closed terminal.
+	 * <p>
+	 * Reconnect on ENTER if terminal is closed is enabled by default.
+	 * 
+	 * @param on <code>True</code> to enable the reconnect, <code>false</code> to disable it.
+	 */
+	void setConnectOnEnterIfClosed(boolean on);
+	
+	/**
+	 * Returns if or if not the terminal view control should try to reconnect
+	 * the terminal connection if the user hits ENTER in a closed terminal.
+	 * 
+	 * @return <code>True</code> the reconnect is enabled, <code>false</code> if disabled.
+	 */
+	boolean isConnectOnEnterIfClosed();
 }

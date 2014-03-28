@@ -40,7 +40,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.pdom.CModelListener;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
@@ -303,15 +306,17 @@ public class BaseTestCase extends TestCase {
 		}
 	}
 
-    public static void waitForIndexer(ICProject project) throws InterruptedException {
-		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
-
-		final PDOMManager indexManager = CCoreInternals.getPDOMManager();
-		assertTrue(indexManager.joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));
-		long waitms= 1;
-		while (waitms < 2000 && !indexManager.isProjectRegistered(project)) {
-			Thread.sleep(waitms);
-			waitms *= 2;
+	public static void waitForIndexer(ICProject project) throws InterruptedException {
+		PDOMManager indexManager = CCoreInternals.getPDOMManager();
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		try {
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
+			project.getProject().refreshLocal(IResource.DEPTH_INFINITE, npm());
+			workspace.build(IncrementalProjectBuilder.FULL_BUILD, npm());
+			indexManager.joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm());
+			workspace.build(IncrementalProjectBuilder.FULL_BUILD, npm());
+		} catch (CoreException e) {
+			fail(e.getMessage());
 		}
 		assertTrue(indexManager.isProjectRegistered(project));
 		assertTrue(indexManager.joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));

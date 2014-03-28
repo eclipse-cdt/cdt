@@ -34,6 +34,24 @@
       "revId": "9487275bd5c8c5a5cacbadd884c2fa38e49dd6dd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_f035ef61",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIBreakInsert.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-03-28T22:13:10Z",
+      "side": 1,
+      "message": "As for the comment, whatever you feel is clearer.  As long as someone knows to go look at that bug before re-introducing similar code to remove the double \\ :)",
+      "parentUuid": "2753a756_f0932f5f",
+      "revId": "9487275bd5c8c5a5cacbadd884c2fa38e49dd6dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

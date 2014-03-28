@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - Initial API and implementation
+ *     Markus Schorn - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
  * It also handles the impact on the grouping of the sub-expressions.
  */
 public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbiguousNode implements IASTAmbiguousExpression {
-
     private final IASTCastExpression fCastExpression;
     private final IASTFunctionCallExpression fFunctionCallExpression;
     
@@ -158,7 +157,7 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbigu
 		}
 		
 		owner.replace(nodeToReplace, result);
-		// resolve ambiguities in the function-call expression
+		// Resolve ambiguities in the function-call expression
 		fFunctionCallExpression.getFunctionNameExpression().accept(visitor);
 		return result;
 	}
@@ -177,8 +176,7 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbigu
 				default:
 					return null;
 				}
-			}
-			else if (operand instanceof IASTArraySubscriptExpression) {
+			} else if (operand instanceof IASTArraySubscriptExpression) {
 				operand= ((IASTArraySubscriptExpression) operand).getArrayExpression();
 			} else if (operand instanceof IASTFunctionCallExpression) {
 				operand= ((IASTFunctionCallExpression) operand).getFunctionNameExpression();

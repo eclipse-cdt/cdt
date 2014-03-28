@@ -19,83 +19,83 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTUnaryExpression extends IASTExpression {
 	/**
 	 * Prefix increment.
-	 * <code>op_prefixIncr</code> ++exp
+	 * {@code op_prefixIncr}: ++exp
 	 */
 	public static final int op_prefixIncr = 0;
 
 	/**
 	 * Prefix decrement.
-	 * <code>op_prefixDecr</code> --exp
+	 * {@code op_prefixDecr}: --exp
 	 */
 	public static final int op_prefixDecr = 1;
 
 	/**
 	 * Operator plus.
-	 * <code>op_plus</code> ==> +exp
+	 * {@code op_plus}: +exp
 	 */
 	public static final int op_plus = 2;
 
 	/**
 	 * Operator minus.
-	 * <code>op_minux</code> ==> -exp
+	 * {@code op_minux}: -exp
 	 */
 	public static final int op_minus = 3;
 
 	/**
 	 *  Operator star.
-	 *  <code>op_star</code> ==> *exp
+	 *  {@code op_star}: *exp
 	 */
 	public static final int op_star = 4;
 
 	/**
 	 * Operator ampersand.
-	 * <code>op_amper</code> ==> &exp
+	 * {@code op_amper}: &exp
 	 */
 	public static final int op_amper = 5;
 
 	/**
 	 * Operator tilde.
-	 * <code>op_tilde</code> ==> ~exp
+	 * {@code op_tilde}: ~exp
 	 */
 	public static final int op_tilde = 6;
 
 	/**
 	 * not.
-	 * <code>op_not</code> ==> ! exp
+	 * {@code op_not}: !exp
 	 */
 	public static final int op_not = 7;
 
 	/**
 	 * sizeof.
-	 * <code>op_sizeof</code> ==> sizeof exp  
+	 * {@code op_sizeof}: sizeof exp  
 	 */
 	public static final int op_sizeof = 8;
 
 	/**
 	 * Postfix increment.
-	 * <code>op_postFixIncr</code> ==> exp++
+	 * {@code op_postFixIncr}: exp++
 	 */
 	public static final int op_postFixIncr = 9;
 
 	/**
 	 * Postfix decrement.
-	 * <code>op_bracketedPrimary</code> ==> exp--
+	 * {@code op_postFixDecr}: exp--
 	 */
 	public static final int op_postFixDecr = 10;
 
 	/**
 	 * A bracketed expression.
-	 * <code>op_bracketedPrimary</code> ==> ( exp )
+	 * {@code op_bracketedPrimary}: ( exp )
 	 */
 	public static final int op_bracketedPrimary = 11;
 
 	/**
-	 * for c++, only. <code>op_throw</code> throw exp
+	 * For C++, only. {@code op_throw}: throw exp
 	 */
 	public static final int op_throw = 12;
 
 	/**
-	 * for c++, only. <code>op_typeid</code> = typeid( exp )
+	 * For C++, only. {@code op_typeid}: typeid( exp )
 	 */
 	public static final int op_typeid = 13;
 
@@ -106,62 +106,63 @@ public interface IASTUnaryExpression extends IASTExpression {
 	public static final int op_typeof = 14;
 
 	/**
-	 * For gnu parsers, only. <code>op_alignOf</code> is used for __alignOf( unaryExpression ) type
+	 * For GCC parsers, only. {@code op_alignOf} is used for __alignOf( unaryExpression ) type
 	 * expressions.
 	 */
 	public static final int op_alignOf = 15;
 
 	/**
-	 * For c++, only: 'sizeof... ( parameterPack )'
+	 * For C++, only: 'sizeof... ( parameterPack )'
 	 * @since 5.2
 	 */
 	public static final int op_sizeofParameterPack = 16;
 
 	/**
-	 * For c++, only: noexcept ( expression )
+	 * For C++, only: noexcept ( expression )
 	 * @since 5.5
 	 */
 	public static final int op_noexcept = 17;
 
 	/**
-	 * <code>op_last</code> is made available for subclasses.
+	 * {@code op_last} is made available for subclasses.
 	 * @deprecated all constants must be defined in this interface
 	 */
 	@Deprecated
 	public static final int op_last = op_alignOf;
 
 	/**
-	 * Get the operator/kind.
-	 * 
-	 * @return (int)
-	 */
-	public int getOperator();
-
-	/**
-	 * Set the operator/kind.
-	 * 
-	 * @param value (int) value
-	 */
-	public void setOperator(int value);
-
-	/**
-	 * <code>OPERAND</code> represents the relationship between an <code>IASTUnaryExpression</code> and
-	 * it's nested <code>IASTExpression</code>.
+	 * {@code OPERAND} represents the relationship between an {@code IASTUnaryExpression} and
+	 * it's nested {@code IASTExpression}.
 	 */
 	public static final ASTNodeProperty OPERAND =
 			new ASTNodeProperty("IASTUnaryExpression.OPERAND - IASTExpression (operand) for IASTUnaryExpression"); //$NON-NLS-1$
 
+
 	/**
-	 * Get the operand.
+	 * Returns the operator/kind.
 	 * 
-	 * @return <code>IASTExpression</code>
+	 * @return the operator, one of {@code op_*} constants defined in this interface.
+	 */
+	public int getOperator();
+
+	/**
+	 * Sets the operator/kind.
+	 * 
+	 * @param operator the operator, one of {@code op_*} constants defined in this interface.
+	 */
+	public void setOperator(int operator);
+
+	/**
+	 * Returns the operand.
+	 * 
+	 * @return {@code IASTExpression}
 	 */
 	public IASTExpression getOperand();
 
 	/**
-	 * Set the operand.
+	 * Sets the operand.
 	 * 
-	 * @param expression <code>IASTExpression</code>
+	 * @param expression {@code IASTExpression}
 	 */
 	public void setOperand(IASTExpression expression);
 

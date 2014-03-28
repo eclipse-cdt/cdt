@@ -16,7 +16,6 @@ import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 
 /**
  * Plain node has one prev one jump
- * 
  */
 public class ExitNode extends AbstractSingleIncomingNode implements IExitNode {
 	private IStartNode start;

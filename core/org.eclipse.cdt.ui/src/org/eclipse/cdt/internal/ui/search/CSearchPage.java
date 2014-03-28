@@ -159,7 +159,7 @@ public class CSearchPage extends DialogPage implements ISearchPage {
 	
 	private ICElement getElement(Object obj) {
 		if (obj instanceof IResource) {
-			return CoreModel.getDefault().create((IResource)obj);
+			return CoreModel.getDefault().create((IResource) obj);
 		} 
 		if (obj instanceof ICElement) {
 			ICElement elem= (ICElement) obj;
@@ -190,7 +190,7 @@ public class CSearchPage extends DialogPage implements ISearchPage {
 	    } else {
 	    	for (int i = 0; i < searchForButtons.length; ++i) {
 	    		if (searchForButtons[i].getSelection())
-	    			searchFlags |= ((Integer)searchForButtons[i].getData()).intValue();
+	    			searchFlags |= ((Integer) searchForButtons[i].getData()).intValue();
 	    	}
 	    }
 	    for (int i = 0; i < limitToButtons.length; ++i) {

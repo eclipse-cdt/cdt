@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - Initial API and implementation
+ *     Markus Schorn - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
  * It also handles the impact on the grouping of the sub-expressions.
  */
 public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNode implements IASTAmbiguousExpression {
-
 	private final IASTBinaryExpression fBinaryExpression;
     private final IASTCastExpression fCastExpression;
 
@@ -113,7 +112,7 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
 		if (primaryInParenthesis != null && leadingCastExpression != null && castedUnary instanceof IASTUnaryExpression) {
 			IASTExpression lp= (IASTExpression) primaryInParenthesis.getParent();
 			IASTBinaryExpression rp= (IASTBinaryExpression) leadingCastExpression.getParent();
-			((IASTUnaryExpression)castedUnary).setOperand(leadingCastExpression);
+			((IASTUnaryExpression) castedUnary).setOperand(leadingCastExpression);
 			setEnd(castedUnary, leadingCastExpression);
 			setRange(fCastExpression, primaryInParenthesis, leadingCastExpression);
 			IASTExpression root= joinExpressions(lp, fCastExpression, rp);

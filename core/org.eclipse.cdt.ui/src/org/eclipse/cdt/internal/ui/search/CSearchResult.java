@@ -158,7 +158,9 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 				if (location.getFullPath() != null) {
 					return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(location.getFullPath()));
 				}
-			} catch(CoreException ce) { /* fall-through to return null */ }
+			} catch (CoreException e) {
+				// Fall-through to return null.
+			}
 		} else if (element instanceof CSearchElement) {
 			CSearchElement searchElement = (CSearchElement) element;
 			IIndexFileLocation location = searchElement.getLocation();

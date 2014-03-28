@@ -26,7 +26,7 @@ public class CSearchMatch extends Match {
 	}
 
 	IIndexFileLocation getLocation() {
-		return ((CSearchElement)getElement()).getLocation();
+		return ((CSearchElement) getElement()).getLocation();
 	}
 	
 	@Override
@@ -35,10 +35,10 @@ public class CSearchMatch extends Match {
 			return true;
 		if (!(obj instanceof CSearchMatch))
 			return false;
-		CSearchMatch other = (CSearchMatch)obj;
+		CSearchMatch other = (CSearchMatch) obj;
 		return getElement().equals(other.getElement())
-			&& getOffset() == other.getOffset()
-			&& getLength() == other.getLength();
+				&& getOffset() == other.getOffset()
+				&& getLength() == other.getLength();
 	}
 
 	public void setIsPolymorphicCall() {

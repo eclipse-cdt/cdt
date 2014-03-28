@@ -1114,13 +1114,13 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		 * swallow this one.
 		 */
 		if (e instanceof CoreException) {
-			s=((CoreException) e).getStatus();
+			s= ((CoreException) e).getStatus();
 			if (s.getCode() == CCorePlugin.STATUS_PDOM_TOO_LARGE) {
 				if (CCorePlugin.PLUGIN_ID.equals(s.getPlugin()))
 					throw (CoreException) e;
 			}
 
-			// mask errors in order to avoid dialog from platform
+			// Mask errors in order to avoid dialog from platform
 			Throwable exception = s.getException();
 			if (exception != null) {
 				Throwable masked= getMaskedException(exception);

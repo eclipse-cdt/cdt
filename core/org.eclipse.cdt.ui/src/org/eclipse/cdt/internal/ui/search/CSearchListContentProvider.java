@@ -70,7 +70,7 @@ public class CSearchListContentProvider implements IStructuredContentProvider, I
 		}
 
 		// add message for all the projects which have no results
-		ICProject[] projects = ((CSearchQuery)result.getQuery()).getProjects();
+		ICProject[] projects = ((CSearchQuery) result.getQuery()).getProjects();
 		for (int i = 0; i < projects.length; ++i) {
 			ICProject project = projects[i];
 			boolean foundProject = uncoveredProjects.contains(project.getProject().getName());

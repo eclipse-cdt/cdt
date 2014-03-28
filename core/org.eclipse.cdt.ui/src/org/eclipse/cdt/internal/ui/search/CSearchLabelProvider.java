@@ -116,9 +116,8 @@ public class CSearchLabelProvider extends LabelProvider implements IStyledLabelP
 		}
 
 		if (element instanceof TypeInfoSearchElement) {
-			return fTypeInfoLabelProvider.getText(((TypeInfoSearchElement)element).getTypeInfo());
-		}
-		else if (element instanceof ProblemSearchElement) {
+			return fTypeInfoLabelProvider.getText(((TypeInfoSearchElement) element).getTypeInfo());
+		} else if (element instanceof ProblemSearchElement) {
 			ProblemSearchElement pse= (ProblemSearchElement) element;
 			return ASTProblem.getMessage(pse.getProblemID(), pse.getDetail()); 
 		}
@@ -128,7 +127,7 @@ public class CSearchLabelProvider extends LabelProvider implements IStyledLabelP
 		}
 		
 		if (element instanceof IIndexFileLocation) {
-			IPath path= IndexLocationFactory.getPath((IIndexFileLocation)element); 
+			IPath path= IndexLocationFactory.getPath((IIndexFileLocation) element); 
 			if (path != null) {
 				// these are categorized into directories already
 				return path.lastSegment();

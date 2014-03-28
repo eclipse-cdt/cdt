@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_3065a711",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIBreakInsert.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-03-28T20:21:39Z",
+      "side": 1,
+      "message": "Could you just put a comment referring to bug 426834 to explain why we are removing this code?",
+      "revId": "9487275bd5c8c5a5cacbadd884c2fa38e49dd6dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

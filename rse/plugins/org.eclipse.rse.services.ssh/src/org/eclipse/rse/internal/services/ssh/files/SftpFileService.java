@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@
  * Martin Oberhuber (Wind River) - [286129][api] RemoteFileException(String) violates API contract
  * Martin Tauber				 - [256581][performance] Re-use Sftp channels
  * Anna Dushistova  (MontaVista) - [331213] [scp] Provide UI-less scp IFileService in org.eclipse.rse.services.ssh
+ * Chris Khoun      (IBM)        - [431396] RSE SystemRemoteFileDialog fails to expand CYGWIN emulated Windows drives through openSSH
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -808,7 +809,14 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		}
 		//Permissions: expect the current user to be the owner
 		String perms = attrsTarget.getPermissionsString();
-		if (perms.indexOf('r',1)<=0) {
+		
+		// By default, CYGWIN lists Windows drives under the /cygdrive/ directory.
+		// CYGWIN will show the following permissions for Windows drives. d---------+
+		// We should not set readable to false for CYGWIN emulated Windows drives
+		// as they are indeed readable and expandable.
+		if (parentPath != null && parentPath.equals("/cygdrive")) { //$NON-NLS-1$
+			node.setReadable(true); //readable by anyone
+		} else if (perms.indexOf('r',1)<=0) {
 			node.setReadable(false); //not readable by anyone
 		}
 		if (perms.indexOf('w',1)<=0) {

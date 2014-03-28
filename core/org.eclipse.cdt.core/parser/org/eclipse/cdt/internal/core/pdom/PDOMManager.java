@@ -730,7 +730,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     @Override
 	public boolean isIndexerIdle() {
     	synchronized (fTaskQueue) {
-        	return Job.getJobManager().find(this).length == 0;
+        	return Job.getJobManager().find(this).length == 0 && fTaskQueue.isEmpty();
 		}
     }
 

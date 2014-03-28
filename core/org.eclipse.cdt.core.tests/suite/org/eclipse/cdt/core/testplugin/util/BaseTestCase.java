@@ -38,7 +38,6 @@ import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.pdom.CModelListener;
-import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -305,16 +304,7 @@ public class BaseTestCase extends TestCase {
 
     public static void waitForIndexer(ICProject project) throws InterruptedException {
 		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
-
-		final PDOMManager indexManager = CCoreInternals.getPDOMManager();
-		assertTrue(indexManager.joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));
-		long waitms= 1;
-		while (waitms < 2000 && !indexManager.isProjectRegistered(project)) {
-			Thread.sleep(waitms);
-			waitms *= 2;
-		}
-		assertTrue(indexManager.isProjectRegistered(project));
-		assertTrue(indexManager.joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));
+		assertTrue(CCoreInternals.getPDOMManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));
 	}
 
 	public static void waitUntilFileIsIndexed(IIndex index, IFile file) throws Exception {

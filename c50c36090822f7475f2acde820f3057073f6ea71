@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_3c1460cf",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteCDSFMainTab.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-03-31T16:11:13Z",
+      "side": 1,
+      "message": "This will inadvertently change path separator to host OS witch might not match target OS path. \nIn case of remote debugging of a Linux App from WindowsOS host  this will change the path.  So instead of \"/home/user/workspace/project.elf\"  the changed path will be  \"\\home\\user\\workspace\\project.elf\" and debug session will fail.\nSolutions would be either to change back to using \"remotePath.toPortableString()\" or an option would be to manually append separators using IRemoteFile API, i.e.\nselectedFile.getAbsolutePath() + selectedFile.getSeparator() + lastSegment.trim()",
+      "revId": "c50c36090822f7475f2acde820f3057073f6ea71",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

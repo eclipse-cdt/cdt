@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,9 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug 323552)
+ *     Raphael Zulliger (Indel) -  Allow derived classes of RegisterVMProvider 
+ *                                 to create alternative configuration (Bug 
+ *                                 431622)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.register;
 
@@ -78,10 +81,19 @@ public class RegisterVMProvider extends AbstractDMVMProvider
         store.addPropertyChangeListener(fPreferencesListener);
         setDelayEventHandleForViewUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
         
+        configureLayout();
+    }
+    
+    /**
+     * Configures the nodes of this provider.  This method may be over-ridden by
+     * sub classes to create an alternate configuration in this provider.
+     */
+    protected void configureLayout() {
+
         /*
          *  Create the register data access routines.
          */
-        SyncRegisterDataAccess regAccess = new SyncRegisterDataAccess(session) ;
+        SyncRegisterDataAccess regAccess = new SyncRegisterDataAccess(getSession()) ;
         
         /*
          *  Create the top level node to deal with the root selection.

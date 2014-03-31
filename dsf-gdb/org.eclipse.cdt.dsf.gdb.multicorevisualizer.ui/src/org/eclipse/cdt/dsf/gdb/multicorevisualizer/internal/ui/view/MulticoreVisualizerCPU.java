@@ -154,7 +154,7 @@ public class MulticoreVisualizerCPU extends MulticoreVisualizerGraphicObject
 			int text_indent_y = 0;
 			int tx = m_bounds.x + m_bounds.width  - text_indent_x;
 			int ty = m_bounds.y + m_bounds.height - text_indent_y;
-			GUIUtils.drawTextAligned(gc, Integer.toString(m_id), tx, ty, false, false);
+			GUIUtils.drawTextAligned(gc, Integer.toString(m_id), m_bounds, tx, ty, false, false);
 		}
 	}
 

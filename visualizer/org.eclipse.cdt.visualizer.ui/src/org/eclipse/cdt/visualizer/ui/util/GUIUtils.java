@@ -83,14 +83,19 @@ public class GUIUtils {
 	// --- drawing methods ---
 
     /** Draws transparent text, with the default alignment (top/left). */
-	static public void drawText(GC gc, String text, int x, int y)
+	static public void drawText(GC gc, String text, Rectangle clip, int x, int y)
 	{
+		Rectangle oldClip = gc.getClipping();
+		gc.setClipping(clip);
 		gc.drawText(text, x, y, SWT.DRAW_TRANSPARENT);
+		gc.setClipping(oldClip);
 	}
 
     /** Draws transparent text, with the specified alignments. */
-	static public void drawTextAligned(GC gc, String text, int x, int y, boolean left, boolean top)
+	static public void drawTextAligned(GC gc, String text, Rectangle clip, int x, int y, boolean left, boolean top)
 	{
+		Rectangle oldClip = gc.getClipping();
+		gc.setClipping(clip);
 		if (left && top) {
 			gc.drawText(text, x, y, SWT.DRAW_TRANSPARENT);
 		}
@@ -100,15 +105,19 @@ public class GUIUtils {
 			int dy = top  ? 0 : te.y;
 			gc.drawText(text, x - dx, y - dy, SWT.DRAW_TRANSPARENT);
 		}
+		gc.setClipping(oldClip);
 	}
 	
     /** Draws transparent text, centered on the specified point. */
-	static public void drawTextCentered(GC gc, String text, int x, int y)
+	static public void drawTextCentered(GC gc, String text, Rectangle clip, int x, int y)
 	{
+		Rectangle oldClip = gc.getClipping();
+		gc.setClipping(clip);
 		Point te = gc.textExtent(text);
 		// Rounding produces less "jumpy" display when graphics are resized.
 		gc.drawText(text, x - (int) Math.round(te.x / 2.0),
 						  y - (int) Math.round(te.y / 2.0), SWT.DRAW_TRANSPARENT);
+		gc.setClipping(oldClip);
 	}
 	
 	

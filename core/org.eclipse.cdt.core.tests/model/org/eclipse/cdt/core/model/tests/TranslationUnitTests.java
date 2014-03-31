@@ -8,7 +8,6 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.core.model.tests;
 
 import java.io.FileNotFoundException;
@@ -29,8 +28,7 @@ import org.eclipse.cdt.core.testplugin.util.ExpectedStrings;
  * 
  * This file contains a set of generic tests for the core C model's
  * TranslationUnit class. There is nothing exotic here, mostly just sanity type
- * tests
- * 
+ * tests.
  */
 public class TranslationUnitTests extends TranslationUnitBaseTest {
 	/*
@@ -41,8 +39,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 			"globalvar", "myenum", "mystruct_t", "mystruct", "myunion",
 			"mytype", "func1", "func2", "main", "func3" };
 
-	int[] expectedLines = { 12, 14, 17, 20, 23, 28, 32, 35, 42, 47, 53, 58, 65,
-			70 };
+	int[] expectedLines = { 12, 14, 17, 20, 23, 28, 32, 35, 42, 47, 53, 58, 65, 70 };
 
 	/*
 	 * This is a list of that the types of the above list of elements is
@@ -85,16 +82,11 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	/***************************************************************************
 	 * Simple sanity test to make sure TranslationUnit.isTranslationUnit returns
 	 * true
-	 * 
 	 */
 	public void testIsTranslationUnit() throws Exception,
 			FileNotFoundException {
-		ITranslationUnit myTranslationUnit;
-
-		myTranslationUnit = CProjectHelper.findTranslationUnit(testProject,
-				"exetest.c");
-		assertTrue("A TranslationUnit", myTranslationUnit != null);
-
+		ITranslationUnit tu = CProjectHelper.findTranslationUnit(testProject, "exetest.c");
+		assertNotNull(tu);
 	}
 
 	/***************************************************************************
@@ -102,48 +94,38 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	 * basicly work
 	 */
 	public void testGetChildren() throws Exception {
-		ITranslationUnit myTranslationUnit;
-		ICElement[] elements;
-		int x;
-
 		ExpectedStrings expectedString = new ExpectedStrings(expectedStringList);
 
-		myTranslationUnit = CProjectHelper.findTranslationUnit(testProject,
-				"exetest.c");
+		ITranslationUnit tu = CProjectHelper.findTranslationUnit(testProject, "exetest.c");
 
-		if (myTranslationUnit.hasChildren()) {
-			elements = myTranslationUnit.getChildren();
-			for (x = 0; x < elements.length; x++) {
+		if (tu.hasChildren()) {
+			ICElement[] elements = tu.getChildren();
+			for (int x = 0; x < elements.length; x++) {
 				expectedString.foundString(elements[x].getElementName());
 			}
 		}
 		assertTrue("PR:23603 " + expectedString.getMissingString(),
 				expectedString.gotAll());
 		assertTrue(expectedString.getExtraString(), !expectedString.gotExtra());
-
 	}
 
 	/***************************************************************************
 	 * Simple sanity tests for the getElement() call
 	 */
 	public void testGetElement() throws Exception {
-		ITranslationUnit myTranslationUnit;
-		ICElement myElement;
 		Stack missing = new Stack();
-		int x;
-		myTranslationUnit = CProjectHelper.findTranslationUnit(testProject,
+		ITranslationUnit tu = CProjectHelper.findTranslationUnit(testProject,
 				"exetest.c");
 
-		for (x = 0; x < expectedStringList.length; x++) {
-			myElement = myTranslationUnit.getElement(expectedStringList[x]);
-			if (myElement == null)
+		for (int x = 0; x < expectedStringList.length; x++) {
+			ICElement myElement = tu.getElement(expectedStringList[x]);
+			if (myElement == null) {
 				missing.push(expectedStringList[x]);
-			else {
-				assertTrue("Expected:" + expectedStringList[x] + " Got:"
-						+ myElement.getElementName(), expectedStringList[x]
-						.equals(myElement.getElementName()));
+			} else {
+				assertTrue("Expected: \"" + expectedStringList[x] + "\". Got:"
+						+ myElement.getElementName(),
+						expectedStringList[x].equals(myElement.getElementName()));
 			}
-
 		}
 		if (!missing.empty()) {
 			String output = new String("PR:23603 Could not get elements: ");
@@ -151,48 +133,40 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 				output += missing.pop() + " ";
 			assertTrue(output, false);
 		}
-
 	}
 
 	/***************************************************************************
 	 * Simple sanity tests for the getInclude call
 	 */
 	public void testBug23478A() throws Exception {
-		IInclude myInclude;
-		int x;
 		String includes[] = { "stdio.h", "unistd.h" };
-		ITranslationUnit myTranslationUnit = CProjectHelper
-				.findTranslationUnit(testProject, "exetest.c");
+		ITranslationUnit tu = CProjectHelper.findTranslationUnit(testProject, "exetest.c");
 
-		for (x = 0; x < includes.length; x++) {
-			myInclude = myTranslationUnit.getInclude(includes[x]);
-			if (myInclude == null)
+		for (int x = 0; x < includes.length; x++) {
+			IInclude include = tu.getInclude(includes[x]);
+			if (include == null) {
 				fail("Unable to get include: " + includes[x]);
-			else {
+			} else {
 				// Failed test: Include.getIncludeName() always returns "";
 				// assertTrue
-				assertTrue("PR:23478 Expected:" + new String("") + " Got:"
-						+ myInclude.getIncludeName(), includes[x]
-						.equals(myInclude.getIncludeName()));
+				assertTrue("PR:23478 Expected: an empty string. Got: "
+						+ include.getIncludeName(),
+						includes[x].equals(include.getIncludeName()));
 			}
 		}
-
 	}
 
 	/***************************************************************************
 	 * Simple sanity tests for the getIncludes call
 	 */
 	public void testBug23478B() throws Exception {
-		IInclude myIncludes[];
-		String includes[] = { "stdio.h", "unistd.h" };
-		ExpectedStrings myExp = new ExpectedStrings(includes);
-		int x;
-		ITranslationUnit myTranslationUnit = CProjectHelper
-				.findTranslationUnit(testProject, "exetest.c");
+		String headers[] = { "stdio.h", "unistd.h" };
+		ExpectedStrings myExp = new ExpectedStrings(headers);
+		ITranslationUnit tu = CProjectHelper.findTranslationUnit(testProject, "exetest.c");
 
-		myIncludes = myTranslationUnit.getIncludes();
-		for (x = 0; x < myIncludes.length; x++) {
-			myExp.foundString(myIncludes[x].getIncludeName());
+		IInclude[] includes = tu.getIncludes();
+		for (int x = 0; x < includes.length; x++) {
+			myExp.foundString(includes[x].getIncludeName());
 		}
 		// Failed test: Include.getIncludeName() always returns "";
 		// assertTrue
@@ -204,31 +178,24 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	 * Simple sanity tests for the getElementAtLine() call
 	 */
 	public void testGetElementAtLine() throws Exception {
-		ITranslationUnit myTranslationUnit;
-		ICElement myElement;
 		Stack missing = new Stack();
-		int x;
-		myTranslationUnit = CProjectHelper.findTranslationUnit(testProject,
-				"exetest.c");
+		ITranslationUnit tu = CProjectHelper.findTranslationUnit(testProject, "exetest.c");
 
-		for (x = 0; x < expectedStringList.length; x++) {
-			myElement = myTranslationUnit.getElementAtLine(expectedLines[x]);
-			if (myElement == null)
+		for (int x = 0; x < expectedStringList.length; x++) {
+			ICElement element = tu.getElementAtLine(expectedLines[x]);
+			if (element == null) {
 				missing.push(expectedStringList[x]);
-			else {
+			} else {
 				if (expectedStringList[x].equals("mystruct_t")) {
-					assertTrue("PR:23603 expected:" + expectedStringList[x]
-							+ " Got:" + myElement.getElementName(),
-							expectedStringList[x].equals(myElement
-									.getElementName()));
+					assertTrue("PR:23603 expected: " + expectedStringList[x]
+							+ ". Got: " + element.getElementName(),
+							expectedStringList[x].equals(element.getElementName()));
 				} else {
-					assertTrue("Expected:" + expectedStringList[x] + " Got:"
-							+ myElement.getElementName(), expectedStringList[x]
-							.equals(myElement.getElementName()));
+					assertTrue("Expected:" + expectedStringList[x] + " Got: "
+							+ element.getElementName(), expectedStringList[x]
+							.equals(element.getElementName()));
 				}
-
 			}
-
 		}
 		if (!missing.empty()) {
 			String output = new String("PR: 23603 Could not get elements: ");

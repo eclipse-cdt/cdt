@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Wind River Systems and others.
+ * Copyright (c) 2007, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -278,7 +278,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
     private volatile int fUpdateCount;
 	private BigInteger fPCAddress;
 	private BigInteger fGotoAddressPending= PC_UNKNOWN;
-	private boolean fGotoAddressOnTop;
 	private BigInteger fFocusAddress= PC_UNKNOWN;
 	private int fBufferZone;
 	private String fDebugSessionId;
@@ -1401,11 +1400,12 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 */
 	@Override
 	public final void gotoAddress(BigInteger address) {
-		fFocusAddress = address;
 		if (fDebugSessionId == null) {
 			return;
 		}
 		if (DEBUG) System.out.println("gotoAddress " + getAddressText(address)); //$NON-NLS-1$
+		fFocusAddress = address;
+		BigInteger previousAddress = fGotoAddressPending;
 		if (fGotoAddressPending == PC_UNKNOWN) {
 			fGotoAddressPending = address;
 		}
@@ -1415,19 +1415,22 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		AddressRangePosition pos = getPositionOfAddress(address);
 		if (pos != null) {
 			if (pos.fValid) {
-				boolean onTop = false;
-				if (fGotoAddressPending.equals(address)) {
-                	fGotoAddressPending = PC_UNKNOWN;
-                	onTop = fGotoAddressOnTop;
-                	fGotoAddressOnTop = false;
+				if ((pos instanceof ErrorPosition || !pos.fAddressOffset.equals(address)) && !previousAddress.equals(address)) {
+                	// address is within a disassembled instruction or error - need to invalidate
+                	pos.fValid = false;
+                	fDocument.addInvalidAddressRange(pos);
+                } else {
+    				if (fGotoAddressPending.equals(address)) {
+                    	fGotoAddressPending = PC_UNKNOWN;
+                    }
+                	gotoPosition(pos, !address.equals(fFrameAddress));
+                	return;
                 }
-                gotoPosition(pos, onTop);
-			} else {
-				int lines = fBufferZone+3;
-				BigInteger endAddress = pos.fAddressOffset.add(pos.fAddressLength).min(
-						address.add(BigInteger.valueOf(lines * fDocument.getMeanSizeOfInstructions())));
-				retrieveDisassembly(address, endAddress, lines);
 			}
+			int lines = fBufferZone+3;
+			BigInteger endAddress = pos.fAddressOffset.add(pos.fAddressLength).min(
+					address.add(BigInteger.valueOf(lines * fDocument.getMeanSizeOfInstructions())));
+			retrieveDisassembly(address, endAddress, lines);
 		}
 	}
 
@@ -2038,7 +2041,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 					fTargetFrame = targetFrame;
 					fFrameAddress = frameAddress;
 					fPCAddress = pcAddress;
-					fGotoAddressOnTop = true;
 					gotoAddress(topAddress);
 				} else {
 					refreshView((int)(refreshViewScheduled - now));

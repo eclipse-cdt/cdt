@@ -84,7 +84,8 @@ public class ControlFlowGraphBuilder {
 			exits.add(returnExit);
 			for (IBasicBlock ds : dead) {
 				IBasicBlock dl = findLast(ds);
-				if (dl != null && dl.getOutgoingSize() == 0 && dl != returnExit) {
+				if (dl != null && !(dl instanceof IExitNode) && dl.getOutgoingSize() == 0 &&
+						dl != returnExit) {
 					((AbstractBasicBlock) dl).addOutgoing(returnExit);
 				}
 			}

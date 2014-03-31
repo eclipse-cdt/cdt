@@ -1,0 +1,9 @@
+Code-Review+1: William Swanson <traveler@tilera.com>
+Code-Review+2: Marc Dumais <marc.dumais@ericsson.com>
+IP-Clean+1: Marc Dumais <marc.dumais@ericsson.com>
+Verified+1: Marc Dumais <marc.dumais@ericsson.com>
+Submitted-by: Marc Dumais <marc.dumais@ericsson.com>
+Submitted-at: Mon, 31 Mar 2014 14:33:13 -0400
+Reviewed-on: https://git.eclipse.org/r/22156
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

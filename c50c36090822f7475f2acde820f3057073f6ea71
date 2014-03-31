@@ -16,6 +16,24 @@
       "revId": "c50c36090822f7475f2acde820f3057073f6ea71",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_37b8f92f",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteCDSFMainTab.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-03-31T21:03:13Z",
+      "side": 1,
+      "message": "True, I missed this case, \nI have now changed it back to .toPortableString() \n\nand the new patch set 4 is available !\n\n\nThanks a lot !",
+      "parentUuid": "2753a756_3c1460cf",
+      "revId": "c50c36090822f7475f2acde820f3057073f6ea71",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

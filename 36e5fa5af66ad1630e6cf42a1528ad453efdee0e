@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_d741bd63",
+        "filename": "core/org.eclipse.cdt.core.tests/suite/org/eclipse/cdt/core/testplugin/util/BaseTestCase.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-03-31T17:48:31Z",
+      "side": 1,
+      "message": "Irrational changes like this one don\u0027t seem appropriate.",
+      "revId": "36e5fa5af66ad1630e6cf42a1528ad453efdee0e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

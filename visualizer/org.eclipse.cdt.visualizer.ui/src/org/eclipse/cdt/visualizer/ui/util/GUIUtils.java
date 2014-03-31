@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Tilera Corporation and others.
+ * Copyright (c) 2012, 2014 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
+ *     Xavier Raynaud <xavier.raynaud@kalray.eu>
  *******************************************************************************/
 
 package org.eclipse.cdt.visualizer.ui.util;
@@ -81,6 +82,33 @@ public class GUIUtils {
     
     
 	// --- drawing methods ---
+
+    /** Draws transparent text, with the default alignment (top/left). */
+	static public void drawText(GC gc, String text, Rectangle clip, int x, int y)
+	{
+		Rectangle oldClip = gc.getClipping();
+		gc.setClipping(clip);
+		drawText(gc, text, x, y);
+		gc.setClipping(oldClip);
+	}
+
+    /** Draws transparent text, with the specified alignments. */
+	static public void drawTextAligned(GC gc, String text, Rectangle clip, int x, int y, boolean left, boolean top)
+	{
+		Rectangle oldClip = gc.getClipping();
+		gc.setClipping(clip);
+		drawTextAligned(gc, text, x, y, left, top);
+		gc.setClipping(oldClip);
+	}
+
+    /** Draws transparent text, centered on the specified point. */
+	static public void drawTextCentered(GC gc, String text, Rectangle clip, int x, int y)
+	{
+		Rectangle oldClip = gc.getClipping();
+		gc.setClipping(clip);
+		drawTextCentered(gc, text, x, y);
+		gc.setClipping(oldClip);
+	}
 
     /** Draws transparent text, with the default alignment (top/left). */
 	static public void drawText(GC gc, String text, int x, int y)

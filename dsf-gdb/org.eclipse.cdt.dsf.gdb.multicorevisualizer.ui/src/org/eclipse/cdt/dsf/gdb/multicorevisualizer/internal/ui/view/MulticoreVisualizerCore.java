@@ -201,7 +201,7 @@ public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject
 			int ty = m_bounds.y + text_indent;
 			// make sure we use the right color for core number, even if selected.
 			gc.setForeground(getCoreStateColor(true));
-			GUIUtils.drawTextAligned(gc, Integer.toString(m_id), tx, ty, false, true);
+			GUIUtils.drawTextAligned(gc, Integer.toString(m_id), m_bounds, tx, ty, false, true);
 		}
 	}
 }

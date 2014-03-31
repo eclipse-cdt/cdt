@@ -54,7 +54,7 @@ public class MulticoreVisualizerStatusBar extends MulticoreVisualizerGraphicObje
 		gc.setForeground(IMulticoreVisualizerConstants.COLOR_STATUS_BAR_TEXT);
 		int tx = m_bounds.x;
 		int ty = m_bounds.y + 15;
-		GUIUtils.drawTextAligned(gc, m_statusMessage, tx, ty, true, false);
+		GUIUtils.drawTextAligned(gc, m_statusMessage, m_bounds, tx, ty, true, false);
 	}
 
 }

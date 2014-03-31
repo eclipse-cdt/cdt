@@ -216,7 +216,7 @@ public class MulticoreVisualizerLoadMeter extends MulticoreVisualizerGraphicObje
 			gc.setForeground(IMulticoreVisualizerConstants.COLOR_LOAD_TEXT);
 			int tx = m_bounds.x;
 			int ty = m_bounds.y;
-			GUIUtils.drawTextAligned(gc, load, tx, ty, true, false);
+			GUIUtils.drawTextAligned(gc, load, m_bounds, tx, ty, true, false);
 		}
 	}
 

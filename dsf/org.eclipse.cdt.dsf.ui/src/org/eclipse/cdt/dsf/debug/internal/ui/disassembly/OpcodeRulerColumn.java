@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Wind River Systems and others.
+ * Copyright (c) 2011, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 
 	public static final String ID = "org.eclipse.cdt.dsf.ui.disassemblyColumn.opcode"; //$NON-NLS-1$
+
+	/** Maximum width of column (in characters) */
+	private static final int MAXWIDTH= 20;
 
 	private int fRadix;
 	private String fRadixPrefix;
@@ -82,6 +85,8 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 						for (int i=str.length()+prefixLength; i < nChars; ++i)
 							buf.append('0');
 						buf.append(str);
+						if (buf.length() > nChars)
+							buf.delete(nChars, buf.length());
 						return buf.toString();
 					}
 				} else if (pos != null && !pos.fValid) {
@@ -97,7 +102,7 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 	@Override
 	protected int computeNumberOfCharacters() {
 		DisassemblyDocument doc = (DisassemblyDocument)getParentRuler().getTextViewer().getDocument();
-		return doc.getMaxOpcodeLength(fRadix);
+		return Math.min(MAXWIDTH, doc.getMaxOpcodeLength(fRadix));
 	}
 
 	@Override

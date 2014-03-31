@@ -520,11 +520,8 @@
           base-type="org.eclipse.core.runtime.text"
           file-extensions="S,s,asm,ASM"
           priority="high"/>
-      <content-type
-            id="binaryFile"
-            name="%binaryFileName"
-            priority="high">
-      </content-type>
+      <content-type id="binaryFile" name="%binaryFileName"
+          priority="high"/>
    </extension>
 
    <!-- The reserved filenames by the C++ standard (cinttypes is G++ specific) -->

@@ -2082,6 +2082,14 @@
       <handler
             class="org.eclipse.cdt.debug.internal.ui.commands.ConnectCommandHandler"
             commandId="org.eclipse.cdt.debug.ui.command.connect">
+			<activeWhen>
+               <with variable="org.eclipse.core.runtime.Platform">
+	              <test property="org.eclipse.core.runtime.bundleState"
+	                  args="org.eclipse.cdt.debug.ui"
+	                  value="ACTIVE">
+	              </test>
+               </with>
+			</activeWhen>
       </handler>
       <handler
             class="org.eclipse.cdt.debug.internal.ui.commands.DebugNewExecutableHandler"

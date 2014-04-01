@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Ericsson
+ * Copyright (c) 2013, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Marc Dumais (Ericsson) - Initial API and implementation (Bug 405390)
+ *     Xavier Raynaud (Kalray) - Bug 431690
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
 
@@ -54,7 +55,7 @@ public class MulticoreVisualizerStatusBar extends MulticoreVisualizerGraphicObje
 		gc.setForeground(IMulticoreVisualizerConstants.COLOR_STATUS_BAR_TEXT);
 		int tx = m_bounds.x;
 		int ty = m_bounds.y + 15;
-		GUIUtils.drawTextAligned(gc, m_statusMessage, tx, ty, true, false);
+		GUIUtils.drawTextAligned(gc, m_statusMessage, m_bounds, tx, ty, true, false);
 	}
 
 }

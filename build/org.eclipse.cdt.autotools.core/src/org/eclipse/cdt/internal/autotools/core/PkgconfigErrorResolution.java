@@ -16,7 +16,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
-import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.remote.core.RemoteCommandLauncher;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -65,11 +66,13 @@ public class PkgconfigErrorResolution implements IMarkerResolution {
 		}
 	}
 	
+	@Override
 	public String getLabel() {
 		// TODO Auto-generated method stub
 		return AutotoolsPlugin.getFormattedString(PKG_UPDATE_MSG, new String[] {pkgName});
 	}
 
+	@Override
 	public void run(IMarker marker) {
 		// We have a pkgconfig library missing requirement for "pkg".  Now, "pkg" does
 		// not necessarily match the actual system package needed to be updated (e.g.
@@ -83,7 +86,7 @@ public class PkgconfigErrorResolution implements IMarkerResolution {
 		IPath pkgconfigPath = 
 			new Path("/usr/lib/pkgconfig").append(pkgName+".pc"); //$NON-NLS-1$ //$NON-NLS-2$
 		// Get a launcher for the config command
-		CommandLauncher launcher = new CommandLauncher();
+		RemoteCommandLauncher launcher = new RemoteCommandLauncher();
 		IPath commandPath = new Path("rpm"); //$NON-NLS-1$
 		String[] commandArgs = 
 			new String[] {"-q", //$NON-NLS-1$
@@ -105,7 +108,7 @@ public class PkgconfigErrorResolution implements IMarkerResolution {
 				} catch (IOException e) {
 				}
 				if (launcher.waitAndRead(output, output, new NullProgressMonitor())
-						!= CommandLauncher.OK) {
+						!= ICommandLauncher.OK) {
 					AutotoolsPlugin.logErrorMessage(launcher.getErrorMessage());
 				} else {
 					String result = output.readBuffer();

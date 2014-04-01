@@ -972,34 +972,37 @@ public class BindingClassifier {
 				 * 	}
 				 */
 				IASTUnaryExpression unaryExpression = (IASTUnaryExpression) expression;
-				if (unaryExpression instanceof ICPPASTUnaryExpression) {
-					ICPPFunction overload = ((ICPPASTUnaryExpression) unaryExpression).getOverload();
-					if (overload != null) {
-						defineFunction(overload, new IASTInitializerClause[] { unaryExpression.getOperand() });
-						return PROCESS_CONTINUE;
-					}
-				}
-
-				boolean expressionDefinitionRequired = true;
-				switch (unaryExpression.getOperator()) {
-					case IASTUnaryExpression.op_amper:
-					case IASTUnaryExpression.op_bracketedPrimary:
-						// The ampersand operator as well as brackets never require a definition.
-						expressionDefinitionRequired = false;
-						break;
-					case IASTUnaryExpression.op_alignOf:
-					case IASTUnaryExpression.op_not:
-					case IASTUnaryExpression.op_plus:
-					case IASTUnaryExpression.op_sizeof:
-					case IASTUnaryExpression.op_typeid:
-						// If the operand is a pointer type, then it doesn't need to be defined.
-						if (unaryExpression.getOperand().getExpressionType() instanceof IPointerType) {
-							expressionDefinitionRequired = false;
+				IASTExpression operand = unaryExpression.getOperand();
+				if (operand != null) {  // A throw expression may have no operand.
+					if (unaryExpression instanceof ICPPASTUnaryExpression) {
+						ICPPFunction overload = ((ICPPASTUnaryExpression) unaryExpression).getOverload();
+						if (overload != null) {
+							defineFunction(overload, new IASTInitializerClause[] { operand });
+							return PROCESS_CONTINUE;
 						}
-				}
+					}
 
-				if (expressionDefinitionRequired) {
-					defineTypeExceptTypedefOrNonFixedEnum(unaryExpression.getOperand().getExpressionType());
+					boolean expressionDefinitionRequired = true;
+					switch (unaryExpression.getOperator()) {
+						case IASTUnaryExpression.op_amper:
+						case IASTUnaryExpression.op_bracketedPrimary:
+							// The ampersand operator as well as brackets never require a definition.
+							expressionDefinitionRequired = false;
+							break;
+						case IASTUnaryExpression.op_alignOf:
+						case IASTUnaryExpression.op_not:
+						case IASTUnaryExpression.op_plus:
+						case IASTUnaryExpression.op_sizeof:
+						case IASTUnaryExpression.op_typeid:
+							// If the operand is a pointer type, then it doesn't need to be defined.
+							if (operand.getExpressionType() instanceof IPointerType) {
+								expressionDefinitionRequired = false;
+							}
+					}
+	
+					if (expressionDefinitionRequired) {
+						defineTypeExceptTypedefOrNonFixedEnum(operand.getExpressionType());
+					}
 				}
 			} else if (expression instanceof IASTBinaryExpression) {
 				/*

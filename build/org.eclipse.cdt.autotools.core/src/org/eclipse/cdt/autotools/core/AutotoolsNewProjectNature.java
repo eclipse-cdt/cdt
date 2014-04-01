@@ -39,6 +39,10 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 	public static final String AUTOTOOLS_NATURE_ID = "org.eclipse.cdt.autotools.core.autotoolsNatureV2";  //$NON-NLS-1$
 	public static final String OLD_AUTOTOOLS_NATURE_ID = "org.eclipse.linuxtools.cdt.autotools.core.autotoolsNatureV2"; //$NON-NLS-1$
 	public final static String BUILDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".genmakebuilder"; //$NON-NLS-1$
+	/**
+	 * @since 1.3
+	 */
+	public final static String REMOTE_BUILDER_ID = "org.eclipse.ptp.rdt.sync.cdt.core.SyncBuilder"; // $NON-NLS-1$
 	public final static String OLD_AUTOTOOLS_BUILDER_ID = "org.eclipse.linuxtools.cdt.autotools.genmakebuilder"; //$NON-NLS-1$
 
 	private IProject project;
@@ -46,6 +50,7 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#configure()
 	 */
+	@Override
 	public void configure() throws CoreException {
 		addAutotoolsBuilder(project, new NullProgressMonitor());
 	}
@@ -53,6 +58,7 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
 	 */
+	@Override
 	public void deconfigure() throws CoreException {
 		// TODO remove builder from here
 	}
@@ -60,6 +66,7 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#getProject()
 	 */
+	@Override
 	public IProject getProject() {
 		return project;
 	}
@@ -67,6 +74,7 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#setProject(org.eclipse.core.resources.IProject)
 	 */
+	@Override
 	public void setProject(IProject project) {
 		this.project = project;
 	}
@@ -91,11 +99,13 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 						protected boolean savedAutoBuildingValue;
 
+						@Override
 						public void run(IProgressMonitor monitor) throws CoreException {
 							IWorkspace workspace = ResourcesPlugin.getWorkspace();
 							turnOffAutoBuild(workspace);
@@ -164,7 +174,10 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 					newCommand.setBuilderName(BUILDER_ID);
 					command = newCommand;
 				}
-				if (command.getBuilderName().equals(BUILDER_ID)) {
+				// Make sure that the Autotools builder precedes the Managed builder
+				// or the Remote Synchronized builder.
+				if (command.getBuilderName().equals(BUILDER_ID) ||
+						command.getBuilderName().equals(REMOTE_BUILDER_ID)) {
 					// add Autotools Configuration builder just before builder
 					ICommand newCommand = description.newCommand();
 					newCommand.setBuilderName(AutotoolsConfigurationBuilder.BUILDER_ID);
@@ -246,7 +259,7 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 		String[] prevNatures = description.getNatureIds();
 		List<String> newNatures = new ArrayList<String>(Arrays.asList(prevNatures));
 		newNatures.remove(natureId);
-		description.setNatureIds((String[])newNatures.toArray(new String[newNatures.size()]));
+		description.setNatureIds(newNatures.toArray(new String[newNatures.size()]));
 		project.setDescription(description, monitor);
 	}
 

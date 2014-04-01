@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Tilera Corporation and others.
+ * Copyright (c) 2012, 2014 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *     Marc Dumais (Ericsson) - Bug 404894
+ *     Xavier Raynaud (Kalray) - Bug 431690
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -201,7 +202,7 @@ public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject
 			int ty = m_bounds.y + text_indent;
 			// make sure we use the right color for core number, even if selected.
 			gc.setForeground(getCoreStateColor(true));
-			GUIUtils.drawTextAligned(gc, Integer.toString(m_id), tx, ty, false, true);
+			GUIUtils.drawTextAligned(gc, Integer.toString(m_id), m_bounds, tx, ty, false, true);
 		}
 	}
 }

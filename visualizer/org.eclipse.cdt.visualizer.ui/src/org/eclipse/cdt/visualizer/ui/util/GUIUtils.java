@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Tilera Corporation and others.
+ * Copyright (c) 2012, 2014 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
+ *     Xavier Raynaud (Kalray) - Bug 431690
  *******************************************************************************/
 
 package org.eclipse.cdt.visualizer.ui.util;
@@ -88,6 +89,15 @@ public class GUIUtils {
 		gc.drawText(text, x, y, SWT.DRAW_TRANSPARENT);
 	}
 
+    /** Draws transparent text, with the default alignment (top/left). */
+	static public void drawText(GC gc, String text, Rectangle clip, int x, int y)
+	{
+		Rectangle oldClip = gc.getClipping();
+		gc.setClipping(clip);
+		drawText(gc, text, x, y);
+		gc.setClipping(oldClip);
+	}
+
     /** Draws transparent text, with the specified alignments. */
 	static public void drawTextAligned(GC gc, String text, int x, int y, boolean left, boolean top)
 	{
@@ -101,7 +111,16 @@ public class GUIUtils {
 			gc.drawText(text, x - dx, y - dy, SWT.DRAW_TRANSPARENT);
 		}
 	}
-	
+
+    /** Draws transparent text, with the specified alignments. */
+	static public void drawTextAligned(GC gc, String text, Rectangle clip, int x, int y, boolean left, boolean top)
+	{
+		Rectangle oldClip = gc.getClipping();
+		gc.setClipping(clip);
+		drawTextAligned(gc, text, x, y, left, top);
+		gc.setClipping(oldClip);
+	}
+
     /** Draws transparent text, centered on the specified point. */
 	static public void drawTextCentered(GC gc, String text, int x, int y)
 	{
@@ -110,8 +129,17 @@ public class GUIUtils {
 		gc.drawText(text, x - (int) Math.round(te.x / 2.0),
 						  y - (int) Math.round(te.y / 2.0), SWT.DRAW_TRANSPARENT);
 	}
-	
-	
+
+    /** Draws transparent text, centered on the specified point. */
+	static public void drawTextCentered(GC gc, String text, Rectangle clip, int x, int y)
+	{
+		Rectangle oldClip = gc.getClipping();
+		gc.setClipping(clip);
+		drawTextCentered(gc, text, x, y);
+		gc.setClipping(oldClip);
+	}
+
+
 	// --- graphic methods ---
 	
 	/** Shrinks rectangle by specified margin on all edges. */

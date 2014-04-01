@@ -11,4 +11,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %pluginProvider
 Import-Package: org.eclipse.core.resources
-Export-Package: org.eclipse.cdt.remote.core;x-internal:=true
+Export-Package: org.eclipse.cdt.remote.core;x-friends="org.eclipse.cdt.autotools.core,org.eclipse.cdt.autotools.ui"

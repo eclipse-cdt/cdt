@@ -20,14 +20,15 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.autotools.core.AutotoolsNewMakeGenerator;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.remote.core.RemoteCommandLauncher;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -131,7 +132,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 
 		}
 
-		return (String[])targetList.toArray(new String[targetList.size()]);
+		return targetList.toArray(new String[targetList.size()]);
 	}
 
 	protected String[] separateOptions(String rawArgList) {
@@ -156,7 +157,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 			}
 		}
 
-		return (String[])argList.toArray(new String[argList.size()]);
+		return argList.toArray(new String[argList.size()]);
 
 	}
 
@@ -227,10 +228,10 @@ public abstract class InvokeAction extends AbstractTargetAction {
 	}
 	
 	private static class ExecuteProgressDialog implements IRunnableWithProgress {
-		private IPath command;
-		private String[] argumentList;
-		private String[] envList;
-		private IPath execDir;
+		private final IPath command;
+		private final String[] argumentList;
+		private final String[] envList;
+		private final IPath execDir;
 		private int status;
 		private HashMap<String, String> outputs = null;
 		
@@ -242,11 +243,12 @@ public abstract class InvokeAction extends AbstractTargetAction {
 			this.execDir = execDir;
 		}
 
+		@Override
 		public void run(IProgressMonitor monitor)
 		throws InvocationTargetException, InterruptedException {
 			ByteArrayOutputStream stdout = new ByteArrayOutputStream();
 			ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-			CommandLauncher cmdL = new CommandLauncher();
+			RemoteCommandLauncher cmdL = new RemoteCommandLauncher();
 			outputs = null;
 
 			// invoke command
@@ -258,7 +260,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 				Process process = cmdL.execute(command, argumentList, envList,
 						execDir, new NullProgressMonitor());
 
-				if (cmdL.waitAndRead(stdout, stderr, new NullProgressMonitor()) == CommandLauncher.OK) {
+				if (cmdL.waitAndRead(stdout, stderr, new NullProgressMonitor()) == ICommandLauncher.OK) {
 					try {
 						status = 0;
 						monitor.done();
@@ -334,10 +336,12 @@ public abstract class InvokeAction extends AbstractTargetAction {
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 
+						@Override
 						public void run(IProgressMonitor monitor) throws CoreException {
 							try {
 								String errMsg = null;
@@ -370,7 +374,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 								ArrayList<String> additionalEnvs = new ArrayList<String>();
 								String strippedCommand = AutotoolsNewMakeGenerator.stripEnvVars(command, additionalEnvs);
 								// Get a launcher for the config command
-								CommandLauncher launcher = new CommandLauncher();
+								RemoteCommandLauncher launcher = new RemoteCommandLauncher();
 								// Set the environment
 								IEnvironmentVariable variables[] = ManagedBuildManager
 										.getEnvironmentVariableProvider().getVariables(cfg, true);
@@ -383,7 +387,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 									}
 									if (additionalEnvs.size() > 0)
 										envList.addAll(additionalEnvs); // add any additional environment variables specified ahead of script
-									env = (String[]) envList.toArray(new String[envList.size()]);
+									env = envList.toArray(new String[envList.size()]);
 								}
 								
 								String[] newArgumentList;
@@ -416,7 +420,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 									}
 
 									if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(
-											monitor, IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) {
+											monitor, IProgressMonitor.UNKNOWN)) != ICommandLauncher.OK) {
 										errMsg = launcher.getErrorMessage();
 									}
 

@@ -1,0 +1,10 @@
+Verified+1: Hudson CI
+Code-Review+1: William Swanson <traveler@tilera.com>
+Code-Review+2: Marc Dumais <marc.dumais@ericsson.com>
+IP-Clean+1: Marc Dumais <marc.dumais@ericsson.com>
+Verified+1: Marc Dumais <marc.dumais@ericsson.com>
+Submitted-by: Marc Dumais <marc.dumais@ericsson.com>
+Submitted-at: Tue, 01 Apr 2014 12:46:13 -0400
+Reviewed-on: https://git.eclipse.org/r/24201
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

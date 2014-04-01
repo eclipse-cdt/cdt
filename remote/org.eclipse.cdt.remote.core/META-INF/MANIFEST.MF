@@ -6,9 +6,10 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.remote.internal.core.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.core,
- org.eclipse.remote.core
+ org.eclipse.remote.core,
+ org.eclipse.core.filesystem
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %pluginProvider
 Import-Package: org.eclipse.core.resources
-Export-Package: org.eclipse.cdt.remote.core;x-internal:=true
+Export-Package: org.eclipse.cdt.remote.core;x-friends="org.eclipse.cdt.autotools.core,org.eclipse.cdt.autotools.ui"

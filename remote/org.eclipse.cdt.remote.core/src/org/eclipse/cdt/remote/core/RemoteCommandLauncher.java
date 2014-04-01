@@ -12,6 +12,7 @@ package org.eclipse.cdt.remote.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
@@ -19,10 +20,12 @@ import java.util.Properties;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.remote.internal.core.messages.Messages;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.IRemoteProcessBuilder;
@@ -68,6 +71,18 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 						parseEnvironment(env);
 						fCommandArgs = constructCommandArray(commandPath.toOSString(), args);
 						IRemoteProcessBuilder processBuilder = fConnection.getProcessBuilder(fCommandArgs);
+						if (workingDirectory != null) {
+			                IPath relativePath = workingDirectory.makeRelativeTo(getProject().getFullPath());
+			                try {
+								IPath remoteWorkingPath = 
+										new Path(remRes.getActiveLocationURI().toURL().getPath()).append(relativePath);
+				                IFileStore wd = fConnection.getFileManager().getResource(remoteWorkingPath.toString());
+								processBuilder.directory(wd);
+							} catch (MalformedURLException e) {
+								fLocalLauncher.setErrorMessage(e.getMessage());
+								return null;
+							}
+						}
 						Map<String, String> processEnv = processBuilder.environment();
 						for (String key : fEnvironment.stringPropertyNames()) {
 							processEnv.put(key, fEnvironment.getProperty(key));

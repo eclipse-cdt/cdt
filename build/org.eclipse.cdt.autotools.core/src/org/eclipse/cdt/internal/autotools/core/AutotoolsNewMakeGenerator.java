@@ -78,6 +78,10 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteResource;
+import org.eclipse.remote.core.IRemoteServices;
+import org.eclipse.remote.core.RemoteServices;
 
 
 @SuppressWarnings("deprecation")
@@ -162,6 +166,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		CUIPlugin.getDefault().getPreferenceStore().getString("dummy");
 	}
 
+	@Override
 	public IProject getProject() {
 		return project;
 	}
@@ -211,6 +216,12 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			if (!newFile.isDerived()) {
 				newFile.setDerived(true);
 			}
+			// if successful, refresh any remote projects to notify them of the new file
+			IRemoteResource remRes =
+					(IRemoteResource)getProject().getAdapter(IRemoteResource.class);
+			if (remRes != null) {
+				remRes.refresh(new NullProgressMonitor());
+			}
 
 		} catch (CoreException e) {
 			// If the file already existed locally, just refresh to get contents
@@ -235,8 +246,18 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		if (dirName.length() == 0 || dirName.equals("."))
 			path = project.getLocation().append(dirName);
 		File f = path.toFile();
-		if (!f.exists())
+		if (!f.exists()) {
 			rc = f.mkdirs();
+			if (rc) {
+				// if successful, refresh any remote projects to notify them of the new directory
+				IRemoteResource remRes =
+						(IRemoteResource)project.getAdapter(IRemoteResource.class);
+				if (remRes != null) {
+					remRes.refresh(new NullProgressMonitor());
+				}
+
+			}
+		}
 
 		return rc;
 	}
@@ -887,7 +908,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					envList.add(variables[i].getName()
 							+ "=" + variables[i].getValue()); //$NON-NLS-1$
 				}
-				env = (String[]) envList.toArray(new String[envList.size()]);
+				env = envList.toArray(new String[envList.size()]);
 			}
 
 			// Hook up an error parser manager
@@ -1007,7 +1028,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 							envList.add(variables[i].getName()
 									+ "=" + variables[i].getValue()); //$NON-NLS-1$
 					}
-					env = (String[]) envList.toArray(new String[envList.size()]);
+					env = envList.toArray(new String[envList.size()]);
 				}
 
 				launcher.execute(
@@ -1025,12 +1046,30 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		return winOSType;
 	}	
 
+    // Get OS name either remotely or locally, depending on the project
+    private String getOSName() {
+    	IRemoteResource remRes =
+    			(IRemoteResource)getProject().getAdapter(IRemoteResource.class);
+    	if (remRes != null) {
+    		URI uri = remRes.getActiveLocationURI();
+    		IRemoteServices remServices = RemoteServices.getRemoteServices(uri);
+    		if (remServices != null) {
+    			IRemoteConnection conn =
+    					remServices.getConnectionManager().getConnection(uri);
+    			if (conn != null) {
+    				return conn.getProperty(IRemoteConnection.OS_NAME_PROPERTY);
+    			}
+    		}
+    	}
+    	return Platform.getOS();
+    }	
+    
     // Get the path string.  We add a Win check to handle MingW.
     // For MingW, we would rather represent C:\a\b as /C/a/b which
     // doesn't cause Makefile to choke. For Cygwin we use /cygdrive/C/a/b
     private String getPathString(IPath path) {
             String s = path.toString();
-            if (Platform.getOS().equals(Platform.OS_WIN32)) {
+            if (getOSName().equals(Platform.OS_WIN32)) {
             	if (getWinOSType().equals("cygwin")) {
                     s = s.replaceAll("^([A-Z])(:)", "/cygdrive/$1");            		
             	} else {
@@ -1048,7 +1087,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
         return s;
     }
 
-	// Run an autotools script (e.g. configure, autogen.sh, config.status).
+    // Run an autotools script (e.g. configure, autogen.sh, config.status).
 	private int runScript(IPath commandPath, IPath runPath, String[] args,
 			String jobDescription, String errMsg, IConsole console,
 			ArrayList<String> additionalEnvs, 
@@ -1073,8 +1112,9 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
         configTargets[0] = getPathString(commandPath);
 
         // Fix for bug #343879
-        if (Platform.getOS().equals(Platform.OS_WIN32)
-                || Platform.getOS().equals(Platform.OS_MACOSX))
+        String osName = getOSName();
+        if (osName.equals(Platform.OS_WIN32)
+                || osName.equals(Platform.OS_MACOSX))
         	removePWD = true;
         
         // Fix for bug #343731 and bug #371277
@@ -1183,7 +1223,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				}
 				if (additionalEnvs != null)
 					envList.addAll(additionalEnvs); // add any additional environment variables specified ahead of script
-				env = (String[]) envList.toArray(new String[envList.size()]);
+				env = envList.toArray(new String[envList.size()]);
 			}
 
 			// Hook up an error parser manager
@@ -1342,6 +1382,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	}
 	
 	protected static class MakeTargetComparator implements Comparator<Object> {
+		@Override
 		public int compare(Object a, Object b) {
 			IMakeTarget make1 = (IMakeTarget)a;
 			IMakeTarget make2 = (IMakeTarget)b;
@@ -1505,6 +1546,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				aList.add(str);
 			}
 		}
-		return (String[])aList.toArray(new String[aList.size()]);
+		return aList.toArray(new String[aList.size()]);
 	}
 }

@@ -1,0 +1,9 @@
+Verified+1: Hudson CI
+Code-Review+2: Teodor Madan <teodor.madan@freescale.com>
+IP-Clean+1: Teodor Madan <teodor.madan@freescale.com>
+Verified+1: Teodor Madan <teodor.madan@freescale.com>
+Submitted-by: Teodor Madan <teodor.madan@freescale.com>
+Submitted-at: Tue, 01 Apr 2014 04:41:32 -0400
+Reviewed-on: https://git.eclipse.org/r/23735
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

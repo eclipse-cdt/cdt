@@ -34,6 +34,24 @@
       "revId": "6ef5ceffb9485cff5e6d1672a0532b43de3d3f49",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_debd831f",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/UNCPathConverter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-01T20:01:24Z",
+      "side": 1,
+      "message": "\u003e No more wrong than treating slash as a separator on Windows systems.\n\nMS C/C++ compiler accepts both / and \\ in #include statements.\n\n\u003e Since UNC paths usually refer to remote systems, their path separators are independent of the one used by the local system.\n\nThis is a misconception. An UNC path is a path on a remote file system MAPPED to the local system. Mapping implies transformation that may involve replacing path separators.",
+      "parentUuid": "2753a756_3e3e3f42",
+      "revId": "6ef5ceffb9485cff5e6d1672a0532b43de3d3f49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -30,9 +30,9 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -58,6 +58,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.newmake.core.IMakeCommonBuildInfo;
+import org.eclipse.cdt.remote.core.RemoteCommandLauncher;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
@@ -78,6 +79,10 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteResource;
+import org.eclipse.remote.core.IRemoteServices;
+import org.eclipse.remote.core.RemoteServices;
 
 
 @SuppressWarnings("deprecation")
@@ -162,6 +167,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		CUIPlugin.getDefault().getPreferenceStore().getString("dummy");
 	}
 
+	@Override
 	public IProject getProject() {
 		return project;
 	}
@@ -211,6 +217,12 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			if (!newFile.isDerived()) {
 				newFile.setDerived(true);
 			}
+			// if successful, refresh any remote projects to notify them of the new file
+			IRemoteResource remRes =
+					(IRemoteResource)getProject().getAdapter(IRemoteResource.class);
+			if (remRes != null) {
+				remRes.refresh(new NullProgressMonitor());
+			}
 
 		} catch (CoreException e) {
 			// If the file already existed locally, just refresh to get contents
@@ -235,8 +247,18 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		if (dirName.length() == 0 || dirName.equals("."))
 			path = project.getLocation().append(dirName);
 		File f = path.toFile();
-		if (!f.exists())
+		if (!f.exists()) {
 			rc = f.mkdirs();
+			if (rc) {
+				// if successful, refresh any remote projects to notify them of the new directory
+				IRemoteResource remRes =
+						(IRemoteResource)project.getAdapter(IRemoteResource.class);
+				if (remRes != null) {
+					remRes.refresh(new NullProgressMonitor());
+				}
+
+			}
+		}
 
 		return rc;
 	}
@@ -876,7 +898,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			consoleOutStream.flush();
 
 			// Get a launcher for the config command
-			CommandLauncher launcher = new CommandLauncher();
+			RemoteCommandLauncher launcher = new RemoteCommandLauncher();
+			launcher.setProject(project);
 			// Set the environment
 			IEnvironmentVariable variables[] = 
 					CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cdesc, true);
@@ -887,7 +910,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					envList.add(variables[i].getName()
 							+ "=" + variables[i].getValue()); //$NON-NLS-1$
 				}
-				env = (String[]) envList.toArray(new String[envList.size()]);
+				env = envList.toArray(new String[envList.size()]);
 			}
 
 			// Hook up an error parser manager
@@ -911,8 +934,22 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				}
 
 				if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(
-						monitor, IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) {
+						monitor, IProgressMonitor.UNKNOWN)) != ICommandLauncher.OK) {
 					errMsg = launcher.getErrorMessage();
+				}
+
+				// There can be a delay before we can look at the process exit value,
+				// so loop until we can.
+				if (errMsg == null || errMsg.length() == 0) {
+					boolean finished = false;
+					while (!finished) {
+						try {
+							proc.exitValue();
+							finished = true;
+						} catch (IllegalThreadStateException e) {
+							// Ignore
+						}
+					}
 				}
 
 				// Force a resync of the projects without allowing the user to
@@ -994,7 +1031,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	private String getWinOSType() {
 		if (winOSType.equals("")) {
 			try {
-				CommandLauncher launcher = new CommandLauncher();
+				RemoteCommandLauncher launcher = new RemoteCommandLauncher();
+				launcher.setProject(getProject());
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				// Fix Bug 423192 - use environment variables when checking the Win OS Type using
 				// a shell command as the path to sh may be specified there
@@ -1007,7 +1045,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 							envList.add(variables[i].getName()
 									+ "=" + variables[i].getValue()); //$NON-NLS-1$
 					}
-					env = (String[]) envList.toArray(new String[envList.size()]);
+					env = envList.toArray(new String[envList.size()]);
 				}
 
 				launcher.execute(
@@ -1016,7 +1054,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 						env,
 						new Path("."), //$NON-NLS-1$
 						new NullProgressMonitor());
-				if (launcher.waitAndRead(out, out) == CommandLauncher.OK)
+				if (launcher.waitAndRead(out, out) == ICommandLauncher.OK)
 					winOSType = out.toString().trim();
 			} catch (CoreException e) {
 				// do nothing
@@ -1025,12 +1063,30 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		return winOSType;
 	}	
 
+    // Get OS name either remotely or locally, depending on the project
+    private String getOSName() {
+    	IRemoteResource remRes =
+    			(IRemoteResource)getProject().getAdapter(IRemoteResource.class);
+    	if (remRes != null) {
+    		URI uri = remRes.getActiveLocationURI();
+    		IRemoteServices remServices = RemoteServices.getRemoteServices(uri);
+    		if (remServices != null) {
+    			IRemoteConnection conn =
+    					remServices.getConnectionManager().getConnection(uri);
+    			if (conn != null) {
+    				return conn.getProperty(IRemoteConnection.OS_NAME_PROPERTY);
+    			}
+    		}
+    	}
+    	return Platform.getOS();
+    }	
+    
     // Get the path string.  We add a Win check to handle MingW.
     // For MingW, we would rather represent C:\a\b as /C/a/b which
     // doesn't cause Makefile to choke. For Cygwin we use /cygdrive/C/a/b
     private String getPathString(IPath path) {
             String s = path.toString();
-            if (Platform.getOS().equals(Platform.OS_WIN32)) {
+            if (getOSName().equals(Platform.OS_WIN32)) {
             	if (getWinOSType().equals("cygwin")) {
                     s = s.replaceAll("^([A-Z])(:)", "/cygdrive/$1");            		
             	} else {
@@ -1048,7 +1104,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
         return s;
     }
 
-	// Run an autotools script (e.g. configure, autogen.sh, config.status).
+    // Run an autotools script (e.g. configure, autogen.sh, config.status).
 	private int runScript(IPath commandPath, IPath runPath, String[] args,
 			String jobDescription, String errMsg, IConsole console,
 			ArrayList<String> additionalEnvs, 
@@ -1073,8 +1129,9 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
         configTargets[0] = getPathString(commandPath);
 
         // Fix for bug #343879
-        if (Platform.getOS().equals(Platform.OS_WIN32)
-                || Platform.getOS().equals(Platform.OS_MACOSX))
+        String osName = getOSName();
+        if (osName.equals(Platform.OS_WIN32)
+                || osName.equals(Platform.OS_MACOSX))
         	removePWD = true;
         
         // Fix for bug #343731 and bug #371277
@@ -1155,7 +1212,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			consoleOutStream.flush();
 
 			// Get a launcher for the config command
-			CommandLauncher launcher = new CommandLauncher();
+			RemoteCommandLauncher launcher = new RemoteCommandLauncher();
+			launcher.setProject(project);
 			// Set the environment
 			IEnvironmentVariable variables[] = 
 					CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cdesc, true);
@@ -1183,7 +1241,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				}
 				if (additionalEnvs != null)
 					envList.addAll(additionalEnvs); // add any additional environment variables specified ahead of script
-				env = (String[]) envList.toArray(new String[envList.size()]);
+				env = envList.toArray(new String[envList.size()]);
 			}
 
 			// Hook up an error parser manager
@@ -1208,8 +1266,22 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				}
 
 				if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(
-						monitor, IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) {
+						monitor, IProgressMonitor.UNKNOWN)) != ICommandLauncher.OK) {
 					errMsg = launcher.getErrorMessage();
+				}
+				
+				// There can be a delay before we can look at the process exit value,
+				// so loop until we can.
+				if (errMsg == null || errMsg.length() == 0) {
+					boolean finished = false;
+					while (!finished) {
+						try {
+							proc.exitValue();
+							finished = true;
+						} catch (IllegalThreadStateException e) {
+							// Ignore
+						}
+					}
 				}
 
 				// Force a resync of the projects without allowing the user to
@@ -1342,6 +1414,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	}
 	
 	protected static class MakeTargetComparator implements Comparator<Object> {
+		@Override
 		public int compare(Object a, Object b) {
 			IMakeTarget make1 = (IMakeTarget)a;
 			IMakeTarget make2 = (IMakeTarget)b;
@@ -1505,6 +1578,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				aList.add(str);
 			}
 		}
-		return (String[])aList.toArray(new String[aList.size()]);
+		return aList.toArray(new String[aList.size()]);
 	}
 }

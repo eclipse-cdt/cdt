@@ -19,6 +19,7 @@ import java.util.Properties;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.remote.internal.core.messages.Messages;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -68,6 +69,10 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 						parseEnvironment(env);
 						fCommandArgs = constructCommandArray(commandPath.toOSString(), args);
 						IRemoteProcessBuilder processBuilder = fConnection.getProcessBuilder(fCommandArgs);
+						if (workingDirectory != null) {
+							IFileStore wd = fConnection.getFileManager().getResource(workingDirectory.toString());
+							processBuilder.directory(wd);
+						}
 						Map<String, String> processEnv = processBuilder.environment();
 						for (String key : fEnvironment.stringPropertyNames()) {
 							processEnv.put(key, fEnvironment.getProperty(key));

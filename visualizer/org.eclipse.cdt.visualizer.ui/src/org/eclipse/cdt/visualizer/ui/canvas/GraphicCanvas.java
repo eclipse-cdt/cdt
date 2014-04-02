@@ -13,8 +13,11 @@ package org.eclipse.cdt.visualizer.ui.canvas;
 
 import java.util.ArrayList;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 
 // ---------------------------------------------------------------------------
@@ -43,6 +46,20 @@ public class GraphicCanvas extends BufferedCanvas
 	public GraphicCanvas(Composite parent) {
 		super(parent);
 		m_objects = new ArrayList<IGraphicObject>();
+		Listener mouseListener = new Listener() {
+			public void handleEvent(Event event) {
+				switch (event.type) {
+				case SWT.MouseEnter:
+				case SWT.MouseMove:
+					IGraphicObject obj = getGraphicObject(event.x, event.y);
+					String tooltip = obj.getTooltip(event.x, event.y);
+					setToolTipText(tooltip);
+					break;
+				}
+			}
+		};
+		addListener(SWT.MouseMove, mouseListener);
+		addListener(SWT.MouseEnter, mouseListener);
 	}
 	
 	/** Dispose method. */

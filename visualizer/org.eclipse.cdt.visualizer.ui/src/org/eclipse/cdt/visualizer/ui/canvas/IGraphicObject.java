@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Tilera Corporation and others.
+ * Copyright (c) 2012, 2014 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
+ *     Xavier Raynaud (Kalray) - Bug 430804
  *******************************************************************************/
 
 package org.eclipse.cdt.visualizer.ui.canvas;
@@ -31,6 +32,15 @@ public interface IGraphicObject
 	 *  If decorations is true, paints optional "decorations" layer.
 	 */
 	public void paint(GC gc, boolean decorations);
+
+	/**
+	 * Return the tooltip to display when mouse stays on this object.
+	 * It may return <code>null</code> if there is nothing to display.
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @return the tooltip to display on this object.
+	 */
+	public String getTooltip(int x, int y);
 	
 	/** Returns true if object has decorations to paint. */
 	public boolean hasDecorations();

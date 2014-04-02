@@ -118,7 +118,7 @@ public class ProcessPrompter implements IStatusHandler {
 					}
 					
 					String owner = info.getOwner();
-					if (owner != null) {
+					if (owner != null && !owner.isEmpty()) {
 						text.append(" (" + owner + ")");  //$NON-NLS-1$//$NON-NLS-2$
 					}
 					

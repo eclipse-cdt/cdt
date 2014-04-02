@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_daa8bd64",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-02T21:57:57Z",
+      "side": 1,
+      "message": "The CDT team puts \"Bug 431274\" instead of \"[431274]\".  Gerrit recognizes this syntax and adds a link to the bug when you view the change.",
+      "revId": "6d442e197f6468fe5e6e5e677efd9f8c8fca9a74",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_fa2f818e",
+        "filename": "releng/org.eclipse.cdt.repo/category.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-02T21:57:57Z",
+      "side": 1,
+      "message": "This should be 0.0.0 to bring in the latest version of the code (i.e. doesn\u0027t have to be edited each release.  Note the other features in this file do this.",
+      "revId": "6d442e197f6468fe5e6e5e677efd9f8c8fca9a74",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_9af3e595",
+        "filename": "remote/org.eclipse.cdt.remote-feature/feature.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-02T21:57:57Z",
+      "side": 1,
+      "message": "This should be the same as all CDT feature providers since it is being added officially to the CDT base (Eclipse CDT).",
+      "revId": "6d442e197f6468fe5e6e5e677efd9f8c8fca9a74",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_7af6d186",
+        "filename": "remote/org.eclipse.cdt.remote-feature/feature.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-02T21:57:57Z",
+      "side": 1,
+      "message": "I don\u0027t think this actually adds to the remote services framework per se.  I think something along the lines of: \"Adds CDT-specific remote services functionality\" might be better.",
+      "revId": "6d442e197f6468fe5e6e5e677efd9f8c8fca9a74",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_5ae14db8",
+        "filename": "remote/org.eclipse.cdt.remote-feature/feature.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-02T21:57:57Z",
+      "side": 1,
+      "message": "This doesn\u0027t have to match the CDT release, but I see that many of the CDT features bump themselves to the CDT release number on releases so whatever you like.",
+      "revId": "6d442e197f6468fe5e6e5e677efd9f8c8fca9a74",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_3adc5903",
+        "filename": "remote/org.eclipse.cdt.remote.core/plugin.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-02T21:57:57Z",
+      "side": 1,
+      "message": "As mentioned before, this should Eclipse CDT since the code will be part of Eclipse CDT.",
+      "revId": "6d442e197f6468fe5e6e5e677efd9f8c8fca9a74",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

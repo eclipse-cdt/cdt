@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_29137d64",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicCanvas.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-02T13:10:16Z",
+      "side": 1,
+      "message": "Should we protect against obj being null?",
+      "revId": "3cbe0cd30bfef993912c540743b9256628402908",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Monta Vista and others.
+ * Copyright (c) 2008, 2014 Monta Vista and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Axel Mueller - Workaround for GDB bug where -var-info-path-expression gives invalid result (Bug 320277)
  *     Anton Gorenkov - DSF-GDB should properly handle variable type change (based on RTTI) (Bug 376901)
+ *     Raphael Zulliger (Indel AG) - [expressions] Assertion when examining a sub-expression using "watch" (Bug 393930)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -2368,6 +2369,18 @@ public class MIVariableManager implements ICommandControl {
 		// We don't use the expression context because it is not safe to compare them
 		// See bug 187718.  So we store the expression itself, and it's parent execution context.
 		String fExpression = null;
+		// As we can't store the expression context itself (see comments for
+		// fExpression), we store the relative expression, if avaiable. This is
+		// required in order to distinguish between watches that refer to the
+		// same variable instance in the debugee, but with different "relatives"
+		// in the expresssion view. One such example is when you have a expanded
+		// struct instance (e.g. "s") in the "Expression View", therefore having
+		// all struct members shown (e.g. member "a"), and then you create an
+		// additional watch which referes to one of these members directly (e.g.
+		// "s.a"): Both, the member and the additional watch, point to the same
+		// variable in the debugee, but they have different
+		// "relative expressions"
+		String fRelativeExpression = null;
 		IExecutionDMContext fExecContext = null;
 		// We need the depth of the frame.  The frame level is not sufficient because 
         // the same frame will have a different level based on the current depth of the stack 
@@ -2381,6 +2394,7 @@ public class MIVariableManager implements ICommandControl {
 			if (other instanceof VariableObjectId) {
 				VariableObjectId otherId = (VariableObjectId) other;
 				return (fExpression == null ? otherId.fExpression == null : fExpression.equals(otherId.fExpression)) &&
+					(fRelativeExpression == null ? otherId.fRelativeExpression == null : fRelativeExpression.equals(otherId.fRelativeExpression)) &&
     				(fExecContext == null ? otherId.fExecContext == null : fExecContext.equals(otherId.fExecContext)) &&
                     (fFrameId == null ? otherId.fFrameId == null : fFrameId.equals(otherId.fFrameId));
 			}
@@ -2390,11 +2404,15 @@ public class MIVariableManager implements ICommandControl {
 		@Override
 		public int hashCode() {
 			return (fExpression == null ? 0 : fExpression.hashCode()) + 
+				   (fRelativeExpression == null ? 0 : fRelativeExpression.hashCode()) +
 		           (fExecContext == null ? 0 : fExecContext.hashCode()) +
 			       (fFrameId  == null ? 0 : fFrameId.hashCode());
 		}
 
 		public void generateId(IExpressionDMContext exprCtx, final RequestMonitor rm) {
+			if( exprCtx instanceof MIExpressionDMC ) {
+				fRelativeExpression = ((MIExpressionDMC)exprCtx).getRelativeExpression();
+			}
 			fExpression = exprCtx.getExpression();
 
 			fExecContext = DMContexts.getAncestorOfType(exprCtx, IExecutionDMContext.class);

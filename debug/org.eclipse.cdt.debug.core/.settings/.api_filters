@@ -15,14 +15,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/cdt/debug/core/model/ICBreakpoint.java" type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
-        <filter comment="Binary backward compatible change." id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.model.ICBreakpoint"/>
-                <message_argument value="C_BREAKPOINT_MARKER"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/cdt/debug/core/model/ICEventBreakpoint.java" type="org.eclipse.cdt.debug.core.model.ICEventBreakpoint">
         <filter comment="Binary backward compatible change." id="403767336">
             <message_arguments>

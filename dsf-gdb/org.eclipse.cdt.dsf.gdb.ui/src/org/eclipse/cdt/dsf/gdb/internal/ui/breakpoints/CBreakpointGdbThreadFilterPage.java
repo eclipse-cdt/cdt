@@ -50,9 +50,8 @@ public class CBreakpointGdbThreadFilterPage extends PropertyPage {
 	    ICBreakpoint bp = getBreakpoint();
 	    if (bp != null) {
 	        try {
-	        	IDsfBreakpointExtension filter =
-	        		(IDsfBreakpointExtension) bp.getExtension(
-	        				GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, CBreakpointGdbThreadsFilterExtension.class);
+	        	IDsfBreakpointExtension filter = bp.getExtension(GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, 
+	        													 CBreakpointGdbThreadsFilterExtension.class);
 	        	filter.initialize(bp);
 	        	return filter;
 	        } catch (CoreException e) {}

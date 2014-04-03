@@ -62,9 +62,6 @@ import org.eclipse.swt.widgets.Label;
 
 public class GdbThreadFilterEditor {
 
-    /**
-     * Comment for ThreadFilterEditor.
-     */
     public class CheckHandler implements ICheckStateListener {
 
         /*
@@ -123,17 +120,10 @@ public class GdbThreadFilterEditor {
         }
     }
 
-    /**
-     * Comment for ThreadFilterEditor.
-     */
     public class ThreadFilterContentProvider implements ITreeContentProvider {
 
-        /**
-         * Constructor for ThreadFilterContentProvider.
-         */
         public ThreadFilterContentProvider() {
             super();
-            // TODO Auto-generated constructor stub
         }
 
         /*
@@ -248,9 +238,6 @@ public class GdbThreadFilterEditor {
 
     private CheckHandler fCheckHandler;
 
-    /**
-     * Constructor for ThreadFilterEditor.
-     */
     public GdbThreadFilterEditor(Composite parent, CBreakpointGdbThreadFilterPage page) {
         fPage = page;
         fContentProvider = new ThreadFilterContentProvider();

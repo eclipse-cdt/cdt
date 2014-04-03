@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Bryan Wilkinson (QNX) - Initial API and implementation
- *    Andrew Ferguson (Symbian)
- *    Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX) - Initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -45,10 +45,10 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 		final ICPPTemplateInstance asInstance= (ICPPTemplateInstance) function;
 		final long argListRec= PDOMCPPArgumentList.putArguments(this, asInstance.getTemplateArguments());
 		final Database db = getDB();
-		db.putRecPtr(record+ARGUMENTS, argListRec);
+		db.putRecPtr(record + ARGUMENTS, argListRec);
 		
 		long exceptSpecRec = PDOMCPPTypeList.putTypes(this, function.getExceptionSpecification());
-		db.putRecPtr(record+EXCEPTION_SPEC, exceptSpecRec);
+		db.putRecPtr(record + EXCEPTION_SPEC, exceptSpecRec);
 	}
 
 	public PDOMCPPFunctionInstance(PDOMLinkage linkage, long bindingRecord) {
@@ -82,7 +82,7 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
-			final long rec= getPDOM().getDB().getRecPtr(record+ARGUMENTS);
+			final long rec= getPDOM().getDB().getRecPtr(record + ARGUMENTS);
 			return PDOMCPPArgumentList.getArguments(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -93,7 +93,7 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 	@Override
 	public IType[] getExceptionSpecification() {
 		try {
-			final long rec = getPDOM().getDB().getRecPtr(record+EXCEPTION_SPEC);
+			final long rec = getPDOM().getDB().getRecPtr(record + EXCEPTION_SPEC);
 			return PDOMCPPTypeList.getTypes(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

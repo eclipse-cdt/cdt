@@ -167,7 +167,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 
-
 /**
  * Collection of static methods to perform template instantiation, member specialization and
  * type instantiation.
@@ -780,7 +779,9 @@ public class CPPTemplates {
 		IType instantiatedType = instantiateType(aliasedType, parameterMap, -1,	within, id);
 		StringBuilder buf= new StringBuilder();
 		buf.append(id.getSimpleID()).append(ASTTypeUtil.getArgumentListString(args, false));
-		return new CPPAliasTemplateInstance(buf.toString().toCharArray(), aliasTemplate, instantiatedType);
+		char[] name = new char[buf.length()];
+		buf.getChars(0, buf.length(), name, 0);
+		return new CPPAliasTemplateInstance(name, aliasTemplate, instantiatedType);
 	}
 
 	static boolean isClassTemplate(ICPPASTTemplateId id) {
@@ -1963,12 +1964,13 @@ public class CPPTemplates {
 		if (!haveTemplate && !requireTemplate)
 			return fns;
 
-		final List<ICPPFunction> result= new ArrayList<ICPPFunction>(fns.length);
+		final List<ICPPFunction> result= new ArrayList<>(fns.length);
 		for (ICPPFunction fn : fns) {
 			if (fn != null) {
 				if (fn instanceof ICPPFunctionTemplate) {
 					ICPPFunctionTemplate fnTmpl= (ICPPFunctionTemplate) fn;
-					ICPPFunction inst = instantiateForFunctionCall(fnTmpl, tmplArgs, fnArgs, argCats, withImpliedObjectArg, point);
+					ICPPFunction inst = instantiateForFunctionCall(fnTmpl, tmplArgs, fnArgs, argCats,
+							withImpliedObjectArg, point);
 					if (inst != null)
 						result.add(inst);
 				} else if (!requireTemplate || fn instanceof ICPPUnknownBinding) {

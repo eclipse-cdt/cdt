@@ -33,8 +33,9 @@ public class ObjectSet<T> extends ObjectTable<T> {
 	public static <T> ObjectSet<T> emptySet() {
     	return EMPTY_SET;
     }
+
     /**
-     * Construct an empty ObjectSet, allocating an initial storage for the specified
+     * Constructs an empty ObjectSet, allocating an initial storage for the specified
      * number of elements
      * @param initialSize
      */
@@ -43,7 +44,7 @@ public class ObjectSet<T> extends ObjectTable<T> {
 	}
 	
 	/**
-	 * Construct an ObjectSet populated with the specified items, or an empty ObjectSet
+	 * Constructs an ObjectSet populated with the specified items, or an empty ObjectSet
 	 * if the parameter is null
 	 * @param items
 	 */

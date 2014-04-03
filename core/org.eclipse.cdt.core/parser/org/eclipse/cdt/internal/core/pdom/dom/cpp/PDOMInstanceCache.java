@@ -51,7 +51,7 @@ public class PDOMInstanceCache {
 	private ICPPDeferredClassInstance fDeferredInstance;
 
 	public PDOMInstanceCache() {
-		fMap= new HashMap<String, ICPPTemplateInstance>();
+		fMap= new HashMap<>();
 	}
 	
 	synchronized public final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
@@ -102,7 +102,7 @@ public class PDOMInstanceCache {
 		return fDeferredInstance;
 	}
 
-	public void putDeferredInstance(ICPPDeferredClassInstance dci) {
-		fDeferredInstance= dci;
+	public void putDeferredInstance(ICPPDeferredClassInstance deferredInstance) {
+		fDeferredInstance= deferredInstance;
 	}
 }

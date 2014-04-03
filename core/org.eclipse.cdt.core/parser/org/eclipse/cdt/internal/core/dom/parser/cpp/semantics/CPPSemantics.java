@@ -592,7 +592,7 @@ public class CPPSemantics {
 		// don't ascend into enclosing scopes.
 		boolean originalQualified = data.qualified;
 		data.qualified = true;
-        Set<ICPPFunction> friendFns = new HashSet<ICPPFunction>(2);
+        Set<ICPPFunction> friendFns = new HashSet<>(2);
 		Set<ICPPNamespaceScope> associated = getAssociatedScopes(data, friendFns);
 		for (ICPPNamespaceScope scope : associated) {
 			if (!data.visited.containsKey(scope)) {
@@ -717,8 +717,8 @@ public class CPPSemantics {
     		return Collections.emptySet();
 
         IType[] ps = data.getFunctionArgumentTypes();
-        Set<ICPPNamespaceScope> namespaces = new HashSet<ICPPNamespaceScope>(2);
-        ObjectSet<IType> handled = new ObjectSet<IType>(2);
+        Set<ICPPNamespaceScope> namespaces = new HashSet<>(2);
+        ObjectSet<IType> handled = new ObjectSet<>(2);
         for (IType p : ps) {
             try {
                 getAssociatedScopes(p, namespaces, friendFns, handled, data.getTranslationUnit());
@@ -882,7 +882,7 @@ public class CPPSemantics {
 	 */
 	static CharArrayObjectMap<Object> mergePrefixResults(CharArrayObjectMap<Object> dest, Object source, boolean scoped) {
 		if (source == null) return dest;
-        CharArrayObjectMap<Object> resultMap = (dest != null) ? dest : new CharArrayObjectMap<Object>(2);
+        CharArrayObjectMap<Object> resultMap = (dest != null) ? dest : new CharArrayObjectMap<>(2);
 
         CharArrayObjectMap<Object> map = null;
         Object[] objs = null;
@@ -1101,7 +1101,7 @@ public class CPPSemantics {
 		}
 		ICPPUsingDirective[] uds= blockScope.getUsingDirectives();
 		if (uds != null && uds.length > 0) {
-			HashSet<ICPPNamespaceScope> handled= new HashSet<ICPPNamespaceScope>();
+			HashSet<ICPPNamespaceScope> handled= new HashSet<>();
 			for (final ICPPUsingDirective ud : uds) {
 				if (data.isIgnorePointOfDeclaration() || declaredBefore(ud, data.getLookupPoint(), false)) {
 					storeUsingDirective(data, blockScope, ud, handled);
@@ -1127,7 +1127,7 @@ public class CPPSemantics {
 			if (dqname.getLastName() != typeDtorName)
 				return false;
 		}
-		char[] tchars= new char[typeDtorChars.length-1];
+		char[] tchars= new char[typeDtorChars.length - 1];
 		System.arraycopy(typeDtorChars, 1, tchars, 0, tchars.length);
 
 		LookupData ld2= new LookupData(tchars, data.fTemplateArguments, data.getLookupPoint());
@@ -1154,7 +1154,7 @@ public class CPPSemantics {
 		}
 
 		char[] classChars= classType.getNameCharArray();
-		char[] classDtorChars= new char[classChars.length+1];
+		char[] classDtorChars= new char[classChars.length + 1];
 		classDtorChars[0]= '~';
 		System.arraycopy(classChars, 0, classDtorChars, 1, classChars.length);
 		data.setLookupKey(classDtorChars);
@@ -1303,7 +1303,7 @@ public class CPPSemantics {
 				break;
 
 			if (b instanceof ICPPUsingDeclaration || (data.typesOnly && isObject(b))) {
-				List<IBinding> result= new ArrayList<IBinding>(bindings.length);
+				List<IBinding> result= new ArrayList<>(bindings.length);
 				expandUsingDeclarations(bindings, data, result);
 				return result.toArray(new IBinding[result.size()]);
 			}
@@ -1393,7 +1393,7 @@ public class CPPSemantics {
 			// store the directive with the scope where it has to be considered
 			List<ICPPNamespaceScope> listOfNominated= data.usingDirectives.get(appearsIn);
 			if (listOfNominated == null) {
-				listOfNominated= new ArrayList<ICPPNamespaceScope>(1);
+				listOfNominated= new ArrayList<>(1);
 				if (data.usingDirectives.isEmpty()) {
 					data.usingDirectives= new HashMap<ICPPNamespaceScope, List<ICPPNamespaceScope>>();
 				}
@@ -1421,7 +1421,7 @@ public class CPPSemantics {
 	 */
 	private static ICPPScope getCommonEnclosingScope(IScope s1, IScope s2, ICPPASTTranslationUnit tu)
 			throws DOMException {
-		ObjectSet<IScope> set = new ObjectSet<IScope>(2);
+		ObjectSet<IScope> set = new ObjectSet<>(2);
 		IScope parent= s1;
 		while (parent != null) {
 			set.put(parent);
@@ -1969,10 +1969,9 @@ public class CPPSemantics {
         IASTNode lookupPoint = data.getLookupPoint();
 	    final boolean indexBased= data.getIndex() != null;
 	    final boolean checkWholeClass= lookupName == null || LookupData.checkWholeClassScope(lookupName);
-	    @SuppressWarnings("unchecked")
-	    ObjectSet<ICPPFunction> fns= ObjectSet.EMPTY_SET;
+	    ObjectSet<ICPPFunction> fns= ObjectSet.emptySet();
 	    IBinding type = null;
-	    IBinding obj  = null;
+	    IBinding obj = null;
 	    IBinding temp = null;
 
 	    final CPPASTTranslationUnit tu = data.getTranslationUnit();
@@ -2029,7 +2028,7 @@ public class CPPSemantics {
 	        			continue;
 	        	}
 	        	if (fns == ObjectSet.EMPTY_SET)
-	        		fns = new ObjectSet<ICPPFunction>(2);
+	        		fns = new ObjectSet<>(2);
 	        	fns.put((ICPPFunction) temp);
 	        } else if (temp instanceof IType) {
 		        // Specializations are selected during instantiation
@@ -2433,13 +2432,14 @@ public class CPPSemantics {
 		// Reduce our set of candidate functions to only those who have the right number of parameters
 	    final IType[] argTypes = data.getFunctionArgumentTypes();
 		ICPPFunction[] tmp= selectByArgumentCount(data, fns);
+	    if (tmp.length == 0 || tmp[0] == null)
+			return new ProblemBinding(lookupName, lookupPoint, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fns);
 	    tmp= CPPTemplates.instantiateForFunctionCall(tmp, data.fTemplateArguments,
 	    		Arrays.asList(argTypes),
 	    		Arrays.asList(data.getFunctionArgumentValueCategories()),
 	    		data.argsContainImpliedObject, lookupPoint);
-	    if (tmp.length == 0 || tmp[0] == null) {
+	    if (tmp.length == 0 || tmp[0] == null)
 			return new ProblemBinding(lookupName, lookupPoint, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fns);
-	    }
 
 		int viableCount= 0;
 		for (IFunction f : tmp) {
@@ -2487,7 +2487,7 @@ public class CPPSemantics {
 
 			if (fnCost.hasDeferredUDC()) {
 				if (potentialCosts == null) {
-					potentialCosts= new ArrayList<FunctionCost>();
+					potentialCosts= new ArrayList<>();
 				}
 				potentialCosts.add(fnCost);
 				continue;
@@ -3592,10 +3592,10 @@ public class CPPSemantics {
 		LookupData data = createLookupData(name);
 		data.contentAssist = true;
 		data.setPrefixLookup(prefixLookup);
-		data.foundItems = new CharArrayObjectMap<Object>(2);
+		data.foundItems = new CharArrayObjectMap<>(2);
 
 		// Convert namespaces to scopes.
-		List<ICPPScope> nsScopes= new ArrayList<ICPPScope>();
+		List<ICPPScope> nsScopes= new ArrayList<>();
 		IASTTranslationUnit tu = name.getTranslationUnit();
 		if (additionalNamespaces != null && tu instanceof CPPASTTranslationUnit) {
 			for (String nsName : additionalNamespaces) {
@@ -3678,7 +3678,7 @@ public class CPPSemantics {
 			scope = global;
 		}
 
-		Set<IBinding> bindings = new HashSet<IBinding>();
+		Set<IBinding> bindings = new HashSet<>();
 
 		// Look for the name in the given scope.
 		findBindingsForQualifiedName(scope, qualifiedName, bindings);
@@ -3814,9 +3814,9 @@ public class CPPSemantics {
 
 		Object[] items = (Object[]) data.foundItems;
 		if (items == null)
-		    return new IBinding[0];
+		    return IBinding.EMPTY_BINDING_ARRAY;
 
-		ObjectSet<IBinding> set = new ObjectSet<IBinding>(items.length);
+		ObjectSet<IBinding> set = new ObjectSet<>(items.length);
 		IBinding binding = null;
 		for (Object item : items) {
 			if (item instanceof IASTName) {

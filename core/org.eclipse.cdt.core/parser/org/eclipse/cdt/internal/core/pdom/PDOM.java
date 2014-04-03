@@ -1088,9 +1088,21 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return fLinkageIDCache.get(linkage.getLinkageID());
 	}
 
+	private IBinding inProgress;
+	
 	@Override
 	public IIndexFragmentBinding adaptBinding(IBinding binding) throws CoreException {
-		return adaptBinding(binding, true);
+		if (inProgress == binding) {
+			// Detect if we're recursing during the adapt. That shouldn't happen and
+			// leads to stack overflow when it does.
+			return null;
+		}
+
+		inProgress = binding;
+		IIndexFragmentBinding result = adaptBinding(binding, true);
+		inProgress = null;
+
+		return result;
 	}
 
 	private IIndexFragmentBinding adaptBinding(IBinding binding, boolean includeLocal) throws CoreException {

@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * An extension to {@link ICBreakpoint} with model-specific breakpoint 
  * attributes. Different debug models can use the standard C breakpoints that 
- * extend the basic <code>ICBreakpoint</code>.  The can use this extension 
+ * extend the basic <code>ICBreakpoint</code>.  They can use this extension 
  * mechanism to edit and store model-specific data in the original breakpoint 
  * object.
  *   

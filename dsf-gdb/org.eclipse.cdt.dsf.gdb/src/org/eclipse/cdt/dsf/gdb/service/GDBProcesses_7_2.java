@@ -379,7 +379,6 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 	    }
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void connectToTarget(IProcessDMContext procCtx, RequestMonitor rm) {
 		ILaunch launch = (ILaunch)procCtx.getAdapter(ILaunch.class);
 		assert launch != null;

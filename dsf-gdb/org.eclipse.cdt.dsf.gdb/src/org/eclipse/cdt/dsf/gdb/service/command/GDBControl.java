@@ -16,6 +16,7 @@
  *     Mikhail Khodjaiants (Mentor Graphics) - Terminate should cancel the initialization sequence 
  *                                             if it is still running (bug 373845)
  *     Marc Khouzam (Ericsson) - Terminate the session if we lose the connection to the remote target (bug 422586)
+ *     Marc Khouzam (Ericsson) - Allow to override the creation of the ControlDMC (Bug 389945)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
@@ -185,7 +186,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		}
 	}
 	
-    private GDBControlDMContext fControlDmc;
+    private ICommandControlDMContext fControlDmc;
 
     private IGDBBackend fMIBackend;
         
@@ -250,9 +251,9 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
         fMIBackend = getServicesTracker().getService(IGDBBackend.class);
     	
-        // getId uses the MIBackend service, which is why we must wait until we
-        // have it, before we can create this context.
-        fControlDmc = new GDBControlDMContext(getSession().getId(), getId()); 
+        // getId, called to create this context, uses the MIBackend service, 
+        // which is why we must wait until we have MIBackend, before we can create the below context.
+        fControlDmc = createComandControlContext(); 
 
         getExecutor().execute(getStartupSequence(requestMonitor));
     }
@@ -273,9 +274,22 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         return fMIBackend.getId();
     }
     
+	/**
+	 * Create the commandControl context.
+	 * This method can be overridden to provide a different context.
+	 */
+	ICommandControlDMContext createComandControlContext() {
+		return new GDBControlDMContext(getSession().getId(), getId());
+	}
+	
+	@Deprecated
     @Override
     public MIControlDMContext getControlDMContext() {
-        return fControlDmc;
+		assert fControlDmc instanceof MIControlDMContext;
+		if (fControlDmc instanceof MIControlDMContext) {
+			return (MIControlDMContext)fControlDmc;
+		}
+		return null;
     }
     
 	@Override
@@ -325,7 +339,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
             getGDBExitWaitTime(), TimeUnit.SECONDS);
         
         queueCommand(
-       		getCommandFactory().createMIGDBExit(fControlDmc),
+       		getCommandFactory().createMIGDBExit(getContext()),
             new DataRequestMonitor<MIInfo>(getExecutor(), rm) { 
                 @Override
                 public void handleCompleted() {
@@ -384,6 +398,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	/**
 	 * @since 4.0
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void completeInitialization(final RequestMonitor rm) {
 		// We take the attributes from the launchConfiguration
@@ -437,7 +452,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     	// Before GDB 7.0, we have to send the containerExited event ourselves
     	IGDBProcesses procService = getServicesTracker().getService(IGDBProcesses.class);
         if (procService != null) {
-    		IContainerDMContext processContainerDmc = procService.createContainerContextFromGroupId(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
+    		IContainerDMContext processContainerDmc = procService.createContainerContextFromGroupId(getContext(), MIProcesses.UNIQUE_GROUP_ID);
     		getSession().dispatchEvent(
     				new ContainerExitedDMEvent(processContainerDmc), getProperties());
         }
@@ -447,7 +462,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     public void eventDispatched(BackendStateChangedEvent e) {
         if (e.getState() == IMIBackend.State.TERMINATED && e.getBackendId().equals(fMIBackend.getId())) {
             // Handle "GDB Exited" event, just relay to following event.
-            getSession().dispatchEvent(new GDBControlShutdownDMEvent(fControlDmc), getProperties());
+            getSession().dispatchEvent(new GDBControlShutdownDMEvent(getContext()), getProperties());
         }
     }
     
@@ -518,8 +533,8 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
                 return;
             }
             
-            fCLICommandProcessor = createCLIEventProcessor(GDBControl.this, fControlDmc);
-            fMIEventProcessor = createMIRunControlEventProcessor(GDBControl.this, fControlDmc);
+            fCLICommandProcessor = createCLIEventProcessor(GDBControl.this, getContext());
+            fMIEventProcessor = createMIRunControlEventProcessor(GDBControl.this, getContext());
             fControlEventProcessor = createControlEventProcessor();
 
             requestMonitor.done();
@@ -575,7 +590,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
                               AbstractMIControl.class.getName(),
                               IGDBControl.class.getName() }, 
                 new Hashtable<String,String>());
-            getSession().dispatchEvent(new GDBControlInitializedDMEvent(fControlDmc), getProperties());
+            getSession().dispatchEvent(new GDBControlInitializedDMEvent(getContext()), getProperties());
             requestMonitor.done();
         }
 

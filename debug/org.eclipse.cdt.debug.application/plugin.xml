@@ -3,7 +3,7 @@
 <plugin>
 
    <extension
-         id="application"
+         id="app"
          point="org.eclipse.core.runtime.applications">
       <application
             cardinality="singleton-global"
@@ -317,9 +317,9 @@
           id="product"
           point="org.eclipse.core.runtime.products">
        <product
-             application="GDBStandalone.application"
+             application="org.eclipse.cdt.debug.application.app"
              description="Eclipse Standalone C/C++ GDB Debugger"
-             name="GDB Standalone">
+             name="Standalone Debugger">
              <property name="windowImages" value="eclipse.gif,eclipse32.gif,eclipse48.gif"/> 
              <property name="aboutImage" value="eclipse_lg.gif"/> 
              <property name="aboutText" value="%aboutText"/> 

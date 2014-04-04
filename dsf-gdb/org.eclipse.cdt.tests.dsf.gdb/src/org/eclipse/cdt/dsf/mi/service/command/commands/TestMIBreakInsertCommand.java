@@ -30,16 +30,6 @@ import org.junit.Test;
 public class TestMIBreakInsertCommand {
 
 	@Test
-	public void pathShouldNotContainDoubleBackSlashes() {
-		MIBreakInsert target = new MIBreakInsert(new TestContext(), false,
-				false, null, 1, "c:\\test\\this\\path:14", 4, false);
-
-		assertEquals("Wrong syntax for command",
-				"-break-insert -i 1 -p 4 c:\\test\\this\\path:14\n", target
-						.constructCommand());
-	}
-
-	@Test
 	public void pathWithSlashesShouldNotBeSubstituted() {
 		MIBreakInsert target = new MIBreakInsert(new TestContext(), false,
 				false, null, 1, "/test/this/path:14", 4, false);

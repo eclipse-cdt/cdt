@@ -15,6 +15,7 @@
  *     Marc Khouzam (Ericsson) - Support for GDB 7.6 memory service
  *     Marc Khouzam (Ericsson) - Support for GDB 7.4 trace control service
  *     William Riley (Renesas) - Support for GDB 7.3 disassembly service (Bug 357270)
+ *     Marc Khouzam (Ericsson) - Support for GDB 7.4 processes service (Bug 389945)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -200,6 +201,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		
 	@Override
 	protected IProcesses createProcessesService(DsfSession session) {
+		if (GDB_7_4_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBProcesses_7_4(session);
+		}
 		if (GDB_7_2_1_VERSION.compareTo(fVersion) <= 0) {
 			return new GDBProcesses_7_2_1(session);
 		}

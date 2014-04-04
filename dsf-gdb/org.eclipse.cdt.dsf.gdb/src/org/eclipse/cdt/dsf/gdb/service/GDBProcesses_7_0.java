@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Ericsson and others.
+ * Copyright (c) 2008, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
  *     John Dallaway - GDB 7.x MI thread details field ignored (Bug 325556)
  *     Marc Khouzam (Ericsson) - Make each thread an IDisassemblyDMContext (bug 352748) 
  *     Andy Jin (QNX) - Not output thread osId as a string when it is null (Bug 397039)
+ *     Marc Khouzam (Ericsson) - Move IBreakpointsTargetDMContext from MIContainerDMC
+ *                               to GDBContainerDMC to ease inheritance (Bug 389945)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -183,8 +185,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	 * Context representing a thread group of GDB/MI. 
 	 */
     @Immutable
-	private static class MIContainerDMC extends AbstractDMContext
-	implements IMIContainerDMContext, IBreakpointsTargetDMContext, IDisassemblyDMContext
+	static class MIContainerDMC extends AbstractDMContext
+	implements IMIContainerDMContext, IDisassemblyDMContext
 	{
 		/**
 		 * String ID that is used to identify the thread group in the GDB/MI protocol.
@@ -225,7 +227,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	}
 
 	private static class GDBContainerDMC extends MIContainerDMC 
-	implements IMemoryDMContext 
+	implements IMemoryDMContext, IBreakpointsTargetDMContext
 	{
 		public GDBContainerDMC(String sessionId, IProcessDMContext processDmc, String groupId) {
 			super(sessionId, processDmc, groupId);

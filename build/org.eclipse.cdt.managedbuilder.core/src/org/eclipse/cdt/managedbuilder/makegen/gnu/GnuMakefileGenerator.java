@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     James Blackburn (Broadcom Corp.)
  *     Marc-Andre Laperle
  *     Liviu Ionescu - [322168] 
+ *     Raphael Zulliger (Indel AG) - [72965] [Managed Build] Too long build commands get make to fail
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
@@ -107,6 +108,12 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  */
 public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	private static final IPath DOT_SLASH_PATH = new Path("./");  //$NON-NLS-1$
+	/**
+	 * Filename for the "response file" that contains the all object files.
+	 * 
+	 * @since 8.3
+	 */
+	protected static final String MAKEFILE_RSP = "makefile.rsp"; //$NON-NLS-1$
 
 	/**
 	 * This class walks the delta supplied by the build system to determine
@@ -730,6 +737,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			checkCancel();
 		}
 
+		// important side note: within the context of calculateToolInputsOutputs(),
+		// buildOutVars is modified by adding additional elements to "OBJS", namely:
+		// "default" and all filenames (without filename extensions) of sources that 
+		// are located in the project root. To avoid this problem, we just generate 
+		// makefile.rsp right after having created the subdir.mk files.
+		writeRSP(buildOutVars);
 
 		// Calculate the inputs and outputs of the Tools to be generated in the main makefile
 		calculateToolInputsOutputs();
@@ -943,6 +956,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			}
 			checkCancel();
 		}
+
+		// important side note: within the context of calculateToolInputsOutputs(),
+		// buildOutVars is modified by adding additional elements to "OBJS", namely:
+		// "default" and all filenames (without filename extensions) of sources that 
+		// are located in the project root. To avoid this problem, we just generate 
+		// makefile.rsp right after having created the subdir.mk files.
+		writeRSP(buildOutVars);
 
 		// Calculate the inputs and outputs of the Tools to be generated in the main makefile
 		calculateToolInputsOutputs();
@@ -1288,6 +1308,34 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	}
 
 	/**
+	 * Create makefile.rsp to be passed to GCC instead of OBJS macro in makefile.
+	 * 
+	 * @throws CoreException
+	 *             if writing makefile.rsp fails
+	 * @since 8.3
+	 */
+	protected void writeRSP(HashMap<String, List<IPath>> buildOutVars) throws CoreException {
+		// Check whether we need to do something
+		if (useResponseFiles() && buildOutVars.containsKey(OBJS_MACRO)) {
+			
+			// get the top build dir in order to make the absolute paths in buildOutVars relative to have location
+			// independent makefile.rsp/makefile
+			final IPath buildDir = getTopBuildDir();
+
+			StringBuffer buffer = new StringBuffer();
+			for (IPath p : buildOutVars.get(OBJS_MACRO)) {
+				buffer.append(escapeWhitespaces(p.makeRelativeTo(buildDir).toString()));
+				buffer.append("\n"); //$NON-NLS-1$			    
+			}
+
+			// Get the place where to save and save it
+			IPath rspFilePath = topBuildDir.append(MAKEFILE_RSP);
+			IFile rspFileHandle = createFile(rspFilePath);
+			save(buffer, rspFileHandle);
+		}
+	}
+
+	/**
 	 * Answers a <code>StringBuffer</code> containing all of the required targets to
 	 * properly build the project.
 	 *
@@ -1589,10 +1637,20 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 		// Always add a clean target
 		buffer.append("clean:" + NEWLINE); //$NON-NLS-1$
-		buffer.append(TAB + "-$(RM)" + WHITESPACE); //$NON-NLS-1$
-		for (Entry<String, List<IPath>> entry : buildOutVars.entrySet()) {
-			String macroName = entry.getKey();
-			buffer.append("$(" + macroName + ")");	//$NON-NLS-1$	//$NON-NLS-2$
+		// If response files needs to be created, we delete every object one by one. This introduces a
+		// performance penalty, but the benefit is that it'd work on Windows as well
+		if( useResponseFiles() ) {
+			for (Entry<String, List<IPath>> entry : buildOutVars.entrySet()) {
+				String macroName = entry.getKey();
+				buffer.append(TAB + "-@$(foreach FILE, $(" + macroName + "), $(shell $(RM) $(FILE)) )" + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			buffer.append(TAB + "-$(RM)" + WHITESPACE); //$NON-NLS-1$
+		} else {
+			buffer.append(TAB + "-$(RM)" + WHITESPACE); //$NON-NLS-1$
+			for (Entry<String, List<IPath>> entry : buildOutVars.entrySet()) {
+				String macroName = entry.getKey();
+				buffer.append("$(" + macroName + ")"); //$NON-NLS-1$	//$NON-NLS-2$
+			}
 		}
 		String outputPrefix = EMPTY_STRING;
 		if (targetTool != null) {
@@ -1608,6 +1666,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			buffer.append(WHITESPACE + completeBuildTargetName);
 		}
 		buffer.append(NEWLINE);
+		
 		buffer.append(TAB + DASH + AT + ECHO_BLANK_LINE + NEWLINE);
 
 		return buffer;
@@ -1714,6 +1773,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 			} catch (BuildMacroException e){
 			}
+			
+			// When using response files, don't use OBJS variable and directly add the
+			// name of response file to the command line.
+			if (useResponseFiles() && inputs.contains("$(OBJS)")) { //$NON-NLS-1$
+				inputs.remove("$(OBJS)"); //$NON-NLS-1$
+				inputs.add(0, "@" + MAKEFILE_RSP); //$NON-NLS-1$
+			}
+
 			String[] cmdInputs = inputs.toArray(new String[inputs.size()]);
 			IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
 			IManagedCommandLineInfo cmdLInfo = gen.generateCommandLineInfo( tool, command,
@@ -4743,4 +4810,16 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 		return h;
 	}
+		
+	/**
+	 * Whether to use response files to pass parameters. By default is disabled - children classes can enable
+	 * it.
+	 * 
+	 * @return true - use patch, false - not to use patch
+	 * @since 8.3
+	 */
+	protected boolean useResponseFiles() {
+		return true;
+	}
+
 }

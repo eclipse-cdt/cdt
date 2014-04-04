@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Mentor Graphics and others.
+ * Copyright (c) 2012, 2014 Mentor Graphics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * 		Mentor Graphics - Initial API and implementation
  * 		Salvatore Culcasi (ST) - Bug 407163 - GDB Console: breakpoint not added with MinGW and gdb
+ *      Marc Khouzam (Ericsson) - Update breakpoint handling for GDB >= 7.4 (Bug 389945)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
@@ -294,9 +295,6 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 		if (breakpointsService == null || bm == null)
 			return;
 		final IBreakpointsTargetDMContext bpTargetDMC = breakpointsService.getBreakpointTargetContext(id);
-		final IContainerDMContext contDMC = DMContexts.getAncestorOfType(bpTargetDMC, IContainerDMContext.class);
-		if (contDMC == null)
-			return;
 		if (bpTargetDMC != null){
 			final MIBreakpointDMContext bpDMC = 
 				new MIBreakpointDMContext(breakpointsService, new IDMContext[] { bpTargetDMC }, id);
@@ -327,6 +325,17 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 									IDsfBreakpointExtension bpExtension = 
 										(IDsfBreakpointExtension)((ICBreakpoint)plBpt).getExtension(
 											MIBreakpointsManager.GDB_DEBUG_MODEL_ID, ICBreakpointExtension.class);
+									
+									IMIProcesses processes = getServicesTracker().getService(IMIProcesses.class);
+									if (processes == null) {
+										return;
+									}
+
+									IContainerDMContext contDMC = processes.createContainerContextFromThreadId(getCommandControl().getContext(), data.getThreadId());
+									if (contDMC == null) {
+										return;
+									}
+
 									IExecutionDMContext[] execDMCs = bpExtension.getThreadFilters(contDMC);
 									List<IExecutionDMContext> list = new ArrayList<IExecutionDMContext>(execDMCs.length);
 									for (IExecutionDMContext c : execDMCs) {
@@ -453,7 +462,12 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			MIBreakpoint miBpt) {
 
 		try {
-			IContainerDMContext contDMC = DMContexts.getAncestorOfType(bpTargetDMC, IContainerDMContext.class);
+			IMIProcesses processes = getServicesTracker().getService(IMIProcesses.class);
+			if (processes == null) {
+				return;
+			}
+			String threadId = miBpt.getThreadId();
+			IContainerDMContext contDMC = processes.createContainerContextFromThreadId(getCommandControl().getContext(), threadId);
 			if (contDMC == null) {
 				return;
 			}
@@ -462,20 +476,16 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			if (procDmc == null) {
 				return;
 			}
-			IMIProcesses processes = getServicesTracker().getService(IMIProcesses.class);
-			if (processes == null) {
-				return;
-			}
 			IDsfBreakpointExtension bpExtension = (IDsfBreakpointExtension)plBpt.getExtension(
 					MIBreakpointsManager.GDB_DEBUG_MODEL_ID, ICBreakpointExtension.class);
 			IExecutionDMContext[] execDMCs = bpExtension.getThreadFilters(contDMC);
 			if (execDMCs == null) {
 				execDMCs = new IExecutionDMContext[0];
 			}
-			int threadId = Integer.parseInt(miBpt.getThreadId());
+			int threadNum = Integer.parseInt(threadId);
 			for (IExecutionDMContext execDMC : execDMCs) {
 				if (execDMC instanceof IMIExecutionDMContext 
-					&& ((IMIExecutionDMContext)execDMC).getThreadId() == threadId) {
+					&& ((IMIExecutionDMContext)execDMC).getThreadId() == threadNum) {
 					// The platform breakpoint is already restricted to the given thread.
 					return;
 				}
@@ -484,8 +494,8 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			System.arraycopy(execDMCs, 0, newExecDMCs, 0, execDMCs.length);
 			newExecDMCs[execDMCs.length] = processes.createExecutionContext(
 					contDMC,
-					processes.createThreadContext(procDmc, miBpt.getThreadId()),
-					miBpt.getThreadId());
+					processes.createThreadContext(procDmc, threadId),
+					threadId);
 			bpExtension.setThreadFilters(newExecDMCs);
 		}
 		catch(NumberFormatException e) {
@@ -723,6 +733,9 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 		if (processes == null) {
 			return null;
 		}
+		
+        // For GDB  < 7.4, each process is its own breakpointTargetDMC so we need to find a the proper process
+        // based on the threadId.  For GDB >= 7.4, this does not matter as we'll always end up with the global bpTargetDMC
 		String threadId = (miBpt != null) ? miBpt.getThreadId() : null;
 		IContainerDMContext contContext = processes.createContainerContextFromThreadId(commandControl.getContext(), threadId);
 		if (contContext == null) {
@@ -1231,10 +1244,11 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 
 	@DsfServiceEventHandler
     public void eventDispatched(IExitedDMEvent e) {
-    	if (e.getDMContext() instanceof IContainerDMContext) {
-    		IBreakpointsTargetDMContext bpTargetDMContext = 
-    			DMContexts.getAncestorOfType(e.getDMContext(), IBreakpointsTargetDMContext.class);
-    		if (bpTargetDMContext != null) {
+     	if (e.getDMContext() instanceof IBreakpointsTargetDMContext) {
+    		// Remove breakpoint entries when a breakpoint target is removed.
+    		// This will happen for GDB < 7.4 where the container is the breakpoint target.
+    		// For GDB >= 7.4, GDB is the breakpoint target and will not be removed.
+    		IBreakpointsTargetDMContext bpTargetDMContext = (IBreakpointsTargetDMContext)e.getDMContext();
     			Map<Integer, MIBreakpoint> createdBreakpoints = fCreatedTargetBreakpoints.remove(bpTargetDMContext);
     			if (createdBreakpoints != null)
     				createdBreakpoints.clear();
@@ -1244,7 +1258,6 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
     			Set<Integer> deletedBreakpoints = fDeletedTargetBreakpoints.remove(bpTargetDMContext);
     			if (deletedBreakpoints != null)
     				deletedBreakpoints.clear();
-    		}
     	}
     }
 

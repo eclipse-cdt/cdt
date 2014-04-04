@@ -1017,6 +1017,19 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(f, ICPPTemplateInstance.class);
 	}
 
+	//	template <typename T>
+	//	bool waldo(T* dummy = nullptr);
+
+	//	struct A {};
+	//
+	//	void test() {
+	//	  typedef A a;
+	//	  waldo<a>();
+	//	}
+	public void testFunctionTemplateWithTypedef_431945() throws Exception {
+		checkBindings();
+	}
+
 	// template<typename T>
 	// class Foo {};
 	//

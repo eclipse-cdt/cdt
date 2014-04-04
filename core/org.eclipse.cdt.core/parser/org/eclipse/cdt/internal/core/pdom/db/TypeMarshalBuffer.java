@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
@@ -88,6 +89,17 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			putShort(NULL_TYPE);
 		} else {
 			PDOMNode pb= fLinkage.addTypeBinding(binding);
+			if (pb == null && binding instanceof ITypedef) {
+				// Since typedef defined in a local scope cannot be stored in the index,
+				// store the target type instead.
+				IType type = ((ITypedef) binding).getType();
+				if (type instanceof ISerializableType) {
+					((ISerializableType) type).marshal(this);
+					return;
+				} else if (type instanceof IBinding) {
+					pb = fLinkage.addTypeBinding((IBinding) type);
+				}
+			}
 			if (pb == null) {
 				putShort(UNSTORABLE_TYPE);
 			} else {

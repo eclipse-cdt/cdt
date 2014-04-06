@@ -16,6 +16,8 @@ import junit.framework.TestSuite;
 
 import org.eclipse.jface.text.Position;
 
+import org.eclipse.cdt.ui.text.ICColorConstants;
+
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
 
 /**
@@ -79,6 +81,7 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 				createPosition(122, 20, 15),
 				createPosition(126, 11, 10),
 				createPosition(126, 28, 11),
+				createPosition(159, 8, 5),
 			};
 		if (PRINT_POSITIONS) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);
@@ -100,6 +103,8 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 				createPosition(108, 4, 26),
 				createPosition(112, 4, 25),
 				createPosition(117, 4, 32),
+				createPosition(156, 9, 11),
+				createPosition(157, 9, 14),
 			};
 		if (PRINT_POSITIONS) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);
@@ -122,6 +127,8 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 				createPosition(117, 4, 32),
 				createPosition(122, 4, 15),
 				createPosition(130, 13, 9),
+				createPosition(156, 9, 11),
+				createPosition(157, 9, 14),
 			};
 		Position[] actual= getSemanticHighlightingPositions();
 		if (PRINT_POSITIONS) System.out.println(toString(actual));
@@ -258,6 +265,7 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 				createPosition(120, 4, 8),
 				createPosition(129, 4, 8),
 				createPosition(147, 42, 7),
+				createPosition(155, 6, 1),
 			};
 		if (PRINT_POSITIONS) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);
@@ -418,6 +426,17 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 				createPosition(123, 7, 1),
 				createPosition(123, 11, 1),
 				createPosition(123, 13, 1),
+			};
+		if (PRINT_POSITIONS) System.out.println(toString(actual));
+		assertEqualPositions(expected, actual);
+	}
+	
+	public void testContextSensitiveKeywordHighlighting() throws Exception {
+		setUpSemanticHighlighting(ICColorConstants.C_KEYWORD);
+		Position[] actual= getSemanticHighlightingPositions();
+		Position[] expected= new Position[] {
+				createPosition(156, 23, 5),
+				createPosition(157, 26, 8),
 			};
 		if (PRINT_POSITIONS) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);

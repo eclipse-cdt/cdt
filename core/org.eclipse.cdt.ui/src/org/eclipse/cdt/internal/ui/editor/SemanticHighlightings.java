@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
@@ -62,6 +63,7 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICColorConstants;
 import org.eclipse.cdt.ui.text.ISemanticToken;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -190,8 +192,7 @@ public class SemanticHighlightings {
 	 * A named preference part that controls the highlighting of operators that have been overloaded.
 	 */
 	public static final String OVERLOADED_OPERATOR= "overloadedOperator"; //$NON-NLS-1$
-
-
+	
 	/** Init debugging mode */
 	private static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.ui/debug/SemanticHighlighting"));  //$NON-NLS-1$//$NON-NLS-2$
 
@@ -203,7 +204,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for static fields.
 	 */
-	private static final class StaticFieldHighlighting extends SemanticHighlighting {
+	private static final class StaticFieldHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return STATIC_FIELD;
@@ -254,7 +255,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for fields.
 	 */
-	private static final class FieldHighlighting extends SemanticHighlighting {
+	private static final class FieldHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return FIELD;
@@ -305,7 +306,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for method declarations.
 	 */
-	private static final class MethodDeclarationHighlighting extends SemanticHighlighting {
+	private static final class MethodDeclarationHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return METHOD_DECLARATION;
@@ -382,7 +383,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for static method invocations.
 	 */
-	private static final class StaticMethodInvocationHighlighting extends SemanticHighlighting {
+	private static final class StaticMethodInvocationHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return STATIC_METHOD_INVOCATION;
@@ -436,7 +437,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for methods.
 	 */
-	private static final class MethodHighlighting extends SemanticHighlighting {
+	private static final class MethodHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return METHOD;
@@ -489,7 +490,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for function declarations.
 	 */
-	private static final class FunctionDeclarationHighlighting extends SemanticHighlighting {
+	private static final class FunctionDeclarationHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return FUNCTION_DECLARATION;
@@ -560,7 +561,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for functions.
 	 */
-	private static final class FunctionHighlighting extends SemanticHighlighting {
+	private static final class FunctionHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return FUNCTION;
@@ -613,7 +614,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for local variable declarations.
 	 */
-	private static final class LocalVariableDeclarationHighlighting extends SemanticHighlighting {
+	private static final class LocalVariableDeclarationHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return LOCAL_VARIABLE_DECLARATION;
@@ -668,7 +669,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for local variables.
 	 */
-	private static final class LocalVariableHighlighting extends SemanticHighlighting {
+	private static final class LocalVariableHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return LOCAL_VARIABLE;
@@ -749,7 +750,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for global variables.
 	 */
-	private static final class GlobalVariableHighlighting extends SemanticHighlighting {
+	private static final class GlobalVariableHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return GLOBAL_VARIABLE;
@@ -806,7 +807,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for parameter variables.
 	 */
-	private static final class ParameterVariableHighlighting extends SemanticHighlighting {
+	private static final class ParameterVariableHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return PARAMETER_VARIABLE;
@@ -850,7 +851,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for template parameters.
 	 */
-	private static final class TemplateParameterHighlighting extends SemanticHighlighting {
+	private static final class TemplateParameterHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return TEMPLATE_PARAMETER;
@@ -897,7 +898,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for classes.
 	 */
-	private static final class ClassHighlighting extends SemanticHighlighting {
+	private static final class ClassHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return CLASS;
@@ -947,7 +948,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for enums.
 	 */
-	private static final class EnumHighlighting extends SemanticHighlighting {
+	private static final class EnumHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return ENUM;
@@ -994,7 +995,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for macro references.
 	 */
-	private static final class MacroReferenceHighlighting extends SemanticHighlighting {
+	private static final class MacroReferenceHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return MACRO_REFERENCE;
@@ -1041,7 +1042,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for macro definitions.
 	 */
-	private static final class MacroDefinitionHighlighting extends SemanticHighlighting {
+	private static final class MacroDefinitionHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return MACRO_DEFINITION;
@@ -1088,7 +1089,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for typedefs.
 	 */
-	private static final class TypedefHighlighting extends SemanticHighlighting {
+	private static final class TypedefHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return TYPEDEF;
@@ -1139,7 +1140,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for namespaces.
 	 */
-	private static final class NamespaceHighlighting extends SemanticHighlighting {
+	private static final class NamespaceHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return NAMESPACE;
@@ -1183,7 +1184,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for labels.
 	 */
-	private static final class LabelHighlighting extends SemanticHighlighting {
+	private static final class LabelHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return LABEL;
@@ -1227,7 +1228,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for enumerators.
 	 */
-	private static final class EnumeratorHighlighting extends SemanticHighlighting {
+	private static final class EnumeratorHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return ENUMERATOR;
@@ -1278,7 +1279,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for problems.
 	 */
-	private static final class ProblemHighlighting extends SemanticHighlighting {
+	private static final class ProblemHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return PROBLEM;
@@ -1340,7 +1341,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for external SDK references.
 	 */
-	private static final class ExternalSDKHighlighting extends SemanticHighlighting {
+	private static final class ExternalSDKHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return EXTERNAL_SDK;
@@ -1429,7 +1430,7 @@ public class SemanticHighlightings {
 	/**
 	 * Semantic highlighting for functions.
 	 */
-	private static final class OverloadedOperatorHighlighting extends SemanticHighlighting {
+	private static final class OverloadedOperatorHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
 			return OVERLOADED_OPERATOR;
@@ -1491,6 +1492,31 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
+	
+	/**
+	 * Semantic highlighting for context-sensitive keywords.
+	 */
+	private static final class ContextSensitiveKeywordHighlighting extends SemanticHighlighting {
+		@Override
+		public String getPreferenceKey() {
+			return ICColorConstants.C_KEYWORD;
+		}
+		
+		@Override
+		public boolean isEnabledByDefault() {
+			return true;
+		}
+
+		@Override
+		public boolean requiresImplicitNames() {
+			return false;
+		}
+
+		@Override
+		public boolean consumes(ISemanticToken token) {
+			return token.getNode() instanceof ICPPASTVirtSpecifier;
+		}
+	}
 
 	/**
 	 * A named preference that controls the given semantic highlighting's color.
@@ -1499,7 +1525,11 @@ public class SemanticHighlightings {
 	 * @return the color preference key
 	 */
 	public static String getColorPreferenceKey(SemanticHighlighting semanticHighlighting) {
-		return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
+		if (semanticHighlighting instanceof SemanticHighlightingWithOwnPreference) {
+			return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
+		} else {
+			return semanticHighlighting.getPreferenceKey();
+		}
 	}
 
 	/**
@@ -1509,7 +1539,11 @@ public class SemanticHighlightings {
 	 * @return the bold preference key
 	 */
 	public static String getBoldPreferenceKey(SemanticHighlighting semanticHighlighting) {
-		return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX;
+		if (semanticHighlighting instanceof SemanticHighlightingWithOwnPreference) {
+			return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX;
+		} else {
+			return semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_BOLD_SUFFIX;
+		}
 	}
 
 	/**
@@ -1519,7 +1553,11 @@ public class SemanticHighlightings {
 	 * @return the italic preference key
 	 */
 	public static String getItalicPreferenceKey(SemanticHighlighting semanticHighlighting) {
-		return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX;
+		if (semanticHighlighting instanceof SemanticHighlightingWithOwnPreference) {
+			return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX;
+		} else {
+			return semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_ITALIC_SUFFIX;
+		}
 	}
 
 	/**
@@ -1529,7 +1567,11 @@ public class SemanticHighlightings {
 	 * @return the strikethrough preference key
 	 */
 	public static String getStrikethroughPreferenceKey(SemanticHighlighting semanticHighlighting) {
-		return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX;
+		if (semanticHighlighting instanceof SemanticHighlightingWithOwnPreference) {			
+			return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX;
+		} else {
+			return semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX;
+		}
 	}
 
 	/**
@@ -1539,7 +1581,11 @@ public class SemanticHighlightings {
 	 * @return the underline preference key
 	 */
 	public static String getUnderlinePreferenceKey(SemanticHighlighting semanticHighlighting) {
-		return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX;
+		if (semanticHighlighting instanceof SemanticHighlightingWithOwnPreference) {
+			return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX;
+		} else {
+			return semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_UNDERLINE_SUFFIX;
+		}
 	}
 
 	/**
@@ -1616,6 +1662,7 @@ public class SemanticHighlightings {
 		highlightings.put(new Key(210), new NamespaceHighlighting());
 		highlightings.put(new Key(220), new LabelHighlighting());
 		highlightings.put(new Key(230), new EnumeratorHighlighting());
+		highlightings.put(new Key(240), new ContextSensitiveKeywordHighlighting());
 	}
 
 	private static final String ExtensionPoint = "semanticHighlighting"; //$NON-NLS-1$
@@ -1665,11 +1712,14 @@ public class SemanticHighlightings {
 		SemanticHighlighting[] semanticHighlightings= getSemanticHighlightings();
 		for (SemanticHighlighting semanticHighlighting : semanticHighlightings) {
 			store.setDefault(SemanticHighlightings.getEnabledPreferenceKey(semanticHighlighting), DEBUG || semanticHighlighting.isEnabledByDefault());
-			PreferenceConverter.setDefault(store, SemanticHighlightings.getColorPreferenceKey(semanticHighlighting), semanticHighlighting.getDefaultTextColor());
-			store.setDefault(SemanticHighlightings.getBoldPreferenceKey(semanticHighlighting), semanticHighlighting.isBoldByDefault());
-			store.setDefault(SemanticHighlightings.getItalicPreferenceKey(semanticHighlighting), semanticHighlighting.isItalicByDefault());
-			store.setDefault(SemanticHighlightings.getStrikethroughPreferenceKey(semanticHighlighting), semanticHighlighting.isStrikethroughByDefault());
-			store.setDefault(SemanticHighlightings.getUnderlinePreferenceKey(semanticHighlighting), DEBUG || semanticHighlighting.isUnderlineByDefault());
+			if (semanticHighlighting instanceof SemanticHighlightingWithOwnPreference) {
+				SemanticHighlightingWithOwnPreference highlighting = (SemanticHighlightingWithOwnPreference) semanticHighlighting;
+				PreferenceConverter.setDefault(store, SemanticHighlightings.getColorPreferenceKey(highlighting), highlighting.getDefaultTextColor());
+				store.setDefault(SemanticHighlightings.getBoldPreferenceKey(highlighting), highlighting.isBoldByDefault());
+				store.setDefault(SemanticHighlightings.getItalicPreferenceKey(highlighting), highlighting.isItalicByDefault());
+				store.setDefault(SemanticHighlightings.getStrikethroughPreferenceKey(highlighting), highlighting.isStrikethroughByDefault());
+				store.setDefault(SemanticHighlightings.getUnderlinePreferenceKey(highlighting), DEBUG || highlighting.isUnderlineByDefault());
+			}
 		}
 	}
 

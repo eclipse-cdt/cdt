@@ -29,7 +29,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ISemanticHighlighter;
 import org.eclipse.cdt.ui.text.ISemanticToken;
 
-public class ContributedSemanticHighlighting extends SemanticHighlighting {
+public class ContributedSemanticHighlighting extends SemanticHighlightingWithOwnPreference {
 
 	/**
 	 * The configuration element needs to be cached until the class is instantiated. Instantiation is deferred

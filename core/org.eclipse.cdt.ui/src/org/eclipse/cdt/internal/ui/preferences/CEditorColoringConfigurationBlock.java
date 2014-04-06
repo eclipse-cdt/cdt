@@ -70,6 +70,7 @@ import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlighting;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedRange;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingWithOwnPreference;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
 import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.util.CColorManager;
@@ -375,17 +376,21 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 					element[1] + UNDERLINE));
 
 		SemanticHighlighting[] semanticHighlightings= SemanticHighlightings.getSemanticHighlightings();
-		for (SemanticHighlighting semanticHighlighting : semanticHighlightings)
-			fListModel.add(
-					new SemanticHighlightingColorListItem(
-							semanticHighlighting.getDisplayName(),
-							SemanticHighlightings.getColorPreferenceKey(semanticHighlighting),
-							SemanticHighlightings.getBoldPreferenceKey(semanticHighlighting),
-							SemanticHighlightings.getItalicPreferenceKey(semanticHighlighting),
-							SemanticHighlightings.getStrikethroughPreferenceKey(semanticHighlighting),
-							SemanticHighlightings.getUnderlinePreferenceKey(semanticHighlighting),
-							SemanticHighlightings.getEnabledPreferenceKey(semanticHighlighting)
-					));
+		for (SemanticHighlighting semanticHighlighting : semanticHighlightings) {
+			if (semanticHighlighting instanceof SemanticHighlightingWithOwnPreference) {
+				SemanticHighlightingWithOwnPreference highlighting = (SemanticHighlightingWithOwnPreference) semanticHighlighting; 
+				fListModel.add(
+						new SemanticHighlightingColorListItem(
+								highlighting.getDisplayName(),
+								SemanticHighlightings.getColorPreferenceKey(highlighting),
+								SemanticHighlightings.getBoldPreferenceKey(highlighting),
+								SemanticHighlightings.getItalicPreferenceKey(highlighting),
+								SemanticHighlightings.getStrikethroughPreferenceKey(highlighting),
+								SemanticHighlightings.getUnderlinePreferenceKey(highlighting),
+								SemanticHighlightings.getEnabledPreferenceKey(highlighting)
+						));
+			}
+		}
 		
 		store.addKeys(createOverlayStoreKeys());
 	}
@@ -872,6 +877,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	 * @return the hard coded previewer ranges
 	 */
 	private SemanticHighlightingManager.HighlightedRange[][] createPreviewerRanges() {
+		// TODO(nathanridge): It would be nicer to actually parse the previewed code.
 		return new SemanticHighlightingManager.HighlightedRange[][] {
 			{ createHighlightedRange( 2,  8,  5, SemanticHighlightings.MACRO_DEFINITION) },
 			{ createHighlightedRange( 3, 16,  3, SemanticHighlightings.NAMESPACE) },
@@ -882,8 +888,8 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			{ createHighlightedRange( 7,  6,  9, SemanticHighlightings.PARAMETER_VARIABLE) },
 			{ createHighlightedRange( 7, 22,  7, SemanticHighlightings.EXTERNAL_SDK), createHighlightedRange( 7, 22,  7, SemanticHighlightings.FUNCTION) },
 			{ createHighlightedRange( 7, 30,  6, SemanticHighlightings.GLOBAL_VARIABLE) },
-			{ createHighlightedRange( 8, 2,   4, SemanticHighlightings.GLOBAL_VARIABLE) },
-			{ createHighlightedRange( 8, 7,   2, SemanticHighlightings.OVERLOADED_OPERATOR) },
+			{ createHighlightedRange( 8,  2,  4, SemanticHighlightings.GLOBAL_VARIABLE) },
+			{ createHighlightedRange( 8,  7,  2, SemanticHighlightings.OVERLOADED_OPERATOR) },
 			{ createHighlightedRange( 9,  9,  9, SemanticHighlightings.PARAMETER_VARIABLE) },
 			{ createHighlightedRange(11,  6,  7, SemanticHighlightings.CLASS) },
 			{ createHighlightedRange(13,  7,  6, SemanticHighlightings.ENUM) },

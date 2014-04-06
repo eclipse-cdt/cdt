@@ -198,8 +198,9 @@ public abstract class ASTNode implements IASTNode {
 	public IASTFileLocation getFileLocation() {
         if (fileLocation != null)
             return fileLocation;
-        // TODO(sprigogin): The purpose of offset == 0 && length == 0 condition is not clear to me.
         final int offset = getOffset();
+        // Only an empty translation unit should have offset = 0 and length = 0.
+        // Otherwise these values mean the parser failed to set the offset and length.
 		if (offset < 0 || (offset == 0 && length == 0 && !(this instanceof IASTTranslationUnit))) {
         	return null;
         }

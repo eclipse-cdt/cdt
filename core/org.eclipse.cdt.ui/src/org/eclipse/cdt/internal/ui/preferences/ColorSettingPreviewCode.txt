@@ -23,4 +23,5 @@ label: myfunc(local);
     problem();
   }
   static void staticMethod();
+  void finalMethod() final;
 };

@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
@@ -190,6 +191,11 @@ public class SemanticHighlightings {
 	 * A named preference part that controls the highlighting of operators that have been overloaded.
 	 */
 	public static final String OVERLOADED_OPERATOR= "overloadedOperator"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference part that controls the highlight of context-sensitive keywords.
+	 */
+	public static final String CONTEXT_SENSITIVE_KEYWORD= "contextSensitiveKeyword";  //$NON-NLS-1$
 
 
 	/** Init debugging mode */
@@ -1491,6 +1497,51 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
+	
+	/**
+	 * Semantic highlighting for context-sensitive keywords.
+	 */
+	private static final class ContextSensitiveKeywordHighlighting extends SemanticHighlighting {
+		@Override
+		public String getPreferenceKey() {
+			return CONTEXT_SENSITIVE_KEYWORD;
+		}
+
+		@Override
+		public boolean requiresImplicitNames() {
+			return false;
+		}
+
+		@Override
+		public RGB getDefaultDefaultTextColor() {
+			return RGB_BLACK;
+		}
+
+		@Override
+		public boolean isBoldByDefault() {
+			return true;
+		}
+
+		@Override
+		public boolean isItalicByDefault() {
+			return false;
+		}
+
+		@Override
+		public boolean isEnabledByDefault() {
+			return true;
+		}
+
+		@Override
+		public String getDisplayName() {
+			return CEditorMessages.SemanticHighlighting_contextSensitiveKeyword;
+		}
+
+		@Override
+		public boolean consumes(ISemanticToken token) {
+			return token.getNode() instanceof ICPPASTVirtSpecifier;
+		}
+	}
 
 	/**
 	 * A named preference that controls the given semantic highlighting's color.
@@ -1616,6 +1667,7 @@ public class SemanticHighlightings {
 		highlightings.put(new Key(210), new NamespaceHighlighting());
 		highlightings.put(new Key(220), new LabelHighlighting());
 		highlightings.put(new Key(230), new EnumeratorHighlighting());
+		highlightings.put(new Key(240), new ContextSensitiveKeywordHighlighting());
 	}
 
 	private static final String ExtensionPoint = "semanticHighlighting"; //$NON-NLS-1$

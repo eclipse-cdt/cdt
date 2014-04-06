@@ -23,28 +23,27 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier.SpecifierKind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * Represents a function declarator.
  */
-public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPASTFunctionDeclarator,
-		IASTAmbiguityParent {
+public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPASTFunctionDeclarator {
     private ICPPASTParameterDeclaration[] parameters;
     private IASTTypeId[] typeIds = NO_EXCEPTION_SPECIFICATION;
     private ICPPASTExpression noexceptExpression;
     private IASTTypeId trailingReturnType;
+    private ICPPASTVirtSpecifier[] virtSpecifiers = NO_VIRT_SPECIFIERS;
     
     private boolean varArgs;
     private boolean pureVirtual;
     private boolean isVolatile;
     private boolean isConst;
     private boolean isMutable;
-    private boolean isOverride;
-    private boolean isFinal;
     
     private ICPPFunctionScope scope;
     
@@ -68,8 +67,6 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		copy.isVolatile = isVolatile;
 		copy.isConst = isConst;
 		copy.isMutable = isMutable;
-		copy.isOverride = isOverride;
-		copy.isFinal = isFinal;
 
 		for (IASTParameterDeclaration param : getParameters()) {
 			copy.addParameterDeclaration(param == null ? null : param.copy(style));
@@ -83,6 +80,9 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		}
 		if (trailingReturnType != null) {
 			copy.setTrailingReturnType(trailingReturnType.copy(style));
+		}
+		for (ICPPASTVirtSpecifier virtSpecifier : getVirtSpecifiers()) {
+			copy.addVirtSpecifier(virtSpecifier);
 		}
 		return copy(copy, style);
 	}
@@ -265,9 +265,10 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		}
 
 		IASTTypeId[] ids = getExceptionSpecification();
-		for (int i = 0; i < ids.length; i++) {
-			if (!ids[i].accept(action))
+		for (IASTTypeId id : ids) {
+			if (!id.accept(action)) {
 				return false;
+			}
 		}
 
 		if (noexceptExpression != null && noexceptExpression != NOEXCEPT_DEFAULT) {
@@ -277,6 +278,13 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		
 		if (trailingReturnType != null && !trailingReturnType.accept(action)) 
 			return false;
+		
+		ICPPASTVirtSpecifier[] virtSpecifiers = getVirtSpecifiers();
+		for (ICPPASTVirtSpecifier virtSpecifier : virtSpecifiers) {
+			if (!virtSpecifier.accept(action)) {
+				return false;
+			}
+		}
 
 		return super.postAccept(action);
 	}
@@ -298,23 +306,49 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 
 	@Override
 	public boolean isOverride() {
-		return isOverride;
+		for (ICPPASTVirtSpecifier virtSpecifier : getVirtSpecifiers()) {
+			if (virtSpecifier.getKind() == SpecifierKind.Override) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public void setOverride(boolean value) {
 		assertNotFrozen();
-		this.isOverride = value;
+		// Do nothing here. Use addVirtSpecifier() instead.
 	}
 
 	@Override
 	public boolean isFinal() {
-		return isFinal;
+		for (ICPPASTVirtSpecifier virtSpecifier : getVirtSpecifiers()) {
+			if (virtSpecifier.getKind() == SpecifierKind.Final) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public void setFinal(boolean value) {
 		assertNotFrozen();
-		this.isFinal = value;
+		// Do nothing here. Use addVirtSpecifier() instead.
+	}
+
+	@Override
+	public ICPPASTVirtSpecifier[] getVirtSpecifiers() {
+        return virtSpecifiers = ArrayUtil.trim(virtSpecifiers);
+	}
+
+	@Override
+	public void addVirtSpecifier(ICPPASTVirtSpecifier virtSpecifier) {
+        assertNotFrozen();
+    	if (virtSpecifier != null) {
+    		assert virtSpecifiers != null;
+    		virtSpecifiers = ArrayUtil.append(virtSpecifiers, virtSpecifier);
+    		virtSpecifier.setParent(this);
+			virtSpecifier.setPropertyInParent(EXCEPTION_TYPEID);
+    	}
 	}
 }

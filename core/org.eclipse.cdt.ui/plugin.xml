@@ -885,6 +885,12 @@
             label="%Dummy.label"
             value="200, 100, 0">
       </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.contextSensitiveKeywordHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
       <theme
          id="org.eclipse.ui.ide.systemDefault">
          <colorOverride

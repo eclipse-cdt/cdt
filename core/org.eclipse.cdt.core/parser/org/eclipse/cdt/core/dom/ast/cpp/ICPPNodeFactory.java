@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier.SpecifierKind;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPASTAttributeSpecifier;
 import org.eclipse.cdt.core.parser.IScanner;
 
@@ -380,6 +381,8 @@ public interface ICPPNodeFactory extends INodeFactory {
 
 	public ICPPASTUsingDirective newUsingDirective(IASTName name);
 
+	public ICPPASTVirtSpecifier newVirtSpecifier(SpecifierKind kind);
+	
 	public ICPPASTVisibilityLabel newVisibilityLabel(int visibility);
 	
 	public ICPPASTWhileStatement newWhileStatement();

@@ -354,7 +354,10 @@ public class ClassTypeHelper {
 	}
 
 	public static ICPPMethod[] getImplicitMethods(ICPPClassType classType, IASTNode point) {
-		IScope scope = classType.getCompositeScope();
+		return getImplicitMethods(classType.getCompositeScope(), point);
+	}
+	
+	public static ICPPMethod[] getImplicitMethods(IScope scope, IASTNode point) {
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getImplicitMethods(point);
 		} else if (scope instanceof ICPPClassScope) {

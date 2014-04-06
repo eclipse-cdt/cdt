@@ -648,7 +648,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				if (type instanceof ICPPClassType) {
 					ArrayUtil.addAll(old, ClassTypeHelper.getImplicitMethods((ICPPClassType) type, point));
 				}
-				ICPPMethod[] implicit= ((ICPPClassScope) scope).getImplicitMethods();
+				ICPPMethod[] implicit= ClassTypeHelper.getImplicitMethods(scope, point);
 				for (ICPPMethod method : implicit) {
 					if (!(method instanceof IProblemBinding)) {
 						PDOMBinding pdomBinding= adaptBinding(method);

@@ -872,6 +872,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	 * @return the hard coded previewer ranges
 	 */
 	private SemanticHighlightingManager.HighlightedRange[][] createPreviewerRanges() {
+		// TODO(nathanridge): It would be nicer to actually parse the previewed code.
 		return new SemanticHighlightingManager.HighlightedRange[][] {
 			{ createHighlightedRange( 2,  8,  5, SemanticHighlightings.MACRO_DEFINITION) },
 			{ createHighlightedRange( 3, 16,  3, SemanticHighlightings.NAMESPACE) },
@@ -882,8 +883,8 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			{ createHighlightedRange( 7,  6,  9, SemanticHighlightings.PARAMETER_VARIABLE) },
 			{ createHighlightedRange( 7, 22,  7, SemanticHighlightings.EXTERNAL_SDK), createHighlightedRange( 7, 22,  7, SemanticHighlightings.FUNCTION) },
 			{ createHighlightedRange( 7, 30,  6, SemanticHighlightings.GLOBAL_VARIABLE) },
-			{ createHighlightedRange( 8, 2,   4, SemanticHighlightings.GLOBAL_VARIABLE) },
-			{ createHighlightedRange( 8, 7,   2, SemanticHighlightings.OVERLOADED_OPERATOR) },
+			{ createHighlightedRange( 8,  2,  4, SemanticHighlightings.GLOBAL_VARIABLE) },
+			{ createHighlightedRange( 8,  7,  2, SemanticHighlightings.OVERLOADED_OPERATOR) },
 			{ createHighlightedRange( 9,  9,  9, SemanticHighlightings.PARAMETER_VARIABLE) },
 			{ createHighlightedRange(11,  6,  7, SemanticHighlightings.CLASS) },
 			{ createHighlightedRange(13,  7,  6, SemanticHighlightings.ENUM) },
@@ -906,6 +907,8 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			{ createHighlightedRange(21,  4, 12, SemanticHighlightings.STATIC_METHOD_INVOCATION), createHighlightedRange(21,  4, 12, SemanticHighlightings.METHOD) },
 			{ createHighlightedRange(22,  4,  7, SemanticHighlightings.PROBLEM) },
 			{ createHighlightedRange(24, 14, 12, SemanticHighlightings.METHOD_DECLARATION), createHighlightedRange(24, 14, 12, SemanticHighlightings.METHOD) },
+			{ createHighlightedRange(25,  7, 11, SemanticHighlightings.METHOD_DECLARATION) },
+			{ createHighlightedRange(25, 21,  5, SemanticHighlightings.CONTEXT_SENSITIVE_KEYWORD) },
 		};
 	}
 

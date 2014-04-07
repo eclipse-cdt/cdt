@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_d7a1fca9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerThread.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-07T15:36:48Z",
+      "side": 1,
+      "message": "Whenever the state of the thread is running, it is important to set the location to null, right?  Do you guys think it would be good to automatically do that in setState()?  It would be more future-proof.  Or it could be getLocationInfo() that first checks the state before returning something non-null; that would protect against coding mistakes where setState(RUNNING) is called first followed by setLocationInfo(non-null).",
+      "revId": "1dbc3560402a05cc2a7394b4c6a459473a7f0ee8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_7736300e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerThread.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-07T15:36:48Z",
+      "side": 1,
+      "message": "For consistency, maybe we can follow the format used in the Debug view?  It is defined in StackFramesVMNode#createLabelProvider()",
+      "revId": "1dbc3560402a05cc2a7394b4c6a459473a7f0ee8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_9709443a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-07T15:36:48Z",
+      "side": 1,
+      "message": "Why cast blindly to MIEvent?  You can leave it as an object, and the line below will still do the proper instanceof.  I think that would be safer.",
+      "revId": "1dbc3560402a05cc2a7394b4c6a459473a7f0ee8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_372038a3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-07T15:36:48Z",
+      "side": 1,
+      "message": "Maybe move the above logic down to where it is needed?  In this case it may avoid some duplication of code too.",
+      "revId": "1dbc3560402a05cc2a7394b4c6a459473a7f0ee8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_7779106c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-07T15:36:48Z",
+      "side": 1,
+      "message": "I think this should also be called in VisualizerModel#markThreadExited()",
+      "revId": "1dbc3560402a05cc2a7394b4c6a459473a7f0ee8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_97466426",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-07T15:36:48Z",
+      "side": 1,
+      "message": "Instead of sending commands directly to GDB, we should use the DSF services. In this case, IStack.getFrameData(). This is important to avoid duplicate code and enable caching.",
+      "revId": "1dbc3560402a05cc2a7394b4c6a459473a7f0ee8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

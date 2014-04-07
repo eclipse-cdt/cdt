@@ -16,6 +16,24 @@
       "revId": "3b9d54323004f22012489b45be232c883ff76449",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_8ccf2c58",
+        "filename": "core/org.eclipse.cdt.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 888,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-04-07T06:18:53Z",
+      "side": 1,
+      "message": "The current infrastructure makes it a bit difficult to do this. The list of semantic highlightings that are applied to the code is determined by SemanticHighlightings.getSemanticHighlightings(). The CEditorColoringConfigurationBlock constructor goes through this same list, and creates a list item in the preferences UI for each one. Therefore, if context-sensitive keywords have a semantic highlighting, they will get their own preference item. Obviously, we don\u0027t want two different preference items backed by the same preference key - _that_ would be confusing.\n\nI suppose we could introduce new infrastructure to allow the list of highlightings applied to the code to be different from the list for which preference items are built. Is it worth it?",
+      "parentUuid": "2753a756_ac2b10b8",
+      "revId": "3b9d54323004f22012489b45be232c883ff76449",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

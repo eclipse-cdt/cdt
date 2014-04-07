@@ -56,4 +56,5 @@ public interface IGraphicObject
 	
 	/** Returns true if element bounds are within specified rectangle. */
 	public boolean isWithin(Rectangle region);
+
 }

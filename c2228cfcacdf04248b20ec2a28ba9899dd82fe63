@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_76026543",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ICompileOptionsFinder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-07T02:05:04Z",
+      "side": 1,
+      "message": "Maybe it should be mentioned in the javadoc whether the filename is absolute, relative or implementation specific.",
+      "revId": "c2228cfcacdf04248b20ec2a28ba9899dd82fe63",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_56fda1a2",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/Dwarf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-07T02:05:04Z",
+      "side": 1,
+      "message": "I don\u0027t think it\u0027s necessary to do e.printStackTrace(), log(e) will also print to console (-consoleLog), right?",
+      "revId": "c2228cfcacdf04248b20ec2a28ba9899dd82fe63",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_acb2f02f",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 823,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-07T02:05:04Z",
+      "side": 1,
+      "message": "fileName is always null for me so when I call getCompileOptions with a file name, it never returns anything because the key in the map is null. I haven\u0027t investigated why yet but I\u0027m testing on 32 bit (Ubuntu) maybe it behaves differently than 64 bit?",
+      "revId": "c2228cfcacdf04248b20ec2a28ba9899dd82fe63",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

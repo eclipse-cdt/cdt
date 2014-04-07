@@ -8,6 +8,7 @@
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
  *     Xavier Raynaud (Kalray) - Bug 431690
+ *     Marc Dumais (Ericsson) - Bug 432151
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -177,7 +178,7 @@ public class MulticoreVisualizerThread extends MulticoreVisualizerGraphicObject
 			
 			// draw TID
 			String displayTID = Integer.toString(m_thread.getTID());
-			GUIUtils.drawText(gc, displayTID, m_bounds, x + w + 4, y + 2);
+			GUIUtils.drawText(gc, displayTID, x + w + 4, y + 2);
 			
 			// draw selection marker, if any
 			if (m_selected)

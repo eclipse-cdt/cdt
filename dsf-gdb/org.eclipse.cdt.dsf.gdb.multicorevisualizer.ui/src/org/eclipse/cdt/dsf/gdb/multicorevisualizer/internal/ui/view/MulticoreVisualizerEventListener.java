@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Ericsson and others.
+ * Copyright (c) 2012, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Marc Dumais (Ericsson) - Bug 409512
  *     Marc Dumais (Ericsson) - Bug 409965
  *     Marc Dumais (Ericsson) - Bug 416524
+ *     Xavier Raynaud (Kalray) - Bug 431935
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -45,7 +46,10 @@ import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl.MIRunMode;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MISignalEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 
@@ -85,8 +89,16 @@ public class MulticoreVisualizerEventListener {
 			return;
 		}
 
+		MIFrame _frame = null;
 		IDMContext context = event.getDMContext();
-		
+		if (event instanceof IMIDMEvent) {
+			MIEvent<?> ev = (MIEvent<?>) ((IMIDMEvent) event).getMIEvent();
+			if (ev instanceof MIStoppedEvent) {
+				_frame = ((MIStoppedEvent) ev).getFrame();
+			}
+		}
+		final MIFrame frame = _frame;
+
 		// all-stop mode? If so, we take the opportunity, now that GDB has suspended
 		// execution, to re-create the model so that we synchronize with the debug session
 		if (context != null && isSessionAllStop(context.getSessionId()) ) {
@@ -147,6 +159,7 @@ public class MulticoreVisualizerEventListener {
 
 					    			thread.setState(newState);
 					    			thread.setCore(vCore);
+									thread.setLocationInfo(frame);
 					    			fVisualizer.refresh();
 					    		}
 							}
@@ -173,6 +186,7 @@ public class MulticoreVisualizerEventListener {
 			List<VisualizerThread> tList = model.getThreads();
 			for(VisualizerThread t : tList) {
 				t.setState(VisualizerExecutionState.RUNNING);
+				t.setLocationInfo((String) null);
 			}
 			fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();
 			return;
@@ -192,6 +206,7 @@ public class MulticoreVisualizerEventListener {
      				   thread.getState() == VisualizerExecutionState.CRASHED;
     			
     			thread.setState(VisualizerExecutionState.RUNNING);
+    			thread.setLocationInfo((String) null);
     			fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();
     		}
     	}

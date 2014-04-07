@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Tilera Corporation and others.
+ * Copyright (c) 2012, 2014 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,14 @@
  *                                               state and os/gdb thread ids
  *     Marc Dumais (Ericsson) -  Bug 405390
  *     Marc Dumais (Ericsson) -  Bug 409965
+ *     Xavier Raynaud (Kalray) - Add tooltip support (Bug 431935)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
+
+import java.io.File;
+
+import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
 
 
 /** Represents single thread. */
@@ -37,16 +42,25 @@ public class VisualizerThread
 	/** Thread execution state. */
 	protected VisualizerExecutionState m_threadState;
 
+	/** Location of this Thread, if any, based on his MIFrame */
+    private String m_locInfo;
+
 	
 	// --- constructors/destructors ---
 
 	/** Constructor. */
 	public VisualizerThread(VisualizerCore core, int pid, int tid, int gdbtid, VisualizerExecutionState state) {
+		this(core, pid, tid, gdbtid, state, null);
+	}
+
+	/** Constructor. */
+	public VisualizerThread(VisualizerCore core, int pid, int tid, int gdbtid, VisualizerExecutionState state, MIFrame frame) {
 		m_core = core;
 		m_pid = pid;
 		m_tid = tid;
 		m_gdbtid = gdbtid;
 		m_threadState = state;
+		setLocationInfo(frame);
 	}
 	
 	/** Dispose method */
@@ -186,4 +200,52 @@ public class VisualizerThread
 		}
 		return 1;
 	}
+
+	/**
+	 * Sets the location info of this thread
+	 * @param s a string, displayinf location information of this thread.
+	 */
+    public void setLocationInfo(String s) {
+        this.m_locInfo = s;
+    }
+
+	/**
+	 * Sets the location info of this thread, based on given {@link MIFrame}
+	 * @param f a {@link MIFrame} (can be <code>null</code>)
+	 */
+    public void setLocationInfo(MIFrame f) {
+        if (f == null) {
+            this.m_locInfo = null;
+        } else {
+            StringBuilder label = new StringBuilder(""); //$NON-NLS-1$
+            if (f.getFunction() != null && f.getFunction().length() != 0) {
+                label.append(f.getFunction());
+                label.append("()"); //$NON-NLS-1$
+            }
+            boolean hasFileName = f.getFile() != null && f.getFile().length() != 0;
+            if (hasFileName) {
+                label.append(" at "); //$NON-NLS-1$
+                label.append(new File(f.getFile()).getName());
+            }
+            if (f.getLine() >= 0) {
+                label.append(":"); //$NON-NLS-1$
+                label.append(f.getLine());
+                label.append(" "); //$NON-NLS-1$
+            }
+            if (f.getAddress() != null) {
+                label.append("-  " + f.getAddress()); //$NON-NLS-1$
+            }
+            this.m_locInfo = label.toString();
+        }
+    }
+
+    /**
+     * Gets the location of this thread or <code>null</code> if none.
+     * @return a String, or <code>null</code>
+     * @since 3.0
+     */
+    public String getLocationInfo() {
+        return m_locInfo;
+    }
+
 }

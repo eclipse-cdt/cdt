@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Tilera Corporation and others.
+ * Copyright (c) 2012, 2014 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
+ *     Xavier Raynaud (Kalray) - Bug 431935
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils;
@@ -20,6 +21,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICPUDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICoreDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.ILoadInfo;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
 
 /** Interface for classes that interact with DSFDebugModel.
  * 
@@ -64,6 +66,7 @@ public interface DSFDebugModelListener {
 			 				                ICoreDMContext coreContext,
 							                IMIExecutionDMContext threadContext,
 							                IThreadDMData threadData,
+							                MIFrame frame,
 							                VisualizerExecutionState state,
 							                Object arg);
 	

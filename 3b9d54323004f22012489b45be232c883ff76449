@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2753a756_ac2b10b8",
+        "filename": "core/org.eclipse.cdt.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 888,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-07T03:44:03Z",
+      "side": 1,
+      "message": "I don\u0027t think context sensitive keywords deserve a separate color. It will be less confusing if they use org.eclipse.cdt.ui.c_keyword.",
+      "revId": "3b9d54323004f22012489b45be232c883ff76449",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

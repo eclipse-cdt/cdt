@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Tilera Corporation and others.
+ * Copyright (c) 2012, 2014 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
+ *     Xavier Raynaud (Kalray) - Bug 431935
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
+import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerExecutionState;
@@ -39,7 +41,11 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.IHardwareTargetDMContex
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.ILoadInfo;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIThread;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadInfoInfo;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.visualizer.ui.util.Timer;
 
@@ -309,46 +315,60 @@ public class DSFDebugModel {
 			                                   final DSFDebugModelListener listener,
 			                                   final Object arg)
 	{
-		IRunControl runControl = sessionState.getService(IRunControl.class);
+		final IRunControl runControl = sessionState.getService(IRunControl.class);
 
 		if (runControl == null) {
-			listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, null, arg);
+			listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, null, null, arg);
 			return;
 		}
 
 		if (runControl.isSuspended(execContext) == false) {
 			// The thread is running
-			listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData,
+			listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, null,
 					                               VisualizerExecutionState.RUNNING, arg);
 		} else {
 			// For a suspended thread, let's see why it is suspended,
 			// to find out if the thread is crashed
-			runControl.getExecutionData(execContext, 
-					new ImmediateDataRequestMonitor<IExecutionDMData>() {
-				@Override
-				protected void handleCompleted() {
-					IExecutionDMData executionData = getData();
 
-					VisualizerExecutionState state = VisualizerExecutionState.SUSPENDED;
-					
-					if (isSuccess() && executionData != null) {
-						if (executionData.getStateChangeReason() == StateChangeReason.SIGNAL) {
-							if (executionData instanceof IExecutionDMData2) {
-								String details = ((IExecutionDMData2)executionData).getDetails();
-								if (details != null) {
-									if (isCrashSignal(details)) {
-										state = VisualizerExecutionState.CRASHED;
+			final MIFrame[] frame = {null};
+			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(execContext, ICommandControlDMContext.class);
+			IMICommandControl miCommandControl = sessionState.getService(IMICommandControl.class);
+			ICommand<MIThreadInfoInfo> cmd = miCommandControl.getCommandFactory().createMIThreadInfo(controlDmc);
+			miCommandControl.queueCommand(cmd, new ImmediateDataRequestMonitor<MIThreadInfoInfo>(null) {
+				@Override
+				protected void handleSuccess() {
+					if (getData().getThreadList().length != 0) {
+						MIThread thread = getData().getThreadList()[0];
+						frame[0] = thread.getTopFrame();
+					}
+					runControl.getExecutionData(execContext,
+							new ImmediateDataRequestMonitor<IExecutionDMData>() {
+						@Override
+						protected void handleCompleted() {
+							IExecutionDMData executionData = getData();
+
+							VisualizerExecutionState state = VisualizerExecutionState.SUSPENDED;
+
+							if (isSuccess() && executionData != null) {
+								if (executionData.getStateChangeReason() == StateChangeReason.SIGNAL) {
+									if (executionData instanceof IExecutionDMData2) {
+										String details = ((IExecutionDMData2)executionData).getDetails();
+										if (details != null) {
+											if (isCrashSignal(details)) {
+												state = VisualizerExecutionState.CRASHED;
+											}
+										}
 									}
 								}
 							}
-						}
-					}
-					
-					listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, state, arg);
-				}
-			});
-		}
 
+							listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, frame[0], state, arg);
+						}
+					});
+				}
+			}
+			);
+		}
 	}
 
 	/**

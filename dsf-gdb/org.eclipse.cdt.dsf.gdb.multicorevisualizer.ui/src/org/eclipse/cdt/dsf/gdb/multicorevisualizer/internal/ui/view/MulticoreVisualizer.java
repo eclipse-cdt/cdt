@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Tilera Corporation and others.
+ * Copyright (c) 2012, 2014 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  *     Marc Dumais (Ericsson) - Bug 407321
  *     Marc-Andre Laperle (Ericsson) - Bug 411634
  *     Marc Dumais (Ericsson) - Bug 409965
+ *     Xavier Raynaud (kalray) - Bug 431935
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -53,6 +54,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICoreDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.ILoadInfo;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvas;
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvasVisualizer;
@@ -1118,7 +1120,6 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			for (IDMContext threadContext : threadContexts) {
 				IMIExecutionDMContext execContext =
 					DMContexts.getAncestorOfType(threadContext, IMIExecutionDMContext.class);
-
 				// Don't add the thread to the model just yet, let's wait until we have its data and execution state.
 				// Collect thread data
 				DSFDebugModel.getThreadData(m_sessionState, cpuContext, coreContext, execContext, this, model);
@@ -1153,6 +1154,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			                                ICoreDMContext coreContext,
 			                                IMIExecutionDMContext execContext,
 			                                IThreadDMData threadData,
+			                                MIFrame frame,
 			                                VisualizerExecutionState state,
 			                                Object arg)
 	{
@@ -1181,15 +1183,15 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		// through the listener.   Checking at both places to prevent this.
 		VisualizerThread t = model.getThread(tid);
 		if (t == null) {
-			model.addThread(new VisualizerThread(core, pid, osTid, tid, state));
+			model.addThread(new VisualizerThread(core, pid, osTid, tid, state, frame));
 		}
 		// if the thread is already in the model, update it's parameters.  
 		else {
 			t.setCore(core);
 			t.setTID(osTid);
 			t.setState(state);
+			t.setLocationInfo(frame);
 		}
-
 		
 		// keep track of threads visited
 		done(1, model);

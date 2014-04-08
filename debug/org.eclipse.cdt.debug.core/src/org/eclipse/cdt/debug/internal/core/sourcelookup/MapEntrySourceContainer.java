@@ -43,7 +43,6 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.mapEntry"; //$NON-NLS-1$
 
 	private IPath fLocalPath;
-
 	private IPath fBackendPath;
 
 	/** 
@@ -63,7 +62,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	}
 
 	/**
-	 * Create an IPath from a string which may be a Win32 path. <p>
+	 * Creates an IPath from a string which may be a Win32 path. <p>
 	 * <p>
 	 * ("new Path(...)" won't work in Unix when using a Win32 path: the backslash
 	 * separator and the device notation are completely munged.)
@@ -106,9 +105,6 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 		return new Path(path);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
-	 */
 	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
 		IPath path = createPath(name);
@@ -159,17 +155,11 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 		return EMPTY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
-	 */
 	@Override
 	public String getName() {
-		return MessageFormat.format("{0} - {1}", new String[] { getBackendPath().toOSString(), getLocalPath().toOSString() }); //$NON-NLS-1$
+		return MessageFormat.format("{0} - {1}", new Object[] { getBackendPath().toOSString(), getLocalPath().toOSString() }); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
-	 */
 	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
@@ -191,9 +181,6 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 		fBackendPath = backend;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof MapEntrySourceContainer))

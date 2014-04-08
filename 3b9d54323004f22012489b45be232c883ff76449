@@ -34,6 +34,24 @@
       "revId": "3b9d54323004f22012489b45be232c883ff76449",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_7d13afe8",
+        "filename": "core/org.eclipse.cdt.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 888,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-04-08T05:18:52Z",
+      "side": 1,
+      "message": "The above problem is actually fairly easy to solve. We can maintain a set of preference keys for which preference UI items have been created, and guard against creating a second item for the same key. Since items for syntax highlightings are created before items for semantic highlightings, this would result in the preference item for the \"Keyword\" syntax highlighting applying to both that and the Context-sensitive Keyword semantic highlighting.\n\nHowever, there is another issue that would need to be worked around. When the SemanticHighlightingManager builds HighlightingStyle objects corresponding to each of the semantic highlightings in initializeHighlightings(), it looks up the color under the preference key \u0027semanticHighlighting.\u003ckey\u003e.color\u0027 where \u0027key\u0027 is the highlighting\u0027s getPreferenceKey(). For the context-sensitive keyword highlighting, however, there would be no color under this naming scheme for \u003ckey\u003e \u003d \u0027c_keyword\u0027. We\u0027d have to introduce a mechanism for specifying different key naming schemes for different semantic highlightings based on whether they have their own preference or piggyback from a syntax highlighting preference.",
+      "parentUuid": "2753a756_8ccf2c58",
+      "revId": "3b9d54323004f22012489b45be232c883ff76449",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

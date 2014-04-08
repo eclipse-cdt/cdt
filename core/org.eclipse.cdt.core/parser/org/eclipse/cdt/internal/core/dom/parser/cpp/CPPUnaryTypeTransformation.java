@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Implementation of ICPPUnaryTypeTransformation.
- *
  */
 public class CPPUnaryTypeTransformation implements ICPPUnaryTypeTransformation, ISerializableType {
 	Operator fOperator;
@@ -65,9 +64,10 @@ public class CPPUnaryTypeTransformation implements ICPPUnaryTypeTransformation, 
 	
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int operator = buffer.getByte();
-		if (operator >= Operator.values().length)
+		if (operator >= Operator.values().length) {
 			throw new CoreException(CCorePlugin.createStatus(
 					"Cannot unmarshal CPPUnaryTypeTransformation - unrecognized type transformation operator"));  //$NON-NLS-1$
+		}
 		return new CPPUnaryTypeTransformation(Operator.values()[operator], buffer.unmarshalType());
 	}
 }

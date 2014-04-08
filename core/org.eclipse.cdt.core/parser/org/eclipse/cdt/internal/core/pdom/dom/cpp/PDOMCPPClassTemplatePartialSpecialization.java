@@ -62,8 +62,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 		linkage.new ConfigurePartialSpecialization(this, partial);
 	}
 	
-	public PDOMCPPClassTemplatePartialSpecialization(PDOMLinkage linkage,
-			long bindingRecord) {
+	public PDOMCPPClassTemplatePartialSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 	
@@ -133,15 +132,15 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 	@Override
 	public int pdomCompareTo(PDOMBinding other) {
 		int cmp = super.pdomCompareTo(other);
-		if(cmp == 0) {
-			if(other instanceof PDOMCPPClassTemplatePartialSpecialization) {
+		if (cmp == 0) {
+			if (other instanceof PDOMCPPClassTemplatePartialSpecialization) {
 				try {
 					PDOMCPPClassTemplatePartialSpecialization otherSpec = (PDOMCPPClassTemplatePartialSpecialization) other;
 					int mySM = getSignatureHash();
 					int otherSM = otherSpec.getSignatureHash();
 					return mySM == otherSM ? 0 : mySM < otherSM ? -1 : 1;
-				} catch(CoreException ce) {
-					CCorePlugin.log(ce);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
 				}
 			} else {
 				assert false;

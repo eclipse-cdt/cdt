@@ -52,6 +52,24 @@
       "revId": "3b9d54323004f22012489b45be232c883ff76449",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2753a756_4cdcf403",
+        "filename": "core/org.eclipse.cdt.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 888,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T16:48:33Z",
+      "side": 1,
+      "message": "If context sensitive keywords have a different coloring preference, users who use a custom color for keywords would consider it a bug that \"final\u0027 and \u0027override\u0027 don\u0027t have the same color as other keywords.\n\nCan we get away without creating a separate semantic highlighting for the context sensitive keywords?",
+      "parentUuid": "2753a756_8ccf2c58",
+      "revId": "3b9d54323004f22012489b45be232c883ff76449",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

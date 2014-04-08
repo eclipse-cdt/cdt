@@ -21,7 +21,8 @@ public class Messages extends NLS {
         NLS.initializeMessages("org.eclipse.cdt.dsf.gdb.internal.memory.messages", Messages.class); //$NON-NLS-1$
     }
 
-    public static String Err_MemoryServiceNotAvailable;
+    public static String Err_ExceedsMaxAddress;
+	public static String Err_MemoryServiceNotAvailable;
     public static String Err_MemoryReadFailed;
     public static String Err_MemoryWriteFailed;
     public static String Err_InvalidEncodedAddress;

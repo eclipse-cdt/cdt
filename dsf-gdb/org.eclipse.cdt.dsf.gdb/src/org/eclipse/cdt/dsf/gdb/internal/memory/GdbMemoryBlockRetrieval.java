@@ -29,6 +29,7 @@ import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlock.MemorySpaceDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBMemory;
 import org.eclipse.cdt.dsf.gdb.service.IGDBMemory2;
 import org.eclipse.cdt.dsf.service.DsfServices;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -48,6 +49,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A specialization of the DSF memory block retrieval implementation supporting
@@ -173,6 +176,14 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 			}
 		}
 
+		// check for block address exceeding maximum allowed address value
+		int addressSize = getAddressSize(memoryDmc, memorySpaceID);
+		BigInteger endAddress = BigInteger.ONE.shiftLeft(addressSize*8).subtract(BigInteger.ONE);
+		if (endAddress.compareTo(blockAddress) < 0) {
+			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, 
+					MessageFormat.format(Messages.Err_ExceedsMaxAddress, expression, endAddress.toString(16)), null));
+		}
+		
 		/*
 		 * At this point, we only resolved the requested memory block
 		 * start address and we have no idea of the block's length.
@@ -403,6 +414,16 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 		return super.getAddressableSize();
 	}
 	
+	
+	private int getAddressSize(IMemoryDMContext aContext, String memorySpaceID) {
+		IGDBMemory memoryService = (IGDBMemory)getServiceTracker().getService();
+		if (memoryService != null && aContext != null) {
+			IMemoryDMContext context = resolveMemSpaceContext(aContext, memorySpaceID);
+			return memoryService.getAddressSize(context);
+		}
+		return super.getAddressSize();
+	}
+
 	private IMemoryDMContext resolveMemSpaceContext(IMemoryDMContext aContext, String aMemorySpaceID) {
 		IMemoryDMContext context = aContext;
 		if (aMemorySpaceID != null && aMemorySpaceID.length() > 0) {

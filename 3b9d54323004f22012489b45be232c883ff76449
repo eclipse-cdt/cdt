@@ -70,6 +70,24 @@
       "revId": "3b9d54323004f22012489b45be232c883ff76449",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_8b8e3d8a",
+        "filename": "core/org.eclipse.cdt.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 888,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-04-08T17:04:30Z",
+      "side": 1,
+      "message": "I can\u0027t see a way to do that.\n\nWhat we can do is hack the infrastructure to allow the semantic highlighting for context-sensitive keywords to be backed by the same prefs as the syntax highlighting for regular keywords. I wanted to avoid doing this because it would look a bit ugly, but I can do it.",
+      "parentUuid": "2753a756_4cdcf403",
+      "revId": "3b9d54323004f22012489b45be232c883ff76449",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_468edc3e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-08T18:35:47Z",
+      "side": 1,
+      "message": "I think the calculation of endAddress will not be correct for addessable sizes larger than one. \n  \nThe confusing part is that \n  addressSize is received in addressable units (formal definition of Byte)\n   i.e. the size of a pointer in char-size units, \n\n   addressableSize will be the size of a char-unit in octets.\n\nSo in order to find out the address size in octets we need to multiply. i.e. \n\naddressSize (in octets) \u003d addressSize (addessable units) * addressableSize (in octets per addressable units)\n\n(using the word octets here on purpose to avoid confusion with the word byte :-))\n\nSo I think the line above should then be:\nBigInteger endAddress \u003d BigInteger.ONE.shiftLeft(addressSize*addressableSize*8).subtract(BigInteger.ONE);",
+      "revId": "7437891d6eb5644d51c74f2a3e9a429525a834e2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

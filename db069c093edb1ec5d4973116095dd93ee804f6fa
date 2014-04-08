@@ -1,0 +1,684 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_faa4e5bb",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10589,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Expand UDL to UserDefinedLiteral.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_ba9a6d79",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 7546,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Please move the tests to AST2CPPTests and put helper methods next to existing helper methods. Expand UDL to UserDefinedLiteral.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_3a8e5d3e",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 7823,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Avoid cryptic abbreviations. Expand UDL and WS. Same below.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_1a939962",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 7859,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Use BindingAssertionHelper instead.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_7a88d52e",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/scanner/PreprocessorTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1397,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Add a blank line above.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_5a8d113d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/scanner/PreprocessorTestsBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Expand UDL to UserDefinedLiteral",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_fa7b4597",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/cpp/GPPScannerExtensionConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Extra blank line.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_da78019e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/cpp/GPPScannerExtensionConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "This is not necessary. We don\u0027t need to worry about compilers that don\u0027t support the latest C++ standard.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_3af93d8f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/cpp/ICPPParserExtensionConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_1afef976",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IProblem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Should it be ON or OF?",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_7a03b51a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IProblem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "USERDEFINED -\u003e USER_DEFINED",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_5dea2b23",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/CharArrayUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Static methods are final by default.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_7de56f51",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/CharArrayUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "finality of fromIndex is redundant.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_bdcee7d7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/CharArrayUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Please keep \u0027else\u0027 on the same line with the closing brace.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_9dcb23c8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ASTProblem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "USERDEFINED -\u003e USER_DEFINED",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_fdd85f9a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTFieldDeclarator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Why this change?",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_ddd59b60",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "getSuffix() -\u003e suffix",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_7dfc4fe5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Get -\u003e Returns\n\nuserdefined -\u003e user-defined",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_fdefbf25",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Empty default clause is redundant.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_ddec7b34",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Please keep together with the closing brace.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_3dadb7f5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Redundant parentheses.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_1db27351",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Log the exception.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_7db72f41",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Use NLS comment instead.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_5dbceb23",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Extract constant for the first argument.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_9dbde320",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "getValue() -\u003e value",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_fdca1fb2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "getSuffix() -\u003e suffix\n\nSame below.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_ddc75ba8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Keep with the previous line.\n\nSame for other \u0027else\u0027 clauses.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_1d99d3d1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3033,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Expand UDL abbreviation.\n\nfind -\u003e finds",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_5d8eab83",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3040,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Expand UDL abbreviation.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_bda70708",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3092,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Keep with the closing brace.\n\nSame below.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_dd9e3bb4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3119,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "One blank line too many.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_fda17ff2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3120,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Please add your name to the TODO.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_bd726704",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/ParserMessages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "\"on\" or \"of\"?",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_1d6b9311",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Add JavaDoc explaining what the additional suffixes mean.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_7d60cf29",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 872,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Keep with the closing brace.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_fd533f62",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/ExpressionEvaluator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Keep with the closing brace.\n\nSame below.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_dd50fb58",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/Lexer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 739,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Redundant parentheses.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_80bbbc0c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/StringType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Get -\u003e Returns",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_20b63026",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/StringType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Expand UDL abbreviation.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_60c02875",
+        "filename": "lrparser/org.eclipse.cdt.core.lrparser/src/org/eclipse/cdt/core/dom/lrparser/ScannerExtensionConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-08T14:01:42Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_4b9d4546",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerThread.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-08T14:01:13Z",
+      "side": 1,
+      "message": "The idea is good but it may turn out to be more work than what is worth.  I\u0027ll review if you want to code it :)",
+      "parentUuid": "0756a345_403c04ef",
+      "revId": "1dbc3560402a05cc2a7394b4c6a459473a7f0ee8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_9709443a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
         "patchSetId": 1

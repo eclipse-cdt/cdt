@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Ericsson and others.
+ * Copyright (c) 2009, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * Ericsson - Initial API and implementation
  * Marc Khouzam (Ericsson) - Updated to allow updating properties
  *                           before creating the tracepoint (Bug 376116)
+ * Marc Khouzam (Ericsson) - Support for dynamic printf (bug 400628)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints; 
 
@@ -45,7 +46,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * The preference page used to present the properties of a GDB tracepoint as preferences. 
- * A TracepointPreferenceStore is used to interface between this page and the tracepoint.
  */
 public class GDBTracepointPropertyPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 
@@ -53,7 +53,7 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 
 		public TracepointIntegerFieldEditor(String name, String labelText, Composite parent) {
 			super(name, labelText, parent);
-			setErrorMessage(Messages.TracepointPropertyPage_integer_negative);
+			setErrorMessage(Messages.PropertyPage_integer_negative);
 		}
 
 		/**
@@ -223,7 +223,7 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 
 	private void createMainLabel(ICTracepoint tracepoint) {
 		addField(createLabelEditor(getFieldEditorParent(), 
-				                   Messages.TracepointPropertyPage_Class,
+				                   Messages.PropertyPage_Class,
 				                   getTracepointMainLabel(tracepoint)));
 	}
 
@@ -234,14 +234,14 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 		else if (tracepoint instanceof ICAddressBreakpoint) {
 			String address = getPreferenceStore().getString(ICLineBreakpoint.ADDRESS);
 			if (address == null || address.trim().length() == 0) {
-				address = Messages.TracepointPropertyPage_NotAvailable;
+				address = Messages.PropertyPage_NotAvailable;
 			}
-			addField(createLabelEditor(getFieldEditorParent(), Messages.TracepointPropertyPage_Address, address));
+			addField(createLabelEditor(getFieldEditorParent(), Messages.PropertyPage_Address, address));
 		}
 		else { // LineTracepoint
 		    String fileName = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
 			if (fileName != null) {
-				addField(createLabelEditor(getFieldEditorParent(), Messages.TracepointPropertyPage_File, fileName));
+				addField(createLabelEditor(getFieldEditorParent(), Messages.PropertyPage_File, fileName));
 			}
 			int lNumber = getPreferenceStore().getInt(IMarker.LINE_NUMBER);
 			if (lNumber > 0) {
@@ -263,39 +263,39 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
     	ICTracepoint tracepoint = getTracepoint();
         if (tracepoint == null || tracepoint.getMarker() == null) {
             TracepointStringFieldEditor expressionEditor = new TracepointStringFieldEditor(
-                ICLineBreakpoint.FUNCTION, Messages.TracepointPropertyPage_FunctionName, parent);
-            expressionEditor.setErrorMessage(Messages.TracepointPropertyPage_function_value_errorMessage);
+                ICLineBreakpoint.FUNCTION, Messages.PropertyPage_FunctionName, parent);
+            expressionEditor.setErrorMessage(Messages.PropertyPage_function_value_errorMessage);
             expressionEditor.setEmptyStringAllowed(false);
             addField(expressionEditor);
         } else {
             String function = getPreferenceStore().getString(ICLineBreakpoint.FUNCTION); 
             if (function == null) { 
-                function = Messages.TracepointPropertyPage_NotAvailable;
+                function = Messages.PropertyPage_NotAvailable;
             }
-            addField(createLabelEditor(getFieldEditorParent(), Messages.TracepointPropertyPage_FunctionName, function));
+            addField(createLabelEditor(getFieldEditorParent(), Messages.PropertyPage_FunctionName, function));
         }
     }
 	protected void createLineNumberEditor(Composite parent) {
-		 String title = Messages.TracepointPropertyPage_LineNumber;
+		 String title = Messages.PropertyPage_LineNumber;
 		 TracepointIntegerFieldEditor labelFieldEditor = new TracepointIntegerFieldEditor(IMarker.LINE_NUMBER, title, parent);
 		 labelFieldEditor.setValidRange(1, Integer.MAX_VALUE);
 		 addField(labelFieldEditor);
 	}
 	
 	protected void createEnabledField(Composite parent) {
-		fEnabled = new BooleanFieldEditor(ICBreakpoint.ENABLED, Messages.TracepointPropertyPage_Enabled, parent);
+		fEnabled = new BooleanFieldEditor(ICBreakpoint.ENABLED, Messages.PropertyPage_Enabled, parent);
 		addField(fEnabled);
 	}
 
 	protected void createConditionEditor(Composite parent) {
-		fCondition = new TracepointStringFieldEditor(ICBreakpoint.CONDITION, Messages.TracepointPropertyPage_Condition, parent);
+		fCondition = new TracepointStringFieldEditor(ICBreakpoint.CONDITION, Messages.PropertyPage_Condition, parent);
 		fCondition.setEmptyStringAllowed(true);
-		fCondition.setErrorMessage(Messages.TracepointPropertyPage_InvalidCondition);
+		fCondition.setErrorMessage(Messages.PropertyPage_InvalidCondition);
 		addField(fCondition);
 	}
 
 	protected void createIgnoreCountEditor(Composite parent) {
-		fIgnoreCount = new TracepointIntegerFieldEditor(ICBreakpoint.IGNORE_COUNT, Messages.TracepointPropertyPage_IgnoreCount, parent);
+		fIgnoreCount = new TracepointIntegerFieldEditor(ICBreakpoint.IGNORE_COUNT, Messages.PropertyPage_IgnoreCount, parent);
 		fIgnoreCount.setValidRange(0, Integer.MAX_VALUE);
 		fIgnoreCountTextControl = fIgnoreCount.getTextControl(parent);
 		fIgnoreCountTextControl.setEnabled( getPreferenceStore().getInt(ICBreakpoint.IGNORE_COUNT) >= 0 );

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Ericsson and others.
+ * Copyright (c) 2012, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Marc Dumais (Ericsson) - Bug 409512
  *     Marc Dumais (Ericsson) - Bug 409965
  *     Marc Dumais (Ericsson) - Bug 416524
+ *     Xavier Raynaud (Kalray) - Bug 431935
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -33,6 +34,9 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
+import org.eclipse.cdt.dsf.debug.service.IStack;
+import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.MulticoreVisualizerUIPlugin;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerCore;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerExecutionState;
@@ -87,6 +91,7 @@ public class MulticoreVisualizerEventListener {
 
 		IDMContext context = event.getDMContext();
 		
+
 		// all-stop mode? If so, we take the opportunity, now that GDB has suspended
 		// execution, to re-create the model so that we synchronize with the debug session
 		if (context != null && isSessionAllStop(context.getSessionId()) ) {
@@ -104,7 +109,7 @@ public class MulticoreVisualizerEventListener {
 			IThreadDMContext threadContext =
 					DMContexts.getAncestorOfType(execDmc, IThreadDMContext.class);
 
-			DsfServicesTracker tracker = 
+			final DsfServicesTracker tracker =
 					new DsfServicesTracker(MulticoreVisualizerUIPlugin.getBundleContext(), 
                                            execDmc.getSessionId());
 			IProcesses procService = tracker.getService(IProcesses.class);
@@ -122,16 +127,16 @@ public class MulticoreVisualizerEventListener {
 							if (cores != null) {
 								assert cores.length == 1; // A thread belongs to a single core
 								int coreId = Integer.parseInt(cores[0]);
-								VisualizerCore vCore = model.getCore(coreId);
+								final VisualizerCore vCore = model.getCore(coreId);
 								
 								int tid = execDmc.getThreadId();
 																
-					    		VisualizerThread thread = model.getThread(tid);
+								final VisualizerThread thread = model.getThread(tid);
 					    		
 					    		if (thread != null) {
 					    			assert thread.getState() == VisualizerExecutionState.RUNNING;
 					    			
-					    			VisualizerExecutionState newState = VisualizerExecutionState.SUSPENDED;
+									VisualizerExecutionState _newState = VisualizerExecutionState.SUSPENDED;
 
 					    			if (event.getReason() == StateChangeReason.SIGNAL) {
 					    				if (event instanceof IMIDMEvent) {
@@ -139,15 +144,41 @@ public class MulticoreVisualizerEventListener {
 					    					if (miEvent instanceof MISignalEvent) {
 					    						String signalName = ((MISignalEvent)miEvent).getName();
 					    						if (DSFDebugModel.isCrashSignal(signalName)) {
-					    							newState = VisualizerExecutionState.CRASHED;
+													_newState = VisualizerExecutionState.CRASHED;
 					    						}
 					    					}
 					    				}
 					    			}
+									final VisualizerExecutionState newState = _newState;
 
-					    			thread.setState(newState);
-					    			thread.setCore(vCore);
-					    			fVisualizer.refresh();
+									final IStack stackService = tracker.getService(IStack.class);
+									stackService.getTopFrame(execDmc,
+										new ImmediateDataRequestMonitor<IFrameDMContext>(null) {
+											@Override
+											protected void handleCompleted() {
+												IFrameDMContext targetFrameContext = getData();
+												if (targetFrameContext != null) {
+													stackService.getFrameData(targetFrameContext,
+														new ImmediateDataRequestMonitor<IFrameDMData>(null) {
+															@Override
+															protected void handleCompleted() {
+																IFrameDMData frameData = getData();
+																thread.setState(newState);
+																thread.setCore(vCore);
+																thread.setLocationInfo(frameData);
+																fVisualizer.refresh();
+																super.handleCompleted();
+															}
+														});
+												} else {
+													thread.setState(newState);
+													thread.setCore(vCore);
+													thread.setLocationInfo((String) null);
+													fVisualizer.refresh();
+												}
+												super.handleCompleted();
+											}
+									});
 					    		}
 							}
 						}
@@ -173,6 +204,7 @@ public class MulticoreVisualizerEventListener {
 			List<VisualizerThread> tList = model.getThreads();
 			for(VisualizerThread t : tList) {
 				t.setState(VisualizerExecutionState.RUNNING);
+				t.setLocationInfo((String) null);
 			}
 			fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();
 			return;
@@ -192,6 +224,7 @@ public class MulticoreVisualizerEventListener {
      				   thread.getState() == VisualizerExecutionState.CRASHED;
     			
     			thread.setState(VisualizerExecutionState.RUNNING);
+    			thread.setLocationInfo((String) null);
     			fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();
     		}
     	}

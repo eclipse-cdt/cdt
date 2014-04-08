@@ -1,0 +1,225 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_0bbb4daa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerThread.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-08T14:07:41Z",
+      "side": 1,
+      "message": "The case that was not looking so good is if you interrupt a thread using the interrupt button instead of a breakpoint.  This will end up in some library and we won\u0027t have the line number.  The debug view then does not show the line number while here we show a 0, which is wrong.\n\nCan you try that scenario?",
+      "revId": "07ba744c314378a5c2182108bf06810365a49640",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_eb6ff9ec",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-08T14:07:41Z",
+      "side": 1,
+      "message": "You can\u0027t use this tracker further down.  Notice that two lines below it is disposed.  Instead, you can fetch the service you need here first, and make that one final.",
+      "revId": "07ba744c314378a5c2182108bf06810365a49640",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_cb3315f9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-08T14:07:41Z",
+      "side": 1,
+      "message": "Check stackService !\u003d null",
+      "revId": "07ba744c314378a5c2182108bf06810365a49640",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_eb137961",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-08T14:07:41Z",
+      "side": 1,
+      "message": "also check isSuccess() before making use of the getData() result,  to make sure there was no error.",
+      "revId": "07ba744c314378a5c2182108bf06810365a49640",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_4b20a5a3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-08T14:07:41Z",
+      "side": 1,
+      "message": "Check isSuccess() before using getData(), if we have a failure, use null instead of getData(); it is technically possible that the caller has set the data field before the error occurred, so getData() may be garbage.",
+      "revId": "07ba744c314378a5c2182108bf06810365a49640",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_6bdac915",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-08T14:07:41Z",
+      "side": 1,
+      "message": "If you handled errors properly (in this case by setting the thread information anyway), don\u0027t call super.handleCompleted() to avoid logging errors you already dealt with.  You don\u0027t have to call any super here, since you did all the work.",
+      "revId": "07ba744c314378a5c2182108bf06810365a49640",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_ebc53932",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-08T14:07:41Z",
+      "side": 1,
+      "message": "Don\u0027t call super.handleCompleted() to avoid logging errors you already dealt with.",
+      "revId": "07ba744c314378a5c2182108bf06810365a49640",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_ab3061ed",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-08T14:07:41Z",
+      "side": 1,
+      "message": "Check stackService is not null",
+      "revId": "07ba744c314378a5c2182108bf06810365a49640",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_eb2a597d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-08T14:07:41Z",
+      "side": 1,
+      "message": "also check isSuccess()",
+      "revId": "07ba744c314378a5c2182108bf06810365a49640",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_2bd0d1f3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-08T14:07:41Z",
+      "side": 1,
+      "message": "check isSuccess() first",
+      "revId": "07ba744c314378a5c2182108bf06810365a49640",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_8bd59de6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-08T14:07:41Z",
+      "side": 1,
+      "message": "If you handled errors properly (in this case by calling getThreadSuspendReason() anyway), don\u0027t call super.handleCompleted() to avoid logging errors you already dealt with.  You don\u0027t have to call any super here, since you did all the work.",
+      "revId": "07ba744c314378a5c2182108bf06810365a49640",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_4bf26593",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-08T14:07:41Z",
+      "side": 1,
+      "message": "Don\u0027t call super.handleCompleted()",
+      "revId": "07ba744c314378a5c2182108bf06810365a49640",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_ebdc1906",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-08T14:07:41Z",
+      "side": 1,
+      "message": "check runControl !\u003d null",
+      "revId": "07ba744c314378a5c2182108bf06810365a49640",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

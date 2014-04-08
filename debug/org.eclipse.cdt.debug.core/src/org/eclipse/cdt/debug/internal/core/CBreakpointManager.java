@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
  * QNX Software Systems - catchpoints - bug 226689
  * James Blackburn (Broadcom) - bug 314865
+ * Marc Khouzam (Ericsson) - Support for dynamic printf (400628)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core; 
 
@@ -68,6 +69,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointFilterExtension;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
@@ -877,8 +879,13 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					breakpointType = ((ICBreakpointType) icbreakpoint).getType();
 				}
 				if ( icbreakpoint instanceof ICTracepoint) {
-					ICTracepoint breakpoint = (ICTracepoint)icbreakpoint; 
-					IMarker marker = BreakpointProblems.reportUnsupportedTracepoint(breakpoint, getDebugTarget().getName(), getDebugTarget().getInternalID());
+					ICTracepoint tracepoint = (ICTracepoint)icbreakpoint; 
+					IMarker marker = BreakpointProblems.reportUnsupportedTracepoint(tracepoint, getDebugTarget().getName(), getDebugTarget().getInternalID());
+					if (marker != null)
+						fBreakpointProblems.add(marker);
+				}else if ( icbreakpoint instanceof ICDynamicPrintf) {
+					ICDynamicPrintf dprintf = (ICDynamicPrintf)icbreakpoint; 
+					IMarker marker = BreakpointProblems.reportUnsupportedDynamicPrintf(dprintf, getDebugTarget().getName(), getDebugTarget().getInternalID());
 					if (marker != null)
 						fBreakpointProblems.add(marker);
 				}

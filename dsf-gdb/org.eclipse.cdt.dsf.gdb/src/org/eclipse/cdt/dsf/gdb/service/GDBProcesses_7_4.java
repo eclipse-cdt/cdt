@@ -41,7 +41,5 @@ public class GDBProcesses_7_4 extends GDBProcesses_7_2_1 {
     													String groupId) {
     	return new GDBContainerDMC_7_4(getSession().getId(), processDmc, groupId);
     }
-	
-
 }
 

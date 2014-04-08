@@ -29,6 +29,7 @@ import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlock.MemorySpaceDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBMemory;
 import org.eclipse.cdt.dsf.gdb.service.IGDBMemory2;
 import org.eclipse.cdt.dsf.service.DsfServices;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -48,6 +49,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A specialization of the DSF memory block retrieval implementation supporting
@@ -173,6 +176,15 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 			}
 		}
 
+		// check for address exceeding maximum range
+		int addressSize = getAddressSize(memoryDmc, memorySpaceID);
+		int addressableSize = getAddressableSize(memoryDmc, memorySpaceID);
+		BigInteger endAddress = BigInteger.ONE.shiftLeft(addressSize*8).divide(BigInteger.valueOf(addressableSize)).subtract(BigInteger.ONE);
+		if (endAddress.compareTo(blockAddress) < 0) {
+			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, 
+					MessageFormat.format(Messages.Err_ExceedsMaxAddress, expression, endAddress.toString(16)), null));
+		}
+		
 		/*
 		 * At this point, we only resolved the requested memory block
 		 * start address and we have no idea of the block's length.
@@ -185,7 +197,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 		 * same memory block, a trip to the target could result. However,
 		 * the memory request cache should save the day.
 		 */
-		return new GdbMemoryBlock(this, memoryDmc, getModelId(), expression, blockAddress, getAddressableSize(memoryDmc, memorySpaceID), 0, memorySpaceID);
+		return new GdbMemoryBlock(this, memoryDmc, getModelId(), expression, blockAddress, addressableSize, 0, memorySpaceID);
 	}
 
 	/*
@@ -403,6 +415,16 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 		return super.getAddressableSize();
 	}
 	
+	
+	private int getAddressSize(IMemoryDMContext aContext, String memorySpaceID) {
+		IGDBMemory memoryService = (IGDBMemory)getServiceTracker().getService();
+		if (memoryService != null && aContext != null) {
+			IMemoryDMContext context = resolveMemSpaceContext(aContext, memorySpaceID);
+			return memoryService.getAddressSize(context);
+		}
+		return super.getAddressSize();
+	}
+
 	private IMemoryDMContext resolveMemSpaceContext(IMemoryDMContext aContext, String aMemorySpaceID) {
 		IMemoryDMContext context = aContext;
 		if (aMemorySpaceID != null && aMemorySpaceID.length() > 0) {

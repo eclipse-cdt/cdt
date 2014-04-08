@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
  *     Patrick Chuong (Texas Instruments) -	Update CDT ToggleBreakpointTargetFactory enablement (340177)
+ *     Marc Khouzam (Ericsson) - Support for dynamic printf (400628)
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -35,6 +36,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
+import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICValue;
@@ -331,7 +333,7 @@ public class CDebugUtils {
 		if (breakpoint instanceof ICWatchpoint) {
 			return getWatchpointText((ICWatchpoint)breakpoint, qualified);
 		}
-		// this allow to create new breakpoint without implemention one the interfaces above and still see a label
+		// This allows to create a new breakpoint without implementing one of the interfaces above and still see a label
 		Object message = breakpoint.getMarker().getAttribute(IMarker.MESSAGE);
 		if (message != null)
 			return message.toString();
@@ -342,6 +344,9 @@ public class CDebugUtils {
 		StringBuffer label = new StringBuffer();
 		appendSourceName(breakpoint, label, qualified);
 		appendLineNumber(breakpoint, label);
+		if (breakpoint instanceof ICDynamicPrintf) {
+			appendPrintfString((ICDynamicPrintf)breakpoint, label);
+		}
 		appendBreakpointType(breakpoint, label);
 		appendIgnoreCount(breakpoint, label);
 		appendCondition(breakpoint, label);
@@ -367,6 +372,9 @@ public class CDebugUtils {
 		StringBuffer label = new StringBuffer();
 		appendSourceName(breakpoint, label, qualified);
 		appendAddress(breakpoint, label);
+		if (breakpoint instanceof ICDynamicPrintf) {
+			appendPrintfString((ICDynamicPrintf)breakpoint, label);
+		}
 		appendBreakpointType(breakpoint, label);
 		appendIgnoreCount(breakpoint, label);
 		appendCondition(breakpoint, label);
@@ -377,6 +385,9 @@ public class CDebugUtils {
 		StringBuffer label = new StringBuffer();
 		appendSourceName(breakpoint, label, qualified);
 		appendFunction(breakpoint, label);
+		if (breakpoint instanceof ICDynamicPrintf) {
+			appendPrintfString((ICDynamicPrintf)breakpoint, label);
+		}
 		appendBreakpointType(breakpoint, label);
 		appendIgnoreCount(breakpoint, label);
 		appendCondition(breakpoint, label);
@@ -419,6 +430,17 @@ public class CDebugUtils {
 			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.2"), (Object[])new String[]{ function.trim() })); //$NON-NLS-1$
 		}
 		return label;
+	}
+
+	/**
+	 * @since 7.5
+	 */
+	protected static void appendPrintfString(ICDynamicPrintf dprintf, StringBuffer buffer) throws CoreException {
+		String printfStr = dprintf.getPrintfString();
+		if (printfStr != null && printfStr.length() > 0) {
+			buffer.append(' ');
+			buffer.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.printfString"), (Object[])new String[] { printfStr })); //$NON-NLS-1$
+		}
 	}
 
 	protected static StringBuffer appendIgnoreCount(ICBreakpoint breakpoint, StringBuffer label) throws CoreException {

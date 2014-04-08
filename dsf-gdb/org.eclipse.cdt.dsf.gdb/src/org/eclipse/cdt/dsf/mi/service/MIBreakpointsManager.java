@@ -14,6 +14,7 @@
  *     Marc Khouzam (Ericsson) - Fix support for thread filter (Bug 355833)
  *     Marc Khouzam (Ericsson) - Generalize thread filtering logic (Bug 431986)
  *     Marc Khouzam (Ericsson) - Accept multiple calls to startTrackingBreakpoints (Bug 389945)
+ *     Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400628)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointExtension;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
+import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
@@ -1073,11 +1075,12 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             // Convert the breakpoint attributes for the back-end
             // Refresh the set of attributes at each iteration just in case...
             Map<String,Object> attrs = convertToTargetBreakpoint(breakpoint, attributes);
-            // Tracepoints are not affected by "skip-all"
-            if (!(breakpoint instanceof ICTracepoint) && !fBreakpointManager.isEnabled()) {
+            // Tracepoints and dynamic printf are not affected by "skip-all"
+            if (!(breakpoint instanceof ICTracepoint) && !(breakpoint instanceof ICDynamicPrintf)
+            		&& !fBreakpointManager.isEnabled()) {
                 attrs.put(MIBreakpoints.IS_ENABLED, false);
             }
-            // Add the secret ingredient..
+
             attrs.put(MIBreakpointDMData.THREAD_ID, thread);
 
             // Then install the spiked breakpoint
@@ -1135,8 +1138,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         for (IBreakpointsTargetDMContext context : fBreakpointIDs.keySet()) {
             for (ICBreakpoint breakpoint : fBreakpointIDs.get(context).keySet()) {
                 try {
-                    // Note that Tracepoints are not affected by "skip-all"
-                    if (!(breakpoint instanceof ICTracepoint) && breakpoint.isEnabled()) {
+                    // Note that Tracepoints and dynamic printf are not affected by "skip-all"
+                    if (!(breakpoint instanceof ICTracepoint) && !(breakpoint instanceof ICDynamicPrintf)
+                    		&& breakpoint.isEnabled()) {
                         for (IBreakpointDMContext ref : fBreakpointIDs.get(context).get(breakpoint)) {
                             Map<String,Object> delta = new HashMap<String,Object>();
                             delta.put(MIBreakpoints.IS_ENABLED, enabled);
@@ -1241,8 +1245,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             try {
                 // Retrieve the breakpoint attributes
                 final Map<String, Object> attrs = breakpoint.getMarker().getAttributes();
-                // Tracepoints are not affected by "skip-all"
-                if (!(breakpoint instanceof ICTracepoint) && !fBreakpointManager.isEnabled()) {
+                // Tracepoints and dynamic printf are not affected by "skip-all"
+                if (!(breakpoint instanceof ICTracepoint) && !(breakpoint instanceof ICDynamicPrintf) 
+                		&& !fBreakpointManager.isEnabled()) {
                     attrs.put(ICBreakpoint.ENABLED, false);
                 }
 
@@ -1790,6 +1795,10 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         // Threads
         if (cdt_attributes.containsKey(ATTR_THREAD_FILTER))
             result.put(ATTR_THREAD_FILTER, cdt_attributes.get(ATTR_THREAD_FILTER));
+        
+        // For IDynamicPrintf
+        if (cdt_attributes.containsKey(ICDynamicPrintf.PRINTF_STRING))
+        	result.put(MIBreakpoints.PRINTF_STRING, cdt_attributes.get(ICDynamicPrintf.PRINTF_STRING));
 
         return result;
     }
@@ -1929,8 +1938,11 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             	// A tracepoint is a LineBreakpoint, but needs its own type
                 properties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
                 properties.put(MIBreakpoints.PASS_COUNT, attributes.get(ICTracepoint.PASS_COUNT));
+            } else if (breakpoint instanceof ICDynamicPrintf) {
+            	// A DynamicPrintf is a LineBreakpoint, but needs its own type
+            	properties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.DYNAMICPRINTF);
+            	properties.put(MIBreakpoints.PRINTF_STRING, attributes.get(ICDynamicPrintf.PRINTF_STRING));
             }
-            
         }
         else if (breakpoint instanceof ICEventBreakpoint) {
         	properties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.CATCHPOINT);
@@ -1969,8 +1981,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         }
 
         // Adjust for "skip-all"
-        // Tracepoints are not affected by "skip-all"
-        if (!(breakpoint instanceof ICTracepoint ) && !fBreakpointManager.isEnabled()) {
+        // Tracepoints and dynamic printf are not affected by "skip-all"
+        if (!(breakpoint instanceof ICTracepoint) && !(breakpoint instanceof ICDynamicPrintf) 
+        		&& !fBreakpointManager.isEnabled()) {
             properties.put(MIBreakpoints.IS_ENABLED, false);
         }
 
@@ -1999,7 +2012,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         ||  delta.containsKey(ATTR_THREAD_FILTER)            // Thread ID
         ||  delta.containsKey(MIBreakpoints.EXPRESSION)      // Watchpoint expression
         ||  delta.containsKey(MIBreakpoints.READ)            // Watchpoint type
-        ||  delta.containsKey(MIBreakpoints.WRITE)) {        // Watchpoint type
+        ||  delta.containsKey(MIBreakpoints.WRITE)           // Watchpoint type
+        ||  delta.containsKey(MIBreakpoints.PRINTF_STRING)) {// Dprintf string
             return true;
         }
 

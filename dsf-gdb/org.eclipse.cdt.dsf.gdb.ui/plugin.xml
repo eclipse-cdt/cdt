@@ -200,6 +200,19 @@
             </or>
          </enabledWhen>
       </page>
+      <page class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.GDBDynamicPrintfPropertyPage"
+            id="org.eclipse.cdt.dsf.gdb.dynamicprintf.common"
+            name="%dynamicPrintf.property.common">
+         <enabledWhen>
+            <or>
+               <adapt type="org.eclipse.cdt.debug.core.model.ICDynamicPrintf"/>
+               <and>
+                  <instanceof value="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext"/>
+                  <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICDynamicPrintf"/>
+               </and>
+            </or>
+         </enabledWhen>
+      </page>
    </extension>
    <extension
          point="org.eclipse.debug.core.statusHandlers">
@@ -420,6 +433,16 @@
                menubarPath="renderGroup">
          </action>
       </objectContribution>
+      <viewerContribution
+            id="org.eclipse.cdt.dsf.debug.ui.disassemblyRulerActions"
+            targetID="#DisassemblyPartRulerContext">
+         <action
+               class="org.eclipse.cdt.dsf.gdb.internal.ui.disassembly.AddDynamicPrintfRulerActionDelegate"
+               id="org.eclipse.cdt.dsf.gdb.ui.actions.RulerAddDynamicPrintfAction"
+               label="%action.addDynamicPrintf.label"
+               menubarPath="debug">
+         </action>
+      </viewerContribution>
    </extension>   
    <extension point="org.eclipse.debug.ui.toggleBreakpointsTargetFactories">
       <toggleTargetFactory
@@ -434,6 +457,15 @@
                      property="org.eclipse.cdt.dsf.debug.ui.isDisassemblyViewSupportsCBreakpoint">
                </test>
             </and>  
+         </enablement>
+      </toggleTargetFactory>
+      <toggleTargetFactory
+            id="org.eclipse.cdt.dsf.gdb.ui.ToggleDynamicPrintfTargetFactory"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.ToggleDynamicPrintfTargetFactory">
+         <enablement>
+            <test
+                  property="org.eclipse.cdt.dsf.debug.ui.isDisassemblyViewSupportsCBreakpoint">
+            </test>
          </enablement>
       </toggleTargetFactory>
    </extension>

@@ -96,7 +96,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 		try {
 			return new PDOMCPPClassTemplate(getLinkage(), getDB().getRecPtr(record + PRIMARY));
 		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			CCorePlugin.log("Failed to load primary template for " + getName(), e); //$NON-NLS-1$
 			return null;
 		}
 	}
@@ -118,7 +118,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 			final long rec= getPDOM().getDB().getRecPtr(record + ARGUMENTS);
 			return PDOMCPPArgumentList.getArguments(this, rec);
 		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			CCorePlugin.log("Failed to load template arguments for " + getName(), e); //$NON-NLS-1$
 			return ICPPTemplateArgument.EMPTY_ARGUMENTS;
 		}
 	}
@@ -140,10 +140,11 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 					int otherSM = otherSpec.getSignatureHash();
 					return mySM == otherSM ? 0 : mySM < otherSM ? -1 : 1;
 				} catch (CoreException e) {
-					CCorePlugin.log(e);
+					CCorePlugin.log("Comparison failure for " + getName(), e); //$NON-NLS-1$
 				}
 			} else {
 				assert false;
+				CCorePlugin.log(new AssertionError("Assertion failure for " + getName())); //$NON-NLS-1$
 			}
 		}
 		return cmp;
@@ -166,7 +167,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 			return false;
 		}
 
-		final ICPPClassTemplatePartialSpecialization rhs = (ICPPClassTemplatePartialSpecialization)type;
+		final ICPPClassTemplatePartialSpecialization rhs = (ICPPClassTemplatePartialSpecialization) type;
 		return CPPClassTemplatePartialSpecialization.isSamePartialClassSpecialization(this, rhs);
 	}
 }

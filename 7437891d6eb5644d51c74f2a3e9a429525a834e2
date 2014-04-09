@@ -70,6 +70,24 @@
       "revId": "7437891d6eb5644d51c74f2a3e9a429525a834e2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_36b67126",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-09T17:55:01Z",
+      "side": 1,
+      "message": "I think this confusion comes from an incorrect use of the word byte all over, \nand making the java doc clear enough may not actually be possible as the word byte is used in many legacy code as octet.\n\nHere goes an example of what you will get from a 32 bit address system with a minimum addressable size of 16 bits (16 bit char)\n\n    addressSize: 2       (addressable units)\n    addressableSize: 2   (2 octets needed to represent one character)\n\nif we apply the java line as per patchset 3.\n\tBigInteger endAddress \u003d BigInteger.ONE.shiftLeft(addressSize*8).subtract(BigInteger.ONE);\n\n\twill be shifting only 16 bits to the left instead of 32",
+      "parentUuid": "0756a345_e0a71307",
+      "revId": "7437891d6eb5644d51c74f2a3e9a429525a834e2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

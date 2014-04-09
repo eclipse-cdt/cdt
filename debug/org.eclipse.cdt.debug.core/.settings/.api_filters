@@ -1,78 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.cdt.debug.core" version="2">
-    <resource path="src/org/eclipse/cdt/debug/core/ICDebugConstants.java" type="org.eclipse.cdt.debug.core.ICDebugConstants">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.ICDebugConstants"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/cdt/debug/core/model/ICAddressBreakpoint.java" type="org.eclipse.cdt.debug.core.model.ICAddressBreakpoint">
-        <filter comment="Binay backward compatible change." id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.model.ICAddressBreakpoint"/>
-                <message_argument value="C_ADDRESS_BREAKPOINT_MARKER"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/cdt/debug/core/model/ICEventBreakpoint.java" type="org.eclipse.cdt.debug.core.model.ICEventBreakpoint">
-        <filter comment="Binary backward compatible change." id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.model.ICEventBreakpoint"/>
-                <message_argument value="C_EVENT_BREAKPOINT_MARKER"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/cdt/debug/core/model/ICFunctionBreakpoint.java" type="org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint">
-        <filter comment="Binay backward compatible change." id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint"/>
-                <message_argument value="C_FUNCTION_BREAKPOINT_MARKER"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/cdt/debug/core/model/ICLineBreakpoint.java" type="org.eclipse.cdt.debug.core.model.ICLineBreakpoint">
-        <filter id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.model.ICLineBreakpoint"/>
-                <message_argument value="C_LINE_BREAKPOINT_MARKER"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/cdt/debug/core/model/ICTracepoint.java" type="org.eclipse.cdt.debug.core.model.ICTracepoint">
-        <filter comment="Binay backward compatible change." id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
-                <message_argument value="C_ADDRESS_TRACEPOINT_MARKER"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Binay backward compatible change." id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
-                <message_argument value="C_FUNCTION_TRACEPOINT_MARKER"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Binary backward compatible change." id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
-                <message_argument value="C_LINE_TRACEPOINT_MARKER"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Binary backward compatible change." id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
-                <message_argument value="C_TRACEPOINT_MARKER"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/cdt/debug/core/model/ICWatchpoint.java" type="org.eclipse.cdt.debug.core.model.ICWatchpoint">
-        <filter comment="Binay backward compatible change." id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.model.ICWatchpoint"/>
-                <message_argument value="C_WATCHPOINT_MARKER"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/cdt/debug/core/sourcelookup/MappingSourceContainer.java" type="org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer">
         <filter id="643846161">
             <message_arguments>
@@ -103,14 +30,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/cdt/debug/core/sourcelookup/SourceLookupMessages.java" type="org.eclipse.cdt.debug.core.sourcelookup.SourceLookupMessages">
-        <filter comment="SourceLookupMessages class is no longer public." id="305365105">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.debug.core.sourcelookup.SourceLookupMessages"/>
-                <message_argument value="org.eclipse.cdt.debug.core_7.1.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/cdt/debug/internal/core/DebugStringVariableSubstitutor.java" type="org.eclipse.cdt.debug.internal.core.DebugStringVariableSubstitutor">
         <filter id="574619656">
             <message_arguments>
@@ -124,14 +43,6 @@
             <message_arguments>
                 <message_argument value="IDynamicVariable"/>
                 <message_argument value="ProjectVariable"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/cdt/debug/internal/core/Trace.java" type="org.eclipse.cdt.debug.internal.core.Trace">
-        <filter id="574619656">
-            <message_arguments>
-                <message_argument value="DebugTrace"/>
-                <message_argument value="Trace"/>
             </message_arguments>
         </filter>
     </resource>

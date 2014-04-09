@@ -16,6 +16,24 @@
       "revId": "7437891d6eb5644d51c74f2a3e9a429525a834e2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_4cc1dbfa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-04-09T08:14:42Z",
+      "side": 1,
+      "message": "Actually the maximum address calculation should not take  in account addressableSize at all. As the code is not ought to compute length but the highest value that a pointer can have.\nI will submit a new patch that removes unnecessary faulty operations.",
+      "parentUuid": "0756a345_468edc3e",
+      "revId": "7437891d6eb5644d51c74f2a3e9a429525a834e2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

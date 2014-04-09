@@ -16,6 +16,24 @@
       "revId": "209d9500f22685dec3213167a08cef69ec5be935",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_e31d5d9c",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/Addr2line.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-04-09T14:04:29Z",
+      "side": 1,
+      "message": "Agreed. Split is a regex. Doing a real regex and extracting the number would be more efficient since it avoids creating the array. I\u0027ve asked Jonathan to take another look.",
+      "parentUuid": "67591f73_bf8d51bd",
+      "revId": "209d9500f22685dec3213167a08cef69ec5be935",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

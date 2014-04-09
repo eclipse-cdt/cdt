@@ -269,6 +269,7 @@ public class VisualizerModel
 		if (m_keepExitedThreads) {
 			VisualizerThread thread = getThread(threadId);
 			thread.setState(VisualizerExecutionState.EXITED);
+			thread.setLocationInfo((String) null);
 		} else {
 			removeThread(threadId);
 		}

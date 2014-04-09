@@ -38,13 +38,13 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
- * Action to interactively create a breakpoint from vertical ruler of a 
+ * Action to interactively create a breakpoint from the vertical ruler of a 
  * workbench part containing a document. The part must provide an 
  * <code>IToggleBreakpointsTargetExtension2</code> adapter.
  * <p>
  * Clients may instantiate this class. 
  * </p>
- * @since 3.8
+ * @since 7.2
  * @see org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate
  */
 public class CAddBreakpointInteractiveRulerAction extends Action implements IUpdate {

@@ -22,11 +22,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Creates a breakpoint interactively, that is with user input as well as context 
  * information gathered from editor location. This action delegate can be 
  * contributed to an editor with the <code>editorActions</code> extension point.
- * This action is as a factory that creates another action that performs the
+ * This action is a factory that creates another action that performs the
  * actual breakpoint toggling. The created action acts on the editor's
- * <code>IToggleBreakpointsTagretCExtension</code> to create the breakpoint.
+ * <code>IToggleBreakpointsTargetCExtension</code> to create the breakpoint.
  * <p>
- * This action should be be contributed to a vertical ruler context menu via the
+ * This action should be contributed to a vertical ruler context menu via the
  * <code>popupMenus</code> extension point, by referencing the ruler's context
  * menu identifier in the <code>targetID</code> attribute.
  * <pre>

@@ -52,6 +52,24 @@
       "revId": "7437891d6eb5644d51c74f2a3e9a429525a834e2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_e0a71307",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-04-09T16:11:30Z",
+      "side": 1,
+      "message": "This check is about learning the maximum address of a *unit*. \n\nI think the statement comment is misleading. It should be \"check for address exceeding maximum value\". I will update accordingly.",
+      "parentUuid": "0756a345_20174b52",
+      "revId": "7437891d6eb5644d51c74f2a3e9a429525a834e2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

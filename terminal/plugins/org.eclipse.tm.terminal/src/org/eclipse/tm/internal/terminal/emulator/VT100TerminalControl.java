@@ -1104,7 +1104,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	private void runAsyncInDisplayThread(Runnable runnable) {
 		if(Display.findDisplay(Thread.currentThread())!=null)
 			runnable.run();
-		else if(PlatformUI.isWorkbenchRunning())
+		else if(PlatformUI.isWorkbenchRunning() && PlatformUI.getWorkbench().getDisplay() != null && !PlatformUI.getWorkbench().getDisplay().isDisposed())
 			PlatformUI.getWorkbench().getDisplay().asyncExec(runnable);
 		// else should not happen and we ignore it...
 	}

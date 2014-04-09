@@ -198,6 +198,6 @@ public class WordPartDetector {
 	}
 
 	private boolean isMakefileLetter(char c) {
-		return Character.isLetterOrDigit(c) || "_-.@%<?^+|*".indexOf(c) >= 0;
+		return Character.isLetterOrDigit(c) || "_-.@%<?^+|*".indexOf(c) >= 0; //$NON-NLS-1$
 	}
 }

@@ -213,7 +213,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		if (selection.equals("")) { //$NON-NLS-1$
 			ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
 			if (dc == null) {
-				CDebugCorePlugin.getDefault().saveDefaultDebugConfiguration("org.eclipse.cdt.debug.mi.core.CDebuggerNew");
+				CDebugCorePlugin.getDefault().saveDefaultDebugConfiguration("org.eclipse.cdt.debug.mi.core.CDebuggerNew"); //$NON-NLS-1$
 				dc = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
 			}
 			if (dc != null)
@@ -263,7 +263,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		// Set the default debugger based on the active toolchain on the project (if possible)
 		String defaultDebugger = null;
 		try {
-			String projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+			String projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 			if (projectName.length() > 0) {
 				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
             	ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project);

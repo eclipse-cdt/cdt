@@ -176,7 +176,7 @@ public class ScannerConfigBuilder extends ACBuilder {
 			if (vars[i] != null
 			 && vars[i].getName() != null) {
 				String value = vars[i].getValue();
-				envProps.setProperty(vars[i].getName(), value == null ? "" : value);
+				envProps.setProperty(vars[i].getName(), value == null ? "" : value); //$NON-NLS-1$
 			}
 		}
 

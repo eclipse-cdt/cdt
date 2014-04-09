@@ -426,7 +426,6 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     private void startNewProcess(ICommandControlDMContext controlDmc, NewExecutableInfo info, RequestMonitor rm) {
 		IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
 		try {
-			@SuppressWarnings("unchecked")
 			Map<String, Object> attributes = fLaunch.getLaunchConfiguration().getAttributes();
 			attributes.put(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_BINARY, info.getTargetPath());
 			attributes.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, info.getArguments());

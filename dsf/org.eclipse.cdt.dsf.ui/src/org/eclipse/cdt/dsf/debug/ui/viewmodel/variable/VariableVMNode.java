@@ -109,7 +109,6 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
 
-@SuppressWarnings("restriction")
 public class VariableVMNode extends AbstractExpressionVMNode 
                             implements IElementEditor, IElementLabelProvider, IElementPropertiesProvider, IElementMementoProvider 
 {

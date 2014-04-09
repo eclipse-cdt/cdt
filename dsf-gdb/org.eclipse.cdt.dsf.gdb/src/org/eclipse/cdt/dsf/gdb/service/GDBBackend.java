@@ -292,7 +292,6 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 		return fProgramPath;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getSharedLibraryPaths() throws CoreException {
 		if (fSharedLibPaths == null) {

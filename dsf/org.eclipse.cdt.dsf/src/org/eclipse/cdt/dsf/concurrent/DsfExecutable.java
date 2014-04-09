@@ -109,7 +109,6 @@ public class DsfExecutable {
 	 */
     private volatile boolean fSubmitted = false;
     
-    @SuppressWarnings("unchecked")
     public DsfExecutable() {
         // Use assertion flag (-ea) to jre to avoid affecting performance when not debugging.
         if (ASSERTIONS_ENABLED || DEBUG_EXECUTOR || DEBUG_MONITORS) {

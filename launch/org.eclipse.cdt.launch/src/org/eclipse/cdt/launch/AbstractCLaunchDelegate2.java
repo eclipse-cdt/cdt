@@ -338,7 +338,6 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 						ICommand[] commands = project.getDescription().getBuildSpec();
 						assert buildCount == commands.length;
 						for (ICommand command : commands) {
-							@SuppressWarnings("unchecked")
 							Map<String, String> args = command.getArguments();
 							if (args == null) {
 								args = new HashMap<String, String>(cfgIdArgs);

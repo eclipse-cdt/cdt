@@ -170,7 +170,6 @@ public class ResourceClassContributionItem extends ContributionItem {
 
 		fResourceClassCombo.addSelectionListener(new SelectionListener() {
 
-			@SuppressWarnings({ "null"})
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String description = fResourceClassCombo.getText();

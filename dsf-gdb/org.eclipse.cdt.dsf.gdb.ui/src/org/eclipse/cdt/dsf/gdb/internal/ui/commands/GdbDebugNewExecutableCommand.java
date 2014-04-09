@@ -145,7 +145,6 @@ public class GdbDebugNewExecutableCommand extends RefreshableDebugCommand implem
 				@Override
 				protected void handleSuccess() {
 					try {
-						@SuppressWarnings( "unchecked" )
 						Map<String, Object> attributes = getLaunchConfiguration().getAttributes();
 						attributes.put( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_BINARY, getData().getTargetPath() );
 						attributes.put( ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, getData().getArguments() );

@@ -28,7 +28,6 @@ import org.eclipse.ui.IViewPart;
  * 
  * @since 2.0  Moved to different package, exists since 1.0.
  */
-@SuppressWarnings("restriction")
 public class RefreshAction implements IViewActionDelegate {
 
 	private IMemoryBlock fMemoryBlock = null;

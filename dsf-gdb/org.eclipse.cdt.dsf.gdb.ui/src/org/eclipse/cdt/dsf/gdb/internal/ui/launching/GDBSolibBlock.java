@@ -111,7 +111,6 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 		if ( fSolibSearchPathBlock != null )
 			fSolibSearchPathBlock.performApply( configuration );
 		try {
-			@SuppressWarnings("unchecked")
 			Map attrs = configuration.getAttributes();
 			
 			if ( fAutoSoLibButton != null )

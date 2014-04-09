@@ -74,7 +74,6 @@ public class CompositeDMContext implements IDMContext {
      * in path.
      * @see #getSessionId()
      */
-    @SuppressWarnings("unchecked")
     @Override
     public Object getAdapter(Class adapterType) {
         IDMContext[] parents = getParents(); 

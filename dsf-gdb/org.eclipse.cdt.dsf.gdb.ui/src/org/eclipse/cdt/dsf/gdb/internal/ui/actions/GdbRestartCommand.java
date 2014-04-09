@@ -93,7 +93,6 @@ public class GdbRestartCommand implements IRestartHandler {
         																	  IContainerDMContext.class);
         
         fExecutor.submit(new DsfRunnable() {
-        	@SuppressWarnings("unchecked")
             @Override
 			public void run() {
             	IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);

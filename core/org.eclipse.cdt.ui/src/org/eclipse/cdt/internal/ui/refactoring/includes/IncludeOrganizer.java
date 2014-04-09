@@ -146,7 +146,7 @@ public class IncludeOrganizer {
 			this.name = name;
 			this.declaration = null;
 			this.type = DeclarationType.NAMESPACE;
-			this.children = new ArrayList<ForwardDeclarationNode>();
+			this.children = new ArrayList<>();
 		}
 
 		/**
@@ -214,8 +214,7 @@ public class IncludeOrganizer {
 
 		// Use a map instead of a set to be able to retrieve existing elements using equal elements.
 		// Maps each element to itself. 
-		Map<IncludePrototype, IncludePrototype> includePrototypes =
-				new HashMap<IncludePrototype, IncludePrototype>();
+		Map<IncludePrototype, IncludePrototype> includePrototypes = new HashMap<>();
 		// Put the new includes into includePrototypes.
 		for (IPath header : fContext.getHeadersToInclude()) {
 			IncludeGroupStyle style = fContext.getIncludeStyle(header);
@@ -258,7 +257,7 @@ public class IncludeOrganizer {
 				int position = allowReordering ? groupingStyle.getOrder() : 0;
 				List<IncludePrototype> prototypes = groupedPrototypes[position];
 				if (prototypes == null) {
-					prototypes = new ArrayList<IncludePrototype>();
+					prototypes = new ArrayList<>();
 					groupedPrototypes[position] = prototypes;
 				}
 				prototypes.add(prototype);
@@ -280,7 +279,7 @@ public class IncludeOrganizer {
 			}
 		}
 
-		List<String> includeDirectives = new ArrayList<String>();
+		List<String> includeDirectives = new ArrayList<>();
 		IncludeGroupStyle previousStyle = null;
 		for (List<IncludePrototype> prototypes : groupedPrototypes) {
 			if (prototypes != null && !prototypes.isEmpty()) {
@@ -469,7 +468,7 @@ public class IncludeOrganizer {
 			}
 
 			// Consider the namespace(s) of the binding.
-			List<String> namespaces = new ArrayList<String>();
+			List<String> namespaces = new ArrayList<>();
 			try {
 				IScope scope = binding.getScope();
 				while (scope != null && scope.getKind() == EScopeKind.eNamespace) {
@@ -693,7 +692,7 @@ public class IncludeOrganizer {
 
 	private static int skipStandaloneCommentBlock(String contents, int offset, int endOffset,
 			IASTComment[] comments, NodeCommentMap commentMap) {
-		Map<IASTComment, IASTNode> inverseLeadingMap = new HashMap<IASTComment, IASTNode>();
+		Map<IASTComment, IASTNode> inverseLeadingMap = new HashMap<>();
 		for (Map.Entry<IASTNode, List<IASTComment>> entry : commentMap.getLeadingMap().entrySet()) {
 			IASTNode node = entry.getKey();
 			if (getNodeOffset(node) <= endOffset) {
@@ -702,7 +701,7 @@ public class IncludeOrganizer {
 				}
 			}
 		}
-		Map<IASTComment, IASTNode> inverseFreestandingMap = new HashMap<IASTComment, IASTNode>();
+		Map<IASTComment, IASTNode> inverseFreestandingMap = new HashMap<>();
 		for (Map.Entry<IASTNode, List<IASTComment>> entry : commentMap.getFreestandingMap().entrySet()) {
 			IASTNode node = entry.getKey();
 			if (getNodeEndOffset(node) < endOffset) {
@@ -749,10 +748,10 @@ public class IncludeOrganizer {
 
 	private Set<IBinding> removeBindingsDefinedInIncludedHeaders(IASTTranslationUnit ast,
 			Set<IBinding> bindings, IIndexFileSet reachableHeaders) throws CoreException {
-		Set<IBinding> filteredBindings = new HashSet<IBinding>(bindings);
+		Set<IBinding> filteredBindings = new HashSet<>(bindings);
 
 		List<InclusionRequest> requests = createInclusionRequests(ast, bindings, true, reachableHeaders);
-		Set<IPath> allIncludedHeaders = new HashSet<IPath>();
+		Set<IPath> allIncludedHeaders = new HashSet<>();
 		allIncludedHeaders.addAll(fContext.getHeadersAlreadyIncluded());
 		allIncludedHeaders.addAll(fContext.getHeadersToInclude());
 

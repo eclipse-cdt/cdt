@@ -34,6 +34,24 @@
       "revId": "7437891d6eb5644d51c74f2a3e9a429525a834e2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_20174b52",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-09T11:14:02Z",
+      "side": 1,
+      "message": "The thing is that addressSize is not in octets but in \"units that are the size of a char\", so for a 16 bit per char systems this means a value of 1 does not represent an octet,\n  by using the 2 octets per char unit (addressable size) we can determine the size of an address in octets.\n\n   So you need to multiply by addressable size to obtain octets and then multiply by 8 to get bits :-)\n\n\nyou can see this used in several places e.g. \nMIMemory#updateMemoryCache\nthe word_count is the amount of addressable units or \"words\", the word_size is the addressable size in octets.\n\nyou can see the calculation of octets in local variable \"count\"",
+      "parentUuid": "0756a345_4cc1dbfa",
+      "revId": "7437891d6eb5644d51c74f2a3e9a429525a834e2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

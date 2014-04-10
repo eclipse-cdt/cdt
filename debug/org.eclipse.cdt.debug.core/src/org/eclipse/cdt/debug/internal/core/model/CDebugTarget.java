@@ -1883,16 +1883,27 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			
 			if (container instanceof CProjectSourceContainer) {
 				IProject project = ((CProjectSourceContainer) container).getProject();
-				if (project != null && project.exists())
-					pathToAdd = project.getLocation().toPortableString();
+				if (project != null && project.exists()) {
+					IPath location = project.getLocation();
+					if (location != null) {
+						pathToAdd = location.toPortableString();
+					}
+				}
 			} else if (container instanceof ProjectSourceContainer) { // For backward compatibility
 				IProject project = ((ProjectSourceContainer) container).getProject();
-				if (project != null && project.exists())
-					pathToAdd = project.getLocation().toPortableString();
+				if (project != null && project.exists()) {
+					IPath location = project.getLocation();
+					if (location != null) {
+						pathToAdd = location.toPortableString();
+					}
+				}
 			} else if (container instanceof FolderSourceContainer) {
 				IContainer folderContainer = ((FolderSourceContainer) container).getContainer();
 				if (folderContainer != null && folderContainer.exists()) {
-					pathToAdd = folderContainer.getLocation().toPortableString();
+					IPath location = folderContainer.getLocation();
+					if (location != null) {
+						pathToAdd = location.toPortableString();
+					}
 				}
 			} if (container instanceof DirectorySourceContainer) {
 				File dir = ((DirectorySourceContainer) container).getDirectory();

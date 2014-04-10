@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Mentor Graphics and others.
+ * Copyright (c) 2011, 2014 Mentor Graphics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Mentor Graphics - Initial API and implementation
+ * Marc Khouzam (Ericsson) - Don't allow to set two bps at same line (bug 432503)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.debug.ui.actions;
@@ -180,7 +181,7 @@ public abstract class AbstractDisassemblyBreakpointsTarget
      */
     @Override
     public boolean canCreateLineBreakpointsInteractive(IWorkbenchPart part, ISelection selection) {
-        return canToggleLineBreakpoints(part, selection);
+        return canToggleLineBreakpoints(part, selection) && !hasBreakpoint(part, selection);
     }
 
     /**
@@ -268,6 +269,18 @@ public abstract class AbstractDisassemblyBreakpointsTarget
 	    createAddressBreakpoint(resource, address);
 	}
 
+    private boolean hasBreakpoint(IWorkbenchPart part, ISelection selection) {
+		assert part instanceof IDisassemblyPart && selection instanceof ITextSelection;
+
+		if ( !(selection instanceof IDisassemblySelection) ) {
+			selection = new DisassemblySelection( (ITextSelection)selection, (IDisassemblyPart)part );
+		}
+		IDisassemblySelection disassemblySelection = (IDisassemblySelection)selection;
+		int line = disassemblySelection.getStartLine();
+		IBreakpoint[] bp = getBreakpointsAtLine( (IDisassemblyPart)part, line );
+		return bp != null && bp.length > 0;
+    }
+    
 	private IBreakpoint[] getBreakpointsAtLine( IDisassemblyPart part, int line ) {
 		List<IBreakpoint> breakpoints = new ArrayList<IBreakpoint>();
 		IAnnotationModel annotationModel = part.getTextViewer().getAnnotationModel();

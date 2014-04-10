@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Mentor Graphics and others.
+ * Copyright (c) 2011, 2014 Mentor Graphics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Mentor Graphics - Initial API and implementation
+ * Marc Khouzam (Ericsson) - Don't allow to set two bps at same line (bug 432503)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.breakpoints;
@@ -172,7 +173,7 @@ abstract public class AbstractToggleBreakpointAdapter
 
 	@Override
 	public boolean canCreateLineBreakpointsInteractive(IWorkbenchPart part, ISelection selection) {
-	    return canToggleLineBreakpoints( part, selection );
+	    return canToggleLineBreakpoints( part, selection ) && !hasBreakpoint( part );
 	}
         
 	@Override
@@ -244,6 +245,16 @@ abstract public class AbstractToggleBreakpointAdapter
         }
 	}
 	
+    private boolean hasBreakpoint(IWorkbenchPart part) {
+    	if (part instanceof ITextEditor) {
+    		ITextEditor textEditor = (ITextEditor) part;
+    		IVerticalRulerInfo rulerInfo = (IVerticalRulerInfo) textEditor.getAdapter(IVerticalRulerInfo.class);
+	        IBreakpoint breakpoint = CDebugUIUtils.getBreakpointFromEditor(textEditor, rulerInfo);
+	        return breakpoint != null;
+    	}
+    	return false;
+    }
+
     /**
      * Updates the breakpoint for given part and selection.  
      * Depending on the flags and on whether a breakpoint exists, this method 

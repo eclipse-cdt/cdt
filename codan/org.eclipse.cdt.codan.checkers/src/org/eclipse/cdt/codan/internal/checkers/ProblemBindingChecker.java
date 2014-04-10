@@ -191,7 +191,6 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 		if (function == null) {
 			return false;
 		}
-		@SuppressWarnings("restriction")
 		IASTDeclarator innermostDeclarator = ASTQueries.findInnermostDeclarator(function.getDeclarator());
 		IBinding binding = innermostDeclarator.getName().resolveBinding();
 		return (binding instanceof ICPPMethod);

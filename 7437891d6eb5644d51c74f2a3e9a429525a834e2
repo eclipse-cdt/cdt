@@ -88,6 +88,24 @@
       "revId": "7437891d6eb5644d51c74f2a3e9a429525a834e2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_54d03df4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-04-10T16:35:41Z",
+      "side": 1,
+      "message": "Thank you for your example.This is a worthfull discussion to be moved to main comment area.",
+      "parentUuid": "0756a345_36b67126",
+      "revId": "7437891d6eb5644d51c74f2a3e9a429525a834e2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

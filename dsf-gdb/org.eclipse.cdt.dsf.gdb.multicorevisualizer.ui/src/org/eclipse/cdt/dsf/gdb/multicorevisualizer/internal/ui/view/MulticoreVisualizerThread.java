@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
- *     Xavier Raynaud (Kalray) - Bug 431690, 432151
+ *     Xavier Raynaud (Kalray) - Bug 431690, 432151, 431935
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -188,4 +188,10 @@ public class MulticoreVisualizerThread extends MulticoreVisualizerGraphicObject
 			}
 		}
 	}
+
+	@Override
+	public String getTooltip(int x, int y) {
+		return m_thread.getLocationInfo();
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Tilera Corporation and others.
+ * Copyright (c) 2012, 2014 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  *     Marc Dumais (Ericsson) - Bug 404894
  *     Marc Dumais (Ericsson) - Bug 405390
  *     Marc Dumais (Ericsson) - Bug 407321
+ *     Xavier Raynaud (Kalray) - Bug 431935
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerC
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerModel;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerThread;
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvas;
+import org.eclipse.cdt.visualizer.ui.canvas.IGraphicObject;
 import org.eclipse.cdt.visualizer.ui.plugin.CDTVisualizerUIPlugin;
 import org.eclipse.cdt.visualizer.ui.util.GUIUtils;
 import org.eclipse.cdt.visualizer.ui.util.MouseMonitor;
@@ -1120,4 +1122,22 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
     public boolean isFilterActive() {
     	return m_canvasFilterManager.isCurrentFilterActive();
     }
+
+	@Override
+	public IGraphicObject getGraphicObject(Class<?> type, int x, int y) {
+		// Why m_cpus are not added in super.m_objects ?
+		IGraphicObject result = null;
+		for (IGraphicObject gobj : getSelectableObjects()) {
+			if (gobj.contains(x, y)) {
+				if (type != null) {
+					Class<?> objType = gobj.getClass();
+					if (! type.isAssignableFrom(objType)) continue;
+				}
+				result = gobj;
+				break;
+			}
+		}
+		return result;
+	}
+
 }

@@ -560,6 +560,11 @@
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="typeindex,typeinfo,type_traits,unordered_map,unordered_set,utility,valarray,vector"/>
    </extension> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="condition_variable,ctgmath"/>
+   </extension> 
  
 <!-- =================================================================================== -->
 <!-- Initialize the preference for the Core Plugin                                       -->

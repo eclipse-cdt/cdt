@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Tilera Corporation and others.
+ * Copyright (c) 2012, 2014 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
  *     Marc Dumais (Ericsson) - Bug 405390
  *     Marc Dumais (Ericsson) - Bug 407321
+ *     Xavier Raynaud (Kalray) - Add tooltip support (Bug 431935)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
@@ -269,6 +270,7 @@ public class VisualizerModel
 		if (m_keepExitedThreads) {
 			VisualizerThread thread = getThread(threadId);
 			thread.setState(VisualizerExecutionState.EXITED);
+			thread.setLocationInfo((String) null);
 		} else {
 			removeThread(threadId);
 		}

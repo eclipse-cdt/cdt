@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Tilera Corporation and others.
+ * Copyright (c) 2012, 2014 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
+ *     Xavier Raynaud (Kalray) - Bug 431935
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils;
@@ -29,6 +30,9 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
+import org.eclipse.cdt.dsf.debug.service.IStack;
+import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerExecutionState;
@@ -301,7 +305,7 @@ public class DSFDebugModel {
 	/** Requests execution state of a thread.
 	 *  Calls back to getThreadExecutionStateDone() on listener. */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public static void getThreadExecutionState(DSFSessionState sessionState,
+	public static void getThreadExecutionState(final DSFSessionState sessionState,
 			                                   final ICPUDMContext cpuContext,
 			                                   final ICoreDMContext coreContext,
 			                                   final IMIExecutionDMContext execContext,
@@ -312,25 +316,66 @@ public class DSFDebugModel {
 		IRunControl runControl = sessionState.getService(IRunControl.class);
 
 		if (runControl == null) {
-			listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, null, arg);
+			listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, null, null, arg);
 			return;
 		}
 
 		if (runControl.isSuspended(execContext) == false) {
 			// The thread is running
-			listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData,
+			listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, null,
 					                               VisualizerExecutionState.RUNNING, arg);
 		} else {
-			// For a suspended thread, let's see why it is suspended,
-			// to find out if the thread is crashed
+			// For a suspended thread, retrieve the current stack
+			final IStack stackService = sessionState.getService(IStack.class);
+			if (stackService != null) {
+				stackService.getTopFrame(execContext, new ImmediateDataRequestMonitor<IFrameDMContext>(null) {
+					@Override
+					protected void handleCompleted() {
+						IFrameDMContext targetFrameContext = null;
+						if (isSuccess()) {
+							targetFrameContext = getData();
+						}
+						if (targetFrameContext!= null) {
+							stackService.getFrameData(targetFrameContext, new ImmediateDataRequestMonitor<IFrameDMData>(null) {
+								@Override
+								protected void handleCompleted() {
+									IFrameDMData frameData = null;
+									if (isSuccess()) {
+										frameData = getData();
+									}
+									getThreadSuspendReason(sessionState, cpuContext, coreContext, execContext, threadData, frameData, listener, arg);
+								}
+							});
+						} else {
+							getThreadSuspendReason(sessionState, cpuContext, coreContext, execContext, threadData, null, listener, arg);
+						}
+					}
+				});
+			} else {
+				getThreadSuspendReason(sessionState, cpuContext, coreContext, execContext, threadData, null, listener, arg);
+			}
+		}
+	}
+
+	// For a suspended thread, let's see why it is suspended,
+	// to find out if the thread is crashed
+	private static void getThreadSuspendReason(DSFSessionState sessionState,
+            final ICPUDMContext cpuContext,
+            final ICoreDMContext coreContext,
+            final IMIExecutionDMContext execContext,
+            final IThreadDMData threadData,
+            final IFrameDMData frameData,
+            final DSFDebugModelListener listener,
+            final Object arg) {
+		IRunControl runControl = sessionState.getService(IRunControl.class);
+		if (runControl != null) {
 			runControl.getExecutionData(execContext, 
 					new ImmediateDataRequestMonitor<IExecutionDMData>() {
 				@Override
 				protected void handleCompleted() {
 					IExecutionDMData executionData = getData();
-
 					VisualizerExecutionState state = VisualizerExecutionState.SUSPENDED;
-					
+
 					if (isSuccess() && executionData != null) {
 						if (executionData.getStateChangeReason() == StateChangeReason.SIGNAL) {
 							if (executionData instanceof IExecutionDMData2) {
@@ -343,12 +388,12 @@ public class DSFDebugModel {
 							}
 						}
 					}
-					
-					listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, state, arg);
+					listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, frameData, state, arg);
 				}
 			});
+		} else {
+			listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, frameData, null, arg);
 		}
-
 	}
 
 	/**

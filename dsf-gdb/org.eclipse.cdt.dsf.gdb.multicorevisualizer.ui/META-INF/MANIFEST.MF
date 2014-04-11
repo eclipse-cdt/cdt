@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.ui,
  org.eclipse.cdt.visualizer.core,
  org.eclipse.cdt.visualizer.ui,
- org.eclipse.debug.ui
+ org.eclipse.debug.ui,
+ org.eclipse.cdt.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.ibm.icu.text

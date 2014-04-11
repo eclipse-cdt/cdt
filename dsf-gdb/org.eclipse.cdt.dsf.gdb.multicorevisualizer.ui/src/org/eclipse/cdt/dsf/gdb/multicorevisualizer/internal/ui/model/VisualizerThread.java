@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Tilera Corporation and others.
+ * Copyright (c) 2012, 2014 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,12 @@
  *                                               state and os/gdb thread ids
  *     Marc Dumais (Ericsson) -  Bug 405390
  *     Marc Dumais (Ericsson) -  Bug 409965
+ *     Xavier Raynaud (Kalray) - Add tooltip support (Bug 431935)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
+
+import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 
 
 /** Represents single thread. */
@@ -37,16 +40,25 @@ public class VisualizerThread
 	/** Thread execution state. */
 	protected VisualizerExecutionState m_threadState;
 
+	/** Location of this Thread, if any, based on his MIFrame */
+    private String m_locInfo;
+
 	
 	// --- constructors/destructors ---
 
 	/** Constructor. */
 	public VisualizerThread(VisualizerCore core, int pid, int tid, int gdbtid, VisualizerExecutionState state) {
+		this(core, pid, tid, gdbtid, state, null);
+	}
+
+	/** Constructor. */
+	public VisualizerThread(VisualizerCore core, int pid, int tid, int gdbtid, VisualizerExecutionState state, IFrameDMData frame) {
 		m_core = core;
 		m_pid = pid;
 		m_tid = tid;
 		m_gdbtid = gdbtid;
 		m_threadState = state;
+		setLocationInfo(frame);
 	}
 	
 	/** Dispose method */
@@ -186,4 +198,80 @@ public class VisualizerThread
 		}
 		return 1;
 	}
+
+	/**
+	 * Sets the location info of this thread
+	 * @param s a string, displayinf location information of this thread.
+	 */
+    public void setLocationInfo(String s) {
+        this.m_locInfo = s;
+    }
+
+	/**
+	 * Sets the location info of this thread, based on given
+	 * {@link IFrameDMData}
+	 * 
+	 * @param dmData
+	 *            a {@link IFrameDMData} (can be <code>null</code>)
+	 */
+	public void setLocationInfo(IFrameDMData dmData) {
+		if (dmData == null) {
+			this.m_locInfo = null;
+		} else {
+			StringBuilder label = new StringBuilder();
+			// Add the function name
+			if (dmData.getFunction() != null
+					&& dmData.getFunction().length() != 0) {
+				label.append(" "); //$NON-NLS-1$
+				label.append(dmData.getFunction());
+				label.append("()"); //$NON-NLS-1$
+			}
+
+			boolean hasFileName = dmData.getFile() != null
+					&& dmData.getFile().length() != 0;
+
+			// Add full file name
+			if (hasFileName) {
+				label.append(" at "); //$NON-NLS-1$
+				label.append(dmData.getFile());
+
+				// Add line number
+				if (dmData.getLine() >= 0) {
+					label.append(":"); //$NON-NLS-1$
+					label.append(dmData.getLine());
+					label.append(" "); //$NON-NLS-1$
+				}
+			}
+
+			// Add module
+			if (!hasFileName
+					&& (dmData.getModule() != null && dmData.getModule()
+							.length() != 0)) {
+				label.append(" "); //$NON-NLS-1$
+				label.append(dmData.getModule());
+				label.append(" "); //$NON-NLS-1$
+			}
+
+			// Add the address
+			if (dmData.getAddress() != null) {
+				label.append("- 0x" + dmData.getAddress().toString(16)); //$NON-NLS-1$
+			}
+			this.m_locInfo = label.toString();
+		}
+	}
+
+	/**
+	 * Gets the location of this thread or <code>null</code> if none.
+	 * 
+	 * @return a String, or <code>null</code>
+	 * @since 3.0
+	 */
+	public String getLocationInfo() {
+		if (m_threadState == VisualizerExecutionState.RUNNING
+				|| m_threadState == VisualizerExecutionState.EXITED) {
+			return null;
+		}
+		return m_locInfo;
+	}
+
 }

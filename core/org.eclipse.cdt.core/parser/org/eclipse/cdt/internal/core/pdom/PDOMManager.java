@@ -280,7 +280,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 		if (jobToCancel != null) {
 			assert !Thread.holdsLock(fTaskQueue);
-			jobToCancel.cancelJobs(null, false);
+			jobToCancel.cancelJobs(null, true);
 		}
 		Job.getJobManager().removeJobChangeListener(fJobChangeListener);
 	}

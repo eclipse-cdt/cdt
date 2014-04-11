@@ -422,6 +422,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_25e0f5b4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/CharArrayUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-11T05:55:27Z",
+      "side": 1,
+      "message": "Don\u0027t worry, I\u0027ll clean them up later.",
+      "parentUuid": "0756a345_f1508858",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_7de56f51",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/util/CharArrayUtils.java",
         "patchSetId": 1
@@ -1186,6 +1204,24 @@
       "side": 1,
       "message": "I\u0027m not certain what they are, I just added a getter method for it. My guess is that they\u0027re additional suffixes that the compiler may support but are non-standard. Do you still want me to document it?",
       "parentUuid": "0756a345_1d6b9311",
+      "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_25bbd5aa",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-11T05:55:27Z",
+      "side": 1,
+      "message": "You can just refer to IScannerExtensionConfiguration.supportAdditionalNumericLiteralSuffixes()",
+      "parentUuid": "0756a345_918e6c8a",
       "revId": "db069c093edb1ec5d4973116095dd93ee804f6fa",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

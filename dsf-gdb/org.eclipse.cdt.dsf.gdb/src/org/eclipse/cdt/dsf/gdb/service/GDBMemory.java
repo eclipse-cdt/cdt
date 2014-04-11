@@ -344,7 +344,12 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 		return fIsBigEndian;
 	}
 
-	protected void readAddressSize(IMemoryDMContext memContext, final DataRequestMonitor<Integer> drm) {
+	/**
+	 * Read address size in octets 
+	 * @param memContext
+	 * @param drm
+	 */
+	protected void readAddressSize(final IMemoryDMContext memContext, final DataRequestMonitor<Integer> drm) {
 		IExpressions exprService = getServicesTracker().getService(IExpressions.class);
 		IExpressionDMContext exprContext = exprService.createExpression(memContext, "sizeof (void*)"); //$NON-NLS-1$
 		CommandFactory commandFactory = fCommandControl.getCommandFactory();
@@ -354,7 +359,8 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 				@Override
 				protected void handleSuccess() {
 					try {
-						drm.setData(Integer.decode(getData().getValue()));
+						Integer ptrBytes = Integer.decode(getData().getValue());
+						drm.setData(ptrBytes * getAddressableSize(memContext));
 					}
 					catch(NumberFormatException e) {
 						drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, String.format("Invalid address size: %s", getData().getValue()))); //$NON-NLS-1$

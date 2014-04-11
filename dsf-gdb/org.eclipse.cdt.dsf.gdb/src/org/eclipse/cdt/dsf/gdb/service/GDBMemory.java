@@ -344,7 +344,17 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 		return fIsBigEndian;
 	}
 
-	protected void readAddressSize(IMemoryDMContext memContext, final DataRequestMonitor<Integer> drm) {
+	/**
+	 * Address size is determined by space, in octets, used to store an address value (e.g. a pointer) on a target system. 
+	 *
+	 * <p>NOTE: Implementation requires addressable memory size to be known</p>
+	 * @param memContext
+	 * @param drm
+	 *
+	 * @see IGDBMemory#getAddressSize(org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext)
+	 * @see GDBMemory#readAddressableSize(org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext, DataRequestMonitor)
+	 */
+	protected void readAddressSize(final IMemoryDMContext memContext, final DataRequestMonitor<Integer> drm) {
 		IExpressions exprService = getServicesTracker().getService(IExpressions.class);
 		IExpressionDMContext exprContext = exprService.createExpression(memContext, "sizeof (void*)"); //$NON-NLS-1$
 		CommandFactory commandFactory = fCommandControl.getCommandFactory();
@@ -354,7 +364,10 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 				@Override
 				protected void handleSuccess() {
 					try {
-						drm.setData(Integer.decode(getData().getValue()));
+						// 'sizeof' returns number of bytes (aka 'chars'). 
+						// Multiply with byte size in octets to get storage required to hold a pointer.
+						Integer ptrBytes = Integer.decode(getData().getValue());
+						drm.setData(ptrBytes * getAddressableSize(memContext));
 					}
 					catch(NumberFormatException e) {
 						drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, String.format("Invalid address size: %s", getData().getValue()))); //$NON-NLS-1$

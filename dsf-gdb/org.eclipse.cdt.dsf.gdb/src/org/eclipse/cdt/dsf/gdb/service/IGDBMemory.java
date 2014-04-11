@@ -27,7 +27,7 @@ public interface IGDBMemory extends IMemory {
 	public void initializeMemoryData(IMemoryDMContext ctx, RequestMonitor rm);
 	
 	/**
-	 * Returns the address size (in bytes) of the memory specified by the given context.
+	 * Returns the address size (in octets) of the memory specified by the given context.
 	 */
 	public int getAddressSize(IMemoryDMContext context);
 

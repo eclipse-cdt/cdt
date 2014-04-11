@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_ec4c259a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-11T15:58:03Z",
+      "side": 1,
+      "message": "This introduces a dependency on the ordering of the calls to readAddressSize() and readAddressableSize().  readAddressableSize() must be called before calling readAddressSize().  We do that correctly, but we should document this dependency.",
+      "revId": "962865f41eb2fd35092f16ec73eb05e5482e77d5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -349,17 +349,18 @@ public abstract class ArrayUtil {
 	 * Adds all elements of an array to a collection.
 	 * @since 5.4
 	 */
-	public static <T> void addAll(Collection<T> collection, T[] array) {
+    @SafeVarargs
+	public static <T> void addAll(Collection<? super T> collection, T... elements) {
 		if (collection instanceof ArrayList) {
-			((ArrayList<T>) collection).ensureCapacity(collection.size() + array.length);
+			((ArrayList<?>) collection).ensureCapacity(collection.size() + elements.length);
 		}
-		for (T element : array) {
+		for (T element : elements) {
 			collection.add(element);
 		}
 	}
 
 	/**
-     * Returns whether the specified array contains the specified object. Comparison is by
+     * Returns whether the specified array contains the specified object. The comparison is by
      * object identity.
      *
      * @param array the array to search

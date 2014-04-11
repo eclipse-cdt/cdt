@@ -18,9 +18,11 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -127,26 +129,28 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  * must be defined and a set of bindings that must be declared.
  */
 public class BindingClassifier {
+	public enum InclusionType { DECLARATION, DEFINITION }
+
 	private final IncludeCreationContext fContext;
 	private final IncludePreferences fPreferences;
 	/** The bindings which require a full definition. */
 	private final Set<IBinding> fBindingsToDefine;
 	/** The bindings which only require a simple forward declaration. */
-	private final Set<IBinding> fBindingsToDeclare;
+	private final Set<IBinding> fBindingsToForwardDeclare;
 	/** The AST that the classifier is working on. */
 	private IASTTranslationUnit fAst;
 	private final BindingCollector fBindingCollector;
 	private final Set<IBinding> fProcessedDefinedBindings;
 	private final Set<IBinding> fProcessedDeclaredBindings;
-	private static final Set<String> templatesAllowingIncompleteArgumentType =
-			Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(new String[] {
-					"enable_shared_from_this", // 20.7.2.4 //$NON-NLS-1$
-					"declval", // 20.2.4 //$NON-NLS-1$
-					"default_delete", // 20.7.1.1 //$NON-NLS-1$
-					"shared_ptr", // 20.7.2.2 //$NON-NLS-1$
-					"unique_ptr", // 20.7.1 //$NON-NLS-1$
-					"weak_ptr" // 20.7.2.3 //$NON-NLS-1$
-			})));
+	private static final String[] TEMPLATES_ALLOWING_INCOMPLETE_ARGUMENT_TYPE = {
+		// Please keep alphabetical order.
+		"enable_shared_from_this", // 20.7.2.4 //$NON-NLS-1$
+		"declval", // 20.2.4 //$NON-NLS-1$
+		"default_delete", // 20.7.1.1 //$NON-NLS-1$
+		"shared_ptr", // 20.7.2.2 //$NON-NLS-1$
+		"unique_ptr", // 20.7.1 //$NON-NLS-1$
+		"weak_ptr" // 20.7.2.3 //$NON-NLS-1$
+	};
 
 	/**
 	 * @param context the context for binding classification
@@ -154,10 +158,10 @@ public class BindingClassifier {
 	public BindingClassifier(IncludeCreationContext context) {
 		fContext = context;
 		fPreferences = context.getPreferences();
-		fBindingsToDefine = new HashSet<IBinding>();
-		fBindingsToDeclare = new HashSet<IBinding>();
-		fProcessedDefinedBindings = new HashSet<IBinding>();
-		fProcessedDeclaredBindings = new HashSet<IBinding>();
+		fBindingsToDefine = new HashSet<>();
+		fBindingsToForwardDeclare = new HashSet<>();
+		fProcessedDefinedBindings = new HashSet<>();
+		fProcessedDeclaredBindings = new HashSet<>();
 		fBindingCollector = new BindingCollector();
 	}
 	
@@ -178,8 +182,8 @@ public class BindingClassifier {
 	/**
 	 * Returns the bindings which only require a simple forward declaration.
 	 */
-	public Set<IBinding> getBindingsToDeclare() {
-		return fBindingsToDeclare;
+	public Set<IBinding> getBindingsToForwardDeclare() {
+		return fBindingsToForwardDeclare;
 	}
 
 	/**
@@ -306,46 +310,56 @@ public class BindingClassifier {
 	 *     or an empty list if no such binding is available.
 	 */
 	private Set<IBinding> getRequiredBindings(IBinding binding) {
-		Set<IBinding> bindings = new HashSet<IBinding>();
+		if (binding instanceof ICPPNamespace)
+			return Collections.emptySet();
 
-		if (binding instanceof ICPPMember) {
-			// If the binding is a member, get its owning composite type.
-			binding = binding.getOwner();
-		} else if (binding instanceof IVariable) {
+		Deque<IBinding> queue = new ArrayDeque<>();
+
+		addRequiredBindings(binding, queue);
+
+		Set<IBinding> bindings = new HashSet<>();
+
+		while ((binding = queue.poll()) != null) {
+			if (!bindings.add(binding))
+				continue;
 			if (binding instanceof ICPPSpecialization) {
-				bindings.add(((ICPPSpecialization) binding).getSpecializedBinding());
-			} else {
-				bindings.add(binding);
-			}
-		} else if (binding instanceof IType) {
-			// Resolve the type.
-			binding = getTypeBinding((IType) binding);
-		} else if (binding instanceof ICPPNamespace) {
-			// Namespaces are neither declared nor defined.
-			binding = null;
-		}
-
-		if (binding instanceof ICPPSpecialization) {
-			ICPPTemplateParameterMap parameterMap = ((ICPPSpecialization) binding).getTemplateParameterMap();
-			for (Integer position : parameterMap.getAllParameterPositions()) {
-				ICPPTemplateArgument argument = parameterMap.getArgument(position);
-				if (argument != null) {
-					IType type = argument.getTypeValue();
-					// Normally we don't need to define parameters of a template specialization that
-					// were not specified explicitly. __gnu_cxx::hash is an exception from that rule.
-					if (type instanceof IBinding && "hash".equals(((IBinding) type).getName())) { //$NON-NLS-1$
-						IBinding owner = ((IBinding) type).getOwner();
-						if (owner instanceof ICPPNamespace && "__gnu_cxx".equals(owner.getName())) //$NON-NLS-1$
-							bindings.add((IBinding) type);
+				ICPPTemplateParameterMap parameterMap = ((ICPPSpecialization) binding).getTemplateParameterMap();
+				for (Integer position : parameterMap.getAllParameterPositions()) {
+					ICPPTemplateArgument argument = parameterMap.getArgument(position);
+					if (argument != null) {
+						IType type = argument.getTypeValue();
+						// Normally we don't need to define parameters of a template specialization
+						// that were not specified explicitly. __gnu_cxx::hash is an exception from
+						// that rule.
+						if (type instanceof IBinding && "hash".equals(((IBinding) type).getName())) { //$NON-NLS-1$
+							IBinding owner = ((IBinding) type).getOwner();
+							if (owner instanceof ICPPNamespace && "__gnu_cxx".equals(owner.getName())) //$NON-NLS-1$
+								addRequiredBindings((IBinding) type, queue);
+						}
 					}
 				}
+				// Get the specialized binding - e.g. get the binding for X if the current binding is
+				// for the template specialization X<Y>.
+				addRequiredBindings(((ICPPSpecialization) binding).getSpecializedBinding(), queue);
 			}
-			// Get the specialized binding - e.g. get the binding for X if the current binding is
-			// for the template specialization X<Y>.
-			binding = ((ICPPSpecialization) binding).getSpecializedBinding();
 		}
 
-		if (binding instanceof IProblemBinding) {
+		return bindings;
+	}
+
+	private void addRequiredBindings(IBinding binding, Deque<IBinding> newBindings) {
+		if (binding instanceof ICPPMember) {
+			if (binding instanceof ICPPMethod) {
+				newBindings.add(binding);  // Include the method in case we need its definition.
+			}
+			// If the binding is a member, get its owning composite type.
+			newBindings.add(binding.getOwner());
+		} else if (binding instanceof IType) {
+			// Remove type qualifiers.
+			IBinding b = getTypeBinding((IType) binding);
+			if (b != null)
+				newBindings.add(b);
+		} else if (binding instanceof IProblemBinding) {
 			IProblemBinding problemBinding = (IProblemBinding) binding;
 
 			IBinding[] candidateBindings = problemBinding.getCandidateBindings();
@@ -354,25 +368,19 @@ public class BindingClassifier {
 				// different candidates are very often defined within the same target file anyway,
 				// so it won't affect the list of generated include directives. This therefore
 				// allows us to be a little more fault tolerant here.
-				for (IBinding candidateBinding : candidateBindings) {
-					bindings.add(candidateBinding);
-				}
+				Collections.addAll(newBindings, candidateBindings);
 			} else {
 				// No candidate bindings available. Check whether this is a macro.
 				try {
-					IIndexMacro[] indexMacros = fContext.getIndex().findMacros(binding.getNameCharArray(),
-							IndexFilter.ALL, null);
-					for (IIndexMacro indexMacro : indexMacros) {
-						bindings.add(indexMacro);
-					}
+					IIndexMacro[] indexMacros =
+							fContext.getIndex().findMacros(binding.getNameCharArray(), IndexFilter.ALL, null);
+					Collections.addAll(newBindings, indexMacros);
 				} catch (CoreException e) {
 				}
 			}
-		} else if (binding != null) {
-			bindings.add(binding);
+		} else {
+			newBindings.add(binding);
 		}
-
-		return bindings;
 	}
 
 	private void declareType(IType type) {
@@ -404,7 +412,8 @@ public class BindingClassifier {
 		Collection<IBinding> requiredBindings = getRequiredBindings(binding);
 
 		for (IBinding requiredBinding : requiredBindings) {
-			if (fBindingsToDeclare.contains(requiredBinding) || fBindingsToDefine.contains(requiredBinding)) {
+			if (fBindingsToForwardDeclare.contains(requiredBinding) ||
+					fBindingsToDefine.contains(requiredBinding)) {
 				return;
 			}
 			if (fAst.getDefinitionsInAST(requiredBinding).length != 0) {
@@ -416,7 +425,7 @@ public class BindingClassifier {
 
 			if (canForwardDeclare(requiredBinding)) {
 				if (requiredBinding == binding) {
-					fBindingsToDeclare.add(requiredBinding);
+					fBindingsToForwardDeclare.add(requiredBinding);
 				} else {
 					declareBinding(requiredBinding);
 				}
@@ -493,18 +502,19 @@ public class BindingClassifier {
 	private void defineBinding(IBinding binding) {
 		if (!markAsDefined(binding))
 			return;
-
 		if (fAst.getDefinitionsInAST(binding).length != 0)
 			return;  // Defined locally.
 
 		Collection<IBinding> requiredBindings = getRequiredBindings(binding);
 		for (IBinding requiredBinding : requiredBindings) {
-			fBindingsToDeclare.remove(requiredBinding);
-			if (requiredBinding == binding) {
-				fBindingsToDefine.add(requiredBinding);
-			} else {
-				defineBinding(requiredBinding);
+			fBindingsToForwardDeclare.remove(requiredBinding);
+			if (requiredBinding != binding) {
+				if (!markAsDefined(requiredBinding))
+					continue;
+				if (fAst.getDefinitionsInAST(requiredBinding).length != 0)
+					continue;  // Defined locally.
 			}
+			fBindingsToDefine.add(requiredBinding);
 		}
 	}
 
@@ -538,7 +548,7 @@ public class BindingClassifier {
 			for (ICPPClassType base : bases) {
 				fProcessedDefinedBindings.add(base);
 				fBindingsToDefine.remove(base);
-				fBindingsToDeclare.remove(base);
+				fBindingsToForwardDeclare.remove(base);
 			}
 		}
 
@@ -567,7 +577,7 @@ public class BindingClassifier {
 			if (type instanceof ICPPTemplateInstance) {
 				ICPPTemplateInstance instance = (ICPPTemplateInstance) type;
 				IBinding template = instance.getSpecializedBinding();
-				if (templatesAllowingIncompleteArgumentType.contains(template.getName())) {
+				if (isTemplateAllowingIncompleteArgumentType(template)) {
 					ICPPTemplateArgument[] arguments = instance.getTemplateArguments();
 					if (arguments.length != 0) {
 						IType argumentType = arguments[0].getTypeValue();
@@ -587,6 +597,17 @@ public class BindingClassifier {
 		if (owner instanceof IType && fBindingsToDefine.contains(owner))
 			return true;
 		return false;
+	}
+
+	private static boolean isTemplateAllowingIncompleteArgumentType(IBinding binding) {
+		String name = binding.getName();
+		int pos = Arrays.binarySearch(TEMPLATES_ALLOWING_INCOMPLETE_ARGUMENT_TYPE, name);
+		if (pos < 0)
+			return false;
+		IBinding owner = binding.getOwner();
+		if (!(owner instanceof ICPPNamespace))
+			return false;
+		return CharArrayUtils.equals(owner.getNameCharArray(), STD) && owner.getOwner() == null;
 	}
 
 	private class BindingCollector extends ASTVisitor {
@@ -1297,8 +1318,7 @@ public class BindingClassifier {
 				!CharArrayUtils.equals(owner.getNameCharArray(), STD) || owner.getOwner() != null) {
 			return true;
 		}
-		String templateName = template.getName();
-		if (!templatesAllowingIncompleteArgumentType.contains(templateName))
+		if (!isTemplateAllowingIncompleteArgumentType(template))
 			return true;
 
 		// For most templates allowing incomplete argument type a full definition of the argument

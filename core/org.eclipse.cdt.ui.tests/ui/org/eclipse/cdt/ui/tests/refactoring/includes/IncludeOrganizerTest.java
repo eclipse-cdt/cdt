@@ -474,6 +474,37 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	}
 
 	//h1.h
+	//struct A {
+	//  template <typename T>
+	//  void m(const T& p);
+	//};
+
+	//h2.h
+	//#include "h1.h"
+	//template<typename T>
+	//void A::m(const T& p) {
+	//}
+
+	//h3.h
+	//#include "h1.h"
+	//typedef A B;
+
+	//source.cpp
+	//void test(B& b) {
+	//  b.m(1);
+	//}
+	//====================
+	//#include "h2.h"
+	//#include "h3.h"
+	//
+	//void test(B& b) {
+	//  b.m(1);
+	//}
+	public void testMethodDefinedInHeader() throws Exception {
+		assertExpectedResults();
+	}
+
+	//h1.h
 	//namespace ns3 {
 	//class C {};
 	//namespace ns2 {

@@ -54,7 +54,7 @@ public class IncludeCreationContext extends InclusionContext {
 		return fSourceContents;
 	}
 
-	public IIndex getIndex() {
+	public final IIndex getIndex() {
 		return fIndex;
 	}
 

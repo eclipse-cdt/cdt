@@ -69,7 +69,7 @@ public class InclusionContext {
 		return fCurrentDirectory;
 	}
 
-	public IncludePreferences getPreferences() {
+	public final IncludePreferences getPreferences() {
 		return fPreferences;
 	}
 

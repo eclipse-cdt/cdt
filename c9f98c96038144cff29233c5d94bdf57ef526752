@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_05ddf1ff",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-11T05:55:43Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "c9f98c96038144cff29233c5d94bdf57ef526752",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_659dcd46",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-11T05:55:43Z",
+      "side": 1,
+      "message": "Indentation looks weird. Better to format the code as:\ncase lk_string_literal:\n    {\n        ...\n    }\n    break;\n\nSame for the next \u0027case\u0027.",
+      "revId": "c9f98c96038144cff29233c5d94bdf57ef526752",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_a5a7e591",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 455,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-11T05:55:43Z",
+      "side": 1,
+      "message": "Align asterisks.",
+      "revId": "c9f98c96038144cff29233c5d94bdf57ef526752",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_45a24984",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 514,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-11T05:55:43Z",
+      "side": 1,
+      "message": "Add spaces around -",
+      "revId": "c9f98c96038144cff29233c5d94bdf57ef526752",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_85ac6177",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 797,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-11T05:55:43Z",
+      "side": 1,
+      "message": "str_op -\u003e strOp",
+      "revId": "c9f98c96038144cff29233c5d94bdf57ef526752",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_e5b0bdc7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 810,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-11T05:55:43Z",
+      "side": 1,
+      "message": "Add a space after \u003d",
+      "revId": "c9f98c96038144cff29233c5d94bdf57ef526752",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_c5adb971",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 3037,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-11T05:55:43Z",
+      "side": 1,
+      "message": "Describe.",
+      "revId": "c9f98c96038144cff29233c5d94bdf57ef526752",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

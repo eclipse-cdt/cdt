@@ -73,7 +73,7 @@ public class IndexLabelProvider extends LabelProvider {
 		else if (element instanceof ICContainer)
 			desc = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_SEARCHFOLDER);
 		else if (element instanceof ITranslationUnit) {
-			ITranslationUnit tu = (ITranslationUnit)element;
+			ITranslationUnit tu = (ITranslationUnit) element;
 			desc = tu.isHeaderUnit()
 				? CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER)
 				: CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT);

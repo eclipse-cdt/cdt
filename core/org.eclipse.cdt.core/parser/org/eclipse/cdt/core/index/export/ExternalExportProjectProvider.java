@@ -63,6 +63,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	private static final String CONTENT = "content"; //$NON-NLS-1$
 	public static final String OPT_SOURCE = "-source"; //$NON-NLS-1$
 	public static final String OPT_INCLUDE = "-include"; //$NON-NLS-1$
+	/** @since 5.7 */
 	public static final String OPT_EXCLUDE = "-exclude"; //$NON-NLS-1$
 	public static final String OPT_FRAGMENT_ID = "-id"; //$NON-NLS-1$
 

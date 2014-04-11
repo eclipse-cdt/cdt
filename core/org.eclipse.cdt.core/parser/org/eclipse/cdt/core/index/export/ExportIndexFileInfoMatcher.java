@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Path;
  * FileInfoMatcher that will match a given project relative path for a directory we want to exclude.
  * 
  * @author dschaefer
- *
+ * @since 5.7
  */
 public class ExportIndexFileInfoMatcher extends AbstractFileInfoMatcher {
 	

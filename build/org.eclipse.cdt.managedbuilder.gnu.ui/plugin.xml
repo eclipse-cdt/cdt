@@ -1665,9 +1665,9 @@
 		  </option>
           <inputType
               sourceContentType="org.eclipse.cdt.core.cxxSource"
-			  sources="c,C,cc,cxx,cpp"
+			  sources="c,C,cc,cxx,cpp,cp,CPP"
               dependencyContentType="org.eclipse.cdt.core.cxxHeader"
-			  dependencyExtensions="h,H,hpp"
+			  dependencyExtensions="h,H,hpp,hh,hp,hxx,HPP,h++,tcc"
 			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator2"
               id="cdt.managedbuild.tool.gnu.cpp.compiler.input"
               languageId="org.eclipse.cdt.core.g++">

@@ -11,7 +11,6 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
- *     Richard Eames
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.cpp;
 
@@ -124,13 +123,4 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
     public boolean supportRawStringLiterals() {
     	return true;
     }
-
-	/**
-	 * User Defined Literals
-	 * @since 5.7
-	 */
-	@Override
-	public boolean supportUserDefinedLiterals() {
-		return true;
-	}
 }

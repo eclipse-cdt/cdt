@@ -7,7 +7,6 @@
  * 
  *  Contributors:
  *      John Camelon (IBM Corporation) - initial API and implementation
- *      Richard Eames
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -222,19 +221,7 @@ public interface IProblem {
 	 * @since 5.1
 	 */
 	public final static int SCANNER_BAD_BINARY_FORMAT = SCANNER_RELATED | 0x00F;
-	
-	/**
-	 * Invalid suffix on constant
-	 * @since 5.7
-	 */
-	public final static int SCANNER_CONSTANT_WITH_BAD_SUFFIX = SCANNER_RELATED | 0x010;
-	
-	/**
-	 * Invalid prefix on float
-	 * @since 5.7
-	 */
-	public final static int SCANNER_FLOAT_WITH_BAD_PREFIX = SCANNER_RELATED | 0x011;
-	
+
 	// Preprocessor
 	/**
 	 *	#error encountered by Preprocessor.  
@@ -318,12 +305,12 @@ public interface IProblem {
 	 * macro argument "..." encountered without the required ')' i.e. must be last argument if used  
 	 * Required attributes: none
 	 */	
-	public final static int PREPROCESSOR_MISSING_RPAREN_PARMLIST = PREPROCESSOR_RELATED | 0x00C;
+	public final static int PREPROCESSOR_MISSING_RPAREN_PARMLIST = PREPROCESSOR_RELATED | 0x00C;	
 
 	/**
 	 * __VA_ARGS__ encountered in macro definition without the required '...' parameter  
 	 * Required attributes: none
-	 */
+	 */	
 	public final static int PREPROCESSOR_INVALID_VA_ARGS = PREPROCESSOR_RELATED | 0x00D;
 	
 	/**
@@ -339,12 +326,6 @@ public interface IProblem {
 	 */
 	public final static int PREPROCESSOR_EXCEEDS_MAXIMUM_INCLUSION_DEPTH= PREPROCESSOR_RELATED | 0x00F;
 	
-	/**
-	 * During concatentation of string literals, at least two were found with
-	 * more than one type of UDL suffix
-	 * @since 5.7
-	 */
-	public final static int PREPROCESSOR_MULTIPLE_USER_DEFINED_SUFFIXES_IN_CONCATENATION = PREPROCESSOR_RELATED | 0x010;
 	/**
 	 * Syntax error, detected by the parser.
 	 */

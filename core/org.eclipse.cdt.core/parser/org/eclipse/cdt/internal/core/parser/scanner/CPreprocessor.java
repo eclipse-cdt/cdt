@@ -11,7 +11,6 @@
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *     Marc-Andre Laperle (Ericsson)
- *     Richard Eames
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -295,7 +294,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fLexOptions.fSupportSlashPercentComments= configuration.supportSlashPercentComments();
         fLexOptions.fSupportUTFLiterals = configuration.supportUTFLiterals();
         fLexOptions.fSupportRawStringLiterals = configuration.supportRawStringLiterals();
-        fLexOptions.fSupportUserDefinedLiterals = configuration.supportUserDefinedLiterals();
         if (info instanceof ExtendedScannerInfo)
         	fLexOptions.fIncludeExportPatterns = ((ExtendedScannerInfo) info).getIncludeExportPatterns();
         fLocationMap= new LocationMap(fLexOptions);
@@ -388,15 +386,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	public ILocationResolver getLocationResolver() {
 		return fLocationMap;
 	}
-	
-	/**
-	 * @see IScannerExtensionConfiguration#supportAdditionalNumericLiteralSuffixes
-	 * @since 5.7
-	 */
-	public char[] getAdditionalNumericLiteralSuffixes() {
-		return fAdditionalNumericLiteralSuffixes;
-	}
-	
+
 	private void configureKeywords(ParserLanguage language, IScannerExtensionConfiguration configuration) {
 		Keywords.addKeywordsPreprocessor(fPPKeywords);
 		if (language == ParserLanguage.C) {
@@ -725,12 +715,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
      */
     @Override
 	public IToken nextToken() throws EndOfFileException {
-    	if (isCancelled) {
+        if (isCancelled) {
             throw new ParseError(ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
         }
 
     	Token t1= fetchToken();
-    	String udl_suffix = null;
     	
     	final int tt1= t1.getType();
     	switch (tt1) {
@@ -752,33 +741,24 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	case IToken.t_PRAGMA:
     		handlePragmaOperator(t1);
     		return nextToken();
-    	case IToken.tUSER_DEFINED_STRING_LITERAL:
-    		udl_suffix = StringType.getUserDefinedLiteralSuffix(t1);
-    		//$FALL-THROUGH$
+    		
     	case IToken.tSTRING:
     	case IToken.tLSTRING:
         case IToken.tUTF16STRING:
         case IToken.tUTF32STRING:
-     		StringType st = StringType.fromToken(t1);
+    		StringType st = StringType.fromToken(tt1);
     		Token t2;
     		StringBuilder buf= null;
-    		int endOffset= t1.getEndOffset();
+    		int endOffset= 0;
     		loop: while (true) {
     			t2= fetchToken();
     			final int tt2= t2.getType();
     			switch (tt2) {
-    			case IToken.tUSER_DEFINED_STRING_LITERAL:
-    				if (udl_suffix == null) {
-    					udl_suffix = StringType.getUserDefinedLiteralSuffix(t2);
-    				} else if (!udl_suffix.equals(StringType.getUserDefinedLiteralSuffix(t2))) {
-    					handleProblem(IProblem.PREPROCESSOR_MULTIPLE_USER_DEFINED_SUFFIXES_IN_CONCATENATION, udl_suffix.toCharArray(), t2.getOffset(), endOffset);
-    				}
-					//$FALL-THROUGH$
-				case IToken.tLSTRING:
+    			case IToken.tLSTRING:
     			case IToken.tSTRING:
     		    case IToken.tUTF16STRING:
     		    case IToken.tUTF32STRING:
-    				st = StringType.max(st, StringType.fromToken(t2));
+    				st = StringType.max(st, StringType.fromToken(tt2));
     				if (buf == null) {
     					buf= new StringBuilder();
     					appendStringContent(buf, t1);
@@ -793,30 +773,23 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		    case IToken.t_PRAGMA:
     		    	handlePragmaOperator(t2);
     		    	continue loop;
-				default:
+    			default:
     				break loop;
     			}
     		}
     		pushbackToken(t2);
     		if (buf != null) {
     			char[] prefix = st.getPrefix();
-    			final int imageLength = buf.length() + prefix.length + 2 + (udl_suffix == null ? 0 : udl_suffix.length()); 
-    			char[] image= new char[imageLength];
+    			char[] image= new char[buf.length() + prefix.length + 2];
     			int off= -1;
-    			int tokenType = st.getTokenValue();
     			
     			for (char c : prefix)
     				image[++off] = c;
     			
     			image[++off]= '"';
     			buf.getChars(0, buf.length(), image, ++off);
-    			off += buf.length();
-    			image[off]= '"';
-    			if (udl_suffix != null) {
-    				udl_suffix.getChars(0, udl_suffix.length(), image, ++off);
-    				tokenType = IToken.tUSER_DEFINED_STRING_LITERAL;
-    			}
-    			t1= new TokenWithImage(tokenType, null, t1.getOffset(), endOffset, image);
+    			image[image.length - 1]= '"';
+    			t1= new TokenWithImage(st.getTokenValue(), null, t1.getOffset(), endOffset, image);
     		}
     		break;
     		
@@ -868,12 +841,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	}
     	
     	if (length > 1) {
-    		int diff = 0;
-    		if (t1.getType() == IToken.tUSER_DEFINED_STRING_LITERAL) {
-    			diff = t1.getImage().lastIndexOf('"') - start;
-    		} else {
-    			diff= image[length - 1] == '"' ? length - start - 1 : length - start;
-    		}
+    		final int diff= image[length - 1] == '"' ? length - start - 1 : length - start;
     		if (diff > 0) {
     			buf.append(image, start, diff);
     		}
@@ -998,8 +966,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         boolean isHex = false;
         boolean isOctal = false;
         boolean hasDot= false;
-        
-        boolean badSuffix = false;
 
         int pos= 0;
         if (image.length > 1) {
@@ -1036,10 +1002,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
             	switch (image[pos]) {
                 case '0': case'1':
                 	continue;
-                case 'e': case 'E':
-                case '.':
-                	handleProblem(IProblem.SCANNER_FLOAT_WITH_BAD_PREFIX, "0b".toCharArray(), number.getOffset(), number.getEndOffset()); //$NON-NLS-1$
-                	return;
                 default:
                 	// 0 and 1 are the only allowed digits for binary integers
                 	// No floating point, exponents etc. are allowed
@@ -1107,71 +1069,38 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
             	break loop;
             }
         }
-        if (pos < image.length) {
-	        char c = image[pos];
-	        if (Character.isLetter(c) || c == '_') {
-	        	// check the suffix
-	        	final int suffixStart = pos;
-	            loop: for (; pos < image.length; pos++) {
-	            	c= image[pos];
-	                switch (c) {
-	                case 'u': case 'U': case 'L': case 'l':
-	                	continue;
-	                case 'f': case 'F':
-	                	if (isFloat) {
-	                		continue loop;
-	                	}
-	                
-	    				//$FALL-THROUGH$
-	    			case 'a': case 'b': case 'c': case 'd': case 'e':  case 'g': case 'h': case 'i': 
-	                case 'j': case 'k':  case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': 
-	                case 's': case 't': case 'v': case 'w': case 'x': case 'y': case 'z':
-	                case 'A': case 'B': case 'C': case 'D': case 'E': case 'G': case 'H': case 'I':
-	                case 'J': case 'K':  case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': 
-	                case 'S': case 'T':case 'V': case 'W': case 'X': case 'Y': case 'Z':
-	                case '0': case '1': case '2': case '3': case '4':
-	                case '5': case '6': case '7': case '8': case '9':
-	                case '_':
-	                	if (fLexOptions.fSupportUserDefinedLiterals) {
-	                		continue loop;
-	                	}
-	                }
-	                for (int i= 0; i < fAdditionalNumericLiteralSuffixes.length; i++) {
-	    				if (fAdditionalNumericLiteralSuffixes[i] == c) {
-	    					continue loop;
-	    				} else {
-	    					badSuffix = true;
-	    				}
-	    			}
-	                
-	                if (badSuffix) {
-	                	char[] suffix = CharArrayUtils.subarray(image, suffixStart, -1);
-	                	handleProblem(IProblem.SCANNER_CONSTANT_WITH_BAD_SUFFIX, suffix, number.getOffset(), number.getEndOffset());
-	                	return;
-	                }
-	            }
-	        	return;
-	        }
+
+        // check the suffix
+        loop: for (; pos < image.length; pos++) {
+        	final char c= image[pos];
+            switch (c) {
+            case 'u': case 'U': case 'L': case 'l':
+            	continue;
+            case 'f': case 'F':
+            	if (isFloat) {
+            		continue loop;
+            	}
+            }
+            for (int i= 0; i < fAdditionalNumericLiteralSuffixes.length; i++) {
+				if (fAdditionalNumericLiteralSuffixes[i] == c) {
+					continue loop;
+				}
+			}
+            if (isBin) {
+            	// The check for bin has to come before float, otherwise binary integers
+            	// with float components get flagged as BAD_FLOATING_POINT
+            	handleProblem(IProblem.SCANNER_BAD_BINARY_FORMAT, image, number.getOffset(), number.getEndOffset());
+            } else if (isFloat) {
+            	handleProblem(IProblem.SCANNER_BAD_FLOATING_POINT, image, number.getOffset(), number.getEndOffset());
+            } else if (isHex) {
+            	handleProblem(IProblem.SCANNER_BAD_HEX_FORMAT, image, number.getOffset(), number.getEndOffset());
+            } else if (isOctal) {
+            	handleProblem(IProblem.SCANNER_BAD_OCTAL_FORMAT, image, number.getOffset(), number.getEndOffset());
+            } else {
+            	handleProblem(IProblem.SCANNER_BAD_DECIMAL_FORMAT, image, number.getOffset(), number.getEndOffset());
+            }
+            return;
         }
-        else {
-        	return;
-        }
-        
-        if (isBin) {
-        	// The check for bin has to come before float, otherwise binary integers
-        	// with float components get flagged as BAD_FLOATING_POINT
-        	handleProblem(IProblem.SCANNER_BAD_BINARY_FORMAT, image, number.getOffset(), number.getEndOffset());
-        } else if (isFloat) {
-        	handleProblem(IProblem.SCANNER_BAD_FLOATING_POINT, image, number.getOffset(), number.getEndOffset());
-        } else if (isHex) {
-        	handleProblem(IProblem.SCANNER_BAD_HEX_FORMAT, image, number.getOffset(), number.getEndOffset());
-        } else if (isOctal) {
-        	handleProblem(IProblem.SCANNER_BAD_OCTAL_FORMAT, image, number.getOffset(), number.getEndOffset());
-        } else {
-        	handleProblem(IProblem.SCANNER_BAD_DECIMAL_FORMAT, image, number.getOffset(), number.getEndOffset());
-        }
-        return;
-        
     }
 
     private <T> T findInclusion(final String includeDirective, final boolean quoteInclude,
@@ -2023,7 +1952,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fCurrentContext= new ScannerContext(ctx, fCurrentContext, replacement);
         return true;
 	}
-	
+
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object getAdapter(Class adapter) {

@@ -8,7 +8,6 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
- *     Richard Eames
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.cpp;
 
@@ -154,16 +153,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	public boolean supportFunctionStyleAssembler() {
 		return false;
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 * @since 5.7
-	 */
-	@Override
-	public boolean supportUserDefinedLiterals() {
-		return true;
-	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#getBuiltinBindingsProvider()
 	 */

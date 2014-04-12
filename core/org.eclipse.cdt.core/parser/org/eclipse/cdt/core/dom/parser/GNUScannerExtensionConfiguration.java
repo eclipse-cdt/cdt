@@ -10,7 +10,6 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
- *     Richard Eames
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
@@ -90,15 +89,7 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
 	public char[] supportAdditionalNumericLiteralSuffixes() {
         return "ij".toCharArray(); //$NON-NLS-1$
     }
-    
-    /**
-	 * @since 5.7
-	 */
-    @Override
-	public boolean supportUserDefinedLiterals() {
-    	return false;
-    }
-    
+        	
 	/**
 	 * @deprecated simply derive from this class and use {@link #addMacro(String, String)} to
 	 * add additional macros.

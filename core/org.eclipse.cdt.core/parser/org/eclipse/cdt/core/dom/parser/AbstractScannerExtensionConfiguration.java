@@ -8,7 +8,6 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
- *     Richard Eames
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
@@ -109,15 +108,6 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	 */
 	@Override
 	public boolean supportRawStringLiterals() {
-		return false;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * @since 5.7
-	 */
-	@Override
-	public boolean supportUserDefinedLiterals() {
 		return false;
 	}
 	

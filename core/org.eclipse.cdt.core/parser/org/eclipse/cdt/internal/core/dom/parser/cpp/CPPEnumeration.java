@@ -81,7 +81,6 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		public ICPPScope asScope() {
 			return this;
 		}
-		
 	}
 
 	private final boolean fIsScoped;

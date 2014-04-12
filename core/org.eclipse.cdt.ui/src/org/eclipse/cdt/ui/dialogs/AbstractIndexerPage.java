@@ -52,6 +52,7 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	private Button fIndexOnOpen;
 	private Button fIncludeHeuristics;
 	private IntegerFieldEditor fFileSizeLimit;
+	private IntegerFieldEditor fIncludedFileSizeLimit;
 	private Button fSkipReferences;
 	private Button fSkipImplicitReferences;
 	private Button fSkipMacroAndTypeReferences;
@@ -91,8 +92,13 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		gl.marginHeight = 0;
 		gl.marginWidth = 0;
 		page.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 		Composite group= new Composite(page, SWT.NONE);
-		
+		group.setLayout(gl= new GridLayout(3, false));
+		gl.marginHeight = 0;
+		gl.marginWidth= 0;
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 		fAllSources= createAllFilesButton(group);
 		IProject prj= getCurrentProject();
 		if (prj == null || !CProject.hasCCNature(prj)) {
@@ -111,21 +117,26 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		});
 
 		Label label = ControlFactory.createLabel(group, DialogsMessages.AbstractIndexerPage_indexAllVersionsSpecificHeaders);
+		int indent = pixelConverter.convertHorizontalDLUsToPixels(12);
 		GridData layoutData = new GridData();
 		layoutData.horizontalSpan = 3;
-		layoutData.horizontalIndent = 10;
+		layoutData.horizontalIndent = indent;
 		label.setLayoutData(layoutData);
 		fIndexAllVersionsSpecificHeaders = ControlFactory.createTextField(group);
 		layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		layoutData.horizontalSpan = 3;
-		layoutData.horizontalIndent = 10;
+		layoutData.horizontalIndent = indent;
 		fIndexAllVersionsSpecificHeaders.setLayoutData(layoutData);
 
 		fIndexOnOpen= createIndexOnOpenButton(group);
 
 		fIncludeHeuristics= createIncludeHeuristicsButton(group);
-		fFileSizeLimit= createFileSizeLimit(group);
 
+		group= new Composite(page, SWT.NONE);
+		fFileSizeLimit= createFileSizeLimit(group, IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB,
+				DialogsMessages.AbstractIndexerPage_fileSizeLimit);
+		fIncludedFileSizeLimit= createFileSizeLimit(group, IndexerPreferences.KEY_SKIP_INCLUDED_FILES_LARGER_THAN_MB,
+				DialogsMessages.AbstractIndexerPage_includedFileSizeLimit);
 		group.setLayout(gl= new GridLayout(3, false));
 		gl.marginHeight = 0;
 		gl.marginWidth= 0;
@@ -188,9 +199,23 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 				}
 			}
 			if (size <= 0) {
-				size= IndexerPreferences.DEFAULT_FILE_SIZE_LIMIT;
+				size= IndexerPreferences.DEFAULT_FILE_SIZE_LIMIT_MB;
 			}
 			fFileSizeLimit.setStringValue(String.valueOf(size));
+		}
+		if (fIncludedFileSizeLimit != null) {
+			Object prop= properties.get(IndexerPreferences.KEY_SKIP_INCLUDED_FILES_LARGER_THAN_MB);
+			int size= 0;
+			if (prop != null) {
+				try {
+					size= Integer.parseInt(prop.toString());
+				} catch (NumberFormatException e) {
+				}
+			}
+			if (size <= 0) {
+				size= IndexerPreferences.DEFAULT_INCLUDED_FILE_SIZE_LIMIT_MB;
+			}
+			fIncludedFileSizeLimit.setStringValue(String.valueOf(size));
 		}
 		if (fSkipReferences != null) {
 			boolean skipReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_ALL_REFERENCES));
@@ -239,6 +264,9 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		}
 		if (fFileSizeLimit != null) {
 			props.put(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB, String.valueOf(fFileSizeLimit.getIntValue()));
+		}
+		if (fIncludedFileSizeLimit != null) {
+			props.put(IndexerPreferences.KEY_SKIP_INCLUDED_FILES_LARGER_THAN_MB, String.valueOf(fIncludedFileSizeLimit.getIntValue()));
 		}
 		if (fSkipReferences != null) {
 			props.put(IndexerPreferences.KEY_SKIP_ALL_REFERENCES, String.valueOf(fSkipReferences.getSelection()));
@@ -309,6 +337,9 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
     	if (!fFileSizeLimit.isValid()) {
     		setErrorMessage(fFileSizeLimit.getErrorMessage());
     		setValid(false);
+    	} else if (!fIncludedFileSizeLimit.isValid()) {
+        	setErrorMessage(fIncludedFileSizeLimit.getErrorMessage());
+        	setValid(false);
 		} else {
     		setValid(true);
     	}
@@ -354,10 +385,10 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		return result;
 	}
 	
-	private IntegerFieldEditor createFileSizeLimit(Composite group) {
-		IntegerFieldEditor result= new IntegerFieldEditor(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB, DialogsMessages.AbstractIndexerPage_fileSizeLimit, group, 5);
+	private IntegerFieldEditor createFileSizeLimit(Composite group, String key, String label) {
+		IntegerFieldEditor result= new IntegerFieldEditor(key, label, group, 5);
 		result.setValidRange(1, 100000);
-		ControlFactory.createLabel(group, DialogsMessages.CacheSizeBlock_MB); 
+		ControlFactory.createLabel(group, DialogsMessages.Megabyte); 
 		Text control = result.getTextControl(group);
 		LayoutUtil.setWidthHint(control, pixelConverter.convertWidthInCharsToPixels(10));
 		LayoutUtil.setHorizontalGrabbing(control, false); 

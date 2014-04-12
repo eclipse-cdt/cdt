@@ -95,7 +95,7 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 		control = fDBAbsoluteLimit.getTextControl(cacheComp);
 		LayoutUtil.setWidthHint(control, pixelConverter.convertWidthInCharsToPixels(10));
 		LayoutUtil.setHorizontalGrabbing(control, false);
-		ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_MB);
+		ControlFactory.createLabel(cacheComp, DialogsMessages.Megabyte);
 
 		Label codeReaderLabel= ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_headerFileCache);
 		fCodeReaderLimit= new IntegerFieldEditor(CodeReaderCache.CODE_READER_BUFFER, DialogsMessages.CacheSizeBlock_absoluteLimit, cacheComp, 4);
@@ -103,7 +103,7 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 		control = fCodeReaderLimit.getTextControl(cacheComp);
 		LayoutUtil.setWidthHint(control, pixelConverter.convertWidthInCharsToPixels(10));
 		LayoutUtil.setHorizontalGrabbing(control, false);
-		ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_MB);
+		ControlFactory.createLabel(cacheComp, DialogsMessages.Megabyte);
 
 		gl= (GridLayout) cacheComp.getLayout();
 		gl.numColumns= 3;

@@ -30,7 +30,8 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 		fProperties.put(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, String.valueOf(false));
 		fProperties.put(IndexerPreferences.KEY_INDEX_ON_OPEN, String.valueOf(false));
 		fProperties.put(IndexerPreferences.KEY_INCLUDE_HEURISTICS, String.valueOf(true));
-		fProperties.put(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB, String.valueOf(IndexerPreferences.DEFAULT_FILE_SIZE_LIMIT));
+		fProperties.put(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB, String.valueOf(IndexerPreferences.DEFAULT_FILE_SIZE_LIMIT_MB));
+		fProperties.put(IndexerPreferences.KEY_SKIP_INCLUDED_FILES_LARGER_THAN_MB, String.valueOf(IndexerPreferences.DEFAULT_INCLUDED_FILE_SIZE_LIMIT_MB));
 		fProperties.put(IndexerPreferences.KEY_SKIP_ALL_REFERENCES, String.valueOf(false)); 
 		fProperties.put(IndexerPreferences.KEY_SKIP_IMPLICIT_REFERENCES, String.valueOf(false)); 
 		fProperties.put(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES, String.valueOf(false)); 

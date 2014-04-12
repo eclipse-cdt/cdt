@@ -62,8 +62,9 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		setShowScannerProblems(checkDebugOption(TRACE_SCANNER_PROBLEMS, TRUE));
 		setShowSyntaxProblems(checkDebugOption(TRACE_SYNTAX_PROBLEMS, TRUE));
 		setShowProblems(checkDebugOption(TRACE_PROBLEMS, TRUE));
-		final long limit = getIntProperty(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB, 0);
-		setFileSizeLimit(limit * 1024 * 1024);
+		final long fileLimit = getIntProperty(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB, 0);
+		final long includedFileLimit = getIntProperty(IndexerPreferences.KEY_SKIP_INCLUDED_FILES_LARGER_THAN_MB, 0);
+		setFileSizeLimits(fileLimit * 1024 * 1024, includedFileLimit * 1024 * 1024);
 		setIndexAllHeaderVersions(checkProperty(IndexerPreferences.KEY_INDEX_ALL_HEADER_VERSIONS));
 		setHeadersToIndexAllVersions(getStringSet(IndexerPreferences.KEY_INDEX_ALL_VERSIONS_SPECIFIC_HEADERS));
 		if (checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES)) {

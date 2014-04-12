@@ -18,13 +18,13 @@ import org.eclipse.osgi.util.NLS;
 
 class DialogsMessages extends NLS {
 	public static String AbstractIndexerPage_fileSizeLimit;
+	public static String AbstractIndexerPage_includedFileSizeLimit;
 	public static String AbstractIndexerPage_heuristicIncludes;
 	public static String AbstractIndexerPage_indexAllFiles;
 	public static String AbstractIndexerPage_indexAllHeaders;
 	public static String AbstractIndexerPage_indexAllHeadersC;
 	public static String AbstractIndexerPage_indexAllHeadersCpp;
 	public static String AbstractIndexerPage_indexOpenedFiles;
-	public static String AbstractIndexerPage_indexUpFront;
 	public static String AbstractIndexerPage_skipAllReferences;
 	public static String AbstractIndexerPage_skipImplicitReferences;
 	public static String AbstractIndexerPage_skipTypeAndMacroReferences;
@@ -32,7 +32,7 @@ class DialogsMessages extends NLS {
 	public static String AbstractIndexerPage_skipMacroReferences;
 	public static String AbstractIndexerPage_indexAllHeaderVersions;
 	public static String AbstractIndexerPage_indexAllVersionsSpecificHeaders;
-	public static String CacheSizeBlock_MB;
+	public static String Megabyte;
 	public static String IndexerBlock_fixedBuildConfig;
 	public static String IndexerBlock_indexerOptions;
 	public static String IndexerBlock_buildConfigGroup;

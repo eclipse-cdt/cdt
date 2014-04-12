@@ -59,6 +59,7 @@ public class IndexerPreferences {
 	public static final String KEY_SKIP_MACRO_REFERENCES= "skipMacroReferences"; //$NON-NLS-1$
 	public static final String KEY_UPDATE_POLICY= "updatePolicy"; //$NON-NLS-1$
 	public static final String KEY_SKIP_FILES_LARGER_THAN_MB = "skipFilesLargerThanMB"; //$NON-NLS-1$
+	public static final String KEY_SKIP_INCLUDED_FILES_LARGER_THAN_MB = "skipIncludedFilesLargerThanMB"; //$NON-NLS-1$
 
 	private static final String KEY_INDEXER_PREFS_SCOPE = "preferenceScope"; //$NON-NLS-1$
 	private static final String KEY_INDEX_IMPORT_LOCATION = "indexImportLocation"; //$NON-NLS-1$
@@ -70,7 +71,8 @@ public class IndexerPreferences {
 
 	private static final String DEFAULT_INDEX_IMPORT_LOCATION = ".settings/cdt-index.zip"; //$NON-NLS-1$
 	private static final int DEFAULT_UPDATE_POLICY= 0;
-	public static final int DEFAULT_FILE_SIZE_LIMIT = 8;
+	public static final int DEFAULT_FILE_SIZE_LIMIT_MB = 8;
+	public static final int DEFAULT_INCLUDED_FILE_SIZE_LIMIT_MB = 16;
 
 	private static final String QUALIFIER = CCorePlugin.PLUGIN_ID;
 	private static final String INDEXER_NODE = "indexer"; //$NON-NLS-1$
@@ -326,7 +328,8 @@ public class IndexerPreferences {
 		prefs.putBoolean(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, false);
 		prefs.putBoolean(KEY_INDEX_ON_OPEN, false);
 		prefs.putBoolean(KEY_INCLUDE_HEURISTICS, true);
-		prefs.putInt(KEY_SKIP_FILES_LARGER_THAN_MB, DEFAULT_FILE_SIZE_LIMIT);
+		prefs.putInt(KEY_SKIP_FILES_LARGER_THAN_MB, DEFAULT_FILE_SIZE_LIMIT_MB);
+		prefs.putInt(KEY_SKIP_INCLUDED_FILES_LARGER_THAN_MB, DEFAULT_INCLUDED_FILE_SIZE_LIMIT_MB);
 		prefs.putBoolean(KEY_SKIP_ALL_REFERENCES, false);
 		prefs.putBoolean(KEY_SKIP_IMPLICIT_REFERENCES, false);
 		prefs.putBoolean(KEY_SKIP_TYPE_REFERENCES, false);

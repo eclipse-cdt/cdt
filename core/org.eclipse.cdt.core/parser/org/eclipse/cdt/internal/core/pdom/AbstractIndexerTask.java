@@ -93,7 +93,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 		LinkageTask(int linkageID) {
 			fLinkageID= linkageID;
-			fLocationTasks= new HashMap<IIndexFileLocation, LocationTask>();
+			fLocationTasks= new HashMap<>();
 		}
 
 		boolean requestUpdate(IIndexFileLocation ifl, IIndexFragmentFile ifile, Object tu,
@@ -164,7 +164,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				fVersionTasks= Collections.singletonList(fc);
 				break;
 			case 1:
-				List<FileVersionTask> newList= new ArrayList<FileVersionTask>(2);
+				List<FileVersionTask> newList= new ArrayList<>(2);
 				newList.add(fVersionTasks.get(0));
 				newList.add(fc);
 				fVersionTasks= newList;
@@ -298,20 +298,21 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private boolean fIndexFilesWithoutConfiguration= true;
 	private boolean fIndexAllHeaderVersions = false;
 	private Set<String> fHeadersToIndexAllVersions = Collections.emptySet();
-	private List<LinkageTask> fRequestsPerLinkage= new ArrayList<LinkageTask>();
-	private Map<IIndexFile, IndexFileContent> fIndexContentCache= new LRUCache<IIndexFile, IndexFileContent>(500);
-	private Map<IIndexFileLocation, IIndexFragmentFile[]> fIndexFilesCache= new LRUCache<IIndexFileLocation, IIndexFragmentFile[]>(5000);
-	private Map<IIndexFileLocation, LocationTask> fOneLinkageTasks= new HashMap<IIndexFileLocation, AbstractIndexerTask.LocationTask>();
+	private List<LinkageTask> fRequestsPerLinkage= new ArrayList<>();
+	private Map<IIndexFile, IndexFileContent> fIndexContentCache= new LRUCache<>(500);
+	private Map<IIndexFileLocation, IIndexFragmentFile[]> fIndexFilesCache= new LRUCache<>(5000);
+	private Map<IIndexFileLocation, LocationTask> fOneLinkageTasks= new HashMap<>();
 
 	private Object[] fFilesToUpdate;
-	private List<Object> fFilesToRemove = new ArrayList<Object>();
+	private List<Object> fFilesToRemove = new ArrayList<>();
 	private int fASTOptions;
-	private int fForceNumberFiles= 0;
+	private int fForceNumberFiles;
 
 	protected IWritableIndex fIndex;
 	private ITodoTaskUpdater fTodoTaskUpdater;
 	private final boolean fIsFastIndexer;
-	private long fFileSizeLimit= 0;
+	private long fTranslationUnitSizeLimit;
+	private long fIncludedFileSizeLimit;
 	private InternalFileContentProvider fCodeReaderFactory;
 	private int fSwallowOutOfMemoryError= 5;
 	/**
@@ -329,7 +330,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		fFilesToUpdate= filesToUpdate;
 		Collections.addAll(fFilesToRemove, filesToRemove);
 		incrementRequestedFilesCount(fFilesToUpdate.length + fFilesToRemove.size());
-		fUrgentTasks = new LinkedList<AbstractIndexerTask>();
+		fUrgentTasks = new LinkedList<>();
 	}
 
 	public final void setIndexHeadersWithoutContext(UnusedHeaderStrategy mode) {
@@ -356,8 +357,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		fForceNumberFiles= number;
 	}
 
-	public final void setFileSizeLimit(long limit) {
-		fFileSizeLimit= limit;
+	public final void setFileSizeLimits(long translationUnitSizeLimit, long includedFileSizeLimit) {
+		fTranslationUnitSizeLimit= translationUnitSizeLimit;
+		fIncludedFileSizeLimit= includedFileSizeLimit;
 	}
 
 	public void setIndexAllHeaderVersions(boolean indexAllHeaderVersions) {
@@ -520,8 +522,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			try {
 				try {
 					// Split into sources and headers, remove excluded sources.
-					HashMap<Integer, List<IIndexFileLocation>> files= new HashMap<Integer, List<IIndexFileLocation>>();
-					final ArrayList<IIndexFragmentFile> indexFilesToRemove= new ArrayList<IIndexFragmentFile>();
+					HashMap<Integer, List<IIndexFileLocation>> files= new HashMap<>();
+					final ArrayList<IIndexFragmentFile> indexFilesToRemove= new ArrayList<>();
 					extractFiles(files, indexFilesToRemove, monitor);
 
 					setResume(true);
@@ -574,7 +576,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 								}
 							}
 							// Extract files from the urgent task.
-							files = new HashMap<Integer, List<IIndexFileLocation>>();
+							files = new HashMap<>();
 							fFilesToUpdate = urgentTask.fFilesToUpdate;
 							fForceNumberFiles = urgentTask.fForceNumberFiles;
 							fFilesToRemove = urgentTask.fFilesToRemove;
@@ -697,7 +699,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private void addPerLinkage(int linkageID, IIndexFileLocation ifl, HashMap<Integer, List<IIndexFileLocation>> files) {
 		List<IIndexFileLocation> list= files.get(linkageID);
 		if (list == null) {
-			list= new LinkedList<IIndexFileLocation>();
+			list= new LinkedList<>();
 			files.put(linkageID, list);
 		}
 		list.add(ifl);
@@ -952,7 +954,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					// File was not parsed, because there is a dependency that needs to be
 					// handled before.
 					if (dependencies == null)
-						dependencies= new HashSet<IIndexFile>();
+						dependencies= new HashSet<>();
 					if (dependencies.add(d.fIndexFile)) {
 						if (parseFile(d.fTu, language, d.fIndexFile.getLocation(), scannerInfo, new FileContext(ctxFile, d.fIndexFile), monitor) == null)
 							done= false;
@@ -1161,7 +1163,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		if (isSource) {
 			options |= ILanguage.OPTION_IS_SOURCE_UNIT;
 		}
-		if (fFileSizeLimit > 0 && fResolver.getFileSize(codeReader.getFileLocation()) > fFileSizeLimit) {
+		if (fTranslationUnitSizeLimit > 0 && fResolver.getFileSize(codeReader.getFileLocation()) > fTranslationUnitSizeLimit) {
 			if (fShowActivity) {
 				trace("Indexer: Skipping large file " + codeReader.getFileLocation());  //$NON-NLS-1$
 			}
@@ -1174,7 +1176,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				IndexBasedFileContentProvider ibfcp = new IndexBasedFileContentProvider(fIndex, fResolver,
 						language.getLinkageID(), fileContentProvider, this);
 				ibfcp.setContextToHeaderGap(ctx2header);
-				ibfcp.setFileSizeLimit(fFileSizeLimit);
+				ibfcp.setFileSizeLimit(fIncludedFileSizeLimit);
 				ibfcp.setHeadersToIndexAllVersions(fHeadersToIndexAllVersions);
 				ibfcp.setIndexAllHeaderVersions(fIndexAllHeaderVersions);
 				fCodeReaderFactory= ibfcp;
@@ -1206,8 +1208,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 	private void writeToIndex(final int linkageID, IASTTranslationUnit ast, FileContent codeReader,
 			FileContext ctx, IProgressMonitor pm) throws CoreException, InterruptedException {
-		HashSet<FileContentKey> enteredFiles= new HashSet<FileContentKey>();
-		ArrayList<FileInAST> orderedFileKeys= new ArrayList<FileInAST>();
+		HashSet<FileContentKey> enteredFiles= new HashSet<>();
+		ArrayList<FileInAST> orderedFileKeys= new ArrayList<>();
 
 		final IIndexFileLocation topIfl = fResolver.resolveASTPath(ast.getFilePath());
 		FileContentKey topKey = new FileContentKey(linkageID, topIfl, ast.getSignificantMacros());

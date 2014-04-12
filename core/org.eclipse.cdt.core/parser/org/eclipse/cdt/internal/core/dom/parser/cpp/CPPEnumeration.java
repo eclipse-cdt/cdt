@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
@@ -51,6 +52,37 @@ import org.eclipse.core.runtime.PlatformObject;
 public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, ICPPInternalBinding {
 	private static final IASTName NOT_INITIALIZED = CPPASTName.NOT_INITIALIZED;
 	private static final IEnumerator[] EMPTY_ENUMERATORS = {};
+	
+	public static class CPPEnumerationProblem extends ProblemBinding implements ICPPEnumeration, ICPPScope {
+		public CPPEnumerationProblem(IASTNode node, int id, char[] arg) {
+			super(node, id, arg);
+		}
+		@Override
+		public IEnumerator[] getEnumerators() {
+			return EMPTY_ENUMERATORS;
+		}
+		@Override
+		public long getMinValue() {
+			return 0;
+		}
+		@Override
+		public long getMaxValue() {
+			return 0;
+		}
+		@Override
+		public boolean isScoped() {
+			return false;
+		}
+		@Override
+		public IType getFixedType() {
+			return null;
+		}
+		@Override
+		public ICPPScope asScope() {
+			return this;
+		}
+		
+	}
 
 	private final boolean fIsScoped;
 	private final IType fFixedType;

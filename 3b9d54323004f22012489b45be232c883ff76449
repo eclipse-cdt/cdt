@@ -88,6 +88,24 @@
       "revId": "3b9d54323004f22012489b45be232c883ff76449",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_4fa263f7",
+        "filename": "core/org.eclipse.cdt.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 888,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-12T16:51:55Z",
+      "side": 1,
+      "message": "It looks like it\u0027s the right thing to do from the user experience perspective.",
+      "parentUuid": "0756a345_8b8e3d8a",
+      "revId": "3b9d54323004f22012489b45be232c883ff76449",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

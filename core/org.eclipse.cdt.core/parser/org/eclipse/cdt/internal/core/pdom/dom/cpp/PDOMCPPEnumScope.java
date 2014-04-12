@@ -23,7 +23,8 @@ import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -40,7 +41,7 @@ import org.eclipse.core.runtime.CoreException;
  * Represents the enum scope for an enum stored in the index.
  * For safe use all fields need to be final.
  */
-class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
+class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 	private final IPDOMCPPEnumType fBinding;
 
 	public PDOMCPPEnumScope(IPDOMCPPEnumType binding) {
@@ -189,5 +190,10 @@ class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
+	}
+
+	@Override
+	public ICPPEnumeration getEnumerationType() {
+		return (ICPPEnumeration) getScopeBinding();
 	}
 }

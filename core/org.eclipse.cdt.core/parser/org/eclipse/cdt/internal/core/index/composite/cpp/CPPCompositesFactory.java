@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecializationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -122,6 +123,10 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				ICPPClassScope classScope = (ICPPClassScope) rscope;
 				return new CompositeCPPClassScope(this,	findOneBinding(classScope.getClassType()));
 			} 
+			if (rscope instanceof ICPPEnumScope) {
+				ICPPEnumScope enumScope = (ICPPEnumScope) rscope;
+				return new CompositeCPPEnumScope(this, findOneBinding(enumScope.getEnumerationType()));
+			}
 			if (rscope instanceof ICPPNamespaceScope) {
 				ICPPNamespace[] namespaces;
 				if (rscope instanceof CompositeCPPNamespace) {
@@ -131,7 +136,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 					namespaces = getNamespaces(rscope.getScopeBinding());
 				}
 				return new CompositeCPPNamespaceScope(this, namespaces);
-			} 
+			}
 			throw new CompositingNotImplementedError(rscope.getClass().getName());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

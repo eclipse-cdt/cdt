@@ -13,15 +13,15 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCPPEnumScope extends CompositeScope implements ICPPScope {
+class CompositeCPPEnumScope extends CompositeScope implements ICPPEnumScope {
 	public CompositeCPPEnumScope(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		super(cf, rbinding);
 	}
@@ -57,5 +57,10 @@ class CompositeCPPEnumScope extends CompositeScope implements ICPPScope {
 	@Override
 	public IIndexBinding getScopeBinding() {
 		return cf.getCompositeBinding(rbinding);
+	}
+
+	@Override
+	public ICPPEnumeration getEnumerationType() {
+		return (ICPPEnumeration) getScopeBinding();
 	}
 }

@@ -105,8 +105,8 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		ICPPEvaluation expansionPattern = fExpansionPattern.computeForFunctionCall(parameterMap, maxdepth, point);
+			ConstexprEvaluationContext context) {
+		ICPPEvaluation expansionPattern = fExpansionPattern.computeForFunctionCall(parameterMap, context.recordStep());
 		if (expansionPattern == fExpansionPattern)
 			return this;
 		return new EvalParameterPack(expansionPattern, getTemplateDefinition());

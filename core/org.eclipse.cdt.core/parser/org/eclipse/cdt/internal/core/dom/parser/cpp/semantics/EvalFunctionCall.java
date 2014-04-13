@@ -145,7 +145,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		ICPPEvaluation eval = computeForFunctionCall(Value.MAX_RECURSION_DEPTH, point);
+		ICPPEvaluation eval = computeForFunctionCall(new ConstexprEvaluationContext(point));
 		if (eval == this) {
 			return Value.create(eval);
 		} 
@@ -205,13 +205,13 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		if (maxdepth == 0)
+			ConstexprEvaluationContext context) {
+		if (context.getStepsPerformed() >= ConstexprEvaluationContext.MAX_CONSTEXPR_EVALUATION_STEPS)
 			return EvalFixed.INCOMPLETE;
 
 		ICPPEvaluation[] args = fArguments;
 		for (int i = 0; i < fArguments.length; i++) {
-			ICPPEvaluation arg = fArguments[i].computeForFunctionCall(parameterMap, maxdepth, point);
+			ICPPEvaluation arg = fArguments[i].computeForFunctionCall(parameterMap, context);
 			if (arg != fArguments[i]) {
 				if (args == fArguments) {
 					args = new ICPPEvaluation[fArguments.length];
@@ -223,17 +223,17 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		EvalFunctionCall eval = this;
 		if (args != fArguments)
 			eval = new EvalFunctionCall(args, getTemplateDefinition());
-		return eval.computeForFunctionCall(maxdepth - 1, point);
+		return eval.computeForFunctionCall(context);
 	}
 
-	private ICPPEvaluation computeForFunctionCall(int maxdepth, IASTNode point) {
+	private ICPPEvaluation computeForFunctionCall(ConstexprEvaluationContext context) {
 		if (isValueDependent())
 			return this;
 		// If the arguments are not all constant expressions, there is
 		// no point trying to substitute them into the return expression.
-		if (!areAllConstantExpressions(fArguments, point))
+		if (!areAllConstantExpressions(fArguments, context.getPoint()))
 			return this;
-		ICPPFunction function = getOverload(point);
+		ICPPFunction function = getOverload(context.getPoint());
 		if (function == null) {
 			if (fArguments[0] instanceof EvalBinding) {
 				IBinding binding = ((EvalBinding) fArguments[0]).getBinding();
@@ -247,7 +247,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		if (eval == null)
 			return EvalFixed.INCOMPLETE;
 		CPPFunctionParameterMap parameterMap = buildParameterMap(function);
-		return eval.computeForFunctionCall(parameterMap, maxdepth, point);
+		return eval.computeForFunctionCall(parameterMap, context.recordStep());
 	}
 
 	private CPPFunctionParameterMap buildParameterMap(ICPPFunction function) {

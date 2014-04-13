@@ -86,15 +86,61 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 			ICPPClassSpecialization within, int maxdepth, IASTNode point);
 
 	/**
+	 * Keeps track of state during a constexpr evaluation.
+	 */
+	class ConstexprEvaluationContext {
+		/**
+		 * The maximum number of steps allowed in a single constexpr evaluation.
+		 * This is used to prevent a buggy constexpr function from causing the
+		 * IDE to hang.
+		 */
+		public static final int MAX_CONSTEXPR_EVALUATION_STEPS = 1024;
+		
+		private int fStepsPerformed;
+		private IASTNode fPoint;
+		
+		/**
+		 * Construct a ConstexprEvaluationContext for a new constexpr evaluation.
+		 * @param point the point of instantiation, determines the scope for name lookups
+		 */
+		public ConstexprEvaluationContext(IASTNode point) {
+			fStepsPerformed = 0;
+			fPoint = point;
+		}
+
+		/**
+		 * Record a new step being performed in this constexpr evaluation.
+		 * @return this constexpr evaluation
+		 */
+		public ConstexprEvaluationContext recordStep() {
+			++fStepsPerformed;
+			return this;
+		}
+
+		/**
+		 * Get the number of steps performed so far in the constexpr evaluation.
+		 */
+		public int getStepsPerformed() {
+			return fStepsPerformed;
+		}
+		
+		/**
+		 * Get the point of instantiation.
+		 */
+		public IASTNode getPoint() {
+			return fPoint;
+		}
+	}
+	
+	/**
 	 * Computes the evaluation produced by substituting function parameters by their values.
 	 * 
 	 * @param parameterMap maps function parameters to their values
-	 * @param maxdepth allowed recursion depth 
-	 * @param point the point of instantiation, determines the scope for name lookups
+	 * @param context the context for the current constexpr evaluation
 	 * @return the computed evaluation
 	 */
-	ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap, int maxdepth,
-			IASTNode point);
+	ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap, 
+			ConstexprEvaluationContext context);
 
 	/**
 	 * Searches the evaluation for a usage of a template parameter which is a parameter pack,

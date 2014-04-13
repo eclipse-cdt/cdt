@@ -362,10 +362,10 @@ public class EvalID extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+			ConstexprEvaluationContext context) {
 		if (fFieldOwner == null)
 			return this;
-		ICPPEvaluation fieldOwner = fFieldOwner.computeForFunctionCall(parameterMap, maxdepth, point);
+		ICPPEvaluation fieldOwner = fFieldOwner.computeForFunctionCall(parameterMap, context.recordStep());
 		if (fieldOwner == fFieldOwner)
 			return this;
 		return new EvalID(fieldOwner, fNameOwner, fName, fAddressOf, fQualified, fTemplateArgs, getTemplateDefinition());

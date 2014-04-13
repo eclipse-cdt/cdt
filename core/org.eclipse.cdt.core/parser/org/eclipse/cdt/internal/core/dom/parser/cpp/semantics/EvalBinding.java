@@ -405,7 +405,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+			ConstexprEvaluationContext context) {
 		int pos = getFunctionParameterPosition();
 		if (pos >= 0) {
 			ICPPEvaluation eval = parameterMap.getArgument(pos);

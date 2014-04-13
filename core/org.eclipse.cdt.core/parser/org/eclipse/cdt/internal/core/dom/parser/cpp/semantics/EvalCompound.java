@@ -109,8 +109,8 @@ public class EvalCompound extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		ICPPEvaluation delegate = fDelegate.computeForFunctionCall(parameterMap, maxdepth, point);
+			ConstexprEvaluationContext context) {
+		ICPPEvaluation delegate = fDelegate.computeForFunctionCall(parameterMap, context.recordStep());
 		if (delegate == fDelegate)
 			return this;
 		return new EvalCompound(delegate, getTemplateDefinition());

@@ -354,23 +354,23 @@ public class EvalConditional extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		ICPPEvaluation condition = fCondition.computeForFunctionCall(parameterMap, maxdepth, point);
+			ConstexprEvaluationContext context) {
+		ICPPEvaluation condition = fCondition.computeForFunctionCall(parameterMap, context.recordStep());
 		// If the condition can be evaluated, fold the conditional into
 		// just the branch that is taken. This avoids infinite recursion
 		// when computing a recursive constexpr function where the base
 		// case of the recursion is one of the branches of the conditional.
-		Long conditionValue = condition.getValue(point).numericalValue();
+		Long conditionValue = condition.getValue(context.getPoint()).numericalValue();
 		if (conditionValue != null) {
 			if (conditionValue.longValue() != 0) {
-				return fPositive == null ? null : fPositive.computeForFunctionCall(parameterMap, maxdepth, point);
+				return fPositive == null ? null : fPositive.computeForFunctionCall(parameterMap, context.recordStep());
 			} else {
-				return fNegative.computeForFunctionCall(parameterMap, maxdepth, point);
+				return fNegative.computeForFunctionCall(parameterMap, context.recordStep());
 			}
 		}
 		ICPPEvaluation positive = fPositive == null ?
-				null : fPositive.computeForFunctionCall(parameterMap, maxdepth, point);
-		ICPPEvaluation negative = fNegative.computeForFunctionCall(parameterMap, maxdepth, point);
+				null : fPositive.computeForFunctionCall(parameterMap, context.recordStep());
+		ICPPEvaluation negative = fNegative.computeForFunctionCall(parameterMap, context.recordStep());
 		if (condition == fCondition && positive == fPositive && negative == fNegative)
 			return this;
 		return new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows, getTemplateDefinition());

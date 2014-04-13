@@ -119,10 +119,10 @@ public class EvalInitList extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+			ConstexprEvaluationContext context) {
 		ICPPEvaluation[] clauses = fClauses;
 		for (int i = 0; i < fClauses.length; i++) {
-			ICPPEvaluation clause = fClauses[i].computeForFunctionCall(parameterMap, maxdepth, point);
+			ICPPEvaluation clause = fClauses[i].computeForFunctionCall(parameterMap, context.recordStep());
 			if (clause != fClauses[i]) {
 				if (clauses == fClauses) {
 					clauses = new ICPPEvaluation[fClauses.length];

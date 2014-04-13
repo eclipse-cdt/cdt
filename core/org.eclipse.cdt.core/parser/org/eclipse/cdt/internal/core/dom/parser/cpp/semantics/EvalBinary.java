@@ -366,9 +366,9 @@ public class EvalBinary extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		ICPPEvaluation arg1 = fArg1.computeForFunctionCall(parameterMap, maxdepth, point);
-		ICPPEvaluation arg2 = fArg2.computeForFunctionCall(parameterMap, maxdepth, point);
+			ConstexprEvaluationContext context) {
+		ICPPEvaluation arg1 = fArg1.computeForFunctionCall(parameterMap, context.recordStep());
+		ICPPEvaluation arg2 = fArg2.computeForFunctionCall(parameterMap, context.recordStep());
 		if (arg1 == fArg1 && arg2 == fArg2)
 			return this;
 		return new EvalBinary(fOperator, arg1, arg2, getTemplateDefinition());

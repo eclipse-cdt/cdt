@@ -345,9 +345,9 @@ public class EvalUnary extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap, int maxdepth,
-			IASTNode point) {
-		ICPPEvaluation argument = fArgument.computeForFunctionCall(parameterMap, maxdepth, point);
+	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap, 
+			ConstexprEvaluationContext context) {
+		ICPPEvaluation argument = fArgument.computeForFunctionCall(parameterMap, context.recordStep());
 		if (argument == fArgument)
 			return this;
 

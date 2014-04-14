@@ -40,7 +40,9 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNameCollector;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
@@ -50,6 +52,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -407,14 +410,25 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 
 	private static boolean isInSameFunction(IASTName refName, IName funcDeclName) {
 		if (funcDeclName instanceof IASTName) {
-			IASTDeclaration fdef = getEnclosingFunctionDefinition((IASTNode) funcDeclName);
-			return fdef != null && fdef.contains(refName);
+			IASTDeclaration fdecl = getEnclosingFunctionDeclaration((IASTNode) funcDeclName);
+			return fdecl != null && fdecl.contains(refName);
 		} 
 		return false;
 	}
 
-	private static IASTDeclaration getEnclosingFunctionDefinition(IASTNode node) {
-		while (node != null && !(node instanceof IASTFunctionDefinition)) {
+	private static boolean isFunctionDeclaration(IASTNode node) {
+		if (node instanceof IASTFunctionDefinition) {
+			return true;
+		}
+		if (node instanceof IASTSimpleDeclaration) {
+			IASTDeclarator[] declarators = ((IASTSimpleDeclaration) node).getDeclarators();
+			return declarators.length == 1 && declarators[0] instanceof IASTFunctionDeclarator;
+		}
+		return false;
+	}
+	
+	private static IASTDeclaration getEnclosingFunctionDeclaration(IASTNode node) {
+		while (node != null && !isFunctionDeclaration(node)) {
 			node= node.getParent();
 		}
 		return (IASTDeclaration) node;

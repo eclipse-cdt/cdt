@@ -1272,4 +1272,15 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         assertEquals(hfile.getLocation().toOSString(), location.getFileName());
         assertEquals(hoffset, location.getNodeOffset());
 	}
+	
+    //	int waldo(int a, decltype(a) b);
+    public void testFunctionParameterReferencingPreviousParameter_432703() throws Exception {
+        String code = getAboveComment();
+        IFile file = importFile("test.cpp", code);
+        waitUntilFileIsIndexed(index, file);
+        
+        int offset= code.indexOf("a)"); 
+        IASTNode def = testF3(file, offset + 1);
+        assertTrue(def instanceof IASTName);
+    }
 }

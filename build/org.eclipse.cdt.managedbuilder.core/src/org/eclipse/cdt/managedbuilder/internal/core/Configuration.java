@@ -523,7 +523,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 			String tcId = ManagedBuildManager.calculateChildId(tCh.getId(), null);
 
-			IToolChain newChain = createToolChain(tCh, tcId, tCh.getId(), false);
+			IToolChain newChain = createToolChain(tCh, tcId, tCh.getName(), false);
 
 			// For each option/option category child of the tool-chain that is
 			// the child of the selected configuration element, create an option/

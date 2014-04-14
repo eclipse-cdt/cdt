@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "0756a345_787f2bd4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-14T17:03:32Z",
+      "side": 1,
+      "message": "Could you put your full name for the signed-off-by and Author fields? Thank you!",
+      "revId": "95a85e88d98001cfdcc448bdfd59a006be360df0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_b879c36e",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/Addr2line.java",
         "patchSetId": 1

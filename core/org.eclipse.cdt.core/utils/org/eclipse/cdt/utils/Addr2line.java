@@ -15,6 +15,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
@@ -113,6 +115,7 @@ public class Addr2line {
 		//IPF_TODO: check 
 		for (int i = 0; i <= 20; i += 4, address = address.add(i)) {
 			String line = getLine(address);
+			line = parserOutput(line);
 			if (line != null) {
 				int colon = line.lastIndexOf(':');
 				String number = line.substring(colon + 1);
@@ -137,6 +140,17 @@ public class Addr2line {
 		}
 		addr2line.destroy();
 		//isDisposed = true;
+	}
+	
+	private String parserOutput(String line) {
+		String REGEX = "(.*)( \\(discriminator.*\\))"; //$NON-NLS-1$
+		Pattern pattern = Pattern.compile(REGEX);
+		Matcher matcher = pattern.matcher(line);
+		if (matcher.matches()) {
+			if (matcher.groupCount()>1)
+				line = matcher.group(1);
+		}
+		return line;
 	}
 }
 

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_f8c4db89",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/disassembly/dsf/AddressRangePosition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-04-14T14:04:22Z",
+      "side": 1,
+      "message": "Print addresses in hex . It is a lot easier to watch the logs",
+      "revId": "7eee2ac8d6be99e8bc9723893a0f6fd17649509c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_38cf73a5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIInstruction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-04-14T14:04:22Z",
+      "side": 1,
+      "message": "similar to decodeOpcodes, but instead of transforming to BigInteger count number of bytes from stream (e.g. opcodes\u003d\"e8 a2 05 00 00\")",
+      "revId": "7eee2ac8d6be99e8bc9723893a0f6fd17649509c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_78d8cb66",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyPart.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1735,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-04-14T14:04:22Z",
+      "side": 1,
+      "message": "Print addresses in hex . It is a lot easier to watch the logs",
+      "revId": "7eee2ac8d6be99e8bc9723893a0f6fd17649509c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

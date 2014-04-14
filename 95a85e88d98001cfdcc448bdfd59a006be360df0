@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_b879c36e",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/Addr2line.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-14T16:31:54Z",
+      "side": 1,
+      "message": "I think we can compile this regex only once and reuse it all the time. Could you move this to a field?\nI\u0027m thinking something like:\nprivate static final Pattern OUTPUT_PATTERN \u003d Pattern.compile(\"(.*)( \\\\(discriminator.*\\\\))\"); ; //$NON-NLS-1$",
+      "revId": "95a85e88d98001cfdcc448bdfd59a006be360df0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_386db3a7",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/Addr2line.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-14T16:31:54Z",
+      "side": 1,
+      "message": "the two conditions can be combined into one.",
+      "revId": "95a85e88d98001cfdcc448bdfd59a006be360df0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

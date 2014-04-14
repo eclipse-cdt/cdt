@@ -9,6 +9,7 @@
  *     Texas Instruments, Freescale Semiconductor - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson AB) - Each memory context needs a different MemoryRetrieval (Bug 250323)
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
+ *     Alvaro Sanchez-Leon (Ericsson AB)  - Need additional API to extend support for memory spaces (Bug 431627)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.memory;
 
@@ -26,6 +27,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlock;
 import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlockRetrieval;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.cdt.dsf.debug.service.IMemorySpaces.IMemorySpaceDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlock.MemorySpaceDMContext;
@@ -105,11 +107,26 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	 */
 	@Override
 	public IMemoryBlockExtension getExtendedMemoryBlock(String expression, Object context) throws DebugException {
-		// Technically, we don't need to override this method. Letting our base
-		// class create a DsfMemoryBlock would work just fine. But, for the
-		// sake of consistency, lets have this retrieval class always return a
-		// GdbMemoryBlock.
-		return getMemoryBlock(expression, context, null);
+		
+		String memorySpaceID = null;
+		
+		// Determine if the expression has memory space information
+		IDMContext dmc = null;
+		if (context instanceof IDMContext) {
+			dmc = (IDMContext) context;
+		} else {
+	        if (context instanceof IAdaptable) {
+	        	dmc = (IDMContext)((IAdaptable)context).getAdapter(IDMContext.class);
+	        }
+		}
+		
+		if (dmc != null) {
+			DecodeResult result = decodeMemorySpaceExpression(dmc, expression);
+			expression = result.getExpression();
+			memorySpaceID = result.getMemorySpaceId();
+		}
+		
+		return getMemoryBlock(expression, context, memorySpaceID);
 	}
 	
 	/* (non-Javadoc)
@@ -129,6 +146,11 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 
         if (memoryDmc == null) {
             return null;
+        }
+        
+        //Use a memory space context if the memory space id is valid
+        if (memorySpaceID != null && memorySpaceID.length() > 0) {
+        	memoryDmc = new MemorySpaceDMContext(getSession().getId(), memorySpaceID, memoryDmc);
         }
         
 		// The block start address (supports 64-bit processors)
@@ -299,6 +321,30 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
  
 	}
 
+	
+	/**
+	 * This base method does not support specific memory space implementations,
+	 * but provides the means for others to extend it, 
+	 * the IDMContext is provided to further refine the expression as needed
+	 */
+	protected DecodeResult decodeMemorySpaceExpression(IDMContext dmc, final String expression) throws DebugException {
+		DecodeResult result = new DecodeResult() {
+			
+			@Override
+			public String getMemorySpaceId() {
+				return null;
+			}
+			
+			@Override
+			public String getExpression() {
+				return expression;
+			}
+		};
+		
+		return result;
+	}
+	
+	
 	ServiceTracker<IMemorySpaces, IMemorySpaces> getMemorySpaceServiceTracker() {
 		return fMemorySpaceServiceTracker;
 	}
@@ -377,6 +423,9 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
                         	if (memorySpaceID.length() == 0) {
                         		memorySpaceID = null; 
                         		assert false : "should have either no memory space or a valid (non-empty) ID"; //$NON-NLS-1$	
+                        	} else {
+                                //Use a memory space context if the memory space id is valid
+                        		memoryCtx = new MemorySpaceDMContext(getSession().getId(), memorySpaceID, memoryCtx);
                         	}
                         }
 
@@ -426,8 +475,8 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 
 	private IMemoryDMContext resolveMemSpaceContext(IMemoryDMContext aContext, String aMemorySpaceID) {
 		IMemoryDMContext context = aContext;
-		if (aMemorySpaceID != null && aMemorySpaceID.length() > 0) {
-			IMemorySpaces memorySpacesService = getMemorySpaceServiceTracker().getService();
+		if (!(aContext instanceof IMemorySpaceDMContext) || (aMemorySpaceID != null && aMemorySpaceID.length() > 0)) {
+			IMemorySpaces memorySpacesService = fMemorySpaceServiceTracker.getService();
 			if (memorySpacesService != null) {
 				context = new MemorySpaceDMContext(memorySpacesService.getSession().getId(), aMemorySpaceID, aContext);
 			}
@@ -435,5 +484,4 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 
 		return context;
 	}
-	
 }

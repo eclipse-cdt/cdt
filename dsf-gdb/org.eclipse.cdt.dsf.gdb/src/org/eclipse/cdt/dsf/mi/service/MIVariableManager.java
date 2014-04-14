@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Monta Vista and others.
+ * Copyright (c) 2008, 2014 Monta Vista and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Axel Mueller - Workaround for GDB bug where -var-info-path-expression gives invalid result (Bug 320277)
  *     Anton Gorenkov - DSF-GDB should properly handle variable type change (based on RTTI) (Bug 376901)
+ *     Alvaro Sanchez-Leon (Ericsson)  - Need additional API to extend support for memory spaces (Bug 431627)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -586,10 +587,15 @@ public class MIVariableManager implements ICommandControl {
 		 */
 		public void setType(String newTypeName) {
 			type = newTypeName;
-			gdbType = fGDBTypeParser.parse(newTypeName);
+			gdbType = getGDBTypeParser().parse(newTypeName);
 		}
 
-		public void setValue(String format, String val) { valueMap.put(format, val); }
+		public void setValue(String format, String val) {
+			valueMap.put(format, val);
+			if (format.equals(IFormattedValues.NATURAL_FORMAT)) {
+			System.out.println("Value set for: " + this.getGdbName() + ", " + this.getExpression() + ", " + val);
+			}
+		}
 		
 		public void resetValues(String valueInCurrentFormat) {
 			resetValues();
@@ -2089,7 +2095,10 @@ public class MIVariableManager implements ICommandControl {
 
 		public boolean isUpdating() { return currentState == STATE_UPDATING; }
         
-		public void setOutOfDate(boolean outOfDate) { fOutOfDate = outOfDate; }
+		public void setOutOfDate(boolean outOfDate) { 
+			System.out.println("OutOfDate updated for: " + this.getGdbName() + ", " +  this.getExpression() + ", " + this.getGDBType() + ", to: " + outOfDate + ", value: " + this.getValue(IFormattedValues.NATURAL_FORMAT));
+			fOutOfDate = outOfDate; 
+		}
 		
 		public boolean getOutOfDate() { return fOutOfDate; }
 		
@@ -2524,7 +2533,7 @@ public class MIVariableManager implements ICommandControl {
     /**
      * @since 3.0
      */
-    private static final GDBTypeParser fGDBTypeParser = new GDBTypeParser();
+    private GDBTypeParser fGDBTypeParser = null;
     
 	private final DsfSession fSession;
 	
@@ -2597,6 +2606,13 @@ public class MIVariableManager implements ICommandControl {
      */
 	protected Map<VariableObjectId, MIVariableObject> getLRUCache() {
 		return lruVariableList;
+	}
+	
+	private GDBTypeParser getGDBTypeParser() {
+		if (fGDBTypeParser == null) {
+			fGDBTypeParser = createGDBTypeParser();
+		}
+		return fGDBTypeParser;
 	}
 	
 	/** 
@@ -3145,4 +3161,12 @@ public class MIVariableManager implements ICommandControl {
     protected boolean needFixForGDBBug320277() {
     	return true;
     }
+    
+    /**
+	 * @since 4.4
+	 */
+    protected GDBTypeParser createGDBTypeParser() {
+		return new GDBTypeParser();
+    }
+    
 }

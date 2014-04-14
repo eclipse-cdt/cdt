@@ -27,6 +27,7 @@ public class MIInstruction extends AbstractInstruction {
     String     opcode     = ""; //$NON-NLS-1$
     String     args       = ""; //$NON-NLS-1$
     BigInteger rawOpcodes = null;
+    Integer    opcodeSize = null;
 
     public MIInstruction(MITuple tuple) {
         parse(tuple);
@@ -154,6 +155,7 @@ public class MIInstruction extends AbstractInstruction {
             if (var.equals("opcodes")) { //$NON-NLS-1$	
             	try {
             		rawOpcodes = decodeOpcodes(str);
+            		opcodeSize = Integer.valueOf(str.replace(" ", "").length() / 2);  //$NON-NLS-1$//$NON-NLS-2$
             	} catch (NumberFormatException e) {
                 }
                 continue;
@@ -188,5 +190,13 @@ public class MIInstruction extends AbstractInstruction {
 	private static BigInteger decodeOpcodes(String string) {
 		// Removing space separation and parse as single big integer
 		return new BigInteger(string.replace(" ", ""), 16); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.debug.service.AbstractInstruction#getSize()
+	 */
+	@Override
+	public Integer getSize() {
+		return opcodeSize;
 	}
 }

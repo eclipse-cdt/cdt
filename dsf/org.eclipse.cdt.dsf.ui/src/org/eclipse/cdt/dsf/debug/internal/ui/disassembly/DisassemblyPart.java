@@ -1732,7 +1732,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				lineNumber= fBackend.getFrameLine();
 			}
 		}
-		if (DEBUG) System.out.println("Asking backend to retrieve disassembly: sa=" + startAddress + ",ea=" + endAddress + ",file=" + file + ",lineNumber=" + lineNumber + ",lines=" + lines); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		if (DEBUG) System.out.println("Asking backend to retrieve disassembly: sa=0x" + startAddress.toString(16) + ",ea=0x" + endAddress.toString(16) + ",file=" + file + ",lineNumber=" + lineNumber + ",lines=" + lines); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		fBackend.retrieveDisassembly(startAddress, endAddress, file, lineNumber, lines, mixed, fShowSymbols, fShowDisassembly, linesHint);
 	}
 

@@ -71,7 +71,7 @@ public class AddressRangePosition extends Position {
 	public String toString() {
 		return getClass().getSimpleName() + '@' + Integer.toHexString(System.identityHashCode(this)) 
 			+ (fValid ? "" : "[INVALID]") //$NON-NLS-1$ //$NON-NLS-2$
-			+ '[' + offset + ':' + length + "]->[" + fAddressOffset //$NON-NLS-1$
-			+ ':' + fAddressLength + ']';
+			+ '[' + offset + ':' + length + "]->[" + fAddressOffset.toString(16) //$NON-NLS-1$
+			+ ':' + fAddressLength.toString(16) + ']';
 	}
 }

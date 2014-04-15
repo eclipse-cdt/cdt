@@ -867,6 +867,14 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			event.doit = false;
 
 			char character = event.character;
+			boolean ctrlKeyPressed = (event.stateMask & SWT.CTRL) != 0;
+			boolean altKeyPressed = (event.stateMask & SWT.ALT) != 0;
+
+			// To fix SPR 110341, we consider the Alt key to be pressed only when the
+			// Control key is _not_ also pressed.  This works around a bug in SWT where,
+			// on European keyboards, the AltGr key being pressed appears to us as Control
+			// + Alt being pressed simultaneously.
+			boolean onlyAltKeyPressed = altKeyPressed && !ctrlKeyPressed;
 
 			//if (!isConnected()) {
 			if (fState==TerminalState.CLOSED) {
@@ -916,11 +924,19 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					break;
 
 				case 0x1000003: // Left arrow.
-					sendString("\u001b[D"); //$NON-NLS-1$
+					if (ctrlKeyPressed){
+						sendString("\u001b[1;5D"); //$NON-NLS-1$
+					} else {
+						sendString("\u001b[D"); //$NON-NLS-1$
+					}
 					break;
 
 				case 0x1000004: // Right arrow.
-					sendString("\u001b[C"); //$NON-NLS-1$
+					if (ctrlKeyPressed){
+						sendString("\u001b[1;5C"); //$NON-NLS-1$
+					} else {
+						sendString("\u001b[C"); //$NON-NLS-1$
+					}
 					break;
 
 				case 0x1000005: // PgUp key.
@@ -1008,24 +1024,16 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				return;
 			}
 
-			// To fix SPR 110341, we consider the Alt key to be pressed only when the
-			// Control key is _not_ also pressed.  This works around a bug in SWT where,
-			// on European keyboards, the AltGr key being pressed appears to us as Control
-			// + Alt being pressed simultaneously.
-
 			Logger.log("stateMask = " + event.stateMask); //$NON-NLS-1$
 
-			boolean altKeyPressed = (((event.stateMask & SWT.ALT) != 0) && ((event.stateMask & SWT.CTRL) == 0));
-
-			if (!altKeyPressed && (event.stateMask & SWT.CTRL) != 0
-					&& character == ' ') {
+			if (!altKeyPressed && ctrlKeyPressed && character == ' ') {
 				// Send a NUL character -- many terminal emulators send NUL when
 				// Control-Space is pressed.  This is used to set the mark in Emacs.
 
 				character = '\u0000';
 			}
 
-			sendChar(character, altKeyPressed);
+			sendChar(character, onlyAltKeyPressed);
 
 			// Special case: When we are in a TCP connection and echoing characters
 			// locally, send a LF after sending a CR.
@@ -1053,7 +1061,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			// o The character is the DELETE character.
 
 			if (getTerminalConnector() == null
-					|| getTerminalConnector().isLocalEcho() == false || altKeyPressed
+					|| getTerminalConnector().isLocalEcho() == false || onlyAltKeyPressed
 					|| (character >= '\u0001' && character < '\t')
 					|| (character > '\t' && character < '\r')
 					|| (character > '\r' && character <= '\u001f')

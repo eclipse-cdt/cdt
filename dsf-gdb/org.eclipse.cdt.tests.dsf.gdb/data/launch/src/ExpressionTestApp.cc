@@ -384,9 +384,15 @@ void testReturn() {
 	
 	testSimpleReturn(6);
 	testComplexReturn();
-	a = 0;;
+	a = 0;
 }
-    
+
+void testExistingChild() {
+	bar b;
+	int a = 10;
+	return;
+}
+
 int main() {
     printf("Running ExpressionTest App\n");
 
@@ -415,6 +421,7 @@ int main() {
     testRTTI();
     testCasting();
     testReturn();
+    testExistingChild();
     
     // For bug 320277
     BaseTest b; b.test();

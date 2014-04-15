@@ -435,6 +435,9 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 	
+	/**
+	 * @since 5.7
+	 */
 	public int leave(ICPPASTVirtSpecifier virtSpecifier) {
 		return PROCESS_CONTINUE;
 	}

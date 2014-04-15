@@ -1,0 +1,8 @@
+Code-Review+2: Doug Schaefer <dschaefer@qnx.com>
+Verified+1: Hudson CI
+Code-Review+1: Jonathan Williams <jonwilliams@qnx.com>
+Submitted-by: Doug Schaefer <dschaefer@qnx.com>
+Submitted-at: Tue, 15 Apr 2014 11:33:46 -0400
+Reviewed-on: https://git.eclipse.org/r/24935
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

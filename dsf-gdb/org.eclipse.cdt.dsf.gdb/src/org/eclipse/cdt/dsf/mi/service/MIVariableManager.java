@@ -1540,6 +1540,17 @@ public class MIVariableManager implements ICommandControl {
 											else if (childVar.getRootToUpdate().isOutOfScope()) {
 												childVar.deleteInGdb();
 												childVar = null;
+											} else {
+												childVar.hasCastToBaseClassWorkaround = childHasCastToBaseClassWorkaround;
+												if (fakeChild) {
+													// I don't think this should happen, but we put it just in case
+													addRealChildrenOfFake(childVar,	exprDmc, realChildren,
+															arrayPosition, countingRm);
+												} else {
+													// This is a real child
+													realChildren[arrayPosition] = new ExpressionInfo[] { childVar.exprInfo };
+													countingRm.done();
+												}
 											}
 										}
 

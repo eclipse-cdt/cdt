@@ -4104,6 +4104,80 @@ public class MIExpressionsTest extends BaseTestCase {
     	assertEquals("b",  result[0].getName());
     }
 
+    /**
+     * This tests verifies that we can obtain a child even though
+     * is was already created directly.
+     */
+    @Test
+    public void testExistingChild() throws Throwable {
+        SyncUtil.runToLocation("testExistingChild");
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+        
+        final String PARENT_EXPR = "b";
+        final String CHILD_EXPR = "((b).d)";
+        
+    	// Fetch the child directly
+        final IExpressionDMContext childDmc = SyncUtil.createExpression(frameDmc, CHILD_EXPR);
+    	Query<String> query = new Query<String>() {
+			@Override
+			protected void execute(final DataRequestMonitor<String> rm) {
+				fExpService.getFormattedExpressionValue(
+						fExpService.getFormattedValueContext(childDmc, IFormattedValues.NATURAL_FORMAT), 
+						new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
+							@Override
+							protected void handleSuccess() {
+								rm.done(getData().getFormattedValue());
+							}	
+						});
+			}
+    	};
+    	
+        fSession.getExecutor().execute(query);
+        String value = query.get(500, TimeUnit.MILLISECONDS);
+		assertEquals("8", value);
+
+    	// Now fetch the child through its parent
+        final IExpressionDMContext parentDmc = SyncUtil.createExpression(frameDmc, PARENT_EXPR);
+    	query = new Query<String>() {
+			@Override
+			protected void execute(final DataRequestMonitor<String> rm) {
+    			fExpService.getSubExpressions(
+    					parentDmc, 
+    					new ImmediateDataRequestMonitor<IExpressionDMContext[]>(rm) {
+    						@Override
+    						protected void handleSuccess() {
+    							if (getData().length != 2) {
+    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 
+    					            		"Wrong number for children.  Expecting 2 but got " + getData().length, null));
+    								return;
+    							}
+    							
+    							IExpressionDMContext firstChildContext = getData()[0];
+    							if (firstChildContext.getExpression().equals(CHILD_EXPR) == false) {
+    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 
+    					            		"Got wrong first child. Expected " + CHILD_EXPR + " but got " +  firstChildContext.getExpression(), null));
+    								return;
+    							}
+    							fExpService.getFormattedExpressionValue(
+    									fExpService.getFormattedValueContext(firstChildContext, IFormattedValues.NATURAL_FORMAT), 
+    									new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
+    										@Override
+    										protected void handleSuccess() {
+    											rm.done(getData().getFormattedValue());
+    										}	
+    									});
+
+    						}
+    					});
+			}
+    	};
+    	
+        fSession.getExecutor().execute(query);
+        value = query.get(500, TimeUnit.MILLISECONDS);
+		assertEquals("8", value);
+    }
+
     protected int getChildrenCount(final IExpressionDMContext parentDmc, final int expectedCount) throws Throwable {
 
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();

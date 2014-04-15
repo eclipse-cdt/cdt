@@ -34,6 +34,24 @@
       "revId": "b12b65bfb8d95020d8138d1155006c8c2dc46a12",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_482b7482",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/pdom/QtPDOMLinkage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-04-15T17:08:52Z",
+      "side": 1,
+      "message": "BTW, this is about the same as the ThreadLocal variable in CPPSpecialization. In fact, this hashmap precluded those from getting cleaned up which was a major contributor to memory usage. Making this weak freed them both up.",
+      "parentUuid": "0756a345_e81a4874",
+      "revId": "b12b65bfb8d95020d8138d1155006c8c2dc46a12",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

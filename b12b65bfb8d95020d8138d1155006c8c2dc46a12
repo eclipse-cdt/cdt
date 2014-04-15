@@ -70,6 +70,24 @@
       "revId": "b12b65bfb8d95020d8138d1155006c8c2dc46a12",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_e8a7e890",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/pdom/QtPDOMLinkage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-04-15T17:34:33Z",
+      "side": 1,
+      "message": "Ah, sorry, I meant CPPClassSpecialization.",
+      "parentUuid": "0756a345_28bf20a9",
+      "revId": "b12b65bfb8d95020d8138d1155006c8c2dc46a12",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

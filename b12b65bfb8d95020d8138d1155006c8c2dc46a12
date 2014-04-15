@@ -52,6 +52,24 @@
       "revId": "b12b65bfb8d95020d8138d1155006c8c2dc46a12",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_28bf20a9",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/pdom/QtPDOMLinkage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-04-15T17:15:55Z",
+      "side": 1,
+      "message": "I\u0027m confused. There is no ThreadLocal variable in CPPSpecialization.",
+      "parentUuid": "0756a345_482b7482",
+      "revId": "b12b65bfb8d95020d8138d1155006c8c2dc46a12",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

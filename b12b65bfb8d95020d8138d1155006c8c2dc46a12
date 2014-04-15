@@ -106,6 +106,24 @@
       "revId": "b12b65bfb8d95020d8138d1155006c8c2dc46a12",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_08d21cc9",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/pdom/QtPDOMLinkage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-04-15T18:11:09Z",
+      "side": 1,
+      "message": "Yes, and now so is this \u0027cache\u0027 variable. Which, BTW, was preventing the CPPClassSpecializations from getting cleaned up which led to a pretty massive number of objects not getting cleaned up :).",
+      "parentUuid": "0756a345_6892b829",
+      "revId": "b12b65bfb8d95020d8138d1155006c8c2dc46a12",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

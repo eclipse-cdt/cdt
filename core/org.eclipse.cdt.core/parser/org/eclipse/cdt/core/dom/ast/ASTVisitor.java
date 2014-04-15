@@ -141,6 +141,7 @@ public abstract class ASTVisitor {
 
 	/**
 	 * Set this flag to visit virt-specifiers.
+	 * @since 5.7
 	 */
 	public boolean shouldVisitVirtSpecifiers = false;
 	
@@ -322,6 +323,9 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 	
+	/**
+	 * @since 5.7
+	 */
 	public int visit(ICPPASTVirtSpecifier virtSpecifier) {
 		return PROCESS_CONTINUE;
 	}
@@ -435,6 +439,9 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 	
+	/**
+	 * @since 5.7
+	 */
 	public int leave(ICPPASTVirtSpecifier virtSpecifier) {
 		return PROCESS_CONTINUE;
 	}

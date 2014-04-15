@@ -10,8 +10,8 @@ package org.eclipse.cdt.internal.qt.core.pdom;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -58,7 +58,7 @@ public class QtPDOMLinkage extends PDOMLinkage {
 	// The version that has been read from/written to the persisted file.
 	private int version;
 
-	private final Map<IQtASTName, PDOMBinding> cache = new HashMap<IQtASTName, PDOMBinding>();
+	private final Map<IQtASTName, PDOMBinding> cache = new WeakHashMap<IQtASTName, PDOMBinding>();
 
 	public QtPDOMLinkage(PDOM pdom, long record) throws CoreException {
 		super(pdom, record);
@@ -166,6 +166,9 @@ public class QtPDOMLinkage extends PDOMLinkage {
 		//
 		// I don't think this needs to be thread-safe, because things are only added from
 		// the single indexer task.
+		//
+		// Doug: The cache is causing out of memory conditions. Commenting out for now.
+		//
 		PDOMBinding pdomBinding = null;
 		pdomBinding = cache.get(qtAstName);
 		if (pdomBinding != null)

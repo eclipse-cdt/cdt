@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_95eda586",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/ASTVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-15T14:47:17Z",
+      "side": 1,
+      "message": "I\u0027m getting a missing @since error here.",
+      "revId": "0be5ad3d1939e331fb63722343a6faec89cfa387",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_75df31d2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTFunctionDeclarator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-15T14:47:17Z",
+      "side": 1,
+      "message": "I\u0027m getting a missing @since error here.",
+      "revId": "0be5ad3d1939e331fb63722343a6faec89cfa387",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -16,6 +16,24 @@
       "revId": "b12b65bfb8d95020d8138d1155006c8c2dc46a12",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_e81a4874",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/pdom/QtPDOMLinkage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-04-15T17:01:20Z",
+      "side": 1,
+      "message": "This was a four character change and worked. We have a code freeze tomorrow so want to keep things to a minimum. I want to revisit this after that. This isn\u0027t really a cache since removing it breaks tests. I wonder if it should be info stored in the PDOM itself. I also want to revisit this whole design and make sure it\u0027s the right strategy. It\u0027s working but can it be simplified.",
+      "parentUuid": "0756a345_a83cd0ef",
+      "revId": "b12b65bfb8d95020d8138d1155006c8c2dc46a12",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

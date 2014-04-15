@@ -34,6 +34,7 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	
 	/**
 	 * Used as return value for {@link #getVirtSpecifiers()}.
+	 * @since 5.7
 	 */
 	public static final ICPPASTVirtSpecifier[] NO_VIRT_SPECIFIERS = {};
 
@@ -52,6 +53,7 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	/** @since 5.2 */
 	public static final ASTNodeProperty TRAILING_RETURN_TYPE = new ASTNodeProperty(
 			"ICPPASTFunctionDeclarator.TRAILING_RETURN_TYPE [IASTTypeId]"); //$NON-NLS-1$
+	/** @since 5.7 */
 	public static final ASTNodeProperty VIRT_SPECIFIER = new ASTNodeProperty(
 			"ICPPASTFunctionDeclarator.VIRT_SPECIFIER [ICPPASTVirtSpecifier]");  //$NON-NLS-1$
 	
@@ -215,11 +217,13 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	
 	/**
 	 * Returns the virt-specifiers of this function.
+	 * @since 5.7
 	 */
 	public ICPPASTVirtSpecifier[] getVirtSpecifiers();
 	
 	/**
 	 * Add a virt-specifiers to this function. 
+	 * @since 5.7
 	 */
 	public void addVirtSpecifier(ICPPASTVirtSpecifier virtSpecifier);
 }

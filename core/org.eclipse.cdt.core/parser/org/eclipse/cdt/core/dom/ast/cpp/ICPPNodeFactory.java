@@ -381,6 +381,9 @@ public interface ICPPNodeFactory extends INodeFactory {
 
 	public ICPPASTUsingDirective newUsingDirective(IASTName name);
 
+	/**
+	 * @since 5.7
+	 */
 	public ICPPASTVirtSpecifier newVirtSpecifier(SpecifierKind kind);
 	
 	public ICPPASTVisibilityLabel newVisibilityLabel(int visibility);

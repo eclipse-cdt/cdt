@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_c64bf500",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 849
+      },
+      "writtenOn": "2014-04-16T12:37:24Z",
+      "side": 1,
+      "message": "This comment applies for both lines below and above.\n\n1) divide by zero may occurs here.\n2) What\u0027s the behaviour if user reduces the width to zero, and then resize it ? Is there a risk that ow remains null ?",
+      "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_2660f176",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 849
+      },
+      "writtenOn": "2014-04-16T12:37:24Z",
+      "side": 1,
+      "message": "Is there a risk that ow/oh becomes negative here ?",
+      "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

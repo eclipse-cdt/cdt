@@ -16,6 +16,24 @@
       "revId": "17b578506159306efa65c71185a64be92284839d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_01479724",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-16T14:44:05Z",
+      "side": 1,
+      "message": "No - I mixed up the pom file for multicore visualizer and Epiphany visualizer. Fixed in new patch.",
+      "parentUuid": "0756a345_a19d0b49",
+      "revId": "17b578506159306efa65c71185a64be92284839d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

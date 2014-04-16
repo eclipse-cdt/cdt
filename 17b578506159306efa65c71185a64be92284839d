@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_a19d0b49",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-16T14:34:37Z",
+      "side": 1,
+      "message": "version downgrade, was this intentional?",
+      "revId": "17b578506159306efa65c71185a64be92284839d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

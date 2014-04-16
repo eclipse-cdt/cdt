@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_88a2ac81",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1831,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-04-16T17:11:25Z",
+      "side": 1,
+      "message": "Typo here: \"is bp applies\" should be \"if bp applies\".",
+      "revId": "e5bcd157c33f368b9cce5a08914b35d78947e485",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

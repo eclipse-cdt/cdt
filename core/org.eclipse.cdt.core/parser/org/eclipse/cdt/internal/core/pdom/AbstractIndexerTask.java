@@ -1238,7 +1238,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				addSymbols(data, storageLinkageID, ctx, fTodoTaskUpdater, pm);
 
 			// Contributed processors now have an opportunity to examine the AST.
-			for(IPDOMASTProcessor processor : PDOMASTProcessorManager.getProcessors(ast)) {
+			for (IPDOMASTProcessor processor : PDOMASTProcessorManager.getProcessors(ast)) {
 				data = new PDOMWriter.Data(ast, fileKeys, fIndex);
 				storageLinkageID = processor.process(ast, data);
 				if (storageLinkageID != ILinkage.NO_LINKAGE_ID)

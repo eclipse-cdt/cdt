@@ -53,8 +53,8 @@ public class TodoTaskParser {
 	}
 
 	public Task[] parse(IASTComment[] comments) {
-		HashSet<String> locKeys= new HashSet<String>();
-		List<Task> tasks = new ArrayList<Task>();
+		HashSet<String> locKeys= new HashSet<>();
+		List<Task> tasks = new ArrayList<>();
 		for (IASTComment comment : comments) {
 			IASTFileLocation location = comment.getFileLocation();
 			if (location != null) { // Be defensive, bug 213307

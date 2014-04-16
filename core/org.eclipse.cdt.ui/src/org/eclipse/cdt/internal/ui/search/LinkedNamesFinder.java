@@ -252,7 +252,7 @@ public class LinkedNamesFinder {
 			int low = 0;
 			int high = comments.length;
 			while (low < high) {
-				int mid = (low + high) / 2;
+				int mid = (low + high) >>> 1;
 				int offset = comments[mid].getFileLocation().getNodeOffset();
 				if (offset < startOffset) {
 					low = mid + 1;

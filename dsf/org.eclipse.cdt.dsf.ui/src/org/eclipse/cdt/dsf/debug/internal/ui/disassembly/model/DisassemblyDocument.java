@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems and others.
+ * Copyright (c) 2007, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,6 @@ import org.eclipse.swt.widgets.Display;
  * DisassemblyDocument
  */
 public class DisassemblyDocument extends REDDocument implements IDisassemblyDocument {
-
 	public final static String CATEGORY_MODEL = "category_model"; //$NON-NLS-1$
 	public final static String CATEGORY_DISASSEMBLY = "category_disassembly"; //$NON-NLS-1$
 	public final static String CATEGORY_SOURCE = "category_source"; //$NON-NLS-1$
@@ -222,10 +221,8 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * given address would be inserted. The position is supposed to become the
 	 * first in this list of all positions with the same offset.
 	 * 
-	 * @param positions
-	 *            the list in which the index is computed
-	 * @param address
-	 *            the address for which the index is computed
+	 * @param positions the list in which the index is computed
+	 * @param address the address for which the index is computed
 	 * @return the computed index
 	 * 
 	 */
@@ -234,23 +231,24 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		if (size == 0) {
 			return 0;
 		}
-		int left = 0;
-		int right = size - 1;
+		int low = 0;
+		int high = size;
 		int mid = 0;
-		while (left <= right) {
-			mid = (left + right) / 2;
+		while (low < high) {
+			mid = (low + high) >>> 1;
 			AddressRangePosition range = positions.get(mid);
 			int compareSign = address.compareTo(range.fAddressOffset);
 			if (compareSign < 0) {
-				right = mid - 1;
+				high = mid;
 			} else if (compareSign == 0) {
 				break;
 			} else if (address.compareTo(range.fAddressOffset.add(range.fAddressLength)) >= 0) {
-				left = mid + 1;
+				low = mid + 1;
 			} else {
 				break;
 			}
 		}
+
 		int idx = mid;
 		AddressRangePosition p = positions.get(idx);
 		if (address.compareTo(p.fAddressOffset) == 0) {
@@ -273,10 +271,8 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * given address would be inserted. The position is supposed to become the
 	 * last but one in this list of all positions with the same address.
 	 * 
-	 * @param positions
-	 *            the list in which the index is computed
-	 * @param address
-	 *            the address for which the index is computed
+	 * @param positions the list in which the index is computed
+	 * @param address the address for which the index is computed
 	 * @return the computed index
 	 * 
 	 */
@@ -285,22 +281,23 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		if (size == 0) {
 			return 0;
 		}
-		int left = 0;
-		int right = size - 1;
+		int low = 0;
+		int high = size;
 		int mid = 0;
-		while (left <= right) {
-			mid = (left + right) / 2;
+		while (low < high) {
+			mid = (low + high) >>> 1;
 			AddressRangePosition range = positions.get(mid);
 			if (address.compareTo(range.fAddressOffset) < 0) {
-				right = mid - 1;
+				high = mid;
 			} else if (address.compareTo(range.fAddressOffset) == 0) {
 				break;
 			} else if (address.compareTo(range.fAddressOffset.add(range.fAddressLength)) >= 0) {
-				left = mid + 1;
+				low = mid + 1;
 			} else {
 				break;
 			}
 		}
+
 		int idx = mid;
 		AddressRangePosition p = positions.get(idx);
 		if (address.compareTo(p.fAddressOffset) > 0) {
@@ -323,46 +320,43 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * given offset would be inserted. The position is supposed to become the
 	 * last in this list of all positions with the same offset.
 	 * 
-	 * @param positions
-	 *            the list in which the index is computed
-	 * @param offset
-	 *            the offset for which the index is computed
+	 * @param positions the list in which the index is computed
+	 * @param offset the offset for which the index is computed
 	 * @return the computed index
 	 * 
 	 * @see IDocument#computeIndexInCategory(String, int)
 	 */
 	protected int computeIndexInPositionListLast(List<Position> positions, int offset) {
-
 		if (positions.size() == 0)
 			return 0;
 
-		int left = 0;
-		int right = positions.size() - 1;
+		int low = 0;
+		int high = positions.size() - 1;
 		int mid = 0;
 		Position p = null;
 
-		while (left < right) {
-
-			mid = (left + right) / 2;
+		while (low < high) {
+			mid = (low + high) >>> 1;
 
 			p = positions.get(mid);
 			if (offset < p.getOffset()) {
-				if (left == mid)
-					right = left;
-				else
-					right = mid - 1;
+				if (low == mid) {
+					high = low;
+				} else {
+					high = mid - 1;
+				}
 			} else if (offset > p.getOffset()) {
-				if (right == mid)
-					left = right;
-				else
-					left = mid + 1;
+				if (high == mid) {
+					low = high;
+				} else {
+					low = mid + 1;
+				}
 			} else if (offset == p.getOffset()) {
-				left = right = mid;
+				low = high = mid;
 			}
-
 		}
 
-		int pos = left;
+		int pos = low;
 		p = positions.get(pos);
 		while (offset >= p.getOffset()) {
 			// entry will become the last of all entries with the same offset
@@ -374,12 +368,11 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		}
 
 		assert 0 <= pos && pos <= positions.size();
-
 		return pos;
 	}
 
 	/**
-	 * Get the position for the supplied category and index.
+	 * Returns the position for the supplied category and index.
 	 * 
 	 * @param category
 	 * @param index
@@ -399,20 +392,11 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		return null;
 	}
 
-	/**
-	 * @param address
-	 * @return
-	 */
 	public AddressRangePosition getPositionOfAddress(BigInteger address) {
 		AddressRangePosition pos = getPositionOfAddress(CATEGORY_DISASSEMBLY, address);
 		return pos;
 	}
 
-	/**
-	 * @param category
-	 * @param address
-	 * @return
-	 */
 	public AddressRangePosition getPositionOfAddress(String category, BigInteger address) {
 		@SuppressWarnings("unchecked")
 		List<AddressRangePosition> positions = (List<AddressRangePosition>) getDocumentManagedPositions().get(category);

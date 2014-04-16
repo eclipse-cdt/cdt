@@ -36,7 +36,7 @@ public abstract class ArrayUtil {
      * the given class object.
      */
 	@SuppressWarnings("unchecked")
-	static public <T> T[] append(Class<T> c, T[] array, T obj) {
+	public static <T> T[] append(Class<T> c, T[] array, T obj) {
     	if (obj == null)
     		return array;
     	if (array == null || array.length == 0) {
@@ -65,7 +65,7 @@ public abstract class ArrayUtil {
      * Object.
      */
     @SuppressWarnings("unchecked")
-	static public <T> T[] append(T[] array, T obj) {
+	public static <T> T[] append(T[] array, T obj) {
     	if (obj == null)
     		return array;
     	if (array == null || array.length == 0) {
@@ -90,22 +90,21 @@ public abstract class ArrayUtil {
 
     /**
      * Assumes that array contains {@code null}s at the end, only.
-     * @returns index of first {@code null}, or -1
+     *
+     * @return index of first {@code null}, or -1
      */ 
     private static int findFirstNull(Object[] array) {
-    	boolean haveNull= false;
-    	int left= 0;
-    	int right= array.length - 1;
-    	while (left <= right) {
-    		int mid= (left + right) / 2;
+    	int low= 0;
+    	int high= array.length;
+    	while (low < high) {
+    		int mid= (low + high) >>> 1;
     		if (array[mid] == null) {
-    			haveNull= true;
-    			right= mid - 1;
+    			high= mid;
     		} else {
-    			left= mid + 1;
+    			low= mid + 1;
     		}
     	}
-		return haveNull ? right + 1 : -1;
+		return high < array.length ? high : -1;
 	}
 
     /**
@@ -114,7 +113,7 @@ public abstract class ArrayUtil {
      */
     @Deprecated
 	@SuppressWarnings("unchecked")
-	static public Object[] append(Class<?> c, Object[] array, int currentLength, Object obj) {
+	public static Object[] append(Class<?> c, Object[] array, int currentLength, Object obj) {
     	return appendAt((Class<Object>) c, array, currentLength, obj);
     }
 
@@ -124,7 +123,7 @@ public abstract class ArrayUtil {
      * @since 5.1
      */
     @SuppressWarnings("unchecked")
-	static public <T> T[] appendAt(Class<T> c, T[] array, int currentLength, T obj) {
+	public static <T> T[] appendAt(Class<T> c, T[] array, int currentLength, T obj) {
     	if (obj == null)
     		return array;
     	if (array == null || array.length == 0) {
@@ -155,7 +154,7 @@ public abstract class ArrayUtil {
      * @return The modified array, which may be the same as the first parameter. 
      * @since 5.4
      */
-	static public <T> T[] appendAt(T[] array, int currentLength, T obj) {
+	public static <T> T[] appendAt(T[] array, int currentLength, T obj) {
     	if (obj == null)
     		return array;
     	if (currentLength >= array.length) {
@@ -180,7 +179,7 @@ public abstract class ArrayUtil {
      * @param forceNew
      */
     @SuppressWarnings("unchecked")
-	static public <T> T[] trim(Class<T> c, T[] array, boolean forceNew) {
+	public static <T> T[] trim(Class<T> c, T[] array, boolean forceNew) {
         if (array == null)
             return (T[]) Array.newInstance(c, 0);
 
@@ -214,7 +213,7 @@ public abstract class ArrayUtil {
      * @param forceNew
      * @since 5.2
      */
-	static public <T> T[] trim(T[] array, boolean forceNew) {
+	public static <T> T[] trim(T[] array, boolean forceNew) {
         int i = array.length;
         if (i == 0 || array[i - 1] != null) {
         	if (!forceNew) {
@@ -235,7 +234,7 @@ public abstract class ArrayUtil {
      * @param array the array to be trimmed
      * @since 5.2
      */
-	static public <T> T[] trim(T[] array) {
+	public static <T> T[] trim(T[] array) {
 		return trim(array, false);
 	}
 
@@ -250,7 +249,7 @@ public abstract class ArrayUtil {
      * @return the modified array, which may be the same as the first parameter. 
      * @since 5.4
      */
-	static public <T> T[] trim(T[] array, int newLength) {
+	public static <T> T[] trim(T[] array, int newLength) {
 		if (newLength == array.length)
 			return array;
    		Assert.isTrue(array[newLength] == null);

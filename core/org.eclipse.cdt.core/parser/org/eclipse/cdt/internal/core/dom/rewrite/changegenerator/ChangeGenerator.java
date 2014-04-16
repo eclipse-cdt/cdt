@@ -601,7 +601,7 @@ public class ChangeGenerator extends ASTVisitor {
 		int low = 0;
 		int high = preprocessorStatements.length;
 		while (low < high) {
-			int mid = (low + high) / 2;
+			int mid = (low + high) >>> 1;
 			IASTNode statement = preprocessorStatements[mid];
 			if (statement.isPartOfTranslationUnitFile() && endOffset(statement) > offset) {
 				high = mid;

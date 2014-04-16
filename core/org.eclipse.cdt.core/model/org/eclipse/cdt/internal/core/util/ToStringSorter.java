@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Rational Software - Initial API and implementation
+ *     Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.util;
-
 
 /**
  * The SortOperation takes a collection of objects and returns
@@ -22,6 +21,7 @@ package org.eclipse.cdt.internal.core.util;
 public class ToStringSorter {
 	Object[] sortedObjects;
 	String[] sortedStrings;
+
 	/**
 	 *  Returns true if stringTwo is 'greater than' stringOne
 	 *  This is the 'ordering' method of the sort operation.
@@ -29,13 +29,14 @@ public class ToStringSorter {
 	public boolean compare(String stringOne, String stringTwo) {
 		return stringOne.compareTo(stringTwo) < 0;
 	}
+
 	/**
 	 *  Sort the objects in sorted collection and return that collection.
 	 */
 	private void quickSort(int left, int right) {
 		int originalLeft = left;
 		int originalRight = right;
-		int midIndex =  (left + right) / 2;
+		int midIndex =  (left + right) >>> 1;
 		String midToString = this.sortedStrings[midIndex];
 		
 		do {
@@ -60,6 +61,7 @@ public class ToStringSorter {
 		if (left < originalRight)
 			quickSort(left, originalRight);
 	}
+
 	/**
 	 *  Return a new sorted collection from this unsorted collection.
 	 *  Sort using quick sort.

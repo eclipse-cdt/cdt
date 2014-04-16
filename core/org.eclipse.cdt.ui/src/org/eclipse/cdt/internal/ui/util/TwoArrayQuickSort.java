@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,18 +13,16 @@ package org.eclipse.cdt.internal.ui.util;
 
 import org.eclipse.core.runtime.Assert;
 
-
 /**
  * Quick sort to sort two arrays in parallel.
  */
 public class TwoArrayQuickSort {
 
 	private static void internalSort(String[] keys, Object[] values, int left, int right, boolean ignoreCase) { 
-	
 		int original_left= left;
 		int original_right= right;
 		
-		String mid= keys[(left + right) / 2]; 
+		String mid= keys[(left + right) >>> 1]; 
 		do { 
 			while (smaller(keys[left], mid, ignoreCase)) { 
 				left++; 
@@ -53,11 +51,13 @@ public class TwoArrayQuickSort {
 			 internalSort(keys, values, left, original_right, ignoreCase); 
 		} 
 	}
+
 	private static boolean smaller(String left, String right, boolean ignoreCase) {
 		if (ignoreCase)
 			return left.compareToIgnoreCase(right) < 0;
 		return left.compareTo(right) < 0;	
 	}
+
 	/**
 	 * Sorts keys and values in parallel.
 	 */

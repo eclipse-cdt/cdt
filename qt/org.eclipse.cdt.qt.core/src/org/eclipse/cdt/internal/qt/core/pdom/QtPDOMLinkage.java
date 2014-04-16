@@ -166,9 +166,6 @@ public class QtPDOMLinkage extends PDOMLinkage {
 		//
 		// I don't think this needs to be thread-safe, because things are only added from
 		// the single indexer task.
-		//
-		// Doug: The cache is causing out of memory conditions. Commenting out for now.
-		//
 		PDOMBinding pdomBinding = null;
 		pdomBinding = cache.get(qtAstName);
 		if (pdomBinding != null)

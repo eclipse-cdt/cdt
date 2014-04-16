@@ -2688,10 +2688,16 @@ public class MIVariableManager implements ICommandControl {
 						MIExpressionDMC miExprCtx = (MIExpressionDMC) exprCtx;
 						ExpressionInfo ctxExprInfo = miExprCtx.getExpressionInfo();
 						ExpressionInfo varExprInfo = varObj.getExpressionInfo();
+						// Don't use equals() below because we are concerned with other fields
+						// of ExpressionInfo that are not considered when doing equals().
+						// Instead, only consider equal if both objects are the same one
 						if (ctxExprInfo != varExprInfo) {
 							// exprCtrx could just be created via IExpressions.createExpression,
 							// and thus the parent-child relationship is not yet set.
-							miExprCtx.setExpressionInfo(varExprInfo);
+							// Set that relationship while keeping the relative expression of
+							// the original context (see bug 393930)
+							miExprCtx.setExpressionInfo(new ExpressionInfo(miExprCtx.getExpression(), miExprCtx.getRelativeExpression(),
+									varExprInfo.isDynamic(), varExprInfo.getParent(), varExprInfo.getIndexInParentExpression()));
 						}
 						
 						rm.setData(varObj);

@@ -43,6 +43,7 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMData;
 import org.eclipse.cdt.dsf.mi.service.ClassAccessor.MIExpressionDMCAccessor;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions;
+import org.eclipse.cdt.dsf.mi.service.MIExpressions.MIExpressionDMC;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -4178,6 +4179,90 @@ public class MIExpressionsTest extends BaseTestCase {
 		assertEquals("8", value);
     }
 
+    /**
+     * This tests verifies that we can manually create a child of an expression
+     * after that child was automatically created through the parent.
+     * This case happens when selecting a child of an expression and using "Watch"
+     * to create an expression automatically.
+     */
+    @Test
+    public void testExplicitChildCreation() throws Throwable {
+        SyncUtil.runToLocation("testExistingChild");
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+        
+        final String PARENT_EXPR = "b";
+        final String CHILD_EXPR = "((b).d)";
+        final String CHILD__REL_EXPR = "d";
+
+    	// First fetch the child through its parent
+        final IExpressionDMContext parentDmc = SyncUtil.createExpression(frameDmc, PARENT_EXPR);
+    	Query<String> query = new Query<String>() {
+			@Override
+			protected void execute(final DataRequestMonitor<String> rm) {
+    			fExpService.getSubExpressions(
+    					parentDmc, 
+    					new ImmediateDataRequestMonitor<IExpressionDMContext[]>(rm) {
+    						@Override
+    						protected void handleSuccess() {
+    							if (getData().length != 2) {
+    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 
+    					            		"Wrong number for children.  Expecting 2 but got " + getData().length, null));
+    								return;
+    							}
+    							
+    							MIExpressionDMC firstChildContext = (MIExpressionDMC)getData()[0];
+    							if (firstChildContext.getExpression().equals(CHILD_EXPR) == false) {
+    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 
+    					            		"Got wrong first child. Expected " + CHILD_EXPR + " but got " +  firstChildContext.getExpression(), null));
+    								return;
+    							}
+
+    							if (firstChildContext.getRelativeExpression().equals(CHILD__REL_EXPR) == false) {
+    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 
+    					            		"Got wrong relative expression. Expected " + CHILD__REL_EXPR + " but got " +  firstChildContext.getRelativeExpression(), null));
+    								return;
+    							}
+
+    							fExpService.getFormattedExpressionValue(
+    									fExpService.getFormattedValueContext(firstChildContext, IFormattedValues.NATURAL_FORMAT), 
+    									new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
+    										@Override
+    										protected void handleSuccess() {
+    											rm.done(getData().getFormattedValue());
+    										}	
+    									});
+
+    						}
+    					});
+			}
+    	};
+    	
+        fSession.getExecutor().execute(query);
+        String value = query.get(500, TimeUnit.MILLISECONDS);
+		assertEquals("8", value);
+
+    	// Now access the child directly
+        final IExpressionDMContext childDmc = SyncUtil.createExpression(frameDmc, CHILD_EXPR);
+    	query = new Query<String>() {
+			@Override
+			protected void execute(final DataRequestMonitor<String> rm) {
+				fExpService.getFormattedExpressionValue(
+						fExpService.getFormattedValueContext(childDmc, IFormattedValues.NATURAL_FORMAT), 
+						new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
+							@Override
+							protected void handleSuccess() {
+								rm.done(getData().getFormattedValue());
+							}	
+						});
+			}
+    	};
+    	
+        fSession.getExecutor().execute(query);
+        value = query.get(500, TimeUnit.MILLISECONDS);
+		assertEquals("8", value);
+    }
+    
     protected int getChildrenCount(final IExpressionDMContext parentDmc, final int expectedCount) throws Throwable {
 
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();

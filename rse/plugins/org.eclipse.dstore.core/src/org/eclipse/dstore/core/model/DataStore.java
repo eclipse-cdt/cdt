@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@
  * David McKnight   (IBM) - [385793] [dstore] DataStore spirit mechanism and other memory improvements needed
  * David McKnight   (IBM) - [390037] [dstore] Duplicated items in the System view
  * David McKnight   (IBM) - [396440] [dstore] fix issues with the spiriting mechanism and other memory improvements (phase 1)
+ * David McKnight   (IBM) - [432875] [dstore] do not use rmt_classloader_cache*.jar
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -2650,11 +2651,16 @@ public final class DataStore
 		_ticket = null;
 
 		// clear the maps
-		_classReqRepository.clear();
+		if (_classReqRepository != null){
+			_classReqRepository.clear();
+		}
 		_cmdDescriptorMap.clear();
 		_hashMap.clear();
 		_lastCreatedElements.clear();
-		_localClassLoaders.clear();
+		
+		if (_localClassLoaders != null){
+			_localClassLoaders.clear();
+		}
 		_objDescriptorMap.clear();
 		_relDescriptorMap.clear();
 		
@@ -3732,22 +3738,26 @@ public final class DataStore
 			}
 		}
 
-		//_remoteClassLoader = new RemoteClassLoader(this);
-		_classReqRepository = new HashMap();
-
 		_waitingStatuses = new ArrayList();
 
 		_byteStreamHandlerRegistry = new ByteStreamHandlerRegistry();
-		_classbyteStreamHandlerRegistry = new ClassByteStreamHandlerRegistry();
 		setDefaultByteStreamHandler();
-		setDefaultClassByteStreamHandler();
 
-		// only start tracing now if we're in one process per server mode
-		if (SystemServiceManager.getInstance().getSystemService() == null){
-			assignCacheJar();
+		// remote class loading
+		// only supported when -DDSTORE_REMOTE_CLASS_LOADING_ON=true
+		//
+		String remoteClassLoading = System.getProperty("DSTORE_REMOTE_CLASS_LOADING_ON"); //$NON-NLS-1$
+		if (remoteClassLoading != null && remoteClassLoading.equals("true")){ //$NON-NLS-1$
+			_classReqRepository = new HashMap();
+			_classbyteStreamHandlerRegistry = new ClassByteStreamHandlerRegistry();
+			setDefaultClassByteStreamHandler();
+	
+			// only allow remote class loading if this is 1 client per server
+			if (SystemServiceManager.getInstance().getSystemService() == null){
+				assignCacheJar();
+			}	
+			registerLocalClassLoader(this.getClass().getClassLoader());
 		}
-
-		registerLocalClassLoader(this.getClass().getClassLoader());
 	}
 
 	public void startDataElementRemoverThread()

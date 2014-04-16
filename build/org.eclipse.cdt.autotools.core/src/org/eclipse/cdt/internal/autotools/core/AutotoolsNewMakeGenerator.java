@@ -127,6 +127,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	private ICConfigurationDescription cdesc;
 	private IAConfiguration toolsCfg;
 	private IBuilder builder;
+	
 
 	public void generateDependencies() throws CoreException {
 		// TODO Auto-generated method stub
@@ -402,7 +403,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				// There is a make target for cleaning.
 				if (topMakefile != null && topMakefile.exists()) {
 					String[] makeargs = new String[1];
-					IPath makeCmd = new Path("make"); //$NON-NLS-1$
+					IPath makeCmd = builder.getBuildCommand();
 					String target = null;
 					try {
 						target = getProject().getPersistentProperty(AutotoolsPropertyConstants.CLEAN_MAKE_TARGET);
@@ -452,7 +453,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 						// There is a make target for cleaning.
 						if (makefile != null && makefile.exists()) {
 							String[] makeargs = new String[1];
-							IPath makeCmd = new Path("make"); //$NON-NLS-1$
+							IPath makeCmd = builder.getBuildCommand();
 							String target = null;
 							try {
 								target = getProject().getPersistentProperty(AutotoolsPropertyConstants.CLEAN_MAKE_TARGET);
@@ -579,7 +580,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			// If nothing this far, look for a Makefile.cvs file which needs to be run. 
 			else if (makefileCvsExists()) {
 				String[] makeargs = new String[1];
-				IPath makeCmd = new Path("make"); //$NON-NLS-1$
+				IPath makeCmd = builder.getBuildCommand();
 				makeargs[0] = "-f" + getMakefileCVSPath().toOSString(); //$NON-NLS-1$
 				rc = runCommand(makeCmd,
 						project.getLocation().append(buildDir),
@@ -1393,7 +1394,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		targetElem.setAttribute(TARGET_ATTR_ID, target.getTargetBuilderID());
 		targetElem.setAttribute(TARGET_ATTR_PATH, target.getContainer().getProjectRelativePath().toString());
 		ICStorageElement elem = targetElem.createChild(TARGET_COMMAND);
-		elem.setValue(target.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make")); //$NON-NLS-1$
+		elem.setValue(target.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, builder.getBuildCommand().toOSString()));
 
 		String targetAttr = target.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, null);
 		if ( targetAttr != null) {

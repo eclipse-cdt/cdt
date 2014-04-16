@@ -141,6 +141,24 @@
       "revId": "b12b65bfb8d95020d8138d1155006c8c2dc46a12",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_a1c18bfd",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/pdom/QtPDOMLinkage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-04-16T14:44:14Z",
+      "side": 1,
+      "message": "Yup. Sorry about that. I\u0027ll clean this up.",
+      "parentUuid": "0756a345_a894d09a",
+      "revId": "b12b65bfb8d95020d8138d1155006c8c2dc46a12",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

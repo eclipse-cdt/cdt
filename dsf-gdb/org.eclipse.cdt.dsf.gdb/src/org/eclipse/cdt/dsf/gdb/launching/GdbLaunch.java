@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems and others.
+ * Copyright (c) 2006, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *     Marc Khouzam (Ericsson) - Fix NPE for partial launches (Bug 368597)
  *     Marc Khouzam (Ericsson) - Create the gdb process through the process factory (Bug 210366)
  *     Alvaro Sanchez-Leon (Ericsson AB) - Each memory context needs a different MemoryRetrieval (Bug 250323)
+ *     Anders Dahlberg (Ericsson)  - Need additional API to extend support for memory spaces (Bug 431627)
+ *     Alvaro Sanchez-Leon (Ericsson AB)  - Need additional API to extend support for memory spaces (Bug 431627)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -33,8 +35,8 @@ import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.concurrent.Sequence.Step;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
-import org.eclipse.cdt.dsf.debug.internal.provisional.model.IMemoryBlockRetrievalManager;
 import org.eclipse.cdt.dsf.debug.model.DsfLaunch;
+import org.eclipse.cdt.dsf.debug.model.IMemoryBlockRetrievalManager;
 import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
@@ -129,7 +131,7 @@ public class GdbLaunch extends DsfLaunch
             fExecutor.submit( new Callable<Object>() {
             	@Override
                 public Object call() throws CoreException {
-                    fMemRetrievalManager = new GdbMemoryBlockRetrievalManager(GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, getLaunchConfiguration(), fSession);
+                    fMemRetrievalManager = createMemoryBlockRetrievalManager();
                     fSession.registerModelAdapter(IMemoryBlockRetrievalManager.class, fMemRetrievalManager);
                     fSession.addServiceEventListener(fMemRetrievalManager, null);
                     return null;
@@ -143,7 +145,15 @@ public class GdbLaunch extends DsfLaunch
             throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Debugger shut down before launch was completed.", e)); //$NON-NLS-1$
         }
     }
-
+    
+    /**
+     * Create an instance of the Memory Retrieval Manager
+	 * @since 4.4
+	 */
+    protected IMemoryBlockRetrievalManager createMemoryBlockRetrievalManager() {
+        	return new GdbMemoryBlockRetrievalManager(GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, getLaunchConfiguration(), getSession());
+    }
+        
     public DsfSession getSession() { return fSession; }
     
     @ThreadSafeAndProhibitedFromDsfExecutor("getDsfExecutor()")

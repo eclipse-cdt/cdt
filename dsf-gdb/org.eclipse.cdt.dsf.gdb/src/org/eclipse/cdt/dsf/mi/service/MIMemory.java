@@ -430,11 +430,6 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     //////////////////////////////////////////////////////////////////////////
     // Event handlers
     //////////////////////////////////////////////////////////////////////////
-
-    /**
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     * @noreference This method is not intended to be referenced by clients.
-     */
     @DsfServiceEventHandler
 	public void eventDispatched(IResumedDMEvent e) {
     	if (e instanceof IContainerResumedDMEvent) {
@@ -459,10 +454,6 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
    		}
 	}
    
-    /**
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     * @noreference This method is not intended to be referenced by clients.
-     */
     @DsfServiceEventHandler
 	public void eventDispatched(ISuspendedDMEvent e) {
     	if (e instanceof IContainerSuspendedDMEvent) {

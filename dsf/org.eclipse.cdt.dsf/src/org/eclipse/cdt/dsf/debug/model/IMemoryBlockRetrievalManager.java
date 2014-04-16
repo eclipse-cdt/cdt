@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Ericsson and others.
+ * Copyright (c) 2013, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,10 @@
  * 
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson AB) - Each memory context needs a different MemoryRetrieval (Bug 250323)
+ *     Anders Dahlberg (Ericsson)  - Need additional API to extend support for memory spaces (Bug 431627)
+ *     Alvaro Sanchez-Leon (Ericsson AB)  - Need additional API to extend support for memory spaces (Bug 431627)
  *******************************************************************************/
-package org.eclipse.cdt.dsf.debug.internal.provisional.model;
+package org.eclipse.cdt.dsf.debug.model;
 
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
@@ -24,7 +26,7 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
  * relationship with an IMemoryDMContext</p>
  *
  * <p>Functionality detecting changes to different memory context elements can resolve the corresponding IMemoryBlockRetrieval via this API.</p>
- *
+ * @since 2.5
  */
 public interface IMemoryBlockRetrievalManager {
 	/**

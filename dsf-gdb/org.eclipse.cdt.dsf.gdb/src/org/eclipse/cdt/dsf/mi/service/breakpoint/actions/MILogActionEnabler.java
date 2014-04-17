@@ -17,11 +17,9 @@ import org.eclipse.cdt.debug.core.breakpointactions.ILogActionEnabler;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
-import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
@@ -34,12 +32,12 @@ public class MILogActionEnabler implements ILogActionEnabler {
 
     private final DsfExecutor fExecutor;
     private final DsfServicesTracker fServiceTracker;
-    private final IBreakpointsTargetDMContext fContext;
+    private final IDMContext fContext;
 
     public MILogActionEnabler(DsfExecutor executor, DsfServicesTracker serviceTracker, IDMContext context) {
         fExecutor = executor;
         fServiceTracker = serviceTracker;
-        fContext = DMContexts.getAncestorOfType(context, IBreakpointsTargetDMContext.class);
+        fContext = context;
     }
 
 	@Override

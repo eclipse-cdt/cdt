@@ -288,6 +288,14 @@ public class GDBConsoleBreakpointsTest extends BaseTestCase {
 		plBpt = findPlatformBreakpoint(type, attributes);
 		Assert.assertTrue(plBpt instanceof CBreakpoint);
 		waitForInstallCountChange((CBreakpoint)plBpt, 0);
+		
+		// Make sure the breakpoint does not get re-installed
+		// once it gets a notification that the platform bp changed
+		// (through its install count changing) Bug 433044
+		// Give it some time and verify that it is still 0.
+		Thread.sleep(3000);  // One second was not enough
+		Assert.assertTrue("Install count no longer 0",
+				          ((CBreakpoint)plBpt).getInstallCount() == 0);
 
 		// Set the console breakpoint again and verify that 
 		// the install count of the platform breakpoint is 1 

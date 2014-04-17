@@ -764,6 +764,11 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         final Map<ICBreakpoint, Set<String>> threadsIDs = fBreakpointThreads.get(dmc);
         assert threadsIDs != null;
 
+        // Remove all relevant target filters
+        // Note that this call is important if a breakpoint is removed directly
+        // from the gdb console, or else we will try to re-install it (bug 433044)
+       	removeAllTargetFilters(dmc, breakpoint);
+
         // Remove breakpoint problem marker (if any)
         removeBreakpointProblemMarker(breakpoint);
 
@@ -1502,6 +1507,19 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     	try {
     		IDsfBreakpointExtension filterExt = getFilterExtension(breakpoint);
    			filterExt.removeTargetFilter(containerDmc);
+    	} catch (CoreException e) {
+    	}
+    }
+
+    private void removeAllTargetFilters(IBreakpointsTargetDMContext bpTargetDmc, ICBreakpoint breakpoint) {
+    	try {
+    		IDsfBreakpointExtension filterExt = getFilterExtension(breakpoint);
+   			IContainerDMContext[] targets = filterExt.getTargetFilters();
+   			for (IContainerDMContext target : targets) {
+   				if (bpTargetDmc.equals(target) || DMContexts.isAncestorOf(target, bpTargetDmc)) {
+   					filterExt.removeTargetFilter(target);
+   				}
+   			}
     	} catch (CoreException e) {
     	}
     }

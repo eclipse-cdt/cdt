@@ -52,19 +52,19 @@ public class LocationMap implements ILocationResolver {
 	private String fTranslationUnitPath;
     private IASTTranslationUnit fTranslationUnit;
 
-    private ArrayList<ASTPreprocessorNode> fDirectives= new ArrayList<ASTPreprocessorNode>();
-    private ArrayList<ASTProblem> fProblems= new ArrayList<ASTProblem>();
-    private ArrayList<ASTComment> fComments= new ArrayList<ASTComment>();
-    private ArrayList<ASTMacroDefinition> fBuiltinMacros= new ArrayList<ASTMacroDefinition>();
-	private ArrayList<ASTPreprocessorName> fMacroReferences= new ArrayList<ASTPreprocessorName>();
+    private ArrayList<ASTPreprocessorNode> fDirectives= new ArrayList<>();
+    private ArrayList<ASTProblem> fProblems= new ArrayList<>();
+    private ArrayList<ASTComment> fComments= new ArrayList<>();
+    private ArrayList<ASTMacroDefinition> fBuiltinMacros= new ArrayList<>();
+	private ArrayList<ASTPreprocessorName> fMacroReferences= new ArrayList<>();
 	
     private LocationCtxFile fRootContext;
     private LocationCtx fCurrentContext;
 	private int fLastChildInsertionOffset;
 
-	// stuff computed on demand
+	// Stuff computed on demand
 	private IdentityHashMap<IBinding, IASTPreprocessorMacroDefinition> fMacroDefinitionMap;
-	private List<ISkippedIndexedFilesListener> fSkippedFilesListeners= new ArrayList<ISkippedIndexedFilesListener>();
+	private List<ISkippedIndexedFilesListener> fSkippedFilesListeners= new ArrayList<>();
 
 	public LocationMap(LexerOptions lexOptions) {
 		fLexerOptions= lexOptions;
@@ -516,7 +516,7 @@ public class LocationMap implements ILocationResolver {
 		}
 		
 		LocationCtxFile ctx= floc.getLocationContext();
-		ArrayList<IASTPreprocessorMacroExpansion> list= new ArrayList<IASTPreprocessorMacroExpansion>();
+		ArrayList<IASTPreprocessorMacroExpansion> list= new ArrayList<>();
 		
 		ctx.collectMacroExpansions(floc.getNodeOffset(), floc.getNodeLength(), list);
 		return list.toArray(new IASTPreprocessorMacroExpansion[list.size()]);
@@ -549,7 +549,7 @@ public class LocationMap implements ILocationResolver {
 
 	@Override
 	public IASTNodeLocation[] getLocations(int sequenceNumber, int length) {
-		ArrayList<IASTNodeLocation> result= new ArrayList<IASTNodeLocation>();
+		ArrayList<IASTNodeLocation> result= new ArrayList<>();
 		fRootContext.collectLocations(sequenceNumber, length, result);
 		return result.toArray(new IASTNodeLocation[result.size()]);
 	} 
@@ -561,7 +561,7 @@ public class LocationMap implements ILocationResolver {
 
 	@Override
 	public IASTImageLocation getImageLocation(int sequenceNumber, int length) {
-		ArrayList<IASTNodeLocation> result= new ArrayList<IASTNodeLocation>();
+		ArrayList<IASTNodeLocation> result= new ArrayList<>();
 		fRootContext.collectLocations(sequenceNumber, length, result);
 		if (result.size() != 1) {
 			return null;
@@ -669,7 +669,7 @@ public class LocationMap implements ILocationResolver {
 	public int getSequenceNumberForFileOffset(String filePath, int fileOffset) {
 		LocationCtx ctx= fRootContext;
 		if (filePath != null) {
-			ArrayDeque<LocationCtx> contexts= new ArrayDeque<LocationCtx>();
+			ArrayDeque<LocationCtx> contexts= new ArrayDeque<>();
 			while (ctx != null) {
 				if (ctx instanceof LocationCtxFile) {
 					if (filePath.equals(ctx.getFilePath())) {
@@ -708,7 +708,7 @@ public class LocationMap implements ILocationResolver {
 
 	@Override
 	public IASTPreprocessorMacroDefinition[] getMacroDefinitions() {
-    	ArrayList<IASTPreprocessorMacroDefinition> result= new ArrayList<IASTPreprocessorMacroDefinition>();
+    	ArrayList<IASTPreprocessorMacroDefinition> result= new ArrayList<>();
     	for (ASTPreprocessorNode directive : fDirectives) {
 			if (directive instanceof IASTPreprocessorMacroDefinition) {
 				result.add((IASTPreprocessorMacroDefinition) directive);
@@ -719,7 +719,7 @@ public class LocationMap implements ILocationResolver {
 
     @Override
 	public IASTPreprocessorIncludeStatement[] getIncludeDirectives() {
-    	ArrayList<IASTPreprocessorIncludeStatement> result= new ArrayList<IASTPreprocessorIncludeStatement>();
+    	ArrayList<IASTPreprocessorIncludeStatement> result= new ArrayList<>();
     	for (ASTPreprocessorNode directive : fDirectives) {
 			if (directive instanceof IASTPreprocessorIncludeStatement) {
 				result.add((IASTPreprocessorIncludeStatement) directive);
@@ -761,7 +761,7 @@ public class LocationMap implements ILocationResolver {
 
 	IASTPreprocessorMacroDefinition getMacroDefinition(IMacroBinding binding) {
 		if (fMacroDefinitionMap == null) {
-			fMacroDefinitionMap= new IdentityHashMap<IBinding, IASTPreprocessorMacroDefinition>();
+			fMacroDefinitionMap= new IdentityHashMap<>();
 			for (int i = 0; i < fBuiltinMacros.size(); i++) {
 				final IASTPreprocessorMacroDefinition def = fBuiltinMacros.get(i);
 				final IASTName name = def.getName();
@@ -782,7 +782,7 @@ public class LocationMap implements ILocationResolver {
 
 	@Override
 	public IASTName[] getReferences(IMacroBinding binding) {
-		List<IASTName> result= new ArrayList<IASTName>();
+		List<IASTName> result= new ArrayList<>();
 		for (IASTName name : fMacroReferences) {
 			if (name.getBinding() == binding) {
 				result.add(name);
@@ -797,7 +797,7 @@ public class LocationMap implements ILocationResolver {
 
 	public ASTPreprocessorName[] getNestedMacroReferences(ASTMacroExpansion expansion) {
 		final IASTName explicitRef= expansion.getMacroReference(); 
-		List<ASTPreprocessorName> result= new ArrayList<ASTPreprocessorName>();
+		List<ASTPreprocessorName> result= new ArrayList<>();
 		for (ASTPreprocessorName name : fMacroReferences) {
 			if (name.getParent() == expansion && name != explicitRef) {
 				result.add(name);
@@ -849,8 +849,8 @@ public class LocationMap implements ILocationResolver {
 			((ASTNode) fTranslationUnit).setLength(offset);
 
 			if (sigMacros != null) {
-				ISignificantMacros sig = sigMacros.isEmpty() ? ISignificantMacros.NONE 
-						: new SignificantMacros(sigMacros);
+				ISignificantMacros sig = sigMacros.isEmpty() ?
+						ISignificantMacros.NONE	: new SignificantMacros(sigMacros);
 				fTranslationUnit.setSignificantMacros(sig);
 			}
 		}

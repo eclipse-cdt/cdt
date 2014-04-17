@@ -242,7 +242,11 @@ public abstract class ASTNode implements IASTNode {
 
     @Override
 	public IASTTranslationUnit getTranslationUnit() {
-       	return parent != null ? parent.getTranslationUnit() : null;
+    	IASTNode node = this;
+    	for (IASTNode p = parent; p != null; p = p.getParent()) {
+    		node = p;
+    	}
+       	return node instanceof IASTTranslationUnit ? (IASTTranslationUnit) node : null;
     }
 
     @Override

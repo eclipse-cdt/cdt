@@ -13,8 +13,10 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -65,6 +67,8 @@ public class LocationMap implements ILocationResolver {
 	// Stuff computed on demand
 	private IdentityHashMap<IBinding, IASTPreprocessorMacroDefinition> fMacroDefinitionMap;
 	private List<ISkippedIndexedFilesListener> fSkippedFilesListeners= new ArrayList<>();
+	// Keyed by file location.
+	private Map<String, LocationCtxFile> fFileContexts;
 
 	public LocationMap(LexerOptions lexOptions) {
 		fLexerOptions= lexOptions;
@@ -667,23 +671,51 @@ public class LocationMap implements ILocationResolver {
 
 	@Override
 	public int getSequenceNumberForFileOffset(String filePath, int fileOffset) {
-		LocationCtx ctx= fRootContext;
+		LocationCtxFile ctx= fRootContext;
 		if (filePath != null) {
-			ArrayDeque<LocationCtx> contexts= new ArrayDeque<>();
-			while (ctx != null) {
-				if (ctx instanceof LocationCtxFile) {
-					if (filePath.equals(ctx.getFilePath())) {
-						break;
+			if (fFileContexts == null) {
+				// Build a map of file contexts keyed by file locations to speed up subsequent calls.
+				fFileContexts = new HashMap<>();
+				fFileContexts.put(fRootContext.getFilePath(), fRootContext);
+				ArrayDeque<LocationCtxContainer> queue= new ArrayDeque<>();
+				for (LocationCtxContainer c = fRootContext; c != null; c = queue.pollFirst()) {
+					for (LocationCtx child : c.getChildren()) {
+						if (child instanceof LocationCtxFile) {
+							LocationCtxFile childFileContext = (LocationCtxFile) child;
+							String path = childFileContext.getFilePath();
+							if (!fFileContexts.containsKey(path)) {
+								fFileContexts.put(path, childFileContext);
+								queue.add(childFileContext);
+							}
+						} else if (child instanceof LocationCtxContainer) {
+							queue.add((LocationCtxContainer) child);
+						}
 					}
 				}
-				contexts.addAll(ctx.getChildren());
-				ctx= contexts.pollFirst();
 			}
+			ctx = fFileContexts.get(filePath);
 		}
-		if (ctx != null) {
-			return ctx.getSequenceNumberForOffset(fileOffset, true);
+		if (ctx == null) {
+			return -1;
 		}
-		return -1;
+		return ctx.getSequenceNumberForOffset(fileOffset, true);
+//		LocationCtx ctx= fRootContext;
+//		if (filePath != null) {
+//			ArrayDeque<LocationCtx> contexts= new ArrayDeque<>();
+//			while (ctx != null) {
+//				if (ctx instanceof LocationCtxFile) {
+//					if (filePath.equals(ctx.getFilePath())) {
+//						break;
+//					}
+//				}
+//				contexts.addAll(ctx.getChildren());
+//				ctx= contexts.pollFirst();
+//			}
+//		}
+//		if (ctx != null) {
+//			return ctx.getSequenceNumberForOffset(fileOffset, true);
+//		}
+//		return -1;
 	}
 
 	@Override

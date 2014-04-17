@@ -169,6 +169,7 @@
     <module>terminal/features/org.eclipse.tm.terminal.sdk-feature</module>
     <module>terminal/features/org.eclipse.tm.terminal.local-feature</module>
     <module>terminal/features/org.eclipse.tm.terminal.local.sdk-feature</module>
+    <module>terminal/features/org.eclipse.tm.terminal.test-feature</module>
     <module>wince/org.eclipse.rse.wince-feature</module>
     <module>wince/org.eclipse.rse.subsystems.wince</module>
     <module>wince/org.eclipse.tm.rapi</module>
@@ -448,7 +449,6 @@
     <profile>
 	  <id>tests</id>
 	  <modules>
-        <module>terminal/features/org.eclipse.tm.terminal.test-feature</module>
         <module>rse/tests/org.eclipse.rse.tests</module>
         <module>rse/tests/org.eclipse.rse.tests-feature</module>
         <module>rse/tests/org.eclipse.rse.tests.framework</module>

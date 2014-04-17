@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -19,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.IntArray;
 
 /**
  * Base class for all location contexts that can contain children. 
@@ -51,7 +53,7 @@ class LocationCtxContainer extends LocationCtx {
 
 	public void addChild(LocationCtx locationCtx) {
 		if (fChildren == null) {
-			fChildren= new ArrayList<LocationCtx>();
+			fChildren= new ArrayList<>();
 		}
 		fChildren.add(locationCtx);
 	}
@@ -74,9 +76,9 @@ class LocationCtxContainer extends LocationCtx {
 	public final int getSequenceNumberForOffset(int offset, boolean checkChildren) {
 		int result= fSequenceNumber + fChildSequenceLength + offset;
 		if (checkChildren && fChildren != null) {
-			for (int i= fChildren.size() - 1; i >= 0; i--) {
+			for (int i= fChildren.size(); --i >= 0;) {
 				final LocationCtx child= fChildren.get(i);
-				if (child.fEndOffsetInParent > offset) {	// Child was inserted behind the offset, adjust sequence number
+				if (child.fEndOffsetInParent > offset) { // Child was inserted behind the offset, adjust sequence number
 					result -= child.getSequenceLength();
 				} else {
 					return result;
@@ -208,7 +210,7 @@ class LocationCtxContainer extends LocationCtx {
 		int upper= fChildren.size();
 		int lower= 0;
 		while (upper > lower) {
-			int middle= (upper + lower) / 2;
+			int middle= (upper + lower) >>> 1;
 			LocationCtx child= fChildren.get(middle);
 			int childSequenceNumber= child.fSequenceNumber;
 			if (beforeReplacedChars) {
@@ -254,18 +256,13 @@ class LocationCtxContainer extends LocationCtx {
 	}
 
 	private int[] computeLineOffsets() {
-		ArrayList<Integer> offsets= new ArrayList<Integer>();
 		final int len= fSource.getLength();
+		IntArray offsets= new IntArray(len / 10);  // Assuming 10 characters per line on average. 
 		for (int i = 0; i < len; i++) {
-			if (fSource.get(i) == '\n') {
-				offsets.add(new Integer(i));
-			}
+			if (fSource.get(i) == '\n')
+				offsets.add(i);
 		}
-		int[] result= new int[offsets.size()];
-		for (int i = 0; i < result.length; i++) {
-			result[i]= offsets.get(i).intValue();
-		}
-		return result;
+		return offsets.toArray();
 	}
 	
 	@Override

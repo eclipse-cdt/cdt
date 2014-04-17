@@ -14,6 +14,7 @@
  *     John Dallaway - support for -data-write-memory-bytes (bug 387793)
  *     John Dallaway - memory cache update fix (bug 387688)
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
+ *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Memory space cache not being reset (Bug 432963)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -445,16 +446,11 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	    	IMemoryDMContext memoryDMC = DMContexts.getAncestorOfType(e.getDMContext(), IMemoryDMContext.class);
 	    	// It is the memory context we want to clear, not only the context that resumed.  The resumed context
 	    	// is probably a thread but that running thread could have changed any memory within the memory
-	    	// context.
-	    	fCommandCache.reset(memoryDMC);
-	    	if (fMemoryCaches.containsKey(memoryDMC)) {
-	    		// We do not want to use the call to getMemoryCache() here.
-	    		// This is because:
-	    		// 1- if there is not an entry already , we do not want to automatically 
-	    		//    create one, just to call reset() on it.
-	    		// 2- if memoryDMC == null, we do not want to create a cache
-	    		//    entry for which the key is 'null'
-	    		fMemoryCaches.get(memoryDMC).reset();
+	    	// context.	    	
+	    	if (memoryDMC != null) {
+	    		fCommandCache.reset(memoryDMC);
+	    		
+	    		memoryCacheReset(memoryDMC);
 	    	}
    		}
 	}
@@ -473,15 +469,10 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     	// It is the memory context we want to clear, not only the context that stopped.  The stopped context
     	// is probably a thread but that thread that ran could have changed any memory within the memory
     	// context.
-    	fCommandCache.reset(memoryDMC);
-    	if (fMemoryCaches.containsKey(memoryDMC)) {
-    		// We do not want to use the call to getMemoryCache() here.
-    		// This is because:
-    		// 1- if there is not an entry already , we do not want to automatically 
-    		//    create one, just to call reset() on it.
-    		// 2- if memoryDMC == null, we do not want to create a cache
-    		//    entry for which the key is 'null'
-    		fMemoryCaches.get(memoryDMC).reset();
+    	if (memoryDMC != null) {
+    		fCommandCache.reset(memoryDMC);
+    		
+    		memoryCacheReset(memoryDMC);
     	}
 	}
 
@@ -1051,14 +1042,21 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     	fCommandCache.reset(context);
     	
     	IMemoryDMContext memoryDMC = DMContexts.getAncestorOfType(context, IMemoryDMContext.class);
-    	if (fMemoryCaches.containsKey(memoryDMC)) {
-    		// We do not want to use the call to getMemoryCache() here.
-    		// This is because:
-    		// 1- if there is not an entry already , we do not want to automatically 
-    		//    create one, just to call reset() on it.
-    		// 2- if memoryDMC == null, we do not want to create a cache
-    		//    entry for which the key is 'null'
-    		fMemoryCaches.get(memoryDMC).reset();
+
+    	if (memoryDMC != null) {    		
+    		memoryCacheReset(memoryDMC);
     	}
     }
+
+	/**
+	 * Reset the cache for the given memory context or any of its associated
+	 * child memory space contexts (see Bug 432963)
+	 */
+	private void memoryCacheReset(IMemoryDMContext memoryDMC) {
+		for (IMemoryDMContext ctx : fMemoryCaches.keySet()) {
+			if (ctx.equals(memoryDMC) || DMContexts.isAncestorOf(ctx, memoryDMC)) {
+				fMemoryCaches.get(ctx).reset();
+			}
+		}
+	}
 }

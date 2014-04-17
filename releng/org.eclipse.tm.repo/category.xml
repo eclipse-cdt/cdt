@@ -15,9 +15,6 @@
    <feature url="features/org.eclipse.rse.scp_0.2.100.qualifier.jar" id="org.eclipse.rse.scp" version="0.2.100.qualifier">
       <category name="tm_35_optional"/>
    </feature>
-   <feature url="features/org.eclipse.rse.tests_3.4.100.qualifier.jar" id="org.eclipse.rse.tests" version="3.4.100.qualifier">
-      <category name="tm_35_optional"/>
-   </feature>
    <feature url="features/org.eclipse.tm.terminal.local.sdk_0.3.100.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.3.100.qualifier">
       <category name="tm_35_optional"/>
    </feature>

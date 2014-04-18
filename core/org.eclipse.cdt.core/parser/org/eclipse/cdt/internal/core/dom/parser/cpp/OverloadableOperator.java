@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.parser.IToken;
  */
 @SuppressWarnings("nls")
 public enum OverloadableOperator {
-	
 	GT(">"), 
 	LT("<"), 
 	NOT("!"), 
@@ -86,7 +85,6 @@ public enum OverloadableOperator {
 	public char[] toCharArray() {
 		return rep;
 	}
-	
 	
 	/**
 	 * Returns true if the given name equals 'operator new'

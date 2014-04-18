@@ -1265,6 +1265,29 @@ public class AST2CPPTests extends AST2TestBase {
 		assertInstances(collector, x2, 1);
 	}
 
+	// class A { A(void);  A(const A &); };
+	public void testConstructors() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
+
+		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+		IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+		ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
+		ICPPConstructor[] ctors = A.getConstructors();
+
+		assertNotNull(ctors);
+		assertEquals(ctors.length, 2);
+
+		assertEquals(0, ctors[0].getParameters().length);
+		assertEquals(1, ctors[1].getParameters().length);
+
+		IType t = ctors[1].getParameters()[0].getType();
+		assertTrue(t instanceof ICPPReferenceType);
+		assertTrue(((ICPPReferenceType) t).getType() instanceof IQualifierType);
+		IQualifierType qt = (IQualifierType) ((ICPPReferenceType) t).getType();
+		assertTrue(qt.isConst());
+		assertSame(qt.getType(), A);
+	}
+
 	// class A {};
 	public void testImplicitConstructors() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
@@ -1289,54 +1312,59 @@ public class AST2CPPTests extends AST2TestBase {
 		assertSame(qt.getType(), A);
 	}
 
-	// class A { A(void);  A(const A &); };
-	public void testConstructors() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
+	//	template<typename T> struct C {
+	//		C(const C<T>& c) {}
+	//	};
+	//	struct D {
+	//      typedef const D& TD;
+	//		D(TD c) {}
+	//	};
+	//  struct E {
+	//     E();
+	//  };
+	//  typedef E F;
+	//  F::E() {}
+	public void testImplicitConstructors_360223() throws Exception {
+		BindingAssertionHelper bh= getAssertionHelper();
+		ICPPClassType c= bh.assertNonProblem("C", 0);
+		ICPPConstructor[] ctors = c.getConstructors();
+		assertEquals(1, ctors.length);
+		assertFalse(ctors[0].isImplicit());
 
-		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
-		IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
-		ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
-		ICPPConstructor[] ctors = A.getConstructors();
+		c= bh.assertNonProblem("D", 0);
+		ctors = c.getConstructors();
+		assertEquals(1, ctors.length);
+		assertFalse(ctors[0].isImplicit());
 
-		assertNotNull(ctors);
-		assertEquals(ctors.length, 2);
-
-		assertEquals(0, ctors[0].getParameters().length);
-		assertEquals(1, ctors[1].getParameters().length);
-
-		IType t = ctors[1].getParameters()[0].getType();
-		assertTrue(t instanceof ICPPReferenceType);
-		assertTrue(((ICPPReferenceType) t).getType() instanceof IQualifierType);
-		IQualifierType qt = (IQualifierType) ((ICPPReferenceType) t).getType();
-		assertTrue(qt.isConst());
-		assertSame(qt.getType(), A);
+		IBinding ctor= bh.assertNonProblem("E() {}", 1);
+		assertTrue(ctor instanceof ICPPConstructor);
 	}
 
-	// class A {~A(); };
-	// class B {~B(void); };
+	// class A { ~A(); };
+	// class B { ~B(void); };
 	public void testExplicitDestructor_183160() throws Exception {
-		// class F {(~)F(); };
-		// class G {(~)G(void); };
+		// class F { (~)F(); };
+		// class G { (~)G(void); };
 
 		BufferedReader br= new BufferedReader(new StringReader(getAboveComment()));
-		for(String line= br.readLine(); line!=null; line= br.readLine()) {
+		for (String line= br.readLine(); line != null; line= br.readLine()) {
 			IASTTranslationUnit tu = parse(line, CPP);
 			IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
 			IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
 			ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
 
-			ICPPMethod[] methods = ((ICPPClassScope)A.getCompositeScope()).getImplicitMethods();
+			ICPPMethod[] methods = ((ICPPClassScope) A.getCompositeScope()).getImplicitMethods();
 			assertNotNull(methods);
-			int count=0;
+			int count= 0;
 			for (ICPPMethod method : methods)
-				count+= method.getName().startsWith("~") ? 1 : 0;
+				count += method.getName().startsWith("~") ? 1 : 0;
 			assertEquals(line, 0, count);
 
 			methods = A.getDeclaredMethods();
 			assertNotNull(methods);
-			count=0;
+			count= 0;
 			for (ICPPMethod method : methods)
-				count+= method.getName().startsWith("~") ? 1 : 0;
+				count += method.getName().startsWith("~") ? 1 : 0;
 			assertEquals(line, 1, count);
 		}
 	}
@@ -1346,24 +1374,24 @@ public class AST2CPPTests extends AST2TestBase {
 	// class E {E(void);};
 	public void testImplicitDestructor_183160() throws Exception {
 		BufferedReader br= new BufferedReader(new StringReader(getAboveComment()));
-		for(String line= br.readLine(); line!=null; line= br.readLine()) {
+		for (String line= br.readLine(); line != null; line= br.readLine()) {
 			IASTTranslationUnit tu = parse(line, CPP);
 			IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
 			IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
 			ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
 
-			ICPPMethod[] methods = ((ICPPClassScope)A.getCompositeScope()).getImplicitMethods();
+			ICPPMethod[] methods = ((ICPPClassScope) A.getCompositeScope()).getImplicitMethods();
 			assertNotNull(methods);
-			int count=0;
+			int count= 0;
 			for (ICPPMethod method : methods)
-				count+= method.getName().startsWith("~") ? 1 : 0;
+				count += method.getName().startsWith("~") ? 1 : 0;
 			assertEquals(line, 1, count);
 
 			methods = A.getDeclaredMethods();
 			assertNotNull(methods);
-			count=0;
+			count= 0;
 			for (ICPPMethod method : methods)
-				count+= method.getName().startsWith("~") ? 1 : 0;
+				count += method.getName().startsWith("~") ? 1 : 0;
 			assertEquals(line, 0, count);
 		}
 	}
@@ -1390,7 +1418,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//  class T {public: T(int k=5, int* ip= 0, T* t= 0);};
 	public void testExplicitDefaultConstructor_183160() throws Exception {
 		BufferedReader br= new BufferedReader(new StringReader(getAboveComment()));
-		for(String line= br.readLine(); line!=null; line= br.readLine()) {
+		for (String line= br.readLine(); line != null; line= br.readLine()) {
 			IASTTranslationUnit tu = parse(line, CPP);
 			IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
 			IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
@@ -1408,7 +1436,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//  class T {public: T(int k, int* ip= 0, T* t= 0);};
 	public void testExplicitNonDefaultConstructor_183160() throws Exception {
 		BufferedReader br= new BufferedReader(new StringReader(getAboveComment()));
-		for(String line= br.readLine(); line!=null; line= br.readLine()) {
+		for (String line= br.readLine(); line != null; line= br.readLine()) {
 			IASTTranslationUnit tu = parse(line, CPP);
 			IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
 			IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
@@ -1430,7 +1458,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	class H {H(const volatile H &, int i=1, long k=2) {}};
 	public void testExplicitCopyConstructor_183160() throws Exception {
 		BufferedReader br= new BufferedReader(new StringReader(getAboveComment()));
-		for(String line= br.readLine(); line!=null; line= br.readLine()) {
+		for (String line= br.readLine(); line != null; line= br.readLine()) {
 			IASTTranslationUnit tu = parse(line, CPP);
 			IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
 			IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
@@ -1449,7 +1477,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	class L {L(const volatile L &, int i=1, long k=2, int* x) {}}; // param int* x has no initializer
 	public void testNotExplicitCopyConstructor_183160() throws Exception {
 		BufferedReader br= new BufferedReader(new StringReader(getAboveComment()));
-		for(String line= br.readLine(); line!=null; line= br.readLine()) {
+		for (String line= br.readLine(); line != null; line= br.readLine()) {
 			IASTTranslationUnit tu = parse(line, CPP);
 			IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
 			IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
@@ -1468,27 +1496,27 @@ public class AST2CPPTests extends AST2TestBase {
 	//	class D {public: void operator=(const D &, const D &); };  // compile error
 	public void testNotExplicitCopyAssignmentOperator_183160() throws Exception {
 		BufferedReader br= new BufferedReader(new StringReader(getAboveComment()));
-		for(String line= br.readLine(); line!=null; line= br.readLine()) {
+		for (String line= br.readLine(); line != null; line= br.readLine()) {
 			IASTTranslationUnit tu = parse(line, CPP);
 			IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
 			IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
 			ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
 			ICPPMethod[] methods = ((ICPPClassScope)A.getCompositeScope()).getImplicitMethods();
 			assertNotNull(methods);
-			int count=0;
+			int count= 0;
 			for (ICPPMethod method : methods) {
 				boolean eq= Arrays.equals(method.getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
-				count+= eq ? 1 : 0;
+				count += eq ? 1 : 0;
 			}
 
 			assertEquals(1, count); // check for one implicit operator= method
 
 			methods = A.getDeclaredMethods();
 			assertNotNull(methods);
-			count=0;
+			count= 0;
 			for (ICPPMethod method : methods) {
 				boolean eq= Arrays.equals(method.getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
-				count+= eq ? 1 : 0;
+				count += eq ? 1 : 0;
 			}
 
 			assertEquals(1, count); // check for the user declared
@@ -1501,27 +1529,27 @@ public class AST2CPPTests extends AST2TestBase {
 	//	class D {D& operator=(volatile const D &); };
 	public void testExplicitCopyAssignmentOperator_183160() throws Exception {
 		BufferedReader br= new BufferedReader(new StringReader(getAboveComment()));
-		for(String line= br.readLine(); line!=null; line= br.readLine()) {
+		for (String line= br.readLine(); line != null; line= br.readLine()) {
 			IASTTranslationUnit tu = parse(line, CPP);
 			IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
 			IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
 			ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
 			ICPPMethod[] methods = ((ICPPClassScope)A.getCompositeScope()).getImplicitMethods();
 			assertNotNull(methods);
-			int count=0;
+			int count= 0;
 			for (ICPPMethod method : methods) {
 				boolean eq= Arrays.equals(method.getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
-				count+= eq ? 1 : 0;
+				count += eq ? 1 : 0;
 			}
 
 			assertEquals(0, count); // check for no implicit operator= methods
 
 			methods = A.getDeclaredMethods();
 			assertNotNull(methods);
-			count=0;
+			count= 0;
 			for (ICPPMethod method : methods) {
 				boolean eq= Arrays.equals(method.getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
-				count+= eq ? 1 : 0;
+				count += eq ? 1 : 0;
 			}
 
 			assertEquals(1, count); // only should get the user declared
@@ -5773,8 +5801,8 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testLiteralsViaOverloads_225534() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
 		char[] cs= {'a','b','e','f','g','h','i','j','k'};
-		for(char c : cs) {
-			for(int i=1; i<(c < 'i' ? 4 : 3); i++) {
+		for (char c : cs) {
+			for (int i=1; i<(c < 'i' ? 4 : 3); i++) {
 				ICPPFunction def= ba.assertNonProblem("foo/*_"+c+"*/", 3, ICPPFunction.class);
 				ICPPFunction ref= ba.assertNonProblem("foo/*"+c+""+i+"*/", 3, ICPPFunction.class);
 				assertSame("function ref: "+c+""+i, def, ref);
@@ -6648,7 +6676,7 @@ public class AST2CPPTests extends AST2TestBase {
 	// }
 	public void testOverloadedUnaryOperator_259927_5() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
-		for(int i = 1; i <=6; i++)
+		for (int i = 1; i <=6; i++)
 			ba.assertNonProblem("xx; // "+i, 2, ICPPField.class);
 	}
 
@@ -6679,7 +6707,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//}
 	public void testOverloadedUnaryOperator_259927_6() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
-		for(int i = 1; i <=6; i++)
+		for (int i = 1; i <= 6; i++)
 			ba.assertNonProblem("xx; // "+i, 2, ICPPField.class);
 	}
 
@@ -9634,34 +9662,6 @@ public class AST2CPPTests extends AST2TestBase {
 	//	};
 	public void testAmbiguityResolution_427854() throws Exception {
 		parseAndCheckBindings();
-	}
-
-	//	template<typename T> struct C {
-	//		C(const C<T>& c) {}
-	//	};
-	//	struct D {
-	//      typedef const D& TD;
-	//		D(TD c) {}
-	//	};
-	//  struct E {
-	//     E();
-	//  };
-	//  typedef E F;
-	//  F::E(){}
-	public void testImplicitCtors_360223() throws Exception {
-		BindingAssertionHelper bh= getAssertionHelper();
-		ICPPClassType c= bh.assertNonProblem("C", 0);
-		ICPPConstructor[] ctors = c.getConstructors();
-		assertEquals(1, ctors.length);
-		assertFalse(ctors[0].isImplicit());
-
-		c= bh.assertNonProblem("D", 0);
-		ctors = c.getConstructors();
-		assertEquals(1, ctors.length);
-		assertFalse(ctors[0].isImplicit());
-
-		IBinding ctor= bh.assertNonProblem("E(){}", 1);
-		assertTrue(ctor instanceof ICPPConstructor);
 	}
 
 	//	struct S;

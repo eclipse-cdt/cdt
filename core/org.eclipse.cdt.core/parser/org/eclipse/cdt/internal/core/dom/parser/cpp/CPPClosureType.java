@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType.UNSPECIFIED_TYPE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +28,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -60,8 +61,6 @@ import org.eclipse.core.runtime.PlatformObject;
  * Binding for a class type.
  */
 public class CPPClosureType extends PlatformObject implements ICPPClassType, ICPPInternalBinding {
-	private static final CPPBasicType NO_RETURN_TYPE = new CPPBasicType(Kind.eUnspecified, 0);
-
 	private final ICPPASTLambdaExpression fLambdaExpression;
 	private ICPPMethod[] fMethods;
 	private ClassScope fScope;
@@ -96,7 +95,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		result[2]= m;
 
 		// Destructor: ~A()
-		ft= CPPVisitor.createImplicitFunctionType(NO_RETURN_TYPE, ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, false, false);
+		ft= CPPVisitor.createImplicitFunctionType(UNSPECIFIED_TYPE, ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, false, false);
 		m = new CPPImplicitMethod(scope, new char[] {'~'}, ft, ICPPParameter.EMPTY_CPPPARAMETER_ARRAY);
 		result[3]= m;
 		

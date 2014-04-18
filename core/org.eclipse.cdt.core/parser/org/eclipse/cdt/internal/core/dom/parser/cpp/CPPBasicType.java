@@ -34,6 +34,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	private static final int FROM_STRING_LITERAL = 1 << 31;
 	public static final CPPBasicType BOOLEAN = new CPPBasicType(Kind.eBoolean, 0, null);
 	public static final CPPBasicType NULL_PTR = new CPPBasicType(Kind.eNullPtr, 0, null);
+    public static final CPPBasicType UNSPECIFIED_TYPE = new CPPBasicType(Kind.eUnspecified, 0);
 	
 	private final Kind fKind;
 	private final int fModifiers;

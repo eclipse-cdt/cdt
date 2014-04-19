@@ -211,7 +211,7 @@ public class ClassTypeHelper {
 			}
 		}
 		IBinding binding = null;
-		ICPPField[] result = null;
+		ICPPField[] result = ICPPField.EMPTY_CPPFIELD_ARRAY;
 
 		IASTDeclaration[] decls = host.getCompositeTypeSpecifier().getMembers();
 		for (IASTDeclaration decl : decls) {
@@ -220,7 +220,7 @@ public class ClassTypeHelper {
 				for (IASTDeclarator dtor : dtors) {
 					binding = ASTQueries.findInnermostDeclarator(dtor).getName().resolveBinding();
 					if (binding instanceof ICPPField)
-						result = ArrayUtil.append(ICPPField.class, result, (ICPPField) binding);
+						result = ArrayUtil.append(result, (ICPPField) binding);
 				}
 			} else if (decl instanceof ICPPASTUsingDeclaration) {
 				IASTName n = ((ICPPASTUsingDeclaration) decl).getName();
@@ -229,14 +229,14 @@ public class ClassTypeHelper {
 					IBinding[] bs = ((ICPPUsingDeclaration) binding).getDelegates();
 					for (IBinding element : bs) {
 						if (element instanceof ICPPField)
-							result = ArrayUtil.append(ICPPField.class, result, (ICPPField) element);
+							result = ArrayUtil.append(result, (ICPPField) element);
 					}
 				} else if (binding instanceof ICPPField) {
-					result = ArrayUtil.append(ICPPField.class, result, (ICPPField) binding);
+					result = ArrayUtil.append(result, (ICPPField) binding);
 				}
 			}
 		}
-		return ArrayUtil.trim(ICPPField.class, result);
+		return ArrayUtil.trim(result);
 	}
 
 	public static ICPPBase[] getBases(ICPPClassType classType, IASTNode point) {
@@ -378,7 +378,7 @@ public class ClassTypeHelper {
 			}
 		}
 		IBinding binding = null;
-		ICPPMethod[] result = null;
+		ICPPMethod[] result = ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 
 		IASTDeclaration[] decls = host.getCompositeTypeSpecifier().getMembers();
 		for (IASTDeclaration decl : decls) {
@@ -391,7 +391,7 @@ public class ClassTypeHelper {
 					for (IASTDeclarator dtor : dtors) {
 						binding = ASTQueries.findInnermostDeclarator(dtor).getName().resolveBinding();
 						if (binding instanceof ICPPMethod)
-							result = ArrayUtil.append(ICPPMethod.class, result, (ICPPMethod) binding);
+							result = ArrayUtil.append(result, (ICPPMethod) binding);
 					}
 				}
 			} else if (decl instanceof IASTFunctionDefinition) {
@@ -401,7 +401,7 @@ public class ClassTypeHelper {
 					dtor = ASTQueries.findInnermostDeclarator(dtor);
 					binding = dtor.getName().resolveBinding();
 					if (binding instanceof ICPPMethod) {
-						result = ArrayUtil.append(ICPPMethod.class, result, (ICPPMethod) binding);
+						result = ArrayUtil.append(result, (ICPPMethod) binding);
 					}
 				}
 			} else if (decl instanceof ICPPASTUsingDeclaration) {
@@ -411,14 +411,14 @@ public class ClassTypeHelper {
 					IBinding[] bs = ((ICPPUsingDeclaration) binding).getDelegates();
 					for (IBinding element : bs) {
 						if (element instanceof ICPPMethod)
-							result = ArrayUtil.append(ICPPMethod.class, result, (ICPPMethod) element);
+							result = ArrayUtil.append(result, (ICPPMethod) element);
 					}
 				} else if (binding instanceof ICPPMethod) {
-					result = ArrayUtil.append(ICPPMethod.class, result, (ICPPMethod) binding);
+					result = ArrayUtil.append(result, (ICPPMethod) binding);
 				}
 			}
 		}
-		return ArrayUtil.trim(ICPPMethod.class, result);
+		return ArrayUtil.trim(result);
 	}
 
 	/* (non-Javadoc)
@@ -444,7 +444,7 @@ public class ClassTypeHelper {
 			}
 		}
 
-		ICPPClassType[] result = null;
+		ICPPClassType[] result = ICPPClassType.EMPTY_CLASS_ARRAY;
 
 		IASTDeclaration[] decls = host.getCompositeTypeSpecifier().getMembers();
 		for (IASTDeclaration decl : decls) {
@@ -460,10 +460,10 @@ public class ClassTypeHelper {
 					binding = ((ICPPASTElaboratedTypeSpecifier) declSpec).getName().resolveBinding();
 				}
 				if (binding instanceof ICPPClassType)
-					result = ArrayUtil.append(ICPPClassType.class, result, (ICPPClassType) binding);
+					result = ArrayUtil.append(result, (ICPPClassType) binding);
 			}
 		}
-		return ArrayUtil.trim(ICPPClassType.class, result);
+		return ArrayUtil.trim(result);
 	}
 
 	public static IField[] getFields(ICPPClassType ct, IASTNode point) {

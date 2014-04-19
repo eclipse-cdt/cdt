@@ -64,6 +64,11 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	private boolean fIsFullyQualified;
 	private char[] fSignature;
 
+	public CPPASTQualifiedName(ICPPASTName lastName) {
+		if (lastName != null)
+			setLastName(lastName);
+	}
+
 	/**
 	 * @deprecated Prefer CPPASTQualifierName(ICPPASTName) instead.
 	 */
@@ -71,10 +76,6 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	public CPPASTQualifiedName() {
 	}
 	
-	public CPPASTQualifiedName(ICPPASTName lastName) {
-		setLastName(lastName);
-	}
-
 	@Override
 	public CPPASTQualifiedName copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -82,9 +83,8 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	
 	@Override
 	public CPPASTQualifiedName copy(CopyStyle style) {
-		CPPASTQualifiedName copy = new CPPASTQualifiedName();
-		if (fLastName != null)
-			copy.addName(fLastName.copy(style));
+		CPPASTQualifiedName copy =
+				new CPPASTQualifiedName(fLastName == null ? null : fLastName.copy(style));
 		for (ICPPASTNameSpecifier nameSpecifier : getQualifier()) {
 			copy.addNameSpecifier(nameSpecifier == null ? null : nameSpecifier.copy(style));
 		}

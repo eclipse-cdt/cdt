@@ -96,8 +96,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression.CaptureDefault;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier.SpecifierKind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
@@ -130,6 +128,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeTransformationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier.SpecifierKind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
@@ -260,7 +260,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	int endOffset= offset;
     	if (LT(1) == IToken.tCOLONCOLON) {
     		endOffset= consume().getEndOffset();
-    		qname= nodeFactory.newQualifiedName();
+    		qname= nodeFactory.newQualifiedName(null);
     		qname.setFullyQualified(true);
     	}
 
@@ -346,7 +346,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     		endOffset= consume().getEndOffset(); // ::
     		if (qname == null) {
-    			qname= nodeFactory.newQualifiedName();
+    			qname= nodeFactory.newQualifiedName(null);
     			addNameSpecifier(qname, nameSpec);
     		}
     	}

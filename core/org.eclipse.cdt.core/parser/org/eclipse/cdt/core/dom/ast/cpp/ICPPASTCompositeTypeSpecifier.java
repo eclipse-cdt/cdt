@@ -110,14 +110,14 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 	/**
 	 * Returns the base specifiers.
 	 * 
-	 * @return <code>ICPPASTBaseSpecifier []</code>
+	 * @return {@code ICPPASTBaseSpecifier[]}
 	 */
 	public ICPPASTBaseSpecifier[] getBaseSpecifiers();
 
 	/**
 	 * Adds a base specifier.
 	 * 
-	 * @param baseSpec <code>ICPPASTBaseSpecifier</code>
+	 * @param baseSpec {@code ICPPASTBaseSpecifier}
 	 */
 	public void addBaseSpecifier(ICPPASTBaseSpecifier baseSpec);
 

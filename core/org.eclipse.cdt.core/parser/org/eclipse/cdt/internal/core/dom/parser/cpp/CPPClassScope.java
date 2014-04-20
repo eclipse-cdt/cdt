@@ -72,8 +72,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 	/**
 	 * Adds in default constructor, copy constructor, copy assignment operator and destructor,
-	 * if appropriate.
-	 * Method will be called after ambiguity resolution.
+	 * if appropriate. The method will be called after ambiguity resolution.
 	 */
 	public void createImplicitMembers() {
 	    // Create bindings for the implicit members, if the user declared them then those
@@ -85,17 +84,17 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         if (!(binding instanceof ICPPClassType))
         	return;
 
-        ICPPClassType clsType = (ICPPClassType) binding;
-        if (clsType instanceof ICPPClassTemplate) {
-            clsType= (ICPPClassType) ((ICPPClassTemplate) clsType).asDeferredInstance();
+        ICPPClassType classType = (ICPPClassType) binding;
+        if (classType instanceof ICPPClassTemplate) {
+            classType= (ICPPClassType) ((ICPPClassTemplate) classType).asDeferredInstance();
         }
         char[] className = name.getLookupKey();
 
-		IType pType = new CPPReferenceType(SemanticUtil.constQualify(clsType), false);
-		ICPPParameter[] ps = new ICPPParameter[] { new CPPParameter(pType, 0) };
+		IType pType = new CPPReferenceType(SemanticUtil.constQualify(classType), false);
+		ICPPParameter[] params = new ICPPParameter[] { new CPPParameter(pType, 0) };
 
 		int i= 0;
-		ImplicitsAnalysis ia= new ImplicitsAnalysis(compTypeSpec, clsType);
+		ImplicitsAnalysis ia= new ImplicitsAnalysis(compTypeSpec, classType);
 		implicits= new ICPPMethod[ia.getImplicitsToDeclareCount()];
 
 		if (!ia.hasUserDeclaredConstructor()) {
@@ -107,16 +106,16 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 		if (!ia.hasUserDeclaredCopyConstructor()) {
 			// Copy constructor: A(const A &)
-			ICPPMethod m = new CPPImplicitConstructor(this, className, ps);
+			ICPPMethod m = new CPPImplicitConstructor(this, className, params);
 			implicits[i++] = m;
 			addBinding(m);
 		}
 
 		if (!ia.hasUserDeclaredCopyAssignmentOperator()) {
 			// Copy assignment operator: A& operator = (const A &)
-			IType refType = new CPPReferenceType(clsType, false);
-			ICPPFunctionType ft= CPPVisitor.createImplicitFunctionType(refType, ps, false, false);
-			ICPPMethod m = new CPPImplicitMethod(this, OverloadableOperator.ASSIGN.toCharArray(), ft, ps);
+			IType refType = new CPPReferenceType(classType, false);
+			ICPPFunctionType ft= CPPVisitor.createImplicitFunctionType(refType, params, false, false);
+			ICPPMethod m = new CPPImplicitMethod(this, OverloadableOperator.ASSIGN.toCharArray(), ft, params);
 			implicits[i++] = m;
 			addBinding(m);
 		}
@@ -197,7 +196,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         Object o = bindings.get(CONSTRUCTOR_KEY);
         if (o != null) {
             if (o instanceof ObjectSet) {
-                ((ObjectSet)o).put(constructor);
+                ((ObjectSet) o).put(constructor);
             } else {
                 ObjectSet set = new ObjectSet(2);
                 set.put(o);
@@ -219,7 +218,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			compName= ((ICPPASTTemplateId) compName).getTemplateName();
 		}
 	    if (CharArrayUtils.equals(c, compName.getLookupKey())) {
-            //9.2 ... The class-name is also inserted into the scope of the class itself
+            // 9.2 ... The class-name is also inserted into the scope of the class itself.
             return compName.resolveBinding();
 	    }
 	    return super.getBinding(name, resolve, fileSet);
@@ -242,7 +241,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			if (shallReturnConstructors(lookupName, prefixLookup)) {
 	            result = ArrayUtil.addAll(IBinding.class, result, getConstructors(lookupName, lookup.isResolve()));
 	        }
-            //9.2 ... The class-name is also inserted into the scope of the class itself
+            // 9.2 ... The class-name is also inserted into the scope of the class itself.
             result = ArrayUtil.append(IBinding.class, result, compName.resolveBinding());
 	    }
 	    result = ArrayUtil.addAll(IBinding.class, result, super.getBindings(lookup));
@@ -333,10 +332,11 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		if (node instanceof ICPPASTTemplateId)
 			return false;
 		if (node instanceof ICPPASTQualifiedName) {
-			if (((ICPPASTQualifiedName) node).getLastName() == name)
+			if (((ICPPASTQualifiedName) node).getLastName() == name) {
 				node = node.getParent();
-			else
+			} else {
 				return false;
+			}
 		}
 		if (node instanceof IASTDeclSpecifier) {
 			IASTNode parent = node.getParent();

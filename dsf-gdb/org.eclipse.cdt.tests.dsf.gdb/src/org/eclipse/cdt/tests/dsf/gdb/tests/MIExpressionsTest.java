@@ -4117,7 +4117,8 @@ public class MIExpressionsTest extends BaseTestCase {
         
         final String PARENT_EXPR = "b";
         final String CHILD_EXPR = "((b).d)";
-        
+        final String CHILD__REL_EXPR = "d";
+
     	// Fetch the child directly
         final IExpressionDMContext childDmc = SyncUtil.createExpression(frameDmc, CHILD_EXPR);
     	Query<String> query = new Query<String>() {
@@ -4154,12 +4155,19 @@ public class MIExpressionsTest extends BaseTestCase {
     								return;
     							}
     							
-    							IExpressionDMContext firstChildContext = getData()[0];
+    							MIExpressionDMC firstChildContext = (MIExpressionDMC)getData()[0];
     							if (firstChildContext.getExpression().equals(CHILD_EXPR) == false) {
     					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 
     					            		"Got wrong first child. Expected " + CHILD_EXPR + " but got " +  firstChildContext.getExpression(), null));
     								return;
     							}
+
+    							if (firstChildContext.getRelativeExpression().equals(CHILD__REL_EXPR) == false) {
+    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 
+    					            		"Got wrong relative expression. Expected " + CHILD__REL_EXPR + " but got " +  firstChildContext.getRelativeExpression(), null));
+    								return;
+    							}
+    							
     							fExpService.getFormattedExpressionValue(
     									fExpService.getFormattedValueContext(firstChildContext, IFormattedValues.NATURAL_FORMAT), 
     									new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {

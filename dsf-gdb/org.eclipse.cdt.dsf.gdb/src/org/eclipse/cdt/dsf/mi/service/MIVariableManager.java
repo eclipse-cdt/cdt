@@ -1541,14 +1541,24 @@ public class MIVariableManager implements ICommandControl {
 												childVar.deleteInGdb();
 												childVar = null;
 											} else {
+												// The child already exists so we can re-use it.
 												childVar.hasCastToBaseClassWorkaround = childHasCastToBaseClassWorkaround;
 												if (fakeChild) {
 													// I don't think this should happen, but we put it just in case
 													addRealChildrenOfFake(childVar,	exprDmc, realChildren,
 															arrayPosition, countingRm);
 												} else {
-													// This is a real child
-													realChildren[arrayPosition] = new ExpressionInfo[] { childVar.exprInfo };
+													// This is a real child, use it directly, however, we must
+													// make sure that its relative expression is expressed with respect
+													// to its parent, which may not be the case already, since that child
+													// might have been created directly (not through the parent).
+													// That is why we set the relative expression explicitly
+													// See bug 432888
+													ExpressionInfo oldInfo = childVar.getExpressionInfo();
+													realChildren[arrayPosition] = 
+															new ExpressionInfo[] { new ExpressionInfo(
+																	oldInfo.getFullExpr(), child.getExp(), oldInfo.isDynamic(), 
+																	oldInfo.getParent(), oldInfo.getIndexInParentExpression()) };
 													countingRm.done();
 												}
 											}

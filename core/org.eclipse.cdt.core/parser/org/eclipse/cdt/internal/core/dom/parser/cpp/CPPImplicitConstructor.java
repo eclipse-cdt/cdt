@@ -26,10 +26,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class CPPImplicitConstructor extends CPPImplicitMethod implements ICPPConstructor {
 
 	public CPPImplicitConstructor(ICPPClassScope scope, char[] name, ICPPParameter[] params) {
-        super(scope, name, createFunctionType(scope, params), params);
+        super(scope, name, createFunctionType(params), params);
     }
 
-	private static ICPPFunctionType createFunctionType(ICPPClassScope scope, IParameter[] params) {
+	private static ICPPFunctionType createFunctionType(IParameter[] params) {
 		return CPPVisitor.createImplicitFunctionType(UNSPECIFIED_TYPE, params, false, false);
 	}
 }

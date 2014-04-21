@@ -24,6 +24,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 /**
  * Jtag control service which selects the Jtag CompleteInitializationSequence.
  * Use for GDB < 7.0
+ * @since 8.4
  */
 public class GDBJtagControl extends GDBControl {
 

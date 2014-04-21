@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.ui.console.actions;
 
+/** @since 6.2 */
 public interface IMiConsoleImagesConst {
 
 	public static final String IMG_SAVE_CONSOLE = "icons/obj16/save_console.gif"; //$NON-NLS-1$

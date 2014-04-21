@@ -19,7 +19,7 @@ import org.eclipse.jface.action.Action;
 
 /**
  * Verbose console mode switcher
- * 
+ * @since 6.2
  */
 public class MiConsoleVerboseModeAction extends Action {
 	private IConsole fConsole;

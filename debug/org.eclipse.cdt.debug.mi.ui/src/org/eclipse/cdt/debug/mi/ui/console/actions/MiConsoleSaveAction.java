@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.FileDialog;
 
 /**
  * Save console content
- *
+ * @since 6.2
  */
 public class MiConsoleSaveAction extends Action{
 

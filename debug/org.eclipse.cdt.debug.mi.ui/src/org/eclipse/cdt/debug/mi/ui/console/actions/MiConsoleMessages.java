@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.mi.ui.console.actions;
 
 import org.eclipse.osgi.util.NLS;
 
+/** @since 6.2 */
 public class MiConsoleMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.mi.ui.console.actions.MiConsoleMessages"; //$NON-NLS-1$
 

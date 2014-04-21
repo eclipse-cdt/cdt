@@ -30,6 +30,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %provider
 Export-Package: org.eclipse.cdt.autotools.core,
  org.eclipse.cdt.internal.autotools.core,
- org.eclipse.cdt.internal.autotools.core.configure
-nt: J2SE-1.5
+ org.eclipse.cdt.internal.autotools.core.configure,
+ org.eclipse.cdt.internal.autotools.core.wizards;x-internal:=true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

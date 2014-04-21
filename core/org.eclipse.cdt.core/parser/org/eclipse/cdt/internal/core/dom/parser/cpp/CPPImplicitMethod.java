@@ -50,7 +50,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 	public int getVisibility() {
 		IASTDeclaration decl= getPrimaryDeclaration();
 		if (decl == null) {
-			// 12.1-5, 12.8-10 Implicit constructors and assignment operators are public
+			// 12.1-5, 12.8-10 Implicit constructors and assignment operators are public.
 			return ICPPASTVisibilityLabel.v_public;
 		}
 		
@@ -86,7 +86,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 	}
 	
 	public IASTDeclaration getPrimaryDeclaration() {
-		// first check if we already know it
+		// First check if we already know it.
 		if (declarations != null) {
 			for (IASTDeclarator dtor : declarations) {
 				if (dtor == null)
@@ -104,17 +104,17 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		IFunctionType ftype = getType();
 		IType[] params = ftype.getParameterTypes();
 
-		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) ASTInternal
-				.getPhysicalNodeOfScope(getScope());
+		ICPPASTCompositeTypeSpecifier compSpec =
+				(ICPPASTCompositeTypeSpecifier) ASTInternal.getPhysicalNodeOfScope(getScope());
 		if (compSpec == null) {
 			return null;
 		}
 		IASTDeclaration[] members = compSpec.getMembers();
 		for (IASTDeclaration member : members) {
-			IASTDeclarator[] ds = null;
 			while (member instanceof ICPPASTTemplateDeclaration)
 				member = ((ICPPASTTemplateDeclaration) member).getDeclaration();
 			
+			IASTDeclarator[] ds;
 			if (member instanceof IASTSimpleDeclaration) {
 				ds = ((IASTSimpleDeclaration) member).getDeclarators();
 			} else if (member instanceof IASTFunctionDefinition) {
@@ -149,10 +149,11 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 					}
 					if (ok) {
 						name.setBinding(this);
-						if (member instanceof IASTSimpleDeclaration)
+						if (member instanceof IASTSimpleDeclaration) {
 							ASTInternal.addDeclaration(this, dtor);
-						else if (member instanceof IASTFunctionDefinition)
+						} else if (member instanceof IASTFunctionDefinition) {
 							ASTInternal.addDefinition(this, dtor);
+						}
 						return member;
 					}
 				}

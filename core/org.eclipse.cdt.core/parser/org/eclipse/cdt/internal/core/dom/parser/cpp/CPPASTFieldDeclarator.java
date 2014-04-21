@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -16,14 +16,11 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * Field declarator for c++.
  */
-public class CPPASTFieldDeclarator extends CPPASTDeclarator implements
-        ICPPASTFieldDeclarator, IASTAmbiguityParent {
-
+public class CPPASTFieldDeclarator extends CPPASTDeclarator implements ICPPASTFieldDeclarator {
     private IASTExpression bitField;
  
     public CPPASTFieldDeclarator() {
@@ -75,13 +72,10 @@ public class CPPASTFieldDeclarator extends CPPASTDeclarator implements
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if( child == bitField )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == bitField) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             bitField  = (IASTExpression) other;
         }
-        
     }
-
 }

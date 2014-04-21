@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -38,7 +37,7 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
     private boolean isGlobal;
     private boolean isVectored;
 
-    private IASTImplicitName[] implicitNames = null;
+    private IASTImplicitName[] implicitNames;
 
     public CPPASTDeleteExpression() {
 	}
@@ -58,8 +57,8 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 	
 	@Override
 	public CPPASTDeleteExpression copy(CopyStyle style) {
-		CPPASTDeleteExpression copy = new CPPASTDeleteExpression(operand == null ? null
-				: operand.copy(style));
+		CPPASTDeleteExpression copy =
+				new CPPASTDeleteExpression(operand == null ? null : operand.copy(style));
 		copy.isGlobal = isGlobal;
 		copy.isVectored = isVectored;
 		return copy(copy, style);
@@ -131,10 +130,11 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 		    	}
 	    	}
 	    	
-	    	if (names.isEmpty())
+	    	if (names.isEmpty()) {
 	    		implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-	    	else
+	    	} else {
 	    		implicitNames = names.toArray(new IASTImplicitName[names.size()]);
+	    	}
     	}
     	
     	return implicitNames;    	
@@ -163,7 +163,7 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP:  return true;
+	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default: break;
 	        }
 		}
@@ -198,5 +198,4 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 			operand = (IASTExpression) other;
 		}
 	}
-
 }

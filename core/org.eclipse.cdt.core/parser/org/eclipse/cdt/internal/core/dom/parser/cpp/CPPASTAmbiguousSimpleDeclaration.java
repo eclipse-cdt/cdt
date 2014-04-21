@@ -31,10 +31,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * Handles ambiguities for simple declarations.
- * <br>
+ * <pre>
  * class C {
- *    C(D);  // if D a type we have a constructor, otherwise this declares the field D.
+ *    C(D);  // If D a type we have a constructor, otherwise this declares the field D.
  * };
+ * </pre>
  */
 public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements IASTAmbiguousSimpleDeclaration {
     private IASTSimpleDeclaration fSimpleDecl;
@@ -49,7 +50,7 @@ public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implement
 
 	@Override
 	protected void beforeResolution() {
-		// populate containing scope, so that it will not be affected by the alternative branches.
+		// Populate containing scope, so that it will not be affected by the alternative branches.
 		IScope scope= CPPVisitor.getContainingScope(this);
 		if (scope instanceof IASTInternalScope) {
 			((IASTInternalScope) scope).populateCache();
@@ -96,17 +97,17 @@ public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implement
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
 		IASTNode nodeToReplace= this;
 
-		// handle nested ambiguities first
+		// Handle nested ambiguities first.
 		owner.replace(nodeToReplace, fSimpleDecl);
 		IASTDeclarator dtor= fSimpleDecl.getDeclarators()[0];
 		dtor.accept(resolver);
 
-		// find nested names
+		// Find nested names.
 		final NameCollector nameCollector= new NameCollector();
 		dtor.accept(nameCollector);
 		final IASTName[] names= nameCollector.getNames();
 
-		// resolve names 
+		// Resolve names.
 		boolean hasIssue= false;
 		for (IASTName name : names) {
 			try {
@@ -121,13 +122,13 @@ public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implement
 			}
 		}
 		if (hasIssue) {
-			// use the alternate version
+			// Use the alternate version.
 			final IASTAmbiguityParent parent = (IASTAmbiguityParent) fSimpleDecl;
 			parent.replace(fSimpleDecl.getDeclSpecifier(), fAltDeclSpec);
 			parent.replace(dtor, fAltDtor);
 		}
 			
-		// resolve further nested ambiguities
+		// Resolve further nested ambiguities.
 		fSimpleDecl.accept(resolver);
 		return fSimpleDecl;
 	}
@@ -138,6 +139,7 @@ public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implement
 	}
 
 	@Override
+	@Deprecated
 	public void addAttribute(IASTAttribute attribute) {
 		fSimpleDecl.addAttribute(attribute);
 	}

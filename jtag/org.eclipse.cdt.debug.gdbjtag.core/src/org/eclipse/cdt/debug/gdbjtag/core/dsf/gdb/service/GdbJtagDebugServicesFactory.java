@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * @since 8.0
+ * @since 8.4
  */
 public class GdbJtagDebugServicesFactory extends GdbDebugServicesFactory {
 

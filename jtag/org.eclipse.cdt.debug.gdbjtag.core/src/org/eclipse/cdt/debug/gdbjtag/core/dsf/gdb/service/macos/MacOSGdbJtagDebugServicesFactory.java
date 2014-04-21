@@ -17,7 +17,7 @@ import org.eclipse.cdt.dsf.gdb.service.macos.MacOSGdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
-/** @since 8.0 */
+/** @since 8.4*/
 public class MacOSGdbJtagDebugServicesFactory extends MacOSGdbDebugServicesFactory {
 
 	public MacOSGdbJtagDebugServicesFactory(String gdbVersion, String appleVersion) {

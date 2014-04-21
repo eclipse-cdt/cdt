@@ -40,10 +40,10 @@ public class MulticoreVisualizerSelectionFinder
 	// --- members ---
 
 	/** Selection item(s) we're currently looking for. */
-	List<Object> m_selection = null;
+	protected List<Object> m_selection = null;
 
 	/** Result we're found, if any. */
-	Set<Object> m_result = null;
+	protected Set<Object> m_result = null;
 
 
 	// --- constructors/destructors ---

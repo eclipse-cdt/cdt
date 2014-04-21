@@ -79,6 +79,9 @@ public class IMulticoreVisualizerConstants
 	/** Color used to draw text to the status bar */
 	public static final Color COLOR_STATUS_BAR_TEXT = Colors.GREEN;
 	
+	/**  */
+	public static final Color EV_COLOR_GRID = Colors.GREEN;
+	
 	// Colors for load meters
 	
 	/**

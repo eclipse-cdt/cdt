@@ -9,6 +9,7 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.internal.corext;x-internal:=true,
  org.eclipse.cdt.internal.corext.codemanipulation;x-internal:=true,
  org.eclipse.cdt.internal.corext.fix;x-internal:=true,
+ org.eclipse.cdt.internal.corext.refactoring.code.flow;x-internal:=true,
  org.eclipse.cdt.internal.corext.template.c;x-internal:=true,
  org.eclipse.cdt.internal.corext.util;x-friends:="org.eclipse.cdt.codan.ui",
  org.eclipse.cdt.internal.ui;x-friends:="org.eclipse.cdt.debug.edc.tests",

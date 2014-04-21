@@ -1,0 +1,225 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_ad1855a9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-21T17:26:43Z",
+      "side": 1,
+      "message": "Can you mention that a GdbMemoryBlock is confined to a single memory space context?  I believe this is what the changes in this file actually achieve, no?",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_c8ac97aa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-21T17:26:43Z",
+      "side": 1,
+      "message": "If it is now required to pass in an MemorySpaceDmc in context, should we no longer require the memorySpaceID param?  We can obtain directly from context, and avoid the risk of them not matching.  What do you think?",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_4d1b79a6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-21T17:26:43Z",
+      "side": 1,
+      "message": "I don\u0027t understand what you mean by this comment.\nDo you mean \"A memorySpaceDMContext should not be created if the memorySpaceId is not valid\"?",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_2d2565e2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-21T17:26:43Z",
+      "side": 1,
+      "message": "can you remove this commented line?",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_8d159171",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-21T17:26:43Z",
+      "side": 1,
+      "message": "Doesn\u0027t the base method do the same thing?",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_6d1e3d99",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-21T17:26:43Z",
+      "side": 1,
+      "message": "If you keep this code, no need to check for the second null, the equals() will do that.",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_88145f4c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-21T17:26:43Z",
+      "side": 1,
+      "message": "I wonder why we didn\u0027t need something like this before?",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_a84a0379",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-21T17:26:43Z",
+      "side": 1,
+      "message": "Could the memoryDmc already be a memorySpaceDmc?  Maybe we should check that and then not create a new one?  In that case, we need to assert that the memorySpaceDmc has the same memorySpaceId as the parameter memorySpaceID",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_28b27300",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-21T17:26:43Z",
+      "side": 1,
+      "message": "Instead of this new method, I believe we should use decodeAddress() which will delegate to the IMemorySpaces services.  I think extending that service is the better approach to decode a memorySpaceId.\n\ndecodeAddress() might need to be adapted a bit though.\n\nThe point is that I think it is confusing to have two methods that decode an expression.  Which one should be used and when?  It would be clearer to have one only.",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_0d650111",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 455,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-21T17:26:43Z",
+      "side": 1,
+      "message": "Do we still need to do something special with a memorySpaceID here since we pass in a memorySpaceDmc when needed?",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_2d60c500",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 468,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-21T17:26:43Z",
+      "side": 1,
+      "message": "Do we still need to do something special with a memorySpaceID here since we pass in a memorySpaceDmc when needed?",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_6d691dec",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 479,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-21T17:26:43Z",
+      "side": 1,
+      "message": "How could we end up with not an IMemorySpaceDMContext here but have a valid aMemorySpaceID?  I don\u0027t think we need to do anything anymore here.",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_8d70f1cb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2528,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-21T17:26:43Z",
+      "side": 1,
+      "message": "Remove above since tag.  I don\u0027t know why it is there",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

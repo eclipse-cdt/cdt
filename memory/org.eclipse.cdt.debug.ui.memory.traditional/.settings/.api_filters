@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.debug.ui.memory.traditional" version="2">
+    <resource path="src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java" type="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRendering">
+        <filter id="576725006">
+            <message_arguments>
+                <message_argument value="IMemoryRenderingViewportProvider"/>
+                <message_argument value="TraditionalRendering"/>
+            </message_arguments>
+        </filter>
+        <filter id="576725006">
+            <message_arguments>
+                <message_argument value="IModelChangedListener"/>
+                <message_argument value="TraditionalRendering"/>
+            </message_arguments>
+        </filter>
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="IModelDelta"/>
+                <message_argument value="TraditionalRendering"/>
+                <message_argument value="modelChanged(IModelDelta, IModelProxy)"/>
+            </message_arguments>
+        </filter>
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="IModelProxy"/>
+                <message_argument value="TraditionalRendering"/>
+                <message_argument value="modelChanged(IModelDelta, IModelProxy)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

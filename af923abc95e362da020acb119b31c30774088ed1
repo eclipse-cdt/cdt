@@ -206,6 +206,23 @@
     },
     {
       "key": {
+        "uuid": "0756a345_68e62bd6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-21T17:30:05Z",
+      "side": 1,
+      "message": "Changes may not be needed if we can use the IMemorySpaces service to override the decoding of a memory space from an expression",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_8d70f1cb",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
         "patchSetId": 4
@@ -217,6 +234,23 @@
       "writtenOn": "2014-04-21T17:26:43Z",
       "side": 1,
       "message": "Remove above since tag.  I don\u0027t know why it is there",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_88dd7f02",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/IMemoryBlockRetrievalManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-21T17:30:05Z",
+      "side": 1,
+      "message": "Changes may not be needed if we can use the IMemorySpaces service to override the decoding of a memory space from an expression",
       "revId": "af923abc95e362da020acb119b31c30774088ed1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

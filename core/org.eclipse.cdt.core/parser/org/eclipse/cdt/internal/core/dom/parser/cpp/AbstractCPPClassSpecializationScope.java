@@ -46,7 +46,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  * For safe usage in index bindings, all fields need to be final or volatile.
  */
 public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializationScope {
-	final private ICPPClassSpecialization specialClass;
+	private final ICPPClassSpecialization specialClass;
 	private volatile ICPPBase[] fBases; // Used by the pdom bindings, needs to be volatile.
 
 	public AbstractCPPClassSpecializationScope(ICPPClassSpecialization specialization) {
@@ -79,7 +79,8 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 
 		ICPPClassType specialized = specialClass.getSpecializedBinding();
 		IScope classScope = specialized.getCompositeScope();
-		IBinding[] bindings = classScope != null ? classScope.getBindings(new ScopeLookupData(name, resolve, false)) : null;
+		IBinding[] bindings = classScope != null ?
+				classScope.getBindings(new ScopeLookupData(name, resolve, false)) : null;
 		
 		if (bindings == null)
 			return null;

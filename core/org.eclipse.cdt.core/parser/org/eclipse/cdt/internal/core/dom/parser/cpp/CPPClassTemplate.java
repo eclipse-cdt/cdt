@@ -87,7 +87,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 			while (parent instanceof IASTName)
 				parent = parent.getParent();
 			if (parent instanceof ICPPASTCompositeTypeSpecifier) {
-				ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier)parent;
+				ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) parent;
 				return compSpec.getScope();
 			}
 		}

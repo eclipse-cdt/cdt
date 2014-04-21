@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.core.parser.util;
 
 import java.util.Comparator;
@@ -24,7 +23,7 @@ public class HashTable implements Cloneable {
         return currEntry == -1;
     }
     
-	final public int size() {
+	public final int size() {
 	    return currEntry + 1;
 	}
     

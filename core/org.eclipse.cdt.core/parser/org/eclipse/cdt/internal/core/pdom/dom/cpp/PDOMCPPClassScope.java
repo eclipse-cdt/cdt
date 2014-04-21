@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Andrew Ferguson (Symbian)
- *    Bryan Wilkinson (QNX)
- *    Sergey Prigogin (Google)
- *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
+ *     Bryan Wilkinson (QNX)
+ *     Sergey Prigogin (Google)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -60,6 +60,7 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	private static final class PopulateMap implements IPDOMVisitor {
 		private final CharArrayMap<List<PDOMBinding>> fResult;
+
 		private PopulateMap(CharArrayMap<List<PDOMBinding>> result) {
 			fResult = result;
 		}
@@ -71,7 +72,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 				final char[] nchars = binding.getNameCharArray();
 				List<PDOMBinding> list= fResult.get(nchars);
 				if (list == null) {
-					list= new ArrayList<PDOMBinding>();
+					list= new ArrayList<>();
 					fResult.put(nchars, list);
 				}
 				list.add(binding);
@@ -126,7 +127,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		try {
 		    final char[] nameChars = name.getSimpleID();
 			if (CharArrayUtils.equals(fBinding.getNameCharArray(), nameChars)) {
-	            //9.2 ... The class-name is also inserted into the scope of the class itself
+	            // 9.2 ... The class-name is also inserted into the scope of the class itself
 		        return getClassNameBinding();
 		    }
 			
@@ -165,7 +166,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 			        	}
 			        	return fBinding.getConstructors();
 			        }
-			        return new IBinding[] {getClassNameBinding()};
+			        return new IBinding[] { getClassNameBinding() };
 				}
 			    return getBindingsViaCache(fBinding, nameChars, IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE);
 			}
@@ -244,8 +245,8 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		CharArrayMap<List<PDOMBinding>> map= cached == null ? null : cached.get();
 		
 		if (map == null) {
-			// there is no cache, build it:
-			map= new CharArrayMap<List<PDOMBinding>>();
+			// There is no cache, build it:
+			map= new CharArrayMap<>();
 			IPDOMVisitor visitor= new PopulateMap(map);
 			visitor.visit(ct);
 			ct.acceptUncached(visitor);
@@ -256,7 +257,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 
 	@Override
 	public IBinding[] find(String name) {
-		return CPPSemantics.findBindings( this, name, false );
+		return CPPSemantics.findBindings(this, name, false);
 	}
 	
 	@Override
@@ -271,7 +272,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 			acceptViaCache(fBinding, methods, false);
 			return methods.getMethods();
 		} catch (CoreException e) {
-			return new ICPPMethod[0];
+			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		}
 	}
 

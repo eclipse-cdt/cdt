@@ -14,14 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
-import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.osgi.util.NLS;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,6 +23,14 @@ import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Database encapsulates access to a flat binary format file with a memory-manager-like API for
@@ -668,7 +668,7 @@ public class Database {
 	public void giveUpExclusiveLock(final boolean flush) throws CoreException {
 		if (fExclusiveLock) {
 			try {
-				ArrayList<Chunk> dirtyChunks= new ArrayList<Chunk>();
+				ArrayList<Chunk> dirtyChunks= new ArrayList<>();
 				synchronized (fCache) {
 					for (int i= 1; i < fChunksUsed; i++) {
 						Chunk chunk= fChunks[i];
@@ -716,7 +716,7 @@ public class Database {
 		}
 
 		// Be careful as other readers may access chunks concurrently.
-		ArrayList<Chunk> dirtyChunks= new ArrayList<Chunk>();
+		ArrayList<Chunk> dirtyChunks= new ArrayList<>();
 		synchronized (fCache) {
 			for (int i= 1; i < fChunksUsed ; i++) {
 				Chunk chunk= fChunks[i];

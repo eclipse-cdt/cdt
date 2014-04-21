@@ -40,7 +40,7 @@ final class Chunk {
 	void read() throws CoreException {
 		try {
 			final ByteBuffer buf= ByteBuffer.wrap(fBuffer);
-			fDatabase.read(buf, (long) fSequenceNumber*Database.CHUNK_SIZE);
+			fDatabase.read(buf, (long) fSequenceNumber * Database.CHUNK_SIZE);
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
@@ -49,7 +49,7 @@ final class Chunk {
 	void flush() throws CoreException {
 		try {
 			final ByteBuffer buf= ByteBuffer.wrap(fBuffer);
-			fDatabase.write(buf, (long) fSequenceNumber*Database.CHUNK_SIZE);
+			fDatabase.write(buf, (long) fSequenceNumber * Database.CHUNK_SIZE);
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}

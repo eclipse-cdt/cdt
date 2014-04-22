@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.ui.preferences;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.swt.SWT;
@@ -57,7 +58,7 @@ public class WizardDefaultsTab extends AbstractCPropertyTab {
 	@Override
 	protected void performDefaults() {
 		show_sup.setSelection(true);
-		show_oth.setSelection(false);
+		show_oth.setSelection(CUIPlugin.getDefault().getPreferenceStore().getDefaultBoolean(CDTPrefUtil.KEY_OTHERS));
 	}
 
 	@Override

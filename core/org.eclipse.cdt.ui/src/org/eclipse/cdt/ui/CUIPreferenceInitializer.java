@@ -21,6 +21,8 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
+
 import org.eclipse.cdt.internal.ui.ICThemeConstants;
 import org.eclipse.cdt.internal.ui.cview.CView;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
@@ -62,6 +64,8 @@ public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
 		EditorsUI.useAnnotationsPreferencePage(store);
         EditorsUI.useQuickDiffPreferencePage(store);
 		useTextEditorPreferencePage(store);
+		
+		store.setDefault(CDTPrefUtil.KEY_OTHERS, true);
 	}
 
 	/*

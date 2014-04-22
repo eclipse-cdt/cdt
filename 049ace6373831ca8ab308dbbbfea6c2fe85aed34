@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_bc7fe4d2",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-22T13:34:14Z",
+      "side": 1,
+      "message": "Good points - I have tried to reflect your advice in the new class name and class comment.",
+      "parentUuid": "0756a345_c1747f45",
+      "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_41b86fab",
         "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2014-04-16T15:12:36Z",
       "side": 1,
       "message": "Grammar tweak:\n/** Sets whether the container\u0027s boundary should be drawn / filled-in.\n     If false, indicates child objects are displayed without showing\n     the parent container. */",
+      "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_68690bec",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-22T13:34:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_41b86fab",
       "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_a87323d7",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-22T13:34:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_0195d710",
+      "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_416a2f8f",
         "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2014-04-16T15:12:36Z",
       "side": 1,
       "message": "I\u0027d comment this as:\n/** Overridden to delegate to setBounds(int,int,int,int) in this class,\n     rather than the base class. */\nso that the calling behavior shows up in the javadoc.",
+      "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_8870dfcb",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-22T13:34:14Z",
+      "side": 1,
+      "message": "Done - nicer way to say it, thanks.",
+      "parentUuid": "0756a345_416a2f8f",
       "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_e83cfbf0",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-22T13:34:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_c1c63fe1",
+      "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_41418f0b",
         "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
         "patchSetId": 3
@@ -98,6 +188,24 @@
       "writtenOn": "2014-04-16T15:12:36Z",
       "side": 1,
       "message": "I suggest wrapping these long lines to help with readability.",
+      "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_9cb2e04f",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-22T13:34:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_41418f0b",
       "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_1cf37012",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-22T13:34:14Z",
+      "side": 1,
+      "message": "1) Indeed, if the virtual width or height is zero - I have added a check when the virtual bounds are set, and throw an exception if the values don\u0027t make sense.\n2) I think this case will work correctly: the outer-most container bounds should be set from the canvas\u0027s bounds, and that will be propagated down to child objects.",
+      "parentUuid": "0756a345_c64bf500",
+      "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_2660f176",
         "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
         "patchSetId": 3
@@ -132,6 +258,24 @@
       "writtenOn": "2014-04-16T12:37:24Z",
       "side": 1,
       "message": "Is there a risk that ow/oh becomes negative here ?",
+      "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_dc01f879",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-22T13:34:14Z",
+      "side": 1,
+      "message": "Indeed - Added a protection so that ow and oh can\u0027t become negative.",
+      "parentUuid": "0756a345_2660f176",
       "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_2889d332",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-22T13:34:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_211d7bf3",
+      "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_c12f5f11",
         "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
         "patchSetId": 3
@@ -166,6 +328,24 @@
       "writtenOn": "2014-04-16T15:12:36Z",
       "side": 1,
       "message": "This method doesn\u0027t quite feel like it belongs in the base class,\nsince different objects would draw such a grid differently.\n\nIf we keep it, to make it a useful utility, it should take optional arguments allowing one to specify the x/y spacing of the grid lines, and perhaps also the color with which to draw the grid (which is used only for this call, and then restored to the original value).",
+      "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_28d6f3f0",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObjectContainer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-22T13:34:14Z",
+      "side": 1,
+      "message": "I have removed the method - It was mostly there because I had needed it to troubleshoot at some point - but probably not that useful in general.",
+      "parentUuid": "0756a345_c12f5f11",
       "revId": "049ace6373831ca8ab308dbbbfea6c2fe85aed34",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

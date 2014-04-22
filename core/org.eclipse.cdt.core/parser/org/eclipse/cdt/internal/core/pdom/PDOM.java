@@ -1021,7 +1021,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			long start= sDEBUG_LOCKS ? System.currentTimeMillis() : 0;
 			while (lockCount > giveupReadLocks || waitingReaders > 0) {
 				mutex.wait(CANCELLATION_CHECK_INTERVAL);
-				if (monitor.isCanceled()) {
+				if (monitor != null && monitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
 				if (sDEBUG_LOCKS) {

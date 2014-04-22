@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_9fd012f6",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/VirtualBoundsGraphicObject.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-04-22T15:30:55Z",
+      "side": 1,
+      "message": "drawed -\u003e drawn",
+      "revId": "5c83f6a6abbd5680390b2e22c3c2529512464c07",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_7fc9be4d",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/VirtualBoundsGraphicObject.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-04-22T15:30:55Z",
+      "side": 1,
+      "message": "Returns null _if_ object is not found",
+      "revId": "5c83f6a6abbd5680390b2e22c3c2529512464c07",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_5fc67a3e",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/VirtualBoundsGraphicObject.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-04-22T15:30:55Z",
+      "side": 1,
+      "message": "No longer needed?",
+      "revId": "5c83f6a6abbd5680390b2e22c3c2529512464c07",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_bff23690",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/VirtualBoundsGraphicObject.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-04-22T15:30:55Z",
+      "side": 1,
+      "message": "Returns (initial cap)",
+      "revId": "5c83f6a6abbd5680390b2e22c3c2529512464c07",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -53,6 +53,12 @@ public class Messages extends NLS {
 	public static String GdbDebugNewExecutableCommand_Select_binaries_on_host_and_target;
 	public static String GdbDebugNewExecutableCommand_Select_Binary;
 	public static String GdbDebugNewExecutableCommand_Select_binary_and_specify_arguments;
+	public static String GdbDebugCoreFileCommand_CoreFile;
+	public static String GdbDebugCoreFileCommand_Debug_Core_File;
+	public static String GdbDebugCoreFileCommand_Select_binary_and_specify_corefile;
+	public static String GdbDebugCoreFileCommand_Core_file_must_be_specified;
+	public static String GdbDebugCoreFileCommand_Core_file_does_not_exist;
+	public static String GdbDebugCoreFileCommand_Invalid_core_file;
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);

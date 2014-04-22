@@ -217,6 +217,13 @@
             id="org.eclipse.cdt.debug.application.command.debugAttachedExecutable"
             name="%DebugAttachedExecutable.name">
       </command>
+      <command
+            categoryId="org.eclipse.cdt.debug.ui.category.debugViewLayout"
+            defaultHandler="org.eclipse.cdt.internal.debug.application.DebugCoreFileHandler"
+            description="%DebugCore.description"
+            id="org.eclipse.cdt.debug.application.command.debugCore"
+            name="%DebugCore.name">
+      </command>
    </extension>
    
    <extension
@@ -235,6 +242,11 @@
             <command
                   commandId="org.eclipse.cdt.debug.application.command.debugAttachedExecutable"
                   label="%DebugAttachedExecutableMenu.label"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.cdt.debug.application.command.debugCore"
+                  label="%DebugCoreMenu.label"
                   style="push">
             </command>
             <command

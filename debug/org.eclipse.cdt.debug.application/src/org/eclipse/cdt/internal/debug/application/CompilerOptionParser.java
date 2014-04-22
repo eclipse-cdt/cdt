@@ -11,9 +11,20 @@
 package org.eclipse.cdt.internal.debug.application;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.ICompileOptionsFinder;
 import org.eclipse.cdt.core.ISymbolReader;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.debug.application.GCCCompileOptionsParser;
 import org.eclipse.cdt.debug.application.Messages;
 import org.eclipse.cdt.utils.elf.parser.GNUElfParser;
 import org.eclipse.core.resources.IContainer;
@@ -30,6 +41,7 @@ import org.eclipse.core.runtime.Path;
 
 public class CompilerOptionParser implements IWorkspaceRunnable {
 	
+	private static final String GCC_COMPILE_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.debug.application.DwarfLanguageSettingsProvider"; //$NON-NLS-1$ 
 	private final IProject project;
 	private final String executable;
 	
@@ -38,6 +50,15 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 		this.executable = executable;
 	}
 
+	private class CWDTracker implements IWorkingDirectoryTracker {
+
+		@Override
+		public URI getWorkingDirectoryURI() {
+			return null;
+		}
+
+	}
+	
 	@Override
 	public void run(IProgressMonitor monitor) {
 		try {
@@ -74,45 +95,45 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 				monitor.worked(1);
 			}
 			
-//			// Find the GCCCompileOptions LanguageSettingsProvider for the configuration.
-//			IWorkingDirectoryTracker cwdTracker = new CWDTracker();
-//			ICProjectDescriptionManager projDescManager = CCorePlugin
-//					.getDefault().getProjectDescriptionManager();
-//			ICProjectDescription projDesc = projDescManager
-//					.getProjectDescription(project,
-//							false);
-//			ICConfigurationDescription ccdesc = projDesc
-//					.getActiveConfiguration();
-//			GCCCompileOptionsParser parser = null;
-//			if (ccdesc instanceof ILanguageSettingsProvidersKeeper) {
-//				ILanguageSettingsProvidersKeeper keeper = (ILanguageSettingsProvidersKeeper)ccdesc;
-//				List<ILanguageSettingsProvider> list = keeper.getLanguageSettingProviders();
-//				for (ILanguageSettingsProvider p : list) {
-//					//						System.out.println("language settings provider " + p.getId());
-//					if (p.getId().equals(GCC_COMPILE_OPTIONS_PROVIDER_ID)) {
-//						parser = (GCCCompileOptionsParser)p;
-//					}
-//				}
-//			}
-//			// Start up the parser and process lines generated from the .debug_macro section.
-//			parser.startup(ccdesc, cwdTracker);
-//			// Get compile options for each source file and process via the parser
-//			// to generate LanguageSettingsEntries.
-//			if (reader instanceof
-//					ICompileOptionsFinder) {
-//				ICompileOptionsFinder f =
-//						(ICompileOptionsFinder) reader;
-//				for (String fileName : sourceFiles) {
-//					parser.setCurrentResourceName(fileName);
-////					String cmdline = f.getCompileOptions(fileName);
-////					System.out.println("Command line is " + cmdline);
-//					parser.processLine(f
-//							.getCompileOptions(fileName));
-//					monitor.worked(1);
-//				}
-//				parser.shutdown(); // this will serialize the data to an xml file and create an event.
-//				monitor.worked(1);
-//			}
+			// Find the GCCCompileOptions LanguageSettingsProvider for the configuration.
+			IWorkingDirectoryTracker cwdTracker = new CWDTracker();
+			ICProjectDescriptionManager projDescManager = CCorePlugin
+					.getDefault().getProjectDescriptionManager();
+			ICProjectDescription projDesc = projDescManager
+					.getProjectDescription(project,
+							false);
+			ICConfigurationDescription ccdesc = projDesc
+					.getActiveConfiguration();
+			GCCCompileOptionsParser parser = null;
+			if (ccdesc instanceof ILanguageSettingsProvidersKeeper) {
+				ILanguageSettingsProvidersKeeper keeper = (ILanguageSettingsProvidersKeeper)ccdesc;
+				List<ILanguageSettingsProvider> list = keeper.getLanguageSettingProviders();
+				for (ILanguageSettingsProvider p : list) {
+					//						System.out.println("language settings provider " + p.getId());
+					if (p.getId().equals(GCC_COMPILE_OPTIONS_PROVIDER_ID)) {
+						parser = (GCCCompileOptionsParser)p;
+					}
+				}
+			}
+			// Start up the parser and process lines generated from the .debug_macro section.
+			parser.startup(ccdesc, cwdTracker);
+			// Get compile options for each source file and process via the parser
+			// to generate LanguageSettingsEntries.
+			if (reader instanceof
+					ICompileOptionsFinder) {
+				ICompileOptionsFinder f =
+						(ICompileOptionsFinder) reader;
+				for (String fileName : sourceFiles) {
+					parser.setCurrentResourceName(fileName);
+//					String cmdline = f.getCompileOptions(fileName);
+//					System.out.println("Command line is " + cmdline);
+					parser.processLine(f
+							.getCompileOptions(fileName));
+					monitor.worked(1);
+				}
+				parser.shutdown(); // this will serialize the data to an xml file and create an event.
+				monitor.worked(1);
+			}
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

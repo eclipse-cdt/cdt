@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.internal.debug.application.DebugAttachedExecutable;
+import org.eclipse.cdt.internal.debug.application.DebugCoreFile;
 import org.eclipse.cdt.internal.debug.application.DebugExecutable;
 import org.eclipse.cdt.internal.debug.application.JobContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -111,14 +112,15 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 				throws InvocationTargetException, InterruptedException {
 			monitor.beginTask(Messages.InitializingDebugger, 10);
 			boolean attachExecutable = false;
-			String executable = "";
+			String executable = null;
+			String corefile = null;
 			String buildLog = null;
 			String arguments = null;
 			String[] args = Platform.getCommandLineArgs();
 //			System.out.println("program args length is " + args.length);
 			try {
 				for (int i = 0; i < args.length; ++i) {
-					//				System.out.println("arg <" + i + "> is " + args[i]);
+									System.out.println("arg <" + i + "> is " + args[i]);
 					if ("-application".equals(args[i]))
 						i++; // ignore the application specifier
 					else if ("-b".equals(args[i])) {
@@ -127,8 +129,14 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							buildLog = args[i];
 					}
 					else if ("-a".equals(args[i])) {
-						++i;
 						attachExecutable = true;
+					}
+					else if ("-c".equals(args[i])) {
+						++i;
+						corefile = "";
+						executable = "";
+						if (i < args.length)
+							corefile = args[i];
 					}
 					else if ("-e".equals(args[i])) {
 						++i;
@@ -144,48 +152,91 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							argBuffer.append(args[i++]);
 						}
 						arguments = argBuffer.toString();
-						File executableFile = new File(executable);
-						if (!executableFile.exists()) {
-							final NewExecutableInfo info = new NewExecutableInfo("", "", "", ""); //$NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
-							final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
-									Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
-							final String executablePath = executable;
-							final String executableArgs = arguments;
-							final String buildLogPath = buildLog;
+					}
+				}
+				// Verify any core file or executable path is valid.
+				if (corefile != null) {
+					File executableFile = new File(executable);
+					File coreFile = new File(corefile);
+					if (!executableFile.exists() || !coreFile.exists()) {
+						final CoreFileInfo info = new CoreFileInfo("", "", ""); //$NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+						final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
+								Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
+						final String executablePath = executable;
+						final String coreFilePath = buildLog;
 
-							Display.getDefault().syncExec(new Runnable() {
+						Display.getDefault().syncExec(new Runnable() {
 
-								@Override
-								public void run() {
+							@Override
+							public void run() {
 
-									NewExecutableDialog dialog = new NewExecutableDialog(getWindowConfigurer().getWindow().getShell(),
-											0, executablePath, buildLogPath, executableArgs);
-									dialog.setBlockOnOpen(true);
-									if (dialog.open() == IDialogConstants.OK_ID) {
-										NewExecutableInfo info2 = dialog.getExecutableInfo();
-										info.setHostPath(info2.getHostPath());
-										info.setArguments(info2.getArguments());
-									} else {
-										ErrorDialog.openError(null,
-												Messages.DebuggerInitializingProblem, null, errorStatus,
-												IStatus.ERROR | IStatus.WARNING);
-									}
+								CoreFileDialog dialog = new CoreFileDialog(getWindowConfigurer().getWindow().getShell(),
+										0, executablePath, coreFilePath);
+								dialog.setBlockOnOpen(true);
+								if (dialog.open() == IDialogConstants.OK_ID) {
+									CoreFileInfo info2 = dialog.getCoreFileInfo();
+									info.setHostPath(info2.getHostPath());
+									info.setCoreFilePath(info2.getCoreFilePath());
+								} else {
+									ErrorDialog.openError(null,
+											Messages.DebuggerInitializingProblem, null, errorStatus,
+											IStatus.ERROR | IStatus.WARNING);
 								}
-							});
-							// Check and see if we failed above and if so, quit
-							if (info.getHostPath().equals("")) {
-								monitor.done();
-								// throw internal exception which will be caught below
-								throw new StartupException(errorStatus.getMessage());
 							}
-							executable = info.getHostPath();
-							arguments = info.getArguments();
+						});
+						// Check and see if we failed above and if so, quit
+						if (info.getHostPath().equals("")) {
+							monitor.done();
+							// throw internal exception which will be caught below
+							throw new StartupException(errorStatus.getMessage());
 						}
+						executable = info.getHostPath();
+						corefile = info.getCoreFilePath();
+					}
+				} else if (executable != null) {
+					File executableFile = new File(executable);
+					if (!executableFile.exists()) {
+						final NewExecutableInfo info = new NewExecutableInfo("", "", "", ""); //$NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+						final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
+								Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
+						final String executablePath = executable;
+						final String executableArgs = arguments;
+						final String buildLogPath = buildLog;
+
+						Display.getDefault().syncExec(new Runnable() {
+
+							@Override
+							public void run() {
+
+								NewExecutableDialog dialog = new NewExecutableDialog(getWindowConfigurer().getWindow().getShell(),
+										0, executablePath, buildLogPath, executableArgs);
+								dialog.setBlockOnOpen(true);
+								if (dialog.open() == IDialogConstants.OK_ID) {
+									NewExecutableInfo info2 = dialog.getExecutableInfo();
+									info.setHostPath(info2.getHostPath());
+									info.setArguments(info2.getArguments());
+								} else {
+									ErrorDialog.openError(null,
+											Messages.DebuggerInitializingProblem, null, errorStatus,
+											IStatus.ERROR | IStatus.WARNING);
+								}
+							}
+						});
+						// Check and see if we failed above and if so, quit
+						if (info.getHostPath().equals("")) {
+							monitor.done();
+							// throw internal exception which will be caught below
+							throw new StartupException(errorStatus.getMessage());
+						}
+						executable = info.getHostPath();
+						arguments = info.getArguments();
 					}
 				}
 				monitor.worked(1);
 				if (attachExecutable) {
 					config = DebugAttachedExecutable.createLaunchConfig(monitor, buildLog);
+				} else if (corefile != null && corefile.length() > 0) {
+					config = DebugCoreFile.createLaunchConfig(monitor, buildLog, executable, corefile);
 				} else if (executable.length() > 0) {
 					config = DebugExecutable.importAndCreateLaunchConfig(monitor, executable, buildLog, arguments);
 				} else {

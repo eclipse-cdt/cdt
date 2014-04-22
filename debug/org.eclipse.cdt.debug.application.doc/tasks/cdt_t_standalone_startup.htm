@@ -31,15 +31,23 @@ within the code to search for C/C++ elements or to calculate a call hierarchy.  
 not provided, the Stand-alone Debugger has only the compiler built-ins and default include paths
 to use which means it may not search properly.</p>
 
+<h4>-c &lt;core file&gt;</h4>
+<p>This option specifies a path to a core file to debug for an executable.  The core file should have been created
+by the specified executable.  The executable is specified using the -e option, which is later described.
+If the core file is invalid or no valid executable is also specified, a dialog will be brought up to allow
+you to enter the required information.</p>
+
 <h4>-e &lt;executable&gt; [args*]</h4>
-<p>This option specifies an executable is being debugged and provides the path to the executable.  Following
-the executable path, a user may specify optional arguments to be passed to the <strong>main</strong> method
-of the C/C++ application.  If an executable is not specified (e.g. starting up the Stand-alone Debugger
+<p>This option specifies a path to an executable to be debugged.  If the -c option is previously specified,
+the executable will be used in conjunction with the core file specified by the -c option.  If the -c option is
+not used, then any additional arguments on the command line will be passed to the <strong>main</strong> method
+of the C/C++ application when it is debugged.  If you do not specify any of the -a, -c, or -e options (e.g. starting up the Stand-alone Debugger
 with no arguments), the last valid executable used invoking the debugger (if this isn't the first invocation) 
-will be offered to you via a dialog, which includes the original program arguments.  
+will be offered to you via a dialog, which includes the original program arguments and build log.  
 You then have the choice of simply hitting the OK button to debug the last executable again or to change the arguments
 as desired.  If the executable location you specify is invalid or no executable is specified and no previous executable exists,
-a dialog will be brought up to allow you to enter the required information.</p>
+a dialog will be brought up to allow you to enter the required information.  The dialog will be appropriate to whether
+you have selected to debug a core file (-c specified) or not.</p>
 
 <h2>Automated Set-up</h3>
 

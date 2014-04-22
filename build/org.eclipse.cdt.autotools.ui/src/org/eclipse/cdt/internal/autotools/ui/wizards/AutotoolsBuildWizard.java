@@ -25,7 +25,6 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.wizards.AbstractCWizard;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSWizardHandler;
-import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 import org.eclipse.jface.wizard.IWizard;
 
@@ -55,7 +54,6 @@ public class AutotoolsBuildWizard extends AbstractCWizard {
 		// look for project types that have a toolchain based on the Autotools toolchain
 		// and if so, add an entry for the project type.
 		// Fix for bug#374026
-		EntryDescriptor oldsRoot = null;
 		SortedMap<String, IProjectType> sm = ManagedBuildManager.getExtensionProjectTypeMap();
 		for (Map.Entry<String, IProjectType> e : sm.entrySet()) {
 			IProjectType pt = e.getValue();
@@ -80,19 +78,8 @@ public class AutotoolsBuildWizard extends AbstractCWizard {
 				h.addTc(t);
 			}
 
-			String pId = null;
-			if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_OTHERS)) {
-				if (oldsRoot == null) {
-					oldsRoot = new EntryDescriptor(OTHERS_LABEL, null, OTHERS_LABEL, true, null, null);
-					items.add(oldsRoot);
-				}
-				pId = oldsRoot.getId();
-			} else { // do not group to <Others>
-			pId = null;
-			}
-
 			if (h.getToolChainsCount() > 0)
-				items.add(new EntryDescriptor(pt.getId(), pId, pt.getName(), true, h, null));
+				items.add(new EntryDescriptor(pt.getId(), null, pt.getName(), true, h, null));
 		}
 
 		return (EntryDescriptor[])items.toArray(new EntryDescriptor[items.size()]);

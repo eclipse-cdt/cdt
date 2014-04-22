@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -322,6 +322,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private final LinkedList<AbstractIndexerTask> fUrgentTasks;
 	boolean fTaskCompleted;
 	private IndexerProgress fInfo= new IndexerProgress();
+	private IProgressMonitor fProgressMonitor;
 
 	public AbstractIndexerTask(Object[] filesToUpdate, Object[] filesToRemove,
 			IndexerInputAdapter resolver, boolean fastIndexer) {
@@ -498,6 +499,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	public final void runTask(IProgressMonitor monitor) throws InterruptedException {
+		fProgressMonitor = monitor;
 		try {
 			if (!fIndexFilesWithoutConfiguration) {
 				fIndexHeadersWithoutContext= UnusedHeaderStrategy.skip;
@@ -600,11 +602,12 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			synchronized (this) {
 				fTaskCompleted = true;
 			}
+			fProgressMonitor = null;
 		}
 	}
 
 	private void setResume(boolean value) throws InterruptedException, CoreException {
-		fIndex.acquireWriteLock();
+		fIndex.acquireWriteLock(fProgressMonitor);
 		try {
 			fIndex.getWritableFragment().setProperty(IIndexFragment.PROPERTY_RESUME_INDEXER, String.valueOf(value));
 		} finally {
@@ -810,7 +813,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private void removeFilesInIndex(List<Object> filesToRemove, List<IIndexFragmentFile> indexFilesToRemove,
 			IProgressMonitor monitor) throws InterruptedException, CoreException {
 		if (!filesToRemove.isEmpty() || !indexFilesToRemove.isEmpty()) {
-			fIndex.acquireWriteLock();
+			fIndex.acquireWriteLock(fProgressMonitor);
 			try {
 				for (Object tu : filesToRemove) {
 					if (monitor.isCanceled()) {
@@ -899,7 +902,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 
 		// Delete remaining files.
-		fIndex.acquireWriteLock();
+		fIndex.acquireWriteLock(fProgressMonitor);
 		try {
 			for (IIndexFileLocation ifl : files) {
 				LocationTask locTask = map.find(ifl);
@@ -1077,7 +1080,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		if (!resultCacheCleared) {
 			// If the result cache has not been cleared, clear it under a write lock to reduce
 			// interference with index readers.
-			fIndex.acquireWriteLock();
+			fIndex.acquireWriteLock(fProgressMonitor);
 			try {
 				fIndex.clearResultCache();
 			} finally {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 QNX Software Systems and others.
+ * Copyright (c) 2005, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -344,7 +344,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * case a pdom ready to use is returned.
 	 * @throws CoreException
 	 */
-	private WritablePDOM getOrCreatePDOM(ICProject project) throws CoreException {
+	private WritablePDOM getOrCreatePDOM(ICProject project, IProgressMonitor monitor) throws CoreException {
 		synchronized (fProjectToPDOM) {
 			IProject rproject = project.getProject();
 			IPDOM pdomProxy= fProjectToPDOM.get(rproject);
@@ -384,7 +384,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			WritablePDOM pdom= new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(rproject), getLinkageFactories());
 			if (!pdom.isSupportedVersion() || fromScratch) {
 				try {
-					pdom.acquireWriteLock();
+					pdom.acquireWriteLock(monitor);
 				} catch (InterruptedException e) {
 					throw new CoreException(CCorePlugin.createStatus(Messages.PDOMManager_creationOfIndexInterrupted, e));
 				}
@@ -569,7 +569,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					return;
 				}
 
-				WritablePDOM pdom= getOrCreatePDOM(project);
+				WritablePDOM pdom= getOrCreatePDOM(project, pm);
 				Properties props= IndexerPreferences.getProperties(prj);
 				IPDOMIndexer indexer= newIndexer(getIndexerId(project), props);
 				IndexUpdatePolicy policy= createPolicy(project);
@@ -862,7 +862,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     			@Override
 				protected IStatus run(IProgressMonitor monitor) {
         			try {
-        				finalpdom.acquireWriteLock();
+        				finalpdom.acquireWriteLock(monitor);
         				try {
         					finalpdom.close();
         					if (delete) {
@@ -1235,10 +1235,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
      * Note. This will acquire a write lock while the pdom is exported
 	 * @param targetLocation a location that does not currently exist
 	 * @param newConverter
+	 * @param monitor 
 	 * @throws CoreException
 	 * @throws IllegalArgumentException if a file exists at targetLocation
 	 */
-	public void exportProjectPDOM(ICProject cproject, File targetLocation, final IIndexLocationConverter newConverter) throws CoreException {
+	public void exportProjectPDOM(ICProject cproject, File targetLocation,
+			final IIndexLocationConverter newConverter, IProgressMonitor monitor) throws CoreException {
 		if (targetLocation.exists()) {
 			boolean deleted= targetLocation.delete();
 			if (!deleted) {
@@ -1249,7 +1251,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 		try {
 			// Copy it.
-			PDOM pdom= getOrCreatePDOM(cproject);
+			PDOM pdom= getOrCreatePDOM(cproject, monitor);
 			pdom.acquireReadLock();
 			String oldID= null;
 			try {
@@ -1264,7 +1266,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 			// Overwrite internal location representations.
 			final WritablePDOM newPDOM = new WritablePDOM(targetLocation, pdom.getLocationConverter(), getLinkageFactories());
-			newPDOM.acquireWriteLock();
+			newPDOM.acquireWriteLock(null);
 			try {
 				newPDOM.rewriteLocations(newConverter);
 
@@ -1284,11 +1286,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	/**
 	 * Resets the pdom for the project with the provided stream.
+	 * @param monitor 
 	 * @throws CoreException
 	 * @throws OperationCanceledException in case the thread was interrupted
 	 * @since 4.0
 	 */
-	public void importProjectPDOM(ICProject project, InputStream stream) throws CoreException, IOException {
+	public void importProjectPDOM(ICProject project, InputStream stream, IProgressMonitor monitor) throws CoreException, IOException {
 		// make a copy of the database
 		String newName= createNewDatabaseName(project);
 		File newFile= fileFromDatabaseName(newName);
@@ -1319,7 +1322,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 		WritablePDOM pdom= (WritablePDOM) getPDOM(project);
 		try {
-			pdom.acquireWriteLock();
+			pdom.acquireWriteLock(monitor);
 		} catch (InterruptedException e) {
 			throw new OperationCanceledException();
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 QNX Software Systems and others.
+ * Copyright (c) 2005, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,6 +102,7 @@ import org.eclipse.core.runtime.Status;
  * Database for storing semantic information for one project.
  */
 public class PDOM extends PlatformObject implements IPDOM {
+	private static final int CANCELLATION_CHECK_INTERVAL = 500;
 	private static final int BLOCKED_WRITE_LOCK_OUTPUT_INTERVAL = 30000;
 	private static final int LONG_WRITE_LOCK_REPORT_THRESHOLD = 1000;
 	private static final int LONG_READ_LOCK_WAIT_REPORT_THRESHOLD = 1000;
@@ -989,8 +990,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 * @throws InterruptedException
 	 * @throws IllegalStateException if this PDOM is not writable
 	 */
-	public void acquireWriteLock() throws InterruptedException {
-		acquireWriteLock(0);
+	public void acquireWriteLock(IProgressMonitor monitor) throws InterruptedException {
+		acquireWriteLock(0, monitor);
 	}
 
 	/**
@@ -999,7 +1000,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 * @throws InterruptedException
 	 * @throws IllegalStateException if this PDOM is not writable
 	 */
-	public void acquireWriteLock(int giveupReadLocks) throws InterruptedException {
+	public void acquireWriteLock(int giveupReadLocks, IProgressMonitor monitor) throws InterruptedException {
 		assert !isPermanentlyReadOnly();
 		synchronized (mutex) {
 			if (sDEBUG_LOCKS) {
@@ -1019,7 +1020,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 			// Let the readers go first
 			long start= sDEBUG_LOCKS ? System.currentTimeMillis() : 0;
 			while (lockCount > giveupReadLocks || waitingReaders > 0) {
-				mutex.wait(BLOCKED_WRITE_LOCK_OUTPUT_INTERVAL);
+				mutex.wait(CANCELLATION_CHECK_INTERVAL);
+				if (monitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
 				if (sDEBUG_LOCKS) {
 					start = reportBlockedWriteLock(start, giveupReadLocks);
 				}

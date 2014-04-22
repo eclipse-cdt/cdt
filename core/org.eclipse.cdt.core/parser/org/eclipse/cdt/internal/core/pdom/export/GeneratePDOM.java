@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2014 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -127,12 +127,12 @@ public class GeneratePDOM {
 				}
 			}
 			// Export a .pdom file
-			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, targetLocation, converter);
+			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, targetLocation, converter, null);
 
 			// Write properties to exported PDOM
 			WritablePDOM exportedPDOM= new WritablePDOM(targetLocation, converter,
 					LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
-			exportedPDOM.acquireWriteLock(0);
+			exportedPDOM.acquireWriteLock(0, null);
 			try {
 				Map<String, String> exportProperties= pm.getExportProperties();
 				if (exportProperties != null) {

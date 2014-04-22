@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 QNX Software Systems
+ * Copyright (c) 2005, 2010 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Doug Schaefer (QNX Software Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
- *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -141,8 +140,7 @@ public class PDOMIndexerJob extends Job {
 							System.out.println("Indexer: completed " + name + "[" + time + "ms]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						}
 					} catch (InterruptedException e) {
-						// An interrupt cancels the current task.
-						Thread.interrupted();  // Clear interrupted status.
+						Thread.currentThread().interrupt();
 					} catch (OperationCanceledException e) {
 					}
 				}
@@ -200,15 +198,7 @@ public class PDOMIndexerJob extends Job {
 			}
 		}
 	}
-
-	@Override
-	protected void canceling() {
-		Thread currThread = getThread();
-		if (currThread != null) {
-			currThread.interrupt();
-		}
-	}
-
+	
 	@Override
 	public boolean belongsTo(Object family) {
 		return family == pdomManager;

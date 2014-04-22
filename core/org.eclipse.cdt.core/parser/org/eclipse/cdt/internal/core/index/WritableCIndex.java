@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 public class WritableCIndex extends CIndex implements IWritableIndex {
 	private boolean fIsWriteLocked;
@@ -113,11 +114,11 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	}
 
 	@Override
-	public void acquireWriteLock() throws InterruptedException {
+	public void acquireWriteLock(IProgressMonitor monitor) throws InterruptedException {
 		checkThread();
 		assert !fIsWriteLocked: "Multiple write locks is not allowed"; //$NON-NLS-1$
 
-		getWritableFragment().acquireWriteLock(getReadLockCount());
+		getWritableFragment().acquireWriteLock(getReadLockCount(), monitor);
 		fIsWriteLocked= true;
 	}
 

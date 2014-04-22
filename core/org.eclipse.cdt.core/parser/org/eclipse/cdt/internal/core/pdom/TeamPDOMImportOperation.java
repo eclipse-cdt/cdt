@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -168,7 +168,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 					NLS.bind(Messages.PDOMImportTask_errorInvalidArchive, zip.getName())));
 		}
 		InputStream stream= zip.getInputStream(indexEntry);
-		CCoreInternals.getPDOMManager().importProjectPDOM(fProject, stream);
+		CCoreInternals.getPDOMManager().importProjectPDOM(fProject, stream, monitor);
 	}
 
 	private Map<?, ?> getChecksums(ZipFile zip) {
@@ -260,7 +260,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 
 	private void updateIndex(WritablePDOM pdom, final int giveupReadlocks, IIndexFragmentFile[] filesToDelete,
 			List<FileAndChecksum> updateTimestamps, IProgressMonitor monitor) throws InterruptedException, CoreException {
-		pdom.acquireWriteLock(giveupReadlocks);
+		pdom.acquireWriteLock(giveupReadlocks, null);
 		try {
 			for (IIndexFragmentFile ifile : filesToDelete) {
 				if (ifile != null) {

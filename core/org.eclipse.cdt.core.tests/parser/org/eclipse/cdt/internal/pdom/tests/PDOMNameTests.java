@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2013, 2014 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Andrew Eidsness - Initial implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
 import junit.framework.Test;
@@ -30,7 +40,7 @@ public class PDOMNameTests extends BaseTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		cproject= CProjectHelper.createCCProject("PDOMNameTest"+System.currentTimeMillis(), "bin", IPDOMManager.ID_FAST_INDEXER);
+		cproject= CProjectHelper.createCCProject("PDOMNameTest" + System.currentTimeMillis(), "bin", IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(cproject);
 	}
 
@@ -53,7 +63,7 @@ public class PDOMNameTests extends BaseTestCase {
 		waitForIndexer(cproject);
 
 		PDOM pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
-		pdom.acquireWriteLock();
+		pdom.acquireWriteLock(null);
 		try {
 			IIndexBinding[] bindings = pdom.findBindings(new char[][]{"E_cpp".toCharArray()}, IndexFilter.ALL, npm());
 			assertEquals(1, bindings.length);
@@ -158,7 +168,6 @@ public class PDOMNameTests extends BaseTestCase {
 			// 5) Check deleting of first entry.
 			extRef_3.delete();
 			assertEquals(0, countExternalReferences(binding_cpp));
-
 		} finally {
 			pdom.releaseWriteLock();
 		}

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2013 QNX Software Systems and others.
+/*******************************************************************************
+ * Copyright (c) 2013, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Andrew Eidsness - Initial implementation
- */
+ *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
 import java.io.File;
@@ -58,7 +58,7 @@ public class PDOMTagIndexTests extends BaseTestCase {
 				+ Double.toString(Math.random()).substring(2), null);
 		pdom = new WritablePDOM(tmpFile, new MockIndexLocationConverter(),
 				LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
-		pdom.acquireWriteLock();
+		pdom.acquireWriteLock(null);
 	}
 
 	@Override

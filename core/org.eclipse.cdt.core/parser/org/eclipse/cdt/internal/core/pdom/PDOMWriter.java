@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,16 @@
  *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -62,16 +72,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Abstract class to write information from AST.
@@ -313,7 +313,7 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 					trace("Indexer: adding " + fileInAST.fileContentKey.getLocation().getURI());  //$NON-NLS-1$
 				}
 				Throwable th= null;
-				YieldableIndexLock lock = new YieldableIndexLock(data.fIndex, false);
+				YieldableIndexLock lock = new YieldableIndexLock(data.fIndex, false, pm);
 				lock.acquire();
 				try {
 					final boolean isReplacement= ctx != null && fileInAST.includeStatement == null;

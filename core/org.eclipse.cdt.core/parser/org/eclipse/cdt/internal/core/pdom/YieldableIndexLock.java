@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Google, Inc and others.
+ * Copyright (c) 2010, 2014 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Write lock on the index that can be yielded temporarily to unblock threads that need
@@ -20,12 +21,14 @@ import org.eclipse.cdt.internal.core.index.IWritableIndex;
 public class YieldableIndexLock {
 	private final IWritableIndex index;
 	private final boolean flushIndex;
+	private final IProgressMonitor progressMonitor;
 	private long lastLockTime;
 	private long cumulativeLockTime;
 
-	public YieldableIndexLock(IWritableIndex index, boolean flushIndex) {
+	public YieldableIndexLock(IWritableIndex index, boolean flushIndex, IProgressMonitor monitor) {
 		this.index = index;
 		this.flushIndex = flushIndex;
+		this.progressMonitor = monitor;
 	}
 
 	/**
@@ -34,7 +37,7 @@ public class YieldableIndexLock {
 	 * @throws InterruptedException
 	 */
 	public void acquire() throws InterruptedException {
-		index.acquireWriteLock();
+		index.acquireWriteLock(progressMonitor);
 		lastLockTime = System.currentTimeMillis();
 	}
 

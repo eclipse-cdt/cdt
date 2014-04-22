@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Interface used by the indexer to write to the index. A writable index is not thread-safe,
@@ -123,7 +124,7 @@ public interface IWritableIndex extends IIndex {
 	/**
 	 * Acquires a write lock, while giving up a certain amount of read locks.
 	 */
-	void acquireWriteLock() throws InterruptedException;
+	void acquireWriteLock(IProgressMonitor monitor) throws InterruptedException;
 
 	/**
 	 * Releases a write lock, reestablishing a certain amount of read locks.

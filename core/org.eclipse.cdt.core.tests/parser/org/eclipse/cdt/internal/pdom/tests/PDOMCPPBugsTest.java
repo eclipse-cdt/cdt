@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2014 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 
 	public void testPDOMProperties() throws Exception {
 		PDOM pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
-		pdom.acquireWriteLock(0);
+		pdom.acquireWriteLock(0, null);
 		try {
 			WritablePDOM wpdom = (WritablePDOM) pdom;
 			IIndexBinding[] b = wpdom.findBindings(Pattern.compile(".+"), false, IndexFilter.ALL, null);
@@ -111,7 +111,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		File tmp= new File(System.getProperty("java.io.tmpdir")+"/temp"+System.currentTimeMillis()+".pdom");
 		IIndexLocationConverter cvr= new ResourceContainerRelativeLocationConverter(cproject.getProject());
 		final PDOMManager pdomManager = CCoreInternals.getPDOMManager();
-		pdomManager.exportProjectPDOM(cproject, tmp, cvr);
+		pdomManager.exportProjectPDOM(cproject, tmp, cvr, null);
 
 		IWritableIndexFragment pdom = new WritablePDOM(tmp, cvr, new ChunkCache(), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		pdom.acquireReadLock();
@@ -155,7 +155,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 	public void testInterruptingAcquireReadLock() throws Exception {
 		final PDOM pdom= (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		final boolean[] ok= {false};
-		pdom.acquireWriteLock();
+		pdom.acquireWriteLock(null);
 		try {
 			Thread other= new Thread() {
 				@Override
@@ -175,7 +175,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		finally {
 			pdom.releaseWriteLock();
 		}
-		pdom.acquireWriteLock();
+		pdom.acquireWriteLock(null);
 		pdom.releaseWriteLock();
 	}
 
@@ -189,7 +189,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 				public void run() {
 					try {
 						pdom.acquireReadLock();
-						pdom.acquireWriteLock(1);
+						pdom.acquireWriteLock(1, null);
 					} catch (InterruptedException e) {
 						ok[0]= true;
 						pdom.releaseReadLock();
@@ -204,7 +204,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		finally {
 			pdom.releaseReadLock();
 		}
-		pdom.acquireWriteLock();
+		pdom.acquireWriteLock(null);
 		pdom.releaseWriteLock();
 	}
 

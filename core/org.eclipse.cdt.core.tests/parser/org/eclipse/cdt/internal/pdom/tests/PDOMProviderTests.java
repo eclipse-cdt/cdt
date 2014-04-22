@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2014 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 			}
 
 			ResourceContainerRelativeLocationConverter cvr= new ResourceContainerRelativeLocationConverter(cproject.getProject());
-			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, tempPDOM, cvr);
+			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, tempPDOM, cvr, null);
 			assertTrue(tempPDOM.exists());
 
 			CProjectHelper.delete(cproject);
@@ -141,7 +141,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 			}
 
 			ResourceContainerRelativeLocationConverter cvr= new ResourceContainerRelativeLocationConverter(cproject.getProject());
-			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, tempPDOM, cvr);
+			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, tempPDOM, cvr, null);
 			assertTrue(tempPDOM.exists());
 
 			CProjectHelper.delete(cproject);
@@ -249,12 +249,12 @@ public class PDOMProviderTests extends PDOMTestBase {
 			TestSourceReader.createFile(cproject.getProject(), new Path("/this.h"), "class A {};\n\n");
 			waitForIndexer(cproject);
 			ResourceContainerRelativeLocationConverter cvr= new ResourceContainerRelativeLocationConverter(cproject.getProject());
-			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, tempPDOM, cvr);
+			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, tempPDOM, cvr, null);
 			CProjectHelper.delete(cproject);
 			
 			// Mimic a PDOM with superseded version.
 			WritablePDOM wpdom= new WritablePDOM(tempPDOM, cvr, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
-			wpdom.acquireWriteLock();
+			wpdom.acquireWriteLock(null);
 			try {
 				wpdom.getDB().setVersion(1);	
 				wpdom.close();

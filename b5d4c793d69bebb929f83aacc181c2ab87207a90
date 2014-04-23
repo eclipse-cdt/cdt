@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_ebe7d09f",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicCanvas.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-23T13:47:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_cb564cda",
+      "revId": "b5d4c793d69bebb929f83aacc181c2ab87207a90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_8b44541f",
         "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObject.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2014-04-23T13:32:06Z",
       "side": 1,
       "message": "I don\u0027t know what is best but I\u0027ll just mention that you could keep this method and have this class implement ITooltipProvider if you want to provide a default implementation to everyone.  But then all GraphicObjects will provide a tooltip, which is what the original solution did anyway.\n\nUp to you.",
+      "revId": "b5d4c793d69bebb929f83aacc181c2ab87207a90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_4b07dcd4",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObject.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-23T13:47:57Z",
+      "side": 1,
+      "message": "I like this idea - Done.",
+      "parentUuid": "0756a345_8b44541f",
       "revId": "b5d4c793d69bebb929f83aacc181c2ab87207a90",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_2b0428ce",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/IGraphicObject.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-23T13:47:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_2b60a8ad",
+      "revId": "b5d4c793d69bebb929f83aacc181c2ab87207a90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_0bccc431",
         "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/ITooltipProvider.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2014-04-23T13:32:06Z",
       "side": 1,
       "message": "Put Xavier also since you copied some of his code for this file",
+      "revId": "b5d4c793d69bebb929f83aacc181c2ab87207a90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_8b11f40d",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/ITooltipProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-04-23T13:47:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_0bccc431",
       "revId": "b5d4c793d69bebb929f83aacc181c2ab87207a90",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -276,9 +276,5 @@ public class GraphicObject
 	 */
 	public void paintDecorations(GC gc) {
 	}
-
-	@Override
-	public String getTooltip(int x, int y) {
-		return null;
-	}
+	
 }

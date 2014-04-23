@@ -12,12 +12,14 @@
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
 
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicObject;
+import org.eclipse.cdt.visualizer.ui.canvas.ITooltipProvider;
 import org.eclipse.swt.graphics.GC;
 
 /**
  * Graphic object for MulticoreVisualizer.
  */
-public class MulticoreVisualizerGraphicObject extends GraphicObject
+public class MulticoreVisualizerGraphicObject extends GraphicObject 
+	implements ITooltipProvider
 {
 	// --- members ---
 
@@ -41,5 +43,10 @@ public class MulticoreVisualizerGraphicObject extends GraphicObject
 	public void paintContent(GC gc) {
 		gc.fillRectangle(m_bounds);
 		gc.drawRectangle(m_bounds);
+	}
+
+	@Override
+	public String getTooltip(int x, int y) {
+		return null;
 	}
 }

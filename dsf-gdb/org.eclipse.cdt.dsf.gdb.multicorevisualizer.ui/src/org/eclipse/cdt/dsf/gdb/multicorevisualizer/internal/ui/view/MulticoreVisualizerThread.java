@@ -22,8 +22,7 @@ import org.eclipse.swt.graphics.GC;
 /**
  * MulticoreVisualizer Thread object.
  */
-public class MulticoreVisualizerThread extends MulticoreVisualizerGraphicObject
-{
+public class MulticoreVisualizerThread extends MulticoreVisualizerGraphicObject {
 	// --- constants ---
 	
 	/** Thread "pixie" spot width/height */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,9 @@ package org.eclipse.cdt.codan.core.model;
 
 /**
  * IProblemReporter - interface to report problems.
- * 
- * It is recommented to extend {@link AbstractProblemReporter} instead
- * 
+ *
+ * It is recommended to extend {@link AbstractProblemReporter} instead
+ *
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will
@@ -30,7 +30,7 @@ public interface IProblemReporter {
 	/**
 	 * Report a problem with "problemId" id on the location determined by "loc",
 	 * using problem specific error message customized by args.
-	 * 
+	 *
 	 * @param problemId - id of the problem registered with a checker
 	 * @param loc - location object, can be created using
 	 *        getRuntime().getProblemLocationFactory().createProblemLocation

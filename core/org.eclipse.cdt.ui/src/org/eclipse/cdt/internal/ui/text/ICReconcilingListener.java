@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
-
 /**
  * Interface of an object listening to (AST-) reconciling.
  * Inspired by JDT.
@@ -23,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
  * @since 4.0
  */
 public interface ICReconcilingListener {
-
 	/**
 	 * Called before reconciling is started.
 	 */
@@ -34,7 +32,7 @@ public interface ICReconcilingListener {
 	 * 
 	 * @param ast
 	 *            the translation unit AST or <code>null</code> if the working
-	 *            copy was consistent or reconcilation has been cancelled
+	 *            copy was consistent or reconciliation has been cancelled
 	 * @param force
 	 *            flag indicating whether the reconciler was invoked forcefully
 	 * @param progressMonitor

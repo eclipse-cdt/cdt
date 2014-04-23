@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions;
 
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
-import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.breakpoints.IToggleBreakpointsTargetCExtension;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyMessages;
@@ -98,10 +97,10 @@ public class AddBreakpointRulerAction extends AbstractDisassemblyBreakpointRuler
         IStatus status= new Status(IStatus.ERROR, CDebugUIPlugin.PLUGIN_ID, "Error creating breakpoint: ", e); //$NON-NLS-1$
         ErrorDialog.openError(
             getDisassemblyPart().getSite().getShell(), 
-            ActionMessages.getString("DisassemblyMessages.Disassembly_action_AddBreakpoint_errorTitle"),  //$NON-NLS-1$
-            ActionMessages.getString("DisassemblyMessages.Disassembly_action_AddBreakpoint_errorMessage"), //$NON-NLS-1$
+            DisassemblyMessages.Disassembly_action_AddBreakpoint_errorTitle,
+            DisassemblyMessages.Disassembly_action_AddBreakpoint_errorMessage,
             status);
-        CDebugUIPlugin.log(status); //
+        CDebugUIPlugin.log(status);
     }
 
 	/**

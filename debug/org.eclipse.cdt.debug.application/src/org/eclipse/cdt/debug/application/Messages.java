@@ -60,6 +60,39 @@ public class Messages extends NLS {
 	public static String GdbDebugCoreFileCommand_Core_file_does_not_exist;
 	public static String GdbDebugCoreFileCommand_Invalid_core_file;
 
+	public static String FileMenuName;
+	public static String EditMenuName;
+	public static String WindowMenuName;
+	public static String HelpMenuName;
+
+	public static String ShowViewMenuName;
+
+	public static String ResetPerspective_text;
+	public static String ResetPerspective_toolTip;
+	public static String Workbench_cut;
+	public static String Workbench_cutToolTip;
+	public static String Workbench_copy;
+	public static String Workbench_copyToolTip;
+	public static String Workbench_paste;
+	public static String Workbench_pasteToolTip;
+	public static String Workbench_selectAll;
+	public static String Workbench_selectAllToolTip;
+	public static String Workbench_findReplace;
+	public static String Workbench_findReplaceToolTip;
+	public static String Workbench_addBookmark;
+	public static String Workbench_addBookmarkToolTip;
+	public static String Workbench_addTask;
+	public static String Workbench_addTaskToolTip;
+	public static String Workbench_delete;
+	public static String Workbench_deleteToolTip;
+
+	public static String CoreFileMenuName;
+	public static String CoreFile_toolTip;
+	public static String NewExecutable_toolTip;
+	public static String NewExecutableMenuName;
+	public static String AttachedExecutable_toolTip;
+	public static String AttachedExecutableMenuName;
+
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);
 

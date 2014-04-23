@@ -123,6 +123,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 //									System.out.println("arg <" + i + "> is " + args[i]);
 					if ("-application".equals(args[i]))
 						i++; // ignore the application specifier
+					else if ("-product".equals(args[i]))
+						i++; // ignore the product specifier
 					else if ("-b".equals(args[i])) {
 						++i;
 						if (i < args.length)

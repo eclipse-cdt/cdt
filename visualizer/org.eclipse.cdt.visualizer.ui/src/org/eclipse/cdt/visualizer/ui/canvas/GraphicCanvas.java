@@ -53,8 +53,8 @@ public class GraphicCanvas extends BufferedCanvas
 				case SWT.MouseEnter:
 				case SWT.MouseMove:
 					IGraphicObject obj = getGraphicObject(event.x, event.y);
-					if (obj != null) {
-						String tooltip = obj.getTooltip(event.x, event.y);
+					if (obj != null && obj instanceof ITooltipProvider) {
+						String tooltip = ((ITooltipProvider) obj).getTooltip(event.x, event.y);
 						setToolTipText(tooltip);
 					}
 					break;

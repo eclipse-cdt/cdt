@@ -90,14 +90,16 @@ public class TextCanvas extends GridCanvas {
 		fCellCanvasModel=model;
 		fCellCanvasModel.addCellCanvasModelListener(new ITextCanvasModelListener(){
 			public void rangeChanged(int col, int line, int width, int height) {
+				if(isDisposed()) return;
 				repaintRange(col,line,width,height);
 			}
 			public void dimensionsChanged(int cols, int rows) {
+				if(isDisposed()) return;
 				calculateGrid();
 			}
 			public void terminalDataChanged() {
-				if(isDisposed())
-					return;
+				if(isDisposed()) return;
+				
 				// scroll to end (unless scroll lock is active)
 				if (!fResizing) {
 					calculateGrid();

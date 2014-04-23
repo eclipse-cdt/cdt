@@ -25,9 +25,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
  * implementation for common methods.
  */
 public abstract class AbstractChecker implements IChecker {
-	/**
-	 * @since 2.0
-	 */
+	private static final Object[] EMPTY_OBJECT_ARRAY = {};
 	private ICheckerInvocationContext context;
 	private IProblemReporter problemReporter;
 
@@ -111,7 +109,7 @@ public abstract class AbstractChecker implements IChecker {
 	 *        - line
 	 */
 	public void reportProblem(String id, IFile file, int lineNumber) {
-		getProblemReporter().reportProblem(id, createProblemLocation(file, lineNumber), new Object[] {});
+		getProblemReporter().reportProblem(id, createProblemLocation(file, lineNumber), EMPTY_OBJECT_ARRAY);
 	}
 
 	/**
@@ -204,6 +202,7 @@ public abstract class AbstractChecker implements IChecker {
 	 */
 	@Override
 	public void before(IResource resource) {
+		// TODO(sprigogin): Use a problem reporter creating non-persistent editor annotations when running in editor.
 		IProblemReporter reporter = CodanRuntime.getInstance().getProblemReporter();
 		problemReporter = reporter;
 		if (reporter instanceof IProblemReporterSessionPersistent) {

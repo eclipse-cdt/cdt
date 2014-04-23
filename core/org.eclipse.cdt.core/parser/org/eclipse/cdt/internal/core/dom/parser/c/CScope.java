@@ -340,9 +340,8 @@ public class CScope implements ICScope, IASTInternalScope {
         for (CharArrayObjectMap<?> map : mapsToNameOrBinding) {
         	if (lookup.isPrefixLookup()) {
         		IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(c);
-        		Object[] keys = map.keyArray();
-        		for (Object key2 : keys) {
-        			char[] key = (char[]) key2;
+        		char[][] keys = map.keys();
+        		for (char[] key : keys) {
 					if (matcher.match(key)) {
         				obj = ArrayUtil.append(obj, map.get(key));
         			}

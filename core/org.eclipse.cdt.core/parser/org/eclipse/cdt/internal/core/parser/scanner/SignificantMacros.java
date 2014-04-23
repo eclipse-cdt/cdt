@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Google, Inc and others.
+ * Copyright (c) 2011, 2014 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,18 +22,18 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  * it back.
  *
  * The map is encoded as:
- * <code>&lt;number_of_entries&gt;,&lt;key1&gt;&lt;value1&gt;...&lt;keyN&gt;&lt;valueN&gt;</code>.
+ * {@code <number_of_entries>,<key1><value1>...<keyN><valueN>}.
  * <p>
- * Each string is encoded as: <code>&lt;number_of_characters&gt;,&lt;characters&gt;</code>.
- * A <code>null</code> string is encoded as a single comma.
+ * Each string is encoded as: {@code <number_of_characters>,<characters>}.
+ * A {@code null} string is encoded as a single comma.
  */
 public class SignificantMacros implements ISignificantMacros {
 	public static final char[] DEFINED = {0};
 	public static final char[] UNDEFINED = {1}; 
-	private static final Comparator<Object> SORTER = new Comparator<Object>() {
+	private static final Comparator<char[]> SORTER = new Comparator<char[]>() {
 		@Override
-		public int compare(Object o1, Object o2) {
-			return CharArrayUtils.compare((char[])o1, (char[])o2);
+		public int compare(char[] s1, char[] s2) {
+			return CharArrayUtils.compare(s1, s2);
 		}
 	}; 
 			
@@ -51,10 +51,9 @@ public class SignificantMacros implements ISignificantMacros {
 
 	private char[] encode(CharArrayObjectMap<char[]> sigMacros) {
 		StringBuilder buffer= new StringBuilder();
-		Object[] keys= sigMacros.keyArray();
+		char[][] keys= sigMacros.keys();
 		Arrays.sort(keys, SORTER);
-		for (Object key : keys) {
-			char[] name= (char[]) key;
+		for (char[] name : keys) {
 			char[] value= sigMacros.get(name);
 			buffer.append((char) name.length).append(name);
 			buffer.append((char) value.length).append(value);

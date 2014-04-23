@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -94,7 +95,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 			return;
 
 		if (bindings == null)
-			bindings = new CharArrayObjectMap<Object>(1);
+			bindings = new CharArrayObjectMap<>(1);
 		if (name instanceof ICPPASTQualifiedName &&
 				!(physicalNode instanceof ICPPASTCompositeTypeSpecifier) &&
 				!(physicalNode instanceof ICPPASTNamespaceDefinition)) {
@@ -109,7 +110,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 		    if (o instanceof ObjectSet) {
 		    	((ObjectSet<Object>) o).put(name);
 		    } else {
-		    	ObjectSet<Object> temp = new ObjectSet<Object>(2);
+		    	ObjectSet<Object> temp = new ObjectSet<>(2);
 		    	temp.put(o);
 		    	temp.put(name);
 		        bindings.put(c, temp);
@@ -229,11 +230,10 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 
 	    Object obj = null;
 	    if (lookup.isPrefixLookup()) {
-	    	Object[] keys = bindings != null ? bindings.keyArray() : new Object[0];
-	    	ObjectSet<Object> all= new ObjectSet<Object>(16);
+	    	char[][] keys = bindings != null ? bindings.keys() : CharArrayUtils.EMPTY_ARRAY_OF_CHAR_ARRAYS;
+	    	ObjectSet<Object> all= new ObjectSet<>(16);
 	    	IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(c);
-	    	for (Object key2 : keys) {
-	    		final char[] key = (char[]) key2;
+	    	for (char[] key : keys) {
 				if (key != CONSTRUCTOR_KEY && matcher.match(key)) {
 	    			obj= bindings.get(key);
 	    			if (obj instanceof ObjectSet<?>) {
@@ -335,9 +335,6 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-	 */
 	@Override
 	public IBinding[] find(String name) {
 	    return CPPSemantics.findBindings(this, name, false);
@@ -347,7 +344,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	@SuppressWarnings({ "unchecked" })
     public void addBinding(IBinding binding) {
         if (bindings == null)
-            bindings = new CharArrayObjectMap<Object>(1);
+            bindings = new CharArrayObjectMap<>(1);
         char[] c = binding.getNameCharArray();
         if (c.length == 0) {
         	return;
@@ -357,7 +354,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
             if (o instanceof ObjectSet) {
                 ((ObjectSet<Object>) o).put(binding);
             } else {
-                ObjectSet<Object> set = new ObjectSet<Object>(2);
+                ObjectSet<Object> set = new ObjectSet<>(2);
                 set.put(o);
                 set.put(binding);
                 bindings.put(c, set);

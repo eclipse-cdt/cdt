@@ -169,16 +169,28 @@ public class CharTable extends HashTable {
 			return i;
 		
 		// Follow the next chain
-		for (i = nextTable[i] - 1; i >= 0 && nextTable[i] != i + 1; i = nextTable[i] - 1)
+		for (i = nextTable[i] - 1; i >= 0 && nextTable[i] != i + 1; i = nextTable[i] - 1) {
 			if (CharArrayUtils.equals(buffer, start, len, keyTable[i]))
 				return i;
+		}
 			
 		return -1;
 	}
 	
-	public Object[] keyArray() {
-	    Object[] keys = new Object[size()];
+	/**
+	 * @since 5.7
+	 */
+	public char[][] keys() {
+	    char[][] keys = new char[size()][];
 	    System.arraycopy(keyTable, 0, keys, 0, keys.length);
 	    return keys;
+	}
+
+	/**
+	 * @deprecated Use {@link #keys()} instead.
+	 */
+	@Deprecated
+	public Object[] keyArray() {
+		return keys();
 	}
 }

@@ -23,6 +23,8 @@ public class CharArrayUtils {
 	/** @since 5.4 */
 	public static final char[] EMPTY_CHAR_ARRAY = {};
 	public static final char[] EMPTY = EMPTY_CHAR_ARRAY;
+	/** @since 5.7 */
+	public static final char[][] EMPTY_ARRAY_OF_CHAR_ARRAYS = {};
 
 	private CharArrayUtils() {}
 

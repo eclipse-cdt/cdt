@@ -47,7 +47,7 @@
  * David McKnight   (IBM) - [390037] [dstore] Duplicated items in the System view
  * David McKnight   (IBM) - [396440] [dstore] fix issues with the spiriting mechanism and other memory improvements (phase 1)
  * David McKnight   (IBM) - [432875] [dstore] do not use rmt_classloader_cache*.jar
- * David McKnight   (IBM) - [432872] [dstore] enforce secure permission bits for .dstore* logs
+ * David McKnight   (IBM) - [432872] [dstore] enforce secure permission bits for .dstore* logs 
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;

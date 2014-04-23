@@ -10,15 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.debug.application;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -27,28 +21,11 @@ import org.eclipse.debug.core.ILaunchManager;
 
 public class DebugCoreFile {
 	
-	private static final String DEBUG_PROJECT_ID = "org.eclipse.cdt.debug"; //$NON-NLS-1$
-
-
 	public DebugCoreFile() {
 	}
 	
 	public static ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
-	}
-	
-	private static IProject createCProjectForExecutable(String projectName) throws OperationCanceledException, CoreException {
-
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IProject newProjectHandle = workspace.getRoot().getProject(projectName);
-
-		IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
-		description.setLocation(null);
-
-		IProject newProject = CCorePlugin.getDefault().createCProject(description, newProjectHandle, null,
-				DEBUG_PROJECT_ID);
-
-		return newProject;
 	}
 	
 	/**

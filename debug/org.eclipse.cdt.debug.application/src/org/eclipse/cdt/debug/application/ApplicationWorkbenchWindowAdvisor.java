@@ -120,7 +120,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 //			System.out.println("program args length is " + args.length);
 			try {
 				for (int i = 0; i < args.length; ++i) {
-									System.out.println("arg <" + i + "> is " + args[i]);
+//									System.out.println("arg <" + i + "> is " + args[i]);
 					if ("-application".equals(args[i]))
 						i++; // ignore the application specifier
 					else if ("-b".equals(args[i])) {

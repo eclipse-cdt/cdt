@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.Rectangle;
  * Base class for objects that can be displayed and manipulated on a GraphicCanvas.
  */
 public class GraphicObject
-	implements IGraphicObject
+	implements IGraphicObject, ITooltipProvider
 {
 	// --- members ---
 
@@ -277,6 +277,9 @@ public class GraphicObject
 	public void paintDecorations(GC gc) {
 	}
 
+	/**
+	 * @since 1.1
+	 */
 	@Override
 	public String getTooltip(int x, int y) {
 		return null;

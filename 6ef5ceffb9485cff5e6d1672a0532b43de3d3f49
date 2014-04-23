@@ -52,6 +52,24 @@
       "revId": "6ef5ceffb9485cff5e6d1672a0532b43de3d3f49",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_06515bdf",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/UNCPathConverter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-04-23T18:04:11Z",
+      "side": 1,
+      "message": "What\u0027s worse is that the backslash is a valid character in file names on non-windows. It not only seems wrong, it is wrong.\n\nThis is one reason we should never use strings for paths. IPath has proper handling for isUNC().",
+      "parentUuid": "2753a756_debd831f",
+      "revId": "6ef5ceffb9485cff5e6d1672a0532b43de3d3f49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -239,7 +239,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					config = DebugAttachedExecutable.createLaunchConfig(monitor, buildLog);
 				} else if (corefile != null && corefile.length() > 0) {
 					config = DebugCoreFile.createLaunchConfig(monitor, buildLog, executable, corefile);
-				} else if (executable.length() > 0) {
+				} else if (executable != null && executable.length() > 0) {
 					config = DebugExecutable.importAndCreateLaunchConfig(monitor, executable, buildLog, arguments);
 				} else {
 					// No executable specified, look for last launch
@@ -257,7 +257,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						oldBuildLog = config.getAttribute(ICDTStandaloneDebugLaunchConstants.BUILD_LOG_LOCATION, ""); //$NON-NLS-1$
 					}
 					final NewExecutableInfo info = new NewExecutableInfo("", "", "", ""); //$NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
-					final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
+					final IStatus errorStatus = new Status(IStatus.WARNING, Activator.PLUGIN_ID, 0, 
 							Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
 					final String executablePath = oldExecutable;
 					final String executableArgs = oldArguments;

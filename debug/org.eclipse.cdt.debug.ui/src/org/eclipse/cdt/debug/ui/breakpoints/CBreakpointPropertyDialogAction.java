@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Wind River Systems and others.
+ * Copyright (c) 2012, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class CBreakpointPropertyDialogAction extends SelectionProviderAction {
     
     private IDebugContextProvider fDebugContextProvider;
     
-    private static final String PAGE_ID_COMMON = "org.eclipse.cdt.debug.ui.propertypages.breakpoint.common"; //$NON-NLS-1$ 
+    static final String PAGE_ID_COMMON = "org.eclipse.cdt.debug.ui.propertypages.breakpoint.common"; //$NON-NLS-1$ 
     
     public CBreakpointPropertyDialogAction(IShellProvider shell, ISelectionProvider selectionProvider, IDebugContextProvider debugContextProvider) {
         super(selectionProvider, WorkbenchMessages.PropertyDialog_text); 
@@ -190,7 +190,12 @@ public class CBreakpointPropertyDialogAction extends SelectionProviderAction {
         if (ss.isEmpty())
             return null;
         
-        return PreferencesUtil.createPropertyDialogOn(fShellProvider.getShell(), bpContext, null, null, null);
+        String initialPageId = null;
+        if (bpContext.getBreakpoint().getMarker() == null) {
+        	// Bug 433308 - Always show Common page initially for new breakpoints
+        	initialPageId = PAGE_ID_COMMON;
+        }
+        return PreferencesUtil.createPropertyDialogOn(fShellProvider.getShell(), bpContext, initialPageId, null, null);
     }
 
     

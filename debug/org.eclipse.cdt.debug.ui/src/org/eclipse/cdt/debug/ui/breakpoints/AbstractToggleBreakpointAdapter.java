@@ -823,7 +823,12 @@ abstract public class AbstractToggleBreakpointAdapter
             .getContextService(part.getSite().getWorkbenchWindow()).getActiveContext(part.getSite().getId());
         CBreakpointContext bpContext = new CBreakpointContext(bp, debugContext, resource, attributes);
 
-        PreferenceDialog dialog = PreferencesUtil.createPropertyDialogOn(part.getSite().getShell(), bpContext, null,
+        String initialPageId = null;
+        if (bp.getMarker() == null) {
+        	// Bug 433308 - Always show Common page initially for new breakpoints
+        	initialPageId = CBreakpointPropertyDialogAction.PAGE_ID_COMMON;
+        }
+		PreferenceDialog dialog = PreferencesUtil.createPropertyDialogOn(part.getSite().getShell(), bpContext, initialPageId ,
             null, null);
         if (dialog != null) {
             dialog.open();

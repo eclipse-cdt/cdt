@@ -8,37 +8,31 @@
  * Contributors:
  *     Texas Instruments, Freescale Semiconductor - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
+ *     Anders Dahlberg (Ericsson)  - Need additional API to extend support for memory spaces (Bug 431627)
+ *     Alvaro Sanchez-Leon (Ericsson AB) - Need additional API to extend support for memory spaces (Bug 431627)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.memory;
 
 import java.math.BigInteger;
-import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlock;
-import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlock;
 import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlockRetrieval;
-import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
-import org.eclipse.cdt.dsf.debug.service.IMemorySpaces;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces.IMemorySpaceDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBMemory;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
-import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.model.MemoryByte;
 
 /**
  * A specialization of the DSF memory block implementation supporting memory
@@ -59,6 +53,18 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 		super(retrieval, context, modelId, expression, address, word_size, length);
 		fMemorySpaceID = (memorySpaceID != null && memorySpaceID.length() > 0) ? memorySpaceID : null;
 		assert memorySpaceID == null || memorySpaceID.length() > 0;	// callers shouldn't be passing in an empty string
+		
+		//TODO: remove the memorySpaceID parameter from this method 
+		//after making sure it's not used in earlier implementations
+		//in the mean time check for consistency
+		if(memorySpaceID != null) {
+			assert(context instanceof IMemorySpaceDMContext);
+			assert memorySpaceID.equals(((IMemorySpaceDMContext) context).getMemorySpaceId());
+		} else {
+			if (context instanceof IMemorySpaceDMContext) {
+				assert ((IMemorySpaceDMContext) context).getMemorySpaceId() == null;
+			}
+		}
 	}
 
 	/**
@@ -71,7 +77,10 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 
 		public MemorySpaceDMContext(String sessionId, String memorySpaceId, IDMContext parent) {
 			super(sessionId, new IDMContext[] {parent});
-			fMemorySpaceId = memorySpaceId;
+			// A memorySpaceDMContext should not be created if the memorySpaceId is not valid.
+			// However we need the id to calculate the hash, therefore we can not leave it as null
+			assert(memorySpaceId != null);
+			fMemorySpaceId = memorySpaceId == null ? "": memorySpaceId; //$NON-NLS-1$
 		}
 		
 		/* (non-Javadoc)
@@ -111,150 +120,6 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
         	return baseToString() + ".memoryspace[" + fMemorySpaceId + ']';  //$NON-NLS-1$
         } 
 	}
-	
-    /*
-	 * The real thing. Since the original call is synchronous (from a platform
-	 * Job), we use a Query that will patiently wait for the underlying
-	 * asynchronous calls to complete before returning.
-	 * 
-	 * @param bigAddress 
-	 * @param count - The number of addressable units for this block
-	 * @return MemoryByte[]
-	 * @throws DebugException
-	 */
-    @Override
-	protected MemoryByte[] fetchMemoryBlock(BigInteger bigAddress, final long count) throws DebugException {
-
-    	// For the IAddress interface
-    	final Addr64 address = new Addr64(bigAddress);
-    	
-        // Use a Query to synchronize the downstream calls  
-        Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
-			@Override
-			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {
-				GdbMemoryBlockRetrieval retrieval = (GdbMemoryBlockRetrieval)getMemoryBlockRetrieval();
-				int addressableSize = 1;
-				try {
-					addressableSize = getAddressableSize();
-				} catch (DebugException e) {}
-
-				// If this block was created with a memory space qualification,
-				// we need to create an enhanced context
-				IMemoryDMContext context = null;
-				if (fMemorySpaceID != null) {
-				    IMemorySpaces memoryService = retrieval.getMemorySpaceServiceTracker().getService();
-				    if (memoryService != null) {
-						context = new MemorySpaceDMContext(memoryService.getSession().getId(), fMemorySpaceID, getContext());
-				    }
-					else {
-						drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, Messages.Err_MemoryServiceNotAvailable, null));
-				    	drm.done();
-				    	return;
-				    }
-				}
-				else {
-					 context = getContext();
-				}
-						
-			    IMemory memoryService = retrieval.getServiceTracker().getService();
-			    if (memoryService != null) {
-			        // Go for it
-			        memoryService.getMemory( 
-			        	context, address, 0, addressableSize, (int) count,
-			            //getContext(), address, 0, addressableSize, (int) length,
-			            new DataRequestMonitor<MemoryByte[]>(retrieval.getExecutor(), drm) {
-			                @Override
-			                protected void handleSuccess() {
-			                    drm.setData(getData());
-			                    drm.done();
-			                }
-			            });
-			    }
-				else {
-					drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, Messages.Err_MemoryServiceNotAvailable, null));
-			    	drm.done();
-			    	return;
-			    }
-			}
-        };
-		GdbMemoryBlockRetrieval retrieval = (GdbMemoryBlockRetrieval)getMemoryBlockRetrieval();        
-        retrieval.getExecutor().execute(query);
-
-		try {
-            return query.get();
-        } catch (InterruptedException e) {
-    		throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, Messages.Err_MemoryReadFailed, e));
-        } catch (ExecutionException e) {
-    		throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, Messages.Err_MemoryReadFailed, e));
-        }
-    }
-
-	/* Writes an array of bytes to memory.
-     * 
-     * @param offset
-     * @param bytes
-     * @throws DebugException
-     */
-    @Override
-	protected void writeMemoryBlock(final long offset, final byte[] bytes) throws DebugException {
-
-    	// For the IAddress interface
-    	final Addr64 address = new Addr64(getBigBaseAddress());
-
-        // Use a Query to synchronize the downstream calls  
-        Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
-			@Override
-			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {
-				GdbMemoryBlockRetrieval retrieval = (GdbMemoryBlockRetrieval)getMemoryBlockRetrieval();
-				int addressableSize = 1;
-				try {
-					addressableSize = getAddressableSize();
-				} catch (DebugException e) {}
-				
-				int addressableUnits = bytes.length/addressableSize;
-				
-				// If this block was created with a memory space qualification,
-				// we need to create an enhanced context
-				IMemoryDMContext context = null;
-				if (fMemorySpaceID != null) {
-				    IMemorySpaces memoryService = retrieval.getMemorySpaceServiceTracker().getService();
-				    if (memoryService != null) {
-						context = new MemorySpaceDMContext(memoryService.getSession().getId(), fMemorySpaceID, getContext());
-				    }
-					else {
-						drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, Messages.Err_MemoryServiceNotAvailable, null));
-				    	drm.done();
-				    	return;
-				    }
-				}
-				else {
-					 context = getContext();
-				}
-			    IMemory memoryService = retrieval.getServiceTracker().getService();
-			    if (memoryService != null) {
-			        // Go for it
-	    	        memoryService.setMemory(
-		    	  	      context, address, offset, addressableSize, addressableUnits, bytes,
-		    	  	      new RequestMonitor(retrieval.getExecutor(), drm));
-			    }
-			    else {
-					drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, Messages.Err_MemoryServiceNotAvailable, null));			    	
-			    	drm.done();
-			    	return;
-			    }
-			}
-        };
-        GdbMemoryBlockRetrieval retrieval = (GdbMemoryBlockRetrieval)getMemoryBlockRetrieval();
-        retrieval.getExecutor().execute(query);
-
-		try {
-            query.get();
-        } catch (InterruptedException e) {
-    		throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, Messages.Err_MemoryWriteFailed, e));
-        } catch (ExecutionException e) {
-    		throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, Messages.Err_MemoryWriteFailed, e));
-        }
-    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.provisional.IMemorySpaceAwareMemoryBlock#getMemorySpaceID()
@@ -283,19 +148,10 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 	@Override
 	public int getAddressSize() throws DebugException {
 		GdbMemoryBlockRetrieval retrieval = (GdbMemoryBlockRetrieval)getMemoryBlockRetrieval();
-		IMemoryDMContext context = null;
-		if (fMemorySpaceID != null) {
-			IMemorySpaces memorySpacesService = retrieval.getMemorySpaceServiceTracker().getService();
-			if (memorySpacesService != null) {
-				context = new MemorySpaceDMContext(memorySpacesService.getSession().getId(), fMemorySpaceID, getContext());
-			}
-		}
-		else {
-			context = getContext();
-		}
+
 		IGDBMemory memoryService = (IGDBMemory)retrieval.getServiceTracker().getService();
 		if (memoryService != null) {
-			return memoryService.getAddressSize(context);
+			return memoryService.getAddressSize(getContext());
 		}
 		
 		throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, Messages.Err_MemoryServiceNotAvailable, null));

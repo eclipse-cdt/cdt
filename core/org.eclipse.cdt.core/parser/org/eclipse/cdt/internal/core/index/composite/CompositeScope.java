@@ -79,7 +79,7 @@ public abstract class CompositeScope implements IIndexScope {
 	 */
 	protected final IBinding processUncertainBinding(IBinding binding) {
 		if (binding instanceof IIndexFragmentBinding) {
-			return cf.getCompositeBinding((IIndexFragmentBinding)binding);				
+			return cf.getCompositeBinding((IIndexFragmentBinding) binding);				
 		} else if (binding instanceof ProblemBinding) {
 			return binding;
 		} else if (binding instanceof CPPCompositeBinding /* AST composite */) {

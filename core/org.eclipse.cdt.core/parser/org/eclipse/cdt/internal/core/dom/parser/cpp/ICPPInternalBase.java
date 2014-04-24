@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *     QNX - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -15,13 +15,12 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
  * @author Bryan Wilkinson
- *
  */
 public interface ICPPInternalBase extends Cloneable {
 	public Object clone();
 	
 	/**
-	 * Set the base class.
+	 * Sets the base class.
 	 */
 	public void setBaseClass(IBinding binding) throws DOMException;
 }

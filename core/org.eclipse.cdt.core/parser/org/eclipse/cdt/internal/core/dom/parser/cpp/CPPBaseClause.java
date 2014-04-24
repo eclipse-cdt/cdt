@@ -63,27 +63,17 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
 		return baseClass;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBase#getVisibility()
-     */
     @Override
 	public int getVisibility() {
 		int vis = base.getVisibility();
 		
 		if (vis == 0) {
 			ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) base.getParent();
-			int key = compSpec.getKey();
-			if (key == ICPPClassType.k_class)
-				vis = ICPPBase.v_private;
-			else
-				vis = ICPPBase.v_public;
+			vis = compSpec.getKey() == ICPPClassType.k_class ? ICPPBase.v_private : ICPPBase.v_public;
 		}
         return vis;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBase#isVirtual()
-     */
     @Override
 	public boolean isVirtual() {
         return base.isVirtual();
@@ -105,9 +95,6 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
 		return base.getName();
 	}
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBase#getClassDefinitionName()
-	 */
 	@Override
 	public IName getClassDefinitionName() {
 		IASTNode parent = base.getParent();

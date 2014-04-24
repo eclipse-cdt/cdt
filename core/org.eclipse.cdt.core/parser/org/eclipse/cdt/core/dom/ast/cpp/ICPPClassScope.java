@@ -21,7 +21,7 @@ public interface ICPPClassScope extends ICPPScope {
 	/**
 	 * Returns the binding for the class this scope is associated with.
 	 */
-	ICPPClassType getClassType();
+	public ICPPClassType getClassType();
 
 	/**
 	 * Returns an array of methods that were implicitly added to this class

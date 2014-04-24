@@ -41,7 +41,7 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 
 	@Override
 	public ICPPMethod[] getImplicitMethods() {
-		ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType)rbinding).getCompositeScope();
+		ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType) rbinding).getCompositeScope();
 		ICPPMethod[] result = rscope.getImplicitMethods();
 		for (int i= 0; i < result.length; i++) {
 			result[i] = (ICPPMethod) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
@@ -51,7 +51,7 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
-		ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType)rbinding).getCompositeScope();
+		ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType) rbinding).getCompositeScope();
 		ICPPConstructor[] result = rscope.getConstructors();
 		for (int i= 0; i < result.length; i++) {
 			result[i] = (ICPPConstructor) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);

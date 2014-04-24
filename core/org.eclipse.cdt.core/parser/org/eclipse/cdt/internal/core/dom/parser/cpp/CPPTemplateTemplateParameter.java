@@ -44,10 +44,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 /**
  * A template template parameter.
  */
-public class CPPTemplateTemplateParameter extends CPPTemplateParameter implements
-		ICPPTemplateTemplateParameter, ICPPInternalTemplate, ICPPUnknownBinding,
+public class CPPTemplateTemplateParameter extends CPPTemplateParameter
+		implements ICPPTemplateTemplateParameter, ICPPInternalTemplate, ICPPUnknownBinding,
 		ICPPUnknownType {
-
 	private ICPPTemplateParameter[] templateParameters;
 	private ObjectMap instances;
 	private ICPPScope unknownScope;
@@ -139,30 +138,37 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	public ICPPBase[] getBases() {
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
+
 	@Override
 	public IField[] getFields() {
 		return IField.EMPTY_FIELD_ARRAY;
 	}
+
 	@Override
 	public IField findField(String name) {
 		return null;
 	}
+
 	@Override
 	public ICPPField[] getDeclaredFields() {
 		return ICPPField.EMPTY_CPPFIELD_ARRAY;
 	}
+
 	@Override
 	public ICPPMethod[] getMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
+
 	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
+
 	@Override
 	public ICPPMethod[] getDeclaredMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
+
 	@Override
 	public ICPPConstructor[] getConstructors() {
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
@@ -171,6 +177,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	public IBinding[] getFriends() {
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
+
 	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;

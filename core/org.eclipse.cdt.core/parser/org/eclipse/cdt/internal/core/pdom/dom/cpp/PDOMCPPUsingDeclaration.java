@@ -94,13 +94,13 @@ class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclara
 				do {
 					IBinding delegate = alias.getBinding();
 					if (delegate != null) {
-						delegates= ArrayUtil.appendAt(IBinding.class, delegates, i++, delegate);
+						delegates= ArrayUtil.appendAt(delegates, i++, delegate);
 					}
 				} while ((alias = alias.getNext()) != null);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
-			delegates = ArrayUtil.trim(IBinding.class, delegates);
+			delegates = ArrayUtil.trim(delegates, i);
 		}
 		return delegates;
 	}

@@ -187,16 +187,17 @@ public class ClassTypeHelper {
 				return ICPPBase.EMPTY_BASE_ARRAY;
 			}
 		}
-		ICPPASTBaseSpecifier[] bases = host.getCompositeTypeSpecifier().getBaseSpecifiers();
-		if (bases.length == 0)
+
+		ICPPASTBaseSpecifier[] baseSpecifiers = host.getCompositeTypeSpecifier().getBaseSpecifiers();
+		if (baseSpecifiers.length == 0)
 			return ICPPBase.EMPTY_BASE_ARRAY;
 
-		ICPPBase[] bindings = new ICPPBase[bases.length];
-		for (int i = 0; i < bases.length; i++) {
-			bindings[i] = new CPPBaseClause(bases[i]);
+        ICPPBase[] bases = new ICPPBase[baseSpecifiers.length];
+		for (int i = 0; i < baseSpecifiers.length; i++) {
+			bases[i] = new CPPBaseClause(baseSpecifiers[i]);
 		}
 
-		return bindings;
+		return bases;
 	}
 
 	public static ICPPField[] getDeclaredFields(ICPPInternalClassTypeMixinHost host) {

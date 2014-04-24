@@ -116,17 +116,15 @@ public class SemanticQueries {
 		 * we need to be able to keep track of more than one at a time.
 		 */
 		private static class FinalOverriderMap {
-			private Map<ICPPMethod, Map<Integer, List<ICPPMethod>>> fMap
-					= new HashMap<ICPPMethod, Map<Integer, List<ICPPMethod>>>();
+			private Map<ICPPMethod, Map<Integer, List<ICPPMethod>>> fMap = new HashMap<>();
 			
 			/**
-			 * Add 'overrider' as a final ovverider of 'method' in subobject
-			 * 'subobjectNumber'.
+			 * Add 'overrider' as a final overrider of 'method' in subobject 'subobjectNumber'.
 			 */
 			public void add(ICPPMethod method, int subobjectNumber, ICPPMethod overrider) {
 				Map<Integer, List<ICPPMethod>> overriders = fMap.get(method);
 				if (overriders == null) {
-					overriders = new HashMap<Integer, List<ICPPMethod>>();
+					overriders = new HashMap<>();
 					fMap.put(method, overriders);
 				}
 				CollectionUtils.listMapGet(overriders, subobjectNumber).add(overrider);
@@ -154,7 +152,7 @@ public class SemanticQueries {
 				for (ICPPMethod method : other.fMap.keySet()) {
 					Map<Integer, List<ICPPMethod>> overriders = fMap.get(method);
 					if (overriders == null) {
-						overriders = new HashMap<Integer, List<ICPPMethod>>();
+						overriders = new HashMap<>();
 						fMap.put(method, overriders);
 					}
 					Map<Integer, List<ICPPMethod>> otherOverriders = other.fMap.get(method);
@@ -171,7 +169,7 @@ public class SemanticQueries {
 			 * which is themself, meaning they have not been overridden.
 			 */
 			public ICPPMethod[] collectPureVirtualMethods() {
-				List<ICPPMethod> pureVirtualMethods = new ArrayList<ICPPMethod>();
+				List<ICPPMethod> pureVirtualMethods = new ArrayList<>();
 				for (ICPPMethod method : fMap.keySet()) {
 					if (method.isPureVirtual()) {
 						Map<Integer, List<ICPPMethod>> finalOverriders = fMap.get(method);
@@ -190,12 +188,12 @@ public class SemanticQueries {
 		// The last subobject number used for each type in the hierarchy. This is used to
 		// assign subobject numbers to subobjects. Virtual subobjects get a subobject
 		// number of zero, while non-virtual subobjects are number starting from one.
-		private Map<ICPPClassType, Integer> subobjectNumbers = new HashMap<ICPPClassType, Integer>();
+		private Map<ICPPClassType, Integer> subobjectNumbers = new HashMap<>();
 		
 		// Cache of final overrider maps for virtual base subobjects. Since such subobjects
 		// only occur once in the hierarchy, we can cache the final overrider maps we
 		// compute for them.
-		private Map<ICPPClassType, FinalOverriderMap> virtualBaseCache = new HashMap<ICPPClassType, FinalOverriderMap>();
+		private Map<ICPPClassType, FinalOverriderMap> virtualBaseCache = new HashMap<>();
 		
 		public ICPPMethod[] collect(ICPPClassType root, IASTNode point) {
 			FinalOverriderMap finalOverriderMap = collectFinalOverriders(root, false, new HashSet<ICPPClassType>(), 

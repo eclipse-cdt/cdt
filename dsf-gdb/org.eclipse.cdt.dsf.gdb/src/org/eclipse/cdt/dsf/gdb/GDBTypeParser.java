@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems and others.
+ * Copyright (c) 2010, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  * 
  * Contributors:
  *     Wind River Systems - initial implementation
+ *     Anders Dahlberg (Ericsson)  - Need additional API to extend support for memory spaces (Bug 431627)
+ *     Alvaro Sanchez-Leon (Ericsson)  - Need additional API to extend support for memory spaces (Bug 431627)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb;
 
@@ -136,7 +138,7 @@ public class GDBTypeParser {
 				}
 			} else {
 				sb.insert(0, ' ');
-				sb.insert(0, gdbType.nameType);
+				sb.insert(0, gdbType.getTypeName());
 				gdbType = null;
 			}
 		}
@@ -279,9 +281,12 @@ public class GDBTypeParser {
 		insertingChild(kind, 0);
 	}
 
-	void insertingChild(int kind, int d) {
+	/**
+	 * @since 4.4
+	 */
+	protected void insertingChild(int kind, int d) {
 		if (gdbDerivedType == null) {
-			gdbDerivedType = new GDBDerivedType(genericType, kind, d);
+			gdbDerivedType = createGDBDerivedType(genericType, kind, d);
 		} else {
 			GDBDerivedType dType = gdbDerivedType;
 			GDBType gdbType = gdbDerivedType.getChild();
@@ -289,7 +294,7 @@ public class GDBTypeParser {
 				dType = (GDBDerivedType)gdbType;
 				gdbType = dType.getChild();
 			}				
-			gdbType = new GDBDerivedType(gdbType, kind, d);
+			gdbType = createGDBDerivedType(gdbType, kind, d);
 			dType.setChild(gdbType);
 		}
 	}
@@ -458,6 +463,13 @@ public class GDBTypeParser {
 				insertingChild(GDBType.ARRAY, len);
 			}
 		}
+	}
+	
+	/**
+	 * @since 4.4
+	 */
+	protected GDBDerivedType createGDBDerivedType(GDBType c, int t, int dim) {
+		return new GDBDerivedType(c, t, dim);
 	}
 
 	public static void main(String[] args) {

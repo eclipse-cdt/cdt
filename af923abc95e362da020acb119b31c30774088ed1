@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_dc65783a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-24T19:53:48Z",
+      "side": 1,
+      "message": "Not quite accurate, as we could use a memory context or memory space context.  \n  I think the change could be summarized to \nconsolidated the use of memory context to a single IMemoryDMContext, regardless if it is associated to a memory space. \n\n Before the change we were creating IMemorySpaceDMContext on the fly depending on the validity of the memory space id, these context resulted in equivalent instances as they would match an \"equal\" check, however we were using memory spaces we were handling two memory context, the parent container and the memory space context, which caused mismatches when validating Memory change events.\n\nI am not sure if we should add an explanation to the class as we are still bound to a single context. We don\u0027t create extra memory contexts but this was not part of the initial description\n\nLet me know what you think,",
+      "parentUuid": "0756a345_ad1855a9",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_c8ac97aa",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2014-04-21T17:26:43Z",
       "side": 1,
       "message": "If it is now required to pass in an MemorySpaceDmc in context, should we no longer require the memorySpaceID param?  We can obtain directly from context, and avoid the risk of them not matching.  What do you think?",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_5fccbaad",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-24T19:53:48Z",
+      "side": 1,
+      "message": "We receive a IMemoryDMContext in the constructor which we could then use to check if is an instance of IMemorySpaceDMContext and if it is, \nwe can then resolve the memory space id. \n\nI thought about it although I was not willing to change the API to the initial implementation. However I see this is an internal API and we could actually change it.",
+      "parentUuid": "0756a345_c8ac97aa",
       "revId": "af923abc95e362da020acb119b31c30774088ed1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_ffd2ee42",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-24T19:53:48Z",
+      "side": 1,
+      "message": "That\u0027s what I mean, \nI have updated the comment as per your clarification",
+      "parentUuid": "0756a345_4d1b79a6",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_2d2565e2",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2014-04-21T17:26:43Z",
       "side": 1,
       "message": "can you remove this commented line?",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_dfd72a32",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-24T19:53:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_2d2565e2",
       "revId": "af923abc95e362da020acb119b31c30774088ed1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_1ff402c0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-24T19:53:48Z",
+      "side": 1,
+      "message": "Done, \nTrue, I have now remove this change, \nI thing left overs after re-factoring.",
+      "parentUuid": "0756a345_8d159171",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_6d1e3d99",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
         "patchSetId": 4
@@ -98,6 +188,24 @@
       "writtenOn": "2014-04-21T17:26:43Z",
       "side": 1,
       "message": "If you keep this code, no need to check for the second null, the equals() will do that.",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_ff24aee7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-24T19:53:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_6d1e3d99",
       "revId": "af923abc95e362da020acb119b31c30774088ed1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_7f737ed8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-24T19:53:48Z",
+      "side": 1,
+      "message": "Me too, the method being called requires it.\n It really depends on the specifics of the first reference implementation which we don\u0027t have access to :-(",
+      "parentUuid": "0756a345_88145f4c",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_a84a0379",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
         "patchSetId": 4
@@ -132,6 +258,24 @@
       "writtenOn": "2014-04-21T17:26:43Z",
       "side": 1,
       "message": "Could the memoryDmc already be a memorySpaceDmc?  Maybe we should check that and then not create a new one?  In that case, we need to assert that the memorySpaceDmc has the same memorySpaceId as the parameter memorySpaceID",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_3fb106ca",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-24T19:53:48Z",
+      "side": 1,
+      "message": "Done, \nI have added the check as suggested but also applied the same comment under createBlocksFromConfiguration.",
+      "parentUuid": "0756a345_a84a0379",
       "revId": "af923abc95e362da020acb119b31c30774088ed1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_df7e0a54",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-24T19:53:48Z",
+      "side": 1,
+      "message": "I agree, \nalthough the solution has changed to resolved the memory space via a new IMemorySpaces2 interface.",
+      "parentUuid": "0756a345_28b27300",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_0d650111",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
         "patchSetId": 4
@@ -166,6 +328,24 @@
       "writtenOn": "2014-04-21T17:26:43Z",
       "side": 1,
       "message": "Do we still need to do something special with a memorySpaceID here since we pass in a memorySpaceDmc when needed?",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_9f181237",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 455,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-24T19:53:48Z",
+      "side": 1,
+      "message": "Done, \nTrue, no need to pass on the memorySpaceID as we have resolved the memory context earlier :-)",
+      "parentUuid": "0756a345_0d650111",
       "revId": "af923abc95e362da020acb119b31c30774088ed1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_ff1dce25",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 468,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-24T19:53:48Z",
+      "side": 1,
+      "message": "Done, \nTrue, no need to pass on the memorySpaceID as we have resolved the memory context earlier :-)",
+      "parentUuid": "0756a345_2d60c500",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_6d691dec",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
         "patchSetId": 4
@@ -200,6 +398,24 @@
       "writtenOn": "2014-04-21T17:26:43Z",
       "side": 1,
       "message": "How could we end up with not an IMemorySpaceDMContext here but have a valid aMemorySpaceID?  I don\u0027t think we need to do anything anymore here.",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_7f11be0a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 479,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-24T19:53:48Z",
+      "side": 1,
+      "message": "Done,\nTrue, this method is no longer needed and has been removed.",
+      "parentUuid": "0756a345_6d691dec",
       "revId": "af923abc95e362da020acb119b31c30774088ed1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_2e9ef143",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-24T19:53:48Z",
+      "side": 1,
+      "message": "Agree, \nThe solution has changed to use a new memory space service method.",
+      "parentUuid": "0756a345_68e62bd6",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_8d70f1cb",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
         "patchSetId": 4
@@ -240,6 +474,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_9f3f7272",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2528,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-24T19:53:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_8d70f1cb",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_88dd7f02",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/IMemoryBlockRetrievalManager.java",
         "patchSetId": 4
@@ -251,6 +503,24 @@
       "writtenOn": "2014-04-21T17:30:05Z",
       "side": 1,
       "message": "Changes may not be needed if we can use the IMemorySpaces service to override the decoding of a memory space from an expression",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_0ea32d88",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/IMemoryBlockRetrievalManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-04-24T19:53:48Z",
+      "side": 1,
+      "message": "Agree, \nThe solution has changed to use a new memory space service method.",
+      "parentUuid": "0756a345_88dd7f02",
       "revId": "af923abc95e362da020acb119b31c30774088ed1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

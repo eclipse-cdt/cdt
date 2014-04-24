@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *	   Bryan Wilkinson (QNX)
  *     Markus Schorn (Wind River Systems)
  *     Nathan Ridge
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
     private final ICPPASTBaseSpecifier base;
 	private IType baseClass;
+	private boolean inheritedConstructorsSource;
     
     public CPPBaseClause(ICPPASTBaseSpecifier base) {
         this.base = base;
@@ -80,14 +82,8 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
     }
 
 	@Override
-	public void setBaseClass(IBinding cls) {
-		if (cls instanceof IType)
-			baseClass = (IType) cls;
-	}
-
-	@Override
-	public void setBaseClass(IType cls) {
-		baseClass = cls;
+	public boolean isInheritedConstructorsSource() {
+		return inheritedConstructorsSource;
 	}
 
 	@Override
@@ -110,8 +106,23 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
    		try {
             t = (ICPPBase) super.clone();
         } catch (CloneNotSupportedException e) {
-            //not going to happen
+            // Not going to happen.
         }
         return t;
     }
+
+	@Override
+	public void setBaseClass(IBinding cls) {
+		if (cls instanceof IType)
+			baseClass = (IType) cls;
+	}
+
+	@Override
+	public void setBaseClass(IType cls) {
+		baseClass = cls;
+	}
+
+	public void setInheritedConstructorsSource(boolean value) {
+		inheritedConstructorsSource = value;
+	}
 }

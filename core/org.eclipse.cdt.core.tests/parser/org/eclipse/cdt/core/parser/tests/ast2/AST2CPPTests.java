@@ -1340,6 +1340,59 @@ public class AST2CPPTests extends AST2TestBase {
 		assertTrue(ctor instanceof ICPPConstructor);
 	}
 
+	//	struct A {
+	//	  A(int);
+	//	};
+	//
+	//	struct B : public A {
+	//	  using A::A;
+	//	};
+	//
+	//	void foo(B);
+	//
+	//	int test() {
+	//	  foo(1);
+	//	}
+	public void testInheritingConstructor() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <class T>
+	//	struct A {
+	//	  A(T);
+	//	};
+	//
+	//	struct B : public A<int> {
+	//	  using A::A;
+	//	};
+	//
+	//	void foo(B);
+	//
+	//	int test() {
+	//	  foo(1);
+	//	}
+	public void testInheritingConstructorWithTemplate_1() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	struct A {
+	//	  A(int);
+	//	};
+	//
+	//	template <class T>
+	//	struct B : public T {
+	//	  using T::T;
+	//	};
+	//
+	//	void foo(B<A>);
+	//
+	//	int test() {
+	//	  foo(1);
+	//	}
+	public void testInheritingConstructorWithTemplate_2() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	// class A { ~A(); };
 	// class B { ~B(void); };
 	public void testExplicitDestructor_183160() throws Exception {
@@ -2239,7 +2292,7 @@ public class AST2CPPTests extends AST2TestBase {
 	// };
 	// void set();
 	// class B{};
-	public void testFriend_1() throws Exception {
+	public void testFriend() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();
 		tu.accept(col);

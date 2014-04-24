@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2014 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import java.util.Arrays;
+
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -101,6 +102,11 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		@Override
 		public boolean isVirtual() {
 			return base.isVirtual();
+		}
+
+		@Override
+		public boolean isInheritedConstructorsSource() {
+			return base.isInheritedConstructorsSource();
 		}
 
 		@Override

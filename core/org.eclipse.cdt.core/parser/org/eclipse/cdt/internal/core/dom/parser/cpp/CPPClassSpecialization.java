@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,10 +146,11 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	private ICPPClassSpecializationScope specScope;
 	private ObjectMap specializationMap= ObjectMap.EMPTY_MAP;
+	private ICPPBase[] bases;
 	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>() {
 		@Override
 		protected Set<IBinding> initialValue() {
-			return new HashSet<IBinding>();
+			return new HashSet<>();
 		}
 	};
 
@@ -174,7 +175,6 @@ public class CPPClassSpecialization extends CPPSpecialization
 			IBinding result= (IBinding) specializationMap.get(original);
 			if (result != null)
 				return result;
-
 		}
 
 		IBinding result;
@@ -226,8 +226,12 @@ public class CPPClassSpecialization extends CPPSpecialization
 	@Override
 	public ICPPBase[] getBases(IASTNode point) {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
-		if (scope == null)
-			return ClassTypeHelper.getBases(this);
+		if (scope == null) {
+			if (bases == null) {
+				bases = ClassTypeHelper.getBases(this);
+			}
+			return bases;
+		}
 
 		return scope.getBases(point);
 	}

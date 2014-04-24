@@ -16,17 +16,28 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter.EMPTY_CPPPARAMETER_ARRAY;
+import static org.eclipse.cdt.core.parser.util.ArrayUtil.addAll;
+import static org.eclipse.cdt.core.parser.util.ArrayUtil.append;
+import static org.eclipse.cdt.core.parser.util.ArrayUtil.appendAt;
+import static org.eclipse.cdt.core.parser.util.ArrayUtil.trim;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType.UNSPECIFIED_TYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+
+import java.util.Arrays;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -35,6 +46,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -42,8 +55,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.index.IIndexFileSet;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
@@ -127,6 +140,116 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			implicits[i++] = m;
 			addBinding(m);
 		}
+
+		ICPPBase[] inheritedConstructorsSources = findInheritedConstructorsSourceBases(compTypeSpec);
+    	ICPPMethod[] inheritedConstructors = createInheritedConsructors(this, className,
+    			inheritedConstructorsSources, ia.getParametersOfNontrivialUserDeclaredConstructors(),
+    			compTypeSpec);
+    	implicits = addAll(implicits, inheritedConstructors);
+    	for (ICPPMethod ctor : inheritedConstructors)
+    		addBinding(ctor);
+	}
+
+	private ICPPBase[] findInheritedConstructorsSourceBases(
+			ICPPASTCompositeTypeSpecifier compositeTypeSpec) {
+		ICPPBase[] bases = ClassTypeHelper.getBases(getClassType(), compositeTypeSpec);
+		if (bases.length == 0)
+			return bases;
+		ICPPBase[] results = ICPPBase.EMPTY_BASE_ARRAY;
+		IASTDeclaration[] members = compositeTypeSpec.getMembers();
+		int n = 0;
+        for (IASTDeclaration member : members) {
+			if (member instanceof ICPPASTUsingDeclaration) {
+				IASTName name = ((ICPPASTUsingDeclaration) member).getName();
+				if (!(name instanceof ICPPASTQualifiedName))
+					continue;
+				ICPPASTQualifiedName qName = (ICPPASTQualifiedName) name;
+				ICPPASTNameSpecifier[] qualifier = qName.getQualifier();
+				IBinding parent = qualifier[qualifier.length - 1].resolveBinding();
+				if (!(parent instanceof IType) || parent instanceof IProblemBinding)
+					continue;
+				IType type = SemanticUtil.getNestedType((IType) parent, TDEF);
+				if (type instanceof IBinding &&
+					Arrays.equals(((IBinding) type).getNameCharArray(), qName.getLastName().getSimpleID())) {
+					for (ICPPBase base : bases) {
+						IType baseClass = base.getBaseClassType();
+						if (type.isSameType(baseClass)) {
+							((CPPBaseClause) base).setInheritedConstructorsSource(true);
+							results = appendAt(results, n++, base);
+						}
+					}
+				}
+			}
+        }
+        return trim(results, n);
+	}
+
+	static ICPPMethod[] createInheritedConsructors(ICPPClassScope scope, char[] className,
+			ICPPBase[] bases, IType[][] existingConstructorParamTypes, IASTNode point) {
+		ICPPMethod[] inheritedConstructors = ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+		int n = 0;
+		for (ICPPBase base : bases) {
+			if (!base.isInheritedConstructorsSource())
+				continue;
+			IBinding baseClass = base.getBaseClass();
+        	if (!(baseClass instanceof ICPPClassType))
+        		continue;
+    		ICPPConstructor[] ctors = ClassTypeHelper.getConstructors((ICPPClassType) baseClass, point);
+    		for (ICPPConstructor ctor : ctors) {
+    			ICPPParameter[] prototypeParams = ctor.getParameters();
+    			// 19.9-1 For each non-template constructor of X that has at least one parameter
+    			// with a default argument, the set of constructors that results from omitting
+    			// any ellipsis parameter specification and successively omitting parameters
+    			// with a default argument from the end of the parameter-type-list.
+    			for (int k = Math.max(ctor.getRequiredArgumentCount(), 1); k <= prototypeParams.length; k++) {
+        			if (k == 1 && isReferenceToClass(prototypeParams[0].getType(), (ICPPClassType) baseClass)) {
+        				continue;  // Skip the copy constructor.
+        			}
+        			if (findMatchingSignature(prototypeParams, k, existingConstructorParamTypes) < 0) {
+        				ICPPParameter[] params = deriveParameters(prototypeParams, k);
+        				CPPInheritedConstructor inheritedConstructor =
+        						new CPPInheritedConstructor(scope, className, ctor, params);
+        				inheritedConstructors = appendAt(inheritedConstructors, n++, inheritedConstructor);
+        			}
+    			}
+    		}
+		}
+		return trim(inheritedConstructors, n);
+	}
+
+	private static ICPPParameter[] deriveParameters(ICPPParameter[] prototypes, int count) {
+		ICPPParameter[] params = new ICPPParameter[count];
+		for (int i = 0; i < count; i++) {
+			params[i] = new CPPParameter(prototypes[i].getType(), i);
+		}
+		return params;
+	}
+
+	private static boolean isReferenceToClass(IType type, IType classType) {
+		type= SemanticUtil.getNestedType(type, TDEF);
+		if (type instanceof ICPPReferenceType && !((ICPPReferenceType) type).isRValueReference()) {
+			type= SemanticUtil.getNestedType(type, TDEF|REF|CVTYPE);
+			return classType.isSameType(type);
+		}
+		return false;
+	}
+
+	private static int findMatchingSignature(ICPPParameter[] params, int numParams, IType[][] paramTypes) {
+		for (int i = 0; i < paramTypes.length; i++) {
+			if (doParameterTypesMatch(params, numParams, paramTypes[i]))
+				return i;
+		}
+		return -1;
+	}
+
+	private static boolean doParameterTypesMatch(ICPPParameter[] params, int numParams, IType[] types) {
+		if (numParams != types.length)
+			return false;
+		for (int i = 0; i < numParams; i++) {
+			if (!params[i].getType().isSameType(types[i]))
+				return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -239,13 +362,13 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 				|| (prefixLookup && ContentAssistMatcherFactory.getInstance().match(c, compName.getLookupKey()))) {
 	        final IASTName lookupName = lookup.getLookupName();
 			if (shallReturnConstructors(lookupName, prefixLookup)) {
-	            result = ArrayUtil.addAll(IBinding.class, result, getConstructors(lookupName, lookup.isResolve()));
+	            result = addAll(IBinding.class, result, getConstructors(lookupName, lookup.isResolve()));
 	        }
             // 9.2 ... The class-name is also inserted into the scope of the class itself.
-            result = ArrayUtil.append(IBinding.class, result, compName.resolveBinding());
+            result = append(IBinding.class, result, compName.resolveBinding());
 	    }
-	    result = ArrayUtil.addAll(IBinding.class, result, super.getBindings(lookup));
-	    return ArrayUtil.trim(IBinding.class, result);
+	    result = addAll(IBinding.class, result, super.getBindings(lookup));
+	    return trim(IBinding.class, result);
 	}
 
 	static protected boolean shouldResolve(boolean force, IASTName candidate, IASTName forName) {
@@ -282,16 +405,16 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         				IASTName n = (IASTName) obj;
         				binding = shouldResolve(forceResolve, n, forName) ? n.resolveBinding() : n.getBinding();
         				if (binding instanceof ICPPConstructor) {
-    						bs = ArrayUtil.append(bs, (ICPPConstructor) binding);
+    						bs = append(bs, (ICPPConstructor) binding);
         				}
         			} else if (obj instanceof ICPPConstructor) {
-						bs = ArrayUtil.append(bs, (ICPPConstructor) obj);
+						bs = append(bs, (ICPPConstructor) obj);
         			}
         		}
-        		return ArrayUtil.trim(ICPPConstructor.class, bs);
+        		return trim(ICPPConstructor.class, bs);
 	        } else if (o instanceof IASTName) {
 	        	if (shouldResolve(forceResolve, (IASTName) o, forName) || ((IASTName) o).getBinding() != null) {
-	        		// Always store the name, rather than the binding, such that we can properly flush the scope.
+	        		// Always store the name, rather than the binding, so that we can properly flush the scope.
 	        		nameMap.put(CONSTRUCTOR_KEY, o);
 	        		binding = ((IASTName)o).resolveBinding();
 	        	}
@@ -372,7 +495,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	public IName getScopeName() {
         IASTNode node = getPhysicalNode();
         if (node instanceof ICPPASTCompositeTypeSpecifier) {
-            return ((ICPPASTCompositeTypeSpecifier)node).getName();
+            return ((ICPPASTCompositeTypeSpecifier) node).getName();
         }
         return null;
     }

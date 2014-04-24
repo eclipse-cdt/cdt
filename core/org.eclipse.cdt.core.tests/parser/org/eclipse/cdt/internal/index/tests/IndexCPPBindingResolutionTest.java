@@ -204,7 +204,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//    B b;
 	//    b.p(E1);
 	//  }
-	public void testUsingTypeDirective_201177() {
+	public void testUsingTypeDeclaration_201177() {
 		IBinding b0= getBindingFromASTName("B::m", 4);
 		IBinding b1= getBindingFromASTName("B::n", 4);
 		IBinding b2= getBindingFromASTName("B::o", 4);
@@ -254,7 +254,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// int g(int x) {return 4;}
 	// int g(char x) {return 2;}
 	// int nn= g(f(2));
-	public void testUsingTypeDirective_177917_1() {
+	public void testUsingTypeDeclaration_177917_1() {
 		IBinding b1= getBindingFromASTName("A a", 1);
 		IBinding b2= getBindingFromASTName("B b", 1);
 		IBinding b3= getBindingFromASTName("C c", 1);
@@ -271,7 +271,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// #include "header.h"
 	// b::A aa;
 	// b::B bb;
-	public void testUsingTypeDirective_177917_2() {
+	public void testUsingTypeDeclaration_177917_2() {
 		IBinding b0= getBindingFromASTName("A aa", 1);
 		IBinding b1= getBindingFromASTName("B bb", 1);
 	}
@@ -319,7 +319,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//		fs(1);
 	//		cls c2;
 	//	}
-	public void testUsingOverloadedFunctionDirective() {
+	public void testUsingOverloadedFunctionDeclaration() {
 		IBinding b;
 		b= getBindingFromASTName("fh()", 2);
 		b= getBindingFromASTName("fh(1)", 2);
@@ -1758,6 +1758,58 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	}
 	//	}
 	public void testAnonymousNamespaces_418130() throws Exception {
+		checkBindings();
+	}
+	//	struct A {
+	//	  A(int);
+	//	};
+
+	//	struct B : public A {
+	//	  using A::A;
+	//	};
+	//
+	//	void foo(B);
+	//
+	//	int test() {
+	//	  foo(1);
+	//	}
+	public void testInheritingConstructor() throws Exception {
+		checkBindings();
+	}
+
+	//	template <class T>
+	//	struct A {
+	//	  A(T);
+	//	};
+
+	//	struct B : public A<int> {
+	//	  using A::A;
+	//	};
+	//
+	//	void foo(B);
+	//
+	//	int test() {
+	//	  foo(1);
+	//	}
+	public void testInheritingConstructorWithTemplate_1() throws Exception {
+		checkBindings();
+	}
+
+	//	struct A {
+	//	  A(int);
+	//	};
+	//
+	//	template <class T>
+	//	struct B : public T {
+	//	  using T::T;
+	//	};
+
+	//	void foo(B<A>);
+	//
+	//	int test() {
+	//	  foo(1);
+	//	}
+	public void testInheritingConstructorWithTemplate_2() throws Exception {
 		checkBindings();
 	}
 }

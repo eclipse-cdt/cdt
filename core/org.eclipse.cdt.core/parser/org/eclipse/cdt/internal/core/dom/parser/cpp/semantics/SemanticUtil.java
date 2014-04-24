@@ -747,4 +747,12 @@ public class SemanticUtil {
 		}
 		return minValue;
 	}
+
+	public static int findSameType(IType type, IType[] types) {
+		for (int i = 0; i < types.length; i++) {
+			if (type.isSameType(types[i]))
+				return i;
+		}
+		return -1;
+	}
 }

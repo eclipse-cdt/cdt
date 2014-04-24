@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *     Thomas Corbat (IFS)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -49,6 +50,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 	private ICPPClassTemplatePartialSpecialization[] partialSpecializations;
 	private ICPPDeferredClassInstance fDeferredInstance;
 	private boolean addedPartialSpecializationsOfIndex;
+	private ICPPBase[] bases;
 
 	public CPPClassTemplate(IASTName name) {
 		super(name);
@@ -154,7 +156,10 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 	
 	@Override
 	public ICPPBase[] getBases() {
-		return ClassTypeHelper.getBases(this);
+		if (bases == null) {
+			bases = ClassTypeHelper.getBases(this);
+		}
+		return bases;
 	}
 
 	@Override

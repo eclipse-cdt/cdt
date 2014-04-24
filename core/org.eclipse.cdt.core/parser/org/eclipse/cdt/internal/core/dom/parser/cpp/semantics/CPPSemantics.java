@@ -2031,10 +2031,10 @@ public class CPPSemantics {
 	        		fns = new ObjectSet<>(2);
 	        	fns.put((ICPPFunction) temp);
 	        } else if (temp instanceof IType) {
-		        // Specializations are selected during instantiation
+		        // Specializations are selected during instantiation.
 	        	if (temp instanceof ICPPClassTemplatePartialSpecialization)
 		        	continue;
-	        	if (temp instanceof ICPPTemplateInstance) {
+	        	if (temp instanceof ICPPTemplateInstance && lookupName instanceof ICPPASTTemplateId) {
 	        		temp= ((ICPPTemplateInstance) temp).getSpecializedBinding();
 	        		if (!(temp instanceof IType))
 	        			continue;

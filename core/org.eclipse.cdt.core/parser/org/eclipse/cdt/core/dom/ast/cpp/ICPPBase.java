@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -66,17 +67,24 @@ public interface ICPPBase extends Cloneable {
 	public boolean isVirtual();
 
 	/**
+	 * The base class is a source of inherited constructors if the class definition that declares
+	 * this base contains a using declaration naming the constructors of the base class.
+	 * @since 5.7
+	 */
+	public boolean isInheritedConstructorsSource();
+
+	/**
 	 * @since 5.1
 	 */
 	public ICPPBase clone();
 
-	/** 
+	/**
 	 * Used internally to change cloned bases.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void setBaseClass(IBinding baseClass);
 
-	/** 
+	/**
 	 * Used internally to change cloned bases.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */

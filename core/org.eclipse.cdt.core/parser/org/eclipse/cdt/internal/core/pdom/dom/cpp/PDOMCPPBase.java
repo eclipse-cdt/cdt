@@ -38,6 +38,10 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	
 	protected static final int RECORD_SIZE = FLAGS + 1;
 	
+	private static final int FLAGS_VISIBILITY_MASK = 0x03;
+	private static final int FLAGS_VIRTUAL = 0x04;
+	private static final int FLAGS_INHERITED_CONSTRUCTORS_SOURCE = 0x08;
+	
 	private final PDOMLinkage linkage;
 	private final long record;
 	
@@ -55,7 +59,8 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		db.putRecPtr(record + CLASS_DEFINITION, classDefName.getRecord());
 		linkage.storeType(record + BASECLASS_TYPE, base.getBaseClassType());
 		
-		byte flags = (byte) (base.getVisibility() | (base.isVirtual() ? 4 : 0));
+		byte flags = (byte) (base.getVisibility() | (base.isVirtual() ? FLAGS_VIRTUAL : 0)
+				| (base.isInheritedConstructorsSource() ? FLAGS_INHERITED_CONSTRUCTORS_SOURCE : 0));
 		db.putByte(record + FLAGS, flags);
 	}
 
@@ -123,7 +128,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	@Override
 	public int getVisibility() {
 		try {
-			return getFlags() & 0x3;
+			return getFlags() & FLAGS_VISIBILITY_MASK;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return 0;
@@ -133,7 +138,17 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	@Override
 	public boolean isVirtual() {
 		try {
-			return (getFlags() & 0x4) != 0;
+			return (getFlags() & FLAGS_VIRTUAL) != 0;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isInheritedConstructorsSource() {
+		try {
+			return (getFlags() & FLAGS_INHERITED_CONSTRUCTORS_SOURCE) != 0;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return false;
@@ -160,7 +175,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	
 	private static class PDOMCPPBaseClone implements ICPPBase, ICPPInternalBase {
 		private final ICPPBase base;
-		private IType baseClass = null;
+		private IType baseClass;
 		
 		public PDOMCPPBaseClone(ICPPBase base) {
 			this.base = base;
@@ -201,6 +216,11 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		@Override
 		public boolean isVirtual() {
 			return base.isVirtual();
+		}
+
+		@Override
+		public boolean isInheritedConstructorsSource() {
+			return base.isInheritedConstructorsSource();
 		}
 
 		@Override

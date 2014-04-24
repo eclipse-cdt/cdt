@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,6 +119,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	private IASTName[] declarations;
 	private boolean checked;
 	private ICPPClassType typeInIndex;
+	private ICPPBase[] bases;
 
 	public CPPClassType(IASTName name, IBinding indexBinding) {
 		name = stripQualifier(name);
@@ -168,7 +169,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 			while (node instanceof IASTName)
 				node = node.getParent();
 			if (node instanceof ICPPASTCompositeTypeSpecifier)
-				return (ICPPASTCompositeTypeSpecifier)node;
+				return (ICPPASTCompositeTypeSpecifier) node;
 		}
 		return null;
 	}
@@ -311,7 +312,10 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	
 	@Override
 	public ICPPBase[] getBases() {
-		return ClassTypeHelper.getBases(this);
+		if (bases == null) {
+			bases = ClassTypeHelper.getBases(this);
+		}
+		return bases;
 	}
 
 	@Override

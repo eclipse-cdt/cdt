@@ -56,7 +56,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof IASTExpressionStatement) {
 				IASTExpression expression = ((IASTExpressionStatement) stmt).getExpression();
-				if (hasNoEffect(expression)) {
+				if (hasNoEffect(expression) && !isFinalInStatementExpression(expression)) {
 					if (!shouldReportInMacro() && CxxAstUtils.isInMacro(expression))
 						return PROCESS_SKIP;
 					String arg = expression.getRawSignature();
@@ -66,6 +66,29 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 				return PROCESS_SKIP;
 			}
 			return PROCESS_CONTINUE;
+		}
+
+		/*
+		 * Check to see if the statement is the last one in a GNU Statement-Expression
+		 * as these become the expression part of another statement and the test may generate
+		 * false positives otherwise
+		 */
+		private boolean isFinalInStatementExpression(IASTExpression e) {
+			// check if it is part of GNU comp stmt expression i.e. ({int a; foo(a); a;})
+			IASTNode stmt = e.getParent();
+			if (stmt instanceof IASTExpressionStatement) {
+				IASTNode parentComp = stmt.getParent();
+				if (parentComp instanceof IASTCompoundStatement) {
+					IASTNode parentStmtExpr = parentComp.getParent();
+					if (parentStmtExpr instanceof IGNUASTCompoundStatementExpression) {
+						// are we evaluating the last statement in the list?
+						IASTStatement childlist[] = ((IASTCompoundStatement) parentComp).getStatements();
+						if (stmt == childlist[childlist.length-1])
+							return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		/**
@@ -109,17 +132,6 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			}
 			// simply a;
 			if (e instanceof IASTIdExpression) {
-				// check if it is part of GNU comp stmt expression i.e. ({foo();a;})
-				IASTNode parent = e.getParent();
-				if (parent instanceof IASTExpressionStatement) {
-					IASTNode parent2 = parent.getParent();
-					if (parent2 instanceof IASTCompoundStatement) {
-						IASTNode parent3 = parent2.getParent();
-						if (parent3 instanceof IGNUASTCompoundStatementExpression) {
-							return false;
-						}
-					}
-				}
 				return true;
 			}
 			return false;

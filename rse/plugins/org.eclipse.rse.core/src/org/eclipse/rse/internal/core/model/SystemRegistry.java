@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -61,6 +61,7 @@
  * Martin Oberhuber (Wind River) - [245154][api] add getSubSystemConfigurationProxiesBySystemType()
  * Zhou Renjian     (Kortide)    - [282238] NPE when copying host and overwrite itself
  * Martin Oberhuber (Wind River) - [359554] Avoid disconnect when changing default user id only
+ * David McKnight   (IBM)        - [433541] profile duplication isn't copying profile or connection property sets
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -585,10 +586,11 @@ public class SystemRegistry implements ISystemRegistry
 				ISubSystemConfiguration factory = null;
 				for (int idx = 0; idx < conns.length; idx++)
 				{
-					msg = "Copying subsystems for connection " + conns[idx].getAliasName(); //$NON-NLS-1$
+					IHost host = conns[idx];
+					msg = "Copying subsystems for connection " + host.getAliasName(); //$NON-NLS-1$
 					//monitor.subTask(msg);
 					RSECorePlugin.getDefault().getLogger().logDebugMessage(this.getClass().getName(), msg);
-					subsystems = getSubSystems(conns[idx]); // get old subsystems for this connection
+					subsystems = getSubSystems(host); // get old subsystems for this connection
 					if ((subsystems != null) && (subsystems.length > 0) && newConns != null)
 					{
 						for (int jdx = 0; jdx < subsystems.length; jdx++)
@@ -602,9 +604,12 @@ public class SystemRegistry implements ISystemRegistry
 						}
 					}
 					//try { java.lang.Thread.sleep(1000l); } catch (InterruptedException e) {}
+					host.clonePropertySets(newConns[idx]); // copy property sets from host
 				}
 			}
-			monitor.worked(1);
+			
+			profile.clonePropertySets(newProfile); // copy property sets from profile
+			monitor.worked(1); 
 		}
 		catch (Exception exc)
 		{
@@ -647,6 +652,7 @@ public class SystemRegistry implements ISystemRegistry
 		RSECorePlugin.getDefault().getLogger().logDebugMessage(this.getClass().getName(), "Copy of system profile " + oldName + " to " + newName + " successful"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return newProfile;
 	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#deleteSystemProfile(org.eclipse.rse.core.model.ISystemProfile)

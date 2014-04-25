@@ -25,20 +25,20 @@ public interface ICPPTemplateParameterMap {
 	public ICPPTemplateArgument getArgument(int paramID);
 
 	/**
-	 * Returns the value for the template parameter in the map, or <code>null</code> if 
+	 * Returns the value for the template parameter in the map, or {@code null} if 
 	 * the parameter is not mapped or the parameter is a parameter pack.
 	 */
 	public ICPPTemplateArgument getArgument(ICPPTemplateParameter param);
 
 	/**
 	 * Returns the values for the template parameter pack with the given id in the map, 
-	 * or <code>null</code> if the parameter is not mapped or is not a parameter pack.
+	 * or {@code null} if the parameter is not mapped or is not a parameter pack.
 	 * @since 5.2
 	 */
 	public ICPPTemplateArgument[] getPackExpansion(int paramID);
 
 	/**
-	 * Returns the values for the template parameter pack in the map, or <code>null</code> if the 
+	 * Returns the values for the template parameter pack in the map, or {@code null} if the 
 	 * parameter is not mapped or is no parameter pack.
 	 * @since 5.2
 	 */
@@ -46,9 +46,9 @@ public interface ICPPTemplateParameterMap {
 
 	/**
 	 * If 'param' is not a parameter pack, returns the value for 'param' in the map.
-	 * If 'param' is a parmameter pack, returns the value at position 'packOffset'
+	 * If 'param' is a parameter pack, returns the value at position 'packOffset'
 	 * in the pack of values for 'param' in the map.
-	 * Returns <code>null</code> is 'param' is not mapped.
+	 * Returns {@code null} is 'param' is not mapped.
 	 * @since 5.5
 	 */
 	public ICPPTemplateArgument getArgument(ICPPTemplateParameter param, int packOffset);

@@ -146,8 +146,9 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
     			inheritedConstructorsSources, ia.getParametersOfNontrivialUserDeclaredConstructors(),
     			compTypeSpec);
     	implicits = addAll(implicits, inheritedConstructors);
-    	for (ICPPMethod ctor : inheritedConstructors)
+    	for (ICPPMethod ctor : inheritedConstructors) {
     		addBinding(ctor);
+    	}
 	}
 
 	private ICPPBase[] findInheritedConstructorsSourceBases(

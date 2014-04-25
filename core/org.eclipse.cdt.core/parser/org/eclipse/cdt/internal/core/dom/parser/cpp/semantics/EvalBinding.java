@@ -89,6 +89,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 	public EvalBinding(ICPPFunction parameterOwner, int parameterPosition, IType type, IASTNode pointOfDefinition) {
 		this(parameterOwner, parameterPosition, type, findEnclosingTemplate(pointOfDefinition));
 	}
+
 	public EvalBinding(ICPPFunction parameterOwner, int parameterPosition, IType type, IBinding templateDefinition) {
 		super(templateDefinition);
 		fParameterOwner = parameterOwner;

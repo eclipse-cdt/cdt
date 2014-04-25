@@ -45,7 +45,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 	}
 
 	public IASTDeclaration getPrimaryDeclaration() {
-		//first check if we already know it
+		// First check if we already know it.
 		if (declarations != null) {
 			for (IASTName declaration : declarations) {
 				IASTNode parent = declaration.getParent();
@@ -104,10 +104,11 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 	@Override
 	public int getVisibility() {
 		IASTDeclaration decl = getPrimaryDeclaration();
-		if( decl == null ){
+		if (decl == null) {
 			ICPPClassType cls = getClassOwner();
 			if (cls != null) {
-				return ( cls.getKey() == ICPPClassType.k_class ) ? ICPPASTVisibilityLabel.v_private : ICPPASTVisibilityLabel.v_public;
+				return cls.getKey() == ICPPClassType.k_class ?
+						ICPPASTVisibilityLabel.v_private : ICPPASTVisibilityLabel.v_public;
 			}
 			return ICPPASTVisibilityLabel.v_private;
 		}
@@ -115,14 +116,15 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		IASTDeclaration [] members = cls.getMembers();
 		ICPPASTVisibilityLabel vis = null;
 		for (IASTDeclaration member : members) {
-			if( member instanceof ICPPASTVisibilityLabel )
+			if (member instanceof ICPPASTVisibilityLabel) {
 				vis = (ICPPASTVisibilityLabel) member;
-			else if( member == decl )
+			} else if (member == decl) {
 				break;
+			}
 		}
-		if( vis != null ){
+		if (vis != null) {
 			return vis.getVisibility();
-		} else if( cls.getKey() == ICPPASTCompositeTypeSpecifier.k_class ){
+		} else if (cls.getKey() == ICPPASTCompositeTypeSpecifier.k_class) {
 			return ICPPASTVisibilityLabel.v_private;
 		} 
 		return ICPPASTVisibilityLabel.v_public;
@@ -138,8 +140,8 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 				return null;
 			}
 		}
-		if( scope instanceof ICPPClassScope ){
-			return ((ICPPClassScope)scope).getClassType();
+		if (scope instanceof ICPPClassScope) {
+			return ((ICPPClassScope) scope).getClassType();
 		}
 		return null;
 	}
@@ -196,7 +198,8 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 	public boolean isExplicit() {
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if (decl instanceof ICPPASTTemplateDeclaration) {
-			ICPPASTDeclSpecifier declSpec= getDeclSpecifier(((ICPPASTTemplateDeclaration) decl).getDeclaration());
+			ICPPASTDeclSpecifier declSpec=
+					getDeclSpecifier(((ICPPASTTemplateDeclaration) decl).getDeclaration());
 			if (declSpec != null) {
 				return declSpec.isExplicit();
 			}
@@ -207,7 +210,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 	@Override
 	public boolean isPureVirtual() {
 		ICPPASTFunctionDeclarator functionDeclarator = findFunctionDeclarator();
-		if(functionDeclarator != null){
+		if (functionDeclarator != null) {
 			return functionDeclarator.isPureVirtual();
 		}
 		return false;
@@ -216,7 +219,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 	@Override
 	public boolean isOverride() {
 		ICPPASTFunctionDeclarator functionDeclarator = findFunctionDeclarator();
-		if(functionDeclarator != null){
+		if (functionDeclarator != null) {
 			return functionDeclarator.isOverride();
 		}
 		return false;
@@ -225,7 +228,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 	@Override
 	public boolean isFinal() {
 		ICPPASTFunctionDeclarator functionDeclarator = findFunctionDeclarator();
-		if(functionDeclarator != null){
+		if (functionDeclarator != null) {
 			return functionDeclarator.isFinal();
 		}
 		return false;
@@ -244,8 +247,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 				parent = parent.getParent();
 
 			if (parent instanceof IASTDeclarator) {
-				IASTDeclarator dtor = ASTQueries
-						.findTypeRelevantDeclarator((IASTDeclarator) parent);
+				IASTDeclarator dtor = ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) parent);
 				if (dtor instanceof ICPPASTFunctionDeclarator) {
 					return (ICPPASTFunctionDeclarator) dtor;
 				}

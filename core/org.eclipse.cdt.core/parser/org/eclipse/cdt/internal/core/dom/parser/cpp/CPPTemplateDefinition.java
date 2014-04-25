@@ -67,8 +67,8 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	private ICPPTemplateParameter[] templateParameters;
 	private ObjectMap instances;
 
-	private ICPPClassTemplate indexBinding= null;
-	private boolean checkedIndex= false;
+	private ICPPClassTemplate indexBinding;
+	private boolean checkedIndex;
 	
 
 	public CPPTemplateDefinition(IASTName name) {
@@ -164,57 +164,36 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-	 */
 	@Override
 	public String getName() {
 		return new String(getNameCharArray());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-	 */
 	@Override
 	public char[] getNameCharArray() {
 		return getTemplateName().getSimpleID();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
 	@Override
 	public IScope getScope() {
 		return CPPVisitor.getContainingScope(getTemplateName());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
-	 */
 	@Override
 	public String[] getQualifiedName() {
 		return CPPVisitor.getQualifiedName(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
-	 */
 	@Override
 	public char[][] getQualifiedNameCharArray() {
 		return CPPVisitor.getQualifiedNameCharArray(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-	 */
 	@Override
 	public boolean isGloballyQualified() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition#getParameters()
-	 */
 	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		if (templateParameters == null) {
@@ -235,9 +214,6 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		return templateParameters;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
 	@Override
 	public void addDefinition(IASTNode node) {
 	    if (node instanceof ICPPASTCompositeTypeSpecifier) {
@@ -252,9 +228,6 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		definition = (IASTName) node;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
 	@Override
 	public void addDeclaration(IASTNode node) {
 	    if (node instanceof ICPPASTElaboratedTypeSpecifier) {
@@ -270,7 +243,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		if (declarations == null) {
 	        declarations = new IASTName[] { declName };
 		} else {
-	        // keep the lowest offset declaration in[0]
+	        // Keep the lowest offset declaration in [0].
 			if (declarations.length > 0 && ((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
 				declarations = ArrayUtil.prepend(IASTName.class, declarations, declName);
 			} else {
@@ -336,17 +309,12 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
     		}
     	}
     }
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDeclarations()
-	 */
+
 	@Override
 	public IASTNode[] getDeclarations() {
 		return declarations;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
-	 */
 	@Override
 	public IASTNode getDefinition() {
 		return definition;

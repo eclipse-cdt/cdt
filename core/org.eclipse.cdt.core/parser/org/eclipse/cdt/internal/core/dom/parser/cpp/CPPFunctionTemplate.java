@@ -156,7 +156,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 			} else if (t instanceof ISemanticProblem){
 				type= new ProblemFunctionType(((ISemanticProblem) t).getID());
 			} else {
-				// This case is unexpected
+				// This case is unexpected.
 				type= new ProblemFunctionType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
 			}
 		}
@@ -392,19 +392,19 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 	public IType[] getExceptionSpecification() {
     	ICPPASTFunctionDeclarator declarator = getFirstFunctionDtor();
 		if (declarator != null) {
-			IASTTypeId[] astTypeIds = declarator.getExceptionSpecification();
-			if (astTypeIds.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION)) {
+			IASTTypeId[] typeIds = declarator.getExceptionSpecification();
+			if (typeIds.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION)) {
 				return null;
 			}
-			if (astTypeIds.equals(IASTTypeId.EMPTY_TYPEID_ARRAY)) {
+			if (typeIds.equals(IASTTypeId.EMPTY_TYPEID_ARRAY)) {
 				return IType.EMPTY_TYPE_ARRAY;
 			}
 			
-			IType[] typeIds = new IType[astTypeIds.length];
-			for (int i = 0; i < astTypeIds.length; ++i) {
-				typeIds[i] = CPPVisitor.createType(astTypeIds[i]);
+			IType[] types = new IType[typeIds.length];
+			for (int i = 0; i < typeIds.length; ++i) {
+				types[i] = CPPVisitor.createType(typeIds[i]);
 			}
-			return typeIds;
+			return types;
 		}
 		return null;
 	}

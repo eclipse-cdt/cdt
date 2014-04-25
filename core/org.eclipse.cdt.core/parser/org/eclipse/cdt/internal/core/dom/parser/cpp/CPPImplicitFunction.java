@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
  * An example is GCC built-in functions.
  */
 public class CPPImplicitFunction extends CPPFunction {
-	private ICPPParameter[] parms;
+	private ICPPParameter[] params;
 	private IScope scope;
     private ICPPFunctionType functionType;
 	private final boolean takesVarArgs;
@@ -31,18 +31,18 @@ public class CPPImplicitFunction extends CPPFunction {
 	private final char[] name;
 	
 	public CPPImplicitFunction(char[] name, IScope scope, ICPPFunctionType type,
-			ICPPParameter[] parms, boolean takesVarArgs) {
+			ICPPParameter[] params, boolean takesVarArgs) {
         super(null);
         this.name= name;
 		this.scope= scope;
 		this.functionType= type;
-		this.parms= parms;
+		this.params= params;
 		this.takesVarArgs= takesVarArgs;
 	}
 
     @Override
 	public ICPPParameter[] getParameters() {
-        return parms;
+        return params;
     }
     
     @Override

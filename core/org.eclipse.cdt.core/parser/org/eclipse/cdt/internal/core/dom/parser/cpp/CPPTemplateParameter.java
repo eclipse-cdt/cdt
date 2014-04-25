@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Niefer (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -53,7 +53,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 				tp= (ICPPASTTemplateParameter) node;
 			} else if (node instanceof ICPPASTInternalTemplateDeclaration) {
 				final ICPPASTInternalTemplateDeclaration tdecl= (ICPPASTInternalTemplateDeclaration) node;
-				nesting+= tdecl.getNestingLevel();
+				nesting += tdecl.getNestingLevel();
 				if (tps == null) {
 					tps= tdecl.getTemplateParameters();
 				}
@@ -84,22 +84,16 @@ public abstract class CPPTemplateParameter extends PlatformObject
    		try {
             t = (IType) super.clone();
         } catch (CloneNotSupportedException e) {
-            //not going to happen
+            // Not going to happen.
         }
         return t;
     }
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-	 */
 	@Override
 	public final String getName() {
 		return new String(getNameCharArray());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-	 */
 	@Override
 	public final char[] getNameCharArray() {
 		// Search for the first declaration that has a name.
@@ -141,49 +135,31 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		return (ICPPASTTemplateParameter) node;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
 	@Override
 	public IScope getScope() {
 		return CPPVisitor.getContainingScope(getPrimaryDeclaration());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
-	 */
 	@Override
 	public String[] getQualifiedName() {
 		return new String[] { getName() };
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
-	 */
 	@Override
 	public char[][] getQualifiedNameCharArray() {
-		return new char[][] {getNameCharArray() };
+		return new char[][] { getNameCharArray() };
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-	 */
 	@Override
 	public boolean isGloballyQualified() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDeclarations()
-	 */
 	@Override
 	public IASTName[] getDeclarations() {
 		return declarations;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
-	 */
 	@Override
 	public IASTNode getDefinition() {
 		if (declarations != null && declarations.length > 0)
@@ -191,17 +167,11 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
 	@Override
 	public void addDefinition(IASTNode node) {
 		addDeclaration(node);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
 	@Override
 	public void addDeclaration(IASTNode node) {
 		if (!(node instanceof IASTName))
@@ -212,7 +182,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		} else {
 	        if (declarations.length > 0 && declarations[0] == node)
 	            return;
-			// keep the lowest offset declaration in [0]
+			// Keep the lowest offset declaration in [0].
 			if (declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset()) {
 				declarations = ArrayUtil.prepend(IASTName.class, declarations, name);
 			} else {
@@ -249,7 +219,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	
 	@Override
 	public IBinding resolveFinalBinding(CPPASTNameBase name) {
-		// check if the binding has been updated.
+		// Check if the binding has been updated.
 		IBinding current= name.getPreBinding();
 		if (current != this)
 			return current;
@@ -259,7 +229,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 			return ((ICPPTemplateParameterOwner) template).resolveTemplateParameter(this);
 		}
 
-		// problem finding the containing template
+		// Problem finding the containing template.
 		if (template == null) {
 			return this;
 		}

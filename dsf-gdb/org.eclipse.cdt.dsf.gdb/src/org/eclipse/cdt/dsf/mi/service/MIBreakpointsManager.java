@@ -1180,7 +1180,16 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 										for (IDMContext dmc : getData()) {
 											IContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
 											assert containerDmc != null;
-											filterExtension.setTargetFilter(containerDmc);
+                                    		if (filterExtension.getThreadFilters(containerDmc) == null) {
+                                    			// Do this only if there wasn't already an entry, or else we would
+                                    			// erase the content of that previous entry.
+                                    			// There can be an entry already when a thread-specific breakpoint is created
+                                    			// from the MIBreakpointsSynchronizer (through the gdb console).  In that case the
+                                    			// platform bp gets created, and the targetFilter gets set by MIBreakpointsSynchronizer
+                                    			// before the call to breakpointAdded() is made and we get to here.
+                                    			// Bug 433339
+                                    			filterExtension.setTargetFilter(containerDmc);
+                                    		}
 										}
 									} catch (CoreException e1) {
 										// Error setting target filter, just skip altogether
@@ -1479,7 +1488,15 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     private void setTargetFilter(ICBreakpoint breakpoint, IContainerDMContext containerDmc) {
     	try {
     		IDsfBreakpointExtension filterExt = getFilterExtension(breakpoint);
-   			filterExt.setTargetFilter(containerDmc);
+    		if (filterExt.getThreadFilters(containerDmc) == null) {
+    			// Do this only if there wasn't already an entry, or else we would
+    			// erase the content of that previous entry.
+    			// This could theoretically happen if the targetFilter is set by
+    			// someone else, before the IStartedDMEvent arrives indicating a new process.
+    			// Bug 433339
+    			filterExt.setTargetFilter(containerDmc);
+    		}
+
     	} catch (CoreException e) {
     	}
     }

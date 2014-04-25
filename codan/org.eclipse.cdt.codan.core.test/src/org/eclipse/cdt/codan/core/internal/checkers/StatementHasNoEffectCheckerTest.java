@@ -88,10 +88,19 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 
 	// main() {
 	// int a=({foo();a;}); // no error here on line 2
+	// char *p=({char s[]="Some string";&s[0];}); // no error here on line 3
 	// }
-	public void testGNUExpressionCompoundStmt() {
+	public void testGNUExpressionCompoundStmtFalsePositives() {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
+	}
+
+	// main() {
+	// int z=({int a=0; +a; a;}) // error here on line 2
+	// }
+	public void testGNUExpressionCompoundStmtInside() {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(2);
 	}
 
 	// main() {

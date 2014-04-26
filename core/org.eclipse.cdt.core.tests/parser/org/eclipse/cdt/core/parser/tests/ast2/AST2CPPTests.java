@@ -1353,7 +1353,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	int test() {
 	//	  foo(1);
 	//	}
-	public void testInheritingConstructor() throws Exception {
+	public void testInheritedConstructor() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -1371,7 +1371,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	int test() {
 	//	  foo(1);
 	//	}
-	public void testInheritingConstructorWithTemplate_1() throws Exception {
+	public void testInheritedConstructorFromTemplateInstance() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -1389,7 +1389,28 @@ public class AST2CPPTests extends AST2TestBase {
 	//	int test() {
 	//	  foo(1);
 	//	}
-	public void testInheritingConstructorWithTemplate_2() throws Exception {
+	public void testInheritedConstructorFromUnknownClass() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <typename T>
+	//	struct A {};
+	//
+	//	struct B {
+	//	  template <typename T>
+	//	  B(const A<T>&, int i = 3);
+	//	};
+	//
+	//	struct C : public B {
+	//	  using B::B;
+	//	};
+	//
+	//	void foo(C);
+	//
+	//	void test(A<int> a) {
+	//	  foo(a);
+	//	}
+	public void _testInheritedTemplateConstructor() throws Exception {
 		parseAndCheckBindings();
 	}
 

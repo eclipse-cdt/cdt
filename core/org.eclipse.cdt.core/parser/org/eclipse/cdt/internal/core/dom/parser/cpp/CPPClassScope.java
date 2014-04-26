@@ -198,7 +198,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
     		ICPPConstructor[] ctors = ClassTypeHelper.getConstructors((ICPPClassType) baseClass, point);
     		for (ICPPConstructor ctor : ctors) {
     			ICPPParameter[] prototypeParams = ctor.getParameters();
-    			// 19.9-1 For each non-template constructor of X that has at least one parameter
+    			// 12.9-1 For each non-template constructor of X that has at least one parameter
     			// with a default argument, the set of constructors that results from omitting
     			// any ellipsis parameter specification and successively omitting parameters
     			// with a default argument from the end of the parameter-type-list.

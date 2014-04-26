@@ -1773,7 +1773,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	int test() {
 	//	  foo(1);
 	//	}
-	public void testInheritingConstructor() throws Exception {
+	public void testInheritedConstructor() throws Exception {
 		checkBindings();
 	}
 
@@ -1791,7 +1791,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	int test() {
 	//	  foo(1);
 	//	}
-	public void testInheritingConstructorWithTemplate_1() throws Exception {
+	public void testInheritedConstructorFromTemplateInstance() throws Exception {
 		checkBindings();
 	}
 
@@ -1809,7 +1809,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	int test() {
 	//	  foo(1);
 	//	}
-	public void testInheritingConstructorWithTemplate_2() throws Exception {
+	public void testInheritedConstructorFromUnknownClass() throws Exception {
 		checkBindings();
 	}
 }

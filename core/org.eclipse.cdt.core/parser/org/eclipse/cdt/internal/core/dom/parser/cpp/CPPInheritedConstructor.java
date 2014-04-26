@@ -21,8 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * Binding for implicit constructors (default and copy constructor).
- * 12.9
+ * Binding for a constructor inherited from a base class (12.9).
  */
 public class CPPInheritedConstructor extends CPPImplicitMethod implements ICPPConstructor {
 	private final ICPPConstructor prototype;

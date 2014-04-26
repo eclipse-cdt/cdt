@@ -432,7 +432,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	struct A<T>::B {
 	//	  typedef typename A::type type;
 	//	};
-	public void _testBug433556() throws Exception {
+	public void testBug433556() throws Exception {
 		parseAndCheckBindings();
 	}
 

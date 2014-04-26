@@ -300,7 +300,7 @@ public class CPPTemplates {
 					// definition cannot be inside a template scope, we can accurately return null
 					// in this case.
 					if (functionName.getParent() instanceof ICPPASTQualifiedName 
-					 && ASTQueries.isAncestorOf(functionName.getParent(), name)) {
+							&& ASTQueries.isAncestorOf(functionName.getParent(), name)) {
 						return null;
 					}
 					scope= CPPVisitor.getContainingScope(functionName);
@@ -334,9 +334,15 @@ public class CPPTemplates {
 				}
 				if (scope instanceof IASTInternalScope) {
 					IASTInternalScope internalScope= (IASTInternalScope) scope;
-					scope= CPPVisitor.getContainingScope(internalScope.getPhysicalNode());
-					if (scope == internalScope)
-						return null;
+					IASTNode physicalNode = internalScope.getPhysicalNode();
+					if (physicalNode instanceof ICPPASTCompositeTypeSpecifier &&
+							((ICPPASTCompositeTypeSpecifier) physicalNode).getName() instanceof ICPPASTQualifiedName) {
+						scope= scope.getParent();
+					} else {
+						scope= CPPVisitor.getContainingScope(physicalNode);
+						if (scope == internalScope)
+							return null;
+					}
 				} else {
 					scope= scope.getParent();
 				}

@@ -251,122 +251,6 @@ public class AST2CPPTests extends AST2TestBase {
 		assertTrue("Expected types to be the same, but first was: '" + first.toString() + "' and second was: '" + second + "'", first.isSameType(second));
 	}
 
-	// #define CURLOPTTYPE_OBJECTPOINT   10000
-	// #define CINIT(name,type,number) CURLOPT_ ## name = CURLOPTTYPE_ ## type + number
-	// typedef enum {
-	// CINIT(FILE, OBJECTPOINT, 1),
-	//     CINIT(URL,  OBJECTPOINT, 2)
-	// } CURLoption ;
-	public void testBug102825() throws Exception {
-		parseAndCheckBindings(getAboveComment());
-	}
-
-	// class B {
-	// public:
-	// B(int t);
-	// };
-	// class A : public B {
-	// public:
-	// A(int t);
-	// };
-	// A::A(int t) : B(t - 1){}
-	public void testBug78883() throws Exception {
-		parseAndCheckBindings(getAboveComment());
-	}
-
-	// enum type {A};
-	// enum type a, b;
-	// type c;
-	// enum type2 {A, B};
-	// enum type2 d, e;
-	public void testBug77967() throws Exception {
-		parseAndCheckBindings(getAboveComment());
-	}
-
-	public void testBug75189() throws Exception {
-		parseAndCheckBindings("struct A{};typedef int (*F) (A*);");
-	}
-
-	public void testBug75340() throws Exception {
-		IASTTranslationUnit tu = parseAndCheckBindings("void f(int i = 0, int * p = 0);");
-		IASTSimpleDeclaration sd = (IASTSimpleDeclaration) tu.getDeclarations()[0];
-		isParameterSignatureEqual(sd.getDeclarators()[0], "(int=0, int*=0)");
-	}
-
-	// #define REF_WRAP(e) class A { public: A (){ } A& foo2(e& v) { return *this; } }
-	// class B
-	// {
-	// REF_WRAP(B);
-	// B();
-	// void foo();
-	// };
-	public void testBug79540() throws Exception {
-		parseAndCheckBindings(getAboveComment());
-	}
-
-	// template <class T, int someConst=0>
-	// class WithTemplate {};
-	// int main ()
-	// {
-	// WithTemplate <int, 10> normalInstance;
-	// const int localConst=10;
-	// WithTemplate <int, localConst> brokenInstance;
-	// return 0;
-	// }
-	public void testBug103578() throws Exception {
-		parseAndCheckBindings(getAboveComment());
-	}
-
-	// int *p1; int *p2;
-	// union {
-	// struct {int a; int b;} A;
-	// struct {int a; int b;};
-	// } MyStruct;
-	// void test (void) {
-	// p1 = &MyStruct.A.a;
-	// p2 = &MyStruct.b;
-	//         MyStruct.b = 1;
-	// }
-	public void testBug78103() throws Exception {
-		parseAndCheckBindings(getAboveComment());
-	}
-
-	// signed int si(0);
-	// unsigned   u(10U);
-	// signed     s(-1);
-	// short      sh(0);
-	// long       l(0L);
-	// long long  ll(0LL);
-	public void testInitializeUnsigned_245070() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true);
-	}
-
-	//	class A {
-	//		int m;
-	//	};
-	//	A* a;
-	//	int A::*pm;
-	//	int f(){}
-	//	int f(int);
-	//	int x = f(a->*pm);
-	public void testBug43579() throws Exception {
-		parseAndCheckBindings();
-	}
-
-	// class A { int m(int); };
-	// A a;
-	// int (A::*pm)(int) = &A::m;
-	// int f(){}
-	// int f(int);
-	// int x = f((a.*pm)(5));
-	public void testBug43242() throws Exception {
-		parseAndCheckBindings(getAboveComment());
-	}
-
-	public void testBug43241() throws Exception {
-		parseAndCheckBindings("int m(int); int (*pm)(int) = &m; int f(){} int f(int); int x = f((*pm)(5));");
-	}
-
 	// int *zzz1 (char);
 	// int (*zzz2) (char);
 	// int ((*zzz3)) (char);
@@ -385,6 +269,100 @@ public class AST2CPPTests extends AST2TestBase {
 		assertNoProblemBindings(col);
 	}
 
+	public void testBug43241() throws Exception {
+		parseAndCheckBindings("int m(int); int (*pm)(int) = &m; int f(){} int f(int); int x = f((*pm)(5));");
+	}
+
+	// class A { int m(int); };
+	// A a;
+	// int (A::*pm)(int) = &A::m;
+	// int f(){}
+	// int f(int);
+	// int x = f((a.*pm)(5));
+	public void testBug43242() throws Exception {
+		parseAndCheckBindings(getAboveComment());
+	}
+
+	//	class A {
+	//		int m;
+	//	};
+	//	A* a;
+	//	int A::*pm;
+	//	int f(){}
+	//	int f(int);
+	//	int x = f(a->*pm);
+	public void testBug43579() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	public void testBug75189() throws Exception {
+		parseAndCheckBindings("struct A{};typedef int (*F) (A*);");
+	}
+
+	public void testBug75340() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings("void f(int i = 0, int * p = 0);");
+		IASTSimpleDeclaration sd = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+		isParameterSignatureEqual(sd.getDeclarators()[0], "(int=0, int*=0)");
+	}
+
+	//	bool f() {
+	//	  int first, last;
+	//	  if (first < 1 || last > 99)
+	//	    return false;
+	//	}
+	public void testBug75858() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
+		NameCollector col = new NameCollector();
+		tu.accept(col);
+		assertNoProblemBindings(col);
+	}
+
+	// enum type {A};
+	// enum type a, b;
+	// type c;
+	// enum type2 {A, B};
+	// enum type2 d, e;
+	public void testBug77967() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	// int *p1; int *p2;
+	// union {
+	// struct {int a; int b;} A;
+	// struct {int a; int b;};
+	// } MyStruct;
+	// void test (void) {
+	// p1 = &MyStruct.A.a;
+	// p2 = &MyStruct.b;
+	//         MyStruct.b = 1;
+	// }
+	public void testBug78103() throws Exception {
+		parseAndCheckBindings(getAboveComment());
+	}
+
+	//	class B {
+	//	public:
+	//	  B(int t);
+	//	};
+	//	class A : public B {
+	//	  public:
+	//	  A(int t);
+	//	};
+	//	A::A(int t) : B(t - 1) {}
+	public void testBug78883() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	#define REF_WRAP(e) class A { public: A (){ } A& foo2(e& v) { return *this; } }
+	//	class B {
+	//	  REF_WRAP(B);
+	//	  B();
+	//	  void foo();
+	//	};
+	public void testBug79540() throws Exception {
+		parseAndCheckBindings(getAboveComment());
+	}
+
 	public void testBug86282() throws Exception {
 		IASTTranslationUnit tu = parse("void foo() { int (* f[])() = new (int (*[10])());  }", CPP);
 		NameCollector col = new NameCollector();
@@ -392,16 +370,24 @@ public class AST2CPPTests extends AST2TestBase {
 		assertNoProblemBindings(col);
 	}
 
-	// bool f() {
-	//     int first, last;
-	// if (first < 1 || last > 99)
-	// return false;
+	// class A {
+	//   public:
+	//   int x;
+	//   A* next;
+	// };
+	// A* start;
+	// void test() {
+	//   for(A *y = start; y->x != 0;  y = y->next) {
+	//     42;
+	//   }
+	//   for(int x = 0 ; x < 10; x++) {
+	//   }
 	// }
-	public void testBug75858() throws Exception {
+	public void testBug95411() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
-		NameCollector col = new NameCollector();
-		tu.accept(col);
-		assertNoProblemBindings(col);
+		NameCollector nameCol = new NameCollector();
+		tu.accept(nameCol);
+		assertNoProblemBindings(nameCol);
 	}
 
 	public void testBug95424() throws Exception {
@@ -411,6 +397,43 @@ public class AST2CPPTests extends AST2TestBase {
 		IASTCompoundStatement cs = (IASTCompoundStatement) f.getBody();
 		IASTExpressionStatement es = (IASTExpressionStatement) cs.getStatements()[0];
 		assertTrue(es.getExpression() instanceof IASTFunctionCallExpression);
+	}
+
+	// #define CURLOPTTYPE_OBJECTPOINT   10000
+	// #define CINIT(name,type,number) CURLOPT_ ## name = CURLOPTTYPE_ ## type + number
+	// typedef enum {
+	// CINIT(FILE, OBJECTPOINT, 1),
+	//     CINIT(URL,  OBJECTPOINT, 2)
+	// } CURLoption ;
+	public void testBug102825() throws Exception {
+		parseAndCheckBindings(getAboveComment());
+	}
+
+	//	template <class T, int someConst=0>
+	//	class WithTemplate {};
+	//	int main () {
+	//	  WithTemplate <int, 10> normalInstance;
+	//	  const int localConst=10;
+	//	  WithTemplate <int, localConst> brokenInstance;
+	//	  return 0;
+	//	}
+	public void testBug103578() throws Exception {
+		parseAndCheckBindings(getAboveComment());
+	}
+
+	//	template <typename T>
+	//	struct A {
+	//	  template <typename U> class B;
+	//	  typedef int type;
+	//	};
+	//
+	//	template <typename T>
+	//	template <typename U>
+	//	struct A<T>::B {
+	//	  typedef typename A::type type;
+	//	};
+	public void _testBug433556() throws Exception {
+		parseAndCheckBindings();
 	}
 
 	// class A { } a;
@@ -430,26 +453,6 @@ public class AST2CPPTests extends AST2TestBase {
 		assertNotNull(A);
 		assertNotNull(a);
 		assertSame(A, A_2);
-	}
-
-	// class A {
-	//     public:
-	// int x;
-	// A * next;
-	// };
-	// A * start;
-	// void test() {
-	// for(A *y = start; y->x != 0;  y = y->next) {
-	// 42;
-	// }
-	// for(int x = 0 ; x < 10; x++) {
-	// }
-	// }
-	public void testBug95411() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
-		NameCollector nameCol = new NameCollector();
-		tu.accept(nameCol);
-		assertNoProblemBindings(nameCol);
 	}
 
 	// class A; class A {};
@@ -5462,18 +5465,6 @@ public class AST2CPPTests extends AST2TestBase {
 		parse(getAboveComment(), CPP, true, true);
 	}
 
-	//	namespace outer {
-	//		namespace inner {
-	//			class foo{};
-	//		}
-	//		using namespace inner __attribute__((__strong__));
-	//	}
-	//	outer::foo x;
-	//	outer::inner::foo y;
-	public void testAttributeInUsingDirective_351228() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true);
-	}
-
 	//	class C {
 	//	public:
 	//		int i;
@@ -5523,6 +5514,18 @@ public class AST2CPPTests extends AST2TestBase {
 
 		assertInstance(b03, ICPPFunction.class);
 		assertInstance(b09, ICPPFunction.class);
+	}
+
+	//	namespace outer {
+	//		namespace inner {
+	//			class foo{};
+	//		}
+	//		using namespace inner __attribute__((__strong__));
+	//	}
+	//	outer::foo x;
+	//	outer::inner::foo y;
+	public void testAttributeInUsingDirective_351228() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 
 	//	namespace source {
@@ -5822,6 +5825,16 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPASTLiteralExpression exp= (ICPPASTLiteralExpression) init.getInitializerClause();
 		ICPPBasicType type= (ICPPBasicType) exp.getExpressionType();
 		assertTrue(type.isLong());
+	}
+
+	// signed int si(0);
+	// unsigned   u(10U);
+	// signed     s(-1);
+	// short      sh(0);
+	// long       l(0L);
+	// long long  ll(0LL);
+	public void testInitializeUnsigned_245070() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 
 	//	void foo/*_a*/(int x) {}

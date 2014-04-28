@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_18940696",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/Dwarf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-28T21:36:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_641be5a6",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_87827b0a",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-04-28T02:51:31Z",
       "side": 1,
       "message": "Would it make sense to break out of the loop here?",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_58a5defd",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-28T21:36:44Z",
+      "side": 1,
+      "message": "Yes it would.  Done.",
+      "parentUuid": "0756a345_87827b0a",
       "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_b8a23af4",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-28T21:36:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_c77c7393",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_a7797fa1",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2014-04-28T02:51:31Z",
       "side": 1,
       "message": "should this be set back to false?",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_f87f92d1",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-28T21:36:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_a7797fa1",
       "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_388aaa6f",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 695,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-28T21:36:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_67bc87b2",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_87bf1ba7",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2014-04-28T02:51:31Z",
       "side": 1,
       "message": "remove comment?",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_188fe67f",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 704,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-28T21:36:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_87bf1ba7",
       "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_58703efc",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 756,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-28T21:36:44Z",
+      "side": 1,
+      "message": "I don\u0027t know.  I would expect it to be empty rather than missing.  I don\u0027t think it matters.  The only references to str in this code will be because of a reference to the string table.  I think it is reasonable for this code to assume that debug info is valid and if a string reference is made, it should attempt to follow the reference and cause what ever error to occur - NPE or range error.",
+      "parentUuid": "0756a345_2709ef39",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_870d5b47",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
         "patchSetId": 2
@@ -132,6 +258,24 @@
       "writtenOn": "2014-04-28T02:51:31Z",
       "side": 1,
       "message": "can altstr be null?",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_b87d1ad7",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-28T21:36:44Z",
+      "side": 1,
+      "message": "Same comment as above.  It might be, but we should follow any references and assume they are valid.  If the debug info isn\u0027t valid, we have more problems than that.",
+      "parentUuid": "0756a345_870d5b47",
       "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_53c2e17b",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-28T21:36:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_b98fe901",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_27dbaf19",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
         "patchSetId": 2
@@ -172,6 +334,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_33600d01",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 769,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-28T21:36:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_27dbaf19",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_2720cf9f",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
         "patchSetId": 2
@@ -183,6 +363,24 @@
       "writtenOn": "2014-04-28T02:51:31Z",
       "side": 1,
       "message": "It\u0027s possible to extract this to a method with some arguments and not copy-paste the same loop bellow.",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_13650911",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1185,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-04-28T21:36:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_2720cf9f",
       "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

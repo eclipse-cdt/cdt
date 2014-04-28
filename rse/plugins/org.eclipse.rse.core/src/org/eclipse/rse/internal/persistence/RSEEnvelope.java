@@ -1,5 +1,5 @@
 /*********************************************************************************
- * Copyright (c) 2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2008, 2014 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,7 @@
  * David Dykstal (IBM) - [189274] provide import and export operations for profiles
  * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
  * David Dykstal (IBM) - [233876] Filters lost after restart
+ * David McKnight (IBM)- [433696] RSE profile merge does not handle property sets
  *********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -272,7 +273,11 @@ public class RSEEnvelope {
 					mergeFilterPool(profile, filterPoolNode);
 				}
 			}
-			// TODO create the property sets
+			// create the property sets
+			for (Iterator z = propertySetNodes.iterator(); z.hasNext();){
+				RSEDOMNode propertySetNode = (RSEDOMNode) z.next();
+				mergePropertySet(profile, propertySetNode);
+			}
 		}
 	}
 	
@@ -303,6 +308,11 @@ public class RSEEnvelope {
 		RSEDOMImporter importer = RSEDOMImporter.getInstance();
 		ISystemFilterPool filterPool = importer.restoreFilterPool(profile, filterPoolNode);
 		filterPool.setOwningParentName(hostName);
+	}
+	
+	private IPropertySet mergePropertySet(ISystemProfile profile, RSEDOMNode propertySetNode) {
+		RSEDOMImporter importer = RSEDOMImporter.getInstance();
+		return importer.restorePropertySet(profile, propertySetNode);
 	}
 		
 	private ISystemFilterPool mergeFilterPool(ISystemProfile profile, RSEDOMNode filterPoolNode) {

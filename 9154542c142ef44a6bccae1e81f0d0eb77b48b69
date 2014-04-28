@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_641be5a6",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/Dwarf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-28T02:51:31Z",
+      "side": 1,
+      "message": "Since there is nothing to do here, do you want to convert this if/else into a single if (!altPath.isAbsolute()) ?",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_87827b0a",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-28T02:51:31Z",
+      "side": 1,
+      "message": "Would it make sense to break out of the loop here?",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_c77c7393",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-28T02:51:31Z",
+      "side": 1,
+      "message": "Since there is nothing to do here, do you want to convert this if/else into a single if (!altPath.isAbsolute()) ?",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_a7797fa1",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-28T02:51:31Z",
+      "side": 1,
+      "message": "should this be set back to false?",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_67bc87b2",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 695,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-28T02:51:31Z",
+      "side": 1,
+      "message": "remove comment?",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_87bf1ba7",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 704,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-28T02:51:31Z",
+      "side": 1,
+      "message": "remove comment?",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_2709ef39",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 756,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-28T02:51:31Z",
+      "side": 1,
+      "message": "can str be null?",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_870d5b47",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-28T02:51:31Z",
+      "side": 1,
+      "message": "can altstr be null?",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_b98fe901",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-28T02:51:31Z",
+      "side": 1,
+      "message": "Maybe those two lists should be Sets instead? I got the same file name 60 times in the list while I was stepping.",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_27dbaf19",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 769,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-28T02:51:31Z",
+      "side": 1,
+      "message": "I think it would be worthwhile to extract this whole loop into a method with arguments in a way that it could be reused for altdata. It seems most of that code is copy-pasted and it\u0027s fairly big.",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_2720cf9f",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1185,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-04-28T02:51:31Z",
+      "side": 1,
+      "message": "It\u0027s possible to extract this to a method with some arguments and not copy-paste the same loop bellow.",
+      "revId": "9154542c142ef44a6bccae1e81f0d0eb77b48b69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

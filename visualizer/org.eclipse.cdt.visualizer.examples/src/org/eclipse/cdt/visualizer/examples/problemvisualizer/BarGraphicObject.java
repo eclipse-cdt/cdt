@@ -11,39 +11,33 @@
  *******************************************************************************/
 package org.eclipse.cdt.visualizer.examples.problemvisualizer;
 
-import org.eclipse.cdt.visualizer.ui.canvas.GraphicObject;
+import org.eclipse.cdt.visualizer.ui.canvas.VirtualBoundsGraphicObject;
 import org.eclipse.cdt.visualizer.ui.util.Colors;
 import org.eclipse.cdt.visualizer.ui.util.GUIUtils;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * A class that draws a bar or a bar outline in the specified color.
  */
-public class BarGraphicObject extends GraphicObject {
+public class BarGraphicObject extends VirtualBoundsGraphicObject {
 	
 	/* The different colors to use for the different severities */
 	private static final Color ERROR_OUTLINE_COLOR = Colors.DARK_RED;
-	private static final Color ERROR_INSIDE_COLOR = Colors.DARK_RED;
 	private static final Color WARNING_OUTLINE_COLOR = Colors.DARK_YELLOW;
-	private static final Color WARNING_INSIDE_COLOR = Colors.DARK_YELLOW;
 	private static final Color INFO_OUTLINE_COLOR = Colors.DARK_BLUE;
-	private static final Color INFO_INSIDE_COLOR = Colors.DARK_BLUE;
 
-	private boolean m_outline;
 	private String m_label;
+	private int m_barPercent;
 	
-	public BarGraphicObject(int severity, int x, int y, int w, int h, boolean outline) {
-		super(x, y, w, h);
-		m_outline = outline;
+	public BarGraphicObject(int severity, int barPercent) {
+		m_barPercent = barPercent;
 		
 		Color color = getColor(severity);
-		if (m_outline) {
-			setForeground(color);
-		} else {
-			setBackground(color);
-		}
+		setForeground(color);
+		setBackground(color);
 	}
 	
 	public void setLabel(String label) {
@@ -52,19 +46,19 @@ public class BarGraphicObject extends GraphicObject {
 	
 	@Override
 	public void paintContent(GC gc) {
-		if (m_outline) {
-			gc.drawRectangle(m_bounds);
-		} else {
-			gc.fillRectangle(m_bounds);
-		}
+		// draw outline of bar
+		gc.drawRectangle(m_bounds);
+
+		// figure-out the width that needs to be filled-in for this bar
+		int barWidth = m_bounds.width * m_barPercent / 100;
+		Rectangle fillIn = new Rectangle(m_bounds.x, m_bounds.y, barWidth, m_bounds.height);
+		// fill-in bar
+		gc.fillRectangle(fillIn);
 	}
 	
 	@Override
 	public boolean hasDecorations() {
-		// Only the outline bar has a label decoration.
-		// We muse the the outline bar and not the inside one because
-		// the inside bar may be too small
-		return m_outline;
+		return true;
 	}
 	
 	/** Invoked to allow element to paint decorations on top of anything drawn on it */
@@ -83,14 +77,11 @@ public class BarGraphicObject extends GraphicObject {
 	private Color getColor(int severity) {
 		switch (severity) {
 		case IMarker.SEVERITY_ERROR:
-			if (m_outline) return ERROR_OUTLINE_COLOR;
-			return ERROR_INSIDE_COLOR;
+			return ERROR_OUTLINE_COLOR;
 		case IMarker.SEVERITY_WARNING:
-			if (m_outline) return WARNING_OUTLINE_COLOR;
-			return WARNING_INSIDE_COLOR;
+			return WARNING_OUTLINE_COLOR;
 		case IMarker.SEVERITY_INFO:
-			if (m_outline) return INFO_OUTLINE_COLOR;
-			return INFO_INSIDE_COLOR;
+			return INFO_OUTLINE_COLOR;
 		}
 		return Colors.ORANGE;
 	}

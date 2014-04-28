@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Re-factored (bug 432908)
  *******************************************************************************/
 package org.eclipse.cdt.visualizer.examples.problemvisualizer;
 
@@ -14,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvas;
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvasVisualizer;
+import org.eclipse.cdt.visualizer.ui.canvas.VirtualBoundsGraphicObject;
 import org.eclipse.cdt.visualizer.ui.util.Colors;
 import org.eclipse.cdt.visualizer.ui.util.SelectionManager;
 import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
@@ -22,25 +24,30 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 
 public class ProblemVisualizer extends GraphicCanvasVisualizer {
 
-	/** The width of the side margins */
-	private static final int MARGIN_WIDTH = 10;
-	/** The height of the top and bottom margins */
-	private static final int MARGIN_HEIGHT = 10;
-	/** The default space between bars in the chart */
-	private static final int SPACING_HEIGHT = 40;
 	/** The predefined number of severities */
 	private static final int NUM_SEVERITY = 3;
 	
 	private static final Color MAIN_BACKGROUND_COLOR = Colors.WHITE;
 	private static final Color MAIN_FOREGROUND_COLOR = Colors.BLACK;
-
+	/** Virtual bounds of the "box" that will contains the bars */
+	private static final int[] BAR_CONTAINER_BOUNDS = { 0, 0, 1, 18 };
+	private static final int BAR_VIRTUAL_WIDTH = 1;
+	private static final int BAR_VIRTUAL_HEIGHT = 4;
+	/** Virtual bounds of each of the bars, relative to their container */
+	private static final int[][] BARS_VIRTUAL_BOUNDS = {
+		{ 0, 13, BAR_VIRTUAL_WIDTH, BAR_VIRTUAL_HEIGHT }, // infos
+		{ 0,  7, BAR_VIRTUAL_WIDTH, BAR_VIRTUAL_HEIGHT },  // warnings
+		{ 0,  1, BAR_VIRTUAL_WIDTH, BAR_VIRTUAL_HEIGHT }   // errors
+	};
+	
 	/** The canvas on which we'll draw our bars */
 	private GraphicCanvas m_canvas;
+	/** Graphic container object - will hold the 3 bars */
+	private VirtualBoundsGraphicObject m_container = null;
 	
 	/**
 	 * The model containing the data to be displayed.
@@ -48,6 +55,13 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	 * different types of problem markers.
 	 */
 	private int[] m_markerCount = new int[NUM_SEVERITY];
+	
+	/** Labels for the different marker severity levels*/
+	private String[] m_markerSeverityLabels = {
+			Messages.ProblemCountVisualizer_Infos,
+			Messages.ProblemCountVisualizer_Warnings,
+			Messages.ProblemCountVisualizer_Errors,
+	};
 	
 	public ProblemVisualizer() {
 		super(Messages.ProblemCountVisualizer_Name, 
@@ -89,59 +103,37 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	 * @param outline Should the bars be created, or the bar outline
 	 * @return The bars to be drawn.
 	 */
-	private BarGraphicObject[] getBars(boolean outline) {
-		BarGraphicObject[] bars = new BarGraphicObject[3];
+	private void createBars() {
+		BarGraphicObject bar;
+		m_container = new VirtualBoundsGraphicObject();
+		m_container.setVirtualBounds(BAR_CONTAINER_BOUNDS);
+		m_container.setDrawContainerBounds(false);
 		
-		Rectangle bounds = m_canvas.getBounds();
-
-		int x = bounds.x + MARGIN_WIDTH;
-		int y = bounds.y + MARGIN_HEIGHT;
+		// The inside of the bars use a proportional width with the maximum width and
+		// the largest amount of markers for one severity.
+		// Find the maximum marker count to dictate the width
+		int maxCount = Math.max(m_markerCount[0], m_markerCount[1]);
+		maxCount = Math.max(maxCount, m_markerCount[2]);
+		if (maxCount == 0) maxCount = 1; // Set to anything but 0.  It will be multiplied by 0 and not matter.
 		
-		int spacing = SPACING_HEIGHT;
-		int height = (bounds.height - 2 * MARGIN_HEIGHT - 2 * SPACING_HEIGHT) / 3;
-		if (height <= 0) {
-			spacing = 0;
-			y = bounds.y;
-			height = bounds.height / 3;
+		// go from high severity to low
+		for (int severity = IMarker.SEVERITY_ERROR; severity >= IMarker.SEVERITY_INFO; severity--) {
+			float barPercent = m_markerCount[severity] / (float) maxCount * 100.0f;
+			bar = new BarGraphicObject(severity, Math.round(barPercent));
+			bar.setVirtualBounds(BARS_VIRTUAL_BOUNDS[severity]);
+			bar.setLabel(m_markerSeverityLabels[severity] + " " + m_markerCount[severity]); //$NON-NLS-1$
+			bar.setDrawContainerBounds(true);
+			m_container.addChildObject("bar" + severity, bar); //$NON-NLS-1$
 		}
 
-		int maxWidth = bounds.width - 2 * MARGIN_WIDTH;
-		
-		if (outline) {
-			// The bar outlines take the entire width of the view
-			bars[0] = new BarGraphicObject(IMarker.SEVERITY_ERROR, x, y, maxWidth, height, outline);
-			bars[0].setLabel(Messages.ProblemCountVisualizer_Errors + m_markerCount[IMarker.SEVERITY_ERROR]);
-			
-			y = y + height + spacing;
-			bars[1] = new BarGraphicObject(IMarker.SEVERITY_WARNING, x, y, maxWidth, height, outline);
-			bars[1].setLabel(Messages.ProblemCountVisualizer_Warnings + m_markerCount[IMarker.SEVERITY_WARNING]);
-
-			y = y + height + spacing;
-			bars[2] = new BarGraphicObject(IMarker.SEVERITY_INFO, x, y, maxWidth, height, outline);
-			bars[2].setLabel(Messages.ProblemCountVisualizer_Infos + m_markerCount[IMarker.SEVERITY_INFO]);
-
-		} else {
-			// The inside of the bars use a proportional width with the maximum width and
-			// the largest amount of markers for one severity.
-			
-			// Find the maximum marker count to dictate the width
-			int maxCount = Math.max(m_markerCount[0], m_markerCount[1]);
-			maxCount = Math.max(maxCount, m_markerCount[2]);
-			if (maxCount == 0) maxCount = 1; // Set to anything but 0.  It will be multiplied by 0 and not matter.
-
-			int width = maxWidth * m_markerCount[IMarker.SEVERITY_ERROR] / maxCount;
-			bars[0] = new BarGraphicObject(IMarker.SEVERITY_ERROR, x, y, width, height, outline);
-
-			y = y + height + spacing;
-			width = maxWidth * m_markerCount[IMarker.SEVERITY_WARNING] / maxCount;
-			bars[1] = new BarGraphicObject(IMarker.SEVERITY_WARNING, x, y, width, height, outline);
-
-			y = y + height + spacing;
-			width = maxWidth * m_markerCount[IMarker.SEVERITY_INFO] / maxCount;
-			bars[2] = new BarGraphicObject(IMarker.SEVERITY_INFO, x, y, width, height, outline);
-		}
-		
-		return bars;
+		// set real bounds on parent "container" object - real bounds of 
+		// bars will be recursively computed in proportion of their virtual
+		// bounds, relative to their container
+		m_container.setBounds(m_canvas.getBounds());
+		// Add container object to canvas - when canvas draws the container, 
+		// the bars will automatically be drawn too, so no need to add them 
+		// to canvas.
+		m_canvas.add(m_container);
 	}
 	
 	/**
@@ -184,16 +176,8 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 		m_canvas.clear();
 		
 		// First create the outline bars
-		BarGraphicObject[] bars = getBars(true);
-		for (BarGraphicObject bar : bars) {
-			m_canvas.add(bar);
-		}
-		
-		// Now, create the inside bars
-		bars = getBars(false);
-		for (BarGraphicObject bar : bars) {
-			m_canvas.add(bar);
-		}
+		createBars();
+		m_canvas.add(m_container);
 		
 		m_canvas.redraw();
 	}

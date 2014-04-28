@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_dd2f20c3",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/VirtualBoundsGraphicObject.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-04-28T14:49:35Z",
+      "side": 1,
+      "message": "grammar check: \"an immediate child\" or \"any immediate children\"",
+      "revId": "ffe0a15f31e28f43653e37937b9a38a8f2b5c613",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

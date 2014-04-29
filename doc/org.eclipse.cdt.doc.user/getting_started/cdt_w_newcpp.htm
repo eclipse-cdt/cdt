@@ -46,17 +46,19 @@ bar, displays icons for items such  as bookmarks, breakpoints, and compiler erro
 using namespace std;
 
 int main () {
-    // Say Hello five times
+    // Say HelloWorld five times
     for (int index = 0; index &lt; 5; ++index)
-      cout &lt;&lt; <q>HelloWorld!</q> &lt;&lt; endl;
+      cout &lt;&lt; &quot;HelloWorld!&quot; &lt;&lt; endl;
     char input = 'i';
-    cout &lt;&lt; <q>To exit, press 'm'</q> &lt;&lt; endl;
+    cout &lt;&lt; &quot;To exit, press 'm' then the 'Enter' key.&quot; &lt;&lt; endl;
+    cin  >> input;
     while(input != 'm') {
+        cout &lt;&lt; &quot;You just entered '&quot; &lt;&lt; input &lt;&lt; &quot;'. &quot;
+             &lt;&lt; &quot;You need to enter 'm' to exit.&quot; &lt;&lt; endl;
         cin  >> input;
-        cout &lt;&lt; <q>You just entered </q> &lt;&lt; input
-             &lt;&lt; <q> you need to enter m to exit.</q> &lt;&lt; endl;
     }
-    exit(0);
+    cout << "Thank you. Exiting." << endl;
+    return 0;
 }
 </pre>
 </li>

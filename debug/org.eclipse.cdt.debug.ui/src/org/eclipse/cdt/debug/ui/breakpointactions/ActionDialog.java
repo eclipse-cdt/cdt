@@ -20,13 +20,18 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -112,7 +117,7 @@ public class ActionDialog extends Dialog {
 		actionNameLabel.setText(Messages.getString("ActionDialog.1")); //$NON-NLS-1$
 
 		actionNameTextWidget = new Text(dialogArea, SWT.BORDER);
-		actionNameTextWidget.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		addDecorator(dialogArea, actionNameTextWidget);
 
 		final Label breakpointActionTypeLabel = new Label(dialogArea, SWT.NONE);
 		breakpointActionTypeLabel.setText(Messages.getString("ActionDialog.2")); //$NON-NLS-1$
@@ -288,6 +293,37 @@ public class ActionDialog extends Dialog {
 			e.printStackTrace();
 		}
 		return actionPageResult;
+	}
+
+	private void addDecorator(Composite parent, final Text control) {
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false); 
+		gd.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth(); 
+		control.setLayoutData(gd);
+
+		final ControlDecoration decoration = new ControlDecoration(control, SWT.TOP | SWT.LEFT, parent );
+		decoration.hide();
+		control.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				String name = control.getText();
+				if (name.trim().isEmpty()) {
+					decoration.setImage( 
+							FieldDecorationRegistry.getDefault().getFieldDecoration( 
+									FieldDecorationRegistry.DEC_ERROR).getImage());
+					decoration.setDescriptionText(Messages.getString("ActionDialog.ErrEmptyName")); //$NON-NLS-1$
+					decoration.show();
+				} else {
+					decoration.hide();
+				}
+				validate();
+			}
+		});
+	}
+
+	private void validate() {
+		Button okButton = getButton(IDialogConstants.OK_ID);
+		if (okButton != null)
+			okButton.setEnabled(!actionNameTextWidget.getText().trim().isEmpty());
 	}
 
 }

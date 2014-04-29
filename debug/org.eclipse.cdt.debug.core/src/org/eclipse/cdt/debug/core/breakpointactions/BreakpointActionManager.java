@@ -13,8 +13,6 @@ package org.eclipse.cdt.debug.core.breakpointactions;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -49,7 +47,7 @@ public class BreakpointActionManager {
 	private static final String BREAKPOINT_ACTION_DATA = "BreakpointActionManager.actionData"; //$NON-NLS-1$
 
 	private IExtension[] breakpointActionExtensions = null;
-	private ArrayList breakpointActions = null;
+	private ArrayList<IBreakpointAction> breakpointActions = null;
 
 	public BreakpointActionManager() {
 	}
@@ -103,21 +101,23 @@ public class BreakpointActionManager {
 		if (breakpoint != null) {
 			IMarker marker = breakpoint.getMarker();
 			String actionNames = marker.getAttribute(BREAKPOINT_ACTION_ATTRIBUTE, ""); //$NON-NLS-1$
-			final String[] actions = actionNames.split(","); //$NON-NLS-1$
-			if (actions.length > 0){
-				Job job = new Job("Execute breakpoint actions") { 
-					@Override
-					public IStatus run(final IProgressMonitor monitor) {
-						return doExecuteActions(breakpoint, context, actions, monitor);
+			if (actionNames.length() > 0 ) {
+				final String[] actions = actionNames.split(","); //$NON-NLS-1$
+				if (actions.length > 0){
+					Job job = new Job("Execute breakpoint actions") {  //$NON-NLS-1$
+						@Override
+						public IStatus run(final IProgressMonitor monitor) {
+							return doExecuteActions(breakpoint, context, actions, monitor);
+						}
+					};
+					job.schedule();
+					try {
+						// wait for actions to execute
+						job.join();
+					}catch (InterruptedException e)
+					{
+						e.printStackTrace();
 					}
-				};
-				job.schedule();
-				try {
-					// wait for actions to execute
-					job.join();
-				}catch (InterruptedException e)
-				{
-					e.printStackTrace();
 				}
 			}
 		}
@@ -141,14 +141,13 @@ public class BreakpointActionManager {
 				monitor.worked(1);
 			}
 		} catch (Exception e) {
-			return new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(),  CDebugCorePlugin.INTERNAL_ERROR, "Internal Error", e );
+			return new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(),  CDebugCorePlugin.INTERNAL_ERROR, "Internal Error", e ); //$NON-NLS-1$
 		}
 		return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 	}
 
 	public IBreakpointAction findBreakpointAction(String name) {
-		for (Iterator iter = getBreakpointActions().iterator(); iter.hasNext();) {
-			IBreakpointAction action = (IBreakpointAction) iter.next();
+		for (IBreakpointAction action : getBreakpointActions()) {
 			if (action.getName().equals(name))
 				return action;
 		}
@@ -168,9 +167,9 @@ public class BreakpointActionManager {
 		return breakpointActionExtensions;
 	}
 
-	public ArrayList getBreakpointActions() {
+	public ArrayList<IBreakpointAction> getBreakpointActions() {
 		if (breakpointActions == null) {
-			breakpointActions = new ArrayList();
+			breakpointActions = new ArrayList<IBreakpointAction>();
 			CDebugCorePlugin.getDefault().getBreakpointActionManager().loadActionData();
 		}
 		return breakpointActions;
@@ -249,15 +248,12 @@ public class BreakpointActionManager {
 			Element rootElement = doc.createElement("breakpointActionData"); //$NON-NLS-1$
 			doc.appendChild(rootElement);
 
-			for (Iterator iter = getBreakpointActions().iterator(); iter.hasNext();) {
-				IBreakpointAction action = (IBreakpointAction) iter.next();
-
+			for (IBreakpointAction action : getBreakpointActions()) {
 				Element element = doc.createElement("actionEntry"); //$NON-NLS-1$
 				element.setAttribute("name", action.getName()); //$NON-NLS-1$				
 				element.setAttribute("class", action.getClass().getName()); //$NON-NLS-1$				
 				element.setAttribute("value", action.getMemento()); //$NON-NLS-1$
 				rootElement.appendChild(element);
-
 			}
 
 			ByteArrayOutputStream s = new ByteArrayOutputStream();

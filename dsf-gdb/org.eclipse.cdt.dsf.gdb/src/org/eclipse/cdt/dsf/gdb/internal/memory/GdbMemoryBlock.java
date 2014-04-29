@@ -21,13 +21,10 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
-import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlock;
 import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlockRetrieval;
 import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
-import org.eclipse.cdt.dsf.debug.service.IMemorySpaces.IMemorySpaceDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
@@ -60,60 +57,6 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 		super(retrieval, context, modelId, expression, address, word_size, length);
 		fMemorySpaceID = (memorySpaceID != null && memorySpaceID.length() > 0) ? memorySpaceID : null;
 		assert memorySpaceID == null || memorySpaceID.length() > 0;	// callers shouldn't be passing in an empty string
-	}
-
-	/**
-	 * A memory space qualified context for the IMemory methods. Used if
-	 * required, otherwise the more basic IMemoryDMContext is used
-	 */
-	public static class MemorySpaceDMContext extends AbstractDMContext implements IMemorySpaceDMContext {
-
-		private final String fMemorySpaceId;
-
-		public MemorySpaceDMContext(String sessionId, String memorySpaceId, IDMContext parent) {
-			super(sessionId, new IDMContext[] {parent});
-			// A memorySpaceDMContext should not be created if the memorySpaceId is not valid.
-			// However we need the id to calculate the hash, therefore we can not leave it as null
-			assert(memorySpaceId != null);
-			fMemorySpaceId = memorySpaceId == null ? "": memorySpaceId; //$NON-NLS-1$
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.dsf.debug.service.IMemorySpaces.IMemorySpaceDMContext#getMemorySpaceId()
-		 */
-		@Override
-		public String getMemorySpaceId() {
-			return fMemorySpaceId;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.dsf.datamodel.AbstractDMContext#equals(java.lang.Object)
-		 */
-		@Override
-		public boolean equals(Object other) {
-            if (other instanceof MemorySpaceDMContext) {
-            	MemorySpaceDMContext  dmc = (MemorySpaceDMContext) other;
-                return (super.baseEquals(other)) && (dmc.fMemorySpaceId.equals(fMemorySpaceId));
-            } else {
-                return false;
-            }
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.dsf.datamodel.AbstractDMContext#hashCode()
-		 */
-		@Override
-        public int hashCode() { 
-			return super.baseHashCode() + fMemorySpaceId.hashCode(); 
-		}
-        
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
-        @Override
-        public String toString() { 
-        	return baseToString() + ".memoryspace[" + fMemorySpaceId + ']';  //$NON-NLS-1$
-        } 
 	}
 	
     /*
@@ -252,9 +195,9 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 	public int getAddressSize() throws DebugException {
 		GdbMemoryBlockRetrieval retrieval = (GdbMemoryBlockRetrieval)getMemoryBlockRetrieval();
 
-		IGDBMemory memoryService = (IGDBMemory)retrieval.getServiceTracker().getService();
-		if (memoryService != null) {
-			return memoryService.getAddressSize(getContext());
+		IMemory memoryService = retrieval.getServiceTracker().getService();
+		if (memoryService instanceof IGDBMemory) {
+			return ((IGDBMemory)memoryService).getAddressSize(getContext());
 		}
 		
 		throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, Messages.Err_MemoryServiceNotAvailable, null));

@@ -21,8 +21,8 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces.IMemorySpaceDMContext;
+import org.eclipse.cdt.dsf.debug.service.IMemorySpaces2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlock.MemorySpaceDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIMemory;
@@ -96,7 +96,12 @@ public class GDBMemory_7_0 extends GDBMemory {
 							// Not so fast, Charlie. The context we were given may have
 							// a memory space qualifier. We need to preserve it.
 							if (dmc instanceof IMemorySpaceDMContext) {
-								threadOrMemoryDmc = new MemorySpaceDMContext(getSession().getId(), ((IMemorySpaceDMContext)dmc).getMemorySpaceId(), threadOrMemoryDmc);
+								IMemorySpaces2 memService = getServicesTracker().getService(IMemorySpaces2.class);
+								assert memService != null;
+								if (memService != null) {
+									threadOrMemoryDmc = memService.createMemorySpaceContext(threadOrMemoryDmc, 
+											                                                ((IMemorySpaceDMContext)dmc).getMemorySpaceId());
+								}
 							}
 							break;
 						}
@@ -138,7 +143,12 @@ public class GDBMemory_7_0 extends GDBMemory {
 							// Not so fast, Charlie. The context we were given may have
 							// a memory space qualifier. We need to preserve it.
 							if (dmc instanceof IMemorySpaceDMContext) {
-								threadOrMemoryDmc = new MemorySpaceDMContext(getSession().getId(), ((IMemorySpaceDMContext)dmc).getMemorySpaceId(), threadOrMemoryDmc);
+								IMemorySpaces2 memService = getServicesTracker().getService(IMemorySpaces2.class);
+								assert memService != null;
+								if (memService != null) {
+									threadOrMemoryDmc = memService.createMemorySpaceContext(threadOrMemoryDmc, 
+											                                                ((IMemorySpaceDMContext)dmc).getMemorySpaceId());
+								}
 							}
 							break;
 						}

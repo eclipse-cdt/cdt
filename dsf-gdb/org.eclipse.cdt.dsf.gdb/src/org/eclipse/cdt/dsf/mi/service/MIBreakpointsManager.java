@@ -1420,15 +1420,17 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         // Identify the platform breakpoint
         final ICBreakpoint breakpoint = findPlatformBreakpoint(number);
 
-        // Perform the actions asynchronously (otherwise we can have a deadlock...)
-        new Job("Breakpoint action") { //$NON-NLS-1$
-            { setSystem(true); }
-            @Override
-            protected IStatus run(IProgressMonitor monitor) {
-                fBreakpointActionManager.executeActions(breakpoint, new BreakpointActionAdapter(getExecutor(), getServicesTracker(), context));
-                return Status.OK_STATUS;
-            };
-        }.schedule();
+        if (breakpoint != null ) {
+        	// Perform the actions asynchronously (otherwise we can have a deadlock...)
+        	new Job("Breakpoint action") { //$NON-NLS-1$
+        		{ setSystem(true); }
+        		@Override
+        		protected IStatus run(IProgressMonitor monitor) {
+        			fBreakpointActionManager.executeActions(breakpoint, new BreakpointActionAdapter(getExecutor(), getServicesTracker(), context));
+        			return Status.OK_STATUS;
+        		};
+        	}.schedule();
+        }
     }
 
     // Helper function to locate the platform breakpoint corresponding

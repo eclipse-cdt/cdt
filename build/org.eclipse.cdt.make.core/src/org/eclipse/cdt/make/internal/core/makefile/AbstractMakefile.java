@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Marc-Andre Laperle (Ericsson) - Prevent StackOverflowError (Bug 430966)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.cdt.make.core.makefile.IBuiltinFunction;
@@ -202,6 +204,18 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 
 	@Override
 	public String expandString(String line, boolean recursive) {
+		return expandString(line, recursive, new HashSet<String>());
+	}
+
+	/**
+	 * @param line
+	 *            - line to expand
+	 * @param expandedMacros
+	 *            - keep track of expanded macros to prevent infinite recursion.
+	 *
+	 * @return line after expanding any macros.
+	 */
+	private String expandString(String line, boolean recursive, HashSet<String> expandedMacros) {
 		int len = line.length();
 		boolean foundDollar = false;
 		boolean inMacro = false;
@@ -238,8 +252,11 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 						}
 						if (defs.length > 0) {
 							String result = defs[0].getValue().toString();
-							if (result.indexOf('$') != -1 && recursive) {
-								result = expandString(result, recursive);
+							if (result.indexOf('$') != -1 && recursive && !expandedMacros.contains(result)) {
+								String prevResult = result;
+								expandedMacros.add(prevResult);
+								result = expandString(result, recursive, expandedMacros);
+								expandedMacros.remove(prevResult);
 							}
 							buffer.append(result);
 						} else { // Do not expand
@@ -263,8 +280,11 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 					}
 					if (defs.length > 0) {
 						String result = defs[0].getValue().toString();
-						if (result.indexOf('$') != -1 && recursive) {
-							result = expandString(result, recursive);
+						if (result.indexOf('$') != -1 && recursive && !expandedMacros.contains(result)) {
+							String prevResult = result;
+							expandedMacros.add(prevResult);
+							result = expandString(result, recursive, expandedMacros);
+							expandedMacros.remove(prevResult);
 						}
 						buffer.append(result);
 					} else {

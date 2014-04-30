@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_d91bab77",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemorySpaces.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-30T19:24:16Z",
+      "side": 1,
+      "message": "I\u0027m not sure about this service.  Should it be a service on its own or should it be part of the standard IMemory service?  The only reason to define it now is to show how to create GDBMemorySpaceDMContext.",
+      "revId": "d2cf6aab0f8e6513fc2837b22224408fd1555b8b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_b91eb766",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemorySpaces.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-30T19:24:16Z",
+      "side": 1,
+      "message": "probably should be protected to be interesting to anyone unless they just copy/paste.",
+      "revId": "d2cf6aab0f8e6513fc2837b22224408fd1555b8b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

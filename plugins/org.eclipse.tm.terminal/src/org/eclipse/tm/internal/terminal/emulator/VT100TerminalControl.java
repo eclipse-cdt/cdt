@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@
  * Simon Bernard (Sierra Wireless) - [351424] [terminal] Terminal does not support del and insert key
  * Martin Oberhuber (Wind River) - [265352][api] Allow setting fonts programmatically
  * Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Widget
+ * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -1179,6 +1180,14 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	 */
 	public final boolean isConnectOnEnterIfClosed() {
 		return connectOnEnterIfClosed;
+	}
+
+	public void setVT100LineWrapping(boolean enable) {
+		getTerminalText().setVT100LineWrapping(enable);
+	}
+
+	public boolean isVT100LineWrapping() {
+		return getTerminalText().isVT100LineWrapping();
 	}
 	
 	

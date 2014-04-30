@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [204796] Terminal should allow setting the encoding to use
  * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
+ * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.provisional.api;
 
@@ -140,4 +141,20 @@ public interface ITerminalControl {
 	 * @return <code>True</code> the reconnect is enabled, <code>false</code> if disabled.
 	 */
 	boolean isConnectOnEnterIfClosed();
+	
+	/**
+	 * Enables VT100 line wrapping mode (default is off).
+	 * This corresponds to the VT100 'eat_newline_glitch' terminal capability.
+	 * If enabled, writing to the rightmost column does not cause
+	 * an immediate wrap to the next line. Instead the line wrap occurs on the
+	 * next output character.
+	 * 
+	 * @param enable  whether to enable or disable VT100 line wrapping mode
+	 */
+	void setVT100LineWrapping(boolean enable);
+	
+	/**
+	 * @return whether VT100 line wrapping mode is enabled
+	 */
+	boolean isVT100LineWrapping();
 }

@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_7373a08d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-30T18:34:34Z",
+      "side": 1,
+      "message": "How about an assert to make sure the memorySpaceID is the same as in \u0027context\u0027",
+      "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_8e2babb8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-30T18:34:34Z",
+      "side": 1,
+      "message": "I think this now does the same thing as the base class, do you agree?",
+      "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_0e1f9b94",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-30T18:34:34Z",
+      "side": 1,
+      "message": "I think this now does the same thing as the base class, do you agree?",
+      "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_8e3d6bed",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-30T18:34:34Z",
+      "side": 1,
+      "message": "Bad comment?",
+      "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_4e74f3bf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-30T18:34:34Z",
+      "side": 1,
+      "message": "I think  you must first assert memorySpaceID !\u003d null",
+      "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_eee187bb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-30T18:34:34Z",
+      "side": 1,
+      "message": "I think the above comment is out-of-date",
+      "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_cea80365",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-30T18:34:34Z",
+      "side": 1,
+      "message": "I think we can make this code slightly better by moving the conversion of the two DecodeResult to outside the query like this:\n\n\t\t\tQuery\u003cIMemorySpaces.DecodeResult\u003e query \u003d new Query\u003cIMemorySpaces.DecodeResult\u003e() {\n\t\t\t\t@Override\n\t\t\t\tprotected void execute(final DataRequestMonitor\u003cIMemorySpaces.DecodeResult\u003e drm) {\n\t\t\t\t\tmemSpaceService.decodeExpression(dmc, expression, drm);\n\t\t\t\t}\n\t\t\t};\n\t\t\t\n\t\t\tgetExecutor().execute(query);\n\t\t\ttry {\n\t\t\t\tfinal IMemorySpaces.DecodeResult result \u003d query.get();\n\t\t\t\tdecodeResult \u003d new DecodeResult() {\n\t\t\t\t\t@Override\n\t\t\t\t\tpublic String getMemorySpaceId() {\n\t\t\t\t\t\treturn result.getMemorySpaceId();\n\t\t\t\t\t}\n\t\t\t\t\t\n\t\t\t\t\t@Override\n\t\t\t\t\tpublic String getExpression() {\n\t\t\t\t\t\treturn result.getExpression();\n\t\t\t\t\t}\n\t\t\t\t};\n\t\t\t} catch (InterruptedException e) {",
+      "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

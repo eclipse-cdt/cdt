@@ -51,6 +51,16 @@ public class EnableLoadMetersAction extends VisualizerAction {
 
 	// --- methods ---
 	
+	/** Set whether the load meters should be enabled or not */
+	public void setLoadMeterState(boolean state) {
+		if (m_enabled != state) {
+			m_enabled = state;
+			setText(getTextToDisplay());
+			m_visualizer.setLoadMetersEnabled(m_enabled);
+			m_visualizer.refresh();
+		}
+	}
+
 	private String getTextToDisplay() {
 		if(m_enabled) {
 			return MulticoreVisualizerUIPlugin.getString(
@@ -67,11 +77,7 @@ public class EnableLoadMetersAction extends VisualizerAction {
 	public void run() {
 		if (m_visualizer != null) {
 			// toggle enabled state
-			m_enabled = !m_enabled;	
-			m_visualizer.setLoadMetersEnabled(m_enabled);
-			m_visualizer.refresh();
-			
-			setText(getTextToDisplay());
+			setLoadMeterState(!m_enabled);
 		}
 	}
 }

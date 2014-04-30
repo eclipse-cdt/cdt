@@ -61,6 +61,6 @@ public class RefreshAction extends VisualizerAction
 	@Override
 	public void run() {
 		if (m_visualizer != null)
-			m_visualizer.refresh();
+			m_visualizer.refreshModel();
 	}
 }

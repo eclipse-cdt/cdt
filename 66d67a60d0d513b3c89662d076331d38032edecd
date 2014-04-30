@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_79ec1f88",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 451,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-30T20:12:16Z",
+      "side": 1,
+      "message": "fCommandCache stores the MI command we sent to GDB for a particular context.  My guess is that it can also be associated to an IMemorySpaceDMC.  In that case, I believe it should also be cleared when its parent IMemoryDMC resumes.\n\nIf I\u0027m right, you should be able to trigger this issue by requesting the exact same memory after a resume or suspend; my guess is that a cached MI command will be returned with old values.",
+      "revId": "66d67a60d0d513b3c89662d076331d38032edecd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_d9e3ab94",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-30T20:12:16Z",
+      "side": 1,
+      "message": "Same comment as above.",
+      "revId": "66d67a60d0d513b3c89662d076331d38032edecd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_3969079a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1061,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-30T20:12:16Z",
+      "side": 1,
+      "message": "I don\u0027t believe we use this now, but to be future proof, should we do the same thing and clear caches for which the ancestor is the memory context?",
+      "revId": "66d67a60d0d513b3c89662d076331d38032edecd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

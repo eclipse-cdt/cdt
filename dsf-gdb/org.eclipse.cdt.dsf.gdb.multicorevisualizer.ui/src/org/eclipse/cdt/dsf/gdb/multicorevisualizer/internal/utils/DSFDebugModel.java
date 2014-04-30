@@ -9,6 +9,7 @@
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *     Xavier Raynaud (Kalray) - Bug 431935
+ *     Marc Dumais (Ericsson) - Bug 407640
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils;
@@ -45,6 +46,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.ILoadInfo;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.dsf.service.DsfSession.SessionEndedListener;
 import org.eclipse.cdt.visualizer.ui.util.Timer;
 
 
@@ -434,7 +436,7 @@ public class DSFDebugModel {
 							executor.execute(new Runnable() {
 								@Override
 								public void run() {
-									listener.updateLoads();
+									listener.updateLoads(sessionState);
 								}
 							});
 						}
@@ -444,5 +446,29 @@ public class DSFDebugModel {
 		};
 		
 		return t;
+	}
+	
+	/** Installs a DSF session ended listener, that will trigger to dispose of finished sessions */
+	public static void installDSFSessionEndedListener(final DSFDebugModelListener listener) {
+		class MySessionEndedListener implements SessionEndedListener {
+			@Override
+			public void sessionEnded(DsfSession session) {
+				// cleanup session that has finished
+				String id = session.getId();
+				listener.disposeDataSource(id);
+			}
+		}
+		MySessionEndedListener l = new MySessionEndedListener();
+		DsfSession.addSessionEndedListener(l);
+	}
+
+	/** Checks whether the DSF session is ready to answer queries */
+	@ConfinedToDsfExecutor("getSession().getExecutor()")
+	public static boolean isAvailable(DSFSessionState sessionState) {
+		IGDBHardwareAndOS2 hwService = sessionState.getService(IGDBHardwareAndOS2.class);
+		if (hwService == null) {
+			return false;
+		}
+		return hwService.isAvailable();
 	}
 }

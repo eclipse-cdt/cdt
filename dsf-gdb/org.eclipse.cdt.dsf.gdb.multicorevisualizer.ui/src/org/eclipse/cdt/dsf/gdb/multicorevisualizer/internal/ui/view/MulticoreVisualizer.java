@@ -17,11 +17,13 @@
  *     Marc-Andre Laperle (Ericsson) - Bug 411634
  *     Marc Dumais (Ericsson) - Bug 409965
  *     Xavier Raynaud (kalray) - Bug 431935
+ *     Marc Dumais (Ericsson) - Bug 407640
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,6 +42,7 @@ import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.FilterCan
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.RefreshAction;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.SelectAllAction;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.SetLoadMeterPeriodAction;
+import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.IVisualizerModelDataSource;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerCPU;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerCore;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerExecutionState;
@@ -73,9 +76,6 @@ import org.eclipse.debug.internal.ui.commands.actions.StepReturnCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.SuspendCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.TerminateCommandAction;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.launch.LaunchView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IMenuManager;
@@ -106,37 +106,22 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	// --- members ---
 	
 	/**
-	 * The data model drawn by this visualizer.
+	 * The data model currently drawn by this visualizer.
 	 */
 	protected VisualizerModel fDataModel;
 
 	/** Downcast reference to canvas. */
 	protected MulticoreVisualizerCanvas m_canvas;
 	
-	/** DSF debug context session object. */
-	protected DSFSessionState m_sessionState;
+	/** Data source for currently displayed model */
+	protected IVisualizerModelDataSource  m_dataSrc;
 	
-	/** Event listener class for DSF events */
-	protected MulticoreVisualizerEventListener fEventListener;
-	
-	/** Cached reference to Debug View viewer. */
-	protected TreeModelViewer m_debugViewer = null;
+	/** Map of the data models created by the visualizer, 
+	 * hashed by their data source */
+	protected HashMap<IVisualizerModelDataSource, VisualizerModel> m_dataSrcModelMap;
 	
 	/** Model changed listener, attached to Debug View. */
 	protected IModelChangedListener m_modelChangedListener = null;
-	
-	// These two arrays are used to cache the CPU and core
-	// contexts, each time the model is recreated.  This way
-	// we can avoid asking the backend for the CPU/core
-	// geometry each time we want to update the load information.
-	/**
-	 * @since 1.1
-	 */
-	protected ICPUDMContext[] m_cpuContextsCache = null;
-	/**
-	 * @since 1.1
-	 */
-	protected ICoreDMContext[] m_coreContextsCache = null;
 	
 	/**
 	 * Main switch that determines if we should display the load meters
@@ -223,10 +208,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	public void dispose()
 	{
 		super.dispose();
-		removeDebugViewerListener();
 		disposeActions();
 		disposeLoadMeterTimer();
-		removeEventListener();
+		m_dataSrcModelMap.clear();
 	}
 	
 	
@@ -235,7 +219,8 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	/** Invoked when visualizer is created, to permit any initialization. */
 	@Override
 	public void initializeVisualizer() {
-		fEventListener = new MulticoreVisualizerEventListener(this);
+		m_dataSrcModelMap = new HashMap<IVisualizerModelDataSource, VisualizerModel>(); 
+		DSFDebugModel.installDSFSessionEndedListener(this);
 	}
 	
 	/**
@@ -243,7 +228,8 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	 */
 	protected void initializeLoadMeterTimer() {
 		if (!m_loadMetersEnabled) return;
-		m_updateLoadMeterTimer = DSFDebugModel.getLoadTimer(m_sessionState, m_loadMeterTimerPeriod, this);		
+		m_updateLoadMeterTimer = DSFDebugModel.getLoadTimer(
+				(DSFSessionState) m_dataSrc, m_loadMeterTimerPeriod, this);
 		// one-shot timer (re-scheduled upon successful triggering)
 		m_updateLoadMeterTimer.setRepeating(false); 
 	}
@@ -265,8 +251,29 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		// handle any other cleanup
 		dispose();
 	}
-	
-	
+
+	/** Dispose of a data source. Synchronized to avoid interleaved disposals */
+	@Override
+	public synchronized void disposeDataSource(String id) {
+		VisualizerModel model = getModel(id);
+		// It's possible that a session unknown to the visualizer ended
+		if (model == null) {
+			return;
+		}
+
+		IVisualizerModelDataSource src = model.getModelDataSrc();
+		// Check if current session is the one that has ended?
+		if (src == m_dataSrc) {
+			m_dataSrc = null;
+			fDataModel = null;
+			update();
+		}
+		src.removeAllServiceEventListeners();
+
+		clearModelSourceMapping(src);
+		src.dispose();
+	}
+
 	// --- accessors ---
 	
 	/** Returns non-localized unique name for this visualizer. */
@@ -302,7 +309,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	 * @since 1.1
 	 */
 	public void setLoadMetersEnabled(boolean enabled) {
-		if (m_loadMetersEnabled == enabled) return;
+		if (m_loadMetersEnabled == enabled || fDataModel == null) return;
 		m_loadMetersEnabled = enabled;
 		// save load meter enablement in model
 		fDataModel.setLoadMetersEnabled(m_loadMetersEnabled);
@@ -370,12 +377,57 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		return m_canvas.isFilterActive();
 	}
 	
-	/** Return the data model backing this multicore visualizer */
+	/** Returns the currently displayed data model, 
+	 * backing this multicore visualizer */
 	public VisualizerModel getModel() {
 		return fDataModel;
 	}
 	
 	
+	// model and data source management
+
+	/** Returns the model corresponding to a data source id, 
+	 * or null if not found */
+	public VisualizerModel getModel(String id) {
+		IVisualizerModelDataSource src = getDataSource(id);
+		if (src == null) { 
+			return null;
+		}
+		return getModel(src);
+	}
+
+	/** Returns the model corresponding to a data source, 
+	 * or null if not found */
+	public VisualizerModel getModel(IVisualizerModelDataSource src) {
+		if (m_dataSrcModelMap == null) { 
+			return null;
+		}
+		return m_dataSrcModelMap.get(src);
+	}
+
+	/** Saves a mapping between a data source and a model. */
+	private void setModelSourceMapping(IVisualizerModelDataSource dataSrc, VisualizerModel model) {
+		m_dataSrcModelMap.put(dataSrc, model);
+	}
+
+	/** Removes a mapping between a model and its data source */
+	private void clearModelSourceMapping(IVisualizerModelDataSource dataSrc) {
+		m_dataSrcModelMap.remove(dataSrc);
+	}
+
+	/** Returns the data source corresponding to an id, null if not found */
+	public IVisualizerModelDataSource getDataSource(String id) {
+		if (m_dataSrcModelMap == null) {
+			return null;
+		}
+		for (IVisualizerModelDataSource s : m_dataSrcModelMap.keySet()) {
+			if (s.getId() == id)
+				return s;
+		}
+		return null;
+	}
+
+
 	// --- action management ---
 
 	/** Creates actions for menus/toolbar. */
@@ -485,6 +537,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		// We should not change the enablement of the debug view
 		// actions, as they are automatically enabled/disabled
 		// by the platform.
+    	
+    	// Update load meter action to reflect current state
+    	m_enableLoadMetersAction.setLoadMeterState(m_loadMetersEnabled);
 	}
 
 	/** Updates actions specific to context menu. */
@@ -697,66 +752,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		else {
 			result = 0;
 		}
-		
-		// While we're here, see if we need to attach debug view listener
-		updateDebugViewListener();
-		
 		return result;
 	}
 	
-	/**
-	 * Adds listener to debug view's viewer, so we can detect
-	 * Debug View updates (which it doesn't bother to properly
-	 * communicate to the rest of the world, sigh).
-	 */
-	protected void updateDebugViewListener()
-	{
-		attachDebugViewerListener();
-	}
-	
-	/** Attaches debug viewer listener. */
-	protected void attachDebugViewerListener()
-	{
-		// NOTE: debug viewer might not exist yet, so we
-		// attach the listener at the first opportunity to do so.
-		if (m_debugViewer == null) {
-			m_debugViewer = DebugViewUtils.getDebugViewer();
-			if (m_debugViewer != null) {
-				m_modelChangedListener =
-				new IModelChangedListener() {
-					@Override
-					public void modelChanged(IModelDelta delta, IModelProxy proxy)
-					{
-						// Execute a refresh after any pending UI updates.
-						GUIUtils.exec( new Runnable() { @Override public void run() {
-							// check if we need to update the debug context
-							updateDebugContext();
-						}});
-					}
-				};
-				m_debugViewer.addModelChangedListener(m_modelChangedListener);
-			}
-		}
-	}
-
-	/** Removes debug viewer listener. */
-	protected void removeDebugViewerListener()
-	{
-		if (m_modelChangedListener != null) {
-			if (m_debugViewer != null) {
-				m_debugViewer.removeModelChangedListener(m_modelChangedListener);
-				m_debugViewer = null;
-				m_modelChangedListener = null;
-			}
-		}
-	}
-	
-	private void removeEventListener() {
-		if (m_sessionState != null) {
-			m_sessionState.removeServiceEventListener(fEventListener);
-		}
-	}
-
     /**
      * Invoked by VisualizerViewer when workbench selection changes.
      */
@@ -776,9 +774,14 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			// to reflect the current workbench selection.
 			updateCanvasSelection();
 		}
-
-		// Also check whether we need to attach debug view listener.
-		updateDebugViewListener();
+	} 
+	
+	/** Re-creates the model and refreshes visualizer content. */
+	public void refreshModel()
+	{
+		// force current model recreation
+		update(true);
+		refresh();
 	}
 	
 	/** Refreshes visualizer content from model. */
@@ -787,7 +790,6 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		m_canvas.requestRecache();
 		m_canvas.requestUpdate();
 	}
-	
 
 	// --- ISelectionChangedListener implementation ---
 
@@ -909,27 +911,26 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	public boolean setDebugSession(String sessionId) {
 		boolean changed = false;
 
-		if (m_sessionState != null &&
-			! m_sessionState.getSessionID().equals(sessionId))
+		if (m_dataSrc != null &&
+			! m_dataSrc.getId().equals(sessionId))
 		{
 			// stop timer that updates the load meters
 			disposeLoadMeterTimer();
-			m_cpuContextsCache = null;
-			m_coreContextsCache = null;
-			
-			m_sessionState.removeServiceEventListener(fEventListener);
-			m_sessionState.dispose();
-			m_sessionState = null;
+			m_dataSrc = null;
 			changed = true;
 		}
 		
-		if (m_sessionState == null &&
+		if (m_dataSrc == null &&
 			sessionId != null)
 		{
-			m_sessionState = new DSFSessionState(sessionId);
-			m_sessionState.addServiceEventListener(fEventListener);
-			// start timer that updates the load meters
-			initializeLoadMeterTimer();
+			m_dataSrc = getDataSource(sessionId);
+			// Unknown data source?
+			if (m_dataSrc == null) {
+				m_dataSrc = new DSFSessionState(sessionId);
+				// Take note that we now know that data source. Will
+				// associate model to it later, when created.
+				setModelSourceMapping(m_dataSrc, null);
+			}
 			changed = true;
 		}
 		
@@ -939,23 +940,49 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 
 	// --- Update methods ---
 	
-	/** Updates visualizer canvas state. */
+	/** Updates visualizer canvas state to show model corresponding to currently
+	 * selected data source. */
 	public void update() {
-		// Create new VisualizerModel and hand it to canvas,
-		// TODO: cache the VisualizerModel somehow and update it,
-		// rather than creating it from scratch each time.
-		if (m_sessionState == null) {
+		update(false);
+	}
+	
+	/** Updates visualizer canvas state to show model corresponding to currently
+	 * selected data source. Optionally force the current model to be re-created */
+	public void update(boolean recreateModel) {
+		if (m_dataSrc == null) {
 			// no state to display, we can immediately clear the canvas
 			setCanvasModel(null);
 			return;
 		}
-		m_sessionState.execute(new DsfRunnable() { @Override public void run() {
-			// get model asynchronously, and update canvas
-			// in getVisualizerModelDone().
-			getVisualizerModel();
-		}});
+		
+		if (recreateModel) {
+			// Forget about model so it will be re-created
+			clearModelSourceMapping(m_dataSrc);
+		}
+		
+		// model already exists for currently selected data source? 
+		VisualizerModel model = getModel(m_dataSrc);
+		if (model != null) {
+			fDataModel = model;
+			setCanvasModel(fDataModel);
+
+			// restore load meter enabled state for that model
+			m_loadMetersEnabled = fDataModel.getLoadMetersEnabled();
+			initializeLoadMeterTimer();
+		}
+		// create model
+		else {
+			if (m_dataSrc instanceof DSFSessionState)
+			{
+				((DSFSessionState) m_dataSrc).execute(new DsfRunnable() { @Override public void run() {
+					// fill-in the model asynchronously, and update canvas
+					// in createVisualizerModelDone().
+					createVisualizerModel(m_dataSrc);
+				}});
+			}
+		}
 	}
-	
+
 	/** Sets canvas model. (Also updates canvas selection.) */
 	protected void setCanvasModel(VisualizerModel model) {
 		final VisualizerModel model_f = model;
@@ -1004,20 +1031,41 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	
 	// --- Visualizer model update methods ---
 	
-	/** Starts visualizer model request.
-	 *  Calls getVisualizerModelDone() with the constructed model.
+	/** 
+	 *  Starts visualizer model request. Calls createVisualizerModelDone() 
+	 *  with the constructed model. Synchronized to avoid interleaved model
+	 *  creations.
 	 */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void getVisualizerModel() {
-		fDataModel = new VisualizerModel(m_sessionState.getSessionID());
-		DSFDebugModel.getCPUs(m_sessionState, this, fDataModel);
+	public synchronized void createVisualizerModel(IVisualizerModelDataSource dataSrc) {
+		// discard old listener, if any
+		dataSrc.removeAllServiceEventListeners();
+		VisualizerModel model = null;
+
+		// Populate model, if the data source is ready.
+		if (dataSrc.isAvailable()) {
+			model = new VisualizerModel(dataSrc);
+			setModelSourceMapping(dataSrc, model);
+			DSFDebugModel.getCPUs((DSFSessionState) dataSrc, this, model);
+			// Set newly built model as the current one
+			fDataModel = model;
+		}
+		// Note: Even if the data source is not ready, still create the event 
+		// listener. When the source is ready, the event listener will 
+		// re-trigger model creation
+
+		// Add an event listener to the data source
+		MulticoreVisualizerEventListener eventListener = 
+				new MulticoreVisualizerEventListener(this, model);
+		dataSrc.addServiceEventListener(eventListener);
 	}
+
 	
-	/** Invoked when getModel() request completes. */
+	/** Invoked when createModel() request completes. */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void getVisualizerModelDone(VisualizerModel model) {
-		fDataModel.setLoadMetersEnabled(m_loadMetersEnabled);
-		updateLoads();
+	public void createVisualizerModelDone(VisualizerModel model) {
+		fDataModel.setLoadMetersEnabled(false);
+		updateLoads((DSFSessionState)model.getModelDataSrc());
 		model.sort();
 		setCanvasModel(model);
 	}
@@ -1030,9 +1078,11 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	public void getCPUsDone(ICPUDMContext[] cpuContexts, Object arg)
 	{
-		// save CPU contexts
-		m_cpuContextsCache = cpuContexts;
 		VisualizerModel model = (VisualizerModel) arg;
+		DSFSessionState session = (DSFSessionState)model.getModelDataSrc();
+		
+		// save CPU contexts
+		session.setCPUContextsCache(cpuContexts);
 		
 		if (cpuContexts == null || cpuContexts.length == 0) {
 			// Whoops, no CPU data.
@@ -1044,7 +1094,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			model.getTodo().add(1);
 			
 			// Collect core data.
-			DSFDebugModel.getCores(m_sessionState, this, model);
+			DSFDebugModel.getCores(session, this, model);
 		} else {
 			// keep track of CPUs left to visit
 			int count = cpuContexts.length;
@@ -1055,7 +1105,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 				model.addCPU(new VisualizerCPU(cpuID));
 				
 				// Collect core data.
-				DSFDebugModel.getCores(m_sessionState, cpuContext, this, model);
+				DSFDebugModel.getCores(session, cpuContext, this, model);
 			}
 			
 		}
@@ -1069,9 +1119,11 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 							 ICoreDMContext[] coreContexts,
 							 Object arg)
 	{
-		// save core contexts
-		m_coreContextsCache = coreContexts;
 		VisualizerModel model = (VisualizerModel) arg;
+		DSFSessionState session = (DSFSessionState)model.getModelDataSrc();
+		
+		// save core contexts
+		session.setCoreContextsCache(coreContexts);
 
 		if (coreContexts == null || coreContexts.length == 0) {
 			// no cores for this cpu context
@@ -1089,7 +1141,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 				cpu.addCore(new VisualizerCore(cpu, coreID));
 				
 				// Collect thread data
-				DSFDebugModel.getThreads(m_sessionState, cpuContext, coreContext, this, model);
+				DSFDebugModel.getThreads(session, cpuContext, coreContext, this, model);
 			}			
 		}
 		
@@ -1108,6 +1160,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 							   Object arg)
 	{
 		VisualizerModel model = (VisualizerModel) arg;
+		DSFSessionState session = (DSFSessionState)model.getModelDataSrc();
 		
 		if (threadContexts == null || threadContexts.length == 0) {
 			// no threads for this core
@@ -1122,7 +1175,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 					DMContexts.getAncestorOfType(threadContext, IMIExecutionDMContext.class);
 				// Don't add the thread to the model just yet, let's wait until we have its data and execution state.
 				// Collect thread data
-				DSFDebugModel.getThreadData(m_sessionState, cpuContext, coreContext, execContext, this, model);
+				DSFDebugModel.getThreadData(session, cpuContext, coreContext, execContext, this, model);
 			}
 			
 		}
@@ -1141,9 +1194,10 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			                      IThreadDMData threadData,
 			                      Object arg)
 	{
-
+		VisualizerModel model = (VisualizerModel) arg;
+		DSFSessionState session = (DSFSessionState)model.getModelDataSrc();
 		// Don't add the thread to the model just yet, let's wait until we have its execution state.
-		DSFDebugModel.getThreadExecutionState(m_sessionState, cpuContext, coreContext, execContext, threadData, this, arg);
+		DSFDebugModel.getThreadExecutionState(session, cpuContext, coreContext, execContext, threadData, this, arg);
 	}
 
 	
@@ -1203,30 +1257,35 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	 */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	@Override
-	public void updateLoads() {
-		if (m_cpuContextsCache == null || m_coreContextsCache == null) {
+	public void updateLoads(DSFSessionState session) {
+		// if meters not enabled, return
+		if (!fDataModel.getLoadMetersEnabled()) {
+			return;
+		}
+
+		VisualizerModel model = getModel(session);
+
+		// Retrieve stored CPU and core contexts
+		ICPUDMContext[] cpuCtxs = session.getCPUContextsCache();
+		ICoreDMContext[] coreCtxs = session.getCoreContextsCache();
+
+		if (cpuCtxs == null || coreCtxs == null) {
 			// not ready to get load info yet
 			return;
 		}
-		// if meters not enabled, do not query backend
-		if (!m_loadMetersEnabled) {
-			return;
-		}
-		
-		VisualizerModel model = fDataModel;
-		
+
 		// keep track of how many loads we expect
-		int count = m_cpuContextsCache.length + m_coreContextsCache.length;
+		int count = cpuCtxs.length + coreCtxs.length;
 		model.getLoadTodo().dispose();
 		model.getLoadTodo().add(count);
-		
+
 		// ask load for each CPU
-		for (ICPUDMContext cpuCtx : m_cpuContextsCache) {
-			DSFDebugModel.getLoad(m_sessionState, cpuCtx, this, model);
+		for (ICPUDMContext cpuCtx : cpuCtxs) {
+			DSFDebugModel.getLoad(session, cpuCtx, this, model);
 		}
 		// ask load for each core
-		for (ICoreDMContext coreCtx : m_coreContextsCache) {
-			DSFDebugModel.getLoad(m_sessionState, coreCtx, this, model);
+		for (ICoreDMContext coreCtx : coreCtxs) {
+			DSFDebugModel.getLoad(session, coreCtx, this, model);
 		}
 	}
 	
@@ -1265,11 +1324,11 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	protected void done(int n, VisualizerModel model) {
 		model.getTodo().done(n);
 		if (model.getTodo().isDone()) {
-			getVisualizerModelDone(model);
+			createVisualizerModelDone(model);
 		}
 	}
 	
-	/** Update "done" count for current visualizer model. */
+	/** Update "done" count for load meters */
 	protected void loadDone(int n, VisualizerModel model) {
 		model.getLoadTodo().done(n);
 		if (model.getLoadTodo().isDone()) {
@@ -1279,8 +1338,10 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 				m_canvas.requestUpdate();
 			}
 			if (m_updateLoadMeterTimer != null) {
-				// re-start timer 
-				m_updateLoadMeterTimer.start();
+				// re-start timer if current session is still the same 
+				if(model == fDataModel) {
+					m_updateLoadMeterTimer.start();
+				}
 			}
 		}
 	}

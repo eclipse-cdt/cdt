@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_3369289a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-30T18:33:29Z",
+      "side": 1,
+      "message": "You are right, let\u0027s leave as is.",
+      "parentUuid": "0756a345_dc65783a",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_c8ac97aa",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
         "patchSetId": 4
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "We receive a IMemoryDMContext in the constructor which we could then use to check if is an instance of IMemorySpaceDMContext and if it is, \nwe can then resolve the memory space id. \n\nI thought about it although I was not willing to change the API to the initial implementation. However I see this is an internal API and we could actually change it.",
       "parentUuid": "0756a345_c8ac97aa",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_9370f482",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-30T18:33:29Z",
+      "side": 1,
+      "message": "You\u0027re right, let\u0027s keep the API the same for Luna since the release is close.  We can revisit later if needed.",
+      "parentUuid": "0756a345_5fccbaad",
       "revId": "af923abc95e362da020acb119b31c30774088ed1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -241,6 +277,24 @@
       "side": 1,
       "message": "Me too, the method being called requires it.\n It really depends on the specifics of the first reference implementation which we don\u0027t have access to :-(",
       "parentUuid": "0756a345_88145f4c",
+      "revId": "af923abc95e362da020acb119b31c30774088ed1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_59195bab",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-04-30T18:33:29Z",
+      "side": 1,
+      "message": "Turns out that this wasn\u0027t needed because both Memory and Memory Browser view have a way to ask the user for the memory space id, and then call IMemorySpaceAwareMemoryBlockRetrieval#getMemoryBlock()\n\nHowever, with the changes you propose, it will possible for some debuggers to use memory spaces even when not specified by the user, but implicitly specified in an expression.",
+      "parentUuid": "0756a345_7f737ed8",
       "revId": "af923abc95e362da020acb119b31c30774088ed1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

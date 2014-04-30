@@ -46,7 +46,7 @@ public class QMakeProjectInfoManager {
 		synchronized (CACHE_SYNC) {
 			CACHE = new HashMap<IProject,QMakeProjectInfo>();
 		}
-		CoreModel.getDefault().addCProjectDescriptionListener(PD_LISTENER, ICDescriptionDelta.ACTIVE_CFG);
+		CoreModel.getDefault().addCProjectDescriptionListener(PD_LISTENER, CProjectDescriptionEvent.LOADED | CProjectDescriptionEvent.APPLIED);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(RC_LISTENER, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
 	}
 
@@ -110,9 +110,14 @@ public class QMakeProjectInfoManager {
 		// called on active project configuration change
 		@Override
 		public void handleEvent(CProjectDescriptionEvent event) {
-			QMakeProjectInfo info = getQMakeProjectInfoFor(event.getProject(), false);
-			if (info != null) {
-				info.updateState();
+			ICDescriptionDelta projectDelta = event.getProjectDelta();
+			if (projectDelta != null) {
+				if ((projectDelta.getChangeFlags() & ICDescriptionDelta.ACTIVE_CFG) != 0) {
+					QMakeProjectInfo info = getQMakeProjectInfoFor(event.getProject(), false);
+					if (info != null) {
+						info.updateState();
+					}
+				}
 			}
 		}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -8,6 +8,7 @@
  * Contributors: 
  * Michael Scharf (Wind River) - initial API and implementation
  * Anton Leherbauer (Wind River) - [206329] Changing terminal size right after connect does not scroll properly
+ * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -39,19 +40,26 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	 * When fCursorColumn is N, the next character output to the terminal appears
 	 * in column N. When a character is output to the rightmost column on a
 	 * given line (column widthInColumns - 1), the cursor moves to column 0 on
-	 * the next line after the character is drawn (this is how line wrapping is
-	 * implemented). If the cursor is in the bottommost line when line wrapping
+	 * the next line after the character is drawn (this is the default line wrapping
+	 * mode). If VT100 line wrapping mode is enabled, the cursor does not move
+	 * to the next line until the next character is printed (this is known as 
+	 * the VT100 'eat_newline_glitch').
+	 * If the cursor is in the bottommost line when line wrapping
 	 * occurs, the topmost visible line is scrolled off the top edge of the
 	 * screen.
 	 * <p>
 	 */
 	private int fCursorColumn;
 	private int fCursorLine;
+	/* true if last output occurred on rightmost column 
+	 * and next output requires line wrap */
+	private boolean fWrapPending;
 	private Style fDefaultStyle;
 	private Style fStyle;
 	int fLines;
 	int fColumns;
 	final private ITerminalTextData fTerminal;
+	private boolean fVT100LineWrapping;
 	public VT100EmulatorBackend(ITerminalTextData terminal) {
 		fTerminal=terminal;
 	}
@@ -284,15 +292,27 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			int line=toAbsoluteLine(fCursorLine);
 			int i=0;
 			while (i < chars.length) {
+				if(fWrapPending) {
+					doNewline();
+					line=toAbsoluteLine(fCursorLine);
+					setCursorColumn(0);
+				}
 				int n=Math.min(fColumns-fCursorColumn,chars.length-i);
 				fTerminal.setChars(line, fCursorColumn, chars, i, n, fStyle);
 				int col=fCursorColumn+n;
 				i+=n;
 				// wrap needed?
-				if(col>=fColumns) {
-					doNewline();
-					line=toAbsoluteLine(fCursorLine);
-					setCursorColumn(0);
+				if(col == fColumns) {
+					if (fVT100LineWrapping) {
+						// deferred line wrapping (eat_newline_glitch)
+						setCursorColumn(col - 1);
+						fWrapPending = true;
+					} else {
+						// immediate line wrapping
+						doNewline();
+						line=toAbsoluteLine(fCursorLine);
+						setCursorColumn(0);
+					}
 				} else {
 					setCursorColumn(col);
 				}
@@ -357,6 +377,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			else if(targetColumn>=fColumns)
 				targetColumn=fColumns-1;
 			fCursorColumn=targetColumn;
+			fWrapPending = false;
 			// We make the assumption that nobody is changing the
 			// terminal cursor except this class!
 			// This assumption gives a huge performance improvement
@@ -397,5 +418,13 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		synchronized (fTerminal) {
 			return fColumns;
 		}
+	}
+
+	public void setVT100LineWrapping(boolean enable) {
+		fVT100LineWrapping = enable;
+	}
+
+	public boolean isVT100LineWrapping() {
+		return fVT100LineWrapping;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Michael Scharf (Wind River) - initial API and implementation
+ * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -168,5 +169,21 @@ public interface IVT100EmulatorBackend {
 	int getLines();
 
 	int getColumns();
+
+	/**
+	 * Enables VT100 line wrapping mode (default is off).
+	 * This corresponds to the VT100 'eat_newline_glitch' terminal capability.
+	 * If enabled, writing to the rightmost column does not cause
+	 * an immediate wrap to the next line. Instead the line wrap occurs on the
+	 * next output character.
+	 * 
+	 * @param enable  whether to enable or disable VT100 line wrapping mode
+	 */
+	void setVT100LineWrapping(boolean enable);
+
+	/**
+	 * @return whether VT100 line wrapping mode is enabled
+	 */
+	boolean isVT100LineWrapping();
 
 }

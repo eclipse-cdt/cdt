@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl
  * Martin Oberhuber (Wind River) - [204796] Terminal should allow setting the encoding to use
  * Uwe Stieber (Wind River) - [282996] [terminal][api] Add "hidden" attribute to terminal connector extension point
+ * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.connector;
 
@@ -82,6 +83,13 @@ public class TerminalConnectorFactoryTest extends TestCase {
 		}
 		
 		public void setConnectOnEnterIfClosed(boolean on) {
+		}
+
+		public void setVT100LineWrapping(boolean enable) {
+		}
+
+		public boolean isVT100LineWrapping() {
+			return false;
 		}
 	}
 	static class ConnectorMock extends TerminalConnectorImpl {

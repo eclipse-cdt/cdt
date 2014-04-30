@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@
  * Kris De Volder (VMWare) - [392107] Switched interpretation for ESC[0K and ESC[1K sequences
  * Martin Oberhuber (Wind River) - [401386] Regression: No header on top due to incorrect ESC[K interpretation
  * Martin Oberhuber (Wind River) - [401480] Handle ESC[39;49m and ESC[G
+ * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -1150,6 +1151,7 @@ public class VT100Emulator implements ControlListener {
 	 * Buffer for {@link #pushBackChar(char)}.
 	 */
 	private int fNextChar=-1;
+
 	private char getNextChar() throws IOException {
 		int c=-1;
 		if(fNextChar!=-1) {
@@ -1188,5 +1190,11 @@ public class VT100Emulator implements ControlListener {
 	}
 	public void setCrAfterNewLine(boolean crAfterNewLine) {
 		fCrAfterNewLine = crAfterNewLine;
+	}
+	void setVT100LineWrapping(boolean enable) {
+		text.setVT100LineWrapping(enable);
+	}
+	boolean isVT100LineWrapping() {
+		return text.isVT100LineWrapping();
 	}
 }

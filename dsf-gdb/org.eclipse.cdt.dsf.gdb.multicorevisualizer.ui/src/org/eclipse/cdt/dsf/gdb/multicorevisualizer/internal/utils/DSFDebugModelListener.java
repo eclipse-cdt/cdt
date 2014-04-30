@@ -77,9 +77,11 @@ public interface DSFDebugModelListener {
 	public void getLoadDone(IDMContext context, ILoadInfo loads, Object arg);
 
 	/**
-	 * Invoked when the load timer triggers
-	 * @since 1.1
+	 * Invoked when the load timer triggers. Updates the loads 
+	 * for a given DSF session.
 	 */
-	public void updateLoads();
-	
+	public void updateLoads(DSFSessionState session);
+
+	/** Invoked when a DSF session terminates */
+	public void disposeDataSource(String id);
 }

@@ -10,6 +10,7 @@
  *     Marc Dumais (Ericsson) - Bug 405390
  *     Marc Dumais (Ericsson) - Bug 407321
  *     Xavier Raynaud (Kalray) - Add tooltip support (Bug 431935)
+ *     Marc Dumais (Ericsson) - Bug 407640
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
@@ -53,13 +54,14 @@ public class VisualizerModel
 	protected boolean m_loadMetersEnabled = false;
 	
 	/** data source corresponding to this model  */
-	protected String m_sessionId = null;
+	protected IVisualizerModelDataSource m_dataSource = null;
+
 	
 	// --- constructors/destructors ---
 	
 	/** Constructor */
-	public VisualizerModel(String sessionId) {
-		m_sessionId = sessionId;
+	public VisualizerModel(IVisualizerModelDataSource src) {
+		m_dataSource = src;
 		m_cpus = new ArrayList<VisualizerCPU>();
 		m_cpuMap = new Hashtable<Integer, VisualizerCPU>();
 		m_threads = new ArrayList<VisualizerThread>();
@@ -93,7 +95,7 @@ public class VisualizerModel
 			m_loadTodo.dispose();
 			m_loadTodo = null;
 		}
-		m_sessionId = null;
+		m_dataSource = null;
 	}
 	
 	
@@ -117,10 +119,16 @@ public class VisualizerModel
 		return m_loadMetersEnabled;
 	}
 	
-	/**	Gets the unique id for the source this model was build from */
-	public String getSessionId() {
-		return m_sessionId;
+	/** Gets the unique id for the data source used to create this model */
+	public String getSourceId() {
+		return m_dataSource.getId();
 	}
+
+	/** Gets a reference to the data source used to create this model */
+	public IVisualizerModelDataSource getModelDataSrc() {
+		return m_dataSource;
+	}
+
 		
 	// --- methods ---
 	

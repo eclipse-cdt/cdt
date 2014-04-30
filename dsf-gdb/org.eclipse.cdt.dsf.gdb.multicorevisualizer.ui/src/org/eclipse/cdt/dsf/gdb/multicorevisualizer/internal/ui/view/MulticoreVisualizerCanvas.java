@@ -317,7 +317,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		
 		// Set filter associated to new model
 		if (m_model != null) {
-			m_canvasFilterManager.setCurrentFilter(m_model.getSessionId());
+			m_canvasFilterManager.setCurrentFilter(m_model.getSourceId());
 		}
 		else {
 			m_canvasFilterManager.setCurrentFilter(null);

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_1445eacb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-05-01T19:16:35Z",
+      "side": 1,
+      "message": "OK, ideally we should remove the memorySpaceId from this method. \n  I have implemented it as;\n\n\t\t//TODO: remove the memorySpaceID parameter from this method \n\t\t//after making sure it\u0027s not used in earlier implementations\n\t\t//in the mean time check for consistency\n\t\tif(memorySpaceID !\u003d null) {\n\t\t\tassert(context instanceof IMemorySpaceDMContext);\n\t\t\tassert memorySpaceID.equals(((IMemorySpaceDMContext) context).getMemorySpaceId());\n\t\t} else {\n\t\t\tif (context instanceof IMemorySpaceDMContext) {\n\t\t\t\tassert ((IMemorySpaceDMContext) context).getMemorySpaceId() \u003d\u003d null;\n\t\t\t}\n\t\t}",
+      "parentUuid": "0756a345_7373a08d",
+      "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_8e2babb8",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2014-04-30T18:34:34Z",
       "side": 1,
       "message": "I think this now does the same thing as the base class, do you agree?",
+      "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_349e2eb5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-05-01T19:16:35Z",
+      "side": 1,
+      "message": "This is also the case for \"writeMemoryBlock\"\nI have now removed both \n\npretty good catch !\n\nDone !",
+      "parentUuid": "0756a345_8e2babb8",
       "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_7483865b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-05-01T19:16:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_0e1f9b94",
+      "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_8e3d6bed",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2014-04-30T18:34:34Z",
       "side": 1,
       "message": "Bad comment?",
+      "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_b464fe3d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-05-01T19:16:35Z",
+      "side": 1,
+      "message": "true, I have now updated it to: \n        //Adjust the memory context to use memory spaces when available\n\nand also removed the one at the else as it\u0027s no longer needed",
+      "parentUuid": "0756a345_8e3d6bed",
       "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_28ed3201",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-05-01T19:16:35Z",
+      "side": 1,
+      "message": "If memoryDmc is instanceof  IMemorySpaceDMContext then the memorySpaceID should not be null, If it\u0027s then we get a NPE  instead of and assert triggering. \n  But just to be clearer I have added one more assert i.e. \n        \tassert(memorySpaceID !\u003d null);",
+      "parentUuid": "0756a345_4e74f3bf",
+      "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_eee187bb",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
         "patchSetId": 5
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_281ff294",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-05-01T19:16:35Z",
+      "side": 1,
+      "message": "True, I have added the following comment to clarify its purpose:\n\n\t/**\n\t * Decode the received expression by\n\t * First, resolving the string directly\n\t * Second, if the memory space is not found in the expression string, use the Memory service to use some help from gdb\n\t */",
+      "parentUuid": "0756a345_eee187bb",
+      "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_cea80365",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
         "patchSetId": 5
@@ -115,6 +223,24 @@
       "writtenOn": "2014-04-30T18:34:34Z",
       "side": 1,
       "message": "I think we can make this code slightly better by moving the conversion of the two DecodeResult to outside the query like this:\n\n\t\t\tQuery\u003cIMemorySpaces.DecodeResult\u003e query \u003d new Query\u003cIMemorySpaces.DecodeResult\u003e() {\n\t\t\t\t@Override\n\t\t\t\tprotected void execute(final DataRequestMonitor\u003cIMemorySpaces.DecodeResult\u003e drm) {\n\t\t\t\t\tmemSpaceService.decodeExpression(dmc, expression, drm);\n\t\t\t\t}\n\t\t\t};\n\t\t\t\n\t\t\tgetExecutor().execute(query);\n\t\t\ttry {\n\t\t\t\tfinal IMemorySpaces.DecodeResult result \u003d query.get();\n\t\t\t\tdecodeResult \u003d new DecodeResult() {\n\t\t\t\t\t@Override\n\t\t\t\t\tpublic String getMemorySpaceId() {\n\t\t\t\t\t\treturn result.getMemorySpaceId();\n\t\t\t\t\t}\n\t\t\t\t\t\n\t\t\t\t\t@Override\n\t\t\t\t\tpublic String getExpression() {\n\t\t\t\t\t\treturn result.getExpression();\n\t\t\t\t\t}\n\t\t\t\t};\n\t\t\t} catch (InterruptedException e) {",
+      "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_6819eaab",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-05-01T19:16:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0756a345_cea80365",
       "revId": "6a92835bc391b0d55fc2048d69b645d943f5ed18",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

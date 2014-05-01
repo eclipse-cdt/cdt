@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Before you begin</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+<body>
+<div role="main">
+<h1>Before you begin</h1>
+
+<p>Depending on how you obtained the Stand-alone Debugger, you might have also received
+a toolchain.
+However, if you downloaded the Stand-alone Debugger from the Eclipse web site, then you will require a toolchain before
+you can debug any projects.</p>
+
+<p>The Stand-alone Debugger uses plug-ins from the CDT (C/C++ Development Tools) project pertaining to
+debugging an application.  These CDT debugging components require some GNU toolchain elements such as
+the gdb debugger and gcc compiler.  The Stand-alone Debugger does allow editing files but does not support rebuilding
+a project; a user can do that outside of the Stand-alone Debugger either either from the command line or using 
+the full CDT IDE which supports edit/compile/build/debug.
+
+<p>Each platform that runs the Stand-alone Debugger requires different steps to acquire the GNU toolchain.</p>
+
+<h2>Windows</h2>
+<p>For windows, MinGW and Cygwin are the two main platform choices for acquiring the GNU toolchain.
+It is important to understand the difference between them.
+Cygwin produces executables that use the Cygwin POSIX runtime. Note that this runtime is GPL licensed.
+MinGW produces native Windows executables that do not require a separate runtime.</p>
+
+<ul>
+<li><p>For <strong>MinGW</strong>, it is recommended to use the MinGW installer, mingw-get, to manage your
+MinGW installation. Download and run the latest mingw-get-inst package from the
+<a href="http://sourceforge.net/projects/mingw/files">MinGW Downloads page.</a>
+</p>
+<p>Note that the Wascana IDE has been discontinued.</p>
+</li>
+
+<li><p><strong>Cygwin</strong> can be installed from the Cygwin site at
+<a href="http://www.cygwin.com">http://www.cygwin.com</a>. You need to manually select
+the gdb and gcc packages.  The gcc package is used to figure out default include paths
+and built-in macros for indexing the code for navigation purposes.</p>
+</li>
+
+<li><p>The <strong>Windows SDK</strong> provides the Visual C++ compiler and header files and libraries required
+to create Windows applications.</p>
+<p><i>Note:</i> For this release, the integration should be considered beta quality. It is not recommended for
+production use.</p>
+</li>
+</ul>
+
+<h2>Linux</h2>
+<p>All Linux distributions include the GNU toolchain. They may not, however, be installed by default.
+For instructions about installing the GNU toolchain for Linux, see the instructions for your particular distribution.</p>
+
+<h2>Mac OS X</h2>
+The Stand-alone Debugger supports the Apple GNU toolchain that is included in with the Xcode IDE. It can be downloaded
+from the Apple's developer site, <a href="http://developer.apple.com/">http://developer.apple.com</a>
+
+<h2>Other Platforms</h2>
+<p>The GNU toolchain is supported on all platforms that the Stand-alone Debugger supports. For instructions about installing the GNU toolchain
+on your platform, see your platform vendor.</p>
+
+<p><img src="../images/ng00_04a.gif" ALT="QNX Copyright Statement" > 
+</p>
+</div>
+</body>
+
+</html>

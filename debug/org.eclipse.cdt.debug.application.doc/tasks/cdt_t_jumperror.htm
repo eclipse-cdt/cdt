@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Jumping to errors</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+
+<body>
+
+<div role="main"><h1>Jumping to errors</h1>
+
+<p>The CDT will parse the output from the make and compiler/linker. If the CDT can 
+determine an error or a warning, the line is highlighted in the Console view and added
+to the Problems view as a <strong>Problem Marker</strong> decorated with
+error <img src="../images/icon_error.gif" alt="Error"> or warning <img src="../images/icon_warning.gif" alt="Warning"> icon.
+Informational messages are marked with Info <img src="../images/icon_info.gif" alt="Info"> icon.
+</p>
+
+<p>To jump to the source of an error do one of the following:</p>
+<ul>
+  <li><p>In the Console view, double-click the highlighted line.</li>
+  <li><p>In the Problems view, double-click the row of the specific error in the table.</li>
+  <li><p>If in the Problems view the error is identified as <strong>External Location</strong> in Location column, 
+    use mouse right-click on it, then click on <strong>Open external location</strong> item in the context menu.</li>
+</ul>
+<p>If CDT can determine file and error line and the file exists - the file opens in the C/C++ editor and the cursor moves to the line with the error.</p>
+
+<p>To jump to errors sequentially:</p>
+<ul>
+  <li>In Editor use Next Annotation <img src="../images/icon_annotation_next.png" alt="Next Annotation">
+    or Previous Annotation <img src="../images/icon_annotation_prev.png" alt="Previous Annotation"> icons on the toolbar. </li>
+  <li>In Console view use Next Error <img src="../images/icon_next_error.png" alt="Next Error">
+    or Previous Error <img src="../images/icon_prev_error.png" alt="Previous Error"> buttons. </li>
+</ul>
+
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<br><a href="../concepts/cdt_c_build_over.htm">Build overview</a>
+</p>
+
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<br><a href="cdt_o_builderrors.htm">Tracking down compilation errors</a>
+<br><a href="../tasks/cdt_t_proj_error_parser.htm">Tuning Error Parsers</a>
+</p>
+
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br><a href="../reference/cdt_u_console_view.htm">Console View</a>
+<br><a href="../reference/cdt_u_problems_view.htm">Problems View</a>
+</p>
+
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
+</div></body>
+
+</html>

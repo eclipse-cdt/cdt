@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Content Assist</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+
+<body>
+<div role="main">
+<h1>Content Assist</h1>
+
+<p>Content Assist is a set of tools built into the CDT that can reduce the number of keystrokes you must
+type to create your code.  The Content Assist plug-in consists of several components that forecast what 
+a developer will type, based on the current context, scope, and prefix.</p>
+
+<h2>Code completion</h2>
+
+<p>Content assist provides code completion anywhere in the document. For the current project a list is 
+displayed of the elements that begin with the letter combination you entered, and 
+the relevance of each proposal is determined in the following order:</p>
+
+<ul>
+  <li>Fields</li>
+  <li>Variables</li>
+  <li>Methods</li>
+  <li>Functions</li>
+  <li>Classes</li>
+  <li>Structs</li>
+  <li>Unions</li>
+  <li>Namespaces</li>
+  <li>Enumerations</li>
+</ul>
+
+You trigger the Code completion feature when you call Content Assist (such as when you type <span class="typewriter">Ctrl+Space</span>), but it is auto-activated when you type 
+<Q><strong>.</strong></Q>, <Q><strong>-></strong></Q> or <Q><strong>::</strong></Q>.</p>
+
+<p><img src="../images/contentAssist_example.png"  alt="C++ example showing Code Assist popup"></p>
+
+<p>You can view the signature of each item on the list in a pop-up by pointing to it. You can then select an item in the list to  insert it directly into your code. </p>
+
+<h2>Templates</h2>
+
+<p>You can create and save templates for frequently used sections of code, which will be inserted according to scope. The Content Assist feature also provides quick access to code 
+templates.</p>
+
+<p>When you enter a letter combination in the C/C++ editor, and type <span class="typewriter">CTRL+SPACE</span> (or right-click and click <strong>Content Assist</strong>), a 
+list of code elements and templates that start with the letter combination that you typed is displayed.</p>
+
+<p>You can then select a template from the list and it is inserted directly into your code.</p>
+
+<img src="../images/editor_c_codetemplates_use.png"  alt="C++ example showing Code Assist popup"></p>
+
+<p>For example, the template <samp>do while statement</samp> contains the following code:</p>
+
+<p><img src="../images/codetemplates_example.png"  alt="Code Template showing do-while example"></p>
+
+<p> When you select the <samp>do</samp> template from the list, you insert the following code:</p>
+
+<p><pre>do {
+} while (condition);</pre></p>
+
+
+<p>If the completion engine finds only one proposal in your templates, that proposal is inserted at the current cursor position.  
+For example if you create a new .cpp file and type <span class="typewriter">mai+CTRL+SPACE</span> the following code is inserted at the cursor location:</p>
+<p><pre>int
+main(int argc, char **argv) {
+	
+}</pre></p>
+
+<h2>No Completions</h2>
+
+<p>If you invoke Content Assist, but no completions are found a message will be displayed on the status to inform you that the Content Assist parser has timed out.</p>
+
+<p><img src="../images/cdt_ca_no_completions.png"  alt="Content Assist No completions available message"></p>
+
+
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<br>
+<a href="cdt_o_code_entry.htm">Code entry</a></p>
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<br>
+<a href="../tasks/cdt_t_contentassist.htm">Using Content Assist</a><br>
+<a href="../tasks/cdt_t_add_codetemp.htm">Creating and editing templates</a><br>
+<a href="../tasks/cdt_t_imp_code_temp.htm">Importing and exporting templates</a></p>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<a href="../reference/cdt_u_icons.htm">C/C++ perspective icons</a></p>
+
+<p>
+
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" ></p>
+</div>
+</body>
+
+</html>

@@ -478,4 +478,10 @@
             plugin="org.eclipse.cdt.dsf.gdb">
       </statusHandler>
    </extension>
+   <extension
+         point="org.eclipse.cdt.dsf.gdb.breakpointUpdaters">
+      <breakpointUpdater
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.GdbBreakpointUpdater">
+      </breakpointUpdater>
+   </extension>
 </plugin>

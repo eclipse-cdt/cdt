@@ -60,6 +60,7 @@ import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
 import org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditorInput;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
+import org.eclipse.cdt.debug.ui.breakpoints.BreakpointUtils;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
@@ -388,7 +389,15 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	protected Image getHWBreakpointImage(ICLineBreakpoint breakpoint) throws CoreException {
 		ImageDescriptor descriptor = null;
 		if ( breakpoint.isEnabled() ) {
-			descriptor = CDebugImages.DESC_OBJS_HWBREAKPOINT_ENABLED;
+			if (BreakpointUtils.isBreakpointInstalled( breakpoint )) {
+				descriptor = CDebugImages.DESC_OBJS_HWBREAKPOINT_INSTALLED;
+			}
+			else if (BreakpointUtils.isBreakpointPending( breakpoint )) {
+				descriptor = CDebugImages.DESC_OBJS_HWBREAKPOINT_PENDING;
+			}
+			else {
+				descriptor = CDebugImages.DESC_OBJS_HWBREAKPOINT_ENABLED;
+			}
 		}
 		else {
 			descriptor = CDebugImages.DESC_OBJS_HWBREAKPOINT_DISABLED;
@@ -421,7 +430,15 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	protected Image getLineBreakpointImage( ICLineBreakpoint breakpoint ) throws CoreException {
 		ImageDescriptor descriptor = null;
 		if ( breakpoint.isEnabled() ) {
-			descriptor = CDebugImages.DESC_OBJS_BREAKPOINT_ENABLED;
+			if (BreakpointUtils.isBreakpointInstalled( breakpoint )) {
+				descriptor = CDebugImages.DESC_OBJS_BREAKPOINT_INSTALLED;
+			}
+			else if (BreakpointUtils.isBreakpointPending( breakpoint )) {
+				descriptor = CDebugImages.DESC_OBJS_BREAKPOINT_PENDING;
+			}
+			else {
+				descriptor = CDebugImages.DESC_OBJS_BREAKPOINT_ENABLED;
+			}
 		}
 		else {
 			descriptor = CDebugImages.DESC_OBJS_BREAKPOINT_DISABLED;

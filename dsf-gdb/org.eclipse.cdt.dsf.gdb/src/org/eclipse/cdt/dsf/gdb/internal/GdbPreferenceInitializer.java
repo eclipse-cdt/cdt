@@ -45,5 +45,6 @@ public class GdbPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putInt(IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, IGdbDebugPreferenceConstants.COMMAND_TIMEOUT_VALUE_DEFAULT);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_HIDE_RUNNING_THREADS, false);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_AGGRESSIVE_BP_FILTER, true);
+		node.putBoolean(IGdbDebugPreferenceConstants.PREF_USE_BP_UPDATERS, true);
 	}
 }

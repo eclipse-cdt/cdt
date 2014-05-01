@@ -13,6 +13,8 @@ package org.eclipse.cdt.debug.ui;
 
 /**
  * Constant definitions for C/C++ Debug UI plug-in.
+ * @since 7.4
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICDebugUIConstants {
 	/**
@@ -95,4 +97,27 @@ public interface ICDebugUIConstants {
 	 */
 	public static final String CSOURCENOTFOUND_EDITOR_ID = PREFIX + "SourceNotFoundEditor"; //$NON-NLS-1$
 	
+	/**
+     * Attribute that reflects the state of the breakpoint depending on the current debug context.
+	 * @since 7.4
+     */
+    public static final String BREAKPOINT_ATTR_STATE = PREFIX + "breakpointState"; //$NON-NLS-1$
+    
+    /**
+     * State value for breakpoints that are not installed in the current debug context.
+	 * @since 7.4
+	 */
+    public static final String BREAKPOINT_STATE_NOT_INSTALLED = "NOT_INSTALLED"; //$NON-NLS-1$
+
+    /**
+     * State value for breakpoints that are installed in the current debug context.
+	 * @since 7.4
+	 */
+    public static final String BREAKPOINT_STATE_INSTALLED = "INSTALLED"; //$NON-NLS-1$
+    
+    /**
+     * State value for breakpoints that are pending in the current debug context.
+	 * @since 7.4
+	 */
+    public static final String BREAKPOINT_STATE_PENDING = "PENDING"; //$NON-NLS-1$
 }

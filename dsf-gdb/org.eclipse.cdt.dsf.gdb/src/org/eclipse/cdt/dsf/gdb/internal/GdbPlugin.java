@@ -20,6 +20,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.internal.provisional.model.MemoryBlockRetrievalFactory;
+import org.eclipse.cdt.dsf.gdb.internal.breakpoints.BreakpointUpdaterManager;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IStatus;
@@ -45,6 +46,8 @@ public class GdbPlugin extends Plugin {
     
     private IAdapterFactory fMemoryRetrievalFactory =  null;
     
+    private BreakpointUpdaterManager fBreakpointUpdaterManager;
+    
 	/**
 	 * The constructor
 	 */
@@ -65,6 +68,9 @@ public class GdbPlugin extends Plugin {
         
         fMemoryRetrievalFactory = new MemoryBlockRetrievalFactory();
         Platform.getAdapterManager().registerAdapters(fMemoryRetrievalFactory, IDMContext.class);
+        
+        fBreakpointUpdaterManager = new BreakpointUpdaterManager();
+        fBreakpointUpdaterManager.start();
 	}
 
 	/*
@@ -74,6 +80,11 @@ public class GdbPlugin extends Plugin {
 	@Override
     public void stop(BundleContext context) throws Exception {
 	    shutdownActiveLaunches();
+		
+		if (fBreakpointUpdaterManager != null) {
+			fBreakpointUpdaterManager.stop();
+		}
+
 		plugin = null;
 		
 		if (fMemoryRetrievalFactory != null) {

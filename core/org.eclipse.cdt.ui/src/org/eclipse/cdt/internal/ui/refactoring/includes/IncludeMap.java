@@ -39,7 +39,7 @@ public class IncludeMap {
 
 	public IncludeMap(boolean unconditionalSubstitution) {
 		this.unconditionalSubstitution = unconditionalSubstitution;
-		this.map = new LinkedHashMap<IncludeInfo, List<IncludeInfo>>();
+		this.map = new LinkedHashMap<>();
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class IncludeMap {
 		if (keysAndValues.length % 2 != 0)
 			throw new IllegalArgumentException("More keys than values"); //$NON-NLS-1$
 		this.unconditionalSubstitution = unconditionalSubstitution;
-		this.map = new LinkedHashMap<IncludeInfo, List<IncludeInfo>>(keysAndValues.length / 2);
+		this.map = new LinkedHashMap<>(keysAndValues.length / 2);
 		for (int i = 0; i < keysAndValues.length;) {
 			String key = keysAndValues[i++];
 			addMapping(key, keysAndValues[i++]);
@@ -60,7 +60,7 @@ public class IncludeMap {
 
 	public IncludeMap(IncludeMap other) {
 		this.unconditionalSubstitution = other.unconditionalSubstitution;
-		this.map = new LinkedHashMap<IncludeInfo, List<IncludeInfo>>(other.map.size());
+		this.map = new LinkedHashMap<>(other.map.size());
 		addAllMappings(other);
 	}
 
@@ -75,7 +75,7 @@ public class IncludeMap {
 			return;  // Don't allow mapping to itself.
 		List<IncludeInfo> list = map.get(from);
 		if (list == null) {
-			list = new ArrayList<IncludeInfo>(2);
+			list = new ArrayList<>(2);
 			map.put(from, list);
 		}
 		list.add(to);
@@ -158,7 +158,7 @@ public class IncludeMap {
 	 * Writes the map to a memento. The {@link #isUnconditionalSubstitution()} flag is not written.
 	 */
 	public void saveToMemento(IMemento memento) {
-		List<IncludeInfo> keys = new ArrayList<IncludeInfo>(map.keySet());
+		List<IncludeInfo> keys = new ArrayList<>(map.keySet());
 		Collections.sort(keys);
 		for (IncludeInfo key : keys) {
 			for (IncludeInfo value : map.get(key)) {
@@ -189,7 +189,7 @@ public class IncludeMap {
 			List<IncludeInfo> otherTargets = entry.getValue();
 			List<IncludeInfo> targets = map.get(source);
 			if (targets == null) {
-				targets = new ArrayList<IncludeInfo>(otherTargets);
+				targets = new ArrayList<>(otherTargets);
 				map.put(source, targets);
 			} else {
 				targets.addAll(otherTargets);
@@ -201,12 +201,12 @@ public class IncludeMap {
 		for (Entry<IncludeInfo, List<IncludeInfo>> entry : map.entrySet()) {
 			IncludeInfo source = entry.getKey();
 			List<IncludeInfo> targets = entry.getValue();
-			ArrayDeque<IncludeInfo> queue = new ArrayDeque<IncludeInfo>(targets);
+			ArrayDeque<IncludeInfo> queue = new ArrayDeque<>(targets);
 			targets.clear();
-			HashSet<IncludeInfo> processed = new HashSet<IncludeInfo>();
+			HashSet<IncludeInfo> processed = new HashSet<>();
 			if (!unconditionalSubstitution)
 				processed.add(source);  // Don't allow mapping to itself.
-			HashSet<IncludeInfo> seenTargets = new HashSet<IncludeInfo>();
+			HashSet<IncludeInfo> seenTargets = new HashSet<>();
 			IncludeInfo target;
 			queueLoop: while ((target = queue.pollFirst()) != null) {
 				if (processed.contains(target))
@@ -263,7 +263,7 @@ public class IncludeMap {
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
 		buf.append("upconditionalSubstitution = ").append(unconditionalSubstitution); //$NON-NLS-1$
-		ArrayList<IncludeInfo> sources = new ArrayList<IncludeInfo>(map.keySet());
+		ArrayList<IncludeInfo> sources = new ArrayList<>(map.keySet());
 		Collections.sort(sources);
 		for (IncludeInfo source : sources) {
 			buf.append('\n');

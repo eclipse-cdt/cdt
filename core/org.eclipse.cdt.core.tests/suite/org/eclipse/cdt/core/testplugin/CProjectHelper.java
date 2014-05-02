@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.zip.ZipFile;
 
-import junit.framework.Assert;
-
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
@@ -61,7 +59,9 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
+import org.junit.Assert;
 import org.osgi.framework.Bundle;
+
 /**
  * Helper methods to set up a ICProject.
  */
@@ -357,7 +357,7 @@ public class CProjectHelper {
 	 * @throws InterruptedException 
 	 */
 	public static ITranslationUnit findTranslationUnit(ICProject testProject, String name) throws CModelException, InterruptedException {
-		for (int j=0; j<20; j++) {
+		for (int j = 0; j < 20; j++) {
 			ICElement[] sourceRoots = testProject.getChildren();
 			for (int i = 0; i < sourceRoots.length; i++) {
 				ISourceRoot root = (ISourceRoot) sourceRoots[i];

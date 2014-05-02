@@ -64,7 +64,7 @@ public abstract class IncludesTestBase extends BaseTestCase {
 	protected TestSourceFile selectedFile;
 	private StringBuilder[] testData;
 	private boolean cpp = true;
-	private final Set<TestSourceFile> testFiles = new LinkedHashSet<TestSourceFile>();
+	private final Set<TestSourceFile> testFiles = new LinkedHashSet<>();
 
     protected IncludesTestBase() {
 		super();

@@ -135,26 +135,27 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 	public static int SKIP_NO_REFERENCES= 0;
 
 	private static class Symbols {
-		final ArrayList<IASTName[]> fNames= new ArrayList<IASTName[]>();
-		final ArrayList<IASTPreprocessorStatement> fMacros= new ArrayList<IASTPreprocessorStatement>();
-		final ArrayList<IASTPreprocessorIncludeStatement> fIncludes= new ArrayList<IASTPreprocessorIncludeStatement>();
+		final ArrayList<IASTName[]> fNames= new ArrayList<>();
+		final ArrayList<IASTPreprocessorStatement> fMacros= new ArrayList<>();
+		final ArrayList<IASTPreprocessorIncludeStatement> fIncludes= new ArrayList<>();
 	}
 
 	protected static class Data implements IIndexSymbols {
 		final IASTTranslationUnit fAST;
 		final FileInAST[] fSelectedFiles;
 		final IWritableIndex fIndex;
-		final Map<IASTPreprocessorIncludeStatement, Symbols> fSymbolMap = new HashMap<IASTPreprocessorIncludeStatement, Symbols>();
-		final Set<IASTPreprocessorIncludeStatement> fContextIncludes = new HashSet<IASTPreprocessorIncludeStatement>();
-		final List<IStatus> fStati= new ArrayList<IStatus>();
+		final Map<IASTPreprocessorIncludeStatement, Symbols> fSymbolMap = new HashMap<>();
+		final Set<IASTPreprocessorIncludeStatement> fContextIncludes = new HashSet<>();
+		final List<IStatus> fStatuses= new ArrayList<>();
 
 		public Data(IASTTranslationUnit ast, FileInAST[] selectedFiles, IWritableIndex index) {
 			fAST= ast;
 			fSelectedFiles= selectedFiles;
 			fIndex= index;
 
-			for(FileInAST file : selectedFiles)
+			for (FileInAST file : selectedFiles) {
 				fSymbolMap.put(file.includeStatement, new Symbols());
+			}
 		}
 
 		@Override
@@ -175,7 +176,7 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 		public void add(IASTPreprocessorIncludeStatement owner, IASTName name, IASTName caller) {
 			Symbols lists= fSymbolMap.get(owner);
 			if (lists != null)
-				lists.fNames.add(new IASTName[]{ name, caller });
+				lists.fNames.add(new IASTName[] { name, caller });
 		}
 
 		@Override
@@ -272,14 +273,14 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 
 		// Tasks update.
 		if (taskUpdater != null) {
-			Set<IIndexFileLocation> locations= new HashSet<IIndexFileLocation>();
+			Set<IIndexFileLocation> locations= new HashSet<>();
 			for (FileInAST file : data.fSelectedFiles) {
 				locations.add(file.fileContentKey.getLocation());
 			}
 			taskUpdater.updateTasks(data.fAST.getComments(), locations.toArray(new IIndexFileLocation[locations.size()]));
 		}
-		if (!data.fStati.isEmpty()) {
-			List<IStatus> stati = data.fStati;
+		if (!data.fStatuses.isEmpty()) {
+			List<IStatus> stati = data.fStatuses;
 			String path= null;
 			if (data.fSelectedFiles.length > 0) {
 				path= data.fSelectedFiles[data.fSelectedFiles.length - 1].fileContentKey.getLocation().getURI().getPath();
@@ -352,7 +353,7 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 					lock.release();
 				}
 				if (th != null) {
-					data.fStati.add(createStatus(NLS.bind(Messages.PDOMWriter_errorWhileParsing,
+					data.fStatuses.add(createStatus(NLS.bind(Messages.PDOMWriter_errorWhileParsing,
 							fileInAST.fileContentKey.getLocation().getURI().getPath()), th));
 				}
 				fStatistics.fAddToIndexTime += lock.getCumulativeLockTime();
@@ -414,7 +415,7 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 					}
 					if (th != null) {
 						if (!reported) {
-							data.fStati.add(CCorePlugin.createStatus(NLS.bind(Messages.PDOMWriter_errorResolvingName,
+							data.fStatuses.add(CCorePlugin.createStatus(NLS.bind(Messages.PDOMWriter_errorResolvingName,
 									name.toString(), file.fileContentKey.getLocation().getURI().getPath()), th));
 						}
 						reported= true;
@@ -593,7 +594,7 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 					}
 				}
 
-				List<IncludeInformation> includeInfos= new ArrayList<IncludeInformation>();
+				List<IncludeInformation> includeInfos= new ArrayList<>();
 				for (int i= 0; i < lists.fIncludes.size(); i++) {
 					final IASTPreprocessorIncludeStatement stmt = lists.fIncludes.get(i);
 					if (!stmt.isResolved()) {

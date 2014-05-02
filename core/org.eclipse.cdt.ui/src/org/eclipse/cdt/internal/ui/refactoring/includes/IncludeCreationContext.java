@@ -42,9 +42,9 @@ public class IncludeCreationContext extends InclusionContext {
 	public IncludeCreationContext(ITranslationUnit tu, IIndex index) {
 		super(tu);
 		fIndex = index;
-		fHeadersToInclude = new HashSet<IPath>();
-		fHeadersAlreadyIncluded = new HashSet<IPath>();
-		fHeadersIncludedPreviously = new HashSet<IPath>();
+		fHeadersToInclude = new HashSet<>();
+		fHeadersAlreadyIncluded = new HashSet<>();
+		fHeadersIncludedPreviously = new HashSet<>();
 	}
 
 	public String getSourceContents() {
@@ -67,7 +67,7 @@ public class IncludeCreationContext extends InclusionContext {
      */
     public void removeExportedHeaders() throws CoreException {
     	// Index files keyed by their absolute paths.
-    	Map<IPath, IIndexFile> filesByPath = new HashMap<IPath, IIndexFile>();
+    	Map<IPath, IIndexFile> filesByPath = new HashMap<>();
     	for (IIndexFile file : fIndex.getAllFiles()) {
     		IPath path = getPath(file);
     		filesByPath.put(path, file);
@@ -79,12 +79,12 @@ public class IncludeCreationContext extends InclusionContext {
 
 	private void removeExportedHeaders(Set<IPath> exportingHeaders,
 			Map<IPath, IIndexFile> filesByPath) throws CoreException {
-		Set<IPath> exportedHeaders = new HashSet<IPath>();
+		Set<IPath> exportedHeaders = new HashSet<>();
 		for (IPath path : exportingHeaders) {
 			if (!exportedHeaders.contains(path)) {
 				IIndexFile file = filesByPath.get(path);
 				if (file != null) {  // file can be null if the header was not indexed.
-					ArrayDeque<IIndexFile> queue = new ArrayDeque<IIndexFile>();
+					ArrayDeque<IIndexFile> queue = new ArrayDeque<>();
 					queue.add(file);
 					while ((file = queue.pollFirst()) != null) {
 						for (IIndexInclude include : file.getIncludes()) {

@@ -320,7 +320,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		if (fLocationResolver != null) {
 			return fLocationResolver.getComments();
 		}
-		return new IASTComment[0];
+		return IASTComment.EMPTY_COMMENT_ARRAY;
 	}
 
 	@Override

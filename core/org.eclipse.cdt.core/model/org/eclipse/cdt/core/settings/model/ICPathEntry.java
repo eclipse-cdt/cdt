@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ *     Intel Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IPath;
 /**
  * Helper interface capturing 'path' characteristic for {@link ICSettingEntry}
  * and {@link ICLanguageSettingEntry} interfaces.
- *
  */
 public interface ICPathEntry extends ICSettingEntry {
 	IPath getFullPath();
@@ -23,5 +22,4 @@ public interface ICPathEntry extends ICSettingEntry {
 	IPath getLocation();
 	
 	boolean isValueWorkspacePath();
-
 }

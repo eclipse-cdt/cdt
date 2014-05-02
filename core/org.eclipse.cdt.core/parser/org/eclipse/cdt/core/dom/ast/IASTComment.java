@@ -18,29 +18,23 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTComment extends IASTNode {
-	/**
-	 * @since 5.4
-	 */
+	/** @since 5.4 */
 	public final IASTComment[] EMPTY_COMMENT_ARRAY = {};
 	
 	/**
-	 * Set the comment.
+	 * Sets the comment.
 	 * 
-	 * @param comment
+	 * @param comment the text of the comment
 	 */
 	public void setComment(char[] comment);
 	
 	/**
-	 * Return a char array representation of the comment.
-	 * 
-	 * @return char array representation of the comment
+	 * Returns a char array representation of the comment.
 	 */
 	public char[] getComment();
 	
 	/**
-	 * Return true if this is a blockcomment.
-	 * 
-	 * @return true if this is a blockcomment
+	 * Returns true if this is a block comment.
 	 */
 	public boolean isBlockComment();
 }

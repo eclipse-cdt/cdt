@@ -24,7 +24,7 @@ public class TestScannerProvider extends AbstractCExtension implements IScannerI
 	public static String[] sIncludes;
 	public static String[] sIncludeFiles;
 	public static String[] sMacroFiles;
-	public static Map<String, String> sDefinedSymbols = new HashMap<String, String>();
+	public static Map<String, String> sDefinedSymbols = new HashMap<>();
 	public final static String SCANNER_ID = CTestPlugin.PLUGIN_ID + ".TestScanner";
 	
 	public static void clear() {

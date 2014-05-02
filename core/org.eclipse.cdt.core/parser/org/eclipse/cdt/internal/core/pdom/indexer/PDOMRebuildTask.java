@@ -37,7 +37,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class PDOMRebuildTask implements IPDOMIndexerTask {
 	protected static final String TRUE= String.valueOf(true);
-	protected static final ITranslationUnit[] NO_TUS = new ITranslationUnit[0];
+	protected static final ITranslationUnit[] NO_TUS = {};
 	
 	private final IPDOMIndexer fIndexer;
 	private final IndexerProgress fProgress;
@@ -78,7 +78,7 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 							createDelegate(cproject, monitor);
 						}
 					}
-					// remove task-tags.
+					// Remove task-tags.
 					TodoTaskUpdater.removeTasksFor(project);
 				} catch (CoreException e) {
 					CCorePlugin.log(NLS.bind(Messages.PDOMRebuildTask_0, cproject.getElementName() ), e);
@@ -112,7 +112,7 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		boolean allFiles = 
 			TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG)) || 
 			TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG));
-		List<ITranslationUnit> sources= new ArrayList<ITranslationUnit>();
+		List<ITranslationUnit> sources= new ArrayList<>();
 		List<ITranslationUnit> headers= allFiles ? sources : null;
 		TranslationUnitCollector collector= new TranslationUnitCollector(sources, headers, monitor);
 		project.accept(collector);

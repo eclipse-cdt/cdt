@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.parser.tests.scanner;
 
@@ -37,7 +37,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 
 public abstract class PreprocessorTestsBase extends BaseTestCase {
-
 	private static final IParserLogService NULL_LOG = new NullLogService();
 	protected CPreprocessor fScanner;
 	protected ILocationResolver fLocationResolver;
@@ -78,11 +77,10 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 		IncludeFileContentProvider readerFactory= FileCodeReaderFactory.getInstance();
 		//IScannerExtensionConfiguration scannerConfig;
 	
-		if(scannerConfig == null) {
+		if (scannerConfig == null) {
 		    if (lang == ParserLanguage.C) {
 		    	scannerConfig= GCCScannerExtensionConfiguration.getInstance();
-		    }
-		    else {
+		    } else {
 		    	scannerConfig= GPPScannerExtensionConfiguration.getInstance(scannerInfo);
 		    }
 		}
@@ -106,10 +104,10 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 
 	protected void fullyTokenize() throws Exception {
 		try	{
-			for(;;) {
+			for (;;) {
 				IToken t= fScanner.nextToken();
 			}
-		} catch ( EndOfFileException e){
+		} catch (EndOfFileException e) {
 		}
 	}
 
@@ -176,8 +174,7 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 		try {
 			IToken t= fScanner.nextToken();
 			fail("superfluous token " + t);
-		}
-		catch(EndOfFileException e) {
+		} catch(EndOfFileException e) {
 		}
 	}
 
@@ -211,5 +208,4 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 			assertEquals(detail, problem.getArguments()[0]);
 		}
 	}
-
 }

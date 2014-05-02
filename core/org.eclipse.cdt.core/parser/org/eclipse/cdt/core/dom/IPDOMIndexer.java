@@ -33,8 +33,7 @@ public interface IPDOMIndexer {
 	public ICProject getProject();
 		
 	/**
-	 * Return the unique ID of type of this indexer
-	 * @return the unique ID of type of this indexer
+	 * Returns the unique ID of type of this indexer
 	 */
 	public String getID();
 	

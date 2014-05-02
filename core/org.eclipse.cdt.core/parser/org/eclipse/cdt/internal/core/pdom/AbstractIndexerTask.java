@@ -1057,16 +1057,12 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				writeToIndex(lang.getLinkageID(), ast, codeReader, ctx, pm);
 				resultCacheCleared = true;  // The cache was cleared while writing to the index.
 			}
-		} catch (CoreException e) {
-			th= e;
 		} catch (RuntimeException e) {
 			final Throwable cause = e.getCause();
 			if (cause instanceof DependsOnOutdatedFileException)
 				return (DependsOnOutdatedFileException) cause;
 			th= e;
-		} catch (StackOverflowError e) {
-			th= e;
-		} catch (AssertionError e) {
+		} catch (StackOverflowError | CoreException | AssertionError e) {
 			th= e;
 		} catch (OutOfMemoryError e) {
 			if (--fSwallowOutOfMemoryError < 0)
@@ -1247,14 +1243,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				if (storageLinkageID != ILinkage.NO_LINKAGE_ID)
 					addSymbols(data, storageLinkageID, ctx, fTodoTaskUpdater, pm);
 			}
-		} catch (CoreException e) {
+		} catch (CoreException | RuntimeException | Error e) {
 			// Avoid parsing files again, that caused an exception to be thrown.
-			withdrawRequests(linkageID, fileKeys);
-			throw e;
-		} catch (RuntimeException e) {
-			withdrawRequests(linkageID, fileKeys);
-			throw e;
-		} catch (Error e) {
 			withdrawRequests(linkageID, fileKeys);
 			throw e;
 		}

@@ -75,8 +75,7 @@ public class TodoTaskParser {
 		return tasks.toArray(new Task[tasks.size()]);
 	}
 	
-    private void parse(char[] comment, String filename, int offset, int lineNumber,
-    		List<Task> tasks) {
+    private void parse(char[] comment, String filename, int offset, int lineNumber, List<Task> tasks) {
         int commentLength = comment.length;
 
     	int foundTaskIndex = tasks.size();

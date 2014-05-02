@@ -40,7 +40,7 @@ public class ShortString implements IString {
 		final int n = chars.length;
 		this.db = db;
 		
-		this.record = db.malloc(CHARS + (useBytes ? n : 2*n));
+		this.record = db.malloc(CHARS + (useBytes ? n : 2 * n));
 		Chunk chunk = db.getChunk(record);
 		chunk.putInt(record + LENGTH, useBytes ? -n : n);
 		long p = record + CHARS;
@@ -134,7 +134,7 @@ public class ShortString implements IString {
 				chars = getChars();
 				final int len = chars.length;
 				for (int i = 0; i < len; i++) {
-					h = 31*h + chars[i];
+					h = 31 * h + chars[i];
 				}
 			} catch (CoreException e) {
 			}
@@ -145,7 +145,7 @@ public class ShortString implements IString {
 	
 	public static int compare(final char[] chars, char[] other, boolean caseSensitive) {
 		final int n = Math.min(chars.length, other.length);
-		for (int i=0; i<n; i++) {
+		for (int i = 0; i < n; i++) {
 			int cmp= compareChars(chars[i], other[i], caseSensitive);
 			if (cmp != 0)
 				return cmp;
@@ -182,7 +182,7 @@ public class ShortString implements IString {
 		final int n = Math.min(chars.length, other.length);
 		int sensitiveCmp= 0;
 
-		for (int i=0; i<n; i++) {
+		for (int i = 0; i < n; i++) {
 			final char c1= chars[i];
 			final char c2= other[i];
 			if (c1 != c2) {
@@ -214,7 +214,7 @@ public class ShortString implements IString {
 	public static int comparePrefix(final char[] chars, char[] other, boolean caseSensitive) {
 		final int n = Math.min(chars.length, other.length);
 		
-		for (int i=0; i<n; i++) {
+		for (int i = 0; i < n; i++) {
 			int cmp= compareChars(chars[i], other[i], caseSensitive);
 			if (cmp != 0)
 				return cmp;

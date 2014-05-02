@@ -51,13 +51,13 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -114,7 +114,7 @@ public class AST2TestBase extends BaseTestCase {
 	private static final ScannerInfo SCANNER_INFO = new ScannerInfo(getStdMap());
 
 	private static Map<String, String> getGnuMap() {
-		Map<String, String> map= new HashMap<String, String>();
+		Map<String, String> map= new HashMap<>();
 		map.put("__GNUC__", Integer.toString(GPPLanguage.GNU_LATEST_VERSION_MAJOR));
 		map.put("__GNUC_MINOR__", Integer.toString(GPPLanguage.GNU_LATEST_VERSION_MINOR));
 		map.put("__SIZEOF_SHORT__", "2");
@@ -125,7 +125,7 @@ public class AST2TestBase extends BaseTestCase {
 	}
 
 	private static Map<String, String> getStdMap() {
-		Map<String, String> map= new HashMap<String, String>();
+		Map<String, String> map= new HashMap<>();
 		map.put("__SIZEOF_SHORT__", "2");
 		map.put("__SIZEOF_INT__", "4");
 		map.put("__SIZEOF_LONG__", "8");
@@ -173,7 +173,7 @@ public class AST2TestBase extends BaseTestCase {
             } else {
             	config = new ANSICPPParserExtensionConfiguration();
             }
-            parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG,config, null);
+            parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config, null);
         } else {
             ICParserExtensionConfiguration config = null;
 
@@ -312,7 +312,7 @@ public class AST2TestBase extends BaseTestCase {
     		this.shouldVisitImplicitNames = shouldVisitImplicitNames;
     	}
 
-        public List<IASTName> nameList = new ArrayList<IASTName>();
+        public List<IASTName> nameList = new ArrayList<>();
 
         @Override
 		public int visit(IASTName name) {
@@ -408,7 +408,7 @@ public class AST2TestBase extends BaseTestCase {
 		}
 		public int numProblemBindings;
 		public int numNullBindings;
-		public List<IASTName> nameList = new ArrayList<IASTName>();
+		public List<IASTName> nameList = new ArrayList<>();
 
 		@Override
 		public int visit(IASTName name) {
@@ -438,7 +438,7 @@ public class AST2TestBase extends BaseTestCase {
 		}
 		public int numProblemBindings;
 		public int numNullBindings;
-		public List<IASTName> nameList = new ArrayList<IASTName>();
+		public List<IASTName> nameList = new ArrayList<>();
 
 		@Override
 		public int visit(IASTName name) {

@@ -40,19 +40,19 @@ public interface IIndexFragmentFile extends IIndexFile {
 
 	/**
 	 * Returns the hash-code computed by combining the file size and the file encoding.
-	 * @return hashcode a hash-code or <code>0</code> if it is unknown.
+	 * @return a hash-code or {@code 0} if it is unknown.
 	 */
 	int getSizeAndEncodingHashcode() throws CoreException;
 
 	/**
 	 * Sets the hash-code computed by combining the file size and the file encoding.
-	 * @param hashcode a hash-code or <code>0</code> if it is unknown.
+	 * @param hashcode a hash-code or {@code 0} if it is unknown.
 	 */
 	void setSizeAndEncodingHashcode(int hashcode) throws CoreException;
 
 	/**
-	 * Sets the flag that determines whether the file is a header with #pragma once statement
-	 * or an include guard, or it is a source file and parsed only once because of that.
+	 * Sets the flag that determines whether the file is a header with {@code #pragma once}
+	 * statement or an include guard, or it is a source file and parsed only once because of that.
 	 */
 	void setPragmaOnceSemantics(boolean value) throws CoreException;
 
@@ -85,5 +85,4 @@ public interface IIndexFragmentFile extends IIndexFile {
 	 * The file 'source' must belong to the same fragment as this file.
 	 */
 	void transferContext(IIndexFragmentFile source) throws CoreException;
-
 }

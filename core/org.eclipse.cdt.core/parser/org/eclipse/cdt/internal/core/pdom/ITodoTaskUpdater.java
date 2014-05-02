@@ -8,7 +8,6 @@
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;

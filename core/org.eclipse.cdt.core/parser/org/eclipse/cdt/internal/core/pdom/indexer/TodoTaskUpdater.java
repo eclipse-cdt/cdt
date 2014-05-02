@@ -9,7 +9,6 @@
  * 	   Sergey Prigogin (Google) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
@@ -100,12 +99,14 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 		class TaskList {
 			IFile fFile;
 			List<Task> fTasks;
+
 			public TaskList(IFile file) {
 				fFile= file;
 			}
+
 			public void add(Task task) {
 				if (fTasks == null) {
-					fTasks= new ArrayList<Task>();
+					fTasks= new ArrayList<>();
 				}
 				fTasks.add(task);
 			}
@@ -113,9 +114,9 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 
 		final IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 
-		// first collect all valid file-locations
-		final Map<IPath, TaskList> pathToTaskList= new HashMap<IPath, TaskList>();
-		final Set<IProject> projects= new HashSet<IProject>();
+		// First collect all valid file-locations.
+		final Map<IPath, TaskList> pathToTaskList= new HashMap<>();
+		final Set<IProject> projects= new HashSet<>();
 		for (final IIndexFileLocation indexFileLocation : filesToUpdate) {
 			final String filepath = indexFileLocation.getFullPath();
 			if (filepath != null) {
@@ -137,7 +138,7 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 			}
 		}
 		
-		// run this in a job in order not to block the indexer (bug 210730).
+		// Update markers in a job in order not to block the indexer (bug 210730).
 		if (!pathToTaskList.isEmpty()) {
 			WorkspaceJob job= new WorkspaceJob(Messages.TodoTaskUpdater_UpdateJob) {
 				@Override
@@ -174,8 +175,7 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 
 	private void applyTask(Task task, IResource resource) throws CoreException {
 		IMarker marker = resource.createMarker(ICModelMarker.TASK_MARKER);
-		String description = NLS.bind(Messages.TodoTaskUpdater_taskFormat,
-				task.getTag(), task.getMessage());
+		String description = NLS.bind(Messages.TodoTaskUpdater_taskFormat, task.getTag(), task.getMessage());
 		marker.setAttributes(
 			TASK_MARKER_ATTRIBUTE_NAMES,
 			new Object[] { 
@@ -203,7 +203,7 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 			return;
 		}
 		
-		// run this in a job in order not to block the indexer (bug 210730).
+		// Delete markers in a job in order not to block the indexer (bug 210730).
 		WorkspaceJob job= new WorkspaceJob(Messages.TodoTaskUpdater_DeleteJob) {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {

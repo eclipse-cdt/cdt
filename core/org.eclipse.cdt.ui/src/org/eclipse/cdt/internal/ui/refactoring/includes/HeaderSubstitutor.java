@@ -107,7 +107,7 @@ public class HeaderSubstitutor {
 		IncludeInfo includeInfo = fContext.getIncludeForHeaderFile(path);
 		if (includeInfo == null)
 			return path;
-		List<IncludeInfo> candidates = new ArrayList<IncludeInfo>();
+		List<IncludeInfo> candidates = new ArrayList<>();
 		candidates.add(includeInfo);
 		IncludeMap[] maps = fIncludeMaps;
 		for (IncludeMap map : maps) {
@@ -150,8 +150,8 @@ public class HeaderSubstitutor {
 	public IPath getPreferredRepresentativeHeaderByHeuristic(InclusionRequest request) {
 		Set<IIndexFile> indexFiles = request.getDeclaringFiles().keySet();
 		String symbolName = request.getBinding().getName();
-		ArrayDeque<IIndexFile> front = new ArrayDeque<IIndexFile>();
-		HashSet<IIndexFile> processed = new HashSet<IIndexFile>();
+		ArrayDeque<IIndexFile> front = new ArrayDeque<>();
+		HashSet<IIndexFile> processed = new HashSet<>();
 
 		try {
 			// Look for headers without an extension and a matching name.

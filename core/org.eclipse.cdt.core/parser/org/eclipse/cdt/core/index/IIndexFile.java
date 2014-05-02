@@ -108,6 +108,23 @@ public interface IIndexFile extends IFileNomination {
 	int getLinkageID() throws CoreException;
 
 	/**
+	 * Returns the name of the replacement header obtained from <code>@headername{header}</code> or
+	 * from {@code IWYU pragma: private, include "header"}. Returns an empty string if the file
+	 * contained {@code IWYU pragma: private} without a replacement header. Returns {@code null} if
+	 * the file does not contain <code>@headername{header}</code> or {@code IWYU pragma: private}.
+	 * @since 5.7
+	 */
+	String getReplacementHeader() throws CoreException;
+
+	/**
+	 * Sets the name of the replacement header.
+	 * @param replacementHeader the name of the replacement header, may be {@code null} or an empty
+	 *     string
+	 * @since 5.7
+	 */
+	void setReplacementHeader(String replacementHeader) throws CoreException;
+
+	/**
 	 * Returns detailed information about the file. For debugging only.
 	 * @since 5.4
 	 */

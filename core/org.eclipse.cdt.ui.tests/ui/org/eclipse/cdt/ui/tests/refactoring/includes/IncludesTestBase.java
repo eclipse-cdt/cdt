@@ -17,9 +17,11 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.osgi.framework.Bundle;
 
@@ -31,6 +33,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -44,6 +47,8 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
  */
 public abstract class IncludesTestBase extends BaseTestCase {
 	protected final String LINE_DELIMITER = "\n";
+	// Same as in CCorePlugin#SCANNER_INFO_PROVIDER2_NAME.
+	private static final String SCANNER_INFO_PROVIDER2_NAME = "ScannerInfoProvider2"; //$NON-NLS-1$
 
 	protected static class FirstHeaderChooser implements IHeaderChooser {
 		@Override
@@ -78,9 +83,15 @@ public abstract class IncludesTestBase extends BaseTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		resetPreferences();
+		
 		cproject = cpp ?
 				CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
 				CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+		IProject project = cproject.getProject();
+		TestScannerProvider.sLocalIncludes = new String[] { project.getLocation().toOSString() };
+		QualifiedName scannerInfoProviderName = new QualifiedName(CCorePlugin.PLUGIN_ID, SCANNER_INFO_PROVIDER2_NAME);
+		project.setSessionProperty(scannerInfoProviderName, new TestScannerProvider());
+
 		Bundle bundle = CTestPlugin.getDefault().getBundle();
 		CharSequence[] testData = TestSourceReader.getContentsForTest(bundle, "ui", getClass(), getName(), 0);
 
@@ -105,7 +116,7 @@ public abstract class IncludesTestBase extends BaseTestCase {
 			}
 			reader.close();
 
-			sourceFile = TestSourceReader.createFile(cproject.getProject(), new Path(testFile.getName()),
+			sourceFile = TestSourceReader.createFile(project, new Path(testFile.getName()),
 					testFile.getSource());
 			testFiles.add(testFile);
 			selectedFile = testFile;

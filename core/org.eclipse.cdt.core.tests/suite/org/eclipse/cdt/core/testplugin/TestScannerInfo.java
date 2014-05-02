@@ -19,13 +19,15 @@ import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 public class TestScannerInfo extends ExtendedScannerInfo {
 	private static final String[] EMPTY = {};
 	private String[] fIncludes;
+	private String[] fLocalIncludes;
 	private String[] fIncludeFiles;
 	private String[] fMacroFiles;
 	private Map<String, String> fDefinedSymbols;
 
-	public TestScannerInfo(String[] includes, String[] macroFiles, String[] includeFiles,
-			Map<String, String> definedSymbols) {
+	public TestScannerInfo(String[] includes, String[] localIncludes, String[] macroFiles,
+			String[] includeFiles, Map<String, String> definedSymbols) {
 		fIncludes= includes;
+		fLocalIncludes= localIncludes;
 		fIncludeFiles= includeFiles;
 		fMacroFiles= macroFiles;
 		fDefinedSymbols= definedSymbols;
@@ -42,13 +44,13 @@ public class TestScannerInfo extends ExtendedScannerInfo {
 	}
 
 	@Override
-	public String[] getIncludeFiles() {
-		return fIncludeFiles == null ? EMPTY: fIncludeFiles;
+	public String[] getLocalIncludePath() {
+		return fLocalIncludes;
 	}
 
 	@Override
-	public String[] getLocalIncludePath() {
-		return null;
+	public String[] getIncludeFiles() {
+		return fIncludeFiles == null ? EMPTY: fIncludeFiles;
 	}
 
 	@Override

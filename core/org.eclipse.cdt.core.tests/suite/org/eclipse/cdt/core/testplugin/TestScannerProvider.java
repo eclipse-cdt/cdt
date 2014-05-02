@@ -22,19 +22,20 @@ import org.eclipse.core.resources.IResource;
 
 public class TestScannerProvider extends AbstractCExtension implements IScannerInfoProvider {
 	public static String[] sIncludes;
+	public static String[] sLocalIncludes;
 	public static String[] sIncludeFiles;
 	public static String[] sMacroFiles;
 	public static Map<String, String> sDefinedSymbols = new HashMap<>();
 	public final static String SCANNER_ID = CTestPlugin.PLUGIN_ID + ".TestScanner";
-	
+
 	public static void clear() {
-		sIncludes= sIncludeFiles= sMacroFiles= null;
+		sIncludes= sLocalIncludes= sIncludeFiles= sMacroFiles= null;
 		sDefinedSymbols.clear();
 	}
-	
+
 	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
-		return new TestScannerInfo(sIncludes, sMacroFiles, sIncludeFiles, sDefinedSymbols);
+		return new TestScannerInfo(sIncludes, sLocalIncludes, sMacroFiles, sIncludeFiles, sDefinedSymbols);
 	}
 
 	@Override

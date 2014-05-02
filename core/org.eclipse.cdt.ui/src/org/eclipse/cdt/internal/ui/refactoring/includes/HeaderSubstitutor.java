@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Google, Inc and others.
+ * Copyright (c) 2012, 2014 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
@@ -54,9 +55,10 @@ public class HeaderSubstitutor {
 					fIncludeMaps[1].addAllMappings(map.getOptionalSubstitutionMap());
 				}
 			}
-			fIncludeMaps[0].transitivelyClose();
-			fIncludeMaps[1].transitivelyClose();
 		}
+		addHeaderDerivedMappings();
+		fIncludeMaps[0].transitivelyClose();
+		fIncludeMaps[1].transitivelyClose();
 
 		fSymbolExportMap = new SymbolExportMap();
 		str = preferences.getString(CUIPlugin.PLUGIN_ID,
@@ -66,6 +68,53 @@ public class HeaderSubstitutor {
 			for (SymbolExportMap map : maps) {
 				fSymbolExportMap.addAllMappings(map);
 			}
+		}
+	}
+
+	private void addHeaderDerivedMappings() {
+		try {
+			for (IIndexFile file : fContext.getIndex().getAllFiles()) {
+				String replacement = file.getReplacementHeader();
+				if (replacement != null) {
+					IPath path = IndexLocationFactory.getAbsolutePath(file.getLocation());
+					if (fContext.getCurrentDirectory().isPrefixOf(path)) {
+						// "IWYU pragma: private" does not affect inclusion from files under
+						// the directory where the header is located.  
+						continue;
+					}
+
+					IncludeInfo includeInfo = fContext.getIncludeForHeaderFile(path);
+					if (includeInfo == null)
+						continue;
+
+					if (replacement.isEmpty()) {
+						IIndexInclude[] includedBy = fContext.getIndex().findIncludedBy(file, IIndex.DEPTH_ZERO);
+						for (IIndexInclude include : includedBy) {
+							IPath includer = IndexLocationFactory.getAbsolutePath(include.getIncludedByLocation());
+							IncludeInfo replacementInfo = fContext.getIncludeForHeaderFile(includer);
+							if (replacementInfo != null) {
+								fIncludeMaps[0].addMapping(includeInfo, replacementInfo);
+							}
+						}
+					} else {
+						String[] headers = replacement.split(","); //$NON-NLS-1$
+						for (String header : headers) {
+							if (!header.isEmpty()) {
+								char firstChar = header.charAt(0);
+								IncludeInfo replacementInfo;
+								if (firstChar == '"' || firstChar == '<') {
+									replacementInfo = new IncludeInfo(header);
+								} else {
+									replacementInfo = new IncludeInfo(header, includeInfo.isSystem());
+								}
+								fIncludeMaps[0].addMapping(includeInfo, replacementInfo);
+							}
+						}
+					}
+				}
+			}
+		} catch (CoreException e) {
+			CUIPlugin.log(e);
 		}
 	}
 

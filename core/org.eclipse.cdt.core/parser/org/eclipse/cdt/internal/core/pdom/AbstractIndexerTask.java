@@ -27,10 +27,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
+import org.eclipse.cdt.core.dom.ast.IASTComment;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
@@ -86,6 +90,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 	// Order of constants is important. Stronger update types have to precede the weaker ones.
 	private static enum UpdateKind { REQUIRED_SOURCE, REQUIRED_HEADER, ONE_LINKAGE_HEADER, OTHER_HEADER }
+
+	private static final Pattern HEADERNAME_PATTERN = Pattern.compile("@headername\\{(?<header>[^\\}]+)\\}");  //$NON-NLS-1$
 
 	private static class LinkageTask {
 		final int fLinkageID;
@@ -298,6 +304,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private boolean fIndexFilesWithoutConfiguration= true;
 	private boolean fIndexAllHeaderVersions = false;
 	private Set<String> fHeadersToIndexAllVersions = Collections.emptySet();
+	private Pattern fPragmaPrivatePattern;
 	private List<LinkageTask> fRequestsPerLinkage= new ArrayList<>();
 	private Map<IIndexFile, IndexFileContent> fIndexContentCache= new LRUCache<>(500);
 	private Map<IIndexFileLocation, IIndexFragmentFile[]> fIndexFilesCache= new LRUCache<>(5000);
@@ -369,6 +376,10 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 	public void setHeadersToIndexAllVersions(Set<String> headers) {
 		fHeadersToIndexAllVersions = headers;
+	}
+
+	public void setPragmaPrivatePattern(Pattern pattern) {
+		fPragmaPrivatePattern = pattern;
 	}
 
 	/**
@@ -1233,15 +1244,28 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			// The default processing is handled by the indexer task.
 			PDOMWriter.Data data = new PDOMWriter.Data(ast, fileKeys, fIndex);
 			int storageLinkageID = process(ast, data);
-			if (storageLinkageID != ILinkage.NO_LINKAGE_ID)
-				addSymbols(data, storageLinkageID, ctx, fTodoTaskUpdater, pm);
+			if (storageLinkageID != ILinkage.NO_LINKAGE_ID) {
+				IASTComment[] comments = ast.getComments();
+				data.fReplacementHeaders = extractReplacementHeaders(comments, pm);
+
+				addSymbols(data, storageLinkageID, ctx, pm);
+
+				// Update task markers.
+				if (fTodoTaskUpdater != null) {
+					Set<IIndexFileLocation> locations= new HashSet<>();
+					for (FileInAST file : data.fSelectedFiles) {
+						locations.add(file.fileContentKey.getLocation());
+					}
+					fTodoTaskUpdater.updateTasks(comments, locations.toArray(new IIndexFileLocation[locations.size()]));
+				}
+			}
 
 			// Contributed processors now have an opportunity to examine the AST.
 			for (IPDOMASTProcessor processor : PDOMASTProcessorManager.getProcessors(ast)) {
 				data = new PDOMWriter.Data(ast, fileKeys, fIndex);
 				storageLinkageID = processor.process(ast, data);
 				if (storageLinkageID != ILinkage.NO_LINKAGE_ID)
-					addSymbols(data, storageLinkageID, ctx, fTodoTaskUpdater, pm);
+					addSymbols(data, storageLinkageID, ctx, pm);
 			}
 		} catch (CoreException | RuntimeException | Error e) {
 			// Avoid parsing files again, that caused an exception to be thrown.
@@ -1287,6 +1311,83 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Parses comments to extract replacement headers from <code>@headername{header}</code> and
+	 * {@code IWYU pragma: private}.
+	 *
+	 * @return replacement headers keyed by file paths 
+	 */
+	private Map<String, String> extractReplacementHeaders(IASTComment[] comments, IProgressMonitor pm) {
+		Map<String, String> replacementHeaders = new HashMap<>();
+		StringBuilder text = new StringBuilder();
+		IASTFileLocation carryoverLocation = null;
+		for (int i = 0; i < comments.length; i++) {
+			IASTComment comment = comments[i];
+			IASTFileLocation location = comment.getFileLocation();
+			if (location == null)
+				continue;
+			String fileName = location.getFileName();
+			if (replacementHeaders.containsKey(fileName))
+				continue;
+			char[] commentChars = comment.getComment();
+			if (commentChars.length <= 2)
+				continue;
+			if (carryoverLocation == null ||
+					!location.getFileName().equals(carryoverLocation.getFileName()) ||
+					location.getStartingLineNumber() != carryoverLocation.getEndingLineNumber() + 1) {
+				text.delete(0, text.length());
+			}
+			carryoverLocation = null;
+			text.append(commentChars, 2, commentChars.length - 2);
+			// Look for @headername{header}.
+			Matcher matcher = HEADERNAME_PATTERN.matcher(text);
+			if (matcher.find()) {
+				String header = matcher.group("header"); //$NON-NLS-1$
+				if (header == null) {
+					header = ""; //$NON-NLS-1$
+				} else {
+					// Normalize the header list.
+					header = header.replace(" or ", ",").replace(" ", ""); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+				}
+				replacementHeaders.put(fileName, header);
+				continue;
+			}
+			if (fPragmaPrivatePattern != null) {
+				// Look for IWYU pragma: private
+				matcher = fPragmaPrivatePattern.matcher(text);
+				if (matcher.find()) {
+					if (!isWhitespace(text, 0, matcher.start()))
+						continue;  // Extraneous text before the pragma.
+					if (isWhitespace(text, matcher.end(), text.length())) {
+						String header = matcher.group("header"); //$NON-NLS-1$
+						if (header == null)
+							header = ""; //$NON-NLS-1$
+						replacementHeaders.put(fileName, header);
+						continue;
+					}
+					// Handle the case when a IWYU pragma is split between two comment lines as:
+					//   IWYU pragma: private,
+					//   include "header"
+					if (text.charAt(matcher.end()) == ',' &&
+							isWhitespace(text, matcher.end() + 1, text.length())) {
+						// Defer processing until the next comment, which will be appended to this
+						// one.
+						carryoverLocation = location;
+					}
+				}
+			}
+		}
+		return replacementHeaders;
+	}
+
+	private boolean isWhitespace(CharSequence text, int start, int end) {
+		while (start < end) {
+			if (text.charAt(start++) > ' ')
+				return false;
+		}
+		return true;
 	}
 
 	public final IndexFileContent getFileContent(int linkageID, IIndexFileLocation ifl,

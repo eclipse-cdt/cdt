@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,7 +181,7 @@ public class CCorePreferenceConstants {
 
 	/**
 	 * Preference key for the regular expression pattern that, when appears in a comment on the same
-	 * line as include statement, indicates the the included header file is exported.
+	 * line as include statement, indicates that the included header file is exported.
 	 * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
 	 *
 	 * @since 5.5
@@ -217,6 +217,22 @@ public class CCorePreferenceConstants {
 	 * @since 5.5
 	 */
 	public static final String INCLUDE_END_EXPORTS_PATTERN = "includes.endExportsPattern"; //$NON-NLS-1$
+
+	/**
+	 * Default value for {@link #INCLUDE_PRIVATE_PATTERN}.
+	 * @since 5.7
+	 */
+	public static final String DEFAULT_INCLUDE_PRIVATE_PATTERN = "IWYU\\s+(pragma:?\\s+)?private(,\\s+include\\s+(?<header>\\S+))?"; //$NON-NLS-1$
+	
+	/**
+	 * Preference key for the regular expression pattern that, when appears in a comment on the same
+	 * line as include statement, indicates that the included header file is private and that
+	 * another header file should be included instead.
+	 * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
+	 *
+	 * @since 5.7
+	 */
+	public static final String INCLUDE_PRIVATE_PATTERN = "includes.privatePattern"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the parser should skip trivial expressions in initializer lists.

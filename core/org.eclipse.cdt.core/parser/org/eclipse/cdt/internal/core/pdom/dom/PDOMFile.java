@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 QNX Software Systems and others.
+ * Copyright (c) 2005, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,7 +79,8 @@ public class PDOMFile implements IIndexFragmentFile {
 	private static final int LAST_USING_DIRECTIVE= SIZE_AND_ENCODING_HASH + 4;
 	private static final int FIRST_MACRO_REFERENCE= LAST_USING_DIRECTIVE + Database.PTR_SIZE;
 	private static final int SIGNIFICANT_MACROS= FIRST_MACRO_REFERENCE + Database.PTR_SIZE;
-	private static final int RECORD_SIZE= SIGNIFICANT_MACROS + Database.PTR_SIZE;   // 8*PTR_SIZE + 3+1+8+8+8+4 = 64
+	private static final int REPLACEMENT_HEADER = SIGNIFICANT_MACROS + Database.PTR_SIZE;
+	private static final int RECORD_SIZE= REPLACEMENT_HEADER + Database.PTR_SIZE;   // 9*PTR_SIZE + 3+1+8+8+8+4 = 68
 
 	private static final int FLAG_PRAGMA_ONCE_SEMANTICS	= 0x01;
 
@@ -213,7 +214,11 @@ public class PDOMFile implements IIndexFragmentFile {
 		// Transfer the flags. 
 		Database db= fLinkage.getDB();
 		db.putByte(record + FLAGS, db.getByte(sourceFile.record + FLAGS));
-		
+
+		// Transfer the replacement header.
+		db.putRecPtr(record + REPLACEMENT_HEADER, db.getRecPtr(sourceFile.record + REPLACEMENT_HEADER));
+		db.putRecPtr(sourceFile.record + REPLACEMENT_HEADER, 0);
+
 		// Delete the source file
 		sourceFile.delete();
 	}
@@ -602,6 +607,9 @@ public class PDOMFile implements IIndexFragmentFile {
 		locRecord = db.getRecPtr(record + SIGNIFICANT_MACROS);
 		if (locRecord != 0)
 			db.getString(locRecord).delete();
+		locRecord = db.getRecPtr(record + REPLACEMENT_HEADER);
+		if (locRecord != 0)
+			db.getString(locRecord).delete();
 
 		db.free(record);
 	}
@@ -948,6 +956,23 @@ public class PDOMFile implements IIndexFragmentFile {
 	@Override
 	public ICPPUsingDirective[] getUsingDirectives() throws CoreException {
 		return fLinkage.getUsingDirectives(this);
+	}
+
+	@Override
+	public String getReplacementHeader() throws CoreException {
+		Database db = fLinkage.getDB();
+		long rec = db.getRecPtr(record + REPLACEMENT_HEADER);
+		return rec == 0 ? null : db.getString(rec).getString();
+	}
+
+	@Override
+	public void setReplacementHeader(String replacementHeader) throws CoreException {
+		Database db = fLinkage.getDB();
+		long oldRecord = db.getRecPtr(record + REPLACEMENT_HEADER);
+		if (oldRecord != 0)
+			db.getString(oldRecord).delete();
+		long newRecord = replacementHeader == null ? 0 : db.newString(replacementHeader).getRecord();
+		db.putRecPtr(record + REPLACEMENT_HEADER, newRecord);
 	}
 
 	// Required because we cannot reference CCorePlugin in order for StandaloneIndexer to work

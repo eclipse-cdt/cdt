@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexSymbols;
 import org.eclipse.cdt.core.index.IPDOMASTProcessor;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
@@ -77,7 +78,7 @@ import org.eclipse.osgi.util.NLS;
  * Abstract class to write information from AST.
  * @since 4.0
  */
-abstract public class PDOMWriter implements IPDOMASTProcessor {
+public abstract class PDOMWriter implements IPDOMASTProcessor {
 	private static final boolean REPORT_UNKNOWN_BUILTINS = false;
 
 	public static class FileInAST {
@@ -146,7 +147,8 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 		final IWritableIndex fIndex;
 		final Map<IASTPreprocessorIncludeStatement, Symbols> fSymbolMap = new HashMap<>();
 		final Set<IASTPreprocessorIncludeStatement> fContextIncludes = new HashSet<>();
-		final List<IStatus> fStatuses= new ArrayList<>();
+		final List<IStatus> fStatuses = new ArrayList<>();
+		Map<String, String> fReplacementHeaders;  // Replacement headers keyed by file paths. 
 
 		public Data(IASTTranslationUnit ast, FileInAST[] selectedFiles, IWritableIndex index) {
 			fAST= ast;
@@ -254,8 +256,7 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 	 * the index after your last write operation.
 	 */
 	final protected void addSymbols(Data data, int storageLinkageID, FileContext ctx,
-			ITodoTaskUpdater taskUpdater, IProgressMonitor pm)
-			throws InterruptedException, CoreException {
+			IProgressMonitor pm) throws InterruptedException, CoreException {
 		if (data.isEmpty() || storageLinkageID == ILinkage.NO_LINKAGE_ID)
 			return;
 
@@ -271,16 +272,8 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 		// Index update.
 		storeSymbolsInIndex(data, storageLinkageID, ctx, pm);
 
-		// Tasks update.
-		if (taskUpdater != null) {
-			Set<IIndexFileLocation> locations= new HashSet<>();
-			for (FileInAST file : data.fSelectedFiles) {
-				locations.add(file.fileContentKey.getLocation());
-			}
-			taskUpdater.updateTasks(data.fAST.getComments(), locations.toArray(new IIndexFileLocation[locations.size()]));
-		}
 		if (!data.fStatuses.isEmpty()) {
-			List<IStatus> stati = data.fStatuses;
+			List<IStatus> statuses = data.fStatuses;
 			String path= null;
 			if (data.fSelectedFiles.length > 0) {
 				path= data.fSelectedFiles[data.fSelectedFiles.length - 1].fileContentKey.getLocation().getURI().getPath();
@@ -288,8 +281,8 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 				path= data.fAST.getFilePath().toString();
 			}
 			String msg= NLS.bind(Messages.PDOMWriter_errorWhileParsing, path);
-			if (stati.size() == 1) {
-				IStatus status= stati.get(0);
+			if (statuses.size() == 1) {
+				IStatus status= statuses.get(0);
 				if (msg.equals(status.getMessage())) {
 					throw new CoreException(status);
 				}
@@ -297,7 +290,7 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 						msg + ':' + status.getMessage(), status.getException()));
 			}
 			throw new CoreException(new MultiStatus(CCorePlugin.PLUGIN_ID, 0,
-					stati.toArray(new IStatus[stati.size()]), msg, null));
+					statuses.toArray(new IStatus[statuses.size()]), msg, null));
 		}
 	}
 
@@ -582,6 +575,11 @@ abstract public class PDOMWriter implements IPDOMASTProcessor {
 		try {
 			boolean pragmaOnce= owner != null ? owner.hasPragmaOnceSemantics() : data.fAST.hasPragmaOnceSemantics();
 			file.setPragmaOnceSemantics(pragmaOnce);
+
+			String headerKey = IndexLocationFactory.getAbsolutePath(location).toOSString();
+			String replacementHeader = data.fReplacementHeaders.get(headerKey);
+			if (replacementHeader != null)
+				file.setReplacementHeader(replacementHeader);
 
 			Symbols lists= data.fSymbolMap.get(owner);
 			if (lists != null) {

@@ -15,12 +15,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -314,37 +315,35 @@ public class CIndex implements IIndex {
 	@Override
 	public IIndexInclude[] findIncludedBy(IIndexFile file, int depth) throws CoreException {
 		List<IIndexInclude> result= new ArrayList<>();
-		findIncludedBy(file.getLinkageID(), Collections.singletonList(file), result, depth,
-				new HashSet<FileContentKey>());
-		return result.toArray(new IIndexInclude[result.size()]);
-	}
-
-	public void findIncludedBy(int linkageID, List<IIndexFile> in, List<IIndexInclude> out, int depth,
-			HashSet<FileContentKey> handled) throws CoreException {
-		List<IIndexFile> nextLevel= depth != 0 ? new LinkedList<IIndexFile>() : null;
-		for (IIndexFile iIndexFile : in) {
-			IIndexFragmentFile file = (IIndexFragmentFile) iIndexFile;
-			for (IIndexFragment fragment : fFragments) {
-				IIndexInclude[] includedBy= fragment.findIncludedBy(file);
-				for (IIndexInclude include : includedBy) {
-					final IIndexFile includer = include.getIncludedBy();
-					FileContentKey key= new FileContentKey(linkageID, includer.getLocation(), includer.getSignificantMacros());
-					if (handled.add(key)) {
-						out.add(include);
-						if (nextLevel != null) {
-							nextLevel.add(includer);
+		Collection<IIndexFile> in = Collections.singletonList(file);
+		Set<FileContentKey> handled = new HashSet<>();
+		while (true) {
+			Collection<IIndexFile> nextLevel= depth != 0 ? new ArrayDeque<IIndexFile>() : null;
+			for (IIndexFile indexFile : in) {
+				IIndexFragmentFile file1 = (IIndexFragmentFile) indexFile;
+				for (IIndexFragment fragment : fFragments) {
+					IIndexInclude[] includedBy= fragment.findIncludedBy(file1);
+					for (IIndexInclude include : includedBy) {
+						final IIndexFile includer = include.getIncludedBy();
+						FileContentKey key= new FileContentKey(file.getLinkageID(), includer.getLocation(), includer.getSignificantMacros());
+						if (handled.add(key)) {
+							result.add(include);
+							if (nextLevel != null) {
+								nextLevel.add(includer);
+							}
 						}
 					}
 				}
 			}
+			if (nextLevel == null || nextLevel.isEmpty()) {
+				break;
+			}
+			if (depth > 0) {
+				depth--;
+			}
+			in = nextLevel;
 		}
-		if (nextLevel == null || nextLevel.isEmpty()) {
-			return;
-		}
-		if (depth > 0) {
-			depth--;
-		}
-		findIncludedBy(linkageID, nextLevel, out, depth, handled);
+		return result.toArray(new IIndexInclude[result.size()]);
 	}
 
 	@Override
@@ -355,37 +354,36 @@ public class CIndex implements IIndex {
 	@Override
 	public IIndexInclude[] findIncludes(IIndexFile file, int depth) throws CoreException {
 		List<IIndexInclude> result= new ArrayList<>();
-		findIncludes(Collections.singletonList(file), result, depth, new HashSet<>());
-		return result.toArray(new IIndexInclude[result.size()]);
-	}
-
-	private void findIncludes(List<IIndexFile> in, List<IIndexInclude> out, int depth,
-			HashSet<Object> handled) throws CoreException {
-		List<IIndexFile> nextLevel= depth != 0 ? new LinkedList<IIndexFile>() : null;
-		for (IIndexFile iIndexFile : in) {
-			IIndexFragmentFile file = (IIndexFragmentFile) iIndexFile;
-			IIndexInclude[] includes= file.getIncludes();
-			for (IIndexInclude include : includes) {
-				IIndexFileLocation target= include.getIncludesLocation();
-				Object key= target != null ? (Object) target : include.getFullName();
-				if (handled.add(key)) {
-					out.add(include);
-					if (nextLevel != null) {
-						IIndexFile includedByFile= resolveInclude(include);
-						if (includedByFile != null) {
-							nextLevel.add(includedByFile);
+		Collection<IIndexFile> in = Collections.singletonList(file);
+		Set<Object> handled = new HashSet<>();
+		while (true) {
+			Collection<IIndexFile> nextLevel= depth != 0 ? new ArrayDeque<IIndexFile>() : null;
+			for (IIndexFile indexFile : in) {
+				IIndexFragmentFile file1 = (IIndexFragmentFile) indexFile;
+				IIndexInclude[] includes= file1.getIncludes();
+				for (IIndexInclude include : includes) {
+					IIndexFileLocation target= include.getIncludesLocation();
+					Object key= target != null ? (Object) target : include.getFullName();
+					if (handled.add(key)) {
+						result.add(include);
+						if (nextLevel != null) {
+							IIndexFile includedByFile= resolveInclude(include);
+							if (includedByFile != null) {
+								nextLevel.add(includedByFile);
+							}
 						}
 					}
 				}
 			}
+			if (nextLevel == null || nextLevel.isEmpty()) {
+				break;
+			}
+			if (depth > 0) {
+				depth--;
+			}
+			in = nextLevel;
 		}
-		if (nextLevel == null || nextLevel.isEmpty()) {
-			return;
-		}
-		if (depth > 0) {
-			depth--;
-		}
-		findIncludes(nextLevel, out, depth, handled);
+		return result.toArray(new IIndexInclude[result.size()]);
 	}
 
 	@Override
@@ -398,7 +396,7 @@ public class CIndex implements IIndex {
 				}
 			} finally {
 				if (i < fFragments.length) {
-					// rollback
+					// Rollback.
 					fReadLock--;
 					while (--i >= 0) {
 						fFragments[i].releaseReadLock();

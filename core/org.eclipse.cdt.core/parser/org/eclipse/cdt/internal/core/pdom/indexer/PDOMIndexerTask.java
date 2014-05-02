@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -103,6 +105,17 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		}
 		setUpdateFlags(IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONTENTS_HASH);
 		setForceFirstFiles(forceFiles.length);
+
+		ICProject project = getCProject();
+		String privatePattern = CCorePreferenceConstants.getPreference(
+				CCorePreferenceConstants.INCLUDE_PRIVATE_PATTERN, project, null);
+		if (privatePattern != null) {
+			try {
+				setPragmaPrivatePattern(Pattern.compile(privatePattern));
+			} catch (PatternSyntaxException e) {
+				CCorePlugin.log(e);
+			}
+		}
 	}
 
 	private static ITranslationUnit[] concat(ITranslationUnit[] added, ITranslationUnit[] changed) {
@@ -128,7 +141,7 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 					if (cmp != 0)
 						return cmp;
 				}
-				int cmp = s1.length-s2.length;
+				int cmp = s1.length - s2.length;
 				if (cmp != 0)
 					return cmp;
 				return s1[max].compareTo(s2[max]);

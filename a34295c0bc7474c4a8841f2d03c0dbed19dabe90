@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_3ef2885b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1057,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-05-02T16:54:27Z",
+      "side": 1,
+      "message": "Looking at the CommandCache#reset() method you pointed me to, it made me realize that we should check here that ctx is not null first, to avoid any risk of NPE.",
+      "revId": "a34295c0bc7474c4a8841f2d03c0dbed19dabe90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

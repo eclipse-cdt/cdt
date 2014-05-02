@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_7edc005a",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.examples/src/org/eclipse/cdt/visualizer/examples/problemvisualizer/ProblemVisualizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-05-02T12:46:57Z",
+      "side": 1,
+      "message": "Actually to replicate the original behavior we need not to draw the container which contains the bars. The default value is \"true\" so if we remove that line, the container would it would be drawn.",
+      "parentUuid": "0756a345_e8605a03",
+      "revId": "f6235ff2fcf4306ca514350da5b50df596747925",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_c863d60b",
         "filename": "visualizer/org.eclipse.cdt.visualizer.examples/src/org/eclipse/cdt/visualizer/examples/problemvisualizer/ProblemVisualizer.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-05-01T18:39:23Z",
       "side": 1,
       "message": "The above call seem useless.  Remove?",
+      "revId": "f6235ff2fcf4306ca514350da5b50df596747925",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_9eb2b430",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.examples/src/org/eclipse/cdt/visualizer/examples/problemvisualizer/ProblemVisualizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-05-02T12:46:57Z",
+      "side": 1,
+      "message": "Done - indeed that value is now set to true by default so there is no need to explicitly set it here.",
+      "parentUuid": "0756a345_c863d60b",
       "revId": "f6235ff2fcf4306ca514350da5b50df596747925",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

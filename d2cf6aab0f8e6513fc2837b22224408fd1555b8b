@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "0756a345_be8df887",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-05-02T19:37:31Z",
+      "side": 1,
+      "message": "It seems the right time to cleanup this constructor and remove the memorySpaceID as well.",
+      "revId": "d2cf6aab0f8e6513fc2837b22224408fd1555b8b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_bec5f8d6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-05-02T19:37:31Z",
+      "side": 1,
+      "message": "General Comment:\nI think the encodeAddress method as well as the decodeAddress methods should now remove their default encoding / decoding and leave it up to the default service.\n\nSo the default service should use \":\" as separator.",
+      "revId": "d2cf6aab0f8e6513fc2837b22224408fd1555b8b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_d91bab77",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemorySpaces.java",
         "patchSetId": 1
@@ -19,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_5e849cad",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemorySpaces.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-05-02T19:37:31Z",
+      "side": 1,
+      "message": "I was a bit concerned on having the service returning exceptions for the core methods would change the behavior in some places, \n  But I did not see any differences while testing it.\nI like it better as a new service, at least as an introductory step as memory spaces is not widely used.",
+      "parentUuid": "0756a345_d91bab77",
+      "revId": "d2cf6aab0f8e6513fc2837b22224408fd1555b8b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_b91eb766",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemorySpaces.java",
         "patchSetId": 1
@@ -30,6 +82,58 @@
       "writtenOn": "2014-04-30T19:24:16Z",
       "side": 1,
       "message": "probably should be protected to be interesting to anyone unless they just copy/paste.",
+      "revId": "d2cf6aab0f8e6513fc2837b22224408fd1555b8b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_9e70f482",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemorySpaces.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-05-02T19:37:31Z",
+      "side": 1,
+      "message": "I would vote to keep it private, \nif requested we can change it to protected at that point. \nBesides we would get a better understanding of other solutions (if any :-))",
+      "parentUuid": "0756a345_b91eb766",
+      "revId": "d2cf6aab0f8e6513fc2837b22224408fd1555b8b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_de99cc01",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemorySpaces.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-05-02T19:37:31Z",
+      "side": 1,
+      "message": "This should now replace the default encoding used in the GdbMemoryBlockRetrieval#encodeAddress e.g. using \":\"",
+      "revId": "d2cf6aab0f8e6513fc2837b22224408fd1555b8b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_be9cd8f0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemorySpaces.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-05-02T19:37:31Z",
+      "side": 1,
+      "message": "This should now replace the default decodeing used in GdbMemoryBlockREtrieval#decodeAddress",
       "revId": "d2cf6aab0f8e6513fc2837b22224408fd1555b8b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

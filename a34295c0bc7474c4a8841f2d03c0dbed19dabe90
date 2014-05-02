@@ -34,6 +34,24 @@
       "revId": "a34295c0bc7474c4a8841f2d03c0dbed19dabe90",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_9eb8f463",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1057,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-05-02T17:50:23Z",
+      "side": 1,
+      "message": "That is assuming that no one else calls getMemoryCache(null) :)  We don\u0027t know how our code will be extended, so it is better to not assume anything.",
+      "parentUuid": "0756a345_be73385a",
+      "revId": "a34295c0bc7474c4a8841f2d03c0dbed19dabe90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

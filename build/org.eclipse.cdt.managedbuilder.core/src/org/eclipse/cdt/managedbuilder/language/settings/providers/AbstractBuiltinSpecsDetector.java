@@ -760,7 +760,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	}
 
 	@Override
-	protected void setSettingEntries(List<ICLanguageSettingEntry> entries) {
+	protected void setSettingEntries(List<? extends ICLanguageSettingEntry> entries) {
 		// Built-in specs detectors collect entries not per line but for the whole output
 		// so collect them to save later when output finishes
 		if (entries != null) {

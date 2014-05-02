@@ -69,8 +69,8 @@ public class LanguageSettingsStorage implements Cloneable {
 	 * @param entries - list of entries to sort.
 	 * @return - sorted entries.
 	 */
-	private List<ICLanguageSettingEntry> sortEntries(List<ICLanguageSettingEntry> entries) {
-		List<ICLanguageSettingEntry> sortedEntries = new ArrayList<ICLanguageSettingEntry>(entries);
+	private List<ICLanguageSettingEntry> sortEntries(List<? extends ICLanguageSettingEntry> entries) {
+		List<ICLanguageSettingEntry> sortedEntries = new ArrayList<>(entries);
 		Collections.sort(sortedEntries, new Comparator<ICLanguageSettingEntry>() {
 			/**
 			 * This comparator sorts by kinds first and the macros are sorted additionally by name.
@@ -79,7 +79,7 @@ public class LanguageSettingsStorage implements Cloneable {
 			public int compare(ICLanguageSettingEntry entry0, ICLanguageSettingEntry entry1) {
 				int kind0 = entry0.getKind();
 				int kind1 = entry1.getKind();
-				if (kind0==ICSettingEntry.MACRO && kind1==ICSettingEntry.MACRO) {
+				if (kind0 == ICSettingEntry.MACRO && kind1 == ICSettingEntry.MACRO) {
 					return entry0.getName().compareTo(entry1.getName());
 				}
 
@@ -98,11 +98,12 @@ public class LanguageSettingsStorage implements Cloneable {
 	 *    to be defined for the language scope.
 	 * @param entries - language settings entries to set.
 	 */
-	public void setSettingEntries(String rcProjectPath, String languageId, List<ICLanguageSettingEntry> entries) {
+	public void setSettingEntries(String rcProjectPath, String languageId,
+			List<? extends ICLanguageSettingEntry> entries) {
 		synchronized (fStorage) {
 			if (entries!=null) {
 				Map<String, List<ICLanguageSettingEntry>> langMap = fStorage.get(languageId);
-				if (langMap==null) {
+				if (langMap == null) {
 					langMap = new HashMap<String, List<ICLanguageSettingEntry>>();
 					fStorage.put(languageId, langMap);
 				}
@@ -111,9 +112,9 @@ public class LanguageSettingsStorage implements Cloneable {
 			} else {
 				// reduct the empty maps in the tables
 				Map<String, List<ICLanguageSettingEntry>> langMap = fStorage.get(languageId);
-				if (langMap!=null) {
+				if (langMap != null) {
 					langMap.remove(rcProjectPath);
-					if (langMap.size()==0) {
+					if (langMap.isEmpty()) {
 						fStorage.remove(languageId);
 					}
 				}

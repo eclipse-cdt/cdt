@@ -8,7 +8,6 @@
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.core.language.settings.providers;
 
 import java.util.List;
@@ -23,7 +22,6 @@ import org.eclipse.core.resources.IResource;
  * their settings themselves and not providing such option to the user.
  *
  * @since 5.4
- *
  */
 public interface ILanguageSettingsEditableProvider extends ILanguageSettingsBroadcastingProvider, Cloneable {
 	@Override
@@ -43,7 +41,8 @@ public interface ILanguageSettingsEditableProvider extends ILanguageSettingsBroa
 	 *    to be defined as default entries for languages.
 	 * @param entries - language settings entries to set.
 	 */
-	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId, List<ICLanguageSettingEntry> entries);
+	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId,
+			List<? extends ICLanguageSettingEntry> entries);
 
 	/**
 	 * Shallow clone of the provider. "Shallow" is defined here as the exact copy except that

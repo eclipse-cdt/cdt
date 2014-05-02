@@ -152,7 +152,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	}
 
 	@Override
-	protected void setSettingEntries(List<ICLanguageSettingEntry> entries) {
+	protected void setSettingEntries(List<? extends ICLanguageSettingEntry> entries) {
 		IResource rc = null;
 		switch (getResourceScope()) {
 		case FILE:

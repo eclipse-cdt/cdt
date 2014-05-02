@@ -608,7 +608,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 *
 	 * @param entries - language settings entries to set.
 	 */
-	protected void setSettingEntries(List<ICLanguageSettingEntry> entries) {
+	protected void setSettingEntries(List<? extends ICLanguageSettingEntry> entries) {
 		setSettingEntries(currentCfgDescription, currentResource, currentLanguageId, entries);
 	}
 

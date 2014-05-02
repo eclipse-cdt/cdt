@@ -105,22 +105,23 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	}
 
 	/**
-	 * Set the language scope of the provider.
+	 * Sets the language scope of the provider.
 	 *
 	 * @param languages - the list of languages this provider provides for.
 	 *    If {@code null}, the provider provides for any language.
 	 *
 	 * @see #getLanguageScope()
 	 */
-	public void setLanguageScope(List <String> languages) {
-		if (languages==null)
+	public void setLanguageScope(List<String> languages) {
+		if (languages == null) {
 			this.languageScope = null;
-		else
-			this.languageScope = new ArrayList<String>(languages);
+		} else {
+			this.languageScope = new ArrayList<>(languages);
+		}
 	}
 
 	/**
-	 * Clear all the entries for all configurations, all resources and all languages.
+	 * Clears all the entries for all configurations, all resources and all languages.
 	 */
 	public void clear() {
 		fStorage.clear();
@@ -141,7 +142,8 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 *    to be defined for the language scope. See {@link #getLanguageScope()}
 	 * @param entries - language settings entries to set.
 	 */
-	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId, List<ICLanguageSettingEntry> entries) {
+	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId,
+			List<? extends ICLanguageSettingEntry> entries) {
 		String rcProjectPath = rc!=null ? rc.getProjectRelativePath().toString() : null;
 		fStorage.setSettingEntries(rcProjectPath, languageId, entries);
 	}

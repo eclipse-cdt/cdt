@@ -576,10 +576,12 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 			boolean pragmaOnce= owner != null ? owner.hasPragmaOnceSemantics() : data.fAST.hasPragmaOnceSemantics();
 			file.setPragmaOnceSemantics(pragmaOnce);
 
-			String headerKey = IndexLocationFactory.getAbsolutePath(location).toOSString();
-			String replacementHeader = data.fReplacementHeaders.get(headerKey);
-			if (replacementHeader != null)
-				file.setReplacementHeader(replacementHeader);
+			if (data.fReplacementHeaders != null) {
+				String headerKey = IndexLocationFactory.getAbsolutePath(location).toOSString();
+				String replacementHeader = data.fReplacementHeaders.get(headerKey);
+				if (replacementHeader != null)
+					file.setReplacementHeader(replacementHeader);
+			}
 
 			Symbols lists= data.fSymbolMap.get(owner);
 			if (lists != null) {

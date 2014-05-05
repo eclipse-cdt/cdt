@@ -10655,4 +10655,35 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testParenthesizedReferenceArgument_424898() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	constexpr int naive_fibonacci(int x) {
+	//		return x == 0 ? 0
+	//			 : x == 1 ? 1
+	//			 : naive_fibonacci(x - 2) + naive_fibonacci(x - 1);
+	//	}
+	//
+	//	constexpr int waldo = naive_fibonacci(5);
+	public void testConditionalExpressionFolding_429891() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IVariable waldo = helper.assertNonProblem("waldo");
+		assertEquals(5, waldo.getInitialValue().numericalValue().longValue());
+	}
+	
+	
+	//	constexpr int naive_fibonacci(int x) {
+	//		return x == 0 ? 0
+	//			 : x == 1 ? 1
+	//			 : naive_fibonacci(x - 2) + naive_fibonacci(x - 1);
+	//	}
+	//
+	//	constexpr int waldo = naive_fibonacci(50);
+	public void testConstexprEvaluationLimit_429891() throws Exception {
+		// Here we're just checking that the computation of the initial
+		// value finishes (with a null result) in a reasonable time.
+		// If we tried to run the computation of naive_fibonacci(50)
+		// to its end, the IDE would appear to hang.
+		BindingAssertionHelper helper = getAssertionHelper();
+		IVariable waldo = helper.assertNonProblem("waldo");
+		assertNull(waldo.getInitialValue().numericalValue());
+	}
 }

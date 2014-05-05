@@ -1,8 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013 Wind River Systems, Inc. and others. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2013, 2014 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  * Wind River Systems - initial API and implementation
@@ -53,6 +54,10 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_pty_PTY_openMaster(JNIEnv *
 	/* Generate masterFD based on current system time */
 	srand((unsigned int)time(NULL));
 	master = rand();
+
+	/* Make sure masterFD does not exist */
+	while (fd2pty.find(master) != fd2pty.end())
+		master++;
 
 	sprintf(line, "winpty_%i", master);
 

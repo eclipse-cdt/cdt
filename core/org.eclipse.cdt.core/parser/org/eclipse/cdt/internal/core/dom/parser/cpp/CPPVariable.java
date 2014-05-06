@@ -64,7 +64,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	        fDeclarations = new IASTName[] { name };
 	    }
 	    
-	    // built-in variables supply a null
+	    // Built-in variables supply a null.
 	    if (name != null) {
 	    	name.setBinding(this);
 	    } else {
@@ -97,7 +97,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 		} else if (fDeclarations == null) {
 			fDeclarations = new IASTName[] { name };
 		} else {
-			// keep the lowest offset declaration at the first position
+			// Keep the lowest offset declaration at the first position.
 			if (fDeclarations.length > 0
 					&& ((ASTNode) node).getOffset() < ((ASTNode) fDeclarations[0]).getOffset()) {
 				fDeclarations = ArrayUtil.prepend(IASTName.class, fDeclarations, name);
@@ -105,7 +105,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 				fDeclarations = ArrayUtil.append(IASTName.class, fDeclarations, name);
 			}
 		}
-		// array types may be incomplete
+		// Array types may be incomplete.
 		if (fType instanceof IArrayType) {
 			fType = null;
 		}
@@ -246,7 +246,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	
     @Override
 	public boolean isMutable() {
-        //7.1.1-8 the mutable specifier can only be applied to names of class data members
+        // 7.1.1-8 the mutable specifier can only be applied to names of class data members.
         return false;
     }
 

@@ -225,7 +225,7 @@ public class Value implements IValue {
 	 * Creates a value representing the given number.
 	 */
 	public static IValue create(long value) {
-		if (value >=0 && value < TYPICAL.length)
+		if (value >= 0 && value < TYPICAL.length)
 			return TYPICAL[(int) value];
 		return new Value(toCharArray(value), null);
 	}

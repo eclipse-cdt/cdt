@@ -2215,7 +2215,7 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	/**
-	 * Compute the type for decltype(expr) or typeof(expr)
+	 * Computes the type for decltype(expr) or typeof(expr).
 	 */
 	private static IType getDeclType(ICPPASTSimpleDeclSpecifier spec) {
 		IASTExpression expr = spec.getDeclTypeExpression();

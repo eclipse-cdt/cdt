@@ -85,7 +85,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		if (fDeclarations == null || fDeclarations.length == 0) {
 	        fDeclarations = new IASTName[] { name };
 		} else {
-	        if (isDeclaredBefore((ASTNode)node, (ASTNode)fDeclarations[0])) {
+	        if (isDeclaredBefore((ASTNode) node, (ASTNode) fDeclarations[0])) {
 				fDeclarations = ArrayUtil.prepend(IASTName.class, fDeclarations, name);
 			} else {
 				fDeclarations = ArrayUtil.append(IASTName.class, fDeclarations, name);
@@ -227,7 +227,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 			IASTNode parent = fDeclarations[i].getParent();
 			while (parent.getPropertyInParent() == IASTDeclarator.NESTED_DECLARATOR)
 				parent = parent.getParent();
-			IASTInitializer init = ((IASTDeclarator)parent).getInitializer();
+			IASTInitializer init = ((IASTDeclarator) parent).getInitializer();
 			if (init != null)
 				return init;
 		}
@@ -272,7 +272,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 
 	@Override
 	public IBinding resolveFinalBinding(CPPASTNameBase name) {
-		// check if the binding has been updated.
+		// Check if the binding has been updated.
 		IBinding current= name.getPreBinding();
 		if (current != this)
 			return current;

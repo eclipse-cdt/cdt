@@ -44,7 +44,7 @@ public interface IProblemBinding extends IBinding, IScope, IType, ISemanticProbl
 
 	/*
      * Parser Semantic Problems
-     * All Semantic problems take a char[] as an argument
+     * All semantic problems take a char[] as an argument.
      */
     public final static int SEMANTIC_NAME_NOT_FOUND = BINDING_NOT_FOUND;
     public static final int SEMANTIC_INVALID_OVERLOAD = BINDING_INVALID_OVERLOAD;

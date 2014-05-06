@@ -81,7 +81,7 @@ public class LongString implements IString {
 		
 		// Write last record
 		int remaining= length - start;
-		long nextRecord = db.malloc(CHARSN + (useBytes ? remaining : remaining*2));
+		long nextRecord = db.malloc(CHARSN + (useBytes ? remaining : remaining * 2));
 		db.putRecPtr(lastNext, nextRecord);
 		chunk= db.getChunk(nextRecord);
 		if (useBytes) {
@@ -125,7 +125,7 @@ public class LongString implements IString {
 		// Other records
 		while (start < length) {
 			p = db.getRecPtr(p);
-			int partLen= Math.min(length-start, numCharsn);
+			int partLen= Math.min(length - start, numCharsn);
 			chunk= db.getChunk(p);
 			if (useBytes) {
 				chunk.getCharsFromBytes(p + CHARSN, chars, start, partLen);

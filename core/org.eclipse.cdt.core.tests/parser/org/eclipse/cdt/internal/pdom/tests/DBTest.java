@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.pdom.tests;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Random;
 
 import junit.framework.Test;
@@ -36,7 +35,7 @@ public class DBTest extends BaseTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		db = new Database(getTestDir().append(getName()+System.currentTimeMillis()+".dat").toFile(),
+		db = new Database(getTestDir().append(getName() + System.currentTimeMillis() + ".dat").toFile(),
 				new ChunkCache(), 0, false);
 		db.setExclusiveLock();
 	}
@@ -66,19 +65,19 @@ public class DBTest extends BaseTestCase {
 		assertEquals(0, db.getVersion());
 
 		final int realsize = 42;
-		final int deltas = (realsize+Database.BLOCK_HEADER_SIZE + Database.BLOCK_SIZE_DELTA - 1) / Database.BLOCK_SIZE_DELTA;
+		final int deltas = (realsize + Database.BLOCK_HEADER_SIZE + Database.BLOCK_SIZE_DELTA - 1) / Database.BLOCK_SIZE_DELTA;
 		final int blocksize = deltas * Database.BLOCK_SIZE_DELTA;
-		final int freeDeltas= Database.CHUNK_SIZE/Database.BLOCK_SIZE_DELTA-deltas;
+		final int freeDeltas= Database.CHUNK_SIZE / Database.BLOCK_SIZE_DELTA - deltas;
 		
 		long mem = db.malloc(realsize);
 		assertEquals(-blocksize, db.getShort(mem - Database.BLOCK_HEADER_SIZE));
 		db.free(mem);
 		assertEquals(blocksize, db.getShort(mem - Database.BLOCK_HEADER_SIZE));
-		assertEquals(mem, db.getRecPtr((deltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
-		assertEquals(mem + blocksize, db.getRecPtr((freeDeltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
+		assertEquals(mem, db.getRecPtr((deltas - Database.MIN_BLOCK_DELTAS +1 ) * Database.INT_SIZE));
+		assertEquals(mem + blocksize, db.getRecPtr((freeDeltas - Database.MIN_BLOCK_DELTAS + 1) * Database.INT_SIZE));
 	}
 
-	public void testBug192437() throws IOException {
+	public void testBug192437() throws Exception {
 		File tmp= File.createTempFile("readOnlyEmpty", ".db");
 		try {
 			tmp.setReadOnly();
@@ -95,7 +94,7 @@ public class DBTest extends BaseTestCase {
 			try {
 				new Database(tmp, ChunkCache.getSharedInstance(), 0, true);
 			} catch (CoreException e) {
-				fail("A readonly file should be readable by a permanently readonly database "+e);
+				fail("A readonly file should be readable by a permanently readonly database " + e);
 			}
 		} finally {
 			tmp.delete(); // this may be pointless on some platforms
@@ -106,13 +105,13 @@ public class DBTest extends BaseTestCase {
 		final int realsize = 42;
 		final int deltas = (realsize + Database.BLOCK_HEADER_SIZE + Database.BLOCK_SIZE_DELTA - 1) / Database.BLOCK_SIZE_DELTA;
 		final int blocksize = deltas * Database.BLOCK_SIZE_DELTA;
-		final int freeDeltas= Database.MIN_BLOCK_DELTAS-deltas;
+		final int freeDeltas= Database.MIN_BLOCK_DELTAS - deltas;
 
 		long mem1 = db.malloc(realsize);
 		long mem2 = db.malloc(realsize);
 		db.free(mem1);
 		db.free(mem2);
-		assertEquals(mem2, db.getRecPtr((deltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
+		assertEquals(mem2, db.getRecPtr((deltas - Database.MIN_BLOCK_DELTAS + 1) * Database.INT_SIZE));
 		assertEquals(0, db.getRecPtr(mem2));
 		assertEquals(mem1, db.getRecPtr(mem2 + Database.INT_SIZE));
 		assertEquals(mem2, db.getRecPtr(mem1));
@@ -249,33 +248,31 @@ public class DBTest extends BaseTestCase {
 		
 	private void doTrials(int n, int min, int max, Random r, boolean caseSensitive) throws CoreException {
 		long start = System.currentTimeMillis();
-		for(int i= 0; i < n; i++) {
+		for (int i= 0; i < n; i++) {
 			String a = randomString(min, max, r);
 			String b = randomString(min, max, r);
 			int expected = caseSensitive ? a.compareTo(b) : a.compareToIgnoreCase(b);
 			assertCMP(a, expected, b, caseSensitive);
 		}
-//		System.out.print("Trials: "+n+" Max length: "+max+" ignoreCase: "+!caseSensitive);
-//		System.out.println(" Time: "+(System.currentTimeMillis()-start));
+//		System.out.print("Trials: " + n + " Max length: " + max + " ignoreCase: " + !caseSensitive);
+//		System.out.println(" Time: " + (System.currentTimeMillis() - start));
 	}
 	
 	private String randomString(int min, int max, Random r) {
-		StringBuffer result = new StringBuffer();
-		int len = min + r.nextInt(max-min);
-		for(int i= 0; i < len; i++) {
+		StringBuilder result = new StringBuilder();
+		int len = min + r.nextInt(max - min);
+		for (int i= 0; i < len; i++) {
 			result.append(randomChar(r));
 		}
 		return result.toString();
 	}
 	
 	private char randomChar(Random r) {
-		// we only match String.compareToIgnoreCase behaviour within this limited range
+		// we only match String.compareToIgnoreCase behavior within this limited range
 		return (char) (32 + r.nextInt(40)); 
 	}
 	
-	private void assertCMP(String a, int expected, String b, boolean caseSensitive) 
-		throws CoreException
-	{
+	private void assertCMP(String a, int expected, String b, boolean caseSensitive) throws CoreException {
 		char[] acs = a.toCharArray();
 		char[] bcs = b.toCharArray();
 		IString aiss = db.newString(a);

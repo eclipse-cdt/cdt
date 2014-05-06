@@ -3486,7 +3486,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//    B();
 	//    void bf();
 	// };
-	public void testFind_bug185408() throws Exception {
+	public void testFind_185408() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
@@ -3519,7 +3519,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//    int b;
 	//    void fb();
 	// };
-	public void testGets() throws Exception {
+	public void testImplicitMethods() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
@@ -7481,9 +7481,8 @@ public class AST2CPPTests extends AST2TestBase {
 	//	typedef C3 T3;
 	//	T3::C3(int) {
 	//	}
-	public void testCTorWithTypedef_269953() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, CPP);
+	public void testCtorWithTypedef_269953() throws Exception {
+		parseAndCheckBindings();
 	}
 
 	//	template<class T> class Compare {
@@ -7494,8 +7493,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	typedef Compare<int> MY_COMPARE;
 	//	template<> MY_COMPARE::Compare() {}
 	public void testTemplateCTorWithTypedef_269953() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	//	class IBase {
@@ -7524,8 +7522,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		return 0;
 	//	}
 	public void testHiddenVirtualBase_282993() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	//	class C {
@@ -7556,8 +7553,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	  m(a);
 	//	}
 	public void testInlineFriendFunction_284690() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	//	void f(int t);
@@ -7603,7 +7599,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//   MyStruct(MyEnum value) {}
 	// };
 	public void testEnumRedefinitionInStruct_385144() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP);
+		parseAndCheckBindings();
 	}
 
 	//	class CL {
@@ -7613,7 +7609,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	  }
 	//	};
 	public void testLookupFromInlineFriend_284690() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP);
+		parseAndCheckBindings();
 	}
 
 	//	class XInterface {};
@@ -7630,7 +7626,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	  XInterface temp;
 	//	}
 	public void testTypeLookupWithMultipleInheritance_286213() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP);
+		parseAndCheckBindings();
 	}
 
 	//	int v1;
@@ -7745,8 +7741,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		foo(c);
 	//	}
 	public void testUserDefinedConversion_222444a() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	//	class From {};
@@ -7773,8 +7768,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		x3(f);
 	//	}
 	public void testUserDefinedConversion_222444b() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	//	class A {};
@@ -7861,8 +7855,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	                             // associated namespace.
 	//	}
 	public void testAssociatedScopesForOverloadedOperators_293589() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	// typedef int F(int);
@@ -7909,8 +7902,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	  f("");
 	//	}
 	public void testCVQualifiersWithArrays_293982() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	//	template <typename T, int N> char (&func(T (&array)[N]))[N];
@@ -7924,8 +7916,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	  f(b); func(b);
 	//	}
 	public void testArrayTypeSizeFromInitializer_294144() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	//	struct A {
@@ -7935,8 +7926,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		template<typename T> struct C {};
 	//	};
 	public void testLookupInClassScopeForTemplateIDs_294904() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	//	template <typename T, int N> char (&func(T (&array)[N]))[N];
@@ -7949,8 +7939,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	  func(A::array);
 	//	}
 	public void testCompleteArrayTypeWithIncompleteDeclaration_294144() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	//	void test() {
@@ -7958,8 +7947,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		return y < x ? -1 : y > x ? 1 : 0;
 	//	}
 	public void testSyntax1_295064() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	//	typedef int TInt;
@@ -7968,8 +7956,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	};
 	//	template <typename T> inline CT<T>::CT(TInt) {}
 	public void testSyntax2_295064() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	//	const unsigned int EIGHT= 8;
@@ -7986,8 +7973,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		static_assert(sizeof(VMPage) == 1, "bla");
 	//	}
 	public void testStaticAssertions_294730() throws Exception {
-		final String code= getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	//	struct A {};
@@ -8261,7 +8247,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	__typeof(a->x) t7();   // type is const double
 	//	__typeof((a->x)) t8(); // type is const double
 
-	public void testDeclType_294730() throws Exception {
+	public void testDecltype_294730() throws Exception {
 		String code= getAboveComment();
 		parseAndCheckBindings(code, CPP);
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
@@ -8282,6 +8268,35 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals("const double", ASTTypeUtil.getType(f.getType().getReturnType()));
 		f= bh.assertNonProblem("t8", 2);
 		assertEquals("const double", ASTTypeUtil.getType(f.getType().getReturnType()));
+	}
+
+	//	class Waldo {
+	//		typedef int type;
+	//		static int value;
+	//	};
+	//
+	//	int main() {
+	//		Waldo w;
+	//		decltype(w)::type i;
+	//		int x = decltype(w)::value;
+	//	}
+	public void testDecltypeInNameQualifier_380751() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <typename T>
+	//	T bar();
+	//	struct S {
+	//	    void waldo();
+	//	};
+	//	int main() {
+	//	    auto L = [](S s) { return s; };
+	//	    typedef decltype(L) lambda_type;
+	//	    decltype(bar<const lambda_type>()(S())) v;
+	//	    v.waldo();
+	//	}
+	public void testDecltypeWithConstantLambda_397494() throws Exception {
+		parseAndCheckBindings();
 	}
 
 	//	typedef int TInt;
@@ -8313,8 +8328,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	S::S(int a) : f{a} {}		// Member initializer
 
 	public void testInitSyntax_302412() throws Exception {
-		String code= getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	//	namespace std {
@@ -8352,8 +8366,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//      fs({});
 	//	}
 	public void testListInitialization_302412a() throws Exception {
-		String code= getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	//	namespace std {
@@ -8724,8 +8737,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		i = p->f(p->xl); // OK
 	//	}
 	public void testScopedEnums_305975e() throws Exception {
-		String code= getAboveComment();
-		parseAndCheckBindings(code);
+		parseAndCheckBindings();
 	}
 
 	//	enum class altitude { high=1, low=2 };
@@ -8766,8 +8778,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	//  f(sizeof(S::m + 1)); // Error not detected by CDT: reference to non-static member in subexpression
 	//	}
 	public void testSizeofOfNonstaticMember_305979() throws Exception {
-		String code= getAboveComment();
-		parseAndCheckBindings(code);
+		parseAndCheckBindings();
 	}
 
 	//	void f(int);
@@ -8794,16 +8805,14 @@ public class AST2CPPTests extends AST2TestBase {
 	//	    return 42;
 	//	}
 	public void testCastToVoid_309155() throws Exception {
-		String code= getAboveComment();
-		parseAndCheckBindings(code);
+		parseAndCheckBindings();
 	}
 
 	//	void test() {
 	//	    void *libHandle (0);
 	//	}
-	public void testCTorInitializerForVoidPtr_314113() throws Exception {
-		String code= getAboveComment();
-		parseAndCheckBindings(code);
+	public void testCtorInitializerForVoidPtr_314113() throws Exception {
+		parseAndCheckBindings();
 	}
 
 	//	struct D {};
@@ -8967,8 +8976,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		gb(a);
 	//	}
 	public void testInlineNamespace_305980a() throws Exception {
-		String code= getAboveComment();
-		parseAndCheckBindings(code);
+		parseAndCheckBindings();
 	}
 
 	//	namespace ns {
@@ -8981,8 +8989,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		ns::a;
 	//	}
 	public void testInlineNamespace_305980b() throws Exception {
-		String code= getAboveComment();
-		parseAndCheckBindings(code);
+		parseAndCheckBindings();
 	}
 
 	//	namespace out {
@@ -9068,8 +9075,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	  });
 	//	}
 	public void testLambdaExpression_316307b() throws Exception {
-		String code= getAboveComment();
-		parseAndCheckBindings(code);
+		parseAndCheckBindings();
 	}
 
 	//	typedef int MyType;
@@ -10268,21 +10274,6 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 
-	//	template <typename T>
-	//	T bar();
-	//	struct S {
-	//	    void waldo();
-	//	};
-	//	int main() {
-	//	    auto L = [](S s) { return s; };
-	//	    typedef decltype(L) lambda_type;
-	//	    decltype(bar<const lambda_type>()(S())) v;
-	//	    v.waldo();
-	//	}
-	public void testDecltypeWithConstantLambda_397494() throws Exception {
-		parseAndCheckBindings();
-	}
-
 	//	template <bool>
 	//	struct enable_if {
 	//	};
@@ -10461,22 +10452,8 @@ public class AST2CPPTests extends AST2TestBase {
 	//		__sync_val_compare_and_swap(&i, 1, 2);
 	//		__sync_synchronize();
 	//	}
-	public void testGNUSyncBuiltins_bug389578() throws Exception {
+	public void testGNUSyncBuiltins_389578() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
-	}
-
-	//	class Waldo {
-	//		typedef int type;
-	//		static int value;
-	//	};
-	//
-	//	int main() {
-	//		Waldo w;
-	//		decltype(w)::type i;
-	//		int x = decltype(w)::value;
-	//	}
-	public void testDecltypeInNameQualifier_bug380751() throws Exception {
-		parseAndCheckBindings();
 	}
 
 	//	template <typename T>
@@ -10503,7 +10480,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	typedef underlying_type<e_int>::type int_type;
 	//	typedef underlying_type<e_ulong>::type ulong_type;
 	//	typedef underlying_type<e_long>::type loong_type;
-	public void testUnderlyingTypeBuiltin_bug411196() throws Exception {
+	public void testUnderlyingTypeBuiltin_411196() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 
 		assertSameType((ITypedef) helper.assertNonProblem("short1_type"), CPPVisitor.SHORT_TYPE);

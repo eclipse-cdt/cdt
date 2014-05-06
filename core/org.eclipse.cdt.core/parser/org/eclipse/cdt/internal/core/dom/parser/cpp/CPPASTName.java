@@ -33,7 +33,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * Unqualified name, also base class for operator and conversion name.
  */
 public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionContext {
-	public static IASTName NOT_INITIALIZED= new CPPASTName(null);
+	public static final IASTName NOT_INITIALIZED= new CPPASTName(null);
 	
 	private char[] name;
 

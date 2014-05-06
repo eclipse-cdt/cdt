@@ -1,0 +1,76 @@
+/*******************************************************************************
+ * Copyright (c) 2014 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Lars Vogel <Lars.Vogel@gmail.com> - initial API and implementation
+ * Andreas Guarino - intial color schema definition
+ * Doug Schaefer - getting this into CDT
+ ******************************************************************************/
+
+IEclipsePreferences#org-eclipse-cdt-ui			 {
+	preferences:
+		"asm_directive=221,40,103"
+		"asm_label=217,232,247"
+		"c_braces=249,250,244"
+		"c_comment_task_tag=154,140,124"
+		"c_default=217,232,247"
+		"c_keyword=221,40,103"
+		"c_multi_line_comment=98,98,98"
+		"c_numbers=104,151,187"
+		"c_operators=230,230,250"
+		"c_single_line_comment=98,98,98"
+		"c_string=23,198,163"
+		"c_type=221,40,103"
+		"org.eclipse.cdt.internal.ui.text.doctools.multi=98,98,98"
+		"org.eclipse.cdt.internal.ui.text.doctools.recognizedTag=30,120,155"
+		"org.eclipse.cdt.internal.ui.text.doctools.single=98,98,98"
+		"pp_default=217,232,247"
+		"pp_directive=221,40,103"
+		"pp_header=23,198,163"
+		"semanticHighlighting.class.color=18,144,195"
+		"semanticHighlighting.class.enabled=true"
+		"semanticHighlighting.class.bold=true"
+		"semanticHighlighting.enum.color=204,129,186"
+		"semanticHighlighting.enum.enabled=true"
+		"semanticHighlighting.enum.italic=true"
+		"semanticHighlighting.enumerator.color=141,218,248"
+		"semanticHighlighting.enumerator.enabled=true"
+		"semanticHighlighting.externalSDK.color=150,236,63"
+		"semanticHighlighting.externalSDK.enabled=true"
+		"semanticHighlighting.field.color=102,225,248"
+		"semanticHighlighting.field.enabled=true"
+		"semanticHighlighting.function.color=167,236,33"
+		"semanticHighlighting.function.enabled=true"
+		"semanticHighlighting.functionDeclaration.color=13,209,64"
+		"semanticHighlighting.functionDeclaration.enabled=true"
+		"semanticHighlighting.functionDeclaration.bold=true"
+		"semanticHighlighting.localVariable.color=255,191,38"
+		"semanticHighlighting.localVariable.enabled=true"
+		"semanticHighlighting.localVariableDeclaration.color=237,127,72"
+		"semanticHighlighting.localVariableDeclaration.enabled=true"
+		"semanticHighlighting.macroDefinition.color=13,209,64"
+		"semanticHighlighting.macroDefinition.enabled=true"
+		"semanticHighlighting.macroDefinition.bold=true"
+		"semanticHighlighting.method.color=167,236,33"
+		"semanticHighlighting.method.enabled=true"
+		"semanticHighlighting.methodDeclaration.color=13,209,64"
+		"semanticHighlighting.methodDeclaration.enabled=true"
+		"semanticHighlighting.methodDeclaration.bold=true"
+		"semanticHighlighting.namespace.color=128,242,246"
+		"semanticHighlighting.namespace.enabled=true"
+		"semanticHighlighting.parameterVariable.color=121,171,255"
+		"semanticHighlighting.parameterVariable.enabled=true"
+		"semanticHighlighting.staticField.color=141,218,248"
+		"semanticHighlighting.staticField.enabled=true"
+		"semanticHighlighting.staticMethod.color=150,236,63"
+		"semanticHighlighting.staticMethod.enabled=true"
+		"semanticHighlighting.typedef.color=18,144,195"
+		"semanticHighlighting.typedef.enabled=true"
+		"semanticHighlighting.typedef.bold=true"
+		"semanticHighlighting.typeParameter.color=191,164,164"
+		"semanticHighlighting.typeParameter.enabled=true"		
+}

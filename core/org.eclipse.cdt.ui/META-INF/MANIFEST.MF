@@ -120,6 +120,7 @@ Require-Bundle: org.eclipse.cdt.core;bundle-version="[5.2.0,6.0.0)",
  org.eclipse.ui.navigator.resources;bundle-version="3.3.100",
  org.eclipse.ui.views;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui.workbench.texteditor;bundle-version="[3.5.0,4.0.0)",
- com.ibm.icu;bundle-version="4.4.2"
+ com.ibm.icu;bundle-version="4.4.2",
+ org.eclipse.e4.ui.css.swt.theme
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

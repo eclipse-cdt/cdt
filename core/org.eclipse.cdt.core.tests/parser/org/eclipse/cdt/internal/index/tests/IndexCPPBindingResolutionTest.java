@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2014 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -767,6 +767,18 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		IBinding b12 = getBindingFromASTName("Int i12;", 3);
 		assertQNEquals("n1::n2::Int", b12);
 	}
+
+	//	struct A {
+	//	  static struct {
+	//	  } waldo;
+	//	};
+	//	decltype(A::waldo) A::waldo;
+
+	//	A a;
+	public void testDecltype_434150() throws Exception {
+		checkBindings();
+	}
+
 
 	// // header content
 	// enum E { ER1, ER2 };

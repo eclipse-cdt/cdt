@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Andrew Niefer (IBM Corporation) - Initial API and implementation 
  *     Markus Schorn (Wind River Systems)
  *     Ed Swartz (Nokia)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -126,11 +127,24 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 		if (fType != null) {
 			return fType;
 		}
-		
+
+		boolean doneWithDefinition = false;
 		IArrayType firstCandidate= null;
 		final int length = fDeclarations == null ? 0 : fDeclarations.length;
-		for (int i = -1; i < length; i++) {
-			IASTName n = i == -1 ? fDefinition : fDeclarations[i];
+		for (int i = 0; i <= length; i++) {
+			IASTName n;
+			// Process the definition according to its relative position among the declarations.
+			// See http://bugs.eclipse.org/434150
+			if (fDefinition != null && !doneWithDefinition &&
+					(i == length || ((ASTNode) fDefinition).getOffset() < ((ASTNode) fDeclarations[i]).getOffset())) {
+				n = fDefinition;
+				doneWithDefinition = true;
+				--i;  // We still have to come back to the declaration at position i.
+			} else if (i < length) {
+				n = fDeclarations[i];
+			} else {
+				break;
+			}
 			if (n != null) {
 				while (n.getParent() instanceof IASTName)
 					n = (IASTName) n.getParent();

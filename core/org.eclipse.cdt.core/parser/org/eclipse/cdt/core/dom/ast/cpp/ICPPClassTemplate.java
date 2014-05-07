@@ -16,6 +16,9 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPClassTemplate extends ICPPTemplateDefinition, ICPPClassType {
+	/**
+	 * Returns the partial specializations of this class template.
+	 */
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations();
 	
 	/**

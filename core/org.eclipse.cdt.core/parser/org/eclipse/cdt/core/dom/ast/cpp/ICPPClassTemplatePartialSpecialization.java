@@ -19,8 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * a class template in its own right.
  * 
  * e.g.:
- * template <class T> class A {};     //the primary class template
- * template <class T> class A<T*> {}; //a partial specialization of the primary class template
+ * template <class T> class A {};     // the primary class template
+ * template <class T> class A<T*> {}; // a partial specialization of the primary class template
  *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -33,7 +33,6 @@ public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplat
 	 */
 	public ICPPClassTemplate getPrimaryClassTemplate();
 
-
 	/**
 	 * Returns the arguments of this partial specialization.
 	 * @since 5.1
@@ -44,5 +43,5 @@ public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplat
 	 * @deprecated use {@link #getTemplateArguments()}, instead.
 	 */
 	@Deprecated
-	public IType [] getArguments() throws DOMException;
+	public IType[] getArguments() throws DOMException;
 }

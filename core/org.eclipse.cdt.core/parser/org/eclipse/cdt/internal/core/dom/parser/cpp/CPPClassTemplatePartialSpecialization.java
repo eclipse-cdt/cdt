@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Niefer (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -28,7 +28,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  */
 public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate 
 		implements ICPPClassTemplatePartialSpecialization {
-
 	private final ICPPTemplateArgument[] arguments;
 
 	public CPPClassTemplatePartialSpecialization(ICPPASTTemplateId name, ICPPTemplateArgument[] arguments) {
@@ -41,29 +40,12 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 		return arguments;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization#getPrimaryClassTemplate()
-	 */
 	@Override
 	public ICPPClassTemplate getPrimaryClassTemplate() {
 		ICPPASTTemplateId id = (ICPPASTTemplateId) getTemplateName();
 		return (ICPPClassTemplate) id.getTemplateName().resolveBinding();
 	}
 
-	@Override
-	public String toString() {
-		return super.toString() + ASTTypeUtil.getArgumentListString(getTemplateArguments(), true);
-	}
-	
-	@Override
-	@Deprecated
-	public IType[] getArguments() throws DOMException {
-		return CPPTemplates.getArguments(getTemplateArguments());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
-	 */
 	@Override
 	public boolean isSameType(IType type) {
 		if (type == this)
@@ -95,5 +77,16 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 				return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + ASTTypeUtil.getArgumentListString(getTemplateArguments(), true);
+	}
+	
+	@Override
+	@Deprecated
+	public IType[] getArguments() throws DOMException {
+		return CPPTemplates.getArguments(getTemplateArguments());
 	}
 }

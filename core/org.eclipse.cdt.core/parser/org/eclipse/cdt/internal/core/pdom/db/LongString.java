@@ -27,14 +27,14 @@ public class LongString implements IString {
 	private final long record;
 	private int hash;
 
-	// Additional fields of first record
-	private static final int LENGTH = 0; // must be first to match ShortString
+	// Additional fields of first record.
+	private static final int LENGTH = 0; // Must be first to match ShortString.
 	private static final int NEXT1 = 4;
 	private static final int CHARS1 = 8;
 	
 	private static final int NUM_CHARS1 = (Database.MAX_MALLOC_SIZE - CHARS1) / 2;
 	
-	// Additional fields of subsequent records
+	// Additional fields of subsequent records.
 	private static final int NEXTN = 0;
 	private static final int CHARSN = 4;
 	
@@ -52,7 +52,7 @@ public class LongString implements IString {
 		this.db = db;
 		this.record = db.malloc(Database.MAX_MALLOC_SIZE);
 
-		// Write the first record
+		// Write the first record.
 		final int length = chars.length;
 		db.putInt(this.record, useBytes ? -length : length);
 		Chunk chunk= db.getChunk(this.record);
@@ -63,7 +63,7 @@ public class LongString implements IString {
 			chunk.putChars(this.record + CHARS1, chars, 0, numChars1);
 		}
 		
-		// write the subsequent records
+		// Write the subsequent records.
 		long lastNext = this.record + NEXT1;
 		int start = numChars1;
 		while (length - start > numCharsn) {
@@ -79,7 +79,7 @@ public class LongString implements IString {
 			lastNext = nextRecord + NEXTN;
 		}
 		
-		// Write last record
+		// Write the last record.
 		int remaining= length - start;
 		long nextRecord = db.malloc(CHARSN + (useBytes ? remaining : remaining * 2));
 		db.putRecPtr(lastNext, nextRecord);
@@ -133,7 +133,7 @@ public class LongString implements IString {
 				chunk.getChars(p + CHARSN, chars, start, partLen);
 			}
 			start += partLen;
-			p=p + NEXTN;
+			p= p + NEXTN;
 		}
 		return chars;
 	}
@@ -151,9 +151,9 @@ public class LongString implements IString {
 		}
 		long nextRecord = db.getRecPtr(record + NEXT1);
 		db.free(record);
-		length-= numChars1;
+		length -= numChars1;
 		
-		// Middle records
+		// Middle records.
 		while (length > numCharsn) {
 			length -= numCharsn;
 			long nextnext = db.getRecPtr(nextRecord + NEXTN);
@@ -161,7 +161,7 @@ public class LongString implements IString {
 			nextRecord = nextnext;
 		}
 		
-		// Last record
+		// Last record.
 		db.free(nextRecord);
 	}
 	

@@ -1,12 +1,12 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
- *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ * Contributors:
+ *     Andrew Niefer (IBM Corporation) - Initial API and implementation 
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
@@ -99,6 +99,7 @@ public class ParserMessages {
 		case ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE: return "ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE";
 		case ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION: return "ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION";
 		case ISemanticProblem.TYPE_NOT_PERSISTED: return "ISemanticProblem.TYPE_NOT_PERSISTED";		
+		case ISemanticProblem.TYPE_ENUMERATION_EXPECTED: return "ISemanticProblem.TYPE_ENUMERATION_EXPECTED";
 		}
 		return null;
 	}

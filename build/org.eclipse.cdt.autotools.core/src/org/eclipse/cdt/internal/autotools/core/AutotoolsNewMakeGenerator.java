@@ -1056,8 +1056,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				RemoteCommandLauncher launcher = new RemoteCommandLauncher();
 				launcher.setProject(getProject());
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				// Fix Bug 423192 - use environment variables when checking the Win OS Type using
-				// a shell command as the path to sh may be specified there
+				// Fix Bug 433864 - can no longer use environment variables when checking the Win OS Type.
+				// Must now use uname and look for "CYGWIN*".  We use sh -c "uname -s" to invoke.
 				IEnvironmentVariable variables[] = 
 						CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cdesc, true);
 				String[] env = new String[0];
@@ -1072,7 +1072,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 				launcher.execute(
 						new Path(SHELL_COMMAND), //$NON-NLS-1$
-						new String[] { "-c", "echo $OSTYPE" }, //$NON-NLS-1$ //$NON-NLS-2$
+						new String[] { "-c", "uname -s" }, //$NON-NLS-1$ //$NON-NLS-2$
 						env,
 						new Path("."), //$NON-NLS-1$
 						new NullProgressMonitor());
@@ -1109,7 +1109,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
     private String getPathString(IPath path) {
             String s = path.toString();
             if (getOSName().equals(Platform.OS_WIN32)) {
-            	if (getWinOSType().equals("cygwin")) {
+            	if (getWinOSType().startsWith("CYGWIN")) {
                     s = s.replaceAll("^([A-Z])(:)", "/cygdrive/$1");            		
             	} else {
                     s = s.replaceAll("^([A-Z])(:)", "/$1");            		

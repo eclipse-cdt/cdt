@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -114,16 +115,27 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 
 	    IBinding[] bindings= classScope.getBindings(lookup);
 		IBinding[] result= IBinding.EMPTY_BINDING_ARRAY;
+		int n = 0;
 		for (IBinding binding : bindings) {
 			if (binding == specialized ||
-					(binding instanceof ICPPClassType && specialized.isSameType((IType) binding))) {
+					(binding instanceof ICPPClassType && areSameTypesModuloPartialSpecialization(specialized, (IType) binding))) {
 				binding= specialClass;
 			} else {
 				binding= specialClass.specializeMember(binding, lookup.getLookupPoint());
 			}
-			result = ArrayUtil.append(result, binding);
+			result = ArrayUtil.appendAt(result, n++, binding);
 		}
-		return ArrayUtil.trim(result);
+		return ArrayUtil.trim(result, n);
+	}
+
+	private static boolean areSameTypesModuloPartialSpecialization(IType type1, IType type2) {
+		while (type1 instanceof ICPPClassTemplatePartialSpecialization) {
+			type1 = ((ICPPClassTemplatePartialSpecialization) type1).getPrimaryClassTemplate();
+		}
+		while (type2 instanceof ICPPClassTemplatePartialSpecialization) {
+			type2 = ((ICPPClassTemplatePartialSpecialization) type2).getPrimaryClassTemplate();
+		}
+		return type1.isSameType(type2);
 	}
 	
 	@Override

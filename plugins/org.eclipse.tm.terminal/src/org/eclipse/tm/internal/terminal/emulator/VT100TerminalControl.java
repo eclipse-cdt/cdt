@@ -33,6 +33,7 @@
  * Martin Oberhuber (Wind River) - [265352][api] Allow setting fonts programmatically
  * Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Widget
  * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
+ * Anton Leherbauer (Wind River) - [434294] Incorrect handling of function keys with modifiers
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -915,102 +916,119 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				// unless certain <keybinding> tags are present in the plugin.xml file
 				// for the Terminal view.  Do not delete those tags.
 
+				String escSeq = null;
+				boolean anyModifierPressed = (event.stateMask & SWT.MODIFIER_MASK) != 0;
+
 				switch (event.keyCode) {
 				case 0x1000001: // Up arrow.
-					sendString("\u001b[A"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[A"; //$NON-NLS-1$
 					break;
 
 				case 0x1000002: // Down arrow.
-					sendString("\u001b[B"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[B"; //$NON-NLS-1$
 					break;
 
 				case 0x1000003: // Left arrow.
-					if (ctrlKeyPressed){
-						sendString("\u001b[1;5D"); //$NON-NLS-1$
-					} else {
-						sendString("\u001b[D"); //$NON-NLS-1$
+					if (ctrlKeyPressed) {
+						escSeq = "\u001b[1;5D"; //$NON-NLS-1$
+					} else if (!anyModifierPressed) {
+						escSeq = "\u001b[D"; //$NON-NLS-1$
 					}
 					break;
 
 				case 0x1000004: // Right arrow.
-					if (ctrlKeyPressed){
-						sendString("\u001b[1;5C"); //$NON-NLS-1$
-					} else {
-						sendString("\u001b[C"); //$NON-NLS-1$
+					if (ctrlKeyPressed) {
+						escSeq = "\u001b[1;5C"; //$NON-NLS-1$
+					} else if (!anyModifierPressed) {
+						escSeq = "\u001b[C"; //$NON-NLS-1$
 					}
 					break;
 
 				case 0x1000005: // PgUp key.
-					sendString("\u001b[5~"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[5~"; //$NON-NLS-1$
 					break;
 
 				case 0x1000006: // PgDn key.
-					sendString("\u001b[6~"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[6~"; //$NON-NLS-1$
 					break;
 
 				case 0x1000007: // Home key.
-					sendString("\u001b[H"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[H"; //$NON-NLS-1$
 					break;
 
 				case 0x1000008: // End key.
-					sendString("\u001b[F"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[F"; //$NON-NLS-1$
 					break;
 
 				case 0x1000009: // Insert.
-					sendString("\u001b[2~"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[2~"; //$NON-NLS-1$
 					break;
 
 				case 0x100000a: // F1 key.
-					if ( (event.stateMask & SWT.CTRL)!=0 ) {
-						//Allow Ctrl+F1 to act locally as well as on the remote, because it is
-						//typically non-intrusive
-						event.doit=true;
-					}
-					sendString("\u001b[M"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[M"; //$NON-NLS-1$
 					break;
 
 				case 0x100000b: // F2 key.
-					sendString("\u001b[N"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[N"; //$NON-NLS-1$
 					break;
 
 				case 0x100000c: // F3 key.
-					sendString("\u001b[O"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[O"; //$NON-NLS-1$
 					break;
 
 				case 0x100000d: // F4 key.
-					sendString("\u001b[P"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[P"; //$NON-NLS-1$
 					break;
 
 				case 0x100000e: // F5 key.
-					sendString("\u001b[Q"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[Q"; //$NON-NLS-1$
 					break;
 
 				case 0x100000f: // F6 key.
-					sendString("\u001b[R"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[R"; //$NON-NLS-1$
 					break;
 
 				case 0x1000010: // F7 key.
-					sendString("\u001b[S"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[S"; //$NON-NLS-1$
 					break;
 
 				case 0x1000011: // F8 key.
-					sendString("\u001b[T"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[T"; //$NON-NLS-1$
 					break;
 
 				case 0x1000012: // F9 key.
-					sendString("\u001b[U"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[U"; //$NON-NLS-1$
 					break;
 
 				case 0x1000013: // F10 key.
-					sendString("\u001b[V"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[V"; //$NON-NLS-1$
 					break;
 
 				case 0x1000014: // F11 key.
-					sendString("\u001b[W"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[W"; //$NON-NLS-1$
 					break;
 
 				case 0x1000015: // F12 key.
-					sendString("\u001b[X"); //$NON-NLS-1$
+					if (!anyModifierPressed)
+						escSeq = "\u001b[X"; //$NON-NLS-1$
 					break;
 
 				default:
@@ -1019,6 +1037,12 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					// handled by the above cases.
 					break;
 				}
+
+				if (escSeq == null)
+					// Any unmapped key should be handled locally by Eclipse
+					event.doit = true;
+				else
+					sendString(escSeq);
 
 				// It's ok to return here, because we never locally echo special keys.
 

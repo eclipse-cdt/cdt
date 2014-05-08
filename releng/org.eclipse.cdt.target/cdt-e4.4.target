@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="cdt_e4.4" sequenceNumber="14">
+<?pde version="3.8"?><target name="cdt_e4.4" sequenceNumber="15">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.jetty.bundles.f.feature.group" version="8.1.11.201307080411"/>
@@ -29,7 +29,7 @@
 <repository location="http://download.eclipse.org/eclipse/updates/4.4milestones/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.remote.feature.group" version="1.0.0.201403241505"/>
+<unit id="org.eclipse.remote.feature.group" version="0.0.0"/>
 <repository location="http://download.eclipse.org/tools/ptp/builds/remote/luna/nightly/"/>
 </location>
 </locations>

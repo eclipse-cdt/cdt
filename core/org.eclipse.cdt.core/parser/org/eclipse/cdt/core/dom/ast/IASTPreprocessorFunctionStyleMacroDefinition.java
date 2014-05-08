@@ -6,22 +6,23 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This interface represent a preprocessor function-style macro definition. e.g.
- * #define ABC( def ) GHI
- * 
- * Note: macros that are expanded as parameters to function style macros are not captured in this abstraction.
+ * <pre>
+ * #define ABC(def) GHI
+ * </pre>
+ * Note: macros that are expanded as parameters to function style macros are not captured in this
+ * abstraction.
  *  
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTPreprocessorFunctionStyleMacroDefinition extends
 		IASTPreprocessorMacroDefinition {
-
 	/**
 	 * This property represents the relationship between a function style macro
 	 * definition and one of its parameters.
@@ -30,18 +31,16 @@ public interface IASTPreprocessorFunctionStyleMacroDefinition extends
 			"IASTPreprocessorFunctionStyleMacroDefinition.PARAMETER - Function Macro Parameter"); //$NON-NLS-1$
 
 	/**
-	 * Get the macro parameters.
+	 * Returns the macro parameters.
 	 * 
 	 * @return <code>IASTFunctionStyleMacroParameter[]</code> parameters
 	 */
 	public IASTFunctionStyleMacroParameter[] getParameters();
 
 	/**
-	 * Add a function-style macro parameter.
+	 * Adds a function-style macro parameter.
 	 * 
-	 * @param parm
-	 *            <code>IASTFunctionStyleMacroParameter</code>
+	 * @param parm the parameter to add
 	 */
 	public void addParameter(IASTFunctionStyleMacroParameter parm);
-
 }

@@ -125,7 +125,7 @@ class ASTComment extends ASTPreprocessorNode implements IASTComment {
 	@Override
 	public int getOffset() {
 		if (fFilePath != null) {
-			// Perform lazy conversion to sequence number
+			// Perform lazy conversion to sequence number.
 			ILocationResolver lr= (ILocationResolver) getTranslationUnit().getAdapter(ILocationResolver.class);
 			if (lr != null) {
 				setOffset(lr.getSequenceNumberForFileOffset(fFilePath, super.getOffset()));
@@ -192,6 +192,7 @@ class ASTElse extends ASTPreprocessorNode implements IASTPreprocessorElseStateme
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
 		fTaken= taken;
 	}
+
     @Override
 	public boolean taken() {
         return fTaken;
@@ -207,9 +208,7 @@ class ASTIfndef extends ASTDirectiveWithCondition implements IASTPreprocessorIfn
 			fMacroRef= new ASTMacroReferenceName(this, IASTPreprocessorStatement.MACRO_NAME, condNumber, condEndNumber, macro, null);
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement#getMacroReference()
-	 */
+
 	@Override
 	public ASTPreprocessorName getMacroReference() {
 		return fMacroRef;
@@ -224,9 +223,7 @@ class ASTIfdef extends ASTDirectiveWithCondition implements IASTPreprocessorIfde
 			fMacroRef= new ASTMacroReferenceName(this, IASTPreprocessorStatement.MACRO_NAME, condNumber, condEndNumber, macro, null);
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement#getMacroReference()
-	 */
+
 	@Override
 	public ASTPreprocessorName getMacroReference() {
 		return fMacroRef;
@@ -816,25 +813,16 @@ class ASTMacroExpansion extends ASTPreprocessorNode implements IASTPreprocessorM
 		fContext= expansionCtx;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion#getName()
-	 */
 	@Override
 	public ASTMacroReferenceName getMacroReference() {
 		return fContext.getMacroReference();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion#getMacroDefinition()
-	 */
 	@Override
 	public IASTPreprocessorMacroDefinition getMacroDefinition() {
 		return fContext.getMacroDefinition();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion#getNestedExpansions()
-	 */
 	@Override
 	public ASTPreprocessorName[] getNestedMacroReferences() {
 		return fContext.getNestedMacroReferences();
@@ -857,9 +845,6 @@ class ASTMacroExpansionLocation implements IASTMacroExpansionLocation, org.eclip
 		fLength= length;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation#getExpansion()
-	 */
 	@Override
 	public IASTPreprocessorMacroExpansion getExpansion() {
 		return fContext.getExpansion();

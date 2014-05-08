@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-# Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
+# Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -135,6 +135,11 @@
             contextId="org.eclipse.tm.terminal.EditContext"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="CTRL+SHIFT+V"/>
+      <key
+            commandId="org.eclipse.tm.terminal.paste"
+            contextId="org.eclipse.tm.terminal.EditContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="SHIFT+INSERT"/>
    </extension>
 
    <extension

@@ -43,12 +43,17 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketException;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -97,6 +102,7 @@ import org.eclipse.tm.terminal.model.TerminalTextDataFactory;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -1038,10 +1044,11 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					break;
 				}
 
-				if (escSeq == null)
+				if (escSeq == null) {
 					// Any unmapped key should be handled locally by Eclipse
 					event.doit = true;
-				else
+					processKeyBinding(event, accelerator);
+				} else
 					sendString(escSeq);
 
 				// It's ok to return here, because we never locally echo special keys.
@@ -1107,6 +1114,39 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				charBuffer.append('\n');
 
 			writeToTerminal(charBuffer.toString());
+		}
+
+		/*
+		 * Process given event as Eclipse key binding.
+		 */
+		private void processKeyBinding(KeyEvent event, int accelerator) {
+			IBindingService bindingService = (IBindingService) PlatformUI
+					.getWorkbench().getAdapter(IBindingService.class);
+			KeyStroke keyStroke = SWTKeySupport.convertAcceleratorToKeyStroke(accelerator);
+			Binding binding = bindingService.getPerfectMatch(KeySequence.getInstance(keyStroke));
+			if (binding != null) {
+				ParameterizedCommand cmd = binding.getParameterizedCommand();
+				if (cmd != null) {
+					IHandlerService handlerService = (IHandlerService) PlatformUI
+							.getWorkbench().getAdapter(IHandlerService.class);
+					Event cmdEvent = new Event();
+					cmdEvent.display = event.display;
+					cmdEvent.widget = event.widget;
+					cmdEvent.character = event.character;
+					cmdEvent.keyCode = event.keyCode;
+					cmdEvent.keyLocation = event.keyLocation;
+					cmdEvent.stateMask = event.stateMask;
+					event.doit = false;
+					try {
+						handlerService.executeCommand(cmd, cmdEvent);
+					} catch (ExecutionException e) {
+						TerminalPlugin.getDefault().getLog().log(
+								new Status(IStatus.ERROR,TerminalPlugin.PLUGIN_ID,e.getLocalizedMessage(),e));
+					} catch (Exception e) {
+						// ignore other exceptions from cmd execution
+					}
+				}
+			}
 		}
 
 	}

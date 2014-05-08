@@ -179,15 +179,15 @@ class THHierarchyModel {
 			return;
 		}
 		boolean fwd= fHierarchyKind == SUPER_TYPE_HIERARCHY;
-		ArrayList<THNode> stack= new ArrayList<THNode>();
-		ArrayList<THNode> roots= new ArrayList<THNode>();
-		ArrayList<THNode> leafs= new ArrayList<THNode>();
+		ArrayList<THNode> stack= new ArrayList<>();
+		ArrayList<THNode> roots= new ArrayList<>();
+		ArrayList<THNode> leafs= new ArrayList<>();
 		
 		THGraphNode inputNode= fGraph.getInputNode();
 		Collection<THGraphNode> groots;
 		
 		if (fHierarchyKind == TYPE_HIERARCHY) {
-			groots= fGraph.getLeaveNodes();
+			groots= fGraph.getLeafNodes();
 		} else {
 			THGraphNode node= fGraph.getInputNode();
 			if (node != null) {
@@ -204,7 +204,7 @@ class THHierarchyModel {
 		}
 		
 		while (!stack.isEmpty()) {
-			THNode node= stack.remove(stack.size()-1);
+			THNode node= stack.remove(stack.size() - 1);
 			THGraphNode gnode= fGraph.getNode(node.getElement());
 			List<THGraphEdge> edges= fwd ? gnode.getOutgoing() : gnode.getIncoming();
 			if (edges.isEmpty()) {
@@ -219,7 +219,7 @@ class THHierarchyModel {
 			}
 		}
 		fRootNodes= roots.toArray(new THNode[roots.size()]);
-		removeFilteredLeafs(fRootNodes);
+		removeFilteredLeaves(fRootNodes);
 		fSelectedTypeNode= findSelection(fRootNodes);
 		if (fSelectedTypeNode != null) {
 			fTypeToSelect= fSelectedTypeNode.getElement();
@@ -231,15 +231,15 @@ class THHierarchyModel {
 			removeNonImplementorLeaves(fRootNodes);
 	}
 
-	private void removeFilteredLeafs(THNode[] rootNodes) {
+	private void removeFilteredLeaves(THNode[] rootNodes) {
 		for (THNode node : rootNodes) {
-			node.removeFilteredLeafs();
+			node.removeFilteredLeaves();
 		}
 	}
 
 	private void removeNonImplementorLeaves(THNode[] rootNodes) {
 		for (THNode node : rootNodes) {
-			node.removeNonImplementorLeafs();
+			node.removeNonImplementorLeaves();
 		}
 	}
 
@@ -394,8 +394,7 @@ class THHierarchyModel {
 	}
 
 	private boolean isImplementor(ICElement element) {
-		if (element == null 
-				|| fSelectedMember == null || fMemberSignatureToSelect == null) {
+		if (element == null || fSelectedMember == null || fMemberSignatureToSelect == null) {
 			return false;
 		}
 		THGraphNode gnode= fGraph.getNode(element);

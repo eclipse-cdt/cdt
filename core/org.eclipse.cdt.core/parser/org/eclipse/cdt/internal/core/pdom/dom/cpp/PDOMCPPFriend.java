@@ -28,7 +28,7 @@ class PDOMCPPFriend extends PDOMNode {
 	public PDOMCPPFriend(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
-	
+
 	public PDOMCPPFriend(PDOMLinkage linkage, PDOMName friendSpec) throws CoreException {
 		super(linkage, null);
 
@@ -48,10 +48,11 @@ class PDOMCPPFriend extends PDOMNode {
 
 	public PDOMName getSpecifierName() throws CoreException {
 		long rec = getDB().getRecPtr(record + FRIEND_SPECIFIER);
-		if (rec != 0) return new PDOMName(getLinkage(), rec);
+		if (rec != 0)
+			return new PDOMName(getLinkage(), rec);
 		return null;
 	}
-	
+
 	public IBinding getFriendSpecifier() {
 		PDOMName friendSpecName;
 		try {
@@ -64,12 +65,12 @@ class PDOMCPPFriend extends PDOMNode {
 		}
 		return null;
 	}
-	
+
 	public void setNextFriend(PDOMCPPFriend nextFriend) throws CoreException {
 		long rec = nextFriend != null ? nextFriend.getRecord() : 0;
 		getDB().putRecPtr(record + NEXT_FRIEND, rec);
 	}
-	
+
 	public PDOMCPPFriend getNextFriend() throws CoreException {
 		long rec = getDB().getRecPtr(record + NEXT_FRIEND);
 		return rec != 0 ? new PDOMCPPFriend(getLinkage(), rec) : null;

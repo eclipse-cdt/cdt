@@ -9,7 +9,6 @@
  *     Markus Schorn - initial API and implementation
  *     Patrick Hofer [bug 325488]
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import java.util.Iterator;
@@ -47,11 +46,10 @@ import org.eclipse.cdt.internal.ui.text.AbstractInformationControl;
 import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
 
 public class THInformationControl extends AbstractInformationControl implements ITHModelPresenter {
-
 	private THHierarchyModel fModel;
 	private THLabelProvider fHierarchyLabelProvider;
 	private TreeViewer fHierarchyTreeViewer;
-	private boolean fDisposed= false;
+	private boolean fDisposed;
 	private KeyAdapter fKeyAdapter;
 	
 	public THInformationControl(Shell parent, int shellStyle, int treeStyle) {
@@ -265,10 +263,11 @@ public class THInformationControl extends AbstractInformationControl implements 
 	protected void selectFirstMatch() {
 		Tree tree= fHierarchyTreeViewer.getTree();
 		Object element= findElement(tree.getItems());
-		if (element != null)
+		if (element != null) {
 			fHierarchyTreeViewer.setSelection(new StructuredSelection(element), true);
-		else
+		} else {
 			fHierarchyTreeViewer.setSelection(StructuredSelection.EMPTY);
+		}
 	}
 
 	protected void toggleHierarchy() {
@@ -301,7 +300,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 			Object item= item2.getData();
 			THNode element= null;
 			if (item instanceof THNode) {
-				element= (THNode)item;
+				element= (THNode) item;
 				if (fStringMatcher == null)
 					return element;
 	

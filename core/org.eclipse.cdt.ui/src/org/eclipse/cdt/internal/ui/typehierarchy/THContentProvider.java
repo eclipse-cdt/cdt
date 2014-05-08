@@ -6,21 +6,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 public class THContentProvider implements ITreeContentProvider {
-	private static final Object[] NO_CHILDREN= new Object[0];
+	private static final Object[] NO_CHILDREN= {};
 	private THHierarchyModel fModel; 
 
 	public THContentProvider() {
 	}
-    
+
     @Override
 	final public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     	fModel= (THHierarchyModel) newInput;

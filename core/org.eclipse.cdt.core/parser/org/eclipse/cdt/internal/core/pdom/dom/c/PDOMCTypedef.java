@@ -93,8 +93,7 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 					}
 				}
 				return false;
-			}
-			else {
+			} else {
 				return false;
 			}
 		}

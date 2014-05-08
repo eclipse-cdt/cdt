@@ -50,7 +50,7 @@ import com.ibm.icu.text.MessageFormat;
  * 0                | version number
  * INT_SIZE         | pointer to head of linked list of blocks of size MIN_BLOCK_DELTAS*BLOCK_SIZE_DELTA
  * ..               | ...
- * INT_SIZE * m (1) | pointer to head of linked list of blocks of size (m+MIN_BLOCK_DELTAS) * BLOCK_SIZE_DELTA
+ * INT_SIZE * m (1) | pointer to head of linked list of blocks of size (m + MIN_BLOCK_DELTAS) * BLOCK_SIZE_DELTA
  * DATA_AREA        | undefined (PDOM stores its own house-keeping data in this area)
  *
  * (1) where 2 <= m <= CHUNK_SIZE/BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 1
@@ -60,7 +60,7 @@ import com.ibm.icu.text.MessageFormat;
  * offset            content
  * 	                 _____________________________
  * 0                | size of block (negative indicates in use, positive unused) (2 bytes)
- * PREV_OFFSET      | pointer to prev block (of same size) (only in free blocks)
+ * PREV_OFFSET      | pointer to previous block (of same size) (only in free blocks)
  * NEXT_OFFSET      | pointer to next block (of same size) (only in free blocks)
  *
  */
@@ -68,7 +68,7 @@ public class Database {
 	// Public for tests only, you shouldn't need these.
 	public static final int INT_SIZE = 4;
 	public static final int CHUNK_SIZE = 1024 * 4;
-	public static final int OFFSET_IN_CHUNK_MASK= CHUNK_SIZE-1;
+	public static final int OFFSET_IN_CHUNK_MASK= CHUNK_SIZE - 1;
 	public static final int BLOCK_HEADER_SIZE= 2;
 	public static final int BLOCK_SIZE_DELTA_BITS = 3;
 	public static final int BLOCK_SIZE_DELTA= 1 << BLOCK_SIZE_DELTA_BITS;

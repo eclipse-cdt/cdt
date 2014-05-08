@@ -39,10 +39,10 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 class THGraph {
 	private static final ICElement[] NO_MEMBERS = {};
-	private THGraphNode fInputNode= null;
-	private HashSet<THGraphNode> fRootNodes= new HashSet<THGraphNode>();
-	private HashSet<THGraphNode> fLeaveNodes= new HashSet<THGraphNode>();
-	private HashMap<ICElement, THGraphNode> fNodes= new HashMap<ICElement, THGraphNode>();
+	private THGraphNode fInputNode;
+	private HashSet<THGraphNode> fRootNodes= new HashSet<>();
+	private HashSet<THGraphNode> fLeafNodes= new HashSet<>();
+	private HashMap<ICElement, THGraphNode> fNodes= new HashMap<>();
 	private boolean fFileIsIndexed;
 	
 	public THGraph() {
@@ -63,7 +63,7 @@ class THGraph {
 			node= new THGraphNode(input);
 			fNodes.put(input, node);
 			fRootNodes.add(node);
-			fLeaveNodes.add(node);
+			fLeafNodes.add(node);
 		}
 		return node;
 	}
@@ -76,7 +76,7 @@ class THGraph {
 		from.startEdge(edge);
 		to.endEdge(edge);
 		fRootNodes.remove(to);
-		fLeaveNodes.remove(from);
+		fLeafNodes.remove(from);
 		return edge;
 	}
 
@@ -88,8 +88,8 @@ class THGraph {
 			return false;
 		}
 		
-		HashSet<THGraphNode> checked= new HashSet<THGraphNode>();
-		ArrayList<THGraphNode> stack= new ArrayList<THGraphNode>();
+		HashSet<THGraphNode> checked= new HashSet<>();
+		ArrayList<THGraphNode> stack= new ArrayList<>();
 		stack.add(to);
 		
 		while (!stack.isEmpty()) {
@@ -119,8 +119,8 @@ class THGraph {
 		return fRootNodes;
 	}
 
-	public Collection<THGraphNode> getLeaveNodes() {
-		return fLeaveNodes;
+	public Collection<THGraphNode> getLeafNodes() {
+		return fLeafNodes;
 	}
 
 	public void defineInputNode(IIndex index, ICElement input) {
@@ -141,8 +141,8 @@ class THGraph {
 		if (fInputNode == null) {
 			return;
 		}
-		HashSet<ICElement> handled= new HashSet<ICElement>();
-		ArrayList<ICElement> stack= new ArrayList<ICElement>();
+		HashSet<ICElement> handled= new HashSet<>();
+		ArrayList<ICElement> stack= new ArrayList<>();
 		stack.add(fInputNode.getElement());
 		handled.add(fInputNode.getElement());
 		while (!stack.isEmpty()) {
@@ -204,8 +204,8 @@ class THGraph {
 		if (fInputNode == null) {
 			return;
 		}
-		HashSet<ICElement> handled= new HashSet<ICElement>();
-		ArrayList<ICElement> stack= new ArrayList<ICElement>();
+		HashSet<ICElement> handled= new HashSet<>();
+		ArrayList<ICElement> stack= new ArrayList<>();
 		ICElement element = fInputNode.getElement();
 		stack.add(element);
 		handled.add(element);
@@ -249,7 +249,7 @@ class THGraph {
 	
 	private void addMembers(IIndex index, THGraphNode graphNode, IBinding binding) throws CoreException {
 		if (graphNode.getMembers(false) == null) {
-			ArrayList<ICElement> memberList= new ArrayList<ICElement>();
+			ArrayList<ICElement> memberList= new ArrayList<>();
 			if (binding instanceof ICPPClassType) {
 				ICPPClassType ct= (ICPPClassType) binding;
 				IBinding[] members= ClassTypeHelper.getDeclaredFields(ct, null);
@@ -285,7 +285,7 @@ class THGraph {
 	}
 
 	public boolean isTrivial() {
-		return fNodes.size() < 2;
+		return fNodes.size() <= 1;
 	}
 
 	public boolean isFileIndexed() {

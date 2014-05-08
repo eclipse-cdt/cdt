@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    IBM Corporation
- *    Markus Schorn (Wind River Systems)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     IBM Corporation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.CoreException;
  * Database representation for c-variables
  */
 class PDOMCVariable extends PDOMBinding implements IVariable {
-
 	/**
 	 * Offset of pointer to type information for this variable
 	 * (relative to the beginning of the record).

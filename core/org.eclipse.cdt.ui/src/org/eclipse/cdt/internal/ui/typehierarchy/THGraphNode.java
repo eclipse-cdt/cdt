@@ -11,10 +11,8 @@
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.ICElement;
@@ -23,7 +21,7 @@ class THGraphNode {
 	private List<THGraphEdge> fOutgoing= Collections.emptyList();
 	private List<THGraphEdge> fIncoming= Collections.emptyList();
 	private ICElement fElement;
-	private ICElement[] fMembers= null;
+	private ICElement[] fMembers;
 	
 	THGraphNode(ICElement element) {
 		fElement= element;
@@ -46,7 +44,7 @@ class THGraphNode {
 		case 0:
 			return Collections.singletonList(elem);
 		case 1:
-			list= new ArrayList<THGraphEdge>(list);
+			list= new ArrayList<>(list);
 			list.add(elem);
 			return list;
 		}
@@ -70,7 +68,7 @@ class THGraphNode {
 		if (!addInherited) {
 			return fMembers;
 		}
-		ArrayList<ICElement> list= new ArrayList<ICElement>();
+		ArrayList<ICElement> list= new ArrayList<>();
 		collectMembers(new HashSet<THGraphNode>(), list);
 		return list.toArray(new ICElement[list.size()]);
 	}
@@ -78,11 +76,10 @@ class THGraphNode {
 	private void collectMembers(HashSet<THGraphNode> visited, List<ICElement> list) {
 		if (visited.add(this)) {
 			if (fMembers != null) {
-				list.addAll(Arrays.asList(fMembers));
+				Collections.addAll(list, fMembers);
 			}
 			List<THGraphEdge> bases= getOutgoing();
-			for (Iterator<THGraphEdge> iterator = bases.iterator(); iterator.hasNext();) {
-				THGraphEdge edge = iterator.next();
+			for (THGraphEdge edge : bases) {
 				edge.getEndNode().collectMembers(visited, list);
 			}
 		}

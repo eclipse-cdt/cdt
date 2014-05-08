@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,14 +40,14 @@ public interface IIndexFile extends IFileNomination {
 	 * @throws CoreException
 	 */
 	IIndexInclude[] getIncludes() throws CoreException;
-	
+
 	/**
 	 * Returns all macros defined in this file.
 	 * @return an array of macros found in this file
 	 * @throws CoreException
 	 */
 	IIndexMacro[] getMacros() throws CoreException;
-	
+
 	/**
 	 * Returns all using directives for namespaces and global scope, found in this file.
 	 * @throws CoreException 
@@ -95,7 +95,7 @@ public interface IIndexFile extends IFileNomination {
 	 * Find all names within the given range.
 	 */
 	IIndexName[] findNames(int offset, int length) throws CoreException;
-	
+
 	/**
 	 * Returns the include that was used to parse this file, may be <code>null</code>.
 	 */
@@ -115,14 +115,6 @@ public interface IIndexFile extends IFileNomination {
 	 * @since 5.7
 	 */
 	String getReplacementHeader() throws CoreException;
-
-	/**
-	 * Sets the name of the replacement header.
-	 * @param replacementHeader the name of the replacement header, may be {@code null} or an empty
-	 *     string
-	 * @since 5.7
-	 */
-	void setReplacementHeader(String replacementHeader) throws CoreException;
 
 	/**
 	 * Returns detailed information about the file. For debugging only.

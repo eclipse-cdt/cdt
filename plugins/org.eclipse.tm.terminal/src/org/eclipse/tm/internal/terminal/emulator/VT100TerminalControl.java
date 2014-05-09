@@ -570,13 +570,13 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					// TODO: Make the ESCAPE-vs-highbit behavior user configurable.
 
 					Logger.log("sending ESC + '" + byteToSend + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-					getOutputStream().write('\u001b');
-					getOutputStream().write(byteToSend);
+					os.write('\u001b');
+					os.write(byteToSend);
 				} else {
 					Logger.log("sending '" + byteToSend + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-					getOutputStream().write(byteToSend);
+					os.write(byteToSend);
 				}
-				getOutputStream().flush();
+				os.flush();
 			}
 		} catch (SocketException socketException) {
 			Logger.logException(socketException);
@@ -876,15 +876,16 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			event.doit = false;
 
 			char character = event.character;
+			int modifierKeys = event.stateMask & SWT.MODIFIER_MASK;
 			boolean ctrlKeyPressed = (event.stateMask & SWT.CTRL) != 0;
-			boolean altKeyPressed = (event.stateMask & SWT.ALT) != 0;
+			boolean onlyCtrlKeyPressed = modifierKeys == SWT.CTRL;
 			boolean macCmdKeyPressed = (event.stateMask & SWT.COMMAND) != 0;
 
 			// To fix SPR 110341, we consider the Alt key to be pressed only when the
 			// Control key is _not_ also pressed.  This works around a bug in SWT where,
 			// on European keyboards, the AltGr key being pressed appears to us as Control
 			// + Alt being pressed simultaneously.
-			boolean onlyAltKeyPressed = altKeyPressed && !ctrlKeyPressed;
+			boolean altKeyPressed = (event.stateMask & SWT.ALT) != 0 && !ctrlKeyPressed;
 
 			//if (!isConnected()) {
 			if (fState==TerminalState.CLOSED) {
@@ -926,7 +927,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				// for the Terminal view.  Do not delete those tags.
 
 				String escSeq = null;
-				boolean anyModifierPressed = (event.stateMask & SWT.MODIFIER_MASK) != 0;
+				boolean anyModifierPressed = modifierKeys != 0;
+				boolean onlyMacCmdKeyPressed = modifierKeys == SWT.COMMAND;
 
 				switch (event.keyCode) {
 				case 0x1000001: // Up arrow.
@@ -940,22 +942,22 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					break;
 
 				case 0x1000003: // Left arrow.
-					if (ctrlKeyPressed) {
+					if (onlyCtrlKeyPressed) {
 						escSeq = "\u001b[1;5D"; //$NON-NLS-1$
 					} else if (!anyModifierPressed) {
 						escSeq = "\u001b[D"; //$NON-NLS-1$
-					} else if (macCmdKeyPressed) {
+					} else if (onlyMacCmdKeyPressed) {
 						// Cmd-Left is "Home" on the Mac
 						escSeq = "\u001b[H"; //$NON-NLS-1$
 					}
 					break;
 
 				case 0x1000004: // Right arrow.
-					if (ctrlKeyPressed) {
+					if (onlyCtrlKeyPressed) {
 						escSeq = "\u001b[1;5C"; //$NON-NLS-1$
 					} else if (!anyModifierPressed) {
 						escSeq = "\u001b[C"; //$NON-NLS-1$
-					} else if (macCmdKeyPressed) {
+					} else if (onlyMacCmdKeyPressed) {
 						// Cmd-Right is "End" on the Mac
 						escSeq = "\u001b[F"; //$NON-NLS-1$
 					}
@@ -1067,14 +1069,14 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 			Logger.log("stateMask = " + event.stateMask); //$NON-NLS-1$
 
-			if (!altKeyPressed && ctrlKeyPressed && character == ' ') {
+			if (onlyCtrlKeyPressed && character == ' ') {
 				// Send a NUL character -- many terminal emulators send NUL when
 				// Control-Space is pressed.  This is used to set the mark in Emacs.
 
 				character = '\u0000';
 			}
 
-			sendChar(character, onlyAltKeyPressed);
+			sendChar(character, altKeyPressed);
 
 			// Special case: When we are in a TCP connection and echoing characters
 			// locally, send a LF after sending a CR.
@@ -1102,7 +1104,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			// o The character is the DELETE character.
 
 			if (getTerminalConnector() == null
-					|| getTerminalConnector().isLocalEcho() == false || onlyAltKeyPressed
+					|| getTerminalConnector().isLocalEcho() == false || altKeyPressed
 					|| (character >= '\u0001' && character < '\t')
 					|| (character > '\t' && character < '\r')
 					|| (character > '\r' && character <= '\u001f')
@@ -1139,6 +1141,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					IHandlerService handlerService = (IHandlerService) PlatformUI
 							.getWorkbench().getAdapter(IHandlerService.class);
 					Event cmdEvent = new Event();
+					cmdEvent.type = SWT.KeyDown;
 					cmdEvent.display = event.display;
 					cmdEvent.widget = event.widget;
 					cmdEvent.character = event.character;

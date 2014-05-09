@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2013, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.keys.IBindingService;
 
 class EditActionAccelerators {
-	private static final String COPY_COMMAND_ID = "org.eclipse.tm.terminal.copy";
-	private static final String PASTE_COMMAND_ID = "org.eclipse.tm.terminal.paste";
+	private static final String COPY_COMMAND_ID = "org.eclipse.tm.terminal.copy"; //$NON-NLS-1$
+	private static final String PASTE_COMMAND_ID = "org.eclipse.tm.terminal.paste"; //$NON-NLS-1$
 
 	private final Map commandIdsByAccelerator = new HashMap();
 
@@ -30,25 +30,21 @@ class EditActionAccelerators {
 	}
 
 	private void addAccelerator(String commandId) {
-		KeySequence keySequence = bindingFor(commandId);
-		if (keySequence == null) {
-			return;
-		}
-		KeyStroke[] keyStrokes = keySequence.getKeyStrokes();
-		if (keyStrokes.length != 0) {
-			int accelerator = SWTKeySupport.convertKeyStrokeToAccelerator(keyStrokes[0]);
-			commandIdsByAccelerator.put(new Integer(accelerator), commandId);
+		TriggerSequence[] bindings = bindingsFor(commandId);
+		for (int i=0; i<bindings.length; ++i) {
+			if (bindings[i] instanceof KeySequence) {
+				KeyStroke[] keyStrokes = ((KeySequence) bindings[i]).getKeyStrokes();
+				if (keyStrokes.length != 0) {
+					int accelerator = SWTKeySupport.convertKeyStrokeToAccelerator(keyStrokes[0]);
+					commandIdsByAccelerator.put(new Integer(accelerator), commandId);
+				}
+			}
 		}
 	}
 
-	private static KeySequence bindingFor(String commandId) {
+	private static TriggerSequence[] bindingsFor(String commandId) {
 		IBindingService bindingService = bindingService();
-		TriggerSequence binding = bindingService.getBestActiveBindingFor(commandId);
-		if (binding instanceof KeySequence) {
-			KeySequence keySequence = (KeySequence) binding;
-			return keySequence;
-		}
-		return null;
+		return bindingService.getActiveBindingsFor(commandId);
 	}
 
 	private static IBindingService bindingService() {

@@ -101,12 +101,12 @@ public class DsfTerminateCommand implements ITerminateHandler {
         return execute(processDmc, request);
     }
 
-    private void canExecute(GdbLaunch launch, IEnabledStateRequest request) {
+    protected void canExecute(GdbLaunch launch, IEnabledStateRequest request) {
     	request.setEnabled(launch.canTerminate());
     	request.done();
     }
 
-    private boolean execute(GdbLaunch launch, final IDebugCommandRequest request) {    	
+    protected boolean execute(GdbLaunch launch, final IDebugCommandRequest request) {    	
         try {
             fExecutor.execute(new DsfRunnable() { 
                 @Override
@@ -204,7 +204,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
      * a single process in a multi-process session.
      * See bug 377447
      */
-    private void waitForTermination(final IDebugCommandRequest request) {
+    protected void waitForTermination(final IDebugCommandRequest request) {
     	// It is possible that the session already had time to terminate
 		if (!DsfSession.isSessionActive(fSession.getId())) {
 			request.done();

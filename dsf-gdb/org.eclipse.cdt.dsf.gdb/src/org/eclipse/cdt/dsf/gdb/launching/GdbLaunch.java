@@ -57,6 +57,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
+import org.eclipse.debug.core.commands.IDisconnectHandler;
 import org.eclipse.debug.core.commands.ITerminateHandler;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -365,6 +366,9 @@ public class GdbLaunch extends DsfLaunch
 
     	// Allow to call the connect handler when the launch is selected
     	if (adapter.equals(IConnectHandler.class))
+    		return getSession().getModelAdapter(adapter);
+    	
+    	if (adapter.equals(IDisconnectHandler.class))
     		return getSession().getModelAdapter(adapter);
     	
     	if (adapter.equals(IDebugNewExecutableHandler.class))

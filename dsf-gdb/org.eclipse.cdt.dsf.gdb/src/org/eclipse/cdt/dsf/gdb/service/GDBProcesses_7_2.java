@@ -12,11 +12,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
+import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
@@ -58,9 +62,65 @@ import org.eclipse.debug.core.ILaunch;
  * 
  * @since 4.0
  */
-public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
+public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminate, IMultiDetach {
+
+	abstract private class ConditionalRequestMonitor extends ImmediateDataRequestMonitor<Boolean> {
+
+    	private Iterator<? extends IDMContext> fIterator;
+    	private boolean fAll = true;
+    	private DataRequestMonitor<Boolean> fParentMonitor;
+
+		private ConditionalRequestMonitor(Iterator<? extends IDMContext> it, boolean all, DataRequestMonitor<Boolean> parentMonitor) {
+			super(parentMonitor);
+			fAll = all;
+			fParentMonitor = parentMonitor;
+			fIterator = it;
+		}
+
+		@Override
+    	protected void handleCompleted() {
+			if (!isSuccess() || getData() != fAll) {
+				fParentMonitor.setData(getData());
+				fParentMonitor.done();
+			}
+			else if (!fIterator.hasNext()) {
+				fParentMonitor.setData(fAll);
+				fParentMonitor.done();
+			}
+			else {
+				proceed(fIterator, fAll, fParentMonitor);
+			}
+    	}
+		
+		abstract protected void proceed(Iterator<? extends IDMContext> it, boolean all, DataRequestMonitor<Boolean> parentMonitor);
+	}
     
-    /**
+    private class CanDetachRequestMonitor extends ConditionalRequestMonitor {
+
+		private CanDetachRequestMonitor(Iterator<? extends IDMContext> it, boolean all, DataRequestMonitor<Boolean> parentMonitor) {
+			super(it, all, parentMonitor);
+		}
+
+		@Override
+		protected void proceed(Iterator<? extends IDMContext> it, boolean all, DataRequestMonitor<Boolean> parentMonitor) {
+			canDetachDebuggerFromProcess(it.next(), new CanDetachRequestMonitor(it, all, parentMonitor));
+		}
+
+	}
+
+	private class CanTerminateRequestMonitor extends ConditionalRequestMonitor {
+
+		private CanTerminateRequestMonitor(Iterator<? extends IDMContext> it, boolean all, DataRequestMonitor<Boolean> parentMonitor) {
+			super(it, all, parentMonitor);
+		}
+
+		@Override
+		protected void proceed(Iterator<? extends IDMContext> it, boolean all, DataRequestMonitor<Boolean> parentMonitor) {
+			canTerminate((IThreadDMContext)it.next(), new CanTerminateRequestMonitor(it, all, parentMonitor));
+		}
+	}
+
+	/**
      * The id of the single thread to be used during event visualization. 
      * @since 4.1 
      */
@@ -114,6 +174,8 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 	 *            initialization is done.
 	 */
 	private void doInitialize(RequestMonitor requestMonitor) {
+        register(new String[]{ IMultiDetach.class.getName(), IMultiTerminate.class.getName() }, new Hashtable<String,String>());
+
 		fCommandControl = getServicesTracker().getService(IGDBControl.class);
         fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
     	fBackend = getServicesTracker().getService(IGDBBackend.class);
@@ -608,5 +670,112 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
     public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
     	setTraceVisualization(e.isVisualizationModeEnabled());
     }
+
+	/**
+	 * @since 4.4
+	 */
+	@Override
+	public void canDetachDebuggerFromSomeProcesses(IDMContext[] dmcs, final DataRequestMonitor<Boolean> rm) {
+		canDetachFromProcesses(dmcs, false, rm);
+	}
+
+	/**
+	 * @since 4.4
+	 */
+	@Override
+	public void canDetachDebuggerFromAllProcesses(IDMContext[] dmcs, DataRequestMonitor<Boolean> rm) {
+		canDetachFromProcesses(dmcs, true, rm);
+	}
+
+	/**
+	 * @since 4.4
+	 */
+	protected void canDetachFromProcesses(IDMContext[] dmcs, boolean all, DataRequestMonitor<Boolean> rm) {
+		Set<IMIContainerDMContext> contDmcs = new HashSet<IMIContainerDMContext>();
+		for (IDMContext c : dmcs) {
+			IMIContainerDMContext contDmc = DMContexts.getAncestorOfType(c, IMIContainerDMContext.class);
+			if (contDmc != null) {
+				contDmcs.add(contDmc);
+			}
+		}
+
+		Iterator<IMIContainerDMContext> it = contDmcs.iterator();
+		if (!it.hasNext()) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
+		canDetachDebuggerFromProcess(it.next(), new CanDetachRequestMonitor(it, all, rm));
+	}
+
+	/**
+	 * @since 4.4
+	 */
+	@Override
+	public void detachDebuggerFromProcesses(IDMContext[] dmcs, final RequestMonitor rm) {
+		Set<IMIContainerDMContext> contDmcs = new HashSet<IMIContainerDMContext>();
+		for (IDMContext c : dmcs) {
+			IMIContainerDMContext contDmc = DMContexts.getAncestorOfType(c, IMIContainerDMContext.class);
+			if (contDmc != null) {
+				contDmcs.add(contDmc);
+			}
+		}
+		if (contDmcs.isEmpty()) {
+			rm.done();
+			return;
+		}
+
+		CountingRequestMonitor crm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), rm);
+		crm.setDoneCount(contDmcs.size());
+		for (IMIContainerDMContext contDmc : contDmcs) {
+			detachDebuggerFromProcess(contDmc, crm);
+		}
+	}
+
+	/**
+	 * @since 4.4
+	 */
+	@Override
+	public void canTerminateSome(IThreadDMContext[] dmcs, DataRequestMonitor<Boolean> rm) {
+		canTerminate(dmcs, false, rm);
+	}
+
+	/**
+	 * @since 4.4
+	 */
+	@Override
+	public void canTerminateAll(IThreadDMContext[] dmcs, DataRequestMonitor<Boolean> rm) {
+		canTerminate(dmcs, true, rm);
+	}
+
+	/**
+	 * @since 4.4
+	 */
+	protected void canTerminate(IThreadDMContext[] dmcs, boolean all, DataRequestMonitor<Boolean> rm) {
+		Iterator<IThreadDMContext> it = Arrays.asList(dmcs).iterator();
+		if (!it.hasNext()) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
+		canTerminate(it.next(), new CanTerminateRequestMonitor(it, all, rm));
+	}
+
+	/**
+	 * @since 4.4
+	 */
+	@Override
+	public void terminate(IThreadDMContext[] dmcs, RequestMonitor rm) {
+		if (dmcs.length == 0) {
+			rm.done();
+			return;
+		}
+
+		CountingRequestMonitor crm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), rm);
+		crm.setDoneCount(dmcs.length);
+		for (IThreadDMContext threadDmc : dmcs) {
+			terminate(threadDmc, crm);
+		}
+	}
 }
 

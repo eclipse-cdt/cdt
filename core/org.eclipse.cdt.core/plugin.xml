@@ -367,22 +367,6 @@
       </fileTypes>
       <fileTypes
             type="text"
-            extension="C">
-      </fileTypes>
-      <fileTypes
-            type="text"
-            extension="c++">
-      </fileTypes>
-      <fileTypes
-            type="text"
-            extension="cp">
-      </fileTypes>
-      <fileTypes
-            type="text"
-            extension="CPP">
-      </fileTypes>
-      <fileTypes
-            type="text"
             extension="h">
       </fileTypes>
       <fileTypes
@@ -392,26 +376,6 @@
       <fileTypes
             type="text"
             extension="hpp">
-      </fileTypes>
-      <fileTypes
-            type="text"
-            extension="hxx">
-      </fileTypes>
-      <fileTypes
-            type="text"
-            extension="H">
-      </fileTypes>
-      <fileTypes
-            type="text"
-            extension="HPP">
-      </fileTypes>
-      <fileTypes
-            type="text"
-            extension="h++">
-      </fileTypes>
-      <fileTypes
-            type="text"
-            extension="tcc">
       </fileTypes>
       <fileTypes
             type="binary"
@@ -544,12 +508,12 @@
 	  <!-- declares a content type for C++ source files -->
       <content-type id="cxxSource" name="%cxxSourceName" 
           base-type="org.eclipse.cdt.core.cSource"
-		  file-extensions="C,cpp,cxx,cc,c++,cp,CPP"
+		  file-extensions="C,cpp,cxx,cc,c++"
           priority="high"/>
 	  <!-- declares a content type for C++ header files -->
       <content-type id="cxxHeader" name="%cxxHeaderName" 
           base-type="org.eclipse.cdt.core.cxxSource"
-		  file-extensions="h,hpp,hh,hxx,H,HPP,h++,tcc"          
+		  file-extensions="h,hpp,hh,hxx"          
           priority="high"/>
 	  <!-- declares a content type for ASM Source files -->
       <content-type id="asmSource" name="%asmSourceName" 

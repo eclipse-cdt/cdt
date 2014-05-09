@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
- * Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -24,7 +24,7 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Sanity check the DBProperties class
+ * Tests for the {@link DBProperties} class.
  */
 public class DBPropertiesTests extends BaseTestCase {
 	File dbLoc;
@@ -50,19 +50,19 @@ public class DBPropertiesTests extends BaseTestCase {
 	public void testBasic() throws CoreException {
 		DBProperties properties = new DBProperties(db);
 		Properties expected = System.getProperties();
-		for(Iterator i = expected.keySet().iterator(); i.hasNext(); ) {
+		for (Iterator i = expected.keySet().iterator(); i.hasNext(); ) {
 			String key = (String) i.next();
 			String value = expected.getProperty(key);
-			if(value!=null) {
+			if (value != null) {
 				properties.setProperty(key, value);
 			}
 		}
-		for(Iterator i = expected.keySet().iterator(); i.hasNext(); ) {
+		for (Iterator i = expected.keySet().iterator(); i.hasNext(); ) {
 			String key = (String) i.next();
 			String aValue = properties.getProperty(key);
 			assertEquals(expected.getProperty(key), aValue);
 		}
-		for(Iterator i = expected.keySet().iterator(); i.hasNext(); ) {
+		for (Iterator i = expected.keySet().iterator(); i.hasNext(); ) {
 			String key = (String) i.next();
 			properties.removeProperty(key);
 		}
@@ -76,7 +76,7 @@ public class DBPropertiesTests extends BaseTestCase {
 		DBProperties ps = new DBProperties(db);
 		
 		StringBuffer largeValue = new StringBuffer();
-		for(int i=0; i<Database.CHUNK_SIZE*2; i+=64) {
+		for (int i= 0; i < Database.CHUNK_SIZE * 2; i += 64) {
 			largeValue.append("********");
 			ps.setProperty("key", largeValue.toString());
 			ps.setProperty(largeValue.toString(), "value");

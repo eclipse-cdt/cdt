@@ -53,7 +53,7 @@ import com.ibm.icu.text.MessageFormat;
  * INT_SIZE * m (1) | pointer to head of linked list of blocks of size (m + MIN_BLOCK_DELTAS) * BLOCK_SIZE_DELTA
  * DATA_AREA        | undefined (PDOM stores its own house-keeping data in this area)
  *
- * (1) where 2 <= m <= CHUNK_SIZE/BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 1
+ * (1) where 2 <= m <= CHUNK_SIZE / BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 1
  *
  * ===== block structure
  *
@@ -406,12 +406,12 @@ public class Database {
 
 	private long getFirstBlock(int blocksize) throws CoreException {
 		assert fLocked;
-		return fHeaderChunk.getFreeRecPtr((blocksize/BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 1) * INT_SIZE);
+		return fHeaderChunk.getFreeRecPtr((blocksize / BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 1) * INT_SIZE);
 	}
 
 	private void setFirstBlock(int blocksize, long block) throws CoreException {
 		assert fExclusiveLock;
-		fHeaderChunk.putFreeRecPtr((blocksize/BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 1) * INT_SIZE, block);
+		fHeaderChunk.putFreeRecPtr((blocksize / BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 1) * INT_SIZE, block);
 	}
 
 	private void removeBlock(Chunk chunk, int blocksize, long block) throws CoreException {

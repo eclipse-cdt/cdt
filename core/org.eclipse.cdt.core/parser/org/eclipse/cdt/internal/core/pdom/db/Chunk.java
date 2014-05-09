@@ -102,9 +102,9 @@ final class Chunk {
 
 	static final int getInt(final byte[] buffer, int idx) {
 		return ((buffer[idx] & 0xff) << 24) |
-			((buffer[++idx] & 0xff) << 16) |
-			((buffer[++idx] & 0xff) <<  8) |
-			((buffer[++idx] & 0xff) <<  0);
+				((buffer[++idx] & 0xff) << 16) |
+				((buffer[++idx] & 0xff) <<  8) |
+				((buffer[++idx] & 0xff) <<  0);
 	}
 
 	/**
@@ -130,7 +130,7 @@ final class Chunk {
 		 * have an unsigned 32-bit value as a long. This gives us one more useful bit in the 
 		 * stored record pointers.
 		 */
-		long address = value & (((long) 1 << Integer.SIZE) - 1);
+		long address = value & 0xFFFFFFFFL;
 		return address << Database.BLOCK_SIZE_DELTA_BITS;
 	}
 
@@ -198,8 +198,8 @@ final class Chunk {
 	public int get3ByteUnsignedInt(final long offset) {
 		int idx= recPtrToIndex(offset);
 		return ((fBuffer[idx] & 0xff) << 16) |
-			((fBuffer[++idx] & 0xff) <<  8) |
-			((fBuffer[++idx] & 0xff) <<  0);
+				((fBuffer[++idx] & 0xff) <<  8) |
+				((fBuffer[++idx] & 0xff) <<  0);
 	}
 
 	public void putShort(final long offset, final short value) {

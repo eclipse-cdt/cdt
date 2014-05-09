@@ -1,14 +1,14 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- *  Contributors:
- *  IBM - Initial API and implementation
- *  Markus Schorn (Wind River Systems)
- *  James Blackburn (Broadcom Corp.)
+ * Contributors:
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.tests.suite;
 
@@ -53,6 +53,7 @@ public class AllManagedBuildTests {
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(AllManagedBuildTests.suite());
 	}
+
 	public static Test suite() {
 		CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, IPDOMManager.ID_FAST_INDEXER);
 

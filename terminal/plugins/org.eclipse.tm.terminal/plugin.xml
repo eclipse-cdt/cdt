@@ -13,6 +13,7 @@
 # Michael Scharf (Wind River) - [237425] undefined tm.terminal command
 # Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Widget
 # Martin Oberhuber (Wind River) - [434294] Add Mac bindings with COMMAND
+# Martin Oberhuber (Wind River) - [434487] Add key bindings for "maximize view" and "quick access"
 -->
 <plugin>
    <extension-point id="terminalConnectors" name="Terminal Connectors" schema="schema/terminalConnectors.exsd"/>
@@ -184,6 +185,21 @@
             platform="carbon"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+V"/>
+      <!--
+           Additional Bindings for Quick Access (Ctrl+3) and Maximize View (Ctrl+M)
+           since these are extremely valuable, but the original shortcut may need
+           to go to the Terminal.
+      -->
+      <key
+            commandId="org.eclipse.ui.window.quickAccess"
+            contextId="org.eclipse.tm.terminal.EditContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+ARROW_RIGHT"/>
+      <key
+            commandId="org.eclipse.ui.window.maximizePart"
+            contextId="org.eclipse.tm.terminal.EditContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+ARROW_UP"/>
    </extension>
 
    <extension

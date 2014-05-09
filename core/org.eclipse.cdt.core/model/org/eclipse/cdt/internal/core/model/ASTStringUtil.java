@@ -81,7 +81,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 /**
- * This is a utility class to help convert AST elements to Strings.
+ * This is a utility class to help convert AST elements to strings.
  * 
  * @see org.eclipse.cdt.core.dom.ast.ASTTypeUtil
  */
@@ -153,7 +153,7 @@ public class ASTStringUtil {
 	 */
 	public static String[] getParameterSignatureArray(IASTFunctionDeclarator functionDeclarator) {
 		if (functionDeclarator instanceof IASTStandardFunctionDeclarator) {
-			final IASTStandardFunctionDeclarator standardFunctionDecl= (IASTStandardFunctionDeclarator)functionDeclarator;
+			final IASTStandardFunctionDeclarator standardFunctionDecl= (IASTStandardFunctionDeclarator) functionDeclarator;
 			final IASTParameterDeclaration[] parameters= standardFunctionDecl.getParameters();
 			final boolean takesVarArgs= standardFunctionDecl.takesVarArgs();
 			final String[] parameterStrings= new String[parameters.length + (takesVarArgs ? 1 : 0)];
@@ -166,7 +166,7 @@ public class ASTStringUtil {
 			}
 			return parameterStrings;
 		} else if (functionDeclarator instanceof ICASTKnRFunctionDeclarator) {
-			final ICASTKnRFunctionDeclarator knrDeclarator= (ICASTKnRFunctionDeclarator)functionDeclarator;
+			final ICASTKnRFunctionDeclarator knrDeclarator= (ICASTKnRFunctionDeclarator) functionDeclarator;
 			final IASTName[] names= knrDeclarator.getParameterNames();
 			final String[] result= new String[names.length];
 			for (int i = 0; i < names.length; i++) {
@@ -243,22 +243,23 @@ public class ASTStringUtil {
 		// get the declaration node
 		IASTNode node= declarator.getParent();
 		while (node instanceof IASTDeclarator) {
-			declarator= (IASTDeclarator)node;
+			declarator= (IASTDeclarator) node;
 			node= node.getParent();
 		}
 		
 		// get the declSpec
 		final IASTDeclSpecifier declSpec;
-		if (node instanceof IASTParameterDeclaration)
+		if (node instanceof IASTParameterDeclaration) {
 			declSpec= ((IASTParameterDeclaration) node).getDeclSpecifier();
-		else if (node instanceof IASTSimpleDeclaration)
-			declSpec= ((IASTSimpleDeclaration)node).getDeclSpecifier();
-		else if (node instanceof IASTFunctionDefinition)
-			declSpec= ((IASTFunctionDefinition)node).getDeclSpecifier();
-		else if (node instanceof IASTTypeId)
-		    declSpec= ((IASTTypeId)node).getDeclSpecifier();
-		else
+		} else if (node instanceof IASTSimpleDeclaration) {
+			declSpec= ((IASTSimpleDeclaration) node).getDeclSpecifier();
+		} else if (node instanceof IASTFunctionDefinition) {
+			declSpec= ((IASTFunctionDefinition) node).getDeclSpecifier();
+		} else if (node instanceof IASTTypeId) {
+		    declSpec= ((IASTTypeId) node).getDeclSpecifier();
+		} else {
 			declSpec= null;
+		}
 
 		return appendDeclarationString(buffer, declSpec, declarator, null);
 	}
@@ -300,12 +301,12 @@ public class ASTStringUtil {
 			}
 
 			if (declarator instanceof IASTArrayDeclarator) {
-				appendArrayQualifiersString(buffer, (IASTArrayDeclarator)declarator);
+				appendArrayQualifiersString(buffer, (IASTArrayDeclarator) declarator);
 			} else if (declarator instanceof IASTFunctionDeclarator) {
-				final IASTFunctionDeclarator functionDecl= (IASTFunctionDeclarator)declarator;
+				final IASTFunctionDeclarator functionDecl= (IASTFunctionDeclarator) declarator;
 				appendParameterSignatureString(buffer, functionDecl);
 				if (declarator instanceof ICPPASTFunctionDeclarator) {
-					final ICPPASTFunctionDeclarator cppFunctionDecl= (ICPPASTFunctionDeclarator)declarator;
+					final ICPPASTFunctionDeclarator cppFunctionDecl= (ICPPASTFunctionDeclarator) declarator;
 					if (cppFunctionDecl.isConst()) {
 						buffer.append(Keywords.CONST).append(' ');
 					}
@@ -328,7 +329,7 @@ public class ASTStringUtil {
 					}
 				}
 			} else if (declarator instanceof IASTFieldDeclarator) {
-				final IASTFieldDeclarator fieldDeclarator= (IASTFieldDeclarator)declarator;
+				final IASTFieldDeclarator fieldDeclarator= (IASTFieldDeclarator) declarator;
 				final IASTExpression bitFieldSize= fieldDeclarator.getBitFieldSize();
 				if (bitFieldSize != null) {
 					buffer.append(Keywords.cpCOLON);
@@ -347,11 +348,11 @@ public class ASTStringUtil {
 
 	private static StringBuilder appendInitializerString(StringBuilder buffer, IASTInitializer initializer) {
 		if (initializer instanceof IASTEqualsInitializer) {
-			final IASTEqualsInitializer initializerExpression= (IASTEqualsInitializer)initializer;
+			final IASTEqualsInitializer initializerExpression= (IASTEqualsInitializer) initializer;
 			buffer.append(Keywords.cpASSIGN);
 			appendInitClauseString(buffer, initializerExpression.getInitializerClause());
 		} else if (initializer instanceof IASTInitializerList) {
-			final IASTInitializerList initializerList= (IASTInitializerList)initializer;
+			final IASTInitializerList initializerList= (IASTInitializerList) initializer;
 			final IASTInitializerClause[] initializers= initializerList.getClauses();
 			buffer.append(Keywords.cpASSIGN);
 			buffer.append(Keywords.cpLBRACE);
@@ -365,10 +366,10 @@ public class ASTStringUtil {
 			buffer.append(Keywords.cpRBRACE);
 		} else if (initializer instanceof ICASTDesignatedInitializer) {
 			//TODO handle ICASTDesignatedInitializer?
-//			final ICASTDesignatedInitializer designatedInitializer= (ICASTDesignatedInitializer)initializer;
+//			final ICASTDesignatedInitializer designatedInitializer= (ICASTDesignatedInitializer) initializer;
 //			final ICASTDesignator[] designator= designatedInitializer.getDesignators();
 		} else if (initializer instanceof ICPPASTConstructorInitializer) {
-			final ICPPASTConstructorInitializer constructorInitializer= (ICPPASTConstructorInitializer)initializer;
+			final ICPPASTConstructorInitializer constructorInitializer= (ICPPASTConstructorInitializer) initializer;
 			final IASTInitializerClause[] clauses= constructorInitializer.getArguments();
 			buffer.append(Keywords.cpLPAREN);
 			for (int i= 0; i < clauses.length; i++) {
@@ -424,9 +425,9 @@ public class ASTStringUtil {
 	private static StringBuilder appendPointerOperatorsString(StringBuilder buffer, IASTPointerOperator[] pointerOperators) {
 		for (final IASTPointerOperator pointerOperator : pointerOperators) {
 			if (pointerOperator instanceof IASTPointer) {
-				final IASTPointer pointer= (IASTPointer)pointerOperator;
+				final IASTPointer pointer= (IASTPointer) pointerOperator;
 				if (pointer instanceof ICPPASTPointerToMember) {
-					final ICPPASTPointerToMember pointerToMember= (ICPPASTPointerToMember)pointer;
+					final ICPPASTPointerToMember pointerToMember= (ICPPASTPointerToMember) pointer;
 					appendQualifiedNameString(buffer, pointerToMember.getName());
 				}
 				buffer.append(Keywords.cpSTAR);
@@ -448,7 +449,7 @@ public class ASTStringUtil {
 
 	private static StringBuilder appendParameterSignatureString(StringBuilder buffer, IASTFunctionDeclarator functionDeclarator) {
 		if (functionDeclarator instanceof IASTStandardFunctionDeclarator) {
-			final IASTStandardFunctionDeclarator standardFunctionDecl= (IASTStandardFunctionDeclarator)functionDeclarator;
+			final IASTStandardFunctionDeclarator standardFunctionDecl= (IASTStandardFunctionDeclarator) functionDeclarator;
 			final IASTParameterDeclaration[] parameters= standardFunctionDecl.getParameters();
 			final boolean takesVarArgs= standardFunctionDecl.takesVarArgs();
 			buffer.append(Keywords.cpLPAREN);
@@ -468,7 +469,7 @@ public class ASTStringUtil {
 			buffer.append(Keywords.cpRPAREN);
 		} else if (functionDeclarator instanceof ICASTKnRFunctionDeclarator) {
 			buffer.append(Keywords.cpLPAREN);
-			final ICASTKnRFunctionDeclarator knrDeclarator= (ICASTKnRFunctionDeclarator)functionDeclarator;
+			final ICASTKnRFunctionDeclarator knrDeclarator= (ICASTKnRFunctionDeclarator) functionDeclarator;
 			final IASTName[] names= knrDeclarator.getParameterNames();
 			for (int i = 0; i < names.length; i++) {
 				if (i > 0) {
@@ -512,12 +513,12 @@ public class ASTStringUtil {
 //			buffer.append(Keywords.INLINE).append(' ');
 //		}
 //		if (declSpecifier instanceof ICASTDeclSpecifier) {
-//			final ICASTDeclSpecifier cDeclSpec= (ICASTDeclSpecifier)declSpecifier;
+//			final ICASTDeclSpecifier cDeclSpec= (ICASTDeclSpecifier) declSpecifier;
 //			if (cDeclSpec.isRestrict()) {
 //				buffer.append(Keywords.RESTRICT).append(' ');
 //			}
 //		} else if (declSpecifier instanceof ICPPASTDeclSpecifier) {
-//			final ICPPASTDeclSpecifier cppDeclSpec= (ICPPASTDeclSpecifier)declSpecifier;
+//			final ICPPASTDeclSpecifier cppDeclSpec= (ICPPASTDeclSpecifier) declSpecifier;
 //			if (cppDeclSpec.isFriend()) {
 //				buffer.append(Keywords.FRIEND).append(' ');
 //			}
@@ -528,7 +529,7 @@ public class ASTStringUtil {
 //				buffer.append(Keywords.EXPLICIT).append(' ');
 //			}
 //			if (declSpecifier instanceof IGPPASTDeclSpecifier) {
-//				final IGPPASTDeclSpecifier gppDeclSpec= (IGPPASTDeclSpecifier)declSpecifier;
+//				final IGPPASTDeclSpecifier gppDeclSpec= (IGPPASTDeclSpecifier) declSpecifier;
 //				if (gppDeclSpec.isRestrict()) {
 //					buffer.append(Keywords.RESTRICT).append(' ');
 //				}
@@ -557,7 +558,7 @@ public class ASTStringUtil {
 //			break;
 //		}
 		if (declSpecifier instanceof IASTCompositeTypeSpecifier) {
-			final IASTCompositeTypeSpecifier compositeTypeSpec= (IASTCompositeTypeSpecifier)declSpecifier;
+			final IASTCompositeTypeSpecifier compositeTypeSpec= (IASTCompositeTypeSpecifier) declSpecifier;
 			final int key= compositeTypeSpec.getKey();
 			switch (key) {
 			case IASTCompositeTypeSpecifier.k_struct:
@@ -573,7 +574,7 @@ public class ASTStringUtil {
 			}
 			appendQualifiedNameString(buffer, compositeTypeSpec.getName());
 		} else if (declSpecifier instanceof IASTElaboratedTypeSpecifier) {
-			final IASTElaboratedTypeSpecifier elaboratedTypeSpec= (IASTElaboratedTypeSpecifier)declSpecifier;
+			final IASTElaboratedTypeSpecifier elaboratedTypeSpec= (IASTElaboratedTypeSpecifier) declSpecifier;
 			switch (elaboratedTypeSpec.getKind()) {
 			case IASTElaboratedTypeSpecifier.k_enum:
 				buffer.append(Keywords.ENUM).append(' ');
@@ -592,11 +593,11 @@ public class ASTStringUtil {
 			}
 			appendQualifiedNameString(buffer, elaboratedTypeSpec.getName());
 		} else if (declSpecifier instanceof IASTEnumerationSpecifier) {
-			final IASTEnumerationSpecifier enumerationSpec= (IASTEnumerationSpecifier)declSpecifier;
+			final IASTEnumerationSpecifier enumerationSpec= (IASTEnumerationSpecifier) declSpecifier;
 			buffer.append(Keywords.ENUM).append(' ');
 			appendQualifiedNameString(buffer, enumerationSpec.getName());
 		} else if (declSpecifier instanceof IASTSimpleDeclSpecifier) {
-			final IASTSimpleDeclSpecifier simpleDeclSpec= (IASTSimpleDeclSpecifier)declSpecifier;
+			final IASTSimpleDeclSpecifier simpleDeclSpec= (IASTSimpleDeclSpecifier) declSpecifier;
 			if (simpleDeclSpec.isSigned()) {
 				buffer.append(Keywords.SIGNED).append(' ');
 			}
@@ -659,7 +660,7 @@ public class ASTStringUtil {
 			default:
 			}
 		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {
-			final IASTNamedTypeSpecifier namedTypeSpec= (IASTNamedTypeSpecifier)declSpecifier;
+			final IASTNamedTypeSpecifier namedTypeSpec= (IASTNamedTypeSpecifier) declSpecifier;
 			appendQualifiedNameString(buffer, namedTypeSpec.getName());
 		}
 		return buffer;
@@ -678,10 +679,11 @@ public class ASTStringUtil {
 	}
 	
 	private static StringBuilder appendQualifiedNameString(StringBuilder buffer, ICPPASTNameSpecifier nameSpec) {
-		if (nameSpec instanceof IASTName)
+		if (nameSpec instanceof IASTName) {
 			appendQualifiedNameString(buffer, (IASTName) nameSpec);
-		else if (nameSpec instanceof ICPPASTDecltypeSpecifier)
+		} else if (nameSpec instanceof ICPPASTDecltypeSpecifier) {
 			appendDecltypeSpecifier(buffer, (ICPPASTDecltypeSpecifier) nameSpec);
+		}
 		return buffer;
 	}
 
@@ -691,7 +693,7 @@ public class ASTStringUtil {
 
 	private static StringBuilder appendNameString(StringBuilder buffer, IASTName name, boolean qualified) {
 		if (name instanceof ICPPASTQualifiedName) {
-			final ICPPASTQualifiedName qualifiedName= (ICPPASTQualifiedName)name;
+			final ICPPASTQualifiedName qualifiedName= (ICPPASTQualifiedName) name;
 			if (qualified) {
 				final ICPPASTNameSpecifier[] segments= qualifiedName.getAllSegments();
 				for (int i = 0; i < segments.length; i++) {
@@ -704,7 +706,7 @@ public class ASTStringUtil {
 				buffer.append(qualifiedName.getLastName());
 			}
 		} else if (name instanceof ICPPASTTemplateId) {
-			final ICPPASTTemplateId templateId= (ICPPASTTemplateId)name;
+			final ICPPASTTemplateId templateId= (ICPPASTTemplateId) name;
 			appendQualifiedNameString(buffer, templateId.getTemplateName());
 			final IASTNode[] templateArguments= templateId.getTemplateArguments();
 			buffer.append(Keywords.cpLT);
@@ -714,9 +716,9 @@ public class ASTStringUtil {
 				}
 				final IASTNode argument= templateArguments[i];
 				if (argument instanceof IASTTypeId) {
-					appendTypeIdString(buffer, (IASTTypeId)argument);
+					appendTypeIdString(buffer, (IASTTypeId) argument);
 				} else if (argument instanceof IASTExpression) {
-					final IASTExpression expression= (IASTExpression)argument;
+					final IASTExpression expression= (IASTExpression) argument;
 					appendExpressionString(buffer, expression);
 				}
 				trimRight(buffer);
@@ -730,9 +732,9 @@ public class ASTStringUtil {
 
 	private static StringBuilder appendTemplateParameterString(StringBuilder buffer, ICPPASTTemplateParameter parameter) {
 		if (parameter instanceof ICPPASTParameterDeclaration) {
-			appendParameterDeclarationString(buffer, (ICPPASTParameterDeclaration)parameter);
+			appendParameterDeclarationString(buffer, (ICPPASTParameterDeclaration) parameter);
 		} else if (parameter instanceof ICPPASTSimpleTypeTemplateParameter) {
-			final ICPPASTSimpleTypeTemplateParameter simpletypeParameter= (ICPPASTSimpleTypeTemplateParameter)parameter;
+			final ICPPASTSimpleTypeTemplateParameter simpletypeParameter= (ICPPASTSimpleTypeTemplateParameter) parameter;
 			final IASTName name= simpletypeParameter.getName();
 			if (name != null) {
 				appendSimpleNameString(buffer, name);
@@ -748,7 +750,7 @@ public class ASTStringUtil {
 				}
 			}
 		} else if (parameter instanceof ICPPASTTemplatedTypeTemplateParameter) {
-			final ICPPASTTemplatedTypeTemplateParameter templatedTypeParameter= (ICPPASTTemplatedTypeTemplateParameter)parameter;
+			final ICPPASTTemplatedTypeTemplateParameter templatedTypeParameter= (ICPPASTTemplatedTypeTemplateParameter) parameter;
 			final ICPPASTTemplateParameter[] subParameters= templatedTypeParameter.getTemplateParameters();
 			buffer.append(Keywords.TEMPLATE).append(Keywords.cpLT);
 			for (int i = 0; i < subParameters.length; i++) {
@@ -766,11 +768,11 @@ public class ASTStringUtil {
 
 	private static StringBuilder appendExpressionString(StringBuilder buffer, IASTExpression expression) {
 		if (expression instanceof IASTIdExpression) {
-			final IASTIdExpression idExpression= (IASTIdExpression)expression;
+			final IASTIdExpression idExpression= (IASTIdExpression) expression;
 			return appendQualifiedNameString(buffer, idExpression.getName());
 		} 
 		if (expression instanceof IASTExpressionList) {
-			final IASTExpressionList expressionList= (IASTExpressionList)expression;
+			final IASTExpressionList expressionList= (IASTExpressionList) expression;
 			final IASTExpression[] expressions= expressionList.getExpressions();
 			for (int i = 0; i < expressions.length; i++) {
 				if (i > 0) {
@@ -781,7 +783,7 @@ public class ASTStringUtil {
 			return buffer;
 		} 
 		if (expression instanceof ICPPASTSimpleTypeConstructorExpression) {
-			final ICPPASTSimpleTypeConstructorExpression typeCast= (ICPPASTSimpleTypeConstructorExpression)expression;
+			final ICPPASTSimpleTypeConstructorExpression typeCast= (ICPPASTSimpleTypeConstructorExpression) expression;
 			appendDeclSpecifierString(buffer, typeCast.getDeclSpecifier());
 			trimRight(buffer);
 			return appendInitializerString(buffer, typeCast.getInitializer());
@@ -967,7 +969,7 @@ public class ASTStringUtil {
 		if (!postOperator && !primaryBracketed)
 			buffer.append(getUnaryOperatorString(expression));
 
-		// need to add a space to the unary expression if it is a specific operator
+		// Need to add a space to the unary expression if it is a specific operator.
 		switch (expression.getOperator()) {
 		case IASTUnaryExpression.op_sizeof:
 		case ICPPASTUnaryExpression.op_noexcept:
@@ -1141,7 +1143,8 @@ public class ASTStringUtil {
 	 * Returns the String representation of the pack expansion expression.
 	 * @param buffer 
 	 */
-	private static StringBuilder appendPackExpansionExpression(StringBuilder buffer, ICPPASTPackExpansionExpression expression) {
+	private static StringBuilder appendPackExpansionExpression(StringBuilder buffer,
+			ICPPASTPackExpansionExpression expression) {
 		appendExpressionString(buffer, expression.getPattern());
 		return buffer.append(Keywords.cpELLIPSIS);
 	}

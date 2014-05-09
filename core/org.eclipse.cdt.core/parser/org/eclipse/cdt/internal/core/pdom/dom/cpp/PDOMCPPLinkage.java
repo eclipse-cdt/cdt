@@ -1011,17 +1011,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (parentNode instanceof ICPPASTQualifiedName) {
 			if (name != ((ICPPASTQualifiedName) parentNode).getLastName())
 				return;
+	    	name = (IASTName) parentNode;
 	    	parentNode = parentNode.getParent();
 		}
-		if (name.getPropertyInParent() == ICPPASTBaseSpecifier.NAME ||
-				(name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME &&
-				parentNode.getPropertyInParent() == ICPPASTBaseSpecifier.NAME)) {
-			pdomName.setIsBaseSpecifier();
-		} else if (parentNode instanceof ICPPASTUsingDirective) {
-			IASTNode parent= name.getParent();
-			if (parent instanceof ICPPASTQualifiedName) {
-				name = (IASTName) parent;
-			}
+		if (parentNode instanceof ICPPASTUsingDirective) {
 			IScope container= CPPVisitor.getContainingScope(name);
 			boolean doit= false;
 			PDOMCPPNamespace containerNS= null;
@@ -1100,6 +1093,19 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					}
 				}
 			}
+		} else {
+			if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
+		    	name = (IASTName) parentNode;
+		    	parentNode = parentNode.getParent();
+			}
+			if (parentNode instanceof ICPPASTQualifiedName) {
+				if (name != ((ICPPASTQualifiedName) parentNode).getLastName())
+					return;
+		    	name = (IASTName) parentNode;
+		    	parentNode = parentNode.getParent();
+			}
+			if (name.getPropertyInParent() == ICPPASTBaseSpecifier.NAME)
+				pdomName.setIsBaseSpecifier();
 		}
 	}
 

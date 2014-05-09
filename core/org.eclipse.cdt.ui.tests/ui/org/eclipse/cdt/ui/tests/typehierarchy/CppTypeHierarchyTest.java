@@ -840,13 +840,18 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		checkMethodTable(new String[] {"field1 : T", "method1() : T"});
 	}
 
+	//	namespace ns {
+	//
 	//	template<typename T>
 	//	class A {
 	// 	public:
 	//    int field1;
 	//    int method1();
 	// 	};
-	// 	class B : public A<int> {
+	//
+	//	}
+	//
+	// 	class B : public ns::A<int> {
 	//	public:
 	//	  int field2;
 	//	  int method2();
@@ -863,7 +868,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		openTypeHierarchy(editor);
 		tree= getHierarchyViewer().getTree();
 
-		item1= checkTreeNode(tree, 0, "A");
+		item1= checkTreeNode(tree, 0, "ns::A");
 		assertEquals(1, tree.getItemCount());
 		getHierarchyViewer().expandAll();
 
@@ -875,7 +880,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("B"), 1);
 		openTypeHierarchy(editor);
 		tree= getHierarchyViewer().getTree();
-		item1= checkTreeNode(tree, 0, "A");
+		item1= checkTreeNode(tree, 0, "ns::A");
 		assertEquals(1, tree.getItemCount());
 
 		item2= checkTreeNode(item1, 0, "B");

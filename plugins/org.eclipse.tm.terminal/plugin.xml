@@ -12,6 +12,7 @@
 # Martin Oberhuber (Wind River) - fixed copyright headers and beautified
 # Michael Scharf (Wind River) - [237425] undefined tm.terminal command
 # Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Widget
+# Martin Oberhuber (Wind River) - [434294] Add Mac bindings with COMMAND
 -->
 <plugin>
    <extension-point id="terminalConnectors" name="Terminal Connectors" schema="schema/terminalConnectors.exsd"/>
@@ -125,21 +126,64 @@
             contextId="org.eclipse.tm.terminal.TerminalContext"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Alt+W"/> <!-- Window -->
+      <!-- 
+           For Copy and Paste, we need replacements since the default Ctrl+C / Ctrl+V
+           need to go to the terminal and thus are not available for local Copy and Paste.
+           This is not an issue on Mac, where COMMAND+C / COMMAND+V works fine.
+           
+           We add both CTRL+INSERT and CTRL+SHIFT+C since on some keyboards, an INSERT key
+           may not be available. Note: we want the "least surprising" and "most available"
+           of all bindings to be shown in the context menu according to the algorithm in 
+           IBindingService#getBestActiveBindingFor().
+           Therefore, we do not want these extra bindings to be shown on the Mac. 
+
+           Unfortunately, there is no way in Bindings to say "NOT Platforms X,Y,Z"
+           We would really like one of the following here but it doesnt work with Eclipse 4.3:
+              platforms="!carbon,!cocoa"
+              platforms="win32,motif,gtk,photon,wpf"
+           Since Eclipse doesnt support this, we will redefine the original Mac bindings below,
+           just to make them show up in the context menu.
+      -->
       <key
             commandId="org.eclipse.tm.terminal.copy"
             contextId="org.eclipse.tm.terminal.EditContext"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="CTRL+SHIFT+C"/>
+            sequence="M1+INSERT"/><!-- Ctrl+Insert -->
+      <key
+            commandId="org.eclipse.tm.terminal.copy"
+            contextId="org.eclipse.tm.terminal.EditContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+C"><!-- Ctrl+Shift+C -->
+      </key>
       <key
             commandId="org.eclipse.tm.terminal.paste"
             contextId="org.eclipse.tm.terminal.EditContext"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="CTRL+SHIFT+V"/>
+            sequence="M2+INSERT"/><!-- Shift+Insert -->
       <key
             commandId="org.eclipse.tm.terminal.paste"
             contextId="org.eclipse.tm.terminal.EditContext"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="SHIFT+INSERT"/>
+            sequence="M1+M2+V"/><!-- Ctrl+Shift+V -->
+      <!--
+           Mac shortcuts need to be redefined with Platform Filter, in order to make
+           them "better" than the bindings above and thus show up in the menu.
+           See the algorithm in IBindingService#getBestActiveBindingFor().
+           It looks like the "carbon" entry is also valid for "cocoa" automatically.
+      -->
+      <key
+            commandId="org.eclipse.tm.terminal.copy"
+            contextId="org.eclipse.tm.terminal.EditContext"
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+C">
+      </key>
+      <key
+            commandId="org.eclipse.tm.terminal.paste"
+            contextId="org.eclipse.tm.terminal.EditContext"
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+V"/>
    </extension>
 
    <extension

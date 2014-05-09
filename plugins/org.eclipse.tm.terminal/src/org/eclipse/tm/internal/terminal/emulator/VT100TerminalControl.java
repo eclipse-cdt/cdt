@@ -34,6 +34,7 @@
  * Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Widget
  * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
  * Anton Leherbauer (Wind River) - [434294] Incorrect handling of function keys with modifiers
+ * Martin Oberhuber (Wind River) - [434294] Add Mac bindings with COMMAND
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -877,6 +878,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			char character = event.character;
 			boolean ctrlKeyPressed = (event.stateMask & SWT.CTRL) != 0;
 			boolean altKeyPressed = (event.stateMask & SWT.ALT) != 0;
+			boolean macCmdKeyPressed = (event.stateMask & SWT.COMMAND) != 0;
 
 			// To fix SPR 110341, we consider the Alt key to be pressed only when the
 			// Control key is _not_ also pressed.  This works around a bug in SWT where,
@@ -913,8 +915,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			// because Control-@ (i.e., NUL) invokes Emacs' set-mark-command when Emacs
 			// is running on a terminal.  When the user presses Control-@, the keyCode
 			// is 50.
+			// On a Mac, the Cmd key is always used for local commands.
 
-			if (character == '\u0000' && event.keyCode != 50) {
+			if (macCmdKeyPressed || (character == '\u0000' && event.keyCode != 50)) {
 				// A special key was pressed.  Figure out which one it was and send the
 				// appropriate ANSI escape sequence.
 				//
@@ -941,6 +944,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 						escSeq = "\u001b[1;5D"; //$NON-NLS-1$
 					} else if (!anyModifierPressed) {
 						escSeq = "\u001b[D"; //$NON-NLS-1$
+					} else if (macCmdKeyPressed) {
+						// Cmd-Left is "Home" on the Mac
+						escSeq = "\u001b[H"; //$NON-NLS-1$
 					}
 					break;
 
@@ -949,6 +955,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 						escSeq = "\u001b[1;5C"; //$NON-NLS-1$
 					} else if (!anyModifierPressed) {
 						escSeq = "\u001b[C"; //$NON-NLS-1$
+					} else if (macCmdKeyPressed) {
+						// Cmd-Right is "End" on the Mac
+						escSeq = "\u001b[F"; //$NON-NLS-1$
 					}
 					break;
 
@@ -956,7 +965,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					if (!anyModifierPressed)
 						escSeq = "\u001b[5~"; //$NON-NLS-1$
 					break;
-
+					
 				case 0x1000006: // PgDn key.
 					if (!anyModifierPressed)
 						escSeq = "\u001b[6~"; //$NON-NLS-1$

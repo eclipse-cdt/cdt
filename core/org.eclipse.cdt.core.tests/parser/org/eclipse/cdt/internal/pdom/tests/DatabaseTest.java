@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems
+ * Copyright (c) 2005, 2014 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,13 @@ import org.eclipse.cdt.internal.core.pdom.db.ShortString;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
-public class DBTest extends BaseTestCase {
+/**
+ * Tests for the {@link Database} class.
+ */
+public class DatabaseTest extends BaseTestCase {
+	// This constant can be used to run the test with very large databases.
+	// Try, for example, setting it to Integer.MAX_VALUE * 7L;
+	private static final long TEST_OFFSET = 0;
 	protected Database db;
 
 	@Override
@@ -38,10 +44,21 @@ public class DBTest extends BaseTestCase {
 		db = new Database(getTestDir().append(getName() + System.currentTimeMillis() + ".dat").toFile(),
 				new ChunkCache(), 0, false);
 		db.setExclusiveLock();
+
+		// Allocate all database chunks up to TEST_OFFSET.
+		int count = 0;
+		for (long offset = 0; offset < TEST_OFFSET;) {
+			offset = db.malloc(Database.MAX_MALLOC_SIZE);
+			if (++count >= 1000) {
+				db.flush();
+				count = 0;
+			}
+		}
+		db.flush();
 	}
 
 	public static Test suite() {
-		return suite(DBTest.class);
+		return suite(DatabaseTest.class);
 	}
 
 	protected IPath getTestDir() {
@@ -152,12 +169,6 @@ public class DBTest extends BaseTestCase {
 	}
 
 	public void testStringsInBTree() throws Exception {
-		// Tests inserting and retrieving strings
-		File f = getTestDir().append("testStrings.dat").toFile();
-		f.delete();
-		final Database db = new Database(f, new ChunkCache(), 0, false);
-		db.setExclusiveLock();
-
 		String[] names = {
 				"ARLENE",
 				"BRET",

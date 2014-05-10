@@ -651,7 +651,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			final boolean regularContent = isRequiredInIndex(tu, ifl, isSourceUnit);
 			final boolean indexedUnconditionally = fResolver.isIndexedUnconditionally(ifl);
 			if (regularContent || indexedUnconditionally) {
-				// Headers or sources required with a specific linkage
+				// Headers or sources required with a specific linkage.
 				final UpdateKind updateKind = isSourceUnit ? UpdateKind.REQUIRED_SOURCE
 						: regularContent && both ? UpdateKind.REQUIRED_HEADER : UpdateKind.ONE_LINKAGE_HEADER;
 				if (regularContent || indexFiles.length == 0) {

@@ -18,7 +18,7 @@ import java.util.HashMap;
  * @param <T> Type of the objects contained in the set.
  */
 public class AtomicMultiSet<T> {
-	private final HashMap<T, Integer> map = new HashMap<T, Integer>();
+	private final HashMap<T, Integer> map = new HashMap<>();
 
 	/**
 	 * Adds object to the set if it was not present, or increments its reference count otherwise.

@@ -145,26 +145,26 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		ILinkage.C_LINKAGE_ID, ILinkage.CPP_LINKAGE_ID, ILinkage.FORTRAN_LINKAGE_ID
 	};
 
-	private final ArrayDeque<ICProject> fProjectQueue= new ArrayDeque<ICProject>();
+	private final ArrayDeque<ICProject> fProjectQueue= new ArrayDeque<>();
 	private final PDOMSetupJob fSetupJob;
 	/**
 	 * Protects fIndexerJob, fCurrentTask and fTaskQueue.
 	 */
-	private final ArrayDeque<IPDOMIndexerTask> fTaskQueue = new ArrayDeque<IPDOMIndexerTask>();
+	private final ArrayDeque<IPDOMIndexerTask> fTaskQueue = new ArrayDeque<>();
     private final PDOMIndexerJob fIndexerJob;
 	private IPDOMIndexerTask fCurrentTask;
 	private int fSourceCount, fHeaderCount, fTickCount;
 
-	private final ArrayDeque<Runnable> fChangeEvents= new ArrayDeque<Runnable>();
+	private final ArrayDeque<Runnable> fChangeEvents= new ArrayDeque<>();
 	private final Job fNotificationJob;
 
-	private final AtomicMultiSet<IIndexFileLocation> fFilesIndexedUnconditionlly= new AtomicMultiSet<IIndexFileLocation>();
+	private final AtomicMultiSet<IIndexFileLocation> fFilesIndexedUnconditionlly= new AtomicMultiSet<>();
 
     /**
      * Stores mapping from pdom to project, used to serialize creation of new pdoms.
      */
-    private Map<IProject, IPDOM> fProjectToPDOM= new HashMap<IProject, IPDOM>();
-    private Map<File, ICProject> fFileToProject= new HashMap<File, ICProject>();
+    private Map<IProject, IPDOM> fProjectToPDOM= new HashMap<>();
+    private Map<File, ICProject> fFileToProject= new HashMap<>();
 	private ListenerList fChangeListeners= new ListenerList();
 	private ListenerList fStateListeners= new ListenerList();
 
@@ -185,12 +185,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * Serializes creation of new indexer, when acquiring the lock you are
 	 * not allowed to hold a lock on fPDOMs.
 	 */
-	private Map<ICProject, IndexUpdatePolicy> fUpdatePolicies= new HashMap<ICProject, IndexUpdatePolicy>();
-	private Set<String> fClosingProjects= new HashSet<String>();
+	private Map<ICProject, IndexUpdatePolicy> fUpdatePolicies= new HashMap<>();
+	private Set<String> fClosingProjects= new HashSet<>();
 
-	private Map<IProject, PCL> fPrefListeners= new HashMap<IProject, PCL>();
-	private List<IndexerSetupParticipant> fSetupParticipants= new ArrayList<IndexerSetupParticipant>();
-	private Set<ICProject> fPostponedProjects= new HashSet<ICProject>();
+	private Map<IProject, PCL> fPrefListeners= new HashMap<>();
+	private List<IndexerSetupParticipant> fSetupParticipants= new ArrayList<>();
+	private Set<ICProject> fPostponedProjects= new HashSet<>();
 	private int fLastNotifiedState= IndexerStateEvent.STATE_IDLE;
 	private boolean fInShutDown;
 
@@ -1210,7 +1210,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	@Override
 	public IIndex getIndex(ICProject project) throws CoreException {
-		return fIndexFactory.getIndex(new ICProject[] {project}, 0);
+		return fIndexFactory.getIndex(new ICProject[] { project }, 0);
 	}
 
 	@Override
@@ -1220,7 +1220,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	@Override
 	public IIndex getIndex(ICProject project, int options) throws CoreException {
-		return fIndexFactory.getIndex(new ICProject[] {project}, options);
+		return fIndexFactory.getIndex(new ICProject[] { project }, options);
 	}
 
 	@Override
@@ -1245,8 +1245,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			boolean deleted= targetLocation.delete();
 			if (!deleted) {
 				throw new IllegalArgumentException(
-						MessageFormat.format(Messages.PDOMManager_ExistingFileCollides,
-								targetLocation ));
+						MessageFormat.format(Messages.PDOMManager_ExistingFileCollides, targetLocation));
 			}
 		}
 		try {
@@ -1383,17 +1382,17 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * set of folders and files specifying the selection.
 	 */
 	private Map<ICProject, List<ICElement>> splitSelection(ICElement[] tuSelection) {
-		HashMap<ICProject, List<ICElement>> result= new HashMap<ICProject, List<ICElement>>();
+		HashMap<ICProject, List<ICElement>> result= new HashMap<>();
 		allElements: for (int i = 0; i < tuSelection.length; i++) {
 			ICElement element = tuSelection[i];
 			if (element instanceof ICProject || element instanceof ICContainer || element instanceof ITranslationUnit) {
 				ICProject project= element.getCProject();
 				List<ICElement> set= result.get(project);
 				if (set == null) {
-					set= new ArrayList<ICElement>();
+					set= new ArrayList<>();
 					result.put(project, set);
 				}
-				for (int j= 0; j<set.size(); j++) {
+				for (int j= 0; j < set.size(); j++) {
 					ICElement other= set.get(j);
 					if (contains(other, element)) {
 						continue allElements;
@@ -1558,7 +1557,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		if (!"true".equals(IndexerPreferences.get(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, null)))  //$NON-NLS-1$
 			return null; // No check is performed in this case
 
-		Set<ITranslationUnit> sources= new HashSet<ITranslationUnit>();
+		Set<ITranslationUnit> sources= new HashSet<>();
 		cproject.accept(new TranslationUnitCollector(sources, null, new NullProgressMonitor()));
 		IStatus syncStatus = null;
 

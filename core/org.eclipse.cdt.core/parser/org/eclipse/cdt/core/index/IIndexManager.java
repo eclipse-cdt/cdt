@@ -184,6 +184,7 @@ public interface IIndexManager extends IPDOMManager {
 
 	/**
 	 * Returns the index for the given project.
+	 *
 	 * @param project the project to get the index for
 	 * @return an index for the project
 	 * @throws CoreException
@@ -192,6 +193,7 @@ public interface IIndexManager extends IPDOMManager {
 
 	/**
 	 * Returns the index for the given projects.
+	 *
 	 * @param projects the projects to get the index for
 	 * @return an index for the projects
 	 * @throws CoreException
@@ -203,7 +205,7 @@ public interface IIndexManager extends IPDOMManager {
 	 * projects.
 	 *
 	 * @param project the project to get the index for
-	 * @param options <code>0</code> or a combination of {@link #ADD_DEPENDENCIES} and
+	 * @param options {@code 0} or a combination of {@link #ADD_DEPENDENCIES} and
 	 *     {@link #ADD_DEPENDENT}.
 	 * @return an index for the project
 	 * @throws CoreException
@@ -213,8 +215,9 @@ public interface IIndexManager extends IPDOMManager {
 	/**
 	 * Returns the index for the given projects. You can specify to add dependencies or dependent
 	 * projects.
+	 *
 	 * @param projects the projects to get the index for
-	 * @param options <code>0</code> or a combination of {@link #ADD_DEPENDENCIES} and
+	 * @param options {@code 0} or a combination of {@link #ADD_DEPENDENCIES} and
 	 *     {@link #ADD_DEPENDENT}.
 	 * @return an index for the projects
 	 * @throws CoreException
@@ -223,6 +226,7 @@ public interface IIndexManager extends IPDOMManager {
 
 	/**
 	 * Registers a listener that will be notified whenever the indexer go idle.
+	 *
 	 * @param listener the listener to register.
 	 */
 	void addIndexChangeListener(IIndexChangeListener listener);
@@ -235,12 +239,14 @@ public interface IIndexManager extends IPDOMManager {
 
 	/**
 	 * Registers a listener that will be notified whenever the indexer changes its state.
+	 *
 	 * @param listener the listener to register.
 	 */
 	void addIndexerStateListener(IIndexerStateListener listener);
 
 	/**
 	 * Removes a previously registered indexer state listener.
+	 *
 	 * @param listener the listener to unregister.
 	 */
 	void removeIndexerStateListener(IIndexerStateListener listener);
@@ -249,15 +255,17 @@ public interface IIndexManager extends IPDOMManager {
 	 * Joins the indexer and reports progress.
 	 * @param waitMaxMillis time limit in milliseconds after which the method returns with
 	 * {@code false}, or {@link #FOREVER}.
+	 *
 	 * @param monitor a monitor to report progress.
-	 * @return <code>true</code>, if the indexer went idle in the given time.
+	 * @return {@code true}, if the indexer went idle in the given time.
 	 */
 	boolean joinIndexer(int waitMaxMillis, IProgressMonitor monitor);
 
 	/**
-	 * Checks whether the indexer is currently idle. The indexer is idle, when there is currently no request
-	 * to update files of an index and no initialization for a project is performed. However, the indexer becomes
-	 * idle, when the setup of a project is postponed (check with {@link #isIndexerSetupPostponed(ICProject)}).
+	 * Checks whether the indexer is currently idle. The indexer is idle, when there is currently
+	 * no request to update files of an index and no initialization for a project is performed.
+	 * However, the indexer becomes idle, when the setup of a project is postponed
+	 * (check with {@link #isIndexerSetupPostponed(ICProject)}).
 	 */
 	boolean isIndexerIdle();
 
@@ -268,8 +276,10 @@ public interface IIndexManager extends IPDOMManager {
 	boolean isProjectIndexed(ICProject proj);
 
 	/**
-	 * Return whether the indexer-setup for a project is currently postponed. Note,
-	 * that a postponed setup does not prevent the indexer from becoming idle ({@link #isIndexerIdle()}.
+	 * Returns whether the indexer-setup for a project is currently postponed. Note,
+	 * that a postponed setup does not prevent the indexer from becoming idle
+	 * ({@link #isIndexerIdle()}.
+	 * <p>
 	 * The fact that the indexer-setup for a project is no longer postponed, will be reported using
 	 * {@link IndexerSetupParticipant#onIndexerSetup(ICProject)}.
 	 */
@@ -296,20 +306,22 @@ public interface IIndexManager extends IPDOMManager {
 	public void reindex(ICProject project);
 
 	/**
-	 * Updates the index for the given selection of translation units considering
-	 * the options supplied. The selection is defined by an array of translation
-	 * units, containers and projects. For containers and projects all recursively
-	 * nested translation units are considered.
+	 * Updates the index for the given selection of translation units considering the options
+	 * supplied. The selection is defined by an array of translation units, containers and projects.
+	 * For containers and projects all recursively nested translation units are considered.
+	 *
 	 * @param tuSelection the translation units to update.
 	 * @param options one of {@link #UPDATE_ALL} or {@link #UPDATE_CHECK_TIMESTAMPS} optionally
-	 * combined with {@link #UPDATE_EXTERNAL_FILES_FOR_PROJECT} and {@link #UPDATE_CHECK_CONTENTS_HASH}.
+	 * 	   combined with {@link #UPDATE_EXTERNAL_FILES_FOR_PROJECT} and
+	 *     {@link #UPDATE_CHECK_CONTENTS_HASH}.
 	 * @throws CoreException
 	 * @since 4.0
 	 */
 	public void update(ICElement[] tuSelection, int options) throws CoreException;
 
 	/**
-	 * Export index for usage within a team.
+	 * Exports index for usage within a team.
+	 *
 	 * @param project a project for which the PDOM is to be exported.
 	 * @param location the target location for the database.
 	 * @param options currently none are supported.

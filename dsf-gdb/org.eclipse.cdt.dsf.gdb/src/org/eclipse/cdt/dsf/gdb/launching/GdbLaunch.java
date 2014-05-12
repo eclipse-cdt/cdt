@@ -46,10 +46,12 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -195,6 +197,33 @@ public class GdbLaunch extends DsfLaunch
     public boolean canTerminate() {
         return fInitialized && super.canTerminate();
     }
+    
+    /* (non-Javadoc)
+ 	 * @see org.eclipse.debug.core.Launch#terminate()
+ 	 */
+ 	@Override
+ 	public void terminate() throws DebugException {
+ 		// Execute asynchronously to avoid potential deadlocks
+ 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=434645
+ 		// 
+ 		Job job = new Job("Terminate session") { //$NON-NLS-1$
+
+ 			@Override
+ 			protected IStatus run(IProgressMonitor monitor) {
+ 				try {
+ 					GdbLaunch.super.terminate();
+ 				} catch (DebugException e) {
+ 					return new MultiStatus(
+                             GdbPlugin.PLUGIN_ID, IStatus.ERROR, new IStatus[]{e.getStatus()}, "Terminate session failed", e); //$NON-NLS-1$
+ 				}
+ 				return Status.OK_STATUS;
+ 			}
+ 			
+ 		};
+ 		job.setSystem(true);
+ 		job.schedule();
+ 	}
+ 	
     // ITerminate
     ///////////////////////////////////////////////////////////////////////////
 
@@ -214,6 +243,7 @@ public class GdbLaunch extends DsfLaunch
     public void disconnect() throws DebugException {
     	terminate();
     }
+
     // IDisconnect
     ///////////////////////////////////////////////////////////////////////////
     

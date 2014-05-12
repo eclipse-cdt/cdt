@@ -22,6 +22,7 @@
 		<platform-site>http://download.eclipse.org/eclipse/updates/${platform-version}</platform-site>
 		<cdt-version>8.4</cdt-version>
 		<cdt-site>http://download.eclipse.org/tools/cdt/builds/${cdt-version}/nightly</cdt-site>	
+		<license-site>http://download.eclipse.org/cbi/updates/license</license-site>
 		<remote-install-dir>/home/data/httpd/download.eclipse.org/tools/ptp/builds/remote/${eclipse-release}/nightly</remote-install-dir>
 	</properties>
 
@@ -57,6 +58,11 @@
 		<repository>
 			<id>cdt-${cdt-version}</id>
 			<url>${cdt-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>license</id>
+			<url>${license-site}</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>

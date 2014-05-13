@@ -2,6 +2,57 @@
   "comments": [
     {
       "key": {
+        "uuid": "0756a345_facc7c66",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPParameterSpecialization.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-13T23:19:22Z",
+      "side": 1,
+      "message": "Should it be fDefaultValue !\u003d null?",
+      "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_dacff856",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/SemanticUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 767,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-13T23:19:22Z",
+      "side": 1,
+      "message": "Get -\u003e Returns",
+      "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_ba184481",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPParameter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-13T23:19:22Z",
+      "side": 1,
+      "message": "Please rename to DEFAULT_VALUE",
+      "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_958ef8b6",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPParameter.java",
         "patchSetId": 1
@@ -19,6 +70,41 @@
     },
     {
       "key": {
+        "uuid": "0756a345_7a834c10",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPParameter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-13T23:19:22Z",
+      "side": 1,
+      "message": "Synchronization between two memory locations would require a synchronized block. You can use Value.NOT_INITIALIZED instead.",
+      "parentUuid": "0756a345_958ef8b6",
+      "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_da2418b9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPParameter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-13T23:19:22Z",
+      "side": 1,
+      "message": "More efficient: getDB().getRecPtr(record + DEFAULTVAL) !\u003d 0",
+      "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_f58db4bb",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPParameter.java",
         "patchSetId": 1
@@ -30,6 +116,41 @@
       "writtenOn": "2014-05-13T06:13:06Z",
       "side": 1,
       "message": "Is this correct? Should I be overriding the delete() method in PDOMCPPParameterSpecialization as well and adding a line like this?",
+      "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_3a1c3470",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPParameter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-13T23:19:22Z",
+      "side": 1,
+      "message": "Yes.",
+      "parentUuid": "0756a345_f58db4bb",
+      "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_1a1fb065",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPParameterSpecialization.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-13T23:19:22Z",
+      "side": 1,
+      "message": "Please rename to DEFAULT_VALUE",
       "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

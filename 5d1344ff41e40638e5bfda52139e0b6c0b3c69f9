@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_958ef8b6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPParameter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-05-13T06:13:06Z",
+      "side": 1,
+      "message": "Are these volatile fields OK? I modelled this on how PDOMCPPTemplateNonTypeParameter stores its type, except we can\u0027t use \u0027null\u0027 to mean the default value hasn\u0027t been loaded because \u0027null\u0027 might mean there is no default value.\n\nAlternatives would be to load the default value eagerly in the constructor, or to reload it each time in getDefaultValue().",
+      "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_f58db4bb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPParameter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-05-13T06:13:06Z",
+      "side": 1,
+      "message": "Is this correct? Should I be overriding the delete() method in PDOMCPPParameterSpecialization as well and adding a line like this?",
+      "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

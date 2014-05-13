@@ -133,7 +133,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
     private KeyListener               fKeyHandler;
     private final ITerminalListener         fTerminalListener;
     private String                    fMsg = ""; //$NON-NLS-1$
-    private FocusListener             fFocusListener;
+    private TerminalFocusListener     fFocusListener;
     private ITerminalConnector		  fConnector;
     private final ITerminalConnector[]      fConnectors;
 	private final boolean fUseCommonPrefs;
@@ -456,9 +456,13 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			disconnectTerminal();
 			return;
 		}
-		getCtlText().setFocus();
+		if (getCtlText().isFocusControl()) {
+			if (getState() == TerminalState.CONNECTED)
+				fFocusListener.captureKeyEvents(true);
+		} else {
+			getCtlText().setFocus();
+		}
 		startReaderJob();
-
 	}
 
 	private synchronized void startReaderJob() {
@@ -804,8 +808,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		return fTerminalText;
 	}
 	protected class TerminalFocusListener implements FocusListener {
-		private IContextActivation contextActivation = null;
-		private IContextActivation contextActivation1 = null;
+		private IContextActivation terminalContextActivation = null;
+		private IContextActivation editContextActivation = null;
 
 		protected TerminalFocusListener() {
 			super();
@@ -815,40 +819,50 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			// Disable all keyboard accelerators (e.g., Control-B) so the Terminal view
 			// can see every keystroke.  Without this, Emacs, vi, and Bash are unusable
 			// in the Terminal view.
-
-			IBindingService bindingService = (IBindingService) PlatformUI
-					.getWorkbench().getAdapter(IBindingService.class);
-			bindingService.setKeyFilterEnabled(false);
-
-			// The above code fails to cause Eclipse to disable menu-activation
-			// accelerators (e.g., Alt-F for the File menu), so we set the command
-			// context to be the Terminal view's command context.  This enables us to
-			// override menu-activation accelerators with no-op commands in our
-			// plugin.xml file, which enables the Terminal view to see absolutly _all_
-			// key-presses.
+			if (getState() == TerminalState.CONNECTED)
+				captureKeyEvents(true);
 
 			IContextService contextService = (IContextService) PlatformUI
 					.getWorkbench().getAdapter(IContextService.class);
-			contextActivation = contextService
-					.activateContext("org.eclipse.tm.terminal.TerminalContext"); //$NON-NLS-1$
-			contextActivation1 = contextService
+			editContextActivation = contextService
 					.activateContext("org.eclipse.tm.terminal.EditContext"); //$NON-NLS-1$
-
 		}
 
 		public void focusLost(FocusEvent event) {
 			// Enable all keybindings.
-
-			IBindingService bindingService = (IBindingService) PlatformUI
-					.getWorkbench().getAdapter(IBindingService.class);
-			bindingService.setKeyFilterEnabled(true);
+			captureKeyEvents(false);
 
 			// Restore the command context to its previous value.
 
 			IContextService contextService = (IContextService) PlatformUI
 					.getWorkbench().getAdapter(IContextService.class);
-			contextService.deactivateContext(contextActivation);
-			contextService.deactivateContext(contextActivation1);
+			contextService.deactivateContext(editContextActivation);
+		}
+
+		protected void captureKeyEvents(boolean capture) {
+			IBindingService bindingService = (IBindingService) PlatformUI
+					.getWorkbench().getAdapter(IBindingService.class);
+			IContextService contextService = (IContextService) PlatformUI
+					.getWorkbench().getAdapter(IContextService.class);
+
+			boolean enableKeyFilter = !capture;
+			if (bindingService.isKeyFilterEnabled() != enableKeyFilter)
+				bindingService.setKeyFilterEnabled(enableKeyFilter);
+
+			if (capture && terminalContextActivation == null) {
+				// The above code fails to cause Eclipse to disable menu-activation
+				// accelerators (e.g., Alt-F for the File menu), so we set the command
+				// context to be the Terminal view's command context.  This enables us to
+				// override menu-activation accelerators with no-op commands in our
+				// plugin.xml file, which enables the Terminal view to see absolutely _all_
+				// key-presses.
+				terminalContextActivation = contextService
+						.activateContext("org.eclipse.tm.terminal.TerminalContext"); //$NON-NLS-1$
+
+			} else if (!capture && terminalContextActivation != null) {
+				contextService.deactivateContext(terminalContextActivation);
+				terminalContextActivation = null;
+			}
 		}
 	}
 
@@ -1179,9 +1193,17 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		// enable the (blinking) cursor if the terminal is connected
 		runAsyncInDisplayThread(new Runnable() {
 			public void run() {
-				if(fCtlText!=null && !fCtlText.isDisposed())
-					fCtlText.setCursorEnabled(isConnected());
-			}});
+				if(fCtlText!=null && !fCtlText.isDisposed()) {
+					if (isConnected()) {
+						fCtlText.setCursorEnabled(true);
+					} else {
+						fCtlText.setCursorEnabled(false);
+						// Stop capturing all key events
+						fFocusListener.captureKeyEvents(false);
+					}
+				}
+			}
+		});
 	}
 	/**
 	 * @param runnable run in display thread
@@ -1265,6 +1287,5 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	public boolean isVT100LineWrapping() {
 		return getTerminalText().isVT100LineWrapping();
 	}
-	
 	
 }

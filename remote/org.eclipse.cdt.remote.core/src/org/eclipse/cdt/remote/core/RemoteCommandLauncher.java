@@ -73,15 +73,11 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 						IRemoteProcessBuilder processBuilder = fConnection.getProcessBuilder(fCommandArgs);
 						if (workingDirectory != null) {
 			                IPath relativePath = workingDirectory.makeRelativeTo(getProject().getLocation());
-			                try {
-								IPath remoteWorkingPath = 
-										new Path(remRes.getActiveLocationURI().toURL().getPath()).append(relativePath);
-				                IFileStore wd = fConnection.getFileManager().getResource(remoteWorkingPath.toString());
-								processBuilder.directory(wd);
-							} catch (MalformedURLException e) {
-								fLocalLauncher.setErrorMessage(e.getMessage());
-								return null;
-							}
+							IPath remoteWorkingPath = new Path(remRes.getActiveLocationURI().getPath());
+							if (!relativePath.isEmpty())
+									remoteWorkingPath.append(relativePath);
+			                IFileStore wd = fConnection.getFileManager().getResource(remoteWorkingPath.toString());
+							processBuilder.directory(wd);
 						}
 						Map<String, String> processEnv = processBuilder.environment();
 						for (String key : fEnvironment.stringPropertyNames()) {

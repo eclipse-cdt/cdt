@@ -130,9 +130,9 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 		// Delete from the binding chain
 		PDOMMacro prevName = getPrevInContainer();
 		PDOMMacro nextName = getNextInContainer();
-		if (prevName != null)
+		if (prevName != null) {
 			prevName.setNextInContainer(nextName);
-		else {
+		} else {
 			PDOMMacroContainer container= getContainer();
 			container.setFirstDefinition(nextName);
 			if (nextName == null && container.isOrphaned()) {
@@ -218,7 +218,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 			try {
 				IString plist= getParamListInDB();
 				if (plist != null) {
-					List<char[]> paramList = new ArrayList<char[]>();
+					List<char[]> paramList = new ArrayList<>();
 					final char[] cplist= plist.getChars();
 					final int end = cplist.length;
 					int from= 0;
@@ -264,7 +264,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 			return getContainer().getNameCharArray();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return new char[] {' '};
+			return new char[] { ' ' };
 		}
 	}
 	

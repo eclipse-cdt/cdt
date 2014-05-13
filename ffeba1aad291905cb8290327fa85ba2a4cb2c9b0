@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_07eabd6c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-05-13T18:27:00Z",
+      "side": 1,
+      "message": "Could you move this up to where canTerminate() is?",
+      "revId": "ffeba1aad291905cb8290327fa85ba2a4cb2c9b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

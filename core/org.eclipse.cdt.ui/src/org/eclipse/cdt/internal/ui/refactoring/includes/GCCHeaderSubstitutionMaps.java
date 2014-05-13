@@ -160,6 +160,7 @@ public class GCCHeaderSubstitutionMaps {
 			"<bits/error.h>", "<error.h>",
 			"<bits/fcntl.h>", "<fcntl.h>",
 			"<bits/fcntl2.h>", "<fcntl.h>",
+			"<bits/fcntl-linux.h>", "<fcntl.h>",
 			"<bits/fenv.h>", "<fenv.h>",
 			"<bits/fenvinline.h>", "<fenv.h>",
 			"<bits/huge_val.h>", "<math.h>",

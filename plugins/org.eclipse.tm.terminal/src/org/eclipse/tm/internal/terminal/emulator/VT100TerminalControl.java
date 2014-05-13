@@ -35,6 +35,7 @@
  * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
  * Anton Leherbauer (Wind River) - [434294] Incorrect handling of function keys with modifiers
  * Martin Oberhuber (Wind River) - [434294] Add Mac bindings with COMMAND
+ * Anton Leherbauer (Wind River) - [434749] UnhandledEventLoopException when copying to clipboard while the selection is empty
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -242,9 +243,12 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	}
 
 	private void copy(int clipboardType) {
-		Object[] data = new Object[] { getSelection() };
-		Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
-		fClipboard.setContents(data, types, clipboardType);
+		String selection = getSelection();
+		if (selection.length() > 0) {
+			Object[] data = new Object[] { selection };
+			Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
+			fClipboard.setContents(data, types, clipboardType);
+		}
 	}
 
 	/* (non-Javadoc)

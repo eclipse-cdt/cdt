@@ -35,6 +35,47 @@ import org.eclipse.remote.core.RemoteProcessAdapter;
 import org.eclipse.remote.core.RemoteServices;
 
 public class RemoteCommandLauncher implements ICommandLauncher {
+	
+	/**
+	 * Convert a local (workspace) path into the remote equivalent. If the local path is not
+	 * absolute, then do nothing.
+	 * 
+	 * e.g. Suppose the local path is /u/local_user/workspace/local_project/subdir1/subdir2
+	 *      Suppose the remote project location is /home/remote_user/remote_project
+	 *      Then the resulting path will be /home/remote_user/remote_project/subdir1/subdir2
+	 * 
+	 * @param localPath absolute local path in the workspace
+	 * @param remote remote project
+	 * @return remote path that is the equivalent of the local path
+	 */
+	public static String makeRemote(String local, IRemoteResource remote) {
+		return makeRemote(new Path(local), remote).toString();
+	}
+	
+	/**
+	 * Convert a local (workspace) path into the remote equivalent. If the local path is not
+	 * absolute, then do nothing.
+	 * 
+	 * e.g. Suppose the local path is /u/local_user/workspace/local_project/subdir1/subdir2
+	 *      Suppose the remote project location is /home/remote_user/remote_project
+	 *      Then the resulting path will be /home/remote_user/remote_project/subdir1/subdir2
+	 * 
+	 * @param localPath absolute local path in the workspace
+	 * @param remote remote project
+	 * @return remote path that is the equivalent of the local path
+	 */
+	public static IPath makeRemote(IPath localPath, IRemoteResource remote) {
+		if (!localPath.isAbsolute()) {
+			return localPath;
+		}
+		IPath relativePath = localPath.makeRelativeTo(remote.getResource().getLocation());
+		IPath remotePath = new Path(remote.getActiveLocationURI().getPath());
+		if (!relativePath.isEmpty()) {
+			remotePath = remotePath.append(relativePath);
+		}
+		return remotePath;
+	}
+	
 	private final ICommandLauncher fLocalLauncher = new CommandLauncher();
 	private boolean fShowCommand;
 	private String[] fCommandArgs;
@@ -50,18 +91,20 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 	/**
 	 * Constructs a command array that will be passed to the process
 	 */
-	private String[] constructCommandArray(String command, String[] commandArgs) {
+	private String[] constructCommandArray(String command, String[] commandArgs, IRemoteResource remote) {
 		String[] args = new String[1 + commandArgs.length];
-		args[0] = command;
-		System.arraycopy(commandArgs, 0, args, 1, commandArgs.length);
+		args[0] = makeRemote(command, remote);
+		for (int i = 0; i < commandArgs.length; i++) {
+			args[i + 1] = makeRemote(commandArgs[i], remote);
+		}
 		return args;
 	}
 
 	@Override
 	public Process execute(IPath commandPath, String[] args, String[] env, IPath workingDirectory, IProgressMonitor monitor)
 			throws CoreException {
-		if (fLocalLauncher.getProject() != null) {
-			IRemoteResource remRes = (IRemoteResource) fLocalLauncher.getProject().getAdapter(IRemoteResource.class);
+		if (getProject() != null) {
+			IRemoteResource remRes = (IRemoteResource) getProject().getAdapter(IRemoteResource.class);
 			if (remRes != null) {
 				URI uri = remRes.getActiveLocationURI();
 				IRemoteServices remServices = RemoteServices.getRemoteServices(uri);
@@ -69,19 +112,12 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 					fConnection = remServices.getConnectionManager().getConnection(uri);
 					if (fConnection != null) {
 						parseEnvironment(env);
-						fCommandArgs = constructCommandArray(commandPath.toOSString(), args);
+						fCommandArgs = constructCommandArray(commandPath.toString(), args, remRes);
 						IRemoteProcessBuilder processBuilder = fConnection.getProcessBuilder(fCommandArgs);
 						if (workingDirectory != null) {
-			                IPath relativePath = workingDirectory.makeRelativeTo(getProject().getLocation());
-			                try {
-								IPath remoteWorkingPath = 
-										new Path(remRes.getActiveLocationURI().toURL().getPath()).append(relativePath);
-				                IFileStore wd = fConnection.getFileManager().getResource(remoteWorkingPath.toString());
-								processBuilder.directory(wd);
-							} catch (MalformedURLException e) {
-								fLocalLauncher.setErrorMessage(e.getMessage());
-								return null;
-							}
+							String remoteWorkingPath = makeRemote(workingDirectory.toString(), remRes);
+			                IFileStore wd = fConnection.getFileManager().getResource(remoteWorkingPath);
+							processBuilder.directory(wd);
 						}
 						Map<String, String> processEnv = processBuilder.environment();
 						for (String key : fEnvironment.stringPropertyNames()) {

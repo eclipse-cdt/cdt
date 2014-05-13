@@ -84,6 +84,7 @@ import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteResource;
 import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.RemoteServices;
+import org.eclipse.remote.core.exception.RemoteConnectionException;
 
 
 @SuppressWarnings("deprecation")
@@ -223,7 +224,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			IRemoteResource remRes =
 					(IRemoteResource)getProject().getAdapter(IRemoteResource.class);
 			if (remRes != null) {
-				remRes.refresh(new NullProgressMonitor());
+				remRes.refresh(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
 			}
 
 		} catch (CoreException e) {
@@ -256,7 +257,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				IRemoteResource remRes =
 						(IRemoteResource)project.getAdapter(IRemoteResource.class);
 				if (remRes != null) {
-					remRes.refresh(new NullProgressMonitor());
+					remRes.refresh(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
 				}
 
 			}
@@ -926,7 +927,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 			launcher.showCommand(true);
 			Process proc = launcher.execute(commandPath, configTargets, env,
-					runPath, new NullProgressMonitor());
+					runPath, new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
 			int exitValue = 0;
 			if (proc != null) {
 				try {
@@ -1036,15 +1037,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	private IPath getRemotePath(IPath path) {
 		IRemoteResource remRes = (IRemoteResource) getProject().getAdapter(IRemoteResource.class);
 		if (remRes != null) {
-			IPath relativePath = path.makeRelativeTo(getProject().getLocation());
-			try {
-				IPath remotePath = 
-						new Path(remRes.getActiveLocationURI().toURL().getPath()).append(relativePath);
-				return remotePath;
-			} catch (MalformedURLException e) {
-				// fall-through to default action
-			}
-
+			return RemoteCommandLauncher.makeRemote(path, remRes);
 		}
 		return path;
 	}
@@ -1075,7 +1068,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 						new String[] { "-c", "echo $OSTYPE" }, //$NON-NLS-1$ //$NON-NLS-2$
 						env,
 						new Path("."), //$NON-NLS-1$
-						new NullProgressMonitor());
+						new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
 				if (launcher.waitAndRead(out, out) == ICommandLauncher.OK)
 					winOSType = out.toString().trim();
 			} catch (CoreException e) {
@@ -1096,7 +1089,16 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
     			IRemoteConnection conn =
     					remServices.getConnectionManager().getConnection(uri);
     			if (conn != null) {
-    				return conn.getProperty(IRemoteConnection.OS_NAME_PROPERTY);
+    				if (!conn.isOpen()) {
+    					try {
+							conn.open(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+							if (conn.isOpen()) {
+								return conn.getProperty(IRemoteConnection.OS_NAME_PROPERTY);
+							}
+						} catch (RemoteConnectionException e) {
+							// Ignore and return platform OS
+						}
+    				}
     			}
     		}
     	}
@@ -1282,7 +1284,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			launcher.showCommand(true);
 			// Run the shell script via shell command.
 			Process proc = launcher.execute(new Path(SHELL_COMMAND), configTargets, env,
-					runPath, new NullProgressMonitor());
+					runPath, new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
 			
 			int exitValue = 0;
 			if (proc != null) {

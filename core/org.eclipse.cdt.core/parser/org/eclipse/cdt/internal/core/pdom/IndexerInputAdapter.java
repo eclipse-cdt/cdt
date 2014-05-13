@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,11 +66,22 @@ public abstract class IndexerInputAdapter extends ASTFilePathResolver {
 	public abstract boolean isIndexedOnlyIfIncluded(Object tu);
 
 	/**
-	 * Checks whether the given file should be indexed unconditionally. 
-	 * @param location the location of the file.
-	 * @return {@code true} if the file should be indexed unconditionally.
+	 * Checks whether the given file should be indexed unconditionally.
+	 *
+	 * @param location the location of the file
+	 * @return {@code true} if the file should be indexed unconditionally
 	 */
 	public abstract boolean isIndexedUnconditionally(IIndexFileLocation location);
+
+	/**
+	 * Returns the priority of indexing a file. The priority is a nonnegative number. A larger
+	 * number means a higher priority causing the file to be indexed ahead of files with lower
+	 * priorities.
+	 *
+	 * @param location the location of the file
+	 * @return {@code true} the indexing priority
+	 */
+	public abstract int getIndexingPriority(IIndexFileLocation location);
 
 	/**
 	 * Tests whether the file in the index is allowed to be part of an SDK. If not

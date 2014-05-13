@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,6 +83,11 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	@Override
 	public boolean isIndexedUnconditionally(IIndexFileLocation ifl) {
 		return false;
+	}
+
+	@Override
+	public int getIndexingPriority(IIndexFileLocation ifl) {
+		return 0;
 	}
 
 	@Override

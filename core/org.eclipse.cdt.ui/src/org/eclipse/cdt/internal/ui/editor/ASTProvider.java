@@ -105,7 +105,6 @@ public final class ASTProvider {
 	 * Internal activation listener.
 	 */
 	private class ActivationListener implements IPartListener2, IWindowListener {
-
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 		 */
@@ -238,10 +237,11 @@ public final class ASTProvider {
 		}
 	}
 
-	private ASTCache fCache= new ASTCache();
+	private final ASTCache fCache= new ASTCache();
 	private ActivationListener fActivationListener;
 	private IWorkbenchPart fActiveEditor;
 	private long fTimeStamp;
+	private final IndexUpdateRequestor fIndexUpdateRequestor = new IndexUpdateRequestor();
 
 	/**
 	 * Returns the C plug-in's AST provider.
@@ -288,6 +288,9 @@ public final class ASTProvider {
 			fTimeStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 			fCache.setActiveElement(tu);
 		}
+
+		// Increase indexing priority of the translation unit of the active editor.
+		fIndexUpdateRequestor.updateIndexInclusion(tu);
 	}
 
 	/**

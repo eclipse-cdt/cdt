@@ -1651,4 +1651,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	public boolean isFileIndexedUnconditionally(IIndexFileLocation ifl) {
 		return fFilesIndexedUnconditionlly.contains(ifl);
 	}
+
+	public int getIndexingPriority(IIndexFileLocation ifl) {
+		return fFilesIndexedUnconditionlly.getCount(ifl);
+	}
 }

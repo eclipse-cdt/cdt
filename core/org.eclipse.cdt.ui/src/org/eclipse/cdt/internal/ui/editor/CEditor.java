@@ -30,7 +30,6 @@ import java.util.Stack;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,8 +39,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.GroupMarker;
@@ -176,7 +173,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -198,8 +194,6 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
-import org.eclipse.cdt.internal.corext.util.CModelUtil;
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -1138,71 +1132,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		}
 	}
 
-	private class IndexerPreferenceListener implements IPreferenceChangeListener {
-		private IProject fProject;
-
-		@Override
-		public void preferenceChange(PreferenceChangeEvent event) {
-			if (IndexerPreferences.KEY_INDEX_ON_OPEN.equals(event.getKey())) {
-				ICElement element= getInputCElement();
-				ITranslationUnit tu = element != null ? (ITranslationUnit) element : null;
-				updateIndexInclusion(tu);
-			}
-		}
-
-		void registerFor(IProject project) {
-			if (fProject == project || fProject != null && fProject.equals(project)) {
-				return;
-			}
-			unregister();
-			fProject = project;
-			if (fProject != null) {
-				IndexerPreferences.addChangeListener(fProject, this);
-			}
-		}
-
-		void unregister() {
-			if (fProject != null) {
-				IndexerPreferences.removeChangeListener(fProject, this);
-				fProject = null;
-			}
-		}
-	}
-
-	private static class IndexUpdateRequestorJob extends Job {
-		private final ITranslationUnit tuToAdd;
-		private final ITranslationUnit tuToReset;
-
-		/**
-		 * @param tu The translation unit to add or to remove from the index.
-		 * @param add {@code true} to add, {@code false} to reset index inclusion.
-		 */
-		IndexUpdateRequestorJob(ITranslationUnit tuToAdd, ITranslationUnit tuToReset) {
-			super(CEditorMessages.CEditor_index_expander_job_name);
-			this.tuToAdd = tuToAdd;
-			this.tuToReset = tuToReset;
-			setSystem(true);
-			setPriority(Job.DECORATE);
-		}
-
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-			try {
-				IIndexManager indexManager = CCorePlugin.getIndexManager();
-				if (tuToReset != null) {
-					indexManager.update(new ICElement[] { CModelUtil.toOriginal(tuToReset) },
-							IIndexManager.RESET_INDEX_INCLUSION | IIndexManager.UPDATE_CHECK_TIMESTAMPS);
-				}
-				if (tuToAdd != null) {
-					indexManager.update(new ICElement[] { CModelUtil.toOriginal(tuToAdd) },
-							IIndexManager.FORCE_INDEX_INCLUSION | IIndexManager.UPDATE_CHECK_TIMESTAMPS);
-				}
-			} catch (CoreException e) {
-			}
-			return Status.OK_STATUS;
-		}
-	}
-
 	/**
 	 * The editor selection changed listener.
 	 *
@@ -1301,21 +1230,16 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * True if editor is opening a large file.
 	 * @since 5.0
 	 */
-	private boolean fEnableScalablilityMode = false;
+	private boolean fEnableScalablilityMode;
 
-	/**
-	 * Flag indicating whether the reconciler is currently running.
-	 */
+	/** Flag indicating whether the reconciler is currently running. */
 	private volatile boolean fIsReconciling;
 
 	private CTemplatesPage fTemplatesPage;
 
 	private SelectionHistory fSelectionHistory;
 
-	/** The translation unit that was added by the editor to index, or <code>null</code>. */
-	private ITranslationUnit fTuAddedToIndex;
-
-	private final IndexerPreferenceListener fIndexerPreferenceListener;
+	private final IndexUpdateRequestor fIndexUpdateRequestor = new IndexUpdateRequestor();
 
 	private final ListenerList fPostSaveListeners;
 
@@ -1354,7 +1278,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
 
 		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);
-		fIndexerPreferenceListener = new IndexerPreferenceListener();
 		fPostSaveListeners = new ListenerList();
 	}
 
@@ -1402,8 +1325,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		if (cSourceViewer != null && isFoldingEnabled() && (store == null || !store.getBoolean(PreferenceConstants.EDITOR_SHOW_SEGMENTS)))
 			cSourceViewer.prepareDelayedProjection();
 
-		fIndexerPreferenceListener.unregister();
-
 		super.doSetInput(input);
 
 		setOutlinePageInput(fOutlinePage, input);
@@ -1415,32 +1336,13 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			fCEditorErrorTickUpdater.updateEditorImage(getInputCElement());
 		}
 		ICElement element= getInputCElement();
-		if (element != null) {
-			IProject project = element.getCProject().getProject();
-			fIndexerPreferenceListener.registerFor(project);
-		}
-
 		if (element instanceof ITranslationUnit) {
 			ITranslationUnit tu = (ITranslationUnit) element;
-			updateIndexInclusion(tu);
+			fIndexUpdateRequestor.updateIndexInclusion(tu);
 			fBracketMatcher.configure(tu.getLanguage());
 		} else {
-			updateIndexInclusion(null);
+			fIndexUpdateRequestor.updateIndexInclusion(null);
 			fBracketMatcher.configure(null);
-		}
-	}
-
-	private void updateIndexInclusion(ITranslationUnit tu) {
-		if (tu != null) {
-			IProject project = tu.getCProject().getProject();
-			if (!String.valueOf(true).equals(IndexerPreferences.get(project, IndexerPreferences.KEY_INDEX_ON_OPEN, null))) {
-				tu = null;
-			}
-		}
-		if ((tu != null || fTuAddedToIndex != null) && tu != fTuAddedToIndex) {
-			IndexUpdateRequestorJob job = new IndexUpdateRequestorJob(tu, fTuAddedToIndex);
-			fTuAddedToIndex = tu;
-			job.schedule();
 		}
 	}
 
@@ -2101,8 +2003,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
      */
     @Override
 	public void dispose() {
-		fIndexerPreferenceListener.unregister();
-    	updateIndexInclusion(null);
+    	fIndexUpdateRequestor.updateIndexInclusion(null);
 
 		ISourceViewer sourceViewer = getSourceViewer();
 		if (sourceViewer instanceof ITextViewerExtension)

@@ -16,9 +16,11 @@ package org.eclipse.cdt.internal.core.pdom;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -326,7 +328,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	 * A queue of urgent indexing tasks that contribute additional files to this task.
 	 * The files from the urgent tasks are indexed before all not yet processed files.
 	 */
-	private final LinkedList<AbstractIndexerTask> fUrgentTasks;
+	private final Deque<AbstractIndexerTask> fUrgentTasks;
 	boolean fTaskCompleted;
 	private IndexerProgress fInfo= new IndexerProgress();
 	private IProgressMonitor fProgressMonitor;
@@ -338,7 +340,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		fFilesToUpdate= filesToUpdate;
 		Collections.addAll(fFilesToRemove, filesToRemove);
 		incrementRequestedFilesCount(fFilesToUpdate.length + fFilesToRemove.size());
-		fUrgentTasks = new LinkedList<>();
+		fUrgentTasks = new ArrayDeque<>();
 	}
 
 	public final void setIndexHeadersWithoutContext(UnusedHeaderStrategy mode) {
@@ -626,7 +628,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 	}
 
-	private void extractFiles(HashMap<Integer, List<IIndexFileLocation>> files, List<IIndexFragmentFile> iFilesToRemove,
+	private void extractFiles(HashMap<Integer, List<IIndexFileLocation>> files, List<IIndexFragmentFile> filesToRemove,
 			IProgressMonitor monitor) throws CoreException {
 		final boolean forceAll= (fUpdateFlags & IIndexManager.UPDATE_ALL) != 0;
 		final boolean checkTimestamps= (fUpdateFlags & IIndexManager.UPDATE_CHECK_TIMESTAMPS) != 0;
@@ -686,7 +688,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				if (ifile != null) {
 					IIndexInclude ctx= ifile.getParsedInContext();
 					if (ctx == null && !indexedUnconditionally && ifile.hasContent()) {
-						iFilesToRemove.add(ifile);
+						filesToRemove.add(ifile);
 						count++;
 					} else {
 						boolean update= force ||
@@ -713,7 +715,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private void addPerLinkage(int linkageID, IIndexFileLocation ifl, HashMap<Integer, List<IIndexFileLocation>> files) {
 		List<IIndexFileLocation> list= files.get(linkageID);
 		if (list == null) {
-			list= new LinkedList<>();
+			list= new ArrayList<>();
 			files.put(linkageID, list);
 		}
 		list.add(ifl);
@@ -859,84 +861,108 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		if (map == null || files == null || files.isEmpty())
 			return;
 
-		// First parse the required sources
-		for (Iterator<IIndexFileLocation> it= files.iterator(); it.hasNext();) {
-			IIndexFileLocation ifl= it.next();
-			LocationTask locTask = map.find(ifl);
-			if (locTask == null || locTask.isCompleted()) {
-				it.remove();
-			} else if (locTask.fKind == UpdateKind.REQUIRED_SOURCE) {
-				if (monitor.isCanceled() || hasUrgentTasks())
-					return;
-				final Object tu = locTask.fTu;
-				final IScannerInfo scannerInfo = getScannerInfo(linkageID, tu);
-				parseFile(tu, getLanguage(tu, linkageID), ifl, scannerInfo, null, monitor);
+		int maxPriority = Integer.MIN_VALUE;
+		int minPriority = Integer.MAX_VALUE;
+		Map<Integer, List<IIndexFileLocation>> filesByPriority = new HashMap<>();
+		for (IIndexFileLocation file : files) {
+			int priority = fResolver.getIndexingPriority(file);
+			List<IIndexFileLocation> list = filesByPriority.get(priority);
+			if (list == null) {
+				list = new LinkedList<>();
+				filesByPriority.put(priority, list);
 			}
+			list.add(file);
+
+			if (maxPriority < priority)
+				maxPriority = priority;
+			if (minPriority > priority)
+				minPriority = priority;
 		}
 
-		// Files with context
-		for (Iterator<IIndexFileLocation> it= files.iterator(); it.hasNext();) {
-			IIndexFileLocation ifl= it.next();
-			LocationTask locTask = map.find(ifl);
-			if (locTask == null || locTask.isCompleted()) {
-				it.remove();
-			} else {
-				for (FileVersionTask versionTask : locTask.fVersionTasks) {
-					if (versionTask.fOutdated) {
-						if (monitor.isCanceled() || hasUrgentTasks())
-							return;
-						parseVersionInContext(linkageID, map, ifl, versionTask, locTask.fTu,
-								new LinkedHashSet<IIndexFile>(), monitor);
-					}
-				}
-			}
-		}
+		for (int priority = maxPriority; priority >= minPriority; priority--) {
+			List<IIndexFileLocation> filesAtPriority = filesByPriority.get(priority);
+			if (filesAtPriority == null)
+				continue;
 
-		// Files without context
-		for (Iterator<IIndexFileLocation> it= files.iterator(); it.hasNext();) {
-			IIndexFileLocation ifl= it.next();
-			LocationTask locTask = map.find(ifl);
-			if (locTask == null || locTask.isCompleted()) {
-				it.remove();
-			} else {
-				if (locTask.needsVersion()) {
+			// First parse the required sources.
+			for (Iterator<IIndexFileLocation> it= filesAtPriority.iterator(); it.hasNext();) {
+				IIndexFileLocation ifl= it.next();
+				LocationTask locTask = map.find(ifl);
+				if (locTask == null || locTask.isCompleted()) {
+					it.remove();
+				} else if (locTask.fKind == UpdateKind.REQUIRED_SOURCE) {
 					if (monitor.isCanceled() || hasUrgentTasks())
 						return;
 					final Object tu = locTask.fTu;
-					final IScannerInfo scannerInfo= getScannerInfo(linkageID, tu);
+					final IScannerInfo scannerInfo = getScannerInfo(linkageID, tu);
 					parseFile(tu, getLanguage(tu, linkageID), ifl, scannerInfo, null, monitor);
-					if (locTask.isCompleted())
-						it.remove();
-
 				}
 			}
-		}
-
-		// Delete remaining files.
-		fIndex.acquireWriteLock(fProgressMonitor);
-		try {
-			for (IIndexFileLocation ifl : files) {
+	
+			// Files with context.
+			for (Iterator<IIndexFileLocation> it= filesAtPriority.iterator(); it.hasNext();) {
+				IIndexFileLocation ifl= it.next();
 				LocationTask locTask = map.find(ifl);
-				if (locTask != null && !locTask.isCompleted()) {
-					if (!locTask.needsVersion()) {
-						if (monitor.isCanceled() || hasUrgentTasks())
-							return;
-						Iterator<FileVersionTask> it= locTask.fVersionTasks.iterator();
-						while (it.hasNext()) {
-							FileVersionTask v = it.next();
-							if (v.fOutdated) {
-								fIndex.clearFile(v.fIndexFile);
-								reportFile(true, locTask.fKind);
-								locTask.removeVersionTask(it);
-								fIndexContentCache.remove(v.fIndexFile);
-								fIndexFilesCache.remove(ifl);
-							}
+				if (locTask == null || locTask.isCompleted()) {
+					it.remove();
+				} else {
+					for (FileVersionTask versionTask : locTask.fVersionTasks) {
+						if (versionTask.fOutdated) {
+							if (monitor.isCanceled() || hasUrgentTasks())
+								return;
+							parseVersionInContext(linkageID, map, ifl, versionTask, locTask.fTu,
+									new LinkedHashSet<IIndexFile>(), monitor);
 						}
 					}
 				}
 			}
-		} finally {
-			fIndex.releaseWriteLock();
+	
+			// Files without context.
+			for (Iterator<IIndexFileLocation> it= filesAtPriority.iterator(); it.hasNext();) {
+				IIndexFileLocation ifl= it.next();
+				LocationTask locTask = map.find(ifl);
+				if (locTask == null || locTask.isCompleted()) {
+					it.remove();
+				} else {
+					if (locTask.needsVersion()) {
+						if (monitor.isCanceled() || hasUrgentTasks())
+							return;
+						final Object tu = locTask.fTu;
+						final IScannerInfo scannerInfo= getScannerInfo(linkageID, tu);
+						parseFile(tu, getLanguage(tu, linkageID), ifl, scannerInfo, null, monitor);
+						if (locTask.isCompleted())
+							it.remove();
+	
+					}
+				}
+			}
+
+			// Delete remaining files.
+			fIndex.acquireWriteLock(fProgressMonitor);
+			try {
+				for (IIndexFileLocation ifl : filesAtPriority) {
+					LocationTask locTask = map.find(ifl);
+					if (locTask != null && !locTask.isCompleted()) {
+						if (!locTask.needsVersion()) {
+							if (monitor.isCanceled() || hasUrgentTasks())
+								return;
+							Iterator<FileVersionTask> it= locTask.fVersionTasks.iterator();
+							while (it.hasNext()) {
+								FileVersionTask v = it.next();
+								if (v.fOutdated) {
+									fIndex.clearFile(v.fIndexFile);
+									reportFile(true, locTask.fKind);
+									locTask.removeVersionTask(it);
+									fIndexContentCache.remove(v.fIndexFile);
+									fIndexFilesCache.remove(ifl);
+								}
+							}
+						}
+					}
+				}
+			} finally {
+				fIndex.releaseWriteLock();
+			}
 		}
 	}
 

@@ -50,11 +50,11 @@ public class RenameTests extends RefactoringTests {
         try {
         	RefactoringStatus rs = checkConditions(proc);
         	if (!rs.hasError()) {
-        		Change change = proc.createChange( new NullProgressMonitor() );
+        		Change change = proc.createChange(new NullProgressMonitor());
         		return change;
         	} 
 
-        	fail ("Input check on " + newName + " failed. "+rs.getEntryMatchingSeverity(RefactoringStatus.ERROR) ); //$NON-NLS-1$ //$NON-NLS-2$
+        	fail ("Input check on " + newName + " failed. "+rs.getEntryMatchingSeverity(RefactoringStatus.ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
         	//rs.getFirstMessage(RefactoringStatus.ERROR) is not the message displayed in 
         	//the UI for renaming a method to a constructor, the first message which is only
         	//a warning is shown in the UI. If you click preview, then the error and the warning
@@ -68,7 +68,7 @@ public class RenameTests extends RefactoringTests {
     private CRenameRefactoring createRefactoring(IFile file, int offset, String newName) {
     	CRefactoringArgument arg= new CRefactoringArgument(file, offset, 0);
         CRenameProcessor proc= new CRenameProcessor(CRefactory.getInstance(), arg);
-        proc.setReplacementText( newName );
+        proc.setReplacementText(newName);
         proc.setSelectedOptions(-1);
         proc.setExhaustiveSearchScope(TextSearchWrapper.SCOPE_WORKSPACE);
         return new CRenameRefactoring(proc);
@@ -80,15 +80,15 @@ public class RenameTests extends RefactoringTests {
         ((CRenameProcessor) proc.getProcessor()).lockIndex();
         try {
         	RefactoringStatus rs = checkConditions(proc);
-        	if (!rs.hasWarning()){
-        		fail ("Input check on "+ newName + " passed. There should have been warnings or errors. ") ; //$NON-NLS-1$ //$NON-NLS-2$
+        	if (!rs.hasWarning()) {
+        		fail ("Input check on "+ newName + " passed. There should have been warnings or errors.") ; //$NON-NLS-1$ //$NON-NLS-2$
         		return null;
         	}
         	RefactoringStatusEntry[] rse = rs.getEntries();
         	result = new String[rse.length];
-        	for (int i=0; i< rse.length; i++){
+        	for (int i= 0; i < rse.length; i++) {
         		RefactoringStatusEntry entry = rse[i];
-        		result[i]=entry.getMessage();
+        		result[i]= entry.getMessage();
 
         	} 
         	return result;
@@ -108,8 +108,8 @@ public class RenameTests extends RefactoringTests {
     }
     
     private RefactoringStatus checkConditions(CRenameRefactoring proc) throws CoreException {
-        RefactoringStatus rs =proc.checkInitialConditions(new NullProgressMonitor() );
-        if (!rs.hasError()){
+        RefactoringStatus rs =proc.checkInitialConditions(new NullProgressMonitor());
+        if (!rs.hasError()) {
             rs= proc.checkFinalConditions(new NullProgressMonitor());
         }
         return rs;

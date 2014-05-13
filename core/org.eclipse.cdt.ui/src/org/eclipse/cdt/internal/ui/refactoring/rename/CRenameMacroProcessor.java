@@ -18,7 +18,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 
-
 /**
  * Rename processor that sets up the input page for renaming a global entity.
  */
@@ -28,7 +27,7 @@ public class CRenameMacroProcessor extends CRenameGlobalProcessor {
         super(processor, name);
         setAvailableOptions(
         		CRefactory.OPTION_IN_CODE_REFERENCES |
-                CRefactory.OPTION_IN_COMMENT | 
+                CRefactory.OPTION_IN_COMMENT |
                 CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE |
                 CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
     }

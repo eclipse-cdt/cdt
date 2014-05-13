@@ -98,9 +98,8 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 	}
 
 	public IIndexMacro[] getDefinitions() throws CoreException {
-		PDOMMacro macro;
 		List<PDOMMacro> macros= new ArrayList<>();
-		for (macro= getFirstDefinition(); macro != null; macro= macro.getNextInContainer()) {
+		for (PDOMMacro macro= getFirstDefinition(); macro != null; macro= macro.getNextInContainer()) {
 			macros.add(macro);
 		}
 		return macros.toArray(new IIndexMacro[macros.size()]);

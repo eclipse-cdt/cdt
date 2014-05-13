@@ -246,7 +246,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private boolean fSplitShiftRightOperator= false;
 
     // State information
-    private final CharArrayMap<PreprocessorMacro> fMacroDictionary = new CharArrayMap<PreprocessorMacro>(512);
+    private final CharArrayMap<PreprocessorMacro> fMacroDictionary = new CharArrayMap<>(512);
 	private final IMacroDictionary fMacroDictionaryFacade = new MacroDictionary();
     private final LocationMap fLocationMap;
 	private CharArraySet fPreventInclusion;
@@ -340,7 +340,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		if (ctx != fRootContext) {
 			if (fLog.isTracing(TRACE_NO_GUARD)) {
 				if (fTracedGuards == null)
-					fTracedGuards= new HashSet<String>();
+					fTracedGuards= new HashSet<>();
 				if (fTracedGuards.add(filePath))
 					fLog.traceLog(TRACE_NO_GUARD, "No include guard in " + filePath); //$NON-NLS-1$
 			}
@@ -420,7 +420,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	 */
 	public static IncludeSearchPath configureIncludeSearchPath(File directory, IScannerInfo info) {
     	boolean inhibitUseOfCurrentFileDirectory= false;
-    	List<IncludeSearchPathElement> elements = new ArrayList<IncludeSearchPathElement>();
+    	List<IncludeSearchPathElement> elements = new ArrayList<>();
 
     	if (info != null) {
 	    	// Quote includes first
@@ -584,7 +584,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
     @Override
 	public Map<String, IMacroBinding> getMacroDefinitions() {
-        Map<String, IMacroBinding> hashMap = new HashMap<String, IMacroBinding>(fMacroDictionary.size());
+        Map<String, IMacroBinding> hashMap = new HashMap<>(fMacroDictionary.size());
         for (char[] key : fMacroDictionary.keys()) {
             hashMap.put(String.valueOf(key), fMacroDictionary.get(key));
 		}
@@ -799,8 +799,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         		endOffset= t1.getEndOffset();
         		
         		t1.setType(IToken.tGT_in_SHIFTR);
-        		t1.setOffset(offset, offset+1);
-        		t2= new Token(IToken.tGT_in_SHIFTR, t1.fSource, offset+1, endOffset);
+        		t1.setOffset(offset, offset + 1);
+        		t2= new Token(IToken.tGT_in_SHIFTR, t1.fSource, offset + 1, endOffset);
         		pushbackToken(t2);
         	}
     	}

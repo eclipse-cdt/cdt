@@ -166,12 +166,12 @@ public abstract class CRenameProcessorDelegate {
      * @return A set of files containing references to the bindings.
      */
     private Collection<IFile> getReferringFiles(IBinding[] bindings) {
-		ArrayList<IFile> files = new ArrayList<IFile>();
+		ArrayList<IFile> files = new ArrayList<>();
     	IIndex index = getIndex();
     	if (index == null) {
     		return files;
     	}
-		Set<IIndexFileLocation> locations = new HashSet<IIndexFileLocation>();
+		Set<IIndexFileLocation> locations = new HashSet<>();
     	try {
     		index.acquireReadLock();
         	for (IBinding binding : bindings) {
@@ -213,12 +213,12 @@ public abstract class CRenameProcessorDelegate {
         RefactoringStatus result= new RefactoringStatus();
         monitor.beginTask(RenameMessages.CRenameProcessorDelegate_task_checkFinalCondition, 2);
         IFile file= getArgument().getSourceFile();
-        //assert file!=null;
+        //assert file != null;
 
         IBinding[] renameBindings= getBindingsToBeRenamed(result);
 
-        // perform text-search
-        fMatches= new ArrayList<CRefactoringMatch>();
+        // Perform text search.
+        fMatches= new ArrayList<>();
         TextSearchWrapper txtSearch= getManager().getTextSearch();
         Collection<IFile> filesToSearch = getReferringFiles(renameBindings);
         if (!filesToSearch.contains(file)) {
@@ -240,7 +240,7 @@ public abstract class CRenameProcessorDelegate {
             return result;
         }
         
-        HashSet<IFile> fileset= new HashSet<IFile>();
+        HashSet<IFile> fileset= new HashSet<>();
         int potentialMatchCount= 0;
         int commentCount= 0;
         for (Iterator<CRefactoringMatch> iter = fMatches.iterator(); iter.hasNext();) {

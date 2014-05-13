@@ -23,45 +23,51 @@ public class CRefactoringMatch {
     public static final int AST_REFERENCE_OTHER= 2;
     public static final int AST_REFEREENCE_CONFLICTING= 3;
     public static final int IN_COMMENT = 4;
-    
+
     private static String[] LABELS= {
         RenameMessages.CRefactoringMatch_label_potentialOccurrence,
         RenameMessages.CRefactoringMatch_label_occurrence,
         "", //$NON-NLS-1$
         RenameMessages.CRefactoringMatch_label_potentialOccurrence,
         RenameMessages.CRefactoringMatch_label_comment };
-    
+
     private IFile fFile;
     private int fOffset;
     private int fLength;
     private int fLocation;
-    private int fAstInformation= 0;
+    private int fAstInformation;
 
     public int getAstInformation() {
         return fAstInformation;
     }
-    
+
     public CRefactoringMatch(IFile file, int offset, int length, int location) {
         fFile= file;
         fOffset= offset;
         fLength= length;
         fLocation= location;
     }
+
     public int getOffset() {
         return fOffset;
     }
+
     public void setLocation(int location) {
         fLocation= location;   
     }
+
     public int getLocation() {
         return fLocation;   
     }
+
     public int getLength() {
         return fLength;
     }
+
     public IFile getFile() {
         return fFile;
     }
+
     public void setASTInformation(int val) {
     	switch (fAstInformation) {
     	case AST_REFERENCE:
@@ -76,6 +82,7 @@ public class CRefactoringMatch {
     		break;
     	}
     }
+
     public String getLabel() {
         if (fAstInformation == AST_REFERENCE) {
             return LABELS[AST_REFERENCE];

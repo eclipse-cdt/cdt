@@ -6,9 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
+
+import static org.eclipse.cdt.core.parser.OffsetLimitReachedException.ORIGIN_PREPROCESSOR_DIRECTIVE;
 
 import java.util.ArrayList;
 
@@ -24,8 +26,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
  * @since 5.0
  */
 public class MacroDefinitionParser {
-	private static final int ORIGIN_PREPROCESSOR_DIRECTIVE = OffsetLimitReachedException.ORIGIN_PREPROCESSOR_DIRECTIVE;
-
 	/**
 	 * Exception for reporting problems while parsing a macro definition.
 	 */
@@ -159,17 +159,17 @@ public class MacroDefinitionParser {
 					if (CharArrayUtils.equals(lastParam, Keywords.cpELLIPSIS)) {
 						hasVarargs= FunctionStyleMacro.VAARGS;
 						char[][] copy= new char[length][];
-						System.arraycopy(paramList, 0, copy, 0, length-1);
+						System.arraycopy(paramList, 0, copy, 0, length - 1);
 						copy[length-1]= Keywords.cVA_ARGS;
 						paramList= copy;
 					}
 					break;
 				default:
-					if (CharArrayUtils.equals(lastParam, lpl-3, 3, Keywords.cpELLIPSIS)) {
+					if (CharArrayUtils.equals(lastParam, lpl - 3, 3, Keywords.cpELLIPSIS)) {
 						hasVarargs= FunctionStyleMacro.NAMED_VAARGS;
 						char[][] copy= new char[length][];
-						System.arraycopy(paramList, 0, copy, 0, length-1);
-						copy[length-1]= CharArrayUtils.subarray(lastParam, 0, lpl-3);
+						System.arraycopy(paramList, 0, copy, 0, length - 1);
+						copy[length - 1]= CharArrayUtils.subarray(lastParam, 0, lpl - 3);
 						paramList= copy;
 					}
 				break;
@@ -202,7 +202,7 @@ public class MacroDefinitionParser {
 		if (lparen.getType() != IToken.tLPAREN || name.getEndOffset() != lparen.getOffset()) {
 			return null;
 		}
-		ArrayList<char[]> paramList= new ArrayList<char[]>();
+		ArrayList<char[]> paramList= new ArrayList<>();
 		IToken next= null;
 		do {
 			final Token param= lex.nextToken();

@@ -57,11 +57,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * The top-level node in the PDOM storage format.  A linkage is a collection of nodes
- * that can be linked with references.  Several linkages can be created for an input
- * AST.
+ * that can be linked with references.  Several linkages can be created for an input AST.
  *
- * TODO Move this to a public interface and discuss the extension point (that already
- *      exists).
+ * TODO Move this to a public interface and discuss the extension point (that already exists).
  */
 public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage, IIndexBindingConstants {
 	// Record offsets.
@@ -73,7 +71,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 20;
-	protected static final long[] FILE_LOCAL_REC_DUMMY = new long[]{0};
+	protected static final long[] FILE_LOCAL_REC_DUMMY = new long[] { 0 };
 
 	private BTree fMacroIndex= null;  // No need for volatile, all fields of BTree are final.
 	private final PDOM fPDOM;
@@ -377,7 +375,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return result;
 	}
 
-	public void removeMacroContainer (PDOMMacroContainer container) throws CoreException {
+	public void removeMacroContainer(PDOMMacroContainer container) throws CoreException {
 		String key= fPDOM.createKeyForCache(record, container.getNameCharArray());
 		fPDOM.putCachedResult(key, null);
 		getMacroIndex().delete(container.getRecord());
@@ -643,10 +641,10 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return new TypeMarshalBuffer(this, data).unmarshalTemplateArgument();
 	}
 
-	public void storeValue(long offset, IValue type) throws CoreException {
+	public void storeValue(long offset, IValue value) throws CoreException {
 		final Database db= getDB();
 		deleteValue(db, offset);
-		storeValue(db, offset, type);
+		storeValue(db, offset, value);
 	}
 	
 	private void storeValue(Database db, long offset, IValue value) throws CoreException {

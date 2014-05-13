@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *    Andrew Niefer (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
+ *    Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -23,10 +24,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
  */
 public class CPPParameterSpecialization extends CPPSpecialization implements ICPPParameter {
 	private final IType fType;
+	private final IValue fDefaultValue;
 	
-	public CPPParameterSpecialization(ICPPParameter orig, IBinding owner, IType type, ICPPTemplateParameterMap tpmap) {
+	public CPPParameterSpecialization(ICPPParameter orig, IBinding owner, IType type, IValue defaultValue,
+			ICPPTemplateParameterMap tpmap) {
 		super(orig, owner, tpmap);
 		fType= type;
+		fDefaultValue = defaultValue;
 	}
 
 	private ICPPParameter getParameter(){
@@ -89,6 +93,11 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 	@Override
 	public boolean hasDefaultValue() {
 		return getParameter().hasDefaultValue();
+	}
+
+	@Override
+	public IValue getDefaultValue() {
+		return fDefaultValue;
 	}
 
 	@Override

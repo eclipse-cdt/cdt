@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,11 +28,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -44,6 +48,8 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -61,6 +67,7 @@ import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
@@ -754,5 +761,38 @@ public class SemanticUtil {
 				return i;
 		}
 		return -1;
+	}
+	
+	/**
+	 * Get the value of the initializer of a variable.
+	 * @param init the initializer's AST node
+	 * @param type the type of the variable
+	 * @param maxDepth maximum recursion depth
+	 */
+	public static IValue getValueOfInitializer(IASTInitializer init, IType type, int maxDepth) {
+		IASTInitializerClause clause= null;
+		if (init instanceof IASTEqualsInitializer) {
+			clause= ((IASTEqualsInitializer) init).getInitializerClause();
+		} else if (init instanceof ICPPASTConstructorInitializer) {
+			IASTInitializerClause[] args= ((ICPPASTConstructorInitializer) init).getArguments();
+			if (args.length == 1 && args[0] instanceof IASTExpression) {
+				IType typeUpToPointers= SemanticUtil.getUltimateTypeUptoPointers(type);
+				if (typeUpToPointers instanceof IPointerType || typeUpToPointers instanceof IBasicType) {
+					clause= args[0];
+				}
+			}
+		} else if (init instanceof ICPPASTInitializerList) {
+			ICPPASTInitializerList list= (ICPPASTInitializerList) init;
+			switch (list.getSize()) {
+			case 0:
+				return Value.create(0);
+			case 1:
+				clause= list.getClauses()[0];
+			}
+		}
+		if (clause instanceof IASTExpression) {
+			return Value.create((IASTExpression) clause, maxDepth);
+		}
+		return Value.UNKNOWN;
 	}
 }

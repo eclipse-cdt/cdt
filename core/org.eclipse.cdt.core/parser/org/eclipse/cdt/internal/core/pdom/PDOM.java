@@ -251,10 +251,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  CDT 8.4 development (versions not supported on the 8.3.x branch)
 	 *  170.0 - Unconditionally store arguments of EvalTypeId, bug 430230.
 	 *  171.0 - Replacement headers for Organize Includes, bug 414692.
+	 *  172.0 - Store default values for function parameters, bug 432701.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(171, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(171, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(171, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(172, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(172, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(172, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

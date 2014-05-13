@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -34,7 +35,9 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -220,7 +223,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		return false;
 	}
 
-	public IASTInitializer getDefaultValue() {
+	public IASTInitializer getInitializer() {
 		if (fDeclarations == null)
 			return null;
 		for (int i = 0; i < fDeclarations.length && fDeclarations[i] != null; i++) {
@@ -236,7 +239,16 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	
 	@Override
 	public boolean hasDefaultValue() {
-		return getDefaultValue() != null;
+		return getInitializer() != null;
+	}
+	
+	@Override
+	public IValue getDefaultValue() {
+		IASTInitializer init = getInitializer();
+		if (init != null) {
+			return SemanticUtil.getValueOfInitializer(init, getType(), Value.MAX_RECURSION_DEPTH);
+		}
+		return null;
 	}
 	
 	@Override

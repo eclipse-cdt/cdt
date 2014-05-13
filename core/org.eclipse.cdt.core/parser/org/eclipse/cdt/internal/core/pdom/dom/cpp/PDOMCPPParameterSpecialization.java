@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -31,10 +32,13 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements ICPPParameter {
 	private static final int NEXT_PARAM = PDOMCPPSpecialization.RECORD_SIZE;
+	private static final int DEFAULTVAL = NEXT_PARAM + Database.PTR_SIZE;
 	@SuppressWarnings("hiding")
-	private static final int RECORD_SIZE = NEXT_PARAM + Database.PTR_SIZE;
+	private static final int RECORD_SIZE = DEFAULTVAL + Database.VALUE_SIZE;
 
 	private final IType fType;
+	private volatile IValue fDefaultValue = null;
+	private volatile boolean fLoadedDefaultValue = false;
 	
 	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, long record, IType t) {
 		super(linkage, record);
@@ -45,9 +49,12 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 			PDOMCPPParameter original, PDOMCPPParameterSpecialization next) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) astParam, original);
 		fType= null;  // This constructor is used for adding parameters to the database, only.
+		fDefaultValue = astParam.getDefaultValue();
+		fLoadedDefaultValue = true;
 		
 		Database db = getDB();
 		db.putRecPtr(record + NEXT_PARAM, next == null ? 0 : next.getRecord());
+		linkage.storeValue(record + DEFAULTVAL, fDefaultValue);
 	}
 
 	@Override
@@ -108,6 +115,19 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 	@Override
 	public boolean hasDefaultValue() {
 		return getParameter().hasDefaultValue();
+	}
+	
+	@Override
+	public IValue getDefaultValue() {
+		if (!fLoadedDefaultValue) {
+			try {
+				fDefaultValue = getLinkage().loadValue(record + DEFAULTVAL);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+			fLoadedDefaultValue = true;
+		}
+		return fDefaultValue;
 	}
 
 	@Override

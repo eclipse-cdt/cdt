@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * Anton Leherbauer (Wind River) - [196465] Resizing Terminal changes Scroller location
  * Anton Leherbauer (Wind River) - [324608] Terminal has strange scrolling behaviour
  * Martin Oberhuber (Wind River) - [265352][api] Allow setting fonts programmatically
+ * Anton Leherbauer (Wind River) - [434749] UnhandledEventLoopException when copying to clipboard while the selection is empty
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
@@ -331,9 +332,12 @@ public class TextCanvas extends GridCanvas {
 		return fCellCanvasModel.getSelectedText();
 	}
 	public void copy() {
-		Clipboard clipboard = new Clipboard(getDisplay());
-		clipboard.setContents(new Object[] { getSelectionText() }, new Transfer[] { TextTransfer.getInstance() });
-		clipboard.dispose();
+		String selectionText = getSelectionText();
+		if (selectionText != null && selectionText.length() > 0) {
+			Clipboard clipboard = new Clipboard(getDisplay());
+			clipboard.setContents(new Object[] { selectionText }, new Transfer[] { TextTransfer.getInstance() });
+			clipboard.dispose();
+		}
 	}
 	public void selectAll() {
 		fCellCanvasModel.setSelection(0, fCellCanvasModel.getTerminalText().getHeight(), 0, fCellCanvasModel.getTerminalText().getWidth());

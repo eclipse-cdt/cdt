@@ -2,6 +2,57 @@
   "comments": [
     {
       "key": {
+        "uuid": "0756a345_fa859ce8",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10675,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-14T00:53:51Z",
+      "side": 1,
+      "message": "Why not check the value itself?",
+      "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_7ab22ccf",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1832,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-14T00:53:51Z",
+      "side": 1,
+      "message": "Isn\u0027t this line redundant?",
+      "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_9ab740bb",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1836,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-14T00:53:51Z",
+      "side": 1,
+      "message": "Why not check the value itself?",
+      "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_facc7c66",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPParameterSpecialization.java",
         "patchSetId": 1

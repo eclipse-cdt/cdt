@@ -560,7 +560,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	 */
 	@Override
 	public boolean isAvailable() {
-		return false;
+		return getSessionInitializationComplete();
 	}
 
 	/**

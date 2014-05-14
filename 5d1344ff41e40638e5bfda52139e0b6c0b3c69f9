@@ -227,6 +227,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_9a88e0aa",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPParameter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-05-14T07:38:06Z",
+      "side": 1,
+      "message": "Turns out I can\u0027t override delete() in PDOMCPPParameterSpecialization because it inherits from PDOMBinding, which marks delete() as \u0027final\u0027.\n\nDo you know why PDOMCPPParameterSpecialization is a PDOMBinding but PDOMCPPParameter is not?",
+      "parentUuid": "0756a345_3a1c3470",
+      "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_1a1fb065",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPParameterSpecialization.java",
         "patchSetId": 1

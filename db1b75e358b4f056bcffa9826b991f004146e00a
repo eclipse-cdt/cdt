@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_18b97866",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1832,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-14T17:43:27Z",
+      "side": 1,
+      "message": "It makes sense to add #include \"header.h\" automatically in the setUp method of the test strategy.",
+      "revId": "db1b75e358b4f056bcffa9826b991f004146e00a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_d85b80cb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPParameterSpecialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-14T17:43:27Z",
+      "side": 1,
+      "message": "Shouldn\u0027t delete method be overridden as you proposed earlier?",
+      "revId": "db1b75e358b4f056bcffa9826b991f004146e00a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

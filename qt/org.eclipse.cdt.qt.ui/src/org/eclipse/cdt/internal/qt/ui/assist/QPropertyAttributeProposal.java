@@ -207,7 +207,7 @@ public class QPropertyAttributeProposal {
 			String defValue = null;
 			if (param instanceof CPPParameter) {
 				CPPParameter cppParam = (CPPParameter) param;
-				IASTInitializer defaultValue = cppParam.getDefaultValue();
+				IASTInitializer defaultValue = cppParam.getInitializer();
 				if (defaultValue instanceof IASTEqualsInitializer) {
 					IASTInitializerClause clause = ((IASTEqualsInitializer) defaultValue).getInitializerClause();
 					defValue = clause.toString();

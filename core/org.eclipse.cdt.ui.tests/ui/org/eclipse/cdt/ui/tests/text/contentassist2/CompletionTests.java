@@ -99,6 +99,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//				void m1private();
 	//	};
 	//	typedef C1 T1;
+	//  using A1 = C1;
 	//
 	//	class C2 : public T1 {
 	//		public:
@@ -690,6 +691,18 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= { "tConvert(void)" };
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
+	
+	//void f(){T1::~/*cursor*/
+	public void testTypedefSyntheticMembers_415495() {
+		final String[] expected= { "" };
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);		
+	}
+
+	//void f(){A1::~/*cursor*/
+	public void testAliasSyntheticMembers_415495() {
+		final String[] expected= { "" };
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);		
+	}
 
 	//	struct A {};
 	//
@@ -711,7 +724,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected = { "D", "E" };
 		assertContentAssistResults(fCursorOffset, expected, true, ID);
 	}
-
+	
 	//using namespace ns;void gfunc(){NSC/*cursor*/
 	public void testUsingDirective() throws Exception {
 		final String[] expected= { "NSCONST" };

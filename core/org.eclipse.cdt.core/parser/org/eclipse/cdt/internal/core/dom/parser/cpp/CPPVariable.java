@@ -18,23 +18,16 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -340,30 +333,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 		if (dtor != null) {
 			IASTInitializer init= dtor.getInitializer();
 			if (init != null) {
-				IASTInitializerClause clause= null;
-				if (init instanceof IASTEqualsInitializer) {
-					clause= ((IASTEqualsInitializer) init).getInitializerClause();
-				} else if (init instanceof ICPPASTConstructorInitializer) {
-					IASTInitializerClause[] args= ((ICPPASTConstructorInitializer) init).getArguments();
-					if (args.length == 1 && args[0] instanceof IASTExpression) {
-						IType type= SemanticUtil.getUltimateTypeUptoPointers(getType());
-						if (type instanceof IPointerType || type instanceof IBasicType) {
-							clause= args[0];
-						}
-					}
-				} else if (init instanceof ICPPASTInitializerList) {
-					ICPPASTInitializerList list= (ICPPASTInitializerList) init;
-					switch (list.getSize()) {
-					case 0:
-						return Value.create(0);
-					case 1:
-						clause= list.getClauses()[0];
-					}
-				}
-				if (clause instanceof IASTExpression) {
-					return Value.create((IASTExpression) clause, maxDepth);
-				}
-				return Value.UNKNOWN;
+				return SemanticUtil.getValueOfInitializer(init, getType(), maxDepth);
 			}
 		}
 		return null;

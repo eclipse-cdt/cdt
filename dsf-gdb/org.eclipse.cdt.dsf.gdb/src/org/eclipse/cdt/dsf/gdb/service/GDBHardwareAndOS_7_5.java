@@ -34,11 +34,7 @@ public class GDBHardwareAndOS_7_5 extends GDBHardwareAndOS implements IGDBHardwa
     public GDBHardwareAndOS_7_5(DsfSession session) {
     	super(session);
     }
-    
-    @Override
-    public boolean isAvailable() {
-    	return getSessionInitializationComplete();
-    }
+
 
     @Override
     public void initialize(final RequestMonitor requestMonitor) {

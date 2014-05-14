@@ -131,6 +131,11 @@ public class CPPLambdaExpressionParameter extends PlatformObject implements ICPP
 	public boolean hasDefaultValue() {
 		return false;
 	}
+
+	@Override
+	public IValue getDefaultValue() {
+		return null;
+	}
 	
 	@Override
 	public ILinkage getLinkage() {

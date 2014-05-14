@@ -10663,4 +10663,15 @@ public class AST2CPPTests extends AST2TestBase {
 		IVariable waldo = helper.assertNonProblem("waldo");
 		assertNull(waldo.getInitialValue().numericalValue());
 	}
+	
+	
+	//	constexpr int foo(int a = 42) {
+	//		return a;
+	//	}
+	//	constexpr int waldo = foo();
+	public void testNameLookupInDefaultArgument_432701() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IVariable waldo = helper.assertNonProblem("waldo");
+		assertEquals(42, waldo.getInitialValue().numericalValue().longValue());
+	}
 }

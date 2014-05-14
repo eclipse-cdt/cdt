@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 QNX Software Systems and others.
+ * Copyright (c) 2006, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Doug Schaefer (QNX) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -20,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -37,16 +39,15 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBinding {
 	private static final int NEXT_PARAM = PDOMNamedNode.RECORD_SIZE;
 	private static final int ANNOTATIONS = NEXT_PARAM + Database.PTR_SIZE;
-	private static final int FLAGS = ANNOTATIONS + 1;
+	private static final int DEFAULT_VALUE = ANNOTATIONS + 1;
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = FLAGS + 1;
+	protected static final int RECORD_SIZE = DEFAULT_VALUE + Database.VALUE_SIZE;
 	static {
 		assert RECORD_SIZE <= 22; // 23 would yield a 32-byte block
 	}
 
-	private static final byte FLAG_DEFAULT_VALUE = 0x1;
-
 	private final IType fType;
+	private volatile IValue fDefaultValue = Value.NOT_INITIALIZED;
 
 	public PDOMCPPParameter(PDOMLinkage linkage, long record, IType type) {
 		super(linkage, record);
@@ -57,9 +58,10 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 			throws CoreException {
 		super(linkage, parent, param.getNameCharArray());
 		fType= null;	// This constructor is used for adding parameters to the database, only.
+		fDefaultValue = param.getDefaultValue();
 
 		Database db = getDB();
-		db.putByte(record + FLAGS, param.hasDefaultValue() ? FLAG_DEFAULT_VALUE : 0);
+		linkage.storeValue(record + DEFAULT_VALUE, fDefaultValue);
 		db.putRecPtr(record + NEXT_PARAM, next == null ? 0 : next.getRecord());
 
 		storeAnnotations(db, param);
@@ -74,9 +76,9 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		final Database db = getDB();
 		// Bug 297438: Don't clear the property of having a default value.
 		if (newPar.hasDefaultValue()) {
-			db.putByte(record + FLAGS, FLAG_DEFAULT_VALUE);
+			getLinkage().storeValue(record + DEFAULT_VALUE, newPar.getDefaultValue());
 		} else if (newPar.isParameterPack()) {
-			db.putByte(record + FLAGS, (byte) 0);
+			getLinkage().storeValue(record + DEFAULT_VALUE, null);
 		}
 		storeAnnotations(db, newPar);
 
@@ -181,7 +183,20 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	@Override
 	public boolean hasDefaultValue() {
-		return hasFlag(FLAG_DEFAULT_VALUE, false, FLAGS);
+		return getDefaultValue() != null;
+	}
+	
+	@Override
+	public IValue getDefaultValue() {
+		if (fDefaultValue == Value.NOT_INITIALIZED) {
+			try {
+				fDefaultValue = getLinkage().loadValue(record + DEFAULT_VALUE);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				fDefaultValue = null;
+			}
+		}
+		return fDefaultValue;
 	}
 
 	@Override
@@ -234,6 +249,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	}
 
 	private void flatDelete(PDOMLinkage linkage) throws CoreException {
+		linkage.storeValue(record + DEFAULT_VALUE, null);
 		super.delete(linkage);
 	}
 

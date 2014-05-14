@@ -1824,4 +1824,14 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	public void testInheritedConstructorFromUnknownClass() throws Exception {
 		checkBindings();
 	}
+	
+	//	constexpr int foo(int a = 42) {
+	//		return a;
+	//	}
+	
+	//	constexpr int waldo = foo();
+	public void testNameLookupInDefaultArgument_432701() throws Exception {
+		IVariable waldo = getBindingFromASTName("waldo", 5);
+		assertEquals(42, waldo.getInitialValue().numericalValue().longValue());
+	}
 }

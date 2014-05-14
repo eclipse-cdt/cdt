@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -20,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
@@ -31,10 +33,12 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements ICPPParameter {
 	private static final int NEXT_PARAM = PDOMCPPSpecialization.RECORD_SIZE;
+	private static final int DEFAULT_VALUE = NEXT_PARAM + Database.PTR_SIZE;
 	@SuppressWarnings("hiding")
-	private static final int RECORD_SIZE = NEXT_PARAM + Database.PTR_SIZE;
+	private static final int RECORD_SIZE = DEFAULT_VALUE + Database.VALUE_SIZE;
 
 	private final IType fType;
+	private volatile IValue fDefaultValue = Value.NOT_INITIALIZED;
 	
 	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, long record, IType t) {
 		super(linkage, record);
@@ -45,9 +49,11 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 			PDOMCPPParameter original, PDOMCPPParameterSpecialization next) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) astParam, original);
 		fType= null;  // This constructor is used for adding parameters to the database, only.
+		fDefaultValue = astParam.getDefaultValue();
 		
 		Database db = getDB();
 		db.putRecPtr(record + NEXT_PARAM, next == null ? 0 : next.getRecord());
+		linkage.storeValue(record + DEFAULT_VALUE, fDefaultValue);
 	}
 
 	@Override
@@ -108,6 +114,19 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 	@Override
 	public boolean hasDefaultValue() {
 		return getParameter().hasDefaultValue();
+	}
+	
+	@Override
+	public IValue getDefaultValue() {
+		if (fDefaultValue == Value.NOT_INITIALIZED) {
+			try {
+				fDefaultValue = getLinkage().loadValue(record + DEFAULT_VALUE);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				fDefaultValue = null;
+			}
+		}
+		return fDefaultValue;
 	}
 
 	@Override

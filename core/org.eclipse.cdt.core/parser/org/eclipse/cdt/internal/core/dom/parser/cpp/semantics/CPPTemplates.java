@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,6 +136,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplateSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition;
@@ -830,17 +831,45 @@ public class CPPTemplates {
 			ICPPClassSpecialization within = getSpecializationContext(owner);
 			ICPPFunctionType type= (ICPPFunctionType) instantiateType(func.getType(), tpMap, -1, within, point);
 			IType[] exceptionSpecs= instantiateTypes(func.getExceptionSpecification(), tpMap, -1, within, point);
+			CPPFunctionSpecialization spec;
 			if (owner instanceof ICPPClassType && template instanceof ICPPMethod) {
 				if (template instanceof ICPPConstructor) {
-					instance = new CPPConstructorInstance((ICPPConstructor) template, (ICPPClassType) owner, tpMap, args, type, exceptionSpecs);
+					spec = new CPPConstructorInstance((ICPPConstructor) template, (ICPPClassType) owner, tpMap, args, type, exceptionSpecs);
 				} else {
-					instance = new CPPMethodInstance((ICPPMethod) template, (ICPPClassType) owner, tpMap, args, type, exceptionSpecs);
+					spec = new CPPMethodInstance((ICPPMethod) template, (ICPPClassType) owner, tpMap, args, type, exceptionSpecs);
 				}
 			} else {
-				instance = new CPPFunctionInstance((ICPPFunction) template, owner, tpMap, args, type, exceptionSpecs);
+				spec = new CPPFunctionInstance((ICPPFunction) template, owner, tpMap, args, type, exceptionSpecs);
 			}
+			spec.setParameters(specializeParameters(func.getParameters(), spec, tpMap, -1, within, Value.MAX_RECURSION_DEPTH, point));
+			instance = (ICPPTemplateInstance) spec;
 		}
 		return instance;
+	}
+	
+	public static ICPPParameter[] specializeParameters(ICPPParameter[] parameters, ICPPFunction functionSpec, 
+			ICPPTemplateParameterMap tpMap, int packOffset, ICPPClassSpecialization within, int maxdepth,
+			IASTNode point) {
+		if (parameters.length == 0) {
+			return parameters;
+		} 
+		
+		// Because of parameter packs there can be more or less parameters in the specialization
+		IType[] specializedParameterTypes = functionSpec.getType().getParameterTypes();
+		final int length = specializedParameterTypes.length;
+		ICPPParameter par = null;
+		ICPPParameter[] result = new ICPPParameter[length];
+		for (int i = 0; i < length; i++) {
+			if (i < parameters.length) {
+				par = parameters[i];
+			} // else reuse last parameter (which should be a pack)
+			IValue defaultValue = par.getDefaultValue();
+			IValue specializedValue = CPPTemplates.instantiateValue(defaultValue, tpMap, 
+					packOffset, within, maxdepth, point);
+			result[i] = new CPPParameterSpecialization(par, functionSpec, specializedParameterTypes[i], 
+					specializedValue, tpMap);
+		}
+		return result;
 	}
 
 	public static IBinding createSpecialization(ICPPClassSpecialization owner, IBinding decl, IASTNode point) {
@@ -883,6 +912,7 @@ public class CPPTemplates {
 				ICPPFunctionType type= (ICPPFunctionType) instantiateType(func.getType(), tpMap, -1, within, point);
 				IType[] exceptionSpecs= instantiateTypes(func.getExceptionSpecification(), tpMap, -1, within, point);
 
+				CPPFunctionSpecialization functionSpec = null;
 				if (decl instanceof ICPPFunctionTemplate) {
 					if (decl instanceof ICPPMethod) {
 						CPPMethodTemplateSpecialization methodSpec;
@@ -893,19 +923,25 @@ public class CPPTemplates {
 						}
 						methodSpec.setTemplateParameters(CPPTemplates.specializeTemplateParameters(methodSpec,
 								(ICPPScope) methodSpec.getScope(), ((ICPPFunctionTemplate) decl).getTemplateParameters(), owner, point));
-						spec = methodSpec;
+						functionSpec = methodSpec;
 					} else {
 						IBinding oldOwner = decl.getOwner();
-						spec = new CPPFunctionTemplateSpecialization((ICPPFunctionTemplate) decl, oldOwner, tpMap, type, exceptionSpecs);
+						functionSpec = new CPPFunctionTemplateSpecialization((ICPPFunctionTemplate) decl, oldOwner, tpMap, type, exceptionSpecs);
 					}
 				} else if (decl instanceof ICPPConstructor) {
-					spec = new CPPConstructorSpecialization((ICPPConstructor) decl, owner, tpMap, type, exceptionSpecs);
+					functionSpec = new CPPConstructorSpecialization((ICPPConstructor) decl, owner, tpMap, type, exceptionSpecs);
 				} else if (decl instanceof ICPPMethod) {
-					spec = new CPPMethodSpecialization((ICPPMethod) decl, owner, tpMap, type, exceptionSpecs);
+					functionSpec = new CPPMethodSpecialization((ICPPMethod) decl, owner, tpMap, type, exceptionSpecs);
 				} else if (decl instanceof ICPPFunction) {
 					IBinding oldOwner = decl.getOwner();
-					spec = new CPPFunctionSpecialization((ICPPFunction) decl, oldOwner, tpMap, type, exceptionSpecs);
+					functionSpec = new CPPFunctionSpecialization((ICPPFunction) decl, oldOwner, tpMap, type, exceptionSpecs);
 				}
+				if (functionSpec != null) {
+					functionSpec.setParameters(specializeParameters(func.getParameters(), functionSpec, tpMap, -1, within, 
+							Value.MAX_RECURSION_DEPTH, point));
+				}
+				spec = functionSpec;
+				
 			} else if (decl instanceof ITypedef) {
 				IType type= instantiateType(((ITypedef) decl).getType(), tpMap, -1, getSpecializationContext(owner), point);
 			    spec = new CPPTypedefSpecialization(decl, owner, tpMap, type);
@@ -1485,8 +1521,11 @@ public class CPPTemplates {
 				IType newType = instantiateType(origInstance.getType(), tpMap, packOffset, within, point);
 				IType[] newExceptionSpecs = instantiateTypes(origInstance.getExceptionSpecification(),
 						tpMap, packOffset, within, point);
-				return new CPPFunctionInstance((ICPPFunction) origInstance.getTemplateDefinition(), origInstance.getOwner(),
-						newMap, newArgs, (ICPPFunctionType) newType, newExceptionSpecs);
+				CPPFunctionInstance result = new CPPFunctionInstance((ICPPFunction) origInstance.getTemplateDefinition(), 
+						origInstance.getOwner(), newMap, newArgs, (ICPPFunctionType) newType, newExceptionSpecs);
+				result.setParameters(specializeParameters(origInstance.getParameters(), result, tpMap, packOffset, 
+						within, maxdepth, point));
+				return result;
 			}
 		}
 		return binding;

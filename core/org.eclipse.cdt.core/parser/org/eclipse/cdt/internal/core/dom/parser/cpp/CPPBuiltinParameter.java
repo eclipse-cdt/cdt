@@ -90,6 +90,11 @@ public class CPPBuiltinParameter extends PlatformObject implements ICPPParameter
         return false;
     }
 
+	@Override
+	public IValue getDefaultValue() {
+		return null;
+	}
+
     @Override
 	public boolean isMutable() {
         return false;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Bryan Wilkinson (QNX)
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -56,28 +57,13 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return (ICPPFunction) getSpecializedBinding();
 	}
 
+	public void setParameters(ICPPParameter[] params) {
+		assert fParams == null;
+		fParams = params;
+	}
+	
 	@Override
 	public ICPPParameter[] getParameters() {
-		if (fParams == null) {
-			ICPPFunction function = getFunction();
-			ICPPParameter[] params = function.getParameters();
-			if (params.length == 0) {
-				fParams= params;
-			} else {
-				// Because of parameter packs there can be more or less parameters in the specialization
-				final ICPPTemplateParameterMap tparMap = getTemplateParameterMap();
-				IType[] ptypes= getType().getParameterTypes();
-				final int length = ptypes.length;
-				ICPPParameter par= null;
-				fParams = new ICPPParameter[length];
-				for (int i = 0; i < length; i++) {
-					if (i < params.length) {
-						par= params[i];
-					} // else reuse last parameter (which should be a pack)
-					fParams[i] = new CPPParameterSpecialization(par, this, ptypes[i], tparMap);
-				}
-			}
-		}
 		return fParams;
 	}
 

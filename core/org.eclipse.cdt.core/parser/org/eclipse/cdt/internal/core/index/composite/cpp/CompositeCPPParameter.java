@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
@@ -23,6 +24,11 @@ class CompositeCPPParameter extends CompositeCPPVariable implements ICPPParamete
 	@Override
 	public boolean hasDefaultValue() {
 		return ((ICPPParameter)rbinding).hasDefaultValue();
+	}
+	
+	@Override
+	public IValue getDefaultValue() {
+		return cf.getCompositeValue(((ICPPParameter)rbinding).getDefaultValue());
 	}
 
 	@Override

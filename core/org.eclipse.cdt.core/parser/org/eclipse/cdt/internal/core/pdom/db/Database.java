@@ -79,7 +79,7 @@ public class Database {
 	// The lower bound for TYPE_SIZE is 1 + PTR_SIZE, but a slightly larger space for types stored
 	// inline produces in a slightly smaller overall database size.
 	public static final int TYPE_SIZE = 2 + PTR_SIZE;  // size of a type in the database in bytes
-	public static final int VALUE_SIZE = TYPE_SIZE;  // size of a value in the database in bytes
+	public static final int VALUE_SIZE = 1 + PTR_SIZE;  // size of a value in the database in bytes
 	public static final int EVALUATION_SIZE = TYPE_SIZE;  // size of an evaluation in the database in bytes
 	public static final int ARGUMENT_SIZE = TYPE_SIZE;  // size of a template argument in the database in bytes
 	public static final long MAX_DB_SIZE= ((long) 1 << (Integer.SIZE + BLOCK_SIZE_DELTA_BITS));

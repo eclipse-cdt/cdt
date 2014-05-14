@@ -387,6 +387,9 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	public boolean hasDefaultValue() {
         return false;
 	}
+	public IValue getDefaultValue() {
+		return null;
+	}
 	public boolean isParameterPack() {
 		return false;
 	}

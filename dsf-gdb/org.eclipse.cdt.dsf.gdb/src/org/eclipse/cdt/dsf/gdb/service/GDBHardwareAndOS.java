@@ -9,6 +9,7 @@
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     Marc Khouzam (Ericsson) - Updated to use /proc/cpuinfo for remote targets (Bug 374024)
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
+ *     Marc Dumais (Ericsson) - Bug 434889
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -560,7 +561,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	 */
 	@Override
 	public boolean isAvailable() {
-		return false;
+		return getSessionInitializationComplete();
 	}
 
 	/**

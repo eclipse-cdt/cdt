@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_b8f20c59",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/CContentTypes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-14T16:45:45Z",
+      "side": 1,
+      "message": "Could you please confirm that this change solves the problem for both, C and C++ projects. If that is the case, do you have an explanation how it produces positive results in both cases?",
+      "revId": "e4730084c1e654c5c831d8df432f4a3503b65d66",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

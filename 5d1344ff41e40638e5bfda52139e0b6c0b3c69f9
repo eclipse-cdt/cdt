@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "0756a345_9a40e009",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1832,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-05-14T04:43:54Z",
+      "side": 1,
+      "message": "I don\u0027t believe so: see https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d401820#c5. For many tests it does not matter, but I think when we fix bug 297690 that will start to change, and so as a matter of principle I think we should starting including \"header.h\" in new tests.",
+      "parentUuid": "0756a345_7ab22ccf",
+      "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0756a345_9ab740bb",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
         "patchSetId": 1
@@ -150,6 +168,24 @@
       "writtenOn": "2014-05-13T23:19:22Z",
       "side": 1,
       "message": "More efficient: getDB().getRecPtr(record + DEFAULTVAL) !\u003d 0",
+      "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_fac2bcfe",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPParameter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-05-14T04:43:54Z",
+      "side": 1,
+      "message": "Are you sure that works? The value might be stored inline, and even if not, the record pointer would start at record + DEFAULTVAL + 1.",
+      "parentUuid": "0756a345_da2418b9",
       "revId": "5d1344ff41e40638e5bfda52139e0b6c0b3c69f9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

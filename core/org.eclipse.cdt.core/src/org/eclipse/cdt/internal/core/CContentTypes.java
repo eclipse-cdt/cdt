@@ -58,10 +58,18 @@ public class CContentTypes {
 				}
 			} catch (CoreException e) {
 				// fallback to workspace wide definitions.
+				// do not prefer cpp since if the file is a cpp file
+				// it gets a higher priority later anyway
+				// see bug #434852
+				preferCpp = false;
 				matcher= Platform.getContentTypeManager();
 			}
 		}
 		else {
+			// if no project is there, we might not prefer cpp
+			// since it gets a higher priority later anyway for cpp files
+			// or hpp files
+			preferCpp = false;
 			matcher= Platform.getContentTypeManager();
 		}
 

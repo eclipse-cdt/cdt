@@ -17,6 +17,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
+import static org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest.CompareType.CONTEXT;
+import static org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest.CompareType.DISPLAY;
+import static org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest.CompareType.ID;
+import static org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest.CompareType.REPLACEMENT;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -35,8 +40,6 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
-
-import static org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest.CompareType.*;
 
 /**
  * A collection of code completion tests.
@@ -99,6 +102,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//				void m1private();
 	//	};
 	//	typedef C1 T1;
+	//	using A1 = C1;
 	//
 	//	class C2 : public T1 {
 	//		public:
@@ -667,8 +671,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//#  d/*cursor*/
 	public void testCompletePreprocessorDirective2() throws Exception {
 		final String[] expected= { "define " };
-		assertCompletionResults(fCursorOffset, expected,
-				REPLACEMENT);
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
 
 	//#  if d/*cursor*/
@@ -689,6 +692,18 @@ public class CompletionTests extends AbstractContentAssistTest {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172436
 		final String[] expected= { "tConvert(void)" };
 		assertCompletionResults(fCursorOffset, expected, ID);
+	}
+
+	//void f(){T1::~/*cursor*/
+	public void testTypedefSyntheticMembers_415495() throws Exception {
+		final String[] expected= {};
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
+	}
+
+	//void f(){A1::~/*cursor*/
+	public void testAliasSyntheticMembers_415495() throws Exception {
+		final String[] expected= {};
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
 
 	//	struct A {};

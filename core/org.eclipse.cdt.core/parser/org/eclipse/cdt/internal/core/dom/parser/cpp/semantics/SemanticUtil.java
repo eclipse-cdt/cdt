@@ -28,15 +28,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
-import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -110,6 +110,7 @@ public class SemanticUtil {
 	 * Returns an array of ICPPMethod objects representing all conversion operators
 	 * declared by the specified class, and the implicitly generated conversion
 	 * operator for a closure type. This does not include inherited methods.
+	 *
 	 * @param clazz
 	 * @return an array of conversion operators.
 	 */
@@ -142,7 +143,8 @@ public class SemanticUtil {
 	/**
 	 * Returns an array of ICPPMethod objects representing all conversion operators
 	 * declared by the specified class and its ancestors. This includes inherited
-	 * methods, and the implicitly generated conversion operator for a closure type. 
+	 * methods, and the implicitly generated conversion operator for a closure type.
+	 *
 	 * @param clazz
 	 * @return an array of conversion operators.
 	 */
@@ -618,7 +620,7 @@ public class SemanticUtil {
 	}
 
 	/**
-	 * Returns <code>true</code> if two bindings have the same owner.
+	 * Returns {@code true} if two bindings have the same owner.
 	 */
 	public static boolean isSameOwner(IBinding owner1, IBinding owner2) {
 		// Ignore anonymous namespaces
@@ -668,12 +670,13 @@ public class SemanticUtil {
 	}
 
 	/**
-	 * Calculates the number of edges in the inheritance path of <code>type</code> to
-	 * <code>ancestorToFind</code>, returning -1 if no inheritance relationship is found.
+	 * Calculates the number of edges in the inheritance path of {@code type} to
+	 * {@code ancestorToFind}, returning -1 if no inheritance relationship is found.
+	 *
 	 * @param type the class to search upwards from
 	 * @param baseClass the class to find in the inheritance graph
 	 * @return the number of edges in the inheritance graph, or -1 if the specified classes have
-	 * no inheritance relation
+	 * 	   no inheritance relation
 	 */
 	public static final int calculateInheritanceDepth(IType type, IType baseClass, IASTNode point) {
 		return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, new HashSet<Object>(), type, baseClass, point);
@@ -764,7 +767,8 @@ public class SemanticUtil {
 	}
 	
 	/**
-	 * Get the value of the initializer of a variable.
+	 * Returns the value of the initializer of a variable.
+	 *
 	 * @param init the initializer's AST node
 	 * @param type the type of the variable
 	 * @param maxDepth maximum recursion depth

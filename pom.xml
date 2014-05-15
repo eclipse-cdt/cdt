@@ -43,6 +43,7 @@
     <tm-stream>luna</tm-stream>
     <eclipse-site>http://download.eclipse.org/releases/${platform-version-name}</eclipse-site>
     <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20130827064939/repository</orbit-site>
+	<license-site>http://download.eclipse.org/cbi/updates/license</license-site>
     <rxtx-version>1.0.0.7837QcJa5vE7MnhE77YA7AU3SWUlbntVZAnlDoIGojcQd</rxtx-version>
     <!-- <rxtx-site>http://rxtx.qbang.org/eclipse</rxtx-site>-->
     <rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>
@@ -65,6 +66,11 @@
     </pluginRepository>
   </pluginRepositories>
   <repositories>
+    <repository>
+        <id>license-feature</id>
+        <url>${license-site}</url>
+        <layout>p2</layout>
+    </repository>	
     <repository>
       <id>orbit</id>
       <layout>p2</layout>

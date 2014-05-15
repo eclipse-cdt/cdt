@@ -435,6 +435,7 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 		setUpSemanticHighlighting(ICColorConstants.C_KEYWORD);
 		Position[] actual= getSemanticHighlightingPositions();
 		Position[] expected= new Position[] {
+				createPosition(155, 8, 5),
 				createPosition(156, 23, 5),
 				createPosition(157, 26, 8),
 			};

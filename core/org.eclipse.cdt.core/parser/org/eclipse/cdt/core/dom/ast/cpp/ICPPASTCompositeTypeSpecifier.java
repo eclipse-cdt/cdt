@@ -45,6 +45,10 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 	 */
 	public static final ASTNodeProperty BASE_SPECIFIER = new ASTNodeProperty(
 			"ICPPASTCompositeTypeSpecifier.BASE_SPECIFIER - Expresses the subclass role"); //$NON-NLS-1$
+	
+	/** @since 5.7 */
+	public static final ASTNodeProperty CLASS_VIRT_SPECIFIER = new ASTNodeProperty(
+			"ICPPASTCompositeTypeSpecifier.CLASS_VIRT_SPECIFIER [ICPPASTClassVirtSpecifier]");  //$NON-NLS-1$
 
 	/**
 	 * Base Specifiers are where a class expresses from whom it inherits.
@@ -150,6 +154,20 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 	 * Sets whether the type is final.
 	 * 
 	 * @since 5.5
+	 * @deprecated Use setVirtSpecifier() instead.
 	 */
+	@Deprecated
 	public void setFinal(boolean isFinal);
+	
+	/**
+	 * Returns the class-virt-specifier of this class, or null if it doesn't have one.
+	 * @since 5.7
+	 */
+	public ICPPASTClassVirtSpecifier getVirtSpecifier();
+	
+	/**
+	 * Set the class-virt-specifier for this class. 
+	 * @since 5.7
+	 */
+	public void setVirtSpecifier(ICPPASTClassVirtSpecifier virtSpecifier);
 }

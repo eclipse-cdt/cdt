@@ -269,12 +269,12 @@ public class CommandLauncher implements ICommandLauncher {
 		// Operation canceled by the user, terminate abnormally.
 		if (monitor.isCanceled()) {
 			closure.terminate();
-			state = COMMAND_CANCELED;
 			setErrorMessage(Messages.CommandLauncher_CommandCancelled);
+			return COMMAND_CANCELED;
 		}
 
 		try {
-			fProcess.waitFor();
+			state = fProcess.waitFor();
 		} catch (InterruptedException e) {
 			// ignore
 		}

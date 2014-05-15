@@ -235,12 +235,12 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 		// Operation canceled by the user, terminate abnormally.
 		if (monitor.isCanceled()) {
 			closure.terminate();
-			state = COMMAND_CANCELED;
 			setErrorMessage(Messages.RemoteCommandLauncher_Command_canceled);
+			return COMMAND_CANCELED;
 		}
 
 		try {
-			fRemoteProcess.waitFor();
+			state = fRemoteProcess.waitFor();
 		} catch (InterruptedException e) {
 			// ignore
 		}

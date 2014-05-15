@@ -51,6 +51,24 @@
       "revId": "db1b75e358b4f056bcffa9826b991f004146e00a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_b3698f9b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPParameterSpecialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-15T02:49:17Z",
+      "side": 1,
+      "message": "I guess the real question is whether delete() is ever called on PDOMCPPParameterSpecialization. I definitely doesn\u0027t happen in tests because otherwise the assertion in PDOMCPPBinding.delete() would fail. Code inspection shows that PDOMCPPParameterSpecialization is never called because PDOMCPPFunctionSpecialization doesn\u0027t override either update or delete.",
+      "parentUuid": "0756a345_b3b7cfba",
+      "revId": "db1b75e358b4f056bcffa9826b991f004146e00a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

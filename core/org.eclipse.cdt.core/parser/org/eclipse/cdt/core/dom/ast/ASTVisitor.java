@@ -17,6 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
@@ -329,6 +330,13 @@ public abstract class ASTVisitor {
 	public int visit(ICPPASTVirtSpecifier virtSpecifier) {
 		return PROCESS_CONTINUE;
 	}
+	
+	/**
+	 * @since 5.7
+	 */
+	public int visit(ICPPASTClassVirtSpecifier classVirtSpecifier) {
+		return PROCESS_CONTINUE;
+	}
 
 	// leave methods
 	public int leave(IASTTranslationUnit tu) {
@@ -446,6 +454,13 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 
+	/**
+	 * @since 5.7
+	 */
+	public int leave(ICPPASTClassVirtSpecifier virtSpecifier) {
+		return PROCESS_CONTINUE;
+	}
+	
 	/**
 	 * @deprecated use {@link IASTTranslationUnit#getComments()}, instead.
 	 */

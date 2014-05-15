@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
@@ -1517,10 +1518,12 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			// Currently the only context-sensitive keywords are 'final'
-			// and 'override', both of which are virt-specifiers at the
-			// end of a method declaration.
-			return token.getNode() instanceof ICPPASTVirtSpecifier;
+			// Currently the only context-sensitive keywords are the
+			// 'final' and 'override' virt-specifiers at the end of a
+			// method declaration, and the 'final' class-virt-specifier
+			// after a class name.
+			return token.getNode() instanceof ICPPASTVirtSpecifier
+					|| token.getNode() instanceof ICPPASTClassVirtSpecifier;
 		}
 	}
 

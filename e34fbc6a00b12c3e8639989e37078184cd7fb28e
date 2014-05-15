@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_4d7e8f8b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTCompositeTypeSpecifier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-15T16:30:13Z",
+      "side": 1,
+      "message": "Redundant initialization.",
+      "revId": "e34fbc6a00b12c3e8639989e37078184cd7fb28e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_2d051b1e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTCompositeTypeSpecifier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-15T16:30:13Z",
+      "side": 1,
+      "message": "Add @Deprecated.",
+      "revId": "e34fbc6a00b12c3e8639989e37078184cd7fb28e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_6d0ef342",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTCompositeTypeSpecifier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-15T16:30:13Z",
+      "side": 1,
+      "message": "Should this line be outside of the \u0027if\u0027 statement.",
+      "revId": "e34fbc6a00b12c3e8639989e37078184cd7fb28e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_4d096f36",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPNodeFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-15T16:30:13Z",
+      "side": 1,
+      "message": "Does it make sense to add an assert?",
+      "revId": "e34fbc6a00b12c3e8639989e37078184cd7fb28e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_6d3553dd",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SemanticHighlightings.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1526,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-15T16:30:13Z",
+      "side": 1,
+      "message": "The statement is nicely aligned, but continuation lines should be double-indented.",
+      "revId": "e34fbc6a00b12c3e8639989e37078184cd7fb28e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

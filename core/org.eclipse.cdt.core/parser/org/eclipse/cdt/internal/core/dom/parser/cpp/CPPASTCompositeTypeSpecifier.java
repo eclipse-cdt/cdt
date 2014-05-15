@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -37,7 +38,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 	private ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier[] baseSpecs;
 	private int baseSpecsPos = -1;
 	private boolean fAmbiguitiesResolved;
-	private boolean isFinal;
+	private ICPPASTClassVirtSpecifier virtSpecifier = null;
 
     public CPPASTCompositeTypeSpecifier() {
 	}
@@ -67,7 +68,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 			copy.addMemberDeclaration(member == null ? null : member.copy(style));
 		for (ICPPASTBaseSpecifier baseSpecifier : getBaseSpecifiers())
 			copy.addBaseSpecifier(baseSpecifier == null ? null : baseSpecifier.copy(style));
-		copy.isFinal = isFinal;
+		copy.setVirtSpecifier(virtSpecifier == null ? null : virtSpecifier.copy(style));
 		return super.copy(copy, style);
 	}
 
@@ -185,6 +186,9 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		if (fName != null && !fName.accept(action))
 			return false;
 
+		if (virtSpecifier != null && !virtSpecifier.accept(action))
+			return false;
+		
 		ICPPASTBaseSpecifier[] bases = getBaseSpecifiers();
 		for (int i = 0; i < bases.length; i++) {
 			if (!bases[i].accept(action))
@@ -225,12 +229,27 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 
 	@Override
 	public boolean isFinal() {
-		return isFinal;
+		return virtSpecifier != null;
 	}
 
 	@Override
 	public void setFinal(boolean value) {
 		assertNotFrozen();
-		isFinal = value;
+		// Do nothing here. Use setVirtSpecifier() instead.
+	}
+
+	@Override
+	public ICPPASTClassVirtSpecifier getVirtSpecifier() {
+		return virtSpecifier;
+	}
+
+	@Override
+	public void setVirtSpecifier(ICPPASTClassVirtSpecifier virtSpecifier) {
+		assertNotFrozen();
+		if (virtSpecifier != null) {
+			this.virtSpecifier = virtSpecifier;
+			virtSpecifier.setParent(this);
+			virtSpecifier.setPropertyInParent(CLASS_VIRT_SPECIFIER);
+		}
 	}
 }

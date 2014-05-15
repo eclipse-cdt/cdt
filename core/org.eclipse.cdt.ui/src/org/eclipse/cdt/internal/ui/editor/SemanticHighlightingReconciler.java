@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.core.model.ICElement;
@@ -167,6 +168,12 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		@Override
 		public int visit(ICPPASTVirtSpecifier virtSpecifier) {
 			visitNode(virtSpecifier);
+			return PROCESS_CONTINUE;
+		}
+		
+		@Override
+		public int visit(ICPPASTClassVirtSpecifier classVirtSpecifier) {
+			visitNode(classVirtSpecifier);
 			return PROCESS_CONTINUE;
 		}
 		

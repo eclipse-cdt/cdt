@@ -153,7 +153,7 @@ void g() {
 }
 
 //http://bugs.eclipse.org/399149
-class C {
+class C final {
     void finalMethod() final;
     void overrideMethod() override;
 

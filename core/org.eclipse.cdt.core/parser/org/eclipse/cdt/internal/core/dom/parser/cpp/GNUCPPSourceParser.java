@@ -96,6 +96,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression.CaptureDefault;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
@@ -129,7 +130,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier.SpecifierKind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
@@ -3623,12 +3623,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		char[] tokenImage = token.getCharImage();
     		if (Arrays.equals(Keywords.cOVERRIDE, tokenImage)) {
     			consume();
-    			ICPPASTVirtSpecifier spec = nodeFactory.newVirtSpecifier(SpecifierKind.Override);
+    			ICPPASTVirtSpecifier spec = nodeFactory.newVirtSpecifier(
+    					ICPPASTVirtSpecifier.SpecifierKind.Override);
     			setRange(spec, token.getOffset(), token.getOffset() + token.getLength());
     			typeRelevantDtor.addVirtSpecifier(spec);
     		} else if (Arrays.equals(Keywords.cFINAL, tokenImage)) {
     			consume();
-    			ICPPASTVirtSpecifier spec = nodeFactory.newVirtSpecifier(SpecifierKind.Final);
+    			ICPPASTVirtSpecifier spec = nodeFactory.newVirtSpecifier(
+    					ICPPASTVirtSpecifier.SpecifierKind.Final);
     			setRange(spec, token.getOffset(), token.getOffset() + token.getLength());
 				typeRelevantDtor.addVirtSpecifier(spec);
     		} else {
@@ -4454,7 +4456,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		char[] tokenImage = token.getCharImage();
 		if (token.getType() == IToken.tIDENTIFIER && Arrays.equals(Keywords.cFINAL, tokenImage)){
 			consume();
-			astClassSpecifier.setFinal(true);
+			ICPPASTClassVirtSpecifier spec = nodeFactory.newClassVirtSpecifier(
+					ICPPASTClassVirtSpecifier.SpecifierKind.Final);
+			setRange(spec, token.getOffset(), token.getOffset() + token.getLength());
+			astClassSpecifier.setVirtSpecifier(spec);
 		}
 	}
     

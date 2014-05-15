@@ -1125,6 +1125,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (linkage != null) {
 			return findBindingInLinkage(linkage, binding, includeLocal);
 		}
+
+		if (binding instanceof IMacroBinding) {
+			for (PDOMLinkage linkage2 : fLinkageIDCache.values()) {
+				IIndexFragmentBinding pdomBinding = findBindingInLinkage(linkage2, binding, includeLocal);
+				if (pdomBinding != null)
+					return pdomBinding;
+			}
+		}
 		return null;
 	}
 

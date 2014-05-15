@@ -22,7 +22,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 /**
  * @author markus.schorn@windriver.com
  */
-public class RenameVariableTests extends RenameTests {
+public class RenameVariableTests extends RenameTestBase {
 
     public RenameVariableTests(String name) {
         super(name);

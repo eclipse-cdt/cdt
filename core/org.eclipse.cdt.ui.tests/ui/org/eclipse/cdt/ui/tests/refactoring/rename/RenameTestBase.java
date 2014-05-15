@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 Wind River Systems, Inc.
+ * Copyright (c) 2005, 2014 Wind River Systems, Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
- * Contributors: 
- *     Markus Schorn - initial API and implementation 
+ * Contributors:
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  ******************************************************************************/ 
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
@@ -27,19 +28,19 @@ import org.eclipse.cdt.internal.ui.refactoring.rename.TextSearchWrapper;
 /**
  * @author markus.schorn@windriver.com
  */
-public class RenameTests extends RefactoringTests {
+public class RenameTestBase extends RefactoringTests {
     private static final IProgressMonitor NPM = new NullProgressMonitor();
 
-	public RenameTests(String name) {
+	public RenameTestBase(String name) {
         super(name);
     }
 
-    public RenameTests() {
+    public RenameTestBase() {
     }
 
     /**
-     * @param element   The CElement to rename
-     * @param newName   The new name for the element
+     * @param element the CElement to rename
+     * @param newName the new name for the element
      * @return
      * @throws Exception
      */
@@ -54,11 +55,11 @@ public class RenameTests extends RefactoringTests {
         		return change;
         	} 
 
-        	fail ("Input check on " + newName + " failed. "+rs.getEntryMatchingSeverity(RefactoringStatus.ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
-        	//rs.getFirstMessage(RefactoringStatus.ERROR) is not the message displayed in 
-        	//the UI for renaming a method to a constructor, the first message which is only
-        	//a warning is shown in the UI. If you click preview, then the error and the warning
-        	//is shown. 
+        	fail("Input check on " + newName + " failed. " + rs.getEntryMatchingSeverity(RefactoringStatus.ERROR));
+        	// rs.getFirstMessage(RefactoringStatus.ERROR) is not the message displayed in 
+        	// the UI for renaming a method to a constructor, the first message which is only
+        	// a warning is shown in the UI. If you click preview, then the error and the warning
+        	// is shown. 
         	return null;
         } finally {
             ((CRenameProcessor) proc.getProcessor()).unlockIndex();
@@ -69,7 +70,7 @@ public class RenameTests extends RefactoringTests {
     	CRefactoringArgument arg= new CRefactoringArgument(file, offset, 0);
         CRenameProcessor proc= new CRenameProcessor(CRefactory.getInstance(), arg);
         proc.setReplacementText(newName);
-        proc.setSelectedOptions(-1);
+        proc.setSelectedOptions(0xFFFF & ~CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
         proc.setExhaustiveSearchScope(TextSearchWrapper.SCOPE_WORKSPACE);
         return new CRenameRefactoring(proc);
     }
@@ -81,7 +82,7 @@ public class RenameTests extends RefactoringTests {
         try {
         	RefactoringStatus rs = checkConditions(proc);
         	if (!rs.hasWarning()) {
-        		fail ("Input check on "+ newName + " passed. There should have been warnings or errors.") ; //$NON-NLS-1$ //$NON-NLS-2$
+        		fail("Input check on "+ newName + " passed. There should have been warnings or errors.");
         		return null;
         	}
         	RefactoringStatusEntry[] rse = rs.getEntries();
@@ -108,7 +109,7 @@ public class RenameTests extends RefactoringTests {
     }
     
     private RefactoringStatus checkConditions(CRenameRefactoring proc) throws CoreException {
-        RefactoringStatus rs =proc.checkInitialConditions(new NullProgressMonitor());
+        RefactoringStatus rs = proc.checkInitialConditions(new NullProgressMonitor());
         if (!rs.hasError()) {
             rs= proc.checkFinalConditions(new NullProgressMonitor());
         }
@@ -131,7 +132,7 @@ public class RenameTests extends RefactoringTests {
         int count= 0;
         while (idx >= 0) {
             count++;
-            idx= contents.indexOf(lookup, idx+lookup.length());
+            idx= contents.indexOf(lookup, idx + lookup.length());
         }
         return count;
     }

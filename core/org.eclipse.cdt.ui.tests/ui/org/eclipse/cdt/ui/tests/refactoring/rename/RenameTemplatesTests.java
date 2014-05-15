@@ -22,7 +22,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 /**
  * @author markus.schorn@windriver.com
  */
-public class RenameTemplatesTests extends RenameTests {
+public class RenameTemplatesTests extends RenameTestBase {
 
 	public RenameTemplatesTests(String name) {
 		super(name);

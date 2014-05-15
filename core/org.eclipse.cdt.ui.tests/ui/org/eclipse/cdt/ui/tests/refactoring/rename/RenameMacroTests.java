@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 Wind River Systems, Inc.
+ * Copyright (c) 2005, 2014 Wind River Systems, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google) 
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
@@ -17,7 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-public class RenameMacroTests extends RenameTests {
+public class RenameMacroTests extends RenameTestBase {
 
     public RenameMacroTests(String name) {
         super(name);
@@ -173,6 +174,23 @@ public class RenameMacroTests extends RenameTests {
         assertTotalChanges(2, ch);
     }
     
+    public void testMacroRename_434917() throws Exception {
+        StringBuilder buf = new StringBuilder();
+        buf.append("#define CC mm\n"); //$NON-NLS-1$
+        String contents = buf.toString();
+        IFile header= importFile("test.h", contents); //$NON-NLS-1$
+
+        buf = new StringBuilder();
+        buf.append("#include \"test.h\"\n");
+        buf.append("int CC;\n"); //$NON-NLS-1$
+        String contents2 = buf.toString();
+        IFile source= importFile("test.cpp", contents2); //$NON-NLS-1$
+
+        int offset= contents.indexOf("CC"); //$NON-NLS-1$
+        Change ch= getRefactorChanges(header, offset, "CCC");  //$NON-NLS-1$
+        assertTotalChanges(2, ch);
+    }
+
     public void testIncludeGuard() throws Exception {
         StringBuilder buf = new StringBuilder();
         buf.append("#ifndef _guard            \n"); //$NON-NLS-1$

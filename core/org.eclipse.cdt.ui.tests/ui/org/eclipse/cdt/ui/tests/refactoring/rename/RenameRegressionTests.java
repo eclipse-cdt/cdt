@@ -25,7 +25,7 @@ import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.tests.FailingTest;
 
-public class RenameRegressionTests extends RenameTests {
+public class RenameRegressionTests extends RenameTestBase {
     public RenameRegressionTests() {
         super();
     }

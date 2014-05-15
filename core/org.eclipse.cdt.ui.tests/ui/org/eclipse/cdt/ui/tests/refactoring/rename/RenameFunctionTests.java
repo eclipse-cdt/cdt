@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-public class RenameFunctionTests extends RenameTests {
+public class RenameFunctionTests extends RenameTestBase {
 
 	public RenameFunctionTests(String name) {
         super(name);

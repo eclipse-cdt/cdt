@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 Wind River Systems, Inc and others.
+ * Copyright (c) 2005, 2014 Wind River Systems, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,11 @@ public class CRenameMacroProcessor extends CRenameGlobalProcessor {
 	protected void analyzeTextMatches(IBinding[] renameBindings, Collection<CRefactoringMatch> matches,
 			IProgressMonitor monitor, RefactoringStatus status) {
         for (CRefactoringMatch m : matches) {
-            if ((m.getLocation() & CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE) != 0) {
+            if ((m.getLocation() & CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE) != 0 ||
+            		// Occurrences in code are reliable only when exhaustive file search is not used.
+            		// TODO(sprigogin): Use index matches to endorse matches obtained from the file search. 
+            		(getSelectedOptions() & CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH) == 0 &&
+            		(m.getLocation() & CRefactory.OPTION_IN_CODE_REFERENCES) != 0) {
                 m.setASTInformation(CRefactoringMatch.AST_REFERENCE);
             }
         }

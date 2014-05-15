@@ -67,14 +67,11 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	public PDOMCFunction(PDOMLinkage linkage, PDOMNode parent, IFunction function) throws CoreException {
 		super(linkage, parent, function.getNameCharArray());
 		
-		IFunctionType type;
-		IParameter[] parameters;
-		byte annotations;
-		type = function.getType();
-		parameters = function.getParameters();
-		annotations = PDOMCAnnotation.encodeAnnotation(function);
+		IFunctionType type = function.getType();
 		setType(getLinkage(), type);
+		IParameter[] parameters = function.getParameters();
 		setParameters(parameters);
+		byte annotations = PDOMCAnnotation.encodeAnnotation(function);
 		getDB().putByte(record + ANNOTATIONS, annotations);
 	}
 
@@ -84,19 +81,16 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 			return;
 
 		IFunction func= (IFunction) newBinding;
-		IFunctionType newType;
-		IParameter[] newParams;
-		byte newAnnotation;
-		newType= func.getType();
-		newParams = func.getParameters();
-		newAnnotation = PDOMCAnnotation.encodeAnnotation(func);
-			
+		IFunctionType newType = func.getType();
 		setType(linkage, newType);
+
 		PDOMCParameter oldParams= getFirstParameter(null);
+		IParameter[] newParams = func.getParameters();
 		setParameters(newParams);
 		if (oldParams != null) {
 			oldParams.delete(linkage);
 		}
+		byte newAnnotation = PDOMCAnnotation.encodeAnnotation(func);
 		getDB().putByte(record + ANNOTATIONS, newAnnotation);
 	}
 

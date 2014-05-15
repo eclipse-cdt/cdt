@@ -20,26 +20,23 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 
 /**
- * Interface for accessing working copies of <code>ITranslationUnit</code>
+ * Interface for accessing working copies of {@code ITranslationUnit}
  * objects. The original translation unit is only given indirectly by means
- * of an <code>IEditorInput</code>. The life cycle is as follows:
+ * of an {@code IEditorInput}. The life cycle is as follows:
  * <ul>
- * <li> <code>connect</code> creates and remembers a working copy of the 
- *   translation unit which is encoded in the given editor input</li>
- * <li> <code>getWorkingCopy</code> returns the working copy remembered on 
- *   <code>connect</code></li>
- * <li> <code>disconnect</code> destroys the working copy remembered on 
- *   <code>connect</code></li>
+ * <li> {@code connect} creates and remembers a working copy of the 
+ *     translation unit which is encoded in the given editor input</li>
+ * <li> {@code getWorkingCopy} returns the working copy remembered on 
+ *     {@code connect}</li>
+ * <li> {@code disconnect} destroys the working copy remembered on 
+ *     {@code connect}</li>
  * </ul>
- * <p>
- * This interface is not intended to be implemented by clients.
  * </p>
  * @noimplement This interface is not intended to be implemented by clients.
  * 
  * @see CDTUITools#getWorkingCopyManager
  */
 public interface IWorkingCopyManager {
-	
 	/**
 	 * Connects the given editor input to this manager. After calling
 	 * this method, a working copy will be available for the translation unit encoded
@@ -47,7 +44,7 @@ public interface IWorkingCopyManager {
 	 *
 	 * @param input the editor input
 	 * @exception CoreException if the working copy cannot be created for the 
-	 *   translation unit
+	 *     translation unit
 	 */
 	void connect(IEditorInput input) throws CoreException;
 	
@@ -67,9 +64,9 @@ public interface IWorkingCopyManager {
 	 * the given editor input.
 	 *
 	 * @param input the editor input
-	 * @return the working copy of the translation unit, or <code>null</code> if the
-	 *   input does not encode an editor input, or if there is no remembered working
-	 *   copy for this translation unit
+	 * @return the working copy of the translation unit, or {@code null} if the
+	 *     input does not encode an editor input, or if there is no remembered working
+	 *     copy for this translation unit
 	 */
 	IWorkingCopy getWorkingCopy(IEditorInput input);
 	
@@ -82,12 +79,14 @@ public interface IWorkingCopyManager {
 	/**
 	 * Returns a shared working copy for the given translation unit. If necessary, a new 
 	 * working copy will be created.
+	 *
 	 * @param tu a translation unit
-	 * @param requestor call back interface for reporting problems, may be <code>null</code>.
+	 * @param requestor call back interface for reporting problems, may be {@code null}.
 	 * @param monitor a monitor to report progress 
 	 * @since 5.2
 	 */
-	IWorkingCopy getSharedWorkingCopy(ITranslationUnit tu, IProblemRequestor requestor, IProgressMonitor monitor) throws CModelException;
+	IWorkingCopy getSharedWorkingCopy(ITranslationUnit tu, IProblemRequestor requestor,
+			IProgressMonitor monitor) throws CModelException;
 
 	/**
 	 * Returns all shared working copies, currently available.
@@ -96,9 +95,9 @@ public interface IWorkingCopyManager {
 	IWorkingCopy[] getSharedWorkingCopies();
 
 	/**
-	 * Returns the shared working copy for the given translation unit, if it exists, or <code>null</code>, otherwise.
+	 * Returns the shared working copy for the given translation unit, if it exists,
+	 * or {@code null}, otherwise.
 	 * @since 5.2
 	 */
 	IWorkingCopy findSharedWorkingCopy(ITranslationUnit tu);
-
 }

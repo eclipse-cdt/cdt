@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,9 @@
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.text.CharacterIterator;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.Stack;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -399,10 +400,10 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	private class ExitPolicy implements IExitPolicy {
 		final char fExitCharacter;
 		final char fEscapeCharacter;
-		final Stack<BracketLevel> fStack;
+		final Deque<BracketLevel> fStack;
 		final int fSize;
 
-		public ExitPolicy(char exitCharacter, char escapeCharacter, Stack<BracketLevel> stack) {
+		public ExitPolicy(char exitCharacter, char escapeCharacter, Deque<BracketLevel> stack) {
 			fExitCharacter = exitCharacter;
 			fEscapeCharacter = escapeCharacter;
 			fStack = stack;
@@ -536,7 +537,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		private boolean fCloseAngularBrackets = true;
 		private final String CATEGORY = toString();
 		private IPositionUpdater fUpdater = new ExclusivePositionUpdater(CATEGORY);
-		private Stack<BracketLevel> fBracketLevelStack = new Stack<BracketLevel>();
+		private Deque<BracketLevel> fBracketLevelStack = new ArrayDeque<>();
 
 		public void setCloseBracketsEnabled(boolean enabled) {
 			fCloseBrackets = enabled;
@@ -1243,7 +1244,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 	private final ListenerList fPostSaveListeners;
 
-	private static final Set<String> angularIntroducers = new HashSet<String>();
+	private static final Set<String> angularIntroducers = new HashSet<>();
 	static {
 		angularIntroducers.add("template"); //$NON-NLS-1$
 		angularIntroducers.add("vector"); //$NON-NLS-1$
@@ -3100,7 +3101,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 			// Add occurrence annotations
 			int length= fLocations.length;
-			Map<Annotation, Position> annotationMap= new HashMap<Annotation, Position>(length);
+			Map<Annotation, Position> annotationMap= new HashMap<>(length);
 			for (int i= 0; i < length; i++) {
 				if (isCanceled(progressMonitor))
 					return Status.CANCEL_STATUS;
@@ -3367,7 +3368,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * @return the preference store for this editor
 	 */
 	private IPreferenceStore createCombinedPreferenceStore(IEditorInput input) {
-		List<IPreferenceStore> stores= new ArrayList<IPreferenceStore>(3);
+		List<IPreferenceStore> stores= new ArrayList<>(3);
 
 		ICProject project= EditorUtility.getCProject(input);
 		if (project != null) {

@@ -2525,4 +2525,30 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testSpecializationOfConstexprFunction_420995() throws Exception {
 		checkBindings();
 	}
+	
+	//	template <class TYPE>
+	//	class waldo {
+	//	    enum {
+	//	        X = sizeof(TYPE),
+	//	        Y = 1
+	//	    };
+	//
+	//	    int value = X && 1;
+	//	};
+	//
+	//	template <int> struct A {};
+	//
+	//	template <class TYPE>
+	//	struct impl : A<waldo<TYPE>::value> {};
+	//
+	//	template <class TYPE>
+	//	struct meta : impl<TYPE>::type {};
+	//
+	//	template <>
+	//	struct meta<int> {};
+	
+	//	int z;
+	public void testEnumerationWithMultipleEnumerators_434467() throws Exception {
+		checkBindings();
+	}
 }

@@ -159,7 +159,7 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 		Reference<CharArrayMap<IPDOMCPPEnumerator>> cached= (Reference<CharArrayMap<IPDOMCPPEnumerator>>) pdom.getCachedResult(key);
 		CharArrayMap<IPDOMCPPEnumerator> map= cached == null ? null : cached.get();
 		if (map != null) {
-			map.put(enumType.getNameCharArray(), enumItem);
+			map.put(enumItem.getNameCharArray(), enumItem);
 		}
 	}
 

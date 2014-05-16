@@ -1529,12 +1529,18 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			return;
 		}
 
+		MIThreadRunState threadState = fThreadRunStates.get(e.getDMContext());
+		if (threadState != null && threadState.fLatestEvent instanceof IResumedDMEvent) {
+			// Ignore multiple running events in a row.  They will only slow down the UI
+			// for no added value.
+			return;
+		}
+
 		if (fRunToLineActiveOperation == null && fStepInToSelectionActiveOperation == null) {
 			// No special case here, i.e. send notification
 			getSession().dispatchEvent(new ResumedEvent(e.getDMContext(), e), getProperties());
 		} else {
 			// Either RunToLine or StepIntoSelection operations are active
-			MIThreadRunState threadState = fThreadRunStates.get(e.getDMContext());
 			if (threadState == null || threadState.fLatestEvent instanceof ISuspendedDMEvent) {
 				// Need to send out Running event notification, only once per operation, then a stop event is expected
 				// at the end of the operation

@@ -21,6 +21,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.core.model.IConnectHandler;
 import org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler;
+import org.eclipse.cdt.debug.internal.core.CRequest;
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -46,16 +47,16 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.ITerminateHandler;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -193,6 +194,35 @@ public class GdbLaunch extends DsfLaunch
 
     ///////////////////////////////////////////////////////////////////////////
     // ITerminate
+    
+    static class TerminateRequest extends CRequest implements IDebugCommandRequest {
+    	Object[] elements;
+    	
+    	public TerminateRequest(Object[] objects) {
+    		elements = objects;
+    	}
+    	
+		@Override
+		public Object[] getElements() {
+			return elements;
+		}
+
+		@Override
+		public void done() {
+			IStatus status = getStatus();
+			if (status != null && !status.isOK()) {
+				IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
+				if (statusHandler != null) {
+					try {
+						statusHandler.handleStatus(status, null);
+					} catch (CoreException ex) {
+						GdbPlugin.getDefault().getLog().log(ex.getStatus());
+					}
+				}
+			}
+		}
+    }
+    
     @Override
     public boolean canTerminate() {
         return fInitialized && super.canTerminate();
@@ -205,23 +235,15 @@ public class GdbLaunch extends DsfLaunch
  	public void terminate() throws DebugException {
  		// Execute asynchronously to avoid potential deadlocks
  		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=434645
- 		// 
- 		Job job = new Job("Terminate session") { //$NON-NLS-1$
 
- 			@Override
- 			protected IStatus run(IProgressMonitor monitor) {
- 				try {
- 					GdbLaunch.super.terminate();
- 				} catch (DebugException e) {
- 					return new MultiStatus(
-                             GdbPlugin.PLUGIN_ID, IStatus.ERROR, new IStatus[]{e.getStatus()}, "Terminate session failed", e); //$NON-NLS-1$
- 				}
- 				return Status.OK_STATUS;
- 			}
- 			
- 		};
- 		job.setSystem(true);
- 		job.schedule();
+ 		ITerminateHandler handler = (ITerminateHandler) getAdapter(ITerminateHandler.class);
+ 		if (handler == null) {
+ 			super.terminate();
+ 			return;
+ 		}
+
+ 		TerminateRequest req = new TerminateRequest(new Object[] {this});
+ 		handler.execute(req);
  	}
  	
     // ITerminate

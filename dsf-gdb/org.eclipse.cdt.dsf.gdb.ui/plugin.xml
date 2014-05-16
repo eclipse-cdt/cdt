@@ -478,4 +478,13 @@
             plugin="org.eclipse.cdt.dsf.gdb">
       </statusHandler>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.statusHandlers">
+      <statusHandler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.GdbStatusHandler"
+            code="10004"
+            id="org.eclipse.cdt.dsf.gdb.ui.statusHandler"
+            plugin="org.eclipse.cdt.dsf.gdb">
+      </statusHandler>
+   </extension>
 </plugin>

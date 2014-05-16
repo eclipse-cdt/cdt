@@ -482,12 +482,18 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
      * @noreference This method is not intended to be referenced by clients.
      */
     @DsfServiceEventHandler
-    public void eventDispatched(final MIRunningEvent e) {
+    public void eventDispatched(MIRunningEvent e) {    	
     	if (fDisableNextRunningEvent) {
     		fDisableNextRunningEvent = false;
     		// We don't broadcast this running event
     		return;
     	}
+
+    	if (fLatestEvent instanceof IResumedDMEvent) {
+			// Ignore multiple running events in a row.  They will only slow down the UI
+			// for no added value.
+			return;
+		}
 
         IDMEvent<?> event = null;
         // Find the container context, which is used in multi-threaded debugging.

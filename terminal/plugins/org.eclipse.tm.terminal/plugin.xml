@@ -14,18 +14,20 @@
 # Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Widget
 # Martin Oberhuber (Wind River) - [434294] Add Mac bindings with COMMAND
 # Martin Oberhuber (Wind River) - [434487] Add key bindings for "maximize view" and "quick access"
+# Martin Oberhuber (Wind River) - [434939] Fix Keybinding conflicts with JEE Luna package
 -->
 <plugin>
    <extension-point id="terminalConnectors" name="Terminal Connectors" schema="schema/terminalConnectors.exsd"/>
    <extension point="org.eclipse.ui.contexts">           
       <context
-            name="%terminal.context.name"
-            description="%terminal.context.description"
+            name="%terminal.context.name.terminal"
+            description="%terminal.context.description.terminal"
+            parentId="org.eclipse.ui.contexts.window"
             id="org.eclipse.tm.terminal.TerminalContext"
             />
     <context
-            name="%terminal.context.name"
-            description="%terminal.context.description"
+            name="%terminal.context.name.edit"
+            description="%terminal.context.description.edit"
             parentId="org.eclipse.ui.contexts.window"
             id="org.eclipse.tm.terminal.EditContext" />
    </extension>
@@ -76,6 +78,21 @@
             commandId="org.eclipse.tm.terminal.command1"
             contextId="org.eclipse.tm.terminal.TerminalContext"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Alt+B"/> <!-- Readline word-left: just to be safe -->
+      <key
+            commandId="org.eclipse.tm.terminal.command1"
+            contextId="org.eclipse.tm.terminal.TerminalContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Alt+C"/> <!-- ClearCase, Extract Constant -->
+      <key
+            commandId="org.eclipse.tm.terminal.command1"
+            contextId="org.eclipse.tm.terminal.TerminalContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Alt+D"/> <!-- Design, Diagram, Debug -->
+      <key
+            commandId="org.eclipse.tm.terminal.command1"
+            contextId="org.eclipse.tm.terminal.TerminalContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Alt+E"/> <!-- Edit -->
       <key
             commandId="org.eclipse.tm.terminal.command1"
@@ -86,7 +103,7 @@
             commandId="org.eclipse.tm.terminal.command1"
             contextId="org.eclipse.tm.terminal.TerminalContext"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+G"/> 
+            sequence="Alt+G"/> <!-- Tar&get -->
       <key
             commandId="org.eclipse.tm.terminal.command1"
             contextId="org.eclipse.tm.terminal.TerminalContext"
@@ -96,12 +113,17 @@
             commandId="org.eclipse.tm.terminal.command1"
             contextId="org.eclipse.tm.terminal.TerminalContext"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Alt+L"/> <!-- Ana&lyze -->
+      <key
+            commandId="org.eclipse.tm.terminal.command1"
+            contextId="org.eclipse.tm.terminal.TerminalContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Alt+N"/> <!-- Navigate -->
       <key
             commandId="org.eclipse.tm.terminal.command1"
             contextId="org.eclipse.tm.terminal.TerminalContext"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+P"/> <!-- Project -->
+            sequence="Alt+P"/> <!-- Project, Papyrus, Ping -->
       <key
             commandId="org.eclipse.tm.terminal.command1"
             contextId="org.eclipse.tm.terminal.TerminalContext"
@@ -127,6 +149,11 @@
             contextId="org.eclipse.tm.terminal.TerminalContext"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Alt+W"/> <!-- Window -->
+      <key
+            commandId="org.eclipse.tm.terminal.command1"
+            contextId="org.eclipse.tm.terminal.TerminalContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Alt+Y"/> <!-- S&ystem -->
       <!-- 
            For Copy and Paste, we need replacements since the default Ctrl+C / Ctrl+V
            need to go to the terminal and thus are not available for local Copy and Paste.

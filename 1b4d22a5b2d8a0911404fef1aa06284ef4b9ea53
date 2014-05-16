@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_f68f7037",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2186,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-16T17:14:27Z",
+      "side": 1,
+      "message": "I\u0027m not sure this is the right solution since it may have side effects in a scenario when a header file is moved from a C project to a C++ one and vice versa. A more targeted and safer solution would be to recognize the project rename scenario and always return true for it. Is the condition !getInputFile(originalElement).getProject().isOpen() sufficient for recognizing the project rename scenario?",
+      "revId": "1b4d22a5b2d8a0911404fef1aa06284ef4b9ea53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -872,9 +872,14 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 	protected class TerminalKeyHandler extends KeyAdapter {
 		public void keyPressed(KeyEvent event) {
+			//TODO next 2 lines are probably obsolete now
 			if (getState()==TerminalState.CONNECTING)
 				return;
 
+			//TODO we should no longer handle copy & paste specially.
+			//Instead, we should have Ctrl+Shift always go to local since there is no escape sequence for this.
+			//On Mac, Command+Anything already goes always to local.
+			//Note that this decision means that Command will NOT be Meta in Emacs on a Remote.
 			int accelerator = SWTKeySupport.convertEventToUnmodifiedAccelerator(event);
 			if (editActionAccelerators.isCopyAction(accelerator)) {
 				copy();
@@ -1094,6 +1099,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				character = '\u0000';
 			}
 
+			//TODO: At this point, Ctrl+M sends the same as Ctrl+Shift+M .
+			//This is undesired. Fixing this here might make the special Ctrl+Shift+C
+			//handling unnecessary further up.
 			sendChar(character, altKeyPressed);
 
 			// Special case: When we are in a TCP connection and echoing characters

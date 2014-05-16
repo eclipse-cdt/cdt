@@ -17,6 +17,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import java.awt.PageAttributes.OriginType;
 import java.text.CharacterIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -2181,35 +2182,56 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 
 	@Override
-	protected boolean canHandleMove(IEditorInput originalElement, IEditorInput movedElement) {
+	protected boolean canHandleMove(IEditorInput originalElement, IEditorInput movedElement) {	
+		if (doFileExtensionsMatch(originalElement, movedElement)) {
+			return true;
+		}
+		return doContentTypesMatch(originalElement, movedElement);
+	}
+	
+	private boolean doContentTypesMatch(IEditorInput originalElement, IEditorInput movedElement) {
 		String oldLanguage = ""; //$NON-NLS-1$
-		if (originalElement instanceof IFileEditorInput) {
-			IFile file = ((IFileEditorInput) originalElement).getFile();
-			if (file != null) {
-				IContentType type = CCorePlugin.getContentType(file.getProject(), file.getName());
-				if (type != null) {
-					oldLanguage = type.getId();
-				}
-				if (oldLanguage == null) {
-					return false;
-				}
+
+		IFile originalFile = getInputFile(originalElement);
+		if (originalFile != null) {
+			IContentType type = CCorePlugin.getContentType(originalFile.getProject(), originalFile.getName());
+			if (type != null) {
+				oldLanguage = type.getId();
+			}
+			if (oldLanguage == null) {
+				return false;
 			}
 		}
 
 		String newLanguage = ""; //$NON-NLS-1$
-		if (movedElement instanceof IFileEditorInput) {
-			IFile file = ((IFileEditorInput) movedElement).getFile();
-			if (file != null) {
-				IContentType type = CCorePlugin.getContentType(file.getProject(), file.getName());
-				if (type != null) {
-					newLanguage = type.getId();
-				}
-				if (newLanguage == null) {
-					return false;
-				}
+		IFile movedFile = getInputFile(movedElement);
+		if (movedFile != null) {
+			IContentType type = CCorePlugin.getContentType(movedFile.getProject(), movedFile.getName());
+			if (type != null) {
+				newLanguage = type.getId();
 			}
+			if (newLanguage == null) {
+				return false;
+			}
+
 		}
 		return oldLanguage.equals(newLanguage);
+	}
+
+	private boolean doFileExtensionsMatch(IEditorInput originalElement, IEditorInput movedElement) {
+		IFile originalFile = getInputFile(originalElement);
+		IFile movedFile = getInputFile(movedElement);
+		if (originalFile != null && movedFile != null) {
+			return originalFile.getFileExtension().equals(movedFile.getFileExtension());
+		}
+		return false;
+	}
+
+	private IFile getInputFile(IEditorInput editorInput) {
+		if (editorInput instanceof IFileEditorInput) {
+			return ((IFileEditorInput) editorInput).getFile();
+		}
+		return null;
 	}
 
 	@Override

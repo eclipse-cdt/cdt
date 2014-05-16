@@ -248,6 +248,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//26c\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-05-16T19:17:22Z",
+      "side": 1,
+      "message": "Ok, that is a good argument.\n\nBe aware though that any Collection will use equals() when doing comparisons.  So, if you had a Map indexed by SessionOSData, you would still have to make sure that SessionOSData.equals() did what you wanted, as it would be called by Map.\n\nCurrently, SessionOSData.equals() does do what you want by inheriting it from Object:\n   public boolean equals(Object obj) {\n\treturn (this \u003d\u003d obj);\n    }\n\nWhich also means that using \u003d\u003d or equals() are the same in this case.",
+      "parentUuid": "AABOIn//27Y\u003d",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//3aw\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
         "patchSetId": 8
@@ -295,6 +313,24 @@
       "side": 1,
       "message": "Different comment - doing keep comparison is rather expensive.",
       "parentUuid": "AABOIn//3JM\u003d",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//26U\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-05-16T19:17:22Z",
+      "side": 1,
+      "message": "Only if you override equals() to actually compare the content.  \n\nBut in this case, to avoid a potential future risk of performance impact if someone does implement such an equals() method, using !\u003d seems ok.",
+      "parentUuid": "AABOIn//27U\u003d",
       "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

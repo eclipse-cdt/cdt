@@ -915,8 +915,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 						for (IIndexFile indexFile : index.getFiles(linkageID, ifl)) {
 							int score= indexFile.getMacros().length * 2;
 							IIndexFile context= getParsedInContext(indexFile);
-							if (isSourceFile(context, getCProject().getProject()))
+							if (isSourceFile(context, getCProject().getProject())) {
+								if (indexFile.equals(context)) {
+									// The file is an independently indexed source - return it.
+									return new IIndexFile[] { indexFile, indexFile };
+								}
 								score++;
+							}
 							if (score > bestScore) {
 								bestScore= score;
 								best= indexFile;

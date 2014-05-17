@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,14 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems, Inc. - bug 248071
+ *     Martin Oberhuber (Wind River) - [303083] Split out the Spawner
  *******************************************************************************/
 package org.eclipse.cdt.utils.pty;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.core.spawner.CSpawnerPlugin;
+import org.eclipse.cdt.internal.core.spawner.Messages;
 import org.eclipse.cdt.utils.spawner.Spawner;
 import org.eclipse.core.runtime.Platform;
 
@@ -139,12 +141,12 @@ public class PTY {
 	public PTY(boolean console) throws IOException {
 		this.console = console;
 		if (console && !isConsoleModeSupported) {
-			throw new IOException(CCorePlugin.getResourceString("Util.exception.cannotCreatePty")); //$NON-NLS-1$
+			throw new IOException(Messages.Util_exception_cannotCreatePty);
 		}
 		slave= hasPTY ? openMaster(console) : null;
 
 		if (slave == null) {
-			throw new IOException(CCorePlugin.getResourceString("Util.exception.cannotCreatePty")); //$NON-NLS-1$
+			throw new IOException(Messages.Util_exception_cannotCreatePty);
 		}
 
 		in = new PTYInputStream(new MasterFD());
@@ -210,7 +212,7 @@ public class PTY {
 		} catch (UnsatisfiedLinkError ule) {
 			if (!setTerminalSizeErrorAlreadyLogged) {
 				setTerminalSizeErrorAlreadyLogged = true;
-				CCorePlugin.log(CCorePlugin.getResourceString("Util.exception.cannotSetTerminalSize"), ule); //$NON-NLS-1$
+				CSpawnerPlugin.log(Messages.Util_exception_cannotSetTerminalSize, ule);
 			}
 		}
 	}

@@ -25,51 +25,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.cdt.core.aix.source"
-         os="aix"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.cdt.core.linux.source"
-         os="linux"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.cdt.core.macosx.source"
-         os="macosx"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.cdt.core.solaris.source"
-         os="solaris"
-         arch="sparc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.cdt.core.win32.source"
-         os="win32"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"/>
-
-   <plugin
          id="org.eclipse.cdt.codan.core.source"
          download-size="0"
          install-size="0"

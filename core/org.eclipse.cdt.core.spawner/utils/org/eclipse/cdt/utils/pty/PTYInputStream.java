@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - bug 286162
+ *     Martin Oberhuber (Wind River) - [303083] Split out the Spawner
  *******************************************************************************/
 package org.eclipse.cdt.utils.pty;
 
@@ -15,6 +16,7 @@ package org.eclipse.cdt.utils.pty;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.eclipse.cdt.internal.core.spawner.Messages;
 import org.eclipse.cdt.utils.pty.PTY.MasterFD;
 
 class PTYInputStream extends InputStream {
@@ -77,7 +79,7 @@ class PTYInputStream extends InputStream {
 		close0(master.getFD());
 		// ignore error on close - see bug 286162
 //		if (status == -1)
-//			throw new IOException(CCorePlugin.getResourceString("Util.exception.closeError")); //$NON-NLS-1$
+//			throw new IOException(Messages.Util_exception_closeError);
 		master.setFD(-1);
 	}
 

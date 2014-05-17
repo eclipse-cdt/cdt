@@ -22,6 +22,10 @@
          version="0.0.0"/>
 
    <includes
+         id="org.eclipse.cdt.platform.fragments.source"
+         version="0.0.0"/>
+
+   <includes
          id="org.eclipse.cdt.gnu.build.source"
          version="0.0.0"/>
 

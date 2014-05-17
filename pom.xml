@@ -72,6 +72,8 @@
 		<module>dsf/org.eclipse.cdt.dsf.ui</module>
 		<module>releng/org.eclipse.cdt.platform-feature</module>
 		<module>releng/org.eclipse.cdt.platform.source-feature</module>
+		<module>releng/org.eclipse.cdt.platform.fragments-feature</module>
+		<module>releng/org.eclipse.cdt.platform.fragments.source-feature</module>
 
 		<module>build/org.eclipse.cdt.managedbuilder.gnu.ui</module>
 		<module>build/org.eclipse.cdt.gnu.build-feature</module>

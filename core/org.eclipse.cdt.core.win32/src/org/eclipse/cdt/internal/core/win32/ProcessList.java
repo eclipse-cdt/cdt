@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Martin Oberhuber (Wind River) - [303083] Split out the Spawner
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.win32;
 
@@ -18,9 +19,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
+import org.eclipse.cdt.internal.core.spawner.CSpawnerPlugin;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -42,7 +43,7 @@ public class ProcessList implements IProcessList {
 		Process p = null;
 		String command = null;
 		InputStream in = null;
-		Bundle bundle = Platform.getBundle(CCorePlugin.PLUGIN_ID);
+		Bundle bundle = Platform.getBundle(CSpawnerPlugin.PLUGIN_ID);
 		IProcessInfo[] procInfos = NOPROCESS;
 
 		try {

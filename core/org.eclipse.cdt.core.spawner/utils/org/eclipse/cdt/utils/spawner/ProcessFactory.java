@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Martin Oberhuber (Wind River) - [303083] Split out the Spawner
  *******************************************************************************/
 package org.eclipse.cdt.utils.spawner;
 
@@ -14,7 +15,8 @@ package org.eclipse.cdt.utils.spawner;
 import java.io.File;
 import java.io.IOException;
 
-import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.core.spawner.CSpawnerPlugin;
+import org.eclipse.cdt.internal.core.spawner.Messages;
 import org.eclipse.cdt.utils.pty.PTY;
 
 /**
@@ -42,7 +44,7 @@ public class ProcessFactory {
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (UnsatisfiedLinkError e) {
-			CCorePlugin.log(e.getMessage());
+			CSpawnerPlugin.log(e.getMessage());
 		}
 	}
 
@@ -94,6 +96,6 @@ public class ProcessFactory {
 		throws IOException {
 		if (hasSpawner)
 			return new Spawner(cmdarray, envp, dir, pty);
-		throw new UnsupportedOperationException(CCorePlugin.getResourceString("Util.exception.cannotCreatePty")); //$NON-NLS-1$
+		throw new UnsupportedOperationException(Messages.Util_exception_cannotCreatePty);
 	}
 }

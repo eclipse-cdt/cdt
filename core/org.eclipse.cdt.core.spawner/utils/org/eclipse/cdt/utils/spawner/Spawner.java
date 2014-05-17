@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - bug 248071, bug 286162
+ *     Martin Oberhuber (Wind River) - [303083] Split out the Spawner
  *******************************************************************************/
 package org.eclipse.cdt.utils.spawner;
 
@@ -18,7 +19,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.StringTokenizer;
 
-import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.core.spawner.CSpawnerPlugin;
+import org.eclipse.cdt.internal.core.spawner.Messages;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
@@ -449,9 +451,9 @@ public class Spawner extends Process {
 		try {
 			System.loadLibrary("spawner"); //$NON-NLS-1$
 		} catch (SecurityException e) {
-			CCorePlugin.log(e);
+			CSpawnerPlugin.log(e);
 		} catch (UnsatisfiedLinkError e) {
-			CCorePlugin.log(e);
+			CSpawnerPlugin.log(e);
 		}
 	}
 
@@ -509,7 +511,7 @@ public class Spawner extends Process {
 
 		public String getErrorMessage() {
 			final String reason= fException != null ? fException.getMessage() : "Unknown reason"; //$NON-NLS-1$
-			return NLS.bind(CCorePlugin.getResourceString("Util.error.cannotRun"), fCmdarray[0], reason); //$NON-NLS-1$
+			return NLS.bind(Messages.Util_error_cannotRun, fCmdarray[0], reason);
 		}
 	}
 }

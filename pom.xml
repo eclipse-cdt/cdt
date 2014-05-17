@@ -44,6 +44,7 @@
 	<modules>
 		<module>releng/org.eclipse.cdt</module>
 		<module>core/org.eclipse.cdt.core</module>
+		<module>core/org.eclipse.cdt.core.spawner</module>
 		<module>core/org.eclipse.cdt.core.linux</module>
 		<module>core/org.eclipse.cdt.core.linux.x86</module>
 		<module>core/org.eclipse.cdt.core.linux.x86_64</module>
@@ -72,6 +73,8 @@
 		<module>dsf/org.eclipse.cdt.dsf.ui</module>
 		<module>releng/org.eclipse.cdt.platform-feature</module>
 		<module>releng/org.eclipse.cdt.platform.source-feature</module>
+		<module>releng/org.eclipse.cdt.spawner-feature</module>
+		<module>releng/org.eclipse.cdt.spawner.source-feature</module>
 
 		<module>build/org.eclipse.cdt.managedbuilder.gnu.ui</module>
 		<module>build/org.eclipse.cdt.gnu.build-feature</module>

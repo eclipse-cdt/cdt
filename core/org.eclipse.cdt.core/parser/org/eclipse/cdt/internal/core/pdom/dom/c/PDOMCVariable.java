@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -105,7 +106,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 			return getLinkage().loadValue(record + VALUE_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return null;
+			return Value.UNKNOWN;
 		}
 	}
 

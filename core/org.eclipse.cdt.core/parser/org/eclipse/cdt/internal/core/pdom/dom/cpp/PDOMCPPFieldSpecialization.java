@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -85,7 +86,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 			return getLinkage().loadValue(record + VALUE_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return null;
+			return Value.UNKNOWN;
 		}
 	}
 

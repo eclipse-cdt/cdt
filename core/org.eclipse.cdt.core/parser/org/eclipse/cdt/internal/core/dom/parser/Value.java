@@ -184,7 +184,7 @@ public class Value implements IValue {
 	public static IValue unmarshal(ITypeMarshalBuffer buf) throws CoreException {
 		short firstBytes= buf.getShort();
 		if (firstBytes == TypeMarshalBuffer.NULL_TYPE)
-			return null;
+			return Value.UNKNOWN;
 		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0)
 			return Value.UNKNOWN;
 		if ((firstBytes & ITypeMarshalBuffer.FLAG2) != 0)

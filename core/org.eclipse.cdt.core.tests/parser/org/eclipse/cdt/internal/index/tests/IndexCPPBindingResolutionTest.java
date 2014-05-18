@@ -1834,4 +1834,20 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		IVariable waldo = getBindingFromASTName("waldo", 5);
 		assertEquals(42, waldo.getInitialValue().numericalValue().longValue());
 	}
+	
+	//	struct function {
+	//	    template <typename T>
+	//	    function(T);
+	//	};
+	//
+	//	struct test {
+	//		// These lambdas have the class 'test' as their owner.
+	//	    test(function f = [](int c){ return c; });
+	//		function member = [](int c){ return c; };
+	//	};
+	
+	//	int z;
+	public void testLambdaOwnedByClass() throws Exception {
+		checkBindings();
+	}
 }

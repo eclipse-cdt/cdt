@@ -901,6 +901,13 @@ public class ClassTypeHelper {
 				return ICPPClassType.v_public; // Fallback visibility
 			}
 		}
+		
+		// The concept of visibility does not apply to a lambda, which can end
+		// up having a class as its owner if they are used in the initializer
+		// of a field or a member function parameter.
+		if (member instanceof CPPClosureType) {
+			return ICPPClassType.v_public;
+		}
 
 		ICPPASTCompositeTypeSpecifier classDeclSpec = classType.getCompositeTypeSpecifier();
 		int visibility = getVisibility(classDeclSpec, member);

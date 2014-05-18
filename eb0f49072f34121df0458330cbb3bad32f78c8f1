@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_819eb0b2",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/StatementHasNoEffectChecker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-18T19:19:08Z",
+      "side": 1,
+      "message": "Check -\u003e Checks",
+      "revId": "eb0f49072f34121df0458330cbb3bad32f78c8f1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_e1804c51",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/StatementHasNoEffectChecker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-18T19:19:08Z",
+      "side": 1,
+      "message": "check -\u003e Check",
+      "revId": "eb0f49072f34121df0458330cbb3bad32f78c8f1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_c1838859",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/StatementHasNoEffectChecker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-18T19:19:08Z",
+      "side": 1,
+      "message": "are -\u003e Are",
+      "revId": "eb0f49072f34121df0458330cbb3bad32f78c8f1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

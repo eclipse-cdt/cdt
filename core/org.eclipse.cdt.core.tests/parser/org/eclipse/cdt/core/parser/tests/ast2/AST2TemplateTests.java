@@ -368,6 +368,17 @@ public class AST2TemplateTests extends AST2TestBase {
 
 		assertInstances(col, T1, 6);
 	}
+	
+	//	template<typename _A_>
+	//	struct A : public _A_::member_t {};
+	//
+	//	struct B : public A<B>{};
+	public void testStackOverflowInBaseComputation_418996() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPClassType B = helper.assertNonProblem("A<B>", 4);
+		// Check that this line does not cause a StackOverflowError.
+		ClassTypeHelper.getBases(B, null);
+	}
 
 	// template < class T > class A {
 	//    void f();

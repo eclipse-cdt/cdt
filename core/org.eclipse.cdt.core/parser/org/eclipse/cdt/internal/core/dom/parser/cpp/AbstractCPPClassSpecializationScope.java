@@ -54,6 +54,12 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	// The following fields are used by the PDOM bindings and need to be volatile.
 	private volatile ICPPBase[] fBases;
 	private volatile ICPPMethod[] ownInheritedConstructors;
+	private final ThreadLocal<Boolean> fComputingBases = new ThreadLocal<Boolean>() {
+		@Override
+		protected Boolean initialValue() {
+			return false;
+		}
+	};
 
 	public AbstractCPPClassSpecializationScope(ICPPClassSpecialization specialization) {
 		this.specialClass= specialization;
@@ -146,48 +152,56 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	@Override
 	public ICPPBase[] getBases(IASTNode point) {
 		if (fBases == null) {
-			ICPPBase[] result = ICPPBase.EMPTY_BASE_ARRAY;
-			ICPPBase[] bases = ClassTypeHelper.getBases(specialClass.getSpecializedBinding(), point);
-			if (bases.length == 0) {
-				fBases= bases;
-			} else {
-				final ICPPTemplateParameterMap tpmap = specialClass.getTemplateParameterMap();
-				for (ICPPBase base : bases) {
-					IBinding origClass = base.getBaseClass();
-					if (origClass instanceof ICPPTemplateParameter && ((ICPPTemplateParameter) origClass).isParameterPack()) {
-						IType[] specClasses= CPPTemplates.instantiateTypes(new IType[] { new CPPParameterPackType((IType) origClass) },
-								tpmap, -1, specialClass, point);
-						if (specClasses.length == 1 && specClasses[0] instanceof ICPPParameterPackType) {
-							result= ArrayUtil.append(result, base);
-						} else {
-							for (IType specClass : specClasses) {
-								ICPPBase specBase = base.clone();
-								specClass = SemanticUtil.getUltimateType(specClass, false);
-								if (specClass instanceof IBinding && !(specClass instanceof IProblemBinding)) {
-									specBase.setBaseClass((IBinding) specClass);
-									result = ArrayUtil.append(result, specBase);
+			if (fComputingBases.get()) {
+				return ICPPBase.EMPTY_BASE_ARRAY;  // avoid recursion
+			}
+			fComputingBases.set(true);
+			try {
+				ICPPBase[] result = ICPPBase.EMPTY_BASE_ARRAY;
+				ICPPBase[] bases = ClassTypeHelper.getBases(specialClass.getSpecializedBinding(), point);
+				if (bases.length == 0) {
+					fBases= bases;
+				} else {
+					final ICPPTemplateParameterMap tpmap = specialClass.getTemplateParameterMap();
+					for (ICPPBase base : bases) {
+						IBinding origClass = base.getBaseClass();
+						if (origClass instanceof ICPPTemplateParameter && ((ICPPTemplateParameter) origClass).isParameterPack()) {
+							IType[] specClasses= CPPTemplates.instantiateTypes(new IType[] { new CPPParameterPackType((IType) origClass) },
+									tpmap, -1, specialClass, point);
+							if (specClasses.length == 1 && specClasses[0] instanceof ICPPParameterPackType) {
+								result= ArrayUtil.append(result, base);
+							} else {
+								for (IType specClass : specClasses) {
+									ICPPBase specBase = base.clone();
+									specClass = SemanticUtil.getUltimateType(specClass, false);
+									if (specClass instanceof IBinding && !(specClass instanceof IProblemBinding)) {
+										specBase.setBaseClass((IBinding) specClass);
+										result = ArrayUtil.append(result, specBase);
+									}
 								}
 							}
+							continue;
 						}
-						continue;
+						if (origClass instanceof IType) {
+							ICPPBase specBase = base.clone();
+							ICPPClassSpecialization specializationContext = specialClass;
+							if (specialClass.getOwner() instanceof ICPPClassSpecialization) {
+								specializationContext = (ICPPClassSpecialization) specialClass.getOwner();
+							}
+							IType specClass= CPPTemplates.instantiateType((IType) origClass, tpmap, -1, specializationContext, point);
+							specClass = SemanticUtil.getUltimateType(specClass, false);
+							if (specClass instanceof IBinding && !(specClass instanceof IProblemBinding)) {
+								specBase.setBaseClass((IBinding) specClass);
+							}
+							result = ArrayUtil.append(result, specBase);
+						}
 					}
-					if (origClass instanceof IType) {
-						ICPPBase specBase = base.clone();
-						ICPPClassSpecialization specializationContext = specialClass;
-						if (specialClass.getOwner() instanceof ICPPClassSpecialization) {
-							specializationContext = (ICPPClassSpecialization) specialClass.getOwner();
-						}
-						IType specClass= CPPTemplates.instantiateType((IType) origClass, tpmap, -1, specializationContext, point);
-						specClass = SemanticUtil.getUltimateType(specClass, false);
-						if (specClass instanceof IBinding && !(specClass instanceof IProblemBinding)) {
-							specBase.setBaseClass((IBinding) specClass);
-						}
-						result = ArrayUtil.append(result, specBase);
-					}
+					result= ArrayUtil.trim(result);
+					fBases= result;
+					return result;
 				}
-				result= ArrayUtil.trim(result);
-				fBases= result;
-				return result;
+			} finally {
+				fComputingBases.set(false);
 			}
 		}
 		return fBases;

@@ -53,12 +53,13 @@ public class ProjectIndexerIncludeResolutionHeuristics implements IIncludeFileRe
 		if (fProject == null)
 			return null;
 
+		String val= IndexerPreferences.get(fProject, IndexerPreferences.KEY_INCLUDE_HEURISTICS, TRUE);
+		if (!TRUE.equals(val))
+			return null;
+
 		if (fProjects == null) {
 			if (fProject.isOpen()) {
-				String val= IndexerPreferences.get(fProject, IndexerPreferences.KEY_INCLUDE_HEURISTICS, TRUE);
-				if (TRUE.equals(val)) {
-					fProjects= getOpenReferencedProjects(fProject);
-				}
+				fProjects= getOpenReferencedProjects(fProject);
 			} 
 			if (fProjects == null) { 
 				fProject= null;

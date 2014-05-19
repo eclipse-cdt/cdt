@@ -62,11 +62,11 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	 * Note: design patterns to keep file group the same and matching {@link #FILE_GROUP}
 	 */
 	@SuppressWarnings("nls")
-	private static final String[] COMPILER_COMMAND_PATTERN_TEMPLATES = {
+	protected static final String[] COMPILER_COMMAND_PATTERN_TEMPLATES = {
 		"${COMPILER_PATTERN}.*\\s" + "()([^'\"\\s]*\\.${EXTENSIONS_PATTERN})(\\s.*)?[\r\n]*", // compiling unquoted file
 		"${COMPILER_PATTERN}.*\\s" + "(['\"])(.*\\.${EXTENSIONS_PATTERN})\\${COMPILER_GROUPS+1}(\\s.*)?[\r\n]*" // compiling quoted file
 	};
-	private static final int FILE_GROUP = 2;
+	protected static final int FILE_GROUP = 2;
 
 	// cached value from properties, do not need to use in equals() and hashCode()
 	private ResourceScope resourceScope = null;
@@ -96,7 +96,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	 * Sub-expression for compiler command pattern accounting for spaces, quotes etc.
 	 */
 	@SuppressWarnings("nls")
-	private String getCompilerPatternExtended() {
+	protected String getCompilerPatternExtended() {
 		String compilerPattern = getCompilerPattern();
 		return "\\s*\"?("+LEADING_PATH_PATTERN+")?(" + compilerPattern + ")\"?";
 	}
@@ -177,14 +177,14 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	/**
 	 * Adjust count for file group taking into consideration extra groups added by {@link #getCompilerPatternExtended()}.
 	 */
-	private int adjustFileGroup() {
+	protected int adjustFileGroup() {
 		return countGroups(getCompilerPatternExtended()) + FILE_GROUP;
 	}
 
 	/**
 	 * Make search pattern for compiler command based on template.
 	 */
-	private String makePattern(String template) {
+	protected String makePattern(String template) {
 		@SuppressWarnings("nls")
 		String pattern = template
 				.replace("${COMPILER_PATTERN}", getCompilerPatternExtended())

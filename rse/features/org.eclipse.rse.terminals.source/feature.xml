@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="org.eclipse.rse.terminals.source" version="1.2.100.qualifier" label="%featureName" provider-name="%providerName" image="eclipse_update_120.jpg"    >
+<feature id="org.eclipse.rse.terminals.source" version="1.2.100.qualifier" label="%featureName" provider-name="%providerName" image="eclipse_update_120.jpg"
+	license-feature="org.eclipse.license"
+      license-feature-version="1.0.1.qualifier"	>
 	<description >
 		%description
 	</description>

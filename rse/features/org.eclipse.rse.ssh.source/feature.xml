@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="org.eclipse.rse.ssh.source" version="3.0.500.qualifier" label="%featureName" provider-name="%providerName"     >
+<feature id="org.eclipse.rse.ssh.source" version="3.0.500.qualifier" label="%featureName" provider-name="%providerName" 
+	license-feature="org.eclipse.license"
+      license-feature-version="1.0.1.qualifier"	>
 	<description >
 		%description
 	</description>

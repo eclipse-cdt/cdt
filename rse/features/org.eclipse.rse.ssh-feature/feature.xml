@@ -14,7 +14,9 @@
       label="%featureName"
       version="3.0.500.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.rse.services.ssh">
+      plugin="org.eclipse.rse.services.ssh"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.1.qualifier">
 
    <description>
       %description

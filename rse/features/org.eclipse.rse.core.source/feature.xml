@@ -3,13 +3,15 @@
       id="org.eclipse.rse.core.source"
       label="%featureName"
       version="3.4.100.qualifier"
-      provider-name="%providerName">
+      provider-name="%providerName"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.1.qualifier">
 
    <description>
       %description
    </description>
 
-   <copyright url="http://www.eclipse.org/legal/epl-v10.html">
+   <copyright>
       %copyright
    </copyright>
 

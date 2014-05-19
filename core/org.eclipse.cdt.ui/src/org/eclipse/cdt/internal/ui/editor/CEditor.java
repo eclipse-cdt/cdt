@@ -2088,9 +2088,8 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		IFile originalFile = getEditorInputFile(originalElement);
 		
 		if (originalFile != null) {
-			// if the project of the original input cannot be accessed, 
-			// we do have a project rename scenario and we can handle a move
-			// see Bug #434852
+			// If the project of the original input cannot be accessed, the project is being
+			// renamed - accept the move. See http://bugs.eclipse.org/434852
 			if (originalFile.getProject() != null && !originalFile.getProject().isAccessible()) {
 				return true;
 			}

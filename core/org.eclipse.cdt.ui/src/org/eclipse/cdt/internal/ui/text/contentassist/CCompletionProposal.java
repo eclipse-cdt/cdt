@@ -1,17 +1,15 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
+ * Contributors:
  *     IBM Rational Software - Initial API and implementation
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.text.contentassist;
-
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -59,7 +57,6 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 
 public class CCompletionProposal implements ICCompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension2, ICompletionProposalExtension3 {
-	
 	private String fDisplayString;
     private String fIdString;
 	private String fReplacementString;
@@ -85,7 +82,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	 * @param replacementLength the length of the text to be replaced
 	 * @param image the image to display for this proposal
 	 * @param displayString the string to be displayed for the proposal
-	 * If set to <code>null</code>, the replacement string will be taken as display string.
+	 * If set to {@code null}, the replacement string will be taken as display string.
 	 */
 	public CCompletionProposal(String replacementString, int replacementOffset, int replacementLength, Image image, String displayString, int relevance) {
         this(replacementString, replacementOffset, replacementLength, image, displayString, null, relevance, null);
@@ -99,8 +96,8 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
      * @param replacementLength the length of the text to be replaced
      * @param image the image to display for this proposal
      * @param displayString the string to be displayed for the proposal
-     * @param viewer the text viewer for which this proposal is computed, may be <code>null</code>
-     * If set to <code>null</code>, the replacement string will be taken as display string.
+     * @param viewer the text viewer for which this proposal is computed, may be {@code null}
+     * If set to {@code null}, the replacement string will be taken as display string.
      */
     public CCompletionProposal(String replacementString, int replacementOffset, int replacementLength, Image image, String displayString, int relevance, ITextViewer viewer) {
         this(replacementString, replacementOffset, replacementLength, image, displayString, null, relevance, viewer);
@@ -115,8 +112,8 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
      * @param image the image to display for this proposal
      * @param displayString the string to be displayed for the proposal
      * @param idString the string to be uniquely identify this proposal
-     * @param viewer the text viewer for which this proposal is computed, may be <code>null</code>
-     * If set to <code>null</code>, the replacement string will be taken as display string.
+     * @param viewer the text viewer for which this proposal is computed, may be {@code null}
+     * If set to {@code null}, the replacement string will be taken as display string.
      */
     public CCompletionProposal(String replacementString, int replacementOffset, int replacementLength, Image image, String displayString, String idString, int relevance, ITextViewer viewer) {
         Assert.isNotNull(replacementString);
@@ -160,7 +157,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	
 	/**
 	 * Sets the proposal info.
-	 * @param proposalInfo The additional information associated with this proposal or <code>null</code>
+	 * @param proposalInfo The additional information associated with this proposal or {@code null}
 	 */
 	public void setAdditionalProposalInfo(String proposalInfo) {
 		fProposalInfo= proposalInfo;
@@ -174,12 +171,9 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	public void setCursorPosition(int cursorPosition) {
 		Assert.isTrue(cursorPosition >= 0);
 		fCursorPosition= cursorPosition;
-		fContextInformationPosition= (fContextInformation != null ? fCursorPosition : -1);
+		fContextInformationPosition= fContextInformation != null ? fCursorPosition : -1;
 	}
 	
-	/*
-	 * @see ICompletionProposalExtension#apply(IDocument, char, int)
-	 */
 	@Override
 	public void apply(IDocument document, char trigger, int offset) {
 		try {
@@ -192,7 +186,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 			if (trigger == (char) 0) {
 				string= fReplacementString;
 			} else {
-				StringBuffer buffer= new StringBuffer(fReplacementString);
+				StringBuilder buffer= new StringBuilder(fReplacementString);
 
 				// fix for PR #5533. Assumes that no eating takes place.
 				if ((fCursorPosition > 0 && fCursorPosition <= buffer.length() && buffer.charAt(fCursorPosition - 1) != trigger)) {
@@ -233,9 +227,8 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 					ui.enter();
 				}
 			}
-
 		} catch (BadLocationException x) {
-			// ignore
+			// Ignore
 		}		
 	}
 
@@ -243,7 +236,6 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	 * A class to simplify tracking a reference position in a document. 
 	 */
 	private static final class ReferenceTracker {
-
 		/** The reference position category name. */
 		private static final String CATEGORY= "reference_position"; //$NON-NLS-1$
 		/** The position updater of the reference position. */
@@ -255,7 +247,6 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		 * Called before document changes occur. It must be followed by a call to postReplace().
 		 * 
 		 * @param document the document on which to track the reference position.
-		 *	
 		 */
 		public void preReplace(IDocument document, int offset) throws BadLocationException {
 			fPosition.setOffset(offset);
@@ -263,9 +254,8 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 				document.addPositionCategory(CATEGORY);
 				document.addPositionUpdater(fPositionUpdater);
 				document.addPosition(CATEGORY, fPosition);
-
 			} catch (BadPositionCategoryException e) {
-				// should not happen
+				// Should not happen
 				CUIPlugin.log(e);
 			}
 		}
@@ -280,9 +270,8 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 				document.removePosition(CATEGORY, fPosition);
 				document.removePositionUpdater(fPositionUpdater);
 				document.removePositionCategory(CATEGORY);
-				 
 			} catch (BadPositionCategoryException e) {
-				// should not happen
+				// Should not happen
 				CUIPlugin.log(e);
 			}
 			return fPosition.getOffset();
@@ -290,19 +279,14 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	}	
 	
 	protected static class ExitPolicy implements IExitPolicy {
-		
 		final char fExitCharacter;
 		
 		public ExitPolicy(char exitCharacter) {
 			fExitCharacter= exitCharacter;
 		}
 
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.link.LinkedPositionUI.ExitPolicy#doExit(org.eclipse.jdt.internal.ui.text.link.LinkedPositionManager, org.eclipse.swt.events.VerifyEvent, int, int)
-		 */
 		@Override
 		public ExitFlags doExit(LinkedModeModel environment, VerifyEvent event, int offset, int length) {
-			
 			if (event.character == fExitCharacter) {
 				if (environment.anyPositionContains(offset))
 					return new ExitFlags(ILinkedModeListener.UPDATE_CARET, false);
@@ -318,7 +302,6 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 				return null;
 			}						
 		}
-
 	}	
 	
 	// #6410 - File unchanged but dirtied by code assist
@@ -335,33 +318,21 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		apply(document, (char) 0, fReplacementOffset + fReplacementLength);
 	}
 	
-	/*
-	 * @see ICompletionProposal#getSelection
-	 */
 	@Override
 	public Point getSelection(IDocument document) {
 		return new Point(fReplacementOffset + fCursorPosition, 0);
 	}
 
-	/*
-	 * @see ICompletionProposal#getContextInformation()
-	 */
 	@Override
 	public IContextInformation getContextInformation() {
 		return fContextInformation;
 	}
 
-	/*
-	 * @see ICompletionProposal#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return fImage;
 	}
 
-	/*
-	 * @see ICompletionProposal#getDisplayString()
-	 */
 	@Override
 	public String getDisplayString() {
 		return fDisplayString;
@@ -377,9 +348,6 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
         return fIdString;
     }
     
-	/*
-	 * @see ICompletionProposal#getAdditionalProposalInfo()
-	 */
 	@Override
 	public String getAdditionalProposalInfo() {
 		if (fProposalInfo != null) {
@@ -388,17 +356,11 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		return null;
 	}
 	
-	/*
-	 * @see ICompletionProposalExtension#getTriggerCharacters()
-	 */
 	@Override
 	public char[] getTriggerCharacters() {
 		return fTriggerCharacters;
 	}
 
-	/*
-	 * @see ICompletionProposalExtension#getContextInformationPosition()
-	 */
 	@Override
 	public int getContextInformationPosition() {
 		return fReplacementOffset + fContextInformationPosition;
@@ -412,9 +374,6 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		return fReplacementOffset;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getCompletionOffset()
-	 */
 	@Override
 	public int getPrefixCompletionStart(IDocument document, int completionOffset) {
 		return getReplacementOffset();
@@ -454,9 +413,6 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		return fReplacementString;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getReplacementText()
-	 */
 	@Override
 	public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 		String string= getReplacementString();
@@ -482,27 +438,20 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		fImage= image;
 	}
 
-	/*
-	 * @see ICompletionProposalExtension#isValidFor(IDocument, int)
-	 */
 	@Override
 	public boolean isValidFor(IDocument document, int offset) {
 		return validate(document, offset, null);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
-	 */
 	@Override
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
-
 		if (offset < fReplacementOffset)
 			return false;
 				
 		boolean validated= match(document, offset, fReplacementString);	
 
 		if (validated && event != null) {
-			// adapt replacement range to document change
+			// Adapt replacement range to document change
 			int delta= (event.fText == null ? 0 : event.fText.length()) - event.fLength;
 			fReplacementLength += delta;	
 		}
@@ -528,8 +477,8 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	}
 
 	/**
-	 * Returns <code>true</code> if a words matches the code completion prefix in the document,
-	 * <code>false</code> otherwise.
+	 * Returns {@code true} if a words matches the code completion prefix in the document,
+	 * {@code false} otherwise.
 	 */	
 	protected boolean match(IDocument document, int offset, String word) {
 		if (word == null) 
@@ -554,15 +503,11 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		return preference.getBoolean(ContentAssistPreference.AUTOINSERT);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension1#apply(org.eclipse.jface.text.ITextViewer, char, int, int)
-	 */
 	@Override
 	public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
-
 		IDocument document= viewer.getDocument();
 
-		// don't eat if not in preferences, XOR with modifier key 1 (Ctrl)
+		// Don't eat if not in preferences, XOR with modifier key 1 (Ctrl)
 		// but: if there is a selection, replace it!
 		Point selection= viewer.getSelectedRange();
 		fToggleEating= (stateMask & SWT.MOD1) != 0;
@@ -574,7 +519,6 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	}
 
 	private static Color getForegroundColor(StyledText text) {
-
 		IPreferenceStore preference= CUIPlugin.getDefault().getPreferenceStore();
 		RGB rgb= PreferenceConverter.getColor(preference, ContentAssistPreference.PROPOSALS_FOREGROUND);
 		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
@@ -582,7 +526,6 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	}
 
 	private static Color getBackgroundColor(StyledText text) {
-
 		IPreferenceStore preference= CUIPlugin.getDefault().getPreferenceStore();
 		RGB rgb= PreferenceConverter.getColor(preference, ContentAssistPreference.PROPOSALS_BACKGROUND);
 		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
@@ -592,27 +535,24 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	private void repairPresentation(ITextViewer viewer) {
 		if (fRememberedStyleRange != null) {
 			 if (viewer instanceof ITextViewerExtension2) {
-			 	// attempts to reduce the redraw area
+			 	// Attempts to reduce the redraw area
 			 	ITextViewerExtension2 viewer2= (ITextViewerExtension2) viewer;
 			 	
 			 	if (viewer instanceof ITextViewerExtension5) {
-			 		
 			 		ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 			 		IRegion widgetRange= extension.modelRange2WidgetRange(new Region(fRememberedStyleRange.start, fRememberedStyleRange.length));
 			 		if (widgetRange != null)
 			 			viewer2.invalidateTextPresentation(widgetRange.getOffset(), widgetRange.getLength());
-			 			
 			 	} else {
 					viewer2.invalidateTextPresentation(fRememberedStyleRange.start + viewer.getVisibleRegion().getOffset(), fRememberedStyleRange.length);
 			 	}
-			 	
-			} else
+			} else {
 				viewer.invalidateTextPresentation();
+			}
 		}
 	}
 
 	private void updateStyle(ITextViewer viewer) {
-
 		StyledText text= viewer.getTextWidget();
 		if (text == null || text.isDisposed())
 			return;
@@ -649,36 +589,27 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		try {
 			text.setStyleRange(fRememberedStyleRange);
 		} catch (IllegalArgumentException x) {
-			// catching exception as offset + length might be outside of the text widget
+			// Catching exception as offset + length might be outside of the text widget
 			fRememberedStyleRange= null;
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#selected(ITextViewer, boolean)
-	 */
 	@Override
 	public void selected(ITextViewer viewer, boolean smartToggle) {
-		if (!insertCompletion() ^ smartToggle)
+		if (!insertCompletion() ^ smartToggle) {
 			updateStyle(viewer);
-		else {
+		} else {
 			repairPresentation(viewer);
 			fRememberedStyleRange= null;
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#unselected(ITextViewer)
-	 */
 	@Override
 	public void unselected(ITextViewer viewer) {
 		repairPresentation(viewer);
 		fRememberedStyleRange= null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getInformationControlCreator()
-	 */
 	@Override
 	public IInformationControlCreator getInformationControlCreator() {
 		return null;
@@ -692,22 +623,15 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		setReplacementLength(length);
 	}
 
-	/*
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return fIdString.hashCode();
 	}
 
-	/*
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object other) {
 		if(!(other instanceof ICCompletionProposal))
 			return false;
 		return fIdString.equalsIgnoreCase(((ICCompletionProposal)other).getIdString());
 	}
-
 }

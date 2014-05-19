@@ -48,13 +48,11 @@ import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
-
 /**
  * Tests the automatic bracket insertion feature of the CEditor. Also tests
  * linked mode along the way.
  */
 public class BracketInserterTest extends TestCase {
-
 	private static final String SRC= "src";
 	private static final String SEP= "/";
 	private static final String TU_NAME= "smartedit.cpp";
@@ -77,7 +75,7 @@ public class BracketInserterTest extends TestCase {
 		"    char[] t= args[0];" + 
 		"}\n";
 	
-	// document offsets 
+	// Document offsets.
 	private static final int INCLUDE_OFFSET= 9;
 	private static final int BODY_OFFSET= 212;
 	private static final int ARGS_OFFSET= 184;
@@ -173,7 +171,7 @@ public class BracketInserterTest extends TestCase {
 		assertModel(true);
 	}
 	
-	public void testDeletingMultipleParenthesisInertion() throws BadLocationException, CModelException, CoreException {
+	public void testDeletingMultipleParenthesisInsertion() throws BadLocationException, CModelException, CoreException {
 		setCaret(BODY_OFFSET);
 		type("((((");
 		
@@ -477,7 +475,6 @@ public class BracketInserterTest extends TestCase {
 				return false;
 			}
 		}.waitForCondition(EditorTestHelper.getActiveDisplay(), 200);
-		
 	}
 
 	private int getCaret() {

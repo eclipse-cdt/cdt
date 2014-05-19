@@ -55,7 +55,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	protected IFile setUpProjectContent(IProject project) throws Exception {
 		String headerContent= readTaggedComment(HEADER_FILE_NAME);
 		StringBuilder sourceContent= getContentsForTest(1)[0];
-		sourceContent.insert(0, "#include \""+HEADER_FILE_NAME+"\"\n");
+		sourceContent.insert(0, "#include \"" + HEADER_FILE_NAME + "\"\n");
 		assertNotNull(createFile(project, HEADER_FILE_NAME, headerContent));
 		return createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
 	}

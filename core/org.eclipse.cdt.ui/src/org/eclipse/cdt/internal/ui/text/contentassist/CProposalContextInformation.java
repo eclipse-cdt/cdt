@@ -8,9 +8,6 @@
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
  *******************************************************************************/
-/*
- * Created on May 6, 2004
- */
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -55,9 +52,6 @@ public class CProposalContextInformation implements IContextInformation, IContex
 		fInformationDisplayString= informationDisplayString;
 	}
 
-	/*
-	 * @see IContextInformation#equals(Object)
-	 */
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof IContextInformation) {
@@ -70,40 +64,29 @@ public class CProposalContextInformation implements IContextInformation, IContex
 		return false;
 	}
 	
-	/*
-	 * @see IContextInformation#getInformationDisplayString()
-	 */
 	@Override
 	public String getInformationDisplayString() {
 		return fInformationDisplayString;
 	}
 	
-	/*
-	 * @see IContextInformation#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return fImage;
 	}
 	
-	/*
-	 * @see IContextInformation#getContextDisplayString()
-	 */
 	@Override
 	public String getContextDisplayString() {
 		if (fContextDisplayString != null)
 			return fContextDisplayString;
 		return fInformationDisplayString;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.IContextInformationExtension#getContextInformationPosition()
-	 */
+
 	@Override
 	public int getContextInformationPosition() {
 		return fInformationPosition;
 	}
 	
-	public void setContextInformationPosition( int pos ){
+	public void setContextInformationPosition(int pos) {
 		fInformationPosition = pos;
 	}
 }

@@ -66,19 +66,18 @@ import org.eclipse.cdt.internal.ui.util.Messages;
 
 /**
  * A content assist processor that aggregates the proposals of the
- * {@link org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer}s contributed via the
- * <code>org.eclipse.cdt.ui.completionProposalComputer</code> extension point.
+ * {@link org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer}s contributed via
+ * the {@code org.eclipse.cdt.ui.completionProposalComputer} extension point.
  * <p>
  * Subclasses may extend:
  * <ul>
- * <li><code>createContext</code> to provide the context object passed to the computers</li>
- * <li><code>createProgressMonitor</code> to change the way progress is reported</li>
- * <li><code>filterAndSort</code> to add sorting and filtering</li>
- * <li><code>getContextInformationValidator</code> to add context validation (needed if any
+ * <li>{@code createContext} to provide the context object passed to the computers</li>
+ * <li>{@code createProgressMonitor} to change the way progress is reported</li>
+ * <li>{@code filterAndSort} to add sorting and filtering</li>
+ * <li>{@code getContextInformationValidator} to add context validation (needed if any
  * contexts are provided)</li>
- * <li><code>getErrorMessage</code> to change error reporting</li>
+ * <li>{@code getErrorMessage} to change error reporting</li>
  * </ul>
- * </p>
  * 
  * @since 4.0
  */
@@ -130,7 +129,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 				fIterationGesture= getIterationGesture();
 				KeySequence binding= getIterationBinding();
 
-				// this may show the warning dialog if all categories are disabled
+				// This may show the warning dialog if all categories are disabled.
 				fCategoryIteration= getCategoryIteration();
 				for (Object element : fCategories) {
 					CompletionProposalCategory cat= (CompletionProposalCategory) element;
@@ -237,12 +236,11 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	/**
 	 * Verifies that auto activation is allowed.
 	 * <p>
-	 * The default implementation always returns <code>true</code>.
-	 * </p>
+	 * The default implementation always returns {@code true}.
 	 * 
 	 * @param viewer  the text viewer
 	 * @param offset  the offset where content assist was invoked on
-	 * @return <code>true</code> if auto activation is allowed
+	 * @return {@code true} if auto activation is allowed
 	 */
 	protected boolean verifyAutoActivation(ITextViewer viewer, int offset) {
 		return true;
@@ -254,7 +252,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	}
 
 	private List<ICompletionProposal> collectProposals(ITextViewer viewer, int offset, IProgressMonitor monitor, ContentAssistInvocationContext context) {
-		List<ICompletionProposal> proposals= new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> proposals= new ArrayList<>();
 		List<CompletionProposalCategory> providers= getCategories();
 		for (CompletionProposalCategory cat : providers) {
 			List<ICompletionProposal> computed= cat.computeCompletionProposals(context, fPartition, new SubProgressMonitor(monitor, 1));
@@ -270,14 +268,14 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	 * Filters and sorts the proposals. The passed list may be modified
 	 * and returned, or a new list may be created and returned.
 	 * 
-	 * @param proposals the list of collected proposals (element type:
-	 *        {@link ICompletionProposal})
+	 * @param proposals the list of collected proposals (element type: {@link ICompletionProposal})
 	 * @param monitor a progress monitor
 	 * @param context TODO
 	 * @return the list of filtered and sorted proposals, ready for
 	 *         display (element type: {@link ICompletionProposal})
 	 */
-	protected List<ICompletionProposal> filterAndSortProposals(List<ICompletionProposal> proposals, IProgressMonitor monitor, ContentAssistInvocationContext context) {
+	protected List<ICompletionProposal> filterAndSortProposals(List<ICompletionProposal> proposals,
+			IProgressMonitor monitor, ContentAssistInvocationContext context) {
 		return proposals;
 	}
 
@@ -301,7 +299,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	}
 
 	private List<IContextInformation> collectContextInformation(ITextViewer viewer, int offset, IProgressMonitor monitor) {
-		List<IContextInformation> proposals= new ArrayList<IContextInformation>();
+		List<IContextInformation> proposals= new ArrayList<>();
 		ContentAssistInvocationContext context= createContext(viewer, offset, false);
 		
 		try {
@@ -320,12 +318,10 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	}
 
 	/**
-	 * Filters and sorts the context information objects. The passed
-	 * list may be modified and returned, or a new list may be created
-	 * and returned.
+	 * Filters and sorts the context information objects. The passed list may be modified
+	 * and returned, or a new list may be created and returned.
 	 * 
-	 * @param contexts the list of collected proposals (element type:
-	 *        {@link IContextInformation})
+	 * @param contexts the list of collected proposals (element type: {@link IContextInformation})
 	 * @param monitor a progress monitor
 	 * @return the list of filtered and sorted proposals, ready for
 	 *         display (element type: {@link IContextInformation})
@@ -371,9 +367,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	/**
 	 * Creates a progress monitor.
 	 * <p>
-	 * The default implementation creates a
-	 * <code>NullProgressMonitor</code>.
-	 * </p>
+	 * The default implementation creates a {@code NullProgressMonitor}.
 	 * 
 	 * @return a progress monitor
 	 */
@@ -382,13 +376,12 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	}
 
 	/**
-	 * Creates the context that is passed to the completion proposal
-	 * computers.
+	 * Creates the context that is passed to the completion proposal computers.
 	 * 
 	 * @param viewer the viewer that content assist is invoked on
 	 * @param offset the content assist offset
-	 * @return the context to be passed to the computers
-	 *         or <code>null</code> if no completion is possible
+	 * @return the context to be passed to the computers,
+	 *     or {@code null} if no completion is possible
 	 */
 	protected ContentAssistInvocationContext createContext(ITextViewer viewer, int offset, boolean isCompletion) {
 		return new ContentAssistInvocationContext(viewer, offset);
@@ -397,7 +390,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	/**
 	 * Test whether the current session was auto-activated.
 	 * 
-	 * @return  <code>true</code> if the current session was auto-activated.
+	 * @return  {@code true} if the current session was auto-activated.
 	 */
 	protected boolean isAutoActivated() {
 		return fIsAutoActivated;
@@ -418,7 +411,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	}
 
 	private List<List<CompletionProposalCategory>> getCategoryIteration() {
-		List<List<CompletionProposalCategory>> sequence= new ArrayList<List<CompletionProposalCategory>>();
+		List<List<CompletionProposalCategory>> sequence= new ArrayList<>();
 		sequence.add(getDefaultCategories());
 		for (CompletionProposalCategory cat : getSeparateCategories()) {
 			sequence.add(Collections.singletonList(cat));
@@ -439,7 +432,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	}
 
 	private List<CompletionProposalCategory> getDefaultCategoriesUnchecked() {
-		List<CompletionProposalCategory> included= new ArrayList<CompletionProposalCategory>();
+		List<CompletionProposalCategory> included= new ArrayList<>();
 		for (Object element : fCategories) {
 			CompletionProposalCategory category= (CompletionProposalCategory) element;
 			if (category.isIncluded() && category.hasComputers(fPartition))
@@ -525,7 +518,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	}
 
 	private List<CompletionProposalCategory> getSeparateCategories() {
-		ArrayList<CompletionProposalCategory> sorted= new ArrayList<CompletionProposalCategory>();
+		ArrayList<CompletionProposalCategory> sorted= new ArrayList<>();
 		for (Object element : fCategories) {
 			CompletionProposalCategory category= (CompletionProposalCategory) element;
 			if (category.isSeparateCommand() && category.hasComputers(fPartition))

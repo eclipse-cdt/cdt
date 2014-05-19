@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Norbert Ploett (Seimens) - Initial Contribution
+ *     Norbert Ploett (Seimens) - Initial Contribution
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist;
 
@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 public class ProposalFilterPreferencesTest extends TestCase {
 
 	public void testPreferences()  {
-		// Check that the test filter is among the filternames
+		// Check that the test filter is among the filter names.
 		String[] filterNames = ProposalFilterPreferencesUtil.getProposalFilterNames();
 		int index = -1 ;
 		for (int i = 0; i < filterNames.length; i++) {
@@ -44,7 +44,7 @@ public class ProposalFilterPreferencesTest extends TestCase {
 		String filterComboStateString = store.getString(ContentAssistPreference.PROPOSALS_FILTER);
 		ProposalFilterPreferencesUtil.ComboState state = ProposalFilterPreferencesUtil.getComboState(filterComboStateString);
 		StringBuffer newStateText = new StringBuffer();
-		newStateText.append(index+1); // First entry is always the <Default Filter>, index+1 must be selected
+		newStateText.append(index + 1); // First entry is always the <Default Filter>, index+1 must be selected
 		for (int i = 0; i < state.items.length; i++) {
 			String item = state.items[i];
 			newStateText.append(";");

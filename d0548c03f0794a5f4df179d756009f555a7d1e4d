@@ -52,6 +52,24 @@
       "revId": "d0548c03f0794a5f4df179d756009f555a7d1e4d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_6c2a6c7f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-05-20T17:43:02Z",
+      "side": 1,
+      "message": "Right, now I remember, thanks.  I tried like you suggest and it works.  The problem is that the status that might get created when doing a terminate will probably not use  IGdbDebugConstants.STATUS_HANDLER_CODE.  Most codes used are from IDsfStatusConstants, which won\u0027t trigger the statusHandler.\n\nShould we create a new Status here to force the error code while re-using the info from the original status?",
+      "parentUuid": "0756a345_8c7d408f",
+      "revId": "d0548c03f0794a5f4df179d756009f555a7d1e4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -535,6 +535,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		private boolean fCloseBrackets = true;
 		private boolean fCloseStrings = true;
 		private boolean fCloseAngularBrackets = true;
+		private boolean fCloseBraces = true;
 		private final String CATEGORY = toString();
 		private IPositionUpdater fUpdater = new ExclusivePositionUpdater(CATEGORY);
 		private Deque<BracketLevel> fBracketLevelStack = new ArrayDeque<>();
@@ -551,6 +552,10 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			fCloseAngularBrackets = enabled;
 		}
 
+		public void setCloseBracesEnabled(boolean enabled) {
+			fCloseBraces = enabled;
+		}
+
 		private boolean isAngularIntroducer(String identifier) {
 			return identifier.length() > 0 && (Character.isUpperCase(identifier.charAt(0))
 					|| angularIntroducers.contains(identifier)
@@ -560,13 +565,14 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 		@Override
 		public void verifyKey(VerifyEvent event) {
-			// Early pruning to slow down normal typing as little as possible.
+			// Early pruning to minimize overhead for normal typing.
 			if (!event.doit || getInsertMode() != SMART_INSERT)
 				return;
 			switch (event.character) {
 				case '(':
 				case '<':
 				case '[':
+				case '{':
 				case '\'':
 				case '\"':
 					break;
@@ -621,6 +627,16 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 						if (!fCloseBrackets
 								|| nextToken == Symbols.TokenIDENT
 								|| next != null && next.length() > 1)
+							return;
+						break;
+
+					case '{':
+						// An opening brace inside parentheses probably starts an initializer list -
+						// close it.
+						if (!fCloseBraces
+								|| nextToken == Symbols.TokenIDENT
+								|| next != null && next.length() > 1
+								|| !isInsideParentheses(scanner, offset - 1))
 							return;
 						break;
 
@@ -687,6 +703,24 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			}
 		}
 
+		private boolean isInsideParentheses(CHeuristicScanner scanner, int offset) {
+			int depth = 0;
+			// Limit the scanning distance to 100 tokens.
+			for (int i = 0; i < 100; i++) {
+				int token = scanner.previousToken(offset, 0);
+				if (token == Symbols.TokenLPAREN) {
+					if (--depth < 0)
+						return true;
+				} else if (token == Symbols.TokenRPAREN) {
+					++depth;
+				} else if (token == Symbols.TokenEOF) {
+					return false;
+				}
+				offset = scanner.getPosition();
+			}
+			return false;
+		}
+
 		private boolean isInsideStringInPreprocessorDirective(ITypedRegion partition, IDocument document, int offset) throws BadLocationException {
 			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType()) && offset < document.getLength()) {
 				// Use temporary document to test whether offset is inside non-default partition.
@@ -706,7 +740,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 		@Override
 		public void left(LinkedModeModel environment, int flags) {
-
 			final BracketLevel level = fBracketLevelStack.pop();
 
 			if (flags != ILinkedModeListener.EXTERNAL_MODIFICATION)
@@ -1197,6 +1230,8 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	private static final String CLOSE_BRACKETS = PreferenceConstants.EDITOR_CLOSE_BRACKETS;
 	/** Preference key for automatically closing angular brackets */
 	private static final String CLOSE_ANGULAR_BRACKETS = PreferenceConstants.EDITOR_CLOSE_ANGULAR_BRACKETS;
+	/** Preference key for automatically closing curly braces */
+	private static final String CLOSE_BRACES = PreferenceConstants.EDITOR_CLOSE_BRACES;
 
     /** Preference key for compiler task tags */
     private static final String TODO_TASK_TAGS = CCorePreferenceConstants.TODO_TASK_TAGS;
@@ -1529,6 +1564,11 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 				if (CLOSE_ANGULAR_BRACKETS.equals(property)) {
 					fBracketInserter.setCloseAngularBracketsEnabled(newBooleanValue);
+					return;
+				}
+
+				if (CLOSE_BRACES.equals(property)) {
+					fBracketInserter.setCloseBracesEnabled(newBooleanValue);
 					return;
 				}
 
@@ -2403,11 +2443,13 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		IPreferenceStore preferenceStore = getPreferenceStore();
 		boolean closeBrackets = preferenceStore.getBoolean(CLOSE_BRACKETS);
 		boolean closeAngularBrackets = preferenceStore.getBoolean(CLOSE_ANGULAR_BRACKETS);
+		boolean closeBraces = preferenceStore.getBoolean(CLOSE_BRACES);
 		boolean closeStrings = preferenceStore.getBoolean(CLOSE_STRINGS);
 
 		fBracketInserter.setCloseBracketsEnabled(closeBrackets);
-		fBracketInserter.setCloseStringsEnabled(closeStrings);
 		fBracketInserter.setCloseAngularBracketsEnabled(closeAngularBrackets);
+		fBracketInserter.setCloseAngularBracketsEnabled(closeBraces);
+		fBracketInserter.setCloseStringsEnabled(closeStrings);
 
 		ISourceViewer sourceViewer = getSourceViewer();
 		if (sourceViewer instanceof ITextViewerExtension)
@@ -2867,8 +2909,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			return false;
 
 		try {
-			return isBracket(document.getChar(offset - 1)) &&
-					isBracket(document.getChar(offset));
+			return isBracket(document.getChar(offset - 1)) && isBracket(document.getChar(offset));
 		} catch (BadLocationException e) {
 			return false;
 		}
@@ -2903,6 +2944,12 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 			case ']':
 				return '[';
+
+			case '{':
+				return '}';
+
+			case '}':
+				return '{';
 
 			case '"':
 				return character;

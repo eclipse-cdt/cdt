@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
@@ -77,7 +78,7 @@ public class BracketInserterTest extends TestCase {
 	
 	// Document offsets.
 	private static final int INCLUDE_OFFSET= 9;
-	private static final int BODY_OFFSET= 212;
+	private static final int BODY_OFFSET= 213;
 	private static final int ARGS_OFFSET= 184;
 	private static final int BRACKETS_OFFSET= 262;
 	
@@ -123,7 +124,7 @@ public class BracketInserterTest extends TestCase {
 		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		assertTrue(file != null && file.exists());
 		try {
-			return (CEditor)EditorTestHelper.openInEditor(file, true);
+			return (CEditor) EditorTestHelper.openInEditor(file, true);
 		} catch (PartInitException e) {
 			fail();
 			return null;
@@ -175,19 +176,19 @@ public class BracketInserterTest extends TestCase {
 		setCaret(BODY_OFFSET);
 		type("((((");
 		
-		// delete two levels
+		// Delete two levels.
 		linkedType(SWT.BS, true, ILinkedModeListener.EXTERNAL_MODIFICATION);
 		linkedType(SWT.BS, true, ILinkedModeListener.EXTERNAL_MODIFICATION);
 
 		assertEquals("(())", fDocument.get(BODY_OFFSET, 4));
 		assertEquals(BODY_OFFSET + 2, getCaret());
 		
-		// delete the second-last level
+		// Delete the second-last level
 		linkedType(SWT.BS, true, ILinkedModeListener.EXTERNAL_MODIFICATION);
 		assertEquals("()", fDocument.get(BODY_OFFSET, 2));
 		assertEquals(BODY_OFFSET + 1, getCaret());
 		
-		// delete last level
+		// Delete last level
 		linkedType(SWT.BS, false, ILinkedModeListener.EXTERNAL_MODIFICATION);
 		assertEquals(TU_CONTENTS, fDocument.get());
 		assertEquals(BODY_OFFSET, getCaret());
@@ -304,18 +305,18 @@ public class BracketInserterTest extends TestCase {
 		setCaret(BODY_OFFSET);
 		type("#define MACRO ");
 		int offset = getCaret();
-		// enter opening quote (should be closed again)
+		// Enter opening quote (should be closed again).
 		type('"');
 		
 		assertEquals("\"\"", fDocument.get(offset, 2));
 		assertSingleLinkedPosition(offset + 1);
 
-		// enter closing quote (should not add a quote, but proceed cursor)
+		// Enter closing quote (should not add a quote, but proceed cursor).
 		type('"');
 		assertEquals("\"\"", fDocument.get(offset, 2));
 		assertEquals(offset + 2, getCaret());
 		
-		// delete closing quote and enter quote again
+		// Delete closing quote and enter quote again.
 		type(SWT.BS);
 		assertEquals("\"", fDocument.get(offset, 1));
 		int length = fDocument.getLength();
@@ -358,6 +359,23 @@ public class BracketInserterTest extends TestCase {
 		assertSingleLinkedPosition(BODY_OFFSET + 5);
 	}
 	
+	public void testCurlyBraceInsideParentheses() throws Exception {
+		setCaret(BODY_OFFSET);
+		type("f({");
+
+		assertEquals("f({})", fDocument.get(BODY_OFFSET, 5));
+		assertSingleLinkedPosition(BODY_OFFSET + 3, true);
+	}
+	
+	public void testCurlyBraceOutsideParentheses() throws Exception {
+		setCaret(BODY_OFFSET);
+		type("struct A {");
+		
+		assertFalse("}".equals(fDocument.get(BODY_OFFSET + 10, 1)));
+		assertEquals(BODY_OFFSET + 10, getCaret());
+		assertFalse(LinkedModeModel.hasInstalledModel(fDocument));
+	}
+
 	public void testAngleBracketsInInclude() throws Exception {
 		setCaret(INCLUDE_OFFSET);
 		type('<');
@@ -396,9 +414,13 @@ public class BracketInserterTest extends TestCase {
 	/* utilities */
 
 	private void assertSingleLinkedPosition(int offset) {
+		assertSingleLinkedPosition(offset, false);
+	}
+	
+	private void assertSingleLinkedPosition(int offset, boolean nested) {
 		assertEquals(offset, getCaret());
 		
-		LinkedPosition position= assertModel(false).findPosition(new LinkedPosition(fDocument, offset, 0));
+		LinkedPosition position= assertModel(nested).findPosition(new LinkedPosition(fDocument, offset, 0));
 		assertNotNull(position);
 		assertEquals(offset, position.getOffset());
 		assertEquals(0, position.getLength());

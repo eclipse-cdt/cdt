@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_222c021e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-05-20T00:34:55Z",
+      "side": 1,
+      "message": "I\u0027m curious about this one.  How does this work?  Will the DebugPlugin return a statusHandler that can handle DSF error codes?",
+      "revId": "d0548c03f0794a5f4df179d756009f555a7d1e4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

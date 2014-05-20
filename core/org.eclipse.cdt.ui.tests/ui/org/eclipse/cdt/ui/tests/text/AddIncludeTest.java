@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Google, Inc and others.
+ * Copyright (c) 2009, 2014 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,6 +155,11 @@ public class AddIncludeTest extends BaseTestCase {
 	
 	public void testInsertionPoint_301780() throws Exception {
 		select("XXX");
+		assertAddIncludeResult();
+	}
+
+	public void testInsertionPoint_435340() throws Exception {
+		select("A435340");
 		assertAddIncludeResult();
 	}
 	

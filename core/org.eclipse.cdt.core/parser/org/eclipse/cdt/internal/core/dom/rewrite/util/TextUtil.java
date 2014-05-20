@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Google, Inc and others.
+ * Copyright (c) 2013, 2014 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,26 @@ public class TextUtil {
 	}
 
 	/**
-	 * Returns {@code true} the line prior to the line corresponding to the given {@code offset} 
+	 * Returns {@code true} if the line corresponding to the given {@code offset} does not contain
+	 * non-whitespace characters.
+	 */
+	public static boolean isLineBlank(String text, int offset) {
+		while (--offset >= 0) {
+			if (text.charAt(offset) == '\n')
+				break;
+		}
+		while (++offset < text.length()) {
+			char c = text.charAt(offset);
+			if (c == '\n')
+				return true;
+			if (!Character.isWhitespace(c))
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Returns {@code true} if the line prior to the line corresponding to the given {@code offset} 
 	 * does not contain non-whitespace characters.
 	 */
 	public static boolean isPreviousLineBlank(String text, int offset) {
@@ -49,6 +68,9 @@ public class TextUtil {
 			if (text.charAt(offset) == '\n')
 				break;
 		}
+		if (offset < 0)
+			return false;
+
 		while (--offset >= 0) {
 			char c = text.charAt(offset);
 			if (c == '\n')
@@ -56,6 +78,6 @@ public class TextUtil {
 			if (!Character.isWhitespace(c))
 				return false;
 		}
-		return false;
+		return true;
 	}
 }

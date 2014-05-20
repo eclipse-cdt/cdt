@@ -83,6 +83,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
+import org.eclipse.cdt.internal.core.dom.rewrite.util.TextUtil;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
@@ -275,8 +276,8 @@ public class IncludeCreator {
 
 		if (preferences.allowReordering) {
 			// Since the order of existing include statements may not match the include order
-			// preferences, we find positions for the new include statements by pushing them from
-			// them up from the bottom of the include insertion region.  
+			// preferences, we find positions for the new include statements by pushing them up
+			// from the bottom of the include insertion region.  
 			for (StyledInclude include : styledIncludes) {
 				int i = mergedIncludes.size();
 				while (--i >= 0 && preferences.compare(include, mergedIncludes.get(i)) < 0) {}
@@ -290,7 +291,8 @@ public class IncludeCreator {
 		StringBuilder text = new StringBuilder();
 		StyledInclude previousInclude = null;
 		for (StyledInclude include : mergedIncludes) {
-			if (include.getExistingInclude() == null) {
+			IASTPreprocessorIncludeStatement existingInclude = include.getExistingInclude();
+			if (existingInclude == null) {
 				if (previousInclude != null) {
 					IASTNode previousNode = previousInclude.getExistingInclude();
 					if (previousNode != null) {
@@ -299,19 +301,29 @@ public class IncludeCreator {
 						if (contents.charAt(offset - 1) != '\n')
 							text.append(fLineDelimiter);
 					}
-					if (include.getStyle().isBlankLineNeededAfter(previousInclude.getStyle(), preferences.includeStyles))
-						text.append(fLineDelimiter);
+					if (include.getStyle().isBlankLineNeededAfter(previousInclude.getStyle(), preferences.includeStyles)) {
+						if (TextUtil.isLineBlank(contents, offset)) {
+							offset = TextUtil.skipToNextLine(contents, offset);
+						} else {
+							text.append(fLineDelimiter);
+						}
+					}
 				}
 				text.append(include.getIncludeInfo().composeIncludeStatement());
 				text.append(fLineDelimiter);
 			} else {
 				if (previousInclude != null && previousInclude.getExistingInclude() == null &&
-						include.getStyle().isBlankLineNeededAfter(previousInclude.getStyle(), preferences.includeStyles)) {
+						include.getStyle().isBlankLineNeededAfter(previousInclude.getStyle(), preferences.includeStyles) &&
+						!TextUtil.isPreviousLineBlank(contents, ASTNodes.offset(existingInclude))) {
 					text.append(fLineDelimiter);
 				}
 				flushEditBuffer(offset, text, rootEdit);
 			}
 			previousInclude = include;
+		}
+		if (includeRegion.getLength() == 0 && !TextUtil.isLineBlank(contents, includeRegion.getOffset()) &&
+				!includes.isEmpty()) {
+			text.append(fLineDelimiter);
 		}
 		flushEditBuffer(offset, text, rootEdit);
 

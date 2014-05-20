@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_ac880400",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2014-05-20T18:36:08Z",
+      "side": 1,
+      "message": "Those methods that you want to override are truly implementation details for this specific type of pattern. I do not think they should be exposed.\nIf your pattern is different, you should override parseResourceName(String line) and introduce your pattern in there. You probably would end up with more elegant implementation. Any problem with that?",
+      "revId": "d14c7a419cda53ff2e12a97f56a7719e767868f6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

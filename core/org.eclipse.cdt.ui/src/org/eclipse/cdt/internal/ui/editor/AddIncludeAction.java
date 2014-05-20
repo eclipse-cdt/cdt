@@ -134,9 +134,7 @@ public class AddIncludeAction extends TextEditorAction {
 				manager.beginCompoundChange();
 				try {
 					edit.apply(document);
-				} catch (MalformedTreeException e) {
-					CUIPlugin.log(e);
-				} catch (BadLocationException e) {
+				} catch (MalformedTreeException | BadLocationException e) {
 					CUIPlugin.log(e);
 				}
 				manager.endCompoundChange();

@@ -133,13 +133,13 @@ public class IncludeCreator {
 			return rootEdit;
 		}
 
-		final Map<String, IncludeCandidate> candidatesMap= new HashMap<String, IncludeCandidate>();
+		final Map<String, IncludeCandidate> candidatesMap= new HashMap<>();
 		final IndexFilter filter = IndexFilter.getDeclaredBindingFilter(ast.getLinkage().getLinkageID(), false);
 		
-		final List<IncludeInfo> requiredIncludes = new ArrayList<IncludeInfo>();
-		final List<UsingDeclaration> usingDeclarations = new ArrayList<UsingDeclaration>();
+		final List<IncludeInfo> requiredIncludes = new ArrayList<>();
+		final List<UsingDeclaration> usingDeclarations = new ArrayList<>();
 
-		List<IIndexBinding> bindings = new ArrayList<IIndexBinding>();
+		List<IIndexBinding> bindings = new ArrayList<>();
 		try {
 			IIndex index = fContext.getIndex();
 			IIndexBinding adaptedBinding= index.adaptBinding(binding);
@@ -184,7 +184,7 @@ public class IncludeCreator {
 				considerForInclusion(definition, macro, index, headerSubstitutor, candidatesMap);
 			}
 	
-			final ArrayList<IncludeCandidate> candidates = new ArrayList<IncludeCandidate>(candidatesMap.values());
+			final ArrayList<IncludeCandidate> candidates = new ArrayList<>(candidatesMap.values());
 			if (candidates.size() > 1) {
 				IncludeCandidate candidate = fAmbiguityResolver.selectElement(candidates);
 				if (candidate == null)
@@ -245,7 +245,7 @@ public class IncludeCreator {
 		IASTPreprocessorIncludeStatement[] existingIncludes = ast.getIncludeDirectives();
 		fContext.addHeadersIncludedPreviously(existingIncludes);
 
-		List<StyledInclude> styledIncludes = new ArrayList<StyledInclude>();
+		List<StyledInclude> styledIncludes = new ArrayList<>();
 		// Put the new includes into styledIncludes.
 		for (IncludeInfo includeInfo : includes) {
 			IPath header = fContext.resolveInclude(includeInfo);
@@ -258,7 +258,7 @@ public class IncludeCreator {
 		Collections.sort(styledIncludes, preferences);
 
 		// Populate list of existing includes in the include insertion region.
-		List<StyledInclude> mergedIncludes = new ArrayList<StyledInclude>();
+		List<StyledInclude> mergedIncludes = new ArrayList<>();
 		for (IASTPreprocessorIncludeStatement include : existingIncludes) {
 			if (include.isPartOfTranslationUnitFile() && isContainedInRegion(include, includeRegion)) {
 				String name = new String(include.getName().getSimpleID());
@@ -333,7 +333,7 @@ public class IncludeCreator {
 			if (usingDeclaration.existingDeclaration.isPartOfTranslationUnitFile() &&
 					ASTNodes.endOffset(usingDeclaration.existingDeclaration) <= selection.getOffset()) {
 				if (temp == null)
-					temp = new ArrayList<UsingDeclaration>();
+					temp = new ArrayList<>();
 				temp.add(usingDeclaration);
 			}
 		}
@@ -386,7 +386,7 @@ public class IncludeCreator {
 	}
 
 	private List<UsingDeclaration> getUsingDeclarations(IASTTranslationUnit ast) {
-		List<UsingDeclaration> usingDeclarations = new ArrayList<UsingDeclaration>();
+		List<UsingDeclaration> usingDeclarations = new ArrayList<>();
 		IASTDeclaration[] declarations = ast.getDeclarations();
 		for (IASTDeclaration declaration : declarations) {
 			if (declaration instanceof ICPPASTUsingDeclaration) {
@@ -508,7 +508,7 @@ public class IncludeCreator {
 	 * For ns1::ns2::Name, e.g., it returns [Name, ns2, ns1].
 	 */
 	private ArrayList<String> getUsingChain(IBinding binding) {
-		ArrayList<String> chain = new ArrayList<String>(4);
+		ArrayList<String> chain = new ArrayList<>(4);
 		for (; binding != null; binding = binding.getOwner()) {
 			String name = binding.getName();
 			if (binding instanceof ICPPNamespace) {
@@ -534,9 +534,9 @@ public class IncludeCreator {
 			if (isWorkspaceFile(headerFile.getLocation().getURI())) {
 				return headerFile;
 			}
-			ArrayDeque<IIndexFile> front = new ArrayDeque<IIndexFile>();
+			ArrayDeque<IIndexFile> front = new ArrayDeque<>();
 			front.add(headerFile);
-			HashSet<IIndexFile> processed = new HashSet<IIndexFile>();
+			HashSet<IIndexFile> processed = new HashSet<>();
 			processed.add(headerFile);
 			while (!front.isEmpty()) {
 				IIndexFile file = front.remove();
@@ -680,6 +680,7 @@ public class IncludeCreator {
 
 	/**
 	 * Returns the fully qualified name for a given index binding.
+	 *
 	 * @param binding
 	 * @return binding's fully qualified name
 	 * @throws CoreException

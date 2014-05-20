@@ -16,6 +16,24 @@
       "revId": "d0548c03f0794a5f4df179d756009f555a7d1e4d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_62455acb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-05-20T00:56:03Z",
+      "side": 1,
+      "message": "I\u0027ve hacked the code to inject an error status from within GDBControl#terminate().  When pressing the terminate button, which calls the ITerminateHandler adapter from the platform, a dialog pops up to show the error status.\n\nHowever, when closing the project, which call GdbLaunch#terminate and this code, I don\u0027t get a popup dialog.  The reason is that no statusHandler is returned here.",
+      "parentUuid": "0756a345_222c021e",
+      "revId": "d0548c03f0794a5f4df179d756009f555a7d1e4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

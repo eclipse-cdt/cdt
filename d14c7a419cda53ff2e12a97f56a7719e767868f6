@@ -16,6 +16,24 @@
       "revId": "d14c7a419cda53ff2e12a97f56a7719e767868f6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_ac73e48b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 884
+      },
+      "writtenOn": "2014-05-20T18:53:42Z",
+      "side": 1,
+      "message": "Yes, it is the exactly way I used, but in order to alter compiler regexp I have to copy-past all implementation of parseResourceName recursively: getCompilerPatternExtended, makePattern, COMPILER_COMMAND_PATTERN_TEMPLATES, FILE_GROUP, LEADING_PATH_PATTERN, adjustFileGroup, getCompilerPattern. Does this make sence?",
+      "parentUuid": "0756a345_ac880400",
+      "revId": "d14c7a419cda53ff2e12a97f56a7719e767868f6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -72,7 +73,7 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 			char curr= d.getChar(pos);
 			pos++;
 			if (curr == '\\') {
-				// ignore escaped characters
+				// Ignore escaped characters.
 				pos++;
 			} else if (curr == ch) {
 				return pos;
@@ -81,11 +82,12 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 		return end;
 	}
 	
-	private int getCharCount(IDocument document, int start, int end, 
-							 char increment, char decrement, boolean considerNesting) throws BadLocationException {
+	private int getCharCount(IDocument document, int start, int end, char increment, char decrement,
+			boolean considerNesting) throws BadLocationException {
 		Assert.isTrue((increment != 0 || decrement != 0) && increment != decrement);
 		
-		int nestingLevel = 0;
+		int parenNestingLevel = 0;
+		int braceNestingLevel = 0;
 		int charCount = 0;
 		while (start < end) {
 			char curr = document.getChar(start++);
@@ -122,12 +124,21 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 			default:
 				if (considerNesting) {
 					if ('(' == curr) {
-						++nestingLevel;
+						++parenNestingLevel;
 					} else if (')' == curr) {
-						--nestingLevel;
+						--parenNestingLevel;
 					}
 						
-					if (nestingLevel != 0)
+					if (parenNestingLevel != 0)
+						break;
+
+					if ('{' == curr) {
+						++braceNestingLevel;
+					} else if ('}' == curr) {
+						--braceNestingLevel;
+					}
+						
+					if (braceNestingLevel != 0)
 						break;
 				}
 				
@@ -206,7 +217,7 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 	private int[] computeCommaPositions(String code) {
 		final int length= code.length();
 	    int pos= 0;
-		List<Integer> positions= new ArrayList<Integer>();
+		List<Integer> positions= new ArrayList<>();
 		positions.add(new Integer(-1));
 		while (pos < length && pos != -1) {
 			char ch= code.charAt(pos);
@@ -222,6 +233,9 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 	            	break;
 	            case '[':
 	            	pos= indexOfClosingPeer(code, '[', ']', pos);
+	            	break;
+	            case '{':
+	            	pos= indexOfClosingPeer(code, '{', '}', pos);
 	            	break;
 	            default:
 	            	break;

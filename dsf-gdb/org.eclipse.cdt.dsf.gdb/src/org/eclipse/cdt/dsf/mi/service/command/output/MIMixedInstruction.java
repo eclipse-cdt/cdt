@@ -22,6 +22,7 @@ public class MIMixedInstruction implements IMixedInstruction {
 
     // The parsed information
     private String fileName = ""; //$NON-NLS-1$
+    private String fullName = ""; //$NON-NLS-1$
     private int lineNumber = 0;
     private MIInstruction[] assemblyCode;
 
@@ -31,7 +32,8 @@ public class MIMixedInstruction implements IMixedInstruction {
 
 	@Override
     public String getFileName() {
-        return fileName;
+		String result = getFullName();
+        return result.isEmpty() ? fileName : result;
     }
 
 	@Override
@@ -80,6 +82,11 @@ public class MIMixedInstruction implements IMixedInstruction {
                 fileName = str;
                 continue;
             }
+
+            if (var.equals("fullname")) { //$NON-NLS-1$
+                fullName = str;
+                continue;
+            }
             
             if (var.equals("line_asm_insn")) { //$NON-NLS-1$
                 if (value instanceof MIList) {
@@ -97,4 +104,11 @@ public class MIMixedInstruction implements IMixedInstruction {
         
     }
 
+    /**
+     * Get full source path as reported by gdb-mi "fullname" attribute.
+	 * @since 4.4
+	 */
+    public String getFullName() {
+        return fullName;
+    }
 }

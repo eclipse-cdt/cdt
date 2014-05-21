@@ -166,7 +166,7 @@
       <renderingBindings
             defaultIds="org.eclipse.debug.ui.rendering.raw_memory"
             primaryId="org.eclipse.debug.ui.rendering.raw_memory"
-            renderingIds="org.eclipse.debug.ui.rendering.raw_memory,org.eclipse.debug.ui.rendering.ascii,org.eclipse.debug.ui.rendering.signedint,org.eclipse.debug.ui.rendering.unsignedint">
+            renderingIds="org.eclipse.debug.ui.rendering.raw_memory,org.eclipse.debug.ui.rendering.ascii,org.eclipse.debug.ui.rendering.signedint,org.eclipse.debug.ui.rendering.unsignedint,org.eclipse.debug.ui.rendering.hexint">
          <enablement>
             <instanceof value="org.eclipse.cdt.dsf.debug.model.DsfMemoryBlock"/>
          </enablement>

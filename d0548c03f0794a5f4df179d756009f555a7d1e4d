@@ -70,6 +70,24 @@
       "revId": "d0548c03f0794a5f4df179d756009f555a7d1e4d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_2f3066eb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-05-21T07:56:50Z",
+      "side": 1,
+      "message": "Done. Assigned GdbStatusHandler to handle IDsfStatusConstants.REQUEST_FAILED. \n\nRequest failed is most likely to contain a meaningful error message for the user. Other errors like internal, not supported will be sent to debug log.",
+      "parentUuid": "0756a345_6c2a6c7f",
+      "revId": "d0548c03f0794a5f4df179d756009f555a7d1e4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

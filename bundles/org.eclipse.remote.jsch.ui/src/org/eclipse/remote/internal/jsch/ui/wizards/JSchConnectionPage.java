@@ -35,7 +35,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -61,7 +60,6 @@ public class JSchConnectionPage extends WizardPage {
 	private Text fPassphraseText;
 	private Text fPortText;
 	private Text fTimeoutText;
-	private Combo fCipherCombo;
 	private RemoteFileWidget fFileWidget;
 
 	private String fInitialName = "Remote Host"; //$NON-NLS-1$
@@ -126,12 +124,6 @@ public class JSchConnectionPage extends WizardPage {
 		fTimeoutText.setText(Integer.toString(JSchConnection.DEFAULT_TIMEOUT));
 		fTimeoutText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 		fTimeoutText.setTextLimit(5);
-
-		// Label cipherLabel = new Label(advancedComp, SWT.NONE);
-		// cipherLabel.setText("Cipher type:");
-		// cipherLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		// fCipherCombo = new Combo(advancedComp, SWT.NONE);
-		// fCipherCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 
 		expComp.setClient(advancedComp);
 	}
@@ -378,6 +370,7 @@ public class JSchConnectionPage extends WizardPage {
 			}
 		}
 		if (fConnection != null) {
+			fConnection.setName(fConnectionName.getText());
 			fConnection.setAddress(fHostText.getText().trim());
 			fConnection.setUsername(fUserText.getText().trim());
 			fConnection.setPassword(fPasswordText.getText().trim());

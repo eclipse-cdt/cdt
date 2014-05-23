@@ -3,7 +3,9 @@
       id="org.eclipse.cdt.remote"
       label="%featureName"
       version="8.4.0.qualifier"
-      provider-name="%featureVendor">
+      provider-name="%featureVendor"
+      license-feature="org.eclipse.license"
+      license-feature-version="0.0.0">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -13,8 +15,8 @@
       [Enter Copyright Description here.]
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="%licenseURL">
+      %license
    </license>
 
    <plugin

@@ -3,7 +3,9 @@
       id="org.eclipse.cdt.autotools"
       label="%featureName"
       version="8.4.0.qualifier"
-      provider-name="%provider">
+      provider-name="%provider"
+      license-feature="org.eclipse.license"
+      license-feature-version="0.0.0">
 
    <description>
       %description

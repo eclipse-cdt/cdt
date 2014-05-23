@@ -22,6 +22,7 @@
 		<orbit-site>${download-site}/tools/orbit/downloads/drops/${orbit-version}/repository</orbit-site>
 		<tm-site>${download-site}/tm/updates/${tm-version}</tm-site>
 		<remote-site>${download-site}/tools/ptp/builds/remote/luna/nightly</remote-site>
+		<license-site>${download-site}/cbi/updates/license</license-site>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
@@ -240,6 +241,11 @@
 		<repository>
 			<id>remote</id>
 			<url>${remote-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>license-feature</id>
+			<url>${license-site}/</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>

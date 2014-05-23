@@ -19,6 +19,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1912,10 +1913,10 @@ public class MIVariableManager implements ICommandControl {
 				if (!value.startsWith("0")) value = "0" + value;  //$NON-NLS-1$  //$NON-NLS-2$
 			}
 			else if (formatId.equals(IFormattedValues.BINARY_FORMAT)) {
-				// convert from binary to decimal
+				// convert from binary to hex
 				if (value.startsWith("0b")) value = value.substring(2, value.length());  //$NON-NLS-1$
 				try {
-	    			value = Integer.toString(Integer.parseInt(value, 2));
+					value = "0x" + new BigInteger(value, 2).toString(16); //$NON-NLS-1$
 				} catch (NumberFormatException e) {
 					rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, 
 							"Invalid binary number: " + value, e)); //$NON-NLS-1$

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManage
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
+import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -2670,10 +2672,16 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 							macroSubstitutor.setMacroContextInfo(info);
 							String[] list = CdtVariableResolver.resolveStringListValues(option.getBasicStringListValue(), macroSubstitutor, true);
 							if(list != null){
-								for (String temp : list) {
-									if(temp.length() > 0 && !temp.equals(EMPTY_QUOTED_STRING))
-										sb.append( evaluateCommand( listCmd, temp ) + WHITE_SPACE );
-								}
+ 								for (String temp : list) {
+									if(temp.length() > 0 && !temp.equals(EMPTY_QUOTED_STRING)) {
+										try {
+											temp = Cygwin.windowsToCygwinPath(temp);
+										} catch (UnsupportedOperationException e) {
+										} catch (IOException e) {
+										}
+ 										sb.append( evaluateCommand( listCmd, temp ) + WHITE_SPACE );
+									}
+ 								}
 							}
 						}
 					}

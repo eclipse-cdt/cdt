@@ -20,7 +20,7 @@
    </license>
 
    <plugin
-         id="org.eclipse.cdt.core.spawner"
+         id="org.eclipse.cdt.core.native"
          download-size="0"
          install-size="0"
          version="0.0.0"

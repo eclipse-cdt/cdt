@@ -24,10 +24,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.cdt.spawner.source"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.cdt.gnu.build.source"
          version="0.0.0"/>
 

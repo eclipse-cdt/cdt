@@ -1,0 +1,9 @@
+Code-Review+2: Doug Schaefer <dschaefer@qnx.com>
+Verified+1: Hudson CI
+Code-Review+1: Anton Leherbauer <anton.leherbauer@windriver.com>
+Verified+1: Anton Leherbauer <anton.leherbauer@windriver.com>
+Submitted-by: Doug Schaefer <dschaefer@qnx.com>
+Submitted-at: Mon, 26 May 2014 09:38:09 -0400
+Reviewed-on: https://git.eclipse.org/r/27225
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

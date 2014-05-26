@@ -274,12 +274,17 @@ public class TemplateInputDialog extends Dialog {
 
 	public int popDuplicate() {
 
-		MessageBox mBox = new MessageBox(new Shell(), SWT.ICON_INFORMATION);
-		mBox.setText(TemplatePreferencePage.Message);
-		mBox.setMessage(TemplatePreferencePage.DuplicateEntry);
-		int result = mBox.open();
-		return result;
-
+		final int[] result = new int[]{ 0 };
+		Display.getDefault().syncExec(new Runnable() {
+		    @Override
+		    public void run() {
+				MessageBox mBox = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_INFORMATION);
+				mBox.setText(TemplatePreferencePage.Message);
+				mBox.setMessage(TemplatePreferencePage.DuplicateEntry);
+				result[0] = mBox.open();
+		    }
+		});
+		return result[0];
 	}
 
 	/*

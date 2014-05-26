@@ -111,7 +111,7 @@ Export-Package: org.eclipse.cdt.core;org.eclipse.cdt.core=split;mandatory=org.ec
  org.eclipse.cdt.utils.som.parser,
  org.eclipse.cdt.utils.xcoff,
  org.eclipse.cdt.utils.xcoff.parser
-Require-Bundle: org.eclipse.cdt.core.spawner;bundle-version="[5.7.0,6.0.0)";visibility:=reexport,
+Require-Bundle: org.eclipse.cdt.core.native;bundle-version="[5.7.0,6.0.0)";visibility:=reexport,
  org.eclipse.core.contenttype;bundle-version="[3.3.0,4.0.0)",
  org.eclipse.core.expressions;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.filebuffers;bundle-version="[3.2.0,4.0.0)",

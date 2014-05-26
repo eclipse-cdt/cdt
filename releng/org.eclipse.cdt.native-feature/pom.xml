@@ -12,6 +12,6 @@
 	</parent>
 
 	<groupId>org.eclipse.cdt.features</groupId>
-	<artifactId>org.eclipse.cdt.spawner</artifactId>
+	<artifactId>org.eclipse.cdt.native</artifactId>
 	<packaging>eclipse-feature</packaging>
 </project>

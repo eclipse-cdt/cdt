@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.cdt.spawner"
+      id="org.eclipse.cdt.native"
       label="%featureName"
       version="8.4.0.qualifier"
       provider-name="%providerName"
@@ -20,7 +20,7 @@
    </license>
 
    <plugin
-         id="org.eclipse.cdt.core.spawner"
+         id="org.eclipse.cdt.core.native"
          download-size="0"
          install-size="0"
          version="0.0.0"

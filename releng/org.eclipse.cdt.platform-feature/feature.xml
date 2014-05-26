@@ -20,7 +20,7 @@
    </license>
 
    <includes
-         id="org.eclipse.cdt.spawner"
+         id="org.eclipse.cdt.native"
          version="0.0.0"/>
 
    <plugin

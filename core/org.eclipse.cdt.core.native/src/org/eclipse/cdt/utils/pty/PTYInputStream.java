@@ -16,7 +16,7 @@ package org.eclipse.cdt.utils.pty;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.eclipse.cdt.internal.core.spawner.Messages;
+import org.eclipse.cdt.internal.core.natives.Messages;
 import org.eclipse.cdt.utils.pty.PTY.MasterFD;
 
 class PTYInputStream extends InputStream {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2014 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,7 @@ import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.cdt.utils.envvar.IEnvironmentChangeEvent;
 import org.eclipse.cdt.utils.envvar.IEnvironmentChangeListener;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -142,6 +143,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	private SDMarkerGenerator markerGenerator = new SDMarkerGenerator();
 	private boolean isConsoleEnabled = false;
 	private String currentCommandResolved = null;
+
+	private ICConfigurationDescription currentCfgDescriptionCache = null;
 
 	private class SDMarkerGenerator implements IMarkerGenerator {
 		// Reuse scanner discovery markers defined in org.eclipse.cdt.managedbuilder.core plugin.xml
@@ -367,9 +370,22 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		return buildDirURI;
 	}
 
+	private ICConfigurationDescription getCfgDescriptionCache(ICConfigurationDescription cfgDescription) {
+		ICConfigurationDescription cfgDescriptionCache = null;
+		if (cfgDescription != null) {
+			IProject project = cfgDescription.getProjectDescription().getProject();
+			if (project != null) {
+				ICProjectDescription prjDescriptionReadable =  CCorePlugin.getDefault().getProjectDescription(project, false);
+				cfgDescriptionCache = prjDescriptionReadable.getConfigurationById(cfgDescription.getId());
+			}
+		}
+		return cfgDescriptionCache;
+	}
+
 	@Override
 	public void registerListener(ICConfigurationDescription cfgDescription) {
 		currentCfgDescription = cfgDescription;
+		currentCfgDescriptionCache = getCfgDescriptionCache(currentCfgDescription);
 		EnvironmentVariableManager.fUserSupplier.registerEnvironmentChangeListener(this);
 
 		execute();
@@ -485,6 +501,11 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		WorkspaceJob job = new WorkspaceJob(ManagedMakeMessages.getResourceString("AbstractBuiltinSpecsDetector.DiscoverBuiltInSettingsJobName")) { //$NON-NLS-1$
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+				ICConfigurationDescription cfgDescriptionCache = getCfgDescriptionCache(currentCfgDescription);
+				if (currentCfgDescriptionCache != cfgDescriptionCache) {
+					return Status.OK_STATUS;
+				}
+
 				isExecuted = false;
 				if (!isEmpty()) {
 					clear();

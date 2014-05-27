@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Intel Corporation and others.
+ * Copyright (c) 2007, 2014 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  * IBM Corporation
  * James Blackburn (Broadcom Corp.)
  * Alex Blewitt Bug 132511 - nature order not preserved
+ * Christian Walther (Indel AG) - [436060] Race condition in updateProjectDescriptions()
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -535,30 +536,23 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 		try {
 			IWorkspace wsp = ResourcesPlugin.getWorkspace();
-			if(projects == null)
-				projects = wsp.getRoot().getProjects();
-			final ICProjectDescription dess[] = new ICProjectDescription[projects.length];
-			int num = 0;
-			for (IProject project : projects) {
-				ICProjectDescription des = getProjectDescription(project, false, true);
-				if(des != null)
-					dess[num++] = des;
-			}
+			final IProject[] prjs = (projects != null) ? projects : wsp.getRoot().getProjects();
 
-			if(num != 0){
-				final int[] fi = new int[1];
-				fi[0] = num;
+			if(prjs.length != 0){
 				runWspModification(new IWorkspaceRunnable(){
 
 					@Override
 					public void run(IProgressMonitor monitor) throws CoreException {
-						monitor.beginTask(SettingsModelMessages.getString("CProjectDescriptionManager.13"), fi[0]); //$NON-NLS-1$
+						monitor.beginTask(SettingsModelMessages.getString("CProjectDescriptionManager.13"), prjs.length); //$NON-NLS-1$
 
-						for (ICProjectDescription des : dess) {
-							if(des == null)
-								break;
+						for (IProject prj : prjs) {
 							IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
 							try {
+								if(!prj.isAccessible())
+									continue;
+								ICProjectDescription des = getProjectDescription(prj, false, true);
+								if(des == null)
+									continue;
 								setProjectDescription(des.getProject(), des, true, subMonitor);
 							} catch (CoreException e){
 								CCorePlugin.log(e);

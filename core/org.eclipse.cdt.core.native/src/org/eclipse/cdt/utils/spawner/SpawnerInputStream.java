@@ -15,7 +15,7 @@ package org.eclipse.cdt.utils.spawner;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.eclipse.cdt.internal.core.spawner.Messages;
+import org.eclipse.cdt.internal.core.natives.Messages;
 
 class SpawnerInputStream extends InputStream {
 	private int fd;

@@ -9,35 +9,36 @@
  *     IBM Corporation - initial API and implementation
  *     Martin Oberhuber (Wind River) - [303083] Split out from CCorePlugin
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.spawner;
+package org.eclipse.cdt.internal.core.natives;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 
 /**
- * CSpawnerPlugin is the life-cycle owner of the plug-in.
+ * CNativePlugin is the life-cycle owner of the plug-in, and also holds
+ * utility methods for logging.
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class CSpawnerPlugin extends Plugin {
+public class CNativePlugin extends Plugin {
 
-	public static final String PLUGIN_ID = "org.eclipse.cdt.core.spawner"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.cdt.core.native"; //$NON-NLS-1$
 
-	private static CSpawnerPlugin fgPlugin;
+	private static CNativePlugin fgPlugin;
 
 	// NON-API
 
 	/**
 	 * @noreference This constructor is not intended to be referenced by clients.
 	 */
-	public CSpawnerPlugin() {
+	public CNativePlugin() {
 		super();
 		fgPlugin = this;
 	}
 
-	public static CSpawnerPlugin getDefault() {
+	public static CNativePlugin getDefault() {
 		return fgPlugin;
 	}
 

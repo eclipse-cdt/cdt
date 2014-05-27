@@ -15,8 +15,8 @@ package org.eclipse.cdt.utils.spawner;
 import java.io.File;
 import java.io.IOException;
 
-import org.eclipse.cdt.internal.core.spawner.CSpawnerPlugin;
-import org.eclipse.cdt.internal.core.spawner.Messages;
+import org.eclipse.cdt.internal.core.natives.CNativePlugin;
+import org.eclipse.cdt.internal.core.natives.Messages;
 import org.eclipse.cdt.utils.pty.PTY;
 
 /**
@@ -44,7 +44,7 @@ public class ProcessFactory {
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (UnsatisfiedLinkError e) {
-			CSpawnerPlugin.log(e.getMessage());
+			CNativePlugin.log(e.getMessage());
 		}
 	}
 

@@ -14,8 +14,8 @@ package org.eclipse.cdt.utils.pty;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.internal.core.spawner.CSpawnerPlugin;
-import org.eclipse.cdt.internal.core.spawner.Messages;
+import org.eclipse.cdt.internal.core.natives.CNativePlugin;
+import org.eclipse.cdt.internal.core.natives.Messages;
 import org.eclipse.cdt.utils.spawner.Spawner;
 import org.eclipse.core.runtime.Platform;
 
@@ -212,7 +212,7 @@ public class PTY {
 		} catch (UnsatisfiedLinkError ule) {
 			if (!setTerminalSizeErrorAlreadyLogged) {
 				setTerminalSizeErrorAlreadyLogged = true;
-				CSpawnerPlugin.log(Messages.Util_exception_cannotSetTerminalSize, ule);
+				CNativePlugin.log(Messages.Util_exception_cannotSetTerminalSize, ule);
 			}
 		}
 	}

@@ -8,12 +8,12 @@
  * Contributors:
  *     Martin Oberhuber (Wind River) - [303083] Split out the Spawner
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.spawner;
+package org.eclipse.cdt.internal.core.natives;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.spawner.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.natives.messages"; //$NON-NLS-1$
 	public static String Util_exception_cannotCreatePty;
 	public static String Util_exception_cannotSetTerminalSize;
 	public static String Util_error_cannotRun;

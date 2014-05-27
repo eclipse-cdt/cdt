@@ -19,8 +19,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.StringTokenizer;
 
-import org.eclipse.cdt.internal.core.spawner.CSpawnerPlugin;
-import org.eclipse.cdt.internal.core.spawner.Messages;
+import org.eclipse.cdt.internal.core.natives.CNativePlugin;
+import org.eclipse.cdt.internal.core.natives.Messages;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
@@ -451,9 +451,9 @@ public class Spawner extends Process {
 		try {
 			System.loadLibrary("spawner"); //$NON-NLS-1$
 		} catch (SecurityException e) {
-			CSpawnerPlugin.log(e);
+			CNativePlugin.log(e);
 		} catch (UnsatisfiedLinkError e) {
-			CSpawnerPlugin.log(e);
+			CNativePlugin.log(e);
 		}
 	}
 

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
-import org.eclipse.cdt.internal.core.spawner.CSpawnerPlugin;
+import org.eclipse.cdt.internal.core.natives.CNativePlugin;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -43,7 +43,7 @@ public class ProcessList implements IProcessList {
 		Process p = null;
 		String command = null;
 		InputStream in = null;
-		Bundle bundle = Platform.getBundle(CSpawnerPlugin.PLUGIN_ID);
+		Bundle bundle = Platform.getBundle(CNativePlugin.PLUGIN_ID);
 		IProcessInfo[] procInfos = NOPROCESS;
 
 		try {

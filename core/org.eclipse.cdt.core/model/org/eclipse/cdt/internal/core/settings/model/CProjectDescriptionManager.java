@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Intel Corporation and others.
+ * Copyright (c) 2007, 2014 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  * IBM Corporation
  * James Blackburn (Broadcom Corp.)
  * Alex Blewitt Bug 132511 - nature order not preserved
+ * Christian Walther (Indel AG) - [436060] Race condition in updateProjectDescriptions()
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -540,7 +541,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			final ICProjectDescription dess[] = new ICProjectDescription[projects.length];
 			int num = 0;
 			for (IProject project : projects) {
-				ICProjectDescription des = getProjectDescription(project, false, true);
+				// We used to get a writable (copy) description here, but for the outdatedness comparison
+				// below I need a non-writable (original) one. It looks like this makes no difference with
+				// respect to the end result, but I'm not positive about that.
+				ICProjectDescription des = getProjectDescription(project, false, false);
 				if(des != null)
 					dess[num++] = des;
 			}
@@ -559,7 +563,13 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 								break;
 							IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
 							try {
-								setProjectDescription(des.getProject(), des, true, subMonitor);
+								// Only apply the project description if it is still current, otherwise:
+								// - someone else must already have called setProjectDescription, so there is
+								// nothing to do
+								// - we might overwrite someone else's changes with our older description
+								if (des == getProjectDescription(des.getProject(), false, false)) {
+									setProjectDescription(des.getProject(), des, true, subMonitor);
+								}
 							} catch (CoreException e){
 								CCorePlugin.log(e);
 							} finally {

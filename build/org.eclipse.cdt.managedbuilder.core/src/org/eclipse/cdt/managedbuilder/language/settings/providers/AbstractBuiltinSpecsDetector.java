@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2014 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
  *     Liviu Ionescu - Bug 413678: trigger discovery after command line change
+ *     Christian Walther (Indel AG) - [436060] Redundant GCCBuiltinSpecsDetector executions
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
@@ -49,6 +50,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.BuildRunnerHelper;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.utils.CommandLineUtil;
@@ -56,6 +58,7 @@ import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.cdt.utils.envvar.IEnvironmentChangeEvent;
 import org.eclipse.cdt.utils.envvar.IEnvironmentChangeListener;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -142,6 +145,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	private SDMarkerGenerator markerGenerator = new SDMarkerGenerator();
 	private boolean isConsoleEnabled = false;
 	private String currentCommandResolved = null;
+	
+	private ICConfigurationDescription currentCfgDescriptionCache = null;
 
 	private class SDMarkerGenerator implements IMarkerGenerator {
 		// Reuse scanner discovery markers defined in org.eclipse.cdt.managedbuilder.core plugin.xml
@@ -367,9 +372,22 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		return buildDirURI;
 	}
 
+	private ICConfigurationDescription getCfgDescriptionCache(ICConfigurationDescription cfgDescription) {
+		ICConfigurationDescription cfgDescriptionCache = null;
+		if (cfgDescription != null) {
+			IProject project = cfgDescription.getProjectDescription().getProject();
+			if (project != null) {
+				ICProjectDescription prjDescriptionReadable = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+				cfgDescriptionCache = prjDescriptionReadable.getConfigurationById(cfgDescription.getId());
+			}
+		}
+		return cfgDescriptionCache;
+	}
+
 	@Override
 	public void registerListener(ICConfigurationDescription cfgDescription) {
 		currentCfgDescription = cfgDescription;
+		currentCfgDescriptionCache = getCfgDescriptionCache(currentCfgDescription);
 		EnvironmentVariableManager.fUserSupplier.registerEnvironmentChangeListener(this);
 
 		execute();
@@ -485,6 +503,11 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		WorkspaceJob job = new WorkspaceJob(ManagedMakeMessages.getResourceString("AbstractBuiltinSpecsDetector.DiscoverBuiltInSettingsJobName")) { //$NON-NLS-1$
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+				ICConfigurationDescription cfgDescriptionCache = getCfgDescriptionCache(currentCfgDescription);
+				if (currentCfgDescriptionCache != cfgDescriptionCache) {
+					return Status.OK_STATUS;
+				}
+
 				isExecuted = false;
 				if (!isEmpty()) {
 					clear();

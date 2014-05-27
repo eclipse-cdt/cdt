@@ -44,7 +44,6 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
-import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.resources.IProject;
@@ -584,109 +583,46 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	}
 
 	/**
-	 * Test environment changes for provider registered to configuration.
+	 * Test environment changes for provider assigned to configuration.
 	 */
-	public void testAbstractBuiltinSpecsDetector_EnvChangesConfiguration_1() throws Exception {
+	public void testAbstractBuiltinSpecsDetector_EnvChangesConfiguration() throws Exception {
 		// Create model project and accompanied descriptions
 		String projectName = getName();
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
-		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
-		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 
-		// Create provider
-		MockBuiltinSpecsDetectorEnvironmentChangeListener provider = new MockBuiltinSpecsDetectorEnvironmentChangeListener();
-		// register environment listener on configuration - note that provider is not included in the configuration
-		provider.registerListener(cfgDescription);
-		waitForProviderToFinish();
-		assertEquals(true, provider.isExecuted());
-		assertEquals(null, provider.getSampleEnvVar());
-		// unset "isExecuted" flag
-		provider.clear();
-		assertEquals(false, provider.isExecuted());
-		assertEquals(null, provider.getSampleEnvVar());
-
-		// Set an environment variable to the configuration
+		// Assign a test provider to the configuration
 		{
 			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
 			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
-			// create and set sample environment variable in the configuration
-			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
-			IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
 
-			// Set an environment variable
-			IEnvironmentVariable var = new EnvironmentVariable(ENV_SAMPLE, ENV_SAMPLE_VALUE_1);
-			contribEnv.addVariable(var, cfgDescriptionWritable);
-			assertEquals(var, envManager.getVariable(ENV_SAMPLE, cfgDescriptionWritable, true));
-
-			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
-		}
-
-		waitForProviderToFinish();
-		// check if provider got executed with new value
-		assertEquals(true, provider.isExecuted());
-		assertEquals(ENV_SAMPLE_VALUE_1, provider.getSampleEnvVar());
-
-		// Repeat one more time with different value of environment variable
-
-		// unset "isExecuted" flag
-		provider.clear();
-		assertEquals(false, provider.isExecuted());
-		assertEquals(ENV_SAMPLE_VALUE_1, provider.getSampleEnvVar());
-
-		// Set an environment variable to the configuration
-		{
-			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
-			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
-			// create and set sample environment variable in the configuration
-			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
-			IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
-
-			// Set an environment variable
-			IEnvironmentVariable var = new EnvironmentVariable(ENV_SAMPLE, ENV_SAMPLE_VALUE_2);
-			contribEnv.addVariable(var, cfgDescriptionWritable);
-			assertEquals(var, envManager.getVariable(ENV_SAMPLE, cfgDescriptionWritable, true));
-
-			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
-		}
-
-		waitForProviderToFinish();
-		// check if provider got executed with new value
-		assertEquals(true, provider.isExecuted());
-		assertEquals(ENV_SAMPLE_VALUE_2, provider.getSampleEnvVar());
-
-		// unregister listeners
-		provider.unregisterListener();
-	}
-
-	/**
-	 * Test running on environment changes as provider assigned to a configuration.
-	 */
-	public void testAbstractBuiltinSpecsDetector_EnvChangesConfiguration_2() throws Exception {
-		// Create a project with one configuration
-		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
-
-		// Assign a provider to configuration
-		{
-			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
-			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
-			// Create provider
 			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = new MockBuiltinSpecsDetectorEnvironmentChangeListener();
-			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(1);
 			providers.add(provider);
-			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
-			// Write to project description
-			CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescriptionWritable);
+			((ILanguageSettingsProvidersKeeper)cfgDescriptionWritable).setLanguageSettingProviders(providers);
 
-			waitForProviderToFinish();
-			// Check that provider got executed
+			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
+		}
+
+		waitForProviderToFinish();
+
+		// Double-check the original state of the provider
+		{
+			ICProjectDescription prjDescriptionReadable = CoreModel.getDefault().getProjectDescription(project, false);
+			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionReadable.getActiveConfiguration();
+
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper)cfgDescriptionWritable).getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			assertEquals(true, providers.get(0) instanceof MockBuiltinSpecsDetectorEnvironmentChangeListener);
+			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers.get(0);
 			assertEquals(true, provider.isExecuted());
 			assertEquals(null, provider.getSampleEnvVar());
 		}
 
-		// Set environment variable to the configuration
+		// Set an environment variable to the configuration
 		{
 			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
 			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
+			// create and set sample environment variable in the configuration
 			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
 			IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
 
@@ -695,40 +631,32 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			contribEnv.addVariable(var, cfgDescriptionWritable);
 			assertEquals(var, envManager.getVariable(ENV_SAMPLE, cfgDescriptionWritable, true));
 
-			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).getLanguageSettingProviders();
-			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers.get(0);
-			// unset "isExecuted" flag
-			provider.clear();
-			assertEquals(false, provider.isExecuted());
-			assertEquals(null, provider.getSampleEnvVar());
-
-			// Save project description including saving environment to the configuration
+			// Write to project description
 			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
 		}
+
 		waitForProviderToFinish();
 
-		// Check if the provider got executed
+		// Check that the provider picked up the variable
 		{
-			// check if environment variable got there
-			ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, false);
-			ICConfigurationDescription cfgDescription = prjDescription.getActiveConfiguration();
-			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
-			IEnvironmentVariable var = envManager.getVariable(ENV_SAMPLE, cfgDescription, true);
-			assertNotNull(var);
-			assertEquals(ENV_SAMPLE_VALUE_1, var.getValue());
+			ICProjectDescription prjDescriptionReadable = CoreModel.getDefault().getProjectDescription(project, false);
+			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionReadable.getActiveConfiguration();
 
-			// check if provider got executed with new value
-			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper)cfgDescriptionWritable).getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			assertEquals(true, providers.get(0) instanceof MockBuiltinSpecsDetectorEnvironmentChangeListener);
 			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers.get(0);
+
+			// check if provider got executed and picked up the variable
 			assertEquals(true, provider.isExecuted());
 			assertEquals(ENV_SAMPLE_VALUE_1, provider.getSampleEnvVar());
 		}
 
-		// Repeat one more time with different value of environment variable
-		// Set another environment variable to the configuration
+		// Set another value for the environment variable to the configuration
 		{
 			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
 			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
+			// create and set sample environment variable in the configuration
 			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
 			IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
 
@@ -737,31 +665,23 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			contribEnv.addVariable(var, cfgDescriptionWritable);
 			assertEquals(var, envManager.getVariable(ENV_SAMPLE, cfgDescriptionWritable, true));
 
-			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).getLanguageSettingProviders();
-			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers.get(0);
-			// unset "isExecuted" flag
-			provider.clear();
-			assertEquals(false, provider.isExecuted());
-			assertEquals(ENV_SAMPLE_VALUE_1, provider.getSampleEnvVar());
-
-			// Save project description including saving environment to the configuration
+			// Write to project description
 			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
 		}
+
 		waitForProviderToFinish();
 
-		// Check if the provider got executed
+		// Check that the provider picked the new value
 		{
-			// check if environment variable got there
-			ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, false);
-			ICConfigurationDescription cfgDescription = prjDescription.getActiveConfiguration();
-			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
-			IEnvironmentVariable var = envManager.getVariable(ENV_SAMPLE, cfgDescription, true);
-			assertNotNull(var);
-			assertEquals(ENV_SAMPLE_VALUE_2, var.getValue());
+			ICProjectDescription prjDescriptionReadable = CoreModel.getDefault().getProjectDescription(project, false);
+			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionReadable.getActiveConfiguration();
+
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper)cfgDescriptionWritable).getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			assertEquals(true, providers.get(0) instanceof MockBuiltinSpecsDetectorEnvironmentChangeListener);
+			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers.get(0);
 
 			// check if provider got executed with new value
-			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
-			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers.get(0);
 			assertEquals(true, provider.isExecuted());
 			assertEquals(ENV_SAMPLE_VALUE_2, provider.getSampleEnvVar());
 		}

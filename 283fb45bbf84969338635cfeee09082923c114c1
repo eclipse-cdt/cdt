@@ -16,6 +16,24 @@
       "revId": "283fb45bbf84969338635cfeee09082923c114c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_066e1f77",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/PTYInputStream.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 190
+      },
+      "writtenOn": "2014-05-27T12:26:03Z",
+      "side": 1,
+      "message": "Thanks Toni - Fixed with a new patchset.\n\nThe CDT\u0027s default warning settings don\u0027t show this warning in the problems view, but it did appear in the Editor. Might be a case for making the CDT warning settings a little more picky :)",
+      "parentUuid": "0756a345_6668bb95",
+      "revId": "283fb45bbf84969338635cfeee09082923c114c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

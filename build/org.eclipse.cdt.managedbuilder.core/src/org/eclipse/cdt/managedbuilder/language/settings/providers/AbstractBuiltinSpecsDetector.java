@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2014 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
  *     Liviu Ionescu - Bug 413678: trigger discovery after command line change
+ *     Christian Walther (Indel AG) - [436060] Redundant GCCBuiltinSpecsDetector executions
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
@@ -39,6 +40,7 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.language.settings.providers.ICBuildOutputParser;
 import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
 import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
@@ -46,6 +48,7 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.BuildRunnerHelper;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
@@ -485,6 +488,21 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		WorkspaceJob job = new WorkspaceJob(ManagedMakeMessages.getResourceString("AbstractBuiltinSpecsDetector.DiscoverBuiltInSettingsJobName")) { //$NON-NLS-1$
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+				// Don't run if the project description that this detector belongs to (if any)
+				// is no longer the current one - besides being useless, that would also cause
+				// further project description changes and under some circumstances even
+				// infinite loops via CProjectDescriptionManager.updateProjectDescriptions().
+				if (currentCfgDescription != null) {
+					ICProjectDescription pd = currentCfgDescription.getProjectDescription();
+					if (pd != CoreModel
+							.getDefault()
+							.getProjectDescriptionManager()
+							.getProjectDescription(pd.getProject(),
+									ICProjectDescriptionManager.GET_IF_LOADDED)) {
+						return new Status(IStatus.CANCEL, ManagedBuilderCorePlugin.PLUGIN_ID, ""); //$NON-NLS-1$
+					}
+				}
+
 				isExecuted = false;
 				if (!isEmpty()) {
 					clear();

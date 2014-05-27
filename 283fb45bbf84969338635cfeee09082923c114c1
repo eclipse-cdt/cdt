@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_6668bb95",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/PTYInputStream.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 595
+      },
+      "writtenOn": "2014-05-27T11:31:00Z",
+      "side": 1,
+      "message": "Unused import",
+      "revId": "283fb45bbf84969338635cfeee09082923c114c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_19003973",
+        "filename": "core/org.eclipse.cdt.ui/.settings/org.eclipse.pde.prefs",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-05-28T19:53:38Z",
+      "side": 1,
+      "message": "That turns off the error when there are unresolved extension points. I don\u0027t want to lose that checking.",
+      "revId": "491a7a734d88f0ac585cc0e80c1bb128d683eb44",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

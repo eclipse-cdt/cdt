@@ -16,6 +16,24 @@
       "revId": "491a7a734d88f0ac585cc0e80c1bb128d683eb44",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_9c45576b",
+        "filename": "core/org.eclipse.cdt.ui/.settings/org.eclipse.pde.prefs",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-05-28T21:14:17Z",
+      "side": 1,
+      "message": "OK, I tested it and it still builds and runs even with that error.",
+      "parentUuid": "0756a345_19003973",
+      "revId": "491a7a734d88f0ac585cc0e80c1bb128d683eb44",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

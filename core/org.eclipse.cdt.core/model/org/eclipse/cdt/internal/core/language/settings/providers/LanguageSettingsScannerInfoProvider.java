@@ -202,7 +202,7 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		}
 
 		IPath locPath = new Path(location);
-		if (locPath.isAbsolute() && locPath.getDevice() == null) {
+		if (!locPath.isUNC() && locPath.isAbsolute() && locPath.getDevice() == null) {
 			IPath buildCWD = getBuildCWD(cfgDescription);
 			// prepend device (C:) for Windows
 			String device = buildCWD.getDevice();

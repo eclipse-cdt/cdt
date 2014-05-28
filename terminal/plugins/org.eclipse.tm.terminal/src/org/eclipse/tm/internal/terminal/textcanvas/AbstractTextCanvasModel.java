@@ -231,7 +231,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 		fCurrentSelection=extractSelectedText();
 	}
 	private void doSetSelection(int startLine, int endLine, int startColumn, int endColumn) {
-		assert(startLine<0 || startLine<=endLine);
+//		assert(startLine<0 || startLine<=endLine);
 		if(startLine>=0) {
 			if(fSelectionSnapshot==null) {
 				fSelectionSnapshot=fSnapshot.getTerminalTextData().makeSnapshot();

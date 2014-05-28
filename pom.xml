@@ -471,10 +471,12 @@
         </property>
       </activation>
       <properties>
-        <eclipse-site>http://download.eclipse.org/releases/staging</eclipse-site>
+        <!--<eclipse-site>http://download.eclipse.org/releases/staging</eclipse-site>-->
+		<eclipse-site>http://download.eclipse.org/eclipse/updates/4.4milestones/S-4.4RC2-201405221330</eclipse-site>
         <platform-version>[4.4,)</platform-version>
         <sdk-version>4.4</sdk-version>
-        <cdt-site>http://download.eclipse.org/tools/cdt/releases/kepler</cdt-site>
+        <!--<cdt-site>http://download.eclipse.org/tools/cdt/releases/kepler</cdt-site>-->
+        <cdt-site>http://download.eclipse.org/tools/cdt/builds/luna/milestones/rc2</cdt-site>
         <cdt-test-site>http://download.eclipse.org/tools/cdt/updates/indigo/</cdt-test-site>
       </properties>
       <repositories>

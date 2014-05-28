@@ -254,7 +254,7 @@ public class SnapshotChanges implements ISnapshotChanges {
 	 * @param shift must be negative!
 	 */
 	private void scrollChangesLinesWithNegativeShift(int line, int n, int shift) {
-		assert shift <0 || throwRuntimeException();
+//		assert shift <0 || throwRuntimeException();
 		// scroll the region
 		// don't run out of bounds!
 		int m=Math.min(line+n+shift,getChangedLineLength()+shift);

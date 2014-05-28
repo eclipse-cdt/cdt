@@ -128,7 +128,7 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 			fData.copyLine(source, sourceLine, destLine-fWindowStartLine);
 	}
 	public void scroll(int startLine, int size, int shift) {
-		assert (startLine>=0 && startLine+size<=fHeight) || throwRuntimeException();
+//		assert (startLine>=0 && startLine+size<=fHeight) || throwRuntimeException();
 		int n=size;
 		int start=startLine-fWindowStartLine;
 		// if start outside our range, cut the length to copy
@@ -157,7 +157,7 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 		fData.setChars(line-fWindowStartLine, column, chars, style);
 	}
 	public void setDimensions(int height, int width) {
-		assert height>=0 || throwRuntimeException();
+//		assert height>=0 || throwRuntimeException();
 		fData.setDimensions(fWindowSize, width);
 		fHeight=height;
 	}

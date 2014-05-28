@@ -34,8 +34,8 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 		fMaxHeight=maxHeight;
 		fData=data;
 		fData.setDimensions(maxHeight, fData.getWidth());
-		if(maxHeight>2)
-			assert shiftOffset(-2) || throwRuntimeException();
+//		if(maxHeight>2)
+//			assert shiftOffset(-2) || throwRuntimeException();
 	}
 	public TerminalTextDataFastScroll(int maxHeight) {
 		this(new TerminalTextDataStore(),maxHeight);
@@ -64,7 +64,7 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 	 * @param delta
 	 */
 	void moveOffset(int delta) {
-		assert Math.abs(delta)<fMaxHeight || throwRuntimeException();
+//		assert Math.abs(delta)<fMaxHeight || throwRuntimeException();
 		fOffset=(fMaxHeight+fOffset+delta)%fMaxHeight;
 		
 	}
@@ -101,19 +101,19 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 	}
 
 	public void copyRange(ITerminalTextData source, int sourceStartLine, int destStartLine, int length) {
-		assert (destStartLine>=0 && destStartLine+length<=fHeight) || throwRuntimeException();
+//		assert (destStartLine>=0 && destStartLine+length<=fHeight) || throwRuntimeException();
 		for (int i = 0; i < length; i++) {
 			fData.copyLine(source, i+sourceStartLine, getPositionOfLine(i+destStartLine));
 		}
 	}
 
 	public char getChar(int line, int column) {
-		assert (line>=0 && line<fHeight) || throwRuntimeException();
+//		assert (line>=0 && line<fHeight) || throwRuntimeException();
 		return fData.getChar(getPositionOfLine(line), column);
 	}
 
 	public char[] getChars(int line) {
-		assert (line>=0 && line<fHeight) || throwRuntimeException();
+//		assert (line>=0 && line<fHeight) || throwRuntimeException();
 		return fData.getChars(getPositionOfLine(line));
 	}
 
@@ -122,7 +122,7 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 	}
 
 	public LineSegment[] getLineSegments(int line, int startCol, int numberOfCols) {
-		assert (line>=0 && line<fHeight) || throwRuntimeException();
+//		assert (line>=0 && line<fHeight) || throwRuntimeException();
 		return fData.getLineSegments(getPositionOfLine(line), startCol, numberOfCols);
 	}
 
@@ -131,12 +131,12 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 	}
 
 	public Style getStyle(int line, int column) {
-		assert (line>=0 && line<fHeight) || throwRuntimeException();
+//		assert (line>=0 && line<fHeight) || throwRuntimeException();
 		return fData.getStyle(getPositionOfLine(line), column);
 	}
 
 	public Style[] getStyles(int line) {
-		assert (line>=0 && line<fHeight) || throwRuntimeException();
+//		assert (line>=0 && line<fHeight) || throwRuntimeException();
 		return fData.getStyles(getPositionOfLine(line));
 	}
 
@@ -153,7 +153,7 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 		}
 	}
 	public void scroll(int startLine, int size, int shift) {
-		assert (startLine>=0 && startLine+size<=fHeight) || throwRuntimeException();
+//		assert (startLine>=0 && startLine+size<=fHeight) || throwRuntimeException();
 		if(shift>=fMaxHeight || -shift>=fMaxHeight) {
 			cleanLines(startLine, fMaxHeight-startLine);
 			return;
@@ -187,23 +187,23 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 	}
 
 	public void setChar(int line, int column, char c, Style style) {
-		assert (line>=0 && line<fHeight) || throwRuntimeException();
+//		assert (line>=0 && line<fHeight) || throwRuntimeException();
 		fData.setChar(getPositionOfLine(line), column, c, style);
 	}
 
 	public void setChars(int line, int column, char[] chars, int start, int len, Style style) {
-		assert (line>=0 && line<fHeight) || throwRuntimeException();
+//		assert (line>=0 && line<fHeight) || throwRuntimeException();
 		fData.setChars(getPositionOfLine(line), column, chars, start, len, style);
 	}
 
 	public void setChars(int line, int column, char[] chars, Style style) {
-		assert (line>=0 && line<fHeight) || throwRuntimeException();
+//		assert (line>=0 && line<fHeight) || throwRuntimeException();
 		fData.setChars(getPositionOfLine(line), column, chars, style);
 	}
 
 	public void setDimensions(int height, int width) {
-		assert height>=0 || throwRuntimeException();
-		assert width>=0 || throwRuntimeException();
+//		assert height>=0 || throwRuntimeException();
+//		assert width>=0 || throwRuntimeException();
 		if(height > fMaxHeight)
 			setMaxHeight(height);
 		fHeight=height;
@@ -212,7 +212,7 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 	}
 
 	public void setMaxHeight(int maxHeight) {
-		assert maxHeight>=fHeight || throwRuntimeException();
+//		assert maxHeight>=fHeight || throwRuntimeException();
 		// move everything to offset0
 		int start=getPositionOfLine(0);
 		if(start!=0) {

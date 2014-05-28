@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_b9ddcdda",
+        "filename": "core/org.eclipse.cdt.ui/.settings/org.eclipse.pde.api.tools.prefs",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-28T18:45:55Z",
+      "side": 1,
+      "message": "Are all changes in this file necessary? Should they be preserved when dependency on org.eclipse.e4.ui.css.swt.theme becomes non-optional?",
+      "revId": "869836c59d5819b682d32b86eb3511db2759572e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_99da89de",
+        "filename": "core/org.eclipse.cdt.ui/.settings/org.eclipse.pde.prefs",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-05-28T18:45:55Z",
+      "side": 1,
+      "message": "Are all changes in this file necessary? Should they be preserved when dependency on org.eclipse.e4.ui.css.swt.theme becomes non-optional?",
+      "revId": "869836c59d5819b682d32b86eb3511db2759572e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

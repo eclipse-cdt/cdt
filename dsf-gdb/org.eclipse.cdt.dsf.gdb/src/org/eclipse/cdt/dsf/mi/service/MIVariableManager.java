@@ -16,6 +16,7 @@
  *     Anton Gorenkov - DSF-GDB should properly handle variable type change (based on RTTI) (Bug 376901)
  *     Anders Dahlberg (Ericsson)  - Need additional API to extend support for memory spaces (Bug 431627)
  *     Alvaro Sanchez-Leon (Ericsson)  - Need additional API to extend support for memory spaces (Bug 431627)
+ *     Martin Schreiber - Bug 435606 - write unsigned variables (UINT32 and UINT64) in the binary format
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 

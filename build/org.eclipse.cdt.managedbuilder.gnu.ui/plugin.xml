@@ -74,6 +74,15 @@
                id="gnu.c.link.option.noshared"
                valueType="boolean">
          </option>
+         <option
+			  category="gnu.c.link.category.general"
+			  command="-ftest-coverage -fprofile-arcs"
+			  defaultValue="false"
+			  id="gnu.c.link.option.codecov"
+			  name="%Option.codecov"
+			  tip="%Option.codecovTip"
+			  valueType="boolean">
+		  </option>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.c.linker"
                name="%OptionCategory.Libs"
@@ -275,6 +284,15 @@
                id="gnu.cpp.link.option.strip"
                valueType="boolean">
          </option>
+         <option
+			  category="gnu.cpp.link.category.options"
+			  command="-ftest-coverage -fprofile-arcs"
+			  defaultValue="false"
+			  id="gnu.cpp.link.option.codecov"
+			  name="%Option.codecov"
+			  tip="%Option.codecovTip"
+			  valueType="boolean">
+		  </option>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.cpp.linker"
                name="%OptionCategory.Libs"
@@ -1302,6 +1320,15 @@
 			  name="%Option.PIC"
 			  valueType="boolean">
 		  </option>
+		  <option
+	          category="gnu.c.compiler.category.other"
+	          command="-ftest-coverage -fprofile-arcs"
+	          defaultValue="false"
+	          id="gnu.c.compiler.option.misc.codecov"
+	          name="%Option.codecov"
+	          tip="%Option.codecovTip"
+	          valueType="boolean">
+		  </option>
           <inputType
               sourceContentType="org.eclipse.cdt.core.cSource"
 		      sources="c"
@@ -1661,6 +1688,15 @@
 			  defaultValue="false"
 			  id="gnu.cpp.compiler.option.other.pic"
 			  name="%Option.PIC"
+			  valueType="boolean">
+		  </option>
+		 <option
+			  category="gnu.cpp.compiler.category.other"
+			  command="-ftest-coverage -fprofile-arcs"
+			  defaultValue="false"
+			  id="gnu.cpp.compiler.option.other.codecov"
+			  name="%Option.codecov"
+			  tip="%Option.codecovTip"
 			  valueType="boolean">
 		  </option>
           <inputType

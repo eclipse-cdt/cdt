@@ -97,7 +97,7 @@ public class PipedInputStream extends InputStream {
 			return fBuffer.length - fUsedSlots;
 		}
 		public void write(byte[] b, int off, int len) throws InterruptedException {
-//			assert len<=getFreeSlots();
+			assert len<=getFreeSlots();
 			while (fUsedSlots == fBuffer.length)
 				// wait until not full
 				wait();
@@ -133,7 +133,7 @@ public class PipedInputStream extends InputStream {
 			return b;
 		}
 		public int read(byte[] cbuf, int off, int len) throws InterruptedException {
-//			assert len<=available();
+			assert len<=available();
 			while (fUsedSlots == 0) {
 				if(fClosed)
 					return 0;

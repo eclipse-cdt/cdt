@@ -267,8 +267,8 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 	}
 
 	public void setInterestWindow(int startLine, int size) {
-//		assert startLine>=0 || throwRuntimeException();
-//		assert size>=0 || throwRuntimeException();
+		assert startLine>=0 || throwRuntimeException();
+		assert size>=0 || throwRuntimeException();
 		fInterestWindowStartLine=startLine;
 		fInterestWindowSize=size;
 		fSnapshot.setWindow(startLine, size);

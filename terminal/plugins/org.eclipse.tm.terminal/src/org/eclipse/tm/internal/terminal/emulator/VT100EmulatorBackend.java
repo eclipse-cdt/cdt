@@ -206,7 +206,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		synchronized (fTerminal) {
 			if(!isCusorInScrollingRegion())
 				return;
-//			assert n>0;
+			assert n>0;
 			int line=toAbsoluteLine(fCursorLine);
 			int nLines=fTerminal.getHeight()-line;
 			fTerminal.scroll(line, nLines, n);
@@ -236,7 +236,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		synchronized (fTerminal) {
 			if(!isCusorInScrollingRegion())
 				return;
-//			assert n>0;
+			assert n>0;
 			int line=toAbsoluteLine(fCursorLine);
 			int nLines=fTerminal.getHeight()-line;
 			fTerminal.scroll(line, nLines, -n);

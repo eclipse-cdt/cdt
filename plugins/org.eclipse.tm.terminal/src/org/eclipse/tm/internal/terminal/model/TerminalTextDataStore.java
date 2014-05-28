@@ -62,8 +62,8 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	 * @see org.eclipse.tm.internal.terminal.text.ITerminalTextData#setDimensions(int, int)
 	 */
 	public void setDimensions(int height, int width) {
-//		assert height>=0 || throwRuntimeException();
-//		assert width>=0  || throwRuntimeException();
+		assert height>=0 || throwRuntimeException();
+		assert width>=0  || throwRuntimeException();
 		// just extend the region
 		if(height>fChars.length) {
 			int h=4*height/3;
@@ -144,7 +144,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	 * @see org.eclipse.tm.internal.terminal.text.ITerminalTextData#getChar(int, int)
 	 */
 	public char getChar(int line, int column) {
-//		assert column<fWidth || throwRuntimeException();
+		assert column<fWidth || throwRuntimeException();
 		if(fChars[line]==null||column>=fChars[line].length)
 			return 0;
 		return fChars[line][column];
@@ -153,7 +153,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	 * @see org.eclipse.tm.internal.terminal.text.ITerminalTextData#getStyle(int, int)
 	 */
 	public Style getStyle(int line, int column) {
-//		assert column<fWidth || throwRuntimeException();
+		assert column<fWidth || throwRuntimeException();
 		if(fStyle[line]==null || column>=fStyle[line].length)
 			return null;
 		return fStyle[line][column];
@@ -202,7 +202,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	 * @see org.eclipse.tm.internal.terminal.text.ITerminalTextData#scroll(int, int, int)
 	 */
 	public void scroll(int startLine, int size, int shift) {
-//		assert startLine+size <= getHeight() || throwRuntimeException();
+		assert startLine+size <= getHeight() || throwRuntimeException();
 		if(shift<0) {
 			// move the region up
 			// shift is negative!!

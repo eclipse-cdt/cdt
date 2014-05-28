@@ -5,8 +5,7 @@
       version="8.4.0.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
-      license-feature-version="0.0.0"
-      image="eclipse_update_120.jpg">
+      license-feature-version="0.0.0">
 
    <description>
       %description

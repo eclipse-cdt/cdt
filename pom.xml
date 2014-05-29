@@ -260,14 +260,14 @@
 
 	<profiles>
 		<profile>
-			<id>platform-4.3</id>
+			<id>platform-4.4</id>
 			<activation>
 				<property>
 					<name>!platform-3.8</name>
 				</property>
 			</activation>
 			<properties>
-				<platform-version>4.3</platform-version>
+				<platform-version>4.4milestones</platform-version>
 				<orbit-version>R20130517111416</orbit-version>
 				<tm-version>3.5</tm-version>
 			</properties>

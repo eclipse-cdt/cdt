@@ -36,6 +36,7 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
 import org.eclipse.cdt.managedbuilder.core.IBuildPropertiesRestriction;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -1325,28 +1326,43 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 			toolChain.resolveProjectReferences(onLoad);
 	}
 
+	/**
+	 * Reset the options of the given holder to the default values
+	 */
+	private void resetOptionSettings(IHoldsOptions holder) {
+		IOption[] opts = holder.getOptions();
+		for (IOption opt : opts) {
+			Object val = opt.getDefaultValue();
+			if (val != null) {
+				if (val instanceof Boolean) {
+					ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (Boolean)val);
+				} else if (val instanceof String[]) {
+					ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (String[])val);
+				} else {
+					ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (String)val);
+				}
+			}
+		}
+	}
+	
 	public void resetOptionSettings() {
-		// We just need to remove all Options
+		// (Bug 438367) Removing all the options and relying on automatic creating when modifying/using the option
+		// will result in problems in the following cases:
+		// 		-	When changing an option affects values of other options.
+		// 		-	When the option has a FieldEditor that holds an instance of the option, that
+		//			will result on having multiple copies of the option in some cases.
+		// Instead, will reset the value of each option to its default value.
 		ITool[] tools = getTools();
 		IToolChain toolChain = getToolChain();
-		IOption[] opts;
+		for (ITool tool : tools) {
+			resetOptionSettings(tool);
+		}
+		resetOptionSettings(toolChain);
 
 		// Send out the event to notify the options that they are about to be removed.
 		// Do not do this for the child resource configurations as they are handled when
 		// the configuration itself is destroyed.
 //		ManagedBuildManager.performValueHandlerEvent(this, IManagedOptionValueHandler.EVENT_CLOSE, false);
-		// Remove the configurations
-		for (ITool tool : tools) {
-			opts = tool.getOptions();
-			for (IOption opt : opts) {
-				tool.removeOption(opt);
-			}
-		}
-		opts = toolChain.getOptions();
-		for (IOption opt : opts) {
-			toolChain.removeOption(opt);
-		}
-
 //		rebuildNeeded = true;
 	}
 

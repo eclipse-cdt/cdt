@@ -4396,29 +4396,29 @@
             id="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring">
       </contribution>
    </extension>
-	<extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
-		<renameParticipant id="org.eclipse.jdt.junit.renameTypeParticipant"
-			name="%renameParticipant.name"
-			class="org.eclipse.cdt.internal.ui.refactoring.rename.RenameSourceFolder">
-			<enablement>
-				<or>
-				<with variable="affectedNatures">
-					<iterate operator="or">
-						<equals value="org.eclipse.cdt.core.ccnature" />
-					</iterate>
-				</with>
-				<with variable="affectedNatures">
-					<iterate operator="or">
-						<equals value="org.eclipse.cdt.core.cnature" />
-					</iterate>
-				</with>
-				</or>
-				<with variable="element">
-					<instanceof value="org.eclipse.core.resources.IFolder" />
-				</with>
-			</enablement>
-		</renameParticipant>
-	</extension>
+   <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
+	  <renameParticipant id="org.eclipse.cdt.ui.RenameSourceFolder"
+            name="%renameParticipant.name"
+            class="org.eclipse.cdt.internal.ui.refactoring.rename.RenameSourceFolder">
+         <enablement>
+            <or>
+               <with variable="affectedNatures">
+                  <iterate operator="or">
+                     <equals value="org.eclipse.cdt.core.ccnature" />
+                  </iterate>
+               </with>
+               <with variable="affectedNatures">
+                  <iterate operator="or">
+                     <equals value="org.eclipse.cdt.core.cnature" />
+                  </iterate>
+               </with>
+            </or>
+            <with variable="element">
+               <instanceof value="org.eclipse.core.resources.IFolder" />
+            </with>
+         </enablement>
+      </renameParticipant>
+   </extension>
    <!-- Add support for undo / redo in the FileListControl -->
    <extension
          id="org.eclipse.cdt.ui.FileListControlHandler"

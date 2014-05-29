@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software (IFS)- initial API and implementation 
+ *     Institute for Software (IFS)- initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -27,7 +27,6 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
  * @author Emanuel Graf IFS
  */
 public class RenameSourceFolder extends RenameParticipant {
-
 	private IFolder oldFolder;
 	private String newName;
 

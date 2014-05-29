@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software (IFS)- initial API and implementation 
+ *     Institute for Software (IFS)- initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -94,14 +94,14 @@ public class RenameCSourceFolderChange extends Change {
 	}
 	
 	private ICSourceEntry[] renameEntry(ICSourceEntry[] entries){
-		Set<ICSourceEntry> set = new HashSet<ICSourceEntry>();
+		Set<ICSourceEntry> set = new HashSet<>();
 		for (ICSourceEntry se : entries){
 			String seLocation = se.getName();
-			if(seLocation.equals(oldName.toPortableString())) {
+			if (seLocation.equals(oldName.toPortableString())) {
 				ICSourceEntry newSE = new CSourceEntry(newName, se.getExclusionPatterns(), se.getFlags());
 				set.add(newSE);
 			} else {
-				Set<IPath> exPatters = new HashSet<IPath>();
+				Set<IPath> exPatters = new HashSet<>();
 				for (IPath filter : se.getExclusionPatterns()) {
 					IPath oldSegments = oldName.removeFirstSegments(oldName.segmentCount() -1);
 					if (filter.equals(oldSegments)) {

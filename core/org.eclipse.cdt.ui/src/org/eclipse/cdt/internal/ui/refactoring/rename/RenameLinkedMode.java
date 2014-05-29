@@ -514,7 +514,7 @@ public class RenameLinkedMode {
 	}
 
 	private AbstractCLikeLanguage getLanguage() {
-		ITranslationUnit tu = (ITranslationUnit) fEditor.getInputCElement();
+		ITranslationUnit tu = fEditor.getInputCElement();
 		ILanguage language = null;
 		try {
 			language = tu.getLanguage();

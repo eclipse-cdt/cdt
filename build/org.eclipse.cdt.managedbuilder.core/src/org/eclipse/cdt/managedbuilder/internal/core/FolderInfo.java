@@ -36,6 +36,7 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
 import org.eclipse.cdt.managedbuilder.core.IBuildPropertiesRestriction;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -1325,28 +1326,74 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 			toolChain.resolveProjectReferences(onLoad);
 	}
 
+	/**
+	 * Reset the options of the given holder to the default values
+	 */
+	private void resetOptionSettings(IHoldsOptions holder) {
+		IOption[] opts = holder.getOptions();
+		for (IOption opt : opts) {
+			Object val = opt.getDefaultValue();
+			if (val == null)
+				val = opt.getValue();
+			try {
+				switch(opt.getValueType()){
+				case IOption.BOOLEAN:
+					if (val == null)
+						val = new Boolean(false);
+					ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (Boolean)opt.getDefaultValue());
+					break;
+				case IOption.ENUMERATED:
+				case IOption.TREE:
+				case IOption.STRING:
+					if (val == null)
+						val = ""; //$NON-NLS-1$
+					ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (String)opt.getDefaultValue());
+					break;
+				case IOption.STRING_LIST:
+				case IOption.INCLUDE_PATH:
+				case IOption.PREPROCESSOR_SYMBOLS:
+				case IOption.LIBRARIES:
+				case IOption.OBJECTS:
+				case IOption.INCLUDE_FILES:
+				case IOption.LIBRARY_PATHS:
+				case IOption.LIBRARY_FILES:
+				case IOption.MACRO_FILES:
+				case IOption.UNDEF_INCLUDE_PATH:
+				case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+				case IOption.UNDEF_INCLUDE_FILES:
+				case IOption.UNDEF_LIBRARY_PATHS:
+				case IOption.UNDEF_LIBRARY_FILES:
+				case IOption.UNDEF_MACRO_FILES:
+					if (val == null)
+						val = new String[0];
+					ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (String[])opt.getDefaultValue());
+					break;
+				}
+			} catch (BuildException e) {
+				continue;
+			}
+		}
+	}
+	
 	public void resetOptionSettings() {
-		// We just need to remove all Options
+		// We just need to remove all Options [Deprecated]
+		// Removing all the options and relying on automatic creating when modifying/using the option
+		// will result in problems in the following cases:
+		// 		-	When changing an option affects values of other options.
+		// 		-	When the option has a FieldEditor that holds an instance of the option, that
+		//			will result on having multiple copies of the option in some cases.
+		// Instead, will reset the value of each option to its default value.
 		ITool[] tools = getTools();
 		IToolChain toolChain = getToolChain();
-		IOption[] opts;
+		for (ITool tool : tools) {
+			resetOptionSettings(tool);
+		}
+		resetOptionSettings(toolChain);
 
 		// Send out the event to notify the options that they are about to be removed.
 		// Do not do this for the child resource configurations as they are handled when
 		// the configuration itself is destroyed.
 //		ManagedBuildManager.performValueHandlerEvent(this, IManagedOptionValueHandler.EVENT_CLOSE, false);
-		// Remove the configurations
-		for (ITool tool : tools) {
-			opts = tool.getOptions();
-			for (IOption opt : opts) {
-				tool.removeOption(opt);
-			}
-		}
-		opts = toolChain.getOptions();
-		for (IOption opt : opts) {
-			toolChain.removeOption(opt);
-		}
-
 //		rebuildNeeded = true;
 	}
 

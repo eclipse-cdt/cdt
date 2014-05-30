@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0756a345_cd76fb7c",
+        "filename": "core/org.eclipse.cdt.core.native/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-05-30T15:44:49Z",
+      "side": 1,
+      "message": "Sorry, can you confirm that it\u0027s OK to just put native here? The only examples I\u0027ve seen have the Bundle-SymbolicName. But I haven\u0027t looked at the spec.",
+      "revId": "aa5a21ff30f4fc90f0a1cf6662adddf434847314",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

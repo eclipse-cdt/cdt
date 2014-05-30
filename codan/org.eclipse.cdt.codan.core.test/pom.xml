@@ -29,6 +29,12 @@
 						<include>**/AutomatedIntegrationSuite.*</include>
 					</includes>
 					<testFailureIgnore>true</testFailureIgnore>
+					<dependencies>
+						<dependency>
+							<artifactId>org.eclipse.platform.feature.group</artifactId>
+							<type>p2-installable-unit</type>
+						</dependency>
+					</dependencies>	
 				</configuration>
 			</plugin>
 		</plugins>

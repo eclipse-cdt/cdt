@@ -6,7 +6,7 @@ Bundle-Version: 5.7.0.qualifier
 Bundle-Activator: org.eclipse.cdt.core.CCorePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.cdt.core;org.eclipse.cdt.core=split;mandatory=org.eclipse.cdt.core,
+Export-Package: org.eclipse.cdt.core,
  org.eclipse.cdt.core.browser,
  org.eclipse.cdt.core.cdtvariables,
  org.eclipse.cdt.core.dom,
@@ -94,7 +94,7 @@ Export-Package: org.eclipse.cdt.core;org.eclipse.cdt.core=split;mandatory=org.ec
  org.eclipse.cdt.internal.formatter;x-friends:="org.eclipse.cdt.ui",
  org.eclipse.cdt.internal.formatter.align;x-internal:=true,
  org.eclipse.cdt.internal.formatter.scanner;x-friends:="org.eclipse.cdt.ui",
- org.eclipse.cdt.utils;org.eclipse.cdt.core=split;mandatory=org.eclipse.cdt.core,
+ org.eclipse.cdt.utils,
  org.eclipse.cdt.utils.cdtvariables,
  org.eclipse.cdt.utils.coff,
  org.eclipse.cdt.utils.coff.parser,

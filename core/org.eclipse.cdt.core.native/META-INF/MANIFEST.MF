@@ -6,10 +6,10 @@ Bundle-Version: 5.7.0.qualifier
 Bundle-Activator: org.eclipse.cdt.internal.core.natives.CNativePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.cdt.core;org.eclipse.cdt.core.native=split;mandatory=org.eclipse.cdt.core.native,
- org.eclipse.cdt.utils;org.eclipse.cdt.core.native=split;mandatory=org.eclipse.cdt.core.native,
+Export-Package: org.eclipse.cdt.core;native=split;mandatory:=native,
+ org.eclipse.cdt.utils;native=split;mandatory:=native,
  org.eclipse.cdt.utils.pty;version="5.7",
  org.eclipse.cdt.utils.spawner;version="5.7"
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.7.0,4.0.0)"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

@@ -17,12 +17,6 @@
 	<properties>
 		<tycho-version>0.20.0</tycho-version>
 		<tycho-extras-version>0.20.0</tycho-extras-version>
-		<download-site>http://download.eclipse.org</download-site>
-		<platform-site>${download-site}/eclipse/updates/${platform-version}</platform-site>
-		<orbit-site>${download-site}/tools/orbit/downloads/drops/${orbit-version}/repository</orbit-site>
-		<tm-site>${download-site}/tm/updates/${tm-version}</tm-site>
-		<remote-site>${download-site}/tools/ptp/builds/remote/luna/nightly</remote-site>
-		<license-site>${download-site}/cbi/updates/license</license-site>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
@@ -216,40 +210,13 @@
 		<module>xlc/org.eclipse.cdt.core.lrparser.xlc.tests</module>
 		<module>debug/org.eclipse.cdt.debug.ui.tests</module>
 -->
+		<module>releng/org.eclipse.cdt.target</module>
 		<module>releng/org.eclipse.cdt.testing</module>
 		<module>releng/org.eclipse.cdt.testing-feature</module>
 		<module>releng/org.eclipse.cdt.testing.repo</module>
 		
 		<module>releng/org.eclipse.cdt.repo</module>
 	</modules>
-
-	<repositories>
-		<repository>
-			<id>platform</id>
-			<url>${platform-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>orbit</id>
-			<url>${orbit-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>tm</id>
-			<url>${tm-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>remote</id>
-			<url>${remote-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>license-feature</id>
-			<url>${license-site}/</url>
-			<layout>p2</layout>
-		</repository>
-	</repositories>
 
 	<pluginRepositories>
    		<pluginRepository>
@@ -259,32 +226,6 @@
   	</pluginRepositories>
 
 	<profiles>
-		<profile>
-			<id>platform-4.3</id>
-			<activation>
-				<property>
-					<name>!platform-3.8</name>
-				</property>
-			</activation>
-			<properties>
-				<platform-version>4.3</platform-version>
-				<orbit-version>R20130517111416</orbit-version>
-				<tm-version>3.5</tm-version>
-			</properties>
-		</profile>
-		<profile>
-			<id>platform-3.8</id>
-			<activation>
-				<property>
-					<name>platform-3.8</name>
-				</property>
-			</activation>
-			<properties>
-				<platform-version>3.8</platform-version>
-				<orbit-version>R20110523182458</orbit-version>
-				<tm-version>3.3</tm-version>
-			</properties>
-		</profile>
 		<profile>
 			<id>macosx</id>
 			<activation>
@@ -445,6 +386,13 @@
 							<arch>sparc</arch>
 						</environment>
 					</environments>
+					<target>
+						<artifact>
+							<groupId>org.eclipse.cdt</groupId>
+							<artifactId>cdt-e4.4</artifactId>
+							<version>1.0.0</version>
+						</artifact>
+					</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -577,11 +525,12 @@
 							<type>eclipse-plugin</type>
 						</dependency>
 					</dependencies>
+					<!-- This needs to be explicitely set now, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395281 -->
 					<repositories>
 						<repository>
 							<id>platform</id>
 							<layout>p2</layout>
-							<url>${platform-site}</url>
+							<url>http://download.eclipse.org/eclipse/updates/4.4milestones</url>
 						</repository>
 					</repositories>
 				</configuration>

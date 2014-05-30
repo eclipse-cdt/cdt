@@ -16,6 +16,24 @@
       "revId": "aa5a21ff30f4fc90f0a1cf6662adddf434847314",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0756a345_4d62ebb7",
+        "filename": "core/org.eclipse.cdt.core.native/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-05-30T15:48:34Z",
+      "side": 1,
+      "message": "Never mind. I think I get it now.",
+      "parentUuid": "0756a345_cd76fb7c",
+      "revId": "aa5a21ff30f4fc90f0a1cf6662adddf434847314",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

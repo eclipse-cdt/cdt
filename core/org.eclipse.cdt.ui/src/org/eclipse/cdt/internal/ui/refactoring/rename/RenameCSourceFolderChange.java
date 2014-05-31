@@ -93,25 +93,25 @@ public class RenameCSourceFolderChange extends Change {
 		CCorePlugin.getDefault().setProjectDescription(project, des, false, new NullProgressMonitor());
 	}
 	
-	private ICSourceEntry[] renameEntry(ICSourceEntry[] entries){
+	private ICSourceEntry[] renameEntry(ICSourceEntry[] entries) {
 		Set<ICSourceEntry> set = new HashSet<>();
-		for (ICSourceEntry se : entries){
-			String seLocation = se.getName();
+		for (ICSourceEntry entry : entries){
+			String seLocation = entry.getName();
 			if (seLocation.equals(oldName.toPortableString())) {
-				ICSourceEntry newSE = new CSourceEntry(newName, se.getExclusionPatterns(), se.getFlags());
+				ICSourceEntry newSE = new CSourceEntry(newName, entry.getExclusionPatterns(), entry.getFlags());
 				set.add(newSE);
 			} else {
-				Set<IPath> exPatters = new HashSet<>();
-				for (IPath filter : se.getExclusionPatterns()) {
+				Set<IPath> exclusionPatterns = new HashSet<>();
+				for (IPath filter : entry.getExclusionPatterns()) {
 					IPath oldSegments = oldName.removeFirstSegments(oldName.segmentCount() -1);
 					if (filter.equals(oldSegments)) {
-						exPatters.add(newName.removeFirstSegments(newName.segmentCount() - 1));
+						exclusionPatterns.add(newName.removeFirstSegments(newName.segmentCount() - 1));
 					} else {
-						exPatters.add(filter);
+						exclusionPatterns.add(filter);
 					}
 				}
 				
-				set.add(new CSourceEntry(se.getValue(), exPatters.toArray(new IPath[exPatters.size()]), se.getFlags()));
+				set.add(new CSourceEntry(entry.getValue(), exclusionPatterns.toArray(new IPath[exclusionPatterns.size()]), entry.getFlags()));
 			}
 		}
 		return set.toArray(new ICSourceEntry[set.size()]);

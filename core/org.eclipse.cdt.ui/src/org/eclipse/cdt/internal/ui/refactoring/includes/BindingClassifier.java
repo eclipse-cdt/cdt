@@ -1025,8 +1025,6 @@ public class BindingClassifier {
 		Set<IBinding> bindings = new HashSet<>();
 
 		while ((binding = queue.poll()) != null) {
-			if (!bindings.add(binding))
-				continue;
 			if (binding instanceof ICPPSpecialization) {
 				ICPPTemplateParameterMap parameterMap = ((ICPPSpecialization) binding).getTemplateParameterMap();
 				for (Integer position : parameterMap.getAllParameterPositions()) {
@@ -1034,11 +1032,13 @@ public class BindingClassifier {
 					if (argument != null) {
 						IType type = argument.getTypeValue();
 						// Normally we don't need to define parameters of a template specialization
-						// that were not specified explicitly. __gnu_cxx::hash is an exception from
-						// that rule.
-						if (type instanceof IBinding && "hash".equals(((IBinding) type).getName())) { //$NON-NLS-1$
+						// that were not specified explicitly. std::hash and __gnu_cxx::hash are
+						// exceptions from that rule.
+						if (type instanceof IBinding && CharArrayUtils.equals(((IBinding) type).getNameCharArray(), "hash")) { //$NON-NLS-1$
 							IBinding owner = ((IBinding) type).getOwner();
-							if (owner instanceof ICPPNamespace && "__gnu_cxx".equals(owner.getName())) //$NON-NLS-1$
+							if (owner instanceof ICPPNamespace &&
+									(CharArrayUtils.equals(owner.getNameCharArray(), STD) ||
+									CharArrayUtils.equals(owner.getNameCharArray(), "__gnu_cxx"))) //$NON-NLS-1$
 								addRequiredBindings((IBinding) type, queue);
 						}
 					}
@@ -1046,6 +1046,8 @@ public class BindingClassifier {
 				// Get the specialized binding - e.g. get the binding for X if the current binding is
 				// for the template specialization X<Y>.
 				addRequiredBindings(((ICPPSpecialization) binding).getSpecializedBinding(), queue);
+			} else {
+				bindings.add(binding);
 			}
 		}
 
@@ -1160,8 +1162,8 @@ public class BindingClassifier {
 				canDeclare = fPreferences.forwardDeclareExternalVariables;
 		}
 
-		if (canDeclare && !fPreferences.forwardDeclareTemplates
-				&& binding instanceof ICPPTemplateDefinition) {
+		if (canDeclare && !fPreferences.forwardDeclareTemplates &&
+				(binding instanceof ICPPTemplateDefinition || binding instanceof ICPPSpecialization)) {
 			canDeclare = false;
 		}
 		return canDeclare;

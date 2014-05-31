@@ -1037,7 +1037,7 @@ public class BindingClassifier {
 						if (type instanceof IBinding && CharArrayUtils.equals(((IBinding) type).getNameCharArray(), "hash")) { //$NON-NLS-1$
 							IBinding owner = ((IBinding) type).getOwner();
 							if (owner instanceof ICPPNamespace &&
-									(CharArrayUtils.equals(owner.getNameCharArray(), CPPVisitor.STD) ||
+									(CharArrayUtils.equals(owner.getNameCharArray(), STD) ||
 									CharArrayUtils.equals(owner.getNameCharArray(), "__gnu_cxx"))) //$NON-NLS-1$
 								addRequiredBindings((IBinding) type, queue);
 						}

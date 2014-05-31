@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 /**
@@ -27,6 +28,7 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
  */
 public class RenameSourceFolder extends RenameParticipant {
 	private IFolder oldFolder;
+	private String newName;
 
 	public RenameSourceFolder() {
 	}
@@ -34,20 +36,21 @@ public class RenameSourceFolder extends RenameParticipant {
 	@Override
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context)
 			throws OperationCanceledException {
+		RenameArguments arg = getArguments();
+		newName = arg.getNewName();		
 		return RefactoringStatus.create(Status.OK_STATUS);
 	}
 
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		IPath oldFolderPath = oldFolder.getFullPath();
-		String newName = getArguments().getNewName();		
-		IPath newFolderPath = oldFolderPath.removeLastSegments(1).append(newName);
+		IPath newFolderPath = oldFolder.getFullPath().uptoSegment(oldFolder.getFullPath().segmentCount() - 1).append(newName);
 		return new RenameCSourceFolderChange(oldFolderPath, newFolderPath, oldFolder.getProject(), oldFolder);
 	}
 
 	@Override
 	public String getName() {
-		return RenameMessages.RenameSourceFolder_name;
+		return RenameMessages.RenameSourceFolder_0;
 	}
 
 	@Override

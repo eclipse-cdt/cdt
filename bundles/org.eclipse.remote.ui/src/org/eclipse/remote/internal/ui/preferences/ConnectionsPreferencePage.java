@@ -70,14 +70,17 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 
 	private class ConnectionContentProvider implements IStructuredContentProvider {
 
+		@Override
 		public void dispose() {
 			// Nothing to do
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return fWorkingCopies.values().toArray(new IRemoteConnection[fWorkingCopies.size()]);
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// Nothing to do
 		}
@@ -86,18 +89,22 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 
 	private class ConnectionLabelProvider implements ITableLabelProvider {
 
+		@Override
 		public void addListener(ILabelProviderListener listener) {
 			// Nothing to do
 		}
 
+		@Override
 		public void dispose() {
 			// Nothing to do
 		}
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			IRemoteConnection connection = (IRemoteConnection) element;
 			switch (columnIndex) {
@@ -113,10 +120,12 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			return null;
 		}
 
+		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
 
+		@Override
 		public void removeListener(ILabelProviderListener listener) {
 			// Nothing to do
 		}
@@ -199,9 +208,24 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 	}
 
 	/**
-	 * Add a service configuration to the set of service configurations
+	 * Add a new connection
 	 */
 	private void addConnection() {
+		if (fIsDirty) {
+			MessageDialog dialog = new MessageDialog(getShell(), Messages.ConnectionsPreferencePage_Confirm_Actions, null,
+					Messages.ConnectionsPreferencePage_There_are_unsaved_changes, MessageDialog.QUESTION,
+					new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
+			switch (dialog.open()) {
+			case 0:
+				performOk();
+				break;
+			case 1:
+				performDefaults();
+				break;
+			case 2:
+				return;
+			}
+		}
 		IRemoteUIConnectionWizard wizard = fUIConnectionManager.getConnectionWizard(getShell());
 		if (wizard != null) {
 			wizard.setConnectionName(initialConnectionName());
@@ -267,16 +291,19 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		fConnectionTable.setFont(parent.getFont());
 		fConnectionTable.addSelectionListener(fEventHandler);
 		fConnectionTable.addMouseListener(new MouseListener() {
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				if (fSelectedConnection != null && !fSelectedConnection.isOpen()) {
 					editConnection();
 				}
 			}
 
+			@Override
 			public void mouseDown(MouseEvent e) {
 				// Nothing
 			}
 
+			@Override
 			public void mouseUp(MouseEvent e) {
 				// Nothing
 			}
@@ -362,6 +389,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		}
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 		// Do nothing
 	}
@@ -390,6 +418,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 	protected void performDefaults() {
 		initWorkingConnections();
 		fIsDirty = false;
+		fConnectionViewer.refresh();
 		super.performDefaults();
 	}
 
@@ -419,6 +448,8 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			}
 			fConnectionViewer.refresh();
 			fIsDirty = true;
+			fConnectionTable.deselectAll();
+			fSelectedConnection = null;
 		}
 	}
 
@@ -460,8 +491,8 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 				if (conn instanceof IRemoteConnectionWorkingCopy) {
 					IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) conn;
 					if (wc.isDirty()) {
-						MessageDialog dialog = new MessageDialog(getShell(), Messages.ConnectionsPreferencePage_Confirm_Actions, null,
-								Messages.ConnectionsPreferencePage_This_connection_contains_unsaved_changes,
+						MessageDialog dialog = new MessageDialog(getShell(), Messages.ConnectionsPreferencePage_Confirm_Actions,
+								null, Messages.ConnectionsPreferencePage_This_connection_contains_unsaved_changes,
 								MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,
 										IDialogConstants.CANCEL_LABEL }, 0);
 						switch (dialog.open()) {

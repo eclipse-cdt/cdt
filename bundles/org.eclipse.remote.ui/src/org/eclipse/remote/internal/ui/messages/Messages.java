@@ -44,6 +44,8 @@ public class Messages extends NLS {
 
 	public static String ConnectionsPreferencePage_Status;
 
+	public static String ConnectionsPreferencePage_There_are_unsaved_changes;
+
 	public static String ConnectionsPreferencePage_This_connection_contains_unsaved_changes;
 
 	public static String ConnectionsPreferencePage_User;

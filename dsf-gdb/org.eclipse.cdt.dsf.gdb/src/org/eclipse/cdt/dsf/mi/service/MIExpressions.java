@@ -1661,7 +1661,9 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
         				// When getting an MIFunctionFinishedEvent we must set
         				// a proper alias for the convenience variable
         				String resultVar = ((MIFunctionFinishedEvent)miEvent).getGDBResultVar();
-        				fReturnValueAliases.createAlias(stoppedEventThread, resultVar);
+        				if (resultVar != null && !resultVar.isEmpty()) {
+        					fReturnValueAliases.createAlias(stoppedEventThread, resultVar);
+        				}
         			}
 
         			// Keep track of the latest method the thread is stopped in.

@@ -65,6 +65,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
@@ -245,13 +246,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	@Override
 	public IInclude[] getIncludes() throws CModelException {
 		ICElement[] celements = getChildren();
-		ArrayList<ICElement> aList = new ArrayList<ICElement>();
+		ArrayList<ICElement> includes = new ArrayList<>();
 		for (ICElement celement : celements) {
 			if (celement.getElementType() == ICElement.C_INCLUDE) {
-				aList.add(celement);
+				includes.add(celement);
 			}
 		}
-		return aList.toArray(new IInclude[0]);
+		return includes.toArray(new IInclude[includes.size()]);
 	}
 
 	@Override
@@ -273,13 +274,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	@Override
 	public IUsing[] getUsings() throws CModelException {
 		ICElement[] celements = getChildren();
-		ArrayList<ICElement> aList = new ArrayList<ICElement>();
+		ArrayList<ICElement> usings = new ArrayList<>();
 		for (ICElement celement : celements) {
 			if (celement.getElementType() == ICElement.C_USING) {
-				aList.add(celement);
+				usings.add(celement);
 			}
 		}
-		return aList.toArray(new IUsing[0]);
+		return usings.toArray(new IUsing[usings.size()]);
 	}
 
 	@Override
@@ -314,13 +315,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	@Override
 	public INamespace[] getNamespaces() throws CModelException {
 		ICElement[] celements = getChildren();
-		ArrayList<ICElement> elementList = new ArrayList<ICElement>();
+		ArrayList<ICElement> namespaces = new ArrayList<>();
 		for (ICElement celement : celements) {
 			if (celement.getElementType() == ICElement.C_NAMESPACE) {
-				elementList.add(celement);
+				namespaces.add(celement);
 			}
 		}
-		return elementList.toArray(new INamespace[0]);
+		return namespaces.toArray(new INamespace[namespaces.size()]);
 	}
 
 	protected void setLocationURI(URI loc) {
@@ -470,7 +471,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			IBuffer buffer = this.getBuffer();
 			return buffer == null ? null : buffer.getCharacters();
 		} catch (CModelException e) {
-			return new char[0];
+			return CharArrayUtils.EMPTY_CHAR_ARRAY;
 		}
 	}
 
@@ -611,9 +612,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 					InputStream stream= null;
 					try {
 						stream = new FileInputStream(file);
-						buffer.setContents(Util.getInputStreamAsCharArray(stream, (int)file.length(), null));
+						buffer.setContents(Util.getInputStreamAsCharArray(stream, (int) file.length(), null));
 					} catch (IOException e) {
-						buffer.setContents(new char[0]);
+						buffer.setContents(CharArrayUtils.EMPTY_CHAR_ARRAY);
 					} finally {
 						if (stream != null) {
 							try {
@@ -623,7 +624,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 						}
 					}
 				} else {
-					buffer.setContents(new char[0]);
+					buffer.setContents(CharArrayUtils.EMPTY_CHAR_ARRAY);
 				}
 			}
 		}
@@ -942,7 +943,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public static IIndexFile getParsedInContext(IIndexFile indexFile) throws CoreException {
-		HashSet<IIndexFile> visited= new HashSet<IIndexFile>();
+		HashSet<IIndexFile> visited= new HashSet<>();
 		// Bug 199412, may recurse.
 		while (visited.add(indexFile)) {
 			IIndexInclude include= indexFile.getParsedInContext();
@@ -1109,7 +1110,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			// optional: parameters
 			String[] mementoParams= {};
 			if (memento.hasMoreTokens()) {
-				List<String> params= new ArrayList<String>();
+				List<String> params= new ArrayList<>();
 				do {
 					token= memento.nextToken();
 					if (token.charAt(0) != CEM_PARAMETER) {

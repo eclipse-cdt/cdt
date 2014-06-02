@@ -59,7 +59,7 @@ public class CRenameProcessor extends RenameProcessor {
     private final CRefactory fManager;
     private final ASTManager fAstManager;
 	private IIndex fIndex;
-	private int indexLockCount;
+	private int fIndexLockCount;
 	private RefactoringStatus fInitialConditionsStatus;
 
 	private Change fChange;
@@ -303,7 +303,7 @@ public class CRenameProcessor extends RenameProcessor {
     }
 
 	public void lockIndex() throws CoreException, InterruptedException {
-		if (indexLockCount == 0) {
+		if (fIndexLockCount == 0) {
 			if (fIndex == null) {
 				ICProject[] projects= CoreModel.getDefault().getCModel().getCProjects();
 				fIndex = CCorePlugin.getIndexManager().getIndex(projects,
@@ -311,11 +311,11 @@ public class CRenameProcessor extends RenameProcessor {
 			}
 			fIndex.acquireReadLock();
 		}
-		indexLockCount++;
+		fIndexLockCount++;
 	}
 	
 	public void unlockIndex() {
-		if (--indexLockCount <= 0) {
+		if (--fIndexLockCount <= 0) {
 			if (fAstManager != null) {
 				fAstManager.dispose();
 			}

@@ -13,6 +13,7 @@ package org.eclipse.cdt.core;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -56,7 +57,7 @@ public abstract class EFSExtensionProvider {
 	 *         physical file.
 	 */
 	public String getPathFromURI(URI locationURI) {
-		String path = locationURI.getPath();
+		String path = UNCPathConverter.toPath(locationURI).toOSString();
 		String schema = locationURI.getScheme();
 		if (schema != null && schema.equals(EFS.SCHEME_FILE) && Platform.getOS().equals(Platform.WS_WIN32)) {
 			// URI path on Windows is represented as "/C:/path"

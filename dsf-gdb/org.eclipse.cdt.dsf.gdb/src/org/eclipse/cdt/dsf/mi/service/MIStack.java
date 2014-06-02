@@ -1047,7 +1047,9 @@ public class MIStack extends AbstractDsfService
         			String name = ((MIFunctionFinishedEvent)miEvent).getGDBResultVar();
         			String value = ((MIFunctionFinishedEvent)miEvent).getReturnValue();
 
-        			fThreadToReturnVariable.put(finishedEventThread, new VariableData(new MIArg(name, value)));
+        			if (name != null && !name.isEmpty() && value != null && !value.isEmpty()) {
+        				fThreadToReturnVariable.put(finishedEventThread, new VariableData(new MIArg(name, value)));
+        			}
         		}
         	}
         }

@@ -1,6 +1,0 @@
-!***************  PROJECT CONTRIBUTION  ******************************************************** 
-
-!*** Special entries from eclipse
-
-plugin@org.eclipse.test=v20100118,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,
-fragment@org.eclipse.ant.optional.junit=v20110503,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,

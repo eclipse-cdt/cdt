@@ -1,2 +1,0 @@
-dropPrefix[]=R&dropPrefix[]=S&
-dropType[]=Archived Release&dropType[]=Archived Stable Build&

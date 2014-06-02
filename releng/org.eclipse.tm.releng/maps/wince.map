@@ -1,6 +1,0 @@
-feature@org.eclipse.rse.wince=v201205301215,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/wince/org.eclipse.rse.wince-feature
-!! feature@org.eclipse.rse.wince.wrapper=v20080609a,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.wince.wrapper-feature
-plugin@org.eclipse.rse.subsystems.wince=v201205301215,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/wince/org.eclipse.rse.subsystems.wince
-plugin@org.eclipse.tm.rapi=v201205301215,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/wince/org.eclipse.tm.rapi
-plugin@org.eclipse.tm.rapi.examples=v201205301215,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/wince/org.eclipse.tm.rapi.examples
-plugin@org.eclipse.tm.rapi.tests=v201205301215,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/wince/org.eclipse.tm.rapi.tests

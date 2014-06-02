@@ -1,6 +1,0 @@
-plugin@org.apache.commons.net,3.2.0=GET,http://build.eclipse.org/orbit/committers/orbit-I/20130514212025/I20130514212025/repository/plugins/org.apache.commons.net_3.2.0.v201305141515.jar
-plugin@org.apache.commons.net.source,3.2.0=GET,http://build.eclipse.org/orbit/committers/orbit-I/20130514212025/I20130514212025/repository/plugins/org.apache.commons.net.source_3.2.0.v201305141515.jar
-plugin@com.jcraft.jzlib,1.1.1=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20120526062928/repository/plugins/com.jcraft.jzlib_1.1.1.v201205102305.jar
-plugin@com.jcraft.jzlib.source,1.1.1=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20120526062928/repository/plugins/com.jcraft.jzlib.source_1.1.1.v201205102305.jar
-plugin@com.jcraft.jsch,0.1.46=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20120526062928/repository/plugins/com.jcraft.jsch_0.1.46.v201205102330.jar
-plugin@com.jcraft.jsch.source,0.1.46=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20120526062928/repository/plugins/com.jcraft.jsch.source_0.1.46.v201205102330.jar

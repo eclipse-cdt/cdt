@@ -365,6 +365,12 @@ int testRTTI() {
 }
 // End of bug 376901 RTTI tests
 
+void noReturnValue() {
+    int a = 0;
+    a++;
+    return;
+}
+    
 int testSimpleReturn(int a) {
 	int b = 0;
 	b = a;
@@ -384,6 +390,7 @@ void testReturn() {
 	
 	testSimpleReturn(6);
 	testComplexReturn();
+	noReturnValue();
 	a = 0;
 }
 

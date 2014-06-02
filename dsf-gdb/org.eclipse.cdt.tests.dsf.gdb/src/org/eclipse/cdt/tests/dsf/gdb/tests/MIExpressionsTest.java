@@ -4106,6 +4106,29 @@ public class MIExpressionsTest extends BaseTestCase {
     }
 
     /**
+     * This test verifies that we properly display variables after a step-return operation
+     * from a method returning void.
+     */
+    @Test
+    public void testNoReturnValueForEmptyStepReturn() throws Throwable {
+    	SyncUtil.runToLocation("noReturnValue");    	
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_RETURN);
+    	
+    	// Check no return value is shown when looking at the first frame
+        final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+    	IVariableDMData[] result = SyncUtil.getLocals(frameDmc);
+    	
+    	assertEquals(2, result.length);  // Two variables and one return value
+
+    	// first variable
+    	assertEquals("a",  result[0].getName());
+    	assertEquals("10", result[0].getValue());
+    	// Second variable
+    	assertEquals("b", result[1].getName());
+    	assertEquals("false", result[1].getValue());
+    }
+
+    /**
      * This tests verifies that we can obtain a child even though
      * is was already created directly.
      */

@@ -50,6 +50,7 @@ public class JSchUIConnectionManager extends AbstractRemoteUIConnectionManager {
 			}
 		}
 
+		@Override
 		public PasswordAuthentication prompt(String username, String message) {
 			if (prompter.promptPassword(message)) {
 				PasswordAuthentication auth = new PasswordAuthentication(username, prompter.getPassword().toCharArray());
@@ -58,10 +59,12 @@ public class JSchUIConnectionManager extends AbstractRemoteUIConnectionManager {
 			return null;
 		}
 
+		@Override
 		public String[] prompt(String destination, String name, String message, String[] prompt, boolean[] echo) {
 			return prompter.promptKeyboardInteractive(destination, name, message, prompt, echo);
 		}
 
+		@Override
 		public int prompt(final int promptType, final String title, final String message, final int[] promptResponses,
 				final int defaultResponseIndex) {
 			final Display display = getDisplay();
@@ -86,13 +89,14 @@ public class JSchUIConnectionManager extends AbstractRemoteUIConnectionManager {
 			}
 
 			display.syncExec(new Runnable() {
+				@Override
 				public void run() {
 					final MessageDialog dialog = new MessageDialog(new Shell(display), title, null /* title image */, message,
 							promptType, buttons, defaultResponseIndex);
 					retval[0] = dialog.open();
 				}
 			});
-			return retval[0];
+			return promptResponses[retval[0]];
 		}
 	}
 
@@ -115,6 +119,7 @@ public class JSchUIConnectionManager extends AbstractRemoteUIConnectionManager {
 	 * 
 	 * @see org.eclipse.remote.ui.IRemoteUIConnectionManager#getConnectionWizard(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	public IRemoteUIConnectionWizard getConnectionWizard(Shell shell) {
 		return new JSchConnectionWizard(shell, fConnMgr);
 	}
@@ -123,6 +128,7 @@ public class JSchUIConnectionManager extends AbstractRemoteUIConnectionManager {
 	public void openConnectionWithProgress(Shell shell, IRunnableContext context, final IRemoteConnection connection) {
 		if (!connection.isOpen()) {
 			IRunnableWithProgress op = new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						connection.open(new RemoteAuthenticator(connection), monitor);
@@ -141,10 +147,12 @@ public class JSchUIConnectionManager extends AbstractRemoteUIConnectionManager {
 					new ProgressMonitorDialog(shell).run(true, true, op);
 				}
 			} catch (InvocationTargetException e) {
-				ErrorDialog.openError(shell, Messages.JSchUIConnectionManager_Connection_Error, Messages.JSchUIConnectionManager_Could_not_open_connection,
+				ErrorDialog.openError(shell, Messages.JSchUIConnectionManager_Connection_Error,
+						Messages.JSchUIConnectionManager_Could_not_open_connection,
 						new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), e.getCause().getMessage()));
 			} catch (InterruptedException e) {
-				ErrorDialog.openError(shell, Messages.JSchUIConnectionManager_Connection_Error, Messages.JSchUIConnectionManager_Could_not_open_connection,
+				ErrorDialog.openError(shell, Messages.JSchUIConnectionManager_Connection_Error,
+						Messages.JSchUIConnectionManager_Could_not_open_connection,
 						new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), e.getMessage()));
 			}
 		}

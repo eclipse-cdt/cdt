@@ -14,7 +14,9 @@
       label="%featureName"
       version="2.3.0.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.rse.services.telnet.source">
+      plugin="org.eclipse.rse.services.telnet.source"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.1.qualifier">
 
    <description>
       %description

@@ -213,8 +213,8 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 	private void addConnection() {
 		if (fIsDirty) {
 			MessageDialog dialog = new MessageDialog(getShell(), Messages.ConnectionsPreferencePage_Confirm_Actions, null,
-					Messages.ConnectionsPreferencePage_There_are_unsaved_changes, MessageDialog.QUESTION,
-					new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
+					Messages.ConnectionsPreferencePage_There_are_unsaved_changes, MessageDialog.QUESTION, new String[] {
+							IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
 			switch (dialog.open()) {
 			case 0:
 				performOk();
@@ -490,6 +490,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			} else {
 				if (conn instanceof IRemoteConnectionWorkingCopy) {
 					IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) conn;
+					conn = wc.getOriginal();
 					if (wc.isDirty()) {
 						MessageDialog dialog = new MessageDialog(getShell(), Messages.ConnectionsPreferencePage_Confirm_Actions,
 								null, Messages.ConnectionsPreferencePage_This_connection_contains_unsaved_changes,
@@ -500,7 +501,6 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 							wc.save();
 							break;
 						case 1:
-							conn = wc.getOriginal();
 							break;
 						case 2:
 							return;

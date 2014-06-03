@@ -69,7 +69,7 @@
     <fixcrlf srcdir="${working}/collector" eol="${eol}" eof="asis" includes="*"/>
     <copy todir="${working}/collector">
       <fileset dir="${working}/jars" includes="*"/>
-      <fileset dir="${builder}/template" includes="notice.html,epl-v10.html"/>
+      <fileset dir="${builder}/rootfiles" includes="notice.html,epl-v10.html"/>
     </copy>
   </target>
   <!-- ===================================================================== -->

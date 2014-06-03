@@ -8,6 +8,7 @@
  * Contributors:
  *     Marc Dumais (Ericsson) - Initial API and implementation (Bug 396268)
  *     Xavier Raynaud (Kalray) - Bug 431690
+ *     Marc Dumais (Ericsson) - Bug 436453
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
 
@@ -217,7 +218,7 @@ public class MulticoreVisualizerLoadMeter extends MulticoreVisualizerGraphicObje
 			gc.setForeground(IMulticoreVisualizerConstants.COLOR_LOAD_TEXT);
 			int tx = m_bounds.x;
 			int ty = m_bounds.y;
-			GUIUtils.drawTextAligned(gc, load, m_bounds, tx, ty, true, false);
+			GUIUtils.drawTextAligned(gc, load, tx, ty, true, false);
 		}
 	}
 

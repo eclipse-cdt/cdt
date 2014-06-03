@@ -57,9 +57,6 @@ public final class ASTProvider {
 			fName= name;
 		}
 
-		/*
-		 * @see java.lang.Object#toString()
-		 */
 		@Override
 		public String toString() {
 			return fName;
@@ -73,7 +70,6 @@ public final class ASTProvider {
 	 * <p>
 	 * If not yet cached and if the translation unit is open, an AST will be created by
 	 * this AST provider.
-	 * </p>
 	 */
 	public static final WAIT_FLAG WAIT_IF_OPEN= new WAIT_FLAG("wait if open"); //$NON-NLS-1$
 
@@ -83,7 +79,6 @@ public final class ASTProvider {
 	 * If the translation unit is not open no AST will be provided.
 	 * <p>
 	 * No AST will be created by the AST provider.
-	 * </p>
 	 */
 	public static final WAIT_FLAG WAIT_ACTIVE_ONLY= new WAIT_FLAG("wait active only"); //$NON-NLS-1$
 
@@ -92,7 +87,6 @@ public final class ASTProvider {
 	 * only wants the already available shared AST.
 	 * <p>
 	 * No AST will be created by the AST provider.
-	 * </p>
 	 */
 	public static final WAIT_FLAG WAIT_NO= new WAIT_FLAG("don't wait"); //$NON-NLS-1$
 
@@ -105,27 +99,18 @@ public final class ASTProvider {
 	 * Internal activation listener.
 	 */
 	private class ActivationListener implements IPartListener2, IWindowListener {
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
-		 */
 		@Override
 		public void partActivated(IWorkbenchPartReference ref) {
 			if (isCEditor(ref) && !isActiveEditor(ref))
 				activeEditorChanged(ref.getPart(true));
 		}
 
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
-		 */
 		@Override
 		public void partBroughtToTop(IWorkbenchPartReference ref) {
 			if (isCEditor(ref) && !isActiveEditor(ref))
 				activeEditorChanged(ref.getPart(true));
 		}
 
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
-		 */
 		@Override
 		public void partClosed(IWorkbenchPartReference ref) {
 			if (isActiveEditor(ref)) {
@@ -133,50 +118,32 @@ public final class ASTProvider {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
-		 */
 		@Override
 		public void partDeactivated(IWorkbenchPartReference ref) {
 		}
 
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
-		 */
 		@Override
 		public void partOpened(IWorkbenchPartReference ref) {
 			if (isCEditor(ref) && !isActiveEditor(ref))
 				activeEditorChanged(ref.getPart(true));
 		}
 
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
-		 */
 		@Override
 		public void partHidden(IWorkbenchPartReference ref) {
 		}
 
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
-		 */
 		@Override
 		public void partVisible(IWorkbenchPartReference ref) {
 			if (isCEditor(ref) && !isActiveEditor(ref))
 				activeEditorChanged(ref.getPart(true));
 		}
 
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
-		 */
 		@Override
 		public void partInputChanged(IWorkbenchPartReference ref) {
 			if (isCEditor(ref) && isActiveEditor(ref))
 				activeEditorChanged(ref.getPart(true));
 		}
 
-		/*
-		 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
-		 */
 		@Override
 		public void windowActivated(IWorkbenchWindow window) {
 			IWorkbenchPartReference ref= window.getPartService().getActivePartReference();
@@ -184,16 +151,10 @@ public final class ASTProvider {
 				activeEditorChanged(ref.getPart(true));
 		}
 
-		/*
-		 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
-		 */
 		@Override
 		public void windowDeactivated(IWorkbenchWindow window) {
 		}
 
-		/*
-		 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
-		 */
 		@Override
 		public void windowClosed(IWorkbenchWindow window) {
 			if (fActiveEditor != null && fActiveEditor.getSite() != null && window == fActiveEditor.getSite().getWorkbenchWindow()) {
@@ -202,9 +163,6 @@ public final class ASTProvider {
 			window.getPartService().removePartListener(this);
 		}
 
-		/*
-		 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
-		 */
 		@Override
 		public void windowOpened(IWorkbenchWindow window) {
 			window.getPartService().addPartListener(this);
@@ -270,8 +228,9 @@ public final class ASTProvider {
 
 			// Ensure existing windows get connected
 			IWorkbenchWindow[] windows= PlatformUI.getWorkbench().getWorkbenchWindows();
-			for (int i= 0, length= windows.length; i < length; i++)
+			for (int i= 0, length= windows.length; i < length; i++) {
 				windows[i].getPartService().addPartListener(fActivationListener);
+			}
 		}
 	}
 
@@ -347,7 +306,7 @@ public final class ASTProvider {
 		fCache.setActiveElement(null);
 	}
 
-	/*
+	/**
 	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled()
 	 */
 	void reconciled(IASTTranslationUnit ast, ICElement cElement, IProgressMonitor progressMonitor) {
@@ -364,7 +323,7 @@ public final class ASTProvider {
 	 *
 	 * @param cElement     the translation unit
 	 * @param waitFlag     condition for waiting for the AST to be built.
-	 * @param monitor      a progress monitor, may be <code>null</code>
+	 * @param monitor      a progress monitor, may be {@code null}
 	 * @param astRunnable  the runnable taking the AST
 	 * @return the status  returned by the ASTRunnable
 	 */
@@ -390,8 +349,8 @@ public final class ASTProvider {
 	 * @param tu The translation unit to get the AST for.
 	 * @param index index with read lock held.
 	 * @param waitFlag condition for waiting for the AST to be built.
-	 * @param monitor a progress monitor, may be <code>null</code>.
-	 * @return the shared AST, or <code>null</code> if the shared AST is not available.
+	 * @param monitor a progress monitor, may be {@code null}.
+	 * @return the shared AST, or {@code null} if the shared AST is not available.
 	 */
 	public final IASTTranslationUnit acquireSharedAST(ITranslationUnit tu, IIndex index,
 			WAIT_FLAG waitFlag, IProgressMonitor monitor) {
@@ -417,8 +376,8 @@ public final class ASTProvider {
 	 *
 	 * @param tu the translation unit.
 	 * @param waitFlag condition for waiting for the AST to be built.
-	 * @return <code>true</code> if the AST cache can be used for the given translation unit,
-	 * 		<code>false</code> otherwise.
+	 * @return {@code true} if the AST cache can be used for the given translation unit,
+	 * 		{@code false} otherwise.
 	 */
 	private boolean prepareForUsingCache(ITranslationUnit tu, WAIT_FLAG waitFlag) {
 		if (!tu.isOpen())

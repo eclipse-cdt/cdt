@@ -26,12 +26,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Represents an entire C translation unit (<code>.c</code> source file).
- * The children are of type <code>IStructureElement</code>,
- * <code>IInclude</code>, etc..
+ * Represents an entire C translation unit ({@code .c} source file).
+ * The children are of type {@code IStructureElement},
+ * {@code IInclude}, etc..
  * and appear in the order in which they are declared in the source.
- * If a <code>.c</code> file cannot be parsed, its structure remains unknown.
- * Use <code>ICElement.isStructureKnown</code> to determine whether this is 
+ * If a {@code .c} file cannot be parsed, its structure remains unknown.
+ * Use {@code ICElement.isStructureKnown} to determine whether this is 
  * the case.
  * 
  * @noimplement This interface is not intended to be implemented by clients.
@@ -99,12 +99,13 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 
 	/**
 	 * Style constant for {@link #getAST(IIndex, int)}. 
-	 * Instructs the parser to make an attempt to create ast nodes for inactive code branches. The parser
-	 * makes its best effort to create ast for the inactive code branches but may decide to skip parts
-	 * of the inactive code (e.g. function bodies, entire code branches, etc.).
+	 * Instructs the parser to make an attempt to create ast nodes for inactive code branches.
+	 * The parser makes its best effort to create ast for the inactive code branches but may decide
+	 * to skip parts of the inactive code (e.g. function bodies, entire code branches, etc.).
 	 * <p>
-	 * The inactive nodes can be accessed via {@link IASTDeclarationListOwner#getDeclarations(boolean)} or
-	 * by using a visitor with {@link ASTVisitor#includeInactiveNodes} set to <code>true</code>.
+	 * The inactive nodes can be accessed via
+	 * {@link IASTDeclarationListOwner#getDeclarations(boolean)} or by using a visitor with
+	 * {@link ASTVisitor#includeInactiveNodes} set to {@code true}.
 	 * 
 	 * @since 5.1
 	 */
@@ -121,17 +122,19 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * If the translation unit already includes the specified include declaration,
 	 * the import is not generated (it does not generate duplicates).
 	 *
-	 * @param name the name of the include declaration to add (For example: <code>"stdio.h"</code> or
-	 *  <code>"sys/types.h"</code>)
-	 * @param sibling the existing element which the include declaration will be inserted immediately before (if
-	 *	<code> null </code>, then this include will be inserted as the last include declaration.
+	 * @param name the name of the include declaration to add (For example: {@code "stdio.h"}
+	 *     or {@code "sys/types.h"})
+	 * @param sibling the existing element which the include declaration will be inserted
+	 *     immediately before (if {@code null}, then this include will be inserted as the last
+	 *     include declaration).
 	 * @param monitor the progress monitor to notify
-	 * @return the newly inserted include declaration (or the previously existing one in case attempting to create a duplicate)
+	 * @return the newly inserted include declaration (or the previously existing one in case
+	 *     attempting to create a duplicate)
 	 *
 	 * @exception CModelException if the element could not be created. Reasons include:
 	 * <ul>
 	 * <li> This C element does not exist or the specified sibling does not exist (ELEMENT_DOES_NOT_EXIST)</li>
-	 * <li> A <code>CoreException</code> occurred while updating an underlying resource
+	 * <li> A {@code CoreException} occurred while updating an underlying resource
 	 * <li> The specified sibling is not a child of this translation unit (INVALID_SIBLING)
 	 * <li> The name is not a valid import name (INVALID_NAME)
 	 * </ul>
@@ -143,12 +146,13 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 *
 	 * @param name the name of the using
 	 * @param monitor the progress monitor to notify
-	 * @return the newly inserted namespace declaration (or the previously existing one in case attempting to create a duplicate)
+	 * @return the newly inserted namespace declaration (or the previously existing one in case
+	 *     attempting to create a duplicate)
 	 *
 	 * @exception CModelException if the element could not be created. Reasons include:
 	 * <ul>
 	 * <li>This C element does not exist (ELEMENT_DOES_NOT_EXIST)</li>
-	 * <li> A <code>CoreException</code> occurred while updating an underlying resource
+	 * <li> A {@code CoreException} occurred while updating an underlying resource
 	 * <li> The name is not a valid package name (INVALID_NAME)
 	 * </ul>
 	 */
@@ -165,21 +169,21 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * @exception CModelException if the element could not be created. Reasons include:
 	 * <ul>
 	 * <li>This C element does not exist (ELEMENT_DOES_NOT_EXIST)</li>
-	 * <li> A <code>CoreException</code> occurred while updating an underlying resource
+	 * <li> A {@code CoreException} occurred while updating an underlying resource
 	 * <li> The name is not a valid package name (INVALID_NAME)
 	 * </ul>
 	 */
 	INamespace createNamespace(String namespace, ICElement sibling, IProgressMonitor monitor) throws CModelException;   
 
 	/**
-	 * Returns the shared working copy for this element, using the default <code>IBuffer</code>
-	 * factory, or <code>null</code>, if no working copy has been created for this element.
+	 * Returns the shared working copy for this element, using the default {@code IBuffer}
+	 * factory, or {@code null}, if no working copy has been created for this element.
 	 * <p>
 	 * Users of this method must not destroy the resulting working copy.
 	 * 
 	 * @param bufferFactory
-	 *            the given <code>IBuffer</code> factory
-	 * @return the found shared working copy for this element, or <code>null</code> if none
+	 *            the given {@code IBuffer} factory
+	 * @return the found shared working copy for this element, or {@code null} if none
 	 * @see IBufferFactory
 	 * @since 5.1
 	 */
@@ -194,30 +198,30 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	/**
 	 * Returns the smallest element within this translation unit that 
 	 * includes the given source position (that is, a method, field, etc.), or
-	 * <code>null</code> if there is no element other than the translation
+	 * {@code null} if there is no element other than the translation
 	 * unit itself at the given position, or if the given position is not
 	 * within the source range of this translation unit.
 	 *
 	 * @param line a position inside the translation unit
-	 * @return the innermost C element enclosing a given source position or <code>null</code>
-	 *	if none (excluding the translation unit).
+	 * @return the innermost C element enclosing a given source position or {@code null}
+	 *	   if none (excluding the translation unit).
 	 * @exception CModelException if the translation unit does not exist or if an
-	 *		exception occurs while accessing its corresponding resource
+	 *	   exception occurs while accessing its corresponding resource
 	 */
 	ICElement getElementAtLine(int line) throws CModelException;
 
 	/**
 	 * Returns the smallest element within this translation unit that 
 	 * includes the given source position (that is, a method, field, etc.), or
-	 * <code>null</code> if there is no element other than the translation
+	 * {@code null} if there is no element other than the translation
 	 * unit itself at the given position, or if the given position is not
 	 * within the source range of this translation unit.
 	 *
 	 * @param position a source position inside the translation unit
-	 * @return the innermost C element enclosing a given source position or <code>null</code>
-	 *	if none (excluding the translation unit).
+	 * @return the innermost C element enclosing a given source position or {@code null}
+	 *	   if none (excluding the translation unit).
 	 * @exception CModelException if the translation unit does not exist or if an
-	 *		exception occurs while accessing its corresponding resource
+	 *	   exception occurs while accessing its corresponding resource
 	 */
 	ICElement getElementAtOffset(int offset) throws CModelException;
 
@@ -230,7 +234,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * You have this behavior when at expansion of a macro.
 	 *
 	 * @param position a source position inside the translation unit
-	 * @return the innermost C element enclosing a given source position or <code>null</code>
+	 * @return the innermost C element enclosing a given source position or {@code null}
 	 *		if none (excluding the translation unit).
 	 * @exception CModelException if the translation unit does not exist or if an
 	 *		exception occurs while accessing its corresponding resource
@@ -242,12 +246,12 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	/**
 	 * Returns the include declaration in this translation unit with the given name.
 	 *
-	 * @param the name of the include to find (For example: <code>"stdio.h"</code> 
-	 * 		or <code>"sys/types.h"</code>)
+	 * @param the name of the include to find (For example: {@code "stdio.h"} 
+	 * 		or {@code "sys/types.h"})
 	 * @return a handle onto the corresponding include declaration. The include declaration may or
 	 * 		may not exist.
 	 */
-	IInclude getInclude(String name) ;
+	IInclude getInclude(String name);
 
 	/**
 	 * Returns the include declarations in this translation unit
@@ -259,42 +263,42 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	IInclude[] getIncludes() throws CModelException;
 	
 	/**
-	 * Returns a shared working copy on this element using the given factory to create the buffer, or this
-	 * element if this element is already a working copy. This API can only answer an already existing working
-	 * copy if it is based on the same original translation unit AND was using the same buffer factory (i.e.
-	 * as defined by <code>Object#equals</code>).
+	 * Returns a shared working copy on this element using the given factory to create the buffer,
+	 * or this element if this element is already a working copy. This API can only answer
+	 * an already existing working copy if it is based on the same original translation unit AND
+	 * was using the same buffer factory (i.e. as defined by {@code Object#equals}).
 	 * <p>
 	 * The life time of a shared working copy is as follows:
 	 * <ul>
-	 * <li>The first call to <code>getSharedWorkingCopy(...)</code> creates a new working copy for this
-	 * element</li>
+	 * <li>The first call to {@code getSharedWorkingCopy(...)} creates a new working copy for
+	 * this element</li>
 	 * <li>Subsequent calls increment an internal counter.</li>
-	 * <li>A call to <code>destroy()</code> decrements the internal counter.</li>
+	 * <li>A call to {@code destroy()} decrements the internal counter.</li>
 	 * <li>When this counter is 0, the working copy is destroyed.
 	 * </ul>
 	 * So users of this method must destroy exactly once the working copy.
 	 * <p>
-	 * Note that the buffer factory will be used for the life time of this working copy, i.e. if the working
-	 * copy is closed then reopened, this factory will be used. The buffer will be automatically initialized
-	 * with the original's compilation unit content upon creation.
+	 * Note that the buffer factory will be used for the life time of this working copy,
+	 * i.e. if the working copy is closed then reopened, this factory will be used. The buffer will
+	 * be automatically initialized with the original's compilation unit content upon creation.
 	 * <p>
-	 * When the shared working copy instance is created, an ADDED ICElementDelta is reported on this working
-	 * copy.
+	 * When the shared working copy instance is created, an ADDED ICElementDelta is reported on
+	 * this working copy.
 	 * 
 	 * @param monitor
 	 *            a progress monitor used to report progress while opening this compilation unit or
-	 *            <code>null</code> if no progress should be reported
+	 *            {@code null} if no progress should be reported
 	 * @param requestor
-	 *            a requestor which will get notified of problems detected during reconciling as they are
-	 *            discovered. The requestor can be set to <code>null</code> indicating that the client is not
-	 *            interested in problems.
+	 *            a requestor which will get notified of problems detected during reconciling as
+	 *            they are discovered. The requestor can be set to {@code null} indicating that
+	 *            the client is not interested in problems.
 	 * @exception CModelException
 	 *                if the contents of this element can not be determined. Reasons include:
 	 *                <ul>
 	 *                <li> This C element does not exist (ELEMENT_DOES_NOT_EXIST)</li>
 	 *                </ul>
-	 * @return a shared working copy on this element using the given factory to create the buffer, or this
-	 *         element if this element is already a working copy
+	 * @return a shared working copy on this element using the given factory to create the buffer,
+	 *         or this element if this element is already a working copy
 	 * @see IBufferFactory
 	 * @see IProblemRequestor
 	 * @since 5.1
@@ -305,7 +309,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * Returns the first using in this translation unit with the name
 	 * This is a handle-only method. The namespace declaration may or may not exist.
 	 *
-	 * @param name the name of the namespace declaration (For example, <code>"std"</code>)
+	 * @param name the name of the namespace declaration (For example, {@code "std"})
 	 */
 	IUsing getUsing(String name);
 
@@ -324,7 +328,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * Returns the first namespace declaration in this translation unit with the given name
 	 * This is a handle-only method. The namespace declaration may or may not exist.
 	 *
-	 * @param name the name of the namespace declaration (For example, <code>"std"</code>)
+	 * @param name the name of the namespace declaration (For example, {@code "std"})
 	 */
 	INamespace getNamespace(String name);
 
@@ -352,17 +356,17 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	boolean isSourceUnit();
 
 	/**
-	 * Returns <code>true</code> if the code is C
+	 * Returns {@code true} if the code is C
 	 */
 	boolean isCLanguage();
 
 	/**
-	 * Returns <code>true</code> if the code is C++
+	 * Returns {@code true} if the code is C++
 	 */
 	boolean isCXXLanguage();
 
 	/**
-	 * Returns <code>true</code> if the code is assembly
+	 * Returns {@code true} if the code is assembly
 	 */
 	boolean isASMLanguage();
 
@@ -403,47 +407,50 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * 
 	 * TODO (DS) I'm not sure it's a good idea to put a setter in this
 	 * interface. We should revisit this.
-	 * 
 	 */
 	public void setIsStructureKnown(boolean wasSuccessful);
 	
 	/**
-	 * Returns the absolute path of the location of the translation unit. May be <code>null</code>, in 
-	 * case the location does not exist.
-	 * @return an absolute path to the location, or <code>null</code>
+	 * Returns the absolute path of the location of the translation unit. May be {@code null},
+	 * in case the location does not exist.
+	 *
+	 * @return an absolute path to the location, or {@code null}
 	 * @since 4.0
 	 */
 	public IPath getLocation();
 
 	/**
-	 * Returns the scanner info associated with this translation unit. May return <code>null</code> if no 
-	 * configuration is available.
-	 * @param force if <code>true</code> a default info is returned, even if nothing is configured for this
-	 * translation unit
-	 * @return a scanner info for parsing the translation unit or <code>null</code> if none is configured
+	 * Returns the scanner info associated with this translation unit. May return {@code null}
+	 * if no configuration is available.
+	 *
+	 * @param force if {@code true} a default info is returned, even if nothing is configured
+	 *     for this translation unit
+	 * @return a scanner info for parsing the translation unit or {@code null} if none
+	 *     is configured
 	 * @since 4.0
 	 */
 	public IScannerInfo getScannerInfo(boolean force);
 
 	/**
-	 * Creates the full AST for this translation unit. May return <code>null</code> if the language
+	 * Creates the full AST for this translation unit. May return {@code null} if the language
 	 * of this translation unit does not support ASTs.
-	 * @return the AST for the translation unit or <code>null</code>
+	 * @return the AST for the translation unit or {@code null}
 	 * @throws CoreException
 	 * @since 4.0
 	 */
 	public IASTTranslationUnit getAST() throws CoreException;
 
 	/**
-	 * Creates an AST based on the requested style. May return <code>null</code> if the language of
+	 * Creates an AST based on the requested style. May return {@code null} if the language of
 	 * this translation unit does not support ASTs. If the index was supplied, the caller has to
 	 * hold a read lock on it. The returned AST is valid only while the index read lock is being
-	 * held and should not be accessed after releasing the lock. 
-	 * @param index	index to back up the parsing of the AST, may be <code>null</code>
-	 * @param style <code>0</code> or a combination of {@link #AST_SKIP_ALL_HEADERS}, 
+	 * held and should not be accessed after releasing the lock.
+	 * 
+	 * @param index	index to back up the parsing of the AST, may be {@code null}
+	 * @param style {@code 0} or a combination of {@link #AST_SKIP_ALL_HEADERS}, 
 	 * {@link #AST_SKIP_IF_NO_BUILD_INFO}, {@link #AST_SKIP_INDEXED_HEADERS}
 	 * and {@link #AST_CONFIGURE_USING_SOURCE_CONTEXT}.
-	 * @return the AST requested or <code>null</code>
+	 * @return the AST requested or {@code null}
 	 * @throws CoreException
 	 * @since 4.0
 	 */

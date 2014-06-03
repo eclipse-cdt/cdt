@@ -144,7 +144,7 @@ public final class CollectionUtils {
 	 * creates it with an empty list as the initial value.
 	 * @since 5.6
 	 */
-	static public <T, U> List<U> listMapGet(Map<T, List<U>> m, T t) {
+	public static <T, U> List<U> listMapGet(Map<T, List<U>> m, T t) {
 		List<U> result = m.get(t);
 		if (result == null) {
 			result = new ArrayList<U>();

@@ -35,9 +35,6 @@ public class Include extends SourceManipulation implements IInclude {
 		return standard;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IInclude#getFullFileName()
-	 */
 	@Override
 	public String getFullFileName() {
 		return fullPath;

@@ -10,23 +10,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-
 /**
  * Interface related to {@link IFunctionSummary} denoting an include required for a function.
  * <p>
  * Clients may implement this interface.
- * </p>
  * @see IFunctionSummary
  */
 public interface IRequiredInclude {
-
 	/**
-	 * Get the include name.
+	 * Returns the include name.
 	 */
 	String getIncludeName();
 
 	/**
-	 * Returns whether the include is to search on "standard places" like /usr/include first .
+	 * Returns whether the include is to search on "standard places" like /usr/include first.
 	 * An include is standard if it starts with <code>"&lt;"</code>.
 	 */
 	boolean isStandard();

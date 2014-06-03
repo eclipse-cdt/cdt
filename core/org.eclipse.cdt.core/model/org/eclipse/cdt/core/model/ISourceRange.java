@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
 /**
  * A source range defines an element's source coordinates
  * 
@@ -18,9 +17,8 @@ package org.eclipse.cdt.core.model;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISourceRange {
-
 	/**
-	 * Returns the 0-based starting position of this element.
+	 * Returns the zero-based starting position of this element.
 	 */
 	public int getStartPos();
 

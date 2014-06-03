@@ -51,7 +51,7 @@ public class CRefactoringContext extends RefactoringContext {
 	public CRefactoringContext(CRefactoring refactoring) {
 		super(refactoring);
 		refactoring.setContext(this);
-		fASTCache = new ConcurrentHashMap<ITranslationUnit, IASTTranslationUnit>();
+		fASTCache = new ConcurrentHashMap<>();
 	}
 
 	/**

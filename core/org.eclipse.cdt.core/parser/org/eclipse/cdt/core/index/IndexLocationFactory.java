@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
- * Factory for obtaining instances of IIndexFileLocation for workspace or external files, and
+ * Factory for obtaining instances of IIndexFileLocation for workspace and external files, and
  * some utility methods for going in the opposite direction. 
  * 
  * @since 4.0
@@ -38,7 +38,7 @@ public class IndexLocationFactory {
 	/**
 	 * Returns
 	 * <ul>
-	 * <li> the full path if this IIndexFileLocation if within the workspace root
+	 * <li> the full path if this IIndexFileLocation is within the workspace root
 	 * <li> the absolute path if this IIndexFileLocation is URI based and corresponds
 	 * to a location on the local file system
 	 * <li> otherwise, null

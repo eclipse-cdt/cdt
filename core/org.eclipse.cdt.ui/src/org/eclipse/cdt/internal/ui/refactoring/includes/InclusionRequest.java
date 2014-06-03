@@ -46,7 +46,7 @@ class InclusionRequest {
 		fBinding = binding;
 		fDeclaringFiles = Collections.unmodifiableMap(declaringHeaders);
 		fReachable = reachable;
-		fCandidatePaths = new ArrayList<IPath>(new HashSet<IPath>(fDeclaringFiles.values()));
+		fCandidatePaths = new ArrayList<>(new HashSet<>(fDeclaringFiles.values()));
 	}
 
 	public IBinding getBinding() {

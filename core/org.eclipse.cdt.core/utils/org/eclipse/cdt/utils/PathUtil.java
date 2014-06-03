@@ -72,9 +72,9 @@ public class PathUtil {
 	}
 
 	/**
-	 * On Windows discover the {@link java.io.File#getCanonicalPath()} for
-	 * a given absolute path.
-	 * On other platforms, and for relative paths returns the passed in fullPath
+	 * On Windows returns the {@link java.io.File#getCanonicalPath()} for a given absolute path.
+	 * On other platforms, and for relative paths returns the the original path.
+	 *
 	 * @param fullPath
 	 * @return canonicalized IPath or passed in fullPath.
 	 * @since 5.3
@@ -198,10 +198,12 @@ public class PathUtil {
 
     /**
 	 * Checks whether path1 is the same as path2.
-	 * @return <code>true</code> if path1 is the same as path2, and <code>false</code> otherwise
-     *
+	 * <p>
      * Similar to IPath.equals(Object obj), but takes case sensitivity of the file system
      * into account.
+     * 
+	 * @return {@code true} if path1 is the same as path2, and {@code false} otherwise
+     *
      * @since 5.1
      * @deprecated Use {@link #equalPath(IPath, IPath)} instead.
      */
@@ -230,10 +232,11 @@ public class PathUtil {
 
     /**
 	 * Checks whether path1 is the same as path2.
-	 * @return <code>true</code> if path1 is the same as path2, and <code>false</code> otherwise
-     *
+	 * <p>
      * Similar to IPath.equals(Object obj), but takes case sensitivity of the file system
      * into account.
+	 *
+	 * @return {@code true} if path1 is the same as path2, and {@code false} otherwise
      * @since 5.3
      */
 	public static boolean equalPath(IPath path1, IPath path2) {
@@ -268,11 +271,11 @@ public class PathUtil {
 	 * <p>
 	 * An empty path is a prefix of all paths with the same device; a root path is a prefix of
 	 * all absolute paths with the same device.
-	 * </p>
-	 * @return <code>true</code> if path1 is a prefix of path2, and <code>false</code> otherwise
-     *
+	 * <p>
      * Similar to IPath.isPrefixOf(IPath anotherPath), but takes case sensitivity of the file system
      * into account.
+	 *
+	 * @return {@code true} if path1 is a prefix of path2, and {@code false} otherwise
      * @since 5.1
      */
 	public static boolean isPrefix(IPath path1, IPath path2) {
@@ -306,11 +309,11 @@ public class PathUtil {
 	/**
 	 * Returns the number of segments which match in path1 and path2
 	 * (device ids are ignored), comparing in increasing segment number order.
-	 *
-	 * @return the number of matching segments
-
+	 * <p>
 	 * Similar to IPath.matchingFirstSegments(IPath anotherPath), but takes case sensitivity
 	 * of the file system into account.
+	 *
+	 * @return the number of matching segments
      * @since 5.1
 	 */
 	public static int matchingFirstSegments(IPath path1, IPath path2) {
@@ -333,7 +336,7 @@ public class PathUtil {
 	}
 
 	/**
-	 * Find location of the program inspecting each path in the path list.
+	 * Finds location of the program inspecting each path in the path list.
 	 *
 	 * @param prog - program to find. For Windows, extensions "com" and "exe"
 	 *     can be omitted.
@@ -345,30 +348,30 @@ public class PathUtil {
 	 * @since 5.3
 	 */
 	public static IPath findProgramLocation(String prog, String pathsStr) {
-		if (prog==null || prog.trim().length()==0)
+		if (prog == null || prog.trim().isEmpty())
 			return null;
 
-		if (pathsStr==null)
+		if (pathsStr == null)
 			pathsStr = System.getenv("PATH"); //$NON-NLS-1$
 
-		if (pathsStr.trim().length()==0)
+		if (pathsStr.trim().isEmpty())
 			return null;
 
 		String locationStr = null;
 		String[] dirs = pathsStr.split(File.pathSeparator);
 
-		// try to find "prog.exe" or "prog.com" on Windows
+		// Try to find "prog.exe" or "prog.com" on Windows
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			for (String dir : dirs) {
 				IPath dirLocation = new Path(dir);
 				File file = null;
 
-				file = dirLocation.append(prog+".exe").toFile(); //$NON-NLS-1$
+				file = dirLocation.append(prog + ".exe").toFile(); //$NON-NLS-1$
 				if (file.isFile() && file.canRead()) {
 					locationStr = file.getAbsolutePath();
 					break;
 				}
-				file = dirLocation.append(prog+".com").toFile(); //$NON-NLS-1$
+				file = dirLocation.append(prog + ".com").toFile(); //$NON-NLS-1$
 				if (file.isFile() && file.canRead()) {
 					locationStr = file.getAbsolutePath();
 					break;
@@ -376,9 +379,9 @@ public class PathUtil {
 			}
 		}
 
-		// check "prog" on Unix and Windows too (if was not found) - could be cygwin or something
+		// Check "prog" on Unix and Windows too (if was not found) - could be cygwin or something
 		// do it in separate loop due to performance and correctness of Windows regular case
-		if (locationStr==null) {
+		if (locationStr == null) {
 			for (String dir : dirs) {
 				IPath dirLocation = new Path(dir);
 				File file = null;
@@ -391,14 +394,14 @@ public class PathUtil {
 			}
 		}
 
-		if (locationStr!=null)
+		if (locationStr != null)
 			return new Path(locationStr);
 
 		return null;
 	}
 
 	/**
-	 * Find location of the program inspecting each path in the path list
+	 * Finds location of the program inspecting each path in the path list
 	 * defined by environment variable ${PATH}.
 	 *
 	 * @param prog - program to find. For Windows, extensions "com" and "exe"

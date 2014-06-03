@@ -106,7 +106,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			IRemoteConnection connection = (IRemoteConnection) element;
+			IRemoteConnection connection = getOriginalIfClean((IRemoteConnection) element);
 			switch (columnIndex) {
 			case 0:
 				return connection.isOpen() ? Messages.ConnectionsPreferencePage_open : Messages.ConnectionsPreferencePage_closed;
@@ -214,17 +214,11 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		if (fIsDirty) {
 			MessageDialog dialog = new MessageDialog(getShell(), Messages.ConnectionsPreferencePage_Confirm_Actions, null,
 					Messages.ConnectionsPreferencePage_There_are_unsaved_changes, MessageDialog.QUESTION, new String[] {
-							IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
-			switch (dialog.open()) {
-			case 0:
-				performOk();
-				break;
-			case 1:
-				performDefaults();
-				break;
-			case 2:
+							IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+			if (dialog.open() == 1) {
 				return;
 			}
+			performOk();
 		}
 		IRemoteUIConnectionWizard wizard = fUIConnectionManager.getConnectionWizard(getShell());
 		if (wizard != null) {
@@ -293,7 +287,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		fConnectionTable.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				if (fSelectedConnection != null && !fSelectedConnection.isOpen()) {
+				if (fSelectedConnection != null && !getOriginalIfClean(fSelectedConnection).isOpen()) {
 					editConnection();
 				}
 			}
@@ -374,7 +368,12 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 	 */
 	private void editConnection() {
 		if (fSelectedConnection != null) {
-			IRemoteConnectionWorkingCopy copy = fSelectedConnection.getWorkingCopy();
+			IRemoteConnectionWorkingCopy copy;
+			if (fSelectedConnection instanceof IRemoteConnectionWorkingCopy) {
+				copy = (IRemoteConnectionWorkingCopy) fSelectedConnection;
+			} else {
+				copy = fSelectedConnection.getWorkingCopy();
+			}
 			IRemoteUIConnectionWizard wizard = fUIConnectionManager.getConnectionWizard(getShell());
 			if (wizard != null) {
 				wizard.setConnection(copy);
@@ -451,6 +450,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			fConnectionTable.deselectAll();
 			fSelectedConnection = null;
 		}
+		updateEnablement();
 	}
 
 	/**
@@ -484,7 +484,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 	private void toggleConnection() {
 		TableItem[] items = fConnectionTable.getSelection();
 		if (items.length > 0) {
-			IRemoteConnection conn = (IRemoteConnection) items[0].getData();
+			IRemoteConnection conn = getOriginalIfClean((IRemoteConnection) items[0].getData());
 			if (conn.isOpen()) {
 				conn.close();
 			} else {
@@ -494,17 +494,11 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 					if (wc.isDirty()) {
 						MessageDialog dialog = new MessageDialog(getShell(), Messages.ConnectionsPreferencePage_Confirm_Actions,
 								null, Messages.ConnectionsPreferencePage_This_connection_contains_unsaved_changes,
-								MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,
-										IDialogConstants.CANCEL_LABEL }, 0);
-						switch (dialog.open()) {
-						case 0:
-							wc.save();
-							break;
-						case 1:
-							break;
-						case 2:
+								MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+						if (dialog.open() == 1) {
 							return;
 						}
+						wc.save();
 					}
 				}
 				IRemoteUIConnectionManager mgr = RemoteUIServices.getRemoteUIServices(conn.getRemoteServices())
@@ -551,15 +545,32 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		fOpenButton.setEnabled(false);
 		fCloseButton.setEnabled(false);
 		if (fSelectedConnection != null) {
-			if (!fSelectedConnection.isOpen()) {
+			IRemoteConnection conn = getOriginalIfClean(fSelectedConnection);
+			if (!conn.isOpen()) {
 				fEditButton
-						.setEnabled((fSelectedConnection.getRemoteServices().getCapabilities() & IRemoteServices.CAPABILITY_EDIT_CONNECTIONS) != 0);
+						.setEnabled((conn.getRemoteServices().getCapabilities() & IRemoteServices.CAPABILITY_EDIT_CONNECTIONS) != 0);
 				fRemoveButton
-						.setEnabled((fSelectedConnection.getRemoteServices().getCapabilities() & IRemoteServices.CAPABILITY_REMOVE_CONNECTIONS) != 0);
+						.setEnabled((conn.getRemoteServices().getCapabilities() & IRemoteServices.CAPABILITY_REMOVE_CONNECTIONS) != 0);
 				fOpenButton.setEnabled(true);
 			} else {
 				fCloseButton.setEnabled(true);
 			}
 		}
+	}
+
+	/**
+	 * Get the original connection if the working copy is not dirty
+	 * 
+	 * @param conn
+	 * @return
+	 */
+	private IRemoteConnection getOriginalIfClean(IRemoteConnection conn) {
+		if (conn instanceof IRemoteConnectionWorkingCopy) {
+			IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) conn;
+			if (!wc.isDirty()) {
+				return wc.getOriginal();
+			}
+		}
+		return conn;
 	}
 }

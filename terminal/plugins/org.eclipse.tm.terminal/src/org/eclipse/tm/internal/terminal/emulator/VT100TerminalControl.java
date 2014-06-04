@@ -36,6 +36,7 @@
  * Anton Leherbauer (Wind River) - [434294] Incorrect handling of function keys with modifiers
  * Martin Oberhuber (Wind River) - [434294] Add Mac bindings with COMMAND
  * Anton Leherbauer (Wind River) - [434749] UnhandledEventLoopException when copying to clipboard while the selection is empty
+ * Martin Oberhuber (Wind River) - [436612] Restore Eclipse 3.4 compatibility by using Reflection
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -43,6 +44,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.SocketException;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -1172,7 +1174,18 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					cmdEvent.widget = event.widget;
 					cmdEvent.character = event.character;
 					cmdEvent.keyCode = event.keyCode;
-					cmdEvent.keyLocation = event.keyLocation;
+					////Bug - KeyEvent.keyLocation was introduced in Eclipse 3.6
+					////Use reflection for now to remain backward compatible down to Eclipse 3.4
+					//cmdEvent.keyLocation = event.keyLocation;
+					try {
+						Field f1 = event.getClass().getField("keyLocation"); //$NON-NLS-1$
+						Field f2 = cmdEvent.getClass().getField("keyLocation"); //$NON-NLS-1$
+						f2.set(cmdEvent, f1.get(event));
+					} catch(NoSuchFieldException nsfe) {
+						/* ignore, this is Eclipse 3.5 or earlier */
+					} catch(Throwable t) {
+						t.printStackTrace();
+					}
 					cmdEvent.stateMask = event.stateMask;
 					event.doit = false;
 					try {

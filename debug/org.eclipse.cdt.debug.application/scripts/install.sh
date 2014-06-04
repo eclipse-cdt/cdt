@@ -19,5 +19,5 @@ chmod +x $HOME/cdtdebugger/cdtdebug.sh
 pushd ../.. >/dev/null
 PLUGINS_DIR=`pwd`
 popd >/dev/null
-sed -i -e "s,pushd ../..,pushd $PLUGINS_DIR," $HOME/cdtdebugger/cdtdebug.sh
+sed -i -e "s,cd ../..,cd $PLUGINS_DIR," $HOME/cdtdebugger/cdtdebug.sh
 echo "Installation complete"

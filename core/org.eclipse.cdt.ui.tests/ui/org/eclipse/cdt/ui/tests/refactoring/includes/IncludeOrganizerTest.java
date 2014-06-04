@@ -221,7 +221,6 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//
 	//#include "A.h"
 	//
-	////#include "h1.h"  // Unused
 	//#include "h2.h" /* Required */  // another comment
 	//#include "h3.h"
 	//#include "h5.h"  // Unresolved includes are preserved
@@ -279,7 +278,6 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//// Comment
 	//
 	//#include "h2.h" /* Required */  // another comment
-	////#include "h1.h"  // Unused
 	//#include "h3.h"
 	//#include "h5.h"  // Unresolved includes are preserved
 	//#include "A.h"

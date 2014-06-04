@@ -14,7 +14,8 @@ mkdir -p $HOME/cdtdebugger
 cp config.ini $HOME/cdtdebugger
 cp dev.properties $HOME/cdtdebugger
 fi
-pushd ../.. >/dev/null
+olddir=`pwd`
+cd ../..
 OSGI_JAR=`ls org.eclipse.osgi_*.jar`
 SWT_JAR=`ls org.eclipse.swt.*.jar`
 SWT_PLUGIN=`echo $SWT_JAR | sed -e "s/_[0-9]*\..*.jar//"`
@@ -23,7 +24,7 @@ FS_PLUGIN=`echo $FS_JAR | sed -e "s/_[0-9]*\..*.jar//"`
 LINUX_JAR=`ls org.eclipse.cdt.core.linux.*.jar`
 LINUX_PLUGIN=`echo $LINUX_JAR | sed -e "s/_[0-9]*\..*.jar//"`
 cd ..; ECLIPSE_HOME=`pwd`
-popd >/dev/null
+cd $olddir
 $ECLIPSE_HOME/eclipse -clean -product org.eclipse.cdt.debug.application.product \
 -data $HOME/workspace-gdbstandlone -configuration file\:$HOME/cdtdebugger \
 -dev file\:$HOME/cdtdebugger/dev.properties $@ \

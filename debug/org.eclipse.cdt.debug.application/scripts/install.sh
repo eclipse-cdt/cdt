@@ -16,8 +16,9 @@ cp config.ini $HOME/cdtdebugger
 cp dev.properties $HOME/cdtdebugger
 cp cdtdebug.sh $HOME/cdtdebugger
 chmod +x $HOME/cdtdebugger/cdtdebug.sh
-pushd ../.. >/dev/null
+olddir=`pwd`
+cd ../..
 PLUGINS_DIR=`pwd`
-popd >/dev/null
-sed -i -e "s,pushd ../..,pushd $PLUGINS_DIR," $HOME/cdtdebugger/cdtdebug.sh
+cd $olddir
+sed -i -e "s,cd ../..,cd $PLUGINS_DIR," $HOME/cdtdebugger/cdtdebug.sh
 echo "Installation complete"

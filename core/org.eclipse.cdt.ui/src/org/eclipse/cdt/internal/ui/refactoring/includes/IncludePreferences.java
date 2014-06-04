@@ -180,7 +180,7 @@ public class IncludePreferences implements Comparator<StyledInclude> {
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_TEMPLATES, false);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS, true);
 		store.setDefault(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION,
-				UnusedStatementDisposition.COMMENT_OUT.toString());
+				UnusedStatementDisposition.REMOVE.toString());
 
 		store.setDefault(PreferenceConstants.INCLUDES_HEADER_SUBSTITUTION,
 				HeaderSubstitutionMap.serializeMaps(GCCHeaderSubstitutionMaps.getDefaultMaps()));

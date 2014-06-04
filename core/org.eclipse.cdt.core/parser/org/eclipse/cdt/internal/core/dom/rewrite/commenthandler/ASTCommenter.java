@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -41,12 +41,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 
 /**
  * This is the starting point of the entire comment handling  process. The creation of the 
- * NodeCommentMap is based on the IASTTranslationUnit. From this TranslationUnit the comments 
- * are extracted and skipped if they belong not to the same workspace. An ASTCommenterVisitor 
- * is initialized with this collection of comments. And the visit process can start. 
+ * {@link NodeCommentMap} is based on the {@link IASTTranslationUnit}. From this translation unit
+ * the comments are extracted and skipped if they belong not to the same workspace.
+ * An {@link ASTCommenterVisitor} is initialized with this collection of comments. And the visit
+ * process can start. 
  * 
- * @see org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommenter
- * @see org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap
+ * @see NodeCommenter
+ * @see NodeCommentMap
  *  
  * @author Guido Zgraggen IFS 
  */
@@ -65,20 +66,23 @@ public class ASTCommenter {
 
 		private int checkOffsets(IASTNode node) {
 			IASTFileLocation nodeLocation = node.getFileLocation();
+			if (nodeLocation == null)
+				return PROCESS_SKIP;
+				
 			int nodeEndOffset = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
-			int status = PROCESS_CONTINUE;
 
-			boolean nodeInBetweenCommentAndPpStmt = nodeEndOffset > commentLocation.getNodeOffset() && nodeEndOffset < ppStmtOffset;
+			boolean nodeInBetweenCommentAndPpStmt =
+					nodeEndOffset > commentLocation.getNodeOffset() && nodeEndOffset < ppStmtOffset;
 			if (isCommentOnSameLine(node) || nodeInBetweenCommentAndPpStmt) {
 				isPrePpStmtComment = false;
-				status = PROCESS_ABORT;
+				return PROCESS_ABORT;
 			} else if (nodeEndOffset < commentLocation.getNodeOffset()) {
-				status = PROCESS_SKIP;
+				return PROCESS_SKIP;
 			} else if (nodeLocation.getNodeOffset() > ppStmtOffset) {
-				status = PROCESS_ABORT;
+				return PROCESS_ABORT;
 			}
 			
-			return status;
+			return PROCESS_CONTINUE;
 		}
 
 		private boolean isCommentOnSameLine(IASTNode node) {
@@ -184,8 +188,8 @@ public class ASTCommenter {
 	}
 
 	/**
-	 * Adds all comments given in {@code ast} to the {@code commentMap}. Calling this twice will have no
-	 * effect.
+	 * Adds all comments given in {@code ast} to the {@code commentMap}. Calling this twice has
+	 * no effect.
 	 * 
 	 * @param ast
 	 *            the AST which contains the comments to add
@@ -197,7 +201,7 @@ public class ASTCommenter {
 			return;
 		}
 		IASTComment[] commentsArray = ast.getComments();
-		List<IASTComment> comments = new ArrayList<IASTComment>(commentsArray.length);
+		List<IASTComment> comments = new ArrayList<>(commentsArray.length);
 		for (IASTComment comment : commentsArray) {
 			if (comment.isPartOfTranslationUnitFile()) {
 				comments.add(comment);
@@ -245,7 +249,7 @@ public class ASTCommenter {
 			return;
 		}
 
-		List<IASTComment> freestandingComments = new ArrayList<IASTComment>(comments.size());
+		List<IASTComment> freestandingComments = new ArrayList<>(comments.size());
 		Iterator<IASTPreprocessorStatement> statementsIter = preprocessorStatements.iterator();
 		Iterator<IASTComment> commentIter = comments.iterator();
 		IASTPreprocessorStatement curStatement = getNextNodeInTu(statementsIter);

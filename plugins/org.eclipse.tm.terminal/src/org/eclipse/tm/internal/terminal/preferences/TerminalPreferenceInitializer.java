@@ -24,8 +24,7 @@ public class TerminalPreferenceInitializer extends AbstractPreferenceInitializer
 	}
 
 	public void initializeDefaultPreferences() {
-		//DefaultScope.INSTANCE was only added in Eclipse 3.7 - we want to be compatible further back
-		IEclipsePreferences defaultPrefs = new DefaultScope().getNode(TerminalPlugin.PLUGIN_ID);
+		IEclipsePreferences defaultPrefs = DefaultScope.INSTANCE.getNode(TerminalPlugin.PLUGIN_ID);
 		defaultPrefs.putBoolean(ITerminalConstants.PREF_INVERT_COLORS, ITerminalConstants.DEFAULT_INVERT_COLORS);
 		defaultPrefs.putInt(ITerminalConstants.PREF_BUFFERLINES, ITerminalConstants.DEFAULT_BUFFERLINES);
         migrateTerminalPreferences();
@@ -36,10 +35,10 @@ public class TerminalPreferenceInitializer extends AbstractPreferenceInitializer
 	 */
 	public static void migrateTerminalPreferences() {
 		//InstanceScope.INSTANCE was only added in Eclipse 3.7 - we want to be compatible further back
-		IEclipsePreferences prefs = new InstanceScope().getNode(TerminalPlugin.PLUGIN_ID);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(TerminalPlugin.PLUGIN_ID);
 		if (!prefs.getBoolean(ITerminalConstants.PREF_HAS_MIGRATED, false)) {
 			prefs.putBoolean(ITerminalConstants.PREF_HAS_MIGRATED, true);
-			PreferenceModifyListener.migrateTerminalPreferences(new InstanceScope().getNode("")); //$NON-NLS-1$
+			PreferenceModifyListener.migrateTerminalPreferences(InstanceScope.INSTANCE.getNode("")); //$NON-NLS-1$
 		}
 	}
 

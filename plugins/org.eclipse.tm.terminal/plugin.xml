@@ -229,21 +229,20 @@
             sequence="M3+ARROW_UP"/>
    </extension>
 
-   <extension
-         point="org.eclipse.ui.preferencePages">
+   <extension point="org.eclipse.ui.preferencePages">
       <page
             name="%terminal.preferences.name"
             class="org.eclipse.tm.internal.terminal.preferences.TerminalPreferencePage"
             id="org.eclipse.tm.terminal.TerminalPreferencePage">
       </page>
    </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
+
+   <extension point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.tm.internal.terminal.preferences.TerminalPreferenceInitializer"/>
       <modifier class="org.eclipse.tm.internal.terminal.preferences.PreferenceModifyListener"/>
    </extension>
-   <extension
-         point="org.eclipse.ui.themes" id="terminal.font">
+
+   <extension point="org.eclipse.ui.themes" id="terminal.font">
       <fontDefinition
             defaultsTo="org.eclipse.jface.textfont"
             id="terminal.views.view.font.definition"
@@ -252,6 +251,14 @@
             %terminal.font.description
          </description>
       </fontDefinition>
+   </extension>
+   
+<!-- Theme contributions -->   
+   <extension point="org.eclipse.e4.ui.css.swt.theme">
+      <stylesheet
+            uri="css/org.eclipse.tm.terminal.stylesheet.dark.css">
+            <themeid refid="org.eclipse.e4.ui.css.theme.e4_dark"/>
+      </stylesheet>
    </extension>
 
 </plugin>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [342450][dstore] Real files should not be deleted when deleting a symbolic link
  * David McKnight   (IBM)        - [392012] [dstore] make server safer for delete operations
  * David McKnight   (IBM) - [414016] [dstore] new server audit log requirements
+ * David McKnight   (IBM)        - [436604] [dstore] deleting symbolic links can delete files
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -161,7 +162,11 @@ public class DeleteThread extends SecuredThread implements ICancellableHandler {
 			        String[] auditData = new String[] {"DELETE", deleteObj.getAbsolutePath(), null, null};
 			     	UniversalServerUtilities.logAudit(auditData, _dataStore);
 
-					if (classification != null && classification.startsWith("symbolic link")){ //$NON-NLS-1$
+			     	// can't rely on classification anymore to determine link
+			     	// instead use canonical path
+			     	String canonicalPath = deleteObj.getCanonicalPath();
+			     	if (!canonicalPath.equals(path)){	     	
+					//if (classification != null && classification.startsWith("symbolic link")){ //$NON-NLS-1$
 						// only delete the link - no the actual file or folder contents
 						deleteObj.delete();
 					}

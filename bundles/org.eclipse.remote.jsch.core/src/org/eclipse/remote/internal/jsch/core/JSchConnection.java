@@ -54,7 +54,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * Class to supply credentials from connection attributes without user interaction.
 	 */
 	private class JSchUserInfo implements UserInfo, UIKeyboardInteractive {
-		private boolean firstTry;
+		private boolean firstTryPassphrase = true;
 		private final IUserAuthenticator fAuthenticator;
 
 		public JSchUserInfo(IUserAuthenticator authenticator) {
@@ -86,13 +86,17 @@ public class JSchConnection implements IRemoteConnection {
 					System.out.println(" " + p); //$NON-NLS-1$
 				}
 			}
-			String password;
-			if (!isPasswordAuth()) {
-				password = getPassphrase();
-			} else {
-				password = getPassword();
+
+			if (fAuthenticator != null) {
+				String[] result = fAuthenticator.prompt(destination, name, instruction, prompt, echo);
+				if (result != null) {
+					if (prompt.length == 1 && prompt[0].trim().equalsIgnoreCase("password:")) { //$NON-NLS-1$
+						fAttributes.setSecureAttribute(JSchConnectionAttributes.PASSWORD_ATTR, result[0]);
+					}
+				}
+				return result;
 			}
-			return new String[] { password };
+			return null;
 		}
 
 		@Override
@@ -100,27 +104,8 @@ public class JSchConnection implements IRemoteConnection {
 			if (logging) {
 				System.out.println("promptPassphrase:" + message); //$NON-NLS-1$
 			}
-			if (firstTry && !getPassphrase().equals("")) { //$NON-NLS-1$
-				firstTry = false;
-				return true;
-			}
-			if (fAuthenticator != null) {
-				PasswordAuthentication auth = fAuthenticator.prompt(null, message);
-				if (auth == null) {
-					return false;
-				}
-				fAttributes.setSecureAttribute(JSchConnectionAttributes.PASSPHRASE_ATTR, new String(auth.getPassword()));
-			}
-			return true;
-		}
-
-		@Override
-		public boolean promptPassword(String message) {
-			if (logging) {
-				System.out.println("promptPassword:" + message); //$NON-NLS-1$
-			}
-			if (firstTry && !getPassword().equals("")) { //$NON-NLS-1$
-				firstTry = false;
+			if (firstTryPassphrase && !getPassphrase().equals("")) { //$NON-NLS-1$
+				firstTryPassphrase = false;
 				return true;
 			}
 			if (fAuthenticator != null) {
@@ -129,9 +114,27 @@ public class JSchConnection implements IRemoteConnection {
 					return false;
 				}
 				fAttributes.setAttribute(JSchConnectionAttributes.USERNAME_ATTR, auth.getUserName());
-				fAttributes.setSecureAttribute(JSchConnectionAttributes.PASSWORD_ATTR, new String(auth.getPassword()));
+				fAttributes.setSecureAttribute(JSchConnectionAttributes.PASSPHRASE_ATTR, new String(auth.getPassword()));
+				return true;
 			}
-			return true;
+			return false;
+		}
+
+		@Override
+		public boolean promptPassword(String message) {
+			if (logging) {
+				System.out.println("promptPassword:" + message); //$NON-NLS-1$
+			}
+			if (fAuthenticator != null) {
+				PasswordAuthentication auth = fAuthenticator.prompt(null, message);
+				if (auth == null) {
+					return false;
+				}
+				fAttributes.setAttribute(JSchConnectionAttributes.USERNAME_ATTR, auth.getUserName());
+				fAttributes.setSecureAttribute(JSchConnectionAttributes.PASSWORD_ATTR, new String(auth.getPassword()));
+				return true;
+			}
+			return false;
 		}
 
 		@Override

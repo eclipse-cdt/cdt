@@ -177,6 +177,7 @@ public class IncludePreferences implements Comparator<StyledInclude> {
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_COMPOSITE_TYPES, true);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_ENUMS, false);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, false);
+		store.setDefault(PreferenceConstants.FORWARD_DECLARE_EXTERNAL_VARIABLES, false);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_TEMPLATES, false);
 		store.setDefault(PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS, true);
 		store.setDefault(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION,

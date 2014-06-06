@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -160,21 +161,21 @@ public class CProject extends Openable implements ICProject {
 
 	@Override
 	public IIncludeReference[] getIncludeReferences() throws CModelException {
-		CProjectInfo pinfo = (CProjectInfo)CModelManager.getDefault().peekAtInfo(this);
+		CProjectInfo pinfo = (CProjectInfo) CModelManager.getDefault().peekAtInfo(this);
 		IIncludeReference[] incRefs = null;
 		if (pinfo != null) {
 			incRefs = pinfo.incReferences;
 		}
 		if (incRefs == null) {
 			IPathEntry[] entries = getResolvedPathEntries();
-			ArrayList<IncludeReference> list = new ArrayList<IncludeReference>(entries.length);
+			ArrayList<IncludeReference> list = new ArrayList<>(entries.length);
 			for (IPathEntry entrie : entries) {
 				if (entrie.getEntryKind() == IPathEntry.CDT_INCLUDE) {
 					IIncludeEntry entry = (IIncludeEntry) entrie;
 					list.add(new IncludeReference(this, entry));
 				}
 			}
-			incRefs = list.toArray(new IIncludeReference[0]);
+			incRefs = list.toArray(new IIncludeReference[list.size()]);
 			if (pinfo != null) {
 				pinfo.incReferences = incRefs;
 			}
@@ -184,7 +185,7 @@ public class CProject extends Openable implements ICProject {
 
 	@Override
 	public ILibraryReference[] getLibraryReferences() throws CModelException {
-		CProjectInfo pinfo = (CProjectInfo)CModelManager.getDefault().peekAtInfo(this);
+		CProjectInfo pinfo = (CProjectInfo) CModelManager.getDefault().peekAtInfo(this);
 		ILibraryReference[] libRefs = null;
 		if (pinfo != null) {
 			libRefs = pinfo.libReferences;
@@ -193,7 +194,7 @@ public class CProject extends Openable implements ICProject {
 		if (libRefs == null) {
 			BinaryParserConfig[] binConfigs = CModelManager.getDefault().getBinaryParser(getProject());
 			IPathEntry[] entries = getResolvedPathEntries();
-			ArrayList<ILibraryReference> list = new ArrayList<ILibraryReference>(entries.length);
+			ArrayList<ILibraryReference> list = new ArrayList<>(entries.length);
 			for (IPathEntry entrie : entries) {
 				if (entrie.getEntryKind() == IPathEntry.CDT_LIBRARY) {
 					ILibraryEntry entry = (ILibraryEntry) entrie;
@@ -203,7 +204,7 @@ public class CProject extends Openable implements ICProject {
 					}
 				}
 			}
-			libRefs = list.toArray(new ILibraryReference[0]);
+			libRefs = list.toArray(new ILibraryReference[list.size()]);
 			if (pinfo != null) {
 				pinfo.libReferences = libRefs;
 			}
@@ -224,14 +225,13 @@ public class CProject extends Openable implements ICProject {
 					bin = parser.getBinary(entry.getFullLibraryPath());
 					if (bin != null) {
 						if (bin.getType() == IBinaryFile.ARCHIVE) {
-							lib = new LibraryReferenceArchive(cproject, entry, (IBinaryArchive)bin);
-						} else if (bin instanceof IBinaryObject){
-							lib = new LibraryReferenceShared(cproject, entry, (IBinaryObject)bin);
+							lib = new LibraryReferenceArchive(cproject, entry, (IBinaryArchive) bin);
+						} else if (bin instanceof IBinaryObject) {
+							lib = new LibraryReferenceShared(cproject, entry, (IBinaryObject) bin);
 						}
 						break;
 					}
-				} catch (IOException e) {
-				} catch (CoreException e) {
+				} catch (IOException | CoreException e) {
 				}
 			}
 		}
@@ -289,7 +289,7 @@ public class CProject extends Openable implements ICProject {
 			String[] propertyNames= preferences.keys();
 			for (String propertyName : propertyNames) {
 				String value= preferences.get(propertyName, null);
-				if (value != null && optionNames.contains(propertyName)){
+				if (value != null && optionNames.contains(propertyName)) {
 					options.put(propertyName, value.trim());
 				}
 			}
@@ -466,7 +466,7 @@ public class CProject extends Openable implements ICProject {
 	@Override
 	public ISourceRoot[] getSourceRoots() throws CModelException {
 		Object[] children = getChildren();
-		ArrayList<ISourceRoot> result = new ArrayList<ISourceRoot>(children.length);
+		ArrayList<ISourceRoot> result = new ArrayList<>(children.length);
 		for (Object element : children) {
 			if (element instanceof ISourceRoot) {
 				result.add((ISourceRoot) element);
@@ -483,7 +483,7 @@ public class CProject extends Openable implements ICProject {
 	 */
 	@Override
 	public ISourceRoot[] getAllSourceRoots() throws CModelException {
-		CProjectInfo pinfo = (CProjectInfo)CModelManager.getDefault().peekAtInfo(this);
+		CProjectInfo pinfo = (CProjectInfo) CModelManager.getDefault().peekAtInfo(this);
 		ISourceRoot[] roots = null;
 		if (pinfo != null) {
 			if (pinfo.sourceRoots != null) {
@@ -518,7 +518,7 @@ public class CProject extends Openable implements ICProject {
 	}
 
 	public IOutputEntry[] getOutputEntries(IPathEntry[] entries) throws CModelException {
-		ArrayList<IPathEntry> list = new ArrayList<IPathEntry>(entries.length);
+		ArrayList<IPathEntry> list = new ArrayList<>(entries.length);
 		for (IPathEntry entrie : entries) {
 			if (entrie.getEntryKind() == IPathEntry .CDT_OUTPUT) {
 				list.add(entrie);
@@ -583,14 +583,14 @@ public class CProject extends Openable implements ICProject {
 		//IPathEntry[] entries = getResolvedPathEntries();
 		ICSourceEntry[] entries = null;
 		ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(getProject(), false);
-		if(des != null){
+		if (des != null) {
 			ICConfigurationDescription cfg = des.getDefaultSettingConfiguration();
-			if(cfg != null)
+			if (cfg != null)
 				entries = cfg.getResolvedSourceEntries();
 		}
 
-		if(entries != null){
-			ArrayList<ISourceRoot> list = new ArrayList<ISourceRoot>(entries.length);
+		if (entries != null) {
+			ArrayList<ISourceRoot> list = new ArrayList<>(entries.length);
 			for (ICSourceEntry sourceEntry : entries) {
 				ISourceRoot root = getSourceRoot(sourceEntry);
 					if (root != null) {
@@ -599,7 +599,7 @@ public class CProject extends Openable implements ICProject {
 			}
 			return list;
 		}
-		return new ArrayList<ISourceRoot>(0);
+		return Collections.emptyList();
 	}
 
 	protected boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
@@ -712,7 +712,7 @@ public class CProject extends Openable implements ICProject {
 	 */
 	public void resetCaches() {
 		CProjectInfo pinfo = (CProjectInfo) CModelManager.getDefault().peekAtInfo(this);
-		if (pinfo != null){
+		if (pinfo != null) {
 			pinfo.resetCaches();
 		}
 	}
@@ -736,7 +736,7 @@ public class CProject extends Openable implements ICProject {
 			if (!rootPath.isAbsolute()) {
 				rootPath= getProject().getFullPath().append(rootPath);
 			}
-			CElement root = (CElement)findSourceRoot(rootPath);
+			CElement root = (CElement) findSourceRoot(rootPath);
 			if (root != null) {
 				if (token != null) {
 					return root.getHandleFromMemento(token, memento);

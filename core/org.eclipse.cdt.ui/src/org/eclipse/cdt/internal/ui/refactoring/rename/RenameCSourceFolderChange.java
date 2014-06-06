@@ -83,9 +83,9 @@ public class RenameCSourceFolderChange extends Change {
 		return new RenameCSourceFolderChange(newName, oldName, project, folder2);
 	}
 	
-	private void changeEntryInAllCfgs(ICProjectDescription des) throws WriteAccessException, CoreException{
+	private void changeEntryInAllCfgs(ICProjectDescription des) throws WriteAccessException, CoreException {
 		ICConfigurationDescription cfgs[] = des.getConfigurations();
-		for (ICConfigurationDescription cfg : cfgs){
+		for (ICConfigurationDescription cfg : cfgs) {
 			ICSourceEntry[] entries = cfg.getSourceEntries();
 			entries = renameEntry(entries);
 			cfg.setSourceEntries(entries);
@@ -93,25 +93,24 @@ public class RenameCSourceFolderChange extends Change {
 		CCorePlugin.getDefault().setProjectDescription(project, des, false, new NullProgressMonitor());
 	}
 	
-	private ICSourceEntry[] renameEntry(ICSourceEntry[] entries){
+	private ICSourceEntry[] renameEntry(ICSourceEntry[] entries) {
 		Set<ICSourceEntry> set = new HashSet<>();
-		for (ICSourceEntry se : entries){
-			String seLocation = se.getName();
-			if (seLocation.equals(oldName.toPortableString())) {
-				ICSourceEntry newSE = new CSourceEntry(newName, se.getExclusionPatterns(), se.getFlags());
-				set.add(newSE);
+		for (ICSourceEntry entry : entries) {
+			String entryPath = entry.getName();
+			if (entryPath.equals(oldName.toString())) {
+				set.add(new CSourceEntry(newName, entry.getExclusionPatterns(), entry.getFlags()));
 			} else {
-				Set<IPath> exPatters = new HashSet<>();
-				for (IPath filter : se.getExclusionPatterns()) {
-					IPath oldSegments = oldName.removeFirstSegments(oldName.segmentCount() -1);
-					if (filter.equals(oldSegments)) {
-						exPatters.add(newName.removeFirstSegments(newName.segmentCount() - 1));
+				IPath oldSegments = oldName.removeFirstSegments(oldName.segmentCount() - 1);
+				Set<IPath> exclusionPatterns = new HashSet<>();
+				for (IPath pattern : entry.getExclusionPatterns()) {
+					if (pattern.equals(oldSegments)) {
+						exclusionPatterns.add(newName.removeFirstSegments(newName.segmentCount() - 1));
 					} else {
-						exPatters.add(filter);
+						exclusionPatterns.add(pattern);
 					}
 				}
 				
-				set.add(new CSourceEntry(se.getValue(), exPatters.toArray(new IPath[exPatters.size()]), se.getFlags()));
+				set.add(new CSourceEntry(entry.getValue(), exclusionPatterns.toArray(new IPath[exclusionPatterns.size()]), entry.getFlags()));
 			}
 		}
 		return set.toArray(new ICSourceEntry[set.size()]);

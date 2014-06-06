@@ -12,6 +12,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementVisitor;
@@ -32,12 +38,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
 
 public abstract class CElement extends PlatformObject implements ICElement {
 	public static final char CEM_ESCAPE = '\\';
@@ -214,7 +214,8 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	public ICModel getCModel () {
 		ICElement current = this;
 		do {
-			if (current instanceof ICModel) return (ICModel) current;
+			if (current instanceof ICModel)
+				return (ICModel) current;
 		} while ((current = current.getParent()) != null);
 		return null;
 	}
@@ -234,14 +235,13 @@ public abstract class CElement extends PlatformObject implements ICElement {
 
 	@Override
 	public IResource getUnderlyingResource() {
-		IResource res = getResource();
-		if (res == null) {
-			ICElement p = getParent();
-			if (p != null) {
-				res = p.getUnderlyingResource();
-			}
-		}
-		return res;
+		ICElement current = this;
+		do {
+			IResource res = getResource();
+			if (res != null)
+				return res;
+		} while ((current = current.getParent()) != null);
+		return null;
 	}
 
 	@Override

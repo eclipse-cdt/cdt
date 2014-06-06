@@ -12,6 +12,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.provider;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.provider.IIndexProvider;
@@ -37,13 +44,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Version;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * The IndexProviderManager is responsible for maintaining the set of index
@@ -431,14 +431,15 @@ public final class IndexProviderManager implements IElementChangedListener {
 		case ICElement.C_MODEL:
 			// Loop through the children
 			ICElementDelta[] children = delta.getAffectedChildren();
-			for (int i = 0; i < children.length; ++i)
+			for (int i = 0; i < children.length; ++i) {
 				processDelta(children[i]);
+			}
 			break;
 		case ICElement.C_PROJECT:
 			final ICProject cproject = (ICProject) delta.getElement();
 			switch (delta.getKind()) {
 			case ICElementDelta.REMOVED:
-				List<ProvisionMapKey> toRemove = new ArrayList<ProvisionMapKey>();
+				List<ProvisionMapKey> toRemove = new ArrayList<>();
 				for (ProvisionMapKey key : provisionMap.keySet()) {
 					if (key.getProject().equals(cproject.getProject())) {
 						toRemove.add(key);

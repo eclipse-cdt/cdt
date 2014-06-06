@@ -9,9 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model;
-
 
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
@@ -25,7 +23,6 @@ import org.eclipse.core.runtime.Path;
  * SourceRoot
  */
 public class SourceRoot extends CContainer implements ISourceRoot {
-
 	ICSourceEntry sourceEntry;
 
 	/**
@@ -47,18 +44,12 @@ public class SourceRoot extends CContainer implements ISourceRoot {
 		return sourceEntry;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ISourceRoot#isOnclasspath(org.eclipse.cdt.core.model.ICElement)
-	 */
 	@Override
 	public boolean isOnSourceEntry(ICElement element) {
 		IPath path = element.getPath();
 		return this.isOnSourceEntry(path);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ISourceRoot#isOnSourceEntry(org.eclipse.core.resources.IResource)
-	 */
 	@Override
 	public boolean isOnSourceEntry(IResource res) {
 		IPath path = res.getFullPath();

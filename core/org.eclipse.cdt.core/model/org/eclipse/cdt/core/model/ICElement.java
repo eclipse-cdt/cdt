@@ -373,18 +373,16 @@ public interface ICElement extends IAdaptable {
 	URI getLocationURI();
 
 	/**
-	 * Returns the underlying resource that contains
-	 * this element, or {@code null} if this element is not contained
-	 * in a resource.
+	 * Returns the underlying resource that contains this element, or {@code null} if this element
+	 * is not contained in a resource.
 	 *
 	 * @return the underlying resource, or {@code null} if none
 	 */
 	IResource getUnderlyingResource();
 
 	/**
-	 * Returns the Corresponding resource for
-	 * this element, or {@code null} if this element does not have
-	 * a corresponding resource.
+	 * Returns the corresponding resource for this element, or {@code null} if this element
+	 * does not have a corresponding resource.
 	 *
 	 * @return the corresponding resource, or {@code null} if none
 	 */

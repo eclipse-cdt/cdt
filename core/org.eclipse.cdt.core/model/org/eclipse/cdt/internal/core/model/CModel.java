@@ -20,8 +20,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.util.MementoTokenizer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -32,7 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CModel extends Openable implements ICModel {
 
-	public CModel () {
+	public CModel() {
 		this(ResourcesPlugin.getWorkspace().getRoot());
 	}
 
@@ -56,9 +54,6 @@ public class CModel extends Openable implements ICModel {
 		return array;
 	}
 
-	/**
-	 * ICModel#getCProject(String)
-	 */
 	@Override
 	public ICProject getCProject(String name) {
 		IProject project = ((IWorkspaceRoot) getResource()).getProject(name);
@@ -66,24 +61,17 @@ public class CModel extends Openable implements ICModel {
 	}
 
 	/**
-	 * Returns the active C project associated with the specified
-	 * resource, or <code>null</code> if no C project yet exists
-	 * for the resource.
+	 * Returns the active C project associated with the specified resource,
+	 * or {@code null} if no C project yet exists for the resource.
 	 *
-	 * @exception IllegalArgumentException if the given resource
-	 * is not one of an IProject, IFolder, or IFile.
+	 * @exception IllegalArgumentException if the given resource is not one of
+	 *     an IProject, IFolder, or IFile.
 	 */
 	public ICProject getCProject(IResource resource) {
-		switch (resource.getType()) {
-		case IResource.FOLDER:
-			return new CProject(this, ((IFolder) resource).getProject());
-		case IResource.FILE:
-			return new CProject(this, ((IFile) resource).getProject());
-		case IResource.PROJECT:
-			return new CProject(this, (IProject) resource);
-		default:
+		IProject project = resource.getProject();
+		if (project == null)
 			throw new IllegalArgumentException("element.invalidResourceForProject"); //$NON-NLS-1$
-		}
+		return new CProject(this, project);
 	}
 
 	/**
@@ -99,7 +87,7 @@ public class CModel extends Openable implements ICModel {
 				}
 			}
 		} catch (CModelException e) {
-			// c model doesn't exist: cannot find any project
+			// C model doesn't exist: cannot find any project.
 		}
 		return null;
 	}
@@ -111,7 +99,7 @@ public class CModel extends Openable implements ICModel {
 
 	@Override
 	public void copy(ICElement[] elements, ICElement[] containers, ICElement[] siblings,
-		String[] renamings, boolean replace, IProgressMonitor monitor) throws CModelException {
+			String[] renamings, boolean replace, IProgressMonitor monitor) throws CModelException {
 		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
 			runOperation(new CopyResourceElementsOperation(elements, containers, replace), elements,
 					siblings, renamings, monitor);
@@ -123,7 +111,7 @@ public class CModel extends Openable implements ICModel {
 
 	@Override
 	public void delete(ICElement[] elements, boolean force, IProgressMonitor monitor)
-		throws CModelException {
+			throws CModelException {
 		CModelOperation op;
 		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
 			op = new DeleteResourceElementsOperation(elements, force);
@@ -135,7 +123,7 @@ public class CModel extends Openable implements ICModel {
 
 	@Override
 	public void move(ICElement[] elements, ICElement[] containers, ICElement[] siblings,
-		String[] renamings, boolean replace, IProgressMonitor monitor) throws CModelException {
+			String[] renamings, boolean replace, IProgressMonitor monitor) throws CModelException {
 		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
 			runOperation(new MoveResourceElementsOperation(elements, containers, replace), elements,
 					siblings, renamings, monitor);
@@ -147,7 +135,7 @@ public class CModel extends Openable implements ICModel {
 
 	@Override
 	public void rename(ICElement[] elements, ICElement[] destinations, String[] renamings,
-		boolean force, IProgressMonitor monitor) throws CModelException {
+			boolean force, IProgressMonitor monitor) throws CModelException {
 		CModelOperation op;
 		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
 			op = new RenameResourceElementsOperation(elements, destinations, renamings, force);
@@ -158,7 +146,7 @@ public class CModel extends Openable implements ICModel {
 	}
 
 	/**
-	 * Configures and runs the <code>MultiOperation</code>.
+	 * Configures and runs the {@link MultiOperation}.
 	 */
 	protected void runOperation(MultiOperation op, ICElement[] elements, ICElement[] siblings,
 			String[] renamings, IProgressMonitor monitor) throws CModelException {
@@ -216,7 +204,7 @@ public class CModel extends Openable implements ICModel {
 	}
 
 	protected  boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
-		// determine my children
+		// Determine my children.
 		IWorkspaceRoot root = (IWorkspaceRoot) getResource();
 		IProject[] projects = root.getProjects();
 		for (IProject project : projects) {
@@ -233,12 +221,12 @@ public class CModel extends Openable implements ICModel {
 	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
 		switch (token.charAt(0)) {
 		case CEM_CPROJECT:
-			if (!memento.hasMoreTokens()) return this;
+			if (!memento.hasMoreTokens())
+				return this;
 			String projectName = memento.nextToken();
 			CElement project = (CElement) getCProject(projectName);
-			if (project != null) {
+			if (project != null)
 				return project.getHandleFromMemento(memento);
-			}
 		}
 		return null;
 	}

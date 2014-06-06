@@ -31,25 +31,23 @@ public class DestroyWorkingCopyOperation extends CModelOperation {
 	 */
 	@Override
 	protected void executeOperation() throws CModelException {
-
 		WorkingCopy workingCopy = getWorkingCopy();
 		workingCopy.close();
 		
-		// if original element is not on classpath flush it from the cache
+		// If original element is not on classpath flush it from the cache.
 		ITranslationUnit originalElement = workingCopy.getOriginalElement();
 		if (!workingCopy.getParent().exists()) {
 			originalElement.close();
 		}
 		
-		// remove working copy from the cache if it is shared
+		// Remove working copy from the cache if it is shared.
 		IWorkingCopy wc = CModelManager.getDefault().removeSharedWorkingCopy(workingCopy.bufferFactory, originalElement);
 		if (wc != null) {
 			//System.out.println("Destroying shared working copy " + workingCopy.toStringWithAncestors());//$NON-NLS-1$
 			//CModelManager.getDefault().fire(delta, ElementChangedEvent.POST_RECONCILE);
 		}
 
-		
-		// report C deltas
+		// Report C deltas
 		CElementDelta delta = new CElementDelta(this.getCModel());
 		delta.removed(workingCopy);
 		addDelta(delta);

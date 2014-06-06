@@ -53,7 +53,7 @@ public class DeltaAnalyzer {
 		final ICElement element = delta.getElement();
 		switch (element.getElementType()) {
 		case ICElement.C_UNIT:
-			ITranslationUnit tu = (ITranslationUnit)element;
+			ITranslationUnit tu = (ITranslationUnit) element;
 			if (!tu.isWorkingCopy()) {
 				handled.add(element.getResource());
 				switch (delta.getKind()) {

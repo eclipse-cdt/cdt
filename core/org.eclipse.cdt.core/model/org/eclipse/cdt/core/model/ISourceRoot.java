@@ -8,7 +8,6 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.core.model;
 
 import org.eclipse.core.resources.IResource;
@@ -25,5 +24,4 @@ public interface ISourceRoot extends ICContainer {
 	boolean isOnSourceEntry(IPath path);
 
 	boolean isOnSourceEntry(ICElement element);
-
 }

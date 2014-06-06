@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -34,7 +35,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	private String extractedFunctionName = "extracted";
 	private String returnValue;
 	// Map from old names to new ones.
-	private Map<String, String> parameterRename = new HashMap<String, String>();
+	private Map<String, String> parameterRename = new HashMap<>();
 	// New positions of parameters, or null.
 	private int[] parameterOrder;
 	private VisibilityEnum visibility = VisibilityEnum.v_private;

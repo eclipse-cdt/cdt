@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ *     Intel Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
@@ -16,25 +16,26 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
 
 public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICExclusionPatternPathEntry {
-	private final IPath[] exclusionPatterns;
 	private final static char[][] UNINIT_PATTERNS = new char[][] { "Non-initialized yet".toCharArray() }; //$NON-NLS-1$
-	/** calculated value, does not have to be final */
+
+	private final IPath[] exclusionPatterns;
+	/** Calculated value, does not have to be final */
 	char[][] fullCharExclusionPatterns = UNINIT_PATTERNS;
 
 
 	ACExclusionFilterEntry(IPath path, IPath exclusionPatterns[] , int flags) {
 		super(path, flags);
-		this.exclusionPatterns = exclusionPatterns != null ? (IPath[])exclusionPatterns.clone() : new IPath[0];
+		this.exclusionPatterns = exclusionPatterns != null ? (IPath[]) exclusionPatterns.clone() : new IPath[0];
 	}
 
 	ACExclusionFilterEntry(IFolder rc, IPath exclusionPatterns[], int flags) {
 		super(rc, flags);
-		this.exclusionPatterns = exclusionPatterns != null ? (IPath[])exclusionPatterns.clone() : new IPath[0];
+		this.exclusionPatterns = exclusionPatterns != null ? (IPath[]) exclusionPatterns.clone() : new IPath[0];
 	}
 
 	ACExclusionFilterEntry(String value, IPath exclusionPatterns[], int flags) {
 		super(value, flags);
-		this.exclusionPatterns = exclusionPatterns != null ? (IPath[])exclusionPatterns.clone() : new IPath[0];
+		this.exclusionPatterns = exclusionPatterns != null ? (IPath[]) exclusionPatterns.clone() : new IPath[0];
 	}
 
 	/**
@@ -51,7 +52,7 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 	 */
 	@Override
 	public IPath[] getExclusionPatterns() {
-		return exclusionPatterns.length != 0 ? (IPath[])exclusionPatterns.clone() : exclusionPatterns;
+		return exclusionPatterns.length != 0 ? (IPath[]) exclusionPatterns.clone() : exclusionPatterns;
 	}
 
 	/**
@@ -63,7 +64,7 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 			int length = this.exclusionPatterns.length;
 			this.fullCharExclusionPatterns = new char[length][];
 			IPath path = getFullPath();
-			if(path == null)
+			if (path == null)
 				path = getLocation();
 			IPath prefixPath = path.removeTrailingSeparator();
 			for (int i = 0; i < length; i++) {
@@ -98,7 +99,7 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 
 	@Override
 	public boolean equalsByContents(ICSettingEntry entry) {
-		if(!super.equalsByContents(entry))
+		if (!super.equalsByContents(entry))
 			return false;
 
 		ACExclusionFilterEntry otherEntry = (ACExclusionFilterEntry)entry;
@@ -108,12 +109,12 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 	@Override
 	protected String contentsToString() {
 		String result = super.contentsToString();
-		if(exclusionPatterns.length != 0){
-			StringBuffer buf = new StringBuffer();
+		if (exclusionPatterns.length != 0) {
+			StringBuilder buf = new StringBuilder();
 			buf.append(result);
 			buf.append(" ; exclude: "); //$NON-NLS-1$
-			for(int i = 0; i < exclusionPatterns.length; i++){
-				if(i != 0)
+			for (int i = 0; i < exclusionPatterns.length; i++) {
+				if (i != 0)
 					buf.append(", "); //$NON-NLS-1$
 				buf.append(exclusionPatterns[i].toString());
 			}

@@ -42,7 +42,7 @@ public class CTextFileChange extends TextFileChange {
     private static final String TEXT_TYPE = "c2"; //$NON-NLS-1$
 	private ITranslationUnit fTranslationUnit;
     private IWorkingCopy fWorkingCopy;
-    private int fAquireCount;
+    private int fAcquireCount;
     
     public CTextFileChange(String name, IFile file) {
         super(name, file);
@@ -65,7 +65,7 @@ public class CTextFileChange extends TextFileChange {
     @Override
 	protected IDocument acquireDocument(IProgressMonitor pm) throws CoreException {
         IDocument doc= super.acquireDocument(pm);
-        if (++fAquireCount == 1) {
+        if (++fAcquireCount == 1) {
             if (fTranslationUnit instanceof TranslationUnit && fWorkingCopy == null) {
                 fWorkingCopy= ((TranslationUnit) fTranslationUnit).getWorkingCopy(null, DocumentAdapter.FACTORY);
                 if (!fTranslationUnit.isOpen()) {
@@ -88,7 +88,7 @@ public class CTextFileChange extends TextFileChange {
     @Override
 	protected void releaseDocument(IDocument document, IProgressMonitor pm) throws CoreException {
         super.releaseDocument(document, pm);
-        if (--fAquireCount == 0) {
+        if (--fAcquireCount == 0) {
             if (fWorkingCopy != null) {
                 fWorkingCopy.destroy();
                 fWorkingCopy= null;

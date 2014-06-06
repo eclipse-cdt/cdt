@@ -38,7 +38,6 @@ import org.eclipse.core.runtime.IPath;
  * (e.g. closing them or updating binary containers).
  */
 final class DeltaProcessor {
-	
 	/**
 	 * The <code>CElementDelta</code> corresponding to the <code>IResourceDelta</code> being translated.
 	 */
@@ -47,7 +46,7 @@ final class DeltaProcessor {
 	static final ICElementDelta[] NO_DELTA = new ICElementDelta[0];
 
 	// Hold on the element being renamed.
-	private ICElement movedFromElement = null;
+	private ICElement movedFromElement;
 
 	/**
 	 * Creates the create corresponding to this resource.
@@ -148,7 +147,7 @@ final class DeltaProcessor {
 		Openable parent = (Openable) child.getParent();
 		if (parent != null && parent.isOpen()) {
 			CElementInfo info = parent.getElementInfo();
-			// Check if the element exits
+			// Check if the element exists.
 			if (!info.includesChild(child)) {
 				info.addChild(child);
 			}
@@ -166,7 +165,7 @@ final class DeltaProcessor {
 		// Remove the child from the parent list.
 		ICElement parent = child.getParent();
 		if (parent != null && parent instanceof Parent && factory.peekAtInfo(parent) != null) {
-			((Parent)parent).removeChild(child);
+			((Parent) parent).removeChild(child);
 		}
 	}
 
@@ -457,7 +456,7 @@ final class DeltaProcessor {
 				if (parent != null)
 					nonCResourcesChanged(parent, delta);
 			} else if (current instanceof ICProject) {
-				ICProject cprj = (ICProject)current;
+				ICProject cprj = (ICProject) current;
 				CModel cModel = CModelManager.getDefault().getCModel();
 				if (!cprj.getProject().isOpen() || cModel.findCProject(cprj.getProject()) == null) {
 					nonCResourcesChanged(parent, delta);

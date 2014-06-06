@@ -38,7 +38,6 @@ import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.model.IProjectEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
-import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;

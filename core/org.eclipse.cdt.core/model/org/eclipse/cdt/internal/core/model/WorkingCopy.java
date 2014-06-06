@@ -78,27 +78,24 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			op.runOperation(monitor);
 		} else {
 			String contents = this.getSource();
-			if (contents == null) return;
+			if (contents == null)
+				return;
+
 			try {
-				IFile originalRes = (IFile)original.getResource();
+				IFile originalRes = (IFile) original.getResource();
 				String encoding = null;
 				try {
 					encoding = originalRes.getCharset();
 				} catch (CoreException e) {
-					// use no encoding
+					// Use no encoding.
 				}
 				byte[] bytes = encoding == null ? contents.getBytes() : contents.getBytes(encoding);
 				ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
 				if (originalRes.exists()) {
-					originalRes.setContents(
-							stream,
-							force ? IResource.FORCE | IResource.KEEP_HISTORY : IResource.KEEP_HISTORY,
-									null);
+					int updateFlags = force ? IResource.FORCE | IResource.KEEP_HISTORY : IResource.KEEP_HISTORY;
+					originalRes.setContents(stream, updateFlags, monitor);
 				} else {
-					originalRes.create(
-							stream,
-							force,
-							monitor);
+					originalRes.create(stream, force, monitor);
 				}
 			}  catch (IOException e) {
 				throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
@@ -118,13 +115,13 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			DestroyWorkingCopyOperation op = new DestroyWorkingCopyOperation(this);
 			op.runOperation(null);
 		} catch (CModelException e) {
-			// do nothing
+			// Do nothing.
 		}
 	}
 
 	@Override
 	public boolean exists() {
-		// working copy always exists in the model until it is destroyed
+		// Working copy always exists in the model until it is destroyed.
 		return this.useCount != 0;
 	}
 
@@ -132,7 +129,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 * Returns custom buffer factory
 	 */
 	@Override
-	public IBufferFactory getBufferFactory(){
+	public IBufferFactory getBufferFactory() {
 		return this.bufferFactory;
 	}
 
@@ -170,7 +167,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			return null; // oops !!
 		}
 
-		// look for it.
+		// Look for it.
 		ICElement element = workingCopyElement;
 		ArrayList<ICElement> children = new ArrayList<ICElement>();
 		while (element != null && element.getElementType() != ICElement.C_UNIT) {
@@ -221,7 +218,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	}
 
 	@Override
-	public IWorkingCopy getWorkingCopy(IProgressMonitor monitor){
+	public IWorkingCopy getWorkingCopy(IProgressMonitor monitor) {
 		return this;
 	}
 
@@ -262,7 +259,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		}
 		super.open(monitor);
 		//if (monitor != null && monitor.isCanceled()) return;
-		//if (this.problemRequestor != null && this.problemRequestor.isActive()){
+		//if (this.problemRequestor != null && this.problemRequestor.isActive()) {
 		//	this.problemRequestor.beginReporting();
 		//	TranslationUnitProblemFinder.process(this, this.problemRequestor, monitor);
 		//	this.problemRequestor.endReporting();
@@ -280,7 +277,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			return null;
 
 		// Set the buffer source if needed
-		if (buffer.getContents() == null){
+		if (buffer.getContents() == null) {
 			ITranslationUnit original= this.getOriginalElement();
 			IBuffer originalBuffer = null;
 			try {

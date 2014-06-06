@@ -48,7 +48,6 @@ import org.eclipse.core.resources.IResourceDelta;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICElementDelta {
-
 	/**
 	 * Status constant indicating that the element has been added.
 	 */

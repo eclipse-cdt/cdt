@@ -37,13 +37,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 
 public class SourceManipulation extends Parent implements ISourceManipulation, ISourceReference {
-
 	/**
-	 * An empty list of Strings
+	 * An empty array of Strings
 	 */
 	protected static final String[] fgEmptyStrings = {};
 	private boolean fIsActive= true;
-	private short fIndex= 0;
+	private short fIndex;
 
 	public SourceManipulation(ICElement parent, String name, int type) {
 		super(parent, name, type);
@@ -54,7 +53,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	 */
 	@Override
 	public void copy(ICElement container, ICElement sibling, String rename, boolean force,
-		IProgressMonitor monitor) throws CModelException {
+			IProgressMonitor monitor) throws CModelException {
 		if (container == null) {
 			throw new IllegalArgumentException(CoreModelMessages.getString("operation.nullContainer")); //$NON-NLS-1$
 		}
@@ -189,15 +188,15 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	}
 
 	protected SourceManipulationInfo getSourceManipulationInfo() throws CModelException {
-		return (SourceManipulationInfo)getElementInfo();
+		return (SourceManipulationInfo) getElementInfo();
 	}
 
 	public boolean isIdentical(SourceManipulation other) throws CModelException{
-		return (this.equals(other)
-		&& (this.getSourceManipulationInfo().hasSameContentsAs(other.getSourceManipulationInfo())));
+		return this.equals(other)
+				&& (this.getSourceManipulationInfo().hasSameContentsAs(other.getSourceManipulationInfo()));
 	}
 
-	/*
+	/**
 	 * @see CElement#generateInfos
 	 */
 	@Override
@@ -239,7 +238,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 		}
 	}
 
-	/*
+	/**
 	 * @see CElement
 	 */
 	@Override

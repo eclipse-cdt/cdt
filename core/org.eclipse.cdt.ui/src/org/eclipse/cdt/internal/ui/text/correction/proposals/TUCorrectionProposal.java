@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.text.correction.proposals;
 
 import org.eclipse.core.runtime.CoreException;
@@ -89,7 +88,6 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 			throw new IllegalArgumentException("Translation unit must not be null"); //$NON-NLS-1$
 		}
 		fTranslationUnit= tu;
-		fLinkedProposalModel= null;
 	}
 
 	/**
@@ -135,12 +133,9 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 		fLinkedProposalModel= model;
 	}
 
-	/*
-	 * @see ICompletionProposal#getAdditionalProposalInfo()
-	 */
 	@Override
 	public String getAdditionalProposalInfo() {
-		final StringBuffer buf= new StringBuffer();
+		final StringBuilder buf= new StringBuilder();
 
 		try {
 			final TextChange change= getTextChange();
@@ -218,13 +213,13 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 
 	private final int surroundLines= 1;
 
-	private void appendContent(IDocument text, int startOffset, int endOffset, StringBuffer buf, boolean surroundLinesOnly) {
+	private void appendContent(IDocument text, int startOffset, int endOffset, StringBuilder buf, boolean surroundLinesOnly) {
 		try {
 			int startLine= text.getLineOfOffset(startOffset);
 			int endLine= text.getLineOfOffset(endOffset);
 
 			boolean dotsAdded= false;
-			if (surroundLinesOnly && startOffset == 0) { // no surround lines for the top no-change range
+			if (surroundLinesOnly && startOffset == 0) { // No surround lines for the top no-change range
 				startLine= Math.max(endLine - surroundLines, 0);
 				buf.append("...<br>"); //$NON-NLS-1$
 				dotsAdded= true;
@@ -237,7 +232,7 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 							buf.append("...<br>"); //$NON-NLS-1$
 							dotsAdded= true;
 						} else if (endOffset == text.getLength()) {
-							return; // no surround lines for the bottom no-change range
+							return; // No surround lines for the bottom no-change range
 						}
 						continue;
 					}
@@ -250,8 +245,8 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 				int from= Math.max(start, startOffset);
 				int to= Math.min(end, endOffset);
 				String content= text.get(from, to - from);
-				if (surroundLinesOnly && (from == start) && Strings.containsOnlyWhitespaces(content)) {
-					continue; // ignore empty lines except when range started in the middle of a line
+				if (surroundLinesOnly && from == start && Strings.containsOnlyWhitespaces(content)) {
+					continue; // Ignore empty lines except when range started in the middle of a line
 				}
 				for (int k= 0; k < content.length(); k++) {
 					char ch= content.charAt(k);
@@ -263,18 +258,15 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 						buf.append(ch);
 					}
 				}
-				if (to == end && to != endOffset) { // new line when at the end of the line, and not end of range
+				if (to == end && to != endOffset) { // New line when at the end of the line, and not end of range
 					buf.append("<br>"); //$NON-NLS-1$
 				}
 			}
 		} catch (BadLocationException e) {
-			// ignore
+			// Ignore.
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#apply(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public void apply(IDocument document) {
 		try {
@@ -318,9 +310,6 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.text.correction.ChangeCorrectionProposal#performChange(org.eclipse.jface.text.IDocument, org.eclipse.ui.IEditorPart)
-	 */
 	@Override
 	protected void performChange(IEditorPart part, IDocument document) throws CoreException {
 		try {
@@ -366,7 +355,7 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 				source= tu.getSource();
 			} catch (CModelException e) {
 				CUIPlugin.log(e);
-				source= new String(); // empty
+				source= ""; //$NON-NLS-1$
 			}
 			Document document= new Document(source);
 			document.setInitialLineDelimiter(StubUtility.getLineDelimiterUsed(tu));
@@ -379,15 +368,12 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 		TextEdit rootEdit= new MultiTextEdit();
 		change.setEdit(rootEdit);
 
-		// initialize text change
+		// Initialize text change.
 		IDocument document= change.getCurrentDocument(new NullProgressMonitor());
 		addEdits(document, rootEdit);
 		return change;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.text.correction.ChangeCorrectionProposal#createChange()
-	 */
 	@Override
 	protected final Change createChange() throws CoreException {
 		return createTextChange(); // make sure that only text changes are allowed here
@@ -422,9 +408,6 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 		return getTextChange().getPreviewContent(new NullProgressMonitor());
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		try {

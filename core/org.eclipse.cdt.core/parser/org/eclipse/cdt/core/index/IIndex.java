@@ -14,14 +14,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.index;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import java.util.regex.Pattern;
 
 /**
  * Interface for accessing the index for one or more projects.

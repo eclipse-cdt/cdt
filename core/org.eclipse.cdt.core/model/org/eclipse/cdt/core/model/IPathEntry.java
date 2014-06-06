@@ -12,9 +12,7 @@ package org.eclipse.cdt.core.model;
 
 import org.eclipse.core.runtime.IPath;
 
-
 public interface IPathEntry {
-
 	/**
 	 * Entry kind constant describing a path entry identifying a
 	 * library. A library is an archive containing 
@@ -104,5 +102,4 @@ public interface IPathEntry {
 	 * @return IPath
 	 */
 	IPath getPath();
-
 }

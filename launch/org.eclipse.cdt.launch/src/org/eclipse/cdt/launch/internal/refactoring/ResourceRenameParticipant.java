@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation9
+ *     QNX Software Systems - Initial API and implementation9
  *******************************************************************************/
-
 package org.eclipse.cdt.launch.internal.refactoring;
 
 import java.util.Collection;
@@ -42,16 +41,10 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
  * 
  * @since 6.0
  */
-public class ResourceRenameParticipant extends RenameParticipant implements
-		IExecutableExtension {
-
+public class ResourceRenameParticipant extends RenameParticipant implements IExecutableExtension {
 	private String name;
-
 	private IResource resourceBeingRenamed;
 
-	/**
-	 * Initializes me.
-	 */
 	public ResourceRenameParticipant() {
 		super();
 	}
@@ -66,17 +59,14 @@ public class ResourceRenameParticipant extends RenameParticipant implements
 		if (element instanceof IResource) {
 			resourceBeingRenamed = (IResource) element;
 		} else if (element instanceof IAdaptable) {
-			resourceBeingRenamed = (IResource) ((IAdaptable) element)
-					.getAdapter(IResource.class);
+			resourceBeingRenamed = (IResource) ((IAdaptable) element).getAdapter(IResource.class);
 		}
 
 		return true;
 	}
 
 	@Override
-	public Change createChange(IProgressMonitor pm) throws CoreException,
-			OperationCanceledException {
-
+	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		Change result = null;
 
 		if (resourceBeingRenamed instanceof IProject) {
@@ -85,22 +75,15 @@ public class ResourceRenameParticipant extends RenameParticipant implements
 			Collection<ILaunchConfigurationType> launchTypes = getCLaunchConfigTypes();
 
 			if (!launchTypes.isEmpty()) {
-				ILaunchManager mgr = DebugPlugin.getDefault()
-						.getLaunchManager();
+				ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();
 
 				for (ILaunchConfigurationType type : launchTypes) {
-					ILaunchConfiguration[] launches = mgr
-							.getLaunchConfigurations(type);
+					ILaunchConfiguration[] launches = mgr.getLaunchConfigurations(type);
 
 					for (ILaunchConfiguration next : launches) {
-						if (next
-								.getAttribute(
-										ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-										"").equals(oldName)) { //$NON-NLS-1$
-
-							result = AbstractLaunchConfigChange.append(result,
-									new ProjectRenameChange(next, oldName,
-											newName));
+						if (next.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "").equals(oldName)) { //$NON-NLS-1$
+							result = AbstractLaunchConfigChange.append(
+									result, new ProjectRenameChange(next, oldName, newName));
 						}
 					}
 				}
@@ -111,10 +94,10 @@ public class ResourceRenameParticipant extends RenameParticipant implements
 	}
 
 	static Collection<ILaunchConfigurationType> getCLaunchConfigTypes() {
-		Set<ILaunchConfigurationType> result = new java.util.HashSet<ILaunchConfigurationType>();
+		Set<ILaunchConfigurationType> result = new HashSet<>();
 
 		// Get launch config types registered by CDT adopters
-		Set<String> thirdPartyConfgTypeIds = new HashSet<String>(5);
+		Set<String> thirdPartyConfgTypeIds = new HashSet<>(5);
 		LaunchConfigAffinityExtensionPoint.getLaunchConfigTypeIds(thirdPartyConfgTypeIds);
 		
 		ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();
@@ -130,18 +113,15 @@ public class ResourceRenameParticipant extends RenameParticipant implements
 	}
 
 	@Override
-	public RefactoringStatus checkConditions(IProgressMonitor pm,
-			CheckConditionsContext context) throws OperationCanceledException {
-
+	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context)
+			throws OperationCanceledException {
 		// I have no conditions to check. Updating the launches is trivial
 		return new RefactoringStatus();
 	}
 
 	@Override
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) throws CoreException {
-
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+			throws CoreException {
 		this.name = config.getAttribute("name"); //$NON-NLS-1$
 	}
-
 }

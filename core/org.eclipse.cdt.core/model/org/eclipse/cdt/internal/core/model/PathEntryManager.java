@@ -1320,7 +1320,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						try {
 							IMarker[] markers = project.findMarkers(ICModelMarker.PATHENTRY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 							if (markers != null && markers.length > 0) {
-								ArrayList<ICModelStatus> problemList = new ArrayList<ICModelStatus>();
+								ArrayList<ICModelStatus> problemList = new ArrayList<>();
 								for (IPathEntry entry : entries) {
 									ICModelStatus status = PathEntryUtil.validatePathEntry(project2, entry, true, false);
 									if (!status.isOK()) {
@@ -1349,7 +1349,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		int type = element.getElementType();
 
 		// Handle open, closing and removing of projects
-		if ( type == ICElement.C_PROJECT) {
+		if (type == ICElement.C_PROJECT) {
 			ICProject cproject = (ICProject)element;
 			if ((kind == ICElementDelta.REMOVED || kind == ICElementDelta.ADDED)) {
 				if (kind == ICElementDelta.REMOVED) {

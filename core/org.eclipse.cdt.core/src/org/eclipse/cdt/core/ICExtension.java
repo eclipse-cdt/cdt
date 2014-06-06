@@ -14,17 +14,20 @@ import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.core.resources.IProject;
 
 /**
- * This represents an executable extension in the cmodel hierarchy
+ * Represents an executable extension in the C model hierarchy.
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICExtension {
 	public IProject getProject();
+
 	/**
 	 * @deprecated Use {@link #getConfigExtensionReference()} instead.
 	 */
 	@Deprecated
 	public ICExtensionReference getExtensionReference();
+
 	/**
 	 * @since 5.2
 	 */

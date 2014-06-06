@@ -26,8 +26,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class CRefactoringMatchStore {
-    private Map<IFile, IPath> fFileToPathMap= new HashMap<IFile, IPath>();
-    private Map<IPath, SortedMap<CRefactoringMatch, CRefactoringMatch>> fPathToMatches= new HashMap<IPath, SortedMap<CRefactoringMatch, CRefactoringMatch>>();
+    private Map<IFile, IPath> fFileToPathMap= new HashMap<>();
+    private Map<IPath, SortedMap<CRefactoringMatch, CRefactoringMatch>> fPathToMatches= new HashMap<>();
     private Comparator<CRefactoringMatch> fOffsetComparator;
 
     public CRefactoringMatchStore() {
@@ -50,7 +50,7 @@ public class CRefactoringMatchStore {
     private Map<CRefactoringMatch, CRefactoringMatch> getMapForPath(IPath path, boolean create) {
         SortedMap<CRefactoringMatch, CRefactoringMatch> map= fPathToMatches.get(path);
         if (map == null && create) {
-            map= new TreeMap<CRefactoringMatch, CRefactoringMatch>(fOffsetComparator);
+            map= new TreeMap<>(fOffsetComparator);
             fPathToMatches.put(path, map);
         }
         return map;
@@ -73,7 +73,7 @@ public class CRefactoringMatchStore {
     }
 
     public List<IFile> getFileList() {
-        return new ArrayList<IFile>(fFileToPathMap.keySet());
+        return new ArrayList<>(fFileToPathMap.keySet());
     }
 
     public boolean contains(IResource file) {

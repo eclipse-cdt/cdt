@@ -56,7 +56,7 @@ public class MoveRenameTest extends ChangeGeneratorTest {
 					IASTDeclaration[] members = classSpecifier.getMembers();
 					ASTModification swap1 = new ASTModification(ASTModification.ModificationKind.REPLACE, members[1], members[2], null);
 					ASTModification swap2 = new ASTModification(ASTModification.ModificationKind.REPLACE, members[2], members[1], null);
-					IASTName name =((CPPASTSimpleDeclaration)members[2]).getDeclarators()[0].getName();
+					IASTName name =((CPPASTSimpleDeclaration) members[2]).getDeclarators()[0].getName();
 					modStore.storeModification(null, swap1);
 					modStore.storeModification(null, swap2);
 					modStore.storeModification(swap1, new ASTModification(ASTModification.ModificationKind.REPLACE, name, new CPPASTName("d".toCharArray()), null)); //$NON-NLS-1$

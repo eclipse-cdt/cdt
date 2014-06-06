@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
+import java.net.URI;
+import java.util.List;
+
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
@@ -58,9 +61,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-
-import java.net.URI;
-import java.util.List;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -260,9 +260,8 @@ public class CoreModel {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
 		if (contentType != null) {
 			String id = contentType.getId();
-			if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)) {
-				return true;
-			} else if (CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
+			if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id) ||
+					CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
 				return true;
 			}
 		}
@@ -567,16 +566,12 @@ public class CoreModel {
 	 * folders are located with that project. That is, a source entry
 	 * specifying the path {@code /P1/src} is only usable for project
 	 * {@code P1}.
-	 * </p>
-	 * </p>
 	 * <p>
 	 * Note that all sources/binaries inside a project are contributed as a
 	 * whole through a project entry (see {@code newProjectEntry}).
 	 * Particular source entries cannot be selectively exported.
-	 * </p>
 	 *
-	 * @param sourcePath
-	 *            the project-relative path of a source folder
+	 * @param sourcePath the project-relative path of a source folder
 	 * @return a new source entry with not exclusion patterns
 	 *
 	 */
@@ -596,7 +591,6 @@ public class CoreModel {
 	 * folders are located with that project. That is, a source entry
 	 * specifying the path {@code /P1/src} is only usable for project
 	 * {@code P1}.
-	 * </p>
 	 *
 	 * @param sourcePath
 	 *            the absolute project-relative path of a source folder
@@ -945,7 +939,6 @@ public class CoreModel {
 	 * If the project's raw entries are later modified they can become out of
 	 * date. Because of this, hanging on resolved pathentries is not
 	 * recommended.
-	 * </p>
 	 *
 	 * @return the resolved entries for the project
 	 * @exception CModelException
@@ -963,7 +956,6 @@ public class CoreModel {
 	 * If the project's raw entries are later modified they can become out of
 	 * date. Because of this, hanging on resolved pathentries is not
 	 * recommended.
-	 * </p>
 	 *
 	 * @return the include entries for the translation unit
 	 * @exception CModelException
@@ -981,7 +973,6 @@ public class CoreModel {
 	 * If the project's raw entries are later modified they can become out of
 	 * date. Because of this, hanging on resolved pathentries is not
 	 * recommended.
-	 * </p>
 	 *
 	 * @return the include file entries for the translation unit
 	 * @exception CModelException
@@ -999,7 +990,6 @@ public class CoreModel {
 	 * If the project's raw entries are later modified they can become out of
 	 * date. Because of this, hanging on resolved pathentries is not
 	 * recommended.
-	 * </p>
 	 *
 	 * @return the resolved entries for the project
 	 * @exception CModelException
@@ -1017,7 +1007,6 @@ public class CoreModel {
 	 * If the project's raw entries are later modified they can become out of
 	 * date. Because of this, hanging on resolved pathentries is not
 	 * recommended.
-	 * </p>
 	 *
 	 * @return the macro file entries for the translation unit
 	 * @exception CModelException
@@ -1162,7 +1151,6 @@ public class CoreModel {
 	private CoreModel() {
 	}
 
-
 	/**
 	 * Runs the given action as an atomic C model operation.
 	 * <p>
@@ -1173,13 +1161,11 @@ public class CoreModel {
 	 * methods that modify C elements and only have element
 	 * changed event notifications reported at the end of the entire
 	 * batch.
-	 * </p>
 	 * <p>
 	 * If this method is called outside the dynamic scope of another such
 	 * call, this method runs the action and then reports a single
 	 * element changed event describing the net effect of all changes
 	 * done to C elements by the action.
-	 * </p>
 	 * <p>
 	 * If this method is called in the dynamic scope of another such
 	 * call, this method simply runs the action.
@@ -1187,7 +1173,7 @@ public class CoreModel {
 	 *
 	 * @param action the action to perform
 	 * @param monitor a progress monitor, or {@code null} if progress
-	 *    reporting and cancellation are not desired
+	 *     reporting and cancellation are not desired
 	 * @exception CoreException if the operation failed.
 	 * @since 2.1
 	 */
@@ -1204,28 +1190,24 @@ public class CoreModel {
 	 * methods that modify C elements and only have element
 	 * changed event notifications reported at the end of the entire
 	 * batch.
-	 * </p>
 	 * <p>
 	 * If this method is called outside the dynamic scope of another such
 	 * call, this method runs the action and then reports a single
 	 * element changed event describing the net effect of all changes
 	 * done to C elements by the action.
-	 * </p>
 	 * <p>
 	 * If this method is called in the dynamic scope of another such
 	 * call, this method simply runs the action.
-	 * </p>
 	 * <p>
  	 * The supplied scheduling rule is used to determine whether this operation can be
 	 * run simultaneously with workspace changes in other threads. See
-	 * {@code IWorkspace.run(...)} for more details.
- 	 * </p>
+	 * {@link IWorkspace#run} for more details.
 	 *
 	 * @param action the action to perform
 	 * @param rule the scheduling rule to use when running this operation, or
-	 * {@code null} if there are no scheduling restrictions for this operation.
+	 *     {@code null} if there are no scheduling restrictions for this operation.
 	 * @param monitor a progress monitor, or {@code null} if progress
-	 *    reporting and cancellation are not desired
+	 *     reporting and cancellation are not desired
 	 * @exception CoreException if the operation failed.
 	 * @since 3.0
 	 */
@@ -1234,7 +1216,7 @@ public class CoreModel {
 		if (workspace.isTreeLocked()) {
 			new BatchOperation(action).run(monitor);
 		} else {
-			// use IWorkspace.run(...) to ensure that a build will be done in autobuild mode
+			// Use IWorkspace.run(...) to ensure that a build will be done in autobuild mode.
 			workspace.run(new BatchOperation(action), rule, IWorkspace.AVOID_UPDATE, monitor);
 		}
 	}

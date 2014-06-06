@@ -379,7 +379,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 				wizard.setConnection(copy);
 				wizard.setInvalidConnectionNames(invalidConnectionNames());
 				IRemoteConnectionWorkingCopy conn = wizard.open();
-				if (conn != null) {
+				if (conn != null && conn.isDirty()) {
 					fWorkingCopies.put(copy.getName(), copy);
 					fConnectionViewer.refresh();
 					fIsDirty = true;
@@ -499,6 +499,10 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 							return;
 						}
 						wc.save();
+						/*
+						 * Replace working copy with original so that the correct version will be used in the future
+						 */
+						fWorkingCopies.put(conn.getName(), conn);
 					}
 				}
 				IRemoteUIConnectionManager mgr = RemoteUIServices.getRemoteUIServices(conn.getRemoteServices())
@@ -533,7 +537,10 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		 */
 		for (IRemoteConnection conn : fWorkingCopies.values()) {
 			if (conn instanceof IRemoteConnectionWorkingCopy) {
-				((IRemoteConnectionWorkingCopy) conn).save();
+				IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) conn;
+				if (wc.isDirty()) {
+					wc.save();
+				}
 			}
 		}
 		initWorkingConnections();

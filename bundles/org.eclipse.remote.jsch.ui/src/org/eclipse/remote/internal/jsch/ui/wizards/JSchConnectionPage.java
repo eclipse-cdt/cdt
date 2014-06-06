@@ -45,6 +45,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 public class JSchConnectionPage extends WizardPage {
 	private class DataModifyListener implements ModifyListener {
+		@Override
 		public synchronized void modifyText(ModifyEvent e) {
 			validateFields();
 			getContainer().updateButtons();
@@ -90,6 +91,7 @@ public class JSchConnectionPage extends WizardPage {
 		expComp.setExpanded(false);
 		expComp.addExpansionListener(new IExpansionListener() {
 
+			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				Point newSize = parent.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				Point currentSize = parent.getSize();
@@ -100,6 +102,7 @@ public class JSchConnectionPage extends WizardPage {
 				getShell().layout(true, true);
 			}
 
+			@Override
 			public void expansionStateChanging(ExpansionEvent e) {
 				// Ignore
 			}
@@ -194,6 +197,7 @@ public class JSchConnectionPage extends WizardPage {
 		fPublicKeyButton.setSelection(false);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		if (fConnection == null) {
 			setDescription(Messages.JSchNewConnectionPage_New_connection_properties);
@@ -370,15 +374,35 @@ public class JSchConnectionPage extends WizardPage {
 			}
 		}
 		if (fConnection != null) {
-			fConnection.setName(fConnectionName.getText());
-			fConnection.setAddress(fHostText.getText().trim());
-			fConnection.setUsername(fUserText.getText().trim());
-			fConnection.setPassword(fPasswordText.getText().trim());
-			fConnection.setPassphrase(fPassphraseText.getText().trim());
-			fConnection.setKeyFile(fFileWidget.getLocationPath());
-			fConnection.setIsPasswordAuth(fPasswordButton.getSelection());
-			fConnection.setTimeout(Integer.parseInt(fTimeoutText.getText().trim()));
-			fConnection.setPort(Integer.parseInt(fPortText.getText().trim()));
+			if (!fConnection.getName().equals(fConnectionName.getText().trim())) {
+				fConnection.setName(fConnectionName.getText().trim());
+			}
+			if (!fConnection.getAddress().equals(fHostText.getText().trim())) {
+				fConnection.setAddress(fHostText.getText().trim());
+			}
+			if (!fConnection.getUsername().equals(fUserText.getText().trim())) {
+				fConnection.setUsername(fUserText.getText().trim());
+			}
+			if (!fConnection.getPassword().equals(fPasswordText.getText().trim())) {
+				fConnection.setPassword(fPasswordText.getText().trim());
+			}
+			if (!fConnection.getPassphrase().equals(fPassphraseText.getText().trim())) {
+				fConnection.setPassphrase(fPassphraseText.getText().trim());
+			}
+			if (!fConnection.getKeyFile().equals(fFileWidget.getLocationPath())) {
+				fConnection.setKeyFile(fFileWidget.getLocationPath());
+			}
+			if (fConnection.isPasswordAuth() != fPasswordButton.getSelection()) {
+				fConnection.setIsPasswordAuth(fPasswordButton.getSelection());
+			}
+			int timeout = Integer.parseInt(fTimeoutText.getText().trim());
+			if (fConnection.getTimeout() != timeout) {
+				fConnection.setTimeout(timeout);
+			}
+			int port = Integer.parseInt(fPortText.getText().trim());
+			if (fConnection.getPort() != port) {
+				fConnection.setPort(port);
+			}
 		}
 	}
 

@@ -165,7 +165,6 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 		fMaxHeight=height;
 	}
 	public void setWindow(int startLine, int size) {
-		assert startLine+size<=getHeight()||throwRuntimeException();
 		fWindowStartLine=startLine;
 		fWindowSize=size;
 		fData.setDimensions(fWindowSize, getWidth());

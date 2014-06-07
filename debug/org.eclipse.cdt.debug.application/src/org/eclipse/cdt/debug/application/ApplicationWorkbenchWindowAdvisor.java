@@ -251,7 +251,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 				} else if (corefile != null && corefile.length() > 0) {
 					config = DebugCoreFile.createLaunchConfig(monitor, buildLog, executable, corefile);
 				} else if (executable != null && executable.length() > 0) {
-					config = DebugExecutable.importAndCreateLaunchConfig(monitor, executable, buildLog, arguments);
+					config = DebugExecutable.importAndCreateLaunchConfig(monitor, executable, buildLog, arguments, true);
 				} else {
 					// No executable specified, look for last launch
 					// and offer that to the end-user.
@@ -308,7 +308,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					// the executable, we need to create a new configuration
 					// and remove artifacts from the old one.
 					if (config == null || !executable.equals(oldExecutable))
-						config = DebugExecutable.importAndCreateLaunchConfig(monitor, executable, buildLog, arguments);
+						config = DebugExecutable.importAndCreateLaunchConfig(monitor, executable, buildLog, arguments, true);
 					ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
 					wc.setAttribute(ICDTStandaloneDebugLaunchConstants.BUILD_LOG_LOCATION,
 							buildLog);
@@ -379,9 +379,9 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	@Override
 	public void postWindowClose() {
-		super.postWindowClose();
 		if (ResourcesPlugin.getWorkspace() != null)
 			disconnectFromWorkspace();
+		super.postWindowClose();
 	}
 
 	private void disconnectFromWorkspace() {

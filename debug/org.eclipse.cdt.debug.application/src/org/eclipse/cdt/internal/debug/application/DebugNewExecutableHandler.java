@@ -48,7 +48,7 @@ public class DebugNewExecutableHandler extends AbstractHandler {
 			String buildLog = info.getBuildLog();
 			
 			try {
-				final ILaunchConfiguration config = DebugExecutable.importAndCreateLaunchConfig(new NullProgressMonitor(), executable, buildLog, arguments);
+				final ILaunchConfiguration config = DebugExecutable.importAndCreateLaunchConfig(new NullProgressMonitor(), executable, buildLog, arguments, false);
 				if (config != null) {
 //					System.out.println("about to add job change listener");
 					final JobContainer LaunchJobs = new JobContainer();

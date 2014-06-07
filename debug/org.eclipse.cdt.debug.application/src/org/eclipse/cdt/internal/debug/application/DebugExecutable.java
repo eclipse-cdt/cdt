@@ -57,13 +57,13 @@ public class DebugExecutable {
 	private static final String GCC_BUILD_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"; //$NON-NLS-1$ 
 	private static final String STANDALONE_QUALIFIER = "org.eclipse.cdt.debug.application"; //$NON-NLS-1$
 	private static final String LAST_LAUNCH = "lastLaunch"; //$NON-NLS-1$
-	
 	public DebugExecutable() {
 	}
 	
 	public static ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
+	
 	
 	/**
 	 * Import given executable into the Executables project then create a launch configuration.
@@ -76,7 +76,7 @@ public class DebugExecutable {
 	 * @throws InterruptedException
 	 */
 	public static ILaunchConfiguration importAndCreateLaunchConfig(IProgressMonitor monitor,
-			String executable, String buildLog, String arguments)
+			String executable, String buildLog, String arguments, boolean startup)
 			throws CoreException, InterruptedException {
 		ILaunchConfiguration config = null;
 		File executableFile = new File(executable);
@@ -84,7 +84,7 @@ public class DebugExecutable {
 		ICProject cProject = CoreModel.getDefault().getCModel()
 				.getCProject(defaultProjectName);
 		// if a valid executable is specified, remove any executables already loaded in workspace
-		if (cProject.exists() && executableFile.exists()) {
+		if (startup && cProject.exists() && executableFile.exists()) {
 			monitor.subTask(Messages.RemoveOldExecutable);
 			IProject proj = cProject.getProject();
 			Collection<Executable> elist = ExecutablesManager.getExecutablesManager().getExecutablesForProject(proj);
@@ -112,6 +112,14 @@ public class DebugExecutable {
 					// do nothing
 				}
 			}
+			
+			// Delete all launch configurations that specify the project we are about to delete
+			ILaunchConfiguration lconfigs[] = getLaunchManager().getLaunchConfigurations();
+			for (ILaunchConfiguration lconfig : lconfigs) {
+				if (lconfig.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "").equals(proj.getName()))
+					lconfig.delete();
+			}
+			
 			// Delete project because we have deleted .cproject and settings files
 			// by this point so just create a new Executables C project to use for
 			// importing the new executable.
@@ -260,8 +268,11 @@ public class DebugExecutable {
 			}
 //					System.out.println("about to create launch configuration");
 			config = createConfiguration(executable, arguments, buildLog, true);
-			String memento = config.getMemento();
-			ResourcesPlugin.getWorkspace().getRoot().setPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH), memento);
+			// If we are starting up the debugger, save the executable as the default executable to use
+			if (startup) {
+				String memento = config.getMemento();
+				ResourcesPlugin.getWorkspace().getRoot().setPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH), memento);
+			}
 			monitor.worked(1);
 		} else {
 			System.out.println("Import job failed");

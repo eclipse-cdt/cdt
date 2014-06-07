@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.application;
 
+import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
@@ -18,6 +19,13 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	private static final String PERSPECTIVE_ID = "org.eclipse.debug.ui.DebugPerspective"; //$NON-NLS-1$
 
+	@Override
+	public void initialize(IWorkbenchConfigurer configurer) {
+		// TODO Auto-generated method stub
+		super.initialize(configurer);
+		configurer.setSaveAndRestore(false);
+	}
+	
     @Override
 	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
         return new ApplicationWorkbenchWindowAdvisor(configurer);

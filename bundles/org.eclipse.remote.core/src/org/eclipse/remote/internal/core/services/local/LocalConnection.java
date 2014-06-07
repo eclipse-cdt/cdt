@@ -28,7 +28,6 @@ import org.eclipse.remote.core.IRemoteFileManager;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.IRemoteProcessBuilder;
 import org.eclipse.remote.core.IRemoteServices;
-import org.eclipse.remote.core.IUserAuthenticator;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.core.exception.UnableToForwardPortException;
 import org.eclipse.remote.internal.core.RemoteCorePlugin;
@@ -350,17 +349,6 @@ public class LocalConnection implements IRemoteConnection {
 			fConnected = true;
 			fireConnectionChangeEvent(IRemoteConnectionChangeEvent.CONNECTION_OPENED);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#open(org.eclipse.remote.core.IUserAuthenticator,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
-	public void open(IUserAuthenticator authenticator, IProgressMonitor monitor) throws RemoteConnectionException {
-		open(monitor);
 	}
 
 	/*

@@ -20,8 +20,8 @@ import java.util.Map;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.remote.core.AbstractRemoteConnectionManager;
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteConnectionManager;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
@@ -29,15 +29,14 @@ import org.eclipse.remote.internal.jsch.core.messages.Messages;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-public class JSchConnectionManager implements IRemoteConnectionManager {
-	private final IRemoteServices fRemoteServices;
+public class JSchConnectionManager extends AbstractRemoteConnectionManager {
 	private Map<String, JSchConnection> fConnections;
 
 	/**
 	 * @since 4.0
 	 */
 	public JSchConnectionManager(IRemoteServices services) {
-		fRemoteServices = services;
+		super(services);
 	}
 
 	/*
@@ -47,6 +46,7 @@ public class JSchConnectionManager implements IRemoteConnectionManager {
 	 * org.eclipse.remote.core.IRemoteConnectionManager#getConnection(java
 	 * .lang.String)
 	 */
+	@Override
 	public IRemoteConnection getConnection(String name) {
 		loadConnections();
 		return fConnections.get(name);
@@ -62,6 +62,7 @@ public class JSchConnectionManager implements IRemoteConnectionManager {
 	/**
 	 * @since 4.0
 	 */
+	@Override
 	public IRemoteConnection getConnection(URI uri) {
 		String connName = JSchFileSystem.getConnectionNameFor(uri);
 		if (connName != null) {
@@ -71,7 +72,7 @@ public class JSchConnectionManager implements IRemoteConnectionManager {
 	}
 
 	public JSchConnection createConnection(String name) {
-		return new JSchConnection(name, fRemoteServices);
+		return new JSchConnection(name, getRemoteServices());
 	}
 
 	/*
@@ -80,6 +81,7 @@ public class JSchConnectionManager implements IRemoteConnectionManager {
 	 * @see
 	 * org.eclipse.remote.core.IRemoteConnectionManager#getConnections()
 	 */
+	@Override
 	public List<IRemoteConnection> getConnections() {
 		loadConnections();
 		List<IRemoteConnection> conns = new ArrayList<IRemoteConnection>();
@@ -94,7 +96,7 @@ public class JSchConnectionManager implements IRemoteConnectionManager {
 			Preferences connections = root.node(JSchConnectionAttributes.CONNECTIONS_KEY);
 			try {
 				for (String name : connections.childrenNames()) {
-					JSchConnection connection = new JSchConnection(name, fRemoteServices);
+					JSchConnection connection = new JSchConnection(name, getRemoteServices());
 					fConnections.put(name, connection);
 				}
 			} catch (BackingStoreException e) {
@@ -113,6 +115,7 @@ public class JSchConnectionManager implements IRemoteConnectionManager {
 	/**
 	 * @since 5.0
 	 */
+	@Override
 	public IRemoteConnectionWorkingCopy newConnection(String name) throws RemoteConnectionException {
 		if (getConnection(name) != null) {
 			throw new RemoteConnectionException(NLS.bind(Messages.JSchConnectionManager_connection_with_name_exists, name));
@@ -139,6 +142,7 @@ public class JSchConnectionManager implements IRemoteConnectionManager {
 	 * org.eclipse.remote.core.IRemoteConnectionManager#removeConnection
 	 * (org.eclipse.remote.core.IRemoteConnection)
 	 */
+	@Override
 	public void removeConnection(IRemoteConnection conn) throws RemoteConnectionException {
 		if (!(conn instanceof JSchConnection)) {
 			throw new RemoteConnectionException(Messages.JSchConnectionManager_invalidConnectionType);

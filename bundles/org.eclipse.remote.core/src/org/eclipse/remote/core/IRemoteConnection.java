@@ -280,20 +280,6 @@ public interface IRemoteConnection extends Comparable<IRemoteConnection> {
 	public void open(IProgressMonitor monitor) throws RemoteConnectionException;
 
 	/**
-	 * Open the connection. Must be called before the connection can be used.
-	 * 
-	 * @param authenticator
-	 *            authenticator to allow the caller to manage interaction with the user
-	 * @param monitor
-	 *            the progress monitor to use for reporting progress to the user. It is the caller's responsibility to call done()
-	 *            on the given monitor. Accepts null, indicating that no progress should be reported and that the operation cannot
-	 *            be cancelled.
-	 * @throws RemoteConnectionException
-	 * @since 7.0
-	 */
-	public void open(IUserAuthenticator authenticator, IProgressMonitor monitor) throws RemoteConnectionException;
-
-	/**
 	 * Remove a listener that will be notified when this connection's status changes.
 	 * 
 	 * @param listener

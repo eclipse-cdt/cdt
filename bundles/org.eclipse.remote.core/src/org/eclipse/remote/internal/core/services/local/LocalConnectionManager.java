@@ -15,17 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.remote.core.AbstractRemoteConnectionManager;
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteConnectionManager;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.core.messages.Messages;
 
-public class LocalConnectionManager implements IRemoteConnectionManager {
+public class LocalConnectionManager extends AbstractRemoteConnectionManager {
 	private final IRemoteConnection fLocalConnection;
 
 	public LocalConnectionManager(IRemoteServices services) {
+		super(services);
 		fLocalConnection = new LocalConnection(services);
 	}
 

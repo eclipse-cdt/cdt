@@ -34,5 +34,13 @@
             </description>
          </transfer>
    </extension>
+   <extension
+         point="org.eclipse.remote.core.authenticator">
+      <authenticator
+            class="org.eclipse.remote.internal.jsch.ui.JSchUserAuthenticator"
+            id="org.eclipse.remote.JSch"
+            priority="0">
+      </authenticator>
+   </extension>
    
 </plugin>

@@ -54,6 +54,16 @@ public interface IRemoteConnectionManager {
 	public List<IRemoteConnection> getConnections();
 
 	/**
+	 * Get the user authenticator that will be used when opening connections. The user authenticator is specified using the
+	 * org.eclipse.remote.core.authenticator extension point.
+	 * 
+	 * @param connection
+	 *            connection that will use this authenticator
+	 * @return user authenticator
+	 */
+	public IUserAuthenticator getUserAuthenticator(IRemoteConnection connection);
+
+	/**
 	 * Creates a new remote connection named with supplied name. The connection attributes will be the default for the
 	 * implementation.
 	 * 

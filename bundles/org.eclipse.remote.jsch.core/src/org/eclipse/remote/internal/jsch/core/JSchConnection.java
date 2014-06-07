@@ -809,26 +809,15 @@ public class JSchConnection implements IRemoteConnection {
 	 */
 	@Override
 	public void open(IProgressMonitor monitor) throws RemoteConnectionException {
-		open(null, monitor);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#open(org.eclipse.remote.core.IUserAuthenticator,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
-	public void open(final IUserAuthenticator authenticator, IProgressMonitor monitor) throws RemoteConnectionException {
 		if (!isOpen()) {
 			checkIsConfigured();
 			SubMonitor subMon = SubMonitor.convert(monitor, 70);
-			Session session = newSession(authenticator, subMon.newChild(10));
+			Session session = newSession(fManager.getUserAuthenticator(this), subMon.newChild(10));
 			if (subMon.isCanceled()) {
 				throw new RemoteConnectionException(Messages.JSchConnection_Connection_was_cancelled);
 			}
 			if (!checkConfiguration(session, subMon.newChild(20))) {
-				newSession(authenticator, subMon.newChild(10));
+				newSession(fManager.getUserAuthenticator(this), subMon.newChild(10));
 				loadEnv(subMon.newChild(10));
 			}
 			fWorkingDir = getCwd(subMon.newChild(10));

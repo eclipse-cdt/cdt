@@ -13,8 +13,31 @@
 <h1>Starting The Debugger</h2>
 
 <p>The debugger is started from the command-line using the <strong>cdtdebug.sh</strong> script.
-The script contains the command-line needed to start Eclipse and to pass appropriate
-parameters at start-up.  The following are the command-line options supported:
+The script invokes Eclipse and passes the appropriate
+parameters at start-up.
+<br><br>
+
+<code><i>cdtdebug.sh [eclipse options] [stand-alone options]</i></code>
+
+<h3>Eclipse options</h3>
+
+<p>Since Eclipse is being invoked by the cdtdebug.sh script, you may pass Eclipse options to it, with the exception
+of -vmargs which is already being used by the cdtdebug.sh script.  The following
+details a few of the options you may want to use from time to time:
+
+<h4>-data &lt;workspace_location&gt;</h4>
+
+<p>This option specifies the directory used by Eclipse which is know as the workspace.  By default, the cdtdebug.sh script will use
+<i>$HOME/workspace-cdtdebug</i>.  If you wish to use a different workspace, you can override using this parameter.
+
+<h4>-consoleLog</h4>
+
+<p>This option causes the Eclipse error log to be written to the console.  This is useful if you are experiencing
+problems and want to see if any errors have occurred internally that are not reported directly in the UI.
+
+<h3>Stand-alone options</h3>
+
+<p>The following are the command-line options specific to the stand-alone debugger:
 
 <h4>-a</h4>
 <p>This option specifies that you want to attach and debug an existing executable that is running on your system.
@@ -49,7 +72,7 @@ as desired.  If the executable location you specify is invalid or no executable 
 a dialog will be brought up to allow you to enter the required information.  The dialog will be appropriate to whether
 you have selected to debug a core file (-c specified) or not.</p>
 
-<h2>Automated Set-up</h3>
+<h2>Automated Set-up</h2>
 
 <p>As mentioned, the Stand-alone Debugger will initialize Eclipse objects on your behalf on
 start-up so you can immediately start debugging.  For starters, the executable you specify is
@@ -65,8 +88,12 @@ This helps to remove the clutter of all contributed plug-ins to what is pertinen
 (e.g. if the C/C++ and Java IDE plug-ins are both present, one does not want to see Java tasks when
 working on a C/C++ project).  Many of the plug-ins being used in the Stand-alone debugger only
 work on C/C++ projects.  In most cases, the name of the C/C++ project being used will be <strong>Executables</strong>.
-This project is reserved for importing executables into the CDT without creating a project first.</p>
-<p>Another Eclipse concept is the Perspective.  An Eclipse perspective is a set of views and the layout of the main Eclipse
+This project is reserved for importing executables into the CDT without creating a project first.  Since the
+same project is used to load executables into, the Stand-alone Debugger will try to clean up this project
+on your behalf.  Whenever you specify an executable using the -e option, the project will be cleaned before
+loading your executable.  If you wish to preserve additional executables you may have loaded during your previous session,
+specify no arguments on the command-line and these executables will remain loaded.</p>
+<p>Another basic Eclipse concept is the Perspective.  An Eclipse perspective is a set of views and the layout of the main Eclipse
 Window.  A perspective will have a default layout and can be modified the end-user for future reference (e.g. adding or removing 
 views).  For the purposes of debugging,
 one should use the Debug Perspective.  The Stand-alone Debugger opens the Debug Perspective by default for you which brings

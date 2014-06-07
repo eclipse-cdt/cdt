@@ -26,7 +26,7 @@ LINUX_PLUGIN=`echo $LINUX_JAR | sed -e "s/_[0-9]*\..*.jar//"`
 cd ..; ECLIPSE_HOME=`pwd`
 cd $olddir
 $ECLIPSE_HOME/eclipse -clean -product org.eclipse.cdt.debug.application.product \
--data $HOME/workspace-gdbstandlone -configuration file\:$HOME/cdtdebugger \
+-data $HOME/workspace-cdtdebug -configuration file\:$HOME/cdtdebugger \
 -dev file\:$HOME/cdtdebugger/dev.properties $@ \
 -vmargs -Dosgi.jar=$OSGI_JAR -Dswt.plugin=$SWT_PLUGIN -Dfs.plugin=$FS_PLUGIN \
 -Dlinux.plugin=$LINUX_PLUGIN -Declipse.home=$ECLIPSE_HOME

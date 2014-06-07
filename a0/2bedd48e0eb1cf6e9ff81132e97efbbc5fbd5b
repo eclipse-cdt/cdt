@@ -1,0 +1,9 @@
+Verified+1: Hudson CI
+Code-Review+2: Jeff Johnston <jjohnstn@redhat.com>
+Verified+1: Jeff Johnston <jjohnstn@redhat.com>
+Code-Review+2: Marc-Andre Laperle <marc-andre.laperle@ericsson.com>
+Submitted-by: Jeff Johnston <jjohnstn@redhat.com>
+Submitted-at: Sat, 07 Jun 2014 15:04:42 -0400
+Reviewed-on: https://git.eclipse.org/r/28070
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

@@ -661,8 +661,8 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         // fSourceLookupParticipant is disposed by the source lookup director
         
         // Need to remove annotations in UI thread.
-        Display display = Display.getDefault();
-        if (!display.isDisposed()) {
+        Display display = PlatformUI.getWorkbench().getDisplay();
+        if (display != null && !display.isDisposed()) {
         	display.asyncExec(new Runnable() {
 				@Override
 				public void run() {

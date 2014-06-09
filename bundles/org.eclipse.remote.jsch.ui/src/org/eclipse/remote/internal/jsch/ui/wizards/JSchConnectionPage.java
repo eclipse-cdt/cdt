@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.swt.widgets.Control;
 
 public class JSchConnectionPage extends WizardPage {
 	private class DataModifyListener implements ModifyListener {
@@ -197,6 +198,7 @@ public class JSchConnectionPage extends WizardPage {
 
 		fPasswordButton.setSelection(true);
 		fPublicKeyButton.setSelection(false);
+		controls.setTabList(new Control[]{fHostText, fUserText, fPasswordButton, fPasswordText, fPublicKeyButton, fFileWidget, fPassphraseText});
 	}
 
 	@Override

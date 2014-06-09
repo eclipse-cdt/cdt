@@ -31,6 +31,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -118,7 +120,7 @@ public class JSchConnectionPage extends WizardPage {
 		fPortText = new Text(advancedComp, SWT.BORDER | SWT.SINGLE);
 		fPortText.setText(Integer.toString(JSchConnection.DEFAULT_PORT));
 		fPortText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
-		fPortText.setTextLimit(5);
+		setTextFieldWidthInChars(fPortText, 5);
 
 		Label timeoutLabel = new Label(advancedComp, SWT.NONE);
 		timeoutLabel.setText(Messages.JSchNewConnectionPage_Timeout);
@@ -126,7 +128,7 @@ public class JSchConnectionPage extends WizardPage {
 		fTimeoutText = new Text(advancedComp, SWT.BORDER | SWT.SINGLE);
 		fTimeoutText.setText(Integer.toString(JSchConnection.DEFAULT_TIMEOUT));
 		fTimeoutText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
-		fTimeoutText.setTextLimit(5);
+		setTextFieldWidthInChars(fTimeoutText, 5);
 
 		expComp.setClient(advancedComp);
 	}
@@ -470,4 +472,15 @@ public class JSchConnectionPage extends WizardPage {
 		return null;
 	}
 
+	private void setTextFieldWidthInChars(Text text, int chars) {
+		text.setTextLimit(chars);
+		Object data = text.getLayoutData();
+		if (data instanceof GridData) {
+			GC gc = new GC(text);
+			FontMetrics fm = gc.getFontMetrics();
+			int width = chars * fm.getAverageCharWidth();
+			gc.dispose();
+			((GridData) data).widthHint = width;
+		}
+	}
 }

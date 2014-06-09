@@ -62,6 +62,7 @@
  * Zhou Renjian     (Kortide)    - [282238] NPE when copying host and overwrite itself
  * Martin Oberhuber (Wind River) - [359554] Avoid disconnect when changing default user id only
  * David McKnight   (IBM)        - [433541] profile duplication isn't copying profile or connection property sets
+ * David McKnight   (IBM)        - [436970] connection alias with ':' causes problems
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -818,7 +819,7 @@ public class SystemRegistry implements ISystemRegistry
 		ISubSystem result = null;
 		// first extract subsystem id
 		int profileDelim = absoluteSubSystemName.indexOf("."); //$NON-NLS-1$
-		int connectionDelim = absoluteSubSystemName.indexOf(":", profileDelim + 1); //$NON-NLS-1$
+		int connectionDelim = absoluteSubSystemName.lastIndexOf(":"); //$NON-NLS-1$
 
 		if (profileDelim > 0 && connectionDelim > profileDelim)
 		{

@@ -11,6 +11,7 @@
  *     Ed Swartz (Nokia)
  *     Andrey Eremchenko (LEDAS)
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -331,6 +332,9 @@ public abstract class CSearchQuery implements ISearchQuery {
 					CSearchMatch match = new CSearchMatch(searchElement, offset, length);
 					if (lineMatch.isPolymorphicCall())
 						match.setIsPolymorphicCall();
+					if (lineMatch.isWriteAccess()) {
+						match.setIsWriteAccess();
+					}
 					result.addMatch(match);
 				}
 			}
@@ -489,6 +493,9 @@ public abstract class CSearchQuery implements ISearchQuery {
 					int offset = lineMatch.getOffset();
 					int length = lineMatch.getLength();
 					CSearchMatch match = new CSearchMatch(searchElement, offset, length);
+					if (lineMatch.isWriteAccess()) {
+						match.setIsWriteAccess();
+					}
 					result.addMatch(match);
 				}
 			}

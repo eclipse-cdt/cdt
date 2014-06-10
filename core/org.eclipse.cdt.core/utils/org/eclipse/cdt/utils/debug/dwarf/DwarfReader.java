@@ -793,21 +793,23 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 			HashMap<Long, ArrayList<String>> t_macros) {
 		for (String name: fixupList) {
 			ArrayList<String> macros = m_compileOptionsMap.get(name);
-			for (int i = 0; i < macros.size(); ++i) {
-				String macroLine = macros.get(i);
-				if (macroLine.startsWith(fixupMarker)) {
-					Long offset = Long.valueOf(macroLine.substring(7));
-					if (DEBUG)
-						System.out.println("Found fixup needed for offset: " + offset + " for file: " + name); //$NON-NLS-1$ //$NON-NLS-2$
-					ArrayList<String> insertMacros = t_macros.get(offset);
-					if (DEBUG)
-						System.out.println("insert macros are: " + insertMacros.toString()); //$NON-NLS-1$
-					macros.remove(i);
-					macros.addAll(i, insertMacros);
-					i += insertMacros.size();
+			if (macros != null) {
+				for (int i = 0; i < macros.size(); ++i) {
+					String macroLine = macros.get(i);
+					if (macroLine.startsWith(fixupMarker)) {
+						Long offset = Long.valueOf(macroLine.substring(7));
+						if (DEBUG)
+							System.out.println("Found fixup needed for offset: " + offset + " for file: " + name); //$NON-NLS-1$ //$NON-NLS-2$
+						ArrayList<String> insertMacros = t_macros.get(offset);
+						if (DEBUG)
+							System.out.println("insert macros are: " + insertMacros.toString()); //$NON-NLS-1$
+						macros.remove(i);
+						macros.addAll(i, insertMacros);
+						i += insertMacros.size();
+					}
 				}
+				m_compileOptionsMap.put(name,  macros); // replace updated list
 			}
-			m_compileOptionsMap.put(name,  macros); // replace updated list
 		}
 	}
 

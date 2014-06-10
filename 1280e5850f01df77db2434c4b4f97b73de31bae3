@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_dc8805ac",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/HideReadWriteReferences.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-06-10T16:58:52Z",
+      "side": 1,
+      "message": "In C/C++ there are three types of references, read-only, write-only and read-write. This code seems to assume that there are only read-only and write-only references.",
+      "revId": "1280e5850f01df77db2434c4b4f97b73de31bae3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -9,6 +9,7 @@
  *     IBM Corp. - Rational Software - initial implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Andrey Eremchenko (LEDAS)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -85,6 +86,9 @@ public final class CSearchMessages extends NLS {
 	public static String HidePolymorphicCalls_actionLabel;
 	public static String HidePolymorphicCalls_description;
 	public static String HidePolymorphicCalls_name;
+	public static String HideReadOnlyReferences_actionLabel;
+	public static String HideReadOnlyReferences_description;
+	public static String HideReadOnlyReferences_name;
 	public static String PDOMSearchViewPage_ShowEnclosingDefinitions_actionLabel;
 	public static String PDOMSearchViewPage_ShowEnclosingDefinitions_description;
 	public static String PDOMSearchViewPageLocationColumn_label;

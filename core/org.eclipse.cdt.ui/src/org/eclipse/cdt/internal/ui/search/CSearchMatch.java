@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -20,6 +21,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
  */
 public class CSearchMatch extends Match {
 	private boolean fIsPolymorphicCall;
+	private boolean fIsWriteAccess;
 
 	public CSearchMatch(CSearchElement elem, int offset, int length) {
 		super(elem, offset, length);
@@ -47,5 +49,13 @@ public class CSearchMatch extends Match {
 	
 	public boolean isPolymorphicCall() {
 		return fIsPolymorphicCall;
+	}
+
+	public void setIsWriteAccess() {
+		fIsWriteAccess = true;
+	}
+
+	boolean isWriteAccess() {
+		return fIsWriteAccess;
 	}
 }

@@ -666,9 +666,9 @@ public class JSchConnection implements IRemoteConnection {
 			for (Session session : fSessions) {
 				isOpen &= session.isConnected();
 			}
-			if (!isOpen) {
-				close(); // Cleanup if session is closed
-			}
+		}
+		if (!isOpen) {
+			close(); // Cleanup if session is closed
 		}
 		return isOpen;
 	}
@@ -823,9 +823,14 @@ public class JSchConnection implements IRemoteConnection {
 				newSession(fManager.getUserAuthenticator(this), subMon.newChild(10));
 				loadEnv(subMon.newChild(10));
 			}
-			fWorkingDir = getCwd(subMon.newChild(10));
-			loadProperties(subMon.newChild(10));
 			fIsOpen = true;
+			try {
+				fWorkingDir = getCwd(subMon.newChild(10));
+				loadProperties(subMon.newChild(10));
+			} catch (RemoteConnectionException e) {
+				fIsOpen = false;
+				throw e;
+			}
 			fireConnectionChangeEvent(IRemoteConnectionChangeEvent.CONNECTION_OPENED);
 		}
 	}

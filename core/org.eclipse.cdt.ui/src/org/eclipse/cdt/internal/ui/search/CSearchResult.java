@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Ed Swartz (Nokia)
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -48,8 +49,9 @@ import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
  */
 public class CSearchResult extends AbstractTextSearchResult implements IEditorMatchAdapter, IFileMatchAdapter {
 	private static final String KEY_SHOW_POLYMORPHIC_CALLS = "ShowPolymorphicCalls"; //$NON-NLS-1$
-	final static MatchFilter[] ALL_FILTERS = new MatchFilter[] { HidePolymorphicCalls.FILTER };
-	final static MatchFilter[] NO_FILTERS = {};
+	private static final String KEY_HIDE_READ_REFERENCES = "HideReadReferences"; //$NON-NLS-1$
+	private static final String KEY_HIDE_WRITE_REFERENCES = "HideWriteReferences"; //$NON-NLS-1$
+	final static MatchFilter[] ALL_FILTERS = new MatchFilter[] { HidePolymorphicCalls.FILTER, HideReadWriteReferences.READ_FILTER, HideReadWriteReferences.WRITE_FILTER };
 
 	private CSearchQuery query;
 	private boolean indexerBusy;
@@ -216,10 +218,17 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 	public MatchFilter[] getActiveMatchFilters() {
 		MatchFilter[] result = super.getActiveMatchFilters();
 		if (result == null) {
+			List<MatchFilter> filters = new ArrayList<>();
 			if (CUIPlugin.getDefault().getDialogSettings().getBoolean(KEY_SHOW_POLYMORPHIC_CALLS)) {
-				return ALL_FILTERS;
+				filters.add(HidePolymorphicCalls.FILTER);
 			}
-			return NO_FILTERS;
+			if (CUIPlugin.getDefault().getDialogSettings().getBoolean(KEY_HIDE_READ_REFERENCES)) {
+				filters.add(HideReadWriteReferences.READ_FILTER);
+			}
+			if (CUIPlugin.getDefault().getDialogSettings().getBoolean(KEY_HIDE_WRITE_REFERENCES)) {
+				filters.add(HideReadWriteReferences.WRITE_FILTER);
+			}
+			return filters.toArray(new MatchFilter[0]);
 		}
 		return result;
 	}
@@ -227,12 +236,22 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 	@Override
 	public void setActiveMatchFilters(MatchFilter[] filters) {
 		boolean showPoly= false;
+		boolean hideReads= false;
+		boolean hideWrites= false;
 		for (int i = 0; i < filters.length; i++) {
 			if (filters[i] == HidePolymorphicCalls.FILTER) {
 				showPoly= true;
 			}
+			if (filters[i] == HideReadWriteReferences.READ_FILTER) {
+				hideReads = true;
+			}
+			if (filters[i] == HideReadWriteReferences.WRITE_FILTER) {
+				hideWrites = true;
+			}
 		}
 		CUIPlugin.getDefault().getDialogSettings().put(KEY_SHOW_POLYMORPHIC_CALLS, showPoly);
+		CUIPlugin.getDefault().getDialogSettings().put(KEY_HIDE_READ_REFERENCES, hideReads);
+		CUIPlugin.getDefault().getDialogSettings().put(KEY_HIDE_WRITE_REFERENCES, hideWrites);
 		super.setActiveMatchFilters(filters);
 	}
 }

@@ -21,14 +21,18 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -421,6 +425,16 @@ public class ImportExecutablePageTwo extends WizardPage {
 				setErrorMessage(Messages.ImportExecutablePageTwo_BadProjectName);
 				return false;
 			}
+			
+			// check if executable with same name already exists in the existing project
+			String[] executables = wizard.getImportExecutablePage().getSelectedExecutables();
+			for (String executable : executables) {
+				IFile exeFile = getExecutableFile(project.getProject(), executable);
+				if (exeFile.exists()) {
+					setErrorMessage(NLS.bind(Messages.ImportExecutablePageTwo_ExecutableAlreadyExists, exeFile.getName()));
+					return false;
+				}
+			}
 
 		}
 		if (isCreateLaunchConfigurationSelected() && getNewConfigurationName().length() == 0) {
@@ -430,6 +444,18 @@ public class ImportExecutablePageTwo extends WizardPage {
 		}
 		return super.isPageComplete();
 	}
+    
+    /**
+     * Returns the executable resource having the specified path within the project.
+     * @param project - the project of the executable file
+     * @param executable - the string path of the executable
+     * @return the executable file
+     */
+    private IFile getExecutableFile(IProject project, String executable) {
+		IPath location = Path.fromOSString(executable);
+		String name = location.toFile().getName();
+		return project.getFile(name);
+    }
 
 
 }

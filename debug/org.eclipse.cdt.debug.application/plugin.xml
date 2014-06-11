@@ -46,6 +46,14 @@
       <activity
             id="org.eclipse.cdt.debug.application.activity.filterMenus"
             name="%FilterMenus.name">
+         <enabledWhen>
+            <not>
+               <systemTest
+                     property="eclipse.product"
+                     value="org.eclipse.cdt.debug.application.product">
+               </systemTest>
+            </not>
+         </enabledWhen>
       </activity>
       <categoryActivityBinding
             activityId="org.eclipse.cdt.debug.application.activity.filterMenus"

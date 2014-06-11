@@ -126,7 +126,7 @@ public abstract class AbstractRemoteCommand<T> {
 		 * @see java.util.concurrent.Callable#call()
 		 */
 		@Override
-		public abstract T1 call() throws JSchException, IOException;
+		public abstract T1 call() throws JSchException, IOException, RemoteConnectionException;
 
 		private void finalizeCmdInThread() {
 			setChannel(null);

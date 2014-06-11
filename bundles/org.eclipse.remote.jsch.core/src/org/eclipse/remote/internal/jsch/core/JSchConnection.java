@@ -171,7 +171,6 @@ public class JSchConnection implements IRemoteConnection {
 	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private String fWorkingDir;
-	private boolean fIsOpen;
 
 	private final IJSchService fJSchService;
 
@@ -263,7 +262,6 @@ public class JSchConnection implements IRemoteConnection {
 			}
 		}
 		fSessions.clear();
-		fIsOpen = false;
 		fireConnectionChangeEvent(IRemoteConnectionChangeEvent.CONNECTION_CLOSED);
 	}
 
@@ -661,7 +659,7 @@ public class JSchConnection implements IRemoteConnection {
 	 */
 	@Override
 	public boolean isOpen() {
-		boolean isOpen = fIsOpen & fSessions.size() > 0;
+		boolean isOpen = fSessions.size() > 0;
 		if (isOpen) {
 			for (Session session : fSessions) {
 				isOpen &= session.isConnected();
@@ -814,23 +812,18 @@ public class JSchConnection implements IRemoteConnection {
 	public void open(IProgressMonitor monitor) throws RemoteConnectionException {
 		if (!isOpen()) {
 			checkIsConfigured();
-			SubMonitor subMon = SubMonitor.convert(monitor, 70);
+			SubMonitor subMon = SubMonitor.convert(monitor, 60);
 			Session session = newSession(fManager.getUserAuthenticator(this), subMon.newChild(10));
 			if (subMon.isCanceled()) {
 				throw new RemoteConnectionException(Messages.JSchConnection_Connection_was_cancelled);
 			}
+			//getCwd checks the exec channel before checkConfiguration checks the sftp channel
+			fWorkingDir = getCwd(subMon.newChild(10)); 
 			if (!checkConfiguration(session, subMon.newChild(20))) {
 				newSession(fManager.getUserAuthenticator(this), subMon.newChild(10));
 				loadEnv(subMon.newChild(10));
 			}
-			fIsOpen = true;
-			try {
-				fWorkingDir = getCwd(subMon.newChild(10));
-				loadProperties(subMon.newChild(10));
-			} catch (RemoteConnectionException e) {
-				fIsOpen = false;
-				throw e;
-			}
+			loadProperties(subMon.newChild(10));
 			fireConnectionChangeEvent(IRemoteConnectionChangeEvent.CONNECTION_OPENED);
 		}
 	}

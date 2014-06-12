@@ -21,7 +21,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.rse.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/tm/updates/3.6milestones/"/>
+<repository location="http://download.eclipse.org/tm/updates/3.6milestones/RC4"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.sdk.ide" version="0.0.0"/>

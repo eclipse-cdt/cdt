@@ -158,14 +158,19 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 				}
 				// Verify any core file or executable path is valid.
 				if (corefile != null) {
-					File executableFile = new File(executable);
+					File executableFile = null;
+					if (executable != null) {
+						executableFile = new File(executable);
+						executable = executableFile.getCanonicalPath();
+					}
 					File coreFile = new File(corefile);
-					if (!executableFile.exists() || !coreFile.exists()) {
+					corefile = coreFile.getCanonicalPath();
+					if (executable == null || !executableFile.exists() || !coreFile.exists()) {
 						final CoreFileInfo info = new CoreFileInfo("", "", ""); //$NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
 						final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
 								Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
 						final String executablePath = executable;
-						final String coreFilePath = buildLog;
+						final String coreFilePath = corefile;
 
 						Display.getDefault().syncExec(new Runnable() {
 
@@ -197,7 +202,13 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					}
 				} else if (executable != null) {
 					File executableFile = new File(executable);
-					if (!executableFile.exists()) {
+					executable = executableFile.getCanonicalPath();
+					File buildLogFile = null;
+					if (buildLog != null) {
+						buildLogFile = new File(buildLog);
+						buildLog = buildLogFile.getCanonicalPath();
+					}
+					if (!executableFile.exists() || (buildLog != null && !buildLogFile.exists())) {
 						final NewExecutableInfo info = new NewExecutableInfo("", "", "", ""); //$NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
 						final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
 								Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);

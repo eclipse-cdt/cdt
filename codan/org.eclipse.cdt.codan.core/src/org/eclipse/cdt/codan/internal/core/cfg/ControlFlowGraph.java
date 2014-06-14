@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph#
 	 * getStartNode()
 	 */
@@ -96,7 +96,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph#
 	 * getUnconnectedNodeIterator()
 	 */
@@ -107,7 +107,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph#
 	 * getUnconnectedNodeSize()
 	 */
@@ -118,7 +118,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph#getNodes ()
 	 */
 	@Override
@@ -136,7 +136,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	 * @param d
 	 * @param result
 	 */
-	private void getNodes(IBasicBlock start, Collection<IBasicBlock> result) {
+	public void getNodes(IBasicBlock start, Collection<IBasicBlock> result) {
 		if (start == null)
 			return; // huh
 		if (result.contains(start))

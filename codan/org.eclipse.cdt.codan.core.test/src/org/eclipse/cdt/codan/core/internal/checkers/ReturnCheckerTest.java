@@ -346,4 +346,42 @@ public class ReturnCheckerTest extends CheckerTestCase {
 			loadCodeAndRunCpp(getAboveComment());
 			checkErrorLine(1);
 	}
+
+	//	int retindead() {
+	//			return 5;
+	//  ;
+	//	}
+	public void testRetInDeadCode1() throws Exception {
+		// bug 348386
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
+	//	int retindead() {
+	//			throw 42;
+	//  ;
+	//	}
+	public void testRetInDeadCodeThrow() throws Exception {
+		// bug 356908
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
+//	bool func( int i )
+//	{
+//	    switch( i )
+//	    {
+//	    case 0:
+//	        return true;
+//	    default:
+//	        return false;
+//	        break;
+//	    }
+//	}
+	public void testRetInDeadCodeCase() throws Exception {
+		// Bug 350168
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
 }

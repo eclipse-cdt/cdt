@@ -12,15 +12,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractAstFunctionChecker;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
+import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.ICfgData;
 import org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
+import org.eclipse.cdt.codan.internal.core.cfg.ControlFlowGraph;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -167,13 +171,35 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 						if (endsWithNoExitNode(func))
 							reportNoRet(func, visitor.hasret);
 					} else if (!isFuncExitStatement(last)) {
-						reportNoRet(func, visitor.hasret);
+						if (!isInDeadCode(func, last))
+							reportNoRet(func, visitor.hasret);
 					}
 				} else {
 					reportNoRet(func, false);
 				}
 			}
 		}
+	}
+
+	private boolean isInDeadCode(IASTFunctionDefinition func, IASTStatement last) {
+		Collection<IBasicBlock> deadBlocks = getDeadBlocks(func);
+		for (Iterator<IBasicBlock> iterator = deadBlocks.iterator(); iterator.hasNext();) {
+			IBasicBlock bb = iterator.next();
+			if (((ICfgData) bb).getData() == last)
+				return true;
+		}
+		return false;
+	}
+	
+	public Collection<IBasicBlock> getDeadBlocks(IASTFunctionDefinition func) {
+		Collection<IBasicBlock> result = new LinkedHashSet<IBasicBlock>();
+		IControlFlowGraph graph = getModelCache().getControlFlowGraph(func);
+		Iterator<IBasicBlock> unconnectedNodeIterator = graph.getUnconnectedNodeIterator();
+		for (Iterator<IBasicBlock> iterator = unconnectedNodeIterator; iterator.hasNext();) {
+			IBasicBlock block = iterator.next();
+			((ControlFlowGraph) graph).getNodes(block, result);
+		}
+		return result;
 	}
 
 	protected void reportNoRet(IASTFunctionDefinition func, boolean hasRet) {
@@ -186,6 +212,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 				return;
 			}
 		}
+	
 		reportProblem(RET_NORET_ID, func.getDeclSpecifier());
 	}
 
@@ -213,17 +240,18 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	protected boolean endsWithNoExitNode(IASTFunctionDefinition func) {
 		IControlFlowGraph graph = getModelCache().getControlFlowGraph(func);
 		Iterator<IExitNode> exitNodeIterator = graph.getExitNodeIterator();
-		boolean noexitop = false;
 		for (; exitNodeIterator.hasNext();) {
 			IExitNode node = exitNodeIterator.next();
-			if (((ICfgData) node).getData() == null) {
+			Object astNode = ((ICfgData) node).getData();
+			if (astNode == null) {
 				// If it real exit node such as return, exit or throw data will be an AST node,
 				// if it is null it is a fake node added by the graph builder.
-				noexitop = true;
-				break;
+				Collection<IBasicBlock> deadBlocks = getDeadBlocks(func);
+				if (!deadBlocks.contains(node)) // exit node is in dead code, not reporting Bug 350168
+					return true;
 			}
 		}
-		return noexitop;
+		return false;
 	}
 
 	protected boolean isExplicitReturn(IASTFunctionDefinition func) {

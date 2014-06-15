@@ -34,6 +34,24 @@
       "revId": "1280e5850f01df77db2434c4b4f97b73de31bae3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_c7566155",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/HideReadWriteReferences.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-06-15T16:50:16Z",
+      "side": 1,
+      "message": "\"Read only references\" and \"Write references\" are correct terms to use. Alternatively, you can use \"Read references\" and \"Write references\" with read-write references appearing in both categories.",
+      "parentUuid": "e76c2f17_1cb27d51",
+      "revId": "1280e5850f01df77db2434c4b4f97b73de31bae3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

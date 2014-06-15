@@ -16,6 +16,24 @@
       "revId": "1280e5850f01df77db2434c4b4f97b73de31bae3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_1cb27d51",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/HideReadWriteReferences.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-06-15T14:22:41Z",
+      "side": 1,
+      "message": "I originally had it \"Read only references\" and \"Write references\". Basically, I want to filter the view to only see results that would appear blue (no write access) and another filter for the orange (with write access). Do you think it would be clearer if I renamed the filters to \"Non-write accesses\" and \"Write accesses\". I would also rename \"isWriteOnly\" because it\u0027s not consistent.",
+      "parentUuid": "e76c2f17_dc8805ac",
+      "revId": "1280e5850f01df77db2434c4b4f97b73de31bae3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

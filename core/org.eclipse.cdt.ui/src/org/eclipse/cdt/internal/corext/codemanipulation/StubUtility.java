@@ -666,7 +666,7 @@ public class StubUtility {
 		return projectStore.findTemplateById(id);
 	}
 
-	private static String generateIncludeGuardSymbol(IResource file, ICProject cproject) {
+	public static String generateIncludeGuardSymbol(IResource file, ICProject cproject) {
 		int scheme = PreferenceConstants.getPreference(
 				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME, cproject,
 				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME);

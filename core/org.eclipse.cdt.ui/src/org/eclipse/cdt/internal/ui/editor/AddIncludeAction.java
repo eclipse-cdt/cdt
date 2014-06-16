@@ -99,7 +99,6 @@ public class AddIncludeAction extends TextEditorAction {
 			return;
 		}
 
-		final String lineDelimiter = getLineDelimiter(editor);
 		final MultiTextEdit[] holder = new MultiTextEdit[1];
 		SharedASTJob job = new SharedASTJob(CEditorMessages.AddInclude_action, tu) {
 			@Override
@@ -113,7 +112,7 @@ public class AddIncludeAction extends TextEditorAction {
 						IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT);
 				try {
 					index.acquireReadLock();
-					IncludeCreator creator = new IncludeCreator(tu, index, lineDelimiter, fAmbiguityResolver);
+					IncludeCreator creator = new IncludeCreator(tu, index, fAmbiguityResolver);
 					holder[0] = creator.createInclude(ast, (ITextSelection) selection);
 					return Status.OK_STATUS;
 				} catch (InterruptedException e) {
@@ -152,19 +151,6 @@ public class AddIncludeAction extends TextEditorAction {
 		} else {
 			Display.getDefault().syncExec(runnable);
 		}
-	}
-
-	private static String getLineDelimiter(ITextEditor editor) {
-		try {
-			IEditorInput editorInput = editor.getEditorInput();
-			IDocument document = editor.getDocumentProvider().getDocument(editorInput);
-			String delim= document.getLineDelimiter(0);
-			if (delim != null) {
-				return delim;
-			}
-		} catch (BadLocationException e) {
-		}
-		return System.getProperty("line.separator", "\n");  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	@Override

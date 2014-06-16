@@ -12,10 +12,6 @@
 package org.eclipse.cdt.internal.ui.refactoring.includes;
 
 import static org.eclipse.cdt.core.index.IndexLocationFactory.getAbsolutePath;
-import static org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.getEndingLineNumber;
-import static org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.getNodeEndOffset;
-import static org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.getNodeOffset;
-import static org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.getStartingLineNumber;
 import static org.eclipse.cdt.internal.ui.refactoring.includes.IncludeUtil.isContainedInRegion;
 
 import java.util.ArrayList;
@@ -34,7 +30,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Region;
 import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MultiTextEdit;
@@ -47,13 +42,9 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -77,10 +68,7 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.CodeGeneration;
 
@@ -88,10 +76,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.TextUtil;
-import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
-import org.eclipse.cdt.internal.core.parser.scanner.IncludeGuardDetection;
-import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
 import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
 import org.eclipse.cdt.internal.formatter.ChangeFormatter;
@@ -182,11 +167,8 @@ public class IncludeOrganizer {
 
 	private final IHeaderChooser fHeaderChooser;
 	private final IncludeCreationContext fContext;
-	private final String fLineDelimiter;
 
-	public IncludeOrganizer(ITranslationUnit tu, IIndex index, String lineDelimiter,
-			IHeaderChooser headerChooser) {
-		fLineDelimiter = lineDelimiter;
+	public IncludeOrganizer(ITranslationUnit tu, IIndex index, IHeaderChooser headerChooser) {
 		fHeaderChooser = headerChooser;
 		fContext = new IncludeCreationContext(tu, index);
 	}
@@ -240,7 +222,7 @@ public class IncludeOrganizer {
 
 		NodeCommentMap commentedNodeMap = ASTCommenter.getCommentedNodeMap(ast);
 		IRegion includeReplacementRegion =
-				getSafeIncludeReplacementRegion(fContext.getSourceContents(), ast, commentedNodeMap);
+				IncludeUtil.getSafeIncludeReplacementRegion(fContext.getSourceContents(), ast, commentedNodeMap);
 		
 		IncludePreferences preferences = fContext.getPreferences();
 		boolean allowReordering = preferences.allowReordering || existingIncludes.length == 0;
@@ -300,7 +282,7 @@ public class IncludeOrganizer {
 							List<IASTComment> comments = commentedNodeMap.getTrailingCommentsForNode(include);
 							StringBuilder buf = new StringBuilder();
 							for (IASTComment comment : comments) {
-								buf.append(getPrecedingWhitespace(comment));
+								buf.append(ASTNodes.getPrecedingWhitespaceInLine(fContext.getSourceContents(), comment));
 								buf.append(comment.getRawSignature());
 							}
 							trailingComment = buf.toString();
@@ -318,7 +300,7 @@ public class IncludeOrganizer {
 		StringBuilder buf = new StringBuilder();
 		for (String include : includeDirectives) {
 			buf.append(include);
-			buf.append(fLineDelimiter);
+			buf.append(fContext.getLineDelimiter());
 		}
 
 		int offset = includeReplacementRegion.getOffset();
@@ -326,7 +308,7 @@ public class IncludeOrganizer {
 		if (allowReordering) {
 			if (buf.length() != 0) {
 				if (offset != 0 && !TextUtil.isPreviousLineBlank(fContext.getSourceContents(), offset))
-					buf.insert(0, fLineDelimiter);  // Blank line before.
+					buf.insert(0, fContext.getLineDelimiter());  // Blank line before.
 			}
 			
 			String text = buf.toString();
@@ -500,7 +482,7 @@ public class IncludeOrganizer {
 
 		for (ForwardDeclarationNode node : typeDeclarationsRoot.children) {
 			if (pendingBlankLine) {
-				buf.append(fLineDelimiter);
+				buf.append(fContext.getLineDelimiter());
 				pendingBlankLine = false;
 			}
 			printNode(node, buf);
@@ -508,14 +490,14 @@ public class IncludeOrganizer {
 
 		for (ForwardDeclarationNode node : nonTypeDeclarationsRoot.children) {
 			if (pendingBlankLine) {
-				buf.append(fLineDelimiter);
+				buf.append(fContext.getLineDelimiter());
 				pendingBlankLine = false;
 			}
 			printNode(node, buf);
 		}
 
 		if ((pendingBlankLine || buf.length() != 0) && !isBlankLineOrEndOfFile(offset))
-			buf.append(fLineDelimiter);
+			buf.append(fContext.getLineDelimiter());
 
 		if (buf.length() != 0)
 			rootEdit.addChild(new InsertEdit(offset, buf.toString()));
@@ -523,15 +505,15 @@ public class IncludeOrganizer {
 
 	private void printNode(ForwardDeclarationNode node, StringBuilder buf) throws CoreException {
 		if (node.declaration == null) {
-			buf.append(CodeGeneration.getNamespaceBeginContent(fContext.getTranslationUnit(), node.name, fLineDelimiter));
+			buf.append(CodeGeneration.getNamespaceBeginContent(fContext.getTranslationUnit(), node.name, fContext.getLineDelimiter()));
 			for (ForwardDeclarationNode child : node.children) {
 				printNode(child, buf);
 			}
-			buf.append(CodeGeneration.getNamespaceEndContent(fContext.getTranslationUnit(), node.name, fLineDelimiter));
+			buf.append(CodeGeneration.getNamespaceEndContent(fContext.getTranslationUnit(), node.name, fContext.getLineDelimiter()));
 		} else {
 			buf.append(node.declaration);
 		}
-		buf.append(fLineDelimiter);
+		buf.append(fContext.getLineDelimiter());
 	}
 
 	private void createCommentOut(IASTPreprocessorIncludeStatement include, MultiTextEdit rootEdit) {
@@ -566,95 +548,6 @@ public class IncludeOrganizer {
 		}
 	}
 
-	static IRegion getSafeIncludeReplacementRegion(String contents, IASTTranslationUnit ast,
-			NodeCommentMap commentMap) {
-		int maxSafeOffset = ast.getFileLocation().getNodeLength();
-		IASTDeclaration[] declarations = ast.getDeclarations(true);
-		if (declarations.length != 0)
-			maxSafeOffset = declarations[0].getFileLocation().getNodeOffset();
-
-		boolean topCommentSkipped = false;
-		int includeOffset = -1;
-		int includeEndOffset = -1;
-		int includeGuardStatementsToSkip = getNumberOfIncludeGuardStatementsToSkip(ast);
-		int includeGuardEndOffset = -1;
-		for (IASTPreprocessorStatement statement : ast.getAllPreprocessorStatements()) {
-			if (statement.isPartOfTranslationUnitFile()) {
-				IASTFileLocation fileLocation = statement.getFileLocation();
-				int offset = fileLocation.getNodeOffset();
-				if (offset >= maxSafeOffset)
-					break;
-				int endOffset = offset + fileLocation.getNodeLength();
-
-				if (includeGuardStatementsToSkip > 0) {
-					--includeGuardStatementsToSkip;
-					includeGuardEndOffset = endOffset;
-					if (!commentMap.getLeadingCommentsForNode(statement).isEmpty()) {
-						topCommentSkipped = true;
-					}
-				} else if (statement instanceof IASTPreprocessorIncludeStatement) {
-					if (includeOffset < 0)
-						includeOffset = offset;
-					includeEndOffset = endOffset;
-					includeGuardStatementsToSkip = 0;  // Just in case
-				} else {
-					break;
-				}
-			}
-		}
-		if (includeOffset < 0) {
-			if (includeGuardEndOffset >= 0) {
-				includeOffset = TextUtil.skipToNextLine(contents, includeGuardEndOffset);
-			} else {
-				includeOffset = 0;
-			}
-			if (!topCommentSkipped) {
-				// Skip the first comment block near the top of the file. 
-				includeOffset = skipStandaloneCommentBlock(contents, includeOffset, maxSafeOffset, ast.getComments(), commentMap);
-			}
-			includeEndOffset = includeOffset;
-		} else {
-			includeEndOffset = TextUtil.skipToNextLine(contents, includeEndOffset);
-		}
-		return new Region(includeOffset, includeEndOffset - includeOffset);
-	}
-
-	private static int getNumberOfIncludeGuardStatementsToSkip(IASTTranslationUnit ast) {
-		IASTPreprocessorStatement statement = findFirstPreprocessorStatement(ast);
-		if (statement == null)
-			return 0;
-
-		int num = 0;
-		int offset = 0;
-		if (isPragmaOnce(statement)) {
-			num++;
-			offset = getNodeEndOffset(statement); 
-		}
-		char[] contents = ast.getRawSignature().toCharArray();
-		if (offset != 0)
-			contents = Arrays.copyOfRange(contents, offset, contents.length);
-		CharArrayIntMap ppKeywords= new CharArrayIntMap(40, -1);
-		Keywords.addKeywordsPreprocessor(ppKeywords);
-		if (IncludeGuardDetection.detectIncludeGuard(new CharArray(contents), new LexerOptions(), ppKeywords) != null) {
-			num += 2;
-		}
-		return num;
-	}
-
-	private static IASTPreprocessorStatement findFirstPreprocessorStatement(IASTTranslationUnit ast) {
-		for (IASTPreprocessorStatement statement : ast.getAllPreprocessorStatements()) {
-			if (statement.isPartOfTranslationUnitFile())
-				return statement;
-		}
-		return null;
-	}
-
-	private static boolean isPragmaOnce(IASTPreprocessorStatement statement) {
-		if (!(statement instanceof IASTPreprocessorPragmaStatement))
-			return false;
-		return CharArrayUtils.equals(((IASTPreprocessorPragmaStatement) statement).getMessage(), "once"); //$NON-NLS-1$
-	}
-
 	/**
 	 * Returns {@code true} if there are no non-whitespace characters between the given
 	 * {@code offset} and the end of the line.
@@ -669,82 +562,6 @@ public class IncludeOrganizer {
 				return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Returns the whitespace preceding the given node. The newline character in not considered
-	 * whitespace for the purpose of this method.
-	 */
-	private String getPrecedingWhitespace(IASTNode node) {
-		int offset = getNodeOffset(node);
-		if (offset >= 0) {
-			String contents = fContext.getSourceContents();
-			int i = offset;
-			while (--i >= 0) {
-				char c = contents.charAt(i);
-				if (c == '\n' || !Character.isWhitespace(c))
-					break;
-			}
-			i++;
-			return contents.substring(i, offset);
-		}
-		return ""; //$NON-NLS-1$
-	}
-
-	private static int skipStandaloneCommentBlock(String contents, int offset, int endOffset,
-			IASTComment[] comments, NodeCommentMap commentMap) {
-		Map<IASTComment, IASTNode> inverseLeadingMap = new HashMap<>();
-		for (Map.Entry<IASTNode, List<IASTComment>> entry : commentMap.getLeadingMap().entrySet()) {
-			IASTNode node = entry.getKey();
-			if (getNodeOffset(node) <= endOffset) {
-				for (IASTComment comment : entry.getValue()) {
-					inverseLeadingMap.put(comment, node);
-				}
-			}
-		}
-		Map<IASTComment, IASTNode> inverseFreestandingMap = new HashMap<>();
-		for (Map.Entry<IASTNode, List<IASTComment>> entry : commentMap.getFreestandingMap().entrySet()) {
-			IASTNode node = entry.getKey();
-			if (getNodeEndOffset(node) < endOffset) {
-				for (IASTComment comment : entry.getValue()) {
-					inverseFreestandingMap.put(comment, node);
-				}
-			}
-		}
-
-		for (int i = 0; i < comments.length; i++) {
-			IASTComment comment = comments[i];
-			int commentOffset = getNodeOffset(comment);
-			if (commentOffset >= offset) {
-				if (commentOffset >= endOffset)
-					break;
-				IASTNode node = inverseLeadingMap.get(comment);
-				if (node != null) {
-					List<IASTComment> leadingComments = commentMap.getLeadingMap().get(node);
-					IASTComment previous = leadingComments.get(0);
-					for (int j = 1; j < leadingComments.size(); j++) {
-						comment = leadingComments.get(j);
-						if (getStartingLineNumber(comment) > getEndingLineNumber(previous) + 1)
-							return ASTNodes.skipToNextLineAfterNode(contents, previous);
-						previous = comment;
-					}
-					if (getStartingLineNumber(node) > getEndingLineNumber(previous) + 1)
-						return ASTNodes.skipToNextLineAfterNode(contents, previous);
-				}
-				node = inverseFreestandingMap.get(comment);
-				if (node != null) {
-					List<IASTComment> freestandingComments = commentMap.getFreestandingMap().get(node);
-					IASTComment previous = freestandingComments.get(0);
-					for (int j = 1; j < freestandingComments.size(); j++) {
-						comment = freestandingComments.get(j);
-						if (getStartingLineNumber(comment) > getEndingLineNumber(previous) + 1)
-							return ASTNodes.skipToNextLineAfterNode(contents, previous);
-						previous = comment;
-					}
-				}
-			}
-		}
-		return offset;
 	}
 
 	private Set<IBinding> removeBindingsDefinedInIncludedHeaders(IASTTranslationUnit ast,

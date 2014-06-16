@@ -59,6 +59,8 @@ public class CTextFileChange extends TextFileChange {
     public CTextFileChange(String name, ITranslationUnit tu) {
         super(name, getFile(tu));
         fTranslationUnit = tu;
+        if (tu instanceof IWorkingCopy)
+        	fWorkingCopy = (IWorkingCopy) tu;
         setTextType(TEXT_TYPE);
     }
 
@@ -66,7 +68,7 @@ public class CTextFileChange extends TextFileChange {
 	protected IDocument acquireDocument(IProgressMonitor pm) throws CoreException {
         IDocument doc= super.acquireDocument(pm);
         if (++fAcquireCount == 1) {
-            if (fTranslationUnit instanceof TranslationUnit && fWorkingCopy == null) {
+            if (fWorkingCopy == null && fTranslationUnit instanceof TranslationUnit) {
                 fWorkingCopy= ((TranslationUnit) fTranslationUnit).getWorkingCopy(null, DocumentAdapter.FACTORY);
                 if (!fTranslationUnit.isOpen()) {
                     fTranslationUnit.open(null);
@@ -89,7 +91,7 @@ public class CTextFileChange extends TextFileChange {
 	protected void releaseDocument(IDocument document, IProgressMonitor pm) throws CoreException {
         super.releaseDocument(document, pm);
         if (--fAcquireCount == 0) {
-            if (fWorkingCopy != null) {
+            if (fWorkingCopy != null && fWorkingCopy != fTranslationUnit) {
                 fWorkingCopy.destroy();
                 fWorkingCopy= null;
             }

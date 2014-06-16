@@ -41,6 +41,17 @@ public class TextUtil {
 	}
 
 	/**
+	 * Returns the offset of the beginning of the line before the one containing the given offset,
+	 * or the beginning of the line containing the given offset if it is first in the text.
+	 */
+	public static int getPreviousLineStart(String text, int offset) {
+		offset = getLineStart(text, offset);
+		if (offset != 0)
+			offset = getLineStart(text, offset);
+		return offset;
+	}
+
+	/**
 	 * Returns {@code true} if the line corresponding to the given {@code offset} does not contain
 	 * non-whitespace characters.
 	 */
@@ -79,5 +90,24 @@ public class TextUtil {
 				return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Returns the beginning offset of the first blank line contained between the two given offsets.
+	 * Returns -1, if not found.
+	 */
+	public static int findBlankLine(String text, int startOffset, int endOffset) {
+		int blankOffset = startOffset == 0 || text.charAt(startOffset - 1) == '\n' ? startOffset : -1;
+		while (startOffset < endOffset) {
+			char c = text.charAt(startOffset++);
+			if (c == '\n') {
+				if (blankOffset >= 0)
+					return blankOffset;
+				blankOffset = startOffset;
+			} else if (!Character.isWhitespace(c)) {
+				blankOffset = -1;
+			}
+		}
+		return -1;
 	}
 }

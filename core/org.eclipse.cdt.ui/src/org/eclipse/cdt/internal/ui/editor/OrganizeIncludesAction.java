@@ -66,7 +66,6 @@ public class OrganizeIncludesAction extends TextEditorAction {
 
 		final IHeaderChooser headerChooser = new InteractiveHeaderChooser(
 				CEditorMessages.OrganizeIncludes_label, editor.getSite().getShell());
-		final String lineDelimiter = getLineDelimiter(editor);
 		final MultiTextEdit[] holder = new MultiTextEdit[1];
 		SharedASTJob job = new SharedASTJob(CEditorMessages.OrganizeIncludes_action, tu) {
 			@Override
@@ -80,7 +79,7 @@ public class OrganizeIncludesAction extends TextEditorAction {
 						IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT);
 				try {
 					index.acquireReadLock();
-					IncludeOrganizer organizer = new IncludeOrganizer(tu, index, lineDelimiter, headerChooser);
+					IncludeOrganizer organizer = new IncludeOrganizer(tu, index, headerChooser);
 					holder[0] = organizer.organizeIncludes(ast);
 					return Status.OK_STATUS;
 				} catch (InterruptedException e) {
@@ -113,19 +112,6 @@ public class OrganizeIncludesAction extends TextEditorAction {
 					CEditorMessages.OrganizeIncludes_error_title,
 					CEditorMessages.OrganizeIncludes_insertion_failed, status);
 		}
-	}
-
-	private static String getLineDelimiter(ITextEditor editor) {
-		try {
-			IEditorInput editorInput = editor.getEditorInput();
-			IDocument document = editor.getDocumentProvider().getDocument(editorInput);
-			String delim= document.getLineDelimiter(0);
-			if (delim != null) {
-				return delim;
-			}
-		} catch (BadLocationException e) {
-		}
-		return System.getProperty("line.separator", "\n");  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	@Override

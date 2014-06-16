@@ -37,7 +37,6 @@ public class IncludeCreationContext extends InclusionContext {
 	private final Set<IPath> fHeadersToInclude;
 	private final Set<IPath> fHeadersAlreadyIncluded;
 	private final Set<IPath> fHeadersIncludedPreviously;
-	private String fSourceContents;
 
 	public IncludeCreationContext(ITranslationUnit tu, IIndex index) {
 		super(tu);
@@ -45,13 +44,6 @@ public class IncludeCreationContext extends InclusionContext {
 		fHeadersToInclude = new HashSet<>();
 		fHeadersAlreadyIncluded = new HashSet<>();
 		fHeadersIncludedPreviously = new HashSet<>();
-	}
-
-	public String getSourceContents() {
-		if (fSourceContents == null) {
-			fSourceContents = new String(getTranslationUnit().getContents());
-		}
-		return fSourceContents;
 	}
 
 	public final IIndex getIndex() {

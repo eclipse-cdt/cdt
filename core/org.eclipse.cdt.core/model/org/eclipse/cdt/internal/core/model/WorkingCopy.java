@@ -77,7 +77,8 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			CommitWorkingCopyOperation op= new CommitWorkingCopyOperation(this, force);
 			op.runOperation(monitor);
 		} else {
-			String contents = this.getSource();
+			IBuffer buffer = getBuffer();
+			String contents = buffer.getContents();
 			if (contents == null)
 				return;
 

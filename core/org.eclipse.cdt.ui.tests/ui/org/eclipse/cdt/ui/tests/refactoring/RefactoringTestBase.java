@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Google, Inc and others.
+ * Copyright (c) 2012, 2014 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,11 @@ import java.io.StringReader;
 import java.net.URI;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
@@ -42,6 +44,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -55,6 +58,7 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
  * Common base for refactoring tests.
  */
 public abstract class RefactoringTestBase extends BaseTestCase {
+	private static final Pattern FILENAME_PATTERN = Pattern.compile("^(\\w+/)*\\w+\\.\\w+$");
 	/** Allows empty files to be created during test setup. */
 	protected boolean createEmptyFiles = true;
 	/** See {@link PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER} */
@@ -67,7 +71,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 
 	private boolean cpp = true;
 	private ICProject cproject;
-	private final Set<TestSourceFile> testFiles = new LinkedHashSet<TestSourceFile>();
+	private final Set<TestSourceFile> testFiles = new LinkedHashSet<>();
 	private TestSourceFile selectedFile;
 	private TextSelection selection;
 	private TestSourceFile historyScript;
@@ -87,22 +91,41 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 		cproject = cpp ?
 				CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
 				CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+		TestScannerProvider.sLocalIncludes = new String[] { cproject.getProject().getLocation().toOSString() };
+
 		Bundle bundle = CTestPlugin.getDefault().getBundle();
 		CharSequence[] testData = TestSourceReader.getContentsForTest(bundle, "ui", getClass(), getName(), 0);
 
 		for (CharSequence contents : testData) {
 			TestSourceFile testFile = null;
+			boolean firstAfterDelimiter = false;
 			boolean expectedResult = false;
 			BufferedReader reader = new BufferedReader(new StringReader(contents.toString()));
 			String line;
 			while ((line = reader.readLine()) != null) {
 				String trimmedLine = line.trim();
 				if (testFile == null) {
-					assertTrue("Invalid file name \"" + trimmedLine + "\"", trimmedLine.matches("^(\\w+/)*\\w+\\.\\w+$"));
-					testFile = new TestSourceFile(trimmedLine);
+					if (isResultDelimiter(trimmedLine)) {
+						expectedResult = true;
+						firstAfterDelimiter = true;
+						testFile = new TestSourceFile(null);
+					} else {
+						assertTrue("Invalid file name \"" + trimmedLine + "\"",
+								FILENAME_PATTERN.matcher(trimmedLine).matches());
+						testFile = new TestSourceFile(trimmedLine);
+					}
 				} else if (isResultDelimiter(trimmedLine)) {
 					expectedResult = true;
+					firstAfterDelimiter = true;
 				} else if (expectedResult) {
+					if (firstAfterDelimiter) {
+						firstAfterDelimiter = false;
+						if (FILENAME_PATTERN.matcher(trimmedLine).matches()) {
+							testFile.setExpectedName(trimmedLine);
+							continue;
+						}
+					}
+					assertTrue(testFile.getExpectedName() != null);
 					testFile.addLineToExpectedSource(line);
 				} else {
 					testFile.addLineToSource(line);
@@ -110,7 +133,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 			}
 			reader.close();
 
-			if (createEmptyFiles || !testFile.getSource().isEmpty()) {
+			if (testFile.getName() != null && (createEmptyFiles || !testFile.getSource().isEmpty())) {
 				TestSourceReader.createFile(cproject.getProject(), new Path(testFile.getName()),
 						testFile.getSource());
 			}
@@ -149,7 +172,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 		executeRefactoring(false);
 	}
 
-	private void executeRefactoring(boolean expectedSuccess) throws Exception {
+	protected void executeRefactoring(boolean expectedSuccess) throws Exception {
 		if (ascendingVisibilityOrder) {
 			getPreferenceStore().setValue(PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER,
 					ascendingVisibilityOrder);
@@ -167,6 +190,11 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 			context = new RefactoringContext(refactoring);
 		}
 		executeRefactoring(refactoring, context, true, expectedSuccess);
+	}
+
+	protected void executeRefactoring(Refactoring refactoring, boolean expectedSuccess)
+			throws CoreException, Exception {
+		executeRefactoring(refactoring, null, false, expectedSuccess);
 	}
 
 	protected void executeRefactoring(Refactoring refactoring, RefactoringContext context,
@@ -230,6 +258,10 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 
 	protected ICProject getCProject() {
 		return cproject;
+	}
+
+	protected IProject getProject() {
+		return cproject.getProject();
 	}
 
 	protected TestSourceFile getSelectedTestFile() {
@@ -348,7 +380,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	protected void compareFiles() throws Exception {
 		for (TestSourceFile testFile : testFiles) {
 			String expectedSource = testFile.getExpectedSource();
-			IFile file = cproject.getProject().getFile(new Path(testFile.getName()));
+			IFile file = cproject.getProject().getFile(new Path(testFile.getExpectedName()));
 			String actualSource = getFileContents(file);
 			expectedSource= expectedSource.replace("\r\n", "\n");
 			actualSource= actualSource.replace("\r\n", "\n");

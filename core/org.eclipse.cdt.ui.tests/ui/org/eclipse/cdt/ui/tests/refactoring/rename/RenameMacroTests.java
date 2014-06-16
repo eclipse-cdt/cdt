@@ -61,7 +61,7 @@ public class RenameMacroTests extends RenameTestBase {
         IFile cpp= importFile("test.cpp", contents); //$NON-NLS-1$
         
         int offset1= contents.indexOf("HALLO"); //$NON-NLS-1$
-        int offset2= contents.indexOf("HALLO", offset1+1); //$NON-NLS-1$
+        int offset2= contents.indexOf("HALLO", offset1 + 1); //$NON-NLS-1$
         
         Change ch= getRefactorChanges(cpp, offset1, "WELT");  //$NON-NLS-1$
         assertTotalChanges(6, ch);
@@ -120,7 +120,6 @@ public class RenameMacroTests extends RenameTestBase {
         importFile("other.cpp", buf.toString()); //$NON-NLS-1$
         waitForIndexer();
 
-
         int offset1= contents.indexOf("MACRO"); //$NON-NLS-1$
         
         // conflicts after renaming
@@ -130,7 +129,7 @@ public class RenameMacroTests extends RenameTestBase {
         		"New element: w1  \n" +
         		"Conflicting element type: Local variable"); //$NON-NLS-1$
         status= checkConditions(cpp, contents.indexOf("par1"), "MACRO");  //$NON-NLS-1$ //$NON-NLS-2$
-        assertRefactoringError(status, "'MACRO' conflicts with the name of an existing macro!"); //$NON-NLS-1$
+        assertRefactoringError(status, "'MACRO' conflicts with the name of an existing macro."); //$NON-NLS-1$
         status= checkConditions(cpp, offset1, "par1");  //$NON-NLS-1$
         assertRefactoringError(status, "A conflict was encountered during refactoring.  \n" +
         		"Type of problem: Name conflict  \n" +
@@ -201,7 +200,7 @@ public class RenameMacroTests extends RenameTestBase {
         IFile cpp= importFile("test.cpp", contents); //$NON-NLS-1$
         
         int offset1= contents.indexOf("_guard"); //$NON-NLS-1$
-        int offset2= contents.indexOf("_guard", offset1+1); //$NON-NLS-1$
+        int offset2= contents.indexOf("_guard", offset1 + 1); //$NON-NLS-1$
         Change ch= getRefactorChanges(cpp, offset2, "WELT");  //$NON-NLS-1$
         assertTotalChanges(2, 0, 1, ch);
         int off= offset1;

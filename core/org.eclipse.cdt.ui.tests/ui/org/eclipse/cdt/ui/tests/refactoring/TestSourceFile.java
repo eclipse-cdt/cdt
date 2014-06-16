@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +28,7 @@ public class TestSourceFile {
 	private static final Pattern SELECTION_END = Pattern.compile("/\\*\\$\\$\\*/"); //$NON-NLS-1$
 
 	private final String name;
+	private String expectedName;
 	private final StringBuilder source = new StringBuilder();
 	private final StringBuilder expectedSource = new StringBuilder();
 	private int selectionStart = -1;
@@ -45,6 +47,20 @@ public class TestSourceFile {
 		return source.toString();
 	}
 
+	/**
+	 * Returns the expected name after refactoring.
+	 */
+	public String getExpectedName() {
+		return expectedName == null ? name : expectedName;
+	}
+
+	public void setExpectedName(String name) {
+		expectedName = name;
+	}
+
+	/**
+	 * Returns the expected contents after refactoring.
+	 */
 	public String getExpectedSource() {
 		if (expectedSource.length() == 0) {
 			return getSource();
@@ -80,7 +96,7 @@ public class TestSourceFile {
 
 	@Override
 	public int hashCode() {
-		return name.hashCode();
+		return Objects.hash(name, expectedName);
 	}
 
 	@Override
@@ -90,6 +106,6 @@ public class TestSourceFile {
 		if (obj == null || getClass() != obj.getClass())
 			return false;
 		TestSourceFile other = (TestSourceFile) obj;
-		return name.equals(other.name);
+		return Objects.equals(name, other.name) && Objects.equals(expectedName, other.expectedName);
 	}
 }

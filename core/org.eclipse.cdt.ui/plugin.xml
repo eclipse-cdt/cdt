@@ -4396,23 +4396,55 @@
             id="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring">
       </contribution>
    </extension>
-   <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
-	  <renameParticipant id="org.eclipse.cdt.ui.RenameSourceFolder"
-            name="%renameParticipant.name"
-            class="org.eclipse.cdt.internal.ui.refactoring.rename.RenameSourceFolder">
+   <extension point="org.eclipse.ltk.core.refactoring.moveParticipants">
+	  <moveParticipant id="org.eclipse.cdt.ui.headerFileMoveParticipant"
+            name="%headerFileMoveParticipant.name"
+            class="org.eclipse.cdt.internal.ui.refactoring.rename.HeaderFileMoveParticipant">
          <enablement>
-            <or>
-               <with variable="affectedNatures">
-                  <iterate operator="or">
-                     <equals value="org.eclipse.cdt.core.ccnature" />
-                  </iterate>
-               </with>
-               <with variable="affectedNatures">
-                  <iterate operator="or">
+            <with variable="affectedNatures">
+               <iterate operator="or">
+                  <or>
                      <equals value="org.eclipse.cdt.core.cnature" />
-                  </iterate>
-               </with>
-            </or>
+                     <equals value="org.eclipse.cdt.core.ccnature" />
+                  </or>
+               </iterate>
+            </with>
+            <with variable="element">
+               <instanceof value="org.eclipse.core.resources.IResource"/>
+            </with>
+         </enablement>
+      </moveParticipant>
+   </extension>
+   <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
+	  <renameParticipant id="org.eclipse.cdt.ui.headerFileRenameParticipant"
+            name="%headerFileRenameParticipant.name"
+            class="org.eclipse.cdt.internal.ui.refactoring.rename.HeaderFileRenameParticipant">
+         <enablement>
+            <with variable="affectedNatures">
+               <iterate operator="or">
+                  <or>
+                     <equals value="org.eclipse.cdt.core.cnature" />
+                     <equals value="org.eclipse.cdt.core.ccnature" />
+                  </or>
+               </iterate>
+            </with>
+            <with variable="element">
+               <instanceof value="org.eclipse.core.resources.IResource"/>
+            </with>
+         </enablement>
+      </renameParticipant>
+	  <renameParticipant id="org.eclipse.cdt.ui.RenameSourceFolder"
+            name="%renameFolderParticipant.name"
+            class="org.eclipse.cdt.internal.ui.refactoring.rename.SourceFolderRenameParticipant">
+         <enablement>
+            <with variable="affectedNatures">
+               <iterate operator="or">
+                  <or>
+                     <equals value="org.eclipse.cdt.core.cnature" />
+                     <equals value="org.eclipse.cdt.core.ccnature" />
+                  </or>
+               </iterate>
+            </with>
             <with variable="element">
                <instanceof value="org.eclipse.core.resources.IFolder" />
             </with>

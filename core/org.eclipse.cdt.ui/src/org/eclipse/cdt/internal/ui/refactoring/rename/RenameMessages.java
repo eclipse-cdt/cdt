@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 Wind River Systems, Inc.
+ * Copyright (c) 2004, 2014 Wind River Systems, Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -97,9 +97,11 @@ class RenameMessages extends NLS {
 	public static String CRenameTopProcessor_virtualMethod;
 	public static String CRenameTopProcessor_wizard_backup_title;
 	public static String CRenameTopProcessor_wizard_title;
+	public static String HeaderFileMoveParticipant_name;
+	public static String HeaderFileRenameParticipant_name;
 	public static String RenameCSourceFolderChange_ErrorMsg;
 	public static String RenameCSourceFolderChange_Name0;
-	public static String RenameSourceFolder_0;
+	public static String SourceFolderRenameParticipant_name;
 	public static String RenameInformationPopup_delayJobName;
 	public static String RenameInformationPopup_EnterNewName;
 	public static String RenameInformationPopup_menu;

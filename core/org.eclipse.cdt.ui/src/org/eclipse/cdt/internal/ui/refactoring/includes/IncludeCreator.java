@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.ui.refactoring.includes;
 
 import static org.eclipse.cdt.core.index.IndexLocationFactory.getAbsolutePath;
-import static org.eclipse.cdt.internal.ui.refactoring.includes.IncludeUtil.isContainedInRegion;
 
 import java.net.URI;
 import java.util.ArrayDeque;
@@ -32,7 +31,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
@@ -98,13 +96,10 @@ import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 public class IncludeCreator {
 	private static final Collator COLLATOR = Collator.getInstance();
 
-	private final String fLineDelimiter;
 	private final IElementSelector fAmbiguityResolver;
 	private final IncludeCreationContext fContext;
 
-	public IncludeCreator(ITranslationUnit tu, IIndex index, String lineDelimiter,
-			IElementSelector ambiguityResolver) {
-		fLineDelimiter = lineDelimiter;
+	public IncludeCreator(ITranslationUnit tu, IIndex index, IElementSelector ambiguityResolver) {
 		fAmbiguityResolver = ambiguityResolver;
 		fContext = new IncludeCreationContext(tu, index);
 	}
@@ -237,7 +232,7 @@ public class IncludeCreator {
 		NodeCommentMap commentedNodeMap = ASTCommenter.getCommentedNodeMap(ast);
 		String contents = fContext.getSourceContents();
 		IRegion includeRegion =
-				IncludeOrganizer.getSafeIncludeReplacementRegion(contents, ast, commentedNodeMap);
+				IncludeUtil.getSafeIncludeReplacementRegion(contents, ast, commentedNodeMap);
 		
 		IncludePreferences preferences = fContext.getPreferences();
 
@@ -258,21 +253,8 @@ public class IncludeCreator {
 		}
 		Collections.sort(styledIncludes, preferences);
 
-		// Populate list of existing includes in the include insertion region.
-		List<StyledInclude> mergedIncludes = new ArrayList<>();
-		for (IASTPreprocessorIncludeStatement include : existingIncludes) {
-			if (include.isPartOfTranslationUnitFile() && isContainedInRegion(include, includeRegion)) {
-				String name = new String(include.getName().getSimpleID());
-				IncludeInfo includeInfo = new IncludeInfo(name, include.isSystemInclude());
-				String path = include.getPath();
-				// An empty path means that the include was not resolved.
-				IPath header = path.isEmpty() ? null : Path.fromOSString(path);
-				IncludeGroupStyle style =
-						header != null ? fContext.getIncludeStyle(header) : fContext.getIncludeStyle(includeInfo);
-				StyledInclude prototype = new StyledInclude(header, includeInfo, style, include);
-				mergedIncludes.add(prototype);
-			}
-		}
+		List<StyledInclude> mergedIncludes =
+				IncludeUtil.getIncludesInRegion(existingIncludes, includeRegion, fContext);
 
 		if (preferences.allowReordering) {
 			// Since the order of existing include statements may not match the include order
@@ -299,23 +281,23 @@ public class IncludeCreator {
 						offset = ASTNodes.skipToNextLineAfterNode(contents, previousNode);
 						flushEditBuffer(offset, text, rootEdit);
 						if (contents.charAt(offset - 1) != '\n')
-							text.append(fLineDelimiter);
+							text.append(fContext.getLineDelimiter());
 					}
 					if (include.getStyle().isBlankLineNeededAfter(previousInclude.getStyle(), preferences.includeStyles)) {
 						if (TextUtil.isLineBlank(contents, offset)) {
 							offset = TextUtil.skipToNextLine(contents, offset);
 						} else {
-							text.append(fLineDelimiter);
+							text.append(fContext.getLineDelimiter());
 						}
 					}
 				}
 				text.append(include.getIncludeInfo().composeIncludeStatement());
-				text.append(fLineDelimiter);
+				text.append(fContext.getLineDelimiter());
 			} else {
 				if (previousInclude != null && previousInclude.getExistingInclude() == null &&
 						include.getStyle().isBlankLineNeededAfter(previousInclude.getStyle(), preferences.includeStyles) &&
 						!TextUtil.isPreviousLineBlank(contents, ASTNodes.offset(existingInclude))) {
-					text.append(fLineDelimiter);
+					text.append(fContext.getLineDelimiter());
 				}
 				flushEditBuffer(offset, text, rootEdit);
 			}
@@ -323,7 +305,7 @@ public class IncludeCreator {
 		}
 		if (includeRegion.getLength() == 0 && !TextUtil.isLineBlank(contents, includeRegion.getOffset()) &&
 				!includes.isEmpty()) {
-			text.append(fLineDelimiter);
+			text.append(fContext.getLineDelimiter());
 		}
 		flushEditBuffer(offset, text, rootEdit);
 
@@ -359,7 +341,7 @@ public class IncludeCreator {
 
 		if (mergedUsingDeclarations.isEmpty()) {
 			offset = includeRegion.getOffset() + includeRegion.getLength();
-			text.append(fLineDelimiter);  // Blank line between includes and using declarations.
+			text.append(fContext.getLineDelimiter());  // Blank line between includes and using declarations.
 		} else {
 			offset = commentedNodeMap.getOffsetIncludingComments(mergedUsingDeclarations.get(0).existingDeclaration);
 		}
@@ -382,11 +364,11 @@ public class IncludeCreator {
 						offset = ASTNodes.skipToNextLineAfterNode(contents, previousNode);
 						flushEditBuffer(offset, text, rootEdit);
 						if (contents.charAt(offset - 1) != '\n')
-							text.append(fLineDelimiter);
+							text.append(fContext.getLineDelimiter());
 					}
 				}
 				text.append(using.composeDirective());
-				text.append(fLineDelimiter);
+				text.append(fContext.getLineDelimiter());
 			} else {
 				flushEditBuffer(offset, text, rootEdit);
 			}

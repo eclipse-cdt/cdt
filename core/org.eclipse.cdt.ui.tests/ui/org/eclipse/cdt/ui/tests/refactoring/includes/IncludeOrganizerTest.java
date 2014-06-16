@@ -71,7 +71,7 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	 */
 	private String organizeIncludes(ITranslationUnit tu) throws Exception {
 		IHeaderChooser headerChooser = new FirstHeaderChooser();
-		IncludeOrganizer organizer = new IncludeOrganizer(tu, index, LINE_DELIMITER, headerChooser);
+		IncludeOrganizer organizer = new IncludeOrganizer(tu, index, headerChooser);
 		MultiTextEdit edit = organizer.organizeIncludes(ast);
 		IDocument document = new Document(new String(tu.getContents()));
 		edit.apply(document);

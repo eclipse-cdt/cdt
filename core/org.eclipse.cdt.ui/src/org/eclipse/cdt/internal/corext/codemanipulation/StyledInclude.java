@@ -92,6 +92,6 @@ public class StyledInclude {
 	/** For debugging only */
 	@Override
 	public String toString() {
-		return header != null ? header.toPortableString() : includeInfo.toString();
+		return header != null ? header.toString() : includeInfo.toString();
 	}
 }

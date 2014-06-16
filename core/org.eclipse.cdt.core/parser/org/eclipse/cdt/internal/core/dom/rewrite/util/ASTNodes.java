@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc and others.
+ * Copyright (c) 2012, 2014 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.util;
-
-import static org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.getNodeEndOffset;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -24,18 +22,51 @@ public class ASTNodes {
 	}
 
 	/**
-	 * Returns the offset of an AST node.
+	 * Returns the offset of the given node, or -1 if the node is not part of the translation
+	 * unit file or doesn't have a file-location.
+	 * @see IASTNode#getFileLocation()
 	 */
 	public static int offset(IASTNode node) {
-		return node.getFileLocation().getNodeOffset();
+		if (!node.isPartOfTranslationUnitFile())
+			return -1;
+		IASTFileLocation nodeLocation = node.getFileLocation();
+		return nodeLocation != null ? nodeLocation.getNodeOffset() : -1;
 	}
 
 	/**
-	 * Returns the exclusive end offset of an AST node.
+	 * Returns the end offset of the given node, or -1 if the node is not part of the translation
+	 * unit file or doesn't have a file-location.
+	 * @see IASTNode#getFileLocation()
 	 */
 	public static int endOffset(IASTNode node) {
-		IASTFileLocation location = node.getFileLocation();
-		return location.getNodeOffset() + location.getNodeLength();
+		if (!node.isPartOfTranslationUnitFile())
+			return -1;
+		IASTFileLocation nodeLocation = node.getFileLocation();
+		return nodeLocation != null ? nodeLocation.getNodeOffset() + nodeLocation.getNodeLength() : -1;
+	}
+
+	/**
+	 * Returns the 1-based starting line number of the given node, or 0 if the node is not part of
+	 * the translation unit file or doesn't have a file-location.
+	 * @see IASTNode#getFileLocation()
+	 */
+	public static int getStartingLineNumber(IASTNode node) {
+		if (!node.isPartOfTranslationUnitFile())
+			return 0;
+		IASTFileLocation nodeLocation = node.getFileLocation();
+		return nodeLocation != null ? nodeLocation.getStartingLineNumber() : 0;
+	}
+
+	/**
+	 * Returns the 1-based ending line number of the given node, or 0 if the node is not part of
+	 * the translation unit file or doesn't have a file-location.
+	 * @see IASTNode#getFileLocation()
+	 */
+	public static int getEndingLineNumber(IASTNode node) {
+		if (!node.isPartOfTranslationUnitFile())
+			return 0;
+		IASTFileLocation nodeLocation = node.getFileLocation();
+		return nodeLocation != null ? nodeLocation.getEndingLineNumber() : 0;
 	}
 
 	/**
@@ -43,6 +74,25 @@ public class ASTNodes {
 	 * offset if there is no line delimiter after the node.
 	 */
 	public static int skipToNextLineAfterNode(String text, IASTNode node) {
-		return TextUtil.skipToNextLine(text, getNodeEndOffset(node));
+		return TextUtil.skipToNextLine(text, endOffset(node));
+	}
+
+	/**
+	 * Returns the whitespace preceding the given node. The newline character in not considered
+	 * whitespace for the purpose of this method.
+	 */
+	public static String getPrecedingWhitespaceInLine(String text, IASTNode node) {
+		int offset = offset(node);
+		if (offset >= 0) {
+			int i = offset;
+			while (--i >= 0) {
+				char c = text.charAt(i);
+				if (c == '\n' || !Character.isWhitespace(c))
+					break;
+			}
+			i++;
+			return text.substring(i, offset);
+		}
+		return ""; //$NON-NLS-1$
 	}
 }

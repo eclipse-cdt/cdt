@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -44,6 +45,8 @@ public class InclusionContext {
 	private final Map<IncludeInfo, IPath> fIncludeResolutionCache;
 	private final Map<IPath, IncludeInfo> fInverseIncludeResolutionCache;
 	private final IncludePreferences fPreferences;
+	private String fSourceContents;
+	private String fLineDelimiter;
 
 	public InclusionContext(ITranslationUnit tu) {
 		fTu = tu;
@@ -141,7 +144,41 @@ public class InclusionContext {
 		return include;
     }
 
-	public IncludeGroupStyle getIncludeStyle(IPath headerPath) {
+	/**
+	 * Returns the include directive that resolves to the given header file, or {@code null} if
+	 * the file is not on the include search path. Current directory is not considered to be a part
+	 * of the include path by this method.
+	 */
+    public IncludeInfo getIncludeForHeaderFile(IPath fullPath, boolean isSystem) {
+    	IncludeInfo include = fInverseIncludeResolutionCache.get(fullPath);
+    	if (include != null)
+    		return include;
+        String headerLocation = fullPath.toOSString();
+        String shortestInclude = null;
+		for (IncludeSearchPathElement pathElement : fIncludeSearchPath.getElements()) {
+			if (isSystem && pathElement.isForQuoteIncludesOnly())
+				continue;
+			String includeDirective = pathElement.getIncludeDirective(headerLocation);
+			if (includeDirective != null &&
+					(shortestInclude == null || shortestInclude.length() > includeDirective.length())) {
+				shortestInclude = includeDirective;
+			}
+		}
+		if (shortestInclude == null) {
+			if (fIncludeSearchPath.isInhibitUseOfCurrentFileDirectory() ||
+					!fCurrentDirectory.isPrefixOf(fullPath)) {
+				return null;
+			}
+			shortestInclude = fullPath.setDevice(null).removeFirstSegments(fCurrentDirectory.segmentCount()).toString();
+		}
+		include = new IncludeInfo(shortestInclude, isSystem);
+		// Don't put an include to fullPath to fIncludeResolutionCache since it may be wrong
+		// if the header was included by #include_next.
+		fInverseIncludeResolutionCache.put(fullPath, include);
+		return include;
+    }
+
+    public IncludeGroupStyle getIncludeStyle(IPath headerPath) {
 		IncludeKind includeKind;
 		IncludeInfo includeInfo = getIncludeForHeaderFile(headerPath);
 		if (includeInfo != null && includeInfo.isSystem()) {
@@ -251,5 +288,23 @@ public class InclusionContext {
 		if (relativePath == null)
 			return null;
 		return relativePath.toString();
+	}
+
+	public String getSourceContents() {
+		if (fSourceContents == null) {
+			fSourceContents = new String(fTu.getContents());
+		}
+		return fSourceContents;
+	}
+
+	public String getLineDelimiter() {
+		if (fLineDelimiter == null) {
+			try {
+				fLineDelimiter = StubUtility.getLineDelimiterUsed(fTu);
+			} catch (CModelException e) {
+				fLineDelimiter = System.getProperty("line.separator", "\n"); //$NON-NLS-1$//$NON-NLS-2$
+			}
+		}
+		return fLineDelimiter;
 	}
 }

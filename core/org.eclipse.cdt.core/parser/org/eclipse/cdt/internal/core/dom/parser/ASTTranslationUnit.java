@@ -502,54 +502,6 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		return fSizeofCalculator;
 	}
 
-	/**
-	 * Returns the offset of the given node, or -1 if the node is not part of the translation
-	 * unit file or doesn't have a file-location.
-	 * @see IASTNode#getFileLocation()
-	 */
-	public static int getNodeOffset(IASTNode node) {
-		if (!node.isPartOfTranslationUnitFile())
-			return -1;
-		IASTFileLocation nodeLocation = node.getFileLocation();
-		return nodeLocation != null ? nodeLocation.getNodeOffset() : -1;
-	}
-
-	/**
-	 * Returns the end offset of the given node, or -1 if the node is not part of the translation
-	 * unit file or doesn't have a file-location.
-	 * @see IASTNode#getFileLocation()
-	 */
-	public static int getNodeEndOffset(IASTNode node) {
-		if (!node.isPartOfTranslationUnitFile())
-			return -1;
-		IASTFileLocation nodeLocation = node.getFileLocation();
-		return nodeLocation != null ? nodeLocation.getNodeOffset() + nodeLocation.getNodeLength() : -1;
-	}
-
-    /**
-     * Returns the 1-based starting line number of the given node, or 0 if the node is not part of
-     * the translation unit file or doesn't have a file-location.
-	 * @see IASTNode#getFileLocation()
-	 */
-	public static int getStartingLineNumber(IASTNode node) {
-		if (!node.isPartOfTranslationUnitFile())
-			return 0;
-		IASTFileLocation nodeLocation = node.getFileLocation();
-		return nodeLocation != null ? nodeLocation.getStartingLineNumber() : 0;
-	}
-
-    /**
-     * Returns the 1-based ending line number of the given node, or 0 if the node is not part of
-     * the translation unit file or doesn't have a file-location.
-	 * @see IASTNode#getFileLocation()
-	 */
-	public static int getEndingLineNumber(IASTNode node) {
-		if (!node.isPartOfTranslationUnitFile())
-			return 0;
-		IASTFileLocation nodeLocation = node.getFileLocation();
-		return nodeLocation != null ? nodeLocation.getEndingLineNumber() : 0;
-	}
-
 	@Override
 	public boolean hasNodesOmitted() {
 		return fNodesOmitted;

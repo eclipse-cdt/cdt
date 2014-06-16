@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems and others.
+ * Copyright (c) 2007, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,30 +7,31 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Convert the dsf-gdb test fragment back to a plug-in
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.launching;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
-/**
- * This is no longer an activator class since this is no longer a plug-in. It's
- * a fragment.
- */
-public class TestsPlugin {
-    private ResourceBundle resourceBundle;
 
-	/**
-	 * We're no longer a plug-in, but a fragment. Make this field an alias
-	 * to our host plugin's ID.
-	 */
-    public static final String PLUGIN_ID = GdbPlugin.PLUGIN_ID;
+/**
+ * The main plugin class
+ */
+public class TestsPlugin extends Plugin {
+    //The shared instance.
+    private static TestsPlugin plugin;
+    //Resource bundle.
+    private ResourceBundle resourceBundle;
+    private static BundleContext bundleContext;
+	
+    public static final String PLUGIN_ID = "org.eclipse.cdt.tests.dsf.gdb"; //$NON-NLS-1$
     
     /** Base tracing option for this plugin */
     public static final boolean DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.tests.dsf.gdb/debug"));  //$NON-NLS-1$//$NON-NLS-2$
@@ -40,6 +41,7 @@ public class TestsPlugin {
      */
     public TestsPlugin() {
         super();
+        plugin = this;
         try {
             resourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.tests.dsf.gdb.TestsPluginResources"); //$NON-NLS-1$
         }
@@ -48,29 +50,56 @@ public class TestsPlugin {
         }
     }
     
-    /**
-     * Returns this fragment's resource bundle,
-     */
+   @Override
+   public void start(BundleContext context) throws Exception {
+       super.start(context);
+       bundleContext = context;
+   }
+   /**
+    * This method is called when the plug-in is stopped
+    */
+   @Override
+   public void stop(BundleContext context) throws Exception {
+       super.stop(context);
+   }
+   /**
+    * Returns the shared instance.
+    */
+   public static TestsPlugin getDefault() {
+       return plugin;
+   }
+    
+   /**
+    * Returns the plugin's resource bundle,
+    */
     public ResourceBundle getResourceBundle() {
         return resourceBundle;
-    }        
+    }    
+    
     /**
-     * Returns the host plug-in's bundle context,
+     * Returns the plugin's bundle context,
      */
     public static BundleContext getBundleContext() {
-        return GdbPlugin.getBundleContext();
-    }        
+        return bundleContext;
+    }             
 
 	/**
-	 * Logs the specified status with this host plug-in's log.
+	 * Logs the specified status with this plug-in's log.
 	 * 
 	 * @param status
 	 *            status to log
 	 */
 	public static void log(IStatus status) {
-		GdbPlugin.getDefault().getLog().log(status);
+		getDefault().getLog().log(status);
 	}
 
+    /**     
+     * Convenience method which returns the unique identifier of this plugin.
+     */    
+    public static String getUniqueIdentifier() {
+    	return getDefault().getBundle().getSymbolicName();    
+    }
+	
 	/**
 	 * Logs an internal error with the specified throwable
 	 * 
@@ -78,8 +107,9 @@ public class TestsPlugin {
 	 *            the exception to be logged
 	 */
 	public static void log( Throwable e ) {
-		log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Internal Error", e)); //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), "Internal Error", e)); //$NON-NLS-1$
 	}
+
 
 	/**
 	 * Tests should use this utility when specifying a timeout value for a wait
@@ -105,7 +135,7 @@ public class TestsPlugin {
 			return (int)(timeoutMs * multiplier);
 		}
 		catch (NumberFormatException exc) {
-			log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "\"dsf.gdb.tests.timeout.multiplier\" property incorrectly specified. Should be a float value (e.g., \"1.5\") or not specified at all.")); //$NON-NLS-1$
+			log(new Status(IStatus.ERROR, getUniqueIdentifier(), "\"dsf.gdb.tests.timeout.multiplier\" property incorrectly specified. Should be a float value (e.g., \"1.5\") or not specified at all.")); //$NON-NLS-1$
 			return timeoutMs;
 		}
 	}

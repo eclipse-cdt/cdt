@@ -15,6 +15,7 @@
  *     Marc Khouzam (Ericsson) - Updated to extend FinalLaunchSequence instead of copying it (bug 324101)
  *     William Riley (Renesas) - Memory viewing broken (Bug 413483)
  *     Marc Khouzam (Ericsson) - Cannot disable Delay command (bug 413437)
+ *     Teodor Madan (Freescale) - enable semihosting console (bug 437532)
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
@@ -48,6 +49,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.launching.FinalLaunchSequence;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
@@ -58,6 +60,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
+import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICommand;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -66,8 +69,12 @@ import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IProcess;
 
 /**
  * The final launch sequence for the Jtag hardware debugging using the
@@ -114,7 +121,6 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		this(launch.getSession(), getAttributes(launch), rm);
     }
 
-	@SuppressWarnings("unchecked")
 	private static Map<String, Object> getAttributes(GdbLaunch launch) {
 		try {
 			return launch.getLaunchConfiguration().getAttributes();
@@ -173,6 +179,8 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 					"stepSetArguments",   //$NON-NLS-1$
 					"stepSetEnvironmentVariables",   //$NON-NLS-1$
 					"stepStartTrackingBreakpoints",   //$NON-NLS-1$
+
+					"stepCreateConsole",   //$NON-NLS-1$
 					
 					"stepSetProgramCounter",   //$NON-NLS-1$
 					"stepStopScript",   //$NON-NLS-1$
@@ -666,4 +674,65 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		}
 		memory.initializeMemoryData(memContext, rm);
 	}
+
+	/**
+	 * Initialize the console for semihosting services.
+	 *  
+	 *  @see org.eclipse.cdt.dsf.gdb.service.StartOrRestartProcessSequence_7_0#stepCreateConsole(RequestMonitor)
+	 *  
+	 */
+	@Execute
+	public void stepCreateConsole(final RequestMonitor rm) {
+		
+		// Compute console name
+		IGDBBackend backend = fTracker.getService(IGDBBackend.class);
+		String defaultPathName = backend.getProgramPath().lastSegment();
+		if (defaultPathName == null) {
+			defaultPathName = ""; //$NON-NLS-1$
+		}
+		String progPathName = CDebugUtils.getAttribute(getAttributes(),
+				ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+				defaultPathName);
+		final String pathLabel = new Path(progPathName).lastSegment();
+
+		final Process inferiorProcess = new MIInferiorProcess(getContainerContext(), backend.getMIOutputStream());
+
+		final ILaunch launch = (ILaunch) getContainerContext().getAdapter(
+				ILaunch.class);
+
+		// This is the groupId of the new process that will be started, even in
+		// the case of a restart.
+		final String groupId = ((IMIContainerDMContext) getContainerContext())
+				.getGroupId();
+
+		// Add the inferior to the launch.
+		// This cannot be done on the executor or things deadlock.
+		DebugPlugin.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				
+				try {
+					// Add the inferior
+					// Need to go through DebugPlugin.newProcess so that we can use
+					// the overrideable process factory to allow others to override.
+					// First set attribute to specify we want to create an inferior
+					// process.
+					// Bug 210366
+					Map<String, String> attributes = new HashMap<String, String>();
+					attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
+							IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
+					IProcess runtimeInferior = DebugPlugin.newProcess(launch,
+							inferiorProcess, pathLabel, attributes);
+					// Now set the inferior groupId
+					runtimeInferior.setAttribute(
+							IGdbDebugConstants.INFERIOR_GROUPID_ATTR, groupId);
+
+				} finally {
+					rm.done();
+				}
+			}
+		});
+		return;
+	}
+
 }

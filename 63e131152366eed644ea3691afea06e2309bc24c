@@ -16,6 +16,24 @@
       "revId": "63e131152366eed644ea3691afea06e2309bc24c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_4da54fb5",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 729,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-06-17T14:53:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_47a24ef7",
+      "revId": "63e131152366eed644ea3691afea06e2309bc24c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

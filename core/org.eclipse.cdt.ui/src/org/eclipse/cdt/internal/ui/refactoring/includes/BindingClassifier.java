@@ -87,6 +87,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
@@ -116,6 +117,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.MethodKind;
@@ -216,7 +218,7 @@ public class BindingClassifier {
 			if (declarator instanceof IASTFunctionDeclarator) {
 				/*
 				 * The type specifier of a function definition doesn't need to be defined if it is
-				 * a pointer or reference type.
+				 * a pointer or a reference type.
 				 *
 				 * Example 1:
 				 * 	X *foo() { }		// definition of X is not required here
@@ -224,12 +226,16 @@ public class BindingClassifier {
 				 * Example 2:
 				 * 	X& foo() { }		// definition of X is not required here
 				 */
-				IBinding binding = declarator.getName().resolveBinding();
+				IASTName name = declarator.getPropertyInParent() == ICPPASTLambdaExpression.DECLARATOR ?
+						((ICPPASTLambdaExpression) declarator.getParent()).getFunctionCallOperatorName() :
+						declarator.getName();
+				IBinding binding = name.resolveBinding();
 				if (binding instanceof IFunction) {
 					IFunction function = (IFunction) binding;
 
 					IFunctionType functionType = function.getType();
-					if (declarator.getPropertyInParent() == IASTFunctionDefinition.DECLARATOR) {
+					if (declarator.getPropertyInParent() == IASTFunctionDefinition.DECLARATOR ||
+							declarator.getPropertyInParent() == ICPPASTLambdaExpression.DECLARATOR) {
 						// Define the return type if necessary.
 						IType returnType = functionType.getReturnType();
 						if (!(returnType instanceof IPointerType || returnType instanceof ICPPReferenceType)) {
@@ -248,8 +254,8 @@ public class BindingClassifier {
 						}
 					} else {
 						// As a matter of policy, a function declaration is responsible for
-						// providing definitions of parameter types that have implicit converting
-						// constructors.
+						// providing definitions of parameter types that have implicit
+						// converting constructors.
 						IType[] parameterTypes = functionType.getParameterTypes();
 						for (IType type : parameterTypes) {
 							if (!(type instanceof IPointerType)) {
@@ -260,7 +266,6 @@ public class BindingClassifier {
 						}
 					}
 				}
-
 			}
 			return PROCESS_CONTINUE;
 		}
@@ -1209,7 +1214,7 @@ public class BindingClassifier {
 	private void defineBinding(IBinding binding) {
 		if (!markAsDefined(binding))
 			return;
-		if (fAst.getDefinitionsInAST(binding).length != 0)
+		if (binding instanceof CPPClosureType || fAst.getDefinitionsInAST(binding).length != 0)
 			return;  // Defined locally.
 
 		Collection<IBinding> requiredBindings = getRequiredBindings(binding);

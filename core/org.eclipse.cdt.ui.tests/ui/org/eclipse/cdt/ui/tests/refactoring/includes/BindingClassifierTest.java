@@ -580,6 +580,14 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	}
 
 	//	struct A {};
+
+	//	auto lambda = [](A* a) { return *a; };
+	public void testLambdaExpression() throws Exception {
+		assertDefined("A");
+		assertDeclared();
+	}
+
+	//	struct A {};
 	//	struct B {};
 	//	struct C {};
 	//	struct prefixD {};

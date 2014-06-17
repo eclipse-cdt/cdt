@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_47a24ef7",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 729,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-17T01:19:40Z",
+      "side": 1,
+      "message": "rm.done should be called in finally block.\nIf code above throws an exception rm never be done\nand launch will hang",
+      "revId": "63e131152366eed644ea3691afea06e2309bc24c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

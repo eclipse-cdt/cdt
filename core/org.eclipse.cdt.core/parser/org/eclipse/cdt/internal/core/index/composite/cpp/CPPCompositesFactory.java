@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -250,7 +251,9 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 		if (eval == null)
 			return null;
 		IBinding templateDefinition = eval.getTemplateDefinition();
-		IBinding templateDefinition2 = getCompositeBinding((IIndexFragmentBinding) templateDefinition);
+		IBinding compositeTemplateDefinition = templateDefinition instanceof IProblemBinding ?
+				templateDefinition :
+				getCompositeBinding((IIndexFragmentBinding) templateDefinition);
 		if (eval instanceof EvalBinary) {
 			EvalBinary e= (EvalBinary) eval;
 			ICPPEvaluation a = e.getArg1();
@@ -258,8 +261,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			
 			ICPPEvaluation a2 = getCompositeEvaluation(a);
 			ICPPEvaluation b2 = getCompositeEvaluation(b);
-			if (a != a2 || b != b2 || templateDefinition != templateDefinition2)
-				e= new EvalBinary(e.getOperator(), a2, b2, templateDefinition2);
+			if (a != a2 || b != b2 || templateDefinition != compositeTemplateDefinition)
+				e= new EvalBinary(e.getOperator(), a2, b2, compositeTemplateDefinition);
 			return e;
 		}
 		if (eval instanceof EvalBinaryTypeId) {
@@ -269,8 +272,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			
 			IType a2 = getCompositeType(a);
 			IType b2 = getCompositeType(b);
-			if (a != a2 || b != b2 || templateDefinition != templateDefinition2)
-				e= new EvalBinaryTypeId(e.getOperator(), a2, b2, templateDefinition2);
+			if (a != a2 || b != b2 || templateDefinition != compositeTemplateDefinition)
+				e= new EvalBinaryTypeId(e.getOperator(), a2, b2, compositeTemplateDefinition);
 			return e;
 		}
 		if (eval instanceof EvalBinding) {
@@ -280,9 +283,9 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				IType b = e.getFixedType();
 				IBinding a2 = getCompositeBinding((IIndexFragmentBinding) parameterOwner);
 				IType b2 = getCompositeType(b);
-				if (parameterOwner != a2 || b != b2 || templateDefinition != templateDefinition2) {
+				if (parameterOwner != a2 || b != b2 || templateDefinition != compositeTemplateDefinition) {
 					int parameterPosition = e.getFunctionParameterPosition();
-					e= new EvalBinding((ICPPFunction) a2, parameterPosition, b2, templateDefinition2);
+					e= new EvalBinding((ICPPFunction) a2, parameterPosition, b2, compositeTemplateDefinition);
 				}
 			} else {
 				IBinding a = e.getBinding();
@@ -290,8 +293,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				
 				IBinding a2 = getCompositeBinding((IIndexFragmentBinding) a);
 				IType b2 = getCompositeType(b);
-				if (a != a2 || b != b2 || templateDefinition != templateDefinition2)
-					e= new EvalBinding(a2, b2, templateDefinition2);
+				if (a != a2 || b != b2 || templateDefinition != compositeTemplateDefinition)
+					e= new EvalBinding(a2, b2, compositeTemplateDefinition);
 			}
 			return e;
 		}
@@ -301,16 +304,16 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			
 			ICPPEvaluation[] a2 = getCompositeEvaluationArray(a);
 			
-			if (a != a2 || templateDefinition != templateDefinition2)
-				e= new EvalComma(a2, templateDefinition2);
+			if (a != a2 || templateDefinition != compositeTemplateDefinition)
+				e= new EvalComma(a2, compositeTemplateDefinition);
 			return e;
 		}
 		if (eval instanceof EvalCompound) {
 			EvalCompound e= (EvalCompound) eval;
 			ICPPEvaluation a = e.getLastEvaluation();
 			ICPPEvaluation a2 = getCompositeEvaluation(a);
-			if (a != a2 || templateDefinition != templateDefinition2)
-				e= new EvalCompound(a2, templateDefinition2);
+			if (a != a2 || templateDefinition != compositeTemplateDefinition)
+				e= new EvalCompound(a2, compositeTemplateDefinition);
 			return e;
 		}
 		if (eval instanceof EvalConditional) {
@@ -321,8 +324,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			ICPPEvaluation a2 = getCompositeEvaluation(a);
 			ICPPEvaluation b2 = getCompositeEvaluation(b);
 			ICPPEvaluation c2 = getCompositeEvaluation(c);
-			if (a != a2 || b != b2 || c != c2 || templateDefinition != templateDefinition2)
-				e= new EvalConditional(a2, b2, c2, e.isPositiveThrows(), e.isNegativeThrows(), templateDefinition2);
+			if (a != a2 || b != b2 || c != c2 || templateDefinition != compositeTemplateDefinition)
+				e= new EvalConditional(a2, b2, c2, e.isPositiveThrows(), e.isNegativeThrows(), compositeTemplateDefinition);
 			return e;
 		}
 		if (eval instanceof EvalFixed) {
@@ -331,7 +334,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			IValue b = e.getValue();
 			IType a2 = getCompositeType(a);
 			IValue b2= getCompositeValue(b);
-			if (a != a2 || b != b2 || templateDefinition != templateDefinition2)
+			if (a != a2 || b != b2 || templateDefinition != compositeTemplateDefinition)
 				e= new EvalFixed(a2, e.getValueCategory(), b2);
 			return e;
 		}
@@ -339,8 +342,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			EvalFunctionCall e= (EvalFunctionCall) eval;
 			ICPPEvaluation[] a = e.getArguments();
 			ICPPEvaluation[] a2 = getCompositeEvaluationArray(a);
-			if (a != a2 || templateDefinition != templateDefinition2)
-				e= new EvalFunctionCall(a2, templateDefinition2);
+			if (a != a2 || templateDefinition != compositeTemplateDefinition)
+				e= new EvalFunctionCall(a2, compositeTemplateDefinition);
 			return e;
 		}
 		if (eval instanceof EvalFunctionSet) {
@@ -354,9 +357,9 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				ICPPFunction[] a2 = getCompositeFunctionArray(a);
 				ICPPTemplateArgument[] b2 = TemplateInstanceUtil.convert(this, b);
 				IType c2 = getCompositeType(c);
-				if (a != a2 || b != b2 || c != c2 || templateDefinition != templateDefinition2)
+				if (a != a2 || b != b2 || c != c2 || templateDefinition != compositeTemplateDefinition)
 					e= new EvalFunctionSet(new CPPFunctionSet(a2, b2, null), e.isQualified(), e.isAddressOf(), 
-							c2, templateDefinition2);
+							c2, compositeTemplateDefinition);
 			}
 			return e;
 		}
@@ -375,16 +378,16 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			}
 			ICPPTemplateArgument[] c2 = TemplateInstanceUtil.convert(this, c);
 			
-			if (a != a2 || b != b2 || c != c2 || templateDefinition != templateDefinition2)
-				e= new EvalID(a2, b2, e.getName(), e.isAddressOf(), e.isQualified(), c2, templateDefinition2);
+			if (a != a2 || b != b2 || c != c2 || templateDefinition != compositeTemplateDefinition)
+				e= new EvalID(a2, b2, e.getName(), e.isAddressOf(), e.isQualified(), c2, compositeTemplateDefinition);
 			return e;
 		}
 		if (eval instanceof EvalInitList) {
 			EvalInitList e= (EvalInitList) eval;
 			ICPPEvaluation[] a = e.getClauses();
 			ICPPEvaluation[] a2 = getCompositeEvaluationArray(a);
-			if (a != a2 || templateDefinition != templateDefinition2)
-				e= new EvalInitList(a2, templateDefinition2);
+			if (a != a2 || templateDefinition != compositeTemplateDefinition)
+				e= new EvalInitList(a2, compositeTemplateDefinition);
 			return e;
 		}
 		if (eval instanceof EvalMemberAccess) {
@@ -393,16 +396,16 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			IBinding b = e.getMember();
 			IType a2= getCompositeType(a);
 			IBinding b2= getCompositeBinding((IIndexFragmentBinding) b);
-			if (a != a2 || b != b2 || templateDefinition != templateDefinition2)
-				e= new EvalMemberAccess(a2, e.getOwnerValueCategory(), b2, e.isPointerDeref(), templateDefinition2);
+			if (a != a2 || b != b2 || templateDefinition != compositeTemplateDefinition)
+				e= new EvalMemberAccess(a2, e.getOwnerValueCategory(), b2, e.isPointerDeref(), compositeTemplateDefinition);
 			return e;
 		}
 		if (eval instanceof EvalParameterPack) {
 			EvalParameterPack e = (EvalParameterPack) eval;
 			ICPPEvaluation a = e.getExpansionPattern();
 			ICPPEvaluation a2 = getCompositeEvaluation(a);
-			if (a != a2 || templateDefinition != templateDefinition2)
-				e = new EvalParameterPack(a2, templateDefinition2);
+			if (a != a2 || templateDefinition != compositeTemplateDefinition)
+				e = new EvalParameterPack(a2, compositeTemplateDefinition);
 			return e;
 		}
 		if (eval instanceof EvalTypeId) {
@@ -411,8 +414,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			ICPPEvaluation[] b = e.getArguments();
 			IType a2= getCompositeType(a);
 			ICPPEvaluation[] b2 = getCompositeEvaluationArray(b);
-			if (a != a2 || b != b2 || templateDefinition != templateDefinition2)
-				e= new EvalTypeId(a2, templateDefinition2, b2);
+			if (a != a2 || b != b2 || templateDefinition != compositeTemplateDefinition)
+				e= new EvalTypeId(a2, compositeTemplateDefinition, b2);
 			return e;
 		}
 		if (eval instanceof EvalUnary) {
@@ -421,16 +424,16 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			ICPPEvaluation a2 = getCompositeEvaluation(a);
 			IBinding b= e.getAddressOfQualifiedNameBinding();
 			IBinding b2= getCompositeBinding((IIndexFragmentBinding) b);
-			if (a != a2 || b != b2 || templateDefinition != templateDefinition2)
-				e= new EvalUnary(e.getOperator(), a2, b2, templateDefinition2);
+			if (a != a2 || b != b2 || templateDefinition != compositeTemplateDefinition)
+				e= new EvalUnary(e.getOperator(), a2, b2, compositeTemplateDefinition);
 			return e;
 		}
 		if (eval instanceof EvalUnaryTypeID) {
 			EvalUnaryTypeID e= (EvalUnaryTypeID) eval;
 			IType a = e.getArgument();
 			IType a2 = getCompositeType(a);
-			if (a != a2 || templateDefinition != templateDefinition2)
-				e= new EvalUnaryTypeID(e.getOperator(), a2, templateDefinition2);
+			if (a != a2 || templateDefinition != compositeTemplateDefinition)
+				e= new EvalUnaryTypeID(e.getOperator(), a2, compositeTemplateDefinition);
 			return e;
 		}
 		

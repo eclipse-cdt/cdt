@@ -108,6 +108,7 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 	private static final Key KEY_CPP_TEST_WORD_DELIMITER = getCDTUIKey(PreferenceConstants.NAME_STYLE_CPP_TEST_WORD_DELIMITER);
 	private static final Key KEY_CPP_TEST_PREFIX = getCDTUIKey(PreferenceConstants.NAME_STYLE_CPP_TEST_PREFIX);
 	private static final Key KEY_CPP_TEST_SUFFIX = getCDTUIKey(PreferenceConstants.NAME_STYLE_CPP_TEST_SUFFIX);
+	private static final Key KEY_INCLUDE_GUARD_SCHEME = getCDTUIKey(PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME);
 
 	private static final IdentifierValidator IDENTIFIER_VALIDATOR = new IdentifierValidator();
 	private static final FilenameValidator FILENAME_VALIDATOR = new FilenameValidator();
@@ -151,6 +152,7 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 				KEY_CPP_TEST_WORD_DELIMITER,
 				KEY_CPP_TEST_PREFIX,
 				KEY_CPP_TEST_SUFFIX,
+				KEY_INCLUDE_GUARD_SCHEME,
 			};
 	}
 
@@ -166,7 +168,7 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 		rootCategories = createCategories();
 	}
 
-	private static Category[] createCategories() {
+	private Category[] createCategories() {
 		Category codeCategory = new Category(PreferencesMessages.NameStyleBlock_code_node); 
 		new Category(PreferencesMessages.NameStyleBlock_constant_node,
 				PreferencesMessages.NameStyleBlock_constant_node_description, EXAMPLE_CONSTANT_NAME,
@@ -221,6 +223,7 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 				.setSeedNameGenerator(fieldCategory)
 				.setNameValidator(IDENTIFIER_VALIDATOR)
 				.setTrimFieldName(true);
+		new IncludeGuardCategory(codeCategory);
 		Category fileCategory = new Category(PreferencesMessages.NameStyleBlock_files_node);
 		new Category(PreferencesMessages.NameStyleBlock_cpp_header_node,
 				PreferencesMessages.NameStyleBlock_cpp_header_node_description, EXAMPLE_CLASS_NAME,
@@ -272,8 +275,6 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 		categoryTree.setDialogFieldListener(adapter);
 		categoryTree.setLabelText(PreferencesMessages.NameStyleBlock_categories_label);
 		categoryTree.setViewerComparator(adapter);
-
-		createCategories();
 
 		for (Category category : rootCategories) {
 			categoryTree.addElement(category);
@@ -331,31 +332,48 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 			layout.marginWidth = 0;
 			envelope.setLayout(layout);
 
-			Control control = addComboBox(envelope, PreferencesMessages.NameStyleBlock_capitalization_label,
-					category.getCapitalizationKey(), CAPITALIZATION_VALUES,
-					CAPITALIZATION_LABELS, 0);
-			LayoutUtil.setHorizontalSpan(getLabel(control), 1);
-			LayoutUtil.setHorizontalSpan(control, 3);
-			control = addTextField(envelope, PreferencesMessages.NameStyleBlock_word_delimiter_label,
-					category.getWordDelimiterKey(), 0, pixelConverter.convertWidthInCharsToPixels(10));
-			LayoutUtil.setHorizontalSpan(control, 3);
-			LayoutUtil.setHorizontalAlignment(control, SWT.BEGINNING);
-			control = addTextField(envelope, PreferencesMessages.NameStyleBlock_prefix_label,
-					category.getPrefixKey(), 0, pixelConverter.convertWidthInCharsToPixels(10));
-			boolean getter = PreferencesMessages.NameStyleBlock_getter_node.equals(category.name);
-			LayoutUtil.setHorizontalSpan(control, getter ? 1 : 3);
-			LayoutUtil.setHorizontalAlignment(control, SWT.BEGINNING);
-			if (getter) {
-				control = addTextField(envelope, PreferencesMessages.NameStyleBlock_prefix_for_boolean_label,
-						category.getAlternativePrefixKey(), pixelConverter.convertWidthInCharsToPixels(2),
-						pixelConverter.convertWidthInCharsToPixels(10));
-				LayoutUtil.setHorizontalSpan(control, 1);
+			if (category instanceof IncludeGuardCategory) {
+				envelope.setLayoutData(new GridData(GridData.FILL_BOTH));
+				addRadioButton(envelope, PreferencesMessages.NameStyleBlock_file_path_relative_to_source_folder,
+						KEY_INCLUDE_GUARD_SCHEME,
+						new String[] { String.valueOf(PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_PATH), null },
+						0);
+				addRadioButton(envelope, PreferencesMessages.NameStyleBlock_file_name,
+						KEY_INCLUDE_GUARD_SCHEME,
+						new String[] { String.valueOf(PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME), null },
+						0);
+				addRadioButton(envelope, PreferencesMessages.NameStyleBlock_unique_identifier,
+						KEY_INCLUDE_GUARD_SCHEME,
+						new String[] { String.valueOf(PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_UUID), null },
+						0);
+			} else {
+				envelope.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+				Control control = addComboBox(envelope, PreferencesMessages.NameStyleBlock_capitalization_label,
+						category.getCapitalizationKey(), CAPITALIZATION_VALUES,
+						CAPITALIZATION_LABELS, 0);
+				LayoutUtil.setHorizontalSpan(getLabel(control), 1);
+				LayoutUtil.setHorizontalSpan(control, 3);
+				control = addTextField(envelope, PreferencesMessages.NameStyleBlock_word_delimiter_label,
+						category.getWordDelimiterKey(), 0, pixelConverter.convertWidthInCharsToPixels(10));
+				LayoutUtil.setHorizontalSpan(control, 3);
+				LayoutUtil.setHorizontalAlignment(control, SWT.BEGINNING);
+				control = addTextField(envelope, PreferencesMessages.NameStyleBlock_prefix_label,
+						category.getPrefixKey(), 0, pixelConverter.convertWidthInCharsToPixels(10));
+				boolean getter = PreferencesMessages.NameStyleBlock_getter_node.equals(category.name);
+				LayoutUtil.setHorizontalSpan(control, getter ? 1 : 3);
+				LayoutUtil.setHorizontalAlignment(control, SWT.BEGINNING);
+				if (getter) {
+					control = addTextField(envelope, PreferencesMessages.NameStyleBlock_prefix_for_boolean_label,
+							category.getAlternativePrefixKey(), pixelConverter.convertWidthInCharsToPixels(2),
+							pixelConverter.convertWidthInCharsToPixels(10));
+					LayoutUtil.setHorizontalSpan(control, 1);
+					LayoutUtil.setHorizontalAlignment(control, SWT.BEGINNING);
+				}
+				control = addTextField(envelope, PreferencesMessages.NameStyleBlock_suffix_label,
+						category.getSuffixKey(), 0, pixelConverter.convertWidthInCharsToPixels(10));
+				LayoutUtil.setHorizontalSpan(control, 3);
 				LayoutUtil.setHorizontalAlignment(control, SWT.BEGINNING);
 			}
-			control = addTextField(envelope, PreferencesMessages.NameStyleBlock_suffix_label,
-					category.getSuffixKey(), 0, pixelConverter.convertWidthInCharsToPixels(10));
-			LayoutUtil.setHorizontalSpan(control, 3);
-			LayoutUtil.setHorizontalAlignment(control, SWT.BEGINNING);
 
 			ControlFactory.insertSpace(envelope, 4, pixelConverter.convertHeightInCharsToPixels(1));
 			ControlFactory.createLabel(envelope, PreferencesMessages.NameStyleBlock_preview_label);
@@ -431,7 +449,7 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
     /**
      * Represents a category of settings.
      */
-	private final static class Category {
+	private static class Category {
 		public final String name;
 		public final String description;
 		public final Category parent;
@@ -448,14 +466,14 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 
 		private Text previewText;
 		private Composite editorArea;
-		private boolean trimFieldName = false;
+		private boolean trimFieldName;
 
 		Category(String name, String description, String seedName, Category parent) {
 			this.name = name;
 			this.description = description;
 			this.seedName = seedName;
 			this.parent = parent;
-			children = new ArrayList<Category>();
+			children = new ArrayList<>();
 			index = parent != null ? parent.addChild(this) : 0;
 		}
 
@@ -581,6 +599,33 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 
 		void setTrimFieldName(boolean trimSeedName) {
 			this.trimFieldName = trimSeedName;
+		}
+	}
+
+	private static class IncludeGuardCategory extends Category {
+		IncludeGuardCategory(Category parent) {
+			super(PreferencesMessages.NameStyleBlock_include_guard_node,
+					PreferencesMessages.NameStyleBlock_include_guard_node_description, null, parent);
+		}
+		
+		@Override
+		String composeExampleName(NameStyleBlock settings) {
+			int scheme = Integer.parseInt(settings.getValue(KEY_INCLUDE_GUARD_SCHEME));
+			switch (scheme) {
+			case PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_PATH:
+				return "DIR1_DIR2_FILENAME_H_"; //$NON-NLS-1$
+			case PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME:
+				return "FILENAME_H_"; //$NON-NLS-1$
+			case PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_UUID:
+				return "H5C9C6A49_D213_49BD_99A7_9BBA0FA998BF"; //$NON-NLS-1$
+			default:
+				return ""; //$NON-NLS-1$
+			}
+		}
+
+		@Override
+		boolean isConcrete() {
+			return true;
 		}
 	}
 

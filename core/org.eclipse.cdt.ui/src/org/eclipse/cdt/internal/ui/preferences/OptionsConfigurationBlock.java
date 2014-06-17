@@ -385,8 +385,8 @@ public abstract class OptionsConfigurationBlock {
 		ControlData data= new ControlData(key, values);
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan= 3;
-		gd.horizontalIndent= indent;
+		gd.horizontalSpan= 4;
+//		gd.horizontalIndent= indent;
 
 		Button radioButton= new Button(parent, SWT.RADIO);
 		radioButton.setFont(JFaceResources.getDialogFont());
@@ -395,7 +395,7 @@ public abstract class OptionsConfigurationBlock {
 		radioButton.setLayoutData(gd);
 		radioButton.addSelectionListener(getSelectionListener());
 
-		makeScrollableCompositeAware(radioButton);
+//		makeScrollableCompositeAware(radioButton);
 
 		String currValue= getValue(key);
 		radioButton.setSelection(data.getSelection(currValue) == 0);

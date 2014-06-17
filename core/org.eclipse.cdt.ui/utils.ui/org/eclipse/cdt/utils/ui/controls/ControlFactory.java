@@ -213,7 +213,7 @@ public class ControlFactory {
 		Label label = new Label(parent, style);
 		label.setFont(parent.getFont());
 		label.setText(text);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 1;
 		gd.widthHint = widthHint;
 		gd.heightHint = heightHint;

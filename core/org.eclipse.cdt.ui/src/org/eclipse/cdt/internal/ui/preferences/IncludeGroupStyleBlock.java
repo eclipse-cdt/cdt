@@ -38,8 +38,8 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
 public class IncludeGroupStyleBlock extends OptionsConfigurationBlock {
 	private final String description;
 	private IncludeGroupStyle style;
-	private final ArrayList<Button> checkBoxes = new ArrayList<Button>();
-	private final ArrayList<Text> textBoxes = new ArrayList<Text>();
+	private final ArrayList<Button> checkBoxes = new ArrayList<>();
+	private final ArrayList<Text> textBoxes = new ArrayList<>();
 	private PixelConverter pixelConverter;
 	private Button checkBoxBlankLine;
 	private static final Key[] EMPTY_KEY_ARRAY = {};

@@ -476,6 +476,8 @@ public final class PreferencesMessages extends NLS {
 	public static String NameStyleBlock_getter_node_description;
 	public static String NameStyleBlock_setter_node;
 	public static String NameStyleBlock_setter_node_description;
+	public static String NameStyleBlock_include_guard_node;
+	public static String NameStyleBlock_include_guard_node_description;
 	public static String NameStyleBlock_cpp_source_node;
 	public static String NameStyleBlock_cpp_source_node_description;
 	public static String NameStyleBlock_cpp_header_node;
@@ -494,6 +496,9 @@ public final class PreferencesMessages extends NLS {
 	public static String NameStyleBlock_prefix_for_boolean_label;
 	public static String NameStyleBlock_suffix_label;
 	public static String NameStyleBlock_preview_label;
+	public static String NameStyleBlock_file_path_relative_to_source_folder;
+	public static String NameStyleBlock_file_name;
+	public static String NameStyleBlock_unique_identifier;
 	public static String NameStyleBlock_select_concrete_category;
 	public static String NameStyleBlock_invalid_prefix;
 	public static String NameStyleBlock_invalid_word_delimiter;

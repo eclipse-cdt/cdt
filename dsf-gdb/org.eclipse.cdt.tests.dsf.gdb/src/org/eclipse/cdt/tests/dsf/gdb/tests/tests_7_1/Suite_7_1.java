@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2010, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,10 @@
  * 
  * Contributors:
  *     Ericsson			  - Initial Implementation
+ *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_1;
 
-import org.eclipse.cdt.dsf.mi.service.command.commands.Suite_Sessionless_Tests;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.junit.BeforeClass;
@@ -46,7 +46,6 @@ import org.junit.runners.Suite;
 	PostMortemCoreTest_7_1.class,
 	CommandTimeoutTest_7_1.class,
 	GDBMultiNonStopRunControlTest_7_1.class,
-	Suite_Sessionless_Tests.class,
 	StepIntoSelectionTest_7_1.class,
 	StepIntoSelectionNonStopTest_7_1.class,
 	/* Add your test class here */

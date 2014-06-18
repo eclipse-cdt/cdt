@@ -1,16 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Ericsson and others.
+ * Copyright (c) 2007, 2014 Ericsson AB and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Ericsson			  - Initial Implementation
+ *     Ericsson	- Initial Implementation
+ *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
-import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
@@ -31,7 +32,7 @@ public class BackgroundRunner extends BlockJUnit4ClassRunner {
 		super(klass);
 	}
 
-	final static QualifiedName BACKGROUND_TEST_EXECUTION_FINISHED = new QualifiedName(GdbPlugin.getDefault().getBundle().getSymbolicName(), "background_test_execution_finished"); //$NON-NLS-1$
+	final static QualifiedName BACKGROUND_TEST_EXECUTION_FINISHED = new QualifiedName(TestsPlugin.getDefault().getBundle().getSymbolicName(), "background_test_execution_finished"); //$NON-NLS-1$
 	
 	void invokeSuperRunImpl(RunNotifier notifier) {
 		super.run(notifier);

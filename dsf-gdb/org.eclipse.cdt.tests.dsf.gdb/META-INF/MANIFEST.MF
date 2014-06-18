@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GDB/MI reference application tests
 Bundle-SymbolicName: org.eclipse.cdt.tests.dsf.gdb;singleton:=true
 Bundle-Version: 2.2.0.qualifier
+Bundle-Activator: org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin
 Bundle-Vendor: Ericsson
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.dsf,
@@ -13,9 +14,25 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt,
  org.eclipse.cdt.launch;bundle-version="6.1.0",
  org.eclipse.cdt.visualizer.ui,
- org.eclipse.cdt.gdb;bundle-version="7.0.0"
+ org.eclipse.cdt.gdb;bundle-version="7.0.0",
+ org.eclipse.cdt.dsf.gdb,
+ org.eclipse.core.variables
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .
-Fragment-Host: org.eclipse.cdt.dsf.gdb
-
+Export-Package: org.eclipse.cdt.dsf.mi.service;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.framework;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.launching;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.tests;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_6;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_7;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_8;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_0;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_1;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_2;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_3;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_4;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_5;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_6;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_7;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_8;x-internal:=true

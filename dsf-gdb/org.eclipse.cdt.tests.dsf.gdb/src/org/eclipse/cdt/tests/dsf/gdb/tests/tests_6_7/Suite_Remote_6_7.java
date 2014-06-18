@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Ericsson and others.
+ * Copyright (c) 2009, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,10 @@
  * 
  * Contributors:
  *     Ericsson			  - Initial Implementation
+ *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_7;
 
-import org.eclipse.cdt.dsf.mi.service.command.commands.Suite_Sessionless_Tests;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseRemoteSuite;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
@@ -42,7 +42,6 @@ import org.junit.runners.Suite;
 	GDBProcessesTest_6_7.class,
 	OperationsWhileTargetIsRunningTest_6_7.class,
 	CommandTimeoutTest_6_7.class,
-	Suite_Sessionless_Tests.class,
 	StepIntoSelectionTest_6_7.class,
 	/* Add your test class here */
 })

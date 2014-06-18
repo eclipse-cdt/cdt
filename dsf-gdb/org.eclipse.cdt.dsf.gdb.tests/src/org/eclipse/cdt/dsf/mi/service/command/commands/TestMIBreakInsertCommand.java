@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Ericsson and others.
+ * Copyright (c) 2008, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *     Marc Khouzam (Ericsson) - Fix NPE (bug 369583)
+ *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
@@ -16,9 +17,9 @@ import static org.junit.Assert.assertEquals;
 import org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControlDMContext;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.junit.Test;
 
 /**
@@ -43,7 +44,7 @@ public class TestMIBreakInsertCommand {
 		private DsfSession session = null;
 
 		public TestContext() {
-			session = DsfSession.startSession(new DefaultDsfExecutor(TestsPlugin.PLUGIN_ID), TestsPlugin.PLUGIN_ID);
+			session = DsfSession.startSession(new DefaultDsfExecutor(GdbPlugin.PLUGIN_ID), GdbPlugin.PLUGIN_ID);
 		}
 		
 		@Override

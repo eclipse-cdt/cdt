@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Ericsson and others.
+ * Copyright (c) 2007, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,13 @@
  * 
  * Contributors:
  *     Ericsson	AB		  - Initial implementation of Test cases
+ *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -18,10 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
 
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -47,7 +47,6 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMData;
-import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
@@ -572,12 +571,12 @@ public class SyncUtil {
 	    		try {
 	    			value = Integer.valueOf(value);
 	    			if (value < 0) {
-	    				TestsPlugin.log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "\"" + propname + "\" property incorrectly specified. Should be an integer value or not specified at all.")); //$NON-NLS-1$
+	    				TestsPlugin.log(new Status(IStatus.ERROR, TestsPlugin.getUniqueIdentifier(), "\"" + propname + "\" property incorrectly specified. Should be an integer value or not specified at all.")); //$NON-NLS-1$
 	    				value = -1;
 	    			}
 	    		}
 	    		catch (NumberFormatException exc) {
-	    			TestsPlugin.log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "\"" + propname + "\" property incorrectly specified. Should be an integer value or not specified at all.")); //$NON-NLS-1$
+	    			TestsPlugin.log(new Status(IStatus.ERROR, TestsPlugin.getUniqueIdentifier(), "\"" + propname + "\" property incorrectly specified. Should be an integer value or not specified at all.")); //$NON-NLS-1$
 	    			value = -1;
 	    		}
     		}

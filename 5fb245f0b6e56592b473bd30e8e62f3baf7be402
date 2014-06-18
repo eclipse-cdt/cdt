@@ -70,6 +70,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_b90d4579",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-06-18T16:44:18Z",
+      "side": 1,
+      "message": "I asked a few of our CDT users and they did not think it would be useful to hide writes. So I\u0027m leaning towards removing that filter and just keeping Hide read-only.",
+      "parentUuid": "e76c2f17_8d13e719",
+      "revId": "5fb245f0b6e56592b473bd30e8e62f3baf7be402",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_6d180b36",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchMessages.properties",
         "patchSetId": 2

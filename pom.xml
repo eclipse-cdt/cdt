@@ -172,6 +172,7 @@
 		<module>build/org.eclipse.cdt.managedbuilder.ui.tests</module>
 		<module>build/org.eclipse.cdt.make.core.tests</module>
 		<module>build/org.eclipse.cdt.make.ui.tests</module>
+		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.tests</module>
 		<module>dsf-gdb/org.eclipse.cdt.tests.dsf.gdb</module>
 		
 		<module>build/org.eclipse.cdt.autotools.core</module>

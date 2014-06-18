@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Ericsson and others.
+ * Copyright (c) 2010, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,9 @@
  * 
  * Contributors:
  *     Marc-Andre Laperle - Added test for the gdb version string converter
+ *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
  *******************************************************************************/
-package org.eclipse.cdt.tests.dsf.gdb.tests;
+package org.eclipse.cdt.dsf.gdb.tests;
 
 import static org.junit.Assert.assertEquals;
 

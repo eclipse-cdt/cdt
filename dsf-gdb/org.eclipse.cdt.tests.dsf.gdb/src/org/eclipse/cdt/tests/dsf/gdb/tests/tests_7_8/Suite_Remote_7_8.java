@@ -7,10 +7,10 @@
  * 
  * Contributors:
  *     Marc Khouzam (Ericsson) - Initial implementation of Test cases
+ *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_8;
 
-import org.eclipse.cdt.dsf.mi.service.command.commands.Suite_Sessionless_Tests;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseRemoteSuite;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
@@ -46,7 +46,6 @@ import org.junit.runners.Suite;
 	OperationsWhileTargetIsRunningTest_7_8.class,
 	OperationsWhileTargetIsRunningNonStopTest_7_8.class,
 	CommandTimeoutTest_7_8.class,
-	Suite_Sessionless_Tests.class,
 	GDBConsoleBreakpointsTest_7_8.class,
 	TraceFileTest_7_8.class,
 	GDBConsoleSynchronizingTest_7_8.class,

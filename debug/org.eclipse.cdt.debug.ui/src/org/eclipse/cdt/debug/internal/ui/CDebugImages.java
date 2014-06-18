@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Ericsson             - Added tracepoint support (284286)
  *     Marc Khouzam (Ericsson) - Added dynamic printf support (400628)
+ *     Marc Dumais (Ericsson) - Bug 437692
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui;
 
@@ -125,6 +126,7 @@ public class CDebugImages {
 	public static final String IMG_LCL_DETAIL_PANE_RIGHT = NAME_PREFIX + "det_pane_right.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_DETAIL_PANE_HIDE = NAME_PREFIX + "det_pane_hide.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_COLLAPSE_ALL = NAME_PREFIX + "collapseall.gif";	//$NON-NLS-1$
+	public static final String IMG_LCL_OPEN_NEW_VIEW = NAME_PREFIX + "open_new.gif";  //$NON-NLS-1$
 
 	public static final String IMG_WIZBAN_ADD_SOURCE = NAME_PREFIX + "addsrcloc_wiz.gif";	//$NON-NLS-1$
 	public static final String IMG_WIZBAN_PATH_MAPPING = NAME_PREFIX + "mapping_wiz.gif";	//$NON-NLS-1$
@@ -212,6 +214,7 @@ public class CDebugImages {
 	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_HIDE_DISABLED = createManaged(T_DLCL, IMG_LCL_DETAIL_PANE_HIDE);
 	public static final ImageDescriptor DESC_LCL_COLLAPSE_ALL = createManaged(T_ELCL, IMG_LCL_COLLAPSE_ALL);
 	public static final ImageDescriptor DESC_LCL_COLLAPSE_ALL_DISABLED = createManaged(T_DLCL, IMG_LCL_COLLAPSE_ALL);
+	public static final ImageDescriptor DESC_LCL_OPEN_NEW_VIEW = createManaged(T_ELCL, IMG_LCL_OPEN_NEW_VIEW);
 
 	/**
 	 * Returns the image managed under the given key in this registry.

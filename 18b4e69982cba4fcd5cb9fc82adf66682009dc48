@@ -1,0 +1,361 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_0e986a80",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/internal/LaunchBarManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "I don\u0027t think we should abort initialization is there is a bad contribution, should\njust log it and don\u0027t use it",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_8efe3a75",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/internal/LaunchBarManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "Log it through Activator",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_ee036e18",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/internal/LaunchBarManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "?",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_ce083238",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/internal/LaunchBarManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "?",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_6e175e51",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/internal/LaunchBarManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "This should be syncronized - multiple thread accessing it can make a mess there",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_ee1a4e74",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/internal/LaunchBarManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "Can this be empty array?",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_ce1f9263",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/internal/LaunchBarManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "remove comment",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_0e318af0",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/internal/LaunchBarManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "This has to be in sort sort of safe runner, or you have to intercept Throwable\nand log, otherwise some bad listener can screw up the whole thing",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_6e2e3e95",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/internal/LaunchBarManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "What does it mean?",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_8ed0faf5",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/internal/LaunchBarManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "Please clean up commetns",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_eed52ee5",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/internal/LocalTarget.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "Local Host maybe?\nIt has to be localized too",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_cedaf213",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "Has to be localized (and 4 blow)",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_2ebf26a9",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/LaunchBarUIManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "What this suppose to be?",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_0ebceab0",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/commands/BuildActiveCommandHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "This need to be cleaned up.\nThere is UIJob running I suspect to run code that you commented out\nwhich starts non UI job. So Wrapper job now is redundant",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_6ec91e4e",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/commands/LaunchActiveCommandHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "This needs to be cleaned up and no need for UIJob I think",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_4ec6e23e",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/commands/StopActiveCommandHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "What handler is doing? Is this suppose to be empty?",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_aef21690",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/ConfigSelector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "All strings need to be externalized",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_8ef75a81",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/LaunchBarControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "extenalize (I personally don\u0027t like text on toolbar)",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_eeec0eb9",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/TargetSelector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "I think you were calling it LaunchTarget before, to be consistent should be LaunchTargetSelector",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_cef1528c",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/TargetSelector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "Externalize. \"Add New Launch Target\"?",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_2ee606d5",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/dialogs/NewLaunchConfigEditPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-06-19T15:10:23Z",
+      "side": 1,
+      "message": "clean up comments",
+      "revId": "18b4e69982cba4fcd5cb9fc82adf66682009dc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

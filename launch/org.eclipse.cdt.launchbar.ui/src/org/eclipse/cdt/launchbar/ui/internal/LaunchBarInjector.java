@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -103,12 +104,9 @@ public class LaunchBarInjector {
 			if (!enabled) {
 				// remove it if we're disabled
 				trimBar.getChildren().remove(launchBarElement);
-				for (MTrimElement trimElement : trimBar.getChildren()) {
-					if (LaunchBarControl.ID.equals(trimElement.getElementId())) {
-						launchBarElement = trimElement;
-						break;
-					}
-				}
+				// This seems to be a bug in the platform but for now, dispose of the widget
+				Widget widget = (Widget)launchBarElement.getWidget();
+				widget.dispose();
 			}
 			// either way, we're done
 			return;

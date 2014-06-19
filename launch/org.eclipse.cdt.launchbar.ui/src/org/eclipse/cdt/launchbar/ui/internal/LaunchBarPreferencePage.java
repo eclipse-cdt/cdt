@@ -20,7 +20,7 @@ public class LaunchBarPreferencePage extends FieldEditorPreferencePage implement
 
 	@Override
 	protected void createFieldEditors() {
-		addField(new BooleanFieldEditor(Activator.PREF_ENABLE_LAUNCHBAR, "Enable the Launch Bar (may require restart).", getFieldEditorParent()));
+		addField(new BooleanFieldEditor(Activator.PREF_ENABLE_LAUNCHBAR, "Enable the Launch Bar.", getFieldEditorParent()));
 	}
 	
 }

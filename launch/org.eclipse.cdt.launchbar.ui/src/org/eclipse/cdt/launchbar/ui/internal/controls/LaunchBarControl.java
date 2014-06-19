@@ -52,6 +52,12 @@ public class LaunchBarControl implements ILaunchBarManager.Listener {
 		container.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		GridLayout layout = new GridLayout(7, false);
 		container.setLayout(layout);
+		container.addDisposeListener(new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				LaunchBarControl.this.dispose();
+			}
+		});
 
 		createButton(container, Activator.IMG_BUTTON_BUILD, Messages.LaunchBarControl_Build, Activator.CMD_BUILD);
 		createButton(container, Activator.IMG_BUTTON_LAUNCH, Messages.LaunchBarControl_Launch, Activator.CMD_LAUNCH);
@@ -84,7 +90,7 @@ public class LaunchBarControl implements ILaunchBarManager.Listener {
 	}
 
 	@PreDestroy
-	public void shutdown() {
+	public void dispose() {
 		manager.removeListener(this);
 	}
 

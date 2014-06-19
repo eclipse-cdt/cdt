@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_aba7a8c3",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/StatementHasNoEffectChecker.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-06-19T00:58:42Z",
+      "side": 1,
+      "message": "Check to see -\u003e Checks",
+      "revId": "a215b81d1268d0335ad9c79d9a8bb9c937560548",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_8bac6ca9",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/StatementHasNoEffectChecker.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-06-19T00:58:42Z",
+      "side": 1,
+      "message": "Please use proper capitalization in comments.\n\nWhat does \"comp\" stand for?",
+      "revId": "a215b81d1268d0335ad9c79d9a8bb9c937560548",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

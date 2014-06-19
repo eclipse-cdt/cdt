@@ -52,8 +52,10 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 
 /**
  * This class creates C control flow graph
@@ -67,6 +69,7 @@ public class ControlFlowGraphBuilder {
 	IConnectorNode outerBreak;
 	IConnectorNode outerContinue;
 	HashMap<String, IBasicBlock> labels = new HashMap<>();
+	private IValue value;
 
 	/**
 	 * Builds the graph.
@@ -463,14 +466,37 @@ public class ControlFlowGraphBuilder {
 		if (prev instanceof IExitNode || prev == null) {
 			dead.add(node);
 			return;
-		} else if (prev instanceof ICfgData) {
-			if (prev instanceof IDecisionNode && !(node instanceof IBranchNode)) {
+		}
+		if (prev instanceof IDecisionNode) {
+			if (node instanceof IBranchNode) {
+				IDecisionNode decisionNode = (IDecisionNode) prev;
+				if (isConstant(decisionNode, 1) && ((IBranchNode) node).getLabel().equals(IBranchNode.ELSE)) {
+					dead.add(node);
+					return;
+				} else if (isConstant(decisionNode, 0) && ((IBranchNode) node).getLabel().equals(IBranchNode.THEN)) {
+					dead.add(node);
+					return;
+				}
+			} else {
 				dead.add(node);
 				return;
 			}
-			((AbstractBasicBlock) prev).addOutgoing(node);
 		}
+		((AbstractBasicBlock) prev).addOutgoing(node);
 		if (!(node instanceof IStartNode))
 			((AbstractBasicBlock) node).addIncoming(prev);
+	}
+
+	private boolean isConstant(IDecisionNode node, long testvalue) {
+		if (node instanceof ICfgData) {
+			IASTNode ast = (IASTNode) ((ICfgData) node).getData();
+			if (ast instanceof IASTExpression) {
+				IValue dvalue = Value.create((IASTExpression) ast, 5);
+				Long numericalValue = dvalue.numericalValue();
+				if (numericalValue==null) return false;
+				return (numericalValue==testvalue);
+			}
+		}
+		return false;
 	}
 }

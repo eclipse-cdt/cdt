@@ -384,4 +384,26 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		checkNoErrors();
 	}
 
+//	int test1() {
+//	    do {
+//	        return 1;
+//	    } while (0);
+//	}
+	public void testNoRetInfinitLoop() throws Exception {
+		// Bug 394521
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
+//	int test1_f()    // WARNING HERE: "No return, in function returning non-void"
+//	{
+//	    while (1)
+//	    {
+//	    }
+//	}
+	public void testNoRetInfinitLoop2() throws Exception {
+		// Bug 394521
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
 }

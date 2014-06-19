@@ -18,3 +18,5 @@ Export-Package: org.eclipse.cdt.visualizer.ui,
  org.eclipse.cdt.visualizer.ui.plugin,
  org.eclipse.cdt.visualizer.ui.test,
  org.eclipse.cdt.visualizer.ui.util
+Import-Package: org.eclipse.cdt.debug.internal.ui.actions,
+ org.eclipse.cdt.debug.internal.ui.pinclone

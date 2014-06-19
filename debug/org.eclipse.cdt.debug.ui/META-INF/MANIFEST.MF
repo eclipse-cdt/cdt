@@ -8,7 +8,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: 
  org.eclipse.cdt.debug.internal.ui;x-friends:="org.eclipse.cdt.dsf.ui,org.eclipse.cdt.dsf.gdb.ui",
- org.eclipse.cdt.debug.internal.ui.actions;x-friends:="org.eclipse.cdt.dsf.ui,org.eclipse.cdt.debug.ui.memory.memorybrowser",
+ org.eclipse.cdt.debug.internal.ui.actions;x-friends:="org.eclipse.cdt.dsf.ui,org.eclipse.cdt.debug.ui.memory.memorybrowser,org.eclipse.cdt.visualizer.ui",
  org.eclipse.cdt.debug.internal.ui.actions.breakpoints;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.breakpoints;x-friends:="org.eclipse.cdt.dsf.ui,org.eclipse.cdt.dsf.gdb.ui",
  org.eclipse.cdt.debug.internal.ui.commands;x-internal:=true,
@@ -22,7 +22,7 @@ Export-Package:
  org.eclipse.cdt.debug.internal.ui.editors;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.elements.adapters;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.launch;x-internal:=true,
- org.eclipse.cdt.debug.internal.ui.pinclone;x-friends:="org.eclipse.cdt.dsf.gdb.ui",
+ org.eclipse.cdt.debug.internal.ui.pinclone;x-friends:="org.eclipse.cdt.dsf.gdb.ui,org.eclipse.cdt.visualizer.ui",
  org.eclipse.cdt.debug.internal.ui.preferences;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.propertypages;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.sourcelookup;x-friends:="org.eclipse.cdt.dsf.ui",

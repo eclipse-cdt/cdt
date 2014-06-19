@@ -204,6 +204,9 @@
 		<module>remote/org.eclipse.cdt.remote.core</module>
 		<module>remote/org.eclipse.cdt.remote-feature</module>
 		
+		<module>launch/org.eclipse.cdt.launchbar.core</module>
+		<module>launch/org.eclipse.cdt.launchbar.ui</module>
+
 <!-- 
 		<module>lrparser/org.eclipse.cdt.core.lrparser.tests</module>
 		<module>upc/org.eclipse.cdt.core.parser.upc.tests</module>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="launchBarInjector"
+         point="org.eclipse.e4.workbench.model">
+      <processor
+            apply="always"
+            beforefragment="false"
+            class="org.eclipse.cdt.launchbar.ui.internal.LaunchBarInjector">
+      </processor>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.cdt.launchbar.core.ILaunchBarManager"
+            class="org.eclipse.cdt.launchbar.ui.internal.LaunchBarUIManagerAdapterFactory">
+         <adapter
+               type="org.eclipse.cdt.launchbar.ui.internal.LaunchBarUIManager">
+         </adapter>
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.eclipse.cdt.launchbar.ui.internal.commands.BuildActiveCommandHandler"
+            id="org.eclipse.cdt.launchbar.ui.command.buildActive"
+            name="Build Active Configuration">
+      </command>
+      <command
+            defaultHandler="org.eclipse.cdt.launchbar.ui.internal.commands.LaunchActiveCommandHandler"
+            id="org.eclipse.cdt.launchbar.ui.command.launchActive"
+            name="Launch Active Configuration">
+      </command>
+      <command
+            defaultHandler="org.eclipse.cdt.launchbar.ui.internal.commands.StopActiveCommandHandler"
+            id="org.eclipse.cdt.launchbar.ui.command.stop"
+            name="Stop">
+      </command>
+      <command
+            defaultHandler="org.eclipse.cdt.launchbar.ui.internal.commands.ConfigureActiveLaunchHandler"
+            id="org.eclipse.cdt.launchbar.ui.command.configureActiveLaunch"
+            name="Configure Active Launch Configuration">
+      </command>
+   </extension>
+
+</plugin>

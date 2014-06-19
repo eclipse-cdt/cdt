@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
+ *     Marc Dumais (Ericsson) - bug 436095
  *******************************************************************************/
 
 // Package declaration
@@ -15,9 +16,18 @@ package org.eclipse.cdt.visualizer.ui;
 // Java classes
 import java.util.List;
 
+import org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewAction;
+import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
+// Custom classes
+import org.eclipse.cdt.visualizer.ui.events.IVisualizerViewerListener;
+import org.eclipse.cdt.visualizer.ui.events.VisualizerViewerEvent;
+import org.eclipse.cdt.visualizer.ui.util.SelectionProviderAdapter;
+import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
+import org.eclipse.cdt.visualizer.ui.util.WorkbenchSelectionAdapter;
 // SWT/JFace classes
 import org.eclipse.jface.action.IMenuListener2;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -25,18 +35,9 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.jface.action.IToolBarManager;
-
+import org.eclipse.ui.IActionBars;
 // Eclipse/CDT classes
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.IActionBars;
-
-// Custom classes
-import org.eclipse.cdt.visualizer.ui.events.IVisualizerViewerListener;
-import org.eclipse.cdt.visualizer.ui.events.VisualizerViewerEvent;
-import org.eclipse.cdt.visualizer.ui.util.SelectionProviderAdapter;
-import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
-import org.eclipse.cdt.visualizer.ui.util.WorkbenchSelectionAdapter;
 
 
 // ----------------------------------------------------------------------------
@@ -82,12 +83,17 @@ public class VisualizerView
     /** Last context menu display location. */
     protected Point m_contextMenuLocation = null;
 
+    /** Open New View action */
+    private OpenNewViewAction m_openNewViewAction = null;
+    
 	
 	// --- constructors/destructors ---
 
 	/** Constructor */
 	public VisualizerView() {
 		super();
+		m_openNewViewAction = new OpenNewViewAction();
+		m_openNewViewAction.init(this);
 	}
 
 	/** Dispose method */
@@ -318,8 +324,12 @@ public class VisualizerView
 		String description = "Displays visualizations of launches.";
 		if (m_viewer != null) {
 			name = m_viewer.getVisualizerDisplayName();
+			// add secondary id to tab name, if applicable
+			String secondaryId =  this.getViewSite().getSecondaryId();
+			if (secondaryId != null) {
+				name += " <" + PinCloneUtils.decodeClonedPartSecondaryId(secondaryId) +">";
+			}
 			description = m_viewer.getVisualizerDescription();
-			
 		}
 		setTabName(name);
 		setTabDescription(description);
@@ -332,6 +342,10 @@ public class VisualizerView
 			IToolBarManager toolBarManager = actionBars.getToolBarManager();
 			toolBarManager.removeAll();
 			m_viewer.populateToolBar(toolBarManager);
+			
+			// Add the "open new view" button on the Visualizer toolbar,
+			// after any viewer-specific buttons.
+			toolBarManager.add(m_openNewViewAction);
 			toolBarManager.update(true);
 			
 			// Allow presentation to set the toolbar's menu content, if any

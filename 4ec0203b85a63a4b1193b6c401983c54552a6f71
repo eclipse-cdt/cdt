@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_ceb672f3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/IVisualizerModelDataSource.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-06-19T15:31:07Z",
+      "side": 1,
+      "message": "It feels strange to have a bare @Override/declaration of an interface method inherited from a parent interface, since inheritance is implied by the \"extends\" declaration. But I can\u0027t find a source that specifically argues against it, either.\n\nThe point here might be to make dispose() more \"visible\", since it\u0027s specifically being treated as part of the contract of this interface. In this case, I\u0027d want a comment documenting the intended effect of the overridden method in classes implementing this interface (e.g. \"disposes the data source\" or \"disposes the data source, and updates X,Y, and Z\", for example).",
+      "revId": "4ec0203b85a63a4b1193b6c401983c54552a6f71",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

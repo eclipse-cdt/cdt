@@ -49,6 +49,9 @@ public class Activator extends AbstractUIPlugin {
 	public static final String CMD_STOP = "org.eclipse.cdt.launchbar.ui.command.stop";
 	public static final String CMD_CONFIG = "org.eclipse.cdt.launchbar.ui.command.configureActiveLaunch";
 
+	// Preference ids
+	public static final String PREF_ENABLE_LAUNCHBAR = "enableLaunchBar";
+
 	// The shared instance
 	private static Activator plugin;
 	

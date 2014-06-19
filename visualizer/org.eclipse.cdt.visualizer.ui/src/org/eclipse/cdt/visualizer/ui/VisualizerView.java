@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
+ *     Marc Dumais (Ericsson) - bug 436095
  *******************************************************************************/
 
 // Package declaration
@@ -30,6 +31,7 @@ import org.eclipse.jface.action.IToolBarManager;
 // Eclipse/CDT classes
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewAction;
 
 // Custom classes
 import org.eclipse.cdt.visualizer.ui.events.IVisualizerViewerListener;
@@ -82,12 +84,17 @@ public class VisualizerView
     /** Last context menu display location. */
     protected Point m_contextMenuLocation = null;
 
+    /** Open New View action */
+    private OpenNewViewAction m_openNewViewAction = null;
+    
 	
 	// --- constructors/destructors ---
 
 	/** Constructor */
 	public VisualizerView() {
 		super();
+		m_openNewViewAction = new OpenNewViewAction();
+		m_openNewViewAction.setView(this);
 	}
 
 	/** Dispose method */
@@ -332,6 +339,10 @@ public class VisualizerView
 			IToolBarManager toolBarManager = actionBars.getToolBarManager();
 			toolBarManager.removeAll();
 			m_viewer.populateToolBar(toolBarManager);
+			
+			// Add the "open new view" button on the Visualizer toolbar,
+			// after any viewer-specific buttons.
+			toolBarManager.add(m_openNewViewAction);
 			toolBarManager.update(true);
 			
 			// Allow presentation to set the toolbar's menu content, if any

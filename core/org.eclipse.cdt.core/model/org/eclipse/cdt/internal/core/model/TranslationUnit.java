@@ -869,6 +869,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 		ASTTranslationUnit ast = (ASTTranslationUnit) ((AbstractLanguage) language).getASTTranslationUnit(
 				fileContent, scanInfo, crf, index, options, log);
+		if (ast == null)
+			return null;
 		ast.setOriginatingTranslationUnit(this);
 		ast.setBasedOnIncompleteIndex(incompleteIndex);
 		return ast;

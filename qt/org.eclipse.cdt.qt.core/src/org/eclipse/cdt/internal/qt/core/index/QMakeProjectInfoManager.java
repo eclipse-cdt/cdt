@@ -79,6 +79,11 @@ public class QMakeProjectInfoManager {
 	private static QMakeProjectInfo getQMakeProjectInfoFor(IProject project, boolean create) {
 		QMakeProjectInfo info;
 		synchronized (CACHE_SYNC) {
+			// If the cache is null then this must be a late notification after shutdown.  We
+			// can't do anything so don't try.
+			if (CACHE == null)
+				return null;
+
 			info = CACHE.get(project);
 			if (info != null) {
 				return info;
@@ -98,6 +103,11 @@ public class QMakeProjectInfoManager {
 	private static void removeProjectFromCache(IResource project) {
 		QMakeProjectInfo info;
 		synchronized (CACHE_SYNC) {
+			// If the cache is null then this must be a late notification after shutdown.  We
+			// can't do anything so don't try.
+			if (CACHE == null)
+				return;
+
 			info = CACHE.remove(project);
 		}
 		if (info != null) {
@@ -213,6 +223,11 @@ public class QMakeProjectInfoManager {
 
 			List<QMakeProjectInfo> infos;
 			synchronized (CACHE_SYNC) {
+				// If the cache is null then this must be a late notification after shutdown.  We
+				// can't do anything so don't try.
+				if (CACHE == null)
+					return;
+
 				infos = new ArrayList<QMakeProjectInfo>(CACHE.values());
 			}
 			for (QMakeProjectInfo info : infos) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anders Dahlberg (Ericsson) - bug 84144
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -1728,6 +1729,26 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 		parseCandCPP(buffer.toString(), false, 0);
 	}
 	
+	//	void f()
+	//	{
+	//     void* labelPtr;
+	//     labelPtr = &&foo;
+	//     goto *labelPtr;
+	//	foo:
+	//     return;
+	//	}
+	public void test6_bug84144() throws Exception {
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("void f()\n{\n"); //$NON-NLS-1$
+		buffer.append("  void* labelPtr;\n"); //$NON-NLS-1$
+		buffer.append("  labelPtr = &&foo;\n"); //$NON-NLS-1$
+		buffer.append("  goto *labelPtr;\n"); //$NON-NLS-1$
+		buffer.append("foo:\n"); //$NON-NLS-1$
+		buffer.append("  return;\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		parseCandCPP(buffer.toString(), true, 0);
+	}
+
 	/**
 	 [--Start Example(C 6.8.6.4-4):
 	struct s { double i; } f(void);

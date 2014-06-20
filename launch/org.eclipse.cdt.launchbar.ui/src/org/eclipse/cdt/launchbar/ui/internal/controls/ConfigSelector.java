@@ -33,12 +33,8 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -64,8 +60,6 @@ import org.eclipse.ui.PlatformUI;
 public class ConfigSelector extends CSelector {
 
 	private LaunchBarUIManager uiManager;
-	
-	private static final ISelection nullSelection = new StructuredSelection("No Launch Configurations");
 	
 	public ConfigSelector(Composite parent, int style) {
 		super(parent, style);
@@ -153,23 +147,21 @@ public class ConfigSelector extends CSelector {
 				return text1.compareTo(text2);
 			}
 		});
-
-		addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				Object selected = getSelection().getFirstElement();
-				if (selected instanceof ILaunchConfigurationDescriptor) {
-					ILaunchConfigurationDescriptor configDesc = (ILaunchConfigurationDescriptor) selected;
-					try {
-						getManager().setActiveLaunchConfigurationDescriptor(configDesc);
-					} catch (CoreException e) {
-						Activator.log(e);
-					}
-				}
-			}
-		});
 	}
 
+	@Override
+	protected void fireSelectionChanged() {
+		Object selected = getSelection();
+		if (selected instanceof ILaunchConfigurationDescriptor) {
+			ILaunchConfigurationDescriptor configDesc = (ILaunchConfigurationDescriptor) selected;
+			try {
+				getManager().setActiveLaunchConfigurationDescriptor(configDesc);
+			} catch (CoreException e) {
+				Activator.log(e);
+			}
+		}
+	}
+	
 	@Override
 	public boolean isEditable(Object element) {
 		return element instanceof ILaunchConfigurationDescriptor;
@@ -281,14 +273,6 @@ public class ConfigSelector extends CSelector {
 	public void setInput(Object input) {
 		super.setInput(input);
 		uiManager = (LaunchBarUIManager) ((ILaunchBarManager) input).getAdapter(LaunchBarUIManager.class);
-	}
-
-	@Override
-	public void setSelection(ISelection selection) {
-		if (selection == null)
-			super.setSelection(nullSelection);
-		else
-			super.setSelection(selection);
 	}
 
 }

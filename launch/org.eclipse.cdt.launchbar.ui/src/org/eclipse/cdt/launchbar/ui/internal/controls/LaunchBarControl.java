@@ -20,7 +20,6 @@ import org.eclipse.cdt.launchbar.core.ILaunchTarget;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.cdt.launchbar.ui.internal.Messages;
 import org.eclipse.debug.core.ILaunchMode;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -80,13 +79,13 @@ public class LaunchBarControl implements ILaunchBarManager.Listener {
 		targetSelector.setInput(manager);
 
 		ILaunchConfigurationDescriptor configDesc = manager.getActiveLaunchConfigurationDescriptor();
-		configSelector.setSelection(configDesc == null ? null : new StructuredSelection(configDesc));
+		configSelector.setSelection(configDesc == null ? null : configDesc);
 
 		ILaunchMode mode = manager.getActiveLaunchMode();
-		modeSelector.setSelection(mode == null ? null : new StructuredSelection(mode));
+		modeSelector.setSelection(mode == null ? null : mode);
 
 		ILaunchTarget target = manager.getActiveLaunchTarget();
-		targetSelector.setSelection(target == null ? null : new StructuredSelection(target));
+		targetSelector.setSelection(target == null ? null : target);
 	}
 
 	@PreDestroy
@@ -117,7 +116,7 @@ public class LaunchBarControl implements ILaunchBarManager.Listener {
 				@Override
 				public void run() {
 					if (!configSelector.isDisposed())
-						configSelector.setSelection(configDesc == null ? null : new StructuredSelection(configDesc));
+						configSelector.setSelection(configDesc == null ? null : configDesc);
 				}
 			});
 		}
@@ -131,7 +130,7 @@ public class LaunchBarControl implements ILaunchBarManager.Listener {
 				@Override
 				public void run() {
 					if (!modeSelector.isDisposed())
-						modeSelector.setSelection(mode == null ? null : new StructuredSelection(mode));
+						modeSelector.setSelection(mode == null ? null : mode);
 				}
 			});
 		}
@@ -145,7 +144,7 @@ public class LaunchBarControl implements ILaunchBarManager.Listener {
 				@Override
 				public void run() {
 					if (!targetSelector.isDisposed())
-						targetSelector.setSelection(target == null ? null : new StructuredSelection(target));
+						targetSelector.setSelection(target == null ? null : target);
 				}
 			});
 		}

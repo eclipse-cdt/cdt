@@ -22,12 +22,8 @@ import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -36,10 +32,10 @@ import org.eclipse.swt.widgets.Composite;
 @SuppressWarnings("restriction")
 public class ModeSelector extends CSelector {
 
-	private static final ISelection nullSelection = new StructuredSelection("---");
-
 	public ModeSelector(Composite parent, int style) {
 		super(parent, style);
+
+		setToolTipText("Launch configuration");
 
 		setContentProvider(new IStructuredContentProvider() {
 			@Override
@@ -137,21 +133,17 @@ public class ModeSelector extends CSelector {
 				return 0;
 			}
 		});
-		
-		setToolTipText("Launch configuration");
-		addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				Object selected = getSelection().getFirstElement();
-				if (selected instanceof ILaunchMode) {
-					ILaunchMode mode = (ILaunchMode) selected;
-					getManager().setActiveLaunchMode(mode);
-				}
-			}
-		});
-
 	}
 
+	@Override
+	protected void fireSelectionChanged() {
+		Object selected = getSelection();
+		if (selected instanceof ILaunchMode) {
+			ILaunchMode mode = (ILaunchMode) selected;
+			getManager().setActiveLaunchMode(mode);
+		}
+	}
+	
 	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		return super.computeSize(150, hHint, changed);
@@ -161,12 +153,4 @@ public class ModeSelector extends CSelector {
 		return (ILaunchBarManager) getInput();
 	}
 
-	@Override
-	public void setSelection(ISelection selection) {
-		if (selection == null)
-			super.setSelection(nullSelection);
-		else
-			super.setSelection(selection);
-	}
-	
 }

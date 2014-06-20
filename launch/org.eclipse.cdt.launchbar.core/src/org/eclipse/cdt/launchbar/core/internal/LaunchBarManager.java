@@ -35,6 +35,8 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 public class LaunchBarManager extends PlatformObject implements ILaunchBarManager, ILaunchConfigurationListener {
 
@@ -71,7 +73,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 	}
 
-	void init() throws CoreException {
+	public LaunchBarManager() throws CoreException {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
 				Activator.PLUGIN_ID,
 				"launchConfigProvider");
@@ -107,7 +109,11 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		for (ILaunchConfiguration configuration : launchManager.getLaunchConfigurations()) {
-			launchConfigurationAdded(configuration);
+			ILaunchConfigurationDescriptor configDesc = new DefaultLaunchConfigurationDescriptor(configuration);
+			for (ProviderExtensionDescriptor provider : providers) {
+				configDesc = provider.getProvider().filterDescriptor(configDesc);
+			}
+			configDescs.put(configDesc.getName(), configDesc);
 		}
 		
 		for (ProviderExtensionDescriptor providerDesc : providers) {
@@ -152,7 +158,9 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
-		// TODO Auto-generated method stub
+		ILaunchConfigurationDescriptor configDesc = getLaunchConfigurationDescriptor(configuration);
+		if (configDesc != null)
+			removeLaunchConfigurationDescriptor(configDesc);
 	}
 	
 	@Override
@@ -173,11 +181,47 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	}
 
 	@Override
+	public ILaunchConfigurationDescriptor getLaunchConfigurationDescriptor(ILaunchConfiguration configuration) {
+		// Check by name
+		ILaunchConfigurationDescriptor configDesc = configDescs.get(configuration.getName());
+		if (configDesc.matches(configuration))
+			return configDesc;
+		
+		// Nope, try all descs
+		for (ILaunchConfigurationDescriptor cd : configDescs.values()) {
+			if (cd.matches(configuration))
+				return cd;
+		}
+		
+		// nothing, weird
+		return null;
+	}
+
+	@Override
 	public void setActiveLaunchConfigurationDescriptor(ILaunchConfigurationDescriptor configDesc) throws CoreException {
 		if (activeConfigDesc == configDesc)
 			return;
 		activeConfigDesc = configDesc;
 		
+		IEclipsePreferences store = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
+		if (activeConfigDesc != null) {
+			store.put(PREF_ACTIVE_CONFIG_DESC, activeConfigDesc.getName());
+		} else {
+			store.remove(PREF_ACTIVE_CONFIG_DESC);
+		}
+		try {
+			store.flush();
+		} catch (BackingStoreException e) {
+			// TODO log
+			e.printStackTrace();
+		}
+
+		if (activeConfigDesc == null) {
+			setActiveLaunchMode(null);
+			setActiveLaunchTarget(null);
+			return;
+		}
+
 		// Get the launch modes
 		List<ILaunchMode> mymodes = new ArrayList<>();
 		ILaunchConfigurationType type = activeConfigDesc.getLaunchConfigurationType();
@@ -198,8 +242,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		}
 
 		// Set active mode
-		IEclipsePreferences store = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
-		String activeModeName = store.get(PREF_ACTIVE_LAUNCH_MODE, null);
+		String activeModeName = store.node(activeConfigDesc.getName()).get(PREF_ACTIVE_LAUNCH_MODE, null);
 		boolean foundMode = false;
 		if (activeModeName != null) {
 			for (ILaunchMode mode : launchModes) {
@@ -234,10 +277,21 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	}
 
 	@Override
-	public void removeLaunchConfigurationDescriptor(
-			ILaunchConfigurationDescriptor configDesc) {
-		// TODO Auto-generated method stub
+	public void removeLaunchConfigurationDescriptor(ILaunchConfigurationDescriptor configDesc) {
+		configDescs.remove(configDesc.getName());
 		
+		// Fix up the active config if this one was it
+		if (activeConfigDesc.equals(configDesc)) {
+			try {
+				if (configDescs.isEmpty())
+					setActiveLaunchConfigurationDescriptor(null);
+				else
+					setActiveLaunchConfigurationDescriptor(configDescs.values().iterator().next());
+			} catch (CoreException e) {
+				// TODO log
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -262,6 +316,20 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		if (activeLaunchMode == mode)
 			return;
 		activeLaunchMode = mode;
+
+		Preferences store = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID).node(activeConfigDesc.getName());
+		if (mode != null) {
+			store.put(PREF_ACTIVE_LAUNCH_MODE, mode.getIdentifier());
+		} else {
+			store.remove(PREF_ACTIVE_LAUNCH_MODE);
+		}
+		try {
+			store.flush();
+		} catch (BackingStoreException e) {
+			// TODO log
+			e.printStackTrace();
+		}
+
 		for (Listener listener : listeners)
 			listener.activeLaunchModeChanged();
 	}

@@ -12,19 +12,11 @@ package org.eclipse.cdt.launchbar.ui.internal.controls;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.eclipse.cdt.launchbar.ui.IHoverProvider;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.DisposeEvent;
@@ -55,7 +47,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-public class CSelector extends Composite implements ISelectionProvider {
+public abstract class CSelector extends Composite {
 
 	private IStructuredContentProvider contentProvider;
 	private ILabelProvider labelProvider;
@@ -71,8 +63,7 @@ public class CSelector extends Composite implements ISelectionProvider {
 	private static final int arrowMax = 2;
 	private Transition arrowTransition;
 
-	private IStructuredSelection selection;
-	private List<ISelectionChangedListener> selectionChangedListeners = new LinkedList<>();
+	private Object selection;
 
 	protected final Color backgroundColor;
 	protected final Color outlineColor;
@@ -118,7 +109,7 @@ public class CSelector extends Composite implements ISelectionProvider {
 			if (hoverProvider != null && (popup == null || popup.isDisposed())) {
 				final Object eventSource = e.getSource();
 				if ((eventSource == currentLabel || eventSource == buttonComposite || eventSource == currentIcon)) {
-					if (hoverProvider.displayHover(CSelector.this.selection.getFirstElement())) {
+					if (hoverProvider.displayHover(selection)) {
 						buttonComposite.setToolTipText("");
 						if (currentLabel != null) {
 							currentLabel.setToolTipText("");
@@ -222,27 +213,8 @@ public class CSelector extends Composite implements ISelectionProvider {
 			popup.dispose();
 	}
 
-	@Override
-	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		selectionChangedListeners.add(listener);
-	}
-
-	@Override
-	public void removeSelectionChangedListener(
-			ISelectionChangedListener listener) {
-		selectionChangedListeners.remove(listener);
-	}
-
-	@Override
-	public void setSelection(ISelection selection) {
-		if (!(selection instanceof IStructuredSelection))
-			return;
-		IStructuredSelection newSelection = (IStructuredSelection) selection;
-		if (this.selection != null && newSelection.getFirstElement() == this.selection.getFirstElement())
-			// Already selected
-			return;
-		
-		this.selection = newSelection;
+	public void setSelection(Object element) {
+		this.selection = element;
 
 		if (buttonComposite != null)
 			buttonComposite.dispose();
@@ -251,8 +223,6 @@ public class CSelector extends Composite implements ISelectionProvider {
 
 		boolean editable = false;
 		int columns = 2;
-		Object element = null;
-		element = this.selection.getFirstElement();
 
 		Image image = labelProvider.getImage(element);
 		if (image != null)
@@ -342,7 +312,7 @@ public class CSelector extends Composite implements ISelectionProvider {
 						@Override
 						public void run() {
 							if (CSelector.this.selection != null)
-								handleEdit(CSelector.this.selection.getFirstElement());
+								handleEdit(selection);
 						}
 					});
 				}
@@ -350,18 +320,11 @@ public class CSelector extends Composite implements ISelectionProvider {
 		}
 
 		layout();
-		fireSelectionChanged();
 	}
 
-	private void fireSelectionChanged() {
-		SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
-		for (ISelectionChangedListener listener : selectionChangedListeners) {
-			listener.selectionChanged(event);
-		}
-	}
+	protected abstract void fireSelectionChanged();
 
-	@Override
-	public IStructuredSelection getSelection() {
+	public Object getSelection() {
 		return selection;
 	}
 
@@ -453,7 +416,7 @@ public class CSelector extends Composite implements ISelectionProvider {
 		selIndex = -1;
 		scrollBucket = 0;
 		if (hoverProvider != null) {
-			hoverProvider.dismissHover(selection != null ? selection.getFirstElement() : null, true);
+			hoverProvider.dismissHover(selection != null ? selection : null, true);
 		}
 	}
 
@@ -539,7 +502,8 @@ public class CSelector extends Composite implements ISelectionProvider {
 				} else {
 					// list item was pressed
 					popup.dispose();
-					setSelection(new StructuredSelection(currItem.element));
+					setSelection(currItem.element);
+					fireSelectionChanged();
 				}
 			} else if (e.detail == SWT.TRAVERSE_ESCAPE) {
 				popup.dispose();
@@ -594,7 +558,8 @@ public class CSelector extends Composite implements ISelectionProvider {
 				@Override
 				public void mouseUp(MouseEvent e) {
 					popup.dispose();
-					setSelection(new StructuredSelection(element));
+					setSelection(element);
+					fireSelectionChanged();
 				}
 			};
 
@@ -811,7 +776,7 @@ public class CSelector extends Composite implements ISelectionProvider {
 	}
 
 	public void update(Object element) {
-		if (selection.getFirstElement() == element) {
+		if (selection == element) {
 			if (currentIcon != null && !currentIcon.isDisposed()) {
 				currentIcon.setImage(labelProvider.getImage(element));
 			}

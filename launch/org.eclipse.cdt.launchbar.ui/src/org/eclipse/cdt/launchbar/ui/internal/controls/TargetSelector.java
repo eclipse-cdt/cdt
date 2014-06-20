@@ -210,20 +210,21 @@ public class TargetSelector extends CSelector {
 	}
 
 	@Override
+	protected void fireSelectionChanged() {
+		Object selection = getSelection();
+		if (selection instanceof ILaunchTarget) {
+			ILaunchTarget target = (ILaunchTarget) selection;
+			uiManager.getManager().setActiveLaunchTarget(target);
+		}
+	}
+	
+	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		return super.computeSize(200, hHint, changed);
 	}
 
 	private ILaunchBarManager getManager() {
 		return (ILaunchBarManager) getInput();
-	}
-
-	@Override
-	public void setSelection(ISelection selection) {
-		if (selection == null)
-			super.setSelection(nullSelection);
-		else
-			super.setSelection(selection);
 	}
 
 }

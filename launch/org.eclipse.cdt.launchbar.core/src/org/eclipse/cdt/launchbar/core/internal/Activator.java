@@ -12,10 +12,8 @@ package org.eclipse.cdt.launchbar.core.internal;
 
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -39,18 +37,12 @@ public class Activator implements BundleActivator {
 			@Override
 			public synchronized ILaunchBarManager getService(Bundle bundle, ServiceRegistration<ILaunchBarManager> registration) {
 				if (launchBarManager == null) {
-					launchBarManager = new LaunchBarManager();
-					new Job("Init LaunchBar Manager") {
-						@Override
-						protected IStatus run(IProgressMonitor monitor) {
-							try {
-								launchBarManager.init();
-								return Status.OK_STATUS;
-							} catch (CoreException e) {
-								return e.getStatus();
-							}
-						}
-					}.schedule();;
+					try {
+						launchBarManager = new LaunchBarManager();
+					} catch (CoreException e) {
+						// TODO log
+						e.printStackTrace();
+					}
 				}
 				return launchBarManager;
 			}

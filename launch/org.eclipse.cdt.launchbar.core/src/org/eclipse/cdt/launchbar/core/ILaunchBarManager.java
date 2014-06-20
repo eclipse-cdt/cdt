@@ -12,6 +12,7 @@ package org.eclipse.cdt.launchbar.core;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchMode;
 
 public interface ILaunchBarManager extends IAdaptable {
@@ -25,6 +26,8 @@ public interface ILaunchBarManager extends IAdaptable {
 	void addLaunchConfigurationDescriptor(ILaunchConfigurationDescriptor configDesc) throws CoreException;
 	
 	void removeLaunchConfigurationDescriptor(ILaunchConfigurationDescriptor configDesc);
+	
+	ILaunchConfigurationDescriptor getLaunchConfigurationDescriptor(ILaunchConfiguration configuration);
 
 	ILaunchMode[] getLaunchModes() throws CoreException;
 	
